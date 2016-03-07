@@ -116,6 +116,10 @@ def change_service_provider_status(db, request, session_user, client_id):
         request.service_provider_id, client_id
     ):
         return clientmasters.InvalidServiceProviderId()
+    elif db.is_user_exists_under_service_provider(
+        request.service_provider_id
+    ):
+        return clientmasters.CannotDeactivateUserExists()
     elif db.update_service_provider_status(
         request.service_provider_id,
         is_active, session_user, client_id
@@ -193,6 +197,10 @@ def change_user_privilege_status(db, request, session_user, client_id):
         request.user_group_id, client_id
     ):
         return clientmasters.InvalidUserGroupId()
+    elif db.is_user_exists_under_user_group(
+        request.user_group_id
+    ):
+        return clientmasters.CannotDeactivateUserExists()
     elif db.update_user_privilege_status(
         request.user_group_id, request.is_active,
         session_user, client_id
@@ -300,7 +308,7 @@ def get_units(db, request, session_user, client_id):
     division_list = db.get_divisions_for_user(
         division_ids
     )
-    unit_list = db.get_units_for_user(unit_ids, client_id)
+    unit_list = db.get_units_closure_for_user(unit_ids)
     return clientmasters.GetUnitsSuccess(
         business_groups=business_group_list,
         legal_entities=legal_entity_list,
@@ -310,11 +318,10 @@ def get_units(db, request, session_user, client_id):
 
 def close_unit(db, request, session_user, client_id):
     session_user = session_user
-    # unit_id = request.unit_id
     password = request.password
 
     if db.verify_password(password, session_user, client_id):
-        db.deactivate_unit(request.unit_id, client_id, session_user)
+        db.close_unit(request.unit_id, session_user)
         return clientmasters.CloseUnitSuccess()
     else:
         return clientmasters.InvalidPassword()

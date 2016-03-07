@@ -1430,7 +1430,7 @@ class ASSIGN_COMPLIANCE_USER(object):
             "user_id": to_structure_SignedIntegerType_8(self.user_id),
             "user_name": to_structure_CustomTextType_50(self.user_name),
             "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
-            "seating_unit_id": to_structure_SignedIntegerType_8(self.seating_unit_id),
+            "seating_unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.seating_unit_id),
             "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
         }
@@ -1614,7 +1614,7 @@ class APPROVALCOMPLIANCE(object):
         documents = data.get("documents")
         documents = parse_structure_OptionalType_VectorType_CustomTextType_500(documents)
         upload_date = data.get("upload_date")
-        upload_date = parse_structure_CustomTextType_20(upload_date)
+        upload_date = parse_structure_OptionalType_CustomTextType_20(upload_date)
         completion_date = data.get("completion_date")
         completion_date = parse_structure_CustomTextType_20(completion_date)
         next_due_date = data.get("next_due_date")
@@ -1648,7 +1648,7 @@ class APPROVALCOMPLIANCE(object):
             "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
             "documents": to_structure_OptionalType_VectorType_CustomTextType_500(self.documents),
             "file_names": to_structure_OptionalType_VectorType_CustomTextType_500(self.file_names),
-            "upload_date": to_structure_CustomTextType_20(self.upload_date),
+            "upload_date": to_structure_OptionalType_CustomTextType_20(self.upload_date),
             "completion_date": to_structure_CustomTextType_20(self.completion_date),
             "next_due_date": to_structure_OptionalType_CustomTextType_20(self.next_due_date),
             "concurrenced_by": to_structure_OptionalType_CustomTextType_50(self.concurrenced_by),

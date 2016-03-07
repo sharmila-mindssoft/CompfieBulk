@@ -53,13 +53,13 @@ function actstatus(element){
   var changestatusStatutories = '.statutoryclass'+$(element).val();
   if ($(element).is(":checked"))
   {
-    $(changestatusStatutories).each(function() { 
-      this.checked = true;           
+    $(changestatusStatutories).each(function() {
+      this.checked = true;
     });
   }else{
     $(changestatusStatutories).each(function() {
-      this.checked = false;                     
-    });  
+      this.checked = false;
+    });
   }
 }
 
@@ -77,7 +77,7 @@ function disppopup(units){
         $('#popup_table').append(clone);
     }
     });
-  }  
+  }
 }
 
 function load_secondwizard(){
@@ -101,14 +101,14 @@ function load_secondwizard(){
       if(count==1){
         $('.accordion-content'+count).addClass("default");
       }
-      
+
       var complianceHeadingtableRow=$('#statutory-templates .compliance-heading');
       var clone1=complianceHeadingtableRow.clone();
       $('.accordion-content'+count).append(clone1);
 
       var actList = domainList[domainentity];
       $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
-      for(var actentity in actList){    
+      for(var actentity in actList){
         var statutoryprovision = '';
         var compliance_id = actList[actentity]["compliance_id"];
         var compliance_name = actList[actentity]["compliance_name"];
@@ -146,7 +146,7 @@ function load_secondwizard(){
           if(sMonth == 1) sMonth = "January"
           else if(sMonth == 2) sMonth = "February"
           else if(sMonth == 3) sMonth = "March"
-          else if(sMonth == 4) sMonth = "April"  
+          else if(sMonth == 4) sMonth = "April"
           else if(sMonth == 5) sMonth = "May"
           else if(sMonth == 6) sMonth = "June"
           else if(sMonth == 7) sMonth = "July"
@@ -155,7 +155,7 @@ function load_secondwizard(){
           else if(sMonth == 10) sMonth = "October"
           else if(sMonth == 11) sMonth = "November"
           else if(sMonth == 12) sMonth = "December"
-            
+
           triggerdate +=  tDays + " Day(s)";
           statutorydate +=  sMonth +' '+ sDay + ' ';
 
@@ -170,7 +170,7 @@ function load_secondwizard(){
         $('.ckbox', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'">');
         $('.compliancetask', clone2).html('<abbr class="page-load" title="'+
           compliance_description+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliance_name);
-        
+
         var dispApplicableUnits = applicable_units.length + '/' + assignStatutoryUnitIds.length;
         $('.applicableunit', clone2).html('<a href="#popup1" onclick="disppopup(\''+applicable_units+'\')">'+dispApplicableUnits+'</a>');
         $('.compliancefrequency', clone2).text(frequency);
@@ -189,11 +189,11 @@ function load_secondwizard(){
             '<div class="edittriggertextbox'+statutoriesCount+'" style="display:none;padding-top:10px;">' + elementTriggerdate + '</div>');
           $('.duedate', clone2).html('<div>' + elementDuedate + '</div>');
         }
-        
+
         if(frequency == 'Periodical' || frequency == 'Review'){
           $('.validitydate', clone2).html('<input type="text" value="" class="input-box" readonly="readonly" id="validitydate'+statutoriesCount+'" />');
         }
-        
+
         $('.accordion-content'+count).append(clone2);
 
         for(var k = 0; k < due_date.length; k++){
@@ -211,7 +211,7 @@ function load_secondwizard(){
         });
         }
 
-        
+
 
         $("#validitydate"+statutoriesCount ).datepicker({
             changeMonth: true,
@@ -222,7 +222,7 @@ function load_secondwizard(){
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         });
 
-        $('.edittrigger'+statutoriesCount).click(function(){  
+        $('.edittrigger'+statutoriesCount).click(function(){
           var text = $(this).attr('class');
           var clickvalue = text.substring(text.lastIndexOf('r') + 1);
           $('.edittriggertextbox'+clickvalue).show();
@@ -230,9 +230,9 @@ function load_secondwizard(){
           $('.edittrigger'+clickvalue).hide();
         });
 
-        $('.closetrigger'+statutoriesCount).click(function(){  
+        $('.closetrigger'+statutoriesCount).click(function(){
           var text = $(this).attr('class');
-          var clickvalue = text.substring(text.lastIndexOf('r') + 1); 
+          var clickvalue = text.substring(text.lastIndexOf('r') + 1);
           $('.edittriggertextbox'+clickvalue).hide();
           $('.edittrigger'+clickvalue).show();
           $('.closetrigger'+clickvalue).hide();
@@ -241,9 +241,9 @@ function load_secondwizard(){
         $('.trigger').keyup('input', function (event) {
           this.value = this.value.replace(/[^0-9]/g, '');
         });
-        
+
         statutoriesCount = statutoriesCount + 1;
-      }  
+      }
       actCount = actCount + 1;
       count++;
     }
@@ -281,7 +281,7 @@ function validate_firsttab(){
   }else{
     displayMessage("");
     return true;
-  }    
+  }
 }
 
 function validate_secondtab(){
@@ -298,7 +298,7 @@ function validate_thirdtab(){
   }else{
     displayMessage("");
     return true;
-  }    
+  }
 }
 
 function convert_month (data){
@@ -307,8 +307,8 @@ function convert_month (data){
   for(var j=0;j<months.length;j++){
       if(data == months[j]){
            rmonth = months.indexOf(months[j])+1;
-       }                      
-  } 
+       }
+  }
   return rmonth;
 }
 
@@ -318,11 +318,11 @@ function convert_date (data){
   for(var j=0;j<months.length;j++){
       if(date[1]==months[j]){
            date[1]=months.indexOf(months[j])+1;
-       }                      
-  } 
+       }
+  }
   if(date[1]<10){
       date[1]='0'+date[1];
-  }       
+  }
   return new Date(date[2], date[1]-1, date[0]);
 }
 
@@ -344,12 +344,12 @@ function submitcompliance(){
     assignComplianceApprovalId = parseInt($('.approvallist.active').attr('id'));
 
     assignComplianceAssigneeName = $('.assigneelist.active').text();
-    
+
     if($('.concurrencelist.active').text() != '') assignComplianceConcurrenceName = $('.concurrencelist.active').text();
-    
+
     assignComplianceApprovalName = $('.approvallist.active').text();
 
- 
+
     assignCompliance = [];
     var statutoriesCount= 1;
     var actCount = 1;
@@ -358,7 +358,7 @@ function submitcompliance(){
     var domainList = statutoriesList[entity];
     for(var domainentity in domainList){
       var actList = domainList[domainentity];
-      for(var actentity in actList){  
+      for(var actentity in actList){
         var complianceApplicable = false;
         if($('#statutory'+statutoriesCount).is(":checked")){
           complianceApplicable = true;
@@ -450,7 +450,7 @@ function submitcompliance(){
             statutory_dates.push(statutoryDateList);
           }
 
-          
+
           /*for(var dDates = 0; dDates < current_due_dates.length; dDates++){
             var statutory_day = null;
             var statutory_month = null;
@@ -482,7 +482,7 @@ function submitcompliance(){
           assignCompliance.push(assignComplianceData);
         }
         statutoriesCount = statutoriesCount + 1;
-      }  
+      }
       actCount = actCount + 1;
     }
   }
@@ -502,9 +502,9 @@ function submitcompliance(){
   function onFailure(error){
     displayMessage(error)
   }
-  client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId, 
-    assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName, 
-    assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, 
+  client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,
+    assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
+    assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance,
     function (error, response) {
     if (error == null){
       onSuccess(response);
@@ -586,12 +586,12 @@ function loadunit(){
       var str='';
       $('#unit').empty();
       for(var unit in unitsList){
-        if(unitsList[unit]["business_group_id"] == assignStatutoryBusinessGroupId && 
-          unitsList[unit]["division_id"] == assignStatutoryDivisionId && 
-          unitsList[unit]["legal_entity_id"] == assignStatutoryLegalEntityId && 
+        if(unitsList[unit]["business_group_id"] == assignStatutoryBusinessGroupId &&
+          unitsList[unit]["division_id"] == assignStatutoryDivisionId &&
+          unitsList[unit]["legal_entity_id"] == assignStatutoryLegalEntityId &&
           unitsList[unit]["country_id"] == assignStatutoryCountryId){
           str += '<li id="'+unitsList[unit]["unit_id"]+'" class="unitlist" > <abbr class="page-load" title="'+
-          unitsList[unit]["address"]+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+ 
+          unitsList[unit]["address"]+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+
           unitsList[unit]["unit_name"]+'</li>';
         }
       }
@@ -622,7 +622,7 @@ $("#unit").click(function(event){
       }
       function onFailure(error){
       }
-      client_mirror.getAssignComplianceForUnits(assignStatutoryUnitIds, 
+      client_mirror.getAssignComplianceForUnits(assignStatutoryUnitIds,
         function (error, response) {
               if (error == null){
                 onSuccess(response);
@@ -701,7 +701,7 @@ $("#country").click(function(event){
   for(var businessgroup in businessgroupsList){
       str += '<li id="'+businessgroupsList[businessgroup]["business_group_id"]+'" class="businessgrouplist" >'+businessgroupsList[businessgroup]["business_group_name"]+'</li>';
   }
-  $('#businessgroup').append(str); 
+  $('#businessgroup').append(str);
 
   var str1='';
   $('#legalentity').empty();
@@ -786,8 +786,8 @@ function loadUser(selectedUnit, userClass, userType){
     if( selectedUnit == 'all' || $.inArray(selectedUnit, userUnits) >= 0){
           var userId= usersList[user]["user_id"];
           var userName= usersList[user]["user_name"];
-          if((assigneeUserId == null || assigneeUserId != userId) && 
-            (concurrenceUserId == null || concurrenceUserId !=userId) && 
+          if((assigneeUserId == null || assigneeUserId != userId) &&
+            (concurrenceUserId == null || concurrenceUserId !=userId) &&
             (approvalUserId == null || approvalUserId != userId)){
             str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
           }
@@ -795,9 +795,11 @@ function loadUser(selectedUnit, userClass, userType){
       /*if( selectedUnit == 'all' || selectedUnit == user ){
         var unitusers = usersList[user];
         for(var user in unitusers){
-          var userId= unitusers[user]["user_id"];
+          console.log(unitusers)
+          console.log(user)
+          var userId= unitusers["user_id"];
           if(assigneeUserId != userId && concurrenceUserId !=userId && approvalUserId != userId){
-            str += '<li id="'+userId+'" class="'+userClass+'" >'+unitusers[user]["user_name"]+'</li>';
+            str += '<li id="'+userId+'" class="'+userClass+'" >'+unitusers["user_name"]+'</li>';
           }
         }
       }*/
@@ -898,7 +900,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('assigneelist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (~name.toLowerCase().indexOf(filter)) 
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -910,7 +912,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('concurrencelist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (~name.toLowerCase().indexOf(filter)) 
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -922,19 +924,19 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('approvallist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (~name.toLowerCase().indexOf(filter)) 
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
     }
   });
 
-$('.edittrigger').click(function(){    
+$('.edittrigger').click(function(){
       $('.edittriggertextbox').show();
       $('.edittrigger').hide();
       $('.closetrigger').show();
   });
-  $('.closetrigger').click(function(){    
+  $('.closetrigger').click(function(){
       $('.edittriggertextbox').hide();
       $('.edittrigger').show();
       $('.closetrigger').hide();
@@ -945,7 +947,7 @@ $('.edittrigger').click(function(){
     var lis = document.getElementsByClassName('countrylist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0) 
+      if (name.toLowerCase().indexOf(filter) == 0)
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -957,7 +959,7 @@ $('.edittrigger').click(function(){
     var lis = document.getElementsByClassName('businessgrouplist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0) 
+      if (name.toLowerCase().indexOf(filter) == 0)
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -969,7 +971,7 @@ $('.edittrigger').click(function(){
     var lis = document.getElementsByClassName('legalentitylist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0) 
+      if (name.toLowerCase().indexOf(filter) == 0)
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -981,20 +983,20 @@ $('.edittrigger').click(function(){
     var lis = document.getElementsByClassName('divisionlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0) 
+      if (name.toLowerCase().indexOf(filter) == 0)
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
     }
   });
 
-  
+
   $("#filter_unit").keyup( function() {
     var filter = $("#filter_unit").val().toLowerCase();
     var lis = document.getElementsByClassName('unitlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0) 
+      if (name.toLowerCase().indexOf(filter) == 0)
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';

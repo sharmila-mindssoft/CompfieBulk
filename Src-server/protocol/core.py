@@ -497,13 +497,14 @@ class COMPLIANCE_ACTIVITY_STATUS(object):
     Submited = "Submited"
     Approved = "Approved"
     Rejected = "Rejected"
+    Concurred = "Concurred"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Submited", "Approved", "Rejected"]
+        return ["Submited", "Approved", "Rejected", "Concurred"]
 
     def value(self):
         return self._value

@@ -97,12 +97,13 @@ function performLogin(e_button, e_email, e_password) {
             e_password.val(),
             getShortName(),
             function (error, response) {
-                console.log(error)
+                console.log(error);
                 if (error == null){
                     // onSuccess(response)
                     window.location.href = "/home";
                 }
                 else {
+                    console.log("login failed")
                     onFailure(error)
                 }
             }

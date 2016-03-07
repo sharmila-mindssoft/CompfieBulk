@@ -536,6 +536,19 @@ class InvalidUserId(Response):
         return {
         }
 
+class CannotDeactivateUserExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CannotDeactivateUserExists()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class UpdateUserSuccess(Response):
     def __init__(self):
         pass
@@ -564,7 +577,11 @@ class ChangeUserStatusSuccess(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetUserGroupsSuccess, SaveUserGroupSuccess, GroupNameAlreadyExists, UpdateUserGroupSuccess, InvalidUserGroupId, ChangeUserGroupStatusSuccess, GetUsersSuccess, SaveUserSuccess, EmailIDAlreadyExists, ContactNumberAlreadyExists, EmployeeCodeAlreadyExists, InvalidUserId, UpdateUserSuccess, ChangeUserStatusSuccess]
+    classes = [GetUserGroupsSuccess, SaveUserGroupSuccess, 
+    GroupNameAlreadyExists, UpdateUserGroupSuccess, InvalidUserGroupId, 
+    ChangeUserGroupStatusSuccess, GetUsersSuccess, SaveUserSuccess, 
+    EmailIDAlreadyExists, ContactNumberAlreadyExists, EmployeeCodeAlreadyExists, 
+    InvalidUserId, UpdateUserSuccess, ChangeUserStatusSuccess, CannotDeactivateUserExists]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

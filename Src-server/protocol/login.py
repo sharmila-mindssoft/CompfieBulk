@@ -340,6 +340,19 @@ class InvalidCredentials(Response):
         return {
         }
 
+class ClientDatabaseNotExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ClientDatabaseNotExists()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class ForgotPasswordSuccess(Response):
     def __init__(self):
         pass
@@ -459,7 +472,10 @@ class InvalidSessionToken(Response):
 
 
 def _init_Response_class_map():
-    classes = [UserLoginSuccess, AdminLoginSuccess, InvalidCredentials, ForgotPasswordSuccess, InvalidUserName, ResetSessionTokenValidationSuccess, InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess, InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken]
+    classes = [UserLoginSuccess, AdminLoginSuccess, InvalidCredentials, 
+    ForgotPasswordSuccess, InvalidUserName, ResetSessionTokenValidationSuccess, 
+    InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess, 
+    InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken, ClientDatabaseNotExists]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

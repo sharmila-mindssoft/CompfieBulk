@@ -215,6 +215,8 @@ function showSideBar(idval, data){
 
         if(remarks == ''){
             remarks = null;
+        }else if(typeof remarks == 'undefined'){
+            remarks = null
         }
       
         else if(validity_date == ''){
