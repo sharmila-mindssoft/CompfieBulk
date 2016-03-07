@@ -385,6 +385,7 @@ function loadStatutoryLevels(countryval,domainval){
     $(element).addClass("active");
 
       var checkbox_status = $(element).attr('class');
+
       if(checkbox_status == 'countrylist active'){
         sm_countryid = id;
         sm_countryval = dispname;
@@ -400,10 +401,10 @@ function loadStatutoryLevels(countryval,domainval){
         sm_statutorynatureval = dispname;
       }
 
-      if(sm_countryid != '' && sm_domainid !=''){
+      if(sm_countryid != '' && sm_domainid !='' && type !='.statutorynaturelist'){
         loadStatutoryLevels(sm_countryid,sm_domainid);
       }
-      if(sm_countryid != ''){
+      if(sm_countryid != '' && type !='.statutorynaturelist'){
         loadGeographyLevels(sm_countryid);
       }
       make_breadcrumbs();

@@ -882,7 +882,7 @@ function loadAssignedStatutoriesList(assignedStatutoriesList){
       else{
         $('.tbl_status', clone).text("Pending");
         $('.tbl_edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+client_statutory_id+','+country_id+','+group_id+','+location_id+','+domain_id+','+unit_id+',\'edit\''+')"/>');
-      $('.tbl_view', clone).html('<img src=\'/images/icon-viewsubmit.png\' onclick="displayEdit('+client_statutory_id+','+country_id+','+group_id+','+location_id+','+domain_id+','+unit_id+',\'submit\''+')"/>');
+        $('.tbl_view', clone).html('<img src=\'/images/icon-viewsubmit.png\' onclick="displayEdit('+client_statutory_id+','+country_id+','+group_id+','+location_id+','+domain_id+','+unit_id+',\'submit\''+')"/>');
       }
       $('.tbody-assignstatutory-list').append(clone);
       j = j + 1;
