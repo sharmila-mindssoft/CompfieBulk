@@ -82,7 +82,7 @@ def process_change_domain_status(db, request, user_id):
         return general.InvalidDomainId()
 
 def process_get_domains(db, user_id):
-    results = db.get_domains_for_user(user_id)
+    results = db.get_domains_for_user(0)
     success = general.GetDomainsSuccess(domains=results)
     return success
 
@@ -123,7 +123,7 @@ def process_change_country_status(db, request, user_id):
         return general.InvalidCountryId()
 
 def process_get_countries(db, user_id):
-    results = db.get_countries_for_user(user_id)
+    results = db.get_countries_for_user(0)
     success = general.GetCountriesSuccess(countries=results)
     return success
 
