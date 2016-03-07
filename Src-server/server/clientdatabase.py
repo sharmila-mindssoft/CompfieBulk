@@ -4943,7 +4943,7 @@ class ClientDatabase(Database):
         assignee = request.assignee
         concurrence = request.concurrence_person
         if concurrence is None :
-            concurrence = ""
+            concurrence = ''
         approval = request.approval_person
         compliances = request.compliances
         reassigned_reason = request.reassigned_reason
@@ -4975,9 +4975,10 @@ class ClientDatabase(Database):
                     assignee, concurrence, approval,
                     unit_id, compliance_id
                 )
+            print update_assign
             self.execute(update_assign)
 
-            print update_assign
+
 
             if history_id is not None :
                 if validity_date is None:
