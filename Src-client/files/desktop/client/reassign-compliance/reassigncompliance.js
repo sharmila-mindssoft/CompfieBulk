@@ -429,8 +429,8 @@ $("#assignee").click(function(event){
     var concurrenceUnit =  $("#concurrence_unit").val();
     var approvalUnit =  $("#approval_unit").val();
 
-    //loadUser(concurrenceUnit, 'concurrencelist', 'concurrence');
-    //loadUser(approvalUnit, 'approvallist', 'approval');
+    loadUser(concurrenceUnit, 'concurrencelist', 'concurrence');
+    loadUser(approvalUnit, 'approvallist', 'approval');
   }
 });
 
@@ -447,7 +447,7 @@ $("#concurrence").click(function(event){
     var approvalUnit =  $("#approval_unit").val();
 
     //loadUser(assigneeUnit, 'assigneelist', 'assignee');
-    //loadUser(approvalUnit, 'approvallist', 'approval');
+    loadUser(approvalUnit, 'approvallist', 'approval');
   }
 });
 
@@ -487,7 +487,7 @@ function loadUser(selectedUnit, userClass, userType){
 
   for(var user in usersList){
     var userUnits = usersList[user]["unit_ids"];
-    if( selectedUnit == 'all' || $.inArray(selectedUnit, userUnits) >= 0){
+    if( selectedUnit == 'all' || $.inArray(parseInt(selectedUnit), userUnits) >= 0){
           var userId= usersList[user]["user_id"];
           var userName= usersList[user]["user_name"];
       

@@ -932,7 +932,7 @@ function showComplianceApplicabilityDrillDownRecord(data, type){
             $(".heading", cloneLevel1).html(disp_unitname);
             $('.accordion-content'+count).append(cloneLevel1);
             $.each(valu, function(k, val){
-                var frequency =  val["frequency_id"];
+                var frequency =  val["frequency"];
                 var statutory_date =  val["statutory_dates"];
                 var statutorydate = '';
                 var triggerbefore = '';
