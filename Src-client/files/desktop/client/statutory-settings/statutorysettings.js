@@ -30,8 +30,24 @@ function actstatus(element){
 function compliancestatus(element, viewremarks){
   var remarkadd = '.cremarkadd'+$(element).val();
   var remarkview = '.cremarkview'+$(element).val();
-  if ($(element).is(":checked"))
-  { 
+  var applicable = '#applicable'+$(element).val();
+
+  $('#cremarkvalue'+$(element).val()).val('');
+  var optedval = $(element).is(":checked");
+  var applicableval = $(applicable).val();
+
+  var addStatus = false;
+  if(applicableval == 'true'){
+    if(optedval){
+      addStatus = true;
+    }
+  }else{
+    if(optedval == false){
+      addStatus = true;
+    }
+  }
+
+  if(addStatus){
     $(remarkadd).hide();
     if(viewremarks) $(remarkview).show();
   }else{
@@ -132,10 +148,10 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
         $('.cremark', clone2).html('<span class="cremarkadd'+statutoriesCount+' default-display-none" > <textarea id="cremarkvalue'+statutoriesCount+'" class="input-box" style="height:30px;"  placeholder="Enter client decision"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></span><span class="cremarkview'+statutoriesCount+'"><abbr class="page-load tipso_style" title="'+compliance_remarks+'"><img src="images/icon-info.png"/>'+compliance_remarks_part+'</abbr></span>');
 
         if(compliance_applicable_status){
-          $('.applicable', clone2).html('<img src=\'/images/tick1bold.png\' />');
+          $('.applicable', clone2).html('<img src=\'/images/tick1bold.png\' /> <input type="hidden" id="applicable'+statutoriesCount+'" value="'+compliance_applicable_status+'"> </input> ');
         }
         else{
-          $('.applicable', clone2).html('<img src=\'/images/deletebold.png\'/>');
+          $('.applicable', clone2).html('<img src=\'/images/deletebold.png\'/> <input type="hidden" id="applicable'+statutoriesCount+'" value="'+compliance_applicable_status+'"> </input>');
         }
         $('.accordion-content'+count).append(clone2);
 
@@ -206,9 +222,25 @@ function submit_statutory(){
         var complianceApplicableStatus = false;
         var compliancenotApplicableRemarks = null;
         var compliance_remarks = complianceslist[compliance]["compliance_remarks"];
+
+        var optedval = $('#statutory'+statutoriesCount).is(":checked");
+        var applicableval = $('#applicable'+statutoriesCount).val();
+        var addStatus = true;
+        if(applicableval == 'true'){
+          if(optedval){
+            addStatus = false;
+          }
+        }else{
+          if(optedval == false){
+            addStatus = false;
+          }
+        }
+
         if($('#statutory'+statutoriesCount).is(":checked")){
           complianceApplicableStatus = true;
-        }else{
+        }
+
+        if(addStatus){
           compliancenotApplicableRemarks = $('#cremarkvalue'+statutoriesCount).val();
           if(compliancenotApplicableRemarks.length == 0 && compliance_remarks == null && applicableStatus == true){
             displayMessage("Remarks required for not applicable compliance");

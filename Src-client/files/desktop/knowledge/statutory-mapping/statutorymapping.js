@@ -740,6 +740,7 @@ function load_compliance(){
        }
       $('.status', clone).html('<img src=\'/images/'+display_image+'\' onclick="temp_change_status_compliance(\''+complianceid+'\','+passStatus+')"/>');
     }else{
+      isAllComplianceActive = true;
       $('.status', clone).html('<img src=\'/images/icon-delete.png\' onclick="temp_removecompliance(\''+complianceid+'\')"/>');
     }
 

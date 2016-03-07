@@ -169,7 +169,7 @@ $("#btn-clientgroup-submit").click(function(){
     if(clientGroupNameVal == ''){
         displayMessage('Group Required');
     }
-    if(clientGroupNameVal.length > 50){
+    else if(clientGroupNameVal.length > 50){
         displayMessage('Group :  Not Allowed More than 50 Characters.');
     }
     else if(countriesList == ''){

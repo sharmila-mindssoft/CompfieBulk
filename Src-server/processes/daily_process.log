@@ -1,0 +1,65 @@
+********************
+current_date datetime  2016-03-06
+begin fetching client info
+begin client db connection
+2016-03-06
+begin process to start new task  - 2016-03-06
+fetching task details to start compliance for client id - 1, 2016-03-06
+**********
+[{'division_id': 1L, 'due_date': datetime.date(2016, 3, 7), 'trigger_before_days': 2L, 'domain_id': 1L, 'validity_date': None, 'compliance_name': '-Periodical Task daily', 'country_id': 1L, 'unit_id': 3L, 'business_group_id': 1L, 'repeats_every': 1L, 'assignee': 2L, 'statutory_dates': '[{"statutory_month": 3, "statutory_date": 7, "trigger_before_days": 2}]', 'frequency': 2L, 'approval_person': 1L, 'repeat_type_id': 1L, 'legal_entity_id': 1L, 'concurrence_person': 3L, 'start_date': datetime.date(2016, 3, 5), 'compliance_id': 3L}, {'division_id': 1L, 'due_date': datetime.date(2016, 3, 15), 'trigger_before_days': 25L, 'domain_id': 1L, 'validity_date': None, 'compliance_name': '-Periodical monthly', 'country_id': 1L, 'unit_id': 3L, 'business_group_id': 1L, 'repeats_every': 1L, 'assignee': 2L, 'statutory_dates': '[{"statutory_month": 3, "statutory_date": 15, "trigger_before_days": 25}]', 'frequency': 2L, 'approval_person': 1L, 'repeat_type_id': 2L, 'legal_entity_id': 1L, 'concurrence_person': 3L, 'start_date': datetime.date(2016, 2, 19), 'compliance_id': 4L}, {'division_id': 1L, 'due_date': datetime.date(2016, 3, 7), 'trigger_before_days': 1L, 'domain_id': 1L, 'validity_date': None, 'compliance_name': '-Review daily', 'country_id': 1L, 'unit_id': 3L, 'business_group_id': 1L, 'repeats_every': 1L, 'assignee': 2L, 'statutory_dates': '[{"statutory_month": 3, "statutory_date": 7, "trigger_before_days": 1}]', 'frequency': 3L, 'approval_person': 1L, 'repeat_type_id': 1L, 'legal_entity_id': 1L, 'concurrence_person': 3L, 'start_date': datetime.date(2016, 3, 6), 'compliance_id': 5L}]
+**********
+
+int() takes at most 2 arguments (3 given)
+********************
+********************
+current_date datetime  2016-03-06
+begin fetching client info
+begin client db connection
+2016-03-06
+begin process to start new task  - 2016-03-06
+fetching task details to start compliance for client id - 1, 2016-03-06
+**********
+[{'division_id': 1L, 'due_date': datetime.date(2016, 3, 7), 'trigger_before_days': 2L, 'domain_id': 1L, 'validity_date': None, 'compliance_name': '-Periodical Task daily', 'country_id': 1L, 'unit_id': 3L, 'business_group_id': 1L, 'repeats_every': 1L, 'assignee': 2L, 'statutory_dates': '[{"statutory_month": 3, "statutory_date": 7, "trigger_before_days": 2}]', 'frequency': 2L, 'approval_person': 1L, 'repeat_type_id': 1L, 'legal_entity_id': 1L, 'concurrence_person': 3L, 'start_date': datetime.date(2016, 3, 5), 'compliance_id': 3L}, {'division_id': 1L, 'due_date': datetime.date(2016, 3, 15), 'trigger_before_days': 25L, 'domain_id': 1L, 'validity_date': None, 'compliance_name': '-Periodical monthly', 'country_id': 1L, 'unit_id': 3L, 'business_group_id': 1L, 'repeats_every': 1L, 'assignee': 2L, 'statutory_dates': '[{"statutory_month": 3, "statutory_date": 15, "trigger_before_days": 25}]', 'frequency': 2L, 'approval_person': 1L, 'repeat_type_id': 2L, 'legal_entity_id': 1L, 'concurrence_person': 3L, 'start_date': datetime.date(2016, 2, 19), 'compliance_id': 4L}, {'division_id': 1L, 'due_date': datetime.date(2016, 3, 7), 'trigger_before_days': 1L, 'domain_id': 1L, 'validity_date': None, 'compliance_name': '-Review daily', 'country_id': 1L, 'unit_id': 3L, 'business_group_id': 1L, 'repeats_every': 1L, 'assignee': 2L, 'statutory_dates': '[{"statutory_month": 3, "statutory_date": 7, "trigger_before_days": 1}]', 'frequency': 3L, 'approval_person': 1L, 'repeat_type_id': 1L, 'legal_entity_id': 1L, 'concurrence_person': 3L, 'start_date': datetime.date(2016, 3, 6), 'compliance_id': 5L}]
+**********
+
+int() takes at most 2 arguments (3 given)
+Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/processes/daily_process.py", line 509, in main
+    start_new_task(db, client_id, current_date)
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/processes/daily_process.py", line 365, in start_new_task
+    d["due_date"], next_due_date, int(d["assignee"], d["concurrence_person"], int(approval_person))
+TypeError: int() takes at most 2 arguments (3 given)
+
+********************
+********************
+current_date datetime  2016-03-06
+begin fetching client info
+begin client db connection
+2016-03-06
+begin process to start new task  - 2016-03-06
+fetching task details to start compliance for client id - 1, 2016-03-06
+**********
+[{'division_id': 1L, 'due_date': datetime.date(2016, 3, 8), 'trigger_before_days': 2L, 'domain_id': 1L, 'validity_date': None, 'compliance_name': '-Periodical Task daily', 'country_id': 1L, 'unit_id': 3L, 'business_group_id': 1L, 'repeats_every': 1L, 'assignee': 2L, 'statutory_dates': '[{"statutory_month": 3, "statutory_date": 7, "trigger_before_days": 2}]', 'frequency': 2L, 'approval_person': 1L, 'repeat_type_id': 1L, 'legal_entity_id': 1L, 'concurrence_person': 3L, 'start_date': datetime.date(2016, 3, 6), 'compliance_id': 3L}]
+**********
+
+new task saved in history (unit_id, compliance_id, start_date) 3, 3, 2016-03-06
+ 1 compliances started for - 2016-03-06
+**********
+[]
+**********
+********************
+********************
+current_date datetime  2016-03-06
+begin fetching client info
+begin client db connection
+2016-03-06
+begin process to start new task  - 2016-03-06
+fetching task details to start compliance for client id - 1, 2016-03-06
+**********
+[]
+**********
+ 0 compliances started for - 2016-03-06
+**********
+[]
+**********
+********************

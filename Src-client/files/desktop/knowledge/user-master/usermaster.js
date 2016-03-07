@@ -71,6 +71,7 @@ function displayEdit (userId) {
 			$("#countryselected").val(countryIds.length+" Selected");
 			$("#emailid").hide();
 			$("#emailid").val(emailId);
+			$("#view_emailid").show();
 			$("#view_emailid").text(emailId);
 			break;
 		}

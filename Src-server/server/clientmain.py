@@ -84,12 +84,12 @@ class API(object):
         try:
             #
             # print "company manager"
-            # for company_id, db in self._databases.iteritems():
-            #     db.close()
+            for company_id, db in self._databases.iteritems():
+                db.close()
 
-            # for company_id, rep_man in self._replication_managers.iteritems():
-            #     print "replication stopped"
-            #     rep_man.stop()
+            for company_id, rep_man in self._replication_managers.iteritems():
+                print "replication stopped"
+                rep_man.stop()
 
             self._databases = {}
             self._replication_managers = {}
