@@ -1400,6 +1400,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function checkContractExpiration(callback){
+        var request = [
+            "CheckContractExpiration", {}
+        ];
+        callerName = "client_dashboard";
+        clientApiRequest(callerName, request, callback); 
+    }  
+
     function reassingComplianceDet(unitId, complianceId, complianceHistoryId, dueDate) {
         return {
             "unit_id": unitId,
@@ -1567,6 +1575,7 @@ function initClientMirror() {
         getUserwiseCompliances: getUserwiseCompliances,
         exportToCSV: exportToCSV,
         get_ip: get_ip,
+        checkContractExpiration: checkContractExpiration,
         saveReassignCompliance : saveReassignCompliance,
         reassingComplianceDet : reassingComplianceDet
     }

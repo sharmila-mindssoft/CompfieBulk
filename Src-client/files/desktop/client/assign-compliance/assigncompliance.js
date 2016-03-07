@@ -90,7 +90,6 @@ function load_secondwizard(){
     var actname = '';
     var domainList = statutoriesList[entity];
     for(var domainentity in domainList){
-
       actname = domainentity;
       var acttableRow=$('#act-templates .font1 .tbody-heading');
       var clone=acttableRow.clone();
@@ -120,7 +119,6 @@ function load_secondwizard(){
         var summary = actList[actentity]["summary"];
         var triggerdate = '';
         var statutorydate = '';
-        //var sdateDesc = '';
         var elementTriggerdate = '';
         var elementDuedate = '';
 
@@ -134,13 +132,7 @@ function load_secondwizard(){
             elementDuedate += '<input type="text" id="duedate'+statutoriesCount+'" readonly="readonly" class="input-box" value="' + due_date[0] + '"/>'
           }
         }
-
-
-
-
-        //if(frequency == 'Periodical' || frequency == 'Review') sdateDesc = 'Every';
         for(j = 0; j < statutory_date.length; j++){
-
           var sDay = '';
           if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
 
@@ -175,15 +167,6 @@ function load_secondwizard(){
           }
         }
 
-        if(summary != null){
-          var tDays = summary.substring(summary.lastIndexOf('n') + 1);
-          if(frequency == 'On Occurrence'){
-            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
-            triggerdate = summary.substring(summary.lastIndexOf('n') + 1);
-          }
-        }
-
-
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
         $('.ckbox', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'">');
@@ -200,18 +183,20 @@ function load_secondwizard(){
           }else{
             statutorydate = summary;
           }
-
         }
-        $('.statutorydate', clone2).text(statutorydate);
 
-        if(triggerdate == '' && frequency != 'On Occurrence'){
+        $('.statutorydate', clone2).text(statutorydate);
+       
+        if(frequency != 'On Occurrence'){
+          if(triggerdate == ''){
           $('.triggerbefore', clone2).html('<input type="text" value="" class="input-box trigger" id="triggerdate'+statutoriesCount+'" />');
           $('.duedate', clone2).html('<input type="text" value="" class="input-box" id="duedate'+statutoriesCount+'" />');
-        }
-        else{
-          $('.triggerbefore', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/delete.png" width="12"></span>'+triggerdate +
-            '<div class="edittriggertextbox'+statutoriesCount+'" style="display:none;padding-top:10px;">' + elementTriggerdate + '</div>');
-          $('.duedate', clone2).html('<div>' + elementDuedate + '</div>');
+          }
+          else{
+            $('.triggerbefore', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/delete.png" width="12"></span>'+triggerdate +
+              '<div class="edittriggertextbox'+statutoriesCount+'" style="display:none;padding-top:10px;">' + elementTriggerdate + '</div>');
+            $('.duedate', clone2).html('<div>' + elementDuedate + '</div>');
+          }
         }
 
         if(frequency == 'Periodical' || frequency == 'Review'){
@@ -400,6 +385,7 @@ function submitcompliance(){
           var compliance_name = actList[actentity]["compliance_name"];
           var applicable_units =  actList[actentity]["applicable_units"];
           var due_date =  actList[actentity]["due_date"];
+          var frequency =  actList[actentity]["frequency"];
 
           var statutory_dates = [];
           var current_due_date = '';
@@ -411,42 +397,41 @@ function submitcompliance(){
           var validitydate = null;
           if($('#validitydate'+statutoriesCount).val() != undefined && $('#validitydate'+statutoriesCount).val() != '') $('#validitydate'+statutoriesCount).val();
 
-
-          if(due_date != undefined && due_date != ''){
+          if(frequency != 'On Occurrence'){
             if(due_date.length > 1){
-            for(var k = 0; k < due_date.length; k++){
-            var dDate = null;
-            var tDay = null;
+              for(var k = 0; k < due_date.length; k++){
+              var dDate = null;
+              var tDay = null;
 
-            dDate = $('#duedate'+statutoriesCount+'-'+k).val();
-            tDay = $('#triggerdate'+statutoriesCount+'-'+k).val();
-            current_due_dates.push(dDate);
-            current_trigger_days.push(tDay);
-            }
+              dDate = $('#duedate'+statutoriesCount+'-'+k).val();
+              tDay = $('#triggerdate'+statutoriesCount+'-'+k).val();
+              current_due_dates.push(dDate);
+              current_trigger_days.push(tDay);
+              }
             }else{
               dDate = $('#duedate'+statutoriesCount).val();
               tDay = $('#triggerdate'+statutoriesCount).val();
               current_due_dates.push(dDate);
               current_trigger_days.push(tDay);
             }
-          var convertDueDate = convert_date(dDate);
-          if (convertDueDate <= currentDate) {
-              displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
-              return false;
-          }
-
-          var sort_elements = current_due_dates;
-          if(current_due_dates.length > 1){
-            sort_elements.sort(function(a, b) {
-            return new Date(a) > new Date(b);
-            });
-
-            current_due_date = sort_elements[0];
-            for(var z=0;z<current_due_dates.length;z++){
-              if(current_due_date == current_due_dates[z]){
-                current_trigger_day = parseInt(current_trigger_days[z]);
-              }
+            var convertDueDate = convert_date(dDate);
+            if (convertDueDate <= currentDate) {
+                displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
+                return false;
             }
+
+            var sort_elements = current_due_dates;
+            if(current_due_dates.length > 1){
+              sort_elements.sort(function(a, b) {
+              return new Date(a) > new Date(b);
+              });
+
+              current_due_date = sort_elements[0];
+              for(var z=0;z<current_due_dates.length;z++){
+                if(current_due_date == current_due_dates[z]){
+                  current_trigger_day = parseInt(current_trigger_days[z]);
+                }
+              }
           }else{
             current_due_date = current_due_dates[0];
             current_trigger_day = parseInt(current_trigger_days[0]);
@@ -493,16 +478,16 @@ function submitcompliance(){
             var current_trigger_day = null;
           }
           assignComplianceData = client_mirror.assignCompliances(
-            compliance_id, compliance_name, statutory_dates,
-            current_due_date, validitydate, current_trigger_day, applicable_units
-          );
+          compliance_id, compliance_name, statutory_dates,
+          current_due_date, validitydate, current_trigger_day, applicable_units
+         );
           assignCompliance.push(assignComplianceData);
         }
         statutoriesCount = statutoriesCount + 1;
       }
       actCount = actCount + 1;
     }
-}
+  }
 
   function onSuccess(data){
     //getAssignedStatutories ();
@@ -583,7 +568,6 @@ $('#activate-step-finish').on('click', function(e) {
 
 
 function loadunit(){
-
 
   var assignStatutoryLegalEntityId = null;
   if($('.legalentitylist.active').attr('id') != undefined)

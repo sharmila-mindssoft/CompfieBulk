@@ -825,6 +825,7 @@ function initMirror() {
         var employeeName = userDetail[2];
         var employeeCode = userDetail[3];
         var contactNo = userDetail[4];
+        var address = userDetail[5];
         if (userDetail[5] == ""){
             address = null;
         }

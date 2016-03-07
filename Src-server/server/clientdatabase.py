@@ -136,7 +136,7 @@ class ClientDatabase(Database):
                 t2.user_group_name, t2.form_ids, t1.is_admin \
                 FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
                 ON t1.user_group_id = t2.user_group_id \
-                WHERE t1.password='%s' and t1.email_id='%s' and is_active=1" % (
+                WHERE t1.password='%s' and t1.email_id='%s' and t1.is_active=1" % (
                     password, username
                 )
             data_list = self.select_one(query)
@@ -2393,7 +2393,10 @@ class ClientDatabase(Database):
                 trigger_before = int(c.trigger_before)
             else :
                 trigger_before = ""
-            due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+            if c.due_date is not None :
+                due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+            else :
+                due_date = ""
             validity_date = c.validity_date
             if validity_date is not None :
                 validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
@@ -2411,12 +2414,13 @@ class ClientDatabase(Database):
                     concurrence_person, approval_person, \
                     trigger_before_days, due_date, validity_date, created_by, \
                     created_on) VALUES \
-                    (%s, %s, %s, '%s', %s, '%s', %s, %s, '%s', '%s', %s, '%s')" % (
+                    (%s, %s, %s, '%s', %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (
                         country_id, unit_id, compliance_id,
                         date_list, assignee, concurrence,
                         approval, trigger_before, due_date, validity_date,
                         int(session_user), created_on
                     )
+                print query
                 self.execute(query)
             self.update_user_units(assignee, unit_ids, client_id)
         compliance_names = json.dumps(compliance_names)
@@ -5137,7 +5141,6 @@ class ClientDatabase(Database):
         reassigned_from = request.reassigned_from
         assignee = request.assignee
         concurrence = request.concurrence_person
-
         approval = request.approval_person
         compliances = request.compliances
         reassigned_reason = request.reassigned_reason
@@ -5168,7 +5171,9 @@ class ClientDatabase(Database):
                 update_qry += " ,concurrance_person = %s " % (concurrence)
             where_qry = " WHERE unit_id = %s AND compliance_id = %s "
 
-            update_assign = update_qry + where_qry % (
+            qry = update_qry + where_qry
+
+            update_assign = qry % (
                 assignee, approval, unit_id, compliance_id
             )
 
@@ -5180,7 +5185,7 @@ class ClientDatabase(Database):
             #     )
             self.execute(update_assign)
 
-            print update_assign
+
 
             if history_id is not None :
                 if validity_date is None:
@@ -7284,3 +7289,28 @@ class ClientDatabase(Database):
             return True
         else:
             return False
+
+    def get_no_of_remaining_licence(self):
+        columns = "count(*)"
+        condition = "1"
+        rows = self.get_data(self.tblUsers, columns, condition)
+        no_of_licence_holders = rows[0][0]
+
+        columns = "no_of_user_licence"
+        rows = self.get_data(self.tblClientGroups, columns, condition)
+        no_of_licence = rows[0][0]
+
+        remaining_licence = int(no_of_licence) - int(no_of_licence_holders)
+        return remaining_licence
+
+    def get_no_of_days_left_for_contract_expiration(self):
+        column = "contract_to"
+        condition = "1"
+        rows = self.get_data(self.tblClientGroups, column, condition)
+        contract_to_str = str(rows[0][0])
+        contract_to_parts = [int(x) for x in contract_to_str.split("-")]
+        contract_to = datetime.date(
+            contract_to_parts[0], contract_to_parts[1], contract_to_parts[2]
+        )
+        delta = contract_to - self.get_date_time().date()
+        return delta.days

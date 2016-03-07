@@ -438,14 +438,13 @@ def get_client_settings(db):
     return result
 
 def reminder_to_assignee(db, client_info, compliance_info):
-
     current_date = get_current_date()
     try :
         print "begin process to remind inprogress compliance task %s " % (current_date)
         # client_info = get_client_settings(db)
         print client_info
         if client_info :
-            reminder_interval = int(client_info["assignee_reminder"])
+            reminder_interval = int(client_info[0]["assignee_reminder"])
             # compliance_info = get_inprogress_compliances(db)
             count = 0
             for c in compliance_info:
@@ -508,7 +507,41 @@ def notify_task_details(db, client_id):
         notify_escalation_to_all(db, client_info, compliance_info)
 
 def notify_before_contract_period(db, client_id):
-    pass
+    query = "SELECT contract_to FROM tbl_client_groups"
+    cursor = db.cursor()
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    contract_to_str = str(rows[0][0])
+    contract_to_parts = [int(x) for x in contract_to_str.split("-")]
+    contract_to = datetime.date(
+        contract_to_parts[0], contract_to_parts[1], contract_to_parts[2]
+    )
+    delta = contract_to - self.get_date_time().date()
+    if delta.days <= 30:
+        notification_text = "Your contract with Compfie will expire in %d \
+        days. Kindly renew your contract to avail the services continuosuly" % (
+            delta.days
+        )
+        extra_details = "Reminder : Contract Expiration"
+
+        notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
+        created_on = datetime.datetime.now()
+        query = "INSERT INTO tbl_notifications_log \
+            (notification_id, notification_type_id,\
+            notification_text, extra_details, updated_on\
+            ) VALUES (%s, %s, %s, %s, %s)" % (
+                notification_id, notification_type_id,
+                notification_text, extra_details, created_on
+            )
+        cursor = db.cursor()
+        cursor.execute(query)
+        cursor.close()
+
+        q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
+            VALUES (%s, %s)" % (notification_id, 0)
+        cur = db.cursor()
+        cur.execute(q)
+        cur.close()
 
 def main():
     print '*' * 20
@@ -520,6 +553,7 @@ def main():
             start_new_task(db, client_id, current_date)
             db.commit()
             notify_task_details(db, client_id)
+            notify_before_contract_period(db, client_id)
             db.commit()
     except Exception, e :
         print e
