@@ -677,6 +677,7 @@ $('ul.setup-panel li a[href="#step-1"]').trigger('click');
 })
 
 function saveorsubmit(submissionType){
+  displayMessage("");
   if (validate_secondtab()){
 
     var assignStatutoryCountryId = 0;
@@ -854,14 +855,25 @@ function loadAssignedStatutoriesList(assignedStatutoriesList){
       location_id = assignedStatutoriesList[entity]["geography_id"];
       domain_id = assignedStatutoriesList[entity]["domain_id"];
       unit_id = assignedStatutoriesList[entity]["unit_id"];
+
+      var businessGroup = '-';
+      if(assignedStatutoriesList[entity]["business_group_name"] != null){
+        businessGroup = assignedStatutoriesList[entity]["business_group_name"];
+      }
+
+      var divisionName = '-';
+      if(assignedStatutoriesList[entity]["division_name"] != null){
+        divisionName = assignedStatutoriesList[entity]["division_name"];
+      }
+
       var tableRow=$('#templates .table-assignstatutory .table-row');
       var clone=tableRow.clone();
       $('.tbl_sno', clone).text(j);
       $('.tbl_country', clone).text(assignedStatutoriesList[entity]["country_name"]);
       $('.tbl_group', clone).text(assignedStatutoriesList[entity]["group_name"]);
-      $('.tbl_businessgroup', clone).text(assignedStatutoriesList[entity]["business_group_name"]);
+      $('.tbl_businessgroup', clone).text(businessGroup);
       $('.tbl_legalentity', clone).text(assignedStatutoriesList[entity]["legal_entity_name"]);
-      $('.tbl_division', clone).text(assignedStatutoriesList[entity]["division_name"]);
+      $('.tbl_division', clone).text(divisionName);
       $('.tbl_location', clone).text(assignedStatutoriesList[entity]["geography_name"]);
       $('.tbl_industry', clone).text(assignedStatutoriesList[entity]["industry_name"]);
       $('.tbl_unit', clone).text(assignedStatutoriesList[entity]["unit_name"]);
