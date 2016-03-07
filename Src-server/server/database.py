@@ -1427,7 +1427,7 @@ class KnowledgeDatabase(Database):
         geographies = {}
         if rows :
             columns = [
-                "geography_id", "geography_name", "parent_names", "level_id", 
+                "geography_id", "geography_name", "parent_names", "level_id",
                 "parent_ids", "is_active", "country_id", "country_name"
             ]
             result = self.convert_to_dict(rows, columns)
@@ -4413,7 +4413,7 @@ class KnowledgeDatabase(Database):
 
     def get_compliance_by_mapping_id(self, mapping_id):
 
-        qry = "SELECT t1.compliance_id, t1.statutory_provision, \
+        qry = "SELECT distinct t1.compliance_id, t1.statutory_provision, \
             t1.compliance_task, t1.compliance_description, \
             t1.document_name \
             FROM tbl_compliances t1 \
@@ -4760,8 +4760,11 @@ class KnowledgeDatabase(Database):
             t1.compliance_applicable, t1.compliance_opted, \
             t1.compliance_remarks, \
             t2.statutory_name, t3.compliance_task, t3.document_name, \
+            t3.statutory_mapping_id, \
             t3.statutory_provision, t3.compliance_description, \
-            t5.statutory_nature_name\
+            t5.statutory_nature_name,\
+            (select distinct level_position from tbl_statutory_levels where level_id = t2.level_id)level,\
+            t2.statutory_name\
             FROM tbl_client_compliances t1 \
             INNER JOIN tbl_statutories t2 \
             ON t1.statutory_id = t2.statutory_id \
@@ -4773,7 +4776,7 @@ class KnowledgeDatabase(Database):
             ON t4.statutory_nature_id = t5.statutory_nature_id \
             WHERE \
             t1.client_statutory_id = %s \
-            AND t1.statutory_id like '%s' " % (
+            AND t1.statutory_id like '%s' ORDER BY level, statutory_name, compliance_id" % (
                 client_statutory_id, statutory_id
             )
         rows = self.select_all(query)
@@ -4783,8 +4786,9 @@ class KnowledgeDatabase(Database):
             "not_applicable_remarks", "compliance_applicable",
             "compliance_opted", "compliance_remarks",
             "statutory_name", "compliance_task", "document_name",
+            "statutory_mapping_id",
             "statutory_provision", "compliance_description",
-            "statutory_nature_name"
+            "statutory_nature_name", "level", "statutory_name"
         ]
         results = self.convert_to_dict(rows, columns)
         level_1_statutory_compliance = {}
@@ -4797,7 +4801,8 @@ class KnowledgeDatabase(Database):
             if statutory_opted is not None :
                 statutory_opted = bool(statutory_opted)
             statutory_id = int(r["statutory_id"])
-            statutory_data = self.statutory_parent_mapping.get(statutory_id)
+            mapping_id = int(r["statutory_mapping_id"])
+            statutory_data = self.statutory_parent_mapping.get(mapping_id)
             s_mapping = statutory_data[1]
             level_map = s_mapping.split(">>")
             if len(level_map) == 1 :
