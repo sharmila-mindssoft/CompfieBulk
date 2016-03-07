@@ -422,7 +422,7 @@ class Database(object) :
             return []
 
     def add_session(
-        self, user_id, session_type_id, ip,  
+        self, user_id, session_type_id, ip,
         employee, client_id=None
     ) :
         if client_id is not None:
@@ -3227,7 +3227,7 @@ class KnowledgeDatabase(Database):
                     "created_on", "created_by", "updated_on", "updated_by"]
         encrypted_password, password = self.generate_and_return_password()
         user_values = [user_id, email_id, user_group_id, encrypted_password,
-                employee_name, employee_code, contact_no,  1, 
+                employee_name, employee_code, contact_no,  1,
                 current_time_stamp, 0, current_time_stamp, 0]
         if address is not None:
             user_columns.append("address")
@@ -3372,7 +3372,7 @@ class KnowledgeDatabase(Database):
             else:
                 continue
         return False
-                
+
 
     def is_deactivated_existing_domain(self, client_id, domain_ids):
         existing_domains = self.get_client_domains(client_id)
@@ -3388,7 +3388,7 @@ class KnowledgeDatabase(Database):
                     continue
             else:
                 continue
-        return False 
+        return False
 
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
@@ -4377,6 +4377,15 @@ class KnowledgeDatabase(Database):
     ):
         if unit_id is not None :
             return self.return_unassign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, unit_id)
+        q = "select parent_ids from tbl_geographies where geography_id = %s" % (int(geography_id))
+        row = self.select_one(q)
+        if row :
+            parent_ids = [int(x) for x in row[0].split(',')[:-1]]
+            if len(parent_ids) == 1 :
+                parent_ids.append(0)
+        else :
+            parent_ids = []
+
         query = "SELECT distinct t1.statutory_mapping_id, \
             t1.statutory_nature_id, t2.statutory_nature_name, \
             t5.statutory_id\
@@ -4402,6 +4411,8 @@ class KnowledgeDatabase(Database):
                     domain_id, country_id, industry_id, geography_id,
                     str("%" + str(geography_id) + ",%"),
                 )
+        if parent_ids :
+            query += " OR t4.geography_id IN %s " % (str(tuple(parent_ids)))
         rows = self.select_all(query)
         columns = [
             "statutory_mapping_id", "statutory_nature_id",
@@ -4468,6 +4479,11 @@ class KnowledgeDatabase(Database):
             compliance_list = self.get_compliance_by_mapping_id(mapping_id)
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
             s_mapping = statutory_data[1]
+            level_map = s_mapping.split(">>")
+            if len(level_map) == 1 :
+                level_map = ""
+            else :
+                level_map = ">>".join(level_map[-1:])
             statutory_parents = statutory_data[2]
             level_1 = statutory_parents[0]
             if level_1 == 0 :
@@ -4479,7 +4495,8 @@ class KnowledgeDatabase(Database):
             if compliance_applicable_list is None:
                 compliance_applicable_list = []
             for c in compliance_list :
-                provision = "%s - %s" % (s_mapping, c["statutory_provision"])
+                provision = "%s - %s" % (level_map, c["statutory_provision"])
+                # provision.replace(level_1, "")
                 name = "%s - %s" % (c["document_name"], c["compliance_task"])
                 c_data = core.ComplianceApplicability(
                     c["compliance_id"],

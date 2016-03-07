@@ -79,7 +79,6 @@ function displayEdit (userId) {
 }
 
 function changeStatus (userId,isActive) {
-
 	var msgstatus='deactivate';
     if(isActive){
       msgstatus='activate';
@@ -87,26 +86,25 @@ function changeStatus (userId,isActive) {
     var answer = confirm('Are you sure you want to '+msgstatus+ '?');
     if (answer)
     {
-
-	function onSuccess(response){
-		getUsers();
+		function onSuccess(response){
+			getUsers();
+		}
+		function onFailure(error){
+			displayMessage(error);
+		}
+		mirror.changeAdminUserStatus(userId, isActive,
+			function (error, response) {
+	            if (error == null){
+	              onSuccess(response);
+	            }
+	            else {
+	              onFailure(error);
+	            }
+	        }
+	    );
 	}
-	function onFailure(error){
-		displayMessage(error);
-	}
+}
 
-	mirror.changeAdminUserStatus(userId, isActive,
-		function (error, response) {
-            if (error == null){
-              onSuccess(response);
-            }
-            else {
-              onFailure(error);
-            }
-        }
-    );
-}
-}
 
 function loadUserList(usersList) {
 	var j = 1;
@@ -114,6 +112,7 @@ function loadUserList(usersList) {
   	var passStatus = '';
   	var userId = 0;
   	var employeeName = '';
+  	var employeeId = '';
   	var isActive = false;
   	var designation = '';
   	var userList;
@@ -122,6 +121,7 @@ function loadUserList(usersList) {
   	for(var entity in usersList) {
   		userId = usersList[entity]["user_id"];
     	employeeName = usersList[entity]["employee_name"];
+    	employeeId = usersList[entity]["employee_code"];
     	isActive = usersList[entity]["is_active"];
     	designation = usersList[entity]["designation"];
     	if (designation == "None" || designation == null){
@@ -144,7 +144,7 @@ function loadUserList(usersList) {
    	var tableRow=$('#templates .table-user-master .table-row');
     var clone=tableRow.clone();
     $('.sno', clone).text(j);
-    $('.employee-name', clone).text(employeeName);
+    $('.employee-name', clone).html(employeeId + ' - ' + employeeName);
     $('.user-group', clone).text(usergroup);
     $('.designation', clone).text(designation);
     $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+userId+',\''+employeeName+'\')"/>');
@@ -259,9 +259,9 @@ $("#submit").click(function(){
       });
 		} else {
 			function onSuccess(response) {
-					getUsers();
-					$("#user-add").hide();
-					$("#user-view").show();
+				getUsers();
+				$("#user-add").hide();
+				$("#user-view").show();
  			}
 			function failure(data) {
 				if(error == "EmailIDAlreadyExists"){
@@ -300,9 +300,13 @@ $(".filter-text-box").keyup(function() {
 	var usergroupfilter = $("#search-usergroup").val().toLowerCase();
 	var designationfilter = $("#search-designation").val().toLowerCase();
 	var filteredList=[];
+	var concatName = '';
 	for(var entity in usersList) {
 			employeeName = usersList[entity]["employee_name"];
 			designation = usersList[entity]["designation"];
+			employeeId = usersList[entity]["employee_code"];
+			concatName = employeeId + ' - ' + employeeName;
+
 			var userGroup='';
 			for(var k in userGroupsList){
 				if(userGroupsList[k]["user_group_id"] == usersList[entity]["user_group_id"]){
@@ -310,7 +314,7 @@ $(".filter-text-box").keyup(function() {
 					break;
 				}
 			}
-			if (~employeeName.toLowerCase().indexOf(employeenamefilter) && ~designation.toLowerCase().indexOf(designationfilter) && ~userGroup.toLowerCase().indexOf(usergroupfilter)) 
+			if (~concatName.toLowerCase().indexOf(employeenamefilter) && ~designation.toLowerCase().indexOf(designationfilter) && ~userGroup.toLowerCase().indexOf(usergroupfilter)) 
 			{
 				filteredList.push(usersList[entity]);
 			}		
@@ -419,7 +423,6 @@ function activate_text (element,checkval,checkname) {
   $("#usergroupval").val(checkname);
   $("#usergroup").val(checkval);
 }
-
 
 $(document).ready(function(){
 	getUsers();
