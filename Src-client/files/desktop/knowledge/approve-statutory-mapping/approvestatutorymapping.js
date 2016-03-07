@@ -267,7 +267,18 @@ function loadApproveStatutory(){
         for (var status in approvalStatusList) {
           var option = $("<option></option>");
           option.val(approvalStatusList[status]["approval_status_id"]);
-          option.text(   approvalStatusList[status]["approval_status"].replace("Pending", "Select") );
+          var approveStatus = approvalStatusList[status]["approval_status"];
+          var updatedStatus = '';
+          if( approveStatus == 'Pending' ){
+            updatedStatus = approveStatus.replace("Pending", "Select");
+          }else if( approveStatus == 'Approved' ){
+            updatedStatus = approveStatus.replace("Approved", "Approve");
+          }else if( approveStatus == 'Rejected' ){
+            updatedStatus = approveStatus.replace("Rejected", "Reject");
+          }else if( approveStatus == 'Approved & Notified' ){
+            updatedStatus = approveStatus.replace("Approved & Notified", "Approve & Notify");
+          }
+          option.text( updatedStatus );
           $("#action"+j).append(option);
         }
         j = j + 1;

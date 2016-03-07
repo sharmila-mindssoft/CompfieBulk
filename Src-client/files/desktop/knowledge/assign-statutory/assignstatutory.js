@@ -599,7 +599,6 @@ function validate_firsttab(){
     var checkDuplicateAssignStauttory = true;
     var unitIdTab2 = null;
     for(var entity in assignedStatutoriesList) {
-      alert($('.locationlist.active').text())
       if($('.locationlist.active').text() == assignedStatutoriesList[entity]["geography_name"] && $('.industrylist.active').text() == assignedStatutoriesList[entity]["industry_name"] && $('.domainlist.active').text() == assignedStatutoriesList[entity]["domain_name"]){
         for(var j=0;j<assignStatutoryUnitValues.length;j++){
           if(assignStatutoryUnitValues[j] == assignedStatutoriesList[entity]["unit_name"] && assignedStatutoriesList[entity]["submission_status"] == 0){
@@ -883,7 +882,7 @@ function loadAssignedStatutoriesList(assignedStatutoriesList){
       else{
         $('.tbl_status', clone).text("Pending");
         $('.tbl_edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+client_statutory_id+','+country_id+','+group_id+','+location_id+','+domain_id+','+unit_id+',\'edit\''+')"/>');
-      $('.tbl_view', clone).html('<img src=\'/images/icon-viewsubmit.png\' onclick="displayEdit('+client_statutory_id+','+country_id+','+group_id+','+location_id+','+domain_id+','+unit_id+',\'submit\''+')"/>');
+        $('.tbl_view', clone).html('<img src=\'/images/icon-viewsubmit.png\' onclick="displayEdit('+client_statutory_id+','+country_id+','+group_id+','+location_id+','+domain_id+','+unit_id+',\'submit\''+')"/>');
       }
       $('.tbody-assignstatutory-list').append(clone);
       j = j + 1;
