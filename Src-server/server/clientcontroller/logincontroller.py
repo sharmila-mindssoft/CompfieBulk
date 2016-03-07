@@ -33,11 +33,13 @@ def process_login_request(request, db, company_id) :
 
 
 def process_login(db, request, client_id):
-    print "client controller login called"
     username = request.username
     password = request.password
     encrypt_password = db.encrypt(password)
-    response = db.verify_login(username, encrypt_password)
+    if db.is_in_contract():
+        response = db.verify_login(username, encrypt_password)
+    else:
+        return login.ContractExpired()
     if response is True:
         return admin_login_response(db, client_id, request.ip)
     else :

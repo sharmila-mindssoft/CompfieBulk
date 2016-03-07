@@ -470,12 +470,27 @@ class InvalidSessionToken(Response):
         return {
         }
 
+class ContractExpired(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ContractExpired()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 def _init_Response_class_map():
-    classes = [UserLoginSuccess, AdminLoginSuccess, InvalidCredentials, 
-    ForgotPasswordSuccess, InvalidUserName, ResetSessionTokenValidationSuccess, 
-    InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess, 
-    InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken, ClientDatabaseNotExists]
+    classes = [
+        UserLoginSuccess, AdminLoginSuccess, InvalidCredentials, 
+        ForgotPasswordSuccess, InvalidUserName, ResetSessionTokenValidationSuccess, 
+        InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess, 
+        InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken, 
+        ClientDatabaseNotExists, ContractExpired
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
