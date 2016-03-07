@@ -1567,7 +1567,8 @@ function initClientMirror() {
         getUserwiseCompliances: getUserwiseCompliances,
         exportToCSV: exportToCSV,
         get_ip: get_ip,
-        saveReassignCompliance : saveReassignCompliance
+        saveReassignCompliance : saveReassignCompliance,
+        reassingComplianceDet : reassingComplianceDet
     }
 }
 var client_mirror = initClientMirror();
