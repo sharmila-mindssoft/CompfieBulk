@@ -2117,17 +2117,16 @@ class ClientDatabase(Database):
 #
 
     def get_units_for_assign_compliance(self, session_user, client_id=None):
-        if session_user == 0 :
-            session_user = '%'
+        if session_user > 0 :
+            qry = ' WHERE t1.unit_id in (select distinct unit_id from tbl_user_units where user_id = %s) ' % (int(session_user))
+        else :
+            qry = ""
+
         query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, \
             t1.division_id, t1.legal_entity_id, t1.business_group_id, \
             t1.address, t1.country_id \
-            FROM tbl_units t1 \
-            INNER JOIN tbl_user_units t2 \
-            ON t1.unit_id = t2.unit_id \
-            AND t2.user_id like '%s' " % (
-                session_user
-            )
+            FROM tbl_units t1 "
+        query += qry
         rows = self.select_all(query)
         columns = [
             "unit_id", "unit_code", "unit_name",
@@ -2242,10 +2241,6 @@ class ClientDatabase(Database):
             ON t2.client_statutory_id = t1.client_statutory_id \
             INNER JOIN tbl_compliances t3 \
             ON t2.compliance_id = t3.compliance_id \
-            INNER JOIN tbl_compliance_frequency t4 \
-            ON t3.frequency_id = t4.frequency_id \
-            INNER JOIN tbl_user_domains t5 \
-            ON t1.domain_id = t5.domain_id \
             INNER JOIN \
             (SELECT distinct U.compliance_id, group_concat(distinct U.unit_id) units FROM  \
             (SELECT A.unit_id, A.client_statutory_id, B.compliance_id FROM tbl_client_statutories A \
@@ -2261,12 +2256,10 @@ class ClientDatabase(Database):
             AND t1.unit_id IN %s \
             AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
-            AND t3.is_active = 1 \
-            AND t5.user_id LIKE '%s'; " % (
+            AND t3.is_active = 1 " % (
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
-                session_user
             )
 
         rows = self.select_all(query)
