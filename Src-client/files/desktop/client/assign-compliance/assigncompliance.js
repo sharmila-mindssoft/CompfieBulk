@@ -125,13 +125,16 @@ function load_secondwizard(){
         var elementDuedate = '';
 
 
-        if(due_date.length > 1){
+        if(due_date != ''){
+          if(due_date.length > 1){
           for(var k = 0; k < due_date.length; k++){
             elementDuedate += '<input type="text" id="duedate'+statutoriesCount+'-'+k+'" readonly="readonly" class="input-box" value="' + due_date[k] + '"/>';
           }
-        }else{
-          elementDuedate += '<input type="text" id="duedate'+statutoriesCount+'" readonly="readonly" class="input-box" value="' + due_date[0] + '"/>'
+          }else{
+            elementDuedate += '<input type="text" id="duedate'+statutoriesCount+'" readonly="readonly" class="input-box" value="' + due_date[0] + '"/>'
+          }
         }
+        
 
        
 
@@ -182,11 +185,16 @@ function load_secondwizard(){
         $('.compliancefrequency', clone2).text(frequency);
 
         if(summary != null){
-          statutorydate = summary + ' ( '+statutorydate+' )';
+          if(statutorydate != ''){
+            statutorydate = summary + ' ( '+statutorydate+' )';
+          }else{
+            statutorydate = summary;
+          }
+         
         }
         $('.statutorydate', clone2).text(statutorydate);
 
-        if(triggerdate == ''){
+        if(triggerdate == '' && frequency != 'On Occurrence'){
           $('.triggerbefore', clone2).html('<input type="text" value="" class="input-box trigger" id="triggerdate'+statutoriesCount+'" />');
           $('.duedate', clone2).html('<input type="text" value="" class="input-box" id="duedate'+statutoriesCount+'" />');
         }
@@ -382,6 +390,7 @@ function submitcompliance(){
           var compliance_name = actList[actentity]["compliance_name"];
           var applicable_units =  actList[actentity]["applicable_units"];
           var due_date =  actList[actentity]["due_date"];
+
           var statutory_dates = [];
           var current_due_date = '';
           var current_trigger_day = '';
@@ -392,7 +401,9 @@ function submitcompliance(){
           var validitydate = null;
           if($('#validitydate'+statutoriesCount).val() != undefined && $('#validitydate'+statutoriesCount).val() != '') $('#validitydate'+statutoriesCount).val();
           
-          if(due_date.length > 1){
+
+          if(due_date != undefined && due_date != ''){
+            if(due_date.length > 1){
             for(var k = 0; k < due_date.length; k++){
             var dDate = null;
             var tDay = null;
@@ -402,14 +413,14 @@ function submitcompliance(){
             current_due_dates.push(dDate);
             current_trigger_days.push(tDay);
             }
-          }else{
-            dDate = $('#duedate'+statutoriesCount).val();
-            tDay = $('#triggerdate'+statutoriesCount).val();
-            current_due_dates.push(dDate);
-            current_trigger_days.push(tDay);
-          }
+            }else{
+              dDate = $('#duedate'+statutoriesCount).val();
+              tDay = $('#triggerdate'+statutoriesCount).val();
+              current_due_dates.push(dDate);
+              current_trigger_days.push(tDay);
+            }
           var convertDueDate = convert_date(dDate);
-          if (convertDueDate < currentDate) {
+          if (convertDueDate <= currentDate) {
               displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
               return false;
           }
@@ -423,12 +434,12 @@ function submitcompliance(){
             current_due_date = sort_elements[0];
             for(var z=0;z<current_due_dates.length;z++){
               if(current_due_date == current_due_dates[z]){
-                current_trigger_day = current_trigger_days[z];
+                current_trigger_day = parseInt(current_trigger_days[z]);
               }
             }
           }else{
             current_due_date = current_due_dates[0];
-            current_trigger_day = current_trigger_days[0];
+            current_trigger_day = parseInt(current_trigger_days[0]);
           }
 
           for(var dDates = 0; dDates < sort_elements.length; dDates++){
@@ -465,34 +476,17 @@ function submitcompliance(){
             statutoryDateList = client_mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days);
             statutory_dates.push(statutoryDateList);
           }
-
+          }else{
+            var statutory_dates = null;
+            var current_due_date = null;
+            var current_trigger_day = null;
+          }
           
-          /*for(var dDates = 0; dDates < current_due_dates.length; dDates++){
-            var statutory_day = null;
-            var statutory_month = null;
-            var trigger_before_days = null;
-            if(current_due_dates[dDates] != ''){
-              var splitDueDates = current_due_dates[dDates].split('-');
-              var strMonth = splitDueDates[1];
-              statutory_day = parseInt(splitDueDates[0]);
-              statutory_month = convert_month(strMonth);
-              if(current_trigger_days[dDates] != '') {
-                trigger_before_days = parseInt(current_trigger_days[dDates]);
-                if(trigger_before_days > 100){
-                  displayMessage("Trigger days should not be exceed 100");
-                  return false;
-                }
-              }else{
-                displayMessage("Trigger date Required in Select Compliance Task Wizard");
-                return false;
-              }
-            }
-            statutoryDateList = client_mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days);
-            statutory_dates.push(statutoryDateList);
-          }*/
+          
+
           assignComplianceData = client_mirror.assignCompliances(
             compliance_id, compliance_name, statutory_dates,
-            current_due_date, validitydate, parseInt(current_trigger_day), applicable_units
+            current_due_date, validitydate, current_trigger_day, applicable_units
           );
           assignCompliance.push(assignComplianceData);
         }
