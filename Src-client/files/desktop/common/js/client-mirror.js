@@ -1400,6 +1400,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function checkContractExpiration(callback){
+        var request = [
+            "CheckContractExpiration", {}
+        ];
+        callerName = "client_dashboard";
+        clientApiRequest(callerName, request, callback);   
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -1538,7 +1546,8 @@ function initClientMirror() {
         startOnOccurrenceCompliance: startOnOccurrenceCompliance,
         getUserwiseCompliances: getUserwiseCompliances,
         exportToCSV: exportToCSV,
-        get_ip: get_ip
+        get_ip: get_ip,
+        checkContractExpiration: checkContractExpiration
     }
 }
 var client_mirror = initClientMirror();

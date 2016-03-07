@@ -123,6 +123,9 @@ function loadUserList(usersList) {
     	employeeName = usersList[entity]["employee_name"];
     	isActive = usersList[entity]["is_active"];
     	designation = usersList[entity]["designation"];
+    	if (designation == "None" || designation == null){
+    		designation = "-"
+    	}
     	for(var k in userGroupsList){
     		if(userGroupsList[k]["user_group_id"] == usersList[entity]["user_group_id"]){
     			usergroup = userGroupsList[k]["user_group_name"];
@@ -273,6 +276,7 @@ $("#submit").click(function(){
             displayMessage("Invalid User Id");
         }
 			}
+			console.log("address:"+address);
 			userDetail = [userId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,countryIds,domainIds];
 			userDetailDict = mirror.getUpdateAdminUserDict(userDetail);
 			console.log(userDetailDict)

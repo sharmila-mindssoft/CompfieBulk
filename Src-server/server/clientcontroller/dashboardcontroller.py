@@ -58,6 +58,10 @@ def process_client_dashboard_requests(request, db) :
     elif type(request) is dashboard.GetAssigneeWiseComplianceDrillDown :
         return process_assigneewise_compliances_drilldown(db, request, session_user, client_id)
 
+    elif type(request) is dashboard.CheckContractExpiration:
+        return check_contract_expiration(db, request, session_user, client_id)
+
+
 def process_get_chart_filters(db, session_user, client_id):
     countries = db.get_countries_for_user(session_user, client_id)
     domains = db.get_domains_for_user(session_user, client_id)
@@ -206,4 +210,12 @@ def process_assigneewise_compliances_drilldown(
             )
     return dashboard.GetAssigneeWiseComplianceDrillDownSuccess(
         drill_down_data=drill_down_data
+    )
+
+def check_contract_expiration(
+    db, request, session_user, client_id
+):
+    no_of_days_left = db.get_no_of_days_left_for_contract_expiration()
+    return dashboard.CheckContractExpirationSuccesss(
+        no_of_days_left=no_of_days_left
     )
