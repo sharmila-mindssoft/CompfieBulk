@@ -4040,9 +4040,9 @@ class ClientDatabase(Database):
         values = [0, remarks, None, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
 
-        # email.notify_task_rejected(
-        #     self, compliance_history_id, remarks, "Reject Approval"
-        # )
+        email.notify_task_rejected(
+            self, compliance_history_id, remarks, "Reject Approval"
+        )
 
     def concur_compliance(self, compliance_history_id, remarks,
         next_due_date, validity_date, client_id):
@@ -4103,9 +4103,9 @@ class ClientDatabase(Database):
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0,  remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-        # email.notify_task_rejected(
-        #     self, compliance_history_id, remarks, "Reject Concurrence"
-        # )
+        email.notify_task_rejected(
+            self, compliance_history_id, remarks, "Reject Concurrence"
+        )
 
     def get_client_level_1_statutoy(self, user_id, client_id=None) :
         query = "SELECT (case when (LEFT(statutory_mapping,INSTR(statutory_mapping,'>>')-1) = '') \
@@ -5957,9 +5957,9 @@ class ClientDatabase(Database):
             and completed_by ='%d'" % (
                 compliance_history_id, session_user
             )
-        # email.notify_task_completed(
-        #     self, compliance_history_id
-        # )
+        email.notify_task_completed(
+            self, compliance_history_id
+        )
         columns = "unit_id, compliance_id"
         condition = "compliance_history_id = '%d'" % compliance_history_id
         rows = self.get_data(
