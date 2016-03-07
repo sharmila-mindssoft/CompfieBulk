@@ -19,7 +19,8 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_50,
     parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_VectorType_RecordType_core_Country,
-    parse_structure_VectorType_RecordType_core_Domain
+    parse_structure_VectorType_RecordType_core_Domain,
+    parse_structure_OptionalType_CustomTextType_250
 )
 from protocol.to_structure import (
     to_structure_CustomTextType_100,
@@ -45,7 +46,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_ClientBusinessGroup,
     to_structure_VectorType_RecordType_core_ClientLegalEntity,
     to_structure_VectorType_RecordType_core_ClientDivision,
-    to_structure_VectorType_RecordType_core_ClientUnit
+    to_structure_VectorType_RecordType_core_ClientUnit,
+    to_structure_OptionalType_CustomTextType_250
 )
 
 #
@@ -102,7 +104,7 @@ class SaveServiceProvider(Request):
         service_provider_name = data.get("service_provider_name")
         service_provider_name = parse_structure_CustomTextType_50(service_provider_name)
         address = data.get("address")
-        address = parse_structure_CustomTextType_250(address)
+        address = parse_structure_OptionalType_CustomTextType_250(address)
         contract_from = data.get("contract_from")
         contract_from = parse_structure_CustomTextType_20(contract_from)
         contract_to = data.get("contract_to")
@@ -116,7 +118,7 @@ class SaveServiceProvider(Request):
     def to_inner_structure(self):
         return {
             "service_provider_name": to_structure_CustomTextType_50(self.service_provider_name),
-            "address": to_structure_CustomTextType_250(self.address),
+            "address": to_structure_OptionalType_CustomTextType_250(self.address),
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
             "contact_person": to_structure_CustomTextType_50(self.contact_person),
@@ -141,7 +143,7 @@ class UpdateServiceProvider(Request):
         service_provider_name = data.get("service_provider_name")
         service_provider_name = parse_structure_CustomTextType_50(service_provider_name)
         address = data.get("address")
-        address = parse_structure_CustomTextType_250(address)
+        address = parse_structure_OptionalType_CustomTextType_250(address)
         contract_from = data.get("contract_from")
         contract_from = parse_structure_CustomTextType_20(contract_from)
         contract_to = data.get("contract_to")

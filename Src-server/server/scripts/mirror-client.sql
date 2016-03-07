@@ -141,6 +141,7 @@ CREATE TABLE `tbl_units` (
   `postal_code` int(11) NOT NULL,
   `domain_ids` varchar(100) NOT NULL,
   `is_active` tinyint(1) DEFAULT '1',
+  `is_closed` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`unit_id`),
   CONSTRAINT `fk_units_legel_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `fk_units_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`)
@@ -272,11 +273,11 @@ CREATE TABLE `tbl_client_compliances` (
   `compliance_opted` tinyint(4) DEFAULT NULL,
   `compliance_remarks` varchar(250) DEFAULT NULL,
   `submitted_on` timestamp NULL DEFAULT '0000-00-00 00:00:00',
-  `created_by` int(11) NOT NULL,
+  `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `updated_by` int(11) NOT NULL,
+  `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`client_statutory_id`)
+  PRIMARY KEY (`client_compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_assigned_compliances`;

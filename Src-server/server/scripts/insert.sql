@@ -85,7 +85,6 @@ INSERT INTO tbl_forms VALUES(23, 4, 'Login Trace', '/login-trace', 23, null, 1);
 INSERT INTO tbl_forms VALUES(24, 4, 'Audit Trail', '/audit-trail', 24, null, 1);
 INSERT INTO tbl_forms VALUES(25, 5, 'Settings', '/settings',  25, null, 1);
 INSERT INTO tbl_forms VALUES(26, 5, 'View Profile', '/view-profile',  26, null, 1);
-
 -- tbl_admin
 -- username, password -- 123456
 INSERT INTO tbl_admin  VALUES("admin", "e10adc3949ba59abbe56e057f20f883e");

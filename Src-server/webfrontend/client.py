@@ -100,6 +100,7 @@ class CompanyManager(object) :
     def locate_company(self, token):
         company_id = self._get_company_id(token)
         company = self._servers.get(company_id)
+        print company
         if company is None:
             return None
         return company

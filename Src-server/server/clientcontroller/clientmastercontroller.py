@@ -310,11 +310,10 @@ def get_units(db, request, session_user, client_id):
 
 def close_unit(db, request, session_user, client_id):
     session_user = session_user
-    # unit_id = request.unit_id
     password = request.password
 
     if db.verify_password(password, session_user, client_id):
-        db.deactivate_unit(request.unit_id, client_id, session_user)
+        db.close_unit(request.unit_id, client_id, session_user)
         return clientmasters.CloseUnitSuccess()
     else:
         return clientmasters.InvalidPassword()

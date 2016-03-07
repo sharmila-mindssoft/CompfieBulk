@@ -106,9 +106,12 @@ class API(object):
                         company.db_password,
                         company.db_name
                     )
-                    db.connect()
+                    try:
+                        db.connect()
+                    except Exception, e:
+                        print "Client database not available to connect"
+                        continue
                     self._databases[company_id] = db
-
                     rep_man = ReplicationManager(
                         self._io_loop,
                         self._knowledge_server_address,
@@ -166,7 +169,12 @@ class API(object):
             db = self._databases.get(company_id)
             if db is None:
                 response.set_status(404)
-                response.send("company not found")
+                response.send("Company not found")
+                # data = login.ClientDatabaseNotExists().to_structure()
+                # s = json.dumps(data, indent=2)
+                # response.send(s)
+                # response.send()
+                # self._send_response(login.ClientDatabaseNotExists(), response)
                 return None
             actual_data = data[1]
             request_data = request_data_type.parse_structure(
@@ -189,7 +197,7 @@ class API(object):
             request_data_type, request, response
         )
         if request_data is None:
-            return
+            return 
 
         db, request_data, company_id = request_data
 

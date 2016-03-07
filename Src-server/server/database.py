@@ -1,3 +1,4 @@
+import threading
 import os
 import MySQLdb as mysql
 import hashlib
@@ -387,7 +388,7 @@ class Database(object) :
                 t2.user_group_name, t2.form_ids \
                 FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
                 ON t1.user_group_id = t2.user_group_id \
-                WHERE t1.password='%s' and t1.email_id='%s'" % (
+                WHERE t1.password='%s' and t1.email_id='%s' and t1.is_active=1" % (
                     password, username
                 )
             data_list = self.select_one(query)
@@ -419,7 +420,10 @@ class Database(object) :
         else:
             return []
 
-    def add_session(self, user_id, session_type_id, client_id=None) :
+    def add_session(
+        self, user_id, session_type_id, ip,  
+        employee, client_id=None
+    ) :
         if client_id is not None:
             self.clear_old_session(user_id, session_type_id, client_id)
         else:
@@ -432,10 +436,20 @@ class Database(object) :
             (session_token, user_id, session_type_id, last_accessed_time) \
             VALUES ('%s', %s, %s, '%s');"
         query = query % (session_id, user_id, session_type_id, updated_on)
-
         self.execute(query)
 
+        action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
+        self.save_activity(user_id, 1, action)
+
         return session_id
+
+    def save_user_login_history(self, user_id):
+        updated_on = self.get_date_time()
+        query = "INSERT INTO tbl_user_login_history \
+            (user_id, login_time) \
+            VALUES ('%s', '%s');"
+        query = query % (user_id, updated_on)
+        self.execute(query)
 
     def clear_old_session(self, user_id, session_type_id, client_id=None) :
         query = "DELETE FROM tbl_user_sessions \
@@ -3119,8 +3133,8 @@ class KnowledgeDatabase(Database):
         )
         condition = "user_group_id in (select user_group_id from \
              %s where form_category_id = 3 and (form_ids like '%s%s%s' \
-             or form_ids like '%s%s%s'))" % (
-                self.tblUserGroups, "%", "19", "%", "%","21", "%"
+             or form_ids like '%s%s%s' or form_ids like '%s%s%s'))" % (
+                self.tblUserGroups, "%", "19", "%", "%","21", "%", "%","20", "%"
             )
         rows = self.get_data(self.tblUsers + " u", columns, condition)
         columns = ["user_id", "employee_name", "is_active", "countries", "domains"]
@@ -3174,6 +3188,16 @@ class KnowledgeDatabase(Database):
         rows = self.get_data(table, columns, condition)
         return rows[0][0]
 
+    def notify_user(
+        self, email_id, password, employee_name, employee_code
+    ):
+        try:
+            email().send_knowledge_user_credentials(
+                email_id, password, employee_name, employee_code
+            )
+        except Exception, e:
+            print "Error while sending email : {}".format(e)
+
     def save_user(self, user_id, email_id, user_group_id, employee_name,
      employee_code, contact_no, address, designation, country_ids, domain_ids):
         result1 = False
@@ -3181,12 +3205,18 @@ class KnowledgeDatabase(Database):
         result3 = False
         current_time_stamp = self.get_date_time()
         user_columns = ["user_id", "email_id", "user_group_id", "password", "employee_name",
-                    "employee_code", "contact_no", "address", "designation", "is_active",
+                    "employee_code", "contact_no", "is_active",
                     "created_on", "created_by", "updated_on", "updated_by"]
         encrypted_password, password = self.generate_and_return_password()
         user_values = [user_id, email_id, user_group_id, encrypted_password,
-                employee_name, employee_code, contact_no, address,
-                designation, 1, current_time_stamp, 0, current_time_stamp, 0]
+                employee_name, employee_code, contact_no,  1, 
+                current_time_stamp, 0, current_time_stamp, 0]
+        if address is not None:
+            user_columns.append("address")
+            user_values.append(address)
+        if designation is not None:
+            user_columns.append("designation")
+            user_values.append(designation)
         result1 = self.insert(self.tblUsers, user_columns, user_values)
 
         country_columns = ["user_id", "country_id"]
@@ -3205,12 +3235,12 @@ class KnowledgeDatabase(Database):
 
         action = "Created User \"%s - %s\"" % (employee_code, employee_name)
         self.save_activity(0, 4, action)
-        try:
-            email().send_knowledge_user_credentials(
+        notify_user_thread = threading.Thread(
+            target=self.notify_user, args=[
                 email_id, password, employee_name, employee_code
-            )
-        except Exception, e:
-            print "Error while sending email : {}".format(e)
+            ]
+        )
+        notify_user_thread.start()
         return (result1 and result2 and result3)
 
     def update_user(self, user_id, user_group_id, employee_name, employee_code, contact_no,
@@ -3475,6 +3505,15 @@ class KnowledgeDatabase(Database):
         cursor.execute(query)
         con.commit()
 
+    def send_client_credentials(
+        self, short_name, email_id, password
+    ):
+        try:
+            email().send_client_credentials(short_name, email_id, password)
+        except Exception, e:
+            print "Error while sending email : {}".format(e)
+        return True
+
     def _create_database(
         self, host, username, password,
         database_name, db_username, db_password, email_id, client_id,
@@ -3522,12 +3561,12 @@ class KnowledgeDatabase(Database):
         print "client domains"
         self._save_client_domains(domain_ids, client_db_cursor)
         client_db_con.commit()
-
-        try:
-            email().send_client_credentials(short_name, email_id, password)
-        except Exception, e:
-            print "Error while sending email : {}".format(e)
-        return True
+        send_client_credentials_thread = threading.Thread(
+            target=self.send_client_credentials, args=[
+                short_name, email_id, password
+            ]
+        )
+        send_client_credentials_thread.start()
 
     def _save_client_countries(self, country_ids, cursor):
         q = "SELECT country_id, country_name, is_active \
@@ -4440,12 +4479,14 @@ class KnowledgeDatabase(Database):
 
     def save_client_compliances(self, client_statutory_id, data, user_id, created_on):
         field = "(client_compliance_id, client_statutory_id, compliance_id, \
-            statutory_id, statutory_applicable, not_applicable_remarks, \
-            compliance_applicable, created_by, created_on)"
+            statutory_id, statutory_applicable, statutory_opted, \
+            not_applicable_remarks, \
+            compliance_applicable, compliance_opted, \
+            created_by, created_on)"
         for d in data :
             client_compliance_id = self.get_new_id("client_compliance_id", self.tblClientCompliances)
             level_1_id = d.level_1_statutory_id
-            applicable_status = d.applicable_status
+            applicable_status = int(d.applicable_status)
             not_applicable_remarks = d.not_applicable_remarks
             if not_applicable_remarks is None :
                 not_applicable_remarks = ""
@@ -4458,8 +4499,10 @@ class KnowledgeDatabase(Database):
                 values = (
                     client_compliance_id,
                     client_statutory_id, compliance_id,
-                    level_1_id, int(applicable_status), not_applicable_remarks,
-                    compliance_applicable_status, int(user_id), created_on
+                    level_1_id, applicable_status, applicable_status,
+                    not_applicable_remarks,
+                    compliance_applicable_status,  compliance_applicable_status,
+                    int(user_id), created_on
                 )
                 self.save_data(self.tblClientCompliances, field, values)
         return True
@@ -4471,7 +4514,7 @@ class KnowledgeDatabase(Database):
         row = self.select_one(query)
         return row[0]
 
-    def update_client_compliances(self, client_statutory_id, data, user_id, submited_on = None):
+    def update_client_compliances(self, client_statutory_id, data, user_id, submited_on=None):
         saved_compliance_ids = self.get_compliance_ids(client_statutory_id)
         saved_compliance_ids = [int(x) for x in saved_compliance_ids.split(',')]
         for d in data :
@@ -4492,9 +4535,13 @@ class KnowledgeDatabase(Database):
                     compliance_applicable_status = int(value)
 
                     field_with_data = "statutory_applicable = %s, \
+                        statutory_opted = %s,\
                         not_applicable_remarks = '%s', \
-                        compliance_applicable = %s, updated_by = %s" % (
-                            applicable_status, not_applicable_remarks,
+                        compliance_applicable = %s, \
+                        compliance_opted = %s, \
+                        updated_by = %s" % (
+                            applicable_status, applicable_status,
+                            not_applicable_remarks, compliance_applicable_status,
                             compliance_applicable_status, int(user_id)
                         )
                     if submited_on is not None :
@@ -5058,6 +5105,7 @@ class KnowledgeDatabase(Database):
             file_space = settings_rows[0][3]
             used_space = settings_rows[0][4]
             licence_holder_rows = self.get_licence_holder_details(client_id)
+            print licence_holder_rows
             licence_holders = []
             for row in licence_holder_rows:
                 employee_name = None
@@ -5073,7 +5121,7 @@ class KnowledgeDatabase(Database):
                     unit_name =  "%s - %s" % (row[6], row[7])
                 user_id = row[0]
                 email_id= row[1]
-                contact_no = row[4]
+                contact_no = None if row[4] is "" else row[4]
                 is_admin= row[5]
                 address= row[8]
                 is_active = row[9]

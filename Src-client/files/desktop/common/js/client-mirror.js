@@ -53,6 +53,20 @@ function initClientMirror() {
         return user;
     }
 
+    function get_ip(){
+        // alert("inside get_ip")
+        // var get = function(u){
+        //     var x = new XMLHttpRequest;
+        //     x.open('GET', u, false);
+        //     x.send();
+        //     return x.responseText;
+        // }
+
+        // response = JSON.parse(get('http://ifconfig.me/all.json'))
+        // return response["ip_addr"]
+        return "127.0.0.1"
+    }
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -152,7 +166,8 @@ function initClientMirror() {
                     "login_type": "Web",
                     "username": username,
                     "password": password,
-                    "short_name": short_name
+                    "short_name": short_name,
+                    "ip": get_ip()
                 }
             ]
         ]
@@ -160,6 +175,7 @@ function initClientMirror() {
             CLIENT_BASE_URL + "login",
             toJSON(request),
             function(data) {
+                console.log("data:"+data);
                 var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
@@ -169,13 +185,16 @@ function initClientMirror() {
                     console.log(data);
                     initSession(response, short_name)
                     callback(null, response);
-
                 }
                 else {
                     callback(status, null);
                 }
             }
-        )
+        ).fail(function(jqXHR, textStatus, errorThrown){
+            if(jqXHR.status == 404) {
+                callback("Client Database not exists")
+            }
+        });
     }
 
     function verifyLoggedIn() {
@@ -358,9 +377,14 @@ function initClientMirror() {
     }
 
     function getSaveServiceProviderDict(serviceProviderDetail) {
+        address = serviceProviderDetail[1]
+        if (address  == ""){
+            address = null;
+        }
+        console.log("address"+address)
         return {
             "service_provider_name": serviceProviderDetail[0],
-            "address": serviceProviderDetail[1],
+            "address": address,
             "contract_from": serviceProviderDetail[2],
             "contract_to": serviceProviderDetail[3],
             "contact_person": serviceProviderDetail[4],
@@ -378,10 +402,14 @@ function initClientMirror() {
     }
 
     function getUpdateServiceProviderDict(serviceProviderDetail) {
+        address = serviceProviderDetail[2]
+        if (address  == ""){
+            address = null;
+        }
         return {
             "service_provider_id": serviceProviderDetail[0],
             "service_provider_name": serviceProviderDetail[1],
-            "address": serviceProviderDetail[2],
+            "address": address,
             "contract_from": serviceProviderDetail[3],
             "contract_to": serviceProviderDetail[4],
             "contact_person": serviceProviderDetail[5],
@@ -1509,7 +1537,8 @@ function initClientMirror() {
         getOnOccurrenceCompliances: getOnOccurrenceCompliances,
         startOnOccurrenceCompliance: startOnOccurrenceCompliance,
         getUserwiseCompliances: getUserwiseCompliances,
-        exportToCSV: exportToCSV
+        exportToCSV: exportToCSV,
+        get_ip: get_ip
     }
 }
 var client_mirror = initClientMirror();
