@@ -1178,8 +1178,8 @@ def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Complian
     return dict
 
 def to_structure_RecordType_dashboard_Compliance(data):
-    from protocol import core
-    return core.Compliance.to_structure(data)
+    from protocol import dashboard
+    return dashboard.Compliance.to_structure(data)
 
 def to_structure_VectorType_RecordType_dashboard_Compliance(data):
     data = parse_list(data, 0)

@@ -1032,7 +1032,10 @@ class RequestFormat(object):
 #
 
 class ASSINGED_COMPLIANCE(object):
-    def __init__(self, compliance_id, compliance_name, statutory_dates, due_date, validity_date, trigger_before, unit_ids):
+    def __init__(
+        self, compliance_id, compliance_name, statutory_dates,
+        due_date, validity_date, trigger_before, unit_ids
+    ):
         self.compliance_id = compliance_id
         self.compliance_name = compliance_name
         self.statutory_dates = statutory_dates
@@ -1043,7 +1046,10 @@ class ASSINGED_COMPLIANCE(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_name", "compliance_id", "statutory_dates", "due_date", "validity_date", "trigger_before", "unit_ids"])
+        data = parse_dictionary(data, [
+            "compliance_name", "compliance_id", "statutory_dates",
+            "due_date", "validity_date", "trigger_before", "unit_ids"
+        ])
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         compliance_name = data.get("compliance_name")
@@ -1055,7 +1061,7 @@ class ASSINGED_COMPLIANCE(object):
         validity_date = data.get("validity_date")
         validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         trigger_before = data.get("trigger_before")
-        trigger_before = parse_structure_SignedIntegerType_8(trigger_before)
+        trigger_before = parse_structure_OptionalType_SignedIntegerType_8(trigger_before)
         unit_ids = data.get("unit_ids")
         unit_ids = parse_structure_VectorType_SignedIntegerType_8(unit_ids)
         return ASSINGED_COMPLIANCE(compliance_id, compliance_name, statutory_dates, due_date, validity_date, trigger_before, unit_ids)
@@ -1067,7 +1073,7 @@ class ASSINGED_COMPLIANCE(object):
             "statutory_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
             "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
             "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
-            "trigger_before": to_structure_SignedIntegerType_8(self.trigger_before),
+            "trigger_before": to_structure_OptionalType_SignedIntegerType_8(self.trigger_before),
             "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
         }
 
@@ -1430,7 +1436,7 @@ class ASSIGN_COMPLIANCE_USER(object):
             "user_id": to_structure_SignedIntegerType_8(self.user_id),
             "user_name": to_structure_CustomTextType_50(self.user_name),
             "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
-            "seating_unit_id": to_structure_SignedIntegerType_8(self.seating_unit_id),
+            "seating_unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.seating_unit_id),
             "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
         }
@@ -1614,7 +1620,7 @@ class APPROVALCOMPLIANCE(object):
         documents = data.get("documents")
         documents = parse_structure_OptionalType_VectorType_CustomTextType_500(documents)
         upload_date = data.get("upload_date")
-        upload_date = parse_structure_CustomTextType_20(upload_date)
+        upload_date = parse_structure_OptionalType_CustomTextType_20(upload_date)
         completion_date = data.get("completion_date")
         completion_date = parse_structure_CustomTextType_20(completion_date)
         next_due_date = data.get("next_due_date")
@@ -1648,7 +1654,7 @@ class APPROVALCOMPLIANCE(object):
             "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
             "documents": to_structure_OptionalType_VectorType_CustomTextType_500(self.documents),
             "file_names": to_structure_OptionalType_VectorType_CustomTextType_500(self.file_names),
-            "upload_date": to_structure_CustomTextType_20(self.upload_date),
+            "upload_date": to_structure_OptionalType_CustomTextType_20(self.upload_date),
             "completion_date": to_structure_CustomTextType_20(self.completion_date),
             "next_due_date": to_structure_OptionalType_CustomTextType_20(self.next_due_date),
             "concurrenced_by": to_structure_OptionalType_CustomTextType_50(self.concurrenced_by),

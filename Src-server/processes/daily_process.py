@@ -1,30 +1,30 @@
 #!/usr/bin/python
 
-# run every 5 mins
-# PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
-# */5 * * * * cd ~/Python/workspace/Compliance-Mirror/Src-server/processes/daily_process.py >> cd ~/Python/workspace/Compliance-Mirror/Src-server/processes/daily_process.log 2>&1
+# # run every 5 mins
+# # PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+# # */5 * * * * cd ~/Python/workspace/Compliance-Mirror/Src-server/processes && ./daily_process.py >> daily_process.log 2>&1
 
-# sudo chmod 777 daily_process.py
+# # sudo chmod 777 daily_process.py
 
-# client db details from server
-# loop every client
-# ## Task start
-# check current date with due date, then start task
-# insert record in history table
-# update assigned compliance (due_date)
-# insert record in notification
-# Email to assignee, concurrance
+# # client db details from server
+# # loop every client
+# # ## Task start
+# # check current date with due date, then start task
+# # insert record in history table
+# # update assigned compliance (due_date)
+# # insert record in notification
+# # Email to assignee, concurrance
 
-# ##  Before due_date (from settings)
-# save notification
-# send mail (assignee, concurrence, approve)
+# # ##  Before due_date (from settings)
+# # save notification
+# # send mail (assignee, concurrence, approve)
 
-# ## After due_date till get approve
-# save notifocation
-# send mail (assignee, concurrence, approve)
+# #  ## After due_date till get approve
+# # save notifocation
+# # send mail (assignee, concurrence, approve)
 
 # ## before contract period expiration
-# Validate datetime based on country
+# # Validate datetime based on country
 
 import MySQLdb as mysql
 import datetime
@@ -146,7 +146,7 @@ def get_compliance_to_start(db, client_id, current_date):
         WHERE \
         (select frequency_id from tbl_compliances WHERE compliance_id = t1.compliance_id) not in (4) \
         AND \
-        (t1.due_date - INTERVAL t1.trigger_before_days DAY) <=  '%s'" % (current_date)
+        (t1.due_date - INTERVAL t1.trigger_before_days DAY) <=  '%s' AND is_active = 1" % (current_date)
 
     # print query
     cursor = db.cursor()
@@ -275,7 +275,8 @@ def get_new_id(db, table_name, column_name):
     return row[0]
 
 def save_in_compliance_history(
-    db, unit_id, compliance_id, start_date, due_date, next_due_date, assignee, concurrence, approve
+    db, unit_id, compliance_id, start_date, due_date, next_due_date, 
+    assignee, concurrence, approve
 ):
     print "new task saved in history (unit_id, compliance_id, start_date) %s, %s, %s" % (unit_id, compliance_id, start_date)
     compliance_history_id = get_new_id(db, "tbl_compliance_history", "compliance_history_id")
@@ -351,11 +352,21 @@ def start_new_task(db, client_id, current_date):
         approval_person = d["approval_person"]
         if d["frequency"] == 1 :
             next_due_date = ""
+            print "going to save in compliance history"
             save_in_compliance_history(
                 db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
-                d["due_date"], next_due_date, int(d["assignee"], d["concurrence_person"], int(approval_person))
+                d["due_date"], next_due_date, int(d["assignee"]), 
+                d["concurrence_person"], int(approval_person)
             )
+
+            query = "UPDATE tbl_assigned_compliances set is_active = 0 WHERE \
+            unit_id = '%d' and compliance_id = '%d'" % (
+                int(d["unit_id"]), int(d["compliance_id"])
+            )
+            cursor = db.cursor()
+            cursor.execute(query)
         else:
+            print "entering into else"
             next_due_date, trigger_before = calculate_next_due_date(
                 d["frequency"], d["statutory_dates"], d["repeat_type_id"],
                 d["repeats_every"], d["due_date"]
@@ -502,7 +513,7 @@ def notify_before_contract_period(db, client_id):
 def main():
     print '*' * 20
     current_date = get_current_date()
-    print "current_date datetime ", current_date
+    print "current_date datetime ", datetime.datetime.now()
     client_info = get_client_database()
     try :
         for client_id, db in client_info.iteritems() :

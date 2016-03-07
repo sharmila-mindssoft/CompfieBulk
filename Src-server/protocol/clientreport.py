@@ -77,6 +77,7 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_client_report_UnitDetails,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_CustomTextType_500,
+    parse_structure_OptionalType_CustomTextType_500
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
@@ -156,7 +157,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_UnsignedIntegerType_32,
     to_structure_VectorType_SignedIntegerType_8,
-    to_structure_VectorType_CustomTextType_500
+    to_structure_VectorType_CustomTextType_500,
+    to_structure_OptionalType_CustomTextType_500
 )
 
 #
@@ -1563,6 +1565,48 @@ class ExportToCSVSuccess(Response):
             "link" : to_structure_CustomTextType_500(self.link)
         }
 
+class GetClientDetailsReportFiltersSuccess(Response):
+    def __init__(self, countries, domains, business_groups, 
+        legal_entities, divisions, units):
+        self.countries = countries
+        self.domains = domains
+        self.business_groups = business_groups
+        self.legal_entities = legal_entities
+        self.divisions = divisions
+        self.units = units
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["countries", "domains", 
+            "business_groups", "legal_entities", "divisions", "units", 
+            ]
+        )
+        countries = data.get("countries")
+        countries = parse_structure_VectorType_RecordType_core_Country(countries)
+        domains = data.get("domains")
+        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
+        business_groups = data.get("business_groups")
+        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
+        legal_entities = data.get("legal_entities")
+        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
+        divisions = data.get("divisions")
+        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
+        units = data.get("units")
+        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
+        return GetClientDetailsReportFiltersSuccess(countries, domains, 
+            business_groups, legal_entities, divisions, units
+        )
+
+    def to_inner_structure(self):
+        return {
+            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
+            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
+            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
+            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
+            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units)
+        }
+
 
 def _init_Response_class_map():
     classes = [GetComplianceDetailsReportFiltersSuccess, 
@@ -1579,7 +1623,8 @@ def _init_Response_class_map():
     GetStatutoryNotificationsListFiltersSuccess, 
     GetStatutoryNotificationsListReportSuccess, 
     GetClientDetailsReportDataSuccess, GetActivityLogFiltersSuccess, 
-    GetActivityLogReportSuccess, GetLoginTraceSuccess, ExportToCSVSuccess]
+    GetActivityLogReportSuccess, GetLoginTraceSuccess, ExportToCSVSuccess,
+    GetClientDetailsReportFiltersSuccess]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -1899,7 +1944,7 @@ class ActivityData(object):
         compliance_status = data.get("compliance_status")
         compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
         remarks = data.get("remarks")
-        remarks = parse_structure_CustomTextType_500(remarks)
+        remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
         return ActivityCompliance(activity_date, activity_status, compliance_status, remarks)
 
     def to_structure(self):
@@ -1907,7 +1952,7 @@ class ActivityData(object):
             "activity_date": to_structure_CustomTextType_20(self.activity_date),
             "activity_status": to_structure_EnumType_core_COMPLIANCE_ACTIVITY_STATUS(self.activity_status),
             "compliance_status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
-            "remarks": to_structure_CustomTextType_500(self.remarks),
+            "remarks": to_structure_OptionalType_CustomTextType_500(self.remarks),
         }
 
 #

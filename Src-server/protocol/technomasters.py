@@ -965,6 +965,32 @@ class EmailIDAlreadyExists(Response):
         return {
         }
 
+class CannotDeactivateDomain(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CannotDeactivateDomain()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class CannotDeactivateCountry(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CannotDeactivateCountry()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class ShortNameAlreadyExists(Response):
     def __init__(self):
         pass
@@ -1155,7 +1181,8 @@ def _init_Response_class_map():
     UnitCodeAlreadyExists, LogoSizeLimitExceeds, UpdateClientSuccess,
     ChangeClientStatusSuccess, ReactivateUnitSuccess, GetClientProfileSuccess,
     InvalidBusinessGroupId, InvalidLegalEntityId, InvalidDivisionId, 
-    InvalidUnitId, UserIsNotResponsibleForAnyClient, ClientCreationFailed]
+    InvalidUnitId, UserIsNotResponsibleForAnyClient, ClientCreationFailed,
+    CannotDeactivateCountry, CannotDeactivateDomain]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

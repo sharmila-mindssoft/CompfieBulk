@@ -147,6 +147,10 @@ def change_user_group_status(db, request, session_user):
     is_active = 0 if request.is_active is False else 1
     if db.is_invalid_id(db.tblUserGroups, "user_group_id", user_group_id):
         return admin.InvalidUserGroupId()
+    elif db.is_user_exists_under_user_group(
+        request.user_group_id
+    ):
+        return admin.CannotDeactivateUserExists()
     elif db.update_user_group_status(user_group_id, is_active):
         return admin.ChangeUserGroupStatusSuccess()
 

@@ -66,7 +66,12 @@ function performLogin(e_button, e_email, e_password) {
     e_password.attr("disabled", "disabled");
 
     function onFailure (status) {
-        displayLoginMessage("Unable to login. Incorrect email / password?");
+        console.log("status"+status);
+        message = "Unable to login. Incorrect email / password?";
+        if(status == "ContractExpired"){
+            message = "Contract Expired"
+        }
+        displayLoginMessage(message);
         $("input").val("");
         resetLoginUI(e_button, e_email, e_password);
     }
@@ -97,12 +102,13 @@ function performLogin(e_button, e_email, e_password) {
             e_password.val(),
             getShortName(),
             function (error, response) {
-                console.log(error)
+                console.log(error);
                 if (error == null){
                     // onSuccess(response)
                     window.location.href = "/home";
                 }
                 else {
+                    console.log("login failed")
                     onFailure(error)
                 }
             }

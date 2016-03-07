@@ -1850,9 +1850,9 @@ class Compliance(object):
         self.document_name = document_name
         self.format_file_list = format_file_list
         self.penal_consequences = penal_consequences
-        self.frequency_id = frequency
+        self.frequency = frequency
         self.statutory_dates = statutory_dates
-        self.repeats_type_id = repeats_type
+        self.repeats_type = repeats_type
         self.repeats_every = repeats_every
         self.duration_type = duration_type
         self.duration = duration
@@ -1884,7 +1884,7 @@ class Compliance(object):
         penal_consequences = data.get("penal_consequences")
         penal_consequences = parse_structure_OptionalType_CustomTextType_500(penal_consequences)
         frequency = data.get("frequency")
-        frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(frequency)
+        frequency = parse_structure_OptionalType_CustomTextType_50(frequency)
         statutory_dates = data.get("statutory_dates")
         statutory_dates = parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(statutory_dates)
         repeats_type = data.get("repeats_type")
@@ -1916,7 +1916,7 @@ class Compliance(object):
             "document_name": to_structure_OptionalType_CustomTextType_50(self.document_name),
             "format_file_list": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.format_file_list),
             "penal_consequences": to_structure_OptionalType_CustomTextType_500(self.penal_consequences),
-            "frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.frequency),
+            "frequency": to_structure_OptionalType_CustomTextType_50(self.frequency),
             "statutory_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
             "repeats_type": to_structure_OptionalType_CustomTextType_20(self.repeats_type),
             "repeats_every": to_structure_OptionalType_UnsignedIntegerType_32(self.repeats_every),
