@@ -128,6 +128,10 @@ function showSideBar(idval, data){
     var action = data["action"];
     if(action == "Approve"){
         $(".action-tr", cloneValSide).show();
+        
+        $(".concurr-action", cloneValSide).hide();
+        $(".approval-action", cloneValSide).show();
+        
         $(".sidebar-action", cloneValSide).on("change", function(e, data){ 
             console.log($(".sidebar-action", cloneValSide).val());
             if($(".sidebar-action", cloneValSide).val() == 'Reject'){
@@ -140,6 +144,10 @@ function showSideBar(idval, data){
     }
     if(action == "Concur"){
         $(".concurrance-tab", cloneValSide).show();
+
+        $(".concurr-action", cloneValSide).show();
+        $(".approval-action", cloneValSide).hide();
+        
         $(".sidebar-concurrence span", cloneValSide).html(data['concurrenced_by']);               
         $(".action-tr", cloneValSide).show();
         $(".sidebar-action", cloneValSide).on("change", function(e, data){ 
@@ -155,6 +163,10 @@ function showSideBar(idval, data){
         $(".concurrance-tab", cloneValSide).show();
         $(".sidebar-concurrance", cloneValSide).html(data['remarks']);
         $(".action-tr", cloneValSide).show();
+
+        $(".concurr-action", cloneValSide).show();
+        $(".approval-action", cloneValSide).hide();
+        
         $(".sidebar-remarks-textarea", cloneValSide).show();
         $(".sidebar-action", cloneValSide).on("change", function(e, data){ 
             console.log($(cloneValSide, ".sidebar-action").val());
@@ -168,6 +180,10 @@ function showSideBar(idval, data){
     }
     if(action == "Reject Approval"){
         $(".action-tr", cloneValSide).show();   
+
+        $(".concurr-action", cloneValSide).hide();
+        $(".approval-action", cloneValSide).show();
+
         $(".sidebar-remarks-textarea", cloneValSide).show(); 
         $(".sidebar-action", cloneValSide).on("change", function(e, data){ 
             console.log($(cloneValSide, ".sidebar-action").val());
