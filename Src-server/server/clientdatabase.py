@@ -2389,7 +2389,10 @@ class ClientDatabase(Database):
                 date_list = []
 
             unit_ids = c.unit_ids
-            trigger_before = int(c.trigger_before)
+            if c.trigger_before is not None :
+                trigger_before = int(c.trigger_before)
+            else :
+                trigger_before = ""
             due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
             validity_date = c.validity_date
             if validity_date is not None :
