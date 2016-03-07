@@ -2389,8 +2389,14 @@ class ClientDatabase(Database):
                 date_list = []
 
             unit_ids = c.unit_ids
-            trigger_before = int(c.trigger_before)
-            due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+            if c.trigger_before is not None :
+                trigger_before = int(c.trigger_before)
+            else :
+                trigger_before = ""
+            if c.due_date is not None :
+                due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+            else :
+                due_date = ""
             validity_date = c.validity_date
             if validity_date is not None :
                 validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
@@ -2408,12 +2414,13 @@ class ClientDatabase(Database):
                     concurrence_person, approval_person, \
                     trigger_before_days, due_date, validity_date, created_by, \
                     created_on) VALUES \
-                    (%s, %s, %s, '%s', %s, '%s', %s, %s, '%s', '%s', %s, '%s')" % (
+                    (%s, %s, %s, '%s', %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (
                         country_id, unit_id, compliance_id,
                         date_list, assignee, concurrence,
                         approval, trigger_before, due_date, validity_date,
                         int(session_user), created_on
                     )
+                print query
                 self.execute(query)
             self.update_user_units(assignee, unit_ids, client_id)
         compliance_names = json.dumps(compliance_names)
@@ -5134,8 +5141,6 @@ class ClientDatabase(Database):
         reassigned_from = request.reassigned_from
         assignee = request.assignee
         concurrence = request.concurrence_person
-        if concurrence is None :
-            concurrence = ''
         approval = request.approval_person
         compliances = request.compliances
         reassigned_reason = request.reassigned_reason
@@ -5161,13 +5166,23 @@ class ClientDatabase(Database):
                 )
             self.execute(query)
 
-            update_assign = "UPDATE tbl_assigned_compliances SET assignee=%s, \
-                is_reassigned=1, concurrence_person=%s, approval_person=%s \
-                WHERE unit_id = %s AND compliance_id = %s " % (
-                    assignee, concurrence, approval,
-                    unit_id, compliance_id
-                )
-            print update_assign
+            update_qry = "UPDATE tbl_assigned_compliances SET assignee=%s, is_reassigned=1, approval_person=%s "
+            if concurrence is not None :
+                update_qry += " ,concurrance_person = %s " % (concurrence)
+            where_qry = " WHERE unit_id = %s AND compliance_id = %s "
+
+            qry = update_qry + where_qry
+
+            update_assign = qry % (
+                assignee, approval, unit_id, compliance_id
+            )
+
+            # update_assign = "UPDATE tbl_assigned_compliances SET assignee=%s, \
+            #     is_reassigned=1, concurrence_person=%s, approval_person=%s \
+            #     WHERE unit_id = %s AND compliance_id = %s " % (
+            #         assignee, concurrence, approval,
+            #         unit_id, compliance_id
+            #     )
             self.execute(update_assign)
 
 
