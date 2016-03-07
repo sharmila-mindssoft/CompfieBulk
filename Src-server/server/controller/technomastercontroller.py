@@ -117,14 +117,10 @@ def update_client_group(db, request, session_user):
 		return technomasters.InvalidClientId()
 	elif db.is_duplicate_group_name(request.group_name, request.client_id):
 		return technomasters.GroupNameAlreadyExists()
-	# elif db.is_deactivated_existing_country(request.client_id, request.country_ids):
-	# 	return technomasters.CannotDeactivateCountry(
-	# 		country_name=country_name
-	# 	)
-	# elif db.is_deactivated_existing_domain(request.client_id, request.domain_ids):
-	# 	return technomasters.CannotDeactivateDomain(
-	# 		domain_name=domain_name
-	# 	)
+	elif db.is_deactivated_existing_country(request.client_id, request.country_ids):
+		return technomasters.CannotDeactivateCountry()
+	elif db.is_deactivated_existing_domain(request.client_id, request.domain_ids):
+		return technomasters.CannotDeactivateDomain()
 	else:
 		db.update_client_group(request, session_user)
 		db.save_date_configurations(request.client_id, request.date_configurations,
@@ -349,7 +345,7 @@ def get_clients(db, request, session_user):
         unit_list = db.get_unit_details_for_user(session_user)
         geography_levels = db.get_geograhpy_levels_for_user(session_user)
         geographies = db.get_geographies_for_user_with_mapping(session_user)
-        industries = db.get_industries()
+        industries = db.get_active_industries()
         client_domains = db.get_user_client_domains(session_user)
         return technomasters.GetClientsSuccess(countries=country_list,
             domains=domain_list, group_companies=group_company_list,

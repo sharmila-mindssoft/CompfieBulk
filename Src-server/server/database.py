@@ -195,6 +195,7 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
+        print query
         return self.select_all(query)
 
     def insert(self, table, columns, values, client_id=None) :
@@ -903,6 +904,16 @@ class KnowledgeDatabase(Database):
     def get_industries(self) :
         query = "SELECT industry_id, industry_name, is_active \
             FROM tbl_industries ORDER BY industry_name"
+        rows = self.select_all(query)
+        result = []
+        if rows :
+            columns = ["industry_id", "industry_name", "is_active"]
+            result = self.convert_to_dict(rows, columns)
+        return self.return_industry(result)
+
+    def get_active_industries(self) :
+        query = "SELECT industry_id, industry_name, is_active \
+            FROM tbl_industries where is_active = 1 ORDER BY industry_name"
         rows = self.select_all(query)
         result = []
         if rows :
@@ -3178,15 +3189,22 @@ class KnowledgeDatabase(Database):
         return rows[0][0]
 
     def get_user_clients(self, user_id):
+        result = None
         columns = "group_concat(client_id)"
         if user_id > 0:
             table = self.tblUserClients
             condition = " user_id = '%d'"% user_id
         else:
             table = self.tblClientGroups
-            condition = "1"
+            condition = "is_active = 1"
         rows = self.get_data(table, columns, condition)
-        return rows[0][0]
+        if rows:
+            columns = "group_concat(client_id)"
+            condition = "client_id in (%s) and is_active = 1" % (rows[0][0])
+            rows = self.get_data(self.tblClientGroups, columns, condition)
+            if rows:
+                result = rows[0][0]
+        return result
 
     def notify_user(
         self, email_id, password, employee_name, employee_code
@@ -3317,11 +3335,60 @@ class KnowledgeDatabase(Database):
         condition = "url_short_name ='%s' AND client_id != '%d'" % (short_name, client_id)
         return self.is_already_exists(self.tblClientGroups, condition)
 
+    def is_unit_exists_under_country(self, country):
+        print "checking whether unit exists under this country"
+        columns = "count(*)"
+        condition = "country_id = '{}'".format(country)
+        rows = self.get_data(self.tblUnits, columns, condition)
+        if rows[0][0] > 0:
+            return True
+        else:
+            return False
+
+    def is_unit_exists_under_domain(self, domain):
+        columns = "count(*)"
+        condition = "(domain_ids like '{}{}{}') or \
+        (domain_ids like '{}{}') or (domain_ids like '{}{}')".format(
+            "%", domain, "%", domain, "%", "%", domain
+        )
+        rows = self.get_data(self.tblUnits, columns, condition)
+        if rows[0][0] > 0:
+            return True
+        else:
+            return False
+
     def is_deactivated_existing_country(self, client_id, country_ids):
-        existing_countries = self.get_client_countries(client_id).split(",")
-        pass
+        existing_countries = self.get_client_countries(client_id)
+        existing_countries_list = None
+        if existing_countries is not None:
+            existing_countries_list = [int(x) for x in existing_countries.split(",")]
+        current_countries = [int(x) for x in country_ids]
+        for country in existing_countries_list:
+            if country not in current_countries:
+                if self.is_unit_exists_under_country(country):
+                    return True
+                else:
+                    continue
+            else:
+                continue
+        return False
+                
 
-
+    def is_deactivated_existing_domain(self, client_id, domain_ids):
+        existing_domains = self.get_client_domains(client_id)
+        existing_domains_list = None
+        if existing_domains is not None:
+            existing_domains_list = [int(x) for x in existing_domains.split(",")]
+        current_domains = [int(x) for x in domain_ids]
+        for domain in existing_domains_list:
+            if domain not in current_domains:
+                if self.is_unit_exists_under_domain(domain):
+                    return True
+                else:
+                    continue
+            else:
+                continue
+        return False 
 
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
@@ -3366,7 +3433,7 @@ class KnowledgeDatabase(Database):
         if user_id != None:
             client_ids = self.get_user_clients(user_id)
         columns = "client_id, group_name, is_active"
-        condition = "1"
+        condition = "is_active=1"
         if client_ids is not None:
             condition = "client_id in (%s) order by group_name ASC" % client_ids
             rows = self.get_data(self.tblClientGroups, columns, condition)
@@ -5105,7 +5172,6 @@ class KnowledgeDatabase(Database):
             file_space = settings_rows[0][3]
             used_space = settings_rows[0][4]
             licence_holder_rows = self.get_licence_holder_details(client_id)
-            print licence_holder_rows
             licence_holders = []
             for row in licence_holder_rows:
                 employee_name = None
@@ -5423,3 +5489,14 @@ class KnowledgeDatabase(Database):
             return self.return_domains(result)
         else :
             return self.get_domains_for_user(session_user)
+
+    def is_user_exists_under_user_group(self, user_group_id):
+        columns = "count(*)"
+        condition = "user_group_id = '%d'" % user_group_id
+        rows = self.get_data(
+            self.tblUsers, columns, condition
+        )
+        if rows[0][0] > 0:
+            return True
+        else:
+            return False
