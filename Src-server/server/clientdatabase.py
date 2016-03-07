@@ -107,6 +107,17 @@ class ClientDatabase(Database):
         trail_id = row[0]
         return trail_id
 
+    def is_in_contract(self):
+        columns = "count(*)"
+        condition = "now() BETWEEN contract_from and contract_to "
+        rows = self.get_data(
+            self.tblClientGroups, columns, condition
+        )
+        if rows[0][0] <= 0:
+            return False
+        else:
+            return True
+
     def verify_login(self, username, password):
         tblAdminCondition = "password='%s' and username='%s'" % (
             password, username
@@ -125,7 +136,7 @@ class ClientDatabase(Database):
                 t2.user_group_name, t2.form_ids, t1.is_admin \
                 FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
                 ON t1.user_group_id = t2.user_group_id \
-                WHERE t1.password='%s' and t1.email_id='%s'" % (
+                WHERE t1.password='%s' and t1.email_id='%s' and is_active=1" % (
                     password, username
                 )
             data_list = self.select_one(query)
@@ -672,11 +683,12 @@ class ClientDatabase(Database):
         current_time_stamp = self.get_date_time()
         user.is_service_provider = 0 if user.is_service_provider== False else 1
         columns = ["user_id", "user_group_id", "email_id", "password", "employee_name",
-                "employee_code", "contact_no", "user_level",
+                    "employee_code", "contact_no", "user_level",
                 "is_admin", "is_service_provider","created_by", "created_on",
                 "updated_by", "updated_on"]
         encrypted_password, password = self.generate_and_return_password()
-        values = [ user_id, user.user_group_id, user.email_id, encrypted_password, user.employee_name,
+        values = [ user_id, user.user_group_id, user.email_id, 
+                encrypted_password, user.employee_name,
                 user.employee_code, user.contact_no, user.user_level,
                 0, user.is_service_provider, session_user,current_time_stamp,
                 session_user, current_time_stamp]
@@ -688,15 +700,30 @@ class ClientDatabase(Database):
             values.append(user.seating_unit_id)
 
         result1 = self.insert(self.tblUsers, columns, values, client_id)
-        print "saved user"
 
+        db_con = Database(
+            KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+            KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+        )
+        db_con.connect()
+        db_con.begin()
+        columns = "client_id, user_id, email_id, employee_name, \
+        employee_code, contact_no, created_on, is_admin, is_active, seating_unit_id"
+        q = "INSERT INTO tbl_client_users ({}) values ('{}', '{}', '{}', '{}', \
+        '{}', '{}', now(), 0, 1, '{}')".format(
+            columns, client_id, user_id, user.email_id, user.employee_name, 
+            user.employee_code, user.contact_no, user.seating_unit_id
+        )
+        db_con.execute(q)
+        db_con.commit()
+        db_con.close()
+        
         country_columns = ["user_id", "country_id"]
         country_values_list = []
         for country_id in user.country_ids:
             country_value_tuple = (user_id, int(country_id))
             country_values_list.append(country_value_tuple)
         result2 = self.bulk_insert(self.tblUserCountries, country_columns, country_values_list, client_id)
-        print "saved user countries"
 
         domain_columns = ["user_id", "domain_id"]
         domain_values_list = []
@@ -704,7 +731,6 @@ class ClientDatabase(Database):
             domain_value_tuple = (user_id, int(domain_id))
             domain_values_list.append(domain_value_tuple)
         result3 = self.bulk_insert(self.tblUserDomains, domain_columns, domain_values_list, client_id)
-        print "saved user domains"
 
         unit_columns = ["user_id", "unit_id"]
         unit_values_list = []
@@ -712,7 +738,6 @@ class ClientDatabase(Database):
             unit_value_tuple = (user_id, int(unit_id))
             unit_values_list.append(unit_value_tuple)
         result4 = self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
-        print "saved user units"
 
         action = "Created user \"%s - %s\"" % (user.employee_code, user.employee_name)
         self.save_activity(session_user, 4, action, client_id)
@@ -771,6 +796,23 @@ class ClientDatabase(Database):
             domain_values_list.append(domain_value_tuple)
         result3 = self.bulk_insert(self.tblUserDomains, domain_columns, domain_values_list, client_id)
 
+        db_con = Database(
+            KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+            KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+        )
+        db_con.connect()
+        db_con.begin()
+        q = "UPDATE tbl_client_users set \
+        email_id ='{}', employee_name = '{}', employee_code = '{}', \
+        contact_no = '{}', seating_unit_id = '{}' where client_id ='{}' \
+        and user_id = '{}'".format(
+             user.email_id, user.employee_name, user.employee_code, user.contact_no, 
+             user.seating_unit_id, client_id, user_id
+        )
+        db_con.execute(q)
+        db_con.commit()
+        db_con.close()
+
         unit_columns = ["user_id", "unit_id"]
         unit_values_list = []
         for unit_id in user.unit_ids:
@@ -788,6 +830,20 @@ class ClientDatabase(Database):
         is_active = 1 if is_active != False else 0
         values = [is_active, self.get_date_time(), session_user]
         condition = "user_id = '%d'"% user_id
+
+        db_con = Database(
+            KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+            KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+        )
+        db_con.connect()
+        db_con.begin()
+        q = "UPDATE tbl_client_users set is_active = '{}' where \
+        user_id = '{}'".format(
+            is_active, user_id
+        )
+        db_con.execute(q)
+        db_con.commit()
+        db_con.close()
 
         action_column = "employee_code, employee_name"
         rows = self.get_data(
@@ -816,6 +872,20 @@ class ClientDatabase(Database):
         )
         employee_code = rows[0][0]
         employee_name = rows[0][1]
+
+        db_con = Database(
+            KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+            KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+        )
+        db_con.connect()
+        db_con.begin()
+        q = "UPDATE tbl_client_users set is_admin = '{}' where \
+        user_id = '{}'".format(
+            is_admin, user_id
+        )
+        db_con.execute(q)
+        db_con.commit()
+        db_con.close()
 
         action = None
         if is_admin == 0:
