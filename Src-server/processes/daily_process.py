@@ -1,30 +1,30 @@
 #!/usr/bin/python
 
-# run every 5 mins
-# PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
-# */5 * * * * cd ~/Python/workspace/Compliance-Mirror/Src-server/processes/daily_process.py >> cd ~/Python/workspace/Compliance-Mirror/Src-server/processes/daily_process.log 2>&1
+# # run every 5 mins
+# # PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+# # */5 * * * * cd ~/Python/workspace/Compliance-Mirror/Src-server/processes && ./daily_process.py >> daily_process.log 2>&1
 
-# sudo chmod 777 daily_process.py
+# # sudo chmod 777 daily_process.py
 
-# client db details from server
-# loop every client
-# ## Task start
-# check current date with due date, then start task
-# insert record in history table
-# update assigned compliance (due_date)
-# insert record in notification
-# Email to assignee, concurrance
+# # client db details from server
+# # loop every client
+# # ## Task start
+# # check current date with due date, then start task
+# # insert record in history table
+# # update assigned compliance (due_date)
+# # insert record in notification
+# # Email to assignee, concurrance
 
-# ##  Before due_date (from settings)
-# save notification
-# send mail (assignee, concurrence, approve)
+# # ##  Before due_date (from settings)
+# # save notification
+# # send mail (assignee, concurrence, approve)
 
-# ## After due_date till get approve
-# save notifocation
-# send mail (assignee, concurrence, approve)
+# #  ## After due_date till get approve
+# # save notifocation
+# # send mail (assignee, concurrence, approve)
 
 # ## before contract period expiration
-# Validate datetime based on country
+# # Validate datetime based on country
 
 import MySQLdb as mysql
 import datetime
@@ -502,7 +502,7 @@ def notify_before_contract_period(db, client_id):
 def main():
     print '*' * 20
     current_date = get_current_date()
-    print "current_date datetime ", current_date
+    print "current_date datetime ", datetime.datetime.now()
     client_info = get_client_database()
     try :
         for client_id, db in client_info.iteritems() :
