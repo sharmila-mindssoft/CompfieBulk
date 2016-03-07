@@ -174,6 +174,16 @@ function load_secondwizard(){
             elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
           }
         }
+
+        if(summary != null){
+          var tDays = summary.substring(summary.lastIndexOf('n') + 1);
+          if(frequency == 'On Occurrence'){
+            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
+            triggerdate = summary.substring(summary.lastIndexOf('n') + 1);
+          }
+        }
+        
+
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
         $('.ckbox', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'">');

@@ -491,7 +491,6 @@ function loadUser(selectedUnit, userClass, userType){
           var userId= usersList[user]["user_id"];
           var userName= usersList[user]["user_name"];
       
-
           if((assigneeUserId == null || assigneeUserId != userId) && 
             (concurrenceUserId == null || concurrenceUserId !=userId) && 
             (approvalUserId == null || approvalUserId != userId)){
