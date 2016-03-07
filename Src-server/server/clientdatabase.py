@@ -2867,7 +2867,7 @@ class ClientDatabase(Database):
 
     def compliance_details_query(self, domain_ids, date_qry, status_qry, filter_type_qry, client_id) :
         if len(domain_ids) == 1 :
-            domains_ids.append(0)
+            domain_ids.append(0)
         query = "SELECT \
             T1.compliance_history_id, T1.unit_id,\
             T1.compliance_id, T1.start_date, \

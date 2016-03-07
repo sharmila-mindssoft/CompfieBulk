@@ -38,7 +38,7 @@ def process_client_transaction_requests(request, db) :
         )
     elif type(request) is clienttransactions.ReassignCompliance :
         return process_reassign_compliance(
-            db, session_user
+            db, request, session_user
         )
     elif type(request) is clienttransactions.GetPastRecordsFormData :
         return process_get_past_records_form_data(
