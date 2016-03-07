@@ -195,7 +195,6 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
-        print query
         return self.select_all(query)
 
     def insert(self, table, columns, values, client_id=None) :
@@ -1394,12 +1393,12 @@ class KnowledgeDatabase(Database):
         return self.return_geographies(result)
 
     def get_geographies_for_user_with_mapping(self, user_id):
-        if bool(self.geography_parent_mapping) is False :
-            self.get_geographies()
+        # if bool(self.geography_parent_mapping) is False :
+        #     self.get_geographies()
         country_ids = None
         if ((user_id is not None) and (user_id != 0)):
             country_ids = self.get_user_countries(user_id)
-        columns = "t1.geography_id, t1.geography_name, "
+        columns = "t1.geography_id, t1.geography_name, t1.parent_names,"
         columns += "t1.level_id,t1.parent_ids, t1.is_active,"
         columns += " t2.country_id, t3.country_name"
         tables = [
@@ -1420,7 +1419,7 @@ class KnowledgeDatabase(Database):
         geographies = {}
         if rows :
             columns = [
-                "geography_id", "geography_name", "level_id",
+                "geography_id", "geography_name", "parent_names", "level_id", 
                 "parent_ids", "is_active", "country_id", "country_name"
             ]
             result = self.convert_to_dict(rows, columns)
@@ -1429,7 +1428,7 @@ class KnowledgeDatabase(Database):
                 geography = core.GeographyWithMapping(
                     d["geography_id"], d["geography_name"],
                     d["level_id"],
-                    self.geography_parent_mapping[int(d["geography_id"])][0],
+                    d["parent_names"]+">>"+d["geography_name"],
                     parent_ids[-1], bool(d["is_active"])
                 )
                 country_id = d["country_id"]
@@ -2255,7 +2254,6 @@ class KnowledgeDatabase(Database):
         statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
         compliances = data.compliances
         geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
-        print data.mappings
         statutory_mapping = '-'.join(data.mappings)
 
         statutory_mapping_id = self.get_new_id(
@@ -2284,8 +2282,6 @@ class KnowledgeDatabase(Database):
                 statutory_mapping_id, domain_id,
                 compliances, created_by
             )
-            print compliances
-            print ids, names
             compliance_ids = ','.join(str(x) for x in ids) + ","
             qry = "UPDATE tbl_statutory_mappings set compliance_ids='%s' \
                 where statutory_mapping_id = %s" % (
@@ -2500,7 +2496,6 @@ class KnowledgeDatabase(Database):
                 self.convert_base64_to_file(file_name, file_content)
                 is_format = False
             compliance_ids.append(compliance_id)
-            print document_name
             if document_name is not "" :
                 compliance_names.append(
                     document_name + "-" + compliance_task
@@ -3336,7 +3331,6 @@ class KnowledgeDatabase(Database):
         return self.is_already_exists(self.tblClientGroups, condition)
 
     def is_unit_exists_under_country(self, country):
-        print "checking whether unit exists under this country"
         columns = "count(*)"
         condition = "country_id = '{}'".format(country)
         rows = self.get_data(self.tblUnits, columns, condition)
@@ -3446,7 +3440,6 @@ class KnowledgeDatabase(Database):
         results = []
         for group_company in group_companies :
             client_countries = self.get_client_countries(group_company["client_id"])
-            print "client_countries:{}".format(client_countries)
             countries = None if client_countries is None else [int(x) for x in client_countries.split(",")]
             client_domains = self.get_client_domains(group_company["client_id"])
             domains = None if client_domains is None else [int(x) for x in client_domains.split(",")]
@@ -3586,24 +3579,17 @@ class KnowledgeDatabase(Database):
         database_name, db_username, db_password, email_id, client_id,
         short_name, country_ids, domain_ids
     ):
-        print "self._cursor:{}".format(self._cursor)
-        print "host before creating db:{}".format(host)
         client_con = self._mysql_server_connect(host, username, password)
-        print "client con : {}".format(client_con)
         client_cursor = client_con.cursor()
-        print "client_cursor : {}".format(client_cursor)
         query = "CREATE DATABASE %s" % database_name
         client_cursor.execute(query)
-        print "grant privileges"
         query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" % (
             database_name, db_username, host, db_password)
-        print query
         client_cursor.execute(query)
         client_con.commit()
 
         client_db_con = self._db_connect(host, username, password, database_name)
         client_db_cursor = client_db_con.cursor()
-        print "exec scripts"
         sql_script_path = os.path.join(
             os.path.join(os.path.split(__file__)[0]),
             "scripts/mirror-client.sql"
@@ -3621,11 +3607,8 @@ class KnowledgeDatabase(Database):
         encrypted_password, password = self.generate_and_return_password()
         query = "insert into tbl_admin (username, password) values ('%s', '%s')" %(
             email_id, encrypted_password)
-        print "admin user"
         client_db_cursor.execute(query)
-        print "client countries"
         self._save_client_countries(country_ids, client_db_cursor)
-        print "client domains"
         self._save_client_domains(domain_ids, client_db_cursor)
         client_db_con.commit()
         send_client_credentials_thread = threading.Thread(
@@ -3641,7 +3624,6 @@ class KnowledgeDatabase(Database):
                 WHERE country_id\
                 IN (%s) " % (country_ids)
         rows = self.select_all(q)
-        print rows
         for r in rows :
             q = " INSERT INTO tbl_countries VALUES (%s, '%s', %s)" % (
                 int(r[0]), r[1], int(r[2])
@@ -4692,7 +4674,6 @@ class KnowledgeDatabase(Database):
             "division_name", "industry_name"
         ]
         result = self.convert_to_dict(rows, columns)
-        print result
         return self.return_assign_statutory_list(result)
 
     def return_assign_statutory_list(self, assigned_list):

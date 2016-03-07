@@ -136,7 +136,7 @@ function clientprofile_isadmin(userId, isAdmin){
     function failure(error){
         console.log(error);
     }
-    mirror.changeAdminStatus(userId, isAdmin,
+    mirror.createNewAdmin(userId,
         function(error, response){
             if(error == null){
                 onSuccess(response);

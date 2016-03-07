@@ -279,7 +279,7 @@ $("#btn-clientgroup-submit").click(function(){
             parseInt(clientGroupIdVal), clientGroupNameVal, countriesVal, domainsVal, logo_file,
             contractFromVal, contractToVal,inchargePersonVal, parseInt(licenceVal),
             parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal, dateConfigurations);
-        
+
         mirror.updateClientGroup( clientGroupDetails,
             function (error, response) {
                 if (error == null){

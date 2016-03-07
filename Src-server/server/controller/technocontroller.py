@@ -53,3 +53,6 @@ def process_techno_request(request, db) :
 
 	if type(request_frame) is technomasters.GetClientProfile:
 		return get_client_profile(db, request_frame, session_user)
+
+	if type(request_frame) is technomasters.createNewAdmin:
+		return create_new_admin(db, request_frame, session_user)
