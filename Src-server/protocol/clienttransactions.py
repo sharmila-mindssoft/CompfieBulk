@@ -1032,7 +1032,10 @@ class RequestFormat(object):
 #
 
 class ASSINGED_COMPLIANCE(object):
-    def __init__(self, compliance_id, compliance_name, statutory_dates, due_date, validity_date, trigger_before, unit_ids):
+    def __init__(
+        self, compliance_id, compliance_name, statutory_dates,
+        due_date, validity_date, trigger_before, unit_ids
+    ):
         self.compliance_id = compliance_id
         self.compliance_name = compliance_name
         self.statutory_dates = statutory_dates
@@ -1043,7 +1046,10 @@ class ASSINGED_COMPLIANCE(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_name", "compliance_id", "statutory_dates", "due_date", "validity_date", "trigger_before", "unit_ids"])
+        data = parse_dictionary(data, [
+            "compliance_name", "compliance_id", "statutory_dates",
+            "due_date", "validity_date", "trigger_before", "unit_ids"
+        ])
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         compliance_name = data.get("compliance_name")
@@ -1055,7 +1061,7 @@ class ASSINGED_COMPLIANCE(object):
         validity_date = data.get("validity_date")
         validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         trigger_before = data.get("trigger_before")
-        trigger_before = parse_structure_SignedIntegerType_8(trigger_before)
+        trigger_before = parse_structure_OptionalType_SignedIntegerType_8(trigger_before)
         unit_ids = data.get("unit_ids")
         unit_ids = parse_structure_VectorType_SignedIntegerType_8(unit_ids)
         return ASSINGED_COMPLIANCE(compliance_id, compliance_name, statutory_dates, due_date, validity_date, trigger_before, unit_ids)
@@ -1067,7 +1073,7 @@ class ASSINGED_COMPLIANCE(object):
             "statutory_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
             "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
             "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
-            "trigger_before": to_structure_SignedIntegerType_8(self.trigger_before),
+            "trigger_before": to_structure_OptionalType_SignedIntegerType_8(self.trigger_before),
             "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
         }
 

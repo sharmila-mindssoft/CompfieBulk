@@ -1105,8 +1105,8 @@ def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Compl
     return dict
 
 def parse_structure_RecordType_dashboard_Compliance(data):
-    from protocol import core
-    return core.Compliance.parse_structure(data)
+    from protocol import dashboard
+    return dashboard.Compliance.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_dashboard_Compliance(data):
     data = parse_list(data, 0)

@@ -2652,16 +2652,16 @@ class ClientDatabase(Database):
         filter_ids = []
 
         inprogress_qry = " AND T1.due_date > CURDATE() \
-                AND T1.approve_status is NULL"
+                AND IFNULL(T1.approve_status,0) <> 1"
 
         complied_qry = " AND T1.due_date >= T1.completion_date \
-                AND T1.approve_status = 1"
+                AND IFNULL(T1.approve_status,0) = 1"
 
         delayed_qry = " AND T1.due_date < T1.completion_date \
-                AND T1.approve_status = 1"
+                AND IFNULL(T1.approve_status,0) = 1"
 
         not_complied_qry = " AND T1.due_date < CURDATE() \
-                AND T1.approve_status is NULL "
+                AND IFNULL(T1.approve_status,0) <> 1"
 
         filter_ids, inprogress = self.get_compliance_status(
                 inprogress_qry, request, user_id
@@ -3763,7 +3763,7 @@ class ClientDatabase(Database):
             country_ids.append(0)
         domain_ids = request.domain_ids
         if len(domain_ids) == 1:
-            domains_ids.append(0)
+            domain_ids.append(0)
         filter_type = request.filter_type
         filter_id = request.filter_ids
         if len(filter_id) == 1:
@@ -3791,7 +3791,6 @@ class ClientDatabase(Database):
             str(tuple(domain_ids)),
             filter_type_qry
         )
-        print query1
         rows = self.select_all(query1)
 
         columns = [
@@ -3823,9 +3822,9 @@ class ClientDatabase(Database):
         self, request, session_user, client_id
     ):
         query = "SELECT T1.compliance_id, T2.unit_id,\
-            (select frequency from tbl_compliance_frequency where frequency_id = t4.frequency_id) frequency,\
-            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t4.repeats_type_id) repeats_type, \
-            (select duration_type from tbl_compliance_duration_type where duration_type_id = t4.duration_type_id)duration_type,\
+            (select frequency from tbl_compliance_frequency where frequency_id = T4.frequency_id) frequency,\
+            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = T4.repeats_type_id) repeats_type, \
+            (select duration_type from tbl_compliance_duration_type where duration_type_id = T4.duration_type_id)duration_type,\
             T4.statutory_mapping, T4.statutory_provision,\
             T4.compliance_task, T4.compliance_description,  \
             T4.document_name, T4.format_file, T4.format_file_size, T4.penal_consequences, \
@@ -3886,7 +3885,6 @@ class ClientDatabase(Database):
             filter_type_qry,
             applicable_type_qry
         )
-        print query1
         rows = self.select_all(query1)
         columns = [
             "compliance_id", "unit_id",
@@ -3925,7 +3923,7 @@ class ClientDatabase(Database):
             download_file_list = []
             if format_file is not None and format_file_size is not None :
                 file_info = core.FileList(
-                    format_file_size, format_file, None
+                    int(format_file_size), format_file, None
                 )
                 file_list.append(file_info)
                 file_name = format_file.split('-')[0]
@@ -3939,12 +3937,12 @@ class ClientDatabase(Database):
                 file_list = None
                 download_file_list = None
 
-            compliance = core.Compliance(
+            compliance = dashboard.Compliance(
                 int(r["compliance_id"]), r["statutory_provision"],
                 r["compliance_task"], r["compliance_description"],
                 r["document_name"], file_list, r["penal_consequences"],
-                int(r["frequency_id"]), date_list, r["repeats_type_id"],
-                r["repeats_every"], r["duration_type_id"],
+                r["frequency"], date_list, r["repeats_type"],
+                r["repeats_every"], r["duration_type"],
                 r["duration"], bool(r["is_active"])
             )
             level_1_wise_data = level_1_wise_compliance.get(level_1)
