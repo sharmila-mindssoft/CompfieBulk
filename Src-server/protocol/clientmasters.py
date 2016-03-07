@@ -20,7 +20,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_VectorType_RecordType_core_Country,
     parse_structure_VectorType_RecordType_core_Domain,
-    parse_structure_OptionalType_CustomTextType_250
+    parse_structure_OptionalType_CustomTextType_250,
+    parse_structure_UnsignedIntegerType_32
 )
 from protocol.to_structure import (
     to_structure_CustomTextType_100,
@@ -47,7 +48,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_ClientLegalEntity,
     to_structure_VectorType_RecordType_core_ClientDivision,
     to_structure_VectorType_RecordType_core_ClientUnit,
-    to_structure_OptionalType_CustomTextType_250
+    to_structure_OptionalType_CustomTextType_250,
+    to_structure_UnsignedIntegerType_32
 )
 
 #
@@ -750,7 +752,8 @@ class ChangeAdminStatusSuccess(Response):
 
 class GetClientUsersSuccess(Response):
     def __init__(self, countries,domains, business_groups, legal_entities,
-        divisions,units, user_groups, users,service_providers):
+        divisions,units, user_groups, users,service_providers, remaining_licence
+    ):
         self.countries = countries
         self.domains = domains
         self.business_groups = business_groups
@@ -760,11 +763,15 @@ class GetClientUsersSuccess(Response):
         self.user_groups = user_groups
         self.users = users
         self.service_providers = service_providers
+        self.remaining_licence = remaining_licence
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries","domains", "business_groups", "legal_entities",
-        "divisions", "units", "user_groups", "users","service_providers"])
+        data = parse_dictionary(data, ["countries","domains", "business_groups", 
+	        	"legal_entities", "divisions", "units", "user_groups", "users",
+	        	"service_providers", "remaining_licence"
+        	]
+       	)
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
@@ -783,9 +790,13 @@ class GetClientUsersSuccess(Response):
         users = parse_structure_VectorType_RecordType_core_User(users)
         service_providers = data.get("service_providers")
         service_providers = parse_structure_VectorType_RecordType_core_ServiceProvider(service_providers)
-
-        return GetClientUsersSuccess(countries,domains, business_groups, legal_entities,
-        divisions,units, user_groups, users,service_providers)
+        remaining_licence = data.get("remaining_licence")
+        remaining_licence = parse_structure_UnsignedIntegerType_32(remaining_licence)
+        return GetClientUsersSuccess(
+        	countries,domains, business_groups, legal_entities,
+        	divisions,units, user_groups, users,service_providers, 
+        	remaining_licence
+        )
 
     def to_inner_structure(self):
         return {
@@ -797,7 +808,8 @@ class GetClientUsersSuccess(Response):
             "units" : to_structure_VectorType_RecordType_core_ClientUnit(self.units),
             "user_groups" : to_structure_VectorType_RecordType_core_UserGroup(self.user_groups),
             "users" : to_structure_VectorType_RecordType_core_ClientUser(self.users),
-            "service_providers" : to_structure_VectorType_RecordType_core_ServiceProvider(self.service_providers)
+            "service_providers" : to_structure_VectorType_RecordType_core_ServiceProvider(self.service_providers),
+            "remaining_licence" : to_structure_UnsignedIntegerType_32(self.remaining_licence)
         }
 
 class SaveClientUserSuccess(Response):

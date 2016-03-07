@@ -95,3 +95,8 @@
 	display: none;
 }
 
+.contract_timer_container{
+	float: right;
+	margin-right: 50px;
+	margin-top: 20px;
+}

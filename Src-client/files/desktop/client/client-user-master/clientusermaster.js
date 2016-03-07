@@ -66,6 +66,10 @@ function initialize(){
         userGroupsList = data['user_groups'];
         serviceProviderList = data['service_providers'];
         userList = data['users'];
+        remaining_licence = data["remaining_licence"]
+        if (parseInt(remaining_licence) <= 0){
+        	$(".btn-add").hide();
+        }
         loadClientUserList();
     }
     function onFailure(error){

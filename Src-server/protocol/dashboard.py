@@ -174,6 +174,19 @@ class GetChartFilters(Request):
         return {
         }
 
+class CheckContractExpiration(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CheckContractExpiration()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class GetComplianceStatusChart(Request):
     def __init__(
         self,
@@ -635,7 +648,7 @@ def _init_Request_class_map():
     GetComplianceStatusDrillDownData, GetEscalationsDrillDownData,
     GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown,
     GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus,
-    GetAssigneewiseComplianesFilters]
+    GetAssigneewiseComplianesFilters, CheckContractExpiration]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -802,6 +815,22 @@ class GetTrendChartSuccess(Response):
         return {
             "years": to_structure_VectorType_UnsignedIntegerType_32(self.years),
             "data": to_structure_VectorType_RecordType_dashboard_TrendData(self.data),
+        }
+
+class CheckContractExpirationSuccesss(Response):
+    def __init__(self, no_of_days_left):
+        self.no_of_days_left = no_of_days_left
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["no_of_days_left"])
+        no_of_days_left = data.get("no_of_days_left")
+        no_of_days_left = parse_structure_UnignedIntegerType_32(no_of_days_left)
+        return CheckContractExpirationSuccesss(no_of_days_left)
+
+    def to_inner_structure(self):
+        return {
+            "no_of_days_left": to_structure_UnsignedIntegerType_32(self.no_of_days_left)
         }
 
 class GetComplianceApplicabilityStatusChartSuccess(Response):
@@ -1048,15 +1077,23 @@ class UpdateNotificationStatusSuccess(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetChartFiltersSuccess, GetComplianceStatusChartSuccess,
-    GetEscalationsChartSuccess, GetNotCompliedChartSuccess, GetTrendChartSuccess,
-    GetComplianceApplicabilityStatusChartSuccess,
-    GetAssigneeWiseCompliancesChartSuccess,
-    GetAssigneeWiseComplianceDrillDownSuccess,
-    GetComplianceStatusDrillDownDataSuccess, GetEscalationsDrillDownDataSuccess,
-    GetComplianceApplicabilityStatusDrillDownSuccess, GetNotCompliedDrillDownSuccess,
-    GetTrendChartDrillDownDataSuccess, GetNotificationsSuccess,
-    UpdateNotificationStatusSuccess, GetAssigneewiseComplianesFiltersSuccess]
+    classes = [
+        GetChartFiltersSuccess, GetComplianceStatusChartSuccess,
+        GetEscalationsChartSuccess, GetNotCompliedChartSuccess, 
+        GetTrendChartSuccess,
+        GetComplianceApplicabilityStatusChartSuccess,
+        GetAssigneeWiseCompliancesChartSuccess,
+        GetAssigneeWiseComplianceDrillDownSuccess,
+        GetComplianceStatusDrillDownDataSuccess, 
+        GetEscalationsDrillDownDataSuccess,
+        GetComplianceApplicabilityStatusDrillDownSuccess, 
+        GetNotCompliedDrillDownSuccess,
+        GetTrendChartDrillDownDataSuccess, 
+        GetNotificationsSuccess,
+        UpdateNotificationStatusSuccess, 
+        GetAssigneewiseComplianesFiltersSuccess,
+        CheckContractExpirationSuccesss
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
