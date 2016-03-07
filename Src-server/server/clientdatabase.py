@@ -380,10 +380,13 @@ class ClientDatabase(Database):
     def return_legal_entities(self, legal_entities):
         results = []
         for legal_entity in legal_entities :
+            b_group_id = None
+            if legal_entity["business_group_id"] > 0:
+                b_group_id = int(legal_entity["business_group_id"])
             results.append(core.ClientLegalEntity(
                 legal_entity["legal_entity_id"],
                 legal_entity["legal_entity_name"],
-                legal_entity["business_group_id"]
+                b_group_id
             ))
         return results
 
@@ -468,10 +471,16 @@ class ClientDatabase(Database):
             )
             for unit in rows:
                 domain_ids_list = [int(x) for x in unit[7].split(",")]
+                division_id = None
+                b_group_id = None
+                if unit[3] > 0 :
+                    division_id = unit[3]
+                if unit[5] > 0 :
+                    b_group_id = unit[5]
                 units.append(
                     clienttransactions.PastRecordUnits(
-                        unit[0], unit[1], unit[2],unit[3], unit[4],
-                        unit[5], unit[6], domain_ids_list
+                        unit[0], unit[1], unit[2], division_id, unit[4],
+                        b_group_id, unit[6], domain_ids_list
                     )
                 )
             industry_wise_units.append(clienttransactions.IndustryWiseUnits(industry_name, units))
@@ -480,9 +489,15 @@ class ClientDatabase(Database):
     def return_units(self, units):
         results = []
         for unit in units :
+            division_id = None
+            b_group_id = None
+            if unit["division_id"] > 0 :
+                division_id = unit["division_id"]
+            if unit["business_group_id"] > 0 :
+                b_group_id = unit["business_group_id"]
             results.append(core.ClientUnit(
-                unit["unit_id"], unit["division_id"], unit["legal_entity_id"],
-                unit["business_group_id"], unit["unit_code"],
+                unit["unit_id"], division_id, unit["legal_entity_id"],
+                b_group_id, unit["unit_code"],
                 unit["unit_name"], unit["unit_address"], bool(unit["is_active"])
             ))
         return results
@@ -2137,13 +2152,19 @@ class ClientDatabase(Database):
         unit_list = []
         for r in result :
             name = "%s - %s" % (r["unit_code"], r["unit_name"])
+            division_id = None
+            b_group_id = None
+            if r["division_id"] > 0 :
+                division_id = r["division_id"]
+            if r["business_group_id"] > 0 :
+                b_group_id = r["business_group_id"]
             unit_list.append(
                 clienttransactions.ASSIGN_COMPLIANCE_UNITS(
                     r["unit_id"], name,
                     r["address"],
-                    r["division_id"],
+                    division_id,
                     r["legal_entity_id"],
-                    r["business_group_id"],
+                    b_group_id,
                     r["country_id"]
                 )
             )
