@@ -97,11 +97,16 @@ def create_client_db_connection(data):
     print "begin client db connection"
     client_connection = {}
     for d in data :
-        db_conn = db_connection(
-            d["database_ip"], d["database_username"],
-            d["database_password"], d["database_name"],
-            d["database_port"]
-        )
+        try :
+            db_conn = db_connection(
+                d["database_ip"], d["database_username"],
+                d["database_password"], d["database_name"],
+                d["database_port"]
+            )
+        except Exception, e :
+            print "unable to connect database %s", d
+            print e
+            continue
         client_connection[d["client_id"]] = db_conn
 
     return client_connection
@@ -275,7 +280,7 @@ def get_new_id(db, table_name, column_name):
     return row[0]
 
 def save_in_compliance_history(
-    db, unit_id, compliance_id, start_date, due_date, next_due_date, 
+    db, unit_id, compliance_id, start_date, due_date, next_due_date,
     assignee, concurrence, approve
 ):
     print "new task saved in history (unit_id, compliance_id, start_date) %s, %s, %s" % (unit_id, compliance_id, start_date)
@@ -355,7 +360,7 @@ def start_new_task(db, client_id, current_date):
             print "going to save in compliance history"
             save_in_compliance_history(
                 db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
-                d["due_date"], next_due_date, int(d["assignee"]), 
+                d["due_date"], next_due_date, int(d["assignee"]),
                 d["concurrence_person"], int(approval_person)
             )
 
