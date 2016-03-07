@@ -1356,6 +1356,17 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function createNewAdmin(user_id, callback){
+        callerName = "techno"
+        var request = [
+            "CreateNewAdmin",
+            {
+                "new_admin_id":user_id
+            }
+        ];
+        apiRequest(callerName, request, callback);   
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -1489,7 +1500,8 @@ function initMirror() {
         getAuditTrail: getAuditTrail,
         updateUserProfile: updateUserProfile,
         getNotifications: getNotifications,
-        updateNotificationStatus: updateNotificationStatus
+        updateNotificationStatus: updateNotificationStatus,
+        createNewAdmin: createNewAdmin
     }
 }
 var mirror = initMirror();

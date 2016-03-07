@@ -3739,7 +3739,7 @@ class KnowledgeDatabase(Database):
         "updated_by", "updated_on"]
         file_name = self.save_client_logo(client_group.logo, client_id)
         values = [client_id, client_group.group_name, client_group.email_id,
-        file_name, 1200, contract_from, contract_to,
+        file_name, client_group.logo.file_size, contract_from, contract_to,
         client_group.no_of_user_licence, client_group.file_space * 1000000000,
         is_sms_subscribed, client_group.short_name,
         ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
@@ -3755,15 +3755,25 @@ class KnowledgeDatabase(Database):
         contract_to = self.string_to_datetime(client_group.contract_to)
         is_sms_subscribed = 0 if client_group.is_sms_subscribed == False else 1
 
-        columns = ["group_name", "logo_url", "logo_size", "contract_from",
-        "contract_to", "no_of_user_licence", "total_disk_space", "is_sms_subscribed",
-        "incharge_persons", "is_active", "updated_by", "updated_on"]
-        file_name = self.update_client_logo(client_group.logo, client_group.client_id)
-        values = [client_group.group_name, file_name, 1200, contract_from, contract_to,
-        client_group.no_of_user_licence, client_group.file_space * 1000000000,
-        is_sms_subscribed,
-        ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
-        current_time_stamp]
+        columns = [
+            "group_name", "contract_from", "contract_to", "no_of_user_licence", 
+            "total_disk_space", "is_sms_subscribed", "incharge_persons", "is_active",
+            "updated_by", "updated_on"
+        ]
+        values = [
+            client_group.group_name, contract_from, contract_to,
+            client_group.no_of_user_licence, client_group.file_space * 1000000000,
+            is_sms_subscribed,
+            ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
+            current_time_stamp
+        ]
+        if client_group.logo is not None:
+            columns.append("logo_url")
+            columns.append("logo_size")
+            file_name = self.update_client_logo(client_group.logo, client_group.client_id)
+            values.append(file_name)
+            values.append(client_group.logo.file_size)
+        
         condition = "client_id = '%d'" % client_group.client_id
 
         action = "Updated Client \"%s\"" % client_group.group_name

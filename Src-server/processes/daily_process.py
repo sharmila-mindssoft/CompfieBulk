@@ -469,7 +469,8 @@ def reminder_before_due_date(db, client_info, compliance_info):
     current_date = get_current_date()
     print "begin process to remind inprogress compliance task to all %s " % (current_date)
     # client_info = get_client_settings(db)
-    reminder_interval = int(client_info["escalation_reminder_in_advance"])
+    print client_info
+    reminder_interval = int(client_info[0]["escalation_reminder_in_advance"])
     for c in compliance_info:
         days_left = (c["due_date"] - current_date).days
         notification_text = "%s days left to complete %s task" % (days_left, c["compliance_name"])
