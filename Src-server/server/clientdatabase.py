@@ -4957,7 +4957,7 @@ class ClientDatabase(Database):
             history_id = c.compliance_history_id
 
             query = " INSERT INTO tbl_reassigned_compliances_history \
-                (unit_id, compliance_id, asssignee, \
+                (unit_id, compliance_id, assignee, \
                 reassigned_from, reassigned_date, remarks, \
                 created_by, created_on) \
                 VALUES (%s, %s, %s, %s, '%s', '%s', %s, '%s') " % (
