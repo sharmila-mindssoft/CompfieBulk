@@ -246,7 +246,9 @@ def get_client_users(db, request, session_user, client_id):
 
 def save_client_user(db, request, session_user, client_id):
     user_id = db.generate_new_user_id(client_id)
-    if db.is_duplicate_user_email(user_id, request.email_id, client_id) :
+    if (db.get_no_of_remaining_licence() <= 0):
+        return clientmasters.UserLimitExceeds()
+    elif db.is_duplicate_user_email(user_id, request.email_id, client_id) :
         return clientmasters.EmailIdAlreadyExists()
     elif db.is_duplicate_employee_code(
         user_id,

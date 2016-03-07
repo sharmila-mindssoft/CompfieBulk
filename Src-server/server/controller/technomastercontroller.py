@@ -13,7 +13,8 @@ __all__ = [
     "get_clients",
     "change_client_status",
     "reactivate_unit",
-    "get_client_profile"
+    "get_client_profile",
+    "create_new_admin"
 ]
 
 #
@@ -407,3 +408,12 @@ def get_client_profile(db, request, session_user):
         return technomasters.GetClientProfileSuccess(
             group_companies = group_companies,
             profiles = profiles)
+
+def create_new_admin(db, request, session_user):
+    new_admin_id = request.new_admin_id
+    client_id = request.client_id
+    if db.create_new_admin(new_admin_id, client_id, session_user):
+        return technomasters.CreateNewAdminSuccess()
+    else:
+        return technomasters.ClientDatabaseNotExists()
+

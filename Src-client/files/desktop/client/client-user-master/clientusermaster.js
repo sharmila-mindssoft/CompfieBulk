@@ -191,6 +191,7 @@ function user_edit(userId){
         });
 }
 function loadUserUpdate(userId){
+    console.log("inside load user update");
     var bgroups = [];
     var lentities = [];
     var divisions = [];
@@ -199,6 +200,7 @@ function loadUserUpdate(userId){
     var divisionlist;
     for(var user in userList){
         if(userList[user]['user_id'] == userId){
+            seatingunitname = null
             $.each(userGroupsList, function(key, value) {  //usergroupname
                 if(userGroupsList[key]['user_group_id'] == userList[user]['user_group_id']){
                     usergroupname = userGroupsList[key]['user_group_name'];
@@ -210,6 +212,8 @@ function loadUserUpdate(userId){
                 }
             });
             var contactno = userList[user]['contact_no'].split("-");
+            console.log("saving user id in hidden field"+userId);
+            $("#user-id").val(userId);
             $("#service-provider").val(userList[user]['service_provider']);
             $("#employee-name").val(userList[user]['employee_name']);
             $("#employee-id").val(userList[user]['employee_code']);
@@ -262,6 +266,7 @@ function loadUserUpdate(userId){
 }
 
 $("#submit").click(function(){
+    var userId = $("#user-id").val();
 	var usertype = $('#usertype').val();
 	var employeename = $('#employee-name').val();	
 	var employeeid = $('#employee-id').val();
@@ -321,15 +326,15 @@ $("#submit").click(function(){
 	else if(country == ''){
 		displayMessage("select Country");
 	}
-	else if(businessgroups == ''){
-		displayMessage("Select businessgroups");
-	}
+	// else if(businessgroups == ''){
+	// 	displayMessage("Select businessgroups");
+	// }
 	else if(legalentities == ''){
 		displayMessage("select legalentities");
 	}
-	else if(division == ''){
-		displayMessage("select division");
-	}
+	// else if(division == ''){
+	// 	displayMessage("select division");
+	// }
 	else if(domains == ''){
 		displayMessage("select domains");
 	}
@@ -423,8 +428,10 @@ $("#submit").click(function(){
 			      employeeid, contactNo, parseInt(seatingunit), parseInt(userlevel), 
 			      arrayCountries, arrayDomains, arrayUnits, isAdmin, isserviceprovider,
 			      serviceprovider];
+        console.log("userId:"+userId);
+        console.log("clientUserDetail:"+clientUserDetail);
 		var clientUserDetailDict = client_mirror.getUpdateClientUserDict(clientUserDetail)
-		
+        console.log("clientUserDetailDict"+clientUserDetailDict);
 		client_mirror.updateClientUser(clientUserDetailDict,
 			function(error, response){
 				if(error == null){
@@ -662,12 +669,15 @@ function activatelegalentities(element){
     });
     $("#legal-entities-selected").val(totalcount+" Selected");
     $("#legal-entities").val(selids);
+    loadautodivision()
+    unitview()
 }
 // Divisions----------------------------------------------------------------------------------------------------------------------
 function hidemenudivision() {
     document.getElementById('selectboxview-division').style.display = 'none';
 }
 function loadautodivision() {
+    console.log("inside load auto division");
     document.getElementById('selectboxview-division').style.display = 'block';
     var lentityValue=$("#legal-entities").val();
     var arraylentity=lentityValue.split(',');
@@ -689,8 +699,10 @@ function loadautodivision() {
                 }
             }
         }
+        console.log("arraylentity:"+arraylentity);
         for(var i in divisionList){
-            if(arraylentity[count]==divisionList[i]['division_id']){
+            console.log("inside division list for loop");
+            if(arraylentity[count]==divisionList[i]['legal_entity_id']){
                 var selectdivisionstatus='';
                 for(var j=0; j<editdivisionval.length; j++){
                     if(editdivisionval[j]==divisionList[i]["division_id"]){
@@ -699,6 +711,8 @@ function loadautodivision() {
                 }
                 var divisionId=parseInt(divisionList[i]["division_id"]);
                 var divisionName=divisionList[i]["division_name"];
+                console.log("divisionId"+divisionId);
+                console.log("divisionName"+divisionName);
                 if(selectdivisionstatus == 'checked'){
                     str += '<li id="'+divisionId+'" class="active_selectbox_division" onclick="activateDivision(this)" >'+divisionName+'</li> ';
                 }else{
@@ -740,6 +754,7 @@ function activateDivision(element){
 //Unit List -----------------------------------------------------------------------------------------------------
 function unitview(){
     $('#unitList ul li:not(:first)').empty();
+    $("#unitList ul").empty();
     var divisionIds=$('#division').val();
     var arraydivision=divisionIds.split(',');
     $.each(arraydivision,function(count, values){
