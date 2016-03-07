@@ -386,6 +386,7 @@ function submitcompliance(){
     var actCount = 1;
 
     for(var entity in statutoriesList){
+
     var domainList = statutoriesList[entity];
     for(var domainentity in domainList){
       var actList = domainList[domainentity];
@@ -501,7 +502,7 @@ function submitcompliance(){
       }
       actCount = actCount + 1;
     }
-  }
+}
 
   function onSuccess(data){
     //getAssignedStatutories ();

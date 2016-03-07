@@ -687,7 +687,7 @@ class ClientDatabase(Database):
                 "is_admin", "is_service_provider","created_by", "created_on",
                 "updated_by", "updated_on"]
         encrypted_password, password = self.generate_and_return_password()
-        values = [ user_id, user.user_group_id, user.email_id, 
+        values = [ user_id, user.user_group_id, user.email_id,
                 encrypted_password, user.employee_name,
                 user.employee_code, user.contact_no, user.user_level,
                 0, user.is_service_provider, session_user,current_time_stamp,
@@ -711,13 +711,13 @@ class ClientDatabase(Database):
         employee_code, contact_no, created_on, is_admin, is_active, seating_unit_id"
         q = "INSERT INTO tbl_client_users ({}) values ('{}', '{}', '{}', '{}', \
         '{}', '{}', now(), 0, 1, '{}')".format(
-            columns, client_id, user_id, user.email_id, user.employee_name, 
+            columns, client_id, user_id, user.email_id, user.employee_name,
             user.employee_code, user.contact_no, user.seating_unit_id
         )
         db_con.execute(q)
         db_con.commit()
         db_con.close()
-        
+
         country_columns = ["user_id", "country_id"]
         country_values_list = []
         for country_id in user.country_ids:
@@ -806,7 +806,7 @@ class ClientDatabase(Database):
         email_id ='{}', employee_name = '{}', employee_code = '{}', \
         contact_no = '{}', seating_unit_id = '{}' where client_id ='{}' \
         and user_id = '{}'".format(
-             user.email_id, user.employee_name, user.employee_code, user.contact_no, 
+             user.email_id, user.employee_name, user.employee_code, user.contact_no,
              user.seating_unit_id, client_id, user_id
         )
         db_con.execute(q)
@@ -5137,7 +5137,7 @@ class ClientDatabase(Database):
         assignee = request.assignee
         concurrence = request.concurrence_person
         if concurrence is None :
-            concurrence = ''
+            concurrence = ""
         approval = request.approval_person
         compliances = request.compliances
         reassigned_reason = request.reassigned_reason
@@ -5170,6 +5170,8 @@ class ClientDatabase(Database):
                     unit_id, compliance_id
                 )
             self.execute(update_assign)
+
+            print update_assign
 
             if history_id is not None :
                 if validity_date is None:
