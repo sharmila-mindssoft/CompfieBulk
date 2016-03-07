@@ -4981,12 +4981,18 @@ class ClientDatabase(Database):
             due_date = d["due_date"]
             if due_date is not None :
                 due_date = due_date.strftime("%d-%b-%Y")
+            else :
+                due_date = ''
             validity_date = d["validity_date"]
             if validity_date is not None :
                 validity_date = validity_date.strftime("%d-%b-%Y")
+            else :
+                validity_date = ''
             compliance_history_id = d["compliance_history_id"]
             if compliance_history_id is not None :
                 compliance_history_id = int(compliance_history_id)
+            else :
+                compliance_history_id = None
             statutory_dates = json.loads(d["statutory_dates"])
             date_list = []
             for date in statutory_dates :
@@ -5060,6 +5066,8 @@ class ClientDatabase(Database):
         reassigned_from = request.reassigned_from
         assignee = request.assignee
         concurrence = request.concurrence_person
+        if concurrence is None :
+            concurrence = ''
         approval = request.approval_person
         compliances = request.compliances
         reassigned_reason = request.reassigned_reason
@@ -5192,7 +5200,8 @@ class ClientDatabase(Database):
             " compliance_description, format_file, unit_code, unit_name," + \
             "  address, ac.statutory_dates, repeats_every, (select domain_name \
             from %s d where d.domain_id = c.domain_id) as domain_name" % (
-            self.tblDomains)
+            self.tblDomains
+        )
         tables = [
             self.tblAssignedCompliances, self.tblUnits,  self.tblCompliances
         ]
