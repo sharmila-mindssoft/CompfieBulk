@@ -88,7 +88,6 @@ class API(object):
                 db.close()
 
             for company_id, rep_man in self._replication_managers.iteritems():
-                print "replication stopped"
                 rep_man.stop()
 
             self._databases = {}
@@ -109,7 +108,7 @@ class API(object):
                     try:
                         db.connect()
                     except Exception, e:
-                        print "Client database not available to connect"
+                        print "Client database not available to connect ", company_id, company
                         continue
                     self._databases[company_id] = db
                     rep_man = ReplicationManager(
@@ -197,7 +196,7 @@ class API(object):
             request_data_type, request, response
         )
         if request_data is None:
-            return 
+            return
 
         db, request_data, company_id = request_data
 

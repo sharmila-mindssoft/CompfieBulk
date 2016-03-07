@@ -495,7 +495,6 @@ class ClientDatabase(Database):
             VALUES (%s, %s, %s, '%s', '%s')" % (
                 activityId, user_id, form_id, action, created_on
             )
-        print query
         self.execute(query)
         return True
 

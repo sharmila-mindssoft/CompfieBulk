@@ -195,7 +195,6 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
-        print query
         return self.select_all(query)
 
     def insert(self, table, columns, values, client_id=None) :
@@ -894,7 +893,7 @@ class KnowledgeDatabase(Database):
         try :
             self.execute(query)
             return True
-        except Exception ,e :
+        except Exception, e :
             print query
             print e
 
@@ -902,8 +901,12 @@ class KnowledgeDatabase(Database):
         query = "UPDATE %s SET %s WHERE %s" % (
             table_name, field_with_data, where_condition
         )
-        self.execute(query)
-        return True
+        try :
+            self.execute(query)
+            return True
+        except Exception, e :
+            print query
+            print e
 
     def get_industries(self) :
         query = "SELECT industry_id, industry_name, is_active \
