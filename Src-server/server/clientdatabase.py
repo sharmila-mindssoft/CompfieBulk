@@ -1745,7 +1745,7 @@ class ClientDatabase(Database):
                                 )
                             )
                         else:
-                            print "entering into else"
+                            pass
                 for level_1_statutory_name, compliances in level_1_statutory_wise_compliances.iteritems():
                     if len(compliances) > 0:
                         statutory_wise_compliances.append(
@@ -2064,21 +2064,15 @@ class ClientDatabase(Database):
                 action = None
                 if self.is_two_levels_of_approval():
                     if concurred_by_id == session_user:
-                        print "concurrence user"
                         if concurrence_status is True:
-                            print "already concurred"
                             continue
                         else:
-                            print "going to concur"
                             action = "Concur"
                     elif concurrence_status is True:
-                        print "Approval user and already concurred"
                         action = "Approve"
                     else:
-                        print "Approval user and not concurred"
                         continue
                 elif concurred_by_id != session_user:
-                    print "approval user going to approve"
                     action = "Approve"
                 else:
                     continue
@@ -2178,7 +2172,6 @@ class ClientDatabase(Database):
 
         if session_user > 0 :
             query = query + where_condition
-        print query
         rows = self.select_all(query)
         columns = [
             "user_id", "employee_name", "employee_code",
@@ -2419,7 +2412,6 @@ class ClientDatabase(Database):
                         approval, trigger_before, due_date, validity_date,
                         int(session_user), created_on
                     )
-                print query
                 self.execute(query)
             self.update_user_units(assignee, unit_ids, client_id)
         compliance_names = json.dumps(compliance_names)
@@ -3241,9 +3233,7 @@ class ClientDatabase(Database):
 
                     escalation_years[year] = count_det
 
-        print escalation_years
         years = escalation_years.keys()
-        print years.sort()
         years.sort()
         chart_data = []
         for y in years:
@@ -3379,7 +3369,6 @@ class ClientDatabase(Database):
                 str(tuple(domain_ids)),
                 filter_type_ids
             )
-        print query
         rows = self.select_all(query)
         columns = [
             "compliance_history_id", "unit_id", "compliance_id",
@@ -4052,7 +4041,6 @@ class ClientDatabase(Database):
 
     def concur_compliance(self, compliance_history_id, remarks,
         next_due_date, validity_date, client_id):
-        print "inside concur compliance"
         columns = ["concurrence_status", "concurred_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [1, self.get_date_time(), remarks]
@@ -4095,7 +4083,6 @@ class ClientDatabase(Database):
         completion_date = rows[0][3]
         status = "Inprogress"
         due_date_parts = str(due_date).split("-")
-        print due_date_parts
         due_date = datetime.date(
             int(due_date_parts[0]), int(due_date_parts[1]), int(due_date_parts[2])
         )
@@ -4399,7 +4386,6 @@ class ClientDatabase(Database):
         return compliance_history_ids, client_statutory_ids, unit_ids
 
     def get_trend_chart(self, country_ids, domain_ids, client_id):
-        print client_id
         years = self.get_last_7_years()
         country_domain_timelines = self.get_country_domain_timelines(
             country_ids, domain_ids, years, client_id)
@@ -4417,11 +4403,8 @@ class ClientDatabase(Database):
                     condition = "due_date between '{}' and '{}'".format(
                         dates["start_date"], dates["end_date"]
                     )
-                    print columns
-                    print condition
                     compliance_history_ids = self.get_compliance_history_ids_for_trend_chart(
                         country_id, domain_id, client_id)
-                    print compliance_history_ids[0]
                     if compliance_history_ids[0] is not None :
                         condition += " and compliance_history_id in (%s)" % (compliance_history_ids[0])
                     rows = self.get_data(
@@ -6036,8 +6019,6 @@ class ClientDatabase(Database):
                     )
                 if compliance_id is not None:
                     condition = compliance_id
-                print "condition:{}".format(condition)
-                print "level_1_statutory:{}".format(level_1_statutory)
                 whereCondition = " compliance_id in (%s) and statutory_mapping like '%s%s'" % (
                         condition, level_1_statutory, "%"
                 )
@@ -7194,7 +7175,6 @@ class ClientDatabase(Database):
             rows = self.get_data(
                 self.tblAssignedCompliances, approval_columns, approval_condition
             )
-            print rows
             approved_by = rows[0][0]
             columns.append("approved_by")
             values.append(approved_by)
