@@ -5134,8 +5134,7 @@ class ClientDatabase(Database):
         reassigned_from = request.reassigned_from
         assignee = request.assignee
         concurrence = request.concurrence_person
-        if concurrence is None :
-            concurrence = ""
+
         approval = request.approval_person
         compliances = request.compliances
         reassigned_reason = request.reassigned_reason
@@ -5161,12 +5160,21 @@ class ClientDatabase(Database):
                 )
             self.execute(query)
 
-            update_assign = "UPDATE tbl_assigned_compliances SET assignee=%s, \
-                is_reassigned=1, concurrence_person=%s, approval_person=%s \
-                WHERE unit_id = %s AND compliance_id = %s " % (
-                    assignee, concurrence, approval,
-                    unit_id, compliance_id
-                )
+            update_qry = "UPDATE tbl_assigned_compliances SET assignee=%s, is_reassigned=1, approval_person=%s "
+            if concurrence is not None :
+                update_qry += " ,concurrance_person = %s " % (concurrence)
+            where_qry = " WHERE unit_id = %s AND compliance_id = %s "
+
+            update_assign = update_qry + where_qry % (
+                assignee, approval, unit_id, compliance_id
+            )
+
+            # update_assign = "UPDATE tbl_assigned_compliances SET assignee=%s, \
+            #     is_reassigned=1, concurrence_person=%s, approval_person=%s \
+            #     WHERE unit_id = %s AND compliance_id = %s " % (
+            #         assignee, concurrence, approval,
+            #         unit_id, compliance_id
+            #     )
             self.execute(update_assign)
 
             print update_assign
