@@ -635,7 +635,6 @@ for(var i=2 ; i<=10; i++){
 $('.slist1').each( function( index, el ) {
   $(el).removeClass( "active" );
 });
-
 }
 
 $("#temp_addstatutories").click(function() {
@@ -1359,7 +1358,7 @@ function validate_firsttab(){
 }
 function validate_secondtab(){
   if (sm_statutoryids.length == 0){
-    displayMessage("Atleast one Staturory should be selected");
+    displayMessage("Atleast one Statutory should be selected");
   }else{
     displayMessage("");
     return true;
