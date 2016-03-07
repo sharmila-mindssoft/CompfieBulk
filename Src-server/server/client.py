@@ -73,7 +73,7 @@ class ReplicationManager(object) :
         }
 
     def _get_received_count(self):
-        assert self._received_count is None
+        # assert self._received_count is None
         self._db.begin()
         try:
             self._received_count = self._db.get_trail_id()
@@ -134,7 +134,7 @@ class ReplicationManager(object) :
 
     def _execute_insert_statement(self, changes, error_ok=False):
         assert (len(changes)) > 0
-        print changes
+        # print changes)
         tbl_name = changes[0].tbl_name
         auto_id = self._auto_id_columns.get(tbl_name)
         column_count = self._columns_count.get(tbl_name)
@@ -171,9 +171,11 @@ class ReplicationManager(object) :
             print '' * 100
         except Exception, e:
             print e
+            print
             print "self._received_count ", self._received_count
             print "self._temp_count ", self._temp_count
             print query
+            print
 
         self._temp_count = changes[-1].audit_trail_id
 
@@ -196,10 +198,15 @@ class ReplicationManager(object) :
         self._temp_count = change.audit_trail_id
 
     def _parse_data(self, changes):
-
-        self._db.begin()
+        self._get_received_count()
         # print "begin _parse_data", self._received_count
         # print "_temp_count ", self._temp_count
+
+        if self._temp_count > self._received_count :
+            return
+
+        self._db.begin()
+
         self._temp_count = self._received_count
         try:
             changes_list = []
@@ -226,9 +233,14 @@ class ReplicationManager(object) :
                     tbl_name = change.tbl_name
                     changes_list.append(change)
             if is_insert:
+                # print "insert 3 -------------------------"
                 self._execute_insert_statement(changes_list, error_ok=True)
+                changes_list = []
+            # print "audit_trail_id updated ", self._temp_count
             self._db.update_traild_id(self._temp_count)
+            self._received_count = self._temp_count
             self._db.commit()
+            # self._temp_count = 0
         except Exception, e:
             print(traceback.format_exc())
             print e

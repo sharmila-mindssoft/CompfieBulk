@@ -825,6 +825,7 @@ function initMirror() {
         var employeeName = userDetail[2];
         var employeeCode = userDetail[3];
         var contactNo = userDetail[4];
+        var address = userDetail[5];
         if (userDetail[5] == ""){
             address = null;
         }
@@ -1355,6 +1356,17 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function createNewAdmin(user_id, callback){
+        callerName = "techno"
+        var request = [
+            "CreateNewAdmin",
+            {
+                "new_admin_id":user_id
+            }
+        ];
+        apiRequest(callerName, request, callback);   
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -1488,7 +1500,8 @@ function initMirror() {
         getAuditTrail: getAuditTrail,
         updateUserProfile: updateUserProfile,
         getNotifications: getNotifications,
-        updateNotificationStatus: updateNotificationStatus
+        updateNotificationStatus: updateNotificationStatus,
+        createNewAdmin: createNewAdmin
     }
 }
 var mirror = initMirror();

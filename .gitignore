@@ -7,4 +7,5 @@
 /Src-server/server/knowledgeformat
 /clientdocuments
 /Src-server/server/clientlogo
-/Src-server/server/exported_reports
+/exported_reports
+*.log

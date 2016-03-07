@@ -1104,6 +1104,25 @@ def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Compl
         dict[key] = value
     return dict
 
+def parse_structure_RecordType_dashboard_Compliance(data):
+    from protocol import dashboard
+    return dashboard.Compliance.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_dashboard_Compliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_dashboard_Compliance(item))
+    return lst
+
+def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items():
+        key = parse_structure_SignedIntegerType_8(key)
+        value = parse_structure_VectorType_RecordType_dashboard_Compliance(value)
+        dict[key] = value
+    return dict
 
 def parse_structure_VectorType_RecordType_clientadminsettings_LICENCE_HOLDER(data):
     data = parse_list(data, 0)

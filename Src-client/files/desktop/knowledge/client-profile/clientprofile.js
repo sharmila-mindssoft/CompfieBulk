@@ -69,7 +69,7 @@ function loadClientProfileList(groupId){
                 var clone = tableRow.clone();
                 sno = sno + 1;
                 $('.sno', clone).text(sno);
-                $('.employee', clone).text(lists[key]['employee_name']);
+                $('.employee', clone).text(lists[key]['user_name']);
                 $('.email', clone).text(lists[key]['email_id']);
                 if(lists[key]['contact_no'] == null){
                   $('.mobile-number', clone).text("-");  

@@ -3358,6 +3358,26 @@ $(document).ready(function () {
         // window.location.href = "/login";
         return;
     }
+
+    client_mirror.checkContractExpiration(function (status, data) {
+            if (data == null) {
+                return
+                $(".contract_timer_container").hide()
+            }else{
+                no_of_days_left = data.no_of_days_left
+                $(".contract_timer_container").show()
+                if (no_of_days_left <= 30){
+                    $(".contract_timer").html(
+                        "Contract Expires in "+no_of_days_left+" days"
+                    )
+                }
+                else{
+                    // alert("Contract not expired yet"+no_of_days_left)
+                }
+            }
+        }   
+    )
+
     client_mirror.getChartFilters(function (status, data) {
         if (data == null) {
             return

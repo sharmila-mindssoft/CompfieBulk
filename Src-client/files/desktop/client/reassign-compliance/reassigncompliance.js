@@ -87,7 +87,6 @@ function load_allcompliances(userId, userName){
         
         if(frequency == 'Periodical' || frequency == 'Review') sdateDesc = 'Every';
         for(j = 0; j < statutory_date.length; j++){
-
           var sDay = '';
           if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
 
@@ -112,7 +111,6 @@ function load_allcompliances(userId, userName){
             
           triggerdate +=  tDays + " Day(s)";
           statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
-
         }
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
@@ -177,20 +175,15 @@ function load_UserCompliances(uCompliances, uId){
     var noOfCompliances = uCompliances[compliance]["no_of_compliances"];
 
     for(var user in usersList){
-      var unitusers = usersList[user];
-      for(var user in unitusers){
-        var userId= unitusers[user]["user_id"];
-        if(userId == uId){
-          userName = unitusers[user]["user_name"];
-          seatingUnitId = unitusers[user]["seating_unit_id"]
-        }
-      }
+      var userId= usersList[user]["user_id"];
+      userName = usersList[user]["user_name"];
+      seatingUnitId = usersList[user]["seating_unit_id"];
     }
     for(var unit in unitsList){
-        var userId= unitusers[user]["user_id"];
-        if(unitsList[unit]["unit_id"] == seatingUnitId){
-          seatingUnit = unitsList[unit]["unit_name"];
-        }
+      var userId= usersList[user]["user_id"];
+      if(unitsList[unit]["unit_id"] == seatingUnitId){
+        seatingUnit = unitsList[unit]["unit_name"];
+      }
     }
 
     var tableRow1=$('#templates .table-compliances .table-row');
@@ -222,11 +215,12 @@ function load_compliances () {
     var uCompliances = compliancesList[givenUserId];
     load_UserCompliances(uCompliances, givenUserId);
   }else if(givenUnitId != ''){
-    var unitUsers = usersList[givenUnitId];
-    for(var i in unitUsers){  
-      var uId =  unitUsers[i]["user_id"];
+    for(var i in usersList){ 
+    if(givenUnitId == usersList[i]["seating_unit_id"]){ 
+      var uId =  usersList[i]["user_id"];
       var uCompliances = compliancesList[uId];
       load_UserCompliances(uCompliances, uId);
+    }
     }
   }
 
@@ -275,25 +269,28 @@ function submitcompliance(){
   for(ucompliance in userCompliances){
     var userUnitwiseCompliance = userCompliances[ucompliance]["units"];
     for(var entity in userUnitwiseCompliance){
-    var statutoriesList = userUnitwiseCompliance[entity]["statutories"];
-    for(var statutory in statutoriesList){
-      var actList = statutoriesList[statutory];
-      for(var actentity in actList){
-        var complianceApplicable = false;
-        if($('#statutory'+statutoriesCount).is(":checked")){
-          complianceApplicable = true;
-        }
-        if(complianceApplicable){
-          var compliance_id = actList[actentity]["compliance_id"];
-          var due_date =  $('#duedate'+statutoriesCount).val();
+      var uId = userUnitwiseCompliance[entity]["unit_id"];
+      var statutoriesList = userUnitwiseCompliance[entity]["statutories"];
+      for(var statutory in statutoriesList){
+        var actList = statutoriesList[statutory];
+        for(var actentity in actList){
+          var complianceApplicable = false;
+          if($('#statutory'+statutoriesCount).is(":checked")){
+            complianceApplicable = true;
+          }
+          if(complianceApplicable){
+            var compliance_id = actList[actentity]["compliance_id"];
+            var compliance_history_id = actList[actentity]["compliance_history_id"];
+            
+            var due_date =  $('#duedate'+statutoriesCount).val();
 
-          reassignComplianceData = client_mirror.assignCompliances(
-            compliance_id, due_date
-          );
-          reassignCompliance.push(reassignComplianceData);
+            reassignComplianceData = client_mirror.reassingComplianceDet(uId,
+              compliance_id, compliance_history_id, due_date
+            );
+            reassignCompliance.push(reassignComplianceData);
+          }  
+          statutoriesCount = statutoriesCount + 1;
         }  
-        statutoriesCount = statutoriesCount + 1;
-      }  
     }
   }
 }
@@ -312,7 +309,7 @@ function submitcompliance(){
   function onFailure(error){
     displayMessage(error)
   }
-  client_mirror.reassignCompliance(reassignUserId, assignComplianceAssigneeId, 
+  client_mirror.saveReassignCompliance(reassignUserId, assignComplianceAssigneeId, 
     assignComplianceConcurrenceId, assignComplianceApprovalId, reassignCompliance, reason, 
     function (error, response) {
     if (error == null){
@@ -329,28 +326,8 @@ function getReassignCompliances () {
   function onSuccess(data){
     compliancesList = data["user_wise_compliances"];
     usersList = data["users"];
-    unitsList = [
-      {
-        "division_id": 1, 
-        "unit_name": "Factory Unit I", 
-        "business_group_id": 1, 
-        "unit_code": "Tvs001", 
-        "legal_entity_id": 1, 
-        "unit_address": "address address", 
-        "is_active": true, 
-        "unit_id": 1
-      }, 
-      {
-        "division_id": 1, 
-        "unit_name": "TVS MADURAI", 
-        "business_group_id": 2, 
-        "unit_code": "UCODE-123", 
-        "legal_entity_id": 1, 
-        "unit_address": "345, Vinayaga Nagar, Anna Bus Stand, Madurai", 
-        "is_active": true, 
-        "unit_id": 2
-      }
-    ];
+    unitsList = data["units"]; 
+
     //load_compliances(compliancesList);
   }
   function onFailure(error){
@@ -378,7 +355,6 @@ $(".hidemenu").click(function(){
 
 //Units-------------------------------------------------------------------------------------------
 $("#seatingunitval").keyup(function(){
-
   var textval = $(this).val();
   $("#autocomplete_seatingunit").show();
   var units = unitsList;
@@ -412,27 +388,19 @@ $("#userval").keyup(function(){
   $("#autocomplete_user").show();
   
   var sUnit = $("#seatingunit").val();
-  var assignees = null;
+  var assignees = usersList;
 
   var suggestions = [];
   $('#ulist_user').empty();
   if(textval.length>0){
-    if(sUnit != ''){
-      assignees = usersList[sUnit];
-      for(var i in assignees){      
-        if (~assignees[i]["user_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["user_id"],assignees[i]["user_name"]]); 
-      }
-    }else{
-      for( user in usersList){
-        assignees = usersList[user];
-        for(var i in assignees){
-          if (~assignees[i]["user_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["user_id"],assignees[i]["user_name"]]); 
-        }
-      }
+    for(var i in assignees){    
+    if(sUnit == '' || sUnit == assignees[i]["seating_unit_id"]){
+      if (~assignees[i]["user_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["user_id"],assignees[i]["user_name"]]); 
+    }  
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_user(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+      str += '<li id="'+suggestions[i][0]+'"onclick="activate_user(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
               
     }
     $('#ulist_user').append(str);
@@ -461,8 +429,8 @@ $("#assignee").click(function(event){
     var concurrenceUnit =  $("#concurrence_unit").val();
     var approvalUnit =  $("#approval_unit").val();
 
-    loadUser(concurrenceUnit, 'concurrencelist', 'concurrence');
-    loadUser(approvalUnit, 'approvallist', 'approval');
+    //loadUser(concurrenceUnit, 'concurrencelist', 'concurrence');
+    //loadUser(approvalUnit, 'approvallist', 'approval');
   }
 });
 
@@ -478,8 +446,8 @@ $("#concurrence").click(function(event){
     var assigneeUnit =  $("#assignee_unit").val();
     var approvalUnit =  $("#approval_unit").val();
 
-    loadUser(assigneeUnit, 'assigneelist', 'assignee');
-    loadUser(approvalUnit, 'approvallist', 'approval');
+    //loadUser(assigneeUnit, 'assigneelist', 'assignee');
+    //loadUser(approvalUnit, 'approvallist', 'approval');
   }
 });
 
@@ -495,8 +463,8 @@ $("#approval").click(function(event){
     var assigneeUnit =  $("#assignee_unit").val();
     var concurrenceUnit =  $("#concurrence_unit").val();
 
-    loadUser(assigneeUnit, 'assigneelist', 'assignee');
-    loadUser(concurrenceUnit, 'concurrencelist', 'concurrence');
+    //loadUser(assigneeUnit, 'assigneelist', 'assignee');
+    //loadUser(concurrenceUnit, 'concurrencelist', 'concurrence');
   }
 });
 
@@ -518,7 +486,19 @@ function loadUser(selectedUnit, userClass, userType){
   $('#'+userType).empty();
 
   for(var user in usersList){
-      if( selectedUnit == 'all' || selectedUnit == user ){
+    var userUnits = usersList[user]["unit_ids"];
+    if( selectedUnit == 'all' || $.inArray(selectedUnit, userUnits) >= 0){
+          var userId= usersList[user]["user_id"];
+          var userName= usersList[user]["user_name"];
+      
+          if((assigneeUserId == null || assigneeUserId != userId) && 
+            (concurrenceUserId == null || concurrenceUserId !=userId) && 
+            (approvalUserId == null || approvalUserId != userId)){
+            str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
+          }
+
+        }
+      /*if( selectedUnit == 'all' || selectedUnit == user ){
         var unitusers = usersList[user];
         for(var user in unitusers){
           var userId= unitusers[user]["user_id"];
@@ -526,7 +506,7 @@ function loadUser(selectedUnit, userClass, userType){
             str += '<li id="'+userId+'" class="'+userClass+'" >'+unitusers[user]["user_name"]+'</li>';
           }
         }
-      }
+      }*/
     }
   $('#'+userType).append(str);
 }
