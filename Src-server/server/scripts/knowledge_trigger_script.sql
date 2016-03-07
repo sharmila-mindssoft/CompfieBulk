@@ -208,7 +208,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
  FOR EACH ROW BEGIN
     SET @action = 0;
     SET @submission_type = (SELECT t1.submission_type FROM tbl_client_statutories t1 WHERE t1.client_statutory_id = NEW.client_statutory_id);
-
+    SET @client_id = (SELECT t1.client_id FROM tbl_client_statutories t1 WHERE t1.client_statutory_id = NEW.client_statutory_id);
 
    IF (@submission_type = 1) THEN
    INSERT INTO tbl_audit_log(action,
@@ -218,7 +218,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                @client_id,
                 NEW.client_compliance_id,
                 'client_statutory_id',
                 NEW.client_statutory_id,
@@ -234,7 +234,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                @client_id,
                 NEW.client_compliance_id,
                 'compliance_id',
                 NEW.compliance_id,
@@ -250,7 +250,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                @client_id,
                 NEW.client_compliance_id,
                 'statutory_applicable',
                 NEW.statutory_applicable,
@@ -266,7 +266,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                @client_id,
                 NEW.client_compliance_id,
                 'statutory_opted',
                 NEW.statutory_opted,
@@ -282,7 +282,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                @client_id,
                 NEW.client_compliance_id,
                 'not_applicable_remarks',
                 NEW.not_applicable_remarks,
@@ -298,7 +298,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                @client_id,
                 NEW.client_compliance_id,
                 'compliance_applicable',
                 NEW.compliance_applicable,
@@ -314,7 +314,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                @client_id,
                 NEW.client_compliance_id,
                 'compliance_opted',
                 NEW.compliance_opted,
@@ -330,7 +330,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                @client_id,
                 NEW.client_compliance_id,
                 'compliance_remarks',
                 NEW.compliance_remarks,
@@ -346,7 +346,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                @client_id,
                 NEW.client_compliance_id,
                 'submitted_on',
                 NEW.submitted_on,

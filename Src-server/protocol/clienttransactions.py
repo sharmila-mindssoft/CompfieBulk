@@ -673,17 +673,24 @@ class InvalidPassword(Response):
         }
 
 class GetAssignCompliancesFormDataSuccess(Response):
-    def __init__(self, countries, business_groups, legal_entities, divisions, units, users):
+    def __init__(
+        self, countries, business_groups, legal_entities,
+        divisions, units, users, two_level_approve
+    ):
         self.countries = countries
         self.business_groups = business_groups
         self.legal_entities = legal_entities
         self.divisions = divisions
         self.units = units
         self.users = users
+        self.two_level_approve = two_level_approve
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "business_groups", "legal_entities", "divisions", "units", "users"])
+        data = parse_dictionary(data, [
+            "countries", "business_groups", "legal_entities",
+            "divisions", "units", "users", "two_level_approve"
+        ])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         business_groups = data.get("business_groups")
@@ -696,7 +703,12 @@ class GetAssignCompliancesFormDataSuccess(Response):
         units = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(units)
         users = data.get("users")
         users = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(users)
-        return GetAssignCompliancesFormDataSuccess(countries, business_groups, legal_entities, divisions, units, users)
+        two_level_approve = data.get("two_level_approve")
+        two_level_approve = parse_structure_Bool(two_level_approve)
+        return GetAssignCompliancesFormDataSuccess(
+            countries, business_groups, legal_entities,
+            divisions, units, users, two_level_approve
+        )
 
     def to_inner_structure(self):
         return {
@@ -706,6 +718,7 @@ class GetAssignCompliancesFormDataSuccess(Response):
             "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
             "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units),
             "users": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users),
+            "two_level_approve": to_structure_Bool(self.two_level_approve)
         }
 
 class GetComplianceForUnitsSuccess(Response):
@@ -1172,8 +1185,8 @@ class UNIT_WISE_STATUTORIES(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "compliance_id", "compliance_name", "description", 
-            "frequency", "statutory_date", "due_date", 
+            "compliance_id", "compliance_name", "description",
+            "frequency", "statutory_date", "due_date",
             "applicable_units", "summary"
         ])
         compliance_id = data.get("compliance_id")

@@ -129,7 +129,7 @@ class ClientDatabase(Database):
                     password, username
                 )
             data_list = self.select_one(query)
-            if data_list is None : 
+            if data_list is None :
                 return False
             else :
                 result = self.convert_to_dict(data_list, data_columns)
@@ -647,7 +647,7 @@ class ClientDatabase(Database):
             )
         except Exception, e:
             print "Error while sending email : {}".format(e)
-    
+
     def save_user(self, user_id, user, session_user, client_id):
         result1 = None
         result2 = None
@@ -710,7 +710,7 @@ class ClientDatabase(Database):
         notify_user_thread.start()
         return (result1 and result2 and result3 and result4)
 
-    
+
 
     def update_user(self, user, session_user, client_id):
         result1 = None
@@ -2070,7 +2070,7 @@ class ClientDatabase(Database):
         where_condition = "WHERE t2.unit_id \
             IN \
             (select distinct unit_id from tbl_user_units where user_id = %s)" % (session_user)
-        query = "SELECT t1.user_id, t1.employee_name, \
+        query = "SELECT distinct t1.user_id, t1.employee_name, \
             t1.employee_code, \
             t1.seating_unit_id, t1.user_level, \
             (select group_concat(distinct domain_id) from tbl_user_domains where user_id = t1.user_id) domain_ids, \
@@ -2867,7 +2867,7 @@ class ClientDatabase(Database):
 
     def compliance_details_query(self, domain_ids, date_qry, status_qry, filter_type_qry, client_id) :
         if len(domain_ids) == 1 :
-            domains_ids.append(0)
+            domain_ids.append(0)
         query = "SELECT \
             T1.compliance_history_id, T1.unit_id,\
             T1.compliance_id, T1.start_date, \
@@ -3725,7 +3725,9 @@ class ClientDatabase(Database):
         self, request, session_user, client_id
     ):
         query = "SELECT T1.compliance_id, T2.unit_id,\
-            T4.frequency_id, T4.repeats_type_id, T4.duration_type_id,\
+            (select frequency from tbl_compliance_frequency where frequency_id = t4.frequency_id) frequency,\
+            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t4.repeats_type_id) repeats_type, \
+            (select duration_type from tbl_compliance_duration_type where duration_type_id = t4.duration_type_id)duration_type,\
             T4.statutory_mapping, T4.statutory_provision,\
             T4.compliance_task, T4.compliance_description,  \
             T4.document_name, T4.format_file, T4.format_file_size, T4.penal_consequences, \
@@ -3737,16 +3739,6 @@ class ClientDatabase(Database):
             ON T2.unit_id = T3.unit_id \
             INNER JOIN tbl_compliances T4\
             ON T1.compliance_id = T4.compliance_id\
-            INNER JOIN tbl_compliance_frequency T5\
-            ON T4.frequency_id = T5.frequency_id \
-            INNER JOIN tbl_divisions T6 \
-            ON T3.division_id = T6.division_id \
-            INNER JOIN tbl_legal_entities T7 \
-            ON T3.legal_entity_id = T7.legal_entity_id \
-            INNER JOIN tbl_business_groups T8 \
-            ON T3.business_group_id = T8.business_group_id \
-            INNER JOIN tbl_countries T9 \
-            ON T3.country_id = T9.country_id \
             WHERE T2.country_id IN %s \
             AND T2.domain_id IN %s \
             %s %s"
@@ -3800,7 +3792,7 @@ class ClientDatabase(Database):
         rows = self.select_all(query1)
         columns = [
             "compliance_id", "unit_id",
-            "frequency_id", "repeats_type_id", "duration_type_id",
+            "frequency", "repeats_type", "duration_type",
             "statutory_mapping", "statutory_provision", "compliance_task",
             "compliance_description", "document_name", "format_file",
             "format_file_size", "penal_consequences", "statutory_dates",
@@ -4950,6 +4942,8 @@ class ClientDatabase(Database):
         reassigned_from = request.reassigned_from
         assignee = request.assignee
         concurrence = request.concurrence_person
+        if concurrence is None :
+            concurrence = ""
         approval = request.approval_person
         compliances = request.compliances
         reassigned_reason = request.reassigned_reason
@@ -4965,7 +4959,7 @@ class ClientDatabase(Database):
             history_id = c.compliance_history_id
 
             query = " INSERT INTO tbl_reassigned_compliances_history \
-                (unit_id, compliance_id, asssignee, \
+                (unit_id, compliance_id, assignee, \
                 reassigned_from, reassigned_date, remarks, \
                 created_by, created_on) \
                 VALUES (%s, %s, %s, %s, '%s', '%s', %s, '%s') " % (
@@ -4982,6 +4976,8 @@ class ClientDatabase(Database):
                     unit_id, compliance_id
                 )
             self.execute(update_assign)
+
+            print update_assign
 
             if history_id is not None :
                 if validity_date is None:
@@ -6986,3 +6982,10 @@ class ClientDatabase(Database):
             self.tblForms, columns, condition
         )
         return rows[0][0]
+
+    def get_client_settings(self):
+        query = "SELECT two_levels_of_approval \
+            FROM tbl_client_groups"
+        row = self.select_one(query)
+        if row:
+            return bool(int(row[0]))

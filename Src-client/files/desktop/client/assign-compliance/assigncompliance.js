@@ -360,33 +360,26 @@ function convert_date (data){
 
 
 function submitcompliance(){
+  var assignComplianceCountryId = null;
+  var assignComplianceAssigneeId = null;
+  var assignComplianceConcurrenceId = null;
+  var assignComplianceApprovalId = null;
+  var assignComplianceAssigneeName = null;
+  var assignComplianceConcurrenceName = null;
+  var assignComplianceApprovalName = null;
+  var currentDate = new Date();
 
-    var assignComplianceCountryId = null;
-    var assignComplianceAssigneeId = null;
-    var assignComplianceConcurrenceId = null;
-    var assignComplianceApprovalId = null;
-    var assignComplianceAssigneeName = null;
-    var assignComplianceConcurrenceName = null;
-    var assignComplianceApprovalName = null;
-    var currentDate = new Date();
-
-    assignComplianceCountryId = parseInt($('.countrylist.active').attr('id'));
-    assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
-    assignComplianceConcurrenceId = parseInt($('.concurrencelist.active').attr('id'));
-    assignComplianceApprovalId = parseInt($('.approvallist.active').attr('id'));
-
-    assignComplianceAssigneeName = $('.assigneelist.active').text();
-    
-    if($('.concurrencelist.active').text() != '') assignComplianceConcurrenceName = $('.concurrencelist.active').text();
-    
-    assignComplianceApprovalName = $('.approvallist.active').text();
-
- 
-    assignCompliance = [];
-    var statutoriesCount= 1;
-    var actCount = 1;
-
-    for(var entity in statutoriesList){
+  assignComplianceCountryId = parseInt($('.countrylist.active').attr('id'));
+  assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
+  assignComplianceConcurrenceId = parseInt($('.concurrencelist.active').attr('id'));
+  assignComplianceApprovalId = parseInt($('.approvallist.active').attr('id'));
+  assignComplianceAssigneeName = $('.assigneelist.active').text();
+  if($('.concurrencelist.active').text() != '') assignComplianceConcurrenceName = $('.concurrencelist.active').text();
+  assignComplianceApprovalName = $('.approvallist.active').text();
+  assignCompliance = [];
+  var statutoriesCount= 1;
+  var actCount = 1;
+  for(var entity in statutoriesList){
     var domainList = statutoriesList[entity];
     for(var domainentity in domainList){
       var actList = domainList[domainentity];
@@ -492,9 +485,8 @@ function submitcompliance(){
             var current_trigger_day = null;
           }
           
-          
 
-          assignComplianceData = client_mirror.assignCompliances(
+            assignComplianceData = client_mirror.assignCompliances(
             compliance_id, compliance_name, statutory_dates,
             current_due_date, validitydate, current_trigger_day, applicable_units
           );
@@ -504,7 +496,7 @@ function submitcompliance(){
       }  
       actCount = actCount + 1;
     }
-  }
+}
 
   function onSuccess(data){
     //getAssignedStatutories ();
