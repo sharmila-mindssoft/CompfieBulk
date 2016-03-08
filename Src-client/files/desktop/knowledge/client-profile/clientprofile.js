@@ -63,7 +63,6 @@ function loadClientProfileList(groupId){
             $('.remaining-licence').html(remaininglicence);
 
             var lists = list['licence_holders'];
-            console.log(lists)
             $.each(lists, function(key, val) { 
                 var tableRow = $('#templates .table-clientprofile-list .table-row');
                 var clone = tableRow.clone();
@@ -76,9 +75,9 @@ function loadClientProfileList(groupId){
                 }
                 else{
                   $('.mobile-number', clone).text(lists[key]['contact_no']);
-                }     
-                $('.seating-unit span', clone).text(lists[key]['unit_name']);
-                $('.seating-unit abbr', clone).text(lists[key]['address']);      
+                }
+                $('.seating-unit span', clone).html(lists[key]['seating_unit_name']);
+                $('.seating-unit abbr', clone).attr("title", lists[key]['address']);      
                 var userId = lists[key]['user_id'];
                 var isAdmin = lists[key]["is_admin"];
                 var isActive = lists[key]["is_active"];
