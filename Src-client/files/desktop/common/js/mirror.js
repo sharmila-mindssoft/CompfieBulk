@@ -589,7 +589,7 @@ function initMirror() {
 
     function checkDuplicateStatutoryMapping(
         countryId, domainId, industryIds, statutoryNatureId,
-        statutoryIds
+        statutoryIds, callback
     ) {
         var request = [
             "CheckDuplicateStatutoryMapping",

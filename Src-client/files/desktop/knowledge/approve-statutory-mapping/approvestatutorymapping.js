@@ -290,7 +290,6 @@ function loadApproveStatutory(){
     if(j <= 1){
       var norecordtableRow=$('#norecord-templates');
       var noclone=norecordtableRow.clone();
-      //$('.norecord', clone).text("industryName");
       $('.tbody-statutorymapping-list').append(noclone);
       $('#saverecord').hide();
     }
