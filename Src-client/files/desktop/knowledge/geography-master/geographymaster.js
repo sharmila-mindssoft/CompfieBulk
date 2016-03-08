@@ -93,7 +93,7 @@ function changeStatus (geographyId,isActive) {
   if(isActive){
     msgstatus='activate';
   }
-  var answer = confirm('Are you sure you want to '+msgstatus+ '?');
+  var answer = confirm('Are you sure want to '+msgstatus+ '?');
   if (answer)
   {
     function onSuccess(response){

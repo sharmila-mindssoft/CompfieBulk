@@ -14,6 +14,23 @@ function initialize(){
 		auditTrailList = data['audit_trail_details'];
 		formList = data['forms'];
 		userList = data['users'];
+		var m_names = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+		var d = new Date();
+		var curr_date = d.getDate();
+		var curr_month = d.getMonth();
+		var curr_year = d.getFullYear();
+		var todaydate = curr_date + "-" + m_names[curr_month] + "-" + curr_year;
+		var currentDate = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 7);
+		var day = currentDate.getDate()
+		var month = currentDate.getMonth()
+		var year = currentDate.getFullYear()
+		var lastdate = day + "-" + m_names[month] + "-" + year;
+
+
+		$("#to-date").val(todaydate);
+		$("#from-date").val(lastdate);
+		$("#show").trigger("click");
+
 	}
 	function onFailure(error){
 		console.log(error);

@@ -229,7 +229,7 @@ def process_save_geography(db, request_frame, user_id):
     geography_name = request_frame.geography_name
     parent_ids_list = request_frame.parent_ids
     parent_ids = ','.join(str(x) for x in parent_ids_list) + ","
-    parent_names = ">>".join(str(x) for x in request_frame.parent_names)
+    parent_names = " >> ".join(str(x) for x in request_frame.parent_names)
     country_id = request_frame.country_id
 
     saved_names = [row["geography_name"].lower() for row in db.check_duplicate_geography(country_id, parent_ids, None)]
@@ -247,7 +247,7 @@ def process_update_geography(db, request_frame, user_id):
     geography_name = request_frame.geography_name
     parent_ids_list = request_frame.parent_ids
     parent_ids = ','.join(str(x) for x in parent_ids_list) + ","
-    parnet_names = '>>'.join(str(x) for x in request_frame.parent_names)
+    parnet_names = ' >> '.join(str(x) for x in request_frame.parent_names)
     country_id = request_frame.country_id
 
     saved_names = [row["geography_name"].lower() for row in db.check_duplicate_geography(country_id, parent_ids, geography_id)]
@@ -276,7 +276,7 @@ def process_save_statutory(db, request_frame, user_id):
     statutory_name = request_frame.statutory_name
     parent_ids_list = request_frame.parent_ids
     parent_ids = ','.join(str(x) for x in parent_ids_list) + ","
-    parent_names = ">>".join(str(x) for x in request_frame.parent_names)
+    parent_names = " >> ".join(str(x) for x in request_frame.parent_names)
     statutory_id = None
     domain_id = request_frame.domain_id
     saved_names = [
@@ -300,7 +300,7 @@ def process_update_statutory(db, request_frame, user_id):
     statutory_name = request_frame.statutory_name
     parent_ids_list = request_frame.parent_ids
     parent_ids = ','.join(str(x) for x in parent_ids_list) + ","
-    parent_names = ">>".join(str(x) for x in request_frame.parent_names)
+    parent_names = " >> ".join(str(x) for x in request_frame.parent_names)
     saved_names = [row["statutory_name"].lower() for row in db.check_duplicate_statutory(parent_ids, statutory_id)]
     if saved_names.count(statutory_name.lower()) > 0 :
         return knowledgemaster.StatutoryNameAlreadyExists()

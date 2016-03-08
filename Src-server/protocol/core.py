@@ -2224,7 +2224,7 @@ class User(object):
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         employee_name = data.get("employee_name")
-        employee_name = parse_structure_CustomTextType_50(employee_name)
+        employee_name = parse_structure_CustomTextType_250(employee_name)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         return User(user_id, employee_name, is_active)
@@ -2232,7 +2232,7 @@ class User(object):
     def to_structure(self):
         return {
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "employee_name": to_structure_CustomTextType_50(self.employee_name),
+            "employee_name": to_structure_CustomTextType_250(self.employee_name),
             "is_active": to_structure_Bool(self.is_active),
         }
 

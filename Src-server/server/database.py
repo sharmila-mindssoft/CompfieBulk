@@ -1974,7 +1974,7 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return self.return_statutory_mappings(result)
 
-    def return_statutory_mappings(self, data):
+    def return_statutory_mappings(self, data, is_report=None):
         if bool(self.statutory_parent_mapping) is False :
             self.get_statutory_master()
         if bool(self.geography_parent_mapping) is False :
@@ -1991,7 +1991,7 @@ class KnowledgeDatabase(Database):
             # compliance_id = int(d["compliance_id"])
 
             compliances_data = self.get_compliance_by_id(
-                compliance_ids
+                compliance_ids, is_report
             )
             compliance_names = compliances_data[0]
             compliances = compliances_data[1]
@@ -2045,11 +2045,11 @@ class KnowledgeDatabase(Database):
     ) :
         qry_where = ""
         if industry_id is not None :
-            qry_where = "AND t2.industry_id = %s " % (industry_id)
+            qry_where += "AND t2.industry_id = %s " % (industry_id)
         if geography_id is not None :
-            qry_where = "AND t3.geography_id = %s " % (geography_id)
+            qry_where += "AND t3.geography_id = %s " % (geography_id)
         if statutory_nature_id is not None :
-            qry_where = "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
+            qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
 
         q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
@@ -2075,7 +2075,7 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_countries t6 \
             ON t1.country_id = t6.country_id \
             and t6.user_id = %s \
-            WHERE t1.approval_status in (1, 3) AND \
+            WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
             t1.country_id = %s \
             and t1.domain_id = %s \
             %s" % (
@@ -2083,6 +2083,7 @@ class KnowledgeDatabase(Database):
                 country_id, domain_id,
                 qry_where
             )
+        print q
         rows = self.select_all(q)
         columns = [
             "statutory_mapping_id", "country_id",
@@ -2094,7 +2095,7 @@ class KnowledgeDatabase(Database):
         result = []
         if rows :
             result = self.convert_to_dict(rows, columns)
-        report_data = self.return_statutory_mappings(result)
+        report_data = self.return_statutory_mappings(result, is_report=True)
 
         return self.return_knowledge_report(
             country_id, domain_id, report_data
@@ -2144,15 +2145,29 @@ class KnowledgeDatabase(Database):
     #
     # compliance
     #
-    def get_compliance_by_id(self, compliance_id):
-        if type(compliance_id) == IntType :
-            q = " WHERE t1.compliance_id = %s" % (
-                compliance_id
-            )
+    def get_compliance_by_id(self, compliance_id, is_active=None):
+        q = ""
+        if is_active is None :
+            if type(compliance_id) == IntType :
+                q = " WHERE t1.compliance_id = %s" % (
+                    compliance_id
+                )
+            else :
+                q = " WHERE t1.compliance_id in %s" % (
+                    str(tuple(compliance_id))
+                )
+
         else :
-            q = " WHERE t1.compliance_id in %s" % (
-                str(tuple(compliance_id))
-            )
+            is_active = int(is_active)
+
+            if type(compliance_id) == IntType :
+                q = " WHERE t1.is_active = %s AND t1.compliance_id = %s" % (
+                    is_active, compliance_id
+                )
+            else :
+                q = " WHERE t1.is_active = %s AND t1.compliance_id in %s" % (
+                    is_active, str(tuple(compliance_id))
+                )
 
         qry = "SELECT t1.compliance_id, t1.statutory_provision, \
             t1.compliance_task, t1.compliance_description, \
@@ -2340,8 +2355,8 @@ class KnowledgeDatabase(Database):
             self.save_statutory_statutories_id(
                 statutory_mapping_id, data.statutory_ids, True
             )
-            notification_log_text = "Statutory mapping created for %s" % ''.join(names)
-            link = "/knowledge/statutory-mapping"
+            notification_log_text = "New statutory mapping created %s" % (statutory_mapping)
+            link = "/knowledge/approve-statutory-mapping"
             self.save_notifications(
                 notification_log_text, link,
                 domain_id, country_id,
@@ -2850,14 +2865,15 @@ class KnowledgeDatabase(Database):
         ]
         where = "statutory_mapping_id=%s" % (statutory_mapping_id)
 
-        q = "SELECT created_by, updated_by, domain_id, \
+        q = "SELECT statutory_mapping, created_by, updated_by, domain_id, \
             country_id from tbl_statutory_mappings \
             where statutory_mapping_id = %s" % (
                 statutory_mapping_id
             )
         rows = self.select_one(q)
         users = self.convert_to_dict(rows, [
-            "created_by", "updated_by", "domain_id", "country_id"
+            "statutory_mapping", "created_by", "updated_by",
+            "domain_id", "country_id"
         ])
 
         if approval_status == 2 :
@@ -3058,9 +3074,12 @@ class KnowledgeDatabase(Database):
             join_conditions, where_condition)
         return rows
 
-    def return_forms(self):
+    def return_forms(self, form_ids=None):
         columns = "form_id, form_name"
-        forms = self.get_data(self.tblForms, columns, "1")
+        condition = " form_id != '26' "
+        if form_ids is not None:
+            condition += " AND form_id in (%s) " % form_ids
+        forms = self.get_data(self.tblForms, columns, condition)
         results = []
         for form in forms:
             results.append(general.AuditTrailForm(form[0], form[1]))
@@ -3181,9 +3200,8 @@ class KnowledgeDatabase(Database):
             self.tblUserCountries, self.tblUserDomains
         )
         condition = "user_group_id in (select user_group_id from \
-             %s where form_category_id = 3 and (form_ids like '%s%s%s' \
-             or form_ids like '%s%s%s' or form_ids like '%s%s%s'))" % (
-                self.tblUserGroups, "%", "19", "%", "%","21", "%", "%","20", "%"
+             %s where form_category_id = 3 )" % (
+                self.tblUserGroups
             )
         rows = self.get_data(self.tblUsers + " u", columns, condition)
         columns = ["user_id", "employee_name", "is_active", "countries", "domains"]
@@ -3236,12 +3254,13 @@ class KnowledgeDatabase(Database):
             table = self.tblClientGroups
             condition = "is_active = 1"
         rows = self.get_data(table, columns, condition)
-        if rows:
-            columns = "group_concat(client_id)"
-            condition = "client_id in (%s) and is_active = 1" % (rows[0][0])
-            rows = self.get_data(self.tblClientGroups, columns, condition)
-            if rows:
-                result = rows[0][0]
+        if rows is not None and len(rows) > 0:
+            if rows[0][0] is not None:
+                columns = "group_concat(client_id)"
+                condition = "client_id in (%s) and is_active = 1" % (rows[0][0])
+                rows = self.get_data(self.tblClientGroups, columns, condition)
+                if rows:
+                    result = rows[0][0]
         return result
 
     def notify_user(
@@ -3782,14 +3801,14 @@ class KnowledgeDatabase(Database):
 
         columns = [
             "group_name", "contract_from", "contract_to", "no_of_user_licence",
-            "total_disk_space", "is_sms_subscribed", "incharge_persons", "is_active",
+            "total_disk_space", "is_sms_subscribed", "incharge_persons",
             "updated_by", "updated_on"
         ]
         values = [
             client_group.group_name, contract_from, contract_to,
             client_group.no_of_user_licence, client_group.file_space * 1000000000,
             is_sms_subscribed,
-            ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
+            ','.join(str(x) for x in client_group.incharge_persons), session_user,
             current_time_stamp
         ]
         if client_group.logo is not None:
@@ -5038,31 +5057,28 @@ class KnowledgeDatabase(Database):
         query = "SELECT distinct t1.client_statutory_id, t1.client_id, \
             t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, \
             t1.submission_type, t2.group_name, t3.unit_name, \
-            t4.business_group_name, t5.legal_entity_name,\
-            t6.division_name, t3.address, t3.postal_code, t3.unit_code \
+            (select business_group_name from tbl_business_groups where business_group_id = t3.business_group_id )business_group_name, \
+            (select legal_entity_name from tbl_legal_entities where legal_entity_id = t3.legal_entity_id)legal_entity_name,\
+            (select division_name from tbl_divisions where division_id = t3.division_id)division_name, \
+            t3.address, t3.postal_code, t3.unit_code \
             FROM tbl_client_statutories t1 \
             INNER JOIN tbl_client_groups t2 \
             ON t1.client_id = t2.client_id \
             INNER JOIN tbl_units t3 \
             ON t1.unit_id = t3.unit_id \
-            INNER JOIN tbl_business_groups t4 \
-            ON t3.business_group_id = t4.business_group_id \
-            INNER JOIN tbl_legal_entities t5 \
-            ON t3.legal_entity_id = t5.legal_entity_id \
-            INNER JOIN tbl_divisions t6 \
-            ON t3.division_id = t6.division_id \
-            INNER JOIN tbl_client_compliances t7 \
-            ON t1.client_statutory_id = t7.client_statutory_id \
-            WHERE t1.country_id = %s \
+            INNER JOIN tbl_client_compliances t4 \
+            ON t1.client_statutory_id = t4.client_statutory_id \
+            WHERE t1.submission_type =1 \
+            AND t1.country_id = %s \
             AND t1.domain_id = %s \
             AND t1.client_id like '%s' \
             AND t3.business_group_id like '%s' \
             AND t3.legal_entity_id like '%s' \
             AND t3.division_id like '%s' \
             AND t3.unit_id like '%s' \
-            AND t7.statutory_id like '%s' \
-            AND t7.statutory_applicable like '%s' \
-            AND t7.compliance_applicable like '%s' " % (
+            AND t4.statutory_id like '%s' \
+            AND t4.statutory_applicable like '%s' \
+            AND t4.compliance_applicable like '%s' " % (
                 country_id, domain_id, group_id,
                 business_group_id, legal_entity_id,
                 division_id, unit_id, level_1_statutory_id,
@@ -5279,16 +5295,26 @@ class KnowledgeDatabase(Database):
 
     def get_audit_trails(self, session_user):
         user_ids = ""
+        form_ids = None
         if session_user != 0:
             column = "user_group_id"
             condition = "user_id = '%d'" % session_user
             rows = self.get_data(self.tblUsers, column, condition)
             user_group_id = rows[0][0]
 
-            column = "form_category_id"
+            column = "form_category_id, form_ids"
             condition = "user_group_id = '%d'" % user_group_id
             rows = self.get_data(self.tblUserGroups, column, condition)
             form_category_id = rows[0][0]
+            form_ids = rows[0][1]
+
+            column = "group_concat(form_id)"
+            condition = "form_category_id = '%d' AND \
+            form_type_id != 3" % form_category_id
+            rows = self.get_data(
+                self.tblForms, column, condition
+            )
+            form_ids = rows[0][0]
 
             column = "group_concat(user_group_id)"
             condition = "form_category_id = '%d'" % form_category_id
@@ -5316,8 +5342,8 @@ class KnowledgeDatabase(Database):
             condition = "user_id in (%s)" % user_ids
             users = self.return_users(condition)
         else:
-            users = self.return_users()
-        forms = self.return_forms()
+            users = self.return_users()       
+        forms = self.return_forms(form_ids)
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
 
 #
@@ -5517,7 +5543,7 @@ class KnowledgeDatabase(Database):
                 if countries is not None:
                     country_ids += countries.split(",")
             columns = "DISTINCT country_id, country_name, is_active"
-            condition = "country_id in (%s) " % (
+            condition = "country_id in (%s) ORDER BY country_name" % (
                 ",".join(
                     str(x) for x in country_ids
                 )
@@ -5541,7 +5567,7 @@ class KnowledgeDatabase(Database):
             for client_id in client_ids_list:
                 domain_ids += self.get_client_domains(int(client_id)).split(",")
             columns = "DISTINCT domain_id, domain_name, is_active"
-            condition = "domain_id in (%s) " % (
+            condition = "domain_id in (%s) ORDER BY domain_name " % (
                 ",".join(
                     str(x) for x in domain_ids
                 )
