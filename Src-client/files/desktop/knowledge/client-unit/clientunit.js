@@ -13,6 +13,8 @@ var geographyLevelList;
 var unitcodecount = 1001;
 var countryByCount = 1;
 var lastClassval = 1;
+var unitcodeautogenerateids = null;
+var get2CharsofGroup = null;
 
 function clearMessage() {
     $(".error-message").hide();
@@ -352,6 +354,7 @@ function addcountryrow(){
             $(".postal-code", clone).on('input', function (event) {
                 this.value = this.value.replace(/[^0-9]/g, '');
             });
+            unitcodeautogenerateids++;
         }
         if(countryCount <= countc){
             displayMessage(countryCount+" Countries Are Allowed for this group");
@@ -391,33 +394,61 @@ function addNewUnitRow(str){
     $('.no-of-units-'+countval).val(parseInt($('.no-of-units-'+countval).val())+1);
     $('.activedclass-'+countval).addClass('activedclass-'+countval+'-'+(lastClassval+1));
     $('.'+tbodyclasses[1]).append(clone1);
+    unitcodeautogenerateids++;
     $('.activedclass-'+countryByCount).text("active");
     $(".postal-code", clone1).on('input', function (event) {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
 
 }
-
-//Auto Generate Unit Code------------------------------------------------------------------------------------------
-function autoGenerateUnitCode(classval){
-    var className = classval.split(' ');
-    var groupId = $("#group-select :selected").val();
-    var groupname = $.trim($("#group-select :Selected").text());    
-    var get3Chars = groupname.slice(0, 3);  
-    var getLastNumber = className[1].split('-').pop();
-    var countryname = $('.country-'+getLastNumber).val();
-    var totUnitcode = $('.unit-code-'+getLastNumber).length
-    if($('.'+className[1]).prop("checked") == true){
-        for(var i = 1;i <= totUnitcode; i++){
-            $('.unit-code-'+getLastNumber+'-'+i).val(get3Chars+unitcodecount);  
-            unitcodecount++;
-        }       
+function autoGenerateUnitCode(){
+    unitcodeautogenerateids = 1001;
+    var sno = [];
+    if($('.unitcode-checkbox').is(':checked')){
+        console.log("checked");
+        var groupname = $.trim($("#group-select :Selected").text());   
+        get2CharsofGroup = groupname.slice(0, 2);  
+        //var numItems = $('.unit-code').length;
+        var flag = 0;
+        $(".unit-code").each(function(i){
+            if ($(this).val() == "")
+                flag++;
+        });
+        for (var i = 0; i < flag; i++){
+            console.log(flag+"==="+unitcodeautogenerateids);
+            sno.push(get2CharsofGroup+unitcodeautogenerateids);
+            unitcodeautogenerateids++;
+        }   
+        $(".unit-code").each(function(i){
+            $(this).val(sno[i]);
+            $(this).attr("readonly", "readonly");
+        });
     }
-    if($('.'+className[1]).prop("checked") == false){
-        $('.unit-code-'+getLastNumber).val('');
+    else{
+        $('.unit-code').val('');
+        $(".unit-code").removeAttr("readonly"); 
     }
-
 }
+
+// function autoGenerateUnitCode(classval){
+//     var className = classval.split(' ');
+//     var groupId = $("#group-select :selected").val();
+//     var groupname = $.trim($("#group-select :Selected").text());    
+//     var get3Chars = groupname.slice(0, 3);  
+//     var getLastNumber = className[1].split('-').pop();
+//     var countryname = $('.country-'+getLastNumber).val();
+//     var totUnitcode = $('.unit-code-'+getLastNumber).length
+//     if($('.'+className[1]).prop("checked") == true){
+//         for(var i = 1;i <= totUnitcode; i++){
+//             $('.unit-code-'+getLastNumber+'-'+i).val(get3Chars+unitcodecount);  
+//             unitcodecount++;
+//         }       
+//     }
+//     if($('.'+className[1]).prop("checked") == false){
+//         $('.unit-code-'+getLastNumber).val('');
+//     }
+
+// }
 function loadglevelsupdate(countryid, lastClass){
     if(countryid == ''){
         displayMessage('Enter Country');
@@ -430,6 +461,7 @@ function loadglevelsupdate(countryid, lastClass){
         }   
     }
 }
+
 //Load Geography Levels -------------------------------------------------------------------------------------------
 function loadglevels(classval){
     var lastClass = classval.split(' ').pop();
@@ -616,6 +648,7 @@ function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divis
     $('.domain-'+countryByCount+'-'+1).val(domainsListArray);
     $('.domain-selectbox-view'+countryByCount+'-'+1).val(domainsListArray.length+" Selected");
     $('.activedclass-'+countryByCount+'-'+1).text("active");
+    unitcodeautogenerateids++;
     if(units != ''){
         var lastClassvalglobal = 2;
         var tbodyclassname = "tbody-unit-"+countryByCount;
@@ -625,6 +658,7 @@ function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divis
             lastClassvalglobal++;
         }
     }
+
 }
 
 function addUnitRowUpdate(clientunitId, businessgroupId, legalEntityId, divisionId, unitid, tbodyclassname, lastClassval, countval, unitlist, countryid){   
@@ -650,7 +684,8 @@ function addUnitRowUpdate(clientunitId, businessgroupId, legalEntityId, division
     $('.ul-domain-list', clone1).addClass('ul-domain-list-'+countval+'-'+lastClassval);
     $('.activedclass', clone1).addClass('activedclass-'+countval+'-'+lastClassval);   
 
-    $('.'+tbodyclassname).append(clone1);             
+    $('.'+tbodyclassname).append(clone1);
+    unitcodeautogenerateids++;            
     $(".postal-code", clone1).on('input', function (event) {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
