@@ -70,7 +70,7 @@
                 <Select id="businessgroup-select" class="input-box" onchange="loadLegalEntity();">
                   <option value="">Select</option>
                 </Select>
-                <input id="businessgroup-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Business Group Name">
+                <input id="businessgroup-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Business Group Name" maxlength="100">
                 <span style="font-size:10px"><a href="#" id="businessgroup-new" onclick="businessGroupExistingChecking('New')">New</a><a href="#" id="businessgroup-existing" style="display:none;" onclick="businessGroupExistingChecking('Cancel')">Cancel</a></span> </div>
               </div>
             </div>
@@ -81,7 +81,7 @@
                   <Select id="entity-select" class="input-box" onchange="loadDivision(this.value);">
                     <option value="">Select</option>
                   </Select>
-                  <input id="entity-text" type="text" class="input-box" style="width:190px;display:none" placeholder="Legal Entity Name">
+                  <input id="entity-text" type="text" class="input-box" style="width:190px;display:none" placeholder="Legal Entity Name" maxlength="100">
                   <span style="font-size:10px"><a href="#" id="entity-new" onclick="legalEntityExistingChecking('New')">New</a><a href="#" id="entity-existing" style="display:none;" onclick="legalEntityExistingChecking('Cancel')">Cancel</a></span> </div>
                 </div>
                 <div class="input-row">
@@ -90,7 +90,7 @@
                     <Select id="division-select" class="input-box">
                       <option value="">Select</option>
                     </Select>
-                    <input id="division-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Division Name">
+                    <input id="division-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Division Name"maxlength="100" >
                     <span style="font-size:10px"><a href="#" id="division-new" onclick="divisionExistingChecking('New')">New</a><a href="#" id="division-existing" style="display:none;" onclick="divisionExistingChecking('Cancel')">Cancel</a></span> </div>
                   </div>
                 </div>
@@ -156,7 +156,7 @@
         <span class="full-location-list"></span></td>
         <td>
         <input type="hidden" class="unit-id">
-        <input type="text" class="input-box unit-code" maxlength="20" ></td>
+        <input type="text" class="input-box unit-code" maxlength="50" ></td>
         <td><input type="text" class="input-box unit-name" maxlength="50"  ></td>
         <td><select class="input-box industry" onfocus="industrytype(this.className);" >
         </select>
@@ -194,14 +194,14 @@
         </div>
         <span class="full-location-list"></span></td>
         <td>
-        <input type="hidden" class="unit-id"><input type="text" class="input-box unit-code"  ></td>
-        <td><input type="text" class="input-box unit-name"  ></td>
+        <input type="hidden" class="unit-id"><input type="text" class="input-box unit-code" maxlength="50"  ></td>
+        <td><input type="text" class="input-box unit-name"  maxlength="50" ></td>
         <td><select class="input-box industry" onfocus="industrytype(this.className);">
           <option value="">Select</option>
         </select>
         </td>
-        <td><input type="text" class="input-box unit-address" /></td>
-        <td><input type="text" class="input-box postal-code" ></td>
+        <td><input type="text" class="input-box unit-address"  maxlength="250" /></td>
+        <td><input type="text" class="input-box postal-code" maxlength="11" ></td>
         <td> <input type="text" class="input-box icon-autocomplete domainselected" value="" readonly="readonly" onclick="loaddomain(this.className)">
         <input type="hidden" class="domain">
         <div class="domain-selectbox-view ac-selectbox" style="display:none;">
