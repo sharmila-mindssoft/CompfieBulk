@@ -2045,11 +2045,11 @@ class KnowledgeDatabase(Database):
     ) :
         qry_where = ""
         if industry_id is not None :
-            qry_where = "AND t2.industry_id = %s " % (industry_id)
+            qry_where += "AND t2.industry_id = %s " % (industry_id)
         if geography_id is not None :
-            qry_where = "AND t3.geography_id = %s " % (geography_id)
+            qry_where += "AND t3.geography_id = %s " % (geography_id)
         if statutory_nature_id is not None :
-            qry_where = "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
+            qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
 
         q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
@@ -2083,6 +2083,7 @@ class KnowledgeDatabase(Database):
                 country_id, domain_id,
                 qry_where
             )
+        print q
         rows = self.select_all(q)
         columns = [
             "statutory_mapping_id", "country_id",
