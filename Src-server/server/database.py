@@ -1974,7 +1974,7 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return self.return_statutory_mappings(result)
 
-    def return_statutory_mappings(self, data):
+    def return_statutory_mappings(self, data, is_report=None):
         if bool(self.statutory_parent_mapping) is False :
             self.get_statutory_master()
         if bool(self.geography_parent_mapping) is False :
@@ -1991,7 +1991,7 @@ class KnowledgeDatabase(Database):
             # compliance_id = int(d["compliance_id"])
 
             compliances_data = self.get_compliance_by_id(
-                compliance_ids, is_active=True
+                compliance_ids, is_report
             )
             compliance_names = compliances_data[0]
             compliances = compliances_data[1]
@@ -2095,7 +2095,7 @@ class KnowledgeDatabase(Database):
         result = []
         if rows :
             result = self.convert_to_dict(rows, columns)
-        report_data = self.return_statutory_mappings(result)
+        report_data = self.return_statutory_mappings(result, is_report=True)
 
         return self.return_knowledge_report(
             country_id, domain_id, report_data
@@ -2146,19 +2146,28 @@ class KnowledgeDatabase(Database):
     # compliance
     #
     def get_compliance_by_id(self, compliance_id, is_active=None):
+        q = ""
         if is_active is None :
-            is_active = 1
+            if type(compliance_id) == IntType :
+                q = " WHERE t1.compliance_id = %s" % (
+                    compliance_id
+                )
+            else :
+                q = " WHERE t1.compliance_id in %s" % (
+                    str(tuple(compliance_id))
+                )
+
         else :
             is_active = int(is_active)
 
-        if type(compliance_id) == IntType :
-            q = " WHERE t1.is_active = %s AND t1.compliance_id = %s" % (
-                is_active, compliance_id
-            )
-        else :
-            q = " WHERE t1.is_active = %s AND t1.compliance_id in %s" % (
-                is_active, str(tuple(compliance_id))
-            )
+            if type(compliance_id) == IntType :
+                q = " WHERE t1.is_active = %s AND t1.compliance_id = %s" % (
+                    is_active, compliance_id
+                )
+            else :
+                q = " WHERE t1.is_active = %s AND t1.compliance_id in %s" % (
+                    is_active, str(tuple(compliance_id))
+                )
 
         qry = "SELECT t1.compliance_id, t1.statutory_provision, \
             t1.compliance_task, t1.compliance_description, \
