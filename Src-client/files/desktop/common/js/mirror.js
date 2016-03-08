@@ -92,7 +92,12 @@ function initMirror() {
 
     function getUserMenu(){
         var info = getUserInfo();
-        return info["menu"]["menus"];
+        if (info != null){
+            return info["menu"]["menus"];    
+        }else{
+            console.log(window.localStorage["login_url"])
+            window.location.href = window.localStorage["login_url"];
+        } 
     }
 
     function getEmployeeName(){
@@ -139,8 +144,10 @@ function initMirror() {
                     callback(null, response);
                 }
                 else if (status == "InvalidSessionToken") {
+                    login_url = "/knowledge/login"
+                    window.localStorage["login_url"] = login_url;
                     clearSession();
-                    window.location.href = "/knowledge/login";
+                    window.location.href = login_url;
                 }
                 else {
                     callback(status, null)
@@ -243,7 +250,10 @@ function initMirror() {
                 //     callback(status, null);
                 // }
                 clearSession();
-                window.location.href = "/knowledge/login";
+                login_url = "/knowledge/login"
+                window.localStorage["login_url"] = login_url;
+                window.location.href = login_url;
+
             }
         )
     }

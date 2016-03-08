@@ -378,7 +378,7 @@ KNOWLEDGE_DB_PASSWORD = "123456"
 KNOWLEDGE_DATABASE_NAME = "mirror_knowledge"
 
 CLIENT_URL = "http://localhost:8080/"
-KNOWLEDGE_URL = "http://localhost:8082/knowledge/"
+KNOWLEDGE_URL = "http://localhost:8082/"
 
 
 # mindssoft aws
@@ -388,5 +388,5 @@ KNOWLEDGE_URL = "http://localhost:8082/knowledge/"
 # KNOWLEDGE_DB_PASSWORD = "Msft!@#$%^"
 # KNOWLEDGE_DATABASE_NAME = "mirror_knowledge"
 
-# CLIENT_URL = "http://52.11.242.90:8080/"
-# KNOWLEDGE_URL = "http://52.11.242.90:8082/knowledge/"
+# CLIENT_URL = "http://52.11.242.90:8082/"
+# KNOWLEDGE_URL = "http://52.11.242.90:8080/"
