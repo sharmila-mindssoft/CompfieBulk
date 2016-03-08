@@ -85,8 +85,16 @@ class EmailHandler(Email):
         #     "ResetLink" : reset_link
         # }
         # template_name = self.get_template("task_completed")
+        user_name = db.get_user_name_by_id(user_id)
         subject = "Reset Password"
-        message = ""
+        message = '''
+            Dear %s, <br> \
+            <p>Use the following link to reset your password</p>\
+            <p>%s</p>\
+            <p> Thanks & Regards, <br>\
+            Compfie Support Team''' % (
+            user_name, reset_link
+        )
 
         self.send_email(receiver, subject, message, cc=None)
         # self.send_mail(template_name, email_to, context)
@@ -96,9 +104,21 @@ class EmailHandler(Email):
         self, short_name, receiver, password
     ):
         subject = "Account Created"
-        message = "Dear Client, Your Compfie account has been created.\
-        Your Credentials are <br> Url: '%slogin/%s' <br> Username: %s <br> password: %s" % (
-        	CLIENT_URL, short_name, receiver, password
+        # message = "Dear Client, Your Compfie account has been created.\
+        # Your Credentials are <br> Url: '%slogin/%s' <br> Username: %s <br> password: %s" % (
+        # 	CLIENT_URL, short_name, receiver, password
+        # )
+        message = '''
+            Dear Client, <br> \
+            <p>Your Compfie account has been created. </p>\
+            <p>Your login Credentials are: <br> \
+            <p>Url: <a href='%slogin/%s'>%slogin/%s</a> \
+            <br>Username: %s \
+            <br>password: %s </p>\
+            <p> Thanks & Regards, <br>\
+            Compfie Support Team''' % (
+            CLIENT_URL, short_name, CLIENT_URL, short_name, 
+            receiver, password
         )
         self.send_email(receiver, subject, message)
 
@@ -106,9 +126,21 @@ class EmailHandler(Email):
         self, short_name, receiver, password, employee_name, employee_code
     ):
         subject = "Account Created"
-        message = "Dear %s, Your Compfie account has been created. Your login credentials are: %s\
-        Url: '%slogin/%s' <br> Username: %s <br> password: %s" % (
-        	CLIENT_URL, employee_name, employee_code, short_name, receiver, password
+        # message = "Dear %s, Your Compfie account has been created. Your login credentials are: %s\
+        # Url: '%slogin/%s' <br> Username: %s <br> password: %s" % (
+        # 	CLIENT_URL, employee_name, employee_code, short_name, receiver, password
+        # )
+        message = '''
+            Dear %s, <br> \
+            <p>Your Compfie account has been created. </p>\
+            <p>Your login Credentials are: <br> \
+            <p>Url: <a href='%slogin/%s'>%slogin/%s</a> \
+            <br>Username: %s \
+            <br>password: %s </p>\
+            <p> Thanks & Regards, <br>\
+            Compfie Support Team''' % (
+            employee_name, CLIENT_URL, short_name, CLIENT_URL, short_name, 
+            receiver, password
         )
         self.send_email(receiver, subject, message)
 
