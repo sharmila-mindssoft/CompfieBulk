@@ -10,7 +10,9 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_20, parse_structure_CustomTextType_50,
     parse_structure_VariantType_clientadminsettings_Request,
     parse_structure_OptionalType_CustomTextType_250,
-    parse_structure_Float
+    parse_structure_Float,
+    parse_structure_OptionalType_CustomTextType_20,
+    parse_structure_OptionalType_CustomTextType_100
 )
 from protocol.to_structure import (
     to_structure_CustomIntegerType_1_7,
@@ -23,7 +25,9 @@ from protocol.to_structure import (
     to_structure_VariantType_clientadminsettings_Request,
     to_structure_RecordType_clientadminsettings_PROFILE_DETAIL,
     to_structure_OptionalType_CustomTextType_250,
-    to_structure_Float
+    to_structure_Float,
+    to_structure_OptionalType_CustomTextType_20,
+    to_structure_OptionalType_CustomTextType_100
 )
 
 #
@@ -275,13 +279,13 @@ class LICENCE_HOLDER(object):
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         user_name = data.get("user_name")
-        user_name = parse_structure_CustomTextType_100(user_name)
+        user_name = parse_structure_CustomTextType_250(user_name)
         email_id = data.get("email_id")
         email_id = parse_structure_CustomTextType_100(email_id)
         contact_no = data.get("contact_no")
-        contact_no = parse_structure_CustomTextType_20(contact_no)
+        contact_no = parse_structure_OptionalType_CustomTextType_20(contact_no)
         seating_unit_name = data.get("seating_unit_name")
-        seating_unit_name = parse_structure_CustomTextType_100(seating_unit_name)
+        seating_unit_name = parse_structure_OptionalType_CustomTextType_100(seating_unit_name)
         address = data.get("address")
         address = parse_structure_OptionalType_CustomTextType_250(address)
         return LICENCE_HOLDER(user_id, user_name, email_id, contact_no, seating_unit_name, address)
@@ -289,10 +293,10 @@ class LICENCE_HOLDER(object):
     def to_structure(self):
         return {
             "user_id": to_structure_SignedIntegerType_8(self.user_id),
-            "user_name": to_structure_CustomTextType_100(self.user_name),
+            "user_name": to_structure_CustomTextType_250(self.user_name),
             "email_id": to_structure_CustomTextType_100(self.email_id),
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "seating_unit_name": to_structure_CustomTextType_100(self.seating_unit_name),
+            "contact_no": to_structure_OptionalType_CustomTextType_20(self.contact_no),
+            "seating_unit_name": to_structure_OptionalType_CustomTextType_100(self.seating_unit_name),
             "address": to_structure_OptionalType_CustomTextType_250(self.address)
         }
 

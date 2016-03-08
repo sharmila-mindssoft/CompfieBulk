@@ -4743,6 +4743,15 @@ class ClientDatabase(Database):
     ):
         contract_from = self.datetime_to_string(contract_from)
         contract_to = self.datetime_to_string(contract_to)
+
+        admin_columns = "username"
+        admin_condition = "1"
+        result = self.get_data(
+            self.tblAdmin, admin_columns, admin_condition
+        )
+        admin_email = result[0][0]
+        is_admin_is_a_user= False
+
         licence_holder_rows = self.get_licence_holder_details(client_id)
         licence_holders = []
         for row in licence_holder_rows:
@@ -4759,6 +4768,9 @@ class ClientDatabase(Database):
                 unit_name = "%s - %s" % (row[6], row[7])
             user_id = row[0]
             email_id = row[1]
+            if email_id == admin_email:
+                is_admin_is_a_user = True
+                employee_name = "Administrator: %s" % employee_name
             contact_no = row[4]
             is_admin = row[5]
             address = row[8]
@@ -4767,6 +4779,12 @@ class ClientDatabase(Database):
                 clientadminsettings.LICENCE_HOLDER(
                     user_id, employee_name, email_id, contact_no,
                     unit_name, address
+                ))
+        if not is_admin_is_a_user:
+            licence_holders.append(
+                clientadminsettings.LICENCE_HOLDER(
+                    0, "Administrator", admin_email, None,
+                    None, None
                 ))
         remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
         profile_detail = clientadminsettings.PROFILE_DETAIL(
