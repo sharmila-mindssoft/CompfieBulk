@@ -785,6 +785,7 @@ textarea.input-box{
 }
 .icon-autocomplete {
 	background: #dadada url(../images/auto-complete-arrow.png) no-repeat 95% center;
+	padding-right: 1.5em;
 }
 .filter-text-box {
 	width: 95%;
@@ -1476,6 +1477,8 @@ list-style-type:none; line-height:25px;
   position: absolute;
   padding-left: 0em;
   background: #ffffff;
+  max-height: 200px;
+  overflow-y: scroll;
 }
 .ac-textbox ul li {
   font-size: 0.8em;
@@ -2101,4 +2104,15 @@ cursor: pointer;
 	text-align: right;
 	font-size: 0.8em;
 	color: #f00;
+}
+.ac-selectbox ul li.deactivate{
+	opacity: 0.7 !important;
+}
+
+.tbody-compliance .table-row:nth-child(4n+1){
+  border-top:1px dotted #ccc; 
+}
+
+.tbody-compliance .table-row:nth-child(4n){
+  border-bottom:1px dotted #ccc;
 }

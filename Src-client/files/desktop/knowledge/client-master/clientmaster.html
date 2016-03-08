@@ -1,7 +1,7 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
 <link href="/files/desktop/common/css/jquery-ui/jquery-ui.css" rel="stylesheet">
-  <div class="content-container width40" id="clientgroup-view">
+  <div class="content-container width50" id="clientgroup-view">
     <div class="content-area">
       <h1>Clients</h1>
       <div class="filters-and-search">
@@ -13,8 +13,8 @@
           <tr align="left">
             <th align="center">#</th>
             <th>Group</th>
-            <th align="center">Edit</th>
-            <th align="center">Status</th>
+            <th align="center" style="width: 15%" >Edit</th>
+            <th align="center" style="width: 15%">Status</th>
           </tr>
           <tr>
             <td align="center"></td>
@@ -49,7 +49,7 @@
               <div class="single-column-field-label">Group:<span class="mandatory">*</span></div>
               <div class="field-input">
                 <input id="clientgroup-id" type="hidden" value="">
-                <input id="clientgroup-name" type="text" class="input-box"  value="" >
+                <input id="clientgroup-name" type="text" class="input-box"  value="" maxlength="50" >
               </div>
             </div>
             <div class="input-row">
