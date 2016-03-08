@@ -172,14 +172,14 @@ def process_save_statutory_level(db, request_frame, user_id):
     if len([p for p in level_positions if level_positions.count(p) > 1]) > 1 :
         return knowledgemaster.DuplicateStatutoryLevelsExists()
 
-    is_duplicate = db.check_duplicate_levels(country_id, domain_id, levels)
-    if is_duplicate :
-        return knowledgemaster.LevelIdCannotBeNull(result)
-    else :
-        db.save_statutory_levels(
-            country_id, domain_id, levels, user_id
-        )
-        return knowledgemaster.SaveStatutoryLevelSuccess()
+    # is_duplicate = db.check_duplicate_levels(country_id, domain_id, levels)
+    # if is_duplicate :
+    #     return knowledgemaster.LevelIdCannotBeNull(result)
+
+    db.save_statutory_levels(
+        country_id, domain_id, levels, user_id
+    )
+    return knowledgemaster.SaveStatutoryLevelSuccess()
 
 
 # geography level
@@ -202,15 +202,14 @@ def process_save_geography_level(db, request_frame, user_id):
     if len([p for p in level_positions if level_positions.count(p) > 1]) > 1 :
         return knowledgemaster.DuplicateGeographyLevelsExists()
 
-    is_duplicate = db.check_duplicate_gepgrahy_levels(country_id, levels)
-    if is_duplicate :
-        return knowledgemaster.LevelIdCannotBeNull(is_duplicate)
+    # is_duplicate = db.check_duplicate_gepgrahy_levels(country_id, levels)
+    # if is_duplicate :
+    #     return knowledgemaster.LevelIdCannotBeNull(is_duplicate)
 
-    else :
-        db.save_geography_levels(
-            country_id, levels, user_id
-        )
-        return knowledgemaster.SaveGeographyLevelSuccess()
+    db.save_geography_levels(
+        country_id, levels, user_id
+    )
+    return knowledgemaster.SaveGeographyLevelSuccess()
 
 
 

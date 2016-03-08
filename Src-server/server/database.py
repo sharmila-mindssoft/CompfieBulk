@@ -2254,6 +2254,41 @@ class KnowledgeDatabase(Database):
         if os.path.exists(file_path) :
             os.remove(file_path)
 
+    def check_duplicate_statutory_mapping(self, data) :
+        country_id = data.country_id
+        domain_id = data.domain_id
+        statutory_nature = data.statutory_nature_id
+        industry_id = data.industry_ids
+        if len(industry_id) == 1  :
+            industry_id = "(%s)" % (industry_id[0])
+        else :
+            industry_id = str(tuple(industry_id))
+        statutory_id = data.statutory_ids
+        if len(statutory_id) == 1 :
+            statutory_id = "(%s)" % (statutory_id[0])
+        else :
+            statutory_id = str(tuple(industry_id))
+
+        q = "SELECT distinct t1.statutory_mapping_id from tbl_statutory_mappings t1 \
+            inner join tbl_statutory_statutories t2 on \
+            t1.statutory_mapping_id = t2.statutory_mapping_id \
+            inner join tbl_statutory_industry t3 on \
+            t1.statutory_mapping_id = t3.statutory_mapping_id \
+            WHERE t1.country_id = %s AND t1.domain_id = %s AND \
+            t1.statutory_nature_id = %s AND t2.statutory_id in %s AND \
+            t3.industry_id in %s" % (
+                country_id,
+                domain_id,
+                statutory_nature,
+                statutory_id,
+                industry_id
+            )
+        row = self.select_one(q)
+        if row :
+            return row[0]
+        else :
+            return None
+
     def save_statutory_mapping(self, data, created_by) :
         country_id = data.country_id
         domain_id = data.domain_id
@@ -5530,7 +5565,7 @@ class KnowledgeDatabase(Database):
         )
         if rows[0][0] > 0:
             return True
-        else: 
+        else:
             return False
 
     def create_new_admin(self, new_admin_id, client_id, session_user):
