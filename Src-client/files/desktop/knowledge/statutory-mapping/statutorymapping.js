@@ -1527,7 +1527,7 @@ function load_edit_selectdomain_master(sm_countryid,sm_domainid,sm_industryids,s
 //edit geographymapping data dynamically
 function edit_geography(country,geographyids_edit){
   var geographyids=geographyids_edit;
-  alert(geographyids)
+  //alert(geographyids)
   for(var i=0; i<geographyids.length;i++){
     var geographyList = geographiesList[country];
     for(glist in geographyList){
@@ -1536,7 +1536,7 @@ function edit_geography(country,geographyids_edit){
         var level = geographyList[glist]["level_position"];
       }
     }
-    alert("parentids:"+parentids)
+    //alert("parentids:"+parentids)
     for(var j=0; j<parentids.length; j++){
       var geo_id = parentids[j];;
       var parent_id = 0;
