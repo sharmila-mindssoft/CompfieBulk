@@ -38,8 +38,9 @@ function displayMessage(message) {
 }
 
 function resetvalues(){
-  $('#single_statutory_date').val('');
-  $('#multiple_statutory_date1').val('');
+  $('.sdate').val('');
+  /*$('#single_statutory_date').val('');
+  //$('#multiple_statutory_date1').val('');
   $('#multiple_statutory_date2').val('');
   $('#multiple_statutory_date3').val('');
   $('#multiple_statutory_date4').val('');
@@ -47,7 +48,7 @@ function resetvalues(){
   $('#multiple_statutory_date6').val('');
 
   $('#single_statutory_month').val('');
-  $('#multiple_statutory_month1').val('');
+  //$('#multiple_statutory_month1').val('');
   $('#multiple_statutory_month2').val('');
   $('#multiple_statutory_month3').val('');
   $('#multiple_statutory_month4').val('');
@@ -55,12 +56,12 @@ function resetvalues(){
   $('#multiple_statutory_month6').val('');
 
   $('#single_triggerbefore').val('');
-  $('#multiple_triggerbefore1').val('');
+  //$('#multiple_triggerbefore1').val('');
   $('#multiple_triggerbefore2').val('');
   $('#multiple_triggerbefore3').val('');
   $('#multiple_triggerbefore4').val('');
   $('#multiple_triggerbefore5').val('');
-  $('#multiple_triggerbefore6').val('');
+  $('#multiple_triggerbefore6').val('');*/
 }
 
 function load_selectdomain_master(){
@@ -831,14 +832,16 @@ $("#temp_addcompliance").click(function() {
             var rep_every = parseInt($('#repeats_every').val());
             var maxCount = 0;
 
-            if(rep_every == 1 || rep_every == 12){
-              maxCount = 1;
+            if(rep_every == 1){
+              maxCount = 12;
             }else if (rep_every == 2){
               maxCount = 6;
             }else if (rep_every == 3){
               maxCount = 4;
             }else if (rep_every == 4){
               maxCount = 3;
+            }else if (rep_every == 12){
+              maxCount = 1;
             }else{
               maxCount = 2;
             }
@@ -1004,7 +1007,7 @@ function temp_editcompliance(edit_id){
       $('#multiple_statutory_month'+i).val(statutory_dates[i-1]["statutory_month"]);
       $('#multiple_triggerbefore'+i).val(statutory_dates[i-1]["trigger_before_days"]);
       }
-      for(var i=statutory_dates+1;i<=6;i++){
+      for(var i=statutory_dates+1;i<=12;i++){
       $('#multiple_statutory_date'+i).val('');
       $('#multiple_statutory_month'+i).val('');
       $('#multiple_triggerbefore'+i).val('');
@@ -1560,41 +1563,55 @@ function load_stautorydates(){
   var modResult = 12 % rep_every;
 
   if(modResult == 0){
-    if(rep_every == 1 || rep_every == 12){
-    $('.input-row1').show();
-    $('.input-row2').hide();
-    $('.input-row3').hide();
-    $('.input-row4').hide();
-    $('.input-row5').hide();
-    $('.input-row6').hide();
-  }else if (rep_every == 2){
-    $('.input-row1').show();
-    $('.input-row2').show();
-    $('.input-row3').show();
-    $('.input-row4').show();
-    $('.input-row5').show();
-    $('.input-row6').show();
-  }else if (rep_every == 3){
-    $('.input-row1').show();
-    $('.input-row2').show();
-    $('.input-row3').show();
-    $('.input-row4').show();
-    $('.input-row5').hide();
-    $('.input-row6').hide();
-  }else if (rep_every == 4){
-    $('.input-row1').show();
-    $('.input-row2').show();
-    $('.input-row3').show();
-    $('.input-row4').hide();
-    $('.input-row5').hide();
-    $('.input-row6').hide();
-  }else{
-    $('.input-row1').show();
-    $('.input-row2').show();
-    $('.input-row3').hide();
-    $('.input-row4').hide();
-    $('.input-row5').hide();
-    $('.input-row6').hide();
+    if(rep_every == 1){
+      $('.input-row1').show();
+      $('.input-row2').show();
+      $('.input-row3').show();
+      $('.input-row4').show();
+      $('.input-row5').show();
+      $('.input-row6').show();
+      $('.input-row7').show();
+      $('.input-row8').show();
+      $('.input-row9').show();
+      $('.input-row10').show();
+      $('.input-row11').show();
+      $('.input-row12').show();
+    }else if (rep_every == 2){
+      $('.input-row1').show();
+      $('.input-row2').show();
+      $('.input-row3').show();
+      $('.input-row4').show();
+      $('.input-row5').show();
+      $('.input-row6').show();
+      for(i=7; i<=12; i++){
+        $('.input-row'+i).hide();
+      }
+    }else if (rep_every == 3){
+      $('.input-row1').show();
+      $('.input-row2').show();
+      $('.input-row3').show();
+      $('.input-row4').show();
+      for(i=5; i<=12; i++){
+        $('.input-row'+i).hide();
+      }
+    }else if (rep_every == 4){
+      $('.input-row1').show();
+      $('.input-row2').show();
+      $('.input-row3').show();
+      for(i=4; i<=12; i++){
+        $('.input-row'+i).hide();
+      }
+    }else if(rep_every == 12){
+      $('.input-row1').show();
+      for(i=2; i<=12; i++){
+        $('.input-row'+i).hide();
+      }
+    }else{
+      $('.input-row1').show();
+      $('.input-row2').show();
+      for(i=3; i<=12; i++){
+        $('.input-row'+i).hide();
+      }
   }
   }else{
     $('#single_statutory_date').show();
@@ -1721,7 +1738,7 @@ $(document).ready(function(){
         $("#single_statutory_date").append(option);
     }
 
-    for(var j=1; j<=6; j++){
+    for(var j=1; j<=12; j++){
     $("#multiple_statutory_date"+j).empty();
     var defaultoption = $("<option></option>");
     defaultoption.val("");
@@ -1976,6 +1993,63 @@ function load_data(){
       var selectedMonth = $('#multiple_statutory_month6').val();
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date6').val(monthDate);
+    }
+
+  });
+
+  $('#multiple_statutory_month7').change(function() {
+    alert("enter")
+    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+      var selectedMonth = $('#multiple_statutory_month7').val();
+      alert(selectedMonth)
+      var monthDate = load_date(selectedMonth);
+      $('#multiple_statutory_date7').val(monthDate);
+    }
+
+  });
+
+
+$('#multiple_statutory_month8').change(function() {
+    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+      var selectedMonth = $('#multiple_statutory_month8').val();
+      var monthDate = load_date(selectedMonth);
+      $('#multiple_statutory_date8').val(monthDate);
+    }
+
+  });
+
+$('#multiple_statutory_month9').change(function() {
+    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+      var selectedMonth = $('#multiple_statutory_month9').val();
+      var monthDate = load_date(selectedMonth);
+      $('#multiple_statutory_date9').val(monthDate);
+    }
+
+  });
+
+$('#multiple_statutory_month10').change(function() {
+    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+      var selectedMonth = $('#multiple_statutory_month10').val();
+      var monthDate = load_date(selectedMonth);
+      $('#multiple_statutory_date10').val(monthDate);
+    }
+
+  });
+
+$('#multiple_statutory_month11').change(function() {
+    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+      var selectedMonth = $('#multiple_statutory_month11').val();
+      var monthDate = load_date(selectedMonth);
+      $('#multiple_statutory_date11').val(monthDate);
+    }
+
+  });
+
+$('#multiple_statutory_month12').change(function() {
+    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+      var selectedMonth = $('#multiple_statutory_month12').val();
+      var monthDate = load_date(selectedMonth);
+      $('#multiple_statutory_date12').val(monthDate);
     }
 
   });
