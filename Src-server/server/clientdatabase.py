@@ -380,10 +380,13 @@ class ClientDatabase(Database):
     def return_legal_entities(self, legal_entities):
         results = []
         for legal_entity in legal_entities :
+            b_group_id = None
+            if legal_entity["business_group_id"] > 0:
+                b_group_id = int(legal_entity["business_group_id"])
             results.append(core.ClientLegalEntity(
                 legal_entity["legal_entity_id"],
                 legal_entity["legal_entity_name"],
-                legal_entity["business_group_id"]
+                b_group_id
             ))
         return results
 
@@ -468,10 +471,16 @@ class ClientDatabase(Database):
             )
             for unit in rows:
                 domain_ids_list = [int(x) for x in unit[7].split(",")]
+                division_id = None
+                b_group_id = None
+                if unit[3] > 0 :
+                    division_id = unit[3]
+                if unit[5] > 0 :
+                    b_group_id = unit[5]
                 units.append(
                     clienttransactions.PastRecordUnits(
-                        unit[0], unit[1], unit[2],unit[3], unit[4],
-                        unit[5], unit[6], domain_ids_list
+                        unit[0], unit[1], unit[2], division_id, unit[4],
+                        b_group_id, unit[6], domain_ids_list
                     )
                 )
             industry_wise_units.append(clienttransactions.IndustryWiseUnits(industry_name, units))
@@ -480,9 +489,15 @@ class ClientDatabase(Database):
     def return_units(self, units):
         results = []
         for unit in units :
+            division_id = None
+            b_group_id = None
+            if unit["division_id"] > 0 :
+                division_id = unit["division_id"]
+            if unit["business_group_id"] > 0 :
+                b_group_id = unit["business_group_id"]
             results.append(core.ClientUnit(
-                unit["unit_id"], unit["division_id"], unit["legal_entity_id"],
-                unit["business_group_id"], unit["unit_code"],
+                unit["unit_id"], division_id, unit["legal_entity_id"],
+                b_group_id, unit["unit_code"],
                 unit["unit_name"], unit["unit_address"], bool(unit["is_active"])
             ))
         return results
@@ -495,7 +510,6 @@ class ClientDatabase(Database):
             VALUES (%s, %s, %s, '%s', '%s')" % (
                 activityId, user_id, form_id, action, created_on
             )
-        print query
         self.execute(query)
         return True
 
@@ -803,11 +817,11 @@ class ClientDatabase(Database):
         db_con.connect()
         db_con.begin()
         q = "UPDATE tbl_client_users set \
-        email_id ='{}', employee_name = '{}', employee_code = '{}', \
+        employee_name = '{}', employee_code = '{}', \
         contact_no = '{}', seating_unit_id = '{}' where client_id ='{}' \
         and user_id = '{}'".format(
-             user.email_id, user.employee_name, user.employee_code, user.contact_no,
-             user.seating_unit_id, client_id, user_id
+             user.employee_name, user.employee_code, user.contact_no,
+             user.seating_unit_id, client_id, user.user_id
         )
         db_con.execute(q)
         db_con.commit()
@@ -1746,7 +1760,7 @@ class ClientDatabase(Database):
                                 )
                             )
                         else:
-                            print "entering into else"
+                            pass
                 for level_1_statutory_name, compliances in level_1_statutory_wise_compliances.iteritems():
                     if len(compliances) > 0:
                         statutory_wise_compliances.append(
@@ -2065,21 +2079,15 @@ class ClientDatabase(Database):
                 action = None
                 if self.is_two_levels_of_approval():
                     if concurred_by_id == session_user:
-                        print "concurrence user"
                         if concurrence_status is True:
-                            print "already concurred"
                             continue
                         else:
-                            print "going to concur"
                             action = "Concur"
                     elif concurrence_status is True:
-                        print "Approval user and already concurred"
                         action = "Approve"
                     else:
-                        print "Approval user and not concurred"
                         continue
                 elif concurred_by_id != session_user:
-                    print "approval user going to approve"
                     action = "Approve"
                 else:
                     continue
@@ -2124,17 +2132,16 @@ class ClientDatabase(Database):
 #
 
     def get_units_for_assign_compliance(self, session_user, client_id=None):
-        if session_user == 0 :
-            session_user = '%'
+        if session_user > 0 :
+            qry = ' WHERE t1.unit_id in (select distinct unit_id from tbl_user_units where user_id = %s) ' % (int(session_user))
+        else :
+            qry = ""
+
         query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, \
             t1.division_id, t1.legal_entity_id, t1.business_group_id, \
             t1.address, t1.country_id \
-            FROM tbl_units t1 \
-            INNER JOIN tbl_user_units t2 \
-            ON t1.unit_id = t2.unit_id \
-            AND t2.user_id like '%s' " % (
-                session_user
-            )
+            FROM tbl_units t1 "
+        query += qry
         rows = self.select_all(query)
         columns = [
             "unit_id", "unit_code", "unit_name",
@@ -2145,13 +2152,19 @@ class ClientDatabase(Database):
         unit_list = []
         for r in result :
             name = "%s - %s" % (r["unit_code"], r["unit_name"])
+            division_id = None
+            b_group_id = None
+            if r["division_id"] > 0 :
+                division_id = r["division_id"]
+            if r["business_group_id"] > 0 :
+                b_group_id = r["business_group_id"]
             unit_list.append(
                 clienttransactions.ASSIGN_COMPLIANCE_UNITS(
                     r["unit_id"], name,
                     r["address"],
-                    r["division_id"],
+                    division_id,
                     r["legal_entity_id"],
-                    r["business_group_id"],
+                    b_group_id,
                     r["country_id"]
                 )
             )
@@ -2179,7 +2192,6 @@ class ClientDatabase(Database):
 
         if session_user > 0 :
             query = query + where_condition
-        print query
         rows = self.select_all(query)
         columns = [
             "user_id", "employee_name", "employee_code",
@@ -2250,10 +2262,6 @@ class ClientDatabase(Database):
             ON t2.client_statutory_id = t1.client_statutory_id \
             INNER JOIN tbl_compliances t3 \
             ON t2.compliance_id = t3.compliance_id \
-            INNER JOIN tbl_compliance_frequency t4 \
-            ON t3.frequency_id = t4.frequency_id \
-            INNER JOIN tbl_user_domains t5 \
-            ON t1.domain_id = t5.domain_id \
             INNER JOIN \
             (SELECT distinct U.compliance_id, group_concat(distinct U.unit_id) units FROM  \
             (SELECT A.unit_id, A.client_statutory_id, B.compliance_id FROM tbl_client_statutories A \
@@ -2269,12 +2277,10 @@ class ClientDatabase(Database):
             AND t1.unit_id IN %s \
             AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
-            AND t3.is_active = 1 \
-            AND t5.user_id LIKE '%s'; " % (
+            AND t3.is_active = 1 " % (
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
-                session_user
             )
 
         rows = self.select_all(query)
@@ -2420,7 +2426,6 @@ class ClientDatabase(Database):
                         approval, trigger_before, due_date, validity_date,
                         int(session_user), created_on
                     )
-                print query
                 self.execute(query)
             self.update_user_units(assignee, unit_ids, client_id)
         compliance_names = json.dumps(compliance_names)
@@ -3242,9 +3247,7 @@ class ClientDatabase(Database):
 
                     escalation_years[year] = count_det
 
-        print escalation_years
         years = escalation_years.keys()
-        print years.sort()
         years.sort()
         chart_data = []
         for y in years:
@@ -3380,7 +3383,6 @@ class ClientDatabase(Database):
                 str(tuple(domain_ids)),
                 filter_type_ids
             )
-        print query
         rows = self.select_all(query)
         columns = [
             "compliance_history_id", "unit_id", "compliance_id",
@@ -4053,7 +4055,6 @@ class ClientDatabase(Database):
 
     def concur_compliance(self, compliance_history_id, remarks,
         next_due_date, validity_date, client_id):
-        print "inside concur compliance"
         columns = ["concurrence_status", "concurred_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [1, self.get_date_time(), remarks]
@@ -4096,7 +4097,6 @@ class ClientDatabase(Database):
         completion_date = rows[0][3]
         status = "Inprogress"
         due_date_parts = str(due_date).split("-")
-        print due_date_parts
         due_date = datetime.date(
             int(due_date_parts[0]), int(due_date_parts[1]), int(due_date_parts[2])
         )
@@ -4400,7 +4400,6 @@ class ClientDatabase(Database):
         return compliance_history_ids, client_statutory_ids, unit_ids
 
     def get_trend_chart(self, country_ids, domain_ids, client_id):
-        print client_id
         years = self.get_last_7_years()
         country_domain_timelines = self.get_country_domain_timelines(
             country_ids, domain_ids, years, client_id)
@@ -4418,11 +4417,8 @@ class ClientDatabase(Database):
                     condition = "due_date between '{}' and '{}'".format(
                         dates["start_date"], dates["end_date"]
                     )
-                    print columns
-                    print condition
                     compliance_history_ids = self.get_compliance_history_ids_for_trend_chart(
                         country_id, domain_id, client_id)
-                    print compliance_history_ids[0]
                     if compliance_history_ids[0] is not None :
                         condition += " and compliance_history_id in (%s)" % (compliance_history_ids[0])
                     rows = self.get_data(
@@ -6037,8 +6033,6 @@ class ClientDatabase(Database):
                     )
                 if compliance_id is not None:
                     condition = compliance_id
-                print "condition:{}".format(condition)
-                print "level_1_statutory:{}".format(level_1_statutory)
                 whereCondition = " compliance_id in (%s) and statutory_mapping like '%s%s'" % (
                         condition, level_1_statutory, "%"
                 )
@@ -7195,7 +7189,6 @@ class ClientDatabase(Database):
             rows = self.get_data(
                 self.tblAssignedCompliances, approval_columns, approval_condition
             )
-            print rows
             approved_by = rows[0][0]
             columns.append("approved_by")
             values.append(approved_by)

@@ -164,25 +164,25 @@ def process_save_statutory_level(db, request_frame, user_id):
     country_id = request_frame.country_id
     domain_id = request_frame.domain_id
     levels = request_frame.levels
-    level_names = [x.level_name for x in levels]
-    if len([n for n in level_names if level_names.count(n) >1]) > 1 :
+    level_names = [x.level_name.lower().strip() for x in levels]
+    if len([n for n in level_names if level_names.count(n.lower()) > 1]) > 1 :
         return knowledgemaster.DuplicateStatutoryLevelsExists()
 
     level_positions = [x.level_position for x in levels]
     if len([p for p in level_positions if level_positions.count(p) > 1]) > 1 :
         return knowledgemaster.DuplicateStatutoryLevelsExists()
 
-    is_duplicate = db.check_duplicate_levels(country_id, domain_id, levels)
-    if is_duplicate:
-        return knowledgemaster.LevelIdCannotBeNull(result)
-    else :
-        db.save_statutory_levels(
-            country_id, domain_id, levels, user_id
-        )
-        return knowledgemaster.SaveStatutoryLevelSuccess()
+    # is_duplicate = db.check_duplicate_levels(country_id, domain_id, levels)
+    # if is_duplicate :
+    #     return knowledgemaster.LevelIdCannotBeNull(result)
+
+    db.save_statutory_levels(
+        country_id, domain_id, levels, user_id
+    )
+    return knowledgemaster.SaveStatutoryLevelSuccess()
 
 
-#geography level
+# geography level
 def process_get_geography_level(db, user_id):
     countries = db.get_countries_for_user(user_id)
     geography_levels = db.get_geography_levels()
@@ -194,24 +194,22 @@ def process_save_geography_level(db, request_frame, user_id):
     country_id = request_frame.country_id
     levels = request_frame.levels
 
-    level_names = [x.level_name for x in levels]
-    if len([n for n in level_names if level_names.count(n) >1]) > 1 :
+    level_names = [x.level_name.lower().strip() for x in levels]
+    if len([n for n in level_names if level_names.count(n.lower()) > 1]) > 1 :
         return knowledgemaster.DuplicateGeographyLevelsExists()
 
     level_positions = [x.level_position for x in levels]
     if len([p for p in level_positions if level_positions.count(p) > 1]) > 1 :
         return knowledgemaster.DuplicateGeographyLevelsExists()
 
+    # is_duplicate = db.check_duplicate_gepgrahy_levels(country_id, levels)
+    # if is_duplicate :
+    #     return knowledgemaster.LevelIdCannotBeNull(is_duplicate)
 
-    is_duplicate = db.check_duplicate_gepgrahy_levels(country_id, levels)
-    if is_duplicate :
-        return knowledgemaster.LevelIdCannotBeNull(is_duplicate)
-
-    else :
-        db.save_geography_levels(
-            country_id, levels, user_id
-        )
-        return knowledgemaster.SaveGeographyLevelSuccess()
+    db.save_geography_levels(
+        country_id, levels, user_id
+    )
+    return knowledgemaster.SaveGeographyLevelSuccess()
 
 
 

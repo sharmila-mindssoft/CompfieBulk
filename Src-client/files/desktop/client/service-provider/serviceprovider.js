@@ -115,7 +115,7 @@ $("#submit").click(function(){
 	else if(countryCodeValue.length > 4){
 		displayMessage('Contact No. Country Code is maximum 4 characters Allowed');
 	}
-	else if(areaCodeValue > 4){
+	else if(areaCodeValue.length > 4){
 		displayMessage('Contact No. Area Code is maximum 4 characters');
 	}
 	else if(mobileNumberValue == ''){

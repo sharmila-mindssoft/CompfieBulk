@@ -73,15 +73,16 @@ def process_update_statutory_settings(db, request, session_user, client_id):
 
 def process_get_assign_compliance_form_data(db, session_user, client_id):
     countries = db.get_countries_for_user(session_user, client_id)
-    business_group_ids = None
+    row = db.get_user_company_details(session_user, client_id)
+    business_group_ids = row[3]
     business_groups = db.get_business_groups_for_user(
         business_group_ids
     )
-    legal_entity_ids = None
+    legal_entity_ids = row[2]
     legal_entities = db.get_legal_entities_for_user(
         legal_entity_ids
     )
-    division_ids = None
+    division_ids = row[1]
     divisions = db.get_divisions_for_user(division_ids)
     units = db.get_units_for_assign_compliance(session_user, client_id)
     users = db.get_users_for_seating_units(session_user, client_id)

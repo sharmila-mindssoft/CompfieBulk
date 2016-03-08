@@ -10,7 +10,8 @@ from technomastercontroller import (
 	get_clients,
 	change_client_status,
 	reactivate_unit,
-	get_client_profile
+	get_client_profile, 
+	create_new_admin
 )
 
 __all__=[
@@ -53,3 +54,6 @@ def process_techno_request(request, db) :
 
 	if type(request_frame) is technomasters.GetClientProfile:
 		return get_client_profile(db, request_frame, session_user)
+
+	if type(request_frame) is technomasters.CreateNewAdmin:
+		return create_new_admin(db, request_frame, session_user)

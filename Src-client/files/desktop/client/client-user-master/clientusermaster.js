@@ -40,6 +40,7 @@ $("#btn-user-add").click(function(){
     }
     clearMessage();
     $("#user-privilege-id").val('');
+    $('#email-id').removeAttr("readonly");
     loadautocountry();
     hidemenu();
     loadautobusinessgroups();
@@ -191,6 +192,7 @@ function user_edit(userId){
         });
 }
 function loadUserUpdate(userId){
+    console.log("inside load user update");
     var bgroups = [];
     var lentities = [];
     var divisions = [];
@@ -199,6 +201,7 @@ function loadUserUpdate(userId){
     var divisionlist;
     for(var user in userList){
         if(userList[user]['user_id'] == userId){
+            seatingunitname = null
             $.each(userGroupsList, function(key, value) {  //usergroupname
                 if(userGroupsList[key]['user_group_id'] == userList[user]['user_group_id']){
                     usergroupname = userGroupsList[key]['user_group_name'];
@@ -210,6 +213,8 @@ function loadUserUpdate(userId){
                 }
             });
             var contactno = userList[user]['contact_no'].split("-");
+            console.log("saving user id in hidden field"+userId);
+            $("#user-id").val(userId);
             $("#service-provider").val(userList[user]['service_provider']);
             $("#employee-name").val(userList[user]['employee_name']);
             $("#employee-id").val(userList[user]['employee_code']);
@@ -223,6 +228,7 @@ function loadUserUpdate(userId){
             $("#seatingunit").val(userList[user]['seating_unit_id']);
             $("#service-provider").val(userList[user]['service_provider']);
             $("#email-id").val(userList[user]['email_id']);
+            $("#email-id").attr("readonly", "readonly");
             $("#country").val(userList[user]['country_ids']);
             $("#units").val(userList[user]['unit_ids']);
             $("#domains").val(userList[user]['domain_ids']);
@@ -262,6 +268,7 @@ function loadUserUpdate(userId){
 }
 
 $("#submit").click(function(){
+    var userId = $("#user-id").val();
 	var usertype = $('#usertype').val();
 	var employeename = $('#employee-name').val();	
 	var employeeid = $('#employee-id').val();
@@ -310,7 +317,7 @@ $("#submit").click(function(){
 		displayMessage("Enter Mobile Number");
 	}
 	else if(usergroup == ''){
-		displayMessage("Enter usergroup");
+		displayMessage("Enter Usergroup");
 	}
 	else if(userlevel == ''){
 		displayMessage("Select User Level");
@@ -319,19 +326,14 @@ $("#submit").click(function(){
 		displayMessage("Enter Email Id");
 	}
 	else if(country == ''){
-		displayMessage("select Country");
-	}
-	else if(businessgroups == ''){
-		displayMessage("Select businessgroups");
+
+		displayMessage("Select Country");
 	}
 	else if(legalentities == ''){
-		displayMessage("select legalentities");
-	}
-	else if(division == ''){
-		displayMessage("select division");
+		displayMessage("Select Legalentities");
 	}
 	else if(domains == ''){
-		displayMessage("select domains");
+		displayMessage("Select Domains");
 	}
 	else if(units == ''){
 		displayMessage("Select Units")
@@ -390,6 +392,7 @@ $("#submit").click(function(){
 		);
 	}
 	else if($('#client-user-id').val() != ''){
+        var userId = $('#client-user-id').val();
 		var isAdmin = false;
 
 		var arrayCountriesVal = country.split(",");
@@ -419,12 +422,14 @@ $("#submit").click(function(){
 		function onFailure(status, data){
 			displayMessage(status);
 		}
-		var clientUserDetail = [userId,  parseInt(usergroup), employeename, 
+		var clientUserDetail = [parseInt(userId),  parseInt(usergroup), employeename, 
 			      employeeid, contactNo, parseInt(seatingunit), parseInt(userlevel), 
 			      arrayCountries, arrayDomains, arrayUnits, isAdmin, isserviceprovider,
 			      serviceprovider];
+        console.log("userId:"+userId);
+        console.log("clientUserDetail:"+clientUserDetail);
 		var clientUserDetailDict = client_mirror.getUpdateClientUserDict(clientUserDetail)
-		
+        console.log("clientUserDetailDict"+clientUserDetailDict);
 		client_mirror.updateClientUser(clientUserDetailDict,
 			function(error, response){
 				if(error == null){
@@ -603,38 +608,39 @@ function loadautolegalentities () {
     var bgroupsValue=$("#business-groups").val();
     var arraybusinessgroups=bgroupsValue.split(',');
     $('#selectboxview-legal-entities ul').empty();
+
     $.each(arraybusinessgroups,function(count, values){
-        var editlegalentitiesval=[];
+        var editlegalentitiesval = [];
         if($("#legal-entities").val() != ''){
             editlegalentitiesval = $("#legal-entities").val().split(",");
         }
         var legalentities = legalEntitiesList;
 
-        var str='';
-        if(values.length!=0){
-            for(var bgroup in businessGroupsList){
-                if(businessGroupsList[bgroup]['business_group_id']==arraybusinessgroups[count]){
-                    str+='<li class="li-heading">'+businessGroupsList[bgroup]['business_group_name']+'</li> ';
-                }
-            }
+        var str = '';
+        if(arraybusinessgroups.length != 0){
+            $.each(businessGroupsList, function(k, val){
+                if(val['business_group_id'] == arraybusinessgroups[count]){
+                    str += '<li class="li-heading">'+val['business_group_name']+'</li> ';
+                }  
+            });
         }
-        for(var i in legalEntitiesList){
-            if(arraybusinessgroups[count]==legalEntitiesList[i]['business_group_id']){
+        $.each(legalEntitiesList, function(k, val){
+            if(arraybusinessgroups[count]==val['business_group_id']){
                 var selectlentitystatus='';
-                for(var j=0; j<editlegalentitiesval.length; j++){
-                    if(editlegalentitiesval[j]==legalEntitiesList[i]["legal_entity_id"]){
-                        selectlentitystatus='checked';
+                for(var j = 0; j < editlegalentitiesval.length; j++){
+                    if(editlegalentitiesval[j] == val["legal_entity_id"]){
+                        selectlentitystatus = 'checked';
                     }
                 }
-                var lentityId=parseInt(legalEntitiesList[i]["legal_entity_id"]);
-                var lentityName=legalEntitiesList[i]["legal_entity_name"];
+                var lentityId = parseInt(val["legal_entity_id"]);
+                var lentityName = val["legal_entity_name"];
                 if(selectlentitystatus == 'checked'){
                     str += '<li id="'+lentityId+'" class="active_selectbox_legal_entities" onclick="activatelegalentities(this)" >'+lentityName+'</li> ';
                 }else{
                     str += '<li id="'+lentityId+'" onclick="activatelegalentities(this)" >'+lentityName+'</li> ';
                 }
             }
-        }
+        });       
         $('#selectboxview-legal-entities ul').append(str);
         $("#legal-entities-selected").val(editlegalentitiesval.length+" Selected");
     });
@@ -643,17 +649,16 @@ function loadautolegalentities () {
 }
 //check & uncheck process
 function activatelegalentities(element){
-      var chkstatus = $(element).attr('class');
-  if(chkstatus == 'active_selectbox_legal_entities'){
+    var chkstatus = $(element).attr('class');
+    if(chkstatus == 'active_selectbox_legal_entities'){
         $(element).removeClass("active_selectbox_legal_entities");
-  }
-  else{
-    $(element).addClass("active_selectbox_legal_entities");
-  }
+    }
+    else{
+        $(element).addClass("active_selectbox_legal_entities");
+    }
     var selids='';
     var totalcount =  $(".active_selectbox_legal_entities").length;
     $(".active_selectbox_legal_entities").each( function( index, el ) {
-
         if (index === totalcount - 1) {
             selids = selids+el.id;
         }else{
@@ -662,17 +667,18 @@ function activatelegalentities(element){
     });
     $("#legal-entities-selected").val(totalcount+" Selected");
     $("#legal-entities").val(selids);
+     unitview();
 }
 // Divisions----------------------------------------------------------------------------------------------------------------------
 function hidemenudivision() {
     document.getElementById('selectboxview-division').style.display = 'none';
 }
 function loadautodivision() {
+    console.log("inside load auto division");
     document.getElementById('selectboxview-division').style.display = 'block';
     var lentityValue=$("#legal-entities").val();
     var arraylentity=lentityValue.split(',');
     $('#selectboxview-division ul').empty();
-
     $.each(arraylentity,function(count, values){
         var editdivisionval=[];
         if($("#division").val() != ''){
@@ -681,31 +687,36 @@ function loadautodivision() {
         var divisions = divisionList;
 
         var str='';
-
-        if(values.length!=0){ //for heading
-            for(var lentity in legalEntitiesList){
-                if(legalEntitiesList[lentity]['legal_entity_id']==arraylentity[count]){
-                    str+='<li class="li-heading">'+legalEntitiesList[lentity]['legal_entity_name']+'</li> ';
+        if(arraylentity.length != 0){ //for heading
+            $.each(legalEntitiesList, function(key, value){
+                if(value['legal_entity_id']==arraylentity[count]){
+                    var dcount = 0;
+                    
+                    $.each(divisionList, function(k, val){
+                        if(arraylentity[count]==val['legal_entity_id']){
+                            if(dcount == 0){
+                                str+='<li class="li-heading">'+value['legal_entity_name']+'</li> ';
+                            }
+                            var selectdivisionstatus='';
+                            for(var j=0; j<editdivisionval.length; j++){
+                                if(editdivisionval[j]==val["division_id"]){
+                                    selectdivisionstatus='checked';
+                                }
+                            }
+                            var divisionId=parseInt(val["division_id"]);
+                            var divisionName=val["division_name"];
+                            if(selectdivisionstatus == 'checked'){
+                                str += '<li id="'+divisionId+'" class="active_selectbox_division" onclick="activateDivision(this)" >'+divisionName+'</li> ';
+                            }else{
+                                str += '<li id="'+divisionId+'" onclick="activateDivision(this)" >'+divisionName+'</li> ';
+                            }
+                            dcount++;
+                        }
+                    });
                 }
-            }
+            });
         }
-        for(var i in divisionList){
-            if(arraylentity[count]==divisionList[i]['division_id']){
-                var selectdivisionstatus='';
-                for(var j=0; j<editdivisionval.length; j++){
-                    if(editdivisionval[j]==divisionList[i]["division_id"]){
-                        selectdivisionstatus='checked';
-                    }
-                }
-                var divisionId=parseInt(divisionList[i]["division_id"]);
-                var divisionName=divisionList[i]["division_name"];
-                if(selectdivisionstatus == 'checked'){
-                    str += '<li id="'+divisionId+'" class="active_selectbox_division" onclick="activateDivision(this)" >'+divisionName+'</li> ';
-                }else{
-                    str += '<li id="'+divisionId+'" onclick="activateDivision(this)" >'+divisionName+'</li> ';
-                }
-            }
-        }
+        
         $('#selectboxview-division ul').append(str);
         $("#division-selected").val(editdivisionval.length+" Selected");
     });
@@ -726,11 +737,9 @@ function activateDivision(element){
     var totalcount =  $(".active_selectbox_division").length;
     $(".active_selectbox_division").each( function( index, el ) {
         if (index === totalcount - 1) {
-            selids = selids+el.id;
-            selNames = selNames+$(this).text();
+            selids = selids+el.id;            
         }else{
             selids = selids+el.id+",";
-            selNames = selNames+$(this).text()+",";
         }
     });
     $("#division-selected").val(totalcount+" Selected");
@@ -738,41 +747,99 @@ function activateDivision(element){
     unitview();
 }
 //Unit List -----------------------------------------------------------------------------------------------------
-function unitview(){
-    $('#unitList ul li:not(:first)').empty();
-    var divisionIds=$('#division').val();
-    var arraydivision=divisionIds.split(',');
-    $.each(arraydivision,function(count, values){
-        var editunitval=[];
+
+function unitview(){  
+    var unitids = [];
+    var arrunits = [];
+    if($("#client-user-id").val() != ""){
+        unitids = $("#units").val().split(",");
+    }
+    var str = '';  
+    $('#unitList ul li:gt(0)').remove();
+    var leIds = $("#legal-entities").val();
+    var arrayle=leIds.split(',');
+
+    $.each(arrayle, function(count, values){
+        var lecount = 0; 
+        var editunitvallegal=[];
         if($("#units").val() != ''){
-            editunitsval = $("#units").val().split(",");
-        }
+            editunitvallegal = $("#units").val().split(",");
+        }        
+        if(arrayle.length != 0){
+            $.each(legalEntitiesList, function(key, value){
 
-        var str='';
-        for(var division in divisionList){
-            if(divisionList[division]['division_id']==arraydivision[count]){
-                str+='<li class="li-heading">'+divisionList[division]['division_name']+'</li> ';
-            }
+                $.each(unitList, function(k, val){
+                    if(arrayle[count] == val['legal_entity_id'] && val['division_id'] == 0 && value['legal_entity_id'] == arrayle[count]){
+                        if(lecount == 0){
+                           str+='<li class="li-heading">'+value['legal_entity_name']+'</li>';            
+                        }
+                        var unitId = parseInt(val["unit_id"]);
+                        var unitName = val["unit_name"];
+                       
+                        str += '<li id="'+unitId+'" onclick="activateUnit(this)" >'+unitName+'</li> ';
+                       
+                        for(var j=0; j<unitids.length; j++){
+                            if(unitids[j]==unitId){                                
+                                arrunits.push(unitId);
+                            }
+                        }
+
+                        lecount++;
+                    }
+                });    
+                
+            });
+           
         }
-        for(var i in unitList){
-            if(arraydivision[count]==unitList[i]['division_id']){
-                var unitId=parseInt(unitList[i]["unit_id"]);
-                var unitName=unitList[i]["unit_name"];
-                str += '<li id="'+unitId+'" onclick="activateUnit(this)" >'+unitName+'</li> ';
-            }
-        }
-        $('#unitList ul').append(str);
     });
-}
+    var divisionIds = $("#division").val();
+    var arraydivision = divisionIds.split(',');
 
+    $.each(arraydivision, function(count, values){  
+        var divcount = 0;      
+        var editunitvaldiv = [];
+        if($("#units").val() != ''){
+            editunitvaldiv = $("#units").val().split(",");
+        }
+
+        if(arraydivision.length != 0)
+        {
+            $.each(divisionList, function(key, value){
+                if(value['division_id'] == arraydivision[count]){
+                    $.each(unitList, function(k, val){
+                        if(arraydivision[count]==val['division_id']){
+                            if(divcount == 0) {
+                                str+='<li class="li-heading">'+value['division_name']+'</li> ';
+                            }
+                            var unitId = parseInt(val["unit_id"]);
+                            var unitName = val["unit_name"];
+                            str += '<li id="'+unitId+'" onclick="activateUnit(this)" >'+unitName+'</li> ';
+                            for(var j=0; j<unitids.length; j++){
+                                if(unitids[j]==unitId){                                
+                                    arrunits.push(unitId);
+                                }
+                            }
+                            divcount++;
+                        }
+                    });
+                }
+            });   
+        }
+        
+    });    
+    $('#unitList ul').append(str);
+    for(var k = 0;  k < arrunits.length; k++){
+        $("#"+arrunits[k]).addClass("active");
+    }    
+}
 function activateUnit(element){
-  var chkstatus = $(element).attr('class');
-  if(chkstatus == 'active'){
+    var chkstatus = $(element).attr('class');
+    if(chkstatus == 'active'){
         $(element).removeClass("active");
-  }
-  else{
+    }
+    else{
     $(element).addClass("active");
-  }
+    }
     var selids='';
     var totalcount =  $(".active").length;
     $(".active").each( function( index, el ) {
