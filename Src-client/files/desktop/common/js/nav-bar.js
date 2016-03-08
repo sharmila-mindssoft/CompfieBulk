@@ -26,8 +26,12 @@ function initializeNavBar () {
         $(".menu-item", itemObject).text(form_name);
         return itemObject;
     }
-
-    var navBarItems = mirror.getUserMenu();
+    var navBarItems = null
+    if (window.localStorage["shortName"] != null){
+        navBarItems = client_mirror.getUserMenu();
+    }else{
+        navBarItems = mirror.getUserMenu();
+    }
     if (navBarItems === null)
         return;
     var menus = ["Home", "Master", "Transaction", "Report"];

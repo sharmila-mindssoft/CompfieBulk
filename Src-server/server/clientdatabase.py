@@ -118,6 +118,17 @@ class ClientDatabase(Database):
         else:
             return True
 
+    def is_contract_not_started(self):
+        columns = "count(*)"
+        condition = "now() < contract_from"
+        rows = self.get_data(
+            self.tblClientGroups, columns, condition
+        )
+        if rows[0][0] <= 0:
+            return False
+        else:
+            return True
+
     def verify_login(self, username, password):
         tblAdminCondition = "password='%s' and username='%s'" % (
             password, username
@@ -293,10 +304,13 @@ class ClientDatabase(Database):
         )
         return rows
 
-    def return_forms(self, client_id):
+    def return_forms(self, client_id, form_ids=None):
         columns = "form_id, form_name"
+        condition = "form_id != 24" 
+        if form_ids is not None:
+            condition += " AND form_id in (%s)" % form_ids
         forms = self.get_data(
-            self.tblForms, columns, "1"
+            self.tblForms, columns, condition
         )
         results = []
         for form in forms:
@@ -1193,6 +1207,7 @@ class ClientDatabase(Database):
 
     def get_audit_trails(self, user_id, client_id):
         user_ids = ""
+        form_ids = None
         if user_id != 0:
             column = "user_group_id"
             condition = "user_id = '%d'" % user_id
@@ -1208,6 +1223,15 @@ class ClientDatabase(Database):
             )
             form_category_id = rows[0][0]
 
+            column = "group_concat(form_id)"
+            condition = "form_category_id = '%d' AND form_type_id != 4" % (
+                form_category_id
+            )
+            rows = self.get_data(
+                self.tblForms, column, condition
+            )
+            form_ids = rows[0][0]
+            
             column = "group_concat(user_group_id)"
             condition = "form_category_id = '%d'" % form_category_id
             rows = self.get_data(
@@ -1224,6 +1248,12 @@ class ClientDatabase(Database):
             condition = "user_id in (%s)" % user_ids
         else:
             condition = "1"
+            form_column = "group_concat(form_id)"
+            form_condition = "form_type_id != 4"
+            rows = self.get_data(
+                self.tblForms, form_column, form_condition
+            )
+            form_ids = rows[0][0]
         columns = "user_id, form_id, action, created_on"
         rows = self.get_data(
             self.tblActivityLog, columns, condition
@@ -1242,7 +1272,7 @@ class ClientDatabase(Database):
             users = self.get_users_by_id(user_ids, client_id)
         else:
             users = self.get_users(client_id)
-        forms = self.return_forms(client_id)
+        forms = self.return_forms(client_id, form_ids)
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
 
 #
@@ -4757,6 +4787,15 @@ class ClientDatabase(Database):
     ):
         contract_from = self.datetime_to_string(contract_from)
         contract_to = self.datetime_to_string(contract_to)
+
+        admin_columns = "username"
+        admin_condition = "1"
+        result = self.get_data(
+            self.tblAdmin, admin_columns, admin_condition
+        )
+        admin_email = result[0][0]
+        is_admin_is_a_user= False
+
         licence_holder_rows = self.get_licence_holder_details(client_id)
         licence_holders = []
         for row in licence_holder_rows:
@@ -4773,6 +4812,9 @@ class ClientDatabase(Database):
                 unit_name = "%s - %s" % (row[6], row[7])
             user_id = row[0]
             email_id = row[1]
+            if email_id == admin_email:
+                is_admin_is_a_user = True
+                employee_name = "Administrator: %s" % employee_name
             contact_no = row[4]
             is_admin = row[5]
             address = row[8]
@@ -4781,6 +4823,12 @@ class ClientDatabase(Database):
                 clientadminsettings.LICENCE_HOLDER(
                     user_id, employee_name, email_id, contact_no,
                     unit_name, address
+                ))
+        if not is_admin_is_a_user:
+            licence_holders.append(
+                clientadminsettings.LICENCE_HOLDER(
+                    0, "Administrator", admin_email, None,
+                    None, None
                 ))
         remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
         profile_detail = clientadminsettings.PROFILE_DETAIL(
@@ -7307,3 +7355,27 @@ class ClientDatabase(Database):
         )
         delta = contract_to - self.get_date_time().date()
         return delta.days
+
+    def is_client_active(self, client_id):
+        print "inside is_client_active"
+        db_con = Database(
+            KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+            KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+        )
+        db_con.connect()
+        db_con.begin()
+        db_cur = db_con.cursor()
+        q = "select count(*) from tbl_client_groups where \
+        client_id = '%d' and is_active = 1" % client_id
+        print q
+        db_cur.execute(q)
+        rows = db_cur.fetchall()
+        print rows
+        db_con.commit()
+        db_con.close()
+        if rows[0][0] > 0:
+            print "returning true"
+            return True
+        else:
+            print "returning false"
+            return False

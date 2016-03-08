@@ -35,15 +35,18 @@ __all__ = [
 class Email(object):
 
     def __init__(self):
-        self.sender = "sharmila@mindssoft.com"
-        self.password = "6108816659"
-        self.API_KEY = 'u5IPdlY1JAxa5_fJoJaPEw'
+        self.sender = "compfie.saas@gmail.com"
+        self.password = "compfie@123"
+        # self.API_KEY = 'u5IPdlY1JAxa5_fJoJaPEw'
         self.initializeTemplates()
 
     def send_email(self, receiver, subject, message, cc=None):
-        server = smtplib.SMTP('mail.mindssoft.com', 25)
+        print "inside send email"
+        server = smtplib.SMTP('smtp.gmail.com', 25)
+        print server
         server.ehlo()
-        server.login(self.sender, self.password)
+        server.starttls()
+        print server.login(self.sender, self.password)
 
         msg = MIMEMultipart()
         msg['From'] = self.sender
@@ -52,26 +55,9 @@ class Email(object):
         if cc is not None:
             msg['Cc'] = cc
             receiver += cc
-        msg.attach(MIMEText(message, 'plain'))
-
-        server.sendmail(self.sender, receiver,  msg.as_string())
+        msg.attach(MIMEText(message, 'html'))
+        response = server.sendmail(self.sender, receiver,  msg.as_string())
         server.close()
-
-    def send_mail(self, template_name, email_to, context):
-        mandrill_client = mandrill.Mandrill(self.API_KEY)
-        message = {
-            'to': [],
-            'global_merge_vars': []
-        }
-        for em in email_to:
-            message['to'].append({'email': em})
-
-        for k, v in context.iteritems():
-            message['global_merge_vars'].append(
-                {'name': k, 'content': v}
-            )
-        print message
-        print mandrill_client.messages.send_template(template_name, [], message)
 
     def initializeTemplates(self):
         self.templates = {
@@ -93,39 +79,35 @@ class EmailHandler(Email):
     def send_reset_link(
         self, db, user_id, receiver, reset_link
     ):
-        email_to = [receiver]
-        context = {
-            "User" : db.get_user_name_by_id(user_id),
-            "ResetLink" : reset_link
-        }
-        template_name = self.get_template("task_completed")
-        self.send_mail(template_name, email_to, context)
-        return True
-
-    def send_client_credentials(
-        self, short_name, receiver, password
-    ):
-        subject = "Account Created"
-        message = "Dear Client, Your Compfie account has been created. Login and enjoy the services.\
-        Your Credentials are <br> Url: '%slogin/%s' <br> Username: %s <br> password: %s" % (
-        	CLIENT_URL, short_name, receiver, password
-        )
-        self.send_email(receiver, subject, message)
         # email_to = [receiver]
         # context = {
         #     "User" : db.get_user_name_by_id(user_id),
         #     "ResetLink" : reset_link
         # }
         # template_name = self.get_template("task_completed")
-        # self.send_mail(template_name, email_to, context)
+        subject = "Reset Password"
+        message = ""
 
+        self.send_email(receiver, subject, message, cc=None)
+        # self.send_mail(template_name, email_to, context)
+        return True
+
+    def send_client_credentials(
+        self, short_name, receiver, password
+    ):
+        subject = "Account Created"
+        message = "Dear Client, Your Compfie account has been created.\
+        Your Credentials are <br> Url: '%slogin/%s' <br> Username: %s <br> password: %s" % (
+        	CLIENT_URL, short_name, receiver, password
+        )
+        self.send_email(receiver, subject, message)
 
     def send_user_credentials(
         self, short_name, receiver, password, employee_name, employee_code
     ):
         subject = "Account Created"
-        message = "Dear %s, Your Compfie account has been created. Your code is %s\
-        Your Credentials are <br> Url: '%slogin/%s' <br> Username: %s <br> password: %s" % (
+        message = "Dear %s, Your Compfie account has been created. Your login credentials are: %s\
+        Url: '%slogin/%s' <br> Username: %s <br> password: %s" % (
         	CLIENT_URL, employee_name, employee_code, short_name, receiver, password
         )
         self.send_email(receiver, subject, message)
@@ -133,10 +115,18 @@ class EmailHandler(Email):
     def send_knowledge_user_credentials(
         self, receiver, password, employee_name, employee_code
     ):
+        print "inside send_knowledge_user_credentials"
         subject = "Account Created"
-        message = "Dear %s, Your Compfie account has been created. Your code is %s\
-        Your Credentials are <br> Url: '%slogin' <br> Username: %s <br> password: %s" % (
-        	KNOWLEDGE_URL, employee_name, employee_code,  receiver, password
+        message = '''
+            Dear %s, <br> \
+            <p>Your Compfie account has been created. </p>\
+            <p>Your login Credentials are: <br> \
+            <p>Url: <a href='%s'>%s</a> \
+            <br>Username: %s \
+            <br>password: %s </p>\
+            <p> Thanks & Regards, <br>\
+            Compfie Support Team''' % (
+             employee_name, KNOWLEDGE_URL, KNOWLEDGE_URL, receiver, password
         )
         self.send_email(receiver, subject, message)
 
@@ -214,14 +204,24 @@ class EmailHandler(Email):
         receiver, employee_name = db.get_user_email_name(user_ids)
         assignee = employee_name.split(",")[0]
 
-        email_to = receiver.split(",")
-        context = {
-            "User" : assignee,
-            "Compliance" : compliance_name,
-            "Reason" : rejected_reason
-        }
-        template_name = self.get_template("task_rejected")
-        self.send_mail(template_name, email_to, context)
+        subject = "Task Rejected"
+        message = "Dear %s, Compliance %s has been rejected. The reason is %s." % (
+            assignee, compliance_name, rejected_reason
+        )
+        sender = None
+        cc = None
+        if concurrence_id is not None and concurrence_id != 0:
+            sender = receiver.split(",")[0]
+            cc = receiver.split(",")[1]
+        self.send_email(receiver, subject, message, cc)
+        # email_to = receiver.split(",")
+        # context = {
+        #     "User" : assignee,
+        #     "Compliance" : compliance_name,
+        #     "Reason" : rejected_reason
+        # }
+        # template_name = self.get_template("task_rejected")
+        # self.send_mail(template_name, email_to, context)
 
     def notify_task_completed(
         self, db, compliance_history_id
@@ -234,11 +234,14 @@ class EmailHandler(Email):
             user_ids = "%s, %s, %s" % (assignee_id, concurrence_id, approver_id)
         receiver, employee_name = db.get_user_email_name(user_ids)
         assignee = employee_name.split(",")[0]
+        self.send_email(receiver, subject, message, cc)
 
-        email_to = receiver.split(",")
-        context = {
-            "User" : assignee,
-            "Compliance" : compliance_name
-        }
-        template_name = self.get_template("task_completed")
-        self.send_mail(template_name, email_to, context)
+
+    # def embed_email_content(
+    #     content
+    # ):
+
+    #     template_loader = jinja2.FileSystemLoader(
+    #         os.path.join(ROOT_PATH, "Src-client")
+    #     )
+    #     template_env = jinja2.Environment(loader=template_loader)

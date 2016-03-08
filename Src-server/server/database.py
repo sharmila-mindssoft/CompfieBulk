@@ -3074,9 +3074,12 @@ class KnowledgeDatabase(Database):
             join_conditions, where_condition)
         return rows
 
-    def return_forms(self):
+    def return_forms(self, form_ids=None):
         columns = "form_id, form_name"
-        forms = self.get_data(self.tblForms, columns, "1")
+        condition = " form_id != '26' "
+        if form_ids is not None:
+            condition += " AND form_id in (%s) " % form_ids
+        forms = self.get_data(self.tblForms, columns, condition)
         results = []
         for form in forms:
             results.append(general.AuditTrailForm(form[0], form[1]))
@@ -3197,9 +3200,8 @@ class KnowledgeDatabase(Database):
             self.tblUserCountries, self.tblUserDomains
         )
         condition = "user_group_id in (select user_group_id from \
-             %s where form_category_id = 3 and (form_ids like '%s%s%s' \
-             or form_ids like '%s%s%s' or form_ids like '%s%s%s'))" % (
-                self.tblUserGroups, "%", "19", "%", "%","21", "%", "%","20", "%"
+             %s where form_category_id = 3 )" % (
+                self.tblUserGroups
             )
         rows = self.get_data(self.tblUsers + " u", columns, condition)
         columns = ["user_id", "employee_name", "is_active", "countries", "domains"]
@@ -3252,12 +3254,13 @@ class KnowledgeDatabase(Database):
             table = self.tblClientGroups
             condition = "is_active = 1"
         rows = self.get_data(table, columns, condition)
-        if rows:
-            columns = "group_concat(client_id)"
-            condition = "client_id in (%s) and is_active = 1" % (rows[0][0])
-            rows = self.get_data(self.tblClientGroups, columns, condition)
-            if rows:
-                result = rows[0][0]
+        if rows is not None and len(rows) > 0:
+            if rows[0][0] is not None:
+                columns = "group_concat(client_id)"
+                condition = "client_id in (%s) and is_active = 1" % (rows[0][0])
+                rows = self.get_data(self.tblClientGroups, columns, condition)
+                if rows:
+                    result = rows[0][0]
         return result
 
     def notify_user(
@@ -3798,14 +3801,14 @@ class KnowledgeDatabase(Database):
 
         columns = [
             "group_name", "contract_from", "contract_to", "no_of_user_licence",
-            "total_disk_space", "is_sms_subscribed", "incharge_persons", "is_active",
+            "total_disk_space", "is_sms_subscribed", "incharge_persons",
             "updated_by", "updated_on"
         ]
         values = [
             client_group.group_name, contract_from, contract_to,
             client_group.no_of_user_licence, client_group.file_space * 1000000000,
             is_sms_subscribed,
-            ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
+            ','.join(str(x) for x in client_group.incharge_persons), session_user,
             current_time_stamp
         ]
         if client_group.logo is not None:
@@ -5292,16 +5295,26 @@ class KnowledgeDatabase(Database):
 
     def get_audit_trails(self, session_user):
         user_ids = ""
+        form_ids = None
         if session_user != 0:
             column = "user_group_id"
             condition = "user_id = '%d'" % session_user
             rows = self.get_data(self.tblUsers, column, condition)
             user_group_id = rows[0][0]
 
-            column = "form_category_id"
+            column = "form_category_id, form_ids"
             condition = "user_group_id = '%d'" % user_group_id
             rows = self.get_data(self.tblUserGroups, column, condition)
             form_category_id = rows[0][0]
+            form_ids = rows[0][1]
+
+            column = "group_concat(form_id)"
+            condition = "form_category_id = '%d' AND \
+            form_type_id != 3" % form_category_id
+            rows = self.get_data(
+                self.tblForms, column, condition
+            )
+            form_ids = rows[0][0]
 
             column = "group_concat(user_group_id)"
             condition = "form_category_id = '%d'" % form_category_id
@@ -5329,8 +5342,8 @@ class KnowledgeDatabase(Database):
             condition = "user_id in (%s)" % user_ids
             users = self.return_users(condition)
         else:
-            users = self.return_users()
-        forms = self.return_forms()
+            users = self.return_users()       
+        forms = self.return_forms(form_ids)
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
 
 #
