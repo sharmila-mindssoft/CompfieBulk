@@ -203,6 +203,7 @@ function loadApproveStatutory(){
     displayMessage("Domain Required");  
   }
   else{
+    displayMessage("");
     j = 1;
     var statutorymappingId = 0;
     var industryName = '';
@@ -287,10 +288,11 @@ function loadApproveStatutory(){
     }
 
     if(j <= 1){
-    var norecordtableRow=$('#no-record-templates .font1 .norecord-table-row');
-    var noclone=norecordtableRow.clone();
-    $('.tbody-statutorymapping-list').append(noclone);
-    $('#saverecord').hide();
+      var norecordtableRow=$('#norecord-templates');
+      var noclone=norecordtableRow.clone();
+      //$('.norecord', clone).text("industryName");
+      $('.tbody-statutorymapping-list').append(noclone);
+      $('#saverecord').hide();
     }
 
   }
@@ -379,7 +381,7 @@ function disppopup(sm_id,compliance_id){
     statutorydate = sdateDesc;
   }
 
-  $(".popup_statutory").html(statutoryMappings);
+  $(".popup_statutory").html(compliances[compliance_id]["statutory_provision"]);
   $(".popup_statutorynature").text(sm["statutory_nature_name"]);
   $(".popup_compliancetask").html(sm["compliance_names"][compliance_id]["compliance_name"]);
   $(".popup_compliancedescription").text(compliances[compliance_id]["description"]);
