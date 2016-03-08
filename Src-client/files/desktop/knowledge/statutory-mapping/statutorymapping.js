@@ -649,7 +649,7 @@ $("#temp_addstatutories").click(function() {
   if(last_statutory_id==0){
     displayMessage("No Statutory is selected");
   }else if($.inArray(last_statutory_id, sm_statutoryids) >= 0){
-    displayMessage("This Statutory already added");
+    displayMessage("This statutory mapping already added in list");
   }else{
     sm_statutoryids.push(parseInt(last_statutory_id));
   }
@@ -737,7 +737,7 @@ function load_compliance(){
       }
       else {
         display_image="icon-inactive.png";
-        passStatus = "1";
+        passStatus = true;
        }
       $('.status', clone).html('<img src=\'/images/'+display_image+'\' onclick="temp_change_status_compliance(\''+complianceid+'\','+passStatus+')"/>');
     }else{
@@ -1585,6 +1585,9 @@ function load_stautorydates(){
       $('.input-row6').show();
       for(i=7; i<=12; i++){
         $('.input-row'+i).hide();
+        $('#multiple_statutory_date'+i).val('');
+        $('#multiple_statutory_month'+i).val('');
+        $('#multiple_triggerbefore'+i).val('');
       }
     }else if (rep_every == 3){
       $('.input-row1').show();
@@ -1593,6 +1596,9 @@ function load_stautorydates(){
       $('.input-row4').show();
       for(i=5; i<=12; i++){
         $('.input-row'+i).hide();
+        $('#multiple_statutory_date'+i).val('');
+        $('#multiple_statutory_month'+i).val('');
+        $('#multiple_triggerbefore'+i).val('');
       }
     }else if (rep_every == 4){
       $('.input-row1').show();
@@ -1600,17 +1606,26 @@ function load_stautorydates(){
       $('.input-row3').show();
       for(i=4; i<=12; i++){
         $('.input-row'+i).hide();
+        $('#multiple_statutory_date'+i).val('');
+        $('#multiple_statutory_month'+i).val('');
+        $('#multiple_triggerbefore'+i).val('');
       }
     }else if(rep_every == 12){
       $('.input-row1').show();
       for(i=2; i<=12; i++){
         $('.input-row'+i).hide();
+        $('#multiple_statutory_date'+i).val('');
+        $('#multiple_statutory_month'+i).val('');
+        $('#multiple_triggerbefore'+i).val('');
       }
     }else{
       $('.input-row1').show();
       $('.input-row2').show();
       for(i=3; i<=12; i++){
         $('.input-row'+i).hide();
+        $('#multiple_statutory_date'+i).val('');
+        $('#multiple_statutory_month'+i).val('');
+        $('#multiple_triggerbefore'+i).val('');
       }
   }
   }else{
@@ -1870,12 +1885,12 @@ $(document).ready(function(){
 
 function load_data(){
   if($('#repeats_type').val() == '2' && $('.multipleinput').prop("checked") == true){
-  $('.multipleselectnone').hide();
-  $('.multipleselect').show();
-  $('#multipleview').show();
-  $('#sdate').show();
-  $('.repeatby-view').show();
-  load_stautorydates();
+    $('.multipleselectnone').hide();
+    $('.multipleselect').show();
+    $('#multipleview').show();
+    $('#sdate').show();
+    $('.repeatby-view').show();
+    load_stautorydates();
   }
   else if($('#repeats_type').val() == '1'){
     $('#single_statutory_date').hide();
@@ -1896,17 +1911,29 @@ function load_data(){
     $('.repeatby-view').show();
     $('#multipleview').hide();
   }
-  else if($('#repeats_type').val() == '2' && $('.multipleinput').prop("checked") == false){
-    $('#single_statutory_date').show();
-    $('#single_statutory_month').hide();
-    $('.multipleselect').hide();
-    $('.multipleselectnone').show();
-    $('#sdate').show();
-    $('.repeatby-view').show();
-    $('#multipleview').show();
+  else if($('#repeats_type').val() == '2' && $('.multipleinput').prop("checked") == false && $('#repeats_every').val() != ''){
+    var rep_every = parseInt($('#repeats_every').val());
+    var modResult = 12 % rep_every;
+    if(modResult == 0){
+      $('#single_statutory_date').show();
+      $('#single_statutory_month').hide();
+      $('.multipleselect').hide();
+      $('.multipleselectnone').show();
+      $('#sdate').show();
+      $('.repeatby-view').show();
+      $('#multipleview').show();
+    }else{
+      $('#single_statutory_date').show();
+      $('#single_statutory_month').hide();
+      $('.multipleselect').hide();
+      $('.multipleselectnone').show();
+      $('#sdate').show();
+      $('.repeatby-view').show();
+      $('#multipleview').hide();
+      $('.multipleinput').prop("checked", false);
+    }
   }
-
-  resetvalues();
+  //resetvalues();
 }
 
   $('.multipleinput').change(function() {
@@ -1921,16 +1948,27 @@ function load_data(){
 
   $('#repeats_every').change(function() {
     load_data();
-    resetvalues();
+    //resetvalues();
   });
 
   $('.repeatlabelday').click(function(){
-    resetvalues()
+    //resetvalues()
+    for(i=1; i<=12; i++){
+      $('#multiple_statutory_date'+i).show();
+    }
+    //$('#single_statutory_date').show();
+    //$('#statutory_date').show();
   });
   $('.repeatlabelendday').click(function(){
-    resetvalues();
-    $('#multiple_statutory_date').val('31');
+    //resetvalues();
+    $('#single_statutory_date').val('31');
     $('#statutory_date').val('31');
+    for(i=1; i<=12; i++){
+      $('#multiple_statutory_date'+i).hide();
+    }
+    //$('#single_statutory_date').hide();
+    //$('#statutory_date').hide();
+
   });
 
   function load_date(selectedMonth){

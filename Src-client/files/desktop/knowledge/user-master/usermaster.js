@@ -304,6 +304,9 @@ $(".filter-text-box").keyup(function() {
 	for(var entity in usersList) {
 			employeeName = usersList[entity]["employee_name"];
 			designation = usersList[entity]["designation"];
+			if(designation == null || designation == 'None'){
+				designation = '-';
+			}
 			employeeId = usersList[entity]["employee_code"];
 			concatName = employeeId + ' - ' + employeeName;
 
@@ -354,8 +357,8 @@ function activate(element){
 	var chkstatus = $(element).attr('class');
 	if(chkstatus == 'active_selectbox'){
 		$(element).removeClass("active_selectbox");
-		remove = domainIds.indexOf(element.id);
-    domainIds.splice(remove,1);
+		remove = domainIds.indexOf(parseInt(element.id));
+    	domainIds.splice(remove,1);
 	}else{
 		$(element).addClass("active_selectbox");
 		domainIds.push(parseInt(element.id));
@@ -386,7 +389,7 @@ function activatecountry(element){
    var chkstatus = $(element).attr('class');
    if(chkstatus == 'active_selectbox_country'){
    	$(element).removeClass("active_selectbox_country");
-   	remove = countryIds.indexOf(element.id);
+   	remove = countryIds.indexOf(parseInt(element.id));
     countryIds.splice(remove,1);
    }else{
     $(element).addClass("active_selectbox_country");

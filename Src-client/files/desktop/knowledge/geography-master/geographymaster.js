@@ -12,21 +12,22 @@ function displayMessage(message) {
 }
 
 $(".btn-geography-add").click(function(){
-$("#geography-view").hide();
-$("#geography-add").show();
-$("#country").val('');
-$("#countryval").val('');
-$(".error-message").html('');
-$(".tbody-geography-level").find("div").remove();
+  $("#geography-view").hide();
+  $("#geography-add").show();
+  $("#country").val('');
+  $("#countryval").val('');
+  $(".error-message").html('');
+  $(".tbody-geography-level").find("div").remove();
 });
 
 $(".btn-geography-back").click(function(){
-$("#geography-view").show();
-$("#geography-add").hide();
-$("#country").val('');
-$("#countryval").val('');
-$(".error-message").html('');
-$(".tbody-geography-level").find("div").remove();
+  GetGeographies();
+  $("#geography-view").show();
+  $("#geography-add").hide();
+  $("#country").val('');
+  $("#countryval").val('');
+  $(".error-message").html('');
+  $(".tbody-geography-level").find("div").remove();
 });
 
 
@@ -230,17 +231,49 @@ function load(id,level,country){
 }
 
 //filter process
-function filter (term, cellNr){
-  var filterkey = term.value.toLowerCase();
-  var table = document.getElementById("tableToModify");
-  var ele;
-  for (var r = 1; r < table.rows.length; r++){
-    ele = table.rows[r].cells[cellNr].innerHTML.replace(/<[^>]+>/g,"");
-    if (ele.toLowerCase().indexOf(filterkey)>=0 )
-      table.rows[r].style.display = '';
-    else table.rows[r].style.display = 'none';
-  }
-}
+  $(".listfilter").keyup(function() {
+
+    var filter1 = $("#filter1").val().toLowerCase();
+    var filter2 = $("#filter2").val().toLowerCase();
+    var filter3 = $("#filter3").val().toLowerCase();
+    var filteredList={};
+
+    for(var entity in geographiesList) {
+      var flist = [];
+      var countryGeographyList = geographiesList[entity];
+      for(var geography in countryGeographyList){
+        var cName = "";
+        for(country in countriesList){
+          var cId = countriesList[country]["country_id"];
+          if(cId == entity){
+            cName = countriesList[country]["country_name"];
+          }
+        }
+        var lName = "";
+        for(level in geographyLevelsList){
+          var cGeography = geographyLevelsList[level];
+          for( g in cGeography){
+            var lId = cGeography[g]["level_id"];
+            if(lId == countryGeographyList[geography]["level_id"]){
+
+              lName = cGeography[g]["level_name"];
+            }
+          }
+        }
+        var filter1val = cName;
+        var filter2val = lName;
+        var filter3val = countryGeographyList[geography]["geography_name"];
+
+        if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2)
+          && ~filter3val.toLowerCase().indexOf(filter3))
+        {
+          flist.push(countryGeographyList[geography]);
+        }
+        filteredList [entity] = flist;
+      }
+    }
+    loadGeographiesList(filteredList);
+  });
 
 //validate and insert records in geograpahymapping table
 function saverecord(j,e){
@@ -279,7 +312,6 @@ function saverecord(j,e){
         }
       }
       countryId = parseInt($("#country").val());
-      console.log($("countryval").innerHTML)
       if(map_gm_id.length == 0){
         map_gm_id.push(0);
       }

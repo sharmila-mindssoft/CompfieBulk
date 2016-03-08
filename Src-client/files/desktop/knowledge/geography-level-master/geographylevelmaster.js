@@ -16,6 +16,8 @@ $(".btn-geographylevel-cancel").click(function(){
     $("#countryval").val("");
     $("#country").val("");
     $("#insertvalue").val("");
+    $("#view-insert-level").hide();
+  	$("#add").show();
 });
 
 $(".add-insert-level").click(function(){  
@@ -81,6 +83,8 @@ $("#countryval").keyup(function(){
 function activate_text (element,checkval,checkname) {
   $("#countryval").val(checkname);
   $("#country").val(checkval);
+  $("#view-insert-level").hide();
+  $("#add").show();
   loadGeographyLevelsList(checkval);
 }
 //Autocomplete Script ends
@@ -132,6 +136,7 @@ $("#submit").click(function(){
 
 	  if(result) {
 	   	var passlevellist = [];
+	   	var isAdd = true;
 		for(var k=1; k<=10; k++) {
 			if($("#levelid"+k).val() != '' && $("#level"+k).val().trim() == ''){
 				displayMessage("Geography Level "+ k + " Should not be Empty")
@@ -139,13 +144,19 @@ $("#submit").click(function(){
 			}else if($("#level"+k).val().trim() != ''){
 				if($("#levelid"+k).val() != ''){
 					passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val().trim(), "level_id" : parseInt($("#levelid"+k).val())});
+					isAdd = false;
 				}else{
 					passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val().trim(), "level_id" : null });
 				}
 			}
 	   }
 		function onSuccess(response) {
-			displayMessage("Record Added Successfully");
+			if(isAdd){
+				displayMessage("Record Added Successfully");
+			}else{
+				displayMessage("Record Updated Successfully");
+			}
+			
 			jQuery('.btn-geographylevel-cancel').focus().click();
 			GetGeographyLevels();			
 		}

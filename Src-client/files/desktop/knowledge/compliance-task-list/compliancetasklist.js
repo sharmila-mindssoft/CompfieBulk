@@ -101,7 +101,7 @@ function loadresult(filterList){
                     if(display_industry){
                       var tableRow3=$('#industry-head-templates .table-industry-list .table-row-industry');
                       var clone3=tableRow3.clone();
-                      $('.tbl_industry_heading', clone3).html("Industry : " + industriesList[indus]["industry_name"]);
+                      $('.tbl_industry_heading', clone3).html('Industry : '+ industriesList[indus]["industry_name"]);
                       $('.accordion-content'+count).append(clone3);
                       display_industry = false;
                     }
@@ -259,6 +259,7 @@ $("#submit").click(function(){
     displayMessage("Domain Required");  
   }
   else{
+      displayMessage("");
       var filterdata={};
       filterdata["country_id"]=parseInt(country);
       filterdata["domain_id"]=parseInt(domain);
