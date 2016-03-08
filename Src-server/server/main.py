@@ -198,7 +198,7 @@ template_loader = jinja2.FileSystemLoader(
 template_env = jinja2.Environment(loader=template_loader)
 
 class TemplateHandler(tornado.web.RequestHandler) :
-    def initialize(self, path_desktop, path_mobile,     parameters) :
+    def initialize(self, path_desktop, path_mobile, parameters) :
         self.__path_desktop = path_desktop
         self.__path_mobile = path_mobile
         self.__parameters = parameters
@@ -227,7 +227,9 @@ class TemplateHandler(tornado.web.RequestHandler) :
         data = etree.tostring(tree, method="html")
         return data
 
-    def get(self) :
+    def get(self, url=None) :
+        if url is not None:
+            print "url:{}".format(url)
         path = self.__path_desktop
         if self.__path_mobile is not None :
             useragent = self.request.headers.get("User-Agent")
