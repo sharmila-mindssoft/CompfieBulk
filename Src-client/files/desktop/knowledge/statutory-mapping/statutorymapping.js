@@ -649,11 +649,38 @@ $("#temp_addstatutories").click(function() {
   if(last_statutory_id==0){
     displayMessage("No Statutory is selected");
   }else if($.inArray(last_statutory_id, sm_statutoryids) >= 0){
-    displayMessage("This statutory mapping already added in list");
+    displayMessage("This statutory already added in list");
   }else{
     sm_statutoryids.push(parseInt(last_statutory_id));
   }
-  load_statories();
+
+  if(sm_statutoryids.length > 0){
+    function onSuccess(data){
+      if(data['is_exists'] == false){
+        load_statories();
+      } else{
+        displayMessage("This statutory already exists");
+        var removeId = sm_statutoryids.indexOf(parseInt(last_statutory_id));
+        sm_statutoryids.splice(removeId,1);
+        //load_statories();
+      }
+    }
+    function onFailure(error){
+      displayMessage(error);
+    }
+    mirror.checkDuplicateStatutoryMapping( sm_countryid,sm_domainid,sm_industryids,
+      sm_statutorynatureid, sm_statutoryids,
+        function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
+        }
+    );
+  }
+  //load_statories();
 });
 
 function temp_removestatutories(remove_id){
@@ -1500,6 +1527,7 @@ function load_edit_selectdomain_master(sm_countryid,sm_domainid,sm_industryids,s
 //edit geographymapping data dynamically
 function edit_geography(country,geographyids_edit){
   var geographyids=geographyids_edit;
+  //alert(geographyids)
   for(var i=0; i<geographyids.length;i++){
     var geographyList = geographiesList[country];
     for(glist in geographyList){
@@ -1508,6 +1536,7 @@ function edit_geography(country,geographyids_edit){
         var level = geographyList[glist]["level_position"];
       }
     }
+    //alert("parentids:"+parentids)
     for(var j=0; j<parentids.length; j++){
       var geo_id = parentids[j];;
       var parent_id = 0;
