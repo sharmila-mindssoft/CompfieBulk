@@ -19,7 +19,7 @@ def process_knowledge_transaction_request(request, db) :
         return process_get_statutory_mappings(db, user_id)
 
     elif type(request_frame) is knowledgetransaction.CheckDuplicateStatutoryMapping :
-        return process_check_statutory_mapping(db, request)
+        return process_check_statutory_mapping(db, request_frame)
 
     elif type(request_frame) is knowledgetransaction.SaveStatutoryMapping :
         return process_save_statutory_mapping(db, request_frame, user_id)
