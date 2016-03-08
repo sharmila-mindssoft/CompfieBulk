@@ -1356,12 +1356,13 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function createNewAdmin(user_id, callback){
+    function createNewAdmin(user_id, client_id, callback){
         callerName = "techno"
         var request = [
             "CreateNewAdmin",
             {
-                "new_admin_id":user_id
+                "new_admin_id": user_id,
+                "client_id": client_id
             }
         ];
         apiRequest(callerName, request, callback);   

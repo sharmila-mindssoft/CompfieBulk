@@ -124,6 +124,28 @@ class GetClientGroups(Request):
         return {
         }
 
+class CreateNewAdmin(Request):
+    def __init__(self, new_admin_id, client_id):
+        self.new_admin_id = new_admin_id
+        self.client_id = client_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["new_admin_id", "client_id"])
+        new_admin_id = data.get("new_admin_id")
+        new_admin_id = parse_structure_UnsignedIntegerType_32(new_admin_id)
+        client_id = data.get("client_id")
+        client_id = parse_structure_UnsignedIntegerType_32(client_id)
+        return CreateNewAdmin(
+            new_admin_id, client_id
+        )
+
+    def to_inner_structure(self):
+        return {
+            "new_admin_id": to_structure_UnsignedIntegerType_32(self.new_admin_id),
+            "client_id": to_structure_UnsignedIntegerType_32(self.client_id)
+        }
+
 class SaveClientGroup(Request):
     def __init__(self, group_name, country_ids, domain_ids, logo, contract_from, contract_to, incharge_persons, no_of_user_licence, file_space, is_sms_subscribed, email_id, date_configurations, short_name):
         self.group_name = group_name
@@ -554,7 +576,11 @@ class GetClientProfile(Request):
 
 
 def _init_Request_class_map():
-    classes = [GetClientGroups, SaveClientGroup, UpdateClientGroup, ChangeClientGroupStatus, GetClients, SaveClient, UpdateClient, ChangeClientStatus, ReactivateUnit, GetClientProfile]
+    classes = [
+        GetClientGroups, SaveClientGroup, UpdateClientGroup, 
+        ChangeClientGroupStatus, GetClients, SaveClient, UpdateClient, 
+        ChangeClientStatus, ReactivateUnit, GetClientProfile, CreateNewAdmin
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -1111,6 +1137,31 @@ class ClientCreationFailed(Response):
             "error": to_structure_CustomTextType_500(self.error)
         }
 
+class CreateNewAdminSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CreateNewAdminSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class ClientDatabaseNotExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ClientDatabaseNotExists()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 class ChangeClientStatusSuccess(Response):
     def __init__(self):
@@ -1174,15 +1225,18 @@ class GetClientProfileSuccess(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetClientGroupsSuccess, SaveClientGroupSuccess, GroupNameAlreadyExists,
-    UpdateClientGroupSuccess, ChangeClientGroupStatusSuccess, InvalidClientId,
-    GetClientsSuccess, SaveClientSuccess, BusinessGroupNameAlreadyExists,
-    LegalEntityNameAlreadyExists, DivisionNameAlreadyExists, UnitNameAlreadyExists,
-    UnitCodeAlreadyExists, LogoSizeLimitExceeds, UpdateClientSuccess,
-    ChangeClientStatusSuccess, ReactivateUnitSuccess, GetClientProfileSuccess,
-    InvalidBusinessGroupId, InvalidLegalEntityId, InvalidDivisionId, 
-    InvalidUnitId, UserIsNotResponsibleForAnyClient, ClientCreationFailed,
-    CannotDeactivateCountry, CannotDeactivateDomain]
+    classes = [
+        GetClientGroupsSuccess, SaveClientGroupSuccess, GroupNameAlreadyExists,
+        UpdateClientGroupSuccess, ChangeClientGroupStatusSuccess, InvalidClientId,
+        GetClientsSuccess, SaveClientSuccess, BusinessGroupNameAlreadyExists,
+        LegalEntityNameAlreadyExists, DivisionNameAlreadyExists, UnitNameAlreadyExists,
+        UnitCodeAlreadyExists, LogoSizeLimitExceeds, UpdateClientSuccess,
+        ChangeClientStatusSuccess, ReactivateUnitSuccess, GetClientProfileSuccess,
+        InvalidBusinessGroupId, InvalidLegalEntityId, InvalidDivisionId, 
+        InvalidUnitId, UserIsNotResponsibleForAnyClient, ClientCreationFailed,
+        CannotDeactivateCountry, CannotDeactivateDomain, CreateNewAdminSuccess,
+        ClientDatabaseNotExists
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

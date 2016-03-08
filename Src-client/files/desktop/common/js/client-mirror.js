@@ -476,7 +476,8 @@ function initClientMirror() {
     }
 
     function getUpdateClientUserDict(clientUserDetail) {
-        return {
+        console.log("clientUserDetail[0]"+clientUserDetail[0]);
+        result =  {
             "user_id": clientUserDetail[0],
             "user_group_id": clientUserDetail[1],
             "employee_name": clientUserDetail[2],
@@ -491,6 +492,8 @@ function initClientMirror() {
             "is_service_provider": clientUserDetail[11],
             "service_provider_id": clientUserDetail[12]
         }
+        console.log("result:"+result);
+        return result
     }
 
     function updateClientUser(clientUserDetail, callback) {

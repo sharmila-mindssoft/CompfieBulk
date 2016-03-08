@@ -1000,7 +1000,18 @@ class GetAuditTrailSuccess(Response):
             "audit_trail_details": to_structure_VectorType_RecordType_general_AuditTrail(self.audit_trails),
         }
 
+class UserLimitExceeds(Response):
+    def __init__(self):
+        pass
 
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UserLimitExceeds()
+
+    def to_inner_structure(self):
+        return {
+        } 
 
 def _init_Response_class_map():
     classes = [GetServiceProvidersSuccess, SaveServiceProviderSuccess,

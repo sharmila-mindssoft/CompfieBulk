@@ -3560,7 +3560,7 @@ class KnowledgeDatabase(Database):
     def _mysql_server_connect(self, host, username, password):
         return mysql.connect(host, username, password)
 
-    def _db_connect(self, host, username, password, database) :
+    def _db_connect(self, host, username, password, database):
         return mysql.connect(host, username, password,
             database)
 
@@ -5529,6 +5529,71 @@ class KnowledgeDatabase(Database):
             self.tblUsers, columns, condition
         )
         if rows[0][0] > 0:
+            return True
+        else: 
+            return False
+
+    def create_new_admin(self, new_admin_id, client_id, session_user):
+        columns = "database_ip, database_username, database_password, \
+        database_name"
+        condition = "client_id = '%d'" % client_id
+        rows = self.get_data(
+            self.tblClientDatabase, columns, condition
+        )
+        if rows:
+            host = rows[0][0]
+            username = rows[0][1]
+            password = rows[0][2]
+            database = rows[0][3]
+            conn = self._db_connect(host, username, password, database)
+            cursor = conn.cursor()
+
+            # Getting old admin details
+            query = "select username, password from tbl_admin"
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            old_admin_username = rows[0][0]
+            old_admin_password = rows[0][1]
+
+            # Getting new admin details
+            query = "select email_id, password from tbl_users where \
+            user_id = '%d'" % (new_admin_id)
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            admin_email = rows[0][0]
+            admin_password = rows[0][1]
+
+            # Promoting to new admin in Client db
+            query = "update tbl_admin set username = '%s', password='%s'" % (
+                admin_email, admin_password
+            )
+            cursor.execute(query)
+            query = "update tbl_users set is_admin = 1 where user_id = '%d'" % (
+                new_admin_id
+            )
+            cursor.execute(query)
+
+            # Deactivating old admin in Client db
+            query = "update tbl_users set is_admin = 0 and is_active = 0 \
+            where email_id = '%s'" % (
+                old_admin_username
+            )
+            cursor.execute(query)
+            conn.commit()
+
+            # Promoting to new admin in Knowledge db
+            query = "update tbl_client_users set is_admin = 1 \
+            where user_id = '%d' and client_id = '%d'" % (
+                new_admin_id, client_id
+            )
+            self.execute(query)
+
+            # Deactivating old admin in Knowledge db
+            query = "update tbl_client_users set is_admin = 0 and is_active = 0 \
+            where email_id = '%s' and client_id = '%d'" % (
+                old_admin_username, client_id
+            )
+            self.execute(query)
             return True
         else:
             return False

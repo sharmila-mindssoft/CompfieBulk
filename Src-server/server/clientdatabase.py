@@ -817,11 +817,11 @@ class ClientDatabase(Database):
         db_con.connect()
         db_con.begin()
         q = "UPDATE tbl_client_users set \
-        email_id ='{}', employee_name = '{}', employee_code = '{}', \
+        employee_name = '{}', employee_code = '{}', \
         contact_no = '{}', seating_unit_id = '{}' where client_id ='{}' \
         and user_id = '{}'".format(
-             user.email_id, user.employee_name, user.employee_code, user.contact_no,
-             user.seating_unit_id, client_id, user_id
+             user.employee_name, user.employee_code, user.contact_no,
+             user.seating_unit_id, client_id, user.user_id
         )
         db_con.execute(q)
         db_con.commit()
