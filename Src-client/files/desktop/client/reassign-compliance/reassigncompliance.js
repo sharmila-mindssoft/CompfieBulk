@@ -490,7 +490,6 @@ function loadUser(selectedUnit, userClass, userType){
     if( selectedUnit == 'all' || $.inArray(parseInt(selectedUnit), userUnits) >= 0){
           var userId= usersList[user]["user_id"];
           var userName= usersList[user]["user_name"];
-      
           if((assigneeUserId == null || assigneeUserId != userId) && 
             (concurrenceUserId == null || concurrenceUserId !=userId) && 
             (approvalUserId == null || approvalUserId != userId)){
