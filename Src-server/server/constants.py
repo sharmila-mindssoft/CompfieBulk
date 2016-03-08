@@ -196,7 +196,7 @@ TEMPLATE_PATHS = [
         "", {}
     ),
     (
-        "/knowledge/reset-password",
+        r"/knowledge/reset-password/([a-zA-Z-0-9]+)",
         "files/desktop/knowledge/resetpassword.html",
         "", {}
     ),

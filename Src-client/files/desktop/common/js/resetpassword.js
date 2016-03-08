@@ -1,3 +1,7 @@
+function displayMessage(message) {
+  $(".error-message").text(message);
+  $(".error-message").show();
+}
 $("#submit").click(function(){
     $(".error-message").html("");
     var resetToken = "71546293895338817723334292533594853377";
