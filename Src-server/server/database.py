@@ -890,15 +890,23 @@ class KnowledgeDatabase(Database):
         query = "INSERT INTO %s %s VALUES %s" % (
             table_name, field, str(data)
         )
-        self.execute(query)
-        return True
+        try :
+            self.execute(query)
+            return True
+        except Exception, e :
+            print query
+            print e
 
     def update_data(self, table_name, field_with_data, where_condition) :
         query = "UPDATE %s SET %s WHERE %s" % (
             table_name, field_with_data, where_condition
         )
-        self.execute(query)
-        return True
+        try :
+            self.execute(query)
+            return True
+        except Exception, e :
+            print query
+            print e
 
     def get_industries(self) :
         query = "SELECT industry_id, industry_name, is_active \
@@ -1419,7 +1427,7 @@ class KnowledgeDatabase(Database):
         geographies = {}
         if rows :
             columns = [
-                "geography_id", "geography_name", "parent_names", "level_id", 
+                "geography_id", "geography_name", "parent_names", "level_id",
                 "parent_ids", "is_active", "country_id", "country_name"
             ]
             result = self.convert_to_dict(rows, columns)
@@ -3738,7 +3746,7 @@ class KnowledgeDatabase(Database):
         is_sms_subscribed = 0 if client_group.is_sms_subscribed == False else 1
 
         columns = [
-            "group_name", "contract_from", "contract_to", "no_of_user_licence", 
+            "group_name", "contract_from", "contract_to", "no_of_user_licence",
             "total_disk_space", "is_sms_subscribed", "incharge_persons", "is_active",
             "updated_by", "updated_on"
         ]
@@ -3755,7 +3763,7 @@ class KnowledgeDatabase(Database):
             file_name = self.update_client_logo(client_group.logo, client_group.client_id)
             values.append(file_name)
             values.append(client_group.logo.file_size)
-        
+
         condition = "client_id = '%d'" % client_group.client_id
 
         action = "Updated Client \"%s\"" % client_group.group_name
@@ -4405,7 +4413,7 @@ class KnowledgeDatabase(Database):
 
     def get_compliance_by_mapping_id(self, mapping_id):
 
-        qry = "SELECT t1.compliance_id, t1.statutory_provision, \
+        qry = "SELECT distinct t1.compliance_id, t1.statutory_provision, \
             t1.compliance_task, t1.compliance_description, \
             t1.document_name \
             FROM tbl_compliances t1 \
@@ -4479,7 +4487,10 @@ class KnowledgeDatabase(Database):
             for c in compliance_list :
                 provision = "%s - %s" % (level_map, c["statutory_provision"])
                 # provision.replace(level_1, "")
-                name = "%s - %s" % (c["document_name"], c["compliance_task"])
+                if c["document_name"] is not None :
+                    name = "%s - %s" % (c["document_name"], c["compliance_task"])
+                else :
+                    name = c["compliance_task"]
                 c_data = core.ComplianceApplicability(
                     c["compliance_id"],
                     name,
@@ -4749,8 +4760,11 @@ class KnowledgeDatabase(Database):
             t1.compliance_applicable, t1.compliance_opted, \
             t1.compliance_remarks, \
             t2.statutory_name, t3.compliance_task, t3.document_name, \
+            t3.statutory_mapping_id, \
             t3.statutory_provision, t3.compliance_description, \
-            t5.statutory_nature_name\
+            t5.statutory_nature_name,\
+            (select distinct level_position from tbl_statutory_levels where level_id = t2.level_id)level,\
+            t2.statutory_name\
             FROM tbl_client_compliances t1 \
             INNER JOIN tbl_statutories t2 \
             ON t1.statutory_id = t2.statutory_id \
@@ -4762,7 +4776,7 @@ class KnowledgeDatabase(Database):
             ON t4.statutory_nature_id = t5.statutory_nature_id \
             WHERE \
             t1.client_statutory_id = %s \
-            AND t1.statutory_id like '%s' " % (
+            AND t1.statutory_id like '%s' ORDER BY level, statutory_name, compliance_id" % (
                 client_statutory_id, statutory_id
             )
         rows = self.select_all(query)
@@ -4772,8 +4786,9 @@ class KnowledgeDatabase(Database):
             "not_applicable_remarks", "compliance_applicable",
             "compliance_opted", "compliance_remarks",
             "statutory_name", "compliance_task", "document_name",
+            "statutory_mapping_id",
             "statutory_provision", "compliance_description",
-            "statutory_nature_name"
+            "statutory_nature_name", "level", "statutory_name"
         ]
         results = self.convert_to_dict(rows, columns)
         level_1_statutory_compliance = {}
@@ -4786,10 +4801,19 @@ class KnowledgeDatabase(Database):
             if statutory_opted is not None :
                 statutory_opted = bool(statutory_opted)
             statutory_id = int(r["statutory_id"])
-            statutory_data = self.statutory_parent_mapping.get(statutory_id)
+            mapping_id = int(r["statutory_mapping_id"])
+            statutory_data = self.statutory_parent_mapping.get(mapping_id)
             s_mapping = statutory_data[1]
-            provision = "%s - %s" % (s_mapping, r["statutory_provision"])
-            name = "%s - %s" % (r["document_name"], r["compliance_task"])
+            level_map = s_mapping.split(">>")
+            if len(level_map) == 1 :
+                level_map = ""
+            else :
+                level_map = ">>".join(level_map[-1:])
+            provision = "%s - %s" % (level_map, r["statutory_provision"])
+            if r["document_name"] is not None :
+                name = "%s - %s" % (r["document_name"], r["compliance_task"])
+            else :
+                name = r["compliance_task"]
             compliance = core.ComplianceApplicability(
                 r["compliance_id"],
                 name,

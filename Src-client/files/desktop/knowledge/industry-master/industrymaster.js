@@ -94,7 +94,7 @@ $("#submit").click(function(){
   var industryName = $("#industryname").val().trim();
 
 if(validate()){
-  if(industryName.length > 0){
+  if(industryId == ''){
     function onSuccess(response) {
       getIndustries ();
       $("#industry-add").hide();

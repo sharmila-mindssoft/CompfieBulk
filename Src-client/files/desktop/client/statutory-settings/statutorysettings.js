@@ -1,5 +1,6 @@
 var assignedStatutoriesList;
 var sList;
+var assignedStatutories = [];
 
 function clearMessage() {
   $(".error-message").hide();
@@ -170,8 +171,6 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
       actCount = actCount + 1;
       count++;
     }
-
-   
   });
   $(document).ready(function($) {
       $("#accordion").find(".accordion-toggle").click(function(){
@@ -192,7 +191,43 @@ function submit_statutory(){
   }else{
     var uId = $("#unit").val();
     var uVal = $("#unitval").val();
-    var assignedStatutories = [];
+    function onSuccess(data){
+      $('.overlay').css("visibility","hidden");
+      $('.overlay').css("opacity","0");
+      $('#password').val("");
+      getStatutorySettings ();
+      $("#statutorysettings-add").hide();
+      $("#statutorysettings-view").show();
+    }
+    function onFailure(error){
+      if(error == 'InvalidPassword'){
+        $('.popup-error-msg').html("Enter Correct password");
+        $('#password').val("");
+      }
+    }
+    client_mirror.updateStatutorySettings(password, uVal, parseInt(uId), assignedStatutories, 
+      function (error, response) {
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+    }
+    );
+  }
+}
+
+$('.close').click(function(){
+  $('#unitidval').val("");
+  $('.overlay').css("visibility","hidden");
+  $('.overlay').css("opacity","0");
+});
+
+$("#submit").click(function() {
+
+    
+    assignedStatutories = [];
     var statutoriesCount= 1;
     var actCount = 1;
     var saveflag = true;
@@ -256,47 +291,13 @@ function submit_statutory(){
       actCount++;
     }
   });
-  
+
   if(saveflag){
-    function onSuccess(data){
-      $('.overlay').css("visibility","hidden");
-      $('.overlay').css("opacity","0");
-      $('#password').val("");
-      getStatutorySettings ();
-      $("#statutorysettings-add").hide();
-      $("#statutorysettings-view").show();
-    }
-    function onFailure(error){
-      if(error == 'InvalidPassword'){
-        $('.popup-error-msg').html("Enter Correct password");
-        $('#password').val("");
-      }
-    }
-    client_mirror.updateStatutorySettings(password, uVal, parseInt(uId), assignedStatutories, 
-      function (error, response) {
-      if (error == null){
-        onSuccess(response);
-      }
-      else {
-        onFailure(error);
-      }
-    }
-    );
-    }
+    $('.overlay').css("visibility","visible");
+    $('.overlay').css("opacity","1");
+    $('.popup-error-msg').html("");
+    $('#password').html("");
   }
-}
-
-$('.close').click(function(){
-  $('#unitidval').val("");
-  $('.overlay').css("visibility","hidden");
-  $('.overlay').css("opacity","0");
-});
-
-$("#submit").click(function() {
-  $('.overlay').css("visibility","visible");
-  $('.overlay').css("opacity","1");
-  $('.popup-error-msg').html("");
-  $('#password').html("");
 });
 
 $("#cancel").click(function() {

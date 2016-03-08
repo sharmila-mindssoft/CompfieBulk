@@ -1326,12 +1326,12 @@ class ASSIGN_COMPLIANCE_UNITS(object):
 
     def to_structure(self):
         return {
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
+            "unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.unit_id),
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_250(self.address),
-            "division_id": to_structure_SignedIntegerType_8(self.division_id),
+            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
             "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
-            "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
+            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
             "country_id": to_structure_UnsignedIntegerType_32(self.country_id)
         }
 

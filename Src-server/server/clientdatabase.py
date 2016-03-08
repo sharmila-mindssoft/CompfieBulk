@@ -380,10 +380,13 @@ class ClientDatabase(Database):
     def return_legal_entities(self, legal_entities):
         results = []
         for legal_entity in legal_entities :
+            b_group_id = None
+            if legal_entity["business_group_id"] > 0:
+                b_group_id = int(legal_entity["business_group_id"])
             results.append(core.ClientLegalEntity(
                 legal_entity["legal_entity_id"],
                 legal_entity["legal_entity_name"],
-                legal_entity["business_group_id"]
+                b_group_id
             ))
         return results
 
@@ -468,10 +471,16 @@ class ClientDatabase(Database):
             )
             for unit in rows:
                 domain_ids_list = [int(x) for x in unit[7].split(",")]
+                division_id = None
+                b_group_id = None
+                if unit[3] > 0 :
+                    division_id = unit[3]
+                if unit[5] > 0 :
+                    b_group_id = unit[5]
                 units.append(
                     clienttransactions.PastRecordUnits(
-                        unit[0], unit[1], unit[2],unit[3], unit[4],
-                        unit[5], unit[6], domain_ids_list
+                        unit[0], unit[1], unit[2], division_id, unit[4],
+                        b_group_id, unit[6], domain_ids_list
                     )
                 )
             industry_wise_units.append(clienttransactions.IndustryWiseUnits(industry_name, units))
@@ -480,9 +489,15 @@ class ClientDatabase(Database):
     def return_units(self, units):
         results = []
         for unit in units :
+            division_id = None
+            b_group_id = None
+            if unit["division_id"] > 0 :
+                division_id = unit["division_id"]
+            if unit["business_group_id"] > 0 :
+                b_group_id = unit["business_group_id"]
             results.append(core.ClientUnit(
-                unit["unit_id"], unit["division_id"], unit["legal_entity_id"],
-                unit["business_group_id"], unit["unit_code"],
+                unit["unit_id"], division_id, unit["legal_entity_id"],
+                b_group_id, unit["unit_code"],
                 unit["unit_name"], unit["unit_address"], bool(unit["is_active"])
             ))
         return results
@@ -2117,17 +2132,16 @@ class ClientDatabase(Database):
 #
 
     def get_units_for_assign_compliance(self, session_user, client_id=None):
-        if session_user == 0 :
-            session_user = '%'
+        if session_user > 0 :
+            qry = ' WHERE t1.unit_id in (select distinct unit_id from tbl_user_units where user_id = %s) ' % (int(session_user))
+        else :
+            qry = ""
+
         query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, \
             t1.division_id, t1.legal_entity_id, t1.business_group_id, \
             t1.address, t1.country_id \
-            FROM tbl_units t1 \
-            INNER JOIN tbl_user_units t2 \
-            ON t1.unit_id = t2.unit_id \
-            AND t2.user_id like '%s' " % (
-                session_user
-            )
+            FROM tbl_units t1 "
+        query += qry
         rows = self.select_all(query)
         columns = [
             "unit_id", "unit_code", "unit_name",
@@ -2138,13 +2152,19 @@ class ClientDatabase(Database):
         unit_list = []
         for r in result :
             name = "%s - %s" % (r["unit_code"], r["unit_name"])
+            division_id = None
+            b_group_id = None
+            if r["division_id"] > 0 :
+                division_id = r["division_id"]
+            if r["business_group_id"] > 0 :
+                b_group_id = r["business_group_id"]
             unit_list.append(
                 clienttransactions.ASSIGN_COMPLIANCE_UNITS(
                     r["unit_id"], name,
                     r["address"],
-                    r["division_id"],
+                    division_id,
                     r["legal_entity_id"],
-                    r["business_group_id"],
+                    b_group_id,
                     r["country_id"]
                 )
             )
@@ -2242,10 +2262,6 @@ class ClientDatabase(Database):
             ON t2.client_statutory_id = t1.client_statutory_id \
             INNER JOIN tbl_compliances t3 \
             ON t2.compliance_id = t3.compliance_id \
-            INNER JOIN tbl_compliance_frequency t4 \
-            ON t3.frequency_id = t4.frequency_id \
-            INNER JOIN tbl_user_domains t5 \
-            ON t1.domain_id = t5.domain_id \
             INNER JOIN \
             (SELECT distinct U.compliance_id, group_concat(distinct U.unit_id) units FROM  \
             (SELECT A.unit_id, A.client_statutory_id, B.compliance_id FROM tbl_client_statutories A \
@@ -2261,12 +2277,10 @@ class ClientDatabase(Database):
             AND t1.unit_id IN %s \
             AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
-            AND t3.is_active = 1 \
-            AND t5.user_id LIKE '%s'; " % (
+            AND t3.is_active = 1 " % (
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
-                session_user
             )
 
         rows = self.select_all(query)
