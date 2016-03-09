@@ -78,11 +78,11 @@ def save_service_provider(db, request, session_user, client_id):
         request.service_provider_name, client_id
     ) :
         return clientmasters.ServiceProviderNameAlreadyExists()
-    elif db.is_duplicate_service_provider_contact_no(
-        service_provider_id,
-        request.contact_no, client_id
-    ) :
-        return clientmasters.ContactNumberAlreadyExists()
+    # elif db.is_duplicate_service_provider_contact_no(
+    #     service_provider_id,
+    #     request.contact_no, client_id
+    # ) :
+    #     return clientmasters.ContactNumberAlreadyExists()
     elif db.save_service_provider(
         service_provider_id, request, session_user, client_id
     ) :
@@ -100,11 +100,11 @@ def update_service_provider(db, request, session_user, client_id):
         request.service_provider_name, client_id
     ) :
         return clientmasters.ServiceProviderNameAlreadyExists()
-    elif db.is_duplicate_service_provider_contact_no(
-        request.service_provider_id,
-        request.contact_no, client_id
-    ) :
-        return clientmasters.ContactNumberAlreadyExists()
+    # elif db.is_duplicate_service_provider_contact_no(
+    #     request.service_provider_id,
+    #     request.contact_no, client_id
+    # ) :
+    #     return clientmasters.ContactNumberAlreadyExists()
     elif db.update_service_provider(request, session_user, client_id) :
         return clientmasters.UpdateServiceProviderSuccess()
 
@@ -255,10 +255,10 @@ def save_client_user(db, request, session_user, client_id):
         request.employee_code, client_id
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
-    elif db.is_duplicate_user_contact_no(
-        user_id, request.contact_no, client_id
-    ):
-        return clientmasters.ContactNumberAlreadyExists()
+    # elif db.is_duplicate_user_contact_no(
+    #     user_id, request.contact_no, client_id
+    # ):
+    #     return clientmasters.ContactNumberAlreadyExists()
     elif db.save_user(user_id, request, session_user, client_id) :
         return clientmasters.SaveClientUserSuccess()
 
@@ -270,11 +270,11 @@ def update_client_user(db, request, session_user, client_id):
         request.employee_code, client_id
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
-    elif db.is_duplicate_user_contact_no(
-        request.user_id,
-        request.contact_no, client_id
-    ):
-        return clientmasters.ContactNumberAlreadyExists()
+    # elif db.is_duplicate_user_contact_no(
+    #     request.user_id,
+    #     request.contact_no, client_id
+    # ):
+    #     return clientmasters.ContactNumberAlreadyExists()
     elif db.update_user(request, session_user, client_id) :
         return clientmasters.UpdateClientUserSuccess()
 
