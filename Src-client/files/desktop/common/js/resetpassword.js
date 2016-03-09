@@ -1,5 +1,7 @@
 function displayMessage(message) {
-  $(".error-message").text(message);
+  console.log("inside displayMessage");
+  console.log("obj:"+$(".error-message"))
+  $(".error-message").html(message);
   $(".error-message").show();
 }
 $("#submit").click(function(){
@@ -49,7 +51,7 @@ $(document).ready(function(){
       displayMessage("Invalid Reset Token");
     }
     $(".error-message").html(status);
-    window.location.href='/knowledge/login';
+    // window.location.href='/knowledge/login';
 
   }
   mirror.validateResetToken("71546293895338817723334292533594853377", 

@@ -3504,9 +3504,16 @@ class KnowledgeDatabase(Database):
             countries = None if client_countries is None else [int(x) for x in client_countries.split(",")]
             client_domains = self.get_client_domains(group_company["client_id"])
             domains = None if client_domains is None else [int(x) for x in client_domains.split(",")]
-            results.append(core.GroupCompany(
+
+            columns = "count(*)"
+            condition = "client_id = '%d'" % group_company["client_id"]
+            rows = self.get_data(self.tblUnits, columns, condition)
+            no_of_units = rows[0][0]
+
+            results.append(core.GroupCompanyForUnitCreation(
                 group_company["client_id"], group_company["group_name"],
-                bool(group_company["is_active"]), countries, domains
+                bool(group_company["is_active"]), countries, domains,
+                no_of_units
             ))
         return results
 
@@ -4450,12 +4457,11 @@ class KnowledgeDatabase(Database):
                 SELECT g.geography_id \
                 FROM tbl_geographies g \
                 WHERE g.geography_id = %s \
-                OR g.parent_ids LIKE '%s' )" % (
+                OR g.parent_ids LIKE '%s' OR t4.geography_id IN %s )" % (
                     domain_id, country_id, industry_id, geography_id,
                     str("%" + str(geography_id) + ",%"),
+                    (str(tuple(parent_ids)))
                 )
-        if parent_ids :
-            query += " OR t4.geography_id IN %s " % (str(tuple(parent_ids)))
         rows = self.select_all(query)
         columns = [
             "statutory_mapping_id", "statutory_nature_id",
