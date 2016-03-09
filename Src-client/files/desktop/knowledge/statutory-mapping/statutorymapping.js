@@ -1726,8 +1726,7 @@ $(document).ready(function(){
             lis[i].style.display = 'none';
     }
     });
-    //end -filter process in select domain tab
-/*
+
     $("#statutory_date").empty();
     var defaultoption = $("<option></option>");
     defaultoption.val("");
@@ -1765,7 +1764,7 @@ $(document).ready(function(){
         option.text(i)
         $("#multiple_statutory_date"+j).append(option);
     }
-    }*/
+    }
 
     $('#repeats_every').keyup('input', function (event) {
       this.value = this.value.replace(/[^0-9]/g, '');
@@ -1988,7 +1987,6 @@ function load_data(){
   }
 
   $('#single_statutory_month').change(function() {
-
     var selectedMonth = $('#single_statutory_month').val();
     var maxDate = load_date(selectedMonth);
     $("#single_statutory_date").empty();
@@ -2009,7 +2007,6 @@ function load_data(){
       $('#single_statutory_date').val(monthDate);
     }
   });
-
 
 
  /*for(var j=1; j<=12; j++){
@@ -2038,7 +2035,6 @@ function load_data(){
     }
   });
 }*/
-
 
 $('#multiple_statutory_month1').change(function() {
     var selectedMonth = $('#multiple_statutory_month1').val();
@@ -2112,7 +2108,6 @@ $('#multiple_statutory_month3').change(function() {
 $('#multiple_statutory_month4').change(function() {
     var selectedMonth = $('#multiple_statutory_month4').val();
     var maxDate = load_date(selectedMonth);
-
     $("#multiple_statutory_date4").empty();
     var defaultoption = $("<option></option>");
     defaultoption.val("");
@@ -2124,7 +2119,6 @@ $('#multiple_statutory_month4').change(function() {
         option.text(i)
         $("#multiple_statutory_date4").append(option);
     }
-
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month4').val();
       var monthDate = load_date(selectedMonth);
@@ -2135,7 +2129,6 @@ $('#multiple_statutory_month4').change(function() {
 $('#multiple_statutory_month5').change(function() {
     var selectedMonth = $('#multiple_statutory_month5').val();
     var maxDate = load_date(selectedMonth);
-
     $("#multiple_statutory_date5").empty();
     var defaultoption = $("<option></option>");
     defaultoption.val("");
@@ -2147,7 +2140,6 @@ $('#multiple_statutory_month5').change(function() {
         option.text(i)
         $("#multiple_statutory_date5").append(option);
     }
-
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month5').val();
       var monthDate = load_date(selectedMonth);
@@ -2158,7 +2150,6 @@ $('#multiple_statutory_month5').change(function() {
 $('#multiple_statutory_month6').change(function() {
     var selectedMonth = $('#multiple_statutory_month6').val();
     var maxDate = load_date(selectedMonth);
-
     $("#multiple_statutory_date6").empty();
     var defaultoption = $("<option></option>");
     defaultoption.val("");
@@ -2170,7 +2161,6 @@ $('#multiple_statutory_month6').change(function() {
         option.text(i)
         $("#multiple_statutory_date6").append(option);
     }
-
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month6').val();
       var monthDate = load_date(selectedMonth);
@@ -2181,7 +2171,6 @@ $('#multiple_statutory_month6').change(function() {
 $('#multiple_statutory_month7').change(function() {
     var selectedMonth = $('#multiple_statutory_month7').val();
     var maxDate = load_date(selectedMonth);
-
     $("#multiple_statutory_date7").empty();
     var defaultoption = $("<option></option>");
     defaultoption.val("");
@@ -2193,7 +2182,6 @@ $('#multiple_statutory_month7').change(function() {
         option.text(i)
         $("#multiple_statutory_date7").append(option);
     }
-
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month7').val();
       var monthDate = load_date(selectedMonth);
@@ -2204,7 +2192,6 @@ $('#multiple_statutory_month7').change(function() {
 $('#multiple_statutory_month8').change(function() {
     var selectedMonth = $('#multiple_statutory_month8').val();
     var maxDate = load_date(selectedMonth);
-
     $("#multiple_statutory_date8").empty();
     var defaultoption = $("<option></option>");
     defaultoption.val("");
@@ -2216,7 +2203,6 @@ $('#multiple_statutory_month8').change(function() {
         option.text(i)
         $("#multiple_statutory_date8").append(option);
     }
-
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month8').val();
       var monthDate = load_date(selectedMonth);
@@ -2228,7 +2214,6 @@ $('#multiple_statutory_month8').change(function() {
 $('#multiple_statutory_month9').change(function() {
     var selectedMonth = $('#multiple_statutory_month9').val();
     var maxDate = load_date(selectedMonth);
-
     $("#multiple_statutory_date9").empty();
     var defaultoption = $("<option></option>");
     defaultoption.val("");
@@ -2240,7 +2225,6 @@ $('#multiple_statutory_month9').change(function() {
         option.text(i)
         $("#multiple_statutory_date9").append(option);
     }
-
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month9').val();
       var monthDate = load_date(selectedMonth);
@@ -2252,7 +2236,6 @@ $('#multiple_statutory_month9').change(function() {
 $('#multiple_statutory_month10').change(function() {
     var selectedMonth = $('#multiple_statutory_month10').val();
     var maxDate = load_date(selectedMonth);
-
     $("#multiple_statutory_date10").empty();
     var defaultoption = $("<option></option>");
     defaultoption.val("");
@@ -2264,7 +2247,6 @@ $('#multiple_statutory_month10').change(function() {
         option.text(i)
         $("#multiple_statutory_date10").append(option);
     }
-
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month10').val();
       var monthDate = load_date(selectedMonth);
@@ -2275,7 +2257,6 @@ $('#multiple_statutory_month10').change(function() {
 $('#multiple_statutory_month11').change(function() {
     var selectedMonth = $('#multiple_statutory_month11').val();
     var maxDate = load_date(selectedMonth);
-
     $("#multiple_statutory_date11").empty();
     var defaultoption = $("<option></option>");
     defaultoption.val("");
@@ -2287,7 +2268,6 @@ $('#multiple_statutory_month11').change(function() {
         option.text(i)
         $("#multiple_statutory_date11").append(option);
     }
-
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month11').val();
       var monthDate = load_date(selectedMonth);
@@ -2299,7 +2279,6 @@ $('#multiple_statutory_month11').change(function() {
 $('#multiple_statutory_month12').change(function() {
     var selectedMonth = $('#multiple_statutory_month12').val();
     var maxDate = load_date(selectedMonth);
-
     $("#multiple_statutory_date12").empty();
     var defaultoption = $("<option></option>");
     defaultoption.val("");
@@ -2311,7 +2290,6 @@ $('#multiple_statutory_month12').change(function() {
         option.text(i)
         $("#multiple_statutory_date12").append(option);
     }
-
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month12').val();
       var monthDate = load_date(selectedMonth);
@@ -2320,10 +2298,8 @@ $('#multiple_statutory_month12').change(function() {
 });
 
   $('#statutory_month').change(function() {
-
     var selectedMonth = $('#statutory_month').val();
     var maxDate = load_date(selectedMonth);
-
     $("#statutory_date").empty();
     var defaultoption = $("<option></option>");
     defaultoption.val("");
@@ -2335,7 +2311,6 @@ $('#multiple_statutory_month12').change(function() {
         option.text(i)
         $("#statutory_date").append(option);
     }
-
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#statutory_month').val();
       var monthDate = load_date(selectedMonth);
