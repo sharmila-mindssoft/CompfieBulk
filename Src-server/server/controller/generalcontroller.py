@@ -30,6 +30,8 @@ def process_general_request(request, db) :
         return process_update_domain(db, request_frame, user_id)
     if type(request_frame) is general.ChangeDomainStatus :
         return process_change_domain_status(db, request_frame, user_id)
+    if type(request_frame) is general.GetCountriesForUser :
+        return process_get_countries_for_user(db, user_id)
     if type(request_frame) is general.GetCountries :
         return process_get_countries(db, user_id)
     if type(request_frame) is general.SaveCountry :
@@ -121,6 +123,11 @@ def process_change_country_status(db, request, user_id):
         return general.ChangeCountryStatusSuccess()
     else :
         return general.InvalidCountryId()
+
+def process_get_countries_for_user(db, user_id):
+    results = db.get_countries_for_user(user_id)
+    success = general.GetCountriesSuccess(countries=results)
+    return success
 
 def process_get_countries(db, user_id):
     results = db.get_countries_for_user(0)

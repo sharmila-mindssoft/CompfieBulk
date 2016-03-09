@@ -129,17 +129,70 @@ $("#show-button").click(function(){
         );
     }
 });
+
+function getBusinessGroupName(businessGroupId){
+    var businessgroupName;
+    if(businessGroupId != null){
+        $.each(businessgroupsList, function(key, value){
+            if(value['business_group_id'] == businessGroupId){
+                businessgroupName = value['business_group_name'];
+            }
+        });
+    }
+    else{
+        businessgroupName = "Nil";
+    }
+    return businessgroupName;   
+}
+function getLegalEntityName(legalentityId){
+    var legalEntityName;
+    if(legalentityId != null){
+        $.each(legalEntityList, function(key, value){
+            if(value['legal_entity_id'] == legalentityId){
+                legalEntityName = value['legal_entity_name'];
+            }
+        });    
+    }
+    else{
+        legalEntityName = "Nil";
+    }
+    
+    return legalEntityName; 
+}
+function getDivisionName(divisionId){
+    var divisionName;
+    if(divisionId != null){
+        $.each(divisionsList, function(key, value){
+            if(value['division_id'] == divisionId){
+                divisionName = value['division_name'];
+            }
+        });
+    }
+    else{
+        divisionName = "Nil";
+    }
+    return divisionName;
+}
 function loadClientDetailsList(data){
-    $('.tbody-clientdetails-list tr').remove();
+    $('.table-clientdetails-list tbody').empty();
     var sno = 0;
     $.each(data, function(key, value) {
         var tablefilter = $('#templates .tr-filter');
-        var clone = tablefilter.clone();
+        var clonefilter = tablefilter.clone();
+        $(".bgroupsval").text(getBusinessGroupName(value['business_group_id']));
+        $(".lentityval").text(getLegalEntityName(value['legal_entity_id']));
+        $(".divisionval").text(getDivisionName(value['division_id']));
+        $('.tbody-clientdetails-list').append(clonefilter);
+
+        var tableheading = $('#templates .tr-heading');
+        var cloneheading = tableheading.clone();
+        $('.tbody-clientdetails-list').append(cloneheading);
+
         var list = value['units'];
         $.each(list, function(k, val) { 
             var arr = [];
             var domainsNames = '';
-            var tableRow = $('#templates .table-clientdetails-list .table-row');
+            var tableRow = $('#templates .table-row');
             var clone = tableRow.clone();
             sno = sno + 1;
             $('.sno', clone).text(sno);

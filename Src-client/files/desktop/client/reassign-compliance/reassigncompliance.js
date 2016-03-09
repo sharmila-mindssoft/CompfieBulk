@@ -495,7 +495,6 @@ function loadUser(selectedUnit, userClass, userType){
             (approvalUserId == null || approvalUserId != userId)){
             str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
           }
-
         }
       /*if( selectedUnit == 'all' || selectedUnit == user ){
         var unitusers = usersList[user];

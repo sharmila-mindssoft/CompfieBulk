@@ -93,11 +93,11 @@ function initMirror() {
     function getUserMenu(){
         var info = getUserInfo();
         if (info != null){
-            return info["menu"]["menus"];    
+            return info["menu"]["menus"];
         }else{
             console.log(window.localStorage["login_url"])
             window.location.href = window.localStorage["login_url"];
-        } 
+        }
     }
 
     function getEmployeeName(){
@@ -316,6 +316,11 @@ function initMirror() {
 
     function getCountryList(callback) {
         var request = ["GetCountries", {}];
+        apiRequest("general", request, callback);
+    }
+
+    function getCountryListForUser(callback) {
+        var request = ["GetCountriesForUser", {}];
         apiRequest("general", request, callback);
     }
 
@@ -597,6 +602,23 @@ function initMirror() {
         return compliance;
     }
 
+    function checkDuplicateStatutoryMapping(
+        countryId, domainId, industryIds, statutoryNatureId,
+        statutoryIds, callback
+    ) {
+        var request = [
+            "CheckDuplicateStatutoryMapping",
+            {
+                "country_id": countryId,
+                "domain_id": domainId,
+                "industry_ids": industryIds,
+                "statutory_nature_id": statutoryNatureId,
+                "statutory_ids": statutoryIds
+            }
+        ];
+        apiRequest("knowledge_transaction", request, callback);
+    }
+
     function statutoryMapping(
         countryId, domainId, industryIds, statutoryNatureId,
         statutoryIds, compliances, geographyIds, mappings, mappingId
@@ -674,7 +696,7 @@ function initMirror() {
         apiRequest("knowledge_transaction", request, callback);
     }
 
-    function approveStatutoryList(statutoryMappingId, statutoryProvision, 
+    function approveStatutoryList(statutoryMappingId, statutoryProvision,
         approvalStatus, reason, notificationText) {
         var dict = {}
         if (reason == ""){
@@ -1375,7 +1397,7 @@ function initMirror() {
                 "client_id": client_id
             }
         ];
-        apiRequest(callerName, request, callback);   
+        apiRequest(callerName, request, callback);
     }
 
     return {
@@ -1410,6 +1432,7 @@ function initMirror() {
         updateCountry: updateCountry,
         changeCountryStatus: changeCountryStatus,
         getCountryList: getCountryList,
+        getCountryListForUser: getCountryListForUser,
 
         saveIndustry: saveIndustry,
         updateIndustry: updateIndustry,
@@ -1443,6 +1466,7 @@ function initMirror() {
         statutoryMapping: statutoryMapping,
         UpdateStatutoryMappingData: UpdateStatutoryMappingData,
 
+        checkDuplicateStatutoryMapping: checkDuplicateStatutoryMapping,
         saveStatutoryMapping: saveStatutoryMapping,
         updateStatutoryMapping: updateStatutoryMapping,
         getStatutoryMappingsMaster: getStatutoryMappingsMaster,

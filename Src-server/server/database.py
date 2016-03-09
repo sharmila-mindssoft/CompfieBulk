@@ -1974,7 +1974,7 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return self.return_statutory_mappings(result)
 
-    def return_statutory_mappings(self, data):
+    def return_statutory_mappings(self, data, is_report=None):
         if bool(self.statutory_parent_mapping) is False :
             self.get_statutory_master()
         if bool(self.geography_parent_mapping) is False :
@@ -1991,7 +1991,7 @@ class KnowledgeDatabase(Database):
             # compliance_id = int(d["compliance_id"])
 
             compliances_data = self.get_compliance_by_id(
-                compliance_ids
+                compliance_ids, is_report
             )
             compliance_names = compliances_data[0]
             compliances = compliances_data[1]
@@ -2045,11 +2045,11 @@ class KnowledgeDatabase(Database):
     ) :
         qry_where = ""
         if industry_id is not None :
-            qry_where = "AND t2.industry_id = %s " % (industry_id)
+            qry_where += "AND t2.industry_id = %s " % (industry_id)
         if geography_id is not None :
-            qry_where = "AND t3.geography_id = %s " % (geography_id)
+            qry_where += "AND t3.geography_id = %s " % (geography_id)
         if statutory_nature_id is not None :
-            qry_where = "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
+            qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
 
         q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
@@ -2075,7 +2075,7 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_countries t6 \
             ON t1.country_id = t6.country_id \
             and t6.user_id = %s \
-            WHERE t1.approval_status in (1, 3) AND \
+            WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
             t1.country_id = %s \
             and t1.domain_id = %s \
             %s" % (
@@ -2094,7 +2094,7 @@ class KnowledgeDatabase(Database):
         result = []
         if rows :
             result = self.convert_to_dict(rows, columns)
-        report_data = self.return_statutory_mappings(result)
+        report_data = self.return_statutory_mappings(result, is_report=True)
 
         return self.return_knowledge_report(
             country_id, domain_id, report_data
@@ -2144,15 +2144,29 @@ class KnowledgeDatabase(Database):
     #
     # compliance
     #
-    def get_compliance_by_id(self, compliance_id):
-        if type(compliance_id) == IntType :
-            q = " WHERE t1.compliance_id = %s" % (
-                compliance_id
-            )
+    def get_compliance_by_id(self, compliance_id, is_active=None):
+        q = ""
+        if is_active is None :
+            if type(compliance_id) == IntType :
+                q = " WHERE t1.compliance_id = %s" % (
+                    compliance_id
+                )
+            else :
+                q = " WHERE t1.compliance_id in %s" % (
+                    str(tuple(compliance_id))
+                )
+
         else :
-            q = " WHERE t1.compliance_id in %s" % (
-                str(tuple(compliance_id))
-            )
+            is_active = int(is_active)
+
+            if type(compliance_id) == IntType :
+                q = " WHERE t1.is_active = %s AND t1.compliance_id = %s" % (
+                    is_active, compliance_id
+                )
+            else :
+                q = " WHERE t1.is_active = %s AND t1.compliance_id in %s" % (
+                    is_active, str(tuple(compliance_id))
+                )
 
         qry = "SELECT t1.compliance_id, t1.statutory_provision, \
             t1.compliance_task, t1.compliance_description, \
@@ -2254,6 +2268,42 @@ class KnowledgeDatabase(Database):
         if os.path.exists(file_path) :
             os.remove(file_path)
 
+    def check_duplicate_statutory_mapping(self, data) :
+        country_id = data.country_id
+        domain_id = data.domain_id
+        statutory_nature = data.statutory_nature_id
+        industry_id = data.industry_ids
+        if len(industry_id) == 1  :
+            industry_id = "(%s)" % (industry_id[0])
+        else :
+            industry_id = str(tuple(industry_id))
+        statutory_id = data.statutory_ids
+        if len(statutory_id) == 1 :
+            statutory_id = "(%s)" % (statutory_id[0])
+        else :
+            statutory_id = str(tuple(statutory_id))
+
+        q = "SELECT distinct t1.statutory_mapping_id from tbl_statutory_mappings t1 \
+            inner join tbl_statutory_statutories t2 on \
+            t1.statutory_mapping_id = t2.statutory_mapping_id \
+            inner join tbl_statutory_industry t3 on \
+            t1.statutory_mapping_id = t3.statutory_mapping_id \
+            WHERE t1.country_id = %s AND t1.domain_id = %s AND \
+            t1.statutory_nature_id = %s AND t2.statutory_id in %s AND \
+            t3.industry_id in %s" % (
+                country_id,
+                domain_id,
+                statutory_nature,
+                statutory_id,
+                industry_id
+            )
+        print q
+        row = self.select_one(q)
+        if row :
+            return row[0]
+        else :
+            return None
+
     def save_statutory_mapping(self, data, created_by) :
         country_id = data.country_id
         domain_id = data.domain_id
@@ -2305,8 +2355,8 @@ class KnowledgeDatabase(Database):
             self.save_statutory_statutories_id(
                 statutory_mapping_id, data.statutory_ids, True
             )
-            notification_log_text = "Statutory mapping created for %s" % ''.join(names)
-            link = "/knowledge/statutory-mapping"
+            notification_log_text = "New statutory mapping created %s" % (statutory_mapping)
+            link = "/knowledge/approve-statutory-mapping"
             self.save_notifications(
                 notification_log_text, link,
                 domain_id, country_id,
@@ -2559,8 +2609,8 @@ class KnowledgeDatabase(Database):
         )
         action = "Edit Statutory Mappings"
         self.save_activity(updated_by, 10, action)
-        notification_log_text = "Stautory mapping updated for %s" % (names)
-        link = "/knowledge/statutory-mapping"
+        notification_log_text = "Stautory mapping updated %s" % (statutory_mapping)
+        link = "/knowledge/approve-statutory-mapping"
         self.save_notifications(
             notification_log_text, link,
             domain_id, country_id,
@@ -2815,14 +2865,15 @@ class KnowledgeDatabase(Database):
         ]
         where = "statutory_mapping_id=%s" % (statutory_mapping_id)
 
-        q = "SELECT created_by, updated_by, domain_id, \
+        q = "SELECT statutory_mapping, created_by, updated_by, domain_id, \
             country_id from tbl_statutory_mappings \
             where statutory_mapping_id = %s" % (
                 statutory_mapping_id
             )
         rows = self.select_one(q)
         users = self.convert_to_dict(rows, [
-            "created_by", "updated_by", "domain_id", "country_id"
+            "statutory_mapping", "created_by", "updated_by",
+            "domain_id", "country_id"
         ])
 
         if approval_status == 2 :
@@ -3446,7 +3497,6 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return self.return_group_companies(result)
 
-
     def return_group_companies(self, group_companies):
         results = []
         for group_company in group_companies :
@@ -3486,10 +3536,10 @@ class KnowledgeDatabase(Database):
             condition = "client_id = '%d'" % group_company["client_id"]
             rows = self.get_data(self.tblUnits, columns, condition)
             no_of_units = rows[0][0]
-        
+
             results.append(core.GroupCompanyForUnitCreation(
                 group_company["client_id"], group_company["group_name"],
-                bool(group_company["is_active"]), countries, domains, 
+                bool(group_company["is_active"]), countries, domains,
                 no_of_units
             ))
         return results
@@ -4425,7 +4475,7 @@ class KnowledgeDatabase(Database):
             ON t1.statutory_mapping_id = t4.statutory_mapping_id \
             INNER JOIN tbl_statutory_statutories t5 \
             ON t1.statutory_mapping_id = t5.statutory_mapping_id\
-            WHERE t1.approval_status IN (1, 3) \
+            WHERE t1.is_active = 1 AND t1.approval_status IN (1, 3) \
             AND t1.domain_id = %s \
             AND t1.country_id = %s \
             AND t3.industry_id = %s \
@@ -4434,12 +4484,11 @@ class KnowledgeDatabase(Database):
                 SELECT g.geography_id \
                 FROM tbl_geographies g \
                 WHERE g.geography_id = %s \
-                OR g.parent_ids LIKE '%s' )" % (
+                OR g.parent_ids LIKE '%s' OR t4.geography_id IN %s )" % (
                     domain_id, country_id, industry_id, geography_id,
                     str("%" + str(geography_id) + ",%"),
+                    (str(tuple(parent_ids)))
                 )
-        if parent_ids :
-            query += " OR t4.geography_id IN %s " % (str(tuple(parent_ids)))
         rows = self.select_all(query)
         columns = [
             "statutory_mapping_id", "statutory_nature_id",
@@ -4506,11 +4555,11 @@ class KnowledgeDatabase(Database):
             compliance_list = self.get_compliance_by_mapping_id(mapping_id)
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
             s_mapping = statutory_data[1]
-            level_map = s_mapping.split(">>")
+            level_map = s_mapping.split(" >> ")
             if len(level_map) == 1 :
-                level_map = ""
+                level_map = None
             else :
-                level_map = ">>".join(level_map[-1:])
+                level_map = " >> ".join(level_map[-1:])
             statutory_parents = statutory_data[2]
             level_1 = statutory_parents[0]
             if level_1 == 0 :
@@ -4522,9 +4571,12 @@ class KnowledgeDatabase(Database):
             if compliance_applicable_list is None:
                 compliance_applicable_list = []
             for c in compliance_list :
-                provision = "%s - %s" % (level_map, c["statutory_provision"])
+                if level_map is not None :
+                    provision = "%s - %s" % (level_map, c["statutory_provision"])
+                else :
+                    provision = " %s" % (c["statutory_provision"])
                 # provision.replace(level_1, "")
-                if c["document_name"] is not None :
+                if c["document_name"] not in (None, "") :
                     name = "%s - %s" % (c["document_name"], c["compliance_task"])
                 else :
                     name = c["compliance_task"]
@@ -4891,22 +4943,30 @@ class KnowledgeDatabase(Database):
         self, country_id, domain_id, industry_id,
         geography_id, unit_id
     ) :
+        q = "select parent_ids from tbl_geographies where geography_id = %s" % (int(geography_id))
+        row = self.select_one(q)
+        if row :
+            parent_ids = [int(x) for x in row[0].split(',')[:-1]]
+            if len(parent_ids) == 1 :
+                parent_ids.append(0)
+        else :
+            parent_ids = []
+
         query = "SELECT distinct \
-            t6.compliance_id, t6.compliance_task, t6.document_name,\
-            t6.statutory_provision, t6.compliance_description, t2.statutory_id, \
+            t2.compliance_id, t2.compliance_task, t2.document_name,\
+            t2.statutory_provision, t2.compliance_description, t5.statutory_id, \
             t.statutory_nature_name \
-            FROM tbl_compliances t6 \
+            FROM tbl_statutory_mappings t1\
+            INNER JOIN tbl_compliances t2 ON t1.statutory_mapping_id = t2.statutory_mapping_id \
             INNER JOIN tbl_statutory_industry t3 \
-            ON t6.statutory_mapping_id = t3.statutory_mapping_id\
+            ON t1.statutory_mapping_id = t3.statutory_mapping_id\
             INNER JOIN tbl_statutory_geographies t4 \
-            ON t6.statutory_mapping_id = t4.statutory_mapping_id \
-            INNER JOIN tbl_statutory_mappings t1 \
-            ON t6.statutory_mapping_id = t1.statutory_mapping_id \
-            INNER JOIN tbl_statutory_statutories t2 \
-            ON t1.statutory_mapping_id = t2.statutory_mapping_id \
+            ON t1.statutory_mapping_id = t4.statutory_mapping_id \
+            INNER JOIN tbl_statutory_statutories t5 \
+            ON t1.statutory_mapping_id = t5.statutory_mapping_id \
             INNER JOIN tbl_statutory_natures t\
             ON t1.statutory_nature_id = t.statutory_nature_id\
-            WHERE t1.approval_status IN (1, 3) \
+            WHERE t1.is_active = 1 AND t2.is_active = 1 ANd t1.approval_status IN (1, 3) \
             AND t1.domain_id = %s \
             AND t1.country_id = %s \
             AND t3.industry_id = %s \
@@ -4916,7 +4976,7 @@ class KnowledgeDatabase(Database):
                 FROM tbl_geographies g \
                 WHERE g.geography_id = %s \
                 OR g.parent_ids LIKE '%s' )\
-            AND t6.compliance_id NOT IN ( \
+            AND t2.compliance_id NOT IN ( \
                 SELECT distinct c.compliance_id \
                 FROM tbl_client_compliances c \
                 INNER JOIN tbl_client_statutories s\
@@ -4930,6 +4990,9 @@ class KnowledgeDatabase(Database):
                     str("%" + str(geography_id) + ",%"),
                     geography_id, domain_id, unit_id
                 )
+        if parent_ids :
+            query += " OR t4.geography_id IN %s " % (str(tuple(parent_ids)))
+
         rows = self.select_all(query)
         columns = ["compliance_id", "compliance_task",
             "document_name", "statutory_provision",
@@ -5040,31 +5103,28 @@ class KnowledgeDatabase(Database):
         query = "SELECT distinct t1.client_statutory_id, t1.client_id, \
             t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, \
             t1.submission_type, t2.group_name, t3.unit_name, \
-            t4.business_group_name, t5.legal_entity_name,\
-            t6.division_name, t3.address, t3.postal_code, t3.unit_code \
+            (select business_group_name from tbl_business_groups where business_group_id = t3.business_group_id )business_group_name, \
+            (select legal_entity_name from tbl_legal_entities where legal_entity_id = t3.legal_entity_id)legal_entity_name,\
+            (select division_name from tbl_divisions where division_id = t3.division_id)division_name, \
+            t3.address, t3.postal_code, t3.unit_code \
             FROM tbl_client_statutories t1 \
             INNER JOIN tbl_client_groups t2 \
             ON t1.client_id = t2.client_id \
             INNER JOIN tbl_units t3 \
             ON t1.unit_id = t3.unit_id \
-            INNER JOIN tbl_business_groups t4 \
-            ON t3.business_group_id = t4.business_group_id \
-            INNER JOIN tbl_legal_entities t5 \
-            ON t3.legal_entity_id = t5.legal_entity_id \
-            INNER JOIN tbl_divisions t6 \
-            ON t3.division_id = t6.division_id \
-            INNER JOIN tbl_client_compliances t7 \
-            ON t1.client_statutory_id = t7.client_statutory_id \
-            WHERE t1.country_id = %s \
+            INNER JOIN tbl_client_compliances t4 \
+            ON t1.client_statutory_id = t4.client_statutory_id \
+            WHERE t1.submission_type =1 \
+            AND t1.country_id = %s \
             AND t1.domain_id = %s \
             AND t1.client_id like '%s' \
             AND t3.business_group_id like '%s' \
             AND t3.legal_entity_id like '%s' \
             AND t3.division_id like '%s' \
             AND t3.unit_id like '%s' \
-            AND t7.statutory_id like '%s' \
-            AND t7.statutory_applicable like '%s' \
-            AND t7.compliance_applicable like '%s' " % (
+            AND t4.statutory_id like '%s' \
+            AND t4.statutory_applicable like '%s' \
+            AND t4.compliance_applicable like '%s' " % (
                 country_id, domain_id, group_id,
                 business_group_id, legal_entity_id,
                 division_id, unit_id, level_1_statutory_id,
@@ -5328,7 +5388,7 @@ class KnowledgeDatabase(Database):
             condition = "user_id in (%s)" % user_ids
             users = self.return_users(condition)
         else:
-            users = self.return_users()       
+            users = self.return_users()
         forms = self.return_forms(form_ids)
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
 
@@ -5577,7 +5637,7 @@ class KnowledgeDatabase(Database):
         )
         if rows[0][0] > 0:
             return True
-        else: 
+        else:
             return False
 
     def create_new_admin(self, new_admin_id, client_id, session_user):

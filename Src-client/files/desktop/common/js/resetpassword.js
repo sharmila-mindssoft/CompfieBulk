@@ -7,11 +7,10 @@ function displayMessage(message) {
 $("#submit").click(function(){
     $(".error-message").html("");
     url = window.location.href;
-    console.log(url);
     url_parameters = url.split("/");
     reset_token = url_parameters[url_parameters.length - 1];
-    console.log(reset_token);
     var resetToken = reset_token;
+
     var newpassword = $("#newpassword").val().trim();
     var confirmpassword = $("#confirmpassword").val().trim();
 
@@ -36,7 +35,7 @@ $("#submit").click(function(){
             displayMessage("Password already used. Enter different password");
           }
         }
-        mirror.resetPassword(resetToken, newpassword, 
+        mirror.resetPassword(resetToken, newpassword,
           function (error, response) {
             if (error == null){
               onSuccess(response);
@@ -50,7 +49,6 @@ $("#submit").click(function(){
   });
 
 $(document).ready(function(){
-
   function onSuccess(data){
   }
 
@@ -63,10 +61,8 @@ $(document).ready(function(){
 
   }
   url = window.location.href;
-  console.log(url);
   url_parameters = url.split("/");
   reset_token = url_parameters[url_parameters.length - 1];
-  console.log(reset_token);
   mirror.validateResetToken(reset_token, 
     function (error, response) {
       if (error == null){

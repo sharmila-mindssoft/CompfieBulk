@@ -133,6 +133,8 @@ function validate(){
       displayMessage("Country Required");
     } else if($("#domain").val().trim().length==0) {
       displayMessage("Domain Required");
+    } else if($("#level1").val().trim().length==0){
+      displayMessage("Level one title required");
     }
     else {
       displayMessage('');
@@ -158,6 +160,7 @@ $("#submit").click(function(){
          }
 
          if( result == "true") {
+          var isAdd = true;
           var passlevellist = [];
          for(var k=1; k<=10; k++) {
           if($("#levelid"+k).val().trim().length > 0 && $("#level"+k).val().trim().length == 0){
@@ -166,13 +169,18 @@ $("#submit").click(function(){
           }else if($("#level"+k).val().trim().length > 0){
             if($("#levelid"+k).val().trim().length > 0){
               passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val().trim(), "level_id" : parseInt($("#levelid"+k).val())});
+              isAdd = false;
             }else{
               passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val().trim(), "level_id" : null});
             }
           }
          }
         function onSuccess(response) {
-          displayMessage("Record Added Successfully");
+          if(isAdd){
+            displayMessage("Record Added Successfully");
+          }else{
+            displayMessage("Record Updated Successfully");
+          }
           GetStatutoryLevels();
           jQuery('.btn-statutorylevel-cancel').focus().click();
         }

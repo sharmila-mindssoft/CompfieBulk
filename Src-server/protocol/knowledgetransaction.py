@@ -108,6 +108,46 @@ class GetStatutoryMappings(Request):
     def to_inner_structure(self):
         return {}
 
+class CheckDuplicateStatutoryMapping(Request):
+    def __init__(
+        self, country_id, domain_id, industry_ids,
+        statutory_nature_id, statutory_ids
+    ):
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.industry_ids = industry_ids
+        self.statutory_nature_id = statutory_nature_id
+        self.statutory_ids = statutory_ids
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "country_id", "domain_id", "industry_ids",
+            "statutory_nature_id", "statutory_ids",
+        ])
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        industry_ids = data.get("industry_ids")
+        industry_ids = parse_structure_VectorType_UnsignedIntegerType_32(industry_ids)
+        statutory_nature_id = data.get("statutory_nature_id")
+        statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
+        statutory_ids = data.get("statutory_ids")
+        statutory_ids = parse_structure_VectorType_UnsignedIntegerType_32(statutory_ids)
+        return CheckDuplicateStatutoryMapping(
+            country_id, domain_id, industry_ids, statutory_nature_id, statutory_ids
+        )
+
+    def to_inner_structure(self):
+        return {
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
+            "industry_ids": to_structure_VectorType_UnsignedIntegerType_32(self.industry_ids),
+            "statutory_nature_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
+            "statutory_ids": to_structure_VectorType_UnsignedIntegerType_32(self.statutory_ids),
+        }
+
 class SaveStatutoryMapping(Request):
     def __init__(
         self, country_id, domain_id, industry_ids,
@@ -291,7 +331,7 @@ class ApproveStatutoryMapping(Request):
 
 
 def _init_Request_class_map():
-    classes = [GetStatutoryMappingsMaster, GetStatutoryMappings, SaveStatutoryMapping, UpdateStatutoryMapping, ChangeStatutoryMappingStatus, ApproveStatutoryMapping]
+    classes = [GetStatutoryMappingsMaster, GetStatutoryMappings, SaveStatutoryMapping, UpdateStatutoryMapping, ChangeStatutoryMappingStatus, ApproveStatutoryMapping, CheckDuplicateStatutoryMapping]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -425,6 +465,40 @@ class SaveStatutoryMappingSuccess(Response):
         return {
         }
 
+class CheckDuplicateStatutoryMappingResponse(Response):
+    def __init__(self, is_exists):
+        self.is_exists = is_exists
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["is_exists"])
+        is_exists = data.get("is_exists")
+        is_exists = parse_structure_Bool(is_exists)
+        return CheckDuplicateStatutoryMappingResponse(is_exists)
+
+    def to_inner_structure(self):
+        return {
+            "is_exists": to_structure_Bool(self.is_exists)
+        }
+
+
+class CheckDuplicateStatutoryMappingSuccess(Response):
+    def __init__(self, is_exists):
+        self.is_exists = is_exists
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["is_exists"])
+        is_exists = data.get("is_exists")
+        is_exists = parse_structure_Bool(is_exists)
+        return CheckDuplicateStatutoryMappingSuccess(is_exists)
+
+    def to_inner_structure(self):
+        return {
+            "is_exists": to_structure_Bool(self.is_exists)
+        }
+
+
 class UpdateStatutoryMappingSuccess(Response):
     def __init__(self):
         pass
@@ -479,7 +553,7 @@ class ApproveStatutoryMappingSuccess(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetStatutoryMappingsMasterSuccess, GetStatutoryMappingsSuccess, SaveStatutoryMappingSuccess, UpdateStatutoryMappingSuccess, InvalidStatutoryMappingId, ChangeStatutoryMappingStatusSuccess, ApproveStatutoryMappingSuccess]
+    classes = [GetStatutoryMappingsMasterSuccess, GetStatutoryMappingsSuccess, SaveStatutoryMappingSuccess, CheckDuplicateStatutoryMappingResponse, CheckDuplicateStatutoryMappingSuccess, UpdateStatutoryMappingSuccess, InvalidStatutoryMappingId, ChangeStatutoryMappingStatusSuccess, ApproveStatutoryMappingSuccess]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
