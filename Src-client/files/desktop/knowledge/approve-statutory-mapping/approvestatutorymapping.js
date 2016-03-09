@@ -216,6 +216,7 @@ function loadApproveStatutory(){
     var industryIds = [];
     $(".tbody-statutorymapping-list").find("tr").remove();
     for(var entity in statutoryMappingsList) {
+      //displayMessage("");
       statutorymappingId = entity;
       countryId = statutoryMappingsList[entity]["country_id"];
       domainId = statutoryMappingsList[entity]["domain_id"];
@@ -287,7 +288,7 @@ function loadApproveStatutory(){
     }
 
     if(j <= 1){
-      displayMessage("");
+      //displayMessage("");
       var norecordtableRow=$('#norecord-templates');
       var noclone=norecordtableRow.clone();
       $('.tbody-statutorymapping-list').append(noclone);
@@ -451,7 +452,7 @@ $("#saverecord").click(function(){
   }
   function onSuccess(response) {
     $(".grid-table").hide();
-    displayMessage("Statutory Mapping successfully approved");
+    displayMessage("Selected action has been saved successfully");
     reloadStatutoryMapping();
   }
   function onFailure(error){

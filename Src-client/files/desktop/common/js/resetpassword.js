@@ -10,7 +10,6 @@ $("#submit").click(function(){
     url_parameters = url.split("/");
     reset_token = url_parameters[url_parameters.length - 1];
     var resetToken = reset_token;
-
     var newpassword = $("#newpassword").val().trim();
     var confirmpassword = $("#confirmpassword").val().trim();
 
@@ -63,7 +62,7 @@ $(document).ready(function(){
   url = window.location.href;
   url_parameters = url.split("/");
   reset_token = url_parameters[url_parameters.length - 1];
-  mirror.validateResetToken(reset_token, 
+  mirror.validateResetToken(reset_token,
     function (error, response) {
       if (error == null){
         onSuccess(response);

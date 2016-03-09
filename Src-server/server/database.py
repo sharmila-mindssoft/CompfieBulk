@@ -672,8 +672,8 @@ class KnowledgeDatabase(Database):
             t1.is_active FROM tbl_domains t1 "
         if user_id > 0 :
             query = query + " INNER JOIN tbl_user_domains t2 ON \
-                t1.domain_id = t2.domain_id WHERE t2.user_id = %s" % (user_id)
-        query = query + " AND t1.is_active=1 ORDER BY t1.domain_name"
+                t1.domain_id = t2.domain_id WHERE t2.user_id = %s \
+                AND t1.is_active=1 ORDER BY t1.domain_name " % (user_id)
         rows = self.select_all(query)
         result = []
         if rows :
@@ -738,6 +738,22 @@ class KnowledgeDatabase(Database):
             self.save_activity(updated_by, 2, action)
             return True
 
+    def check_domain_id_to_deactivate(self, domain_id) :
+        q = "SELECT count(*) from tbl_statutory_mappings where domain_id = %s" % (
+            domain_id
+        )
+        row = self.select_one(q)
+        if row[0] > 0 :
+            return False
+        else :
+            q = "SELECT count(*) from tbl_client_domains where domain_id = %s " % (
+                domain_id
+            )
+            row = self.select_one(q)
+            if row[0] > 0 :
+                return False
+        return True
+
     def update_domain_status(self, domain_id, is_active, updated_by) :
         oldData = self.get_domain_by_id(domain_id)
         if oldData is None :
@@ -761,14 +777,15 @@ class KnowledgeDatabase(Database):
     #
 
     def get_countries_for_user(self, user_id) :
+
         query = "SELECT distinct t1.country_id, t1.country_name, \
             t1.is_active FROM tbl_countries t1 "
         if user_id > 0 :
             query = query + " INNER JOIN tbl_user_countries t2 \
-                ON t1.country_id = t2.country_id WHERE t2.user_id = %s" % (
+                ON t1.country_id = t2.country_id WHERE t2.user_id = %s \
+                AND t1.is_active = 1 ORDER BY t1.country_name " % (
                     user_id
                 )
-        query = query + " AND t1.is_active = 1 ORDER BY t1.country_name"
         rows = self.select_all(query)
         result = []
         if rows :
@@ -832,6 +849,23 @@ class KnowledgeDatabase(Database):
             action = "Edit Country - \"%s\"" % country_name
             self.save_activity(updated_by, 1, action)
             return True
+
+    def check_country_id_to_deactivate(self, country_id) :
+        q = "SELECT count(*) from tbl_statutory_mappings where country_id = %s" % (
+            country_id
+        )
+        row = self.select_one(q)
+        if row[0] > 0 :
+            return False
+        else :
+            q = "SELECT count(*) from tbl_client_countries where country_id = %s " % (
+                country_id
+            )
+            row = self.select_one(q)
+            if row[0] > 0 :
+                return False
+        return True
+
 
     def update_country_status(self, country_id, is_active, updated_by) :
         oldData = self.get_country_by_id(country_id)
@@ -2208,7 +2242,7 @@ class KnowledgeDatabase(Database):
 
             compliance_task = d["compliance_task"]
             document_name = d["document_name"]
-            if document_name != "" :
+            if document_name not in (None, "") :
                 name = "%s - %s" % (
                     document_name, compliance_task
                 )
@@ -2297,7 +2331,6 @@ class KnowledgeDatabase(Database):
                 statutory_id,
                 industry_id
             )
-        print q
         row = self.select_one(q)
         if row :
             return row[0]
@@ -2491,8 +2524,6 @@ class KnowledgeDatabase(Database):
             file_name = ""
             file_size = 0
             file_content = ""
-            if document_name is None:
-                document_name = ""
 
             if file_list is not None :
                 file_list = file_list[0]
@@ -2554,7 +2585,7 @@ class KnowledgeDatabase(Database):
                 self.convert_base64_to_file(file_name, file_content)
                 is_format = False
             compliance_ids.append(compliance_id)
-            if document_name is not "" :
+            if document_name not in (None, "") :
                 compliance_names.append(
                     document_name + "-" + compliance_task
                 )
@@ -4899,7 +4930,7 @@ class KnowledgeDatabase(Database):
             else :
                 level_map = ">>".join(level_map[-1:])
             provision = "%s - %s" % (level_map, r["statutory_provision"])
-            if r["document_name"] is not None :
+            if r["document_name"] not in (None, "") :
                 name = "%s - %s" % (r["document_name"], r["compliance_task"])
             else :
                 name = r["compliance_task"]
@@ -5017,7 +5048,10 @@ class KnowledgeDatabase(Database):
             if compliance_applicable_list is None:
                 compliance_applicable_list = []
             provision = "%s - %s" % (s_mapping, d["statutory_provision"])
-            name = "%s - %s" % (d["document_name"], d["compliance_task"])
+            if d["document_name"] not in (None, "") :
+                name = "%s - %s" % (d["document_name"], d["compliance_task"])
+            else :
+                name = "%s" % (d["compliance_task"])
             c_data = core.ComplianceApplicability(
                 d["compliance_id"],
                 name,
@@ -5077,28 +5111,28 @@ class KnowledgeDatabase(Database):
         country_id = request_data.country_id
         domain_id = request_data.domain_id
         group_id = request_data.group_id
-        if group_id is None :
-            group_id = '%'
+        qry = ""
+        if group_id is not None :
+            qry += " AND t1.client_id = %s " % (group_id)
         business_group_id = request_data.business_group_id
-        if business_group_id is None :
-            business_group_id = '%'
+        if business_group_id is not None :
+            qry += " AND t3.business_group_id = %s " % (business_group_id)
         legal_entity_id = request_data.legal_entity_id
-        if legal_entity_id is None :
-            legal_entity_id = '%'
+        if legal_entity_id is not None :
+            qry += " AND t3.legal_entity_id = %s " % (legal_entity_id)
         division_id = request_data.division_id
-        if division_id is None :
-            division_id = '%'
+        if division_id is not None :
+            qry += " AND t3.division_id =%s " % (division_id)
         unit_id = request_data.unit_id
-        if unit_id is None :
-            unit_id = '%'
+        if unit_id is not None :
+            qry += " AND t3.unit_id = %s " % (unit_id)
         level_1_statutory_id = request_data.level_1_statutory_id
-        if level_1_statutory_id is None :
-            level_1_statutory_id = '%'
+        if level_1_statutory_id is not None :
+            qry += " AND t4.statutory_id = %s " % (level_1_statutory_id)
         applicable_status = request_data.applicability_status
-        if applicable_status is None :
-            applicable_status = '%'
-        else :
-            applicable_status = int(applicable_status)
+        if applicable_status is not None :
+            qry += " AND t4.statutory_applicable = %s " % (applicable_status)
+            qry += " AND t4.compliance_applicable = %s " % (applicable_status)
 
         query = "SELECT distinct t1.client_statutory_id, t1.client_id, \
             t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, \
@@ -5116,21 +5150,12 @@ class KnowledgeDatabase(Database):
             ON t1.client_statutory_id = t4.client_statutory_id \
             WHERE t1.submission_type =1 \
             AND t1.country_id = %s \
-            AND t1.domain_id = %s \
-            AND t1.client_id like '%s' \
-            AND t3.business_group_id like '%s' \
-            AND t3.legal_entity_id like '%s' \
-            AND t3.division_id like '%s' \
-            AND t3.unit_id like '%s' \
-            AND t4.statutory_id like '%s' \
-            AND t4.statutory_applicable like '%s' \
-            AND t4.compliance_applicable like '%s' " % (
-                country_id, domain_id, group_id,
-                business_group_id, legal_entity_id,
-                division_id, unit_id, level_1_statutory_id,
-                applicable_status, applicable_status
+            AND t1.domain_id = %s " % (
+                country_id, domain_id
             )
 
+        query = query + qry
+        print query
         rows = self.select_all(query)
         columns = [
             "client_statutory_id", "client_id", "geography_id",
