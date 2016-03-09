@@ -309,22 +309,30 @@ function validateEmail($email) {
 }
 
 function clientgroup_active(clientId, isActive){
-    $("#clientgroup-id").val(clientId);
-    function onSuccess(data){
-      initialize();
+    var msgstatus='deactivate';
+    if(isActive){
+        msgstatus='activate';
     }
-    function onFailure(error){
-    }
-    mirror.changeClientGroupStatus( parseInt(clientId), isActive,
-        function (error, response){
-            if(error == null){
-                onSuccess(response);
-            }
-            else{
-                onFailure(error);
-            }
+    var answer = confirm('Are you sure want to '+msgstatus+ '?');
+    if (answer)
+    {
+        $("#clientgroup-id").val(clientId);
+        function onSuccess(data){
+          initialize();
         }
-    );
+        function onFailure(error){
+        }
+        mirror.changeClientGroupStatus( parseInt(clientId), isActive,
+            function (error, response){
+                if(error == null){
+                    onSuccess(response);
+                }
+                else{
+                    onFailure(error);
+                }
+            }
+        );
+    }
 }
 function clientgroup_edit(clientGroupId){
     clearMessage();

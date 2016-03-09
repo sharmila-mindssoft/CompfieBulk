@@ -160,7 +160,7 @@ function loadClientsList(clientunitsList){
         $('.legal-entity-name', clone).text(getLegalEntityName(lentitiesId)); 
         $('.division-name', clone).text(getDivisionName(divisionId));
         $('.edit', clone).html('<img src = "/images/icon-edit.png" id = "editid" onclick = "clientunit_edit('+clientId+','+bgroupId+','+lentitiesId+','+divisionId+')"/>');
-        $('.is-active', clone).html('<img src = "/images/'+imageName+'" title = "'+title+'" onclick = "clientunit_active('+clientId+','+lentitiesId+', '+divisionId+', '+statusVal+')"/>');
+        // $('.is-active', clone).html('<img src = "/images/'+imageName+'" title = "'+title+'" onclick = "clientunit_active('+clientId+','+lentitiesId+', '+divisionId+', '+statusVal+')"/>');
         $('.tbody-clientunit-list').append(clone);  
     });
 }
