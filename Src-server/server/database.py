@@ -2242,7 +2242,7 @@ class KnowledgeDatabase(Database):
 
             compliance_task = d["compliance_task"]
             document_name = d["document_name"]
-            if document_name != "" :
+            if document_name not in (None, "") :
                 name = "%s - %s" % (
                     document_name, compliance_task
                 )
@@ -2524,8 +2524,6 @@ class KnowledgeDatabase(Database):
             file_name = ""
             file_size = 0
             file_content = ""
-            if document_name is None:
-                document_name = ""
 
             if file_list is not None :
                 file_list = file_list[0]
@@ -2587,7 +2585,7 @@ class KnowledgeDatabase(Database):
                 self.convert_base64_to_file(file_name, file_content)
                 is_format = False
             compliance_ids.append(compliance_id)
-            if document_name is not "" :
+            if document_name not in (None, "") :
                 compliance_names.append(
                     document_name + "-" + compliance_task
                 )
@@ -4932,7 +4930,7 @@ class KnowledgeDatabase(Database):
             else :
                 level_map = ">>".join(level_map[-1:])
             provision = "%s - %s" % (level_map, r["statutory_provision"])
-            if r["document_name"] is not None :
+            if r["document_name"] not in (None, "") :
                 name = "%s - %s" % (r["document_name"], r["compliance_task"])
             else :
                 name = r["compliance_task"]
@@ -5050,7 +5048,10 @@ class KnowledgeDatabase(Database):
             if compliance_applicable_list is None:
                 compliance_applicable_list = []
             provision = "%s - %s" % (s_mapping, d["statutory_provision"])
-            name = "%s - %s" % (d["document_name"], d["compliance_task"])
+            if d["document_name"] not in (None, "") :
+                name = "%s - %s" % (d["document_name"], d["compliance_task"])
+            else :
+                name = "%s" % (d["compliance_task"])
             c_data = core.ComplianceApplicability(
                 d["compliance_id"],
                 name,
