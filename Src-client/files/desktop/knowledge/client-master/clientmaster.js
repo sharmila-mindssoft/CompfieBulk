@@ -321,6 +321,9 @@ function clientgroup_active(clientId, isActive){
           initialize();
         }
         function onFailure(error){
+            if(error == "CannotDeactivateClient"){
+                displayMessage("Cannot Deactivate Client");
+            }
         }
         mirror.changeClientGroupStatus( parseInt(clientId), isActive,
             function (error, response){
@@ -388,6 +391,7 @@ function loadFormListUpdate(clientListData, clientGroupId){
             $("#usersSelected").val(userListArray.length+" Selected");
             $("#short-name").val(clientListData[clientList]['short_name']);
             $("#short-name").attr("readonly", "true");
+            $(".shorturl").text(clientListData[clientList]['short_name']);
             dateconfigList = clientListData[clientList]['date_configurations'];
         }
     }
