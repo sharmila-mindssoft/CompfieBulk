@@ -305,12 +305,12 @@ class Database(object) :
 
     def generate_password(self) :
         password = self.generate_random()
-        password = "123456"
+        # password = "123456"
         return self.encrypt(password)
 
     def generate_and_return_password(self):
         password = self.generate_random()
-        password = "123456"
+        # password = "123456"
         return self.encrypt(password), password
 
     def encrypt(self, value):
@@ -5726,6 +5726,15 @@ class KnowledgeDatabase(Database):
                 old_admin_username, client_id
             )
             self.execute(query)
+            return True
+        else:
+            return False
+
+    def is_unit_exists_under_client(self, client_id):
+        column = "count(*)"
+        condition = "client_id = '%d'" % client_id
+        rows = self.get_data(self.tblUnits, column, condition)
+        if rows[0][0] > 0:
             return True
         else:
             return False
