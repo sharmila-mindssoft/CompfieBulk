@@ -8,8 +8,8 @@
           <div class="input-row">
             <div class="field-label">Country:<span class="mandatory">*</span></div>
             <div class="field-input">
-              <input type="text" class="input-box icon-autocomplete" id="countryval" placeholder="Enter Country" value="">
-              <input type="hidden" id="country" value="">
+              <input type="text" class="input-box icon-autocomplete" id="countryval" placeholder="Enter Country" value="India">
+              <input type="hidden" id="country" value="1">
               <div id="autocompleteview" class="ac-textbox default-display-none">
               <ul id="ulist_text" style="width:215px;" class="hidemenu"></ul>
             </div>
@@ -18,8 +18,8 @@
         <div class="input-row">
           <div class="field-label">Domain:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" >
-            <input type="hidden" id="domain" value="">
+            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" value="Finance Law" >
+            <input type="hidden" id="domain" value="1">
             <div id="autocomplete_domain" class="ac-textbox default-display-none">
             <ul id="ulist_domain" style="width:215px;" class="hidemenu"></ul>
           </div>
@@ -119,8 +119,8 @@
 </div>
 
 <div id="compliance-templates" style="display:none;">
-<table width="100%" style="border:1px dotted #CCCCCC;" class="table-compliances-list">
-<tr align="left" class="sub-head table-row">
+<table width="100%" class="table-compliances-list">
+<tr align="left" class="sub-head table-row"  style="border-top:1px dotted #CCCCCC;">
 <th width="3%" align="center">#</th>
 <th width="12%">Industry Type</th>
 <th width="12%">Statutory Nature</th>
@@ -141,7 +141,7 @@
 <th>Compliance Occurence</th>
 <th colspan="2" >Applicable Location</th>
 </tr>
-<tr class="table-row">
+<tr class="table-row" style="border-bottom:1px dotted #ccc;">
 <td></td>
 <td class="tbl_description"></td>
 <td class="tbl_penalconsequences"></td>

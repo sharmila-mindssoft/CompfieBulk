@@ -2109,10 +2109,10 @@ cursor: pointer;
 	opacity: 0.7 !important;
 }
 
-.tbody-compliance .table-row:nth-child(4n+1){
+/*.tbody-compliance .table-row:nth-child(4n+1){
   border-top:1px dotted #ccc; 
 }
 
 .tbody-compliance .table-row:nth-child(4n){
   border-bottom:1px dotted #ccc;
-}
+}*/

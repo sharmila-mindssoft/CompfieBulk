@@ -715,9 +715,9 @@ function load_compliance(){
 
     if(compliances[entity]["repeats_every"] != null && compliances[entity]["repeats_type_id"] != null){
       for (var rtype in complianceRepeatTypeList) {
-      if(complianceRepeatTypeList[rtype]["repeat_type_id"] == compliances[entity]["repeats_type_id"]){
-        repeatsval = complianceRepeatTypeList[rtype]["repeat_type"];
-      }
+        if(complianceRepeatTypeList[rtype]["repeat_type_id"] == compliances[entity]["repeats_type_id"]){
+          repeatsval = complianceRepeatTypeList[rtype]["repeat_type"];
+        }
       }
       display_repeats = compliances[entity]["repeats_every"] + " " + repeatsval;
     }
@@ -760,7 +760,6 @@ function load_compliance(){
       isAllComplianceActive = true;
       $('.status', clone).html('<img src=\'/images/icon-delete.png\' onclick="temp_removecompliance(\''+complianceid+'\')"/>');
     }
-
     $('.tbody-compliance-list').append(clone);
 
     complianceid = complianceid + 1;
