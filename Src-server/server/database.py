@@ -2609,8 +2609,8 @@ class KnowledgeDatabase(Database):
         )
         action = "Edit Statutory Mappings"
         self.save_activity(updated_by, 10, action)
-        notification_log_text = "Stautory mapping updated for %s" % (names)
-        link = "/knowledge/statutory-mapping"
+        notification_log_text = "Stautory mapping updated %s" % (statutory_mapping)
+        link = "/knowledge/approve-statutory-mapping"
         self.save_notifications(
             notification_log_text, link,
             domain_id, country_id,
@@ -5342,7 +5342,7 @@ class KnowledgeDatabase(Database):
             condition = "user_id in (%s)" % user_ids
             users = self.return_users(condition)
         else:
-            users = self.return_users()       
+            users = self.return_users()
         forms = self.return_forms(form_ids)
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
 
