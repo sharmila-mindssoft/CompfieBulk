@@ -885,10 +885,10 @@ $("#temp_addcompliance").click(function() {
   }
   var check_duplicate_status= true;
   $.each(compliances, function(index, value) {
+    
   if (
     (value.statutory_provision == statutory_provision) &&
-    (value.compliance_task == compliance_task) &&
-    comp_id == '') {
+    (value.compliance_task == compliance_task)) {
 
     if(value.statutory_provision == statutory_provision){
       displayMessage("Statutory provision is duplicate");
@@ -1299,7 +1299,6 @@ function savestatutorymapping(){
       $("#uploaded_fileview").hide();
       $("#uploaded_filename").html('');
       $("#statutorymapping-view").show();
-
   }
   function onFailure(error){
 
@@ -1321,7 +1320,6 @@ function savestatutorymapping(){
           }
           else {
             onFailure(error);
-
           }
       }
   );
@@ -1729,7 +1727,7 @@ $(document).ready(function(){
     }
     });
     //end -filter process in select domain tab
-
+/*
     $("#statutory_date").empty();
     var defaultoption = $("<option></option>");
     defaultoption.val("");
@@ -1767,7 +1765,7 @@ $(document).ready(function(){
         option.text(i)
         $("#multiple_statutory_date"+j).append(option);
     }
-    }
+    }*/
 
     $('#repeats_every').keyup('input', function (event) {
       this.value = this.value.replace(/[^0-9]/g, '');
@@ -1831,12 +1829,12 @@ $(document).ready(function(){
   $('ul.setup-panel li a[href="#step-3"]').trigger('click');
 
   })
-  $('#activate-step-finish').on('click', function(e) {
-    $('#activate-step-finish').disabled; 
+  $('#activate-step-finish').on('click', function(e) { 
     getGeographyResult();
     if (validate_fourthtab()){
-    savestatutorymapping();
-  }
+      savestatutorymapping();
+      $('#activate-step-finish').disabled;
+    }
   })
 
   $('#days').hide();
@@ -1982,14 +1980,30 @@ function load_data(){
     if(selectedMonth == 1 || selectedMonth == 3 || selectedMonth == 5 || selectedMonth == 7 || selectedMonth == 8 || selectedMonth == 10 || selectedMonth == 12){
       result = 31;
     }else if(selectedMonth == 2){
-      result = 28;
+      result = 29;
     }else{
       result = 30;
     }
     return result;
   }
   
+
   $('#single_statutory_month').change(function() {
+
+    var selectedMonth = $('#single_statutory_month').val();
+    var maxDate = load_date(selectedMonth);
+    $("#single_statutory_date").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#single_statutory_date").append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#single_statutory_date").append(option);
+    }
+
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#single_statutory_month').val();
       var monthDate = load_date(selectedMonth);
@@ -1997,124 +2011,332 @@ function load_data(){
     }
   });
 
-  $('#multiple_statutory_month1').change(function() {
+
+ 
+ /*for(var j=1; j<=12; j++){
+  $('#multiple_statutory_month'+j).change(function() {
+    var selectedMonth = $('#multiple_statutory_month'+j).val();
+    var maxDate = load_date(selectedMonth);
+
+
+    $("#multiple_statutory_date"+j).empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+
+    $("#multiple_statutory_date"+j).append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#multiple_statutory_date"+j).append(option);
+    }
+
+    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+      var selectedMonth = $('#multiple_statutory_month'+j).val();
+      var monthDate = load_date(selectedMonth);
+      $('#multiple_statutory_date'+j).val(monthDate);
+    }
+  });
+}*/
+
+
+$('#multiple_statutory_month1').change(function() {
+    var selectedMonth = $('#multiple_statutory_month1').val();
+    var maxDate = load_date(selectedMonth);
+
+    $("#multiple_statutory_date1").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#multiple_statutory_date1").append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#multiple_statutory_date1").append(option);
+    }
+
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month1').val();
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date1').val(monthDate);
     }
-  });
+});
 
-  $('#multiple_statutory_month2').change(function() {
+$('#multiple_statutory_month2').change(function() {
+    var selectedMonth = $('#multiple_statutory_month2').val();
+    var maxDate = load_date(selectedMonth);
+
+    $("#multiple_statutory_date2").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#multiple_statutory_date2").append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#multiple_statutory_date2").append(option);
+    }
+
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month2').val();
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date2').val(monthDate);
     }
+});
 
-  });
+$('#multiple_statutory_month3').change(function() {
+    var selectedMonth = $('#multiple_statutory_month3').val();
+    var maxDate = load_date(selectedMonth);
 
-  $('#multiple_statutory_month3').change(function() {
+    $("#multiple_statutory_date3").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#multiple_statutory_date3").append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#multiple_statutory_date3").append(option);
+    }
+
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month3').val();
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date3').val(monthDate);
     }
+});
 
-  });
+$('#multiple_statutory_month4').change(function() {
+    var selectedMonth = $('#multiple_statutory_month4').val();
+    var maxDate = load_date(selectedMonth);
 
-  $('#multiple_statutory_month4').change(function() {
+    $("#multiple_statutory_date4").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#multiple_statutory_date4").append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#multiple_statutory_date4").append(option);
+    }
+
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month4').val();
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date4').val(monthDate);
     }
+});
 
-  });
+$('#multiple_statutory_month5').change(function() {
+    var selectedMonth = $('#multiple_statutory_month5').val();
+    var maxDate = load_date(selectedMonth);
 
-  $('#multiple_statutory_month5').change(function() {
+    $("#multiple_statutory_date5").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#multiple_statutory_date5").append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#multiple_statutory_date5").append(option);
+    }
+
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month5').val();
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date5').val(monthDate);
     }
+});
 
-  });
+$('#multiple_statutory_month6').change(function() {
+    var selectedMonth = $('#multiple_statutory_month6').val();
+    var maxDate = load_date(selectedMonth);
 
-  $('#multiple_statutory_month6').change(function() {
+    $("#multiple_statutory_date6").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#multiple_statutory_date6").append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#multiple_statutory_date6").append(option);
+    }
+
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month6').val();
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date6').val(monthDate);
     }
+});
 
-  });
+$('#multiple_statutory_month7').change(function() {
+    var selectedMonth = $('#multiple_statutory_month7').val();
+    var maxDate = load_date(selectedMonth);
 
-  $('#multiple_statutory_month7').change(function() {
+    $("#multiple_statutory_date7").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#multiple_statutory_date7").append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#multiple_statutory_date7").append(option);
+    }
+
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month7').val();
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date7').val(monthDate);
     }
-
-  });
-
+});
 
 $('#multiple_statutory_month8').change(function() {
+    var selectedMonth = $('#multiple_statutory_month8').val();
+    var maxDate = load_date(selectedMonth);
+
+    $("#multiple_statutory_date8").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#multiple_statutory_date8").append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#multiple_statutory_date8").append(option);
+    }
+
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month8').val();
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date8').val(monthDate);
     }
+});
 
-  });
 
 $('#multiple_statutory_month9').change(function() {
+    var selectedMonth = $('#multiple_statutory_month9').val();
+    var maxDate = load_date(selectedMonth);
+
+    $("#multiple_statutory_date9").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#multiple_statutory_date9").append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#multiple_statutory_date9").append(option);
+    }
+
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month9').val();
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date9').val(monthDate);
     }
+});
 
-  });
 
 $('#multiple_statutory_month10').change(function() {
+    var selectedMonth = $('#multiple_statutory_month10').val();
+    var maxDate = load_date(selectedMonth);
+
+    $("#multiple_statutory_date10").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#multiple_statutory_date10").append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#multiple_statutory_date10").append(option);
+    }
+
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month10').val();
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date10').val(monthDate);
     }
-
-  });
+});
 
 $('#multiple_statutory_month11').change(function() {
+    var selectedMonth = $('#multiple_statutory_month11').val();
+    var maxDate = load_date(selectedMonth);
+
+    $("#multiple_statutory_date11").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#multiple_statutory_date11").append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#multiple_statutory_date11").append(option);
+    }
+
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month11').val();
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date11').val(monthDate);
     }
+});
 
-  });
 
 $('#multiple_statutory_month12').change(function() {
+    var selectedMonth = $('#multiple_statutory_month12').val();
+    var maxDate = load_date(selectedMonth);
+
+    $("#multiple_statutory_date12").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#multiple_statutory_date12").append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#multiple_statutory_date12").append(option);
+    }
+
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month12').val();
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date12').val(monthDate);
     }
-
-  });
-
-  $('#multiple_statutory_month').change(function() {
-    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
-      var selectedMonth = $('#multiple_statutory_month').val();
-      var monthDate = load_date(selectedMonth);
-      $('#multiple_statutory_date').val(monthDate);
-    }
-
-  });
+});
 
   $('#statutory_month').change(function() {
+
+    var selectedMonth = $('#statutory_month').val();
+    var maxDate = load_date(selectedMonth);
+
+    $("#statutory_date").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#statutory_date").append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#statutory_date").append(option);
+    }
+
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#statutory_month').val();
       var monthDate = load_date(selectedMonth);
