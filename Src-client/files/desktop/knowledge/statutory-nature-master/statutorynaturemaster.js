@@ -142,12 +142,20 @@ function statNature_edit(statNatureId, statNatureName){
     $("#statutory-nature-id").val(statNatureId);
 }
 function statNature_active(statNatureId, isActive){
-    function success(status, data){
-      initialize();
+    var msgstatus='deactivate';
+    if(isActive){
+        msgstatus='activate';
     }
-    function failure(status, data){
+    var answer = confirm('Are you sure want to '+msgstatus+ '?');
+    if (answer)
+    {
+        function success(status, data){
+            initialize();
+        }
+        function failure(status, data){
+        }
+        mirror.changeStatutoryNatureStatus(parseInt(statNatureId), isActive, success, failure);
     }
-    mirror.changeStatutoryNatureStatus(parseInt(statNatureId), isActive, success, failure);
 }
 $("#search-statutory-nature-name").keyup(function() {
     var count=0;

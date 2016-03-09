@@ -139,13 +139,14 @@ function getBusinessGroupName(businessGroupId){
             }
         });
     }
-    else{
+   if(businessGroupId == null){
         businessgroupName = "Nil";
     }
     return businessgroupName;   
 }
 function getLegalEntityName(legalentityId){
     var legalEntityName;
+
     if(legalentityId != null){
         $.each(legalEntityList, function(key, value){
             if(value['legal_entity_id'] == legalentityId){
@@ -153,7 +154,7 @@ function getLegalEntityName(legalentityId){
             }
         });    
     }
-    else{
+    if(legalentityId == null){
         legalEntityName = "Nil";
     }
     
@@ -168,7 +169,7 @@ function getDivisionName(divisionId){
             }
         });
     }
-    else{
+    if(divisionId == null){
         divisionName = "Nil";
     }
     return divisionName;
@@ -179,9 +180,9 @@ function loadClientDetailsList(data){
     $.each(data, function(key, value) {
         var tablefilter = $('#templates .tr-filter');
         var clonefilter = tablefilter.clone();
-        $(".bgroupsval").text(getBusinessGroupName(value['business_group_id']));
-        $(".lentityval").text(getLegalEntityName(value['legal_entity_id']));
-        $(".divisionval").text(getDivisionName(value['division_id']));
+        $(".bgroupsval", clonefilter).text(getBusinessGroupName(value['business_group_id']));
+        $(".lentityval", clonefilter).text(getLegalEntityName(value['legal_entity_id']));
+        $(".divisionval", clonefilter).text(getDivisionName(value['division_id']));
         $('.tbody-clientdetails-list').append(clonefilter);
 
         var tableheading = $('#templates .tr-heading');
