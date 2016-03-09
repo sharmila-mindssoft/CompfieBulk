@@ -565,7 +565,7 @@ def main():
             start_new_task(db, client_id, current_date)
             db.commit()
             notify_task_details(db, client_id)
-            notify_before_contract_period(db, client_id)
+            # notify_before_contract_period(db, client_id)
             db.commit()
     except Exception, e :
         print e
