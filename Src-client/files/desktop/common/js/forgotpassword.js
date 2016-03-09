@@ -21,16 +21,16 @@ $("#submit").click(function(){
     displayMessage("");
     var username = $("#username").val().trim();
     if(username.length == 0) {
-      displayMessage("User Name Required");
+      displayMessage("Username required");
     } else {
 
         function onSuccess(data){
-          displayMessage("Password Reset Link send to your Mail Id");
+          displayMessage("Password reset link has been sent to your email Id");
           $("#username").val("");
         }
         function onFailure(error){
-          if(error == "InvalidUsername"){
-            displayMessage("Invalid Username");
+          if(error == "InvalidUserName"){
+            displayMessage("No such user exists");
           }
         }
         mirror.forgotPassword(username, 

@@ -188,6 +188,7 @@ function loadStatutoryMappingList(statutoryMappingsList) {
   var countryName = '';
   var domainName = '';
   var approvalStatus = '';
+  var title='';
 
   $(".tbody-statutorymapping-list").find("tr").remove();
   for(var entity in statutoryMappingsList) {
@@ -237,7 +238,8 @@ function loadStatutoryMappingList(statutoryMappingsList) {
       $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+statutorymappingId+')"/>');
     }
     else {
-      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' />');
+      title = "Only active status mapping have edit option"
+      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' title="'+title+'" />');
      }
     $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+statutorymappingId+','+passStatus+')"/>');
     $('.approvalstatus', clone).text(approvalStatus);

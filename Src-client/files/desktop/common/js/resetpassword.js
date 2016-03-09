@@ -4,7 +4,7 @@ function displayMessage(message) {
 }
 $("#submit").click(function(){
     $(".error-message").html("");
-    var resetToken = "71546293895338817723334292533594853377";
+    var resetToken = "a7da78729ce049d8b29f2520c8c57496";
     var newpassword = $("#newpassword").val().trim();
     var confirmpassword = $("#confirmpassword").val().trim();
 
@@ -40,7 +40,6 @@ $("#submit").click(function(){
   });
 
 $(document).ready(function(){
-
   function onSuccess(data){
   }
 
@@ -52,7 +51,7 @@ $(document).ready(function(){
     window.location.href='/knowledge/login';
 
   }
-  mirror.validateResetToken("71546293895338817723334292533594853377", 
+  mirror.validateResetToken("a7da78729ce049d8b29f2520c8c57496", 
     function (error, response) {
       if (error == null){
         onSuccess(response);
