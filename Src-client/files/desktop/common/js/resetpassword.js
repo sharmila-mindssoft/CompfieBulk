@@ -6,7 +6,7 @@ function displayMessage(message) {
 }
 $("#submit").click(function(){
     $(".error-message").html("");
-    var resetToken = "71546293895338817723334292533594853377";
+    var resetToken = "a7da78729ce049d8b29f2520c8c57496";
     var newpassword = $("#newpassword").val().trim();
     var confirmpassword = $("#confirmpassword").val().trim();
 
@@ -28,7 +28,7 @@ $("#submit").click(function(){
             displayMessage("Invalid Reset Token");
           }
         }
-        mirror.resetPassword(resetToken, newpassword, 
+        mirror.resetPassword(resetToken, newpassword,
           function (error, response) {
             if (error == null){
               onSuccess(response);
@@ -42,7 +42,6 @@ $("#submit").click(function(){
   });
 
 $(document).ready(function(){
-
   function onSuccess(data){
   }
 
@@ -59,7 +58,7 @@ $(document).ready(function(){
   url_parameters = url.split("/");
   reset_tokent = url_parameters[url_parameters.length - 1];
   console.log(reset_tokent);
-  mirror.validateResetToken("71546293895338817723334292533594853377", 
+  mirror.validateResetToken("71546293895338817723334292533594853377",
     function (error, response) {
       if (error == null){
         onSuccess(response);

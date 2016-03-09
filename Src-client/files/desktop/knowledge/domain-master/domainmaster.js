@@ -46,6 +46,7 @@ function loadDomainList (domainsList) {
   var domainId = 0;
   var domainName = null;
   var isActive = false;
+  var title;
   $(".tbody-domain-list1").find("tr").remove();
     for(var entity in domainsList) {
       domainId = domainsList[entity]["domain_id"];
@@ -54,17 +55,19 @@ function loadDomainList (domainsList) {
       if(isActive == true) {
         passStatus=false;
         imgName="icon-active.png"
+        title = "Click here to deactivate"
       }
       else {
         passStatus=true;
         imgName="icon-inactive.png"
+        title = "Click here to activate"
       }
       var tableRow=$('#templates .table-domain-master .table-row');
       var clone=tableRow.clone();
       $('.sno', clone).text(j);
       $('.domain-name', clone).text(domainName);
       $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+domainId+',\''+domainName+'\')"/>');
-      $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+domainId+','+passStatus+')"/>');
+      $('.status', clone).html('<img src=\'/images/'+imgName+'\' title="'+title+'" onclick="changeStatus('+domainId+','+passStatus+')"/>');
       $('.tbody-domain-list1').append(clone);
       j = j + 1;
     }

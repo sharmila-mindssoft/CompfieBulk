@@ -2281,7 +2281,7 @@ class KnowledgeDatabase(Database):
         if len(statutory_id) == 1 :
             statutory_id = "(%s)" % (statutory_id[0])
         else :
-            statutory_id = str(tuple(industry_id))
+            statutory_id = str(tuple(statutory_id))
 
         q = "SELECT distinct t1.statutory_mapping_id from tbl_statutory_mappings t1 \
             inner join tbl_statutory_statutories t2 on \
@@ -2297,6 +2297,7 @@ class KnowledgeDatabase(Database):
                 statutory_id,
                 industry_id
             )
+        print q
         row = self.select_one(q)
         if row :
             return row[0]

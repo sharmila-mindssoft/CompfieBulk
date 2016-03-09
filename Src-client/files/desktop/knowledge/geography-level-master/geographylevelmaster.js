@@ -112,6 +112,8 @@ function loadGeographyLevelsList(countryval) {
 function validate(){
     if($("#country").val().trim().length==0){
       displayMessage("Country Required");
+    }else if($("#level1").val().trim().length==0){
+      displayMessage("Level one title required");
     }
     else {
       displayMessage('');

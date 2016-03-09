@@ -203,7 +203,6 @@ function loadApproveStatutory(){
     displayMessage("Domain Required");  
   }
   else{
-    displayMessage("");
     j = 1;
     var statutorymappingId = 0;
     var industryName = '';
@@ -288,6 +287,7 @@ function loadApproveStatutory(){
     }
 
     if(j <= 1){
+      displayMessage("");
       var norecordtableRow=$('#norecord-templates');
       var noclone=norecordtableRow.clone();
       $('.tbody-statutorymapping-list').append(noclone);

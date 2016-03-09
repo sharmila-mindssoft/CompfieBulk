@@ -39,29 +39,6 @@ function displayMessage(message) {
 
 function resetvalues(){
   $('.sdate').val('');
-  /*$('#single_statutory_date').val('');
-  //$('#multiple_statutory_date1').val('');
-  $('#multiple_statutory_date2').val('');
-  $('#multiple_statutory_date3').val('');
-  $('#multiple_statutory_date4').val('');
-  $('#multiple_statutory_date5').val('');
-  $('#multiple_statutory_date6').val('');
-
-  $('#single_statutory_month').val('');
-  //$('#multiple_statutory_month1').val('');
-  $('#multiple_statutory_month2').val('');
-  $('#multiple_statutory_month3').val('');
-  $('#multiple_statutory_month4').val('');
-  $('#multiple_statutory_month5').val('');
-  $('#multiple_statutory_month6').val('');
-
-  $('#single_triggerbefore').val('');
-  //$('#multiple_triggerbefore1').val('');
-  $('#multiple_triggerbefore2').val('');
-  $('#multiple_triggerbefore3').val('');
-  $('#multiple_triggerbefore4').val('');
-  $('#multiple_triggerbefore5').val('');
-  $('#multiple_triggerbefore6').val('');*/
 }
 
 function load_selectdomain_master(){
@@ -211,6 +188,7 @@ function loadStatutoryMappingList(statutoryMappingsList) {
   var countryName = '';
   var domainName = '';
   var approvalStatus = '';
+  var title='';
 
   $(".tbody-statutorymapping-list").find("tr").remove();
   for(var entity in statutoryMappingsList) {
@@ -256,7 +234,13 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     $('.statutorynature', clone).text(statutoryNatureName);
     $('.statutory', clone).html(statutoryMappings);
     $('.compliancetask', clone).html(complianceNames);
-    $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+statutorymappingId+')"/>');
+    if(isActive == true) {
+      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+statutorymappingId+')"/>');
+    }
+    else {
+      title = "Only active status mapping have edit option"
+      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' title="'+title+'" />');
+     }
     $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+statutorymappingId+','+passStatus+')"/>');
     $('.approvalstatus', clone).text(approvalStatus);
     $('.tbody-statutorymapping-list').append(clone);
@@ -651,36 +635,10 @@ $("#temp_addstatutories").click(function() {
   }else if($.inArray(last_statutory_id, sm_statutoryids) >= 0){
     displayMessage("This statutory already added in list");
   }else{
+    displayMessage("Statutory added in list");
     sm_statutoryids.push(parseInt(last_statutory_id));
   }
-
-  if(sm_statutoryids.length > 0){
-    function onSuccess(data){
-      if(data['is_exists'] == false){
-        load_statories();
-      } else{
-        displayMessage("This statutory already exists");
-        var removeId = sm_statutoryids.indexOf(parseInt(last_statutory_id));
-        sm_statutoryids.splice(removeId,1);
-        //load_statories();
-      }
-    }
-    function onFailure(error){
-      displayMessage(error);
-    }
-    mirror.checkDuplicateStatutoryMapping( sm_countryid,sm_domainid,sm_industryids,
-      sm_statutorynatureid, sm_statutoryids,
-        function (error, response) {
-            if (error == null){
-              onSuccess(response);
-            }
-            else {
-              onFailure(error);
-            }
-        }
-    );
-  }
-  //load_statories();
+  load_statories();
 });
 
 function temp_removestatutories(remove_id){
@@ -726,9 +684,9 @@ function load_compliance(){
 
     if(compliances[entity]["repeats_every"] != null && compliances[entity]["repeats_type_id"] != null){
       for (var rtype in complianceRepeatTypeList) {
-      if(complianceRepeatTypeList[rtype]["repeat_type_id"] == compliances[entity]["repeats_type_id"]){
-        repeatsval = complianceRepeatTypeList[rtype]["repeat_type"];
-      }
+        if(complianceRepeatTypeList[rtype]["repeat_type_id"] == compliances[entity]["repeats_type_id"]){
+          repeatsval = complianceRepeatTypeList[rtype]["repeat_type"];
+        }
       }
       display_repeats = compliances[entity]["repeats_every"] + " " + repeatsval;
     }
@@ -771,7 +729,6 @@ function load_compliance(){
       isAllComplianceActive = true;
       $('.status', clone).html('<img src=\'/images/icon-delete.png\' onclick="temp_removecompliance(\''+complianceid+'\')"/>');
     }
-
     $('.tbody-compliance-list').append(clone);
 
     complianceid = complianceid + 1;
@@ -1388,6 +1345,8 @@ function validate_firsttab(){
   }
 }
 function validate_secondtab(){
+  alert(sm_statutoryids.length)
+  alert(sm_statutoryids)
   if (sm_statutoryids.length == 0){
     displayMessage("Atleast one Statutory should be selected");
   }else{
@@ -1527,7 +1486,7 @@ function load_edit_selectdomain_master(sm_countryid,sm_domainid,sm_industryids,s
 //edit geographymapping data dynamically
 function edit_geography(country,geographyids_edit){
   var geographyids=geographyids_edit;
-  //alert(geographyids)
+  var temp_parent = [];
   for(var i=0; i<geographyids.length;i++){
     var geographyList = geographiesList[country];
     for(glist in geographyList){
@@ -1536,7 +1495,6 @@ function edit_geography(country,geographyids_edit){
         var level = geographyList[glist]["level_position"];
       }
     }
-    //alert("parentids:"+parentids)
     for(var j=0; j<parentids.length; j++){
       var geo_id = parentids[j];;
       var parent_id = 0;
@@ -1558,7 +1516,10 @@ function edit_geography(country,geographyids_edit){
       }
     }
     $('#'+combineid).addClass( "active" );
-    load_geography(levelposition,country,combineid,"add",displaytext);
+    if($.inArray(parent_id, temp_parent) == -1){
+      temp_parent.push(parent_id)
+      load_geography(levelposition,country,combineid,"add",displaytext);
+    }     
   }
   var finalcombineid = geographyids[i]+"-"+geo_id;
   $('#'+finalcombineid).addClass( "active" );
@@ -1591,7 +1552,7 @@ function load_stautorydates(){
   var rep_every = parseInt($('#repeats_every').val());
   var modResult = 12 % rep_every;
 
-  if(modResult == 0){
+  if(modResult == 0 && rep_every < 12){
     if(rep_every == 1){
       $('.input-row1').show();
       $('.input-row2').show();
@@ -1860,9 +1821,10 @@ $(document).ready(function(){
 
   })
   $('#activate-step-finish').on('click', function(e) {
-  getGeographyResult();
-  if (validate_fourthtab()){
-  savestatutorymapping();
+    $('#activate-step-finish').disabled; 
+    getGeographyResult();
+    if (validate_fourthtab()){
+    savestatutorymapping();
   }
   })
 
@@ -1943,7 +1905,7 @@ function load_data(){
   else if($('#repeats_type').val() == '2' && $('.multipleinput').prop("checked") == false && $('#repeats_every').val() != ''){
     var rep_every = parseInt($('#repeats_every').val());
     var modResult = 12 % rep_every;
-    if(modResult == 0){
+    if(modResult == 0 && rep_every < 12 ){
       $('#single_statutory_date').show();
       $('#single_statutory_month').hide();
       $('.multipleselect').hide();
@@ -1985,7 +1947,8 @@ function load_data(){
     for(i=1; i<=12; i++){
       $('#multiple_statutory_date'+i).show();
     }
-    //$('#single_statutory_date').show();
+    $('#single_statutory_date').show();
+    $('#sdate').show();
     //$('#statutory_date').show();
   });
   $('.repeatlabelendday').click(function(){
@@ -1995,7 +1958,10 @@ function load_data(){
     for(i=1; i<=12; i++){
       $('#multiple_statutory_date'+i).hide();
     }
-    //$('#single_statutory_date').hide();
+    $('#single_statutory_date').hide();
+    if($('#repeats_type').val() == '2'){
+      $('#sdate').hide();
+    }
     //$('#statutory_date').hide();
 
   });
@@ -2011,6 +1977,15 @@ function load_data(){
     }
     return result;
   }
+  
+  $('#single_statutory_month').change(function() {
+    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+      var selectedMonth = $('#single_statutory_month').val();
+      var monthDate = load_date(selectedMonth);
+      $('#single_statutory_date').val(monthDate);
+    }
+  });
+
   $('#multiple_statutory_month1').change(function() {
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month1').val();
@@ -2065,10 +2040,8 @@ function load_data(){
   });
 
   $('#multiple_statutory_month7').change(function() {
-    alert("enter")
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#multiple_statutory_month7').val();
-      alert(selectedMonth)
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date7').val(monthDate);
     }

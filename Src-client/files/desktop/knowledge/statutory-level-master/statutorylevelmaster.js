@@ -133,6 +133,8 @@ function validate(){
       displayMessage("Country Required");
     } else if($("#domain").val().trim().length==0) {
       displayMessage("Domain Required");
+    } else if($("#level1").val().trim().length==0){
+      displayMessage("Level one title required");
     }
     else {
       displayMessage('');

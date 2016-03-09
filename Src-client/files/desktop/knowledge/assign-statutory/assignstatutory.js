@@ -137,7 +137,7 @@ function actstatus(element){
 
 function make_breadcrumbs(){
     var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
-    $(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + $('.grouplist.active').text() + arrowimage + $('.businessgrouplist.active').text() + arrowimage + $('.legalentitylist.active').text() + arrowimage + $('.divisionlist.active').text() + arrowimage + $('.locationlist.active').text() + arrowimage + assignStatutoryUnitValues + arrowimage + $('.domainlist.active').text());
+    $(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + $('.grouplist.active').text() + arrowimage + $('.legalentitylist.active').text() + arrowimage + $('.locationlist.active').text() + arrowimage + assignStatutoryUnitValues + arrowimage + $('.domainlist.active').text());
 }
 
 function load_secondwizard(){
