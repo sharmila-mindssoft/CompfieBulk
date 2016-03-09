@@ -635,8 +635,21 @@ $("#temp_addstatutories").click(function() {
   }else if($.inArray(last_statutory_id, sm_statutoryids) >= 0){
     displayMessage("This statutory already added in list");
   }else{
-    displayMessage("Statutory added in list");
-    sm_statutoryids.push(parseInt(last_statutory_id));
+    if(sm_statutoryids.length > 0){
+      var parentSelection = $(".slist1.active").text();
+      if(disp_statutories.length > 0){
+        var parentAct = disp_statutories[0].split('>>');
+        if(parentSelection != parentAct[0]){
+          displayMessage("Invalid level one selection. you should select ' "+parentAct[0]+" ' in first level.");
+          return false;
+        }else{
+          sm_statutoryids.push(parseInt(last_statutory_id));
+        }
+      }
+    }
+    else{
+      sm_statutoryids.push(parseInt(last_statutory_id));
+    }
   }
   load_statories();
 });
@@ -883,7 +896,7 @@ $("#temp_addcompliance").click(function() {
     if(value.compliance_task == compliance_task){
       displayMessage("Compliance task is duplicate");
     }
-      check_duplicate_status = false;
+    check_duplicate_status = false;
   }
   });
 
