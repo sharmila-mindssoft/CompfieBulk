@@ -635,45 +635,8 @@ $("#temp_addstatutories").click(function() {
   }else if($.inArray(last_statutory_id, sm_statutoryids) >= 0){
     displayMessage("This statutory already added in list");
   }else{
-
+    displayMessage("Statutory added in list");
     sm_statutoryids.push(parseInt(last_statutory_id));
-    if(sm_statutoryids.length > 0){
-      var parentSelection = $(".slist1.active").text();
-      if(disp_statutories.length > 0){
-        var parentAct = disp_statutories[0].split('>>');
-        if(parentSelection != parentAct[0]){
-          displayMessage("Invalid level one selection. you should select ' "+parentAct[0]+" ' in first level.");
-          var removeId = sm_statutoryids.indexOf(parseInt(last_statutory_id));
-          sm_statutoryids.splice(removeId,1);
-          load_statories();
-          return false;
-        }else{
-          function onSuccess(data){
-            if(data['is_exists'] == false){
-              load_statories();
-            } else{
-              displayMessage("This statutory already exists");
-              var removeId = sm_statutoryids.indexOf(parseInt(last_statutory_id));
-              sm_statutoryids.splice(removeId,1);
-            }
-          }
-          function onFailure(error){
-            displayMessage(error);
-          }
-          mirror.checkDuplicateStatutoryMapping( sm_countryid,sm_domainid,sm_industryids,
-            sm_statutorynatureid, sm_statutoryids,
-              function (error, response) {
-                if (error == null){
-                  onSuccess(response);
-                }
-                else {
-                  onFailure(error);
-                }
-              }
-          );
-        }
-      }
-    }
   }
   load_statories();
 });
