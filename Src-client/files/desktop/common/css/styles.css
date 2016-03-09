@@ -1501,6 +1501,8 @@ list-style-type:none; line-height:25px;
   padding-left: 0em;
   background: #ffffff;
   transition: opacity 200ms ease-out 0s, top 200ms ease-out 0s, visibility 200ms ease-out 0s;
+  max-height: 200px;
+  overflow-y: scroll;
 }
 .ac-selectbox ul li {
   font-size: 0.8em;
