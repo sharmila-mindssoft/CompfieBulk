@@ -93,11 +93,11 @@ function initMirror() {
     function getUserMenu(){
         var info = getUserInfo();
         if (info != null){
-            return info["menu"]["menus"];    
+            return info["menu"]["menus"];
         }else{
             console.log(window.localStorage["login_url"])
             window.location.href = window.localStorage["login_url"];
-        } 
+        }
     }
 
     function getEmployeeName(){
@@ -316,6 +316,11 @@ function initMirror() {
 
     function getCountryList(callback) {
         var request = ["GetCountries", {}];
+        apiRequest("general", request, callback);
+    }
+
+    function getCountryListForUser(callback) {
+        var request = ["GetCountriesForUser", {}];
         apiRequest("general", request, callback);
     }
 
@@ -1427,6 +1432,7 @@ function initMirror() {
         updateCountry: updateCountry,
         changeCountryStatus: changeCountryStatus,
         getCountryList: getCountryList,
+        getCountryListForUser: getCountryListForUser,
 
         saveIndustry: saveIndustry,
         updateIndustry: updateIndustry,

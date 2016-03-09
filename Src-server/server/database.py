@@ -2083,7 +2083,6 @@ class KnowledgeDatabase(Database):
                 country_id, domain_id,
                 qry_where
             )
-        print q
         rows = self.select_all(q)
         columns = [
             "statutory_mapping_id", "country_id",
@@ -4442,7 +4441,7 @@ class KnowledgeDatabase(Database):
             ON t1.statutory_mapping_id = t4.statutory_mapping_id \
             INNER JOIN tbl_statutory_statutories t5 \
             ON t1.statutory_mapping_id = t5.statutory_mapping_id\
-            WHERE t1.approval_status IN (1, 3) \
+            WHERE t1.is_active = 1 AND t1.approval_status IN (1, 3) \
             AND t1.domain_id = %s \
             AND t1.country_id = %s \
             AND t3.industry_id = %s \
@@ -4523,11 +4522,11 @@ class KnowledgeDatabase(Database):
             compliance_list = self.get_compliance_by_mapping_id(mapping_id)
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
             s_mapping = statutory_data[1]
-            level_map = s_mapping.split(">>")
+            level_map = s_mapping.split(" >> ")
             if len(level_map) == 1 :
-                level_map = ""
+                level_map = None
             else :
-                level_map = ">>".join(level_map[-1:])
+                level_map = " >> ".join(level_map[-1:])
             statutory_parents = statutory_data[2]
             level_1 = statutory_parents[0]
             if level_1 == 0 :
@@ -4539,9 +4538,12 @@ class KnowledgeDatabase(Database):
             if compliance_applicable_list is None:
                 compliance_applicable_list = []
             for c in compliance_list :
-                provision = "%s - %s" % (level_map, c["statutory_provision"])
+                if level_map is not None :
+                    provision = "%s - %s" % (level_map, c["statutory_provision"])
+                else :
+                    provision = " %s" % (c["statutory_provision"])
                 # provision.replace(level_1, "")
-                if c["document_name"] is not None :
+                if c["document_name"] not in (None, "") :
                     name = "%s - %s" % (c["document_name"], c["compliance_task"])
                 else :
                     name = c["compliance_task"]
@@ -4908,22 +4910,30 @@ class KnowledgeDatabase(Database):
         self, country_id, domain_id, industry_id,
         geography_id, unit_id
     ) :
+        q = "select parent_ids from tbl_geographies where geography_id = %s" % (int(geography_id))
+        row = self.select_one(q)
+        if row :
+            parent_ids = [int(x) for x in row[0].split(',')[:-1]]
+            if len(parent_ids) == 1 :
+                parent_ids.append(0)
+        else :
+            parent_ids = []
+
         query = "SELECT distinct \
-            t6.compliance_id, t6.compliance_task, t6.document_name,\
-            t6.statutory_provision, t6.compliance_description, t2.statutory_id, \
+            t2.compliance_id, t2.compliance_task, t2.document_name,\
+            t2.statutory_provision, t2.compliance_description, t5.statutory_id, \
             t.statutory_nature_name \
-            FROM tbl_compliances t6 \
+            FROM tbl_statutory_mappings t1\
+            INNER JOIN tbl_compliances t2 ON t1.statutory_mapping_id = t2.statutory_mapping_id \
             INNER JOIN tbl_statutory_industry t3 \
-            ON t6.statutory_mapping_id = t3.statutory_mapping_id\
+            ON t1.statutory_mapping_id = t3.statutory_mapping_id\
             INNER JOIN tbl_statutory_geographies t4 \
-            ON t6.statutory_mapping_id = t4.statutory_mapping_id \
-            INNER JOIN tbl_statutory_mappings t1 \
-            ON t6.statutory_mapping_id = t1.statutory_mapping_id \
-            INNER JOIN tbl_statutory_statutories t2 \
-            ON t1.statutory_mapping_id = t2.statutory_mapping_id \
+            ON t1.statutory_mapping_id = t4.statutory_mapping_id \
+            INNER JOIN tbl_statutory_statutories t5 \
+            ON t1.statutory_mapping_id = t5.statutory_mapping_id \
             INNER JOIN tbl_statutory_natures t\
             ON t1.statutory_nature_id = t.statutory_nature_id\
-            WHERE t1.approval_status IN (1, 3) \
+            WHERE t1.is_active = 1 AND t2.is_active = 1 ANd t1.approval_status IN (1, 3) \
             AND t1.domain_id = %s \
             AND t1.country_id = %s \
             AND t3.industry_id = %s \
@@ -4933,7 +4943,7 @@ class KnowledgeDatabase(Database):
                 FROM tbl_geographies g \
                 WHERE g.geography_id = %s \
                 OR g.parent_ids LIKE '%s' )\
-            AND t6.compliance_id NOT IN ( \
+            AND t2.compliance_id NOT IN ( \
                 SELECT distinct c.compliance_id \
                 FROM tbl_client_compliances c \
                 INNER JOIN tbl_client_statutories s\
@@ -4947,6 +4957,9 @@ class KnowledgeDatabase(Database):
                     str("%" + str(geography_id) + ",%"),
                     geography_id, domain_id, unit_id
                 )
+        if parent_ids :
+            query += " OR t4.geography_id IN %s " % (str(tuple(parent_ids)))
+
         rows = self.select_all(query)
         columns = ["compliance_id", "compliance_task",
             "document_name", "statutory_provision",
