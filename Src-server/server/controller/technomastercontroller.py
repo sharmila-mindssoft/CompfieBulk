@@ -138,6 +138,8 @@ def change_client_group_status(db, request, session_user):
     is_active = request.is_active
     if db.is_invalid_id(db.tblClientGroups, "client_id", client_id) :
         return technomasters.InvalidClientId()
+    elif db.is_unit_exists_under_client(client_id):
+        return technomasters.CannotDeactivateClient()
     else:
         db.update_client_group_status(client_id, is_active, session_user)
         return technomasters.ChangeClientStatusSuccess()

@@ -5704,3 +5704,12 @@ class KnowledgeDatabase(Database):
             return True
         else:
             return False
+
+    def is_unit_exists_under_client(self, client_id):
+        column = "count(*)"
+        condition = "client_id = '%d'" % client_id
+        rows = self.get_data(self.tblClientGroups, column, condition)
+        if rows[0][0] > 0:
+            return True
+        else:
+            return False

@@ -1204,6 +1204,18 @@ class UserIsNotResponsibleForAnyClient(Response):
         return {
         }
 
+class CannotDeactivateClient(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CannotDeactivateClient()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 class GetClientProfileSuccess(Response):
     def __init__(self, group_companies, profiles):
@@ -1237,7 +1249,7 @@ def _init_Response_class_map():
         InvalidBusinessGroupId, InvalidLegalEntityId, InvalidDivisionId, 
         InvalidUnitId, UserIsNotResponsibleForAnyClient, ClientCreationFailed,
         CannotDeactivateCountry, CannotDeactivateDomain, CreateNewAdminSuccess,
-        ClientDatabaseNotExists
+        ClientDatabaseNotExists, CannotDeactivateClient
     ]
     class_map = {}
     for c in classes:
