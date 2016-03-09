@@ -673,7 +673,7 @@ class KnowledgeDatabase(Database):
         if user_id > 0 :
             query = query + " INNER JOIN tbl_user_domains t2 ON \
                 t1.domain_id = t2.domain_id WHERE t2.user_id = %s" % (user_id)
-        query = query + " ORDER BY t1.domain_name"
+        query = query + " AND t1.is_active=1 ORDER BY t1.domain_name"
         rows = self.select_all(query)
         result = []
         if rows :
@@ -768,7 +768,7 @@ class KnowledgeDatabase(Database):
                 ON t1.country_id = t2.country_id WHERE t2.user_id = %s" % (
                     user_id
                 )
-        query = query + " ORDER BY t1.country_name"
+        query = query + " AND t1.is_active = 1 ORDER BY t1.country_name"
         rows = self.select_all(query)
         result = []
         if rows :
@@ -3496,8 +3496,35 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return self.return_group_companies(result)
 
-
     def return_group_companies(self, group_companies):
+        results = []
+        for group_company in group_companies :
+            client_countries = self.get_client_countries(group_company["client_id"])
+            countries = None if client_countries is None else [int(x) for x in client_countries.split(",")]
+            client_domains = self.get_client_domains(group_company["client_id"])
+            domains = None if client_domains is None else [int(x) for x in client_domains.split(",")]
+
+            results.append(core.GroupCompany(
+                group_company["client_id"], group_company["group_name"],
+                bool(group_company["is_active"]), countries, domains
+            ))
+        return results
+
+    def get_group_companies_for_user_with_max_unit_count(self, user_id):
+        result = {}
+        client_ids = None
+        if user_id != None:
+            client_ids = self.get_user_clients(user_id)
+        columns = "client_id, group_name, is_active"
+        condition = "is_active=1"
+        if client_ids is not None:
+            condition = "client_id in (%s) order by group_name ASC" % client_ids
+            rows = self.get_data(self.tblClientGroups, columns, condition)
+            columns = ["client_id", "group_name", "is_active"]
+            result = self.convert_to_dict(rows, columns)
+        return self.return_group_companies_with_max_unit_count(result)
+
+    def return_group_companies_with_max_unit_count(self, group_companies):
         results = []
         for group_company in group_companies :
             client_countries = self.get_client_countries(group_company["client_id"])
@@ -5562,7 +5589,7 @@ class KnowledgeDatabase(Database):
                 if countries is not None:
                     country_ids += countries.split(",")
             columns = "DISTINCT country_id, country_name, is_active"
-            condition = "country_id in (%s) ORDER BY country_name" % (
+            condition = "country_id in (%s) and is_active = 1 ORDER BY country_name" % (
                 ",".join(
                     str(x) for x in country_ids
                 )
@@ -5586,7 +5613,7 @@ class KnowledgeDatabase(Database):
             for client_id in client_ids_list:
                 domain_ids += self.get_client_domains(int(client_id)).split(",")
             columns = "DISTINCT domain_id, domain_name, is_active"
-            condition = "domain_id in (%s) ORDER BY domain_name " % (
+            condition = "domain_id in (%s) and is_active = 1 ORDER BY domain_name " % (
                 ",".join(
                     str(x) for x in domain_ids
                 )

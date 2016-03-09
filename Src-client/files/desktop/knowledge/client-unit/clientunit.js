@@ -335,7 +335,7 @@ function addcountryrow(){
             $('.auto-complete-unit-location', clone).addClass('auto-complete-unit-location-'+countryByCount+'-'+1);
             $('.unitlocationlist-text', clone).addClass('unitlocationlist-text-'+countryByCount+'-'+1);
             $('.full-location-list', clone).addClass('full-location-list-'+countryByCount+'-'+1);
-            $('.unitcode-checkbox', clone).addClass('unitcode-checkbox-'+countryByCount);                        
+            //$('.unitcode-checkbox', clone).addClass('unitcode-checkbox-'+countryByCount);                        
             $('.unit-code', clone).addClass('unit-code-'+countryByCount);
             $('.unit-code', clone).addClass('unit-code-'+countryByCount+'-'+1);
             $('.unit-name', clone).addClass('unit-name-'+countryByCount+'-'+1);
@@ -356,19 +356,19 @@ function addcountryrow(){
             $('.unit-error-msg', clone).addClass('unit-error-msg-'+countryByCount);
             $('.add-country-unit-list').append(clone);  
             $('.activedclass-'+countryByCount+'-'+1).text("active");
-            if(countryByCount != 1){
-                $('.unitcode-checkbox-'+countryByCount).hide();  
-            }  
+            // if(countryByCount != 1){
+            //     $('.unitcode-checkbox-'+countryByCount).hide();  
+            // }  
             countc++;
             countryByCount++;
             $(".postal-code", clone).on('input', function (event) {
                 this.value = this.value.replace(/[^0-9]/g, '');
             });
             
-            if($('.unitcode-checkbox').is(':checked')){
-                $('.unit-code-'+countryByCount+'-'+1).val(get2CharsofGroup+unitcodeautogenerateids);
-                unitcodeautogenerateids++;
-            }
+            // if($('.unitcode-checkbox').is(':checked')){
+            //     $('.unit-code-'+countryByCount+'-'+1).val(get2CharsofGroup+unitcodeautogenerateids);
+            //     unitcodeautogenerateids++;
+            // }
         }
         if(countryCount <= countc){
             displayMessage(countryCount+" Countries Are Allowed for this group");
@@ -408,10 +408,10 @@ function addNewUnitRow(str){
     $('.no-of-units-'+countval).val(parseInt($('.no-of-units-'+countval).val())+1);
     $('.activedclass', clone1).addClass('activedclass-'+countval+'-'+(lastClassval+1));
     $('.'+tbodyclasses[1]).append(clone1);
-    if($('.unitcode-checkbox').is(':checked')){
-        $('.unit-code-'+countval+'-'+(lastClassval+1)).val(get2CharsofGroup+unitcodeautogenerateids);
-        unitcodeautogenerateids++;
-    }
+    // if($('.unitcode-checkbox').is(':checked')){
+    //     $('.unit-code-'+countval+'-'+(lastClassval+1)).val(get2CharsofGroup+unitcodeautogenerateids);
+    //     unitcodeautogenerateids++;
+    // }
     $('.activedclass-'+countval+'-'+(lastClassval+1)).text("active");
     $(".postal-code", clone1).on('input', function (event) {
         this.value = this.value.replace(/[^0-9]/g, '');
@@ -619,7 +619,7 @@ function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divis
     $('.auto-complete-unit-location', clone).addClass('auto-complete-unit-location-'+countryByCount+'-'+1);
     $('.unitlocationlist-text', clone).addClass('unitlocationlist-text-'+countryByCount+'-'+1);
     $('.full-location-list', clone).addClass('full-location-list-'+countryByCount+'-'+1);
-    $('.unitcode-checkbox', clone).addClass('unitcode-checkbox-'+countryByCount);
+    //$('.unitcode-checkbox', clone).addClass('unitcode-checkbox-'+countryByCount);
     $('.unit-id', clone).addClass('unit-id-'+countryByCount+'-'+1);
     $('.unit-code', clone).addClass('unit-code-'+countryByCount);
     $('.unit-code', clone).addClass('unit-code-'+countryByCount+'-'+1);
@@ -640,9 +640,9 @@ function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divis
     $('.unit-error-msg', clone).addClass('unit-error-msg-'+countryByCount);
     $('.activedclass', clone).addClass('activedclass-'+countryByCount+'-1');
     $('.add-country-unit-list').append(clone);          
-    if(countryByCount != 1){
-        $('.unitcode-checkbox-'+countryByCount).hide();  
-    }  
+    // if(countryByCount != 1){
+    //     $('.unitcode-checkbox-'+countryByCount).hide();  
+    // }  
     $(".postal-code", clone).on('input', function (event) {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
@@ -661,7 +661,7 @@ function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divis
     $('.unit-id-'+countryByCount+'-1').val(firstlist['unit_id']);
     $('.unit-code-'+countryByCount+'-'+1).val(firstlist['unit_code']);
     $('.unit-name-'+countryByCount+'-1').val(firstlist['unit_name']);
-    $('.industry-'+countryByCount+'-'+1+'option[value='+firstlist["industry_id"]+']').attr("selected", "selected");
+    $('.industry-'+countryByCount+'-'+1+' option[value='+firstlist["industry_id"]+']').attr("selected", "selected");
     $('.unit-address-'+countryByCount+'-'+1).val(firstlist['unit_address']);
     $('.postal-code-'+countryByCount+'-'+1).val(firstlist['postal_code']);
     var domainsListArray = firstlist['domain_ids'];
@@ -1077,22 +1077,30 @@ $("#btn-clientunit-submit").click(function(){
 
 //Active or inactive Client Unit List --------------------------------------------------------------------------
 function clientunit_active(clientunitId, lentityId, divisionId, isActive){
-    function onSuccess(data) {
-        initialize();   
+    var msgstatus='deactivate';
+    if(isActive){
+        msgstatus='activate';
     }
-    function onFailure(error) {
-        console.log(error); 
-    }
-    mirror.changeClientStatus( parseInt(clientunitId), parseInt(lentityId), divisionId, isActive, 
-        function(error, response){
-            if(error == null){
-                onSuccess(response);
-            }
-            else{
-                onFailure(error);
-            }
+    var answer = confirm('Are you sure want to '+msgstatus+ '?');
+    if (answer)
+    {
+        function onSuccess(data) {
+            initialize();   
         }
-    );
+        function onFailure(error) {
+            console.log(error); 
+        }
+        mirror.changeClientStatus( parseInt(clientunitId), parseInt(lentityId), divisionId, isActive, 
+            function(error, response){
+                if(error == null){
+                    onSuccess(response);
+                }
+                else{
+                    onFailure(error);
+                }
+            }
+        );
+    }
 }
 
 //Search Client name ----------------------------------------------------------------------------------------------

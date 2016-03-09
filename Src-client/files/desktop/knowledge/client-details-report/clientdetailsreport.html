@@ -83,7 +83,23 @@
       <div class="clearfix"></div>
       <div class="grid-table-rpt">
         <h1>Client Details</h1>
-        <div style="margin-left:15%;">
+          <table class="table-clientdetails-list">
+            <tbody class="tbody-clientdetails-list-filter">
+            </tbody>
+            <tbody class="tbody-clientdetails-list-heading">
+            </tbody>
+            <tbody class="tbody-clientdetails-list">
+            </tbody>
+          </table>
+        
+        <p style="border-top:1px dashed #ccc;" class="total-records"></p>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="templates">
+<table><tr><td colspan="5" class="tr-filter">
+<div style="margin-left:15%;" >
           <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
 
            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;" class="countryval"
@@ -98,23 +114,16 @@
 
           </div>
         </div>
-        <table style="border-bottom:dotted 1px #999999;">
-          <tr align="left">
-            <th width="3%" align="center" class="header-bg">#</th>
-            <th class="header-bg">Unit</th>
-            <th class="header-bg">Domain</th>
-            <th width="40%"  class="header-bg">Unit Location &  Address</th>
-            <th class="header-bg">Postal Code</th>
-          </tr>
-          <tbody class="tbody-clientdetails-list">
-          </tbody>
-        </table>
-        <p style="border-top:1px dashed #ccc;" class="total-records"></p>
-      </div>
-    </div>
-  </div>
-</div>
-<div id="templates">
+        </td></tr>
+    <tr align="left" class="tr-heading">
+      <th width="3%" align="center" class="header-bg">#</th>
+      <th class="header-bg">Unit</th>
+      <th class="header-bg">Domain</th>
+      <th width="40%"  class="header-bg">Unit Location &  Address</th>
+      <th class="header-bg">Postal Code</th>
+    </tr>
+  
+  </table>
   <table class="table-clientdetails-list">
     <tr class="table-row" >
       <td align="center" class="sno"></td>

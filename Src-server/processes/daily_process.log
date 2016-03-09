@@ -1,0 +1,138 @@
+********************
+begin daily_process
+current_date datetime  2016-03-09 15:00:01.183759
+begin fetching client info
+begin client db connection
+2016-03-09
+begin process to start new task  - 2016-03-09
+fetching task details to start compliance for client id - 1, 2016-03-09
+**********
+[]
+**********
+ 0 compliances started for - 2016-03-09
+**********
+[]
+**********
+**********
+contract period expire notification sent ot Puzo
+**********
+2016-03-09
+begin process to start new task  - 2016-03-09
+fetching task details to start compliance for client id - 2, 2016-03-09
+**********
+[]
+**********
+ 0 compliances started for - 2016-03-09
+**********
+[]
+**********
+**********
+contract period expire notification sent ot VALEE
+**********
+2016-03-09
+begin process to start new task  - 2016-03-09
+fetching task details to start compliance for client id - 3, 2016-03-09
+**********
+[]
+**********
+ 0 compliances started for - 2016-03-09
+**********
+[]
+**********
+**********
+contract period expire notification sent ot Amigo
+**********
+end daily_process
+********************
+********************
+begin daily_process
+current_date datetime  2016-03-09 15:01:01.509515
+begin fetching client info
+begin client db connection
+2016-03-09
+begin process to start new task  - 2016-03-09
+fetching task details to start compliance for client id - 1, 2016-03-09
+**********
+[]
+**********
+ 0 compliances started for - 2016-03-09
+**********
+[]
+**********
+**********
+contract period expire notification sent ot Puzo
+**********
+2016-03-09
+begin process to start new task  - 2016-03-09
+fetching task details to start compliance for client id - 2, 2016-03-09
+**********
+[]
+**********
+ 0 compliances started for - 2016-03-09
+**********
+[]
+**********
+**********
+contract period expire notification sent ot VALEE
+**********
+2016-03-09
+begin process to start new task  - 2016-03-09
+fetching task details to start compliance for client id - 3, 2016-03-09
+**********
+[]
+**********
+ 0 compliances started for - 2016-03-09
+**********
+[]
+**********
+**********
+contract period expire notification sent ot Amigo
+**********
+end daily_process
+********************
+********************
+begin daily_process
+current_date datetime  2016-03-09 15:02:01.857209
+begin fetching client info
+begin client db connection
+2016-03-09
+begin process to start new task  - 2016-03-09
+fetching task details to start compliance for client id - 1, 2016-03-09
+**********
+[]
+**********
+ 0 compliances started for - 2016-03-09
+**********
+[]
+**********
+**********
+contract period expire notification sent ot Puzo
+**********
+2016-03-09
+begin process to start new task  - 2016-03-09
+fetching task details to start compliance for client id - 2, 2016-03-09
+**********
+[]
+**********
+ 0 compliances started for - 2016-03-09
+**********
+[]
+**********
+**********
+contract period expire notification sent ot VALEE
+**********
+2016-03-09
+begin process to start new task  - 2016-03-09
+fetching task details to start compliance for client id - 3, 2016-03-09
+**********
+[]
+**********
+ 0 compliances started for - 2016-03-09
+**********
+[]
+**********
+**********
+contract period expire notification sent ot Amigo
+**********
+end daily_process
+********************

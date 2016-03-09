@@ -42,7 +42,7 @@ class Email(object):
 
     def send_email(self, receiver, subject, message, cc=None):
         print "inside send email"
-        server = smtplib.SMTP('smtp.gmail.com', 25)
+        server = smtplib.SMTP('smtp.gmail.com', 25, timeout=30)
         print server
         server.ehlo()
         server.starttls()
@@ -86,6 +86,7 @@ class EmailHandler(Email):
         # }
         # template_name = self.get_template("task_completed")
         user_name = db.get_user_name_by_id(user_id)
+        user_name_parts = user_name.split("-")
         subject = "Reset Password"
         message = '''
             Dear %s, <br> \
@@ -93,9 +94,8 @@ class EmailHandler(Email):
             <p>%s</p>\
             <p> Thanks & Regards, <br>\
             Compfie Support Team''' % (
-            user_name, reset_link
+            user_name_parts[1], reset_link
         )
-
         self.send_email(receiver, subject, message, cc=None)
         # self.send_mail(template_name, email_to, context)
         return True
@@ -266,6 +266,15 @@ class EmailHandler(Email):
             user_ids = "%s, %s, %s" % (assignee_id, concurrence_id, approver_id)
         receiver, employee_name = db.get_user_email_name(user_ids)
         assignee = employee_name.split(",")[0]
+        subject = "Task Completed"
+        message = '''
+        Dear %s, 
+        <br>
+        Task %s Completed Successfully.
+        ''' % (
+            assignee, compliance_name
+        )
+        cc = None
         self.send_email(receiver, subject, message, cc)
 
 
@@ -276,4 +285,4 @@ class EmailHandler(Email):
     #     template_loader = jinja2.FileSystemLoader(
     #         os.path.join(ROOT_PATH, "Src-client")
     #     )
-    #     template_env = jinja2.Environment(loader=template_loader)
+    #     template_env = jinja2.Environment(loader=template_loader) 

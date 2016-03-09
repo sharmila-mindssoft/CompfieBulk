@@ -133,6 +133,8 @@ function loadClientDetailsList(data){
     $('.tbody-clientdetails-list tr').remove();
     var sno = 0;
     $.each(data, function(key, value) {
+        var tablefilter = $('#templates .tr-filter');
+        var clone = tablefilter.clone();
         var list = value['units'];
         $.each(list, function(k, val) { 
             var arr = [];
