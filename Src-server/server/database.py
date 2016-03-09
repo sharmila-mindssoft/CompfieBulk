@@ -2242,7 +2242,9 @@ class KnowledgeDatabase(Database):
 
             compliance_task = d["compliance_task"]
             document_name = d["document_name"]
-            if document_name not in (None, "") :
+            if document_name == "None":
+                document_name = None
+            if document_name :
                 name = "%s - %s" % (
                     document_name, compliance_task
                 )
@@ -2585,7 +2587,9 @@ class KnowledgeDatabase(Database):
                 self.convert_base64_to_file(file_name, file_content)
                 is_format = False
             compliance_ids.append(compliance_id)
-            if document_name not in (None, "") :
+            if document_name == "None":
+                document_name = None
+            if document_name :
                 compliance_names.append(
                     document_name + "-" + compliance_task
                 )
@@ -4607,8 +4611,11 @@ class KnowledgeDatabase(Database):
                 else :
                     provision = " %s" % (c["statutory_provision"])
                 # provision.replace(level_1, "")
-                if c["document_name"] not in (None, "") :
-                    name = "%s - %s" % (c["document_name"], c["compliance_task"])
+                document_name = c["document_name"]
+                if document_name == "None":
+                    document_name = None
+                if document_name :
+                    name = "%s - %s" % (document_name, c["compliance_task"])
                 else :
                     name = c["compliance_task"]
                 c_data = core.ComplianceApplicability(
@@ -4930,8 +4937,11 @@ class KnowledgeDatabase(Database):
             else :
                 level_map = ">>".join(level_map[-1:])
             provision = "%s - %s" % (level_map, r["statutory_provision"])
-            if r["document_name"] not in (None, "") :
-                name = "%s - %s" % (r["document_name"], r["compliance_task"])
+            document_name = r["document_name"]
+            if document_name == "None":
+                document_name = None
+            if document_name :
+                name = "%s - %s" % (document_name, r["compliance_task"])
             else :
                 name = r["compliance_task"]
             compliance = core.ComplianceApplicability(
@@ -5048,8 +5058,11 @@ class KnowledgeDatabase(Database):
             if compliance_applicable_list is None:
                 compliance_applicable_list = []
             provision = "%s - %s" % (s_mapping, d["statutory_provision"])
-            if d["document_name"] not in (None, "") :
-                name = "%s - %s" % (d["document_name"], d["compliance_task"])
+            document_name = d["document_name"]
+            if document_name == "None":
+                document_name = None
+            if document_name :
+                name = "%s - %s" % (document_name, d["compliance_task"])
             else :
                 name = "%s" % (d["compliance_task"])
             c_data = core.ComplianceApplicability(
