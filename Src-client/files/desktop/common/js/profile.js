@@ -21,8 +21,8 @@ function initialize(){
 	$('textarea.address').text(userprofile['address']);
 	$('.userid').val(userprofile['user_id']);
 }
-$('.countrycode').on('input', function (event) {
-    this.value = this.value.replace(/^[0-9 ()+-]+$/, '');
+$('.countrycode').on('input', function (event) {   
+    this.value = this.value.replace(/[^0-9]/g, '');
 });
 $('.areacode').on('input', function (event) {
     this.value = this.value.replace(/[^0-9]/g, '');
