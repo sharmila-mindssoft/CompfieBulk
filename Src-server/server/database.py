@@ -3504,7 +3504,6 @@ class KnowledgeDatabase(Database):
             countries = None if client_countries is None else [int(x) for x in client_countries.split(",")]
             client_domains = self.get_client_domains(group_company["client_id"])
             domains = None if client_domains is None else [int(x) for x in client_domains.split(",")]
-
             results.append(core.GroupCompany(
                 group_company["client_id"], group_company["group_name"],
                 bool(group_company["is_active"]), countries, domains
