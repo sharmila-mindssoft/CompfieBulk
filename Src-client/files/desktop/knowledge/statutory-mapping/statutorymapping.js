@@ -1726,8 +1726,7 @@ $(document).ready(function(){
             lis[i].style.display = 'none';
     }
     });
-    //end -filter process in select domain tab
-/*
+
     $("#statutory_date").empty();
     var defaultoption = $("<option></option>");
     defaultoption.val("");
@@ -1765,7 +1764,7 @@ $(document).ready(function(){
         option.text(i)
         $("#multiple_statutory_date"+j).append(option);
     }
-    }*/
+    }
 
     $('#repeats_every').keyup('input', function (event) {
       this.value = this.value.replace(/[^0-9]/g, '');
@@ -2009,9 +2008,6 @@ function load_data(){
     }
   });
 
-<<<<<<< HEAD
-=======
-
 
  /*for(var j=1; j<=12; j++){
   $('#multiple_statutory_month'+j).change(function() {
@@ -2040,8 +2036,6 @@ function load_data(){
   });
 }*/
 
-
->>>>>>> 3ef78dd07c3b4ae670c1eee866d5ae7df5e16a95
 $('#multiple_statutory_month1').change(function() {
     var selectedMonth = $('#multiple_statutory_month1').val();
     var maxDate = load_date(selectedMonth);
