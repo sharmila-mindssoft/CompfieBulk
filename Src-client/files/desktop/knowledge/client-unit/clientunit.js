@@ -343,12 +343,12 @@ function addcountryrow(){
             $('.add-unit-row img', clone).addClass('table-addunit-'+countryByCount);
             $('.tbody-unit-list', clone).addClass('tbody-unit-'+countryByCount);
             $('.no-of-units', clone).addClass('no-of-units-'+countryByCount);
-            $('.activedclass', clone).addClass('activedclass-'+countryByCount);
+            $('.activedclass', clone).addClass('activedclass-'+countryByCount+'-'+1);
             $('.no-of-units-'+countryByCount, clone).val(1);
             $('#unitcount').val(1);
             $('.unit-error-msg', clone).addClass('unit-error-msg-'+countryByCount);
             $('.add-country-unit-list').append(clone);  
-            $('.activedclass-'+countryByCount).text("active");
+            $('.activedclass-'+countryByCount+'-'+1).text("active");
             if(countryByCount != 1){
                 $('.unitcode-checkbox-'+countryByCount).hide();  
             }  
@@ -399,13 +399,13 @@ function addNewUnitRow(str){
     $('.domain-selectbox-view', clone1).addClass('domain-selectbox-view-'+countval+'-'+(lastClassval+1));
     $('.ul-domain-list', clone1).addClass('ul-domain-list-'+countval+'-'+(lastClassval+1));
     $('.no-of-units-'+countval).val(parseInt($('.no-of-units-'+countval).val())+1);
-    $('.activedclass-'+countval).addClass('activedclass-'+countval+'-'+(lastClassval+1));
+    $('.activedclass', clone1).addClass('activedclass-'+countval+'-'+(lastClassval+1));
     $('.'+tbodyclasses[1]).append(clone1);
     if($('.unitcode-checkbox').is(':checked')){
         $('.unit-code-'+countval+'-'+(lastClassval+1)).val(get2CharsofGroup+unitcodeautogenerateids);
         unitcodeautogenerateids++;
     }
-    $('.activedclass-'+countryByCount).text("active");
+    $('.activedclass-'+countval+'-'+(lastClassval+1)).text("active");
     $(".postal-code", clone1).on('input', function (event) {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
@@ -656,7 +656,7 @@ function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divis
     $('.postal-code-'+countryByCount+'-'+1).val(firstlist['postal_code']);
     var domainsListArray = firstlist['domain_ids'];
     $('.domain-'+countryByCount+'-'+1).val(domainsListArray);
-    $('.domain-selectbox-view'+countryByCount+'-'+1).val(domainsListArray.length+" Selected");
+    $('.domainselected-'+countryByCount+'-'+1).val(domainsListArray.length+" Selected");
     $('.activedclass-'+countryByCount+'-'+1).text("active");
 
     unitcodeautogenerateids++;
@@ -718,7 +718,7 @@ function addUnitRowUpdate(clientunitId, businessgroupId, legalEntityId, division
     $('.postal-code-'+countval+'-'+lastClassval).val(firstlist['postal_code']);
     var domainsListArray = firstlist['domain_ids'];
     $('.domain-'+countval+'-'+lastClassval).val(domainsListArray);
-    $('.domain-selectbox-view'+countval+'-'+lastClassval).val(domainsListArray.length+" Selected");
+    $('.domainselected-'+countval+'-'+lastClassval).val(domainsListArray.length+" Selected");
     $('.activedclass-'+countval+'-'+lastClassval).text("active");
 }
 
@@ -1221,7 +1221,7 @@ function loaddomain(classval){
 //check & uncheck process
 function activate(element, count){
     var chkstatus = $(element).attr('class');
-    if(chkstatus == 'active_selectbox'){
+    if(chkstatus == 'active_selectbox'+count+' active'){
         $(element).removeClass("active_selectbox"+count);
         $(element).removeClass("active");
         
