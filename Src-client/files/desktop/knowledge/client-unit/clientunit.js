@@ -551,6 +551,7 @@ function clientunit_edit(clientunitId, businessgroupId, legalentityId, divisionI
 }
 //Update load form cal------------------------------------------------------------------------------------------
 function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, divisionId){
+    countryByCount = 1;
     $("#client-unit-id").val(clientunitId);
     $(".add-country-unit-list").empty();
     //group
@@ -697,13 +698,13 @@ function addUnitRowUpdate(clientunitId, businessgroupId, legalEntityId, division
     $('.domain-selectbox-view', clone1).addClass('domain-selectbox-view-'+countval+'-'+lastClassval);
     $('.ul-domain-list', clone1).addClass('ul-domain-list-'+countval+'-'+lastClassval);
     $('.activedclass', clone1).addClass('activedclass-'+countval+'-'+lastClassval);   
-
+    
     $('.'+tbodyclassname).append(clone1);
     unitcodeautogenerateids++;            
     $(".postal-code", clone1).on('input', function (event) {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
-    $('.no-of-units-'+countval, clone1).val(parseInt($('.no-of-units-'+countval).val())+1);
+    $('.no-of-units-'+countval).val(parseInt($('.no-of-units-'+countval).val())+1);
     loadglevelsupdate(countryid, "glevel-"+countval+"-"+lastClassval);
     var firstlist = unitlist;
     var gid = firstlist['geography_id'];    
@@ -858,7 +859,11 @@ $("#btn-clientunit-submit").click(function(){
                         $(".unit-error-msg-"+i).html("Unit location Required");
                         return;
                     }
-                    if(unitCode == ''){
+                    else if(unitGeographyId == ''){
+                        $(".unit-error-msg-"+i).html("Unit location Name is Invalid");
+                        return;   
+                    }
+                    else if(unitCode == ''){
                         $(".unit-error-msg-"+i).html("Unit Code Required");
                         return;
                     }
@@ -1012,7 +1017,11 @@ $("#btn-clientunit-submit").click(function(){
                         $(".unit-error-msg-"+i).html("Unit location Required");
                         return;
                     }
-                    if(unitCode == ''){
+                    else if(unitGeographyId == ''){
+                        $(".unit-error-msg-"+i).html("Unit location Name is Invalid");
+                        return;   
+                    }
+                    else if(unitCode == ''){
                         $(".unit-error-msg-"+i).html("Unit Code Required");
                         return;
                     }

@@ -191,14 +191,14 @@ function loadAssignedStatutoryList(data){
 	  		var optedImageName;
 	  		var tableRowAssigned = $('#act-heading .table-act-heading-list .tablerow');
 			var cloneAssigned = tableRowAssigned.clone();
-			var appStatus = assignedList[k]['applicable_status']
+			var appStatus = val['applicable_status']
 			if(appStatus == true){
 				asImageName = "<img src='/images/tick1bold.png'>";
 			}
 			else{
 				asImageName = "<img src='/images/deletebold.png'>";  
 			}
-			var optedStatus = assignedList[k]['compliance_opted_status']
+			var optedStatus = val['opted_status']
 			if(optedStatus == true){
 				optedImageName = "<img src='/images/tick1bold.png'>";
 			}
