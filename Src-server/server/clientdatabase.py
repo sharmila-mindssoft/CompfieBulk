@@ -306,7 +306,7 @@ class ClientDatabase(Database):
 
     def return_forms(self, client_id, form_ids=None):
         columns = "form_id, form_name"
-        condition = "form_id != 24" 
+        condition = "form_id != 24"
         if form_ids is not None:
             condition += " AND form_id in (%s)" % form_ids
         forms = self.get_data(
@@ -1231,7 +1231,7 @@ class ClientDatabase(Database):
                 self.tblForms, column, condition
             )
             form_ids = rows[0][0]
-            
+
             column = "group_concat(user_group_id)"
             condition = "form_category_id = '%d'" % form_category_id
             rows = self.get_data(
@@ -1420,11 +1420,16 @@ class ClientDatabase(Database):
             statutories = self.return_compliance_for_statutory_settings(
                 domain_id, client_statutory_id, client_id
             )
+            statutory_val = []
+            for key in sorted(statutories):
+                statutory_val.append(
+                    statutories[key]
+                )
 
             unit_statutories = unit_wise_statutories.get(unit_id)
             if unit_statutories is None :
                 statutory_dict = {}
-                statutory_dict[domain_name] = statutories.values()
+                statutory_dict[domain_name] = statutory_val
                 unit_statutories = clienttransactions.UnitStatutoryCompliances(
                     unit_id,
                     unit_name,

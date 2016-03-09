@@ -142,6 +142,19 @@ class ChangeDomainStatus(Request):
             "is_active": to_structure_Bool(self.is_active),
         }
 
+class GetCountriesForUser(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetCountriesForUser()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class GetCountries(Request):
     def __init__(self):
         pass
@@ -263,7 +276,7 @@ class GetAuditTrails(Request):
 def _init_Request_class_map():
     classes = [
         UpdateUserProfile, GetDomains, SaveDomain, UpdateDomain,
-        ChangeDomainStatus, GetCountries, SaveCountry, UpdateCountry,
+        ChangeDomainStatus, GetCountriesForUser, GetCountries, SaveCountry, UpdateCountry,
         ChangeCountryStatus, GetNotifications, UpdateNotificationStatus,
         GetAuditTrails
     ]
