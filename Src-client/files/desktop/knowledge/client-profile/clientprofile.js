@@ -111,21 +111,29 @@ function loadClientProfileList(groupId){
 }
 
 function clientprofile_active(userId, clientId, status){
-    function onSuccess(data){
-        initialize();
+     var msgstatus='deactivate';
+    if(status){
+        msgstatus='activate';
     }
-    function onFailure(error){
-    }
-    mirror.changeClientUserStatus(userId, status,
-        function(error, response){
-            if(error == null){
-                onSuccess(response);
-            }
-            else{
-                onFailure(error);
-            }
+    var answer = confirm('Are you sure want to '+msgstatus+ '?');
+    if(answer)
+    {
+        function onSuccess(data){
+            initialize();
         }
-    );
+        function onFailure(error){
+        }
+        mirror.changeClientUserStatus(userId, status,
+            function(error, response){
+                if(error == null){
+                    onSuccess(response);
+                }
+                else{
+                    onFailure(error);
+                }
+            }
+        );
+    }
 }
 
 function clientprofile_isadmin(userId, clientId){
