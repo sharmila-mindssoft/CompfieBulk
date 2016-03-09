@@ -174,7 +174,7 @@ function changeStatus (statutorymappingId,isActive) {
           }
       }
   );
-  }    
+  }
 }
 
 function loadStatutoryMappingList(statutoryMappingsList) {
@@ -1345,8 +1345,8 @@ function validate_firsttab(){
   }
 }
 function validate_secondtab(){
-  alert(sm_statutoryids.length)
-  alert(sm_statutoryids)
+  // alert(sm_statutoryids.length)
+  // alert(sm_statutoryids)
   if (sm_statutoryids.length == 0){
     displayMessage("Atleast one Statutory should be selected");
   }else{
@@ -1519,7 +1519,7 @@ function edit_geography(country,geographyids_edit){
     if($.inArray(parent_id, temp_parent) == -1){
       temp_parent.push(parent_id)
       load_geography(levelposition,country,combineid,"add",displaytext);
-    }     
+    }
   }
   var finalcombineid = geographyids[i]+"-"+geo_id;
   $('#'+finalcombineid).addClass( "active" );
@@ -1821,7 +1821,7 @@ $(document).ready(function(){
 
   })
   $('#activate-step-finish').on('click', function(e) {
-    $('#activate-step-finish').disabled; 
+    $('#activate-step-finish').disabled;
     getGeographyResult();
     if (validate_fourthtab()){
     savestatutorymapping();
@@ -1977,7 +1977,7 @@ function load_data(){
     }
     return result;
   }
-  
+
   $('#single_statutory_month').change(function() {
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
       var selectedMonth = $('#single_statutory_month').val();

@@ -2297,7 +2297,6 @@ class KnowledgeDatabase(Database):
                 statutory_id,
                 industry_id
             )
-        print q
         row = self.select_one(q)
         if row :
             return row[0]
