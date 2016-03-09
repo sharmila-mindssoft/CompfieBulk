@@ -204,8 +204,8 @@ def save_user(db, request, session_user):
         return admin.EmailIDAlreadyExists()
     elif db.is_duplicate_employee_code(employee_code, user_id) :
         return admin.EmployeeCodeAlreadyExists()
-    elif db.is_duplicate_contact_no(contact_no, user_id) :
-        return admin.ContactNumberAlreadyExists()
+    # elif db.is_duplicate_contact_no(contact_no, user_id) :
+    #     return admin.ContactNumberAlreadyExists()
     elif db.save_user(user_id, email_id, user_group_id, employee_name,
      employee_code, contact_no, address, designation, country_ids, domain_ids) :
         return admin.SaveUserSuccess()
@@ -225,8 +225,8 @@ def update_user(db, request, session_user):
         return admin.InvalidUserId()
     elif db.is_duplicate_employee_code(employee_code, user_id) :
         return admin.EmployeeCodeAlreadyExists()
-    elif db.is_duplicate_contact_no(contact_no, user_id) :
-        return admin.ContactNumberAlreadyExists()
+    # elif db.is_duplicate_contact_no(contact_no, user_id) :
+    #     return admin.ContactNumberAlreadyExists()
     elif db.update_user(user_id, user_group_id, employee_name, employee_code,
         contact_no, address, designation, country_ids, domain_ids) :
         return admin.UpdateUserSuccess()

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import mandrill
-import smtplib
+from smtplib import SMTP_SSL as SMTP
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 
@@ -35,18 +35,26 @@ __all__ = [
 class Email(object):
 
     def __init__(self):
-        self.sender = "compfie.saas@gmail.com"
-        self.password = "compfie@123"
+        # self.sender = "compfie.saas@gmail.com"
+        # self.password = "compfie@123"
+        self.sender = "compfie.test@aparajitha.com"
+        self.password = "Ctt@123"
         # self.API_KEY = 'u5IPdlY1JAxa5_fJoJaPEw'
         self.initializeTemplates()
 
     def send_email(self, receiver, subject, message, cc=None):
         print "inside send email"
-        server = smtplib.SMTP('smtp.gmail.com', 25, timeout=30)
+        # server = smtplib.SMTP('smtp.gmail.com', 25, timeout=30)
+        # server = smtplib.SMTP("mail.aparajitha.com", 465)
+        # print server
+        # server.ehlo()
+        # server.starttls()
+        # print server.login(self.sender, self.password)
+
+        server = SMTP("mail.aparajitha.com", 465)
         print server
-        server.ehlo()
-        server.starttls()
-        print server.login(self.sender, self.password)
+        server.set_debuglevel(False)
+        server.login(self.sender, self.password)
 
         msg = MIMEMultipart()
         msg['From'] = self.sender
@@ -57,6 +65,7 @@ class Email(object):
             receiver += cc
         msg.attach(MIMEText(message, 'html'))
         response = server.sendmail(self.sender, receiver,  msg.as_string())
+        print response
         server.close()
 
     def initializeTemplates(self):
@@ -117,7 +126,7 @@ class EmailHandler(Email):
             <br>password: %s </p>\
             <p> Thanks & Regards, <br>\
             Compfie Support Team''' % (
-            CLIENT_URL, short_name, CLIENT_URL, short_name, 
+            CLIENT_URL, short_name, CLIENT_URL, short_name,
             receiver, password
         )
         self.send_email(receiver, subject, message)
@@ -139,7 +148,7 @@ class EmailHandler(Email):
             <br>password: %s </p>\
             <p> Thanks & Regards, <br>\
             Compfie Support Team''' % (
-            employee_name, CLIENT_URL, short_name, CLIENT_URL, short_name, 
+            employee_name, CLIENT_URL, short_name, CLIENT_URL, short_name,
             receiver, password
         )
         self.send_email(receiver, subject, message)
@@ -268,7 +277,7 @@ class EmailHandler(Email):
         assignee = employee_name.split(",")[0]
         subject = "Task Completed"
         message = '''
-        Dear %s, 
+        Dear %s,
         <br>
         Task %s Completed Successfully.
         ''' % (
@@ -285,4 +294,4 @@ class EmailHandler(Email):
     #     template_loader = jinja2.FileSystemLoader(
     #         os.path.join(ROOT_PATH, "Src-client")
     #     )
-    #     template_env = jinja2.Environment(loader=template_loader) 
+    #     template_env = jinja2.Environment(loader=template_loader)

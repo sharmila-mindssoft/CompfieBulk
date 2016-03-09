@@ -160,7 +160,7 @@ function loadClientsList(clientunitsList){
         $('.legal-entity-name', clone).text(getLegalEntityName(lentitiesId)); 
         $('.division-name', clone).text(getDivisionName(divisionId));
         $('.edit', clone).html('<img src = "/images/icon-edit.png" id = "editid" onclick = "clientunit_edit('+clientId+','+bgroupId+','+lentitiesId+','+divisionId+')"/>');
-        $('.is-active', clone).html('<img src = "/images/'+imageName+'" title = "'+title+'" onclick = "clientunit_active('+clientId+','+lentitiesId+', '+divisionId+', '+statusVal+')"/>');
+        // $('.is-active', clone).html('<img src = "/images/'+imageName+'" title = "'+title+'" onclick = "clientunit_active('+clientId+','+lentitiesId+', '+divisionId+', '+statusVal+')"/>');
         $('.tbody-clientunit-list').append(clone);  
     });
 }
@@ -561,6 +561,7 @@ function clientunit_edit(clientunitId, businessgroupId, legalentityId, divisionI
 }
 //Update load form cal------------------------------------------------------------------------------------------
 function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, divisionId){
+    countryByCount = 1;
     $("#client-unit-id").val(clientunitId);
     $(".add-country-unit-list").empty();
     //group
@@ -707,13 +708,13 @@ function addUnitRowUpdate(clientunitId, businessgroupId, legalEntityId, division
     $('.domain-selectbox-view', clone1).addClass('domain-selectbox-view-'+countval+'-'+lastClassval);
     $('.ul-domain-list', clone1).addClass('ul-domain-list-'+countval+'-'+lastClassval);
     $('.activedclass', clone1).addClass('activedclass-'+countval+'-'+lastClassval);   
-
+    
     $('.'+tbodyclassname).append(clone1);
     unitcodeautogenerateids++;            
     $(".postal-code", clone1).on('input', function (event) {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
-    $('.no-of-units-'+countval, clone1).val(parseInt($('.no-of-units-'+countval).val())+1);
+    $('.no-of-units-'+countval).val(parseInt($('.no-of-units-'+countval).val())+1);
     loadglevelsupdate(countryid, "glevel-"+countval+"-"+lastClassval);
     var firstlist = unitlist;
     var gid = firstlist['geography_id'];    
@@ -777,7 +778,13 @@ $("#btn-clientunit-submit").click(function(){
             initialize();
         }
         function onFailure(error) {
-            displayMessage(error);
+            if(error == "UnitCodeAlreadyExists"){
+                displayMessage("Unit Code Already Exists!");
+            }
+            else{
+                displayMessage(error);    
+            }
+            
         }
 
         var businessGroup;
@@ -848,10 +855,12 @@ $("#btn-clientunit-submit").click(function(){
         var numItemsCountry = $('.country').length;
         for(var i = 1; i < numItemsCountry;i++){
             if($('.country-'+i).val() != ''){
+                var unitarr = [];
                 countryUnits = parseInt($('.country-'+i).val());
                 var unitcount = $('.no-of-units-'+i).val();
                 var units = [];
                 for(var j = 1;j <= unitcount;j++){
+                    
                     var unit;
                     unitId= null;
                     unitCode =  $('.unit-code-'+i+'-'+j).val();
@@ -868,7 +877,11 @@ $("#btn-clientunit-submit").click(function(){
                         $(".unit-error-msg-"+i).html("Unit location Required");
                         return;
                     }
-                    if(unitCode == ''){
+                    else if(unitGeographyId == ''){
+                        $(".unit-error-msg-"+i).html("Unit location Name is Invalid");
+                        return;   
+                    }
+                    else if(unitCode == ''){
                         $(".unit-error-msg-"+i).html("Unit Code Required");
                         return;
                     }
@@ -891,18 +904,39 @@ $("#btn-clientunit-submit").click(function(){
                     else if(unitdomain == ''){
                         $(".unit-error-msg-"+i).html("Domain Required");
                         return;   
-                    } 
+                    }
                     else{
-                        var arrayDomainsVal = unitdomain.split(",");
-                        var arrayDomains = [];
-                        for(var m = 0; m < arrayDomainsVal.length; m++){
-                            arrayDomains[m] = parseInt(arrayDomainsVal[m]);
-                        } 
-                        var domainsVal = arrayDomains;
+                        unitarr.push(unitCode);
+                        var hash = [];
+                        for (var n=unitarr.length; n--; ){
+                           if (typeof hash[unitarr[n]] === 'undefined') hash[unitarr[n]] = [];
+                           hash[unitarr[n]].push(n);
+                        }
 
-                        unit = mirror.getUnitDict(null, unitName, unitCode, unitAddress, parseInt(unitPostalCode), 
-                            parseInt(unitGeographyId), unitLocation, unitIndustryId, unitIndustryName, domainsVal);
-                        units.push(unit);    
+                        var duplicates = [];
+                        for (var key in hash){
+                            if (hash.hasOwnProperty(key) && hash[key].length > 1){
+                                duplicates.push(key);
+                            }
+                        }
+                        if(duplicates == ""){
+                            var arrayDomainsVal = unitdomain.split(",");
+                            var arrayDomains = [];
+                            for(var m = 0; m < arrayDomainsVal.length; m++){
+                                arrayDomains[m] = parseInt(arrayDomainsVal[m]);
+                            } 
+                            var domainsVal = arrayDomains;
+
+                            unit = mirror.getUnitDict(null, unitName, unitCode, unitAddress, parseInt(unitPostalCode), 
+                                parseInt(unitGeographyId), unitLocation, unitIndustryId, unitIndustryName, domainsVal);
+                            units.push(unit);    
+                        }
+                        else{
+                            displayMessage(duplicates+" Unit Code Already Exits!!!");
+                            return;
+                        }
+
+                        
                     }
                     
                 }
@@ -1000,12 +1034,14 @@ $("#btn-clientunit-submit").click(function(){
         var numItemsCountry = $('.country').length;
         for(var i = 1; i < numItemsCountry;i++){
             var countryUnits = {};
+            var unitarr = [];
             if($('.country-'+i).val() != ''){
                 countryUnits = parseInt($('.country-'+i).val());
                 var unitcount = $('.no-of-units-'+i).val();
                 console.log("unitcount value = "+$('.no-of-units-'+i).val());
                 var units = [];
                 for(var j = 1; j <= unitcount; j++){
+
                     var unit;
                     unitId= $('.unit-id-'+i+'-'+j).val();;
                     unitCode =  $('.unit-code-'+i+'-'+j).val();
@@ -1022,7 +1058,11 @@ $("#btn-clientunit-submit").click(function(){
                         $(".unit-error-msg-"+i).html("Unit location Required");
                         return;
                     }
-                    if(unitCode == ''){
+                    else if(unitGeographyId == ''){
+                        $(".unit-error-msg-"+i).html("Unit location Name is Invalid");
+                        return;   
+                    }
+                    else if(unitCode == ''){
                         $(".unit-error-msg-"+i).html("Unit Code Required");
                         return;
                     }
@@ -1047,16 +1087,35 @@ $("#btn-clientunit-submit").click(function(){
                         return;   
                     } 
                     else{
-                        var arrayDomainsVal = unitdomain.split(",");
-                        var arrayDomains = [];
-                        for(var m = 0; m < arrayDomainsVal.length; m++){
-                            arrayDomains[m] = parseInt(arrayDomainsVal[m]);
-                        } 
-                        var domainsVal = arrayDomains;
+                        unitarr.push(unitCode);
+                        var hash = [];
+                        for (var n=unitarr.length; n--; ){
+                           if (typeof hash[unitarr[n]] === 'undefined') hash[unitarr[n]] = [];
+                           hash[unitarr[n]].push(n);
+                        }
 
-                        unit = mirror.getUnitDict(parseInt(unitId), unitName, unitCode, unitAddress, parseInt(unitPostalCode), 
-                            parseInt(unitGeographyId), unitLocation, unitIndustryId, unitIndustryName, domainsVal);
-                        units.push(unit);    
+                        var duplicates = [];
+                        for (var key in hash){
+                            if (hash.hasOwnProperty(key) && hash[key].length > 1){
+                                duplicates.push(key);
+                            }
+                        }
+                        if(duplicates == ""){
+                            var arrayDomainsVal = unitdomain.split(",");
+                            var arrayDomains = [];
+                            for(var m = 0; m < arrayDomainsVal.length; m++){
+                                arrayDomains[m] = parseInt(arrayDomainsVal[m]);
+                            } 
+                            var domainsVal = arrayDomains;
+
+                            unit = mirror.getUnitDict(parseInt(unitId), unitName, unitCode, unitAddress, parseInt(unitPostalCode), 
+                                parseInt(unitGeographyId), unitLocation, unitIndustryId, unitIndustryName, domainsVal);
+                            units.push(unit);
+                        }
+                        else{
+                            displayMessage(duplicates+" Unit Code Already Exists!!!");
+                            return;
+                        }
                     }
                     
                 }

@@ -33,6 +33,7 @@ function loadFormCategories(){
 }
 
 function initialize(){
+	clearMessage();
 	function onSuccess(data){
 		categoryList = data['form_categories'];
 		loadUserGroupdata(data['user_groups']);
@@ -93,8 +94,11 @@ function loadUserGroupdata(userGroupList){
 		$('.tbody-usergroups-list').append(clone);
 	}
 }
-
+$("#categoryName").on("change", function(){
+	$("#btnUserGroupShow").trigger("click");
+});
 $("#btnUserGroupShow").click(function(){
+	clearMessage();
 	var groupNameVal = $("#groupName").val().trim();
 	var categoryNameVal = $("#categoryName").val().trim();
 	if(groupNameVal == ''){
@@ -127,6 +131,7 @@ $("#btnUserGroupShow").click(function(){
 	}
 });
 function loadFormList(formList,categoryNameVal){
+	clearMessage();
 	$(".tableFormList").find("tr").remove();
 	$('.checkedFormId').prop("checked", false);
 	var i_incre;
@@ -153,6 +158,7 @@ function loadFormList(formList,categoryNameVal){
 function loadFormListUpdate(formList, userGroupList, catgid, userGroupId){
 	$(".tableFormList").find("tr").remove();
 	$('.checkedFormId').prop("checked", false);
+	clearMessage();
 
 	var i_incre;
 	var list = formList[catgid]['menus'];
@@ -184,6 +190,7 @@ function loadFormListUpdate(formList, userGroupList, catgid, userGroupId){
 	}
 }
 $("#btnUserGroupSubmit").click(function(){
+
 	var groupIdVal = $("#groupId").val();
 	var groupNameVal = $("#groupName").val().trim();
 	var categoryNameVal = $("#categoryName").val().trim();
@@ -207,6 +214,7 @@ $("#btnUserGroupSubmit").click(function(){
 
 		}
 		else{
+			clearMessage();
 			chkArrayInt = chkArray.map(function(item) {
 			    return parseInt(item, 10);
 			});
@@ -236,6 +244,7 @@ $("#btnUserGroupSubmit").click(function(){
 		}
 	}
 	else if(groupIdVal != ''){
+		clearMessage();
 		$(".checkedFormId:checked").each(function() {
 			chkArray.push($(this).val());
 		});
@@ -268,6 +277,7 @@ $("#btnUserGroupSubmit").click(function(){
 	}
 });
 function userGroupEdit(userGroupId, userGroupName, catgid){
+	clearMessage();
 	$("#userGroupAdd").show();
 	$("#userGroupView").hide();
 	$("#groupId").val(userGroupId);

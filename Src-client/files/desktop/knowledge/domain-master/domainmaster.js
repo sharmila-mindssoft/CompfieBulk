@@ -93,7 +93,7 @@ if(validate()){
       $("#domain-add").hide();
       $("#domain-view").show();
     }    function onFailure(error){
-                      
+
         if(error == "DomainNameAlreadyExists"){
             displayMessage("Domain Name Already Exists");
         }
@@ -117,7 +117,7 @@ if(validate()){
     function onFailure(error) {
         if(error == "InvalidDomainId"){
             displayMessage("Invalid Domain Id");
-        }  
+        }
 
         if(error == 'DomainNameAlreadyExists'){
             displayMessage("Domain Name Already Exists");
@@ -134,7 +134,7 @@ if(validate()){
       });
   }
 }
-});   
+});
 
 $('#domainname').keypress(function (e) {
   if (e.which == 13) {
@@ -165,6 +165,7 @@ function changeStatus (domainId,isActive) {
       getDomains ();
     }
     function onFailure(error){
+      alert(error);
     }
     mirror.changeDomainStatus(domainId, isActive,
       function (error, response) {
@@ -175,10 +176,10 @@ function changeStatus (domainId,isActive) {
           onFailure(error);
         }
       });
-    }    
+    }
 }
 
-$("#search-domain-name").keyup(function() { 
+$("#search-domain-name").keyup(function() {
   var filterkey = this.value.toLowerCase();
   var filteredList=[];
     for(var entity in domainsList) {

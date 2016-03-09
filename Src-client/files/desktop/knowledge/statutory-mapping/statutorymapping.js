@@ -174,7 +174,7 @@ function changeStatus (statutorymappingId,isActive) {
           }
       }
   );
-  }    
+  }
 }
 
 function loadStatutoryMappingList(statutoryMappingsList) {
@@ -885,7 +885,7 @@ $("#temp_addcompliance").click(function() {
   }
   var check_duplicate_status= true;
   $.each(compliances, function(index, value) {
-    
+
   if (
     (value.statutory_provision == statutory_provision) &&
     (value.compliance_task == compliance_task)) {
@@ -1528,7 +1528,7 @@ function edit_geography(country,geographyids_edit){
     if($.inArray(parent_id, temp_parent) == -1){
       temp_parent.push(parent_id)
       load_geography(levelposition,country,combineid,"add",displaytext);
-    }     
+    }
   }
   var finalcombineid = geographyids[i]+"-"+geo_id;
   $('#'+finalcombineid).addClass( "active" );
@@ -1829,7 +1829,7 @@ $(document).ready(function(){
   $('ul.setup-panel li a[href="#step-3"]').trigger('click');
 
   })
-  $('#activate-step-finish').on('click', function(e) { 
+  $('#activate-step-finish').on('click', function(e) {
     getGeographyResult();
     if (validate_fourthtab()){
       savestatutorymapping();
@@ -1986,7 +1986,6 @@ function load_data(){
     }
     return result;
   }
-  
 
   $('#single_statutory_month').change(function() {
     var selectedMonth = $('#single_statutory_month').val();
@@ -2010,6 +2009,39 @@ function load_data(){
     }
   });
 
+<<<<<<< HEAD
+=======
+
+
+ /*for(var j=1; j<=12; j++){
+  $('#multiple_statutory_month'+j).change(function() {
+    var selectedMonth = $('#multiple_statutory_month'+j).val();
+    var maxDate = load_date(selectedMonth);
+
+
+    $("#multiple_statutory_date"+j).empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+
+    $("#multiple_statutory_date"+j).append(defaultoption);
+    for (var i=1; i<=maxDate; i++) {
+        var option = $("<option></option>");
+        option.val(i);
+        option.text(i)
+        $("#multiple_statutory_date"+j).append(option);
+    }
+
+    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+      var selectedMonth = $('#multiple_statutory_month'+j).val();
+      var monthDate = load_date(selectedMonth);
+      $('#multiple_statutory_date'+j).val(monthDate);
+    }
+  });
+}*/
+
+
+>>>>>>> 3ef78dd07c3b4ae670c1eee866d5ae7df5e16a95
 $('#multiple_statutory_month1').change(function() {
     var selectedMonth = $('#multiple_statutory_month1').val();
     var maxDate = load_date(selectedMonth);

@@ -28,7 +28,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_technoreports_NOTIFICATIONS,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_CustomTextType_20,
-    parse_structure_CustomTextType_500
+    parse_structure_CustomTextType_500,
+    parse_structure_OptionalType_CustomTextType_50
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Domain,
@@ -59,7 +60,8 @@ from protocol.to_structure import (
     to_structure_VectorType_SignedIntegerType_8,
     to_structure_VectorType_RecordType_techno_report_GroupedUnits,
     to_structure_VectorType_RecordType_technoreports_NOTIFICATIONS,
-    to_structure_CustomTextType_500
+    to_structure_CustomTextType_500,
+    to_structure_OptionalType_CustomTextType_50
 )
 
 #
@@ -628,11 +630,11 @@ class UNIT_WISE_ASSIGNED_STATUTORIES(object):
         group_name = data.get("group_name")
         group_name = parse_structure_CustomTextType_50(group_name)
         business_group_name = data.get("business_group_name")
-        business_group_name = parse_structure_CustomTextType_50(business_group_name)
+        business_group_name = parse_structure_OptionalType_CustomTextType_50(business_group_name)
         legal_entity_name = data.get("parse_structure_CustomTextType_50")
         legal_entity_name = parse_structure_CustomTextType_50(legal_entity_name)
         division_name = data.get("division_name")
-        division_name = parse_structure_CustomTextType_50(division_name)
+        division_name = parse_structure_OptionalType_CustomTextType_50(division_name)
         address = data.get("address")
         address = parse_structure_CustomTextType_500(address)
         assigned_statutories = data.get("assigned_statutories")
@@ -644,9 +646,9 @@ class UNIT_WISE_ASSIGNED_STATUTORIES(object):
             "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "group_name": to_structure_CustomTextType_50(self.group_name),
-            "business_group_name": to_structure_CustomTextType_50(self.business_group_name),
+            "business_group_name": to_structure_OptionalType_CustomTextType_50(self.business_group_name),
             "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
-            "division_name": to_structure_CustomTextType_50(self.division_name),
+            "division_name": to_structure_OptionalType_CustomTextType_50(self.division_name),
             "address": to_structure_CustomTextType_250(self.address),
             "assigned_statutories": to_structure_VectorType_RecordType_core_AssignedStatutory(self.assigned_statutories),
         }

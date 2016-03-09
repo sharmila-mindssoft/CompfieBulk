@@ -120,7 +120,7 @@ def process_reset_password(db, request):
             else:
                 print "Failed to delete used token"
         else:
-            print "Failed to update password"
+            return login.EnterDifferentPassword()
     else:
         return login.InvalidResetToken()
 
