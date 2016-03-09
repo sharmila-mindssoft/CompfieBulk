@@ -41,7 +41,7 @@ function loadCountriesList(countriesList){
     $(".tbody-countries-list").find("tr").remove();
     var sno = 0;
     var imageName = null;
-    var title = null;   
+    var title = null;
     $.each(countriesList, function(i, value){
         var countries = countriesList[i];
         $.each(countries, function(j, value){
@@ -54,7 +54,7 @@ function loadCountriesList(countriesList){
                 statusVal = false;
             }
             else{
-                imageName = "icon-inactive.png";    
+                imageName = "icon-inactive.png";
                 title = "Click here to Activate"
                 statusVal = true;
             }
@@ -72,7 +72,7 @@ function loadCountriesList(countriesList){
 $('#country-name').keypress(function (e) {
     var countryNameValue = $("#country-name").val();
     if (e.which == 13 && $(this).val() != "") {
-        jQuery('#submit').focus().click();  
+        jQuery('#submit').focus().click();
     }
 });
 
@@ -83,7 +83,7 @@ $("#submit").click(function(){
         displayMessage('Country Name Required');
     }
     else{
-        if(countryIdValue == ''){       
+        if(countryIdValue == ''){
             function onSuccess(response){
                 $("#country-add").hide();
                 $("#country-view").show();
@@ -91,10 +91,10 @@ $("#submit").click(function(){
             }
             function onFailure(error){
                 if(error == 'CountryNameAlreadyExists'){
-                    displayMessage("Country Name Already Exists");  
-                }           
+                    displayMessage("Country Name Already Exists");
+                }
             }
-            mirror.saveCountry(countryNameValue, 
+            mirror.saveCountry(countryNameValue,
                 function (error, response) {
                     if (error == null){
                         onSuccess(response);
@@ -105,21 +105,21 @@ $("#submit").click(function(){
                 }
             );
         }
-        else{       
+        else{
             function onSuccess(response){
                 $("#country-add").hide();
                 $("#country-view").show();
                 initialize();
             }
-            function onFailure(error){          
+            function onFailure(error){
                 if(error == 'InvalidCountryId') {
                     displayMessage("Invalid Country Name");
-                }   
+                }
                 if(error == 'CountryNameAlreadyExists'){
-                    displayMessage("Country Name Already Exists");  
-                }       
+                    displayMessage("Country Name Already Exists");
+                }
             }
-            mirror.updateCountry(parseInt(countryIdValue), countryNameValue, 
+            mirror.updateCountry(parseInt(countryIdValue), countryNameValue,
                 function (error, response) {
                     if (error == null){
                         onSuccess(response);
@@ -131,7 +131,7 @@ $("#submit").click(function(){
             );
         }
     }
-    
+
 });
 function country_edit(countryId, countryName){
     $("#country-view").hide();
@@ -150,12 +150,12 @@ function country_active(countryId, isActive){
     {
         $("#country-id").val(countryId);
         function onSuccess(response){
-            initialize();         
+            initialize();
         }
         function onFailure(error){
-            console.log(error);
+            alert(error)
         }
-        mirror.changeCountryStatus( parseInt(countryId), isActive, 
+        mirror.changeCountryStatus( parseInt(countryId), isActive,
             function (error, response) {
                 if (error == null){
                     onSuccess(response);
@@ -168,12 +168,12 @@ function country_active(countryId, isActive){
     }
 }
 
-$("#search-country-name").keyup(function() { 
+$("#search-country-name").keyup(function() {
     var count = 0;
     var value = this.value.toLowerCase();
     $("table").find("tr:not(:first)").each(function(index) {
         if (index === 0) return;
-        var id = $(this).find(".country-name").text().toLowerCase();       
+        var id = $(this).find(".country-name").text().toLowerCase();
         $(this).toggle(id.indexOf(value) !== -1);;
     });
 });

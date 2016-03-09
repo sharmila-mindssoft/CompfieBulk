@@ -738,6 +738,22 @@ class KnowledgeDatabase(Database):
             self.save_activity(updated_by, 2, action)
             return True
 
+    def check_domain_id_to_deactivate(self, domain_id) :
+        q = "SELECT count(*) from tbl_statutory_mappings where domain_id = %s" % (
+            domain_id
+        )
+        row = self.select_one(q)
+        if row[0] > 0 :
+            return False
+        else :
+            q = "SELECT count(*) from tbl_client_domains where domain_id = %s " % (
+                domain_id
+            )
+            row = self.select_one(q)
+            if row[0] > 0 :
+                return False
+        return True
+
     def update_domain_status(self, domain_id, is_active, updated_by) :
         oldData = self.get_domain_by_id(domain_id)
         if oldData is None :
@@ -833,6 +849,23 @@ class KnowledgeDatabase(Database):
             action = "Edit Country - \"%s\"" % country_name
             self.save_activity(updated_by, 1, action)
             return True
+
+    def check_country_id_to_deactivate(self, country_id) :
+        q = "SELECT count(*) from tbl_statutory_mappings where country_id = %s" % (
+            country_id
+        )
+        row = self.select_one(q)
+        if row[0] > 0 :
+            return False
+        else :
+            q = "SELECT count(*) from tbl_client_countries where country_id = %s " % (
+                country_id
+            )
+            row = self.select_one(q)
+            if row[0] > 0 :
+                return False
+        return True
+
 
     def update_country_status(self, country_id, is_active, updated_by) :
         oldData = self.get_country_by_id(country_id)

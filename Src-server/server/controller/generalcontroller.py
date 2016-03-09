@@ -53,7 +53,7 @@ def validate_user_session(db, session_token):
 
 def process_save_domain(db, request, user_id):
     domain_name = request.domain_name
-    isDuplicate = db.check_duplicate_domain(domain_name, domain_id = None)
+    isDuplicate = db.check_duplicate_domain(domain_name, domain_id=None)
 
     if isDuplicate :
         return general.DomainNameAlreadyExists()
@@ -76,12 +76,20 @@ def process_update_domain(db, request, user_id):
 
 def process_change_domain_status(db, request, user_id):
     is_active = request.is_active
-    domain_id = request.domain_id
-
-    if (db.update_domain_status(domain_id, is_active, user_id)) :
-        return general.ChangeDomainStatusSuccess()
+    domain_id = int(request.domain_id)
+    if is_active is False :
+        if db.check_domain_id_to_deactivate(domain_id) :
+            if (db.update_domain_status(domain_id, is_active, user_id)) :
+                return general.ChangeDomainStatusSuccess()
+            else :
+                return general.InvalidDomainId()
+        else :
+            return general.TransactionExists()
     else :
-        return general.InvalidDomainId()
+        if (db.update_domain_status(domain_id, is_active, user_id)) :
+            return general.ChangeDomainStatusSuccess()
+        else :
+            return general.InvalidDomainId()
 
 def process_get_domains(db, user_id):
     results = db.get_domains_for_user(0)
@@ -117,12 +125,20 @@ def process_update_country(db, request, user_id):
 
 def process_change_country_status(db, request, user_id):
     is_active = request.is_active
-    country_id = request.country_id
-
-    if (db.update_country_status(country_id, int(is_active), user_id)) :
-        return general.ChangeCountryStatusSuccess()
+    country_id = int(request.country_id)
+    if is_active is False :
+        if db.check_country_id_to_deactivate(country_id) :
+            if (db.update_country_status(country_id, int(is_active), user_id)) :
+                return general.ChangeCountryStatusSuccess()
+            else :
+                return general.InvalidCountryId()
+        else :
+            return general.TransactionExists()
     else :
-        return general.InvalidCountryId()
+        if (db.update_country_status(country_id, int(is_active), user_id)) :
+            return general.ChangeCountryStatusSuccess()
+        else :
+            return general.InvalidCountryId()
 
 def process_get_countries_for_user(db, user_id):
     results = db.get_countries_for_user(user_id)
