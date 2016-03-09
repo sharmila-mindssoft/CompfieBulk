@@ -3872,3 +3872,14 @@ def parse_structure_VectorType_CustomTextType_250(data):
 def parse_structure_OptionalType_VectorType_CustomTextType_250(data):
     if data is None: return data
     return parse_structure_VectorType_CustomTextType_250(data)
+
+def parse_structure_VectorType_RecordType_core_GroupCompanyForUnitCreation(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_core_GroupCompanyForUnitCreation(item))
+    return lst
+
+def parse_structure_RecordType_core_GroupCompanyForUnitCreation(data):
+    from protocol import core
+    return core.GroupCompanyForUnitCreation.parse_structure(data)

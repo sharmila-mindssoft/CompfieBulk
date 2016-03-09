@@ -267,7 +267,18 @@ function loadApproveStatutory(){
         for (var status in approvalStatusList) {
           var option = $("<option></option>");
           option.val(approvalStatusList[status]["approval_status_id"]);
-          option.text(   approvalStatusList[status]["approval_status"].replace("Pending", "Select") );
+          var approveStatus = approvalStatusList[status]["approval_status"];
+          var updatedStatus = '';
+          if( approveStatus == 'Pending' ){
+            updatedStatus = approveStatus.replace("Pending", "Select");
+          }else if( approveStatus == 'Approved' ){
+            updatedStatus = approveStatus.replace("Approved", "Approve");
+          }else if( approveStatus == 'Rejected' ){
+            updatedStatus = approveStatus.replace("Rejected", "Reject");
+          }else if( approveStatus == 'Approved & Notified' ){
+            updatedStatus = approveStatus.replace("Approved & Notified", "Approve & Notify");
+          }
+          option.text( updatedStatus );
           $("#action"+j).append(option);
         }
         j = j + 1;
@@ -276,10 +287,11 @@ function loadApproveStatutory(){
     }
 
     if(j <= 1){
-    var norecordtableRow=$('#no-record-templates .font1 .norecord-table-row');
-    var noclone=norecordtableRow.clone();
-    $('.tbody-statutorymapping-list').append(noclone);
-    $('#saverecord').hide();
+      displayMessage("");
+      var norecordtableRow=$('#norecord-templates');
+      var noclone=norecordtableRow.clone();
+      $('.tbody-statutorymapping-list').append(noclone);
+      $('#saverecord').hide();
     }
 
   }
@@ -368,7 +380,7 @@ function disppopup(sm_id,compliance_id){
     statutorydate = sdateDesc;
   }
 
-  $(".popup_statutory").html(statutoryMappings);
+  $(".popup_statutory").html(compliances[compliance_id]["statutory_provision"]);
   $(".popup_statutorynature").text(sm["statutory_nature_name"]);
   $(".popup_compliancetask").html(sm["compliance_names"][compliance_id]["compliance_name"]);
   $(".popup_compliancedescription").text(compliances[compliance_id]["description"]);

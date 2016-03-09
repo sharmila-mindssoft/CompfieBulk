@@ -336,7 +336,7 @@ def update_client(db, request, session_user):
 
 
 def get_clients(db, request, session_user):
-    group_company_list = db.get_group_companies_for_user(session_user)
+    group_company_list = db.get_group_companies_for_user_with_max_unit_count(session_user)
     if len(group_company_list) > 0:
         country_list = db.get_countries_for_user(session_user)
         domain_list = db.get_domains_for_user(session_user)

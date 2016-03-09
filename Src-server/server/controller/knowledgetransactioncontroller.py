@@ -18,6 +18,9 @@ def process_knowledge_transaction_request(request, db) :
     elif type(request_frame) is knowledgetransaction.GetStatutoryMappings :
         return process_get_statutory_mappings(db, user_id)
 
+    elif type(request_frame) is knowledgetransaction.CheckDuplicateStatutoryMapping :
+        return process_check_statutory_mapping(db, request_frame)
+
     elif type(request_frame) is knowledgetransaction.SaveStatutoryMapping :
         return process_save_statutory_mapping(db, request_frame, user_id)
 
@@ -57,10 +60,20 @@ def process_get_statutory_mappings(db, user_id):
         statutory_mappings
     )
 
+def process_check_statutory_mapping(db, request_frame):
+    is_duplicate = db.check_duplicate_statutory_mapping(request_frame)
+    if is_duplicate is None :
+        is_duplicate = False
+    else :
+        is_duplicate = True
+    return knowledgetransaction.CheckDuplicateStatutoryMappingSuccess(is_duplicate)
+
 def process_save_statutory_mapping(db, request_frame, user_id):
-    print request_frame
-    if (db.save_statutory_mapping(request_frame, user_id)):
+    if (db.save_statutory_mapping(request_frame, user_id)) :
         return knowledgetransaction.SaveStatutoryMappingSuccess()
+    else :
+        return knowledgetransaction.CheckDuplicateStatutoryMappingResponse(True)
+
 
 def process_update_statutory_mapping(db, request_frame, user_id):
     if (db.update_statutory_mapping(request_frame, user_id)):

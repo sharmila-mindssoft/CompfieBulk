@@ -15,6 +15,8 @@ var countryByCount = 1;
 var lastClassval = 1;
 var unitcodeautogenerateids = null;
 var get2CharsofGroup = null;
+var max = {};
+var auto_generate_initial_value = null
 
 function clearMessage() {
     $(".error-message").hide();
@@ -28,6 +30,8 @@ function displayMessage(message) {
 function initialize(){
     function onSuccess(data){
         groupList = data['group_companies'];
+        console.log("group list inside initialize"+groupList)
+        console.log("client_id")
         businessGroupList = data['business_groups'];
         legalEntitiesList = data['legal_entities'];
         divisionList = data['divisions'];
@@ -125,7 +129,10 @@ function loadClientsList(clientunitsList){
     var sno = 0;
     var imageName, title;
     var getAllArrayValues = [];
-
+    for(var i=0; i<groupList.length; i++){
+        max[groupList[i]["client_id"]] = groupList[i]["no_of_units"];
+    }
+    console.log(max);
     $.each(unitList, function (key, value){
         var isActive = unitList[key]['is_active'];  
         var unitId = unitList[key]['unit_id'];
@@ -414,7 +421,10 @@ function addNewUnitRow(str){
 
 }
 function autoGenerateUnitCode(){
-    unitcodeautogenerateids = 1001;
+    client_id = $("#group-select").val()
+    console.log(max[client_id])
+    auto_generate_initial_value = max[client_id]
+    unitcodeautogenerateids = (auto_generate_initial_value+1) + 10000; 
     var sno = [];
     if($('.unitcode-checkbox').is(':checked')){
         console.log("checked");

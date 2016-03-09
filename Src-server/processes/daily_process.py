@@ -97,11 +97,16 @@ def create_client_db_connection(data):
     print "begin client db connection"
     client_connection = {}
     for d in data :
-        db_conn = db_connection(
-            d["database_ip"], d["database_username"],
-            d["database_password"], d["database_name"],
-            d["database_port"]
-        )
+        try :
+            db_conn = db_connection(
+                d["database_ip"], d["database_username"],
+                d["database_password"], d["database_name"],
+                d["database_port"]
+            )
+        except Exception, e :
+            print "unable to connect database %s", d
+            print e
+            continue
         client_connection[d["client_id"]] = db_conn
 
     return client_connection
@@ -275,7 +280,7 @@ def get_new_id(db, table_name, column_name):
     return row[0]
 
 def save_in_compliance_history(
-    db, unit_id, compliance_id, start_date, due_date, next_due_date, 
+    db, unit_id, compliance_id, start_date, due_date, next_due_date,
     assignee, concurrence, approve
 ):
     print "new task saved in history (unit_id, compliance_id, start_date) %s, %s, %s" % (unit_id, compliance_id, start_date)
@@ -355,7 +360,7 @@ def start_new_task(db, client_id, current_date):
             print "going to save in compliance history"
             save_in_compliance_history(
                 db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
-                d["due_date"], next_due_date, int(d["assignee"]), 
+                d["due_date"], next_due_date, int(d["assignee"]),
                 d["concurrence_person"], int(approval_person)
             )
 
@@ -508,16 +513,17 @@ def notify_task_details(db, client_id):
         notify_escalation_to_all(db, client_info, compliance_info)
 
 def notify_before_contract_period(db, client_id):
-    query = "SELECT contract_to FROM tbl_client_groups"
+    query = "SELECT contract_to, group_name FROM tbl_client_groups"
     cursor = db.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()
     contract_to_str = str(rows[0][0])
+    group_name = str(rows[0][1])
     contract_to_parts = [int(x) for x in contract_to_str.split("-")]
     contract_to = datetime.date(
         contract_to_parts[0], contract_to_parts[1], contract_to_parts[2]
     )
-    delta = contract_to - self.get_date_time().date()
+    delta = contract_to - datetime.datetime.now().date()
     if delta.days <= 30:
         notification_text = "Your contract with Compfie will expire in %d \
         days. Kindly renew your contract to avail the services continuosuly" % (
@@ -529,9 +535,9 @@ def notify_before_contract_period(db, client_id):
         created_on = datetime.datetime.now()
         query = "INSERT INTO tbl_notifications_log \
             (notification_id, notification_type_id,\
-            notification_text, extra_details, updated_on\
-            ) VALUES (%s, %s, %s, %s, %s)" % (
-                notification_id, notification_type_id,
+            notification_text, extra_details, created_on\
+            ) VALUES (%s, %s, '%s', '%s', '%s')" % (
+                notification_id, 2,
                 notification_text, extra_details, created_on
             )
         cursor = db.cursor()
@@ -543,9 +549,14 @@ def notify_before_contract_period(db, client_id):
         cur = db.cursor()
         cur.execute(q)
         cur.close()
+        print '*' * 10
+        print "contract period expire notification sent ot %s" % (group_name)
+        print '*' * 10
+
 
 def main():
     print '*' * 20
+    print "begin daily_process"
     current_date = get_current_date()
     print "current_date datetime ", datetime.datetime.now()
     client_info = get_client_database()
@@ -554,13 +565,13 @@ def main():
             start_new_task(db, client_id, current_date)
             db.commit()
             notify_task_details(db, client_id)
-            notify_before_contract_period(db, client_id)
+            # notify_before_contract_period(db, client_id)
             db.commit()
     except Exception, e :
         print e
         db.rollback()
         print(traceback.format_exc())
-
+    print "end daily_process"
     print '*' * 20
 
 if __name__ == "__main__" :

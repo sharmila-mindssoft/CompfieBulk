@@ -1,6 +1,9 @@
 from server.controller.corecontroller import process_user_forms
 from server.emailcontroller import EmailHandler as email
 from protocol import login
+from server.constants import (
+    CLIENT_URL, KNOWLEDGE_URL
+)
 
 
 __all__ = [
@@ -36,10 +39,14 @@ def process_login(db, request, client_id):
     username = request.username
     password = request.password
     encrypt_password = db.encrypt(password)
-    if db.is_in_contract():
-        response = db.verify_login(username, encrypt_password)
-    else:
+    if db.is_contract_not_started():
+        return login.InvalidCredentials()
+    elif not db.is_in_contract():
         return login.ContractExpired()
+    elif not db.is_client_active(client_id):
+        return login.InvalidCredentials()
+    else:
+        response = db.verify_login(username, encrypt_password)
     if response is True:
         return admin_login_response(db, client_id, request.ip)
     else :
@@ -102,8 +109,8 @@ def process_forgot_password(db, request):
 
 def send_reset_link(db, user_id, username, short_name):
     reset_token = db.new_uuid()
-    reset_link = "http://localhost:8080/%s/ForgotPassword?reset_token=%s" % (
-        short_name, reset_token)
+    reset_link = "%s%s/ForgotPassword?reset_token=%s" % (
+        CLIENT_URL, short_name, reset_token)
     columns = ["user_id", "verification_code"]
     values_list = [user_id, reset_token]
     if db.insert(db.tblEmailVerification, columns, values_list):

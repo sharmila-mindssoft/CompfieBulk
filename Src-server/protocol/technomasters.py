@@ -38,7 +38,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_RecordType_core_FileList,
     parse_structure_OptionalType_CustomTextType_250,
     parse_structure_OptionalType_CustomTextType_20,
-    parse_structure_OptionalType_CustomTextType_50
+    parse_structure_OptionalType_CustomTextType_50,
+    parse_structure_VectorType_RecordType_core_GroupCompanyForUnitCreation
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -82,7 +83,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_RecordType_core_FileList,
     to_structure_OptionalType_CustomTextType_250,
     to_structure_OptionalType_CustomTextType_20,
-    to_structure_OptionalType_CustomTextType_50
+    to_structure_OptionalType_CustomTextType_50,
+    to_structure_VectorType_RecordType_core_GroupCompanyForUnitCreation
 )
 
 #
@@ -929,7 +931,7 @@ class GetClientsSuccess(Response):
         client_domains = data.get("client_domains")
         client_domains = parse_structure_VectorType_RecordType_core_Domain(client_domains)
         group_companies = data.get("group_companies")
-        group_companies = parse_structure_VectorType_RecordType_core_GroupCompany(group_companies)
+        group_companies = to_structure_VectorType_RecordType_core_GroupCompanyForUnitCreation(group_companies)
         business_groups = data.get("business_groups")
         business_groups = parse_structure_OptionalType_VectorType_RecordType_core_BusinessGroup(business_groups)
         legal_entities = data.get("legal_entities")
@@ -954,7 +956,7 @@ class GetClientsSuccess(Response):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "group_companies": to_structure_VectorType_RecordType_core_GroupCompany(self.group_companies),
+            "group_companies": to_structure_VectorType_RecordType_core_GroupCompanyForUnitCreation(self.group_companies),
             "business_groups": to_structure_OptionalType_VectorType_RecordType_core_BusinessGroup(self.business_groups),
             "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
             "divisions": to_structure_OptionalType_VectorType_RecordType_core_Division(self.divisions),

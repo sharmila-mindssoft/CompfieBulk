@@ -1501,6 +1501,8 @@ list-style-type:none; line-height:25px;
   padding-left: 0em;
   background: #ffffff;
   transition: opacity 200ms ease-out 0s, top 200ms ease-out 0s, visibility 200ms ease-out 0s;
+  max-height: 200px;
+  overflow-y: scroll;
 }
 .ac-selectbox ul li {
   font-size: 0.8em;
@@ -2109,10 +2111,10 @@ cursor: pointer;
 	opacity: 0.7 !important;
 }
 
-.tbody-compliance .table-row:nth-child(4n+1){
+/*.tbody-compliance .table-row:nth-child(4n+1){
   border-top:1px dotted #ccc; 
 }
 
 .tbody-compliance .table-row:nth-child(4n){
   border-bottom:1px dotted #ccc;
-}
+}*/

@@ -90,7 +90,12 @@ function initClientMirror() {
 
     function getUserMenu() {
         var info = getUserInfo();
-        return info["menu"]["menus"];
+        if (info != null){
+            return info["menu"]["menus"];    
+        }else{
+            login_url = "/login/"+window.localStorage["recent_short_name"]
+            window.location.href = login_url;
+        }
     }
 
     function getClientId() {
@@ -108,8 +113,10 @@ function initClientMirror() {
     }
 
     function redirect_login(){
-        login_url = "/login/" + getClientShortName();
-        // console.log(login_url)
+        var short_name = getClientShortName();
+        login_url = "/login/" + short_name;
+        console.log(login_url);
+        window.localStorage["recent_short_name"] = short_name;
         clearSession();
         window.location.href = login_url;
     }

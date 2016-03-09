@@ -1,8 +1,6 @@
-var userList = null ;
-var domainsList = null;
-var countriesList = null;
-var clientcountriesList = null;
-var clientdomainList = null;
+var userList;
+var domainsList;
+var countriesList;
 var dateconfigList;
 var uploadFile = [];
 var logo_file;
@@ -22,6 +20,7 @@ $(".btn-clientgroup-add").click(function(){
         userList = data["users"];
         domainsList = data["domains"];
         countriesList = data["countries"];
+
         clientcountriesList = data["client_countries"];
         clientdomainList = data["client_domains"];
          $("#clientgroup-name").val('');
@@ -244,9 +243,6 @@ $("#btn-clientgroup-submit").click(function(){
             if(error == 'UsernameAlreadyExists'){
                 displayMessage('Username Already Exists');
             }
-            if(error == "ShortNameAlreadyExists"){
-                displayMessage('Short Name Already Exists');
-            }
         }
 
         var clientGroupDetails = mirror.getSaveClientGroupDict(
@@ -337,8 +333,6 @@ function clientgroup_edit(clientGroupId){
         userList = data["users"];
         domainsList = data["domains"];
         countriesList = data["countries"];
-        clientcountriesList = data["client_countries"];
-        clientdomainList = data["client_domains"];
         loadFormListUpdate(data['client_list'],clientGroupId);
     }
     function onFailure(error){
@@ -377,15 +371,11 @@ function loadFormListUpdate(clientListData, clientGroupId){
             if(clientListData[clientList]['is_sms_subscribed'] == true){
                 $('#subscribe-sms').prop("checked", true);
             }
-            if(clientListData[clientList]['is_sms_subscribed'] == false){
-                $('#subscribe-sms').prop("checked", false);
-            }
             var userListArray = clientListData[clientList]['incharge_persons'];
             $("#users").val(userListArray);
             $("#usersSelected").val(userListArray.length+" Selected");
             $("#short-name").val(clientListData[clientList]['short_name']);
             $("#short-name").attr("readonly", "true");
-            $(".shorturl").text(clientListData[clientList]['short_name']);
             dateconfigList = clientListData[clientList]['date_configurations'];
         }
     }
@@ -515,6 +505,7 @@ function loadauto() {
         }
         var domainId=parseInt(domains[i]["domain_id"]);
         var domainName=domains[i]["domain_name"];
+
         if(checkdomain(domainId) == 1){
             if(selectdomainstatus == 'checked'){
                 str += '<li id = "'+domainId+'" class = "active_selectbox" onclick = "activate(this)" >'+domainName+'</li> ';
@@ -561,6 +552,7 @@ function activate(element){
     }
 
 }
+
 function checkcountry(countryid){
     var returnval;
     $.each(countriesList, function(key, value){
@@ -586,6 +578,7 @@ function loadautocountry() {
         editcountryval = $("#country").val().split(",");
     }
     //alert(editcountryval[0]+"---"+editcountryval[1]);
+
     if($("#clientgroup-id").val().trim() == ""){
         var countries = countriesList;    
     }
@@ -593,29 +586,25 @@ function loadautocountry() {
         var countriesforuser = countriesList;
         var countries = clientcountriesList;    
     }  
+
     $('#ulist-country').empty();
     var str = '';
-    $.each(countries, function(key,value){
+    for(var i in countries){
         var selectcountrystatus = '';
         for(var j = 0; j < editcountryval.length; j++){
-            if(editcountryval[j] == value["country_id"]){
+            if(editcountryval[j] == countries[i]["country_id"]){
                 selectcountrystatus = 'checked';
             }
         }
-        var countryId = parseInt(value["country_id"]);
-        var countryName = value["country_name"];
-        if(checkcountry(countryId) == 1){
-            if(selectcountrystatus == 'checked'){
-                str += '<li id = "'+countryId+'" class="active_selectbox_country" onclick="activateCountry(this)" >'+countryName+'</li> ';
-            }else{
-                str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';
-            }    
+        var countryId = parseInt(countries[i]["country_id"]);
+        var countryName = countries[i]["country_name"];
+
+        if(selectcountrystatus == 'checked'){
+            str += '<li id = "'+countryId+'" class="active_selectbox_country" onclick="activateCountry(this)" >'+countryName+'</li> ';
+        }else{
+            str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';
         }
-        else{
-            str += '<li id = "'+countryId+'" class="active_selectbox_country deactivate" >'+countryName+'</li> ';
-        }
-        
-    });
+    }
   $('#ulist-country').append(str);
   $("#countryselected").val(editcountryval.length+" Selected");
 }
@@ -691,6 +680,7 @@ function dateconfig(){
         }
     }
 }
+
 function checkuser(userid, usercountryids, userdomainids){
     var returnval;
     var arrc = [];
@@ -718,6 +708,7 @@ function checkuser(userid, usercountryids, userdomainids){
     }
     return returnval;
 }
+
 function loadAutoUsers () {
     document.getElementById('selectboxview-users').style.display = 'block';
     var editusersval = [];
@@ -734,20 +725,18 @@ function loadAutoUsers () {
                 selectUserStatus = 'checked';
             }
         }
-        if(checkuser(users[i]["user_id"], users[i]["countries"], users[i]["domains"]) == 1){
-            if(selectUserStatus == 'checked'){
-                str += '<li id="'+users[i]["user_id"]+'" class="active_selectbox_users" onclick="activateUsers(this)" >'+users[i]["employee_name"]+'</li> ';
-            }else{
-                str += '<li id="'+users[i]["user_id"]+'" onclick="activateUsers(this)" >'+users[i]["employee_name"]+'</li> ';
-            }    
-        }        
+        if(selectUserStatus == 'checked'){
+            str += '<li id="'+users[i]["user_id"]+'" class="active_selectbox_users" onclick="activateUsers(this)" >'+users[i]["employee_name"]+'</li> ';
+        }else{
+            str += '<li id="'+users[i]["user_id"]+'" onclick="activateUsers(this)" >'+users[i]["employee_name"]+'</li> ';
+        }
     }
   $('#selectboxview-users ul').append(str);
   $("#usersSelected").val(editusersval.length+" Selected")
 }
 //check & uncheck process
 function activateUsers(element){
-    
+    console.log(element);
   var chkstatus = $(element).attr('class');
   if(chkstatus == 'active_selectbox_users'){
         $(element).removeClass("active_selectbox_users");

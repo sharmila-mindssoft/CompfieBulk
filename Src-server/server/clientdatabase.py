@@ -118,6 +118,17 @@ class ClientDatabase(Database):
         else:
             return True
 
+    def is_contract_not_started(self):
+        columns = "count(*)"
+        condition = "now() < contract_from"
+        rows = self.get_data(
+            self.tblClientGroups, columns, condition
+        )
+        if rows[0][0] <= 0:
+            return False
+        else:
+            return True
+
     def verify_login(self, username, password):
         tblAdminCondition = "password='%s' and username='%s'" % (
             password, username
@@ -293,10 +304,13 @@ class ClientDatabase(Database):
         )
         return rows
 
-    def return_forms(self, client_id):
+    def return_forms(self, client_id, form_ids=None):
         columns = "form_id, form_name"
+        condition = "form_id != 24"
+        if form_ids is not None:
+            condition += " AND form_id in (%s)" % form_ids
         forms = self.get_data(
-            self.tblForms, columns, "1"
+            self.tblForms, columns, condition
         )
         results = []
         for form in forms:
@@ -380,10 +394,13 @@ class ClientDatabase(Database):
     def return_legal_entities(self, legal_entities):
         results = []
         for legal_entity in legal_entities :
+            b_group_id = None
+            if legal_entity["business_group_id"] > 0:
+                b_group_id = int(legal_entity["business_group_id"])
             results.append(core.ClientLegalEntity(
                 legal_entity["legal_entity_id"],
                 legal_entity["legal_entity_name"],
-                legal_entity["business_group_id"]
+                b_group_id
             ))
         return results
 
@@ -468,10 +485,16 @@ class ClientDatabase(Database):
             )
             for unit in rows:
                 domain_ids_list = [int(x) for x in unit[7].split(",")]
+                division_id = None
+                b_group_id = None
+                if unit[3] > 0 :
+                    division_id = unit[3]
+                if unit[5] > 0 :
+                    b_group_id = unit[5]
                 units.append(
                     clienttransactions.PastRecordUnits(
-                        unit[0], unit[1], unit[2],unit[3], unit[4],
-                        unit[5], unit[6], domain_ids_list
+                        unit[0], unit[1], unit[2], division_id, unit[4],
+                        b_group_id, unit[6], domain_ids_list
                     )
                 )
             industry_wise_units.append(clienttransactions.IndustryWiseUnits(industry_name, units))
@@ -480,9 +503,15 @@ class ClientDatabase(Database):
     def return_units(self, units):
         results = []
         for unit in units :
+            division_id = None
+            b_group_id = None
+            if unit["division_id"] > 0 :
+                division_id = unit["division_id"]
+            if unit["business_group_id"] > 0 :
+                b_group_id = unit["business_group_id"]
             results.append(core.ClientUnit(
-                unit["unit_id"], unit["division_id"], unit["legal_entity_id"],
-                unit["business_group_id"], unit["unit_code"],
+                unit["unit_id"], division_id, unit["legal_entity_id"],
+                b_group_id, unit["unit_code"],
                 unit["unit_name"], unit["unit_address"], bool(unit["is_active"])
             ))
         return results
@@ -1178,6 +1207,7 @@ class ClientDatabase(Database):
 
     def get_audit_trails(self, user_id, client_id):
         user_ids = ""
+        form_ids = None
         if user_id != 0:
             column = "user_group_id"
             condition = "user_id = '%d'" % user_id
@@ -1192,6 +1222,15 @@ class ClientDatabase(Database):
                 self.tblUserGroups, column, condition
             )
             form_category_id = rows[0][0]
+
+            column = "group_concat(form_id)"
+            condition = "form_category_id = '%d' AND form_type_id != 4" % (
+                form_category_id
+            )
+            rows = self.get_data(
+                self.tblForms, column, condition
+            )
+            form_ids = rows[0][0]
 
             column = "group_concat(user_group_id)"
             condition = "form_category_id = '%d'" % form_category_id
@@ -1209,6 +1248,12 @@ class ClientDatabase(Database):
             condition = "user_id in (%s)" % user_ids
         else:
             condition = "1"
+            form_column = "group_concat(form_id)"
+            form_condition = "form_type_id != 4"
+            rows = self.get_data(
+                self.tblForms, form_column, form_condition
+            )
+            form_ids = rows[0][0]
         columns = "user_id, form_id, action, created_on"
         rows = self.get_data(
             self.tblActivityLog, columns, condition
@@ -1227,7 +1272,7 @@ class ClientDatabase(Database):
             users = self.get_users_by_id(user_ids, client_id)
         else:
             users = self.get_users(client_id)
-        forms = self.return_forms(client_id)
+        forms = self.return_forms(client_id, form_ids)
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
 
 #
@@ -1375,11 +1420,16 @@ class ClientDatabase(Database):
             statutories = self.return_compliance_for_statutory_settings(
                 domain_id, client_statutory_id, client_id
             )
+            statutory_val = []
+            for key in sorted(statutories):
+                statutory_val.append(
+                    statutories[key]
+                )
 
             unit_statutories = unit_wise_statutories.get(unit_id)
             if unit_statutories is None :
                 statutory_dict = {}
-                statutory_dict[domain_name] = statutories.values()
+                statutory_dict[domain_name] = statutory_val
                 unit_statutories = clienttransactions.UnitStatutoryCompliances(
                     unit_id,
                     unit_name,
@@ -2117,17 +2167,16 @@ class ClientDatabase(Database):
 #
 
     def get_units_for_assign_compliance(self, session_user, client_id=None):
-        if session_user == 0 :
-            session_user = '%'
+        if session_user > 0 :
+            qry = ' WHERE t1.unit_id in (select distinct unit_id from tbl_user_units where user_id = %s) ' % (int(session_user))
+        else :
+            qry = ""
+
         query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, \
             t1.division_id, t1.legal_entity_id, t1.business_group_id, \
             t1.address, t1.country_id \
-            FROM tbl_units t1 \
-            INNER JOIN tbl_user_units t2 \
-            ON t1.unit_id = t2.unit_id \
-            AND t2.user_id like '%s' " % (
-                session_user
-            )
+            FROM tbl_units t1 "
+        query += qry
         rows = self.select_all(query)
         columns = [
             "unit_id", "unit_code", "unit_name",
@@ -2138,13 +2187,19 @@ class ClientDatabase(Database):
         unit_list = []
         for r in result :
             name = "%s - %s" % (r["unit_code"], r["unit_name"])
+            division_id = None
+            b_group_id = None
+            if r["division_id"] > 0 :
+                division_id = r["division_id"]
+            if r["business_group_id"] > 0 :
+                b_group_id = r["business_group_id"]
             unit_list.append(
                 clienttransactions.ASSIGN_COMPLIANCE_UNITS(
                     r["unit_id"], name,
                     r["address"],
-                    r["division_id"],
+                    division_id,
                     r["legal_entity_id"],
-                    r["business_group_id"],
+                    b_group_id,
                     r["country_id"]
                 )
             )
@@ -2242,10 +2297,6 @@ class ClientDatabase(Database):
             ON t2.client_statutory_id = t1.client_statutory_id \
             INNER JOIN tbl_compliances t3 \
             ON t2.compliance_id = t3.compliance_id \
-            INNER JOIN tbl_compliance_frequency t4 \
-            ON t3.frequency_id = t4.frequency_id \
-            INNER JOIN tbl_user_domains t5 \
-            ON t1.domain_id = t5.domain_id \
             INNER JOIN \
             (SELECT distinct U.compliance_id, group_concat(distinct U.unit_id) units FROM  \
             (SELECT A.unit_id, A.client_statutory_id, B.compliance_id FROM tbl_client_statutories A \
@@ -2261,12 +2312,10 @@ class ClientDatabase(Database):
             AND t1.unit_id IN %s \
             AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
-            AND t3.is_active = 1 \
-            AND t5.user_id LIKE '%s'; " % (
+            AND t3.is_active = 1 " % (
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
-                session_user
             )
 
         rows = self.select_all(query)
@@ -4743,6 +4792,15 @@ class ClientDatabase(Database):
     ):
         contract_from = self.datetime_to_string(contract_from)
         contract_to = self.datetime_to_string(contract_to)
+
+        admin_columns = "username"
+        admin_condition = "1"
+        result = self.get_data(
+            self.tblAdmin, admin_columns, admin_condition
+        )
+        admin_email = result[0][0]
+        is_admin_is_a_user= False
+
         licence_holder_rows = self.get_licence_holder_details(client_id)
         licence_holders = []
         for row in licence_holder_rows:
@@ -4759,6 +4817,9 @@ class ClientDatabase(Database):
                 unit_name = "%s - %s" % (row[6], row[7])
             user_id = row[0]
             email_id = row[1]
+            if email_id == admin_email:
+                is_admin_is_a_user = True
+                employee_name = "Administrator: %s" % employee_name
             contact_no = row[4]
             is_admin = row[5]
             address = row[8]
@@ -4767,6 +4828,12 @@ class ClientDatabase(Database):
                 clientadminsettings.LICENCE_HOLDER(
                     user_id, employee_name, email_id, contact_no,
                     unit_name, address
+                ))
+        if not is_admin_is_a_user:
+            licence_holders.append(
+                clientadminsettings.LICENCE_HOLDER(
+                    0, "Administrator", admin_email, None,
+                    None, None
                 ))
         remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
         profile_detail = clientadminsettings.PROFILE_DETAIL(
@@ -7293,3 +7360,27 @@ class ClientDatabase(Database):
         )
         delta = contract_to - self.get_date_time().date()
         return delta.days
+
+    def is_client_active(self, client_id):
+        print "inside is_client_active"
+        db_con = Database(
+            KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+            KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+        )
+        db_con.connect()
+        db_con.begin()
+        db_cur = db_con.cursor()
+        q = "select count(*) from tbl_client_groups where \
+        client_id = '%d' and is_active = 1" % client_id
+        print q
+        db_cur.execute(q)
+        rows = db_cur.fetchall()
+        print rows
+        db_con.commit()
+        db_con.close()
+        if rows[0][0] > 0:
+            print "returning true"
+            return True
+        else:
+            print "returning false"
+            return False
