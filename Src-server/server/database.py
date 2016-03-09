@@ -673,7 +673,7 @@ class KnowledgeDatabase(Database):
         if user_id > 0 :
             query = query + " INNER JOIN tbl_user_domains t2 ON \
                 t1.domain_id = t2.domain_id WHERE t2.user_id = %s" % (user_id)
-        query = query + " ORDER BY t1.domain_name"
+        query = query + " AND t1.is_active=1 ORDER BY t1.domain_name"
         rows = self.select_all(query)
         result = []
         if rows :
@@ -768,7 +768,7 @@ class KnowledgeDatabase(Database):
                 ON t1.country_id = t2.country_id WHERE t2.user_id = %s" % (
                     user_id
                 )
-        query = query + " ORDER BY t1.country_name"
+        query = query + " WHERE t1.is_active = 1 ORDER BY t1.country_name"
         rows = self.select_all(query)
         result = []
         if rows :
@@ -5502,7 +5502,7 @@ class KnowledgeDatabase(Database):
                 if countries is not None:
                     country_ids += countries.split(",")
             columns = "DISTINCT country_id, country_name, is_active"
-            condition = "country_id in (%s) ORDER BY country_name" % (
+            condition = "country_id in (%s) and is_active = 1 ORDER BY country_name" % (
                 ",".join(
                     str(x) for x in country_ids
                 )
@@ -5526,7 +5526,7 @@ class KnowledgeDatabase(Database):
             for client_id in client_ids_list:
                 domain_ids += self.get_client_domains(int(client_id)).split(",")
             columns = "DISTINCT domain_id, domain_name, is_active"
-            condition = "domain_id in (%s) ORDER BY domain_name " % (
+            condition = "domain_id in (%s) and is_active = 1 ORDER BY domain_name " % (
                 ",".join(
                     str(x) for x in domain_ids
                 )

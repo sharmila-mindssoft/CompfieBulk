@@ -2,6 +2,9 @@ from corecontroller import process_user_forms
 from generalcontroller import validate_user_session
 from server.emailcontroller import EmailHandler as email
 from protocol import login, core
+from server.constants import (
+    CLIENT_URL, KNOWLEDGE_URL
+)
 
 
 __all__ = [
@@ -87,7 +90,9 @@ def process_forgot_password(db, request):
     
 def send_reset_link(db, user_id, username):
     reset_token = db.new_uuid()
-    reset_link = "http://localhost:8082/knowledge/reset-password/%s" % reset_token
+    reset_link = "%sknowledge/reset-password/%s" % (
+        KNOWLEDGE_URL, reset_token
+    )
     columns = ["user_id", "verification_code"]
     values_list = [user_id, reset_token]
     if db.insert(db.tblEmailVerification, columns, values_list):

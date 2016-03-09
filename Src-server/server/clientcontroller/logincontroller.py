@@ -1,6 +1,9 @@
 from server.controller.corecontroller import process_user_forms
 from server.emailcontroller import EmailHandler as email
 from protocol import login
+from server.constants import (
+    CLIENT_URL, KNOWLEDGE_URL
+)
 
 
 __all__ = [
@@ -106,8 +109,8 @@ def process_forgot_password(db, request):
 
 def send_reset_link(db, user_id, username, short_name):
     reset_token = db.new_uuid()
-    reset_link = "http://localhost:8080/%s/ForgotPassword?reset_token=%s" % (
-        short_name, reset_token)
+    reset_link = "%s%s/ForgotPassword?reset_token=%s" % (
+        CLIENT_URL, short_name, reset_token)
     columns = ["user_id", "verification_code"]
     values_list = [user_id, reset_token]
     if db.insert(db.tblEmailVerification, columns, values_list):
