@@ -5077,28 +5077,28 @@ class KnowledgeDatabase(Database):
         country_id = request_data.country_id
         domain_id = request_data.domain_id
         group_id = request_data.group_id
-        if group_id is None :
-            group_id = '%'
+        qry = ""
+        if group_id is not None :
+            qry += " AND t1.client_id = %s " % (group_id)
         business_group_id = request_data.business_group_id
-        if business_group_id is None :
-            business_group_id = '%'
+        if business_group_id is not None :
+            qry += " AND t3.business_group_id = %s " % (business_group_id)
         legal_entity_id = request_data.legal_entity_id
-        if legal_entity_id is None :
-            legal_entity_id = '%'
+        if legal_entity_id is not None :
+            qry += " AND t3.legal_entity_id = %s " % (legal_entity_id)
         division_id = request_data.division_id
-        if division_id is None :
-            division_id = '%'
+        if division_id is not None :
+            qry += " AND t3.division_id =%s " % (division_id)
         unit_id = request_data.unit_id
-        if unit_id is None :
-            unit_id = '%'
+        if unit_id is not None :
+            qry += " AND t3.unit_id = %s " % (unit_id)
         level_1_statutory_id = request_data.level_1_statutory_id
-        if level_1_statutory_id is None :
-            level_1_statutory_id = '%'
+        if level_1_statutory_id is not None :
+            qry += " AND t4.statutory_id = %s " % (level_1_statutory_id)
         applicable_status = request_data.applicability_status
-        if applicable_status is None :
-            applicable_status = '%'
-        else :
-            applicable_status = int(applicable_status)
+        if applicable_status is not None :
+            qry += " AND t4.statutory_applicable = %s " % (applicable_status)
+            qry += " AND t4.compliance_applicable = %s " % (applicable_status)
 
         query = "SELECT distinct t1.client_statutory_id, t1.client_id, \
             t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, \
@@ -5116,21 +5116,12 @@ class KnowledgeDatabase(Database):
             ON t1.client_statutory_id = t4.client_statutory_id \
             WHERE t1.submission_type =1 \
             AND t1.country_id = %s \
-            AND t1.domain_id = %s \
-            AND t1.client_id like '%s' \
-            AND t3.business_group_id like '%s' \
-            AND t3.legal_entity_id like '%s' \
-            AND t3.division_id like '%s' \
-            AND t3.unit_id like '%s' \
-            AND t4.statutory_id like '%s' \
-            AND t4.statutory_applicable like '%s' \
-            AND t4.compliance_applicable like '%s' " % (
-                country_id, domain_id, group_id,
-                business_group_id, legal_entity_id,
-                division_id, unit_id, level_1_statutory_id,
-                applicable_status, applicable_status
+            AND t1.domain_id = %s " % (
+                country_id, domain_id
             )
 
+        query = query + qry
+        print query
         rows = self.select_all(query)
         columns = [
             "client_statutory_id", "client_id", "geography_id",
