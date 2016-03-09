@@ -1345,8 +1345,6 @@ function validate_firsttab(){
   }
 }
 function validate_secondtab(){
-  alert(sm_statutoryids.length)
-  alert(sm_statutoryids)
   if (sm_statutoryids.length == 0){
     displayMessage("Atleast one Statutory should be selected");
   }else{
