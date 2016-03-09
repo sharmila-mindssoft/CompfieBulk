@@ -8,4 +8,4 @@
 /clientdocuments
 /Src-server/server/clientlogo
 /exported_reports
-/Src-server/processes/daily_process.log
+*.log
