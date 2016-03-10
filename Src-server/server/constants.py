@@ -182,10 +182,6 @@ CLIENT_TEMPLATE_PATHS = [
 
 TEMPLATE_PATHS = [
     (
-        "/", "files/desktop/login/login.html",
-        "files/mobile/login/login.html", {}
-    ),
-    (
         "/knowledge/login",
         "files/desktop/knowledge/login.html",
         None, {}
@@ -193,12 +189,12 @@ TEMPLATE_PATHS = [
     (
         "/knowledge/forgot-password",
         "files/desktop/knowledge/forgotpassword.html",
-        "", {}
+        None, {}
     ),
     (
         r"/knowledge/reset-password/([a-zA-Z-0-9]+)",
         "files/desktop/knowledge/resetpassword.html",
-        "", {}
+        None, {}
     ),
     # (
     #     "/knowledge/login",
