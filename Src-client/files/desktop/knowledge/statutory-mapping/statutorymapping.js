@@ -182,7 +182,7 @@ function loadStatutoryMappingList(statutoryMappingsList) {
   $('#activate-step-finish').text('Submit');
   $('#activate-step-finish').addClass('btn-right');
   $('#activate-step-finish').removeClass('btn-right-submiting');
-  
+
   var j = 1;
   var imgName = '';
   var passStatus = '';
@@ -817,13 +817,13 @@ $("#temp_addcompliance").click(function() {
         repeats_every_length = $('#repeats_every').val().trim().length;
 
         if(repeats_type == '1' && repeats_every_length > 3){
-          displayMessage("Repeats Every should be lessthan or equql 3 digits");
+          displayMessage("Days maximum 3 digits");
           return false;
         }else if(repeats_type == '2' && repeats_every_length > 2){
-          displayMessage("Repeats Every should be lessthan or equql 2 digits");
+          displayMessage("Months maximum 2 digits");
           return false;
         }else if(repeats_type == '3'  && repeats_every_length > 1){
-          displayMessage("Repeats Every should be lessthan or equql 1 digits");
+          displayMessage("Years maximum 1 digit");
           return false;
         }
         else{
@@ -1864,7 +1864,7 @@ $(document).ready(function(){
       $('#activate-step-finish').removeClass('btn-right');
       $('#activate-step-finish').addClass('btn-right-submiting');
       $('#activate-step-finish').text('Submitting...');
-      savestatutorymapping();      
+      savestatutorymapping();
     }
   })
 
