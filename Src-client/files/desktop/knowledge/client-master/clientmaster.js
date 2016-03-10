@@ -13,6 +13,12 @@ function displayMessage(message) {
     $(".error-message").text(message);
     $(".error-message").show();
 }
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
 $(".btn-clientgroup-add").click(function(){
     $("#clientgroup-view").hide();
     $("#clientgroup-add").show();
@@ -63,6 +69,7 @@ $("#btn-clientgroup-cancel").click(function(){
     $("#clientgroup-view").show();
 });
 function initialize(){
+    hideLoader();
     function onSuccess(data){
         loadClientGroupList(data['client_list']);
     }
@@ -80,6 +87,7 @@ function initialize(){
         }
     );
 }
+
 
 function loadClientGroupList(clientGroupList){
     $(".tbody-clientgroup-list").find("tr").remove();
@@ -233,11 +241,13 @@ $("#btn-clientgroup-submit").click(function(){
             return false
         }
         function onSuccess(data){
+            hideLoader();
             $("#clientgroup-add").hide();
             $("#clientgroup-view").show();
             initialize();
         }
         function onFailure(error){
+            hideLoader();
             if(error == 'GroupNameAlreadyExists'){
                 displayMessage('Group Name Already Exists');
             }
@@ -251,6 +261,7 @@ $("#btn-clientgroup-submit").click(function(){
             contractFromVal, contractToVal, inchargePersonVal,  parseInt(licenceVal),
             parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal,
             usernameVal, dateConfigurations, shortname);
+        displayLoader();
         mirror.saveClientGroup(clientGroupDetails,
             function (error, response) {
                 if (error == null){
@@ -321,6 +332,9 @@ function clientgroup_active(clientId, isActive){
           initialize();
         }
         function onFailure(error){
+            if(error == "CannotDeactivateClient"){
+                displayMessage("Cannot Deactivate Client");
+            }
         }
         mirror.changeClientGroupStatus( parseInt(clientId), isActive,
             function (error, response){
@@ -388,6 +402,7 @@ function loadFormListUpdate(clientListData, clientGroupId){
             $("#usersSelected").val(userListArray.length+" Selected");
             $("#short-name").val(clientListData[clientList]['short_name']);
             $("#short-name").attr("readonly", "true");
+            $(".shorturl").text(clientListData[clientList]['short_name']);
             dateconfigList = clientListData[clientList]['date_configurations'];
         }
     }

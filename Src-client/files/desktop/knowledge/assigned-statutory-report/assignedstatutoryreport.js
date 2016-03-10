@@ -176,8 +176,25 @@ function loadAssignedStatutoryList(data){
 	$('.grid-table-rpt').show();
 	$('.tbody-assigned-statutory-list tr').remove();
 	var sno = 0;
+	var gname;
+	var bgname;
+	var lename;
+	var dname;
 	
 	$.each(data, function(key, value) {
+		var tablefilter = $('#statutory-list .tr-filter');
+		var clonefilter = tablefilter.clone();
+	
+		$('.groupsval').text(value["group_name"]);	
+		$('.bgroupsval').text(value["business_group_name"]);	
+		$('.lentityval').text(value["legal_entity_name"]);	
+		$('.divisionval').text(value["division_name"]);	
+		$('.tbody-assigned-statutory-list').append(clonefilter);
+		
+		var tableheading = $('#statutory-list .tr-heading');
+		var cloneheading = tableheading.clone();
+		$('.tbody-assigned-statutory-list').append(cloneheading);
+
 	  	var list = data[key];
 	  	var tableRow = $('#unit-details-list .table-unit-details-list .tablerow');
 		var clone = tableRow.clone();
@@ -191,14 +208,14 @@ function loadAssignedStatutoryList(data){
 	  		var optedImageName;
 	  		var tableRowAssigned = $('#act-heading .table-act-heading-list .tablerow');
 			var cloneAssigned = tableRowAssigned.clone();
-			var appStatus = val['applicable_status']
+			var appStatus = assignedList[k]['applicable_status']
 			if(appStatus == true){
 				asImageName = "<img src='/images/tick1bold.png'>";
 			}
 			else{
 				asImageName = "<img src='/images/deletebold.png'>";  
 			}
-			var optedStatus = val['opted_status']
+			var optedStatus = assignedList[k]['compliance_opted_status']
 			if(optedStatus == true){
 				optedImageName = "<img src='/images/tick1bold.png'>";
 			}
