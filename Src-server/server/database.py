@@ -2242,7 +2242,9 @@ class KnowledgeDatabase(Database):
 
             compliance_task = d["compliance_task"]
             document_name = d["document_name"]
-            if document_name not in (None, "") :
+            if document_name == "None":
+                document_name = None
+            if document_name :
                 name = "%s - %s" % (
                     document_name, compliance_task
                 )
@@ -2585,7 +2587,9 @@ class KnowledgeDatabase(Database):
                 self.convert_base64_to_file(file_name, file_content)
                 is_format = False
             compliance_ids.append(compliance_id)
-            if document_name not in (None, "") :
+            if document_name == "None":
+                document_name = None
+            if document_name :
                 compliance_names.append(
                     document_name + "-" + compliance_task
                 )
@@ -4607,8 +4611,11 @@ class KnowledgeDatabase(Database):
                 else :
                     provision = " %s" % (c["statutory_provision"])
                 # provision.replace(level_1, "")
-                if c["document_name"] not in (None, "") :
-                    name = "%s - %s" % (c["document_name"], c["compliance_task"])
+                document_name = c["document_name"]
+                if document_name == "None":
+                    document_name = None
+                if document_name :
+                    name = "%s - %s" % (document_name, c["compliance_task"])
                 else :
                     name = c["compliance_task"]
                 c_data = core.ComplianceApplicability(
@@ -4930,8 +4937,11 @@ class KnowledgeDatabase(Database):
             else :
                 level_map = ">>".join(level_map[-1:])
             provision = "%s - %s" % (level_map, r["statutory_provision"])
-            if r["document_name"] not in (None, "") :
-                name = "%s - %s" % (r["document_name"], r["compliance_task"])
+            document_name = r["document_name"]
+            if document_name == "None":
+                document_name = None
+            if document_name :
+                name = "%s - %s" % (document_name, r["compliance_task"])
             else :
                 name = r["compliance_task"]
             compliance = core.ComplianceApplicability(
@@ -4969,7 +4979,6 @@ class KnowledgeDatabase(Database):
 
         return final_statutory_list
 
-
     def get_unassigned_compliances(
         self, country_id, domain_id, industry_id,
         geography_id, unit_id
@@ -5006,7 +5015,7 @@ class KnowledgeDatabase(Database):
                 SELECT g.geography_id \
                 FROM tbl_geographies g \
                 WHERE g.geography_id = %s \
-                OR g.parent_ids LIKE '%s' )\
+                OR g.parent_ids LIKE '%s' OR t4.geography_id IN %s )\
             AND t2.compliance_id NOT IN ( \
                 SELECT distinct c.compliance_id \
                 FROM tbl_client_compliances c \
@@ -5019,15 +5028,17 @@ class KnowledgeDatabase(Database):
             " % (
                     domain_id, country_id, industry_id, geography_id,
                     str("%" + str(geography_id) + ",%"),
+                    (str(tuple(parent_ids))),
                     geography_id, domain_id, unit_id
                 )
-        if parent_ids :
-            query += " OR t4.geography_id IN %s " % (str(tuple(parent_ids)))
 
+        print query
         rows = self.select_all(query)
-        columns = ["compliance_id", "compliance_task",
+        columns = [
+            "compliance_id", "compliance_task",
             "document_name", "statutory_provision",
-            "compliance_description", "statutory_id", "statutory_nature_name"
+            "compliance_description", "statutory_id",
+            "statutory_nature_name"
         ]
         result = self.convert_to_dict(rows, columns)
         # New compliances to_structure
@@ -5035,12 +5046,14 @@ class KnowledgeDatabase(Database):
             self.get_statutory_master()
         level_1_compliance = {}
         for d in result :
-            statutory_nature_name  = d["statutory_nature_name"]
+            statutory_nature_name = d["statutory_nature_name"]
             statutory_id = int(d["statutory_id"])
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
             s_mapping = statutory_data[1]
             statutory_parents = statutory_data[2]
             level_1 = statutory_parents[0]
+            if level_1 == 0 :
+                level_1 = statutory_id
             compliance_applicable_status = bool(1)
             compliance_opted_status = None
             compliance_remarks = None
@@ -5048,8 +5061,11 @@ class KnowledgeDatabase(Database):
             if compliance_applicable_list is None:
                 compliance_applicable_list = []
             provision = "%s - %s" % (s_mapping, d["statutory_provision"])
-            if d["document_name"] not in (None, "") :
-                name = "%s - %s" % (d["document_name"], d["compliance_task"])
+            document_name = d["document_name"]
+            if document_name == "None":
+                document_name = None
+            if document_name :
+                name = "%s - %s" % (document_name, d["compliance_task"])
             else :
                 name = "%s" % (d["compliance_task"])
             c_data = core.ComplianceApplicability(
@@ -5094,7 +5110,7 @@ class KnowledgeDatabase(Database):
                 )
                 statutories.append(s_data)
 
-        return technotransactions.GetAssignedStatutoriesByIdSuccess (
+        return technotransactions.GetAssignedStatutoriesByIdSuccess(
             data["country_name"],
             data["group_name"],
             data["business_group_name"],
@@ -5104,7 +5120,8 @@ class KnowledgeDatabase(Database):
             data["geography_name"],
             data["domain_name"],
             statutories,
-            new_compliances
+            new_compliances,
+            data["industry_name"]
         )
 
     def get_assigned_statutories_report(self, request_data, user_id):
@@ -5155,7 +5172,6 @@ class KnowledgeDatabase(Database):
             )
 
         query = query + qry
-        print query
         rows = self.select_all(query)
         columns = [
             "client_statutory_id", "client_id", "geography_id",

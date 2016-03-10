@@ -256,7 +256,7 @@ class UpdateNotificationStatus(Request):
 
     def to_inner_structure(self):
         return {
-            "notification_id": to_structure_SignedIntegerType_8(self.notification_id),
+            "notification_id": to_structure_UnsignedIntegerType_32(self.notification_id),
             "has_read": to_structure_Bool(self.has_read),
         }
 
@@ -632,7 +632,7 @@ class Notification(object):
 
     def to_structure(self):
         return {
-            "notification_id": to_structure_SignedIntegerType_8(self.notification_id),
+            "notification_id": to_structure_UnsignedIntegerType_32(self.notification_id),
             "notification_text": to_structure_CustomTextType_500(self.notification_text),
             "link": to_structure_CustomTextType_500(self.link),
             "has_read": to_structure_Bool(self.has_read),
