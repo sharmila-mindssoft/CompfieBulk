@@ -178,6 +178,12 @@ function changeStatus (statutorymappingId,isActive) {
 }
 
 function loadStatutoryMappingList(statutoryMappingsList) {
+  $('#activate-step-finish').prop('disabled', false);
+  $('#activate-step-finish').text('submit');
+  $('#activate-step-finish').addClass('btn-right');
+  $('#activate-step-finish').removeClass('btn-right-submiting');
+  
+
   var j = 1;
   var imgName = '';
   var passStatus = '';
@@ -825,10 +831,8 @@ $("#temp_addcompliance").click(function() {
         }
         else{
           if(repeats_type == '2' && $('.multipleinput').prop("checked") == true){
-
             var rep_every = parseInt($('#repeats_every').val());
             var maxCount = 0;
-
             if(rep_every == 1){
               maxCount = 12;
             }else if (rep_every == 2){
@@ -885,10 +889,10 @@ $("#temp_addcompliance").click(function() {
   }
   var check_duplicate_status= true;
   $.each(compliances, function(index, value) {
-
   if (
     (value.statutory_provision == statutory_provision) &&
-    (value.compliance_task == compliance_task)) {
+    (value.compliance_task == compliance_task) &&
+    comp_id == '') {
 
     if(value.statutory_provision == statutory_provision){
       displayMessage("Statutory provision is duplicate");
@@ -1525,8 +1529,8 @@ function edit_geography(country,geographyids_edit){
       }
     }
     $('#'+combineid).addClass( "active" );
-    if($.inArray(parent_id, temp_parent) == -1){
-      temp_parent.push(parent_id)
+    if($.inArray(geo_id, temp_parent) == -1){
+      temp_parent.push(geo_id)
       load_geography(levelposition,country,combineid,"add",displaytext);
     }
   }
@@ -1831,8 +1835,11 @@ $(document).ready(function(){
   $('#activate-step-finish').on('click', function(e) {
     getGeographyResult();
     if (validate_fourthtab()){
-      savestatutorymapping();
-      $('#activate-step-finish').disabled;
+      $('#activate-step-finish').prop('disabled', true);
+      $('#activate-step-finish').text('submitting...');
+      $('#activate-step-finish').removeClass('btn-right');
+      $('#activate-step-finish').addClass('btn-right-submiting');
+      savestatutorymapping();      
     }
   })
 
