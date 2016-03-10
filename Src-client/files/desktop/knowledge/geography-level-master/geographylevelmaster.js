@@ -177,7 +177,7 @@ $("#submit").click(function(){
             }
           });
 	   }else{
-	   		displayMessage("Intermediate Level's should not be Empty");
+	   		displayMessage("Intermediate Level(s) should not be Empty");
 	   }
 		}
 });

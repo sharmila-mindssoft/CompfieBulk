@@ -77,7 +77,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_client_report_UnitDetails,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_CustomTextType_500,
-    parse_structure_OptionalType_CustomTextType_500
+    parse_structure_OptionalType_CustomTextType_500,
+    parse_structure_Text
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
@@ -158,7 +159,8 @@ from protocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
     to_structure_VectorType_SignedIntegerType_8,
     to_structure_VectorType_CustomTextType_500,
-    to_structure_OptionalType_CustomTextType_500
+    to_structure_OptionalType_CustomTextType_500,
+    to_structure_Text
 )
 
 #
@@ -855,7 +857,7 @@ class GetLoginTrace(Request):
 
 class ExportToCSV(Request):
     def __init__(self, json_data):
-        self.json_data = json_data 
+        self.json_data = json_data
 
     @staticmethod
     def parse_inner_structure(data):
@@ -870,16 +872,16 @@ class ExportToCSV(Request):
         }
 
 def _init_Request_class_map():
-    classes = [GetComplianceDetailsReportFilters, GetComplianceDetailsReport, 
-    GetRiskReportFilters, GetRiskReport, GetServiceProviderReportFilters, 
-    GetServiceProviderWiseCompliance, GetClientReportFilters, 
-    GetAssigneewisecomplianceReport, GetUnitwisecomplianceReport, 
-    GetReassignComplianceTaskReportFilters, GetReassignComplianceTaskDetails, 
-    GetTaskApplicabilityStatusFilters, GetComplianceTaskApplicabilityStatusReport, 
-    GetComplianceActivityReportFilters, GetComplianceActivityReport, 
-    GetReassignedHistoryReportFilters, GetReassignedHistoryReport, 
-    GetStatutoryNotificationsListFilters, GetStatutoryNotificationsListReport, 
-    GetClientDetailsReportFilters, GetClientDetailsReportData, GetActivityLogFilters, 
+    classes = [GetComplianceDetailsReportFilters, GetComplianceDetailsReport,
+    GetRiskReportFilters, GetRiskReport, GetServiceProviderReportFilters,
+    GetServiceProviderWiseCompliance, GetClientReportFilters,
+    GetAssigneewisecomplianceReport, GetUnitwisecomplianceReport,
+    GetReassignComplianceTaskReportFilters, GetReassignComplianceTaskDetails,
+    GetTaskApplicabilityStatusFilters, GetComplianceTaskApplicabilityStatusReport,
+    GetComplianceActivityReportFilters, GetComplianceActivityReport,
+    GetReassignedHistoryReportFilters, GetReassignedHistoryReport,
+    GetStatutoryNotificationsListFilters, GetStatutoryNotificationsListReport,
+    GetClientDetailsReportFilters, GetClientDetailsReportData, GetActivityLogFilters,
     GetActivityLogReport, GetLoginTrace, ExportToCSV]
     class_map = {}
     for c in classes:
@@ -1566,7 +1568,7 @@ class ExportToCSVSuccess(Response):
         }
 
 class GetClientDetailsReportFiltersSuccess(Response):
-    def __init__(self, countries, domains, business_groups, 
+    def __init__(self, countries, domains, business_groups,
         legal_entities, divisions, units):
         self.countries = countries
         self.domains = domains
@@ -1577,8 +1579,8 @@ class GetClientDetailsReportFiltersSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", 
-            "business_groups", "legal_entities", "divisions", "units", 
+        data = parse_dictionary(data, ["countries", "domains",
+            "business_groups", "legal_entities", "divisions", "units",
             ]
         )
         countries = data.get("countries")
@@ -1593,7 +1595,7 @@ class GetClientDetailsReportFiltersSuccess(Response):
         divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
-        return GetClientDetailsReportFiltersSuccess(countries, domains, 
+        return GetClientDetailsReportFiltersSuccess(countries, domains,
             business_groups, legal_entities, divisions, units
         )
 
@@ -1609,20 +1611,20 @@ class GetClientDetailsReportFiltersSuccess(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetComplianceDetailsReportFiltersSuccess, 
-    GetComplianceDetailsReportSuccess, GetRiskReportFiltersSuccess, 
-    GetRiskReportSuccess, GetServiceProviderReportFiltersSuccess, 
-    GetServiceProviderWiseComplianceSuccess, GetClientReportFiltersSuccess, 
-    GetAssigneewisecomplianceReportSuccess, GetUnitwisecomplianceReportSuccess, 
-    GetReassignComplianceTaskReportFiltersSuccess, 
-    GetReassignComplianceTaskDetailsSuccess, 
-    GetTaskApplicabilityStatusFiltersSuccess, 
-    GetComplianceTaskApplicabilityStatusReportSuccess, 
-    GetComplianceActivityReportFiltersSuccess, GetComplianceActivityReportSuccess, 
-    GetReassignedHistoryReportFiltersSuccess, GetReassignedHistoryReportSuccess, 
-    GetStatutoryNotificationsListFiltersSuccess, 
-    GetStatutoryNotificationsListReportSuccess, 
-    GetClientDetailsReportDataSuccess, GetActivityLogFiltersSuccess, 
+    classes = [GetComplianceDetailsReportFiltersSuccess,
+    GetComplianceDetailsReportSuccess, GetRiskReportFiltersSuccess,
+    GetRiskReportSuccess, GetServiceProviderReportFiltersSuccess,
+    GetServiceProviderWiseComplianceSuccess, GetClientReportFiltersSuccess,
+    GetAssigneewisecomplianceReportSuccess, GetUnitwisecomplianceReportSuccess,
+    GetReassignComplianceTaskReportFiltersSuccess,
+    GetReassignComplianceTaskDetailsSuccess,
+    GetTaskApplicabilityStatusFiltersSuccess,
+    GetComplianceTaskApplicabilityStatusReportSuccess,
+    GetComplianceActivityReportFiltersSuccess, GetComplianceActivityReportSuccess,
+    GetReassignedHistoryReportFiltersSuccess, GetReassignedHistoryReportSuccess,
+    GetStatutoryNotificationsListFiltersSuccess,
+    GetStatutoryNotificationsListReportSuccess,
+    GetClientDetailsReportDataSuccess, GetActivityLogFiltersSuccess,
     GetActivityLogReportSuccess, GetLoginTraceSuccess, ExportToCSVSuccess,
     GetClientDetailsReportFiltersSuccess]
     class_map = {}
@@ -1772,7 +1774,7 @@ class Level1Compliance(object):
         data = parse_dictionary(data, ["statutory_mapping", "compliance_name",
             "description", "penal_consequences", "compliance_frequency", "repeats"])
         statutory_mapping = data.get("statutory_mapping")
-        statutory_mapping = parse_structure_CustomTextType_500(statutory_mapping)
+        statutory_mapping = parse_structure_Text(statutory_mapping)
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_100(compliance_name)
         description = data.get("description")
@@ -1788,7 +1790,7 @@ class Level1Compliance(object):
 
     def to_structure(self):
         return {
-            "statutory_mapping": to_structure_CustomTextType_500(self.statutory_mapping),
+            "statutory_mapping": to_structure_Text(self.statutory_mapping),
             "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
             "description": to_structure_CustomTextType_250(self.description),
             "penal_consequences": to_structure_CustomTextType_250(self.penal_consequences),
@@ -2129,7 +2131,7 @@ class ComplianceList(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["statutory_provision", "compliance_name", "description", "penal_consequences", "compliance_frequency", "repeats"])
         statutory_provision = data.get("statutory_provision")
-        statutory_provision = parse_structure_CustomTextType_100(statutory_provision)
+        statutory_provision = parse_structure_Text(statutory_provision)
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_VectorType_CustomTextType_100(compliance_name)
         description = data.get("description")
@@ -2144,7 +2146,7 @@ class ComplianceList(object):
 
     def to_structure(self):
         return {
-            "statutory_provision": to_structure_CustomTextType_100(self.statutory_provision),
+            "statutory_provision": to_structure_Text(self.statutory_provision),
             "compliance_name": to_structure_VectorType_CustomTextType_100(self.compliance_name),
             "description": to_structure_CustomTextType_500(self.description),
             "penal_consequences": to_structure_CustomTextType_500(self.penal_consequences),
@@ -2543,7 +2545,7 @@ class LEVEL_1_STATUTORY_NOTIFICATIONS(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["statutory_provision", "notification_text", "date_and_time"])
         statutory_provision = data.get("statutory_provision")
-        statutory_provision = parse_structure_CustomTextType_500(statutory_provision)
+        statutory_provision = parse_structure_Text(statutory_provision)
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_250(unit_name)
         notification_text = data.get("notification_text")
@@ -2554,7 +2556,7 @@ class LEVEL_1_STATUTORY_NOTIFICATIONS(object):
 
     def to_structure(self):
         return {
-            "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
+            "statutory_provision": to_structure_Text(self.statutory_provision),
             "unit_name": to_structure_CustomTextType_250(self.unit_name),
             "notification_text": to_structure_CustomTextType_500(self.notification_text),
             "date_and_time": to_structure_CustomTextType_20(self.date_and_time)

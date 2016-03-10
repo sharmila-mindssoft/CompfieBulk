@@ -12,6 +12,9 @@
 --
 -- Triggers `tbl_business_groups`
 --
+
+USE `compfie_knowledge`;
+
 DROP TRIGGER IF EXISTS `after_tbl_business_groups_insert`;
 DELIMITER //
 CREATE TRIGGER `after_tbl_business_groups_insert` AFTER INSERT ON `tbl_business_groups`

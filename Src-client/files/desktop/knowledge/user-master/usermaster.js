@@ -203,7 +203,7 @@ function validate(){
 		displayMessage("User Group Required");
 		$("#usergroupval").focus();
 	} else if(reg.test(emailId) == false) {
-		displayMessage("Invalid Email Address");
+		displayMessage("Invalid Email ID");
 		$("#emailid").focus();
 	} else if(countryIds.length == 0) {
 		displayMessage("Country Required");

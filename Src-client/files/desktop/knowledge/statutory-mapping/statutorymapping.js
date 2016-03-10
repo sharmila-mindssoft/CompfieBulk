@@ -179,10 +179,9 @@ function changeStatus (statutorymappingId,isActive) {
 
 function loadStatutoryMappingList(statutoryMappingsList) {
   $('#activate-step-finish').prop('disabled', false);
-  $('#activate-step-finish').text('submit');
+  $('#activate-step-finish').text('Submit');
   $('#activate-step-finish').addClass('btn-right');
   $('#activate-step-finish').removeClass('btn-right-submiting');
-  
 
   var j = 1;
   var imgName = '';
@@ -209,13 +208,11 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
       complianceNames = complianceNames + statutoryMappingsList[entity]["compliance_names"][i]["compliance_name"] + " <br>";
     }
-
     for(approvalstatuslist in complianceApprovalStatusList){
       if(statutoryMappingsList[entity]["approval_status"] == complianceApprovalStatusList[approvalstatuslist]["approval_status_id"]){
         approvalStatus = complianceApprovalStatusList[approvalstatuslist]["approval_status"];
       }
     }
-
     statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
     countryName = statutoryMappingsList[entity]["country_name"];
     domainName = statutoryMappingsList[entity]["domain_name"];
@@ -820,13 +817,13 @@ $("#temp_addcompliance").click(function() {
         repeats_every_length = $('#repeats_every').val().trim().length;
 
         if(repeats_type == '1' && repeats_every_length > 3){
-          displayMessage("Repeats Every should be lessthan or equql 3 digits");
+          displayMessage("Days maximum 3 digits");
           return false;
         }else if(repeats_type == '2' && repeats_every_length > 2){
-          displayMessage("Repeats Every should be lessthan or equql 2 digits");
+          displayMessage("Months maximum 2 digits");
           return false;
         }else if(repeats_type == '3'  && repeats_every_length > 1){
-          displayMessage("Repeats Every should be lessthan or equql 1 digits");
+          displayMessage("Years maximum 1 digit");
           return false;
         }
         else{
@@ -888,12 +885,12 @@ $("#temp_addcompliance").click(function() {
     duration_type = parseInt($('#duration_type').val());
   }
   var check_duplicate_status= true;
+  var ccount = 0;
   $.each(compliances, function(index, value) {
   if (
     (value.statutory_provision == statutory_provision) &&
     (value.compliance_task == compliance_task) &&
-    comp_id == '') {
-
+    (comp_id == '' || comp_id != ccount )) {
     if(value.statutory_provision == statutory_provision){
       displayMessage("Statutory provision is duplicate");
     }
@@ -902,6 +899,7 @@ $("#temp_addcompliance").click(function() {
     }
     check_duplicate_status = false;
   }
+  ccount = ccount + 1;
   });
 
   if(check_duplicate_status){
@@ -1361,7 +1359,7 @@ function validate_firsttab(){
 }
 function validate_secondtab(){
   if (sm_statutoryids.length == 0){
-    displayMessage("Atleast one Statutory should be selected");
+    displayMessage("Atleast one Statute should be selected");
   }else{
     displayMessage("");
     return true;
@@ -1663,19 +1661,46 @@ $(function()
   });
   $('#duration').keyup(function()
   {
-  $("#summary").html("To Complete within " + $('#duration').val() + " " + $('#duration_type option:selected').text() );
+    var durationVal = $('#duration').val();
+    var durationType = $('#duration_type option:selected').text().trim();
+    var summaryVal = '';
+    if( durationVal != '' && durationType != 'Select'){
+      summaryVal = durationVal + ' ' + durationType;
+    }
+    $("#summary").html("To Complete within " + summaryVal);
   });
   $('#duration_type').change(function()
   {
-  $("#summary").html("To Complete within " + $('#duration').val() + " " + $('#duration_type option:selected').text() );
+      var durationVal = $('#duration').val();
+      var durationType = $('#duration_type option:selected').text().trim();
+      var summaryVal = '';
+      if( durationVal != '' && durationType != 'Select'){
+        summaryVal = durationVal + ' ' + durationType;
+      }
+      $("#summary").html("To Complete within " + summaryVal);
   });
+
   $('#repeats_every').change(function()
   {
-  $(".summary_repeat").html("Every " + $('#repeats_every').val() + " " + $('#repeats_type option:selected').text());
+      var repeatVal = $('#repeats_every').val();
+      var repeatType = $('#repeats_type option:selected').text().trim();
+      var summaryVal1 = '';
+      if( repeatVal != '' && repeatType != 'Select'){
+        summaryVal1 = repeatVal + ' ' + repeatType;
+      }
+      $(".summary_repeat").html("Every " + summaryVal1);
+
   });
   $('#repeats_type').change(function()
   {
-  $(".summary_repeat").html("Every " + $('#repeats_every').val() + " " + $('#repeats_type option:selected').text());
+      var repeatVal = $('#repeats_every').val();
+      var repeatType = $('#repeats_type option:selected').text().trim();
+      var summaryVal1 = '';
+      if( repeatVal != '' && repeatType != 'Select'){
+        summaryVal1 = repeatVal + ' ' + repeatType;
+      }
+      $(".summary_repeat").html("Every " + summaryVal1);
+
   });
 });
 
@@ -1836,10 +1861,10 @@ $(document).ready(function(){
     getGeographyResult();
     if (validate_fourthtab()){
       $('#activate-step-finish').prop('disabled', true);
-      $('#activate-step-finish').text('submitting...');
       $('#activate-step-finish').removeClass('btn-right');
       $('#activate-step-finish').addClass('btn-right-submiting');
-      savestatutorymapping();      
+      $('#activate-step-finish').text('Submitting...');
+      savestatutorymapping();
     }
   })
 
