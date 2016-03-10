@@ -2135,11 +2135,20 @@ class KnowledgeDatabase(Database):
         )
 
     def get_mappings_id(self, statutory_id) :
-        query = "SELECT t1.statutory_mapping_ids from tbl_statutories t1 \
-            WHERE t1.statutory_id = %s OR t1.parent_ids like '%s'" % (
-                    int(statutory_id),
-                    str("" + str(statutory_id) + ",%")
-                )
+        query = "select distinct t1.statutory_mapping_id \
+            from tbl_statutory_statutories t1 \
+            where t1.statutory_id in ( \
+            select t.statutory_id from tbl_statutories t where \
+            t.statutory_id = %s OR t.parent_ids like '%s' \
+            )" % (
+                int(statutory_id),
+                str("" + str(statutory_id) + ",%")
+            )
+        # query = "SELECT t1.statutory_mapping_ids from tbl_statutories t1 \
+        #     WHERE t1.statutory_id = %s OR t1.parent_ids like '%s'" % (
+        #             int(statutory_id),
+        #             str("" + str(statutory_id) + ",%")
+        #         )
         rows = self.select_all(query)
         result = []
         if rows :
@@ -2168,9 +2177,12 @@ class KnowledgeDatabase(Database):
 
                 def get_data(i) :
                     return report_data.get(int(i))
-                mapping_list.extend(
-                    [get_data(x) for x in mapping_ids[:-1].split(',') if get_data(x) is not None]
-                )
+                # mapping_list.extend(
+                #     [get_data(x) for x in mapping_ids[:-1].split(',') if get_data(x) is not None]
+                # )
+                info = get_data(mapping_ids)
+                if info is not None :
+                    mapping_list.append(info)
             if mapping_list:
                 level_1_mappings[statutory_id] = mapping_list
         return level_1_mappings
@@ -4530,7 +4542,14 @@ class KnowledgeDatabase(Database):
             "statutory_nature_name", "statutory_id"
         ]
         result = self.convert_to_dict(rows, columns)
-        return self.return_assign_statutory_wizard_two(country_id, domain_id, result)
+        final_result = []
+        mapping_ids = []
+        for r in result :
+            mapping_id = int(r["statutory_mapping_id"])
+            if mapping_id not in mapping_ids :
+                mapping_ids.append(mapping_id)
+                final_result.append(r)
+        return self.return_assign_statutory_wizard_two(country_id, domain_id, final_result)
 
     def get_compliance_by_mapping_id(self, mapping_id):
 
@@ -4631,6 +4650,7 @@ class KnowledgeDatabase(Database):
                 compliance_applicable_list.append(c_data)
             level_1_compliance[level_1] = compliance_applicable_list
 
+        assigned_dict = {}
         assigned_statutory_list = []
         for key, value in level_1_compliance.iteritems() :
             name = self.statutory_parent_mapping.get(int(key))
@@ -4639,13 +4659,16 @@ class KnowledgeDatabase(Database):
             applicable_status = bool(1)
             statutory_opted_status = None
             not_applicable_remarks = None
-            assigned_statutory_list.append(
-                core.AssignedStatutory(
-                    key, name, compliances, applicable_status,
-                    statutory_opted_status,
-                    not_applicable_remarks
-                )
+            assigned_dict[name] = core.AssignedStatutory(
+                key, name, compliances, applicable_status,
+                statutory_opted_status,
+                not_applicable_remarks
             )
+        for k in sorted(assigned_dict) :
+            assigned_statutory_list.append(
+                assigned_dict[k]
+            )
+
         return technotransactions.GetStatutoryWizardTwoDataSuccess(
             assigned_statutory_list
         )
@@ -5032,7 +5055,6 @@ class KnowledgeDatabase(Database):
                     geography_id, domain_id, unit_id
                 )
 
-        print query
         rows = self.select_all(query)
         columns = [
             "compliance_id", "compliance_task",
@@ -5041,11 +5063,18 @@ class KnowledgeDatabase(Database):
             "statutory_nature_name"
         ]
         result = self.convert_to_dict(rows, columns)
+        final_result = []
+        compliance_ids = []
+        for r in result :
+            compliance_id = int(r["compliance_id"])
+            if compliance_id not in compliance_ids :
+                compliance_ids.append(compliance_id)
+                final_result.append(r)
         # New compliances to_structure
         if bool(self.statutory_parent_mapping) is False:
             self.get_statutory_master()
         level_1_compliance = {}
-        for d in result :
+        for d in final_result :
             statutory_nature_name = d["statutory_nature_name"]
             statutory_id = int(d["statutory_id"])
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
