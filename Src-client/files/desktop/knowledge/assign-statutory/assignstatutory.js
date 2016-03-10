@@ -639,13 +639,13 @@ function validate_firsttab(){
       if($('.locationlist.active').text() == assignedStatutoriesList[entity]["geography_name"] && $('.industrylist.active').text() == assignedStatutoriesList[entity]["industry_name"] && $('.domainlist.active').text() == assignedStatutoriesList[entity]["domain_name"]){
         for(var j=0;j<assignStatutoryUnitValues.length;j++){
           if(assignStatutoryUnitValues[j] == assignedStatutoriesList[entity]["unit_name"] && assignedStatutoriesList[entity]["submission_status"] == 0){
-            displayMessage("Statutory already assigned for '"+assignStatutoryUnitValues[j]+"' unit");
+            displayMessage("Statutes already assigned for '"+assignStatutoryUnitValues[j]+"' unit");
             checkDuplicateAssignStauttory = false;
             break;
             return false;
           }
           if(assignStatutoryUnitValues[j] == assignedStatutoriesList[entity]["unit_name"] && assignedStatutoriesList[entity]["submission_status"] == 1 && assignStatutoryUnitValues.length > 1){
-            displayMessage("Please select individual unit, Statutory already submitted for '"+assignStatutoryUnitValues[j] + "' unit");
+            displayMessage("Please select individual unit, Statutes already submitted for '"+assignStatutoryUnitValues[j] + "' unit");
             checkDuplicateAssignStauttory = false;
             break;
             return false;
