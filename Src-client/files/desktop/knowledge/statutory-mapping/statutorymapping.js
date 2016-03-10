@@ -885,12 +885,12 @@ $("#temp_addcompliance").click(function() {
     duration_type = parseInt($('#duration_type').val());
   }
   var check_duplicate_status= true;
+  var ccount = 0;
   $.each(compliances, function(index, value) {
   if (
     (value.statutory_provision == statutory_provision) &&
     (value.compliance_task == compliance_task) &&
-    comp_id == '') {
-
+    (comp_id == '' || comp_id != ccount )) {
     if(value.statutory_provision == statutory_provision){
       displayMessage("Statutory provision is duplicate");
     }
@@ -899,6 +899,7 @@ $("#temp_addcompliance").click(function() {
     }
     check_duplicate_status = false;
   }
+  ccount = ccount + 1;
   });
 
   if(check_duplicate_status){
@@ -1661,7 +1662,7 @@ $(function()
   $('#duration').keyup(function()
   {
     var durationVal = $('#duration').val();
-    var durationType = $('#duration_type option:selected').text();
+    var durationType = $('#duration_type option:selected').text().trim();
     var summaryVal = '';
     if( durationVal != '' && durationType != 'Select'){
       summaryVal = durationVal + ' ' + durationType;
@@ -1671,7 +1672,7 @@ $(function()
   $('#duration_type').change(function()
   {
       var durationVal = $('#duration').val();
-      var durationType = $('#duration_type option:selected').text();
+      var durationType = $('#duration_type option:selected').text().trim();
       var summaryVal = '';
       if( durationVal != '' && durationType != 'Select'){
         summaryVal = durationVal + ' ' + durationType;
@@ -1682,18 +1683,18 @@ $(function()
   $('#repeats_every').change(function()
   {
       var repeatVal = $('#repeats_every').val();
-      var repeatType = $('#repeats_type option:selected').text();
+      var repeatType = $('#repeats_type option:selected').text().trim();
       var summaryVal1 = '';
       if( repeatVal != '' && repeatType != 'Select'){
         summaryVal1 = repeatVal + ' ' + repeatType;
       }
-      $(".summary_repeat").html("Every " + summaryVal);
+      $(".summary_repeat").html("Every " + summaryVal1);
 
   });
   $('#repeats_type').change(function()
   {
       var repeatVal = $('#repeats_every').val();
-      var repeatType = $('#repeats_type option:selected').text();
+      var repeatType = $('#repeats_type option:selected').text().trim();
       var summaryVal1 = '';
       if( repeatVal != '' && repeatType != 'Select'){
         summaryVal1 = repeatVal + ' ' + repeatType;
