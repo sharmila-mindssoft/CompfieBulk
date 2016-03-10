@@ -176,8 +176,25 @@ function loadAssignedStatutoryList(data){
 	$('.grid-table-rpt').show();
 	$('.tbody-assigned-statutory-list tr').remove();
 	var sno = 0;
+	var gname;
+	var bgname;
+	var lename;
+	var dname;
 	
 	$.each(data, function(key, value) {
+		var tablefilter = $('#statutory-list .tr-filter');
+		var clonefilter = tablefilter.clone();
+	
+		$('.groupsval').text(value["group_name"]);	
+		$('.bgroupsval').text(value["business_group_name"]);	
+		$('.lentityval').text(value["legal_entity_name"]);	
+		$('.divisionval').text(value["division_name"]);	
+		$('.tbody-assigned-statutory-list').append(clonefilter);
+		
+		var tableheading = $('#statutory-list .tr-heading');
+		var cloneheading = tableheading.clone();
+		$('.tbody-assigned-statutory-list').append(cloneheading);
+
 	  	var list = data[key];
 	  	var tableRow = $('#unit-details-list .table-unit-details-list .tablerow');
 		var clone = tableRow.clone();
@@ -191,22 +208,23 @@ function loadAssignedStatutoryList(data){
 	  		var optedImageName;
 	  		var tableRowAssigned = $('#act-heading .table-act-heading-list .tablerow');
 			var cloneAssigned = tableRowAssigned.clone();
-			var appStatus = assignedList[k]['applicable_status']
+			var appStatus = val['applicable_status']
 			if(appStatus == true){
 				asImageName = "<img src='/images/tick1bold.png'>";
 			}
 			else{
 				asImageName = "<img src='/images/deletebold.png'>";  
 			}
-			var optedStatus = assignedList[k]['compliance_opted_status']
-			if(optedStatus == true){
-				optedImageName = "<img src='/images/tick1bold.png'>";
+			var optedStatuslevel1 = val['opted_status']
+			console.log(optedStatuslevel1);
+			if(optedStatuslevel1 == true){
+				optedImageNamelevel1 = "<img src='/images/tick-orange.png'>";
 			}
-			else if(optedStatus == false){
-				optedImageName = "<img src='/images/deletebold.png'>";  
+			else if(optedStatuslevel1 == false){
+				optedImageNamelevel1 = "<img src='/images/deletebold.png'>";  
 			}
 			else{
-				optedImageName = "Nil";
+				optedImageNamelevel1 = "Nil";
 			}
 			var remarks = assignedList[k]['compliance_remarks'];
 			if(remarks == null){
@@ -214,7 +232,8 @@ function loadAssignedStatutoryList(data){
 			}
 			$('.heading', cloneAssigned).text(assignedList[k]['level_1_statutory_name']);
 			$('.act-applicable', cloneAssigned).html(asImageName);
-			$('.act-opted', cloneAssigned).html(optedImageName);
+
+			$('.act-opted', cloneAssigned).html(optedImageNamelevel1);
 			$('.act-remarks', cloneAssigned).text(remarks);
 			var assignedRecord = assignedList[k]['compliances']; 
 			$('.tbody-assigned-statutory-list').append(cloneAssigned);		
@@ -228,7 +247,7 @@ function loadAssignedStatutoryList(data){
 				}
 				var optedStatus = assignedRecord[ke]['compliance_opted_status']
 				if(optedStatus == true){
-					optedImageName = "<img src='/images/tick1bold.png'>";
+					optedImageName = "<img src='/images/tick-orange.png'>";
 				}
 				else if(optedStatus == false){
 					optedImageName = "<img src='/images/deletebold.png'>";  

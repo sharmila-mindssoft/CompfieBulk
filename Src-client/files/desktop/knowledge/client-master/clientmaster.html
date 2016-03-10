@@ -1,5 +1,8 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
+<div class='loading-indicator-spin'>
+  <span><img src='/files/desktop/common/images/loading-img.gif' alt=""></span>
+</div>
 <link href="/files/desktop/common/css/jquery-ui/jquery-ui.css" rel="stylesheet">
   <div class="content-container width50" id="clientgroup-view">
     <div class="content-area">
@@ -11,7 +14,7 @@
       <div class="grid-table">
         <table>
           <tr align="left">
-            <th align="center">#</th>
+            <th align="center" style="width: 8%">#</th>
             <th>Group</th>
             <th align="center" style="width: 15%" >Edit</th>
             <th align="center" style="width: 15%">Status</th>
@@ -135,7 +138,7 @@
         <div class="single-column-field-label">Short Name:<span class="mandatory">*</span></div>
         <div class="field-input">
           <input id="short-name" type="text" class="input-box"  value="" maxlength="20">
-           <span style="font-size:10px;">[http://aparajitha.com/login/<abbr class="shorturl"></abbr>]</span>
+           <span style="font-size:10px;">[http://domain.com/login/<abbr class="shorturl"></abbr>]</span>
         </div>
       </div>
     </div>

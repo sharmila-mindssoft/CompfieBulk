@@ -115,29 +115,29 @@ function getDivisionName(divisionid){
 
 function loadUnitClosureList(unitsListData){
  	$(".tbody-unitclosure-list").find("tr").remove();
- 	var sno=0;
+ 	var sno = 0;
 	var imageName, title;	
-	$.each(unitsListData, function(k, values) { 
-		var list=unitsListData[k];
-		var bgroupid=list['business_group_id'];
-		var lentityid=list['legal_entity_id'];
-		var divisionid=list['division_id'];
-		var unitName=list['unit_name'];	
-		var unitId=list["unit_id"];
-		var address=list["unit_address"];		
-		var isClosed=list["is_active"];
+	$.each(unitsListData, function(k, value) { 
+		
+		var bgroupid = value['business_group_id'];
+		var lentityid = value['legal_entity_id'];
+		var divisionid = value['division_id'];
+		var unitName = value['unit_name'];	
+		var unitId = value["unit_id"];
+		var address = value["unit_address"];		
+		var isClosed = value["is_active"];
 					
-		if(isClosed==0){
-			imageName="deletebold.png";
-			title="close"
-			statusVal=0;
+		if(isClosed == false){
+			imageName = "deletebold.png";
+			title = "close"
+			statusVal = 0;
 		}
 		else{
-			imageName="";	
-			title=""
+			imageName = "";	
+			title = ""
 		}
-		var tableRow=$('#templates .table-unitclosure-list .table-row');
-		var clone=tableRow.clone();
+		var tableRow = $('#templates .table-unitclosure-list .table-row');
+		var clone = tableRow.clone();
 		sno = sno + 1;
 		$('.sno', clone).text(sno);
 		$('.business-group', clone).text(getBusinessGroupsName(bgroupid));
@@ -145,7 +145,7 @@ function loadUnitClosureList(unitsListData){
 		$('.division', clone).text(getDivisionName(divisionid));
 		$('.unit', clone).text(unitName);
 		$('.unit-address', clone).text(address);
-		if(imageName==''){
+		if(imageName == ''){
 			$('.is-active', clone).text('closed');	
 		}
 		else{
@@ -154,55 +154,9 @@ function loadUnitClosureList(unitsListData){
 		$('.tbody-unitclosure-list').append(clone);
 	});
 }
-$("#business-group-search").keyup(function() { 
-	var count=0;
-    var value = this.value.toLowerCase();
-    $("table").find("tr:not(:first)").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".business-group").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
-
-$("#legalentity-search").keyup(function() { 
-	var count=0;
-    var value = this.value.toLowerCase();
-    $("table").find("tr:not(:first)").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".legal-entity").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
-
-$("#division-search").keyup(function() { 
-	var count=0;
-    var value = this.value.toLowerCase();
-    $("table").find("tr:not(:first)").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".division").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
-
-$("#unit-search").keyup(function() { 
-	var count=0;
-    var value = this.value.toLowerCase();
-    $("table").find("tr:not(:first)").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".unit").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
-
-$("#address-search").keyup(function() { 
-	var count=0;
-    var value = this.value.toLowerCase();
-    $("table").find("tr:not(:first)").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".unit-address").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
 $(function() {
 	initialize();
+});
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });

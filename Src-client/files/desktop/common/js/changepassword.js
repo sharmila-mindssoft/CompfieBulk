@@ -19,7 +19,7 @@ $("#submit").click(function(){
   } else if(confirmpassword.length == 0) {
     displayMessage("Confirm Password Required");
   } else if(confirmpassword != newpassword) {
-    displayMessage("New Password & Confirm Password is Not Match");
+    displayMessage("New Password & Confirm Password Do Not Match");
   } else {
       function onSuccess(data){
           displayMessage("Password Changed Successfully");

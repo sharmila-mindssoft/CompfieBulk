@@ -1,4 +1,4 @@
-USE `mirror_knowledge`;
+USE `compfie_knowledge`;
 
 -- DELETE FROM tbl_form_category;
 INSERT INTO tbl_form_category VALUES(1, "IT Team");
@@ -50,7 +50,7 @@ INSERT INTO tbl_forms VALUES(26, 4, 3, 'Audit Trail', '/knowledge/audit-trail', 
 
 -- tbl_admin
 -- username, password -- 123456
-INSERT INTO tbl_admin  VALUES("admin", "e10adc3949ba59abbe56e057f20f883e");
+INSERT INTO tbl_admin  VALUES("admin", "7ecfd14ba1b0d6800688a0a317a5a331");
 
 -- tbl_session_types
 INSERT INTO tbl_session_types VALUES(1, "web");

@@ -901,7 +901,11 @@ function updateComplianceApplicabilityDrillDown(status, data, type) {
 }
 
 function showComplianceApplicabilityDrillDownRecord(data, type){
-    $(".drilldown-title").text(GROUP_NAME+" - "+type+" Compliances")
+    $(".drilldown-title").text(GROUP_NAME+" - "+type+" Compliances");
+
+    $(".table-thead-drilldown-list").empty();
+    $(".table-drilldown-list tbody").remove();
+
     var data =  data['drill_down_data'];
     var sno = 1;
     var count = 1;
@@ -992,6 +996,9 @@ function accordianType(idtype, toggleClass, contentClass){
 }
 
 function showNotCompliedDrillDownRecord(data){
+	
+    $(".table-thead-drilldown-list").empty();
+    $(".table-drilldown-list tbody").remove();
     $(".drilldown-title").text("Over due compliances of "+GROUP_NAME);
     var data =  data['drill_down_data'];
     var filter_type = chartInput.getFilterType();

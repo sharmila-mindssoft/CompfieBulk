@@ -67,7 +67,7 @@ function performLogin(e_button, e_email, e_password) {
 
     function onFailure(status) {
         console.log("status"+status);
-        message = "Unable to login. Incorrect email / password?";
+        message = "Unable to login. Incorrect email / password!";
         if(status == "ContractExpired"){
             message = "Contract Expired"
         }

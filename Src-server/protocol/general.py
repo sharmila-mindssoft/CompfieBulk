@@ -256,7 +256,7 @@ class UpdateNotificationStatus(Request):
 
     def to_inner_structure(self):
         return {
-            "notification_id": to_structure_SignedIntegerType_8(self.notification_id),
+            "notification_id": to_structure_UnsignedIntegerType_32(self.notification_id),
             "has_read": to_structure_Bool(self.has_read),
         }
 
@@ -574,13 +574,27 @@ class MasterDataNotAvailableForClient(Response):
         return {
         }
 
+class TransactionExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return TransactionExists()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 def _init_Response_class_map():
     classes = [
         UpdateUserProfileSuccess, ContactNumberAlreadyExists,
         GetDomainsSuccess, SaveDomainSuccess, DomainNameAlreadyExists,
         UpdateDomainSuccess, InvalidDomainId, ChangeDomainStatusSuccess,
         GetNotificationsSuccess, UpdateNotificationStatusSuccess, GetAuditTrailSuccess,
-        MasterDataNotAvailableForClient
+        MasterDataNotAvailableForClient, TransactionExists
     ]
     class_map = {}
     for c in classes:
@@ -618,7 +632,7 @@ class Notification(object):
 
     def to_structure(self):
         return {
-            "notification_id": to_structure_SignedIntegerType_8(self.notification_id),
+            "notification_id": to_structure_UnsignedIntegerType_32(self.notification_id),
             "notification_text": to_structure_CustomTextType_500(self.notification_text),
             "link": to_structure_CustomTextType_500(self.link),
             "has_read": to_structure_Bool(self.has_read),

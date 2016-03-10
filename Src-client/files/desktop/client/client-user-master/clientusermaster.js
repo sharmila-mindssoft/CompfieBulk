@@ -40,6 +40,7 @@ $("#btn-user-add").click(function(){
     }
     clearMessage();
     $("#user-privilege-id").val('');
+    $("#unitList li:gt(0)").remove();
     $('#email-id').removeAttr("readonly");
     loadautocountry();
     hidemenu();

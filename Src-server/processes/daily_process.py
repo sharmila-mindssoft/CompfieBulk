@@ -34,7 +34,7 @@ import traceback
 mysqlHost = "localhost"
 mysqlUser = "root"
 mysqlPassword = "123456"
-mysqlDatabase = "mirror_knowledge"
+mysqlDatabase = "compfie_knowledge"
 mysqlPort = 3306
 
 
