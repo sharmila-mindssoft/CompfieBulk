@@ -1661,7 +1661,7 @@ $(function()
   $('#duration').keyup(function()
   {
     var durationVal = $('#duration').val();
-    var durationType = $('#duration_type option:selected').text();
+    var durationType = $('#duration_type option:selected').text().trim();
     var summaryVal = '';
     if( durationVal != '' && durationType != 'Select'){
       summaryVal = durationVal + ' ' + durationType;
@@ -1671,7 +1671,7 @@ $(function()
   $('#duration_type').change(function()
   {
       var durationVal = $('#duration').val();
-      var durationType = $('#duration_type option:selected').text();
+      var durationType = $('#duration_type option:selected').text().trim();
       var summaryVal = '';
       if( durationVal != '' && durationType != 'Select'){
         summaryVal = durationVal + ' ' + durationType;
@@ -1682,18 +1682,18 @@ $(function()
   $('#repeats_every').change(function()
   {
       var repeatVal = $('#repeats_every').val();
-      var repeatType = $('#repeats_type option:selected').text();
+      var repeatType = $('#repeats_type option:selected').text().trim();
       var summaryVal1 = '';
       if( repeatVal != '' && repeatType != 'Select'){
         summaryVal1 = repeatVal + ' ' + repeatType;
       }
-      $(".summary_repeat").html("Every " + summaryVal);
+      $(".summary_repeat").html("Every " + summaryVal1);
 
   });
   $('#repeats_type').change(function()
   {
       var repeatVal = $('#repeats_every').val();
-      var repeatType = $('#repeats_type option:selected').text();
+      var repeatType = $('#repeats_type option:selected').text().trim();
       var summaryVal1 = '';
       if( repeatVal != '' && repeatType != 'Select'){
         summaryVal1 = repeatVal + ' ' + repeatType;
