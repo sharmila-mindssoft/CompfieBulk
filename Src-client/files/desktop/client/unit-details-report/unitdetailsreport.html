@@ -26,7 +26,7 @@
           <div class="field-label">Domain:</div>
           <div class="field-input">
             <input type="hidden" id="domain">
-            <input type="text" class="input-box icon-autocomplete" id="domainval" value="" readonly="readonly" onclick="loadauto_domains()">
+            <input type="text" class="input-box icon-autocomplete" id="domainval" value=""  onkeyup="loadauto_domains(this.value)">
             <div id="selectboxview-domains" class="ac-textbox" style="display:none;"  onmouseleave="hidemenudomains();">
               <ul style=" width:195px;"></ul>
             </div>
