@@ -885,12 +885,12 @@ $("#temp_addcompliance").click(function() {
     duration_type = parseInt($('#duration_type').val());
   }
   var check_duplicate_status= true;
+  var ccount = 0;
   $.each(compliances, function(index, value) {
   if (
     (value.statutory_provision == statutory_provision) &&
     (value.compliance_task == compliance_task) &&
-    comp_id == '') {
-
+    (comp_id == '' || comp_id != ccount )) {
     if(value.statutory_provision == statutory_provision){
       displayMessage("Statutory provision is duplicate");
     }
@@ -899,6 +899,7 @@ $("#temp_addcompliance").click(function() {
     }
     check_duplicate_status = false;
   }
+  ccount = ccount + 1;
   });
 
   if(check_duplicate_status){
