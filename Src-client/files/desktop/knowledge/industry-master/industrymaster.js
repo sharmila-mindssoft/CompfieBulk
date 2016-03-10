@@ -14,6 +14,7 @@ $(".btn-industry-add").click(function(){
   $("#industryname").val('');
   $("#industryid").val('');
   $(".error-message").html('');
+  $("#industryname").focus();
 });
 $(".btn-industry-cancel").click(function(){
   $("#industry-add").hide();

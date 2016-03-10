@@ -224,4 +224,5 @@ $(".fieldvalue").keyup(function (evt) {
 
 $(document).ready(function(){
   GetStatutoryLevels();
+  $("#countryval").focus();
 });

@@ -191,4 +191,5 @@ $("#search-domain-name").keyup(function() {
 
 $(document).ready(function () {
   getDomains ();
+  $("#domainname").focus();
 });

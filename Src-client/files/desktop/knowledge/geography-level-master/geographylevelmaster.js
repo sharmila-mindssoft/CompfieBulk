@@ -220,6 +220,7 @@ $("#insert-record").click(function(){
 
 $(document).ready(function(){
 	GetGeographyLevels()
+	$("#countryval").focus();
 });
 
 $(".fieldvalue").keyup(function (evt) {
