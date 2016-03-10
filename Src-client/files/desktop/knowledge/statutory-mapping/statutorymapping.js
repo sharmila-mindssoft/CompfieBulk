@@ -1359,7 +1359,7 @@ function validate_firsttab(){
 }
 function validate_secondtab(){
   if (sm_statutoryids.length == 0){
-    displayMessage("Atleast one Statutory should be selected");
+    displayMessage("Atleast one Statute should be selected");
   }else{
     displayMessage("");
     return true;

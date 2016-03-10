@@ -447,7 +447,7 @@ $("#saverecord").click(function(){
   }
 
   if(approvelist.length == 0){
-    displayMessage("Atleast one action should be select");
+    displayMessage("Atleast one action should be selected");
     return false;
   }
   function onSuccess(response) {
