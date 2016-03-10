@@ -1525,8 +1525,8 @@ function edit_geography(country,geographyids_edit){
       }
     }
     $('#'+combineid).addClass( "active" );
-    if($.inArray(parent_id, temp_parent) == -1){
-      temp_parent.push(parent_id)
+    if($.inArray(geo_id, temp_parent) == -1){
+      temp_parent.push(geo_id)
       load_geography(levelposition,country,combineid,"add",displaytext);
     }
   }
