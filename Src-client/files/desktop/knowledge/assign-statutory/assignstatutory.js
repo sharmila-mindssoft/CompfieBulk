@@ -136,10 +136,17 @@ function actstatus(element){
 }
 
 function make_breadcrumbs(){
-    var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
-    $(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + $('.grouplist.active').text() 
-      + arrowimage + $('.legalentitylist.active').text() + arrowimage + $('.locationlist.active').text() 
-      + arrowimage + $('.industrylist.active').text() + arrowimage + assignStatutoryUnitValues + arrowimage + $('.domainlist.active').text());
+
+  var bc_businessgroup = $('.businessgrouplist.active').text();
+  var bc_divisionname = $('.divisionlist.active').text();
+  var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
+
+  if(bc_businessgroup != '') bc_businessgroup = arrowimage + bc_businessgroup;
+  if(bc_divisionname != '') bc_divisionname = arrowimage + bc_divisionname;
+
+$(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + $('.grouplist.active').text() 
++ bc_businessgroup + arrowimage + $('.legalentitylist.active').text() + bc_divisionname + arrowimage + $('.locationlist.active').text() 
+  + arrowimage + $('.industrylist.active').text() + arrowimage + assignStatutoryUnitValues + arrowimage + $('.domainlist.active').text());
 }
 
 function load_secondwizard(){
@@ -840,8 +847,14 @@ function displayEdit(client_statutory_id, country_id, group_id, location_id, dom
       }
 
       var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
-      $(".breadcrumbs").html(data["country_name"] + arrowimage + data["group_name"] + arrowimage + 
-      data["legal_entity_name"] + arrowimage + data["geography_name"] + arrowimage + data["industry_name"]
+      var bc_businessgroup = '';
+      var bc_divisionname = '';
+
+      if(data["business_group_name"] != null) bc_businessgroup = arrowimage + data["business_group_name"];
+      if(data["division_name"] != null) bc_divisionname = arrowimage + data["division_name"];
+
+      $(".breadcrumbs").html(data["country_name"] + arrowimage + data["group_name"] + bc_businessgroup + arrowimage + 
+      data["legal_entity_name"] + bc_divisionname + arrowimage + data["geography_name"] + arrowimage + data["industry_name"]
       + arrowimage + data["unit_name"] + 
       arrowimage + data["domain_name"]);
 
