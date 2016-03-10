@@ -5110,7 +5110,7 @@ class KnowledgeDatabase(Database):
                 )
                 statutories.append(s_data)
 
-        return technotransactions.GetAssignedStatutoriesByIdSuccess (
+        return technotransactions.GetAssignedStatutoriesByIdSuccess(
             data["country_name"],
             data["group_name"],
             data["business_group_name"],
@@ -5120,7 +5120,8 @@ class KnowledgeDatabase(Database):
             data["geography_name"],
             data["domain_name"],
             statutories,
-            new_compliances
+            new_compliances,
+            data["industry_name"]
         )
 
     def get_assigned_statutories_report(self, request_data, user_id):
