@@ -312,7 +312,7 @@ function addcountryrow(){
         displayMessage("Select Group");
     }
     else if(legalEntityValue == ''){
-        displayMessage('Select Legal Entity');
+        displayMessage('Select Existing Legal Entity or Create New');
     }
     else{
         clearMessage();
@@ -373,7 +373,7 @@ function addcountryrow(){
             // }
         }
         if(countryCount <= countc){
-            displayMessage(countryCount+" Countries Are Allowed for this group");
+            displayMessage("Exceeds Maximum Number of Countries");
         }
 
     }
@@ -759,12 +759,12 @@ $("#btn-clientunit-submit").click(function(){
     }
     if(lentitytextValue.length == 0){
         if(legalEntityValue.length == 0){
-            displayMessage("Select Legal Entity or Create New One");
+            displayMessage("Select Existing Legal Entity or Create New");
             return false;
         }
     }
     if(unitCountValue.length == 0){
-        displayMessage("Add Atleast One Unit in a Group");
+        displayMessage("Add atleast one unit in a Group");
         return false;
     }
     if(countryVal.length == 0){
@@ -874,11 +874,11 @@ $("#btn-clientunit-submit").click(function(){
                     unitdomain = $('.domain-'+i+'-'+j).val();
                   
                     if(unitLocation == ''){
-                        $(".unit-error-msg-"+i).html("Unit location Required");
+                        $(".unit-error-msg-"+i).html("Unit Location Required");
                         return;
                     }
                     else if(unitGeographyId == ''){
-                        $(".unit-error-msg-"+i).html("Unit location Name is Invalid");
+                        $(".unit-error-msg-"+i).html("Unit Location Name is Invalid");
                         return;   
                     }
                     else if(unitCode == ''){
@@ -898,7 +898,7 @@ $("#btn-clientunit-submit").click(function(){
                         return;
                     }
                     else if(unitPostalCode == ''){
-                        $(".unit-error-msg-"+i).html("Unit Postal code Required");
+                        $(".unit-error-msg-"+i).html("Unit Postal Code Required");
                         return;
                     }
                     else if(unitdomain == ''){

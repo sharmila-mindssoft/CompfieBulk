@@ -204,7 +204,7 @@ $("#btn-clientgroup-submit").click(function(){
         displayMessage('Username Required');
     }
     else if(validateEmail(usernameVal) == ''){
-        displayMessage('Username Invalid Format');
+        displayMessage('Username Format is Invalid');
     }
     else if(licenceVal == ''){
         displayMessage('No. Of User Licence Required');
