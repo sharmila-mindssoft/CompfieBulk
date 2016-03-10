@@ -138,6 +138,8 @@ def change_client_group_status(db, request, session_user):
     is_active = request.is_active
     if db.is_invalid_id(db.tblClientGroups, "client_id", client_id) :
         return technomasters.InvalidClientId()
+    elif db.is_unit_exists_under_client(client_id):
+        return technomasters.CannotDeactivateClient()
     else:
         db.update_client_group_status(client_id, is_active, session_user)
         return technomasters.ChangeClientStatusSuccess()
@@ -213,9 +215,7 @@ def save_client(db, request, session_user):
         for unit in units:
             unit_id = (unit_id+1) if unit_id != None else db.generate_new_unit_id()
             domain_ids = ",".join(str(x) for x in unit.domain_ids)
-            if db.is_duplicate_unit_name(unit_id, unit.unit_name, client_id):
-                return technomasters.UnitNameAlreadyExists()
-            elif db.is_duplicate_unit_code(unit_id, unit.unit_code, client_id):
+            if db.is_duplicate_unit_code(unit_id, unit.unit_code, client_id):
                 return technomasters.UnitCodeAlreadyExists()
             else:
                 unit.unit_id = unit_id
@@ -302,9 +302,7 @@ def update_client(db, request, session_user):
             domain_ids = ",".join(str(x) for x in unit.domain_ids)
             if unit.unit_id == None:
                 unit_id = (unit_id+1) if unit_id != None else db.generate_new_unit_id()
-                if db.is_duplicate_unit_name(unit_id, unit.unit_name, client_id):
-                    return technomasters.UnitNameAlreadyExists()
-                elif db.is_duplicate_unit_code(unit_id, unit.unit_code, client_id):
+                if db.is_duplicate_unit_code(unit_id, unit.unit_code, client_id):
                     return technomasters.UnitCodeAlreadyExists()
                 else:
                     unit.unit_id = unit_id
@@ -313,8 +311,6 @@ def update_client(db, request, session_user):
             else:
                 if db.is_invalid_id(db.tblUnits, "unit_id", unit.unit_id):
                     return technomasters.InvalidUnitId()
-                elif db.is_duplicate_unit_name(unit.unit_id, unit.unit_name, client_id):
-                    return technomasters.UnitNameAlreadyExists()
                 elif db.is_duplicate_unit_code(unit.unit_id, unit.unit_code, client_id):
                     return technomasters.UnitCodeAlreadyExists()
                 else:

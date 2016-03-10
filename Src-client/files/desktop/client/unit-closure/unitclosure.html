@@ -63,7 +63,8 @@
    <h1> Unit Closure</h1>
     <div class="clearfix"></div>
     <div class="grid-table">
-      <table>
+      <table class="js-filtertable">
+      <thead>
           <tr align="left">
             <th align="center">#</th>
             <th>Business Group</th>
@@ -77,13 +78,14 @@
         </tr>
          <tr>
           <td align="center"></td>
-          <td><input type="text" class="filter-text-box" id="business-group-search"></td>
-          <td><input type="text" class="filter-text-box" id="legalentity-search"></td>
-          <td><input type="text" class="filter-text-box" id="division-search"></td>
-          <td><input type="text" class="filter-text-box" id="unit-search"></td>
-          <td><input type="text" class="filter-text-box" id="address-search"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="business-group-search"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="legalentity-search"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="division-search"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="unit-search"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="address-search"></td>
           <td align="center"></td>
         </tr>
+        </thead>
         <tbody class="tbody-unitclosure-list">
         </tbody>
       </table>
