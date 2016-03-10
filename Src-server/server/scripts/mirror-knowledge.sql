@@ -1,5 +1,5 @@
 CREATE DATABASE  IF NOT EXISTS `compfie_knowledge`;
-USE `mirror_knowledge`;
+USE `compfie_knowledge`;
 
 DROP TABLE IF EXISTS `tbl_audit_log`;
 CREATE TABLE `tbl_audit_log` (
