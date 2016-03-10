@@ -1,4 +1,4 @@
-USE `mirror_knowledge`;
+USE `compfie_knowledge`;
 
 -- DELETE FROM tbl_form_category;
 INSERT INTO tbl_form_category VALUES(1, "IT Team");

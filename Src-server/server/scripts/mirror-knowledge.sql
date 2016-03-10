@@ -1,4 +1,4 @@
-CREATE DATABASE  IF NOT EXISTS `mirror_knowledge`;
+CREATE DATABASE  IF NOT EXISTS `compfie_knowledge`;
 USE `mirror_knowledge`;
 
 DROP TABLE IF EXISTS `tbl_audit_log`;
