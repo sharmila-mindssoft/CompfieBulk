@@ -4979,7 +4979,6 @@ class KnowledgeDatabase(Database):
 
         return final_statutory_list
 
-
     def get_unassigned_compliances(
         self, country_id, domain_id, industry_id,
         geography_id, unit_id
@@ -5016,7 +5015,7 @@ class KnowledgeDatabase(Database):
                 SELECT g.geography_id \
                 FROM tbl_geographies g \
                 WHERE g.geography_id = %s \
-                OR g.parent_ids LIKE '%s' )\
+                OR g.parent_ids LIKE '%s' OR t4.geography_id IN %s )\
             AND t2.compliance_id NOT IN ( \
                 SELECT distinct c.compliance_id \
                 FROM tbl_client_compliances c \
@@ -5029,15 +5028,17 @@ class KnowledgeDatabase(Database):
             " % (
                     domain_id, country_id, industry_id, geography_id,
                     str("%" + str(geography_id) + ",%"),
+                    (str(tuple(parent_ids))),
                     geography_id, domain_id, unit_id
                 )
-        if parent_ids :
-            query += " OR t4.geography_id IN %s " % (str(tuple(parent_ids)))
 
+        print query
         rows = self.select_all(query)
-        columns = ["compliance_id", "compliance_task",
+        columns = [
+            "compliance_id", "compliance_task",
             "document_name", "statutory_provision",
-            "compliance_description", "statutory_id", "statutory_nature_name"
+            "compliance_description", "statutory_id",
+            "statutory_nature_name"
         ]
         result = self.convert_to_dict(rows, columns)
         # New compliances to_structure
@@ -5045,12 +5046,14 @@ class KnowledgeDatabase(Database):
             self.get_statutory_master()
         level_1_compliance = {}
         for d in result :
-            statutory_nature_name  = d["statutory_nature_name"]
+            statutory_nature_name = d["statutory_nature_name"]
             statutory_id = int(d["statutory_id"])
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
             s_mapping = statutory_data[1]
             statutory_parents = statutory_data[2]
             level_1 = statutory_parents[0]
+            if level_1 == 0 :
+                level_1 = statutory_id
             compliance_applicable_status = bool(1)
             compliance_opted_status = None
             compliance_remarks = None
@@ -5168,7 +5171,6 @@ class KnowledgeDatabase(Database):
             )
 
         query = query + qry
-        print query
         rows = self.select_all(query)
         columns = [
             "client_statutory_id", "client_id", "geography_id",
