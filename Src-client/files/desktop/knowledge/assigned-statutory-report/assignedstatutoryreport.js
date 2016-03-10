@@ -208,22 +208,23 @@ function loadAssignedStatutoryList(data){
 	  		var optedImageName;
 	  		var tableRowAssigned = $('#act-heading .table-act-heading-list .tablerow');
 			var cloneAssigned = tableRowAssigned.clone();
-			var appStatus = assignedList[k]['applicable_status']
+			var appStatus = val['applicable_status']
 			if(appStatus == true){
 				asImageName = "<img src='/images/tick1bold.png'>";
 			}
 			else{
 				asImageName = "<img src='/images/deletebold.png'>";  
 			}
-			var optedStatus = assignedList[k]['compliance_opted_status']
-			if(optedStatus == true){
-				optedImageName = "<img src='/images/tick1bold.png'>";
+			var optedStatuslevel1 = val['opted_status']
+			console.log(optedStatuslevel1);
+			if(optedStatuslevel1 == true){
+				optedImageNamelevel1 = "<img src='/images/tick-orange.png'>";
 			}
-			else if(optedStatus == false){
-				optedImageName = "<img src='/images/deletebold.png'>";  
+			else if(optedStatuslevel1 == false){
+				optedImageNamelevel1 = "<img src='/images/deletebold.png'>";  
 			}
 			else{
-				optedImageName = "Nil";
+				optedImageNamelevel1 = "Nil";
 			}
 			var remarks = assignedList[k]['compliance_remarks'];
 			if(remarks == null){
@@ -231,7 +232,8 @@ function loadAssignedStatutoryList(data){
 			}
 			$('.heading', cloneAssigned).text(assignedList[k]['level_1_statutory_name']);
 			$('.act-applicable', cloneAssigned).html(asImageName);
-			$('.act-opted', cloneAssigned).html(optedImageName);
+
+			$('.act-opted', cloneAssigned).html(optedImageNamelevel1);
 			$('.act-remarks', cloneAssigned).text(remarks);
 			var assignedRecord = assignedList[k]['compliances']; 
 			$('.tbody-assigned-statutory-list').append(cloneAssigned);		
@@ -245,7 +247,7 @@ function loadAssignedStatutoryList(data){
 				}
 				var optedStatus = assignedRecord[ke]['compliance_opted_status']
 				if(optedStatus == true){
-					optedImageName = "<img src='/images/tick1bold.png'>";
+					optedImageName = "<img src='/images/tick-orange.png'>";
 				}
 				else if(optedStatus == false){
 					optedImageName = "<img src='/images/deletebold.png'>";  
