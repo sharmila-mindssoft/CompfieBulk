@@ -62,7 +62,7 @@ def save_client_group(db, request, session_user):
     else:
         group_name = re.sub('[^a-zA-Z0-9 \n\.]', '', request.group_name)
         group_name = group_name.replace(" ", "")
-        database_name = "mirror_%s_%d" % (group_name.lower(), client_id)
+        database_name = "compfie_%s_%d" % (group_name.lower(), client_id)
         row = db._get_server_details()
         host = row[0][0]
         username = row[0][1]
