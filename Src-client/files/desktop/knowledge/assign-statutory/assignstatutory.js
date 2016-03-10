@@ -841,8 +841,8 @@ function displayEdit(client_statutory_id, country_id, group_id, location_id, dom
 
       var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
       $(".breadcrumbs").html(data["country_name"] + arrowimage + data["group_name"] + arrowimage + 
-      data["legal_entity_name"] + arrowimage + data["industry_name"] +
-      arrowimage + data["geography_name"] + arrowimage + data["unit_name"] + 
+      data["legal_entity_name"] + arrowimage + data["geography_name"] + arrowimage + data["industry_name"]
+      + arrowimage + data["unit_name"] + 
       arrowimage + data["domain_name"]);
 
       statutoriesList = data["statutories"];
