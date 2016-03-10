@@ -5610,7 +5610,7 @@ class KnowledgeDatabase(Database):
         for row in rows:
             notifications.append(general.Notification(
                 row[0], row[1], row[2],
-                bool(row[4]), self.datetime_to_string_time(row[3])
+                bool(row[4]), self.datetime_to_string(row[3])
             ))
         return notifications
 
