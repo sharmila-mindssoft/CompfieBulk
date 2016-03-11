@@ -12,12 +12,12 @@ CLIENT_TEMPLATE_PATHS = [
     (
         r"/forgot_password/([a-zA-Z-0-9]+)",
         "files/desktop/client/forgotpassword.html",
-        "", {}
+        None, {}
     ),
     (
         r"/reset_password/([a-zA-Z-0-9]+)",
         "files/desktop/client/resetpassword.html",
-        "", {}
+        None, {}
     ),
     (
         "/change-password",
@@ -25,7 +25,7 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        r"/test/([a-zA-Z-0-9]+)", "test_apis.html", "", {}
+        r"/test/([a-zA-Z-0-9]+)", "test_apis.html", None, {}
     ),
     # (
     #     "/home", "files/desktop/home/home.html",
@@ -201,7 +201,7 @@ TEMPLATE_PATHS = [
     #     "files/desktop/login/login.html",
     #     "files/mobile/login/login.html", {}
     # ),
-    ("/knowledge/test", "test_apis.html", "", {}),
+    ("/knowledge/test", "test_apis.html", None, {}),
     ("/knowledge/home", "files/desktop/knowledge/home/home.html", None, {}),
     # (
     #     "/knowledge/custom-controls",
