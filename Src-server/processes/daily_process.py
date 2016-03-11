@@ -560,17 +560,18 @@ def main():
     current_date = get_current_date()
     print "current_date datetime ", datetime.datetime.now()
     client_info = get_client_database()
-    try :
+    if client_info is not None :
         for client_id, db in client_info.iteritems() :
-            start_new_task(db, client_id, current_date)
-            db.commit()
-            notify_task_details(db, client_id)
-            # notify_before_contract_period(db, client_id)
-            db.commit()
-    except Exception, e :
-        print e
-        db.rollback()
-        print(traceback.format_exc())
+            try :
+                start_new_task(db, client_id, current_date)
+                db.commit()
+                notify_task_details(db, client_id)
+                # notify_before_contract_period(db, client_id)
+                db.commit()
+            except Exception, e :
+                print e
+                db.rollback()
+                print(traceback.format_exc())
     print "end daily_process"
     print '*' * 20
 
