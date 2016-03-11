@@ -196,9 +196,9 @@ function validate(){
 	} else if(emailId.length == 0) {
 		displayMessage("Email Id Required");
 		$("#emailid").focus();
-	} else if(contactNo.length == 0) {
+	/*} else if(contactNo.length == 0) {
 		displayMessage("Contact Number Required");
-		$("#contactno").focus();
+		$("#contactno").focus();*/
 	} else if(userGroup.length == 0) {
 		displayMessage("User Group Required");
 		$("#usergroupval").focus();
