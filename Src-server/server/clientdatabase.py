@@ -7284,6 +7284,11 @@ class ClientDatabase(Database):
         if row:
             return bool(int(row[0]))
 
+    def get_admin_info(self):
+        query = "SELECT admin_id from tbl_admin"
+        row = self.select_one(query)
+        return int(row[0])
+
     def close_unit(self, unit_id, session_user):
         condition = "unit_id ='{}'".format(unit_id)
         columns = ["is_closed", "is_active"]
