@@ -1198,18 +1198,18 @@ class StatutoryMapping(object):
 
 class GroupCompanyForUnitCreation(object):
     def __init__(self, client_id, group_name, is_active, country_ids, 
-        domain_ids, no_of_units):
+        domain_ids, next_unit_code):
         self.client_id = client_id
         self.group_name = group_name
         self.is_active = is_active
         self.country_ids = country_ids
         self.domain_ids = domain_ids
-        self.no_of_units = no_of_units
+        self.next_unit_code = next_unit_code
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["client_id", "group_name", "is_active",
-            "country_ids", "domain_ids", "no_of_units"])
+            "country_ids", "domain_ids", "next_unit_code"])
         client_id = data.get("client_id")
         client_id = parse_structure_UnsignedIntegerType_32(client_id)
         group_name = data.get("group_name")
@@ -1220,10 +1220,11 @@ class GroupCompanyForUnitCreation(object):
         domain_ids = parse_structure_VectorType_UnsignedIntegerType_32(domain_ids)
         country_ids = data.get("country_ids")
         country_ids = parse_structure_VectorType_UnsignedIntegerType_32(country_ids)
-        no_of_units = data.get("no_of_units")
-        no_of_units = parse_structure_UnsignedIntegerType_32(no_of_units)
+        next_unit_code = data.get("next_unit_code")
+        next_unit_code = parse_structure_UnsignedIntegerType_32(next_unit_code)
         return GroupCompanyForUnitCreation(
-            client_id, group_name, is_active, country_ids, domain_ids, no_of_units
+            client_id, group_name, is_active, country_ids, domain_ids, 
+            next_unit_code
         )
 
     def to_structure(self):
@@ -1233,7 +1234,7 @@ class GroupCompanyForUnitCreation(object):
             "is_active": to_structure_Bool(self.is_active),
             "country_ids": to_structure_VectorType_UnsignedIntegerType_32(self.country_ids),
             "domain_ids": to_structure_VectorType_UnsignedIntegerType_32(self.domain_ids),
-            "no_of_units": to_structure_UnsignedIntegerType_32(self.no_of_units)
+            "next_unit_code": to_structure_UnsignedIntegerType_32(self.next_unit_code)
         }
 
 #

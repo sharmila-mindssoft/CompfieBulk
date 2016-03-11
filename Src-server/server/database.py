@@ -2402,7 +2402,7 @@ class KnowledgeDatabase(Database):
             self.save_statutory_statutories_id(
                 statutory_mapping_id, data.statutory_ids, True
             )
-            notification_log_text = "New statutory mapping created %s" % (statutory_mapping)
+            notification_log_text = "New statutory mapping has been created %s" % (statutory_mapping)
             link = "/knowledge/approve-statutory-mapping"
             self.save_notifications(
                 notification_log_text, link,
@@ -2656,7 +2656,7 @@ class KnowledgeDatabase(Database):
         )
         action = "Edit Statutory Mappings"
         self.save_activity(updated_by, 10, action)
-        notification_log_text = "Stautory mapping updated %s" % (statutory_mapping)
+        notification_log_text = "Stautory mapping has been updated %s" % (statutory_mapping)
         link = "/knowledge/approve-statutory-mapping"
         self.save_notifications(
             notification_log_text, link,
@@ -3583,11 +3583,30 @@ class KnowledgeDatabase(Database):
             condition = "client_id = '%d'" % group_company["client_id"]
             rows = self.get_data(self.tblUnits, columns, condition)
             no_of_units = rows[0][0]
+            group_name = group_company["group_name"].replace(" ", "")
+            unit_code_start_letters = group_name[:2]
+
+            columns = "TRIM(LEADING '%s' FROM unit_code)" % unit_code_start_letters
+            condition = "unit_code like '%s%s'" % (unit_code_start_letters, "%")
+            rows = self.get_data(self.tblUnits, columns, condition)
+            auto_generated_unit_codes = []
+            for row in rows:
+                try:
+                    auto_generated_unit_codes.append(int(row[0]))
+                except Exception, ex:
+                    continue
+            next_auto_gen_no = 1
+            if len(auto_generated_unit_codes) > 0:
+                existing_max_unit_code = max(auto_generated_unit_codes)
+                if existing_max_unit_code == no_of_units:
+                    next_auto_gen_no = no_of_units + 1 
+                else:
+                    next_auto_gen_no = existing_max_unit_code + 1
 
             results.append(core.GroupCompanyForUnitCreation(
                 group_company["client_id"], group_company["group_name"],
                 bool(group_company["is_active"]), countries, domains,
-                no_of_units
+                next_auto_gen_no
             ))
         return results
 
@@ -3925,7 +3944,7 @@ class KnowledgeDatabase(Database):
         return self.bulk_insert(self.tblUserClients, columns, values_list)
 
     def notify_incharge_persons(self, client_group):
-        notification_text = "Client %s has assigned to you" % client_group.group_name
+        notification_text = "Client %s has been assigned" % client_group.group_name
         link = "/knowledge/client-unit"
         notification_id = self.get_new_id(
             "notification_id", "tbl_notifications"
@@ -5610,7 +5629,7 @@ class KnowledgeDatabase(Database):
         for row in rows:
             notifications.append(general.Notification(
                 row[0], row[1], row[2],
-                bool(row[4]), self.datetime_to_string_time(row[3])
+                bool(row[4]), self.datetime_to_string(row[3])
             ))
         return notifications
 

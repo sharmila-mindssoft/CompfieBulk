@@ -162,7 +162,7 @@ class EmailHandler(Email):
             Dear %s, <br> \
             <p>Your Compfie account has been created. </p>\
             <p>Your login Credentials are: <br> \
-            <p>Url: <a href='%s'>%s</a> \
+            <p>Url: <a href='%s/login'>%s/login</a> \
             <br>Username: %s \
             <br>password: %s </p>\
             <p> Thanks & Regards, <br>\
