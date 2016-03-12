@@ -130,7 +130,7 @@ function loadClientsList(clientunitsList){
     for(var i = 0; i < groupList.length; i++){
         max[groupList[i]["client_id"]] = groupList[i]["no_of_units"];
     }
-    console.log(max);
+    //console.log(max);
     $.each(unitList, function (key, value){
         var isActive = value['is_active'];  
         var unitId = value['unit_id'];
@@ -166,6 +166,26 @@ function loadClientsList(clientunitsList){
 $("#btn-clientunit-add").click(function(){
     $("#clientunit-add").show();
     $("#clientunit-view").hide();
+    $("#group-select").show();
+    $("#businessgroup-text").hide();
+    $("#businessgroup-select").show();
+    $("#businessgroup-new").show();
+    $("#businessgroup-existing").hide();
+    $("#entity-text").hide();
+    $("#entity-select").show();
+    $("#entity-new").show();
+    $("#entity-existing").hide();
+    $("#division-text").hide();
+    $("#division-select").show();
+    $("#division-new").show();
+    $("#division-existing").hide();
+    $(".no-of-units").val('');
+    $(".labelgroup").text('');
+    $(".labelbusinessgroup").text('');
+    $(".labelentity").text('');
+    $(".labeldivision").text('');
+
+
     $("#client-unit-id").val('');
     $(".unit-error-msg").val('');
     countryByCount = 1;
