@@ -64,7 +64,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance
+    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance,
+    parse_structure_VectorType_CustomTextType_500
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -132,7 +133,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
     to_structure_OptionalType_CustomTextType_500,
     to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance
+    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance,
+    to_structure_VectorType_CustomTextType_500
 )
 
 #
@@ -1100,18 +1102,18 @@ class UpdateNotificationStatusSuccess(Response):
 def _init_Response_class_map():
     classes = [
         GetChartFiltersSuccess, GetComplianceStatusChartSuccess,
-        GetEscalationsChartSuccess, GetNotCompliedChartSuccess, 
+        GetEscalationsChartSuccess, GetNotCompliedChartSuccess,
         GetTrendChartSuccess,
         GetComplianceApplicabilityStatusChartSuccess,
         GetAssigneeWiseCompliancesChartSuccess,
         GetAssigneeWiseComplianceDrillDownSuccess,
-        GetComplianceStatusDrillDownDataSuccess, 
+        GetComplianceStatusDrillDownDataSuccess,
         GetEscalationsDrillDownDataSuccess,
-        GetComplianceApplicabilityStatusDrillDownSuccess, 
+        GetComplianceApplicabilityStatusDrillDownSuccess,
         GetNotCompliedDrillDownSuccess,
-        GetTrendChartDrillDownDataSuccess, 
+        GetTrendChartDrillDownDataSuccess,
         GetNotificationsSuccess,
-        UpdateNotificationStatusSuccess, 
+        UpdateNotificationStatusSuccess,
         GetAssigneewiseComplianesFiltersSuccess,
         CheckContractExpirationSuccesss
     ]
@@ -1897,9 +1899,8 @@ class Compliance(object):
         self, compliance_id, statutory_provision,
         compliance_task, description, document_name,
         format_file_list, penal_consequences,
-        frequency, statutory_dates, repeats_type,
-        repeats_every, duration_type,
-        duration, is_active
+        frequency, statutory_dates,
+        is_active, download_url, summary
     ):
         self.compliance_id = compliance_id
         self.statutory_provision = statutory_provision
@@ -1910,11 +1911,9 @@ class Compliance(object):
         self.penal_consequences = penal_consequences
         self.frequency = frequency
         self.statutory_dates = statutory_dates
-        self.repeats_type = repeats_type
-        self.repeats_every = repeats_every
-        self.duration_type = duration_type
-        self.duration = duration
         self.is_active = is_active
+        self.download_url = download_url
+        self.summary = summary
 
     @staticmethod
     def parse_structure(data):
@@ -1925,7 +1924,7 @@ class Compliance(object):
             "penal_consequences", "frequency",
             "statutory_dates", "repeats_type",
             "repeats_every", "duration_type",
-            "duration", "is_active"
+            "duration", "is_active", "download_url", "summary"
         ])
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_OptionalType_UnsignedIntegerType_32(compliance_id)
@@ -1945,24 +1944,20 @@ class Compliance(object):
         frequency = parse_structure_OptionalType_CustomTextType_50(frequency)
         statutory_dates = data.get("statutory_dates")
         statutory_dates = parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(statutory_dates)
-        repeats_type = data.get("repeats_type")
-        repeats_type = parse_structure_OptionalType_CustomTextType_20(repeats_type)
-        repeats_every = data.get("repeats_every")
-        repeats_every = parse_structure_OptionalType_UnsignedIntegerType_32(repeats_every)
-        duration_type = data.get("duration_type")
-        duration_type = parse_structure_OptionalType_CustomTextType_20(duration_type)
-        duration = data.get("duration")
-        duration = parse_structure_OptionalType_UnsignedIntegerType_32(duration)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
+        download_url = data.get("download_url")
+        download_url = parse_structure_VectorType_CustomTextType_500(download_url)
+        summary = data.get("summary")
+        summary = parse_structure_OptionalType_CustomTextType_500(summary)
         return Compliance(
             compliance_id, statutory_provision,
             compliance_task, description,
             document_name, format_file_list,
             penal_consequences, frequency,
-            statutory_dates, repeats_type,
-            repeats_every, duration_type,
-            duration, is_active
+            statutory_dates,
+            is_active, download_url,
+            summary
         )
 
     def to_structure(self):
@@ -1976,9 +1971,7 @@ class Compliance(object):
             "penal_consequences": to_structure_OptionalType_CustomTextType_500(self.penal_consequences),
             "frequency": to_structure_OptionalType_CustomTextType_50(self.frequency),
             "statutory_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
-            "repeats_type": to_structure_OptionalType_CustomTextType_20(self.repeats_type),
-            "repeats_every": to_structure_OptionalType_UnsignedIntegerType_32(self.repeats_every),
-            "duration_type": parse_structure_OptionalType_CustomTextType_20(self.duration_type),
-            "duration": to_structure_OptionalType_UnsignedIntegerType_32(self.duration),
             "is_active": to_structure_Bool(self.is_active),
+            "download_url": to_structure_VectorType_CustomTextType_500(self.download_url),
+            "summary": to_structure_OptionalType_CustomTextType_500(self.summary)
         }

@@ -43,4 +43,8 @@ $("#submit").click(function(){
       }
     );
     }
-  });
+});
+
+$(document).ready(function(){
+  $("#currentpassword").focus();
+});

@@ -12,12 +12,12 @@ CLIENT_TEMPLATE_PATHS = [
     (
         r"/forgot_password/([a-zA-Z-0-9]+)",
         "files/desktop/client/forgotpassword.html",
-        "", {}
+        None, {}
     ),
     (
         r"/reset_password/([a-zA-Z-0-9]+)",
         "files/desktop/client/resetpassword.html",
-        "", {}
+        None, {}
     ),
     (
         "/change-password",
@@ -25,7 +25,7 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        r"/test/([a-zA-Z-0-9]+)", "test_apis.html", "", {}
+        r"/test/([a-zA-Z-0-9]+)", "test_apis.html", None, {}
     ),
     # (
     #     "/home", "files/desktop/home/home.html",
@@ -201,7 +201,7 @@ TEMPLATE_PATHS = [
     #     "files/desktop/login/login.html",
     #     "files/mobile/login/login.html", {}
     # ),
-    ("/knowledge/test", "test_apis.html", "", {}),
+    ("/knowledge/test", "test_apis.html", None, {}),
     ("/knowledge/home", "files/desktop/knowledge/home/home.html", None, {}),
     # (
     #     "/knowledge/custom-controls",
@@ -367,7 +367,10 @@ TEMPLATE_PATHS = [
 
 ]
 
-KNOWLEDGE_DB_HOST = "127.0.0.1"
+
+VERSION = 1
+
+KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
 KNOWLEDGE_DB_PASSWORD = "123456"
@@ -376,8 +379,7 @@ KNOWLEDGE_DATABASE_NAME = "compfie_knowledge"
 CLIENT_URL = "http://127.0.0.1:8080/"
 KNOWLEDGE_URL = "http://127.0.0.1:8082/knowledge"
 
-
-# # mindssoft aws
+# # # # # mindssoft aws
 # KNOWLEDGE_DB_HOST = "localhost"
 # KNOWLEDGE_DB_PORT = 3306
 # KNOWLEDGE_DB_USERNAME = "root"
@@ -387,7 +389,7 @@ KNOWLEDGE_URL = "http://127.0.0.1:8082/knowledge"
 # CLIENT_URL = "http://52.11.242.90:8082/"
 # KNOWLEDGE_URL = "http://52.11.242.90:8080/knowledge"
 
-# # # aparajitha server
+# # aparajitha server
 # KNOWLEDGE_DB_HOST = "localhost"
 # KNOWLEDGE_DB_PORT = 3306
 # KNOWLEDGE_DB_USERNAME = "root"

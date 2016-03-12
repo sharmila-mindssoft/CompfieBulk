@@ -196,9 +196,9 @@ function validate(){
 	} else if(emailId.length == 0) {
 		displayMessage("Email Id Required");
 		$("#emailid").focus();
-	} else if(contactNo.length == 0) {
+	/*} else if(contactNo.length == 0) {
 		displayMessage("Contact Number Required");
-		$("#contactno").focus();
+		$("#contactno").focus();*/
 	} else if(userGroup.length == 0) {
 		displayMessage("User Group Required");
 		$("#usergroupval").focus();
@@ -429,6 +429,7 @@ function activate_text (element,checkval,checkname) {
 
 $(document).ready(function(){
 	getUsers();
+	$("#employeename").focus();
   $('#contactno').keyup('input', function (event) {
       this.value = this.value.replace(/[^0-9]/g, '');
   });
@@ -438,6 +439,6 @@ $(document).ready(function(){
   });
 
   $('#countrycode').keyup('input', function (event) {
-      this.value = this.value.replace(/[^0-9]/g, '');
+      this.value = this.value.replace(/[^0-9^+]/g, '');
   });
 });

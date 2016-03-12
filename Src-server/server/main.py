@@ -26,7 +26,8 @@ from replication.protocol import (
 from server.constants import (
     TEMPLATE_PATHS,
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
+    VERSION
 )
 
 
@@ -219,13 +220,19 @@ class TemplateHandler(tornado.web.RequestHandler) :
         for node in tree.xpath('//*[@src]'):
             url = node.get('src')
             new_url = self.set_path(url)
+            if node.tag == "script" :
+                new_url += "?v=%s" % (VERSION)
             node.set('src', new_url)
         for node in tree.xpath('//*[@href]'):
             url = node.get('href')
             if not url.startswith("#"):
                 new_url = self.set_path(url)
+                if node.tag == "link" :
+                    new_url += "?v=%s" % (VERSION)
             else :
                 new_url = url
+                if node.tag == "link" :
+                    new_url += "?v=%s" % (VERSION)
             node.set('href', new_url)
         data = etree.tostring(tree, method="html")
         return data

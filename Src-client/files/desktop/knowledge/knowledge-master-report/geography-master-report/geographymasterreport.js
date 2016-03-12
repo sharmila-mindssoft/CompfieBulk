@@ -91,7 +91,10 @@ function activate_text (element,checkval,checkname) {
 $("#search-geography-name").keyup(function(){
   var filterkey = $("#search-geography-name").val().toLowerCase();
   var filteredList=[];
-  var geographyList = geographiesList[1];
+  var cId = '';
+  if($("#country").val() != '') cId = $("#country").val();
+
+  var geographyList = geographiesList[cId];
   for(var entity in geographyList) {
       geogtaphyname = geographyList[entity]["geography"];
       if (~geogtaphyname.toLowerCase().indexOf(filterkey)) 
