@@ -676,6 +676,8 @@ function validate_firsttab(){
         statutoriesList = data["statutories"];
         newCompliancesList = data["new_compliances"];
         load_secondwizard();
+        displayMessage("");
+        return true;
       }
       function onFailure(error){
       }
