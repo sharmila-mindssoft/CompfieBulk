@@ -5135,11 +5135,13 @@ class ClientDatabase(Database):
             compliance_name = "%s - %s" % (
                 d["document_name"], d["compliance_task"]
             )
+            summary = None
             compliance = clienttransactions.STATUTORYWISECOMPLIANCE(
                 compliance_history_id, d["compliance_id"],
                 compliance_name,
                 d["compliance_description"], frequency,
-                date_list, due_date, validity_date
+                date_list, due_date, validity_date,
+                summary
             )
             assignee_data = assignee_wise_compliances.get(assignee)
             if assignee_data is None :
@@ -5152,7 +5154,7 @@ class ClientDatabase(Database):
                 )
                 count = assignee_compliance_count.get(assignee)
                 if count is None :
-                    count = 0
+                    count = 1
                 else :
                     count += 1
                 assignee_compliance_count[assignee] = count
@@ -5167,7 +5169,7 @@ class ClientDatabase(Database):
                     )
                     count = assignee_compliance_count.get(assignee)
                     if count is None :
-                        count = 0
+                        count = 1
                     else :
                         count += 1
                     assignee_compliance_count[assignee] = count
@@ -5181,9 +5183,9 @@ class ClientDatabase(Database):
 
                     unit_data.statutories = statutories
                     if count is None :
-                        count = 0
+                        count = 1
                     else :
-                        count += len(compliance_list)
+                        count += 1
                     assignee_compliance_count[assignee] = count
                 assignee_data[unit_id] = unit_data
 

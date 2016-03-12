@@ -1451,7 +1451,7 @@ class ASSIGN_COMPLIANCE_USER(object):
 #
 
 class STATUTORYWISECOMPLIANCE(object):
-    def __init__(self, compliance_history_id, compliance_id, compliance_name, description, compliance_frequency, statutory_date, due_date, validity_date):
+    def __init__(self, compliance_history_id, compliance_id, compliance_name, description, compliance_frequency, statutory_date, due_date, validity_date, summary):
         self.compliance_history_id = compliance_history_id
         self.compliance_id = compliance_id
         self.compliance_name = compliance_name
@@ -1460,21 +1460,19 @@ class STATUTORYWISECOMPLIANCE(object):
         self.statutory_date = statutory_date
         self.due_date = due_date
         self.validity_date = validity_date
+        self.summary = summary
 
     @staticmethod
     def parse_structure(data):
-        print type(data)
         data = parse_dictionary(
             data,
             [
                 "compliance_history_id", "compliance_id",
                 "compliance_name", "description",
                 "compliance_frequency", "statutory_date",
-                "due_date", "validity_date"
+                "due_date", "validity_date", "summary"
             ]
         )
-        print "*" * 100
-        print data
         compliance_history_id = data.get("compliance_history_id")
         compliance_history_id = parse_structure_OptionalType_UnsignedIntegerType_32(compliance_history_id)
         compliance_id = data.get("compliance_id")
@@ -1491,10 +1489,13 @@ class STATUTORYWISECOMPLIANCE(object):
         due_date = parse_structure_CustomTextType_20(due_date)
         validity_date = data.get("validity_date")
         validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
+        summary = data.get("summary")
+        summary = parse_structure_OptionalType_CustomTextType_500(summary)
         return STATUTORYWISECOMPLIANCE(
             compliance_history_id, compliance_id, compliance_name,
             description, compliance_frequency,
-            statutory_date, due_date, validity_date
+            statutory_date, due_date, validity_date,
+            summary
         )
 
     def to_structure(self):
@@ -1507,6 +1508,7 @@ class STATUTORYWISECOMPLIANCE(object):
             "statutory_date": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_date),
             "due_date": to_structure_CustomTextType_20(self.due_date),
             "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
+            "summary": to_structure_OptionalType_CustomTextType_500(self.summary)
         }
 
 #
