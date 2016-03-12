@@ -19,7 +19,7 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_clientadminsettings_LICENCE_HOLDER,
     to_structure_CustomTextType_250,
     to_structure_VectorType_RecordType_clientadminsettings_PROFILE_DETAIL,
-    to_structure_SignedIntegerType_8, to_structure_CustomTextType_100,
+    to_structure_UnsignedIntegerType_32, to_structure_CustomTextType_100,
     to_structure_Bool, to_structure_CustomTextType_20,
     to_structure_CustomTextType_50,
     to_structure_VariantType_clientadminsettings_Request,
@@ -159,9 +159,9 @@ class GetSettingsSuccess(Response):
     def to_inner_structure(self):
         return {
             "is_two_levels_of_approval": to_structure_Bool(self.is_two_levels_of_approval),
-            "assignee_reminder_days": to_structure_SignedIntegerType_8(self.assignee_reminder_days),
-            "escalation_reminder_In_advance_days": to_structure_SignedIntegerType_8(self.escalation_reminder_In_advance_days),
-            "escalation_reminder_days": to_structure_SignedIntegerType_8(self.escalation_reminder_days),
+            "assignee_reminder_days": to_structure_UnsignedIntegerType_32(self.assignee_reminder_days),
+            "escalation_reminder_In_advance_days": to_structure_UnsignedIntegerType_32(self.escalation_reminder_In_advance_days),
+            "escalation_reminder_days": to_structure_UnsignedIntegerType_32(self.escalation_reminder_days),
             "profile_detail": to_structure_RecordType_clientadminsettings_PROFILE_DETAIL(self.profile_detail),
         }
 
@@ -253,8 +253,8 @@ class PROFILE_DETAIL(object):
         return {
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
-            "no_of_user_licence": to_structure_SignedIntegerType_8(self.no_of_user_licence),
-            "remaining_licence": to_structure_SignedIntegerType_8(self.remaining_licence),
+            "no_of_user_licence": to_structure_UnsignedIntegerType_32(self.no_of_user_licence),
+            "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
             "licence_holders": to_structure_VectorType_RecordType_clientadminsettings_LICENCE_HOLDER(self.licence_holders),
             "total_file_space": to_structure_Float(self.total_file_space),
             "used_space": to_structure_Float(self.used_space)
@@ -292,7 +292,7 @@ class LICENCE_HOLDER(object):
 
     def to_structure(self):
         return {
-            "user_id": to_structure_SignedIntegerType_8(self.user_id),
+            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
             "user_name": to_structure_CustomTextType_250(self.user_name),
             "email_id": to_structure_CustomTextType_100(self.email_id),
             "contact_no": to_structure_OptionalType_CustomTextType_20(self.contact_no),

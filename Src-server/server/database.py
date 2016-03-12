@@ -3510,7 +3510,7 @@ class KnowledgeDatabase(Database):
             file_parts = client_row[3].split("-")
             etn_parts = client_row[3].split(".")
             original_file_name = "%s.%s" % (file_parts[0], etn_parts[1])
-            logo_url = "%s/%s" % (LOGO_URL, client_row[3])
+            logo_url = "/%s/%s" % (LOGO_URL, client_row[3])
             contract_from = self.datetime_to_string(client_row[4])
             contract_to  = self.datetime_to_string(client_row[5])
             no_of_user_licence = client_row[6]
