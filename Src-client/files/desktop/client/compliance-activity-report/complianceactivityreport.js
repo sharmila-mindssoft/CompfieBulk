@@ -188,6 +188,11 @@ function loadComplianceActivityReportList(data){
     });
     $(".total-records").html("Total : "+sno+" records")
 }
+$("#accordion-bgwhite").find(".accordion-toggle-bgwhite").click(function(){
+    $(this).next('tbody').slideToggle('fast');
+    $(".accordion-content-bgwhite").not($(this).next()).slideUp('fast');
+});
+
 
 
 //Country----------------------------------------------------------------------------------------------------------------------

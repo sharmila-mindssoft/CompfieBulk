@@ -2124,3 +2124,7 @@ cursor: pointer;
 .ac-selectbox ul li.deactivate{
 	opacity: 0.7 !important;
 }
+
+#labelusername {
+	line-height: 1.5em;
+}

@@ -44,6 +44,9 @@ $(".btn-clientgroup-add").click(function(){
            if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
         }
 
+        $("#username").show();            
+        $("#labelusername").text('');
+
         loadautocountry();
         loadauto();
         loadAutoUsers();
@@ -215,8 +218,8 @@ $("#btn-clientgroup-submit").click(function(){
     else if(isNaN(licenceVal)){
         displayMessage('Invalid No. Of User Licence');
     }
-    else if(licenceVal.length > 4){
-        displayMessage('No. of User License : Max 4 Digits are allowed');
+    else if(licenceVal.length > 3){
+        displayMessage('No. of User License : Max 3 Digits are allowed');
     }
     else if(fileSpaceVal == ''){
         displayMessage('File Space Required');
@@ -224,8 +227,8 @@ $("#btn-clientgroup-submit").click(function(){
     else if(!$.isNumeric(fileSpaceVal)){
         displayMessage('Invalid File Space Value');
     }
-    else if(fileSpaceVal.length > 4){
-        displayMessage('File Space : Max 4 Digits are allowed');
+    else if(fileSpaceVal.length > 3){
+        displayMessage('File Space : Max 3 Digits are allowed');
     }
     else if(inchargePersonVal == ''){
         displayMessage('Incharge Person Required');
@@ -241,7 +244,7 @@ $("#btn-clientgroup-submit").click(function(){
         inchargePersonVal = arrayinchargePerson;
         if(logo_file == ''){
             displayMessage('Logo Required');
-            return false
+            return false;
         }
         function onSuccess(data){
             hideLoader();
@@ -393,8 +396,8 @@ function loadFormListUpdate(clientListData, clientGroupId){
 
             $("#contract-from").val(clientListData[clientList]['contract_from']);
             $("#contract-to").val(clientListData[clientList]['contract_to']);
-            $("#username").val(clientListData[clientList]['username']);
-
+            $("#username").hide();            
+            $("#labelusername").text(clientListData[clientList]['username']);
             var logoimgsrc = clientListData[clientList]['logo'];
 
             $("#upload-logo-img").attr("src", logoimgsrc);
@@ -575,7 +578,11 @@ function loadauto() {
             }
         }
         else{
-            str += '<li id = "'+domainId+'" class = "active_selectbox deactivate">'+domainName+'</li> ';
+            if(selectdomainstatus == 'checked'){
+                str += '<li id = "'+domainId+'" class = "active_selectbox deactivate">'+domainName+'</li> ';
+            }else{
+                str += '<li id = "'+domainId+'" class = "deactivate">'+domainName+'</li> ';
+            }
         }
     }
   $('#ulist').append(str);
