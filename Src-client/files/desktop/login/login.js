@@ -162,7 +162,7 @@ $(document).ready(function () {
             navigateToHome()
             return;
         }
-        var url = "/forgot-password";
+        var url = "/knowledge/forgot-password";
         $('.text-forgot-password a').attr('href', url);
     }
     else {

@@ -797,9 +797,6 @@ class GetUserwiseCompliancesSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        print "parse_structure"
-        print
-
         data = parse_dictionary(
             data, ["user_wise_compliances", "users", "units"]
         )
