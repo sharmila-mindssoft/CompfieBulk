@@ -3587,7 +3587,7 @@ class KnowledgeDatabase(Database):
             unit_code_start_letters = group_name[:2].upper()
 
             columns = "TRIM(LEADING '%s' FROM unit_code)" % unit_code_start_letters
-            condition = "unit_code like '%s%s'" % (unit_code_start_letters, "%")
+            condition = "unit_code like binary '%s%s' and CHAR_LENGTH(unit_code) = 7" % (unit_code_start_letters, "%")
             rows = self.get_data(self.tblUnits, columns, condition)
             auto_generated_unit_codes = []
             for row in rows:
