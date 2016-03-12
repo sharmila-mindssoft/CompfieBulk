@@ -90,7 +90,7 @@ def process_forgot_password(db, request):
     
 def send_reset_link(db, user_id, username):
     reset_token = db.new_uuid()
-    reset_link = "%sknowledge/reset-password/%s" % (
+    reset_link = "%s/reset-password/%s" % (
         KNOWLEDGE_URL, reset_token
     )
     columns = ["user_id", "verification_code"]

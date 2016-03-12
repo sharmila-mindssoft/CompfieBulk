@@ -153,6 +153,7 @@ function navigateToHome(){
 }
 
 $(document).ready(function () {
+    $("#txt-username").focus();
     short_name = getShortName()
     if (short_name === null) {
         if (mirror.verifyLoggedIn()) {

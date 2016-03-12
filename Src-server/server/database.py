@@ -2402,7 +2402,7 @@ class KnowledgeDatabase(Database):
             self.save_statutory_statutories_id(
                 statutory_mapping_id, data.statutory_ids, True
             )
-            notification_log_text = "New statutory mapping created %s" % (statutory_mapping)
+            notification_log_text = "New statutory mapping has been created %s" % (statutory_mapping)
             link = "/knowledge/approve-statutory-mapping"
             self.save_notifications(
                 notification_log_text, link,
@@ -2656,7 +2656,7 @@ class KnowledgeDatabase(Database):
         )
         action = "Edit Statutory Mappings"
         self.save_activity(updated_by, 10, action)
-        notification_log_text = "Stautory mapping updated %s" % (statutory_mapping)
+        notification_log_text = "Stautory mapping has been updated %s" % (statutory_mapping)
         link = "/knowledge/approve-statutory-mapping"
         self.save_notifications(
             notification_log_text, link,
@@ -3925,7 +3925,7 @@ class KnowledgeDatabase(Database):
         return self.bulk_insert(self.tblUserClients, columns, values_list)
 
     def notify_incharge_persons(self, client_group):
-        notification_text = "Client %s has assigned to you" % client_group.group_name
+        notification_text = "Client %s has been assigned" % client_group.group_name
         link = "/knowledge/client-unit"
         notification_id = self.get_new_id(
             "notification_id", "tbl_notifications"

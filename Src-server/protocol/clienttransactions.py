@@ -362,9 +362,9 @@ class SaveAssignedCompliance(Request):
         concurrence_person_name = data.get("concurrence_person_name")
         concurrence_person_name = parse_structure_OptionalType_CustomTextType_100(concurrence_person_name)
         approval_person = data.get("approval_person")
-        approval_person = parse_structure_UnsignedIntegerType_32(approval_person)
+        approval_person = parse_structure_OptionalType_UnsignedIntegerType_32(approval_person)
         approval_person_name = data.get("approval_person_name")
-        approval_person_name = parse_structure_CustomTextType_100(approval_person_name)
+        approval_person_name = parse_structure_OptionalType_CustomTextType_100(approval_person_name)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(compliances)
         return SaveAssignedCompliance(
@@ -379,10 +379,10 @@ class SaveAssignedCompliance(Request):
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "assignee": to_structure_SignedIntegerType_8(self.assignee),
             "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
-            "concurrence_person": to_structure_OptionalType_SignedIntegerType_8(self.concurrence_person),
+            "concurrence_person": to_structure_OptionalType_UnsignedIntegerType_32(self.concurrence_person),
             "concurrence_person_name": to_structure_OptionalType_CustomTextType_100(self.concurrence_person_name),
-            "approval_person": to_structure_SignedIntegerType_8(self.approval_person),
-            "approval_person_name": to_structure_CustomTextType_100(self.approval_person_name),
+            "approval_person": to_structure_OptionalType_UnsignedIntegerType_32(self.approval_person),
+            "approval_person_name": to_structure_OptionalType_CustomTextType_100(self.approval_person_name),
             "compliances": to_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(self.compliances),
         }
 
@@ -675,7 +675,7 @@ class InvalidPassword(Response):
 class GetAssignCompliancesFormDataSuccess(Response):
     def __init__(
         self, countries, business_groups, legal_entities,
-        divisions, units, users, two_level_approve
+        divisions, units, users, two_level_approve, client_admin
     ):
         self.countries = countries
         self.business_groups = business_groups
@@ -684,12 +684,13 @@ class GetAssignCompliancesFormDataSuccess(Response):
         self.units = units
         self.users = users
         self.two_level_approve = two_level_approve
+        self.client_admin = client_admin
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "countries", "business_groups", "legal_entities",
-            "divisions", "units", "users", "two_level_approve"
+            "divisions", "units", "users", "two_level_approve", "client_admin"
         ])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
@@ -705,9 +706,12 @@ class GetAssignCompliancesFormDataSuccess(Response):
         users = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(users)
         two_level_approve = data.get("two_level_approve")
         two_level_approve = parse_structure_Bool(two_level_approve)
+        client_admin = data.get("client_admin")
+        client_admin = parse_structure_UnsignedIntegerType_32("client_admin")
         return GetAssignCompliancesFormDataSuccess(
             countries, business_groups, legal_entities,
-            divisions, units, users, two_level_approve
+            divisions, units, users, two_level_approve,
+            client_admin
         )
 
     def to_inner_structure(self):
@@ -718,7 +722,8 @@ class GetAssignCompliancesFormDataSuccess(Response):
             "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
             "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units),
             "users": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users),
-            "two_level_approve": to_structure_Bool(self.two_level_approve)
+            "two_level_approve": to_structure_Bool(self.two_level_approve),
+            "client_admin": to_structure_UnsignedIntegerType_32(self.client_admin)
         }
 
 class GetComplianceForUnitsSuccess(Response):
