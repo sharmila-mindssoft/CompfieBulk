@@ -480,6 +480,7 @@ $("#unit").click(function(event){
 });
 
 $("#domain").click(function(event){
+  $('#activate-step-finish').show();
   if($(event.target).attr('class') == 'domainlist'){
     $('.'+$(event.target).attr('class')).each( function( index, el ) {
       $(el).removeClass( "active" );
