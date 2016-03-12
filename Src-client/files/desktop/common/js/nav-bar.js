@@ -34,12 +34,17 @@ function initializeNavBar () {
     }
     if (navBarItems === null)
         return;
-    var menus = ["Home", "Master", "Transaction", "Report"];
+    var menus = null
+    if (window.localStorage["shortName"] != null){
+        menus = ["Home", "Master", "Transaction", "Report"];
+    }else{
+        menus = ["Home", "Master", "Transaction", "Report"];
+    } 
+    console.log(menus)
     for (var i = 0; i < menus.length; i++) {
         var key = menus[i];
         if (!(key in navBarItems))
-            continue;
-
+            continue
         var liObject = $("#nav-bar-templates .sub-menu-name li").clone();
         $(".menu-name", liObject).text(toUpperCamelCase(key));
         $(".menu-items-ul", liObject).addClass("menu");
@@ -78,8 +83,8 @@ function initializeNavBar () {
                 }
                 $(".menu-items-ul.menu", liObject).append(parentLi);
             }
-        }
-
+        }    
+        
         $("#cssmenu .menu-ul").append(liObject);
     }
 
@@ -136,8 +141,19 @@ function initializeNavBar () {
     });
 
     $("ul", settingsMenuObject).append(item);
-    $("#cssmenu .menu-ul").append(settingsMenuObject);
+    $("#cssmenu .menu-ul").append(settingsMenuObject)
 
+    if ((typeof(client_name) != "undefined") || (client_name != null) ){
+        console.log("inside if")
+        var liObject = $("#nav-bar-templates .notification li").clone();
+        $("#cssmenu .menu-ul").append(liObject);
+
+        var liObject = $("#nav-bar-templates .reminder li").clone();
+        $("#cssmenu .menu-ul").append(liObject);
+
+        var liObject = $("#nav-bar-templates .escalations li").clone();
+        $("#cssmenu .menu-ul").append(liObject);
+    }
 }
 
 $(document).ready(function () {

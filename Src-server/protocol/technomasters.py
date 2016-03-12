@@ -1217,6 +1217,19 @@ class CannotDeactivateClient(Response):
         return {
         }
 
+class ReassignFirst(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ReassignFirst()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class GetClientProfileSuccess(Response):
     def __init__(self, group_companies, profiles):
         self.group_companies = group_companies
@@ -1249,7 +1262,7 @@ def _init_Response_class_map():
         InvalidBusinessGroupId, InvalidLegalEntityId, InvalidDivisionId, 
         InvalidUnitId, UserIsNotResponsibleForAnyClient, ClientCreationFailed,
         CannotDeactivateCountry, CannotDeactivateDomain, CreateNewAdminSuccess,
-        ClientDatabaseNotExists, CannotDeactivateClient
+        ClientDatabaseNotExists, CannotDeactivateClient, ReassignFirst
     ]
     class_map = {}
     for c in classes:
@@ -1290,7 +1303,7 @@ class LICENCE_HOLDER_DETAILS(object):
     def __init__(
         self, user_id, user_name, email_id, contact_no, 
         seating_unit_name, address, total_disk_space, used_disk_space,
-        is_active, is_admin
+        is_active, is_admin, is_service_provider
     ):
         self.user_id = user_id
         self.user_name = user_name
@@ -1302,13 +1315,14 @@ class LICENCE_HOLDER_DETAILS(object):
         self.used_disk_space = used_disk_space
         self.is_active = is_active
         self.is_admin = is_admin
+        self.is_service_provider = is_service_provider
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
                 "user_id", "user_name", "email_id", "contact_no", 
                 "seating_unit_name", "address", "total_disk_space", 
-                "used_disk_space", "is_active", "is_admin"
+                "used_disk_space", "is_active", "is_admin", "is_service_provider"
             ]
         )
         user_id = data.get("user_id")
@@ -1331,9 +1345,12 @@ class LICENCE_HOLDER_DETAILS(object):
         is_active = parse_structure_Bool(is_active)
         is_admin = data.get("is_admin")
         is_admin = parse_structure_Bool(is_admin)
+        is_service_provider = data.get("is_service_provider")
+        is_service_provider = parse_structure_Bool(is_service_provider)
         return LICENCE_HOLDER_DETAILS(
             user_id, user_name, email_id, contact_no, seating_unit_name, 
-            address, total_disk_space, used_disk_space, is_active, is_admin
+            address, total_disk_space, used_disk_space, is_active, is_admin,
+            is_service_provider
         )
 
     def to_structure(self):
@@ -1348,6 +1365,7 @@ class LICENCE_HOLDER_DETAILS(object):
             "used_disk_space": to_structure_Float(self.used_disk_space),
             "is_active": to_structure_Bool(self.is_active),
             "is_admin": to_structure_Bool(self.is_admin),
+            "is_service_provider": to_structure_Bool(self.is_service_provider)
         }
 
 #

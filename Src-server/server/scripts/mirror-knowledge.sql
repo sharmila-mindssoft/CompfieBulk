@@ -504,7 +504,8 @@ CREATE TABLE `tbl_client_users` (
   `employee_code` varchar(50) NULL DEFAULT NULL,
   `contact_no` varchar(20) NULL DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
-  `is_admin` tinyint(1) NOT NULL,
+  `is_admin` tinyint(1) NOT NULL DEFAULT 0,
+  `is_primary_admin` tinyint(1) NOT NULL DEFAULT 0,
   `is_active` tinyint(1) NOT NULL,
   CONSTRAINT `fk_tbl_client_users_cg` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)
 

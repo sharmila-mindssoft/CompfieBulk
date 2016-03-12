@@ -12,6 +12,7 @@ function clearMessage() {
 function displayMessage(message) {
     $(".error-message").text(message);
     $(".error-message").show();
+    hideLoader()
 }
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -253,12 +254,16 @@ $("#btn-clientgroup-submit").click(function(){
             initialize();
         }
         function onFailure(error){
+            console.log("inside onFailure")
             hideLoader();
             if(error == 'GroupNameAlreadyExists'){
                 displayMessage('Group Name Already Exists');
             }
             if(error == 'UsernameAlreadyExists'){
                 displayMessage('Username Already Exists');
+            }
+            if(error == 'ClientCreationFailed'){
+                displayMessage('Client Creation Failed. Check your server connection details');
             }
         }
 

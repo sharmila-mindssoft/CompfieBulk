@@ -176,6 +176,7 @@ CREATE TABLE `tbl_user_groups` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_admin`;
 CREATE TABLE `tbl_admin` (
+  `admin_id` int(11) NOT NULL DEFAULT 0,
   `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -192,6 +193,7 @@ CREATE TABLE `tbl_users` (
   `seating_unit_id` int(11) DEFAULT NULL,
   `user_level` int(11) DEFAULT NULL,
   `is_admin` tinyint(4) DEFAULT 0,
+  `is_primary_admin` tinyint(4) DEFAULT 0,
   `is_service_provider` tinyint(4) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT 1,
   `created_by` int(11) DEFAULT NULL,
@@ -512,3 +514,6 @@ INSERT INTO tbl_compliance_frequency VALUES(1, "One Time");
 INSERT INTO tbl_compliance_frequency VALUES(2, "Periodical");
 INSERT INTO tbl_compliance_frequency VALUES(3, "Review");
 INSERT INTO tbl_compliance_frequency VALUES(4, "On Occurrence");
+INSERT INTO tbl_notification_types VALUES(1, "Notification");
+INSERT INTO tbl_notification_types VALUES(2, "Reminder");
+INSERT INTO tbl_notification_types VALUES(3, "Escalation");

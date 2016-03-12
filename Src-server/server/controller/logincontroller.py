@@ -93,6 +93,10 @@ def send_reset_link(db, user_id, username):
     reset_link = "%s/reset-password/%s" % (
         KNOWLEDGE_URL, reset_token
     )
+    
+    condition = "user_id = '%d' " % user_id
+    db.delete(db.tblEmailVerification, condition)
+
     columns = ["user_id", "verification_code"]
     values_list = [user_id, reset_token]
     if db.insert(db.tblEmailVerification, columns, values_list):
