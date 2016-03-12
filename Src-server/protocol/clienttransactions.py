@@ -795,18 +795,21 @@ class ApprovalPersonNotBelongToUnit(Response):
         }
 
 class GetUserwiseCompliancesSuccess(Response):
-    def __init__(self, user_wise_compliances, users, units):
+    def __init__(self, user_wise_compliances, users, units, two_level_approve, client_admin):
         self.user_wise_compliances = user_wise_compliances
         self.users = users
         self.units = units
+        self.two_level_approve = two_level_approve
+        self.client_admin = client_admin
 
     @staticmethod
     def parse_inner_structure(data):
-        print "parse_structure"
-        print
 
         data = parse_dictionary(
-            data, ["user_wise_compliances", "users", "units"]
+            data, [
+                "user_wise_compliances", "users", "units",
+                "two_level_approve", "client_admin"
+            ]
         )
         user_wise_compliances = data.get("user_wise_compliances")
         user_wise_compliances = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(
@@ -819,15 +822,22 @@ class GetUserwiseCompliancesSuccess(Response):
         # )
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(units)
+        two_level_approve = data.get("two_level_approve")
+        two_level_approve = parse_structure_Bool(two_level_approve)
+        client_admin = data.get("client_admin")
+        client_admin = parse_structure_UnsignedIntegerType_32("client_admin")
         return GetUserwiseCompliancesSuccess(
-            user_wise_compliances, users, units
+            user_wise_compliances, users, units,
+            two_level_approve, client_admin
         )
 
     def to_inner_structure(self):
         result = {
             "user_wise_compliances": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(self.user_wise_compliances),
             "users": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users),
-            "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units)
+            "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units),
+            "two_level_approve": to_structure_Bool(self.two_level_approve),
+            "client_admin": to_structure_UnsignedIntegerType_32(self.client_admin)
             # "users": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users)
         }
         return result

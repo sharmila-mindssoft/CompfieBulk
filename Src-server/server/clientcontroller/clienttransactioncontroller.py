@@ -219,8 +219,13 @@ def process_get_user_wise_compliances(db, session_user, client_id):
         )
         final_dict[key] = [user_data]
 
+    two_level_approve = db.get_client_settings()
+    client_admin = db.get_admin_info()
+
     result = clienttransactions.GetUserwiseCompliancesSuccess(
-        final_dict, users, units
+        final_dict, users, units,
+        two_level_approve,
+        client_admin
     )
 
     return result
