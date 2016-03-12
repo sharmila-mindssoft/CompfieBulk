@@ -1081,14 +1081,14 @@ $("#btn-clientunit-submit").click(function(){
         var divisiontextValue = $(".labeldivision").text().trim();
         var divisionidupdate = $("#division-update-id").val();
          
-        if(businessgrouptextValue != null){
+        if(businessgrouptextValue != ''){
             businessGroup = mirror.getBusinessGroupDict(parseInt(businessgroupidupdate), businessgrouptextValue);    
         }
         else{
             businessGroup = null;
         }
         legalEntity = mirror.getLegalEntityDict(parseInt(legalentityidupdate), lentitytextValue);
-        if(divisiontextValue != null){
+        if(divisiontextValue != ''){
             division = mirror.getDivisionDict(parseInt(divisionidupdate), divisiontextValue);
         }
         else{
