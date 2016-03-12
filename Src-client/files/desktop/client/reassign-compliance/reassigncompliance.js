@@ -293,9 +293,9 @@ function submitcompliance(){
           }  
           statutoriesCount = statutoriesCount + 1;
         }  
+      }
     }
   }
-}
 
   function onSuccess(data){
     $('ul.setup-panel li:eq(0)').addClass('active');
@@ -330,7 +330,6 @@ function getReassignCompliances () {
     usersList = data["users"];
     unitsList = data["units"]; 
     //two_level_approve = data["two_level_approve"];
-
     //load_compliances(compliancesList);
   }
   function onFailure(error){
