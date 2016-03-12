@@ -166,8 +166,8 @@ function loadTaskApplicabilityStatusList(data){
             var cloneList = tableRowList.clone();
             $('.tbody-task-applicability-list').append(cloneList);
             var list = actwiselist[ke];
-            $.each(list, function(k, val) { 
-                var valcomp = list[k]["compliances"];
+            $.each(list, function(i, val) { 
+                var valcomp = list[i]["compliances"];
                 var tableRow = $('#templates .table-task-applicability-list .task-list');
                 var clone = tableRow.clone();
                 sno = sno + 1;
