@@ -3584,7 +3584,7 @@ class KnowledgeDatabase(Database):
             rows = self.get_data(self.tblUnits, columns, condition)
             no_of_units = rows[0][0]
             group_name = group_company["group_name"].replace(" ", "")
-            unit_code_start_letters = group_name[:2]
+            unit_code_start_letters = group_name[:2].upper()
 
             columns = "TRIM(LEADING '%s' FROM unit_code)" % unit_code_start_letters
             condition = "unit_code like '%s%s'" % (unit_code_start_letters, "%")
@@ -4142,27 +4142,27 @@ class KnowledgeDatabase(Database):
             domain_ids = ",".join(str(x) for x in unit.domain_ids)
             if business_group_id != None and division_id is not None:
                 values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
-                    str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
+                    str(unit.industry_id), domain_ids, str(unit.unit_code).upper(), str(unit.unit_name), str(unit.unit_address),
                     str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp,
                     business_group_id, division_id)
             elif business_group_id is not None:
                 values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
-                    str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
+                    str(unit.industry_id), domain_ids, str(unit.unit_code).upper(), str(unit.unit_name), str(unit.unit_address),
                     str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp,
                     business_group_id)
             elif division_id != None :
                 values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
-                    str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
+                    str(unit.industry_id), domain_ids, str(unit.unit_code).upper(), str(unit.unit_name), str(unit.unit_address),
                     str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp,
                     division_id)
             else:
                 values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
-                        str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
+                        str(unit.industry_id), domain_ids, str(unit.unit_code).upper(), str(unit.unit_name), str(unit.unit_address),
                         str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp)
             values_list.append(values_tuple)
         result = self.bulk_insert(self.tblUnits, columns, values_list)
 
-        action = "Created Unit \"%s - %s\"" % (unit.unit_code, unit.unit_name)
+        action = "Created Unit \"%s - %s\"" % (str(unit.unit_code).upper(), unit.unit_name)
         self.save_activity(session_user, 19, action)
 
         return result
