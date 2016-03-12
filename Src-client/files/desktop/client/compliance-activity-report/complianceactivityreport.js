@@ -4,7 +4,6 @@ var unitList;
 var userList;
 var level1List;
 var complianceList;
-
 var countriesNameVal;
 var domainNameVal;
 var usertype;
