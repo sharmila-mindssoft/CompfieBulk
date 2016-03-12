@@ -65,6 +65,7 @@
               </div>
             </div>
             <div class="input-row">
+              <input type="hidden" id="businessgroup-update-id" value="">
               <div class="single-column-field-label">Business Group</div>
               <div class="single-column-field-input"><span class="labelbusinessgroup"></span>
                 <Select id="businessgroup-select" class="input-box" onchange="loadLegalEntity();">
@@ -76,6 +77,7 @@
             </div>
             <div class="input-row-right">
               <div class="input-row">
+               <input type="hidden" id="legalentity-update-id" value="">
                 <div class="single-column-field-label">Legal Entity:<span class="mandatory">*</span></div>
                 <div class="single-column-field-input"><span class="labelentity"></span>
                   <Select id="entity-select" class="input-box" onchange="loadDivision(this.value);">
@@ -85,6 +87,7 @@
                   <span style="font-size:10px"><a href="#" id="entity-new" onclick="legalEntityExistingChecking('New')">New</a><a href="#" id="entity-existing" style="display:none;" onclick="legalEntityExistingChecking('Cancel')">Cancel</a></span> </div>
                 </div>
                 <div class="input-row">
+                 <input type="hidden" id="division-update-id" value="">
                   <div class="single-column-field-label">Division</div>
                   <div class="single-column-field-input"><span class="labeldivision"></span>
                     <Select id="division-select" class="input-box">

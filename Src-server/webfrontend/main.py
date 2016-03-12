@@ -117,8 +117,7 @@ class TemplateHandler(RequestHandler):
         self.__parameters = parameters
         self._company_manager = company_manager
 
-    def get(self, url=None) :
-        print url
+    def get(self, url=None, token=None) :
         if url is not None:
             print 'GOT URL %s' % (url,)
             company = self._company_manager.locate_company(

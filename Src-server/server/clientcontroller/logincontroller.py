@@ -109,7 +109,7 @@ def process_forgot_password(db, request):
 
 def send_reset_link(db, user_id, username, short_name):
     reset_token = db.new_uuid()
-    reset_link = "%s%s/ForgotPassword?reset_token=%s" % (
+    reset_link = "%sreset_password/%s/%s" % (
         CLIENT_URL, short_name, reset_token)
 
     condition = "user_id = '%d' " % user_id
