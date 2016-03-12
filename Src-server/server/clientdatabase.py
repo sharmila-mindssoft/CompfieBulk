@@ -5152,7 +5152,7 @@ class ClientDatabase(Database):
                 )
                 count = assignee_compliance_count.get(assignee)
                 if count is None :
-                    count = 1
+                    count = 0
                 else :
                     count += 1
                 assignee_compliance_count[assignee] = count
@@ -5167,7 +5167,7 @@ class ClientDatabase(Database):
                     )
                     count = assignee_compliance_count.get(assignee)
                     if count is None :
-                        count = 1
+                        count = 0
                     else :
                         count += 1
                     assignee_compliance_count[assignee] = count
@@ -5181,7 +5181,7 @@ class ClientDatabase(Database):
 
                     unit_data.statutories = statutories
                     if count is None :
-                        count = 1
+                        count = 0
                     else :
                         count += len(compliance_list)
                     assignee_compliance_count[assignee] = count
