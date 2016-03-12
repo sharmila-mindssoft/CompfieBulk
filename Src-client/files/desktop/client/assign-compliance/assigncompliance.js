@@ -980,8 +980,9 @@ function getAssignCompliances () {
     divisionsList = data["divisions"];
     unitsList = data["units"];
     usersList = data["users"];
-    two_level_approve = data["two_level_approve"];
-    client_admin = data["client_admin"]
+    //two_level_approve = data["two_level_approve"];
+    two_level_approve = false;
+    client_admin = data["client_admin"];
     load_firstwizard();
   }
   function onFailure(error){

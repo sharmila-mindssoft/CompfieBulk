@@ -650,21 +650,21 @@ function validate_firsttab(){
     var checkDuplicateAssignStauttory = true;
     var unitIdTab2 = null;
     for(var entity in assignedStatutoriesList) {
-      if($('.industrylist.active').text() == assignedStatutoriesList[entity]["industry_name"] && $('.domainlist.active').text() == assignedStatutoriesList[entity]["domain_name"]){
-        for(var j=0;j<assignStatutoryUnitValues.length;j++){
-          if(assignStatutoryUnitValues[j] == assignedStatutoriesList[entity]["unit_name"] && assignedStatutoriesList[entity]["submission_status"] == 0){
+      if($('.industrylist.active').text() == assignedStatutoriesList[entity]["industry_name"] && $('.domainlist.active').id == assignedStatutoriesList[entity]["domain_id"]){
+        for(var j=0;j<assignStatutoryUnitIds.length;j++){
+          if(assignStatutoryUnitIds[j] == assignedStatutoriesList[entity]["unit_id"] && assignedStatutoriesList[entity]["submission_status"] == 0){
             displayMessage("Statutes already assigned for '"+assignStatutoryUnitValues[j]+"' unit");
             checkDuplicateAssignStauttory = false;
             break;
             return false;
           }
-          if(assignStatutoryUnitValues[j] == assignedStatutoriesList[entity]["unit_name"] && assignedStatutoriesList[entity]["submission_status"] == 1 && assignStatutoryUnitValues.length > 1){
+          if(assignStatutoryUnitIds[j] == assignedStatutoriesList[entity]["unit_id"] && assignedStatutoriesList[entity]["submission_status"] == 1 && assignStatutoryUnitIds.length > 1){
             displayMessage("Please select individual unit, Statutes already submitted for '"+assignStatutoryUnitValues[j] + "' unit");
             checkDuplicateAssignStauttory = false;
             break;
             return false;
           }
-          if(assignStatutoryUnitValues[j] == assignedStatutoriesList[entity]["unit_name"] && assignedStatutoriesList[entity]["submission_status"] == 1 && assignStatutoryUnitValues.length == 1){
+          if(assignStatutoryUnitIds[j] == assignedStatutoriesList[entity]["unit_id"] && assignedStatutoriesList[entity]["submission_status"] == 1 && assignStatutoryUnitIds.length == 1){
             unitIdTab2 = assignedStatutoriesList[entity]["unit_id"];
           }
         }
@@ -675,6 +675,8 @@ function validate_firsttab(){
       function onSuccess(data){
         statutoriesList = data["statutories"];
         newCompliancesList = data["new_compliances"];
+        $('ul.setup-panel li:eq(1)').removeClass('disabled');
+        $('ul.setup-panel li a[href="#step-2"]').trigger('click');
         load_secondwizard();
         displayMessage("");
         return true;
@@ -691,8 +693,8 @@ function validate_firsttab(){
               }
           }
     );
-      displayMessage("");
-      return true;
+    displayMessage("");
+    return true;
     }
   }
 }
