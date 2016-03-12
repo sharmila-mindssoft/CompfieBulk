@@ -92,9 +92,7 @@ def save_client_group(db, request, session_user):
                 create_database_thread.start()
                 return q
             result_q = enthread()
-            print result_q
             result = result_q.get()
-            print result
         
             db.save_client_group(client_id, request, session_user)
             db.save_date_configurations(client_id, request.date_configurations,

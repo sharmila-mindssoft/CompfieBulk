@@ -175,7 +175,12 @@ function clientprofile_isadmin(userId, clientId){
         initialize();
     }
     function failure(error){
-        console.log(error);
+        if(error == "ReassignFirst"){
+            alert("Cannot Promote \
+            this user as Primary admin. Since the old admin has compliances\
+            under him. First inform the client to reassign those compliances to \
+            another user.");
+        }
     }
     mirror.createNewAdmin(userId, clientId,
         function(error, response){
@@ -183,7 +188,7 @@ function clientprofile_isadmin(userId, clientId){
                 onSuccess(response);
             }
             else{
-                onFailure(error);
+                failure(error);
             }
         }
     );
