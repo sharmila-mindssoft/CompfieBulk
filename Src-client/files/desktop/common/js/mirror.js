@@ -222,8 +222,9 @@ function initMirror() {
     }
     function verifyLoggedIn() {
         sessionToken = getSessionToken();
-        if (sessionToken == null)
+        if (sessionToken == null){
             return false;
+        }
         else
             return true;
     }

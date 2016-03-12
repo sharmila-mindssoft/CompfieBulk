@@ -584,6 +584,7 @@ $(".breadcrumbs").html('');
 $("#activate-step-submit").hide();
 $("#activate-step-submit-cancel").hide();
 $("#activate-step-finish-cancel").hide();
+$('#activate-step-finish').show();
 $('ul.setup-panel li:eq(0)').addClass('active');
 $('ul.setup-panel li:eq(1)').addClass('disabled');
 $('ul.setup-panel li a[href="#step-1"]').trigger('click');
@@ -832,6 +833,7 @@ function displayEdit(client_statutory_id, country_id, group_id, location_id, dom
       $('ul.setup-panel li:eq(1)').addClass('active');
       $("#assignstatutory-view").hide();
       $("#assignstatutory-add").show();
+
       if(submit_type == 'edit'){
         $("#backward-step-1").hide();
         $("#activate-step-finish").show();

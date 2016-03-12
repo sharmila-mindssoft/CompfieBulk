@@ -6,7 +6,6 @@ var industriesList;
 var statutoryNaturesList;
 var statutoriesList;
 var complianceFrequencyList;
-
 var temp_act = null;
 
 function clearMessage() {
@@ -17,7 +16,6 @@ function displayMessage(message) {
   $(".error-message").text(message);
   $(".error-message").show();
 }
-
 
 function getStatutoryMappings(){
   function onSuccess(data){
@@ -212,8 +210,6 @@ function loadresult(filterList){
               }else{
                 statutorydate = sdateDesc;
               }
-              
-
               $('.tbl_description', clone1).text(filterList[entity][i]["compliances"][k]["description"]);
               $('.tbl_penalconsequences', clone1).text(filterList[entity][i]["compliances"][k]["penal_consequences"]);
               $('.tbl_occurance', clone1).text(statutorydate);

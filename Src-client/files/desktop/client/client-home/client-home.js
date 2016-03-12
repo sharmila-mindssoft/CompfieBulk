@@ -938,8 +938,7 @@ function showComplianceApplicabilityDrillDownRecord(data, type){
                 var statutory_date =  val["statutory_dates"];
                 var statutorydate = '';
                 var triggerbefore = '';
-                var repeats = 'Nil';
-                if(frequency == '2' || frequency == '3') repeats = 'Every';
+                var summary = val["summary"];
 
                 for(j = 0; j < statutory_date.length; j++){
                   var sDay = '';
@@ -964,8 +963,16 @@ function showComplianceApplicabilityDrillDownRecord(data, type){
                   else if(sMonth == 11) sMonth = "Nov"
                   else if(sMonth == 12) sMonth = "Dec"
 
-                  statutorydate +=  sDay +' - '+ sMonth;
-                  triggerbefore +=  tBefore;
+                  statutorydate +=  sDay +' - '+ sMonth + ' ';
+                  triggerbefore +=  tBefore + ' ';
+                }
+
+                if(summary != null){
+                  if(statutorydate != ''){
+                    statutorydate = summary + ' ( '+statutorydate+' )';
+                  }else{
+                    statutorydate = summary;
+                  }
                 }
 
                 var tableRow = $('#templates .compliance-applicable-status .table-row-list');
@@ -975,9 +982,9 @@ function showComplianceApplicabilityDrillDownRecord(data, type){
                 $(".compliance-task-name", clone).html(val["compliance_task"])
                 $(".compliance-description-name", clone).html(val["description"]);
                 $(".penal-consequences-name", clone).html(val["penal_consequences"]);
-                $(".compliance-frequency-name", clone).html(val["frequency_id"]);
-                $(".repeats", clone).html(repeats);
-                $(".statutory-date", clone).html(statutorydate);
+                $(".compliance-frequency-name", clone).html(frequency);
+                $(".repeats", clone).html(statutorydate);
+                //$(".statutory-date", clone).html(statutorydate);
                 $(".trigger-before", clone).html(triggerbefore);
                 $('.accordion-content'+count).append(clone);
                 sno = sno + 1;
