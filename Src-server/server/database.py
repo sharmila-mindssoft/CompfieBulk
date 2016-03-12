@@ -3510,7 +3510,7 @@ class KnowledgeDatabase(Database):
             file_parts = client_row[3].split("-")
             etn_parts = client_row[3].split(".")
             original_file_name = "%s.%s" % (file_parts[0], etn_parts[1])
-            logo_url = "%s/%s" % (LOGO_URL, client_row[3])
+            logo_url = "/%s/%s" % (LOGO_URL, client_row[3])
             contract_from = self.datetime_to_string(client_row[4])
             contract_to  = self.datetime_to_string(client_row[5])
             no_of_user_licence = client_row[6]
@@ -3722,7 +3722,8 @@ class KnowledgeDatabase(Database):
     ):
         con = self._mysql_server_connect(host, username, password)
         cursor = con.cursor()
-        query = "DROP DATABASE %s" % database_name
+        query = "DROP DATABASE IF EXISTS %s" % database_name
+        print query
         cursor.execute(query)
         con.commit()
 
@@ -3928,7 +3929,7 @@ class KnowledgeDatabase(Database):
         if client_id is None:
             client_id = client_group.client_id
         columns = ["client_id", "user_id",  "email_id",
-        "employee_name", "created_on", "is_admin", "is_active"]
+        "employee_name", "created_on", "is_primary_admin", "is_active"]
         values = [client_id, 0, client_group.email_id, "Admin",
         self.get_date_time(), 1, 1]
         return self.insert(self.tblClientUsers, columns, values)
@@ -5371,7 +5372,7 @@ class KnowledgeDatabase(Database):
 
     def get_licence_holder_details(self, client_id):
         columns = "tcu.user_id, tcu.email_id, tcu.employee_name, tcu.employee_code, tcu.contact_no,"+\
-        "tcu.is_admin, tu.unit_code, tu.unit_name, tu.address, tcu.is_active"
+        "tcu.is_primary_admin, tu.unit_code, tu.unit_name, tu.address, tcu.is_active, tcu.is_admin"
         tables = [self.tblClientUsers, self.tblUnits]
         aliases = ["tcu", "tu"]
         join_type = "left join"
@@ -5394,11 +5395,6 @@ class KnowledgeDatabase(Database):
             for row in licence_holder_rows:
                 employee_name = None
                 unit_name = None
-                if(row[3] == None):
-                    employee_name = row[2]
-                else:
-                    employee_name = "%s - %s" % (row[3], row[2])
-
                 if row[7] == None:
                     unit_name = "-"
                 else:
@@ -5406,15 +5402,31 @@ class KnowledgeDatabase(Database):
                 user_id = row[0]
                 email_id= row[1]
                 contact_no = None if row[4] is "" else row[4]
-                is_admin= row[5]
-                address= row[8]
+                is_primary_admin= row[5]
                 is_active = row[9]
+                is_admin = row[10]
+                if(row[3] == None):
+                    employee_name = row[2]
+                elif (is_primary_admin == 1 and is_active == 1):
+                    employee_name = "Administrator"
+                elif (is_primary_admin == 1 and is_active == 0):
+                    employee_name = "Old Administrator"
+                else:
+                    employee_name = "%s - %s" % (row[3], row[2])
+                address= row[8]
+                is_service_provider = False
+                if unit_name == "-":
+                    if (is_primary_admin == 1 or is_admin == 1 ):
+                        is_service_provider = False
+                    else:
+                        is_service_provider = True
                 licence_holders.append(
                     technomasters.LICENCE_HOLDER_DETAILS(
                     user_id, employee_name, email_id, contact_no,
                     unit_name, address,
                     file_space/1000000000, used_space/1000000000,
-                    bool(is_active), bool(is_admin)
+                    bool(is_active), bool(is_primary_admin), 
+                    is_service_provider
                 ))
 
             remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
@@ -5745,54 +5757,122 @@ class KnowledgeDatabase(Database):
             cursor = conn.cursor()
 
             # Getting old admin details
-            query = "select username, password from tbl_admin"
+            query = "select admin_id, username, password from tbl_admin"
             cursor.execute(query)
             rows = cursor.fetchall()
-            old_admin_username = rows[0][0]
-            old_admin_password = rows[0][1]
+            old_admin_id = rows[0][0]
+            old_admin_username = rows[0][1]
+            old_admin_password = rows[0][2]
 
-            # Getting new admin details
-            query = "select email_id, password from tbl_users where \
-            user_id = '%d'" % (new_admin_id)
+            query = "select count(*) from tbl_assigned_compliances \
+            where assignee = '%d'" % old_admin_id
             cursor.execute(query)
             rows = cursor.fetchall()
-            admin_email = rows[0][0]
-            admin_password = rows[0][1]
+            compliance_count = rows[0][0]
+            if compliance_count > 0:
+                return "Reassign"
+            else:
+                # Getting new admin details
+                query = "select email_id, password from tbl_users where \
+                user_id = '%d'" % (new_admin_id)
+                print query
+                cursor.execute(query)
+                rows = cursor.fetchall()
+                admin_email = rows[0][0]
+                admin_password = rows[0][1]
 
-            # Promoting to new admin in Client db
-            query = "update tbl_admin set username = '%s', password='%s'" % (
-                admin_email, admin_password
-            )
-            cursor.execute(query)
-            query = "update tbl_users set is_admin = 1 where user_id = '%d'" % (
-                new_admin_id
-            )
-            cursor.execute(query)
+                # Promoting to new admin in Client db
+                query = "update tbl_admin set admin_id='%d', username = '%s', password='%s'" % (
+                    new_admin_id, admin_email, admin_password
+                )
+                print query
+                cursor.execute(query)
+                query = "update tbl_users set is_primary_admin = 1 where user_id = '%d'" % (
+                    new_admin_id
+                )
+                cursor.execute(query)
 
-            # Deactivating old admin in Client db
-            query = "update tbl_users set is_admin = 0 and is_active = 0 \
-            where email_id = '%s'" % (
-                old_admin_username
-            )
-            cursor.execute(query)
-            conn.commit()
+                # Deactivating old admin in Client db
+                query = "update tbl_users set is_active = 0 \
+                where user_id = '%d'" % (
+                    old_admin_id
+                )
+                cursor.execute(query)
 
-            # Promoting to new admin in Knowledge db
-            query = "update tbl_client_users set is_admin = 1 \
-            where user_id = '%d' and client_id = '%d'" % (
-                new_admin_id, client_id
-            )
-            self.execute(query)
+                # Adding all countries to new admin
+                query = "select country_id from tbl_countries"
+                cursor.execute(query)
+                rows = cursor.fetchall()
 
-            # Deactivating old admin in Knowledge db
-            query = "update tbl_client_users set is_admin = 0 and is_active = 0 \
-            where email_id = '%s' and client_id = '%d'" % (
-                old_admin_username, client_id
-            )
-            self.execute(query)
-            return True
+                query = "delete from tbl_user_countries where user_id = '%d'" % (
+                    new_admin_id
+                )
+                cursor.execute(query)
+
+                query = "Insert into tbl_user_countries (country_id, user_id) values "
+                for index, row in enumerate(rows):
+                    if index < len(rows)-1:
+                        query += "(%s, %s)," % (row[0], new_admin_id)
+                    else:
+                        query += "(%s, %s)" % (row[0], new_admin_id)
+
+                print query
+                cursor.execute(query)
+
+                # Adding all domains to new admin
+                query = "select domain_id from tbl_domains"
+                cursor.execute(query)
+                rows = cursor.fetchall()
+
+                query = "delete from tbl_user_domains where user_id = '%d'" % (
+                    new_admin_id
+                )
+                cursor.execute(query)
+
+                query = "Insert into tbl_user_domains (domain_id, user_id) values "
+                for index, row in enumerate(rows):
+                    if index < len(rows)-1:
+                        query += "(%s, %s)," % (row[0], new_admin_id)
+                    else:
+                        query += "(%s, %s)" % (row[0], new_admin_id)
+                cursor.execute(query)
+
+                # Adding all units to new admin
+                query = "select unit_id from tbl_units"
+                cursor.execute(query)
+                rows = cursor.fetchall()
+
+                query = "delete from tbl_user_units where user_id = '%d'" % (
+                    new_admin_id
+                )
+                cursor.execute(query)
+
+                query = "Insert into tbl_user_units (unit_id, user_id) values "
+                for row in rows:
+                    if index < len(rows)-1:
+                        query += "(%s, %s)," % (row[0], new_admin_id)
+                    else:
+                        query += "(%s, %s)" % (row[0], new_admin_id)
+                cursor.execute(query)
+
+                conn.commit()
+
+                # Promoting to new admin in Knowledge db
+                query = "update tbl_client_users set is_primary_admin = 1 \
+                where user_id = '%d' and client_id = '%d'" % (
+                    new_admin_id, client_id
+                )
+                self.execute(query)
+
+                # Deactivating old admin in Knowledge db
+                query = "update tbl_client_users set is_active = 0 \
+                where user_id = '%d' and client_id = '%d'" % (
+                    old_admin_id, client_id
+                )
+                self.execute(query)
+                return True
         else:
-            return False
+            return "ClientDatabaseNotExists"
 
     def is_unit_exists_under_client(self, client_id):
         column = "count(*)"

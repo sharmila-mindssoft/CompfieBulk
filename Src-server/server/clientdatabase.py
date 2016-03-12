@@ -637,14 +637,16 @@ class ClientDatabase(Database):
     def get_user_details(self, client_id):
         columns = "user_id, email_id, user_group_id, employee_name,"+\
         "employee_code, contact_no, seating_unit_id, user_level, "+\
-        " is_admin, is_service_provider, service_provider_id, is_active"
+        " is_admin, is_service_provider, service_provider_id, is_active,\
+        is_primary_admin "
         condition = "1 ORDER BY employee_name"
         rows =  self.get_data(
             self.tblUsers,columns, condition
         )
         columns = ["user_id", "email_id", "user_group_id", "employee_name",
         "employee_code", "contact_no", "seating_unit_id", "user_level",
-        "is_admin", "is_service_provider", "service_provider_id", "is_active"]
+        "is_admin", "is_service_provider", "service_provider_id", "is_active",
+        "is_primary_admin"]
         result = self.convert_to_dict(rows, columns)
         return self.return_user_details(result, client_id)
 
@@ -662,7 +664,9 @@ class ClientDatabase(Database):
                 [int(x) for x in domains.split(",")] if domains != None else [],
                 [int(x) for x in units.split(",")] if units != None else [],
                 bool(user["is_admin"]), bool(user["is_service_provider"]),
-                user["service_provider_id"], bool(user["is_active"])))
+                user["service_provider_id"], bool(user["is_active"]),
+                bool(user["is_primary_admin"])
+            ))
         return results
 
     def get_users(self, client_id):
@@ -7278,7 +7282,7 @@ class ClientDatabase(Database):
 
     def get_form_ids_for_admin(self):
         columns = "group_concat(form_id)"
-        condition = "is_admin = 1 OR form_type_id in (4,5)"
+        condition = "is_admin = 1 OR form_type_id in (4,5) OR form_id in (9,11,10,12)"
         rows = self.get_data(
             self.tblForms, columns, condition
         )
@@ -7388,7 +7392,6 @@ class ClientDatabase(Database):
         return delta.days
 
     def is_client_active(self, client_id):
-        print "inside is_client_active"
         db_con = Database(
             KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
             KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
@@ -7398,15 +7401,99 @@ class ClientDatabase(Database):
         db_cur = db_con.cursor()
         q = "select count(*) from tbl_client_groups where \
         client_id = '%d' and is_active = 1" % client_id
-        print q
         db_cur.execute(q)
         rows = db_cur.fetchall()
-        print rows
         db_con.commit()
         db_con.close()
         if rows[0][0] > 0:
-            print "returning true"
             return True
         else:
-            print "returning false"
+            return False
+
+    def get_dashboard_notification_counts(
+        self, session_user
+    ):
+        column = "notification_id"
+
+        notification_condition = "notification_type_id = 1 ORDER BY created_on \
+        DESC limit 30"
+        reminder_condition = "notification_type_id = 2 ORDER BY created_on \
+        DESC limit 30"
+        escalation_condition = "notification_type_id = 3 ORDER BY created_on \
+        DESC limit 30"
+
+        notification_rows = self.get_data(
+            self.tblNotificationsLog, column, notification_condition
+        )
+        reminder_rows = self.get_data(
+            self.tblNotificationsLog, column, reminder_condition
+        )
+        escalation_rows = self.get_data(
+            self.tblNotificationsLog, column, escalation_condition
+        )
+
+        notification_ids = None if len(notification_rows) <= 0 else notification_rows[0]
+        reminder_ids = None if len(reminder_rows) <= 0 else reminder_rows[0]
+        escalation_ids = None if len(escalation_rows) <= 0 else escalation_rows[0]
+
+        column = "count(*)"
+        notification_condition = None if notification_ids is None else "notification_ids in (%s) AND read_status=0 AND user_id = '%d'" % (
+            notification_ids, session_user
+        )
+        reminder_condition = None if reminder_ids is None else "notification_ids in (%s) AND read_status=0 AND user_id = '%d'" % (
+            reminder_ids, session_user
+        )
+        escalation_condition = None if escalation_ids is None else "notification_ids in (%s) AND read_status=0 AND user_id = '%d'" % (
+            escalation_ids, session_user
+        )
+
+        notification_count = 0
+        reminder_count = 0
+        escalation_count = 0
+        if notification_condition is not None:
+            notification_count_rows = self.get_data(
+                self.tblNotificationUserLog, column, notification_condition
+            )
+            notification_count = notification_count_rows[0]
+
+        if reminder_condition is not None:
+            reminder_count_rows = self.get_data(
+                self.tblNotificationUserLog, column, reminder_condition
+            )
+            reminder_count = reminder_count_rows[0]
+
+        if escalation_condition is not None:
+            escalation_count_rows = self.get_data(
+                self.tblNotificationUserLog, column, escalation_condition
+            )
+            escalation_count = escalation_count_rows[0]
+
+        ## Getting statutory notifications
+        column = "count(*)"
+        condition = "user_id = '%d' and read_status = 0 ORDER BY \
+        statutory_notification_id DESC limit 30" % session_user
+        statutory_notification_rows = self.get_data(
+            self.tblStatutoryNotificationStatus, column, condition
+        )
+        statutory_notification_count = statutory_notification_rows[0][0]
+        notification_count += statutory_notification_count
+
+        return notification_count, reminder_count, escalation_count
+
+    def is_primary_admin(self, user_id):
+        column = "count(*)"
+        condition = "user_id = '%d' and is_primary_admin = 1" % user_id
+        rows = self.get_data(self.tblUsers, column, condition)
+        if rows[0][0] > 0:
+            return True
+        else:
+            return False
+
+    def is_service_proivder_user(self, user_id):
+        column = "count(*)"
+        condition = "user_id = '%d' and is_service_provider = 1" % user_id
+        rows = self.get_data(self.tblUsers, column, condition)
+        if rows[0][0] > 0:
+            return True
+        else:
             return False

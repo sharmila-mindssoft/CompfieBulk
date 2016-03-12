@@ -118,7 +118,10 @@ class API(object):
         self._db.begin()
         try:
             response_data = unbound_method(self, request_data, self._db)
-            self._db.commit()
+            if type(response_data) != technomasters.ClientCreationFailed:
+                self._db.commit()
+            else:
+                self._db.rollback()
             respond(response_data)
         except Exception, e:
             print e

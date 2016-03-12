@@ -1,4 +1,4 @@
-USE `mirror_knowledge`;
+USE `compfie_knowledge`;
 
 -- DELETE FROM tbl_form_category;
 INSERT INTO tbl_form_category VALUES(1, "IT Team");
@@ -15,7 +15,7 @@ INSERT INTO tbl_form_type VALUES(4, "Settings");
 -- DELETE FROM tbl_forms
 -- fields(form_id, form_category_id, form_type_id, form_name, form_url, form_order, parent_menu)
 
--- mirror_knowledge
+-- compfie_knowledge
 # Admin
 INSERT INTO tbl_forms VALUES(1, 4, 1,  'Country', '/knowledge/country-master', 1,  null);
 INSERT INTO tbl_forms VALUES(2, 4, 1,  'Domain', '/knowledge/domain-master', 2, null);

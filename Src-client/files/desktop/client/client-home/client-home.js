@@ -3388,6 +3388,13 @@ $(document).ready(function () {
                 else{
                     // alert("Contract not expired yet"+no_of_days_left)
                 }
+                notification_count = data.notification_count;
+                console.log("notification_count"+notification_count);
+                reminder_count = data.reminder_count;
+                escalation_count = data.escalation_count;
+                $("#notification_count").text(notification_count);
+                $("#reminder_count").text(reminder_count);
+                $("#escalation_count").text(escalation_count);
             }
         }
     )
