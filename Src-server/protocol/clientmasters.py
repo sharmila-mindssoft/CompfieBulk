@@ -945,6 +945,32 @@ class InvalidServiceProviderId(Response):
         return {
         }
 
+class CannotChangePrimaryAdminStatus(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CannotChangePrimaryAdminStatus()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class CannotPromoteServiceProvider(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CannotChangePrimaryAdminStatus()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class CloseUnitSuccess(Response):
     def __init__(self):
         pass
@@ -1023,7 +1049,8 @@ def _init_Response_class_map():
     UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess,
     ChangeAdminStatusSuccess, GetAuditTrailSuccess, CannotDeactivateUserExists,
     GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExists,
-    InvalidServiceProviderId, EmailIdAlreadyExists]
+    InvalidServiceProviderId, EmailIdAlreadyExists, CannotChangePrimaryAdminStatus ,
+    CannotPromoteServiceProvider]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

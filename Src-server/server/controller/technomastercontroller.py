@@ -1,5 +1,6 @@
 import threading
 import re
+import Queue
 
 from protocol import core, technomasters
 
@@ -39,18 +40,19 @@ def create_database(
     db_password, email_id, client_id, short_name, db,
     country_ids, domain_ids
 ):
-    try:
+    try:        
         db._create_database(
             host, username, password, database_name, db_username,
             db_password, email_id, client_id, short_name, country_ids,
             domain_ids
         )
-    except Exception, e:
-        print "Error:{}".format(e)
-        db.delete_database(host, database_name, db_username, db_password)
-        print "database deleted"
-        db._connection.rollback()
-        return technomasters.ClientCreationFailed(error="Failed to create client")
+        print "returning true"
+        return True
+    except Exception, ex:
+        print "Error :{}".format(ex)
+        return False
+
+
 
 def save_client_group(db, request, session_user):
     session_user = int(session_user)
@@ -72,45 +74,54 @@ def save_client_group(db, request, session_user):
         db_port = row[0][3]
         country_ids = ",".join(str(x) for x in request.country_ids)
         domain_ids = ",".join(str(x) for x in request.domain_ids)
-        create_database_thread = threading.Thread(
-            target=create_database, args=[
-                host, username, password, database_name, db_username,
-                db_password, request.email_id, client_id, request.short_name, db,
-                country_ids, domain_ids
-            ]
-        )
-        create_database_thread.start()
         try:
+            create_database_thread = None
+            def enthread():
+                q = Queue.Queue()
+                def wrapper():
+                    q.put(
+                        create_database(
+                            host, username, password, database_name, db_username,
+                            db_password, request.email_id, client_id, request.short_name, db,
+                            country_ids, domain_ids
+                        )
+                    )
+                create_database_thread = threading.Thread(
+                    target=wrapper
+                )
+                create_database_thread.start()
+                return q
+            result_q = enthread()
+            print result_q
+            result = result_q.get()
+            print result
+        
             db.save_client_group(client_id, request, session_user)
-            print "client group saved"
             db.save_date_configurations(client_id, request.date_configurations,
                 session_user)
-            print "client config saved"
             db.save_client_countries(client_id, request.country_ids)
-            print "client countries saved"
             db.save_client_domains(client_id, request.domain_ids)
-            print "client domains saved"
             db.save_incharge_persons(request, client_id)
-            print "client incharge persons saved"
             db.save_client_user(request, session_user, client_id)
-            print "client admin saved"
             db.update_client_db_details(
                 host, client_id, db_username,
                 db_password, request.short_name, database_name, db_port
             )
             db.notify_incharge_persons(request)
-            print "notified to incharge"
-            while create_database_thread.isAlive():
-                continue
-            return technomasters.SaveClientGroupSuccess()
+            # while create_database_thread.isAlive():
+            #     continue
+            print result
+            if result :
+                return technomasters.SaveClientGroupSuccess()
+            else:
+                raise Exception('Error in Creating database')
         except Exception, e:
-            print "Error:{}".format(e)
-            db.delete_database(host, database_name, db_username, db_password)
-            print "database deleted"
-            db._connection.rollback()
+            print "Error in save client group: {}".format(e)
+            try:
+                db.delete_database(host, database_name, username, password)
+            except Exception, ex:
+                print "Error in deleting database : {}".format(ex)
             return technomasters.ClientCreationFailed(error="Failed to create client")
-
-
 
 def update_client_group(db, request, session_user):
 	session_user = int(session_user)
@@ -408,8 +419,11 @@ def get_client_profile(db, request, session_user):
 def create_new_admin(db, request, session_user):
     new_admin_id = request.new_admin_id
     client_id = request.client_id
-    if db.create_new_admin(new_admin_id, client_id, session_user):
-        return technomasters.CreateNewAdminSuccess()
-    else:
+    result = db.create_new_admin(new_admin_id, client_id, session_user)
+    if result == "ClientDatabaseNotExists":
         return technomasters.ClientDatabaseNotExists()
+    elif result == "Reassign":
+        return technomasters.ReassignFirst()
+    else:
+        return technomasters.CreateNewAdminSuccess()
 

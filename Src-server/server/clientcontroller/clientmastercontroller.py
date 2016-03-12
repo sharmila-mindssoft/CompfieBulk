@@ -281,6 +281,8 @@ def update_client_user(db, request, session_user, client_id):
 def change_client_user_status(db, request, session_user, client_id):
     if db.is_invalid_id(db.tblUsers, "user_id", request.user_id, client_id) :
         return clientmasters.InvalidUserId()
+    elif db.is_primary_admin(request.user_id):
+        return clientmasters.CannotChangePrimaryAdminStatus()
     elif db.update_user_status(
         request.user_id,
         request.is_active, session_user, client_id
@@ -290,6 +292,10 @@ def change_client_user_status(db, request, session_user, client_id):
 def change_admin_status(db, request, session_user, client_id):
     if db.is_invalid_id(db.tblUsers, "user_id", request.user_id, client_id) :
         return clientmasters.InvalidUserId()
+    elif db.is_primary_admin(request.user_id):
+        return clientmasters.CannotChangePrimaryAdminStatus()
+    elif db.is_service_proivder_user(request.user_id):
+        return clientmasters.CannotPromoteServiceProvider()
     elif db.update_admin_status(
         request.user_id,
         request.is_admin, session_user, client_id
