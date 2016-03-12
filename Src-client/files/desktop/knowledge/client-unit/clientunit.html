@@ -58,15 +58,16 @@
             <div class="input-row">
               <div class="single-column-field-label">Group:<span class="mandatory">*</span></div>
               <div class="single-column-field-input">
-                <input type="hidden" id="client-unit-id" value="">
+                <input type="hidden" id="client-unit-id" value=""><span class="labelgroup"></span>
                 <Select id="group-select" class="input-box" onchange="loadBusinessGroups();loadLegalEntity();" >
                   <option value="">Select</option>
                 </Select>
               </div>
             </div>
             <div class="input-row">
+              <input type="hidden" id="businessgroup-update-id" value="">
               <div class="single-column-field-label">Business Group</div>
-              <div class="single-column-field-input">
+              <div class="single-column-field-input"><span class="labelbusinessgroup"></span>
                 <Select id="businessgroup-select" class="input-box" onchange="loadLegalEntity();">
                   <option value="">Select</option>
                 </Select>
@@ -76,8 +77,9 @@
             </div>
             <div class="input-row-right">
               <div class="input-row">
+               <input type="hidden" id="legalentity-update-id" value="">
                 <div class="single-column-field-label">Legal Entity:<span class="mandatory">*</span></div>
-                <div class="single-column-field-input">
+                <div class="single-column-field-input"><span class="labelentity"></span>
                   <Select id="entity-select" class="input-box" onchange="loadDivision(this.value);">
                     <option value="">Select</option>
                   </Select>
@@ -85,8 +87,9 @@
                   <span style="font-size:10px"><a href="#" id="entity-new" onclick="legalEntityExistingChecking('New')">New</a><a href="#" id="entity-existing" style="display:none;" onclick="legalEntityExistingChecking('Cancel')">Cancel</a></span> </div>
                 </div>
                 <div class="input-row">
+                 <input type="hidden" id="division-update-id" value="">
                   <div class="single-column-field-label">Division</div>
-                  <div class="single-column-field-input">
+                  <div class="single-column-field-input"><span class="labeldivision"></span>
                     <Select id="division-select" class="input-box">
                       <option value="">Select</option>
                     </Select>
@@ -158,7 +161,7 @@
         <span class="full-location-list"></span></td>
         <td>
         <input type="hidden" class="unit-id">
-        <input type="text" class="input-box unit-code" maxlength="50" >
+        <input type="text" class="input-box unit-code" maxlength="20" >
         <span class="unit-code-lbl"></span>
         </td>
         <td><input type="text" class="input-box unit-name" maxlength="50"  ></td>

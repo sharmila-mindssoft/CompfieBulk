@@ -196,7 +196,7 @@ function showSideBar(idval, data){
                     displayMessage("Select Completion Date");
                 }
                 else if(validity_date == ''){
-                    displayMessage("Select Completion Date");
+                    displayMessage("Select Validity Date");
                 }
                 else{
                     function onSuccess(data){
