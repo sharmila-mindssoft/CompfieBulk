@@ -61,15 +61,30 @@ $(document).ready(function(){
   }
   url = window.location.href;
   url_parameters = url.split("/");
+  console.log(url_parameters);
   reset_token = url_parameters[url_parameters.length - 1];
-  mirror.validateResetToken(reset_token,
-    function (error, response) {
-      if (error == null){
-        onSuccess(response);
-      }
-      else {
-        onFailure(error);
-      }
+  if(url_parameters[url_parameters.length - 2] != "reset-password"){
+       mirror.validateResetToken(reset_token,
+          function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
+        }
+      );
+  }else{
+      client_mirror.validateResetToken(reset_token, url_parameters[url_parameters.length - 2],
+          function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
+        }
+      );
   }
-);
+ 
 });

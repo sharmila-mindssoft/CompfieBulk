@@ -7,12 +7,27 @@ function displayMessage(message) {
   $(".error-message").show();
 }
 
+function getShortName(){
+    var pathArray = window.location.pathname.split( '/' );
+    short_name = null;
+    if(typeof pathArray[2] === 'undefined'){
+        short_name = null;
+    }
+    else if (pathArray[2] === "login") {
+        short_name = null
+    }
+    else{
+        short_name = pathArray[2]
+    }
+    return short_name
+}
+
 $(".btn-forgotpassword-cancel").click(function(){
   var pathArray = window.location.pathname.split( '/' );
   if (pathArray[1] === 'knowledge'){
     window.location.href='/knowledge/login';
   }else{
-    window.location.href='/login/';
+    window.location.href='/login/'+getShortName();
   }
   
 });
@@ -22,7 +37,7 @@ $("#submit").click(function(){
     var username = $("#username").val().trim();
     if(username.length == 0) {
       displayMessage("Username required");
-    } else {
+    }else {
 
         function onSuccess(data){
           displayMessage("Password reset link has been sent to your email Id");
@@ -33,15 +48,29 @@ $("#submit").click(function(){
             displayMessage("No such user exists");
           }
         }
-        mirror.forgotPassword(username, 
-          function (error, response) {
-            if (error == null){
-              onSuccess(response);
+
+        if(getShortName() == null){
+            mirror.forgotPassword(username, 
+              function (error, response) {
+                if (error == null){
+                  onSuccess(response);
+                }
+                else {
+                  onFailure(error);
+                }
             }
-            else {
-              onFailure(error);
-            }
+          );
+        }else{
+            client_mirror.forgotPassword(username, 
+                function (error, response) {
+                  if (error == null){
+                    onSuccess(response);
+                  }
+                  else {
+                    onFailure(error);
+                  }
+              }
+            );
         }
-      );
-      }
+    }
   });
