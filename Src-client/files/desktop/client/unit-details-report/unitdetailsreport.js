@@ -371,7 +371,7 @@ function loadauto_domains (textval) {
   document.getElementById('selectboxview-domains').style.display = 'block';
   var domains = domainsList;
   var suggestions = [];
-  $('#autocompleteview-domains ul').empty();
+  $('#selectboxview-domains ul').empty();
   if(textval.length>0){
     for(var i in domains){
         if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);     

@@ -3,6 +3,8 @@ var usersList;
 var unitsList;
 var reassignUserId=null;
 var cCount = 1;
+var two_level_approve;
+
 
 function clearMessage() {
   $(".error-message").hide();
@@ -291,9 +293,9 @@ function submitcompliance(){
           }  
           statutoriesCount = statutoriesCount + 1;
         }  
+      }
     }
   }
-}
 
   function onSuccess(data){
     $('ul.setup-panel li:eq(0)').addClass('active');
@@ -327,7 +329,7 @@ function getReassignCompliances () {
     compliancesList = data["user_wise_compliances"];
     usersList = data["users"];
     unitsList = data["units"]; 
-
+    //two_level_approve = data["two_level_approve"];
     //load_compliances(compliancesList);
   }
   function onFailure(error){
@@ -416,60 +418,47 @@ function activate_user (element,checkval,checkname) {
   $("#user").val(checkval);
 }
 
-
-$("#assignee").click(function(event){
-  var chkstatus = $(event.target).attr('class');
-  if(chkstatus != undefined){
-    if(chkstatus == 'assigneelist active'){
-      $(event.target).removeClass("active");
-    }else{
-      $(event.target).addClass("active");
+function getUserLevel(selectedUserId){
+  var getuserLevel = null; 
+  for(var user in usersList){
+    var userId= usersList[user]["user_id"];
+    if(userId == selectedUserId){
+      getuserLevel = usersList[user]["user_level"];
     }
-
-    var concurrenceUnit =  $("#concurrence_unit").val();
-    var approvalUnit =  $("#approval_unit").val();
-
-    loadUser(concurrenceUnit, 'concurrencelist', 'concurrence');
-    loadUser(approvalUnit, 'approvallist', 'approval');
   }
-});
+  return getuserLevel;
+}
+function loadUser(userType){
+  var selectedUnit;
+  var userClass;
+  var temp_assignee = null;
+  var temp_concurrence = null;
+  var temp_approval = null;
+  var temp_id = null;
 
-$("#concurrence").click(function(event){
-  var chkstatus = $(event.target).attr('class');
-  if(chkstatus != undefined){
-    if(chkstatus == 'concurrencelist active'){
-      $(event.target).removeClass("active");
-    }else{
-      $(event.target).addClass("active");
-    }
+  if(userType == 'assignee'){
+    selectedUnit = $("#assignee_unit").val();
+    userClass = 'assigneelist';
 
-    var assigneeUnit =  $("#assignee_unit").val();
-    var approvalUnit =  $("#approval_unit").val();
-
-    //loadUser(assigneeUnit, 'assigneelist', 'assignee');
-    loadUser(approvalUnit, 'approvallist', 'approval');
+    if($('.assigneelist.active').attr('id') != undefined)
+      temp_id = parseInt($('.assigneelist.active').attr('id'));
   }
-});
+  else if(userType == 'concurrence'){
+    selectedUnit = $("#concurrence_unit").val();
+    userClass = 'concurrencelist';
 
-$("#approval").click(function(event){
-  var chkstatus = $(event.target).attr('class');
-  if(chkstatus != undefined){
-    if(chkstatus == 'approvallist active'){
-      $(event.target).removeClass("active");
-    }else{
-      $(event.target).addClass("active");
-    }
-
-    var assigneeUnit =  $("#assignee_unit").val();
-    var concurrenceUnit =  $("#concurrence_unit").val();
-
-    //loadUser(assigneeUnit, 'assigneelist', 'assignee');
-    //loadUser(concurrenceUnit, 'concurrencelist', 'concurrence');
+    if($('.concurrencelist.active').attr('id') != undefined)
+      temp_id = parseInt($('.concurrencelist.active').attr('id'));
   }
-});
+  else{
+    selectedUnit = $("#approval_unit").val();
+    userClass = 'approvallist';
 
-function loadUser(selectedUnit, userClass, userType){
+    if($('.approvallist.active').attr('id') != undefined)
+      temp_id = parseInt($('.approvallist.active').attr('id'));
+  }
   var str='';
+  $('#'+userType).empty();
 
   var assigneeUserId = null;
   if($('.assigneelist.active').attr('id') != undefined)
@@ -483,46 +472,133 @@ function loadUser(selectedUnit, userClass, userType){
   if($('.approvallist.active').attr('id') != undefined)
     approvalUserId = parseInt($('.approvallist.active').attr('id'));
 
-  $('#'+userType).empty();
+
+  var conditionResult = true;
+  var conditionResult1 = true;
+  var userLevel = null;
+  var userLevel1 = null;
+
+  if(userType == 'assignee' && (concurrenceUserId != null || approvalUserId != null)){
+    if(concurrenceUserId != null){
+      userLevel = getUserLevel(concurrenceUserId);
+    }else{
+      userLevel = getUserLevel(approvalUserId);
+    }
+  }else if(userType == 'concurrence' && (assigneeUserId != null || approvalUserId != null)){
+    if(assigneeUserId != null){
+      userLevel = getUserLevel(assigneeUserId);
+    }
+    if(approvalUserId != null){
+      userLevel1 = getUserLevel(approvalUserId);
+    }
+  }else if(userType == 'approval' && (concurrenceUserId != null || assigneeUserId != null)){
+    if(concurrenceUserId != null){
+      userLevel = getUserLevel(concurrenceUserId);
+    }else{
+      userLevel = getUserLevel(assigneeUserId);
+    }
+  }
 
   for(var user in usersList){
     var userUnits = usersList[user]["unit_ids"];
     if( selectedUnit == 'all' || $.inArray(parseInt(selectedUnit), userUnits) >= 0){
-          var userId= usersList[user]["user_id"];
-          var userName= usersList[user]["user_name"];
-          if((assigneeUserId == null || assigneeUserId != userId) && 
-            (concurrenceUserId == null || concurrenceUserId !=userId) && 
-            (approvalUserId == null || approvalUserId != userId)){
-            str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
-          }
+      var userId= usersList[user]["user_id"];
+      var uLevel = usersList[user]["user_level"];
+      var userName= usersList[user]["user_name"] + ' - Level ' + uLevel;
+     
+      if(userLevel != null){
+        if(userType == 'assignee'){
+          conditionResult = (uLevel >= userLevel);
         }
-      /*if( selectedUnit == 'all' || selectedUnit == user ){
-        var unitusers = usersList[user];
-        for(var user in unitusers){
-          var userId= unitusers[user]["user_id"];
-          if(assigneeUserId != userId && concurrenceUserId !=userId && approvalUserId != userId){
-            str += '<li id="'+userId+'" class="'+userClass+'" >'+unitusers[user]["user_name"]+'</li>';
-          }
+        else if(userType == 'concurrence'){
+          conditionResult = (uLevel <= userLevel);
         }
-      }*/
+        else if(userType == 'approval'){
+          conditionResult = (uLevel <= userLevel);
+        }
+      }
+
+      if(userType == 'concurrence' && userLevel1 != null){
+          conditionResult1 = (uLevel >= userLevel1);
+      }
+
+      if(conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
+        && (approvalUserId == null || approvalUserId != userId) 
+        && (concurrenceUserId == null || concurrenceUserId != userId)){
+        if(temp_id == userId){
+          str += '<li id="'+userId+'" class="'+userClass+ ' active'+'" >'+userName+'</li>';
+        }else{
+          str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
+        }
+      }
     }
+  }
   $('#'+userType).append(str);
 }
 
+$("#assignee").click(function(event){
+  var chkstatus = $(event.target).attr('class');
+  if(chkstatus != undefined){
+    if(chkstatus == 'assigneelist active'){
+      $(event.target).removeClass("active");
+    }else{
+      $('.assigneelist').each( function( index, el ) {
+        $(el).removeClass( "active" );
+      });
+      $(event.target).addClass("active");
+    }
+
+    loadUser('concurrence');
+    loadUser('approval');
+  }
+});
+
+$("#concurrence").click(function(event){
+  var chkstatus = $(event.target).attr('class');
+  if(chkstatus != undefined){
+    if(chkstatus == 'concurrencelist active'){
+      $(event.target).removeClass("active");
+    }else{
+      $('.concurrencelist').each( function( index, el ) {
+        $(el).removeClass( "active" );
+      });
+      $(event.target).addClass("active");
+    }
+
+    loadUser('assignee');
+    loadUser('approval');
+  }
+});
+
+$("#approval").click(function(event){
+  var chkstatus = $(event.target).attr('class');
+  if(chkstatus != undefined){
+    if(chkstatus == 'approvallist active'){
+      $(event.target).removeClass("active");
+    }else{
+      $('.approvallist').each( function( index, el ) {
+        $(el).removeClass( "active" );
+      });
+      $(event.target).addClass("active");
+    }
+
+    loadUser('assignee');
+    loadUser('concurrence');
+  }
+});
+
 $('#assignee_unit').change(function() {
-    var assigneeUnit =  $("#assignee_unit").val();
-    loadUser(assigneeUnit, 'assigneelist', 'assignee');
+    loadUser('assignee');
 });
 
 $('#concurrence_unit').change(function() {
-    var concurrenceUnit =  $("#concurrence_unit").val();
-    loadUser(concurrenceUnit, 'concurrencelist', 'concurrence');
+    loadUser('concurrence');
 });
 
 $('#approval_unit').change(function() {
-    var approvalUnit =  $("#approval_unit").val();
-    loadUser(approvalUnit, 'approvallist', 'approval');
+    loadUser('approval');
 });
+
 
 function validate_firsttab(){
   return true;
@@ -532,12 +608,15 @@ function validate_secondtab(){
   if($('.assigneelist.active').text() == ''){
     displayMessage("Assignee Required");
     return false;
-  /*}else if ($('.approvallist.active').text() == ''){
+  /*}else if ($('.concurrencelist.active').text() == '' && two_level_approve){
+    displayMessage("Concurrence Required");
+    return false;*/
+  }else if ($('.approvallist.active').text() == ''){
     displayMessage("Approval Required");
     return false;
   }else if ($('#reason').val().trim() == ''){
     displayMessage("Reason Required");
-    return false;*/
+    return false;
   }else{
     displayMessage("");
     return true;

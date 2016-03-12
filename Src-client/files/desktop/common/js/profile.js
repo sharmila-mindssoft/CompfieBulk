@@ -11,14 +11,26 @@ function initialize(){
 	clearMessage();
 	var contactNo = (userprofile['contact_no']).split('-');
 	$('.employee-name').text(userprofile['employee_name']);
-	$('.designation').text(userprofile['designation']);
+
+	if(userprofile['designation'] == null || userprofile['designation'] == "None" ){
+		$('.designation').text("");
+	}
+	else{
+		$('.designation').text(userprofile['designation']);			
+	}	
 	$('.email-id').text(userprofile['email_id']);
 	$('.countrycode').val(contactNo[0]);
 	$('.areacode').val(contactNo[1]);
 	$('.mobile').val(contactNo[2]);
 	$('.employee-id').text(userprofile['employee_code']);
 	$('.usergroup').text(userprofile['user_group']);
-	$('textarea.address').text(userprofile['address']);
+	console.log(userprofile['address']);
+	if(userprofile['address'] == null || userprofile['address'] == "None" ){
+		$('.textarea.address').val("");
+	}
+	else{
+		$('textarea.address').val(userprofile['address']);		
+	}		
 	$('.userid').val(userprofile['user_id']);
 }
 $('.countrycode').on('input', function (event) {   

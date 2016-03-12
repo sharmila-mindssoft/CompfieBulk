@@ -78,5 +78,5 @@ INSERT INTO `tbl_machines` (`machine_id`, `ip`, `port`, `client_ids`, `server_fu
 (1, '127.0.0.1', 8081, '1', 0);
 
 -- tbl_database_server
-INSERT INTO `tbl_database_server` (`ip`, `server_username`, `server_password`) VALUES
-('127.0.0.1', 'root', '123456');
+INSERT INTO `tbl_database_server` (`ip`, `port`, `server_username`, `server_password`) VALUES
+('127.0.0.1', 3306, 'root', '123456');

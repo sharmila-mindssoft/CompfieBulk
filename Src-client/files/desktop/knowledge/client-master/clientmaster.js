@@ -24,24 +24,30 @@ $(".btn-clientgroup-add").click(function(){
     $("#clientgroup-view").hide();
     $("#clientgroup-add").show();
     function onSuccess(data){
+        clearMessage();
+
         userList = data["users"];
         domainsList = data["domains"];
         countriesList = data["countries"];
-
         clientcountriesList = data["client_countries"];
         clientdomainList = data["client_domains"];
-         $("#clientgroup-name").val('');
+
+        $("#clientgroup-name").val('');
         $("#clientgroup-id").val('');
-        clearMessage();
         $("#short-name").removeAttr("readonly");
-        $("#upload-logo-img").hide();
+        $("#upload-logo-img").hide();        
+        $(".shorturl").text('');
+        $("#subscribe-sms").prop("checked", "false");
+        $("#subscribe-sms").removeProp('checked');
+        
         var x=document.getElementsByTagName("input");
         for(i = 0; i<=x.length-1; i++){
            if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
         }
-        $(".shorturl").text('');
-        $("#subscribe-sms").prop("checked", "false");
-        $("#subscribe-sms").removeProp('checked');
+
+        $("#username").show();            
+        $("#labelusername").text('');
+
         loadautocountry();
         loadauto();
         loadAutoUsers();
@@ -126,13 +132,13 @@ $('#file-space').on('input', function (event) {
     this.value = this.value.replace(/[^0-9]/g, '');
 });
 
-$("#short-name").keypress(function (e) {
-   $(this).val($(this).val().replace(' ',''));
+$('#short-name').on('input', function (event) {
+    this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
 });
 
 $("#short-name").on('keyup', function(){
     $(".shorturl").text($(this).val());
-})
+});
 
 $("#btn-clientgroup-submit").click(function(){
     var dateConfigurations = [];
@@ -213,8 +219,8 @@ $("#btn-clientgroup-submit").click(function(){
     else if(isNaN(licenceVal)){
         displayMessage('Invalid No. Of User Licence');
     }
-    else if(licenceVal.length > 4){
-        displayMessage('No. of User License : Max 4 Digits are allowed');
+    else if(licenceVal.length > 3){
+        displayMessage('No. of User License : Max 3 Digits are allowed');
     }
     else if(fileSpaceVal == ''){
         displayMessage('File Space Required');
@@ -222,8 +228,8 @@ $("#btn-clientgroup-submit").click(function(){
     else if(!$.isNumeric(fileSpaceVal)){
         displayMessage('Invalid File Space Value');
     }
-    else if(fileSpaceVal.length > 4){
-        displayMessage('File Space : Max 4 Digits are allowed');
+    else if(fileSpaceVal.length > 3){
+        displayMessage('File Space : Max 3 Digits are allowed');
     }
     else if(inchargePersonVal == ''){
         displayMessage('Incharge Person Required');
@@ -239,7 +245,7 @@ $("#btn-clientgroup-submit").click(function(){
         inchargePersonVal = arrayinchargePerson;
         if(logo_file == ''){
             displayMessage('Logo Required');
-            return false
+            return false;
         }
         function onSuccess(data){
             hideLoader();
@@ -364,7 +370,7 @@ function clientgroup_edit(clientGroupId){
         countriesList = data["countries"];
         clientcountriesList = data["client_countries"];
         clientdomainList = data["client_domains"];
-        loadFormListUpdate(data['client_list'],clientGroupId);
+        loadFormListUpdate(data['client_list'], clientGroupId);
     }
     function onFailure(error){
         console.log(error);
@@ -380,6 +386,7 @@ function clientgroup_edit(clientGroupId){
         });
 }
 function loadFormListUpdate(clientListData, clientGroupId){
+    $("#upload-logo-img").show();
     for(clientList in clientListData){
         if(clientGroupId == clientListData[clientList]['client_id']){
             $("#clientgroup-name").val(clientListData[clientList]['client_name']);
@@ -394,9 +401,12 @@ function loadFormListUpdate(clientListData, clientGroupId){
 
             $("#contract-from").val(clientListData[clientList]['contract_from']);
             $("#contract-to").val(clientListData[clientList]['contract_to']);
-            $("#username").val(clientListData[clientList]['username']);
-            //$("#upload-logo-img").attr("src",clientListData[clientList]['logo']);
-            $("#upload-logo-img").show();
+            $("#username").hide();            
+            $("#labelusername").text(clientListData[clientList]['username']);
+            var logoimgsrc = clientListData[clientList]['logo'];
+
+            $("#upload-logo-img").attr("src", logoimgsrc);
+            
             $("#no-of-user-licence").val(clientListData[clientList]['no_of_user_licence']);
             $("#file-space").val(clientListData[clientList]['total_disk_space']);
             if(clientListData[clientList]['is_sms_subscribed'] == true){
@@ -573,7 +583,11 @@ function loadauto() {
             }
         }
         else{
-            str += '<li id = "'+domainId+'" class = "active_selectbox deactivate">'+domainName+'</li> ';
+            if(selectdomainstatus == 'checked'){
+                str += '<li id = "'+domainId+'" class = "active_selectbox deactivate">'+domainName+'</li> ';
+            }else{
+                str += '<li id = "'+domainId+'" class = "deactivate">'+domainName+'</li> ';
+            }
         }
     }
   $('#ulist').append(str);
@@ -665,7 +679,12 @@ function loadautocountry() {
             }    
         }
         else{
-            str += '<li id="'+countryId+'" class="active_selectbox_country deactivate" >'+countryName+'</li> ';
+            if(selectcountrystatus == 'checked'){
+                str += '<li id="'+countryId+'" class="active_selectbox_country deactivate" >'+countryName+'</li> ';
+            }
+            else{
+                str += '<li id="'+countryId+'" class="deactivate" >'+countryName+'</li> ';   
+            }
         }
         
     }

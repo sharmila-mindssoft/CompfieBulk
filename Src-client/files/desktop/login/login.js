@@ -154,6 +154,7 @@ function navigateToHome(){
 
 $(document).ready(function () {
     console.log("inside document ready");
+    $("#txt-username").focus();
     short_name = getShortName()
     console.log("short name"+short_name);
     if (short_name === null) {
