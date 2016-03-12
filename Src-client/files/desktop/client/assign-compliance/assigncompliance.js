@@ -157,7 +157,7 @@ function load_secondwizard(){
           else if(sMonth == 12) sMonth = "December"
 
           if(tDays != ''){
-            triggerdate +=  tDays + " Day(s)";
+            triggerdate +=  tDays + " Day(s) ";
           }
           statutorydate +=  sMonth +' '+ sDay + ' ';
 
