@@ -14,16 +14,20 @@ function displayMessage(message) {
 function actstatus(element){
   var remarkbox = '.remark'+$(element).val();
   var changestatusStatutories = '.statutoryclass'+$(element).val();
+
   if ($(element).is(":checked"))
   {
     $(remarkbox).hide();
     $(changestatusStatutories).each(function() { 
-      this.checked = true;           
+      this.checked = true;
+      if($('#applicable'+this.value).val() == "false")  
+        $('.cremarkadd'+this.value).show();
     });
   }else{
     $(remarkbox).show();
     $(changestatusStatutories).each(function() {
-      this.checked = false;                     
+      this.checked = false;
+      $('.cremarkadd'+this.value).hide();                     
     });  
   }
 }
@@ -32,7 +36,8 @@ function compliancestatus(element, viewremarks){
   var remarkadd = '.cremarkadd'+$(element).val();
   var remarkview = '.cremarkview'+$(element).val();
   var applicable = '#applicable'+$(element).val();
-
+  var sClass = $(element).attr('class');
+  
   $('#cremarkvalue'+$(element).val()).val('');
   var optedval = $(element).is(":checked");
   var applicableval = $(applicable).val();
@@ -55,6 +60,17 @@ function compliancestatus(element, viewremarks){
     $(remarkadd).show();
     $(remarkview).hide();
   }
+
+  var actSelect = sClass.substr(sClass.lastIndexOf("s") + 1);
+  $('#act'+actSelect).prop("checked",true);
+  $('.remark'+actSelect).hide();
+
+  /*var cStatus = false;
+  $('.'+sClass).each(function() { 
+    if(this.checked = true){
+      cStatus = true;
+    }
+  });*/
 }
 
 function part_compliance (remark) {
@@ -104,7 +120,10 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
       var acttableRow=$('#act-templates .font1 .tbody-heading');
       var clone=acttableRow.clone();
       $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:100px;"> <label for="act'+actCount+'" style="margin-top:100px;"></label> ');
-      $('.actname', clone).html('<div style="float:left;margin-top:5px;">'+actname+'</div> <div style="float:right; width:500px;" class="default-display-none remark'+actCount+'" ><div style="float:right;  width:250px;margin-top:-3px;"> <input type="text" maxlength="250" id="remarkvalue'+actCount+'" value="'+not_applicable_remarks+'" class="input-box" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:5px;"> Remarks</div></div>');
+      
+      $('.actname', clone).html('<div style="float:left;margin-top:5px;">'+actname+'</div> <div style="float:right; width:500px;" class="default-display-none remark'+actCount+
+        '" ><div style="float:right;  width:250px;margin-top:-3px;"> <input type="text" maxlength="250" id="remarkvalue'+actCount+
+        '" value="'+not_applicable_remarks+'" class="input-box" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:5px;"> Remarks</div></div>');
       $('.tbody-statutorysettings').append(clone);
 
       if(applicable_status == false){
@@ -276,8 +295,15 @@ $("#submit").click(function() {
         }
 
         if(addStatus){
-          compliancenotApplicableRemarks = $('#cremarkvalue'+statutoriesCount).val();
-          if(compliancenotApplicableRemarks.length == 0 && compliance_remarks == null && applicableStatus == true){
+          $('#cremarkvalue'+statutoriesCount).show();
+
+          if($('#cremarkvalue'+statutoriesCount).val() != ''){
+            compliancenotApplicableRemarks = $('#cremarkvalue'+statutoriesCount).val().trim();
+          }else{
+            compliancenotApplicableRemarks = compliance_remarks;
+          }
+         
+          if(compliancenotApplicableRemarks == null && compliance_remarks == null && applicableStatus == true){
             displayMessage("Remarks required for not applicable compliance");
             saveflag = false;
             return false;

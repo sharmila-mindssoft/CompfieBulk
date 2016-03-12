@@ -135,6 +135,19 @@ function actstatus(element){
   }
 }
 
+function compliancestatus(element){
+  var sClass = $(element).attr('class');
+  var actSelect = sClass.substr(sClass.lastIndexOf("s") + 1);
+  $('#act'+actSelect).prop("checked",true);
+  $('.remark'+actSelect).hide();
+  /*var cStatus = false;
+  $('.'+sClass).each(function() { 
+    if(this.checked = true){
+      cStatus = true;
+    }
+  });*/
+}
+
 function make_breadcrumbs(){
 
   var bc_businessgroup = $('.businessgrouplist.active').text();
@@ -202,7 +215,7 @@ function load_secondwizard(){
       $('.compliancetask', clone2).text(complianceslist[compliance]["compliance_name"]);
       $('.compliancedescription', clone2).html('<abbr class="page-load" title="'+
           cDescription+'">'+partDescription+'</abbr>');
-      $('.complianceapplicable', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'"><label for="statutory'+statutoriesCount+'"></label>');
+      $('.complianceapplicable', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this)"><label for="statutory'+statutoriesCount+'"></label>');
       $('.accordion-content'+count).append(clone2);
 
       if(compliance_applicable_status == false){
@@ -637,7 +650,7 @@ function validate_firsttab(){
     var checkDuplicateAssignStauttory = true;
     var unitIdTab2 = null;
     for(var entity in assignedStatutoriesList) {
-      if($('.locationlist.active').text() == assignedStatutoriesList[entity]["geography_name"] && $('.industrylist.active').text() == assignedStatutoriesList[entity]["industry_name"] && $('.domainlist.active').text() == assignedStatutoriesList[entity]["domain_name"]){
+      if($('.industrylist.active').text() == assignedStatutoriesList[entity]["industry_name"] && $('.domainlist.active').text() == assignedStatutoriesList[entity]["domain_name"]){
         for(var j=0;j<assignStatutoryUnitValues.length;j++){
           if(assignStatutoryUnitValues[j] == assignedStatutoriesList[entity]["unit_name"] && assignedStatutoriesList[entity]["submission_status"] == 0){
             displayMessage("Statutes already assigned for '"+assignStatutoryUnitValues[j]+"' unit");
