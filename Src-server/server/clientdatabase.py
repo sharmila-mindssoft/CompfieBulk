@@ -4935,7 +4935,7 @@ class ClientDatabase(Database):
                 notification_id = notification_detail[0]
                 notification_text = notification_detail[1]
                 extra_details = notification_detail[3]
-                updated_on = self.datetime_to_string_time(notification_detail[2])
+                updated_on = self.datetime_to_string(notification_detail[2])
                 unit_name = "%s - %s" % (
                     notification_detail[5],
                     notification_detail[6]
@@ -5000,8 +5000,11 @@ class ClientDatabase(Database):
             T1.due_date, T1.validity_date, \
             T2.compliance_task, T2.document_name,\
             T2.compliance_description, T2.statutory_mapping,\
-             T8.unit_name, T8.unit_code, T8.address, T8.postal_code,\
-            frequency, NULL\
+            T8.unit_name, T8.unit_code, T8.address, T8.postal_code,\
+            (select frequency from tbl_compliance_frequency where frequency_id = T2.frequency_id) frequency, T2.frequency_id,\
+            (select duration_type from tbl_compliance_duration_type where duration_type_id = T2.duration_type_id) duration_type, T2.duration, \
+            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = T2.repeats_type_id) repeat_type, T2.repeats_every,\
+            NULL\
             FROM tbl_assigned_compliances T1 \
             INNER JOIN tbl_compliances T2 \
             ON T1.compliance_id = T2.compliance_id \
@@ -5052,7 +5055,9 @@ class ClientDatabase(Database):
             "compliance_task", "document_name",
             "compliance_description", "statutory_mapping",
             "unit_name", "unit_code", "address", "postal_code",
-            "frequency", "compliance_history_id"
+            "frequency", "frequency_id", "duration_type", "duration",
+            "repeat_type", "repeats_every",
+            "compliance_history_id"
         ]
         rows = self.select_all(upcoming)
         result = self.convert_to_dict(rows, columns)
@@ -5063,7 +5068,10 @@ class ClientDatabase(Database):
             T2.compliance_task, T2.document_name,\
             T2.compliance_description, T2.statutory_mapping,\
             T8.unit_name, T8.unit_code, T8.address, T8.postal_code,\
-            frequency, TC.compliance_history_id \
+            (select frequency from tbl_compliance_frequency where frequency_id = T2.frequency_id) frequency, T2.frequency_id,\
+            (select duration_type from tbl_compliance_duration_type where duration_type_id = T2.duration_type_id) duration_type, T2.duration, \
+            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = T2.repeats_type_id) repeat_type, T2.repeats_every, \
+            TC.compliance_history_id \
             FROM tbl_compliance_history TC \
             INNER JOIN tbl_assigned_compliances T1 \
             ON TC.compliance_id = T1.compliance_id \
@@ -5085,8 +5093,7 @@ class ClientDatabase(Database):
             INNER JOIN tbl_units T8 \
             ON T1.unit_id = T8.unit_id \
             WHERE T1.is_active = 1 \
-            AND TC.approve_status is NULL \
-            OR TC.approve_status != 1\
+            AND IFNULL(TC.approve_status, 0) != 1 \
             AND T7.user_id like '%s'" % (user_id)
 
         rows = self.select_all(ongoing)
@@ -5135,11 +5142,19 @@ class ClientDatabase(Database):
             compliance_name = "%s - %s" % (
                 d["document_name"], d["compliance_task"]
             )
+            if d["frequency_id"] in (2, 3) :
+                summary = "Repeats ever %s - %s" % (d["repeats_every"], d["repeat_type"])
+            elif d["frequency_id"] == 4 :
+                summary = "To complete within %s - %s" % (d["duration"], d["duration_type"])
+            else :
+                summary = None
+
             compliance = clienttransactions.STATUTORYWISECOMPLIANCE(
                 compliance_history_id, d["compliance_id"],
                 compliance_name,
                 d["compliance_description"], frequency,
-                date_list, due_date, validity_date
+                date_list, due_date, validity_date,
+                summary
             )
             assignee_data = assignee_wise_compliances.get(assignee)
             if assignee_data is None :
@@ -5183,7 +5198,7 @@ class ClientDatabase(Database):
                     if count is None :
                         count = 1
                     else :
-                        count += len(compliance_list)
+                        count += 1
                     assignee_compliance_count[assignee] = count
                 assignee_data[unit_id] = unit_data
 

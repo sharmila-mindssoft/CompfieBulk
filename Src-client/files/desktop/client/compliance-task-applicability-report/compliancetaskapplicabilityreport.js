@@ -106,7 +106,6 @@ $("#show-button").click(function(){
     }
     else{
         function onSuccess(data){
-            console.log(data);
             $(".grid-table-rpt").show();
             loadTaskApplicabilityStatusList(data);     
         }
@@ -145,30 +144,42 @@ function loadTaskApplicabilityStatusList(data){
     $.each(data, function(key, value) {
         var tableRowHeading = $('#templates .table-task-applicability-list .applicable-status-list');
         var cloneHeading = tableRowHeading.clone();
-        $('.applicable-status-heading', cloneHeading).text(key);
+        if(key == "applicable"){
+            keyvalue = "Applicable"
+        }
+        if(key == "not_opted"){
+            keyvalue = "Not Opted"
+        }
+        if(key == "not_applicable"){
+            keyvalue = "Not Applicable"
+        }
+        $('.applicable-status-heading', cloneHeading).text(keyvalue);
         $('.tbody-task-applicability-list').append(cloneHeading);
-
         var actwiselist = data[key];
         $.each(actwiselist, function(ke, valu) { 
             var arr = [];
             var tableRowLevel1 = $('#templates .table-task-applicability-list .level1-list');
             var cloneLevel1 = tableRowLevel1.clone();
-            $('.level1-heading', cloneLevel1).text(valu);
+            $('.level1-heading', cloneLevel1).text(ke);
             $('.tbody-task-applicability-list').append(cloneLevel1);
+            var tableRowList = $('#templates .table-task-applicability-list .list-heading');
+            var cloneList = tableRowList.clone();
+            $('.tbody-task-applicability-list').append(cloneList);
             var list = actwiselist[ke];
-            $.each(list, function(k, val) { 
+            $.each(list, function(i, val) { 
+                var valcomp = list[i]["compliances"];
                 var tableRow = $('#templates .table-task-applicability-list .task-list');
                 var clone = tableRow.clone();
                 sno = sno + 1;
                 $('.sno', clone).text(sno);
-                $('.statutory-provision', clone).html(val['statutory_provision']);
+                $('.statutory-provision', clone).html(valcomp['statutory_provision']);
                 $('.unit-name', clone).html(valu["unit-name"]);
-                $('.compliance-task a', clone).html(val['compliance_name']);
-                $('.compliance-task a', clone).attr("href",val['compliance_name']);
-                $('.compliance-description', clone).html(val['description']);
-                $('.penal-consequences', clone).html(val['penal_consequences']);
-                $('.compliance-frequency', clone).html(val['compliance_frequency']);
-                $('.repeats', clone).html(val['repeats']);
+                $('.compliance-task a', clone).html(valcomp['compliance_name']);
+                $('.compliance-task a', clone).attr("href",valcomp['compliance_name']);
+                $('.compliance-description', clone).html(valcomp['description']);
+                $('.penal-consequences', clone).html(valcomp['penal_consequences']);
+                $('.compliance-frequency', clone).html(valcomp['compliance_frequency']);
+                $('.repeats', clone).html(valcomp['repeats']);
                 $('.tbody-task-applicability-list').append(clone);
             });
         });

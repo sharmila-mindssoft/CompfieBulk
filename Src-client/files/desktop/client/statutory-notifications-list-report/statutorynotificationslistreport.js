@@ -43,6 +43,7 @@ function initialize(){
     );
 }
 $("#show-button").click(function(){ 
+
     var countries = $("#country").val();
     countriesNameVal = $("#countryval").val();
     //Domain    
@@ -109,6 +110,7 @@ $("#show-button").click(function(){
         displayMessage("Select From Date");
     }
     else{
+
         function onSuccess(data){
             $(".grid-table-rpt").show();
             loadStatutoryNotificationsList(data['statutory_wise_notifications']);     
@@ -133,6 +135,7 @@ $("#show-button").click(function(){
 
 
 function loadStatutoryNotificationsList(data){
+    alert("loadStatutoryNotificationsList");
     $('.tbody-statutory-notifications-list tr').remove();
     var sno = 0;
     
