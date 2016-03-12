@@ -4935,7 +4935,7 @@ class ClientDatabase(Database):
                 notification_id = notification_detail[0]
                 notification_text = notification_detail[1]
                 extra_details = notification_detail[3]
-                updated_on = self.datetime_to_string_time(notification_detail[2])
+                updated_on = self.datetime_to_string(notification_detail[2])
                 unit_name = "%s - %s" % (
                     notification_detail[5],
                     notification_detail[6]

@@ -23,24 +23,27 @@ $(".btn-clientgroup-add").click(function(){
     $("#clientgroup-view").hide();
     $("#clientgroup-add").show();
     function onSuccess(data){
+        clearMessage();
+
         userList = data["users"];
         domainsList = data["domains"];
         countriesList = data["countries"];
-
         clientcountriesList = data["client_countries"];
         clientdomainList = data["client_domains"];
-         $("#clientgroup-name").val('');
+
+        $("#clientgroup-name").val('');
         $("#clientgroup-id").val('');
-        clearMessage();
         $("#short-name").removeAttr("readonly");
-        $("#upload-logo-img").hide();
+        $("#upload-logo-img").hide();        
+        $(".shorturl").text('');
+        $("#subscribe-sms").prop("checked", "false");
+        $("#subscribe-sms").removeProp('checked');
+        
         var x=document.getElementsByTagName("input");
         for(i = 0; i<=x.length-1; i++){
            if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
         }
-        $(".shorturl").text('');
-        $("#subscribe-sms").prop("checked", "false");
-        $("#subscribe-sms").removeProp('checked');
+
         loadautocountry();
         loadauto();
         loadAutoUsers();
@@ -125,13 +128,13 @@ $('#file-space').on('input', function (event) {
     this.value = this.value.replace(/[^0-9]/g, '');
 });
 
-$("#short-name").keypress(function (e) {
-   $(this).val($(this).val().replace(' ',''));
+$('#short-name').on('input', function (event) {
+    this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
 });
 
 $("#short-name").on('keyup', function(){
     $(".shorturl").text($(this).val());
-})
+});
 
 $("#btn-clientgroup-submit").click(function(){
     var dateConfigurations = [];
@@ -359,7 +362,7 @@ function clientgroup_edit(clientGroupId){
         countriesList = data["countries"];
         clientcountriesList = data["client_countries"];
         clientdomainList = data["client_domains"];
-        loadFormListUpdate(data['client_list'],clientGroupId);
+        loadFormListUpdate(data['client_list'], clientGroupId);
     }
     function onFailure(error){
         console.log(error);
@@ -375,6 +378,7 @@ function clientgroup_edit(clientGroupId){
         });
 }
 function loadFormListUpdate(clientListData, clientGroupId){
+    $("#upload-logo-img").show();
     for(clientList in clientListData){
         if(clientGroupId == clientListData[clientList]['client_id']){
             $("#clientgroup-name").val(clientListData[clientList]['client_name']);
@@ -390,8 +394,11 @@ function loadFormListUpdate(clientListData, clientGroupId){
             $("#contract-from").val(clientListData[clientList]['contract_from']);
             $("#contract-to").val(clientListData[clientList]['contract_to']);
             $("#username").val(clientListData[clientList]['username']);
-            //$("#upload-logo-img").attr("src",clientListData[clientList]['logo']);
-            $("#upload-logo-img").show();
+
+            var logoimgsrc = clientListData[clientList]['logo'];
+
+            $("#upload-logo-img").attr("src", logoimgsrc);
+            
             $("#no-of-user-licence").val(clientListData[clientList]['no_of_user_licence']);
             $("#file-space").val(clientListData[clientList]['total_disk_space']);
             if(clientListData[clientList]['is_sms_subscribed'] == true){
@@ -660,7 +667,12 @@ function loadautocountry() {
             }    
         }
         else{
-            str += '<li id="'+countryId+'" class="active_selectbox_country deactivate" >'+countryName+'</li> ';
+            if(selectcountrystatus == 'checked'){
+                str += '<li id="'+countryId+'" class="active_selectbox_country deactivate" >'+countryName+'</li> ';
+            }
+            else{
+                str += '<li id="'+countryId+'" class="deactivate" >'+countryName+'</li> ';   
+            }
         }
         
     }
