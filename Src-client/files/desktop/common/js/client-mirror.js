@@ -294,26 +294,26 @@ function initClientMirror() {
         )
     }
 
-    function validateResetToken(resetToken,
+    function validateResetToken(resetToken, short_name, 
         callback) {
         callerName = "login"
         var request = [
             "ResetTokenValidation", {
                 "reset_token": resetToken,
-                "short_name": getShortName()
+                "short_name": short_name
             }
         ];
         clientApiRequest(callerName, request, callback);
     }
 
-    function resetPassword(resetToken, newPassword,
+    function resetPassword(resetToken, newPassword, short_name,
         callback) {
         callerName = "login"
         var request = [
             "ResetPassword", {
                 "reset_token": resetToken,
                 "new_password": newPassword,
-                "short_name": getShortName()
+                "short_name": short_name
             }
         ];
         clientApiRequest(callerName, request, callback);

@@ -57,7 +57,6 @@ function loadComplianceApprovalDetails(data){
                 $('.delayedby', clonelist).html(val['delayedby']+" days");    
             }
             var compliance_history_id = val['compliance_history_id'];  
-
             
             $(clonelist, ".expand-compliance").on("click", function() {
                 //$(".table-row-list", clonelist).addClass("active1");
@@ -169,7 +168,6 @@ function showSideBar(idval, data){
         
         $(".sidebar-remarks-textarea", cloneValSide).show();
         $(".sidebar-action", cloneValSide).on("change", function(e, data){ 
-            console.log($(cloneValSide, ".sidebar-action").val());
             if($(".sidebar-action", cloneValSide).val() == 'Reject'){
                 $(".sidebar-remarks-textarea", cloneValSide).show();
             }
@@ -231,10 +229,10 @@ function showSideBar(idval, data){
 
         if(remarks == ''){
             remarks = null;
-        }else if(typeof remarks == 'undefined'){
-            remarks = null
         }
-      
+        else if(typeof remarks == 'undefined'){
+            remarks = null
+        }      
         else if(validity_date == ''){
             displayMessage("Select Validity Date");
         }

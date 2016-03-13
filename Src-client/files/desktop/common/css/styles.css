@@ -2128,3 +2128,11 @@ cursor: pointer;
 #labelusername {
 	line-height: 1.5em;
 }
+#upload-logo{
+	vertical-align: top;
+}
+.labelgroup, .labelbusinessgroup, .labelentity, .labeldivision{
+	font-size:0.8em;
+	line-height: 2em;	
+	font-weight: normal;
+}

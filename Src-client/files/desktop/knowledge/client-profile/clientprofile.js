@@ -81,6 +81,7 @@ function loadClientProfileList(groupId){
                 var userId = lists[key]['user_id'];
                 var isAdmin = lists[key]["is_admin"];
                 var isActive = lists[key]["is_active"];
+                var isServiceProvider = lists[key]["is_service_provider"];
                 if(isActive == true){
                     imageName = "icon-active.png";
                     title = "Click here to deactivate"
@@ -101,13 +102,31 @@ function loadClientProfileList(groupId){
                     imageadminName = "promote-inactive.png";
                     admintitle = "Click here to Promote Admin";
                 }
-                $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientprofile_active('+userId+','+groupId+', '+statusVal+')"/>');
-                $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="clientprofile_isadmin('+userId+','+groupId+','+adminstatus+')" />');
+                // $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientprofile_active('+userId+','+groupId+', '+statusVal+')"/>');
+                if(isActive == true){
+                    $('.is-active', clone).html("Active");    
+                }else{
+                    $('.is-active', clone).html("Inactive");    
+                }
+                
+                if(isServiceProvider == false){
+                    if(isAdmin == true){
+                        $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="alertUserToPromoteAnotherAdmin('+isActive+')" />');    
+                    }else{
+                        $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="clientprofile_isadmin('+userId+','+groupId+','+adminstatus+')" />');        
+                    }
+                    
+                }
                 $('.tbody-clientprofile-list').append(clone);
             });
         }
          
     });	  
+}
+
+function dismissPopup(){
+    $('.overlay').css("visibility","hidden");
+    $('.overlay').css("opacity","0");
 }
 
 function clientprofile_active(userId, clientId, status){
@@ -122,6 +141,12 @@ function clientprofile_active(userId, clientId, status){
             initialize();
         }
         function onFailure(error){
+            if(error == "ReassignFirst"){
+                alert("Cannot Promote \
+                this user as Primary admin. Since the old admin has compliances\
+                under him. First inform the client to reassign those compliances to \
+                another user.");
+            }
         }
         mirror.changeClientUserStatus(userId, status,
             function(error, response){
@@ -136,12 +161,26 @@ function clientprofile_active(userId, clientId, status){
     }
 }
 
+function alertUserToPromoteAnotherAdmin(isActive){
+    if (isActive == true){
+        alert("Try Promote another person as admin. \
+            Current admin will be deactivated automatically");
+    }else{
+        alert("Cannot Change status of inactive administrator");
+    }
+}
+
 function clientprofile_isadmin(userId, clientId){
     function onSuccess(data){
         initialize();
     }
     function failure(error){
-        console.log(error);
+        if(error == "ReassignFirst"){
+            alert("Cannot Promote \
+            this user as Primary admin. Since the old admin has compliances\
+            under him. First inform the client to reassign those compliances to \
+            another user.");
+        }
     }
     mirror.createNewAdmin(userId, clientId,
         function(error, response){
@@ -149,7 +188,7 @@ function clientprofile_isadmin(userId, clientId){
                 onSuccess(response);
             }
             else{
-                onFailure(error);
+                failure(error);
             }
         }
     );

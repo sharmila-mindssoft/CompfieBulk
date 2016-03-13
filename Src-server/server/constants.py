@@ -15,7 +15,7 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        r"/reset_password/([a-zA-Z-0-9]+)",
+        r"/reset_password/([a-zA-Z-0-9]+)/([a-zA-Z-0-9]+)",
         "files/desktop/client/resetpassword.html",
         None, {}
     ),
@@ -367,7 +367,7 @@ TEMPLATE_PATHS = [
 
 ]
 
-VERSION = 1
+VERSION = 2
 
 KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
@@ -388,7 +388,7 @@ KNOWLEDGE_URL = "http://localhost:8082/knowledge"
 # CLIENT_URL = "http://52.11.242.90:8082/"
 # KNOWLEDGE_URL = "http://52.11.242.90:8080/knowledge"
 
-# # aparajitha server
+# # # aparajitha server
 # KNOWLEDGE_DB_HOST = "localhost"
 # KNOWLEDGE_DB_PORT = 3306
 # KNOWLEDGE_DB_USERNAME = "root"

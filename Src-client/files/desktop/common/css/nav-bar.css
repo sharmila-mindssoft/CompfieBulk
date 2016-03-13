@@ -293,6 +293,31 @@
   padding-top: 5px;
 }
 
+#noti_Container {
+    position:relative;    
+    border:0px;
+    width:16px;
+    height:16px;
+    cursor:pointer;
+
+}
+.noti_bubble {
+    position:absolute;    /* This breaks the div from the normal HTML document. */
+    top: -6px;
+    right:-6px;
+    padding:1px 2px 1px 2px;
+    background-color:red; /* you could use a background image if you'd like as well */
+    color:white;
+    font-weight:bold;
+    font-size:0.55em;
+    border-radius:30px;
+    box-shadow:1px 1px 1px gray;
+    cursor:hand;
+}
+.noti_icon{
+  padding: 0px 20px !important;
+}
+
 @media all and (max-width: 800px), only screen and (-webkit-min-device-pixel-ratio: 2) and (max-width: 1024px), only screen and (min--moz-device-pixel-ratio: 2) and (max-width: 1024px), only screen and (-o-min-device-pixel-ratio: 2/1) and (max-width: 1024px), only screen and (min-device-pixel-ratio: 2) and (max-width: 1024px), only screen and (min-resolution: 192dpi) and (max-width: 1024px), only screen and (min-resolution: 2dppx) and (max-width: 1024px) {
   #cssmenu {
     width: auto;

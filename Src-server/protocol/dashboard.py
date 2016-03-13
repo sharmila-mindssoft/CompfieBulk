@@ -820,19 +820,40 @@ class GetTrendChartSuccess(Response):
         }
 
 class CheckContractExpirationSuccesss(Response):
-    def __init__(self, no_of_days_left):
+    def __init__(
+        self, no_of_days_left, notification_count, reminder_count, escalation_count
+    ):
         self.no_of_days_left = no_of_days_left
+        self.notification_count = notification_count
+        self.reminder_count = reminder_count
+        self.escalation_count = escalation_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["no_of_days_left"])
+        data = parse_dictionary(
+            data, [
+                "no_of_days_left", "notification_count", "reminder_count", 
+                "escalation_count"
+            ]
+        )
         no_of_days_left = data.get("no_of_days_left")
         no_of_days_left = parse_structure_UnignedIntegerType_32(no_of_days_left)
-        return CheckContractExpirationSuccesss(no_of_days_left)
+        notification_count = data.get("notification_count")
+        notification_count = parse_structure_UnignedIntegerType_32(notification_count)
+        reminder_count = data.get("reminder_count")
+        reminder_count = parse_structure_UnignedIntegerType_32(reminder_count)
+        escalation_count = data.get("escalation_count")
+        escalation_count = parse_structure_UnignedIntegerType_32(escalation_count)
+        return CheckContractExpirationSuccesss(
+            no_of_days_left, notification_count, reminder_count, escalation_count
+        )
 
     def to_inner_structure(self):
         return {
-            "no_of_days_left": to_structure_UnsignedIntegerType_32(self.no_of_days_left)
+            "no_of_days_left": to_structure_UnsignedIntegerType_32(self.no_of_days_left),
+            "notification_count": to_structure_UnsignedIntegerType_32(self.notification_count),
+            "reminder_count": to_structure_UnsignedIntegerType_32(self.reminder_count),
+            "escalation_count": to_structure_UnsignedIntegerType_32(self.escalation_count),
         }
 
 class GetComplianceApplicabilityStatusChartSuccess(Response):

@@ -129,6 +129,7 @@ function loadClientUserList(){
         var userId = users["user_id"];
         var isActive = users["is_active"];
         var isAdmin = users["is_admin"];
+        var isPrimaryAdmin = users["is_primary_admin"];
 
         if(isActive == true){
             imageName = "icon-active.png";
@@ -140,7 +141,7 @@ function loadClientUserList(){
             title = "Click here to Activate"
             statusVal = true;
         }
-        if(isAdmin == true){
+        if(isAdmin == true || isPrimaryAdmin == true){
             adminstatus = false;
             imageadminName = "promote-active.png";
             admintitle = "Click here to deactivate Promote Admin";
@@ -160,14 +161,24 @@ function loadClientUserList(){
             var clone = tableRow.clone();
             sno = sno + 1;
             $('.sno', clone).text(sno);
-            $('.employee-code-name', clone).text(users["employee_code"]+" - "+users["employee_name"]);
+            console.log(isActive);
+            if (isActive == false && isPrimaryAdmin == true){
+                $('.employee-code-name', clone).text("Old Administrator");    
+            }else if(isActive == true && isPrimaryAdmin == true){
+                $('.employee-code-name', clone).text("Administrator");    
+            }else{
+                $('.employee-code-name', clone).text(users["employee_code"]+" - "+users["employee_name"]);    
+            }
+            
             $('.group-name', clone).text(getUserGroupName(userGroupId));
             $('.level-name', clone).text("Level "+users["user_level"]);
             $('.seating-unit', clone).html('<abbr class="page-load" title="'+getUnitNameAndAddress(seatingUnitId, serviceProviderId)['unitAddress']+'"><img src="/images/icon-info.png" style="margin-right:10px"/>'+getUnitNameAndAddress(seatingUnitId, serviceProviderId)['unitName']);
 
             $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
-            $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+')"/>');
-            $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="user_isadmin('+userId+', '+adminstatus+')" />');
+            if (isPrimaryAdmin == false){
+                $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+')"/>');
+                $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="user_isadmin('+userId+', '+adminstatus+')" />');    
+            } 
             $('.tbody-users-list').append(clone);
         }
     }
@@ -451,6 +462,9 @@ function user_active(userId, isActive){
         initialize();
     }
     function onFailure(error){
+        if (error == "CannotChangePrimaryAdminStatus"){
+            alert("Only Techno team can change stauts of primary admin");
+        }
     }
     client_mirror.changeClientUserStatus(userId, isActive,
         function(error, response){
@@ -468,6 +482,11 @@ function user_isadmin(userId, isAdmin){
         initialize();
     }
     function onFailure(error){
+        if (error == "CannotPromoteServiceProvider"){
+            alert("Cannot promote a service provider as admin");
+        }else if (error == "CannotChangePrimaryAdminStatus"){
+            alert("Only Techno team can change stauts of primary admin");
+        }
     }
     client_mirror.changeAdminStatus(userId, isAdmin,
         function(error, response){

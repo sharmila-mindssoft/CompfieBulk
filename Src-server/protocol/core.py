@@ -1809,7 +1809,10 @@ class ServiceProviderDetails(object):
 #
 
 class ClientUser(object):
-    def __init__(self, user_id, email_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, user_level, country_ids, domain_ids, unit_ids, is_admin, is_service_provider, service_provider_id, is_active):
+    def __init__(self, user_id, email_id, user_group_id, employee_name, 
+        employee_code, contact_no, seating_unit_id, user_level, country_ids, 
+        domain_ids, unit_ids, is_admin, is_service_provider, 
+        service_provider_id, is_active, is_primary_admin):
         self.user_id = user_id
         self.email_id = email_id
         self.user_group_id = user_group_id
@@ -1825,6 +1828,7 @@ class ClientUser(object):
         self.is_service_provider = is_service_provider
         self.service_provider_id = service_provider_id
         self.is_active = is_active
+        self.is_primary_admin = is_primary_admin
 
     @staticmethod
     def parse_structure(data):
@@ -1859,10 +1863,15 @@ class ClientUser(object):
         service_provider_id = parse_structure_OptionalType_UnsignedIntegerType_32(service_provider_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
-        return ClientUser(user_id, email_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, seating_unit_name, user_level, country_ids, domain_ids, unit_ids, is_admin, is_service_provider, service_provider_id, is_active)
+        is_primary_admin = data.get("is_primary_admin")
+        is_primary_admin = parse_structure_Bool(is_primary_admin)
+        return ClientUser(user_id, email_id, user_group_id, employee_name, 
+            employee_code, contact_no, seating_unit_id, seating_unit_name, 
+            user_level, country_ids, domain_ids, unit_ids, is_admin, 
+            is_service_provider, service_provider_id, is_active, 
+            is_primary_admin)
 
     def to_structure(self):
-        print "inside core client users inner structure"
         return {
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
             "email_id": to_structure_CustomTextType_100(self.email_id),
@@ -1879,6 +1888,7 @@ class ClientUser(object):
             "is_service_provider": to_structure_Bool(self.is_service_provider),
             "service_provider_id": to_structure_OptionalType_UnsignedIntegerType_32(self.service_provider_id),
             "is_active": to_structure_Bool(self.is_active),
+            "is_primary_admin": to_structure_Bool(self.is_primary_admin),
         }
 
 #
