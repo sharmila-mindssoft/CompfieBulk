@@ -334,78 +334,79 @@ function addcountryrow(){
         }   
         if(groupId == ''){
             displayMessage("Select Group");
+            return false;
         }
         else if(legalEntityValue == ''){
             displayMessage('Select Existing Legal Entity or Create New');
+            return false;
         }
     }
 
-    else{
-        clearMessage();
-        for (var i in groupList){
-            if(groupList[i]['client_id'] == groupId){ countryIds = groupList[i]['country_ids'];
-            }
+    clearMessage();
+    for (var i in groupList){
+        if(groupList[i]['client_id'] == groupId){ countryIds = groupList[i]['country_ids'];
         }
-        var countryArray = [];      
-        var countryCount = countryIds.length;       
-        if(countryCount > countc){          
-            var divCountryAddRow = $('#templates .grid-table');
-            var clone = divCountryAddRow.clone();   
-            $('.btable', clone).addClass('table-'+countryByCount);
-            $('.countryval', clone).addClass('countryval-'+countryByCount);
-            $('.country', clone).addClass('country-'+countryByCount);
-            $('.autocompleteview', clone).addClass('autocompleteview-'+countryByCount);
-            $('.ulist-text', clone).addClass('ulist-text-'+countryByCount);         
-            $('.geography-levels', clone).addClass('glevel-'+countryByCount+'-'+1);
-            $('.unit-location', clone).addClass('unitlocation-'+countryByCount+'-'+1);
-            $('.unit-location-ids', clone).addClass('unitlocation-ids-'+countryByCount+'-'+1);
-            $('.auto-complete-unit-location', clone).addClass('auto-complete-unit-location-'+countryByCount+'-'+1);
-            $('.unitlocationlist-text', clone).addClass('unitlocationlist-text-'+countryByCount+'-'+1);
-            $('.full-location-list', clone).addClass('full-location-list-'+countryByCount+'-'+1);
-            $('.unitcode-checkbox', clone).addClass('unitcode-checkbox-'+countryByCount);                            
-            $('.unit-code', clone).addClass('unit-code-'+countryByCount);
-            $('.unit-code', clone).addClass('unit-code-'+countryByCount+'-'+1);
-            $('.unit-name', clone).addClass('unit-name-'+countryByCount+'-'+1);
-            $('.industry', clone).addClass('industry-'+countryByCount+'-'+1);
-            $('.unit-address', clone).addClass('unit-address-'+countryByCount+'-'+1);
-            $('.postal-code', clone).addClass('postal-code-'+countryByCount+'-'+1);
-            $('.domain-list', clone).addClass('domain-list-'+countryByCount+'-'+1);
-            $('.domainselected', clone).addClass('domainselected-'+countryByCount+'-'+1);
-            $('.domain', clone).addClass('domain-'+countryByCount+'-'+1);
-            $('.domain-selectbox-view', clone).addClass('domain-selectbox-view-'+countryByCount+'-'+1);
-            $('.ul-domain-list', clone).addClass('ul-domain-list-'+countryByCount+'-'+1);       
-            $('.add-unit-row img', clone).addClass('table-addunit-'+countryByCount);
-            $('.tbody-unit-list', clone).addClass('tbody-unit-'+countryByCount);
-            $('.no-of-units', clone).addClass('no-of-units-'+countryByCount);
-            $('.activedclass', clone).addClass('activedclass-'+countryByCount+'-'+1);
-            
-            $('#unitcount').val(1);
-            $('.unit-error-msg', clone).addClass('unit-error-msg-'+countryByCount);
-            $('.add-country-unit-list').append(clone);  
-            $('.no-of-units-'+countryByCount).val(1);
-            $('.activedclass-'+countryByCount+'-'+1).text("Active");
-            if(countryByCount != 1){
-                 $('.unitcode-checkbox-'+countryByCount).hide();  
-            }  
-            if($('.unitcode-checkbox').is(':checked')){
-                console.log(countryByCount+"---"+get2CharsofGroup+unitcodeautogenerateids);
-                $('.unit-code-'+countryByCount+'-'+1).val(get2CharsofGroup+intTo5digitsString(unitcodeautogenerateids));
-                unitcodeautogenerateids++;
-                console.log("addcountryrow=="+unitcodeautogenerateids);
-            }
-            countc++;
-            countryByCount++;
-            $(".postal-code", clone).on('input', function (event) {
-                this.value = this.value.replace(/[^0-9]/g, '');
-            });
-            
-
+    }
+    var countryArray = [];      
+    var countryCount = countryIds.length;       
+    if(countryCount > countc){          
+        var divCountryAddRow = $('#templates .grid-table');
+        var clone = divCountryAddRow.clone();   
+        $('.btable', clone).addClass('table-'+countryByCount);
+        $('.countryval', clone).addClass('countryval-'+countryByCount);
+        $('.country', clone).addClass('country-'+countryByCount);
+        $('.autocompleteview', clone).addClass('autocompleteview-'+countryByCount);
+        $('.ulist-text', clone).addClass('ulist-text-'+countryByCount);         
+        $('.geography-levels', clone).addClass('glevel-'+countryByCount+'-'+1);
+        $('.unit-location', clone).addClass('unitlocation-'+countryByCount+'-'+1);
+        $('.unit-location-ids', clone).addClass('unitlocation-ids-'+countryByCount+'-'+1);
+        $('.auto-complete-unit-location', clone).addClass('auto-complete-unit-location-'+countryByCount+'-'+1);
+        $('.unitlocationlist-text', clone).addClass('unitlocationlist-text-'+countryByCount+'-'+1);
+        $('.full-location-list', clone).addClass('full-location-list-'+countryByCount+'-'+1);
+        $('.unitcode-checkbox', clone).addClass('unitcode-checkbox-'+countryByCount);                            
+        $('.unit-code', clone).addClass('unit-code-'+countryByCount);
+        $('.unit-code', clone).addClass('unit-code-'+countryByCount+'-'+1);
+        $('.unit-name', clone).addClass('unit-name-'+countryByCount+'-'+1);
+        $('.industry', clone).addClass('industry-'+countryByCount+'-'+1);
+        $('.unit-address', clone).addClass('unit-address-'+countryByCount+'-'+1);
+        $('.postal-code', clone).addClass('postal-code-'+countryByCount+'-'+1);
+        $('.domain-list', clone).addClass('domain-list-'+countryByCount+'-'+1);
+        $('.domainselected', clone).addClass('domainselected-'+countryByCount+'-'+1);
+        $('.domain', clone).addClass('domain-'+countryByCount+'-'+1);
+        $('.domain-selectbox-view', clone).addClass('domain-selectbox-view-'+countryByCount+'-'+1);
+        $('.ul-domain-list', clone).addClass('ul-domain-list-'+countryByCount+'-'+1);       
+        $('.add-unit-row img', clone).addClass('table-addunit-'+countryByCount);
+        $('.tbody-unit-list', clone).addClass('tbody-unit-'+countryByCount);
+        $('.no-of-units', clone).addClass('no-of-units-'+countryByCount);
+        $('.activedclass', clone).addClass('activedclass-'+countryByCount+'-'+1);
+        
+        $('#unitcount').val(1);
+        $('.unit-error-msg', clone).addClass('unit-error-msg-'+countryByCount);
+        $('.add-country-unit-list').append(clone);  
+        $('.no-of-units-'+countryByCount).val(1);
+        $('.activedclass-'+countryByCount+'-'+1).text("Active");
+        if(countryByCount != 1){
+             $('.unitcode-checkbox-'+countryByCount).hide();  
+        }  
+        if($('.unitcode-checkbox').is(':checked')){
+            console.log(countryByCount+"---"+get2CharsofGroup+unitcodeautogenerateids);
+            $('.unit-code-'+countryByCount+'-'+1).val(get2CharsofGroup+intTo5digitsString(unitcodeautogenerateids));
+            unitcodeautogenerateids++;
+            console.log("addcountryrow=="+unitcodeautogenerateids);
         }
-        if(countryCount <= countc){
-            displayMessage("Exceeds Maximum Number of Countries");
-        }
+        countc++;
+        countryByCount++;
+        $(".postal-code", clone).on('input', function (event) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+        
 
     }
+    if(countryCount <= countc){
+        displayMessage("Exceeds Maximum Number of Countries");
+    }
+
+    
 }
 //Add Unit for individual Rows---------------------------------------------------------------------------------
 function addNewUnitRow(str){
