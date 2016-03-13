@@ -44,28 +44,28 @@ function initialize(){
 			if(error == null){
 				onSuccess(response);
 			}
-			else{	
+			else{
 				onFailure(error);
 			}
 		}
 	);
 }
-$("#show-button").click(function(){	
+$("#show-button").click(function(){
 	var countries = $("#countries").val();
 	countriesText = $("#countries  option:selected").text();
 	//Domain
-	
+
 	var domain = $("#domain").val();
-	if(domain != ''){ 
+	if(domain != ''){
 		var domainsVal = parseInt(domain);
 	}
 	else{
 		var domainsVal = null;
-	}	
+	}
 	var domainName = $("#domainval").val();
 	//Groups
 	var groups = $("#group-id").val();
-	if(groups != ''){ 
+	if(groups != ''){
 		var groupid = parseInt(groups);
 	}
 	else{
@@ -75,7 +75,7 @@ $("#show-button").click(function(){
 
 	//Business Groups
 	var bgroups = $("#businessgroupid").val();
-	if(bgroups != ''){ 
+	if(bgroups != ''){
 		var businessgroupid = parseInt(bgroups);
 	}
 	else{
@@ -134,13 +134,13 @@ $("#show-button").click(function(){
 		$(".grid-table-rpt").hide();
 	}
 	else if(domain == ""){
-		displayMessage("Please Enter Domain");	
+		displayMessage("Please Enter Domain");
 		$(".grid-table-rpt").hide();
 	}
 	else if(domainName == ""){
-		displayMessage("Please Enter Domain");	
+		displayMessage("Please Enter Domain");
 		$(".grid-table-rpt").hide();
-	}	
+	}
 	else{
 
 		function onSuccess(data){
@@ -152,13 +152,13 @@ $("#show-button").click(function(){
 			$(".bgroupsval").text(businessgroupsval);
 			$(".lentityval").text(legalentityval);
 			$(".divisionval").text(divisionval);
-			loadAssignedStatutoryList(data['unit_wise_assigned_statutories']);		
+			loadAssignedStatutoryList(data['unit_wise_assigned_statutories']);
 		}
 		function onFailure(error){
 			console.log(error);
 		}
 		//countryId, domainId,  clientId, businessGroupId, legalEntityId, divisionId, unitId, level1StatutoryId, applicableStatus,
-		mirror.getAssignedStatutoryReport(parseInt(countries),  domainsVal,  groupid, businessgroupid, 
+		mirror.getAssignedStatutoryReport(parseInt(countries),  domainsVal,  groupid, businessgroupid,
 			lentityid, divisionid, unitid,  level1Statutoryid, applicableStatus,
 			function (error, response){
 				if(error == null){
@@ -180,17 +180,23 @@ function loadAssignedStatutoryList(data){
 	var bgname;
 	var lename;
 	var dname;
-	
+
 	$.each(data, function(key, value) {
 		var tablefilter = $('#statutory-list .tr-filter');
 		var clonefilter = tablefilter.clone();
-	
-		$('.groupsval').text(value["group_name"]);	
-		$('.bgroupsval').text(value["business_group_name"]);	
-		$('.lentityval').text(value["legal_entity_name"]);	
-		$('.divisionval').text(value["division_name"]);	
+
+		$('.groupsval').text(value["group_name"]);
+		businessGroup = value["business_group_name"];
+		if (businessGroup == null)
+			businessGroup = "Nil";
+		$('.bgroupsval').text(businessGroup);
+		$('.lentityval').text(value["legal_entity_name"]);
+		divisionName = value["division_name"];
+		if (divisionName == null)
+			divisionName = "Nil";
+		$('.divisionval').text(divisionName);
 		$('.tbody-assigned-statutory-list').append(clonefilter);
-		
+
 		var tableheading = $('#statutory-list .tr-heading');
 		var cloneheading = tableheading.clone();
 		$('.tbody-assigned-statutory-list').append(cloneheading);
@@ -203,7 +209,7 @@ function loadAssignedStatutoryList(data){
 		$('.tbody-assigned-statutory-list').append(clone);
 		var assignedList = list['assigned_statutories'];
 		//Assigned Act List
-	  	$.each(assignedList, function(k, val) { 
+	  	$.each(assignedList, function(k, val) {
 	  		var asImageName;
 	  		var optedImageName;
 	  		var tableRowAssigned = $('#act-heading .table-act-heading-list .tablerow');
@@ -213,7 +219,7 @@ function loadAssignedStatutoryList(data){
 				asImageName = "<img src='/images/tick1bold.png'>";
 			}
 			else{
-				asImageName = "<img src='/images/deletebold.png'>";  
+				asImageName = "<img src='/images/deletebold.png'>";
 			}
 			var optedStatuslevel1 = val['opted_status']
 			console.log(optedStatuslevel1);
@@ -221,7 +227,7 @@ function loadAssignedStatutoryList(data){
 				optedImageNamelevel1 = "<img src='/images/tick-orange.png'>";
 			}
 			else if(optedStatuslevel1 == false){
-				optedImageNamelevel1 = "<img src='/images/deletebold.png'>";  
+				optedImageNamelevel1 = "<img src='/images/deletebold.png'>";
 			}
 			else{
 				optedImageNamelevel1 = "Nil";
@@ -235,22 +241,22 @@ function loadAssignedStatutoryList(data){
 
 			$('.act-opted', cloneAssigned).html(optedImageNamelevel1);
 			$('.act-remarks', cloneAssigned).text(remarks);
-			var assignedRecord = assignedList[k]['compliances']; 
-			$('.tbody-assigned-statutory-list').append(cloneAssigned);		
+			var assignedRecord = assignedList[k]['compliances'];
+			$('.tbody-assigned-statutory-list').append(cloneAssigned);
 			$.each(assignedRecord, function(ke, valu) {
 				var appStatus = assignedRecord[ke]['compliance_applicable_status']
 				if(appStatus == true){
 					asImageName = "<img src='/images/tick1bold.png'>";
 				}
 				else{
-					asImageName = "<img src='/images/deletebold.png'>";  
+					asImageName = "<img src='/images/deletebold.png'>";
 				}
 				var optedStatus = assignedRecord[ke]['compliance_opted_status']
 				if(optedStatus == true){
 					optedImageName = "<img src='/images/tick-orange.png'>";
 				}
 				else if(optedStatus == false){
-					optedImageName = "<img src='/images/deletebold.png'>";  
+					optedImageName = "<img src='/images/deletebold.png'>";
 				}
 				else{
 					optedImageName = "Nil";
@@ -259,7 +265,7 @@ function loadAssignedStatutoryList(data){
 				if(remarks == null){
 					remarks = "Nil";
 				}
-				sno++; 
+				sno++;
 		  		var tableRowAssignedRecord = $('#statutory-list .table-statutory-list .tablerow');
 				var cloneAssignedRecord = tableRowAssignedRecord.clone();
 				$('.sno', cloneAssignedRecord).text(sno);
@@ -272,7 +278,7 @@ function loadAssignedStatutoryList(data){
 				$('.remarks', cloneAssignedRecord).text(remarks);
 				$('.tbody-assigned-statutory-list').append(cloneAssignedRecord);
 
-			});				
+			});
 		});
 	});
 	$(".total-records").html("Total : "+sno+" records")
@@ -297,7 +303,7 @@ function loadauto_domains (textval) {
   $('#selectboxview-domains ul').empty();
   if(textval.length>0){
     for(var i in domains){
-      if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 
+      if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -310,7 +316,7 @@ function loadauto_domains (textval) {
 //set selected autocomplte value to textbox
 function activate_text (element,checkval,checkname) {
   $("#domainval").val(checkname);
-  $("#domain").val(checkval);  
+  $("#domain").val(checkval);
 }
 //Groups----------------------------------------------------------------------------------------------------------------------
 function hidegroupslist(){
@@ -324,7 +330,7 @@ function loadauto_text (textval) {
   $('#autocompleteview ul').empty();
   if(textval.length>0){
     for(var i in groups){
-      if (~groups[i]['group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([groups[i]["client_id"],groups[i]["group_name"]]); 
+      if (~groups[i]['group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([groups[i]["client_id"],groups[i]["group_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -337,7 +343,7 @@ function loadauto_text (textval) {
 //set selected autocomplte value to textbox
 function activate_groups (element,checkval,checkname) {
   $("#groupsval").val(checkname);
-  $("#group-id").val(checkval);  
+  $("#group-id").val(checkval);
 }
 
 //businessgroups---------------------------------------------------------------------------------------------------------------
@@ -355,8 +361,8 @@ function loadauto_businessgroups (textval) {
   if(textval.length>0){
     for(var i in bgroups){
     	if(bgroups[i]['client_id']==$("#group-id").val()){
-    		if (~bgroups[i]['business_group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([bgroups[i]["business_group_id"],bgroups[i]["business_group_name"]]); 	
-    	}      
+    		if (~bgroups[i]['business_group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([bgroups[i]["business_group_id"],bgroups[i]["business_group_name"]]);
+    	}
     }
     var str='';
     for(var i in suggestions){
@@ -386,15 +392,15 @@ function loadauto_lentity (textval) {
     for(var i in lentity){
     	if($("#businessgroupid").val()!=''){
     		if(lentity[i]['business_group_id']==$("#businessgroupid").val()){
-    			if (~lentity[i]['legal_entity_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([lentity[i]["legal_entity_id"],lentity[i]["legal_entity_name"]]); 	
-    		}      
+    			if (~lentity[i]['legal_entity_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([lentity[i]["legal_entity_id"],lentity[i]["legal_entity_name"]]);
+    		}
     	}
     	else{
     		if(lentity[i]['client_id']==$("#group-id").val()){
-    			if (~lentity[i]['legal_entity_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([lentity[i]["legal_entity_id"],lentity[i]["legal_entity_name"]]); 	
-    		}     
+    			if (~lentity[i]['legal_entity_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([lentity[i]["legal_entity_id"],lentity[i]["legal_entity_name"]]);
+    		}
     	}
-    	
+
     }
     var str='';
     for(var i in suggestions){
@@ -424,8 +430,8 @@ function loadauto_division (textval) {
   if(textval.length>0){
     for(var i in division){
     	if(division[i]['legal_entity_id']==$("#legalentityid").val()){
-    		if (~division[i]['division_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([division[i]["division_id"],division[i]["division_name"]]); 	
-    	}      
+    		if (~division[i]['division_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([division[i]["division_id"],division[i]["division_name"]]);
+    	}
     }
     var str='';
     for(var i in suggestions){
@@ -458,15 +464,15 @@ function loadauto_unit (textval) {
     	if($("#divisionid").val()==''){
 
     		if(unit[i]['legal_entity_id']==$("#legalentityid").val()){
-    			if (~getunitidname.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]); 	
-    		}      	
+    			if (~getunitidname.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]);
+    		}
     	}
     	else{
     		if(unit[i]['division_id']==$("#divisionid").val()){
-    			if (~getunitidname.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]); 	
-    		}      	
+    			if (~getunitidname.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]);
+    		}
     	}
-    	
+
     }
     var str='';
     for(var i in suggestions){
@@ -496,8 +502,8 @@ function loadauto_level1 (textval) {
   var suggestions = [];
   $('#autocompleteview-level1 ul').empty();
   if(textval.length>0){
-    $.each(level1, function(i, value){    
-    	if (~level1[i]['statutory_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([level1[i]["statutory_id"],level1[i]["statutory_name"]]); 	
+    $.each(level1, function(i, value){
+    	if (~level1[i]['statutory_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([level1[i]["statutory_id"],level1[i]["statutory_name"]]);
     });
     var str='';
     for(var i in suggestions){
