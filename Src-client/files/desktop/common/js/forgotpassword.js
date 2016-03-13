@@ -9,15 +9,19 @@ function displayMessage(message) {
 
 function getShortName(){
     var pathArray = window.location.pathname.split( '/' );
+    console.log(pathArray)
     short_name = null;
     if(typeof pathArray[2] === 'undefined'){
         short_name = null;
     }
+    if (pathArray[1] == "knowledge") {
+      short_name = null;
+    }
     else if (pathArray[2] === "login") {
-        short_name = null
+      short_name = null
     }
     else{
-        short_name = pathArray[2]
+      short_name = pathArray[2]
     }
     return short_name
 }
@@ -29,7 +33,7 @@ $(".btn-forgotpassword-cancel").click(function(){
   }else{
     window.location.href='/login/'+getShortName();
   }
-  
+
 });
 
 $("#submit").click(function(){
@@ -49,8 +53,10 @@ $("#submit").click(function(){
           }
         }
 
+        console.log(getShortName());
+
         if(getShortName() == null){
-            mirror.forgotPassword(username, 
+            mirror.forgotPassword(username,
               function (error, response) {
                 if (error == null){
                   onSuccess(response);
@@ -61,7 +67,7 @@ $("#submit").click(function(){
             }
           );
         }else{
-            client_mirror.forgotPassword(username, 
+            client_mirror.forgotPassword(username,
                 function (error, response) {
                   if (error == null){
                     onSuccess(response);
@@ -74,3 +80,7 @@ $("#submit").click(function(){
         }
     }
   });
+
+$(document).ready(function () {
+  $("#username").focus();
+});
