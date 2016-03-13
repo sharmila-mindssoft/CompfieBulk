@@ -133,7 +133,7 @@ $('#file-space').on('input', function (event) {
 });
 
 $('#short-name').on('input', function (event) {
-    this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+    this.value = this.value.replace(/[^a-z0-9]/g, '');
 });
 
 $("#short-name").on('keyup', function(){

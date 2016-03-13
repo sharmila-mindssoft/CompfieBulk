@@ -322,12 +322,6 @@ $("#submit").click(function(){
 	if(employeename == ''){
 		displayMessage("Enter Employee Name");
 	}
-	else if(countrycode == ''){
-		displayMessage("Enter Country Code");
-	}
-	else if(mobilenumber == ''){
-		displayMessage("Enter Mobile Number");
-	}
 	else if(usergroup == ''){
 		displayMessage("Enter Usergroup");
 	}

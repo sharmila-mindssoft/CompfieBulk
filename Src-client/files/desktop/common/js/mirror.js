@@ -1066,8 +1066,7 @@ function initMirror() {
     }
 
     function getBusinessGroupDict(businessGroupId, busienssGroupName){
-        if (busienssGroupName == null || businessGroupId == null || 
-            busienssGroupName == '' || businessGroupId == ''){
+        if (busienssGroupName == null || busienssGroupName == '' ){
             return null
         }else{
             return {
@@ -1085,8 +1084,7 @@ function initMirror() {
     }
 
     function getDivisionDict(divisionId, divisionName){
-        if (divisionName == null || divisionId == null ||
-            divisionName == '' || divisionId == ''){
+        if (divisionName == null  || divisionName == ''){
             return null
         }else{
             return {

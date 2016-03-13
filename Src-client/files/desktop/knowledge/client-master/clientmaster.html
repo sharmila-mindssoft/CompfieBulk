@@ -235,16 +235,16 @@ $(function() {
   }
 });
 $( "#contract-to" ).datepicker({
-changeMonth: true,
-changeYear: true,
-numberOfMonths: 1,
-dateFormat: "dd-M-yy",
-monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-onClose: function( selectedDate ) {
-$( "#contract-from" ).datepicker( "option", "maxDate", selectedDate );
-}
-});
+  changeMonth: true,
+  changeYear: true,
+  numberOfMonths: 1,
+  dateFormat: "dd-M-yy",
+  monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  onClose: function( selectedDate ) {
+    $( "#contract-from" ).datepicker( "option", "maxDate", selectedDate );
+    }
+  });
 });
 </script>
 {% endblock %}

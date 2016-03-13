@@ -303,7 +303,26 @@ function initClientMirror() {
                 "short_name": short_name
             }
         ];
-        clientApiRequest(callerName, request, callback);
+        jQuery.post(
+            CLIENT_BASE_URL + callerName,
+            toJSON(request),
+            function(data) {
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                matchString = 'success';
+                if (status.toLowerCase().indexOf(matchString) != -1) {
+                    console.log("status success");
+                    initSession(response, short_name)
+                    callback(null, response);
+
+                }
+                else {
+                    callback(status, null);
+                }
+            }
+        )
+        
     }
 
     function resetPassword(resetToken, newPassword, short_name,
@@ -316,7 +335,25 @@ function initClientMirror() {
                 "short_name": short_name
             }
         ];
-        clientApiRequest(callerName, request, callback);
+        jQuery.post(
+            CLIENT_BASE_URL + callerName,
+            toJSON(request),
+            function(data) {
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                matchString = 'success';
+                if (status.toLowerCase().indexOf(matchString) != -1) {
+                    console.log("status success");
+                    initSession(response, short_name)
+                    callback(null, response);
+
+                }
+                else {
+                    callback(status, null);
+                }
+            }
+        )
     }
 
     // Client User Group
