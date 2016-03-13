@@ -272,7 +272,7 @@ function initClientMirror() {
                     "short_name" : short_name
                 }
             ]
-        ]
+        ];
         jQuery.post(
             CLIENT_BASE_URL + callerName,
             toJSON(request),
@@ -298,11 +298,13 @@ function initClientMirror() {
         callback) {
         callerName = "login"
         var request = [
-            "ResetTokenValidation", {
-                "reset_token": resetToken,
-                "short_name": short_name
-            }
-        ];
+            short_name, [
+                "ResetTokenValidation", {
+                    "reset_token": resetToken,
+                    "short_name": short_name
+                }
+            ]
+        ]
         jQuery.post(
             CLIENT_BASE_URL + callerName,
             toJSON(request),
@@ -329,11 +331,13 @@ function initClientMirror() {
         callback) {
         callerName = "login"
         var request = [
-            "ResetPassword", {
-                "reset_token": resetToken,
-                "new_password": newPassword,
-                "short_name": short_name
-            }
+            short_name, [
+                "ResetPassword", {
+                    "reset_token": resetToken,
+                    "new_password": newPassword,
+                    "short_name": short_name
+                }
+            ]
         ];
         jQuery.post(
             CLIENT_BASE_URL + callerName,

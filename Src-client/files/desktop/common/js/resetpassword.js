@@ -40,7 +40,7 @@ $("#submit").click(function(){
             displayMessage("Password already used. Enter different password");
           }
         }
-        mirror.resetPassword(resetToken, newpassword,
+        client_mirror.resetPassword(resetToken, newpassword,url_parameters[url_parameters.length - 2],
           function (error, response) {
             if (error == null){
               onSuccess(response);
@@ -51,20 +51,22 @@ $("#submit").click(function(){
         }
         );
       }else{
+        
+
         function onSuccess(data){
-          displayMessage("Password Reset Successfully");
-          $("#newpassword").val("");
-          $("#confirmpassword").val("");
-        }
-        function onFailure(error){
-          if(error == "InvalidResetToken"){
-            displayMessage("Invalid Reset Token");
+            displayMessage("Password Reset Successfully");
+            $("#newpassword").val("");
+            $("#confirmpassword").val("");
           }
-          if(error == "EnterDifferentPassword"){
-            displayMessage("Password already used. Enter different password");
+          function onFailure(error){
+            if(error == "InvalidResetToken"){
+              displayMessage("Invalid Reset Token");
+            }
+            if(error == "EnterDifferentPassword"){
+              displayMessage("Password already used. Enter different password");
+            }
           }
-        }
-        client_mirror.resetPassword(resetToken, newpassword,
+        mirror.resetPassword(resetToken, newpassword,
           function (error, response) {
             if (error == null){
               onSuccess(response);
@@ -83,13 +85,21 @@ $("#submit").click(function(){
 
 $(document).ready(function(){
   function onSuccess(data){
+    console.log("inside onSuccess" + data);
+    // if (data[0] == "InvalidResetToken"){
+    //   displayMessage("Invalid Reset Token");
+    //   $(".error-message").html(status);
+    // }
+
   }
 
   function onFailure(error){
-    if(error == "InvalidResetToken"){
-      displayMessage("Invalid Reset Token");
-    }
-    $(".error-message").html(status);
+    console.log("inside onFailure"+error);
+    alert(error);
+    // if(error == "InvalidResetToken"){
+    //   displayMessage("Invalid Reset Token");
+    // }
+    // $(".error-message").html(status);
     // window.location.href='/knowledge/login';
 
   }
