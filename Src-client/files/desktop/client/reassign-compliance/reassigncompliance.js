@@ -2,7 +2,7 @@ var compliancesList;
 var usersList;
 var unitsList;
 var reassignUserId=null;
-var cCount = 1;
+var cCount;
 var two_level_approve;
 var client_admin;
 
@@ -137,7 +137,12 @@ function load_allcompliances(userId, userName){
 
         $('.triggerbefore', clone2).text(triggerdate);
         
-        $('.duedate', clone2).html('<input type="text" value="'+due_date+'" class="input-box" readonly id="duedate'+statutoriesCount+'" />');
+        if(frequency != 'On Occurrence'){
+          $('.duedate', clone2).html('<input type="text" value="'+due_date+'" class="input-box" readonly id="duedate'+statutoriesCount+'" />');
+        }else{
+          $('.duedate', clone2).html(due_date);
+        }
+        
         
         $('.validitydate', clone2).text(validity_date);
       
@@ -213,11 +218,11 @@ function load_UserCompliances(uCompliances, uId){
 
 
 function load_compliances () {
-  var givenUserId = $("#assignee").val();
+  var givenUserId = $("#user").val();
   var givenUnitId = $("#seatingunit").val();;
 
   $(".tbody-reassign-compliances-list").find("tr").remove();
-
+  cCount = 1;
   if(givenUserId == '' && givenUnitId == ''){
     for(var entity in compliancesList) {
       var uCompliances = compliancesList[entity];
@@ -301,8 +306,12 @@ function submitcompliance(){
           if(complianceApplicable){
             var compliance_id = actList[actentity]["compliance_id"];
             var compliance_history_id = actList[actentity]["compliance_history_id"];
+            var cfrequency = actList[actentity]["compliance_frequency"];
             
-            var due_date =  $('#duedate'+statutoriesCount).val();
+            var due_date = null;
+            if(cfrequency != 'On Occurrence'){
+              due_date =  $('#duedate'+statutoriesCount).val();
+            }
 
             reassignComplianceData = client_mirror.reassingComplianceDet(uId,
               compliance_id, compliance_history_id, due_date
