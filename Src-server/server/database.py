@@ -4616,11 +4616,11 @@ class KnowledgeDatabase(Database):
             compliance_list = self.get_compliance_by_mapping_id(mapping_id)
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
             s_mapping = statutory_data[1]
-            level_map = s_mapping.split(" >> ")
+            level_map = s_mapping.split(">>")
             if len(level_map) == 1 :
                 level_map = None
             else :
-                level_map = " >> ".join(level_map[-1:])
+                level_map = ">>".join(level_map[-1:])
             statutory_parents = statutory_data[2]
             level_1 = statutory_parents[0]
             if level_1 == 0 :
@@ -4963,10 +4963,13 @@ class KnowledgeDatabase(Database):
             s_mapping = statutory_data[1]
             level_map = s_mapping.split(">>")
             if len(level_map) == 1 :
-                level_map = ""
+                level_map = None
             else :
                 level_map = ">>".join(level_map[-1:])
-            provision = "%s - %s" % (level_map, r["statutory_provision"])
+            if level_map :
+                provision = "%s - %s" % (level_map, r["statutory_provision"])
+            else :
+                provision = r["statutory_provision"]
             document_name = r["document_name"]
             if document_name == "None":
                 document_name = None
