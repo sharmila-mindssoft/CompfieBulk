@@ -367,6 +367,7 @@ TEMPLATE_PATHS = [
 
 ]
 
+IS_DEVELOPMENT = True
 VERSION = 4
 
 KNOWLEDGE_DB_HOST = "localhost"

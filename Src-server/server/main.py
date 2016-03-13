@@ -1,4 +1,5 @@
 import os
+import time
 import json
 import traceback
 import mimetypes
@@ -27,11 +28,15 @@ from server.constants import (
     TEMPLATE_PATHS,
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    VERSION
+    VERSION, IS_DEVELOPMENT
 )
 
-
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
+
+if IS_DEVELOPMENT :
+    FILE_VERSION = time.time()
+else :
+    FILE_VERSION = VERSION
 
 #
 # cors_handler
@@ -221,18 +226,18 @@ class TemplateHandler(tornado.web.RequestHandler) :
             url = node.get('src')
             new_url = self.set_path(url)
             if node.tag == "script" :
-                new_url += "?v=%s" % (VERSION)
+                new_url += "?v=%s" % (FILE_VERSION)
             node.set('src', new_url)
         for node in tree.xpath('//*[@href]'):
             url = node.get('href')
             if not url.startswith("#"):
                 new_url = self.set_path(url)
                 if node.tag == "link" :
-                    new_url += "?v=%s" % (VERSION)
+                    new_url += "?v=%s" % (FILE_VERSION)
             else :
                 new_url = url
                 if node.tag == "link" :
-                    new_url += "?v=%s" % (VERSION)
+                    new_url += "?v=%s" % (FILE_VERSION)
             node.set('href', new_url)
         data = etree.tostring(tree, method="html")
         return data
