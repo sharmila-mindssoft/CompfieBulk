@@ -657,7 +657,6 @@ function loadautocountry() {
     if($("#country").val() != ''){
         editcountryval = $("#country").val().split(",");
     }
-    //alert(editcountryval[0]+"---"+editcountryval[1]);
 
     if($("#clientgroup-id").val().trim() == ""){
         var countries = countriesList; 

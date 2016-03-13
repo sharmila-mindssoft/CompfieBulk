@@ -36,11 +36,18 @@ $(".btn-forgotpassword-cancel").click(function(){
 
 });
 
+function validateEmail($email) {
+    var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+    return emailReg.test( $email );
+}
+
 $("#submit").click(function(){
     displayMessage("");
     var username = $("#username").val().trim();
     if(username.length == 0) {
       displayMessage("Username required");
+    }else if(validateEmail(username) == ''){
+      displayMessage("Invalid email id");
     }else {
 
         function onSuccess(data){
@@ -53,9 +60,7 @@ $("#submit").click(function(){
           }
         }
 
-        console.log(getShortName());
-
-        if(getShortName() == null){
+        if(getShortName() == null  || getShortName() == "forgot-password"){
             mirror.forgotPassword(username,
               function (error, response) {
                 if (error == null){
