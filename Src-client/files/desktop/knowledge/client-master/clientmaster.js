@@ -207,8 +207,8 @@ $("#btn-clientgroup-submit").click(function(){
     else if(contractToVal == ''){
         displayMessage('Contract To Required');
     }
-    else if(usernameVal == ''){
-        displayMessage('Username Required');
+    else if(usernameVal == '' && clientGroupIdVal == ''){
+        displayMessage('Username Required');    
     }
     else if(validateEmail(usernameVal) == ''){
         displayMessage('Username Format is Invalid');
@@ -344,7 +344,8 @@ function clientgroup_active(clientId, isActive){
         }
         function onFailure(error){
             if(error == "CannotDeactivateClient"){
-                displayMessage("Cannot Deactivate Client");
+                alert("Cannot deactivate client, since client \
+                    has one or more active units")
             }
         }
         mirror.changeClientGroupStatus( parseInt(clientId), isActive,
@@ -390,8 +391,12 @@ function loadFormListUpdate(clientListData, clientGroupId){
     for(clientList in clientListData){
         if(clientGroupId == clientListData[clientList]['client_id']){
             $("#clientgroup-name").val(clientListData[clientList]['client_name']);
-
             var countriesListArray = clientListData[clientList]['country_ids'];
+            // var totalCountriesArray = countriesListArray
+            // $.each(countriesList, function (key, value){
+            //     totalCountriesArray.push(value['country_id']);
+            // });
+            // console.log("totalCountriesArray:"+totalCountriesArray);
             $("#country").val(countriesListArray);
             $("#countryselected").val(countriesListArray.length+" Selected");
 
@@ -646,6 +651,7 @@ function checkdomain(domainid){
     return returnval;
 }
 function loadautocountry() {
+    console.log("inside loadautocountry");
     document.getElementById('selectboxview-country').style.display = 'block';
     var editcountryval = [];
     if($("#country").val() != ''){
@@ -654,11 +660,11 @@ function loadautocountry() {
     //alert(editcountryval[0]+"---"+editcountryval[1]);
 
     if($("#clientgroup-id").val().trim() == ""){
-        var countries = countriesList;    
+        var countries = countriesList; 
     }
     if($("#clientgroup-id").val().trim() != ""){
         var countriesforuser = countriesList;
-        var countries = clientcountriesList;    
+        var countries = clientcountriesList;
     }  
 
     $('#ulist-country').empty();
