@@ -242,6 +242,9 @@ function loadauto_text (textval) {
     }
     $('#autocompleteview ul').append(str);
     $("#group-id").val('');
+    }else{
+      $("#group-id").val('');
+      $("#autocompleteview").hide();
     }
 }
 //set selected autocomplte value to textbox
@@ -271,6 +274,9 @@ function loadauto_businessgroups (textval) {
     }
     $('#autocompleteview-bgroups ul').append(str);
     $("#businessgroupid").val('');
+    }else{
+      $("#businessgroupid").val('');
+      $("#autocompleteview-bgroups").hide();
     }
 }
 function activate_businessgroups (element,checkval,checkname) {
@@ -306,6 +312,9 @@ function loadauto_lentity (textval) {
     }
     $('#autocompleteview-lentity ul').append(str);
     $("#legalentityid").val('');
+    }else{
+      $("#legalentityid").val('');
+      $("#autocompleteview-lentity").hide();
     }
 }
 //set selected autocomplte value to textbox
@@ -337,6 +346,9 @@ function loadauto_division (textval) {
     }
     $('#autocompleteview-division ul').append(str);
     $("#divisionid").val('');
+    }else{
+      $("#divisionid").val('');
+      $("#autocompleteview-division").hide();
     }
 }
 function activate_division (element,checkval,checkname) {
@@ -379,6 +391,9 @@ function loadauto_unit (textval) {
     }
     $('#autocompleteview-unit ul').append(str);
     $("#unitid").val('');
+    }else{
+      $("#unitid").val('');
+      $("#autocompleteview-unit").hide();
     }
 }
 function activate_unit (element,checkval,checkname) {
