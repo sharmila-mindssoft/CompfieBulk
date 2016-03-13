@@ -42,11 +42,11 @@ function initialize(){
         }
     );
 }
-$("#show-button").click(function(){ 
+$("#show-button").click(function(){
 
     var countries = $("#country").val();
     countriesNameVal = $("#countryval").val();
-    //Domain    
+    //Domain
     var domain = $("#domain").val();
     domainNameVal = $("#domainval").val();
     //business_groups
@@ -101,7 +101,7 @@ $("#show-button").click(function(){
         displayMessage("Enter Country");
     }
     else if(domain == ""){
-        displayMessage("Enter Domain");  
+        displayMessage("Enter Domain");
     }
     else if(fromdate != '' && todate ==''){
         displayMessage("Select To Date");
@@ -113,7 +113,7 @@ $("#show-button").click(function(){
 
         function onSuccess(data){
             $(".grid-table-rpt").show();
-            loadStatutoryNotificationsList(data['statutory_wise_notifications']);     
+            loadStatutoryNotificationsList(data['statutory_wise_notifications']);
         }
         function onFailure(error){
             console.log(error);
@@ -138,7 +138,7 @@ function loadStatutoryNotificationsList(data){
     alert("loadStatutoryNotificationsList");
     $('.tbody-statutory-notifications-list tr').remove();
     var sno = 0;
-    
+
     $.each(data, function(key, value) {
         var tableRowHeading = $('#templates .table-statutory-notifications-list .filter-heading-list');
         var cloneHeading = tableRowHeading.clone();
@@ -154,7 +154,7 @@ function loadStatutoryNotificationsList(data){
         $('.statutory-notifications-list .tbody-statutory-notifications-list').append(cloneHeadingth);
 
         var level1list = data[key]['level_1_statutory_wise_notifications'];
-        $.each(level1list, function(ke, valu) { 
+        $.each(level1list, function(ke, valu) {
             var tableRow = $('#templates .table-statutory-notifications-list .table-row-heading ');
             var clone = tableRow.clone();
             $('.level1-heading', clone).text(ke);
@@ -171,10 +171,10 @@ function loadStatutoryNotificationsList(data){
                 $('.statutory-notificaions', cloneval).html(list[k]['notification_text']);
                 $('.date-time', cloneval).html(list[k]['date_and_time']);
                 $('.statutory-notifications-list .tbody-statutory-notifications-list').append(cloneval);
-            });            
-        });        
+            });
+        });
     });
-    $(".total-records").html("Total : "+sno+" records")
+    $(".total-records").html( sno+" records")
 }
 
 
@@ -189,7 +189,7 @@ function loadauto_country (textval) {
   $('#selectboxview-country ul').empty();
   if(textval.length>0){
     for(var i in countries){
-      if (~countries[i]['country_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
+      if (~countries[i]['country_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -202,7 +202,7 @@ function loadauto_country (textval) {
 //set selected autocomplte value to textbox
 function activate_text (element,checkval,checkname) {
   $("#countryval").val(checkname);
-  $("#country").val(checkval);  
+  $("#country").val(checkval);
 }
 
 //Domains---------------------------------------------------------------------------------------------------------------
@@ -216,7 +216,7 @@ function loadauto_domains (textval) {
   $('#autocompleteview-domains ul').empty();
   if(textval.length>0){
     for(var i in domains){
-        if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);     
+        if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -241,7 +241,7 @@ function loadauto_domains (textval) {
   $('#autocompleteview-domains ul').empty();
   if(textval.length>0){
     for(var i in domains){
-        if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);     
+        if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -271,7 +271,7 @@ function loadauto_businessgroups (textval) {
     $('#autocompleteview-bgroups ul').empty();
     if(textval.length>0){
         for(var i in bgroups){
-            if (~bgroups[i]['business_group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([bgroups[i]["business_group_id"],bgroups[i]["business_group_name"]]);     
+            if (~bgroups[i]['business_group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([bgroups[i]["business_group_id"],bgroups[i]["business_group_name"]]);
         }
         var str='';
         for(var i in suggestions){
@@ -300,8 +300,8 @@ function loadauto_lentity (textval) {
   if(textval.length>0){
     for(var i in lentity){
         if($("#businessgroupid").val()!=''){
-            if (~lentity[i]['legal_entity_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([lentity[i]["legal_entity_id"],lentity[i]["legal_entity_name"]]);   
-        }        
+            if (~lentity[i]['legal_entity_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([lentity[i]["legal_entity_id"],lentity[i]["legal_entity_name"]]);
+        }
     }
     var str='';
     for(var i in suggestions){
@@ -330,7 +330,7 @@ function loadauto_division (textval) {
   $('#autocompleteview-division ul').empty();
   if(textval.length>0){
     for(var i in division){
-        if (~division[i]['division_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([division[i]["division_id"],division[i]["division_name"]]);    
+        if (~division[i]['division_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([division[i]["division_id"],division[i]["division_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -360,7 +360,7 @@ function loadauto_unit (textval) {
   if(textval.length>0){
     for(var i in unit){
         var getunitidname = unit[i]['unit_code']+"-"+unit[i]['unit_name'];
-        if (~getunitidname.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]);  
+        if (~getunitidname.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -390,8 +390,8 @@ function loadauto_level1 (textval) {
   var suggestions = [];
   $('#autocompleteview-level1 ul').empty();
   if(textval.length>0){
-    $.each(level1, function(i, value){    
-        if (~level1[i]['statutory'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([level1[i]["statutory"],level1[i]["statutory"]]);   
+    $.each(level1, function(i, value){
+        if (~level1[i]['statutory'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([level1[i]["statutory"],level1[i]["statutory"]]);
     });
     var str='';
     for(var i in suggestions){
