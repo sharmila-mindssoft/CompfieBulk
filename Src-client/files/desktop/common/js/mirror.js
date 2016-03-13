@@ -1021,7 +1021,7 @@ function initMirror() {
             "ForgotPassword",
             {
                 "username": username,
-                "short_name": getShortName()
+                "short_name": null
             }
         ];
         LoginApiRequest(callerName, request, callback);
@@ -1066,9 +1066,14 @@ function initMirror() {
     }
 
     function getBusinessGroupDict(businessGroupId, busienssGroupName){
-        return {
-            "business_group_id" : businessGroupId,
-            "business_group_name" : busienssGroupName
+        if (busienssGroupName == null || businessGroupId == null || 
+            busienssGroupName == '' || businessGroupId == ''){
+            return null
+        }else{
+            return {
+                "business_group_id" : businessGroupId,
+                "business_group_name" : busienssGroupName
+            }
         }
     }
 
@@ -1080,10 +1085,16 @@ function initMirror() {
     }
 
     function getDivisionDict(divisionId, divisionName){
-        return {
-            "division_id" : divisionId,
-            "division_name" : divisionName
+        if (divisionName == null || divisionId == null ||
+            divisionName == '' || divisionId == ''){
+            return null
+        }else{
+            return {
+                "division_id" : divisionId,
+                "division_name" : divisionName
+            }    
         }
+        
     }
 
     function getUnitDict(unitId, unitName, unitCode, unitAddress,

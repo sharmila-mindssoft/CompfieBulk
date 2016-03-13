@@ -937,14 +937,14 @@ $("#btn-clientunit-submit").click(function(){
             divIdValue = null;
             divNameValue = divisiontextValue;   
         }
-        if(bgNameValue != null){
+        if(bgNameValue != null && bgIdValue != null){
             businessGroup = mirror.getBusinessGroupDict(bgIdValue, bgNameValue);    
         }
         else{
             businessGroup = null;
         }
         legalEntity = mirror.getLegalEntityDict(leIdValue, leNameValue);
-        if(divNameValue != null){
+        if(divNameValue != null && divIdValue != null){
             division = mirror.getDivisionDict(divIdValue, divNameValue);
         }
         else{
@@ -1081,14 +1081,14 @@ $("#btn-clientunit-submit").click(function(){
         var divisiontextValue = $(".labeldivision").text().trim();
         var divisionidupdate = $("#division-update-id").val();
          
-        if(businessgrouptextValue != null){
+        if(businessgrouptextValue != null && businessgroupidupdate != null){
             businessGroup = mirror.getBusinessGroupDict(parseInt(businessgroupidupdate), businessgrouptextValue);    
         }
         else{
             businessGroup = null;
         }
         legalEntity = mirror.getLegalEntityDict(parseInt(legalentityidupdate), lentitytextValue);
-        if(divisiontextValue != null){
+        if(divisiontextValue != null && divisionidupdate != null){
             division = mirror.getDivisionDict(parseInt(divisionidupdate), divisiontextValue);
         }
         else{
