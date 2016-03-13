@@ -970,6 +970,12 @@ function load_firstwizard(){
     option.text(unitsList[unitList]["unit_name"]);
     $("#approval_unit").append(option);
   }
+
+  if(two_level_approve){
+    $('.c-view').show();
+  }else{
+    $('.c-view').hide();
+  }
 }
 
 function getAssignCompliances () {
@@ -981,7 +987,7 @@ function getAssignCompliances () {
     unitsList = data["units"];
     usersList = data["users"];
     two_level_approve = data["two_level_approve"];
-    client_admin = data["client_admin"]
+    client_admin = data["client_admin"];
     load_firstwizard();
   }
   function onFailure(error){
