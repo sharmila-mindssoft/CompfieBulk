@@ -396,6 +396,7 @@ function loadFormListUpdate(clientListData, clientGroupId){
 
             $("#contract-from").val(clientListData[clientList]['contract_from']);
             $("#contract-to").val(clientListData[clientList]['contract_to']);
+            $("#username").val(clientListData[clientList]['username']); 
             $("#username").hide();            
             $("#labelusername").text(clientListData[clientList]['username']);
             var logoimgsrc = clientListData[clientList]['logo'];
