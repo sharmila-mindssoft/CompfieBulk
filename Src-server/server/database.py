@@ -3599,7 +3599,7 @@ class KnowledgeDatabase(Database):
             if len(auto_generated_unit_codes) > 0:
                 existing_max_unit_code = max(auto_generated_unit_codes)
                 if existing_max_unit_code == no_of_units:
-                    next_auto_gen_no = no_of_units + 1 
+                    next_auto_gen_no = no_of_units + 1
                 else:
                     next_auto_gen_no = existing_max_unit_code + 1
 
@@ -4616,11 +4616,11 @@ class KnowledgeDatabase(Database):
             compliance_list = self.get_compliance_by_mapping_id(mapping_id)
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
             s_mapping = statutory_data[1]
-            level_map = s_mapping.split(" >> ")
+            level_map = s_mapping.split(">>")
             if len(level_map) == 1 :
                 level_map = None
             else :
-                level_map = " >> ".join(level_map[-1:])
+                level_map = ">>".join(level_map[-1:])
             statutory_parents = statutory_data[2]
             level_1 = statutory_parents[0]
             if level_1 == 0 :
@@ -4959,14 +4959,17 @@ class KnowledgeDatabase(Database):
                 statutory_opted = bool(statutory_opted)
             statutory_id = int(r["statutory_id"])
             mapping_id = int(r["statutory_mapping_id"])
-            statutory_data = self.statutory_parent_mapping.get(mapping_id)
+            statutory_data = self.statutory_parent_mapping.get(statutory_id)
             s_mapping = statutory_data[1]
             level_map = s_mapping.split(">>")
             if len(level_map) == 1 :
-                level_map = ""
+                level_map = None
             else :
                 level_map = ">>".join(level_map[-1:])
-            provision = "%s - %s" % (level_map, r["statutory_provision"])
+            if level_map :
+                provision = "%s - %s" % (level_map, r["statutory_provision"])
+            else :
+                provision = r["statutory_provision"]
             document_name = r["document_name"]
             if document_name == "None":
                 document_name = None
@@ -5412,7 +5415,7 @@ class KnowledgeDatabase(Database):
                     user_id, employee_name, email_id, contact_no,
                     unit_name, address,
                     file_space/1000000000, used_space/1000000000,
-                    bool(is_active), bool(is_primary_admin), 
+                    bool(is_active), bool(is_primary_admin),
                     is_service_provider
                 ))
 

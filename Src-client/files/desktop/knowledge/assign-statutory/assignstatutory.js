@@ -135,6 +135,19 @@ function actstatus(element){
   }
 }
 
+function compliancestatus(element){
+  var sClass = $(element).attr('class');
+  var actSelect = sClass.substr(sClass.lastIndexOf("s") + 1);
+  $('#act'+actSelect).prop("checked",true);
+  $('.remark'+actSelect).hide();
+  /*var cStatus = false;
+  $('.'+sClass).each(function() { 
+    if(this.checked = true){
+      cStatus = true;
+    }
+  });*/
+}
+
 function make_breadcrumbs(){
 
   var bc_businessgroup = $('.businessgrouplist.active').text();
@@ -202,7 +215,7 @@ function load_secondwizard(){
       $('.compliancetask', clone2).text(complianceslist[compliance]["compliance_name"]);
       $('.compliancedescription', clone2).html('<abbr class="page-load" title="'+
           cDescription+'">'+partDescription+'</abbr>');
-      $('.complianceapplicable', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'"><label for="statutory'+statutoriesCount+'"></label>');
+      $('.complianceapplicable', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this)"><label for="statutory'+statutoriesCount+'"></label>');
       $('.accordion-content'+count).append(clone2);
 
       if(compliance_applicable_status == false){
@@ -467,6 +480,7 @@ $("#unit").click(function(event){
 });
 
 $("#domain").click(function(event){
+  $('#activate-step-finish').show();
   if($(event.target).attr('class') == 'domainlist'){
     $('.'+$(event.target).attr('class')).each( function( index, el ) {
       $(el).removeClass( "active" );
@@ -583,11 +597,21 @@ clearValues('all');
 $(".breadcrumbs").html('');
 $("#activate-step-submit").hide();
 $("#activate-step-submit-cancel").hide();
-$("#activate-step-finish-cancel").hide();
+$("#activate-step-finish-cancel").show();
 $('#activate-step-finish').show();
+$("#backward-step-1").show();
+        
+$('ul.setup-panel li:eq(0)').show();
+$('ul.setup-panel li:eq(0)').removeClass('disabled');
 $('ul.setup-panel li:eq(0)').addClass('active');
+$('ul.setup-panel li:eq(1)').removeClass('active');
 $('ul.setup-panel li:eq(1)').addClass('disabled');
 $('ul.setup-panel li a[href="#step-1"]').trigger('click');
+
+/*$("#step-1").show();
+$("#step-2").show();
+$('ul.setup-panel li:eq(1)').css({'width': '49.5%'});*/
+
 $(".tbody-assignstatutory").find("tbody").remove();
 
 function onSuccess(data){
@@ -637,21 +661,21 @@ function validate_firsttab(){
     var checkDuplicateAssignStauttory = true;
     var unitIdTab2 = null;
     for(var entity in assignedStatutoriesList) {
-      if($('.locationlist.active').text() == assignedStatutoriesList[entity]["geography_name"] && $('.industrylist.active').text() == assignedStatutoriesList[entity]["industry_name"] && $('.domainlist.active').text() == assignedStatutoriesList[entity]["domain_name"]){
-        for(var j=0;j<assignStatutoryUnitValues.length;j++){
-          if(assignStatutoryUnitValues[j] == assignedStatutoriesList[entity]["unit_name"] && assignedStatutoriesList[entity]["submission_status"] == 0){
+      if($('.industrylist.active').text() == assignedStatutoriesList[entity]["industry_name"] && $('.domainlist.active').id == assignedStatutoriesList[entity]["domain_id"]){
+        for(var j=0;j<assignStatutoryUnitIds.length;j++){
+          if(assignStatutoryUnitIds[j] == assignedStatutoriesList[entity]["unit_id"] && assignedStatutoriesList[entity]["submission_status"] == 0){
             displayMessage("Statutes already assigned for '"+assignStatutoryUnitValues[j]+"' unit");
             checkDuplicateAssignStauttory = false;
             break;
             return false;
           }
-          if(assignStatutoryUnitValues[j] == assignedStatutoriesList[entity]["unit_name"] && assignedStatutoriesList[entity]["submission_status"] == 1 && assignStatutoryUnitValues.length > 1){
+          if(assignStatutoryUnitIds[j] == assignedStatutoriesList[entity]["unit_id"] && assignedStatutoriesList[entity]["submission_status"] == 1 && assignStatutoryUnitIds.length > 1){
             displayMessage("Please select individual unit, Statutes already submitted for '"+assignStatutoryUnitValues[j] + "' unit");
             checkDuplicateAssignStauttory = false;
             break;
             return false;
           }
-          if(assignStatutoryUnitValues[j] == assignedStatutoriesList[entity]["unit_name"] && assignedStatutoriesList[entity]["submission_status"] == 1 && assignStatutoryUnitValues.length == 1){
+          if(assignStatutoryUnitIds[j] == assignedStatutoriesList[entity]["unit_id"] && assignedStatutoriesList[entity]["submission_status"] == 1 && assignStatutoryUnitIds.length == 1){
             unitIdTab2 = assignedStatutoriesList[entity]["unit_id"];
           }
         }
@@ -663,6 +687,8 @@ function validate_firsttab(){
         statutoriesList = data["statutories"];
         newCompliancesList = data["new_compliances"];
         load_secondwizard();
+        displayMessage("");
+        return true;
       }
       function onFailure(error){
       }
@@ -676,8 +702,8 @@ function validate_firsttab(){
               }
           }
     );
-      displayMessage("");
-      return true;
+    displayMessage("");
+    return true;
     }
   }
 }
@@ -825,12 +851,21 @@ $('#activate-step-submit').on('click', function(e) {
 function displayEdit(client_statutory_id, country_id, group_id, location_id, domain_id, unit_id, submit_type){
    function onSuccess(data){
       clearValues('all');
-      $('ul.setup-panel li:eq(0)').hide();
+      /*$('ul.setup-panel li:eq(0)').hide();
+      $('ul.setup-panel li:eq(1)').addClass('active');
       $("#step-1").hide();
       $("#step-2").show();
       $('ul.setup-panel li:eq(1)').css({'width': '100%'});
-      $('ul.setup-panel li:eq(1)').html('<a href="#step-2"><h4 class="list-group-item-heading">Select Statutory</h4></a>');
+      //$('ul.setup-panel li:eq(1)').html('<a href="#step-2"><h4 class="list-group-item-heading">Select Statutory</h4></a>');
       $('ul.setup-panel li:eq(1)').addClass('active');
+      $("#assignstatutory-view").hide();
+      $("#assignstatutory-add").show();*/
+
+      $('ul.setup-panel li:eq(0)').removeClass('active');
+      $('ul.setup-panel li:eq(0)').addClass('disabled');
+      $('ul.setup-panel li:eq(1)').removeClass('disabled');
+      $('ul.setup-panel li:eq(1)').addClass('active');
+      $('ul.setup-panel li a[href="#step-2"]').trigger('click');
       $("#assignstatutory-view").hide();
       $("#assignstatutory-add").show();
 
@@ -1004,7 +1039,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('countrylist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1016,7 +1051,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('grouplist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1028,7 +1063,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('businessgrouplist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1040,7 +1075,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('legalentitylist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1052,7 +1087,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('divisionlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1064,7 +1099,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('geographylevellist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1076,7 +1111,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('locationlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1088,7 +1123,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('industrylist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1100,7 +1135,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('unitlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1112,7 +1147,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('domainlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';

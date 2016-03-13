@@ -322,19 +322,24 @@ function loadupdateunitlocation(cid, gid){
 //Add Country Wise List ----------------------------------------------------------------------------------------
 function addcountryrow(){
     var countryIds;
-    var groupId = $("#group-select").val();
-    if($("#entity-text").val().length == 0){
-        var legalEntityValue = $("#entity-select").val();   
+    var groupId = $("#client-unit-id").val();
+    if($("#client-unit-id").val() == '')
+    {
+        groupId = $("#group-select").val();
+        if($("#entity-text").val().length == 0){
+            var legalEntityValue = $("#entity-select").val();   
+        }
+        else{
+            var legalEntityValue = $("#entity-text").val();     
+        }   
+        if(groupId == ''){
+            displayMessage("Select Group");
+        }
+        else if(legalEntityValue == ''){
+            displayMessage('Select Existing Legal Entity or Create New');
+        }
     }
-    else{
-        var legalEntityValue = $("#entity-text").val();     
-    }   
-    if(groupId == ''){
-        displayMessage("Select Group");
-    }
-    else if(legalEntityValue == ''){
-        displayMessage('Select Existing Legal Entity or Create New');
-    }
+
     else{
         clearMessage();
         for (var i in groupList){
@@ -378,7 +383,7 @@ function addcountryrow(){
             $('.unit-error-msg', clone).addClass('unit-error-msg-'+countryByCount);
             $('.add-country-unit-list').append(clone);  
             $('.no-of-units-'+countryByCount).val(1);
-            $('.activedclass-'+countryByCount+'-'+1).text("active");
+            $('.activedclass-'+countryByCount+'-'+1).text("Active");
             if(countryByCount != 1){
                  $('.unitcode-checkbox-'+countryByCount).hide();  
             }  
@@ -439,7 +444,7 @@ function addNewUnitRow(str){
         unitcodeautogenerateids++;
           console.log("addNewUnitRow=="+unitcodeautogenerateids);
     }
-    $('.activedclass-'+countval+'-'+(lastClassval+1)).text("active");
+    $('.activedclass-'+countval+'-'+(lastClassval+1)).text("Active");
     $(".postal-code", clone1).on('input', function (event) {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
@@ -766,7 +771,7 @@ function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divis
     var domainsListArray = firstlist['domain_ids'];
     $('.domain-'+countryByCount+'-'+1).val(domainsListArray);
     $('.domainselected-'+countryByCount+'-'+1).val(domainsListArray.length+" Selected");
-    $('.activedclass-'+countryByCount+'-'+1).text("active");
+    $('.activedclass-'+countryByCount+'-'+1).text("Active");
     // if($('.unit-id-'+countryByCount+'-1').val() != ''){
     //     unitcodeautogenerateids++;    
     //     console.log("addcountryrowupdate=="+unitcodeautogenerateids);
@@ -831,7 +836,7 @@ function addUnitRowUpdate(clientunitId, businessgroupId, legalEntityId, division
     var domainsListArray = firstlist['domain_ids'];
     $('.domain-'+countval+'-'+lastClassval).val(domainsListArray);
     $('.domainselected-'+countval+'-'+lastClassval).val(domainsListArray.length+" Selected");
-    $('.activedclass-'+countval+'-'+lastClassval).text("active");
+    $('.activedclass-'+countval+'-'+lastClassval).text("Active");
 }
 
 
@@ -1081,14 +1086,14 @@ $("#btn-clientunit-submit").click(function(){
         var divisiontextValue = $(".labeldivision").text().trim();
         var divisionidupdate = $("#division-update-id").val();
          
-        if(businessgrouptextValue != null){
+        if(businessgrouptextValue != ''){
             businessGroup = mirror.getBusinessGroupDict(parseInt(businessgroupidupdate), businessgrouptextValue);    
         }
         else{
             businessGroup = null;
         }
         legalEntity = mirror.getLegalEntityDict(parseInt(legalentityidupdate), lentitytextValue);
-        if(divisiontextValue != null){
+        if(divisiontextValue != ''){
             division = mirror.getDivisionDict(parseInt(divisionidupdate), divisiontextValue);
         }
         else{
