@@ -4,6 +4,7 @@ var unitsList;
 var reassignUserId=null;
 var cCount = 1;
 var two_level_approve;
+var client_admin;
 
 
 function clearMessage() {
@@ -80,6 +81,7 @@ function load_allcompliances(userId, userName){
         var compliance_description = actList[actentity]["description"];
         var frequency =  actList[actentity]["compliance_frequency"];
         var statutory_date =  actList[actentity]["statutory_date"];
+        var summary = actList[actentity]["summary"];
         var due_date =  actList[actentity]["due_date"];
         var validity_date =  actList[actentity]["validity_date"];
         if(validity_date == null) validity_date = '';
@@ -87,7 +89,6 @@ function load_allcompliances(userId, userName){
         var statutorydate = '';
         var sdateDesc = '';
         
-        if(frequency == 'Periodical' || frequency == 'Review') sdateDesc = 'Every';
         for(j = 0; j < statutory_date.length; j++){
           var sDay = '';
           if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
@@ -111,9 +112,18 @@ function load_allcompliances(userId, userName){
           else if(sMonth == 11) sMonth = "November"
           else if(sMonth == 12) sMonth = "December"
             
-          triggerdate +=  tDays + " Day(s)";
-          statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
+          triggerdate +=  tDays + " Day(s) ";
+          statutorydate +=  sMonth +' '+ sDay + ' ';
         }
+
+        if(summary != null){
+          if(statutorydate != ''){
+            statutorydate = summary + ' ( '+statutorydate+' )';
+          }else{
+            statutorydate = summary;
+          }
+        }
+
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
         $('.ckbox', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'">');
@@ -178,11 +188,12 @@ function load_UserCompliances(uCompliances, uId){
 
     for(var user in usersList){
       var userId= usersList[user]["user_id"];
-      userName = usersList[user]["user_name"];
-      seatingUnitId = usersList[user]["seating_unit_id"];
+      if(uId == userId){
+        userName = usersList[user]["user_name"];
+        seatingUnitId = usersList[user]["seating_unit_id"];
+      }
     }
     for(var unit in unitsList){
-      var userId= usersList[user]["user_id"];
       if(unitsList[unit]["unit_id"] == seatingUnitId){
         seatingUnit = unitsList[unit]["unit_name"];
       }
@@ -202,8 +213,8 @@ function load_UserCompliances(uCompliances, uId){
 
 
 function load_compliances () {
-  var givenUserId = givenUserId = $("#assignee").val();
-  var givenUnitId = givenUnitId = $("#seatingunit").val();;
+  var givenUserId = $("#assignee").val();
+  var givenUnitId = $("#seatingunit").val();;
 
   $(".tbody-reassign-compliances-list").find("tr").remove();
 
@@ -255,6 +266,13 @@ function load_compliances () {
     option.text(unitsList[unitList]["unit_name"]);
     $("#approval_unit").append(option);
   }
+
+  if(two_level_approve){
+    $('.c-view').show();
+  }else{
+    $('.c-view').hide();
+  }
+
 }
 
 
@@ -329,8 +347,9 @@ function getReassignCompliances () {
     compliancesList = data["user_wise_compliances"];
     usersList = data["users"];
     unitsList = data["units"]; 
-    //two_level_approve = data["two_level_approve"];
-    //load_compliances(compliancesList);
+    two_level_approve = data["two_level_approve"];
+    $("#compliance-list").show();
+    load_compliances();
   }
   function onFailure(error){
   }
@@ -428,36 +447,34 @@ function getUserLevel(selectedUserId){
   }
   return getuserLevel;
 }
+
 function loadUser(userType){
-  var selectedUnit;
+  var selectedUnit = null;
   var userClass;
   var temp_assignee = null;
   var temp_concurrence = null;
   var temp_approval = null;
-  var temp_id = null;
+  //var temp_id = null;
 
   if(userType == 'assignee'){
     selectedUnit = $("#assignee_unit").val();
     userClass = 'assigneelist';
-
-    if($('.assigneelist.active').attr('id') != undefined)
-      temp_id = parseInt($('.assigneelist.active').attr('id'));
+    /*if($('.assigneelist.active').attr('id') != undefined)
+      temp_id = parseInt($('.assigneelist.active').attr('id'));*/
   }
   else if(userType == 'concurrence'){
     selectedUnit = $("#concurrence_unit").val();
     userClass = 'concurrencelist';
-
-    if($('.concurrencelist.active').attr('id') != undefined)
-      temp_id = parseInt($('.concurrencelist.active').attr('id'));
+    /*if($('.concurrencelist.active').attr('id') != undefined)
+      temp_id = parseInt($('.concurrencelist.active').attr('id'));*/
   }
   else{
     selectedUnit = $("#approval_unit").val();
     userClass = 'approvallist';
-
-    if($('.approvallist.active').attr('id') != undefined)
-      temp_id = parseInt($('.approvallist.active').attr('id'));
+    /*if($('.approvallist.active').attr('id') != undefined)
+      temp_id = parseInt($('.approvallist.active').attr('id'));*/
   }
-  var str='';
+  
   $('#'+userType).empty();
 
   var assigneeUserId = null;
@@ -499,6 +516,19 @@ function loadUser(userType){
     }
   }
 
+  var str='';
+  if(userType != 'concurrence' && selectedUnit != ''){
+    if((assigneeUserId == null || assigneeUserId != client_admin)
+    && (approvalUserId == null || approvalUserId != client_admin) 
+    && (concurrenceUserId == null || concurrenceUserId != client_admin)){
+      /*if(temp_id == client_admin){
+        str='<li id="'+client_admin+'" class="'+userClass+' active" > Admin </li>';
+      }else{
+        str='<li id="'+client_admin+'" class="'+userClass+'" > Admin </li>';
+      }*/
+      str='<li id="'+client_admin+'" class="'+userClass+'" > Client Admin </li>';
+    }
+  }
   for(var user in usersList){
     var userUnits = usersList[user]["unit_ids"];
     if( selectedUnit == 'all' || $.inArray(parseInt(selectedUnit), userUnits) >= 0){
@@ -525,11 +555,12 @@ function loadUser(userType){
       if(conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
         && (approvalUserId == null || approvalUserId != userId) 
         && (concurrenceUserId == null || concurrenceUserId != userId)){
-        if(temp_id == userId){
+        /*if(temp_id == userId){
           str += '<li id="'+userId+'" class="'+userClass+ ' active'+'" >'+userName+'</li>';
         }else{
           str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
-        }
+        }*/
+        str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
       }
     }
   }
@@ -547,9 +578,14 @@ $("#assignee").click(function(event){
       });
       $(event.target).addClass("active");
     }
-
-    loadUser('concurrence');
-    loadUser('approval');
+    var assigneeText = $(".assigneelist.active").text().trim();
+    if(assigneeText != 'Client Admin'){
+      loadUser('concurrence');
+      loadUser('approval');
+    }else{
+      $('#concurrence').empty();
+      $('#approval').empty();
+    }
   }
 });
 
@@ -564,8 +600,7 @@ $("#concurrence").click(function(event){
       });
       $(event.target).addClass("active");
     }
-
-    loadUser('assignee');
+    //loadUser('assignee');
     loadUser('approval');
   }
 });
@@ -582,8 +617,8 @@ $("#approval").click(function(event){
       $(event.target).addClass("active");
     }
 
-    loadUser('assignee');
-    loadUser('concurrence');
+    //loadUser('assignee');
+    //loadUser('concurrence');
   }
 });
 
@@ -599,7 +634,6 @@ $('#approval_unit').change(function() {
     loadUser('approval');
 });
 
-
 function validate_firsttab(){
   return true;
 }
@@ -608,9 +642,9 @@ function validate_secondtab(){
   if($('.assigneelist.active').text() == ''){
     displayMessage("Assignee Required");
     return false;
-  /*}else if ($('.concurrencelist.active').text() == '' && two_level_approve){
+  }else if ($('.concurrencelist.active').text() == '' && two_level_approve){
     displayMessage("Concurrence Required");
-    return false;*/
+    return false;
   }else if ($('.approvallist.active').text() == ''){
     displayMessage("Approval Required");
     return false;

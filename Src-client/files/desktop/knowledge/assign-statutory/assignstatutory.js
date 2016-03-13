@@ -597,11 +597,21 @@ clearValues('all');
 $(".breadcrumbs").html('');
 $("#activate-step-submit").hide();
 $("#activate-step-submit-cancel").hide();
-$("#activate-step-finish-cancel").hide();
+$("#activate-step-finish-cancel").show();
 $('#activate-step-finish').show();
+$("#backward-step-1").show();
+        
+$('ul.setup-panel li:eq(0)').show();
+$('ul.setup-panel li:eq(0)').removeClass('disabled');
 $('ul.setup-panel li:eq(0)').addClass('active');
+$('ul.setup-panel li:eq(1)').removeClass('active');
 $('ul.setup-panel li:eq(1)').addClass('disabled');
 $('ul.setup-panel li a[href="#step-1"]').trigger('click');
+
+/*$("#step-1").show();
+$("#step-2").show();
+$('ul.setup-panel li:eq(1)').css({'width': '49.5%'});*/
+
 $(".tbody-assignstatutory").find("tbody").remove();
 
 function onSuccess(data){
@@ -676,8 +686,6 @@ function validate_firsttab(){
       function onSuccess(data){
         statutoriesList = data["statutories"];
         newCompliancesList = data["new_compliances"];
-        $('ul.setup-panel li:eq(1)').removeClass('disabled');
-        $('ul.setup-panel li a[href="#step-2"]').trigger('click');
         load_secondwizard();
         displayMessage("");
         return true;
@@ -843,12 +851,21 @@ $('#activate-step-submit').on('click', function(e) {
 function displayEdit(client_statutory_id, country_id, group_id, location_id, domain_id, unit_id, submit_type){
    function onSuccess(data){
       clearValues('all');
-      $('ul.setup-panel li:eq(0)').hide();
+      /*$('ul.setup-panel li:eq(0)').hide();
+      $('ul.setup-panel li:eq(1)').addClass('active');
       $("#step-1").hide();
       $("#step-2").show();
       $('ul.setup-panel li:eq(1)').css({'width': '100%'});
-      $('ul.setup-panel li:eq(1)').html('<a href="#step-2"><h4 class="list-group-item-heading">Select Statutory</h4></a>');
+      //$('ul.setup-panel li:eq(1)').html('<a href="#step-2"><h4 class="list-group-item-heading">Select Statutory</h4></a>');
       $('ul.setup-panel li:eq(1)').addClass('active');
+      $("#assignstatutory-view").hide();
+      $("#assignstatutory-add").show();*/
+
+      $('ul.setup-panel li:eq(0)').removeClass('active');
+      $('ul.setup-panel li:eq(0)').addClass('disabled');
+      $('ul.setup-panel li:eq(1)').removeClass('disabled');
+      $('ul.setup-panel li:eq(1)').addClass('active');
+      $('ul.setup-panel li a[href="#step-2"]').trigger('click');
       $("#assignstatutory-view").hide();
       $("#assignstatutory-add").show();
 
@@ -1022,7 +1039,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('countrylist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1034,7 +1051,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('grouplist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1046,7 +1063,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('businessgrouplist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1058,7 +1075,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('legalentitylist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1070,7 +1087,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('divisionlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1082,7 +1099,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('geographylevellist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1094,7 +1111,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('locationlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1106,7 +1123,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('industrylist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1118,7 +1135,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('unitlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -1130,7 +1147,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('domainlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0)
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
