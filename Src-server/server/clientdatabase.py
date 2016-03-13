@@ -7012,6 +7012,9 @@ class ClientDatabase(Database):
             T2.statutory_dates, T3.unit_id, (select frequency \
                 from tbl_compliance_frequency where \
                 frequency_id = T2.frequency_id) as frequency,\
+            (select business_group_name from tbl_business_groups where business_group_id = T4.business_group_id)business_group, \
+            (select legal_entity_name from tbl_legal_entities where legal_entity_id = T4.legal_entity_id)legal_entity, \
+            (select division_name from tbl_divisions where division_id = T4.division_id )division_name,\
             (select group_concat(unit_code, '-', unit_name) from tbl_units \
                 where unit_id = T3.unit_id) as unit_name, \
             (select group_concat(address, '-', postal_code) from tbl_units \
@@ -7042,6 +7045,7 @@ class ClientDatabase(Database):
             "statutory_provision", "statutory_mapping", "compliance_task",
             "document_name", "format_file", "penal_consequences",
             "compliance_description", "statutory_dates", "unit_id", "frequency",
+            "business_group", "legal_entity", "division_name",
             "unit_name", "unit_address", "statutory_applicable",
             "statutory_opted", "compliance_opted",
             "repeat_type", "duration_type", "repeats_every",
