@@ -265,6 +265,8 @@ function initClientMirror() {
     function forgotPassword(username, callback) {
         callerName = "login"
         var short_name = getShortName();
+        window.localStorage["recent_short_name"] = short_name
+        login_url = "/login/"+short_name
         var request = [
             short_name, [
                 "ForgotPassword", {
@@ -296,6 +298,8 @@ function initClientMirror() {
 
     function validateResetToken(resetToken, short_name, 
         callback) {
+        window.localStorage["recent_short_name"] = short_name
+        login_url = "/login/"+short_name
         callerName = "login"
         var request = [
             short_name, [
@@ -329,6 +333,8 @@ function initClientMirror() {
 
     function resetPassword(resetToken, newPassword, short_name,
         callback) {
+        window.localStorage["recent_short_name"] = short_name
+        login_url = "/login/"+short_name
         callerName = "login"
         var request = [
             short_name, [
