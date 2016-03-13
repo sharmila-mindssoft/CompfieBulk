@@ -3,6 +3,7 @@ import re
 import Queue
 
 from protocol import core, technomasters
+from server.emailcontroller import EmailHandler as email
 
 __all__ = [
     "get_client_groups",
@@ -41,17 +42,26 @@ def create_database(
     country_ids, domain_ids
 ):
     try:        
-        db._create_database(
+        password = db._create_database(
             host, username, password, database_name, db_username,
             db_password, email_id, client_id, short_name, country_ids,
             domain_ids
         )
         print "returning true"
-        return True
+        return True, password
     except Exception, ex:
         print "Error :{}".format(ex)
-        return False
+        return False, None
 
+
+def send_client_credentials(
+        short_name, email_id, password
+    ):
+        try:
+            email().send_client_credentials(short_name, email_id, password)
+        except Exception, e:
+            print "Error while sending email : {}".format(e)
+        return True
 
 
 def save_client_group(db, request, session_user):
@@ -108,8 +118,13 @@ def save_client_group(db, request, session_user):
             db.notify_incharge_persons(request)
             # while create_database_thread.isAlive():
             #     continue
-            print result
-            if result :
+            if result[0] : 
+                send_client_credentials_thread = threading.Thread(
+                    target=send_client_credentials, args=[
+                        request.short_name, request.email_id, result[1]
+                    ]
+                )
+                send_client_credentials_thread.start()
                 return technomasters.SaveClientGroupSuccess()
             else:
                 raise Exception('Error in Creating database')
