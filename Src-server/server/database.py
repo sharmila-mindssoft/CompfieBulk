@@ -928,7 +928,6 @@ class KnowledgeDatabase(Database):
             self.execute(query)
             return True
         except Exception, e :
-            print query
             print e
 
     def update_data(self, table_name, field_with_data, where_condition) :
@@ -939,7 +938,6 @@ class KnowledgeDatabase(Database):
             self.execute(query)
             return True
         except Exception, e :
-            print query
             print e
 
     def get_industries(self) :
@@ -5798,16 +5796,11 @@ class KnowledgeDatabase(Database):
                     new_admin_id
                 )
                 cursor.execute(query)
-
-                query = "Insert into tbl_user_countries (country_id, user_id) values "
-                for index, row in enumerate(rows):
-                    if index < len(rows)-1:
-                        query += "(%s, %s)," % (row[0], new_admin_id)
-                    else:
-                        query += "(%s, %s)" % (row[0], new_admin_id)
-
-                print query
-                cursor.execute(query)
+                if rows:
+                    query = "Insert into tbl_user_countries (country_id, user_id) values "
+                    for index, row in enumerate(rows):
+                        q = "%s (%s, %s) " % ( query, row[0], new_admin_id)
+                        cursor.execute(q)
 
                 # Adding all domains to new admin
                 query = "select domain_id from tbl_domains"
@@ -5818,14 +5811,11 @@ class KnowledgeDatabase(Database):
                     new_admin_id
                 )
                 cursor.execute(query)
-
-                query = "Insert into tbl_user_domains (domain_id, user_id) values "
-                for index, row in enumerate(rows):
-                    if index < len(rows)-1:
-                        query += "(%s, %s)," % (row[0], new_admin_id)
-                    else:
-                        query += "(%s, %s)" % (row[0], new_admin_id)
-                cursor.execute(query)
+                if rows:
+                    query = "Insert into tbl_user_domains (domain_id, user_id) values "
+                    for index, row in enumerate(rows):
+                        q = "%s (%s, %s) " % ( query, row[0], new_admin_id)
+                        cursor.execute(q)
 
                 # Adding all units to new admin
                 query = "select unit_id from tbl_units"
@@ -5837,14 +5827,11 @@ class KnowledgeDatabase(Database):
                 )
                 cursor.execute(query)
 
-                query = "Insert into tbl_user_units (unit_id, user_id) values "
-                for row in rows:
-                    if index < len(rows)-1:
-                        query += "(%s, %s)," % (row[0], new_admin_id)
-                    else:
-                        query += "(%s, %s)" % (row[0], new_admin_id)
-                cursor.execute(query)
-
+                if rows:
+                    query = "Insert into tbl_user_units (unit_id, user_id) values "
+                    for row in rows:
+                        q = "%s (%s, %s) " % ( query, row[0], new_admin_id)
+                        cursor.execute(q)
                 conn.commit()
 
                 # Promoting to new admin in Knowledge db

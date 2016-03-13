@@ -265,6 +265,8 @@ function initClientMirror() {
     function forgotPassword(username, callback) {
         callerName = "login"
         var short_name = getShortName();
+        window.localStorage["recent_short_name"] = short_name
+        login_url = "/login/"+short_name
         var request = [
             short_name, [
                 "ForgotPassword", {
@@ -272,7 +274,7 @@ function initClientMirror() {
                     "short_name" : short_name
                 }
             ]
-        ]
+        ];
         jQuery.post(
             CLIENT_BASE_URL + callerName,
             toJSON(request),
@@ -296,13 +298,17 @@ function initClientMirror() {
 
     function validateResetToken(resetToken, short_name, 
         callback) {
+        window.localStorage["recent_short_name"] = short_name
+        login_url = "/login/"+short_name
         callerName = "login"
         var request = [
-            "ResetTokenValidation", {
-                "reset_token": resetToken,
-                "short_name": short_name
-            }
-        ];
+            short_name, [
+                "ResetTokenValidation", {
+                    "reset_token": resetToken,
+                    "short_name": short_name
+                }
+            ]
+        ]
         jQuery.post(
             CLIENT_BASE_URL + callerName,
             toJSON(request),
@@ -327,13 +333,17 @@ function initClientMirror() {
 
     function resetPassword(resetToken, newPassword, short_name,
         callback) {
+        window.localStorage["recent_short_name"] = short_name
+        login_url = "/login/"+short_name
         callerName = "login"
         var request = [
-            "ResetPassword", {
-                "reset_token": resetToken,
-                "new_password": newPassword,
-                "short_name": short_name
-            }
+            short_name, [
+                "ResetPassword", {
+                    "reset_token": resetToken,
+                    "new_password": newPassword,
+                    "short_name": short_name
+                }
+            ]
         ];
         jQuery.post(
             CLIENT_BASE_URL + callerName,

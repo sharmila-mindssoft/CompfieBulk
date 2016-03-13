@@ -1,5 +1,6 @@
 // var BASE_URL = "http://127.0.0.1:8082/";
 var BASE_URL = "/knowledge/api/";
+var login_url = "/knowledge/login"
 
 function initMirror() {
     var DEBUG = true;
