@@ -5,6 +5,7 @@ function displayMessage(message) {
   $(".error-message").show();
 }
 $("#submit").click(function(){
+    console.log("inside submit");
     $(".error-message").html("");
     url = window.location.href;
     url_parameters = url.split("/");
@@ -21,7 +22,12 @@ $("#submit").click(function(){
       $(".error-message").html("New Password & Confirm Password is Not Match");
     } else {
 
-        function onSuccess(data){
+      url = window.location.href;
+      url_parameters = url.split("/");
+      console.log(url_parameters);
+      reset_token = url_parameters[url_parameters.length - 1];
+      if(url_parameters[url_parameters.length - 2] != "reset-password"){
+          function onSuccess(data){
           displayMessage("Password Reset Successfully");
           $("#newpassword").val("");
           $("#confirmpassword").val("");
@@ -43,7 +49,35 @@ $("#submit").click(function(){
               onFailure(error);
             }
         }
-      );
+        );
+      }else{
+        function onSuccess(data){
+          displayMessage("Password Reset Successfully");
+          $("#newpassword").val("");
+          $("#confirmpassword").val("");
+        }
+        function onFailure(error){
+          if(error == "InvalidResetToken"){
+            displayMessage("Invalid Reset Token");
+          }
+          if(error == "EnterDifferentPassword"){
+            displayMessage("Password already used. Enter different password");
+          }
+        }
+        client_mirror.resetPassword(resetToken, newpassword,
+          function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
+        }
+        );
+      }
+
+
+        
       }
   });
 
@@ -64,7 +98,7 @@ $(document).ready(function(){
   console.log(url_parameters);
   reset_token = url_parameters[url_parameters.length - 1];
   if(url_parameters[url_parameters.length - 2] != "reset-password"){
-       mirror.validateResetToken(reset_token,
+       client_mirror.validateResetToken(reset_token, url_parameters[url_parameters.length - 2],
           function (error, response) {
             if (error == null){
               onSuccess(response);
@@ -75,7 +109,8 @@ $(document).ready(function(){
         }
       );
   }else{
-      client_mirror.validateResetToken(reset_token, url_parameters[url_parameters.length - 2],
+      
+      mirror.validateResetToken(reset_token,
           function (error, response) {
             if (error == null){
               onSuccess(response);
