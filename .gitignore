@@ -3,9 +3,10 @@
 *~
 *.txt
 *.csv
+*.log
 /Src-server/server/knowledgeformat
 /Src-server/server/knowledgeformat
 /clientdocuments
 /Src-server/server/clientlogo
 /exported_reports
-*.log
+/Src-server/logs
