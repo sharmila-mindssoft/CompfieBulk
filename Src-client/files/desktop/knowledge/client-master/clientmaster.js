@@ -207,8 +207,8 @@ $("#btn-clientgroup-submit").click(function(){
     else if(contractToVal == ''){
         displayMessage('Contract To Required');
     }
-    else if(usernameVal == ''){
-        displayMessage('Username Required');
+    else if(usernameVal == '' && clientGroupIdVal == ''){
+        displayMessage('Username Required');    
     }
     else if(validateEmail(usernameVal) == ''){
         displayMessage('Username Format is Invalid');
@@ -344,7 +344,8 @@ function clientgroup_active(clientId, isActive){
         }
         function onFailure(error){
             if(error == "CannotDeactivateClient"){
-                displayMessage("Cannot Deactivate Client");
+                alert("Cannot deactivate client, since client \
+                    has one or more active units")
             }
         }
         mirror.changeClientGroupStatus( parseInt(clientId), isActive,
@@ -390,8 +391,12 @@ function loadFormListUpdate(clientListData, clientGroupId){
     for(clientList in clientListData){
         if(clientGroupId == clientListData[clientList]['client_id']){
             $("#clientgroup-name").val(clientListData[clientList]['client_name']);
-
             var countriesListArray = clientListData[clientList]['country_ids'];
+            // var totalCountriesArray = countriesListArray
+            // $.each(countriesList, function (key, value){
+            //     totalCountriesArray.push(value['country_id']);
+            // });
+            // console.log("totalCountriesArray:"+totalCountriesArray);
             $("#country").val(countriesListArray);
             $("#countryselected").val(countriesListArray.length+" Selected");
 
@@ -645,6 +650,7 @@ function checkdomain(domainid){
     return returnval;
 }
 function loadautocountry() {
+    console.log("inside loadautocountry");
     document.getElementById('selectboxview-country').style.display = 'block';
     var editcountryval = [];
     if($("#country").val() != ''){
@@ -653,11 +659,21 @@ function loadautocountry() {
     //alert(editcountryval[0]+"---"+editcountryval[1]);
 
     if($("#clientgroup-id").val().trim() == ""){
-        var countries = countriesList;    
+        var countries = countriesList; 
     }
     if($("#clientgroup-id").val().trim() != ""){
-        var countriesforuser = countriesList;
-        var countries = clientcountriesList;    
+        user_countries_names = []
+        $.each(countriesList, function(i, el){
+            user_countries_names.push[el["country_name"]];
+        });
+
+        var countries = countriesList
+        $.each(clientcountriesList, function(i, el){
+            client_country_name = el["country_name"]
+            $.each(countries, function(j, inner_el){
+                if($.inArray(client_country_name, user_countries_names) === -1) countries.push(el)
+            });
+        });
     }  
 
     $('#ulist-country').empty();

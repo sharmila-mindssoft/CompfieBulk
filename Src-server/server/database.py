@@ -5863,7 +5863,7 @@ class KnowledgeDatabase(Database):
 
     def is_unit_exists_under_client(self, client_id):
         column = "count(*)"
-        condition = "client_id = '%d'" % client_id
+        condition = "client_id = '%d' and is_active = 1" % client_id
         rows = self.get_data(self.tblUnits, column, condition)
         if rows[0][0] > 0:
             return True
