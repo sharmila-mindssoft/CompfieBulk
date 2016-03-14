@@ -42,7 +42,7 @@ mysqlPassword = "123456"
 mysqlDatabase = "compfie_knowledge"
 mysqlPort = 3306
 
-CLIENT_URL = "http://localhost:8080/"
+CLIENT_URL = "http://52.11.242.90:8082/"
 
 
 class EmailNotification(object):
@@ -428,11 +428,13 @@ def save_in_notification(
     notification_text, extra_details, notification_type_id, notify_to_all=True
 ):
     def save_notification_users(notification_id, user_id):
-        q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
-            VALUES (%s, %s)" % (notification_id, user_id)
-        cur = db.cursor()
-        cur.execute(q)
-        cur.close()
+        if user_id is not "NULL" :
+            q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
+                VALUES (%s, %s)" % (notification_id, user_id)
+            print q
+            cur = db.cursor()
+            cur.execute(q)
+            cur.close()
 
     notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
     created_on = datetime.datetime.now()
@@ -448,7 +450,7 @@ def save_in_notification(
             assignee, concurrence_person, approval_person, notification_type_id,
             notification_text, extra_details, created_on
         )
-    # print query
+    print query
     # print
     cursor = db.cursor()
     cursor.execute(query)
@@ -717,7 +719,7 @@ def notify_before_contract_period(db, client_id):
 
 
 def main():
-    print '*' * 20
+    print '--' * 20
     print "begin daily_process"
     current_date = get_current_date()
     print "current_date datetime ", datetime.datetime.now()
@@ -735,7 +737,7 @@ def main():
                 db.rollback()
                 print(traceback.format_exc())
     print "end daily_process"
-    print '*' * 20
+    print '--' * 20
 
 if __name__ == "__main__" :
     main()

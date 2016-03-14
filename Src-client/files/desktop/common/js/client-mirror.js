@@ -243,10 +243,7 @@ function initClientMirror() {
 
     // Change Password APIs
 
-    function changePassword(
-        currentPassword, newPassword,
-        callback
-    ) {
+    function changePassword(currentPassword, newPassword,callback) {
         callerName = "login"
         var sessionToken = getSessionToken();
         var client_id = getClientId()
@@ -269,7 +266,13 @@ function initClientMirror() {
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
-                redirect_login()
+                if (status.toLowerCase().indexOf(matchString) != -1) {
+                    callback(null, response);
+
+                }
+                else {
+                    callback(status, null);
+                }
             }
         )
         
