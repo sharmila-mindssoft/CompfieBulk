@@ -145,7 +145,7 @@ def process_reset_password(db, request):
 
 def process_change_password(db, request):
     client_info = request.session_token.split("-")
-    session_token = client_info[1]
+    session_token = "{}-{}".format(client_info[0],client_info[2])
     client_id = int(client_info[0])
     session_user = db.validate_session_token(client_id, session_token)
     if db.verify_password(request.current_password, session_user, client_id):

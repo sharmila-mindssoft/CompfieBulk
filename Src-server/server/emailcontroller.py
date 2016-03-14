@@ -96,6 +96,9 @@ class EmailHandler(Email):
         # template_name = self.get_template("task_completed")
         user_name = db.get_user_name_by_id(user_id)
         user_name_parts = user_name.split("-")
+        employee_name = user_name_parts[0]
+        if len(user_name_parts) > 1:
+            employee_name = user_name_parts[1]
         subject = "Reset Password"
         message = '''
             Dear %s, <br> \
@@ -103,7 +106,7 @@ class EmailHandler(Email):
             <p>%s</p>\
             <p> Thanks & Regards, <br>\
             Compfie Support Team''' % (
-            user_name_parts[1], reset_link
+            employee_name, reset_link
         )
         self.send_email(receiver, subject, message, cc=None)
         # self.send_mail(template_name, email_to, context)

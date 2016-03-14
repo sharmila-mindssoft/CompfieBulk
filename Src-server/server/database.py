@@ -3585,7 +3585,9 @@ class KnowledgeDatabase(Database):
             unit_code_start_letters = group_name[:2].upper()
 
             columns = "TRIM(LEADING '%s' FROM unit_code)" % unit_code_start_letters
-            condition = "unit_code like binary '%s%s' and CHAR_LENGTH(unit_code) = 7" % (unit_code_start_letters, "%")
+            condition = "unit_code like binary '%s%s' and CHAR_LENGTH(unit_code) = 7 and client_id='%d'" % (
+                unit_code_start_letters, "%", group_company["client_id"]
+            )
             rows = self.get_data(self.tblUnits, columns, condition)
             auto_generated_unit_codes = []
             for row in rows:
@@ -5645,7 +5647,7 @@ class KnowledgeDatabase(Database):
         self, user_id, client_id = None
     ):
         employee_name = None
-        if user_id != None:
+        if user_id != None and user_id != 0:
             columns = "employee_code, employee_name"
             condition = "user_id ='{}'".format(user_id)
             rows = self.get_data(
@@ -5653,6 +5655,8 @@ class KnowledgeDatabase(Database):
             )
             if len(rows) > 0:
                 employee_name = "{} - {}".format(rows[0][0], rows[0][1])
+        else:
+            employee_name = "Administrator"
         return employee_name
 
     def get_client_ids(
@@ -5763,7 +5767,6 @@ class KnowledgeDatabase(Database):
                 # Getting new admin details
                 query = "select email_id, password from tbl_users where \
                 user_id = '%d'" % (new_admin_id)
-                print query
                 cursor.execute(query)
                 rows = cursor.fetchall()
                 admin_email = rows[0][0]
@@ -5773,7 +5776,6 @@ class KnowledgeDatabase(Database):
                 query = "update tbl_admin set admin_id='%d', username = '%s', password='%s'" % (
                     new_admin_id, admin_email, admin_password
                 )
-                print query
                 cursor.execute(query)
                 query = "update tbl_users set is_primary_admin = 1 where user_id = '%d'" % (
                     new_admin_id

@@ -81,7 +81,7 @@ class ReplicationManager(object) :
             self._received_count = self._db.get_trail_id()
             self._db.commit()
         except Exception, e:
-            print e
+            # print e
             self._received_count = None
             self._db.rollback()
         assert self._received_count is not None
@@ -121,7 +121,7 @@ class ReplicationManager(object) :
                     json.loads(response.body)
                 )
             except Exception, e:
-                print err, e
+                # print err, e
                 self._poll()
                 return
             if type(r) is InvalidReceivedCount:
@@ -131,7 +131,8 @@ class ReplicationManager(object) :
             assert r is not None
             self._parse_data(r.changes)
         else :
-            print err, response.error
+            pass
+            # print err, response.error
         self._poll()
 
     def _execute_insert_statement(self, changes, error_ok=False):
@@ -169,15 +170,16 @@ class ReplicationManager(object) :
         # print query
         try :
             self._db.execute(query)
-            print "INSERT success ",  query
-            print '' * 100
+            # print "INSERT success ",  query
+            # print '' * 100
         except Exception, e:
-            print e
-            print
-            print "self._received_count ", self._received_count
-            print "self._temp_count ", self._temp_count
-            print query
-            print
+            pass
+            # print e
+            # print
+            # print "self._received_count ", self._received_count
+            # print "self._temp_count ", self._temp_count
+            # print query
+            # print
 
         self._temp_count = changes[-1].audit_trail_id
 
@@ -244,8 +246,8 @@ class ReplicationManager(object) :
             self._db.commit()
             # self._temp_count = 0
         except Exception, e:
-            print(traceback.format_exc())
-            print e
+            # print(traceback.format_exc())
+            # print e
             logger.logClient("error", "client.py-parse-data", e)
             logger.logClient("error", "client.py", traceback.format_exc())
 
