@@ -7477,11 +7477,11 @@ class ClientDatabase(Database):
             escalation_count = escalation_count_rows[0]
 
         ## Getting statutory notifications
-        column = "count(*)"
-        condition = "user_id = '%d' and read_status = 0 ORDER BY \
+        statutory_column = "count(*)"
+        statutory_condition = "user_id = '%d' and read_status = 0 ORDER BY \
         statutory_notification_id DESC limit 30" % session_user
         statutory_notification_rows = self.get_data(
-            self.tblStatutoryNotificationStatus, column, condition
+            self.tblStatutoryNotificationStatus, statutory_column, statutory_condition
         )
         statutory_notification_count = statutory_notification_rows[0][0]
         notification_count += statutory_notification_count
