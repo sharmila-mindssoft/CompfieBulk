@@ -42,12 +42,12 @@ function loadClientProfileList(groupId){
             var noLicence = list['no_of_user_licence'];
             var remaininglicence = list['remaining_licence'];
             var totaldiskspace = list["total_disk_space"];
-            var useddiskspace = list["used_disk_space"];    
+            var useddiskspace = list["used_disk_space"];
             $('.contract-start').html(contractFrom);
-            $('.contract-expires').html(contractTo);    
+            $('.contract-expires').html(contractTo);
             $('.space-summary').html(useddiskspace+" GB of "+totaldiskspace+" GB used");
             var calculate = ((useddiskspace/totaldiskspace)*100).toFixed(2);
-            
+
             var balance = 100-calculate;
             if(calculate !='0.00'){
                 $('.usedspace').css("width", calculate+"%");
@@ -63,7 +63,7 @@ function loadClientProfileList(groupId){
             $('.remaining-licence').html(remaininglicence);
 
             var lists = list['licence_holders'];
-            $.each(lists, function(key, val) { 
+            $.each(lists, function(key, val) {
                 var tableRow = $('#templates .table-clientprofile-list .table-row');
                 var clone = tableRow.clone();
                 sno = sno + 1;
@@ -71,13 +71,13 @@ function loadClientProfileList(groupId){
                 $('.employee', clone).text(lists[key]['user_name']);
                 $('.email', clone).text(lists[key]['email_id']);
                 if(lists[key]['contact_no'] == null){
-                  $('.mobile-number', clone).text("-");  
+                  $('.mobile-number', clone).text("-");
                 }
                 else{
                   $('.mobile-number', clone).text(lists[key]['contact_no']);
                 }
                 $('.seating-unit span', clone).html(lists[key]['seating_unit_name']);
-                $('.seating-unit abbr', clone).attr("title", lists[key]['address']);      
+                $('.seating-unit abbr', clone).attr("title", lists[key]['address']);
                 var userId = lists[key]['user_id'];
                 var isAdmin = lists[key]["is_admin"];
                 var isActive = lists[key]["is_active"];
@@ -88,7 +88,7 @@ function loadClientProfileList(groupId){
                     statusVal = false;
                 }
                 else{
-                  imageName = "icon-inactive.png";  
+                  imageName = "icon-inactive.png";
                   title = "Click here to Activate"
                   statusVal = true;
                 }
@@ -98,30 +98,30 @@ function loadClientProfileList(groupId){
                     admintitle = "Click here to deactivate Promote Admin";
                 }
                 else{
-                    adminstatus = true; 
+                    adminstatus = true;
                     imageadminName = "promote-inactive.png";
                     admintitle = "Click here to Promote Admin";
                 }
                 // $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientprofile_active('+userId+','+groupId+', '+statusVal+')"/>');
                 if(isActive == true){
-                    $('.is-active', clone).html("Active");    
+                    $('.is-active', clone).html("Active");
                 }else{
-                    $('.is-active', clone).html("Inactive");    
+                    $('.is-active', clone).html("Inactive");
                 }
-                
+
                 if(isServiceProvider == false){
                     if(isAdmin == true){
-                        $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="alertUserToPromoteAnotherAdmin('+isActive+')" />');    
+                        $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="alertUserToPromoteAnotherAdmin('+isActive+')" />');
                     }else{
-                        $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="clientprofile_isadmin('+userId+','+groupId+','+adminstatus+')" />');        
+                        $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="clientprofile_isadmin('+userId+','+groupId+','+adminstatus+')" />');
                     }
-                    
+
                 }
                 $('.tbody-clientprofile-list').append(clone);
             });
         }
-         
-    });	  
+
+    });
 }
 
 function dismissPopup(){
@@ -160,7 +160,7 @@ function clientprofile_active(userId, clientId, status){
 
 function alertUserToPromoteAnotherAdmin(isActive){
     if (isActive == true){
-        alert("Try Promote another person as admin. \n Current admin will be deactivated automatically");
+        alert("Try Promote another person as admin. \nCurrent admin will be deactivated automatically");
     }else{
         alert("Cannot Change status of inactive administrator");
     }
@@ -173,7 +173,7 @@ function clientprofile_isadmin(userId, clientId){
     }
     function failure(error){
         if(error == "ReassignFirst"){
-            alert("Cannot Promote this user as Primary admin. \nSince the old admin has compliances \n under him. \nFirst inform the client to reassign those compliances to another user.");
+            alert("Cannot Promote this user as Primary admin. \nSince the old admin has compliances under him. \nFirst inform the client to reassign those compliances to another user.");
         }
     }
     mirror.createNewAdmin(userId, clientId,
@@ -200,8 +200,8 @@ function loadauto_text (textval) {
   if(textval.length>0){
     for(var i in groups){
         if(groups[i]['is_active'] == true){
-            if (~groups[i]['group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([groups[i]["client_id"],groups[i]["group_name"]]);       
-        }      
+            if (~groups[i]['group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([groups[i]["client_id"],groups[i]["group_name"]]);
+        }
     }
     var str='';
     for(var i in suggestions){

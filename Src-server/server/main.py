@@ -31,6 +31,8 @@ from server.constants import (
     VERSION, IS_DEVELOPMENT
 )
 
+import logger
+
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
 if IS_DEVELOPMENT :
@@ -97,7 +99,9 @@ class API(object):
             )
         except Exception, e:
             print e
+            logger.logKnowledge("error", "main.py-parse-request", e)
             print(traceback.format_exc())
+            logger.logKnowledge("error", "main.py", traceback.format_exc())
             response.set_status(400)
             response.send(str(e))
             return None
@@ -131,6 +135,9 @@ class API(object):
         except Exception, e:
             print e
             print(traceback.format_exc())
+            logger.logKnowledge("error", "main.py-handle-api", e)
+            logger.logKnowledge("error", "main.py", traceback.format_exc())
+
             self._db.rollback()
 
     @api_request(

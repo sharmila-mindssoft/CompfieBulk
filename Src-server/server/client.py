@@ -6,6 +6,8 @@ from replication.protocol import (
     Response, GetChanges, GetChangesSuccess, InvalidReceivedCount
 )
 
+import logger
+
 
 #
 # __all__
@@ -244,6 +246,9 @@ class ReplicationManager(object) :
         except Exception, e:
             print(traceback.format_exc())
             print e
+            logger.logClient("error", "client.py-parse-data", e)
+            logger.logClient("error", "client.py", traceback.format_exc())
+
             self._temp_count = self._received_count
             self._db.rollback()
         assert self._received_count <= self._temp_count
