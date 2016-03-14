@@ -1,4 +1,4 @@
-from protocol import (clientuser, core)
+from protocol import (clientuser, core, login)
 from server.controller.corecontroller import process_user_menus
 
 __all__ = [
@@ -38,7 +38,7 @@ def process_get_compliance_detail(db, request, session_user, client_id):
 
 def process_update_compliance_detail(db, request, session_user, client_id):
 	if db.update_compliances(request.compliance_history_id, request.documents,
-		request.completion_date, request.validity_date, request.next_due_date, 
+		request.completion_date, request.validity_date, request.next_due_date,
 		request.remarks, client_id, session_user):
 		return clientuser.UpdateComplianceDetailSuccess()
 	else:
