@@ -22,6 +22,13 @@ function displayMessage(message) {
   $(".error-message").show();
 }
 
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
+
 function clearValues(levelvalue) {
   if(levelvalue == 'all'){
     assignStatutoryUnitIds = [];
@@ -683,12 +690,14 @@ function validate_firsttab(){
     }
 
     if(checkDuplicateAssignStauttory){
+      //displayLoader();
       function onSuccess(data){
         statutoriesList = data["statutories"];
         newCompliancesList = data["new_compliances"];
         load_secondwizard();
         displayMessage("");
         return true;
+        //hideLoader();
       }
       function onFailure(error){
       }
@@ -1038,6 +1047,7 @@ $(".listfilter").keyup(function() {
   });
 
 $(document).ready(function () {
+  hideLoader();
   getAssignedStatutories ();
   $("#filter_country").keyup( function() {
     var filter = $("#filter_country").val().toLowerCase();
