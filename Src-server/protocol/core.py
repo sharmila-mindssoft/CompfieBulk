@@ -1617,7 +1617,8 @@ class Unit(object):
         }
 
 class ClientUnit(object):
-    def __init__(self, unit_id, division_id, legal_entity_id, business_group_id, unit_code, unit_name, unit_address, is_active):
+    def __init__(self, unit_id, division_id, legal_entity_id, business_group_id, 
+        unit_code, unit_name, unit_address, is_active, domain_ids, country_id):
         self.unit_id = unit_id
         self.division_id = division_id
         self.legal_entity_id = legal_entity_id
@@ -1626,10 +1627,14 @@ class ClientUnit(object):
         self.unit_name = unit_name
         self.unit_address = unit_address
         self.is_active = is_active
+        self.domain_ids = domain_ids
+        self.country_id = country_id
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "division_id", "legal_entity_id", "business_group_id", "unit_code", "unit_name", "unit_address", "is_active"])
+        data = parse_dictionary(data, ["unit_id", "division_id", "legal_entity_id", 
+            "business_group_id", "unit_code", "unit_name", "unit_address", 
+            "is_active", "domain_ids", "country_id"])
         unit_id = data.get("unit_id")
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         division_id = data.get("division_id")
@@ -1646,7 +1651,12 @@ class ClientUnit(object):
         unit_address = parse_structure_CustomTextType_250(unit_address)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
-        return Unit(unit_id, division_id, legal_entity_id, business_group_id, unit_code, unit_name, unit_address, is_active)
+        domain_ids = data.get("domain_ids")
+        domain_ids = parse_structure_VectorType_UnsignedIntegerType_32(domain_ids) 
+        country_id = data.get("country_id")
+        country_id = parse_structure_VectorType_UnsignedIntegerType_32(country_id) 
+        return Unit(unit_id, division_id, legal_entity_id, business_group_id, 
+            unit_code, unit_name, unit_address, is_active, domain_ids, country_id)
 
     def to_structure(self):
         return {
@@ -1657,7 +1667,9 @@ class ClientUnit(object):
             "unit_code": to_structure_CustomTextType_20(self.unit_code),
             "unit_name": to_structure_CustomTextType_50(self.unit_name),
             "unit_address": to_structure_CustomTextType_250(self.unit_address),
-            "is_active": to_structure_Bool(self.is_active)
+            "is_active": to_structure_Bool(self.is_active),
+            "domain_ids": to_structure_VectorType_UnsignedIntegerType_32(self.domain_ids),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id)
         }
 
 #

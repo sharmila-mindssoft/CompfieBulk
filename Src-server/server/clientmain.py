@@ -183,8 +183,8 @@ class API(object):
                 actual_data
             )
         except Exception, e:
-            print e
-            print(traceback.format_exc())
+            # print e
+            # print(traceback.format_exc())
             logger.logClient("error", "clientmain.py-parse-request", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
@@ -222,8 +222,8 @@ class API(object):
             db.commit()
             respond(response_data)
         except Exception, e:
-            print(traceback.format_exc())
-            print e
+            # print(traceback.format_exc())
+            # print e
             logger.logClient("error", "client.py-handle-api", e)
             logger.logClient("error", "client.py", traceback.format_exc())
 
@@ -231,7 +231,6 @@ class API(object):
 
     @api_request(login.Request, need_client_id=True)
     def handle_login(self, request, db, client_id):
-        print "inside handle login"
         return controller.process_login_request(request, db, client_id)
 
     @api_request(clientmasters.RequestFormat)
@@ -278,9 +277,7 @@ def run_server(address, knowledge_server_address):
 
         web_server = WebServer(io_loop)
         client_docs_path = os.path.join(ROOT_PATH, "clientdocuments")
-        print client_docs_path
         exported_reports_path = os.path.join(ROOT_PATH, "exported_reports")
-        print exported_reports_path
         web_server.low_level_url(
             r"/client/client_documents/(.*)",
             StaticFileHandler,

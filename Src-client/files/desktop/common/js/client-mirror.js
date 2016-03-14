@@ -250,14 +250,29 @@ function initClientMirror() {
         callerName = "login"
         var sessionToken = getSessionToken();
         var client_id = getClientId()
-        var request = [
-            "ChangePassword", {
-                "session_token": client_id + "-" + sessionToken,
-                "current_password": currentPassword,
-                "new_password": newPassword
-            }
+        var request =  [
+            sessionToken,
+            [
+                "ChangePassword", {
+                    "session_token": client_id + "-" + sessionToken,
+                    "current_password": currentPassword,
+                    "new_password": newPassword
+                }
+            ]
         ];
-        clientLoginApiRequest(callerName, request, callback);
+
+        jQuery.post(
+            CLIENT_BASE_URL + "login",
+            toJSON(request),
+            function(data) {
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                matchString = 'success';
+                redirect_login()
+            }
+        )
+        
     }
 
     // Forgot Password APIs
@@ -285,7 +300,7 @@ function initClientMirror() {
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     console.log("status success");
-                    initSession(response, short_name)
+                    // initSession(response, short_name)
                     callback(null, response);
 
                 }
@@ -319,7 +334,7 @@ function initClientMirror() {
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     console.log("status success");
-                    initSession(response, short_name)
+                    // initSession(response, short_name)
                     callback(null, response);
 
                 }
@@ -355,7 +370,7 @@ function initClientMirror() {
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     console.log("status success");
-                    initSession(response, short_name)
+                    // initSession(response, short_name)
                     callback(null, response);
 
                 }
