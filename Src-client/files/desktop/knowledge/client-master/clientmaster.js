@@ -689,7 +689,7 @@ function loadautocountry() {
                 str += '<li id="'+countryId+'" class="active_selectbox_country deactivate" >'+countryName+'</li> ';
             }
             else{
-                str += '<li id="'+countryId+'" class="deactivate" >'+countryName+'</li> ';   
+               // str += '<li id="'+countryId+'" class="deactivate" >'+countryName+'</li> ';   
             }
         }
         
