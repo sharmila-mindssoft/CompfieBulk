@@ -283,6 +283,7 @@ class ClientDatabase(Database):
     def validate_session_token(self, client_id, session_token) :
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
+        print query
         row = self.select_one(query)
         user_id = None
         if row :
@@ -430,7 +431,7 @@ class ClientDatabase(Database):
         return results
 
     def get_units_for_user(self, unit_ids, client_id=None):
-        columns = "unit_id, unit_code, unit_name, address, division_id,"
+        columns = "unit_id, unit_code, unit_name, address, division_id, domain_ids, country_id,"
         columns += " legal_entity_id, business_group_id, is_active"
         condition = "1"
         if unit_ids is not None:
@@ -439,7 +440,7 @@ class ClientDatabase(Database):
             self.tblUnits, columns, condition
         )
         columns = [
-            "unit_id", "unit_code", "unit_name", "unit_address", "division_id",
+            "unit_id", "unit_code", "unit_name", "unit_address", "division_id","domain_ids", "country_id",
             "legal_entity_id", "business_group_id", "is_active"
         ]
 
@@ -447,7 +448,7 @@ class ClientDatabase(Database):
         return self.return_units(result)
 
     def get_units_closure_for_user(self, unit_ids):
-        columns = "unit_id, unit_code, unit_name, address, division_id,"
+        columns = "unit_id, unit_code, unit_name, address, division_id, domain_ids, country_id,"
         columns += " legal_entity_id, business_group_id, is_closed"
         condition = "1"
         if unit_ids is not None:
@@ -456,7 +457,7 @@ class ClientDatabase(Database):
             self.tblUnits, columns, condition
         )
         columns = [
-            "unit_id", "unit_code", "unit_name", "unit_address", "division_id",
+            "unit_id", "unit_code", "unit_name", "unit_address", "division_id","domain_ids", "country_id",
             "legal_entity_id", "business_group_id", "is_active"
         ]
 
@@ -512,7 +513,8 @@ class ClientDatabase(Database):
             results.append(core.ClientUnit(
                 unit["unit_id"], division_id, unit["legal_entity_id"],
                 b_group_id, unit["unit_code"],
-                unit["unit_name"], unit["unit_address"], bool(unit["is_active"])
+                unit["unit_name"], unit["unit_address"], bool(unit["is_active"]),
+                [int(x) for x in unit["domain_ids"].split(",")], unit["country_id"]
             ))
         return results
 
@@ -2148,7 +2150,7 @@ class ClientDatabase(Database):
 
     def get_user_name_by_id(self, user_id, client_id = None):
         employee_name = None
-        if user_id != None:
+        if user_id != None and user_id != 0:
             columns = "employee_code, employee_name"
             condition = "user_id ='{}'".format(user_id)
             rows = self.get_data(
@@ -2156,6 +2158,8 @@ class ClientDatabase(Database):
             )
             if len(rows) > 0:
                 employee_name = "{} - {}".format(rows[0][0], rows[0][1])
+        else:
+            employee_name = "Administrator"
         return employee_name
 
     def get_unit_name_by_id(self, unit_id):
@@ -7473,11 +7477,11 @@ class ClientDatabase(Database):
             escalation_count = escalation_count_rows[0]
 
         ## Getting statutory notifications
-        column = "count(*)"
-        condition = "user_id = '%d' and read_status = 0 ORDER BY \
+        statutory_column = "count(*)"
+        statutory_condition = "user_id = '%d' and read_status = 0 ORDER BY \
         statutory_notification_id DESC limit 30" % session_user
         statutory_notification_rows = self.get_data(
-            self.tblStatutoryNotificationStatus, column, condition
+            self.tblStatutoryNotificationStatus, statutory_column, statutory_condition
         )
         statutory_notification_count = statutory_notification_rows[0][0]
         notification_count += statutory_notification_count

@@ -759,6 +759,7 @@ function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divis
     $('.countryval-'+countryByCount).val(getCountryName(key));
     $('.countryval-'+countryByCount).attr("disabled", "disabled");
     $('.country-'+countryByCount).val(key);
+
     var gid = firstlist['geography_id'];
     var unitlts = loadupdateunitlocation(key, gid);
     loadglevelsupdate(key, "glevel-"+countryByCount+"-"+1);
@@ -1273,7 +1274,6 @@ function loadauto_countrytext (textval, classval) {
         groupId = $("#group-select").val();
     }
 
-    console.log(groupId);
     if(groupId == ''){
         displayMessage("Select Group First");
     }
@@ -1285,6 +1285,7 @@ function loadauto_countrytext (textval, classval) {
             }
         }
     }
+    console.log(arrayCountry.length);
 
     var countries = countryFulList;
     var suggestions = [];
