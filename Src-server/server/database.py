@@ -5647,7 +5647,7 @@ class KnowledgeDatabase(Database):
         self, user_id, client_id = None
     ):
         employee_name = None
-        if user_id != None:
+        if user_id != None and user_id != 0:
             columns = "employee_code, employee_name"
             condition = "user_id ='{}'".format(user_id)
             rows = self.get_data(
@@ -5655,6 +5655,8 @@ class KnowledgeDatabase(Database):
             )
             if len(rows) > 0:
                 employee_name = "{} - {}".format(rows[0][0], rows[0][1])
+        else:
+            employee_name = "Administrator"
         return employee_name
 
     def get_client_ids(

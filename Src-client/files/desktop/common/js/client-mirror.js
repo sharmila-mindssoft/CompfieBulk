@@ -300,7 +300,7 @@ function initClientMirror() {
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     console.log("status success");
-                    initSession(response, short_name)
+                    // initSession(response, short_name)
                     callback(null, response);
 
                 }
@@ -334,7 +334,7 @@ function initClientMirror() {
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     console.log("status success");
-                    initSession(response, short_name)
+                    // initSession(response, short_name)
                     callback(null, response);
 
                 }
@@ -370,7 +370,7 @@ function initClientMirror() {
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     console.log("status success");
-                    initSession(response, short_name)
+                    // initSession(response, short_name)
                     callback(null, response);
 
                 }
