@@ -110,6 +110,7 @@ function getUnitNameAndAddress(unitId, serviceproviderid){
         });
     }
     else{
+        console.log(service_provider_id);
         $.each(serviceProviderList, function(key, value) { //unit name
             if(value['service_provider_id'] == serviceproviderid){
                 unit['unitName'] = value['service_provider_name'];
