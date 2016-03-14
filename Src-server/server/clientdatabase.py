@@ -283,6 +283,7 @@ class ClientDatabase(Database):
     def validate_session_token(self, client_id, session_token) :
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
+        print query
         row = self.select_one(query)
         user_id = None
         if row :
