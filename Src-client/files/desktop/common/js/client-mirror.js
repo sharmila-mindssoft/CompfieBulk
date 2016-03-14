@@ -269,7 +269,7 @@ function initClientMirror() {
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
-                redirect_login()
+                // redirect_login()
             }
         )
         
