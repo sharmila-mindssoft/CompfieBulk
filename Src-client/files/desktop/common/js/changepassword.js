@@ -59,6 +59,7 @@ $("#submit-client").click(function(){
   } else if(confirmpassword != newpassword) {
     displayMessage("New Password & Confirm Password Do Not Match");
   } else {
+      console.log("Else ")
       function onSuccess(data){
           displayMessage("Password Changed Successfully");
           $("#currentpassword").val("");
@@ -70,6 +71,7 @@ $("#submit-client").click(function(){
           displayMessage("Invalid Current Password");
         }
       }
+
       client_mirror.changePassword(currentpassword, newpassword, 
         function (error, response) {
           if (error == null){
