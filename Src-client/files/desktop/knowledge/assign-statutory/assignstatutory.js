@@ -1012,9 +1012,14 @@ $(".listfilter").keyup(function() {
   for(var entity in assignedStatutoriesList) {
     var filter1val = assignedStatutoriesList[entity]["country_name"];
     var filter2val = assignedStatutoriesList[entity]["group_name"];
-    var filter3val = assignedStatutoriesList[entity]["business_group_name"];
+    var filter3val = '-';
+    if(assignedStatutoriesList[entity]["business_group_name"] != null) filter3val = assignedStatutoriesList[entity]["business_group_name"];
+  
     var filter4val = assignedStatutoriesList[entity]["legal_entity_name"];
-    var filter5val = assignedStatutoriesList[entity]["division_name"];
+
+    var filter5val = '-';
+    if(assignedStatutoriesList[entity]["division_name"] != null) filter5val = assignedStatutoriesList[entity]["division_name"];
+
     var filter6val = assignedStatutoriesList[entity]["geography_name"];
     var filter7val = assignedStatutoriesList[entity]["industry_name"];
     var filter8val = assignedStatutoriesList[entity]["unit_name"];

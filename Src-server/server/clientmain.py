@@ -94,7 +94,6 @@ class API(object):
             self._replication_managers = {}
             # print servers
             for company_id, company in servers.iteritems():
-                print company.to_structure()
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
                 if company_server_ip.ip_address == ip and \
