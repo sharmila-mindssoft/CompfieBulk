@@ -5007,48 +5007,17 @@ class ClientDatabase(Database):
         if session_user == 0 :
             user_id = '%'
 
-        upcoming = "SELECT distinct T1.unit_id, \
-            T1.compliance_id, T1.statutory_dates, T1.assignee, \
-            T1.due_date, T1.validity_date, \
-            T2.compliance_task, T2.document_name,\
-            T2.compliance_description, T2.statutory_mapping,\
-            T8.unit_name, T8.unit_code, T8.address, T8.postal_code,\
-            (select frequency from tbl_compliance_frequency where frequency_id = T2.frequency_id) frequency, T2.frequency_id,\
-            (select duration_type from tbl_compliance_duration_type where duration_type_id = T2.duration_type_id) duration_type, T2.duration, \
-            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = T2.repeats_type_id) repeat_type, T2.repeats_every,\
-            NULL\
-            FROM tbl_assigned_compliances T1 \
-            INNER JOIN tbl_compliances T2 \
-            ON T1.compliance_id = T2.compliance_id \
-            INNER JOIN tbl_compliance_frequency T3 \
-            ON T2.frequency_id = T3.frequency_id \
-            INNER JOIN tbl_client_statutories T4 \
-            ON T1.unit_id = T4.unit_id \
-            AND T1.country_id = T4.country_id \
-            INNER JOIN tbl_user_countries T5 \
-            ON T1.country_id = T5.country_id \
-            INNER JOIN tbl_user_domains T6 \
-            ON T4.domain_id = T6.domain_id  \
-            AND T5.user_id = T6.user_id \
-            INNER JOIN tbl_users T7 \
-            ON T6.user_id = T7.user_id \
-            INNER JOIN tbl_units T8 \
-            ON T1.unit_id = T8.unit_id \
-            WHERE T1.due_date > CURDATE() \
-            AND T1.is_active = 1 \
-            AND T1.compliance_id NOT IN ( \
-                SELECT DISTINCT distinct TA.compliance_id \
-                FROM tbl_assigned_compliances TA \
-                INNER JOIN tbl_compliance_history TC \
-                ON TA.compliance_id = TC.compliance_id \
-                AND TA.unit_id = TC.unit_id \
-                WHERE TA.due_date > CURDATE() \
-                AND TA.is_active = 1 \
-                AND (TA.due_date = TC.due_date \
-                OR TA.due_date = TC.next_due_date ) \
-                AND TC.approve_status = 1 \
-            ) \
-            AND T1.compliance_id NOT IN ( \
+        upcoming = "SELECT distinct t1.compliance_id, t1.unit_id, t1.statutory_dates, t1.assignee, \
+            t1.due_date, t1.validity_date, t2.compliance_task, t2.document_name, t2.compliance_description, \
+            t2.statutory_mapping, t3.unit_name, t3.unit_code, t3.address, t3.postal_code, \
+            (select frequency from tbl_compliance_frequency where frequency_id = t2.frequency_id) frequency, t2.frequency_id,\
+            (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) duration_type, t2.duration, \
+            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t2.repeats_type_id) repeat_type, t2.repeats_every,\
+            NULL \
+            FROM tbl_assigned_compliances t1 \
+            INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id AND t1.is_active = 1 \
+            INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id \
+            AND t1.compliance_id NOT IN ( \
                 SELECT DISTINCT distinct TA.compliance_id \
                 FROM tbl_assigned_compliances TA \
                 INNER JOIN tbl_compliance_history TC \
@@ -5058,10 +5027,10 @@ class ClientDatabase(Database):
                 TA.is_active = 1 \
                 AND IFNULL(TC.approve_status, 0) != 1 \
             ) \
-            AND T7.user_id like '%s'" % (user_id)
+            AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id like '%s') " % (user_id)
 
         columns = [
-            "unit_id", "compliance_id", "statutory_dates",
+            "compliance_id", "unit_id", "statutory_dates",
             "assignee", "due_date", "validity_date",
             "compliance_task", "document_name",
             "compliance_description", "statutory_mapping",
@@ -5073,41 +5042,22 @@ class ClientDatabase(Database):
         rows = self.select_all(upcoming)
         result = self.convert_to_dict(rows, columns)
 
-        ongoing = "SELECT distinct T1.unit_id, \
-            T1.compliance_id, T1.statutory_dates, T1.assignee, \
-            TC.due_date, TC.validity_date, \
-            T2.compliance_task, T2.document_name,\
-            T2.compliance_description, T2.statutory_mapping,\
-            T8.unit_name, T8.unit_code, T8.address, T8.postal_code,\
-            (select frequency from tbl_compliance_frequency where frequency_id = T2.frequency_id) frequency, T2.frequency_id,\
-            (select duration_type from tbl_compliance_duration_type where duration_type_id = T2.duration_type_id) duration_type, T2.duration, \
-            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = T2.repeats_type_id) repeat_type, T2.repeats_every, \
-            TC.compliance_history_id \
-            FROM tbl_compliance_history TC \
-            INNER JOIN tbl_assigned_compliances T1 \
-            ON TC.compliance_id = T1.compliance_id \
-            AND TC.unit_id = T1.unit_id \
-            INNER JOIN tbl_compliances T2 \
-            ON T1.compliance_id = T2.compliance_id \
-            INNER JOIN tbl_compliance_frequency T3 \
-            ON T2.frequency_id = T3.frequency_id \
-            INNER JOIN tbl_client_statutories T4 \
-            ON T1.unit_id = T4.unit_id \
-            AND T1.country_id = T4.country_id \
-            INNER JOIN tbl_user_countries T5 \
-            ON T1.country_id = T5.country_id \
-            INNER JOIN tbl_user_domains T6 \
-            ON T4.domain_id = T6.domain_id  \
-            AND T5.user_id = T6.user_id \
-            INNER JOIN tbl_users T7 \
-            ON T6.user_id = T7.user_id \
-            INNER JOIN tbl_units T8 \
-            ON T1.unit_id = T8.unit_id \
-            WHERE T1.is_active = 1 \
-            AND IFNULL(TC.approve_status, 0) != 1 \
-            AND T7.user_id like '%s'" % (user_id)
+        ongoing = "SELECT distinct t1.compliance_id, t1.unit_id, t1.statutory_dates, t1.assignee, \
+            t1.due_date, t1.validity_date, t2.compliance_task, t2.document_name, t2.compliance_description, \
+            t2.statutory_mapping, t3.unit_name, t3.unit_code, t3.address, t3.postal_code, \
+            (select frequency from tbl_compliance_frequency where frequency_id = t2.frequency_id) frequency, t2.frequency_id,\
+            (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) duration_type, t2.duration, \
+            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t2.repeats_type_id) repeat_type, t2.repeats_every,\
+            tc.compliance_history_id \
+            FROM tbl_compliance_history tc\
+            INNER JOIN tbl_assigned_compliances t1 on tc.compliance_id = t1.compliance_id \
+            INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id \
+            INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id \
+            WHERE IFNULL(tc.approve_status, 0) != 1 \
+            AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id like '%s') " % (user_id)
 
         rows = self.select_all(ongoing)
+        print rows
         result.extend(self.convert_to_dict(rows, columns))
         return self.return_compliance_to_reassign(result)
 
