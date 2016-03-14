@@ -431,7 +431,7 @@ class ClientDatabase(Database):
         return results
 
     def get_units_for_user(self, unit_ids, client_id=None):
-        columns = "unit_id, unit_code, unit_name, address, division_id,"
+        columns = "unit_id, unit_code, unit_name, address, division_id, domain_ids, country_id,"
         columns += " legal_entity_id, business_group_id, is_active"
         condition = "1"
         if unit_ids is not None:
@@ -440,7 +440,7 @@ class ClientDatabase(Database):
             self.tblUnits, columns, condition
         )
         columns = [
-            "unit_id", "unit_code", "unit_name", "unit_address", "division_id",
+            "unit_id", "unit_code", "unit_name", "unit_address", "division_id","domain_ids", "country_id",
             "legal_entity_id", "business_group_id", "is_active"
         ]
 
@@ -448,7 +448,7 @@ class ClientDatabase(Database):
         return self.return_units(result)
 
     def get_units_closure_for_user(self, unit_ids):
-        columns = "unit_id, unit_code, unit_name, address, division_id,"
+        columns = "unit_id, unit_code, unit_name, address, division_id, domain_ids, country_id,"
         columns += " legal_entity_id, business_group_id, is_closed"
         condition = "1"
         if unit_ids is not None:
@@ -457,7 +457,7 @@ class ClientDatabase(Database):
             self.tblUnits, columns, condition
         )
         columns = [
-            "unit_id", "unit_code", "unit_name", "unit_address", "division_id",
+            "unit_id", "unit_code", "unit_name", "unit_address", "division_id","domain_ids", "country_id",
             "legal_entity_id", "business_group_id", "is_active"
         ]
 
@@ -513,7 +513,8 @@ class ClientDatabase(Database):
             results.append(core.ClientUnit(
                 unit["unit_id"], division_id, unit["legal_entity_id"],
                 b_group_id, unit["unit_code"],
-                unit["unit_name"], unit["unit_address"], bool(unit["is_active"])
+                unit["unit_name"], unit["unit_address"], bool(unit["is_active"]),
+                [int(x) for x in unit["domain_ids"].split(",")], unit["country_id"]
             ))
         return results
 
