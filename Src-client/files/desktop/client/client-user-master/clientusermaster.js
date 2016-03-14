@@ -478,24 +478,32 @@ $("#submit").click(function(){
 	}
 });
 function user_active(userId, isActive){
-    function onSuccess(data){
-        initialize();
+     var msgstatus='deactivate';
+    if(isActive){
+        msgstatus='activate';
     }
-    function onFailure(error){
-        if (error == "CannotChangePrimaryAdminStatus"){
-            alert("Only Techno team can change stauts of primary admin");
+    var answer = confirm('Are you sure want to '+msgstatus+ '?');
+    if (answer)
+    {
+        function onSuccess(data){
+            initialize();
         }
-    }
-    client_mirror.changeClientUserStatus(userId, isActive,
-        function(error, response){
-            if(error == null){
-                onSuccess(response);
-            }
-            else{
-                onFailure(error);
+        function onFailure(error){
+            if (error == "CannotChangePrimaryAdminStatus"){
+                alert("Only Techno team can change stauts of primary admin");
             }
         }
-    );
+        client_mirror.changeClientUserStatus(userId, isActive,
+            function(error, response){
+                if(error == null){
+                    onSuccess(response);
+                }
+                else{
+                    onFailure(error);
+                }
+            }
+        );
+    }
 }
 function user_isadmin(userId, isAdmin){
     function onSuccess(data){
@@ -841,6 +849,7 @@ function unitview(){
     var countryid = $("#country").val();
     var countryarray = countryid.split(',');
     var arrayCountries = [];
+    var selectunitstatus = null;
     for(var i = 0; i < countryarray.length; i++){ arrayCountries[i] = parseInt(countryarray[i]); }
     if($("#domains").val() !=''){
         var domainid = $("#domains").val();
