@@ -35,10 +35,10 @@ function initialize(){
 		}
 	);
 }
-$("#show-button").click(function(){	
+$("#show-button").click(function(){
 	var countries = $("#country").val();
 	var countriesNameVal = $("#countryval").val();
-	//Domain	
+	//Domain
 	var domain = $("#domain").val();
 	var domainNameVal = $("#domainval").val();
 	//Level 1 Statutories
@@ -54,7 +54,7 @@ $("#show-button").click(function(){
 		displayMessage("Enter Country");
 	}
 	else if(domain == ""){
-		displayMessage("Enter Domain");	
+		displayMessage("Enter Domain");
 	}
 	else{
 		function onSuccess(data){
@@ -62,12 +62,12 @@ $("#show-button").click(function(){
 			$(".grid-table-rpt").show();
 			$(".snCountryVal").text(countriesNameVal);
 			$(".snDomainVal").text(domainNameVal);
-			loadStatutoryNotificationsList(data['country_wise_notifications']);		
+			loadStatutoryNotificationsList(data['country_wise_notifications']);
 		}
 		function onFailure(error){
 			console.log(error);
 		}
-		
+
 		mirror.getStatutoryNotificationsReportData(parseInt(countries), parseInt(domain), level1id,
 			function (error, response){
 				if(error == null){
@@ -101,7 +101,7 @@ function loadStatutoryNotificationsList(data){
 		$('.heading', cloneHeading).text(getDomainName(domainId));
 		$('.tbody-statutory-notifications-list').append(cloneHeading);
 	  	var list = data[key]['notifications'];
-	  	$.each(list, function(k, val) { 
+	  	$.each(list, function(k, val) {
 		  	var arr = [];
 			var tableRow = $('#templates .table-statutory-notifications-list .table-row-values');
 			var clone = tableRow.clone();
@@ -113,7 +113,7 @@ function loadStatutoryNotificationsList(data){
 			$('.tbody-statutory-notifications-list').append(clone);
 		});
 	});
-	$(".total-records").html("Total : "+sno+" records")
+	$(".total-records").html( sno+" records")
 }
 
 
@@ -128,7 +128,7 @@ function loadauto_country (textval) {
   $('#selectboxview-country ul').empty();
   if(textval.length>0){
     for(var i in countries){
-      if (~countries[i]['country_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
+      if (~countries[i]['country_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -141,7 +141,7 @@ function loadauto_country (textval) {
 //set selected autocomplte value to textbox
 function activate_text (element,checkval,checkname) {
   $("#countryval").val(checkname);
-  $("#country").val(checkval);  
+  $("#country").val(checkval);
 }
 
 //Domains---------------------------------------------------------------------------------------------------------------
@@ -155,7 +155,7 @@ function loadauto_domains (textval) {
   $('#autocompleteview-domains ul').empty();
   if(textval.length>0){
     for(var i in domains){
-    	if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 	
+    	if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -180,7 +180,7 @@ function loadauto_domains (textval) {
   $('#selectboxview-domains ul').empty();
   if(textval.length>0){
     for(var i in domains){
-    	if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 	
+    	if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -210,8 +210,8 @@ function loadauto_level1 (textval) {
   var suggestions = [];
   $('#autocompleteview-level1 ul').empty();
   if(textval.length>0){
-    $.each(level1, function(i, value){    
-    	if (~level1[i]['statutory_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([level1[i]["statutory_id"],level1[i]["statutory_name"]]); 	
+    $.each(level1, function(i, value){
+    	if (~level1[i]['statutory_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([level1[i]["statutory_id"],level1[i]["statutory_name"]]);
     });
     var str='';
     for(var i in suggestions){

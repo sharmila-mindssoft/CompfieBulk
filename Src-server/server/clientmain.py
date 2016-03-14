@@ -16,6 +16,8 @@ import clientcontroller as controller
 from webfrontend.client import CompanyManager
 from server.client import ReplicationManager
 
+import logger
+
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 #
 # cors_handler
@@ -109,6 +111,7 @@ class API(object):
                         db.connect()
                     except Exception, e:
                         print "Client database not available to connect ", company_id, company.to_structure()
+
                         continue
                     self._databases[company_id] = db
                     rep_man = ReplicationManager(
@@ -182,6 +185,9 @@ class API(object):
         except Exception, e:
             print e
             print(traceback.format_exc())
+            logger.logClient("error", "clientmain.py-parse-request", e)
+            logger.logClient("error", "clientmain.py", traceback.format_exc())
+
             response.set_status(400)
             response.send(str(e))
             return None
@@ -218,6 +224,9 @@ class API(object):
         except Exception, e:
             print(traceback.format_exc())
             print e
+            logger.logClient("error", "client.py-handle-api", e)
+            logger.logClient("error", "client.py", traceback.format_exc())
+
             db.rollback()
 
     @api_request(login.Request, need_client_id=True)
