@@ -5199,7 +5199,7 @@ class ClientDatabase(Database):
 
             update_qry = "UPDATE tbl_assigned_compliances SET assignee=%s, is_reassigned=1, approval_person=%s "
             if concurrence is not None :
-                update_qry += " ,concurrance_person = %s " % (concurrence)
+                update_qry += " ,concurrence_person = %s " % (concurrence)
             where_qry = " WHERE unit_id = %s AND compliance_id = %s "
 
             qry = update_qry + where_qry

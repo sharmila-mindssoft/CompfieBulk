@@ -453,7 +453,7 @@ function submitcompliance(){
           var current_trigger_days = [];
 
           var validitydate = null;
-          if($('#validitydate'+statutoriesCount).val() != undefined && $('#validitydate'+statutoriesCount).val() != '') $('#validitydate'+statutoriesCount).val();
+          if($('#validitydate'+statutoriesCount).val() != undefined && $('#validitydate'+statutoriesCount).val() != '') validitydate = $('#validitydate'+statutoriesCount).val();
 
           if(frequency != 'On Occurrence'){
             if(due_date.length > 1){
@@ -1146,7 +1146,7 @@ $('.edittrigger').click(function(){
     var lis = document.getElementsByClassName('unitlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (~name.toLowerCase().indexOf(filter))
+      if (name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
