@@ -81,9 +81,10 @@ class EmailNotification(object):
             )
         try :
             self.send_email(receiver, subject, message, cc_person)
+            pass
         except Exception, e :
             print e
-            print "Email Failed for %s ", message
+            print "Email Failed for compliance start ", message
 
     def notify_to_assignee(
         self, assignee, days_left, compliance_name, unit_name,
@@ -96,10 +97,12 @@ class EmailNotification(object):
                 unit_name
             )
         try :
-            self.send_email(receiver, subject, message, cc_person=None)
+            print
+            # self.send_email(receiver, subject, message)
+            pass
         except Exception, e :
             print e
-            print "Email Failed for %s ", message
+            print "Email Failed for notify to assignee %s ", message
 
     def notify_before_due_date(
         self, assignee, days_left, compliance_name, unit_name,
@@ -112,10 +115,11 @@ class EmailNotification(object):
                 unit_name
             )
         try :
-            self.send_email(receiver, subject, message, cc_person)
+            # self.send_email(receiver, subject, message, cc_person)
+            pass
         except Exception, e :
             print e
-            print "Email Failed for %s ", message
+            print "Email Failed for before due_date  ", message
 
     def notify_escalation(
         self, assignee, compliance_name, unit_name,
@@ -127,10 +131,11 @@ class EmailNotification(object):
                 assignee, compliance_name, unit_name, over_due_days
             )
         try :
-            self.send_email(receiver, subject, message, cc_person)
+            # self.send_email(receiver, subject, message, cc_person)
+            pass
         except Exception, e :
             print e
-            print "Email Failed for %s ", message
+            print "Email Failed for escalations", message
 
 
 def convert_to_dict(data_list, columns) :
@@ -213,11 +218,11 @@ def get_client_database():
     return client_db
 
 def get_current_date():
-    date = datetime.datetime.now().strftime("%Y-%m-%d")
+    date = datetime.date.today()
     return date
 
 def get_current_month():
-    month = datetime.datetime.now().month
+    month = datetime.date.today().month
     return month
 
 def get_country_wise_timestamp():
@@ -254,7 +259,7 @@ def get_compliance_to_start(db, client_id, current_date):
     ]
     result = convert_to_dict(rows, columns)
     print '*' * 10
-    print result
+    # print result
     print '*' * 10
 
     return result
@@ -425,7 +430,6 @@ def save_in_notification(
         if user_id is not "NULL" :
             q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
                 VALUES (%s, %s)" % (notification_id, user_id)
-            print q
             cur = db.cursor()
             cur.execute(q)
             cur.close()
@@ -444,8 +448,6 @@ def save_in_notification(
             assignee, concurrence_person, approval_person, notification_type_id,
             notification_text, extra_details, created_on
         )
-    print query
-    # print
     cursor = db.cursor()
     cursor.execute(query)
     cursor.close()
@@ -457,7 +459,6 @@ def save_in_notification(
             save_notification_users(notification_id, concurrence_person)
 
 def start_new_task(db, client_id, current_date):
-    print current_date
     print "begin process to start new task  - %s" % (current_date)
     data = get_compliance_to_start(db, client_id, current_date)
     count = 0
@@ -490,13 +491,13 @@ def start_new_task(db, client_id, current_date):
                 d["repeats_every"], d["due_date"]
             )
             print next_due_date, d["frequency"], d["statutory_dates"], d["repeat_type_id"]
-            # save_in_compliance_history(
-            #     db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
-            #     d["due_date"], next_due_date, int(d["assignee"]), d["concurrence_person"], int(approval_person)
-            # )
-            # if trigger_before is None:
-            #     trigger_before = d["trigger_before_days"]
-            # update_assign_compliance_due_date(db, trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
+            save_in_compliance_history(
+                db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
+                d["due_date"], next_due_date, int(d["assignee"]), d["concurrence_person"], int(approval_person)
+            )
+            if trigger_before is None:
+                trigger_before = d["trigger_before_days"]
+            update_assign_compliance_due_date(db, trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
 
         if d["document_name"] :
             compliance_name = d["document_name"] + " - " + d["compliance_task"]
@@ -506,17 +507,17 @@ def start_new_task(db, client_id, current_date):
         notification_text = "Compliance task %s started" % (compliance_name)
         extra_details = "Compliance Started"
         notification_type_id = 1   # 1 = notification
-        # save_in_notification(
-        #     db, d["country_id"], d["domain_id"], d["business_group_id"], d["legal_entity_id"],
-        #     d["division_id"], d["unit_id"], d["compliance_id"], d["assignee"],
-        #     d["concurrence_person"], d["approval_person"],
-        #     notification_text, extra_details, notification_type_id
-        # )
-        # a_name, assignee_email = get_email_id_for_users(db, d["assignee"])
-        # email.notify_compliance_start(
-        #     a_name, d["compliance_name"], d["unit_name"],
-        #     d["due_date"], assignee_email
-        # )
+        save_in_notification(
+            db, d["country_id"], d["domain_id"], d["business_group_id"], d["legal_entity_id"],
+            d["division_id"], d["unit_id"], d["compliance_id"], d["assignee"],
+            d["concurrence_person"], d["approval_person"],
+            notification_text, extra_details, notification_type_id
+        )
+        a_name, assignee_email = get_email_id_for_fusers(db, d["assignee"])
+        email.notify_compliance_start(
+            a_name, compliance_name, unit_name,
+            d["due_date"], assignee_email
+        )
         count += 1
 
     print " %s compliances started for - %s" % (count, current_date)
@@ -531,7 +532,7 @@ def get_inprogress_compliances(db):
         t1.compliance_id = t2.compliance_id \
         INNER JOIN tbl_compliances t3 on t1.compliance_id = t3.compliance_id \
         INNER JOIN tbl_units t4 on t1.unit_id = t4.unit_id WHERE \
-        IFNULL(t1.approval_status, 0) != 1"
+        IFNULL(t1.approve_status, 0) != 1"
     # print query
     cursor = db.cursor()
     cursor.execute(query)
@@ -544,7 +545,7 @@ def get_inprogress_compliances(db):
     ]
     result = convert_to_dict(rows, columns)
     print '*' * 10
-    print result
+    # print result
     print '*' * 10
 
     return result
@@ -564,16 +565,19 @@ def reminder_to_assignee(db, client_info, compliance_info):
     try :
         print "begin process to remind inprogress compliance task %s " % (current_date)
         # client_info = get_client_settings(db)
-        print client_info
         if client_info :
             reminder_interval = int(client_info[0]["assignee_reminder"])
             # compliance_info = get_inprogress_compliances(db)
             count = 0
             email = EmailNotification()
             for c in compliance_info:
+                if c["document_name"] :
+                    compliance_name = c["document_name"] + " - " + c["compliance_task"]
+                else :
+                    compliance_name = c["compliance_task"]
                 date_diff = (current_date - c["start_date"]).days
                 days_left = (c["due_date"] - current_date).days
-                notification_text = "%s days left to complete %s task" % (days_left, c["compliance_name"])
+                notification_text = "%s days left to complete %s task" % (days_left, compliance_name)
                 extra_details = ""
                 if (date_diff % reminder_interval) == 0 :
                     save_in_notification(
@@ -584,7 +588,7 @@ def reminder_to_assignee(db, client_info, compliance_info):
                     )
                     a_name, assignee_email = get_email_id_for_users(db, c["assignee"])
                     email.notify_to_assignee(
-                        a_name, days_left, c["compliance_name"],
+                        a_name, days_left, compliance_name,
                         c["unit_name"], assignee_email
                     )
                     count += 1
@@ -597,12 +601,15 @@ def reminder_before_due_date(db, client_info, compliance_info):
     current_date = get_current_date()
     print "begin process to remind inprogress compliance task to all %s " % (current_date)
     # client_info = get_client_settings(db)
-    print client_info
     email = EmailNotification()
     reminder_interval = int(client_info[0]["escalation_reminder_in_advance"])
     for c in compliance_info:
+        if c["document_name"] :
+            compliance_name = c["document_name"] + " - " + c["compliance_task"]
+        else :
+            compliance_name = c["compliance_task"]
         days_left = (c["due_date"] - current_date).days
-        notification_text = "%s days left to complete %s task" % (days_left, c["compliance_name"])
+        notification_text = "%s days left to complete %s task" % (days_left, compliance_name)
         extra_details = ""
         if days_left == reminder_interval:
             save_in_notification(
@@ -622,7 +629,7 @@ def reminder_before_due_date(db, client_info, compliance_info):
             ap_name, approval_email = get_email_id_for_users(db, c["approval_person"])
             cc_person.append(approval_email)
             email.notify_before_due_date(
-                a_name, days_left, c["compliance_name"],
+                a_name, days_left, compliance_name,
                 c["unit_name"],
                 assignee_email, cc_person
             )
@@ -630,11 +637,17 @@ def reminder_before_due_date(db, client_info, compliance_info):
 def notify_escalation_to_all(db, client_info, compliance_info):
     current_date = get_current_date()
     print "begin process to notify escalations to all %s" % (current_date)
-    escalation_interval = int(client_info["escalation_reminder"])
+    escalation_interval = int(client_info[0]["escalation_reminder"])
     email = EmailNotification()
     for c in compliance_info :
+        if c["document_name"] :
+            compliance_name = c["document_name"] + " - " + c["compliance_task"]
+        else :
+            compliance_name = c["compliance_task"]
         over_due_days = (current_date - c["due_date"]).days
-        notification_text = "%s overdue by %s days" % (c["compliance_name"], over_due_days)
+        if over_due_days == 0 :
+            continue
+        notification_text = "%s overdue by %s days" % (compliance_name, over_due_days)
         extra_details = ""
         if (over_due_days % escalation_interval) == 0 :
             save_in_notification(
@@ -654,7 +667,7 @@ def notify_escalation_to_all(db, client_info, compliance_info):
             ap_name, approval_email = get_email_id_for_users(db, c["approval_person"])
             cc_person.append(approval_email)
             email.notify_before_due_date(
-                a_name, c["compliance_name"],
+                a_name, compliance_name,
                 c["unit_name"], over_due_days,
                 assignee_email, cc_person
             )
