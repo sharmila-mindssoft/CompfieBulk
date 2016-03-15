@@ -127,8 +127,8 @@ $("#submit").click(function(){
 	else if(mobileNumberValue.length > 12){
 		displayMessage('Contact No. is maximum 12 characters Allowed');
 	}
-	else if(addressValue.length > 500){
-		displayMessage('Address is maximum 500 characters Allowed');
+	else if(addressValue.length > 250){
+		displayMessage('Address is maximum 250 characters Allowed');
 	}
 	else if(contractFromValue == ''){
 		displayMessage('Enter Contract From ');
