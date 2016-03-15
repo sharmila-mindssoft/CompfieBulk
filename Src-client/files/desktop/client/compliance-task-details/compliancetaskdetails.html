@@ -53,27 +53,7 @@ margin: 5px 5%;
   vertical-align: middle;
 }
 </style>
-<script type="text/javascript">
-$(document).ready(function() {
-  $(".current-tab").click(function() {
-    $(".current-tab").addClass("active");
-    $(".upcomming-tab").removeClass("active");
-    $(".main-tab-content").show();
-    $(".upcomming-tab-content").hide();
-  })
 
-  $(".upcomming-tab").click(function() {
-    $(".upcomming-tab").addClass("active");
-    $(".current-tab").removeClass("active");
-    $(".main-tab-content").hide();
-    $(".upcomming-tab-content").show();
-  })
-  $(".close").click(function() {
-    $(".current-tab-content").hide();
-    $(".main-tab-content").show();
-  })
-})
-</script>
 <div class="content-container width100">
   <div class="content-area">
     <div class="add-container">
