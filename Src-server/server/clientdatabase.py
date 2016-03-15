@@ -4903,8 +4903,8 @@ class ClientDatabase(Database):
             notification_id = notification[0]
             read_status = bool(notification[1])
             # Getting notification details
-            columns = "notification_id, notification_text, updated_on, extra_details, " + \
-                "nl.statutory_provision, unit_code, unit_name, address, assignee, " + \
+            columns = "notification_id, notification_text, created_on, extra_details, " + \
+                "statutory_provision, unit_code, unit_name, address, assignee, " + \
                 "concurrence_person, approval_person, nl.compliance_id, " + \
                 " compliance_task, document_name, compliance_description, penal_consequences"
             tables = [self.tblNotificationsLog, self.tblUnits, self.tblCompliances]
@@ -4915,7 +4915,7 @@ class ClientDatabase(Database):
             ]
             join_type = " left join"
             where_condition = "notification_id = '%d'" % notification_id
-            where_condition += " and notification_type_id = '%d' order by updated_on DESC limit 30" % notification_type_id
+            where_condition += " and notification_type_id = '%d' order by created_on DESC limit 30" % notification_type_id
             notification_detail_row = self.get_data_from_multiple_tables(
                 columns, tables, aliases, join_type,
                 join_conditions, where_condition
@@ -5238,10 +5238,13 @@ class ClientDatabase(Database):
         current_time_stamp = self.get_date_time()
         due_date = datetime.datetime(due_date.year, due_date.month, due_date.day)
         ageing = (current_time_stamp - due_date).days
-        compliance_status = " %d days left" % abs(ageing)
+        # compliance_status = " %d days left" % abs(ageing)
         if ageing > 0:
+            print ageing
             compliance_status = "Overdue by %d days" % abs(ageing)
-        return ageing, compliance_status
+            return ageing, compliance_status
+        return 0, None
+
 
     def get_current_compliances_list(self, session_user, client_id):
         columns = "compliance_history_id, start_date, due_date, " +\
@@ -7415,19 +7418,22 @@ class ClientDatabase(Database):
             notification_count_rows = self.get_data(
                 self.tblNotificationUserLog, column, notification_condition
             )
-            notification_count = notification_count_rows[0]
+            if notification_count_rows :
+                notification_count = notification_count_rows[0]
 
         if reminder_condition is not None:
             reminder_count_rows = self.get_data(
                 self.tblNotificationUserLog, column, reminder_condition
             )
-            reminder_count = reminder_count_rows[0]
+            if reminder_count_rows :
+                reminder_count = reminder_count_rows[0]
 
         if escalation_condition is not None:
             escalation_count_rows = self.get_data(
                 self.tblNotificationUserLog, column, escalation_condition
             )
-            escalation_count = escalation_count_rows[0]
+            if escalation_count_rows :
+                escalation_count = escalation_count_rows[0]
 
         ## Getting statutory notifications
         statutory_column = "count(*)"
