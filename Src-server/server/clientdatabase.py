@@ -645,6 +645,7 @@ class ClientDatabase(Database):
         rows =  self.get_data(
             self.tblUsers,columns, condition
         )
+        print rows
         columns = ["user_id", "email_id", "user_group_id", "employee_name",
         "employee_code", "contact_no", "seating_unit_id", "user_level",
         "is_admin", "is_service_provider", "service_provider_id", "is_active",
@@ -4028,18 +4029,21 @@ class ClientDatabase(Database):
 #
 #   Compliance Approval
 #
-    def approve_compliance(self, compliance_history_id, remarks, next_due_date,
-        validity_date, client_id):
+    def approve_compliance(
+        self, compliance_history_id, remarks, next_due_date,
+        validity_date, client_id
+    ):
         columns = ["approve_status", "approved_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [1, self.get_date_time(), remarks]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-        columns = "unit_id, compliance_id"
+        get_columns = "unit_id, compliance_id"
         rows = self.get_data(
-            self.tblComplianceHistory, columns, condition
+            self.tblComplianceHistory, get_columns, condition
         )
+        columns = []
         if next_due_date is not None:
-            columns = ["due_date"]
+            columns.append("due_date")
             condition = " unit_id = '%d' and compliance_id = '%d'" % (
                 rows[0][0], rows[0][1])
             values = [self.string_to_datetime(next_due_date)]
@@ -4049,10 +4053,10 @@ class ClientDatabase(Database):
         if len(columns) > 0 and len(values) > 0 and len(columns) == len(values):
             self.update(self.tblAssignedCompliances, columns, values, condition, client_id)
 
-        columns = "unit_id, compliance_id, due_date, completion_date"
+        get_columns = "unit_id, compliance_id, due_date, completion_date"
         condition = "compliance_history_id = '%d'" % compliance_history_id
         rows = self.get_data(
-            self.tblComplianceHistory, columns, condition
+            self.tblComplianceHistory, get_columns, condition
         )
         unit_id = rows[0][0]
         compliance_id = rows[0][1]
@@ -5052,8 +5056,7 @@ class ClientDatabase(Database):
                 AND TA.unit_id = TC.unit_id \
                 WHERE \
                 TA.is_active = 1 \
-                AND TC.approve_status is NULL \
-                OR TC.approve_status != 1\
+                AND IFNULL(TC.approve_status, 0) != 1 \
             ) \
             AND T7.user_id like '%s'" % (user_id)
 
