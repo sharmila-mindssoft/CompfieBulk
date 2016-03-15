@@ -448,9 +448,7 @@ function submitcompliance(){
           var statutory_dates = [];
           var current_due_date = '';
           var current_trigger_day = '';
-
           var current_due_dates = [];
-          var current_trigger_days = [];
 
           var validitydate = null;
           if($('#validitydate'+statutoriesCount).val() != undefined && $('#validitydate'+statutoriesCount).val() != '') validitydate = $('#validitydate'+statutoriesCount).val();
@@ -463,14 +461,12 @@ function submitcompliance(){
 
               dDate = $('#duedate'+statutoriesCount+'-'+k).val();
               tDay = $('#triggerdate'+statutoriesCount+'-'+k).val();
-              current_due_dates.push(dDate);
-              current_trigger_days.push(tDay);
+              current_due_dates.push([dDate,tDay]);
               }
             }else{
               dDate = $('#duedate'+statutoriesCount).val();
               tDay = $('#triggerdate'+statutoriesCount).val();
-              current_due_dates.push(dDate);
-              current_trigger_days.push(tDay);
+              current_due_dates.push([dDate,tDay]);
             }
             var convertDueDate = convert_date(dDate);
             if (convertDueDate <= currentDate) {
@@ -479,23 +475,19 @@ function submitcompliance(){
                 return false;
             }
 
-          var sort_elements = current_due_dates;
-            if(current_due_dates.length > 1){
-              sort_elements.sort(function(a, b) {
-                a1 = convert_date(a);
-                b1 = convert_date(b);
-              return a1 - b1;
-              });
+            var sort_elements = current_due_dates;
+              if(current_due_dates.length > 1){
+                sort_elements.sort(function(a, b) {
+                  a1 = convert_date(a[0]);
+                  b1 = convert_date(b[0]);
+                return a1 - b1;
+                });
 
-              current_due_date = sort_elements[0];
-              for(var z=0;z<current_due_dates.length;z++){
-                if(current_due_date == current_due_dates[z]){
-                  current_trigger_day = parseInt(current_trigger_days[z]);
-                }
-              }
+              current_due_date = sort_elements[0][0];
+              current_trigger_day = parseInt(sort_elements[0][1]);
           }else{
-            current_due_date = current_due_dates[0];
-            current_trigger_day = parseInt(current_trigger_days[0]);
+            current_due_date = current_due_dates[0][0];
+            current_trigger_day = parseInt(current_trigger_days[0][1]);
           }
 
 
@@ -503,20 +495,15 @@ function submitcompliance(){
             var statutory_day = null;
             var statutory_month = null;
             var trigger_before_days = null;
-            if(sort_elements[dDates] != ''){
-              var splitDueDates = sort_elements[dDates].split('-');
+            if(sort_elements[dDates][0] != ''){
+              var splitDueDates = sort_elements[dDates][0].split('-');
               var strMonth = splitDueDates[1];
               statutory_day = parseInt(splitDueDates[0]);
               statutory_month = convert_month(strMonth);
-
-              for(var z=0;z<current_due_dates.length;z++){
-                if(sort_elements[dDates] == current_due_dates[z]){
-                  trigger_before_days = current_trigger_days[z];
-                }
-              }
+              trigger_before_days = sort_elements[dDates][1];
 
               if(trigger_before_days != '') {
-                trigger_before_days = parseInt(current_trigger_days[dDates]);
+                trigger_before_days = parseInt(trigger_before_days);
                 if(trigger_before_days > 100){
                   displayMessage("Trigger days should not be exceed 100");
                   hideLoader();
@@ -553,7 +540,6 @@ function submitcompliance(){
       actCount = actCount + 1;
     }
   }
-
   function onSuccess(data){
     //getAssignedStatutories ();
     $('ul.setup-panel li:eq(0)').addClass('active');
