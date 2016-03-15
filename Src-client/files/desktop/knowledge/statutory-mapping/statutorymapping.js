@@ -296,7 +296,6 @@ function getStatutoryMappings(){
 //load statutory levels
 function loadStatutoryLevels(countryval,domainval){
   $(".tbody-statutory-level").find("div").remove();
-
   if((countryval in statutoryLevelsList) && (domainval in statutoryLevelsList[countryval])){
       var statutoryLevelList = statutoryLevelsList[countryval][domainval];
       var levelposition;
@@ -319,17 +318,18 @@ function loadStatutoryLevels(countryval,domainval){
         var clsval='.slist'+setlevelstage;
         var clsval1='slist'+setlevelstage;
 
-        var statutoryList = statutoriesList[countryval][domainval];
-        for(var i in statutoryList){
-          var setstatutoryid = statutoryList[i]["statutory_id"];
-          if(statutoryList[i]["level_id"] == firstlevelid){
-          str += '<span class="eslist-filter'+setlevelstage+'" style="float:left;margin-right:5px;margin-left:5px;margin-top:3px;cursor:pointer;" onclick="editstaturoty('+setstatutoryid+',\''+statutoryList[i]["statutory_name"]+'\','+setlevelstage+')"><img src="/images/icon-edit.png" style="width:11px;height:11px"/> </span> <li id="'+setstatutoryid+'" class="'+clsval1+'" onclick="activate_statutorylist(this,'+setstatutoryid+',\''+clsval+'\','+countryval+','+domainval+','+setlevelstage+')" >'+statutoryList[i]["statutory_name"]+'</li> ';
+        if((countryval in statutoriesList) && (domainval in statutoriesList[countryval])){
+          var statutoryList = statutoriesList[countryval][domainval];
+          for(var i in statutoryList){
+            var setstatutoryid = statutoryList[i]["statutory_id"];
+            if(statutoryList[i]["level_id"] == firstlevelid){
+            str += '<span class="eslist-filter'+setlevelstage+'" style="float:left;margin-right:5px;margin-left:5px;margin-top:3px;cursor:pointer;" onclick="editstaturoty('+setstatutoryid+',\''+statutoryList[i]["statutory_name"]+'\','+setlevelstage+')"><img src="/images/icon-edit.png" style="width:11px;height:11px"/> </span> <li id="'+setstatutoryid+'" class="'+clsval1+'" onclick="activate_statutorylist(this,'+setstatutoryid+',\''+clsval+'\','+countryval+','+domainval+','+setlevelstage+')" >'+statutoryList[i]["statutory_name"]+'</li> ';
+            }
+          }
         }
-      }
         $('#statutorylist'+setlevelstage).append(str);
   }
 }
-
 
   //filter process
   $(".listfilter").keyup(function() {

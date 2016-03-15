@@ -1,6 +1,8 @@
 {% extends "files/desktop/client/home/container.html" %}
 {% block content %}
-
+<div class='loading-indicator-spin'>
+  <span><img src='/files/desktop/common/images/loading-img.gif' alt=""></span>
+</div>
   <div class="content-container width100" >
     <div class="content-area">
       <h1>Assign Compliance</h1>
@@ -235,9 +237,11 @@
     <div class="content">
     <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;color:#000">Applicable Units</h1>
      <table width="100%" id="popup_table">
+     <tbody class="popup-list"> 
         <tr align="left" class = "popup_row">
           <td class="popup_unitname"></td>
         </tr>
+    </tbody>
     </table>
     </div>
   </div>
