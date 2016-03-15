@@ -62,15 +62,20 @@ function compliancestatus(element, viewremarks){
   }
 
   var actSelect = sClass.substr(sClass.lastIndexOf("s") + 1);
-  $('#act'+actSelect).prop("checked",true);
-  $('.remark'+actSelect).hide();
-
-  /*var cStatus = false;
+  var cStatus = false;
   $('.'+sClass).each(function() { 
-    if(this.checked = true){
+    if(this.checked){
       cStatus = true;
     }
-  });*/
+  });
+
+  if(cStatus){
+    $('#act'+actSelect).prop("checked",true);
+    $('.remark'+actSelect).hide();
+  }else{
+    $('#act'+actSelect).prop("checked",false);
+    $('.remark'+actSelect).show();
+  }
 }
 
 function part_compliance (remark) {
@@ -363,11 +368,11 @@ function loadStatutorySettingsList(assignedStatutoriesList){
       unit_id = assignedStatutoriesList[entity]["unit_id"];
       var bGroup = assignedStatutoriesList[entity]["business_group_name"];
       if(bGroup == null){
-        bGroup = 'Nil';
+        bGroup = '-';
       }
       var dName = assignedStatutoriesList[entity]["division_name"];
       if(dName == null){
-        dName = 'Nil';
+        dName = '-';
       }
       var tableRow=$('#templates .table-statutorysettings .table-row');
       var clone=tableRow.clone();
@@ -414,9 +419,15 @@ $(".listfilter").keyup(function() {
   var filteredList=[];
   for(var entity in assignedStatutoriesList) {
     var filter1val = assignedStatutoriesList[entity]["country_name"];
-    var filter2val = assignedStatutoriesList[entity]["business_group_name"];
+
+     var filter2val = '-';
+    if(assignedStatutoriesList[entity]["business_group_name"] != null) filter2val = assignedStatutoriesList[entity]["business_group_name"];
+  
     var filter3val = assignedStatutoriesList[entity]["legal_entity_name"];
-    var filter4val = assignedStatutoriesList[entity]["division_name"];
+
+    var filter4val = '-';
+    if(assignedStatutoriesList[entity]["division_name"] != null) filter4val = assignedStatutoriesList[entity]["division_name"];
+
     var filter5val = assignedStatutoriesList[entity]["unit_name"];
     var domainList = assignedStatutoriesList[entity]["domain_names"];
     var domains = '';

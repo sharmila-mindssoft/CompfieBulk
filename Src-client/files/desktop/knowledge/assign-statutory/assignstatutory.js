@@ -489,6 +489,7 @@ $("#unit").click(function(event){
     }else{
        $('#domain').empty();
     }
+    $('ul.setup-panel li:eq(1)').addClass('disabled');
   }
 });
 
