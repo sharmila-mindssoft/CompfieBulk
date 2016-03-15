@@ -72,8 +72,9 @@ def process_update_statutory_settings(db, request, session_user, client_id):
         return clientmasters.InvalidPassword()
 
 def process_get_assign_compliance_form_data(db, session_user, client_id):
-    countries = db.get_countries_for_user(session_user, client_id)
-    row = db.get_user_company_details(session_user, client_id)
+    countries = db.get_countries_for_user(session_user)
+    domains = db.get_domains_for_user(session_user)
+    row = db.get_user_company_details(session_user)
     business_group_ids = row[3]
     business_groups = db.get_business_groups_for_user(
         business_group_ids
@@ -89,7 +90,7 @@ def process_get_assign_compliance_form_data(db, session_user, client_id):
     two_level_approve = db.get_client_settings()
     client_admin = db.get_admin_info()
     return clienttransactions.GetAssignCompliancesFormDataSuccess(
-        countries, business_groups, legal_entities,
+        countries, domains, business_groups, legal_entities,
         divisions, units, users,
         two_level_approve, client_admin
     )

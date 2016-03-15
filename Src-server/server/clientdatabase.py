@@ -2181,14 +2181,14 @@ class ClientDatabase(Database):
 
         query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, \
             t1.division_id, t1.legal_entity_id, t1.business_group_id, \
-            t1.address, t1.country_id \
+            t1.address, t1.country_id, domain_ids\
             FROM tbl_units t1 "
         query += qry
         rows = self.select_all(query)
         columns = [
             "unit_id", "unit_code", "unit_name",
             "division_id", "legal_entity_id",
-            "business_group_id", "address", "country_id"
+            "business_group_id", "address", "country_id", "domain_ids"
         ]
         result = self.convert_to_dict(rows, columns)
         unit_list = []
@@ -2200,6 +2200,8 @@ class ClientDatabase(Database):
                 division_id = r["division_id"]
             if r["business_group_id"] > 0 :
                 b_group_id = r["business_group_id"]
+
+            domain_ids = [int(x) for x in r["domain_ids"].split(',')]
             unit_list.append(
                 clienttransactions.ASSIGN_COMPLIANCE_UNITS(
                     r["unit_id"], name,
@@ -2207,7 +2209,8 @@ class ClientDatabase(Database):
                     division_id,
                     r["legal_entity_id"],
                     b_group_id,
-                    r["country_id"]
+                    r["country_id"],
+                    domain_ids
                 )
             )
         return unit_list
