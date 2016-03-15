@@ -42,7 +42,7 @@ mysqlPassword = "123456"
 mysqlDatabase = "compfie_knowledge"
 mysqlPort = 3306
 
-CLIENT_URL = "http://localhost:8080/"
+CLIENT_URL = "http://52.11.242.90:8082/"
 
 
 class EmailNotification(object):
@@ -226,39 +226,29 @@ def get_country_wise_timestamp():
 
 def get_compliance_to_start(db, client_id, current_date):
     print "fetching task details to start compliance for client id - %s, %s" % (client_id, current_date)
-    query = "SELECT t1.country_id, t1.unit_id, t1.compliance_id, \
-        t1.statutory_dates, t1.trigger_before_days, t1.due_date, t1.validity_date, \
-        (select group_concat(document_name, '-', compliance_task) from tbl_compliances where compliance_id = t1.compliance_id) compliance_name, \
-        (select frequency_id from tbl_compliances WHERE compliance_id = t1.compliance_id)frequency, \
-        (select repeats_type_id from tbl_compliances WHERE compliance_id = t1.compliance_id) repeat_type_id, \
-        (select repeats_every from tbl_compliances WHERE compliance_id = t1.compliance_id) repeats_every, \
-        (t1.due_date - INTERVAL t1.trigger_before_days DAY) start_date, \
-        (select business_group_id from tbl_units where unit_id = t1.unit_id) business_group_id, \
-        (select legal_entity_id from tbl_units where unit_id = t1.unit_id) legal_entity_id, \
-        (select division_id from tbl_units where unit_id = t1.unit_id) division_id, \
-        (select group_concat(unit_code, ' - ', unit_name) from tbl_units where unit_id = t1.unit_id) unit_name, \
-        (select distinct a.domain_id from tbl_client_statutories a \
-            INNER JOIN tbl_client_compliances b ON a.client_statutory_id = b.client_statutory_id\
-            INNER JOIN tbl_compliances c ON c.compliance_id = b.compliance_id \
-            WHERE c.compliance_id = t1.compliance_id AND a.unit_id = t1.unit_id \
-            AND a.country_id = t1.country_id) domain_id,\
+    query = "SELECT t1.country_id, t1.unit_id, t1.compliance_id, t1.statutory_dates, \
+        t1.trigger_before_days, t1.due_date, t1.validity_date,\
+        t2.document_name, t2.compliance_task, t2.frequency_id, t2.repeats_type_id,\
+        t2.repeats_every, (t1.due_date - INTERVAL t1.trigger_before_days DAY) start_date,\
+        t3.unit_id, t3.unit_code, t3.unit_name, t3.business_group_id,\
+        t3.legal_entity_id, t3.division_id, t2.domain_id, \
         t1.assignee, t1.concurrence_person, t1.approval_person\
-        FROM tbl_assigned_compliances t1 \
-        WHERE \
-        (select frequency_id from tbl_compliances WHERE compliance_id = t1.compliance_id) not in (4) \
-        AND \
-        (t1.due_date - INTERVAL t1.trigger_before_days DAY) <=  '%s' AND is_active = 1" % (current_date)
+        from tbl_assigned_compliances t1\
+        INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id\
+        INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id\
+        WHERE\
+        t1.is_active = 1 AND t2.is_active = 1 AND \
+        (t1.due_date - INTERVAL t1.trigger_before_days DAY) <= '%s'" % (current_date)
 
-    # print query
     cursor = db.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()
     columns = [
         "country_id", "unit_id", "compliance_id", "statutory_dates",
-        "trigger_before_days", "due_date", "validity_date", "compliance_name",
+        "trigger_before_days", "due_date", "validity_date", "document_name", "compliance_task",
         "frequency", "repeat_type_id", "repeats_every", "start_date",
+        "unit_id", "unit_code", "unit_name",
         "business_group_id", "legal_entity_id", "division_id",
-        "unit_name",
         "domain_id",
         "assignee", "concurrence_person", "approval_person"
     ]
@@ -334,7 +324,11 @@ def calculate_next_due_date(
     if statutory_dates == []:
         statutory_dates = None
     if frequency == 2 or frequency == 3 :
+        print "periodical"
         if statutory_dates is None or len(statutory_dates) == 1 :
+            print "statutory_dates is None"
+            print old_due_date
+            print repeat_every
             if repeat_type == 1 :
                 new_due_date = addDays(repeat_every, old_due_date)
             elif repeat_type == 2 :
@@ -428,11 +422,13 @@ def save_in_notification(
     notification_text, extra_details, notification_type_id, notify_to_all=True
 ):
     def save_notification_users(notification_id, user_id):
-        q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
-            VALUES (%s, %s)" % (notification_id, user_id)
-        cur = db.cursor()
-        cur.execute(q)
-        cur.close()
+        if user_id is not "NULL" :
+            q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
+                VALUES (%s, %s)" % (notification_id, user_id)
+            print q
+            cur = db.cursor()
+            cur.execute(q)
+            cur.close()
 
     notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
     created_on = datetime.datetime.now()
@@ -448,7 +444,7 @@ def save_in_notification(
             assignee, concurrence_person, approval_person, notification_type_id,
             notification_text, extra_details, created_on
         )
-    # print query
+    print query
     # print
     cursor = db.cursor()
     cursor.execute(query)
@@ -493,60 +489,57 @@ def start_new_task(db, client_id, current_date):
                 d["frequency"], d["statutory_dates"], d["repeat_type_id"],
                 d["repeats_every"], d["due_date"]
             )
-            save_in_compliance_history(
-                db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
-                d["due_date"], next_due_date, int(d["assignee"]), d["concurrence_person"], int(approval_person)
-            )
-            if trigger_before is None:
-                trigger_before = d["trigger_before_days"]
-            update_assign_compliance_due_date(db, trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
+            print next_due_date, d["frequency"], d["statutory_dates"], d["repeat_type_id"]
+            # save_in_compliance_history(
+            #     db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
+            #     d["due_date"], next_due_date, int(d["assignee"]), d["concurrence_person"], int(approval_person)
+            # )
+            # if trigger_before is None:
+            #     trigger_before = d["trigger_before_days"]
+            # update_assign_compliance_due_date(db, trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
 
-        notification_text = "Compliance task %s started" % (d["compliance_name"])
+        if d["document_name"] :
+            compliance_name = d["document_name"] + " - " + d["compliance_task"]
+        else :
+            compliance_name = d["compliance_task"]
+        unit_name = d["unit_code"] + " - " + d["unit_name"]
+        notification_text = "Compliance task %s started" % (compliance_name)
         extra_details = "Compliance Started"
         notification_type_id = 1   # 1 = notification
-        save_in_notification(
-            db, d["country_id"], d["domain_id"], d["business_group_id"], d["legal_entity_id"],
-            d["division_id"], d["unit_id"], d["compliance_id"], d["assignee"],
-            d["concurrence_person"], d["approval_person"],
-            notification_text, extra_details, notification_type_id
-        )
-        a_name, assignee_email = get_email_id_for_users(db, d["assignee"])
-        email.notify_compliance_start(
-            a_name, d["compliance_name"], d["unit_name"],
-            d["due_date"], assignee_email
-        )
+        # save_in_notification(
+        #     db, d["country_id"], d["domain_id"], d["business_group_id"], d["legal_entity_id"],
+        #     d["division_id"], d["unit_id"], d["compliance_id"], d["assignee"],
+        #     d["concurrence_person"], d["approval_person"],
+        #     notification_text, extra_details, notification_type_id
+        # )
+        # a_name, assignee_email = get_email_id_for_users(db, d["assignee"])
+        # email.notify_compliance_start(
+        #     a_name, d["compliance_name"], d["unit_name"],
+        #     d["due_date"], assignee_email
+        # )
         count += 1
 
     print " %s compliances started for - %s" % (count, current_date)
 
 def get_inprogress_compliances(db):
-    query = "SELECT t1.compliance_history_id, t1.unit_id, t1.compliance_id, t1.start_date, t1.due_date, \
-        (select group_concat(document_name, '-', compliance_task) from tbl_compliances where compliance_id = t1.compliance_id) compliance_name, \
-        (select assignee from tbl_assigned_compliances \
-            where unit_id = t1.unit_id and compliance_id = t1.compliance_id) assignee, \
-        (select concurrence_person from tbl_assigned_compliances \
-            where unit_id = t1.unit_id and compliance_id = t1.compliance_id) concurrence_person, \
-        (select concurrence_person from tbl_assigned_compliances \
-            where unit_id = t1.unit_id and compliance_id = t1.compliance_id) approval_person, \
-        (select group_concat(unit_code, ' - ', unit_name) from tbl_units where unit_id = t1.unit_id) unit_name,\
-        (select business_group_id from tbl_units where unit_id = t1.unit_id) business_group_id, \
-        (select legal_entity_id from tbl_units where unit_id = t1.unit_id) legal_entity_id, \
-        (select division_id from tbl_units where unit_id = t1.unit_id) division_id, \
-        (select country_id from tbl_units where unit_id = t1.unit_id) country_id, \
-        (select distinct a.domain_id from tbl_client_statutories a \
-            INNER JOIN tbl_client_compliances b ON a.client_statutory_id = b.client_statutory_id\
-            INNER JOIN tbl_compliances c ON c.compliance_id = b.compliance_id \
-            WHERE c.compliance_id = t1.compliance_id AND a.unit_id = t1.unit_id \
-        ) domain_id \
-        FROM tbl_compliance_history t1 WHERE approve_status = NULL OR approve_status != 1  "
+    query = "SELECT t1.compliance_history_id, t1.unit_id, t1.compliance_id, t1.start_date, \
+        t1.due_date, t3.document_name, t3.compliance_task, \
+        t2.assignee, t2.concurrence_person, t2.approval_person, t4.unit_code, t4.unit_name, \
+        t4.business_group_id, t4.legal_entity_id, t4.division_id, t2.country_id, \
+        t3.domain_id FROM \
+        tbl_compliance_history t1 INNER JOIN tbl_assigned_compliances t2 on \
+        t1.compliance_id = t2.compliance_id \
+        INNER JOIN tbl_compliances t3 on t1.compliance_id = t3.compliance_id \
+        INNER JOIN tbl_units t4 on t1.unit_id = t4.unit_id WHERE \
+        IFNULL(t1.approval_status, 0) != 1"
     # print query
     cursor = db.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()
     columns = [
         "compliance_history_id", "unit_id", "compliance_id", "start_date", "due_date",
-        "compliance_name", "assignee", "concurrence_person", "approval_person",
-        "unit_name", "business_group_id", "legal_entity_id", "division_id", "country_id",
+        "document_name", "compliance_task", "assignee", "concurrence_person", "approval_person",
+        "unit_code", "unit_name", "business_group_id", "legal_entity_id", "division_id", "country_id",
         "domain_id"
     ]
     result = convert_to_dict(rows, columns)
@@ -717,7 +710,7 @@ def notify_before_contract_period(db, client_id):
 
 
 def main():
-    print '*' * 20
+    print '--' * 20
     print "begin daily_process"
     current_date = get_current_date()
     print "current_date datetime ", datetime.datetime.now()
@@ -735,7 +728,7 @@ def main():
                 db.rollback()
                 print(traceback.format_exc())
     print "end daily_process"
-    print '*' * 20
+    print '--' * 20
 
 if __name__ == "__main__" :
     main()

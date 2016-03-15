@@ -3955,7 +3955,7 @@ def to_structure_VectorType_CustomTextType_250(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
-        lst.append(to_structure_CustomTextType_250(item))
+        lst.append(to_structure_Text(item))
     return lst
 
 def to_structure_OptionalType_VectorType_CustomTextType_250(data):
