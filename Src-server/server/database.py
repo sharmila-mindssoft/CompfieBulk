@@ -198,6 +198,7 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
+        print query
         return self.select_all(query)
 
     def insert(self, table, columns, values, client_id=None) :
@@ -2301,12 +2302,12 @@ class KnowledgeDatabase(Database):
     #
 
     def convert_base64_to_file(self, file_name, file_content, file_path=None):
-
         if file_path is None :
             file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
         else:
             if not os.path.exists(file_path):
                 os.makedirs(file_path)
+                os.chmod(file_path, 0777)
             file_path = "%s/%s" % (file_path, file_name)
         self.remove_uploaded_file(file_path)
         new_file = open(file_path, "wb")

@@ -61,12 +61,14 @@ $("#submit-client").click(function(){
   } else {
       console.log("Else ")
       function onSuccess(data){
+          console.log("inside onsucces in change password")
           displayMessage("Password Changed Successfully");
           $("#currentpassword").val("");
           $("#newpassword").val("");
           $("#confirmpassword").val("");
       }
       function onFailure(error){
+        console.log("inside onFailure in change password")
         if(error == "InvalidCurrentPassword"){
           displayMessage("Invalid Current Password");
         }

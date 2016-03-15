@@ -2025,8 +2025,10 @@ class ClientDatabase(Database):
             aliases, join_type,  join_condition,
             assignee_condition
         )
+        print assignee_rows
         approval_compliances = []
         for assignee in assignee_rows:
+            print "inside for"
             query_columns = "compliance_history_id, tch.compliance_id, start_date,"+\
             " tch.due_date, documents, completion_date, completed_on, next_due_date, "+\
             "concurred_by, remarks, datediff(tch.due_date, completion_date ),compliance_task,"+\
