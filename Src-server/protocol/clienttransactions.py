@@ -1115,7 +1115,7 @@ class REASSIGNED_COMPLIANCE(object):
         compliance_history_id = data.get("compliance_history_id")
         compliance_history_id = parse_structure_OptionalType_UnsignedIntegerType_32(compliance_history_id)
         due_date = data.get("due_date")
-        due_date = parse_structure_CustomTextType_20(due_date)
+        due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
         return REASSIGNED_COMPLIANCE(
             unit_id, compliance_id, compliance_history_id, due_date
         )
@@ -1125,7 +1125,7 @@ class REASSIGNED_COMPLIANCE(object):
             "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
             "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
             "compliance_history_id": to_structure_OptionalType_UnsignedIntegerType_32(self.compliance_history_id),
-            "due_date": to_structure_CustomTextType_20(self.due_date),
+            "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
         }
 
 #
