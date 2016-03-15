@@ -131,9 +131,8 @@ function showSideBar(idval, data){
         $(".concurr-action", cloneValSide).hide();
         $(".approval-action", cloneValSide).show();
         
-        $(".sidebar-action", cloneValSide).on("change", function(e, data){ 
-            console.log($(".sidebar-action", cloneValSide).val());
-            if($(".sidebar-action", cloneValSide).val() == 'Reject'){
+        $(".approval-action", cloneValSide).on("change", function(e, data){ 
+            if($(".approval-action", cloneValSide).text() == 'Reject'){
                 $(".sidebar-remarks-textarea", cloneValSide).show();
             }
             else{
@@ -149,8 +148,8 @@ function showSideBar(idval, data){
         
         $(".sidebar-concurrence span", cloneValSide).html(data['concurrenced_by']);               
         $(".action-tr", cloneValSide).show();
-        $(".sidebar-action", cloneValSide).on("change", function(e, data){ 
-            if($(".sidebar-action", cloneValSide).val() == 'Reject'){
+        $(".concurr-action", cloneValSide).on("change", function(e, data){ 
+            if($(".concurr-action option:selected", cloneValSide).text() == 'Reject'){
                 $(".sidebar-remarks-textarea", cloneValSide).show();
             }
             else{
@@ -168,7 +167,7 @@ function showSideBar(idval, data){
         
         $(".sidebar-remarks-textarea", cloneValSide).show();
         $(".sidebar-action", cloneValSide).on("change", function(e, data){ 
-            if($(".sidebar-action", cloneValSide).val() == 'Reject'){
+            if($(".sidebar-action option:selected", cloneValSide).val() == 'Reject'){
                 $(".sidebar-remarks-textarea", cloneValSide).show();
             }
             else{
@@ -184,8 +183,7 @@ function showSideBar(idval, data){
 
         $(".sidebar-remarks-textarea", cloneValSide).show(); 
         $(".sidebar-action", cloneValSide).on("change", function(e, data){ 
-            console.log($(cloneValSide, ".sidebar-action").val());
-            if($(".sidebar-action", cloneValSide).val() == 'Reject'){
+            if($(".sidebar-action option:selected", cloneValSide).val() == 'Reject'){
                 $(".sidebar-remarks-textarea", cloneValSide).show();
             }
             else{
@@ -201,7 +199,8 @@ function showSideBar(idval, data){
         var validity_date;
         compliance_history_id = data['compliance_history_id'];
 
-        approval_status = $(".sidebar-action").val();
+        approval_status = $(".sidebar-action option:selected").val();
+        console.log(approval_status);
         if(approval_status == ''){
             displayMessage("Select Any Action");
             return false;
