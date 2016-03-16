@@ -9,6 +9,7 @@ var assignStatutoryUnitValues = [];
 var statutoriesList;
 var two_level_approve;
 var client_admin;
+var domainsList;
 
 function clearMessage() {
   $(".error-message").hide();
@@ -54,6 +55,10 @@ function clearValues(levelvalue) {
     assignStatutoryUnitIds = [];
     assignStatutoryUnitValues = [];
     $('#unit').empty();
+  }
+
+  if(levelvalue == 'unit'){
+    $('#domain').empty();
   }
 }
 
@@ -112,9 +117,13 @@ function load_secondwizard(){
   var actCount = 1;
   $(".tbody-assignstatutory").find("tbody").remove();
 
-  for(var entity in statutoriesList){
+  //var selectedDomain = $('.domainlist.active').attr('id');
+  var selectedDomain = 1;
+
+  if(selectedDomain in statutoriesList){
+
     var actname = '';
-    var domainList = statutoriesList[entity];
+    var domainList = statutoriesList[selectedDomain];
     for(var domainentity in domainList){
       actname = domainentity;
       var acttableRow=$('#act-templates .font1 .tbody-heading');
@@ -289,13 +298,15 @@ function load_secondwizard(){
       actCount = actCount + 1;
       count++;
     }
-  }
+  
 
   if(count <= 1){
     var norecordtableRow=$('#no-record-templates .font1');
     var noclone=norecordtableRow.clone();
     $('.tbody-assignstatutory').append(noclone);
     $('#activate-step-3').hide();
+  }
+
   }
 
   $(document).ready(function($) {
@@ -320,6 +331,9 @@ function validate_firsttab(){
   }else if (assignStatutoryUnitIds.length == 0){
     displayMessage("Unit Required");
     return false;
+ /* }else if ($('.domainlist.active').text() == ''){
+    displayMessage("Domain Required");
+    return false;*/
   }else{
     displayMessage("");
     displayLoader();
@@ -657,6 +671,7 @@ $("#unit").click(function(event){
     var chkstatus = $(event.target).attr('class');
     $('#activate-step-3').show();
     if(chkstatus != undefined && chkstatus != 'active'){
+      clearValues('unit');
       if(chkstatus == 'unitlist active'){
         $(event.target).removeClass("active");
         var removeid = assignStatutoryUnitIds.indexOf(parseInt(event.target.id));
@@ -668,9 +683,44 @@ $("#unit").click(function(event){
         assignStatutoryUnitIds.push(parseInt(event.target.id));
         assignStatutoryUnitValues.push($(event.target).text());
       }
+      
+      /*var domainArray = [];
+      var applicableDomains = [];
+      for(var unit in unitsList){
+        if($.inArray(unitsList[unit]["unit_id"], assignStatutoryUnitIds) >= 0){
+          domainArray.push(unitsList[unit]["domain_ids"]);
+        }
+      }
+
+      if(domainArray.length > 0){
+        applicableDomains = domainArray.shift().filter(function(v) {
+        return domainArray.every(function(a) {
+            return a.indexOf(v) !== -1;
+        });
+      });
+      var str='';
+      $('#domain').empty();
+      for(var domain in domainsList){
+        if(domainsList[domain]["is_active"] == true && $.inArray(domainsList[domain]["domain_id"], applicableDomains) >= 0){
+          str += '<li id="'+domainsList[domain]["domain_id"]+'" class="domainlist" >'+domainsList[domain]["domain_name"]+'</li>';
+        }
+      }
+      $('#domain').append(str);
+      }else{
+        $('#domain').empty();
+      }*/
       $('ul.setup-panel li:eq(1)').addClass('disabled');
       $('ul.setup-panel li:eq(2)').addClass('disabled');
     }
+});
+
+$("#domain").click(function(event){
+  if($(event.target).attr('class') == 'domainlist'){
+    $('.'+$(event.target).attr('class')).each( function( index, el ) {
+      $(el).removeClass( "active" );
+    });
+    $(event.target).addClass("active");
+  }
 });
 
 $("#businessgroup").click(function(event){
@@ -1013,6 +1063,16 @@ function getAssignCompliances () {
     usersList = data["users"];
     two_level_approve = data["two_level_approve"];
     client_admin = data["client_admin"];
+    //domainsList = data["domains"];
+    domainsList = [
+
+    {
+        "is_active":true,
+        "domain_id":1,
+        "domain_name":"Finance Law"
+    }
+
+];
     load_firstwizard();
   }
   function onFailure(error){
@@ -1132,12 +1192,25 @@ $('.edittrigger').click(function(){
     var lis = document.getElementsByClassName('unitlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter))
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
     }
   });
+
+  $("#filter_domain").keyup( function() {
+    var filter = $("#filter_domain").val().toLowerCase();
+    var lis = document.getElementsByClassName('domainlist');
+    for (var i = 0; i < lis.length; i++) {
+      var name = lis[i].innerHTML;
+      if (~name.toLowerCase().indexOf(filter))
+        lis[i].style.display = 'list-item';
+      else
+        lis[i].style.display = 'none';
+    }
+  });
+
 
 });
 
