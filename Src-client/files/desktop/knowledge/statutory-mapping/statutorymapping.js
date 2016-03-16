@@ -270,7 +270,7 @@ function getStatutoryMappingsMastersList() {
 
 function getStatutoryMappings(){
   mirror.getStatutoryMappings(
-    function (error, response) {
+    function (error, data) {
           if (error == null){
             statutoryMappingsList = data["statutory_mappings"];
             loadStatutoryMappingList(statutoryMappingsList);
@@ -2263,7 +2263,6 @@ $('#multiple_statutory_month12').change(function() {
   }
   //resetvalues();
 }
-
 
 $(".dayhour").change(function(){
 if($(this).val()=="1")
