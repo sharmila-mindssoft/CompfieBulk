@@ -2329,7 +2329,7 @@ class KnowledgeDatabase(Database):
         if os.path.exists(file_path) :
             os.remove(file_path)
 
-    def check_duplicate_statutory_mapping(self, data) :
+    def check_duplicate_statutory_mapping(self, data, statutory_mapping_id=None) :
         country_id = data.country_id
         domain_id = data.domain_id
         statutory_nature = data.statutory_nature_id
@@ -2358,6 +2358,8 @@ class KnowledgeDatabase(Database):
                 statutory_id,
                 industry_id
             )
+        if statutory_mapping_id is not None :
+            q = q + " AND t1.statutory_mapping_id != %s" % statutory_mapping_id
         row = self.select_one(q)
         if row :
             return row[0]
