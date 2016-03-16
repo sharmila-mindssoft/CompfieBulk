@@ -139,6 +139,22 @@ $('#short-name').on('input', function (event) {
 $("#short-name").on('keyup', function(){
     $(".shorturl").text($(this).val());
 });
+function dataconfigurationvalidate(){
+    var flag = 0;
+    $(".tbody-dateconfiguration-list .tl-from").each(function(){
+        console.log($(this).val());
+        if ($(this).val() == "") {
+            flag = 1;
+        }
+    });
+    $(".tbody-dateconfiguration-list .tl-to").each(function(){
+        console.log($(this).val());
+        if ($(this).val() == "") {
+            flag = 1;
+        }
+    });
+    return flag;
+}
 
 $("#btn-clientgroup-submit").click(function(){
     var dateConfigurations = [];
@@ -215,7 +231,10 @@ $("#btn-clientgroup-submit").click(function(){
     }
     else if(licenceVal == ''){
         displayMessage('No. Of User Licence Required');
-    }   
+    } 
+    else if(licenceVal == "0"){
+        displayMessage('Invalid No. Of User Licence');
+    }    
     else if(isNaN(licenceVal)){
         displayMessage('Invalid No. Of User Licence');
     }
@@ -238,12 +257,16 @@ $("#btn-clientgroup-submit").click(function(){
         displayMessage('Short Name Required');
         gototop();
     }
+    else if(dataconfigurationvalidate() == 1){
+        displayMessage('Select Date Configurations From & To');
+    }
     else if(clientGroupIdVal == ''){
         var arrayinchargePersonVal = inchargePersonVal.split(",");
         var arrayinchargePerson = [];
         for(var k = 0; k < arrayinchargePersonVal.length; k++) { arrayinchargePerson[k] = parseInt(arrayinchargePersonVal[k]); }
         inchargePersonVal = arrayinchargePerson;
-        if(logo_file == ''){
+        console.log(logo_file);
+        if($("#upload-logo").val() == ''){
             displayMessage('Logo Required');
             return false;
         }
@@ -259,12 +282,16 @@ $("#btn-clientgroup-submit").click(function(){
             if(error == 'GroupNameAlreadyExists'){
                 displayMessage('Group Name Already Exists');
             }
-            if(error == 'UsernameAlreadyExists'){
+            else if(error == 'UsernameAlreadyExists'){
                 displayMessage('Username Already Exists');
             }
-            if(error == 'ClientCreationFailed'){
+            else if(error == 'ClientCreationFailed'){
                 displayMessage('Client Creation Failed. Check your server connection details');
             }
+            else{
+                displayMessage(error);
+            }
+
         }
 
         var clientGroupDetails = mirror.getSaveClientGroupDict(
@@ -301,8 +328,17 @@ $("#btn-clientgroup-submit").click(function(){
             if(error == 'GroupNameAlreadyExists'){
                 displayMessage('Group Name Already Exists');
             }
-            if(error == 'UsernameAlreadyExists'){
+            else if(error == 'UsernameAlreadyExists'){
                 displayMessage('Username Already Exists');
+            }
+            else if(error == 'CannotDeactivateCountry'){
+                displayMessage("Cannot unselect country. One or more units exists")
+            }
+            else if(error == 'CannotDeactivateDomain'){
+                displayMessage("Cannot unselect Domain. One or more units exists")   
+            }
+            else{
+                displayMessage(error);   
             }
         }
         var clientGroupDetails = mirror.getUpdateClientGroupDict(
@@ -344,8 +380,10 @@ function clientgroup_active(clientId, isActive){
         }
         function onFailure(error){
             if(error == "CannotDeactivateClient"){
-                alert("Cannot deactivate client, since client \
-                    has one or more active units")
+                displayMessage("Cannot deactivate client, since client has one or more active units")
+            }
+            else{
+                displayMessage(error);
             }
         }
         mirror.changeClientGroupStatus( parseInt(clientId), isActive,
@@ -592,7 +630,7 @@ function loadauto() {
             if(selectdomainstatus == 'checked'){
                 str += '<li id = "'+domainId+'" class = "active_selectbox deactivate">'+domainName+'</li> ';
             }else{
-                str += '<li id = "'+domainId+'" class = "deactivate">'+domainName+'</li> ';
+                //str += '<li id = "'+domainId+'" class = "deactivate">'+domainName+'</li> ';
             }
         }
     }
