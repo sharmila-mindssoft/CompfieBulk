@@ -8,7 +8,7 @@ var UNITS = {};
 var DOMAIN_INFO = {};
 var GROUP_NAME = null;
 
-var COMPLIANCE_STATUS_DATA = null;
+var COMPLIANCE_STATUS_DATA;
 var COMPLIANCE_STATUS_DRILL_DOWN_DATE = null;
 
 var ESCALATION_DATA = null;
@@ -846,7 +846,8 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
         options.chart.type = 'pie';
         options.chart.options3d = {
             enabled: true,
-            alpha: 30
+            alpha: 35,
+            beta: 0
         };
         var chart1 = new Highcharts.Chart(options);
 
@@ -1003,7 +1004,7 @@ function accordianType(idtype, toggleClass, contentClass){
 }
 
 function showNotCompliedDrillDownRecord(data){
-	
+
     $(".table-thead-drilldown-list").empty();
     $(".table-drilldown-list tbody").remove();
     $(".drilldown-title").text("Over due compliances of "+GROUP_NAME);
@@ -2289,13 +2290,14 @@ function prepareNotCompliedChart(source_data) {
         }
         chartTitle = "Over due compliance of " + chartTitle + " " + filter_names;
     }
-    return [chartDataSeries, chartTitle];
+    return [chartDataSeries, chartTitle,  count];
 }
 
 function updateNotCompliedChart(data) {
     data = prepareNotCompliedChart(data);
     chartDataSeries = data[0];
     chartTitle = data[1];
+    total = data[2];
     highchart = new Highcharts.Chart({
         colors: ['#FF9C80', '#F2746B', '#FB4739', '#DD070C'],
         chart: {
@@ -2317,7 +2319,7 @@ function updateNotCompliedChart(data) {
         },
         tooltip: {
             headerFormat: '',
-            pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b>out of total'
+            pointFormat: '<span>{point.name} days</span>: <b>{point.y:.0f}</b>out of total' + total
         },
         legend: {
             enabled: true
@@ -2707,9 +2709,11 @@ function loadComplianceStatusChart () {
         requestData,
         function (status, data) {
             // TODO: API Error Validation
+            COMPLIANCE_STATUS_DATA = data["chart_data"];
             data = data["chart_data"];
-            COMPLIANCE_STATUS_DATA = data;
+            console.log(COMPLIANCE_STATUS_DATA)
             updateComplianceStatusChart(data.splice(0, 7));
+
             hideLoader();
         }
     );
@@ -2728,6 +2732,9 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter
         "compliance_status": compliance_status,
         "year": chartInput.getCurrentYear()
     }
+    $(".btn-back").on("click", function() {
+        loadComplianceStatusChart();
+    });
     client_mirror.getComplianceStatusDrillDown(
         requestData,
         function (status, data) {
@@ -2753,6 +2760,9 @@ function loadEscalationDrillDown(year) {
         "filter_ids": filter_ids,
         "year": parseInt(year)
     }
+    $(".btn-back").on("click", function() {
+        loadEscalationChart();
+    });
     client_mirror.getEscalationDrillDown(
         requestData,
         function (status, data) {
@@ -2816,6 +2826,9 @@ function loadTrendChartDrillDown(year){
         "filter_ids": [1],
         "year": parseInt(year)
     };
+    $(".btn-back").on("click", function() {
+        loadTrendChart();
+    });
     client_mirror.getTrendChartDrillDown(
         requestData, function(status, data) {
             TREND_CHART_DATA = data;
@@ -2860,6 +2873,9 @@ function loadNotCompliedDrillDown(type){
         "filter_ids": filter_ids,
         "not_complied_type": type
     }
+    $(".btn-back").on("click", function() {
+        loadNotCompliedChart();
+    });
     client_mirror.getNotCompliedDrillDown(
         requestData,
         function (status, data) {
@@ -2908,6 +2924,9 @@ function loadComplianceApplicabilityDrillDown(type){
         "filter_ids": filter_ids,
         "applicability_status": type
     }
+    $(".btn-back").on("click", function() {
+        loadComplianceApplicabilityChart();
+    });
     client_mirror.getComplianceApplicabilityDrillDown(
         requestData,
         function (status, data) {
@@ -3058,15 +3077,20 @@ function loadDomains () {
 
 function loadBusinessGroups (isSelectAll) {
     business_groups = CHART_FILTERS_DATA.business_groups;
-    for (var i = 0; i < business_groups.length; i++) {
-        var business_group = business_groups[i];
-        var option = getOptionElement(
-            business_group["business_group_id"],
-            business_group["business_group_name"],
-            isSelectAll
-        );
-        $('.bg-filter').append(option);
-    };
+    if (business_groups.length > 0) {
+        for (var i = 0; i < business_groups.length; i++) {
+            var business_group = business_groups[i];
+            var option = getOptionElement(
+                business_group["business_group_id"],
+                business_group["business_group_name"],
+                isSelectAll
+            );
+            $('.bg-filter').append(option);
+        };
+    }
+    else {
+        $(".chart-filters").off("click");
+    }
 }
 
 function loadLegalEntities (isSelectAll) {

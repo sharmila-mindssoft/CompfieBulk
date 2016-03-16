@@ -145,14 +145,21 @@ function actstatus(element){
 function compliancestatus(element){
   var sClass = $(element).attr('class');
   var actSelect = sClass.substr(sClass.lastIndexOf("s") + 1);
-  $('#act'+actSelect).prop("checked",true);
-  $('.remark'+actSelect).hide();
-  /*var cStatus = false;
+  
+  var cStatus = false;
   $('.'+sClass).each(function() { 
-    if(this.checked = true){
+    if(this.checked){
       cStatus = true;
     }
-  });*/
+  });
+
+  if(cStatus){
+    $('#act'+actSelect).prop("checked",true);
+    $('.remark'+actSelect).hide();
+  }else{
+    $('#act'+actSelect).prop("checked",false);
+    $('.remark'+actSelect).show();
+  }
 }
 
 function make_breadcrumbs(){
@@ -266,7 +273,6 @@ function load_secondwizard(){
     var noclone=norecordtableRow.clone();
     $('.tbody-assignstatutory').append(noclone);
     $('#activate-step-finish').hide();
-    $("#activate-step-finish-cancel").show();
   }
 
   $(document).ready(function($) {
@@ -483,6 +489,7 @@ $("#unit").click(function(event){
     }else{
        $('#domain').empty();
     }
+    $('ul.setup-panel li:eq(1)').addClass('disabled');
   }
 });
 
@@ -580,20 +587,8 @@ displayMessage('');
 clearValues('all');
 $(".breadcrumbs").html('');
 $("#activate-step-submit").hide();
-$("#activate-step-submit-cancel").hide();
-$("#activate-step-finish-cancel").hide();
 });
 
-$("#activate-step-submit-cancel").click(function(){
-$("#assignstatutory-view").show();
-$("#assignstatutory-add").hide();
-displayMessage('');
-clearValues('all');
-$(".breadcrumbs").html('');
-$("#activate-step-submit").hide();
-$("#activate-step-submit-cancel").hide();
-$("#activate-step-finish-cancel").hide();
-});
 
 $(".btn-assignstatutory-add").click(function(){
 $("#assignstatutory-view").hide();
@@ -603,8 +598,6 @@ displayMessage('');
 clearValues('all');
 $(".breadcrumbs").html('');
 $("#activate-step-submit").hide();
-$("#activate-step-submit-cancel").hide();
-$("#activate-step-finish-cancel").show();
 $('#activate-step-finish').show();
 $("#backward-step-1").show();
         
@@ -668,7 +661,7 @@ function validate_firsttab(){
     var checkDuplicateAssignStauttory = true;
     var unitIdTab2 = null;
     for(var entity in assignedStatutoriesList) {
-      if($('.industrylist.active').text() == assignedStatutoriesList[entity]["industry_name"] && $('.domainlist.active').id == assignedStatutoriesList[entity]["domain_id"]){
+      if($('.industrylist.active').text() == assignedStatutoriesList[entity]["industry_name"] && $('.domainlist.active').attr('id') == assignedStatutoriesList[entity]["domain_id"]){
         for(var j=0;j<assignStatutoryUnitIds.length;j++){
           if(assignStatutoryUnitIds[j] == assignedStatutoriesList[entity]["unit_id"] && assignedStatutoriesList[entity]["submission_status"] == 0){
             displayMessage("Statutes already assigned for '"+assignStatutoryUnitValues[j]+"' unit");
@@ -690,16 +683,17 @@ function validate_firsttab(){
     }
 
     if(checkDuplicateAssignStauttory){
-      //displayLoader();
+      displayLoader();
       function onSuccess(data){
         statutoriesList = data["statutories"];
         newCompliancesList = data["new_compliances"];
         load_secondwizard();
         displayMessage("");
+        hideLoader();
         return true;
-        //hideLoader();
       }
       function onFailure(error){
+        hideLoader();
       }
       mirror.getAssignStatutoryWizardTwo(parseInt($('.countrylist.active').attr('id')), parseInt($('.domainlist.active').attr('id')), parseInt($('.industrylist.active').attr('id')), parseInt($('.locationlist.active').attr('id')), unitIdTab2,
         function (error, response) {
@@ -822,8 +816,10 @@ function saveorsubmit(submissionType){
   }
 
   if(isApplicableStatus) {
+    displayLoader();
     function onSuccess(data){
       getAssignedStatutories ();
+      hideLoader();
       $("#assignstatutory-add").hide();
       $("#assignstatutory-view").show();
       $('ul.setup-panel li:eq(0)').addClass('active');
@@ -881,15 +877,11 @@ function displayEdit(client_statutory_id, country_id, group_id, location_id, dom
       if(submit_type == 'edit'){
         $("#backward-step-1").hide();
         $("#activate-step-finish").show();
-        $("#activate-step-finish-cancel").show();
         $("#activate-step-submit").hide();
-        $("#activate-step-submit-cancel").hide();
       }else{
         $("#backward-step-1").hide();
         $("#activate-step-finish").hide();
-        $("#activate-step-finish-cancel").hide();
         $("#activate-step-submit").show();
-        $("#activate-step-submit-cancel").show();
       }
 
       var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";

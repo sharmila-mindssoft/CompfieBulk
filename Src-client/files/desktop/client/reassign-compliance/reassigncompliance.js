@@ -16,6 +16,13 @@ function displayMessage(message) {
   $(".error-message").show();
 }
 
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
+
 $(".btn-submit").click(function(){
   $("#compliance-list").show();
   load_compliances();
@@ -33,6 +40,20 @@ function actstatus(element){
       this.checked = false;                     
     });  
   }
+}
+
+function convert_date (data){
+  var date = data.split("-");
+  var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  for(var j=0;j<months.length;j++){
+      if(date[1]==months[j]){
+           date[1]=months.indexOf(months[j])+1;
+       }                      
+  } 
+  if(date[1]<10){
+      date[1]='0'+date[1];
+  }       
+  return new Date(date[2], date[1]-1, date[0]);
 }
 
 function load_allcompliances(userId, userName){
@@ -282,7 +303,7 @@ function load_compliances () {
 
 
 function submitcompliance(){
-
+  displayLoader();
   var assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
   var assignComplianceConcurrenceId = parseInt($('.concurrencelist.active').attr('id'));
   var assignComplianceApprovalId = parseInt($('.approvallist.active').attr('id'));
@@ -290,6 +311,7 @@ function submitcompliance(){
   reassignCompliance = [];
   var statutoriesCount= 1;
   var userCompliances = compliancesList[reassignUserId];
+  var currentDate = new Date();
 
   for(ucompliance in userCompliances){
     var userUnitwiseCompliance = userCompliances[ucompliance]["units"];
@@ -307,10 +329,18 @@ function submitcompliance(){
             var compliance_id = actList[actentity]["compliance_id"];
             var compliance_history_id = actList[actentity]["compliance_history_id"];
             var cfrequency = actList[actentity]["compliance_frequency"];
+            var compliance_name = actList[actentity]["compliance_name"];
             
             var due_date = null;
             if(cfrequency != 'On Occurrence'){
               due_date =  $('#duedate'+statutoriesCount).val();
+            }
+
+            var convertDueDate = convert_date(due_date);
+            if (convertDueDate <= currentDate) {
+                displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
+                hideLoader();
+                return false;
             }
 
             reassignComplianceData = client_mirror.reassingComplianceDet(uId,
@@ -330,13 +360,15 @@ function submitcompliance(){
     $('ul.setup-panel li a[href="#step-1"]').trigger('click');
     $(".tbody-reassign-compliances-list").find("tbody").remove();
     getReassignCompliances();
+    hideLoader();
     $("#reassign-view").show();
     $("#reassign-detailview").hide();
     $("#currentassignee").text('');
     reassignUserId = null;
   }
   function onFailure(error){
-    displayMessage(error)
+    displayMessage(error);
+    hideLoader();
   }
   client_mirror.saveReassignCompliance(reassignUserId, assignComplianceAssigneeId, 
     assignComplianceConcurrenceId, assignComplianceApprovalId, reassignCompliance, reason, 

@@ -73,10 +73,11 @@
       </div>
 
       <div class="main-tab-content" style="border:1px solid white;">
-        <div class="grid-table" style="padding-bottom:0em;">
-          <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
-          <tr>
-            <td width="100%" class="full-width-list" style="padding:0px;">
+        
+        <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
+            <tr>
+              <td width="100%" class="full-width-list">
+               <div class="grid-table" style="padding-bottom:0em;">
             <table class="js-filtertable">
             <thead>
               <tr align="left" style="background:#ccc;">
@@ -117,11 +118,14 @@
               </thead>
               <tbody class="tbody-compliance-approval-list"></tbody>
             </table>
+            </div>
             </td>
               <td width="1%" class="half-width-task-details default-display-none" style="vertical-align:top; background:#F1E9F6; padding-left:10px;" ></td>
             </tr>
           </table>
-        </div>
+         
+
+  
       </div>
       <div class="current-tab-content" style="border:1px solid white;display:none">
         <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
@@ -293,12 +297,12 @@
         <select class="input-box sidebar-action approval-action" style="width:150px;">
           <option value="">Select</option>
           <option value="Approve">Approve</option>
-          <option value="RejectApproval">Reject</option>
+          <option value="Reject Approval">Reject</option>
         </select>
          <select class="input-box sidebar-action concurr-action" style="width:150px;">
           <option value="">Select</option>
           <option value="Concur">Concurrence</option>
-          <option value="RejectConcurrence">Reject</option>
+          <option value="Reject Concurrence">Reject</option>
         </select>
       </td>
     </tr>
@@ -307,7 +311,7 @@
         <span style="font-weight:bold;">Remarks:</span>
       </td>
       <td colspan="2">
-        <textarea class="input-box" class="remarks-textarea" placeholder="Remarks"></textarea>
+        <textarea class="input-box" maxlength="500" class="remarks-textarea" placeholder="Remarks"></textarea>
         <br>
         <span style="font-size:0.75em;">(max 500 characters)</span>
       </td>

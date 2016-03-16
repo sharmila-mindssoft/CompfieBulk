@@ -91,7 +91,7 @@ function initClientMirror() {
     function getUserMenu() {
         var info = getUserInfo();
         if (info != null){
-            return info["menu"]["menus"];    
+            return info["menu"]["menus"];
         }else{
             login_url = "/login/"+window.localStorage["recent_short_name"]
             window.location.href = login_url;
@@ -243,10 +243,7 @@ function initClientMirror() {
 
     // Change Password APIs
 
-    function changePassword(
-        currentPassword, newPassword,
-        callback
-    ) {
+    function changePassword(currentPassword, newPassword,callback) {
         callerName = "login"
         var sessionToken = getSessionToken();
         var client_id = getClientId()
@@ -269,10 +266,16 @@ function initClientMirror() {
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
-                // redirect_login()
+                if (status.toLowerCase().indexOf(matchString) != -1) {
+                    callback(null, response);
+
+                }
+                else {
+                    callback(status, null);
+                }
             }
         )
-        
+
     }
 
     // Forgot Password APIs
@@ -311,7 +314,7 @@ function initClientMirror() {
         )
     }
 
-    function validateResetToken(resetToken, short_name, 
+    function validateResetToken(resetToken, short_name,
         callback) {
         window.localStorage["recent_short_name"] = short_name
         login_url = "/login/"+short_name
@@ -343,7 +346,7 @@ function initClientMirror() {
                 }
             }
         )
-        
+
     }
 
     function resetPassword(resetToken, newPassword, short_name,
@@ -1477,8 +1480,8 @@ function initClientMirror() {
             "CheckContractExpiration", {}
         ];
         callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback); 
-    }  
+        clientApiRequest(callerName, request, callback);
+    }
 
     function reassingComplianceDet(unitId, complianceId, complianceHistoryId, dueDate) {
         return {
@@ -1490,8 +1493,8 @@ function initClientMirror() {
     }
 
     function saveReassignCompliance(
-        reassignFrom, reassignedTo, concurrence, approval, 
-        compliance_list, reason, callback 
+        reassignFrom, reassignedTo, concurrence, approval,
+        compliance_list, reason, callback
     ) {
         request = [
             "ReassignCompliance",

@@ -69,17 +69,33 @@ def process_check_statutory_mapping(db, request_frame):
     return knowledgetransaction.CheckDuplicateStatutoryMappingSuccess(is_duplicate)
 
 def process_save_statutory_mapping(db, request_frame, user_id):
-    if (db.save_statutory_mapping(request_frame, user_id)) :
-        return knowledgetransaction.SaveStatutoryMappingSuccess()
+    is_duplicate = db.check_duplicate_statutory_mapping(request_frame)
+    if is_duplicate is None :
+        is_duplicate = False
     else :
-        return knowledgetransaction.CheckDuplicateStatutoryMappingResponse(True)
+        is_duplicate = True
+
+    if is_duplicate :
+        return knowledgetransaction.StatutoryMappingAlreadyExists()
+    else :
+        if (db.save_statutory_mapping(request_frame, user_id)) :
+            return knowledgetransaction.SaveStatutoryMappingSuccess()
 
 
 def process_update_statutory_mapping(db, request_frame, user_id):
-    if (db.update_statutory_mapping(request_frame, user_id)):
-        return knowledgetransaction.UpdateStatutoryMappingSuccess()
+    is_duplicate = db.check_duplicate_statutory_mapping(request_frame, request_frame.statutory_mapping_id)
+    if is_duplicate is None :
+        is_duplicate = False
     else :
-        return knowledgetransaction.InvalidStatutoryMappingId()
+        is_duplicate = True
+
+    if is_duplicate :
+        return knowledgetransaction.StatutoryMappingAlreadyExists()
+    else :
+        if (db.update_statutory_mapping(request_frame, user_id)):
+            return knowledgetransaction.UpdateStatutoryMappingSuccess()
+        else :
+            return knowledgetransaction.InvalidStatutoryMappingId()
 
 def process_change_statutory_mapping_status(db, request_frame, user_id):
     if (db.change_statutory_mapping_status(request_frame, user_id)) :

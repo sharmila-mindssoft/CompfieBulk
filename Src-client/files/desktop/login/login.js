@@ -35,13 +35,13 @@ function getShortName(){
 
 function isLoginValidated (e_email, e_password) {
     if (e_email.val() == "") {
-        displayLoginMessage("Enter email");
+        displayLoginMessage("Enter username / password");
         e_email.focus();
         return false;
     }
 
     if (e_password.val() == "") {
-        displayLoginMessage("Enter password");
+        displayLoginMessage("Enter username / password");
         e_password.focus();
         return false;
     }
@@ -67,7 +67,7 @@ function performLogin(e_button, e_email, e_password) {
 
     function onFailure(status) {
         console.log("status"+status);
-        message = "Unable to login. Incorrect email / password!";
+        message = "Unable to login. Incorrect username / password!";
         if(status == "ContractExpired"){
             message = "Contract Expired"
         }

@@ -674,10 +674,11 @@ class InvalidPassword(Response):
 
 class GetAssignCompliancesFormDataSuccess(Response):
     def __init__(
-        self, countries, business_groups, legal_entities,
+        self, countries, domains, business_groups, legal_entities,
         divisions, units, users, two_level_approve, client_admin
     ):
         self.countries = countries
+        self.domains = domains
         self.business_groups = business_groups
         self.legal_entities = legal_entities
         self.divisions = divisions
@@ -689,11 +690,13 @@ class GetAssignCompliancesFormDataSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "countries", "business_groups", "legal_entities",
+            "countries", "domains", "business_groups", "legal_entities",
             "divisions", "units", "users", "two_level_approve", "client_admin"
         ])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
+        domains = data.get("domains")
+        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         business_groups = data.get("business_groups")
         business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
         legal_entities = data.get("legal_entities")
@@ -709,7 +712,7 @@ class GetAssignCompliancesFormDataSuccess(Response):
         client_admin = data.get("client_admin")
         client_admin = parse_structure_UnsignedIntegerType_32("client_admin")
         return GetAssignCompliancesFormDataSuccess(
-            countries, business_groups, legal_entities,
+            countries, domains, business_groups, legal_entities,
             divisions, units, users, two_level_approve,
             client_admin
         )
@@ -717,6 +720,7 @@ class GetAssignCompliancesFormDataSuccess(Response):
     def to_inner_structure(self):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
+            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
             "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
             "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
             "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
@@ -1115,7 +1119,7 @@ class REASSIGNED_COMPLIANCE(object):
         compliance_history_id = data.get("compliance_history_id")
         compliance_history_id = parse_structure_OptionalType_UnsignedIntegerType_32(compliance_history_id)
         due_date = data.get("due_date")
-        due_date = parse_structure_CustomTextType_20(due_date)
+        due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
         return REASSIGNED_COMPLIANCE(
             unit_id, compliance_id, compliance_history_id, due_date
         )
@@ -1125,7 +1129,7 @@ class REASSIGNED_COMPLIANCE(object):
             "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
             "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
             "compliance_history_id": to_structure_OptionalType_UnsignedIntegerType_32(self.compliance_history_id),
-            "due_date": to_structure_CustomTextType_20(self.due_date),
+            "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
         }
 
 #
@@ -1303,7 +1307,7 @@ class UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(object):
 class ASSIGN_COMPLIANCE_UNITS(object):
     def __init__(
         self, unit_id, unit_name, address, division_id,
-        legal_entity_id, business_group_id, country_id
+        legal_entity_id, business_group_id, country_id, domain_ids
     ):
         self.unit_id = unit_id
         self.unit_name = unit_name
@@ -1312,12 +1316,14 @@ class ASSIGN_COMPLIANCE_UNITS(object):
         self.legal_entity_id = legal_entity_id
         self.business_group_id = business_group_id
         self.country_id = country_id
+        self.domain_ids = domain_ids
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "unit_id", "unit_name", "address", "division_id",
-            "legal_entity_id", "business_group_id", "country_id"
+            "legal_entity_id", "business_group_id", "country_id",
+            "domain_ids"
         ])
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
@@ -1333,9 +1339,11 @@ class ASSIGN_COMPLIANCE_UNITS(object):
         business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        domain_ids = data.get("domain_ids")
+        domain_ids = parse_structure_VectorType_UnsignedIntegerType_32(domain_ids)
         return ASSIGN_COMPLIANCE_UNITS(
             unit_id, unit_name, address, division_id,
-            legal_entity_id, business_group_id, country_id
+            legal_entity_id, business_group_id, country_id, domain_ids
         )
 
     def to_structure(self):
@@ -1346,7 +1354,8 @@ class ASSIGN_COMPLIANCE_UNITS(object):
             "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
             "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
             "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
-            "country_id": to_structure_UnsignedIntegerType_32(self.country_id)
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
+            "domain_ids": to_structure_VectorType_UnsignedIntegerType_32(self.domain_ids)
         }
 
 #

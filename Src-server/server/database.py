@@ -2065,6 +2065,17 @@ class KnowledgeDatabase(Database):
             else :
                 industry_names = self.get_industry_by_id(industry_ids)
 
+            approval = int(d["approval_status"])
+            if approval == 0 :
+                approval_status_text = "Pending"
+            elif approval == 1 :
+                approval_status_text = "Approved"
+            elif approval_status_text == 2 :
+                approval_status_text = "Rejected"
+            else :
+                approval_status_text = "Approved & Notified"
+
+
             statutory = core.StatutoryMapping(
                 d["country_id"], d["country_name"],
                 d["domain_id"], d["domain_name"],
@@ -2073,7 +2084,7 @@ class KnowledgeDatabase(Database):
                 statutory_ids, statutory_mapping_list,
                 compliances, compliance_names, geography_ids,
                 geography_mapping_list, int(d["approval_status"]),
-                bool(d["is_active"]),
+                bool(d["is_active"]), approval_status_text
             )
             mapping_data_list[mapping_id] = statutory
         return mapping_data_list
@@ -2321,7 +2332,7 @@ class KnowledgeDatabase(Database):
         if os.path.exists(file_path) :
             os.remove(file_path)
 
-    def check_duplicate_statutory_mapping(self, data) :
+    def check_duplicate_statutory_mapping(self, data, statutory_mapping_id=None) :
         country_id = data.country_id
         domain_id = data.domain_id
         statutory_nature = data.statutory_nature_id
@@ -2350,6 +2361,8 @@ class KnowledgeDatabase(Database):
                 statutory_id,
                 industry_id
             )
+        if statutory_mapping_id is not None :
+            q = q + " AND t1.statutory_mapping_id != %s" % statutory_mapping_id
         row = self.select_one(q)
         if row :
             return row[0]

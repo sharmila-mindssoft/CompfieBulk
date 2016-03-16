@@ -551,6 +551,7 @@ function initMirror() {
         var file = files[0];
         file_name = file.name
         file_size = file.size
+        console.log(file_size)
         if (file_size > max_limit) {
             callback("File max limit exceeded");
         }
@@ -650,10 +651,11 @@ function initMirror() {
     }
 
     function UpdateStatutoryMappingData(
-        domainId, industryIds, statutoryNatureId,
+        countryId, domainId, industryIds, statutoryNatureId,
         statutoryIds, compliances, geographyIds, mappings, mappingId
     ) {
         var mappingData = {};
+        mappingData["country_id"] = countryId;
         mappingData["domain_id"] = domainId;
         mappingData["industry_ids"] = industryIds;
         mappingData["statutory_nature_id"] = statutoryNatureId;
@@ -1091,9 +1093,9 @@ function initMirror() {
             return {
                 "division_id" : divisionId,
                 "division_name" : divisionName
-            }    
+            }
         }
-        
+
     }
 
     function getUnitDict(unitId, unitName, unitCode, unitAddress,

@@ -97,6 +97,9 @@ $("#submit").click(function(){
 	var addressValue = $("#address").val();
 	var contractFromValue = $("#contract-from").val();
 	var contractToValue = $("#contract-to").val();
+	//var start1 = new Date($('#contract-from').val());
+	//var todaydate = new Date();
+
 	if(serviceProviderNameValue == ''){
 		displayMessage('Enter Service Provider Name ');
 	}
@@ -124,8 +127,8 @@ $("#submit").click(function(){
 	else if(mobileNumberValue.length > 12){
 		displayMessage('Contact No. is maximum 12 characters Allowed');
 	}
-	else if(addressValue.length > 500){
-		displayMessage('Address is maximum 500 characters Allowed');
+	else if(addressValue.length > 250){
+		displayMessage('Address is maximum 250 characters Allowed');
 	}
 	else if(contractFromValue == ''){
 		displayMessage('Enter Contract From ');
@@ -133,6 +136,9 @@ $("#submit").click(function(){
 	else if(contractToValue == ''){
 		displayMessage('Enter Contract To');
 	}
+	// else if (start1 > todaydate){
+	// 	displayMessage('Select Contract To Date is maximum of Today Date');
+	// }
 	else if(serviceProviderIdValue == ''){		
 		function onSuccess(data){
 		    $("#service-provider-add").hide();

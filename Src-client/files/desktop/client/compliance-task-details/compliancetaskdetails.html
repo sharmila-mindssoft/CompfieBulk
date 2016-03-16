@@ -61,7 +61,6 @@ $(document).ready(function() {
     $(".main-tab-content").show();
     $(".upcomming-tab-content").hide();
   })
-
   $(".upcomming-tab").click(function() {
     $(".upcomming-tab").addClass("active");
     $(".current-tab").removeClass("active");
@@ -74,6 +73,7 @@ $(document).ready(function() {
   })
 })
 </script>
+
 <div class="content-container width100">
   <div class="content-area">
     <div class="add-container">
@@ -306,7 +306,8 @@ $(document).ready(function() {
         </td>
         <td>
           <span class="validity1_label"><abbr></abbr>
-            <img src="/images/icon-edit.png" class="validity1_icon" style="padding-left:40px;"></span>
+            <img src="/images/icon-edit.png" class="validity1_icon" style="padding-left:40px;">
+          </span>
           <span class="validity1_textbox" style="display:none;">
             <input type="text" value="" class="input-box validity1-textbox-input"/>
           </span>
