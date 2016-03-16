@@ -474,7 +474,13 @@ class Database(object) :
         count = rows[0][0]
         user_id = rows[0][1]
         if count == 1:
-            return user_id
+            column = "count(*)"
+            condition = "user_id = '%d' and is_active = 1" % user_id
+            rows = reself.get_data(self.tblUsers, column, condition)
+            if rows[0][0] > 0
+                return user_id
+            else:
+                return None
         else:
             return None
 
@@ -4228,7 +4234,7 @@ class KnowledgeDatabase(Database):
 
     def verify_username(self, username):
         columns = "count(*), user_id"
-        condition = "email_id='%s'" % (username)
+        condition = "email_id='%s' and is_active = 1" % (username)
         rows = self.get_data(self.tblUsers, columns, condition)
         count = rows[0][0]
         if count == 1:

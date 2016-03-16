@@ -298,3 +298,5 @@ class EmailHandler(Email):
     #         os.path.join(ROOT_PATH, "Src-client")
     #     )
     #     template_env = jinja2.Environment(loader=template_loader)
+
+Email()
