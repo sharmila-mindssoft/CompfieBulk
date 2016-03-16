@@ -200,21 +200,14 @@ function loadStatutoryMappingList(statutoryMappingsList) {
 
     industryName = statutoryMappingsList[entity]["industry_names"];
     statutoryNatureName = statutoryMappingsList[entity]["statutory_nature_name"];
-
     var statutoryMappings='';
     for(var i=0; i<statutoryMappingsList[entity]["statutory_mappings"].length; i++){
       statutoryMappings = statutoryMappings + statutoryMappingsList[entity]["statutory_mappings"][i] + " <br>";
     }
-
     var complianceNames='';
     for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
       complianceNames = complianceNames + statutoryMappingsList[entity]["compliance_names"][i]["compliance_name"] + " <br>";
     }
-    /*for(approvalstatuslist in complianceApprovalStatusList){
-      if(statutoryMappingsList[entity]["approval_status"] == complianceApprovalStatusList[approvalstatuslist]["approval_status_id"]){
-        approvalStatus = complianceApprovalStatusList[approvalstatuslist]["approval_status"];
-      }
-    }*/
     statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
     countryName = statutoryMappingsList[entity]["country_name"];
     domainName = statutoryMappingsList[entity]["domain_name"];
@@ -230,9 +223,6 @@ function loadStatutoryMappingList(statutoryMappingsList) {
       imgName="icon-inactive.png"
      }
 
-     /*if(approvalStatus == '0'){
-      approvalStatus = "Pending";
-     }*/
     var tableRow=$('#templates .table-statutorymapping .table-row');
     var clone=tableRow.clone();
     $('.sno', clone).text(j);
@@ -254,7 +244,7 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     $('.tbody-statutorymapping-list').append(clone);
     j = j + 1;
     }
-  }
+}
 
 function getStatutoryMappingsMastersList() {
   mirror.getStatutoryMappingsMaster(function (error, data) {
@@ -279,19 +269,14 @@ function getStatutoryMappingsMastersList() {
 }
 
 function getStatutoryMappings(){
-  function onSuccess(data){
-    statutoryMappingsList = data["statutory_mappings"];
-    loadStatutoryMappingList(statutoryMappingsList);
-  }
-  function onFailure(error){
-  }
   mirror.getStatutoryMappings(
     function (error, response) {
           if (error == null){
-            onSuccess(response);
+            statutoryMappingsList = data["statutory_mappings"];
+            loadStatutoryMappingList(statutoryMappingsList);
           }
           else {
-            onFailure(error);
+            console.log(error);
           }
       }
   );
@@ -311,7 +296,6 @@ function loadStatutoryLevels(countryval,domainval){
           $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="statutoryfilter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" maxlength="50" class="input-box addleft" placeholder="" style="width:90%" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
           $('.tbody-statutory-level').append(clone);
         }
-
         var setlevelstage= 1;
         $('#datavalue'+setlevelstage).val('');
         $('#statutorylist'+setlevelstage).empty();
@@ -539,6 +523,7 @@ function saverecord(j,e){
             onSuccess(response);
           }
           else {
+            alert(data)
             onFailure(error);
           }
         }
@@ -566,6 +551,7 @@ function saverecord(j,e){
             onSuccessUpdate(response);
           }
           else {
+            alert(data)
             onFailureUpdate(error);
           }
         }
@@ -1315,7 +1301,15 @@ function savestatutorymapping(){
       $("#statutorymapping-view").show();
   }
   function onFailure(error){
-
+    if(error == "StatutoryMappingAlreadyExists"){
+      displayMessage("Statutory Mapping Already Exists for same statutory");
+    }else{
+      displayMessage(error);
+    }
+    $('#activate-step-finish').prop('disabled', false);
+    $('#activate-step-finish').text('Submit');
+    $('#activate-step-finish').addClass('btn-right');
+    $('#activate-step-finish').removeClass('btn-right-submiting');
   }
   var sm_id = null;
   if($("#edit_sm_id").val().length > 0){
@@ -2271,44 +2265,44 @@ $('#multiple_statutory_month12').change(function() {
 }
 
 
-  $(".dayhour").change(function(){
-  if($(this).val()=="1")
-  {
+$(".dayhour").change(function(){
+if($(this).val()=="1")
+{
   $('#days').show();
   $('#hours').hide();
   $("#trigger_every").show();
-  }else if($(this).val()=="2"){
+}else if($(this).val()=="2"){
   $('#days').hide();
   $('#hours').show();
   $("#trigger_every").show();
-  }
-  });
-  $('.tasktype').on('keyup change', function() {
+}
+});
+$('.tasktype').on('keyup change', function() {
   if($(this).val()=="2" || $(this).val()=="3")
   {
-  $('#Recurring').show();
-  $('#Occasional').hide();
-  $('#One_Time').hide();
+    $('#Recurring').show();
+    $('#Occasional').hide();
+    $('#One_Time').hide();
   }
 
   else if($(this).val() == "4" )
   {
-  $('#Recurring').hide();
-  $('#Occasional').show();
-  $('#One_Time').hide();
+    $('#Recurring').hide();
+    $('#Occasional').show();
+    $('#One_Time').hide();
   }
 
   else if($(this).val() == "1")
   {
-  $('#Recurring').hide();
-  $('#Occasional').hide();
-  $('#One_Time').show();
+    $('#Recurring').hide();
+    $('#Occasional').hide();
+    $('#One_Time').show();
   }
   else
   {
-  $('#Recurring').hide();
-  $('#Occasional').hide();
-  $('#One_Time').hide();
+    $('#Recurring').hide();
+    $('#Occasional').hide();
+    $('#One_Time').hide();
   }
 });
 
