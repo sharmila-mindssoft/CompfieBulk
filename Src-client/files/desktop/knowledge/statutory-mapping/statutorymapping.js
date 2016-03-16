@@ -1332,6 +1332,7 @@ function savestatutorymapping(){
   );
   }else{
     statutorymappingData = mirror.UpdateStatutoryMappingData(
+      sm_countryid,
       sm_domainid, sm_industryids,sm_statutorynatureid,
       sm_statutoryids,compliances,sm_geographyids,
       disp_statutories, sm_id)
