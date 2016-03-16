@@ -720,21 +720,21 @@ allWells = $('.setup-content');
 allWells.hide();
 navListItems.click(function(e)
 {
-e.preventDefault();
-var $target = $($(this).attr('href')),
-$item = $(this).closest('li');
-if (!$item.hasClass('disabled')) {
-navListItems.closest('li').removeClass('active');
-$item.addClass('active');
-allWells.hide();
-$target.show();
-}
+  e.preventDefault();
+  var $target = $($(this).attr('href')),
+  $item = $(this).closest('li');
+  if (!$item.hasClass('disabled')) {
+    navListItems.closest('li').removeClass('active');
+    $item.addClass('active');
+    allWells.hide();
+    $target.show();
+  }
 });
 $('ul.setup-panel li.active a').trigger('click');
 $('#activate-step-2').on('click', function(e) {
 if (validate_firsttab()){
-$('ul.setup-panel li:eq(1)').removeClass('disabled');
-$('ul.setup-panel li a[href="#step-2"]').trigger('click');
+  $('ul.setup-panel li:eq(1)').removeClass('disabled');
+  $('ul.setup-panel li a[href="#step-2"]').trigger('click');
 }
 })
 $('#backward-step-1').on('click', function(e) {
@@ -856,16 +856,6 @@ $('#activate-step-submit').on('click', function(e) {
 function displayEdit(client_statutory_id, country_id, group_id, location_id, domain_id, unit_id, submit_type){
    function onSuccess(data){
       clearValues('all');
-      /*$('ul.setup-panel li:eq(0)').hide();
-      $('ul.setup-panel li:eq(1)').addClass('active');
-      $("#step-1").hide();
-      $("#step-2").show();
-      $('ul.setup-panel li:eq(1)').css({'width': '100%'});
-      //$('ul.setup-panel li:eq(1)').html('<a href="#step-2"><h4 class="list-group-item-heading">Select Statutory</h4></a>');
-      $('ul.setup-panel li:eq(1)').addClass('active');
-      $("#assignstatutory-view").hide();
-      $("#assignstatutory-add").show();*/
-
       $('ul.setup-panel li:eq(0)').removeClass('active');
       $('ul.setup-panel li:eq(0)').addClass('disabled');
       $('ul.setup-panel li:eq(1)').removeClass('disabled');
