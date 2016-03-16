@@ -1,37 +1,56 @@
-2016-03-13 22:09:25,257 - knowledge_logger - main.py : {
- "session_token": "2a5123f34f52443a945529203420d14e",
- "request": [
-  "GetClientGroups",
-  {}
- ]
-}
-2016-03-13 22:25:25,691 - knowledge_logger - main.py : {
- "session_token": "2a5123f34f52443a945529203420d14e",
- "request": [
-  "GetClientGroups",
-  {}
- ]
-}
-2016-03-13 22:25:40,424 - knowledge_logger - main.py : {
- "session_token": "2a5123f34f52443a945529203420d14e",
- "request": [
-  "GetClientGroups",
-  {}
- ]
-}
-2016-03-13 22:30:36,650 - knowledge_logger - main.py-parse-request : expected key "logo" is missing in the dictionary, but received: {u'is_sms_subscribed': False, u'domain_ids': [2], u'country_ids': [2], u'group_name': u'Amigo', u'no_of_user_licence': 5, u'contract_from': u'01-Mar-2016', u'date_configurations': [{u'period_from': 1, u'period_to': 12, u'country_id': 2, u'domain_id': 2}], u'client_id': 3, u'file_space': 2, u'contract_to': u'31-Mar-2016', u'incharge_persons': [2, 4]}
-2016-03-13 22:30:36,652 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 99, in _parse_request
-    data
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 1289, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 345, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 110, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/technomasters.py", line 233, in parse_inner_structure
-    data = parse_dictionary(data, ["client_id", "group_name", "country_ids", "domain_ids", "logo", "contract_from", "contract_to", "incharge_persons", "no_of_user_licence", "file_space", "is_sms_subscribed", "date_configurations"])
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 142, in parse_dictionary
-    raise expectation_error(msg, x)
-ValueError: expected key "logo" is missing in the dictionary, but received: {u'is_sms_subscribed': False, u'domain_ids': [2], u'country_ids': [2], u'group_name': u'Amigo', u'no_of_user_licence': 5, u'contract_from': u'01-Mar-2016', u'date_configurations': [{u'period_from': 1, u'period_to': 12, u'country_id': 2, u'domain_id': 2}], u'client_id': 3, u'file_space': 2, u'contract_to': u'31-Mar-2016', u'incharge_persons': [2, 4]}
+2016-03-15 15:39:50,454 - knowledge_logger - main.py-handle-api : %d format: a number is required, not NoneType
+2016-03-15 15:39:50,479 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 47, in process_techno_request
+    return update_client(db, request_frame, session_user)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 303, in update_client
+    if db.is_invalid_id( db.tblLegalEntities, "legal_entity_id", legal_entity_id):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 300, in is_invalid_id
+    condition = "%s = '%d'" % (field, value)
+TypeError: %d format: a number is required, not NoneType
+
+2016-03-15 16:07:48,815 - knowledge_logger - main.py-handle-api : %d format: a number is required, not NoneType
+2016-03-15 16:07:48,815 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 47, in process_techno_request
+    return update_client(db, request_frame, session_user)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 303, in update_client
+    if db.is_invalid_id( db.tblLegalEntities, "legal_entity_id", legal_entity_id):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 300, in is_invalid_id
+    condition = "%s = '%d'" % (field, value)
+TypeError: %d format: a number is required, not NoneType
+
+2016-03-15 16:20:38,175 - knowledge_logger - main.py-handle-api : %d format: a number is required, not NoneType
+2016-03-15 16:20:38,175 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 47, in process_techno_request
+    return update_client(db, request_frame, session_user)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 303, in update_client
+    if db.is_invalid_id( db.tblLegalEntities, "legal_entity_id", legal_entity_id):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 300, in is_invalid_id
+    condition = "%s = '%d'" % (field, value)
+TypeError: %d format: a number is required, not NoneType
+
+2016-03-15 16:23:12,008 - knowledge_logger - main.py-handle-api : %d format: a number is required, not NoneType
+2016-03-15 16:23:12,008 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 47, in process_techno_request
+    return update_client(db, request_frame, session_user)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 303, in update_client
+    if db.is_invalid_id( db.tblLegalEntities, "legal_entity_id", legal_entity_id):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 300, in is_invalid_id
+    condition = "%s = '%d'" % (field, value)
+TypeError: %d format: a number is required, not NoneType
 

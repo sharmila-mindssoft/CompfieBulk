@@ -1260,6 +1260,7 @@ function initClientMirror() {
                 "to_date": todate
             }
         ];
+        clientApiRequest(callerName, request, callback);
     }
 
     /* Reassigned History Report */
