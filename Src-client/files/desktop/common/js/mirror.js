@@ -551,6 +551,7 @@ function initMirror() {
         var file = files[0];
         file_name = file.name
         file_size = file.size
+        console.log(file_size)
         if (file_size > max_limit) {
             callback("File max limit exceeded");
         }
@@ -1091,9 +1092,9 @@ function initMirror() {
             return {
                 "division_id" : divisionId,
                 "division_name" : divisionName
-            }    
+            }
         }
-        
+
     }
 
     function getUnitDict(unitId, unitName, unitCode, unitAddress,

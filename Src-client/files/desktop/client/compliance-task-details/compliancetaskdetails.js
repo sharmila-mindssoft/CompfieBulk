@@ -141,7 +141,7 @@ function showSideBar(idval, data){
             $('.sideview-completion-date-td', cloneValSide).html("<input  type='text' class='input-box datepick sideview-completion-date' id='completion-date'>");
             $('.sideview-compliance-status', cloneValSide).html(complianceStatus);
             $('.sideview-upload-date', cloneValSide).html(d);
-            $('.sideview-remarks-td', cloneValSide).html("<textarea class='input-box sideview-remarks'></textarea>");
+            $('.sideview-remarks-td', cloneValSide).html("<textarea class='input-box sideview-remarks' maxlength='500'></textarea>");
             $("#upload_file", cloneValSide).on("change", function(e) {
                 if (e.originalEvent.defaultPrevented) return;
                 uploadedfile(e);
@@ -151,7 +151,7 @@ function showSideBar(idval, data){
             }
             if(data[k]['compliance_frequency'] != 'One Time'){
                 $('.validityAndDueDate').show();
-                $(cloneValSide, '.validity1_icon').on("click", function(e, complianceStatus){  
+                $('.validity1_icon', cloneValSide).on("click", function(e, complianceStatus){  
                     showTextbox(complianceStatus);
                 }); 
                 $('.validity1_label abbr', cloneValSide).html(data[k]['validity_date']);

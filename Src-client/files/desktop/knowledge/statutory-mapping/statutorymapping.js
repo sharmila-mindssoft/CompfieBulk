@@ -467,12 +467,17 @@ $("#upload_file").on("change", function(e) {
     /*alert(data["file_name"])
     alert(data["file_size"])
     alert(data["file_content"])*/
+    console.log(data)
+    if (data == "File max limit exceeded") {
+      displayMessage(data)
+    }
     if(data != 'File max limit exceeded' || data != 'File content is empty'){
       uploadFile = data;
       $("#uploaded_fileview").show();
       $("#uploaded_filename").html( data["file_name"] + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' />")
     }
     else{
+      console.log(data)
       displayMessage(data);
     }
 

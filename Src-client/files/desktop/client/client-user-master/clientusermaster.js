@@ -689,7 +689,7 @@ function loadautolegalentities () {
                 });
             }
             $.each(legalEntitiesList, function(k, val){
-                if(arraybusinessgroups[count]==val['business_group_id']){
+                if(arraybusinessgroups[count] == val['business_group_id']){
                     var selectlentitystatus='';
                     for(var j = 0; j < editlegalentitiesval.length; j++){
                         if(editlegalentitiesval[j] == val["legal_entity_id"]){
@@ -849,7 +849,8 @@ function unitview(){
     var countryid = $("#country").val();
     var countryarray = countryid.split(',');
     var arrayCountries = [];
-    var selectunitstatus = null;
+    var selectunitstatusl = null;
+    var selectunitstatusd = null;
     for(var i = 0; i < countryarray.length; i++){ arrayCountries[i] = parseInt(countryarray[i]); }
     if($("#domains").val() !=''){
         var domainid = $("#domains").val();
@@ -880,10 +881,10 @@ function unitview(){
                                     var unitName = val["unit_name"];
                                     for(var j=0; j<editunitvaldiv.length; j++){
                                         if(editunitvaldiv[j]==val["unit_id"]){
-                                            selectunitstatus='active';
+                                            selectunitstatusd='active';
                                         }
                                     }
-                                    if(selectunitstatus == "active"){
+                                    if(selectunitstatusd == "active"){
                                         str += '<li id="'+unitId+'" class="active" onclick="activateUnit(this)" >'+unitName+'</li> ';    
                                     }
                                     else{
@@ -924,10 +925,10 @@ function unitview(){
                                 var unitName = val["unit_name"];
                                 for(var j=0; j<editunitvallegal.length; j++){
                                     if(editunitvallegal[j]==val["unit_id"]){
-                                        selectunitstatus='active';
+                                        selectunitstatusl = 'active';
                                     }
                                 }
-                                if(selectunitstatus == "active"){
+                                if(selectunitstatusl == "active"){
                                     str += '<li id="'+unitId+'" onclick="activateUnit(this)" class= "active" >'+unitName+'</li> ';
                                 }
                                 else{
