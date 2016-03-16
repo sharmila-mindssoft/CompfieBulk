@@ -2364,7 +2364,10 @@ class ClientDatabase(Database):
             compliance_list = level_1_wise.get(level_1)
             if compliance_list is None :
                 compliance_list = []
-            name = "%s - %s" % (r["document_name"], r["compliance_task"])
+            if r["document_name"] not in ("", "None", None):
+                name = "%s - %s" % (r["document_name"], r["compliance_task"])
+            else :
+                name = r["compliance_task"]
             statutory_dates = r["statutory_dates"]
             statutory_dates = json.loads(statutory_dates)
             date_list = []
@@ -3185,7 +3188,10 @@ class ClientDatabase(Database):
                 ageing = abs((completion_date - due_date).days) + 1
 
             status = core.COMPLIANCE_STATUS(compliance_status)
-            name = "%s-%s" % (r["document_name"], r["compliance_task"])
+            if r["document_name"] not in ("", "None", None):
+                name = "%s-%s" % (r["document_name"], r["compliance_task"])
+            else :
+                name = r["compliance_task"]
             compliance = dashboard.Level1Compliance(
                 name, r["compliance_description"], r["employee_name"],
                 str(r["start_date"]), str(due_date),
@@ -3433,6 +3439,8 @@ class ClientDatabase(Database):
         above_90 = 0
         for i in not_complied :
             due_date = i["due_date"]
+            if due_date is None :
+                continue
             ageing = abs((current_date - due_date).days)
             if ageing <= 30 :
                 below_30 += 1
@@ -3515,7 +3523,7 @@ class ClientDatabase(Database):
             due_date = r["due_date"]
             completion_date = r["completion_date"]
 
-            ageing = abs((current_date - due_date).days)
+            ageing = abs((current_date - due_date).days) + 1
 
             status = core.COMPLIANCE_STATUS("Not Complied")
             name = "%s-%s" % (r["document_name"], r["compliance_task"])

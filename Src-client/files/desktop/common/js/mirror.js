@@ -651,10 +651,11 @@ function initMirror() {
     }
 
     function UpdateStatutoryMappingData(
-        domainId, industryIds, statutoryNatureId,
+        countryId, domainId, industryIds, statutoryNatureId,
         statutoryIds, compliances, geographyIds, mappings, mappingId
     ) {
         var mappingData = {};
+        mappingData["country_id"] = country_id;
         mappingData["domain_id"] = domainId;
         mappingData["industry_ids"] = industryIds;
         mappingData["statutory_nature_id"] = statutoryNatureId;
