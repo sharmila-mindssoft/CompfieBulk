@@ -3217,7 +3217,7 @@ class ClientDatabase(Database):
 
             else :
                 level_compliance = drill_down_data.compliances
-                compliance_list = level_compliance[level_1]
+                compliance_list = level_compliance.get(level_1)
                 if compliance_list is None :
                     compliance_list = []
                 compliance_list.append(compliance)
