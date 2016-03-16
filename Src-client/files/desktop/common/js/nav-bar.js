@@ -40,7 +40,6 @@ function initializeNavBar () {
     }else{
         menus = ["Home", "Master", "Transaction", "Report"];
     } 
-    console.log(menus)
     for (var i = 0; i < menus.length; i++) {
         var key = menus[i];
         if (!(key in navBarItems))
@@ -101,7 +100,7 @@ function initializeNavBar () {
 
     var client_name = client_mirror.getClientShortName();
     var employee_name = mirror.getEmployeeName();
-    console.log(client_name)
+    
     if ((typeof(client_name) == "undefined") || (client_name == null) ){
         profile_url = "/knowledge/profile";
         change_password_url = "/knowledge/change-password";
@@ -144,7 +143,6 @@ function initializeNavBar () {
     $("#cssmenu .menu-ul").append(settingsMenuObject)
 
     if ((typeof(client_name) != "undefined") || (client_name != null) ){
-        console.log("inside if")
         var liObject = $("#nav-bar-templates .notification li").clone();
         $("#cssmenu .menu-ul").append(liObject);
 

@@ -216,7 +216,7 @@ $("#btn-clientunit-add").click(function(){
     $('#businessgroup-select').find('option').not(':first').remove();
     $('#entity-select').find('option').not(':first').remove();
     $('#division-select').find('option').not(':first').remove();
-    $('.industry').empty();
+    $('.industry').find('option').not(':first').empty();
     $('.add-country-unit-list').empty();
     divisionExistingChecking('Cancel');
     legalEntityExistingChecking('Cancel');
@@ -679,7 +679,7 @@ function loadglevels(classval){
     }
 
     else{
-        $('.'+lastClass).empty();
+        $('.'+lastClass).find('option').not(':first').remove();
         for(var glevel in geographyLevelList[countryid]){
             var glevellist = geographyLevelList[countryid][glevel];
             $('.'+lastClass).append($('<option value = "'+glevellist['level_id']+'">'+glevellist['level_name']+'</option>'));
@@ -725,11 +725,11 @@ function clientunit_edit(clientunitId, businessgroupId, legalentityId, divisionI
         if(x.item(i).type != "submit" ){ x.item(i).value = ""; }
     }
 
-    $('#group-select:gt(0)').empty();
-    $('#businessgroup-select:gt(0)').empty();
-    $('#entity-select:gt(0)').empty();
-    $('#division-select:gt(0)').empty();
-    $('.industry:gt(0)').empty();
+    $('#group-select').find('option').not(':first').remove();
+    $('#businessgroup-select').find('option').not(':first').remove();
+    $('#entity-select').find('option').not(':first').remove();
+    $('#division-select').find('option').not(':first').remove();
+    $('.industry').find('option').not(':first').remove();
     checkunitscount = null;
     clearMessage();
     function onSuccess(data) {
@@ -991,7 +991,16 @@ $("#btn-clientunit-submit").click(function(){
             initialize();
         }
         function onFailure(error) {
-            if(error == "UnitCodeAlreadyExists"){
+            if(error == "BusinessGroupNameAlreadyExists"){
+                displayMessage("Business Group Name Already Exists!");
+            }
+            else if(error == "LegalEntityNameAlreadyExists"){
+                displayMessage("Legal Entity Name Already Exists!");
+            }
+            else if(error == "DivisionNameAlreadyExists"){
+                displayMessage("DivisionName Already Exists!");
+            }
+            else if(error == "UnitCodeAlreadyExists"){
                 displayMessage("Unit Code Already Exists!");
             }
             else{
@@ -1184,7 +1193,21 @@ $("#btn-clientunit-submit").click(function(){
             initialize();
         }
         function onFailure(error) {
-            displayMessage(error);
+            if(error == "BusinessGroupNameAlreadyExists"){
+                displayMessage("Business Group Name Already Exists!");
+            }
+            else if(error == "LegalEntityNameAlreadyExists"){
+                displayMessage("Legal Entity Name Already Exists!");
+            }
+            else if(error == "DivisionNameAlreadyExists"){
+                displayMessage("DivisionName Already Exists!");
+            }
+            else if(error == "UnitCodeAlreadyExists"){
+                displayMessage("Unit Code Already Exists!");
+            }
+            else{
+                displayMessage(error);
+            }
         }
         var businessgrouptextValue = $(".labelbusinessgroup").text().trim();
         var businessgroupidupdate = $("#businessgroup-update-id").val();
@@ -1275,7 +1298,7 @@ $("#btn-clientunit-submit").click(function(){
                         return;
                     }
                     else if(unitPostalCode == ''){
-                        $(".unit-error-msg-"+i).html("Unit Postal code Required");
+                        $(".unit-error-msg-"+i).html("Unit Postal Code Required");
                         return;
                     }
                     else if(unitdomain == ''){
