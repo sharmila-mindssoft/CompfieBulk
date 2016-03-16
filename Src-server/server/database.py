@@ -2070,7 +2070,7 @@ class KnowledgeDatabase(Database):
                 approval_status_text = "Pending"
             elif approval == 1 :
                 approval_status_text = "Approved"
-            elif approval_status_text == 2 :
+            elif approval_status == 2 :
                 approval_status_text = "Rejected"
             else :
                 approval_status_text = "Approved & Notified"
