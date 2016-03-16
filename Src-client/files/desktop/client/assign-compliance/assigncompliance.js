@@ -74,9 +74,9 @@ function actstatus(element){
 function compliancestatus(element){
   var sClass = $(element).attr('class');
   var actSelect = sClass.substr(sClass.lastIndexOf("s") + 1);
-  
+
   var cStatus = false;
-  $('.'+sClass).each(function() { 
+  $('.'+sClass).each(function() {
     if(this.checked){
       cStatus = true;
     }
@@ -212,7 +212,7 @@ function load_secondwizard(){
         }
 
         $('.statutorydate', clone2).text(statutorydate);
-       
+
         if(frequency != 'On Occurrence'){
           if(triggerdate == ''){
           $('.triggerbefore', clone2).html('<input type="text" value="" class="input-box trigger" id="triggerdate'+statutoriesCount+'" />');
@@ -487,7 +487,7 @@ function submitcompliance(){
               current_trigger_day = parseInt(sort_elements[0][1]);
           }else{
             current_due_date = current_due_dates[0][0];
-            current_trigger_day = parseInt(current_trigger_days[0][1]);
+            current_trigger_day = parseInt(sort_elements[0][1]);
           }
 
 
@@ -754,7 +754,7 @@ $("#country").click(function(event){
 
 
 function getUserLevel(selectedUserId){
-  var getuserLevel = null; 
+  var getuserLevel = null;
   for(var user in usersList){
     var userId= usersList[user]["user_id"];
     if(userId == selectedUserId){
@@ -790,7 +790,7 @@ function loadUser(userType){
     /*if($('.approvallist.active').attr('id') != undefined)
       temp_id = parseInt($('.approvallist.active').attr('id'));*/
   }
-  
+
   $('#'+userType).empty();
 
   var assigneeUserId = null;
@@ -835,7 +835,7 @@ function loadUser(userType){
   var str='';
   if(userType != 'concurrence' && selectedUnit != ''){
     if((assigneeUserId == null || assigneeUserId != client_admin)
-    && (approvalUserId == null || approvalUserId != client_admin) 
+    && (approvalUserId == null || approvalUserId != client_admin)
     && (concurrenceUserId == null || concurrenceUserId != client_admin)){
       /*if(temp_id == client_admin){
         str='<li id="'+client_admin+'" class="'+userClass+' active" > Admin </li>';
@@ -851,7 +851,7 @@ function loadUser(userType){
       var userId= usersList[user]["user_id"];
       var uLevel = usersList[user]["user_level"];
       var userName= usersList[user]["user_name"] + ' - Level ' + uLevel;
-     
+
       if(userLevel != null){
         if(userType == 'assignee'){
           conditionResult = (uLevel >= userLevel);
@@ -869,7 +869,7 @@ function loadUser(userType){
       }
 
       if(conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
-        && (approvalUserId == null || approvalUserId != userId) 
+        && (approvalUserId == null || approvalUserId != userId)
         && (concurrenceUserId == null || concurrenceUserId != userId)){
         /*if(temp_id == userId){
           str += '<li id="'+userId+'" class="'+userClass+ ' active'+'" >'+userName+'</li>';
