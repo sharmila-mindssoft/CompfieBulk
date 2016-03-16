@@ -83,7 +83,7 @@ def process_save_statutory_mapping(db, request_frame, user_id):
 
 
 def process_update_statutory_mapping(db, request_frame, user_id):
-    is_duplicate = db.check_duplicate_statutory_mapping(request_frame)
+    is_duplicate = db.check_duplicate_statutory_mapping(request_frame, request_frame.statutory_mapping_id)
     if is_duplicate is None :
         is_duplicate = False
     else :
