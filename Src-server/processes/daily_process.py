@@ -343,7 +343,7 @@ def calculate_next_due_date(
             return (new_due_date,  trigger_before_days)
         else :
             print "due_date from next_due_date"
-            temp_date = convert_string_to_date(old_due_date)
+            temp_date = convert_string_to_date(str(old_due_date))
             old_month = temp_date.month
             if repeat_type == 2 :
                 for index, dat in enumerate(statutory_dates) :
