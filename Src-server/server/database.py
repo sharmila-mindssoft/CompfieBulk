@@ -167,13 +167,10 @@ class Database(object) :
     def get_data(
         self, table, columns, condition
     ):
-        try:
-            query = "SELECT %s FROM %s " % (columns, table)
-            if condition is not None :
-                query += " WHERE %s" % (condition)
-            return self.select_all(query)
-        except:
-            print query
+        query = "SELECT %s FROM %s " % (columns, table)
+        if condition is not None :
+            query += " WHERE %s" % (condition)
+        return self.select_all(query)
 
     def get_data_from_multiple_tables(
         self, columns, tables, aliases, join_type,
@@ -476,8 +473,8 @@ class Database(object) :
         if count == 1:
             column = "count(*)"
             condition = "user_id = '%d' and is_active = 1" % user_id
-            rows = reself.get_data(self.tblUsers, column, condition)
-            if rows[0][0] > 0
+            rows = self.get_data(self.tblUsers, column, condition)
+            if rows[0][0] > 0:
                 return user_id
             else:
                 return None

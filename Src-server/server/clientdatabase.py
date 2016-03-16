@@ -278,8 +278,8 @@ class ClientDatabase(Database):
         if count == 1:
             column = "count(*)"
             condition = "user_id = '%d' and is_active = 1" % user_id
-            rows = reself.get_data(self.tblUsers, column, condition)
-            if rows[0][0] > 0
+            rows = self.get_data(self.tblUsers, column, condition)
+            if rows[0][0] > 0:
                 return user_id
             else:
                 return None
@@ -289,7 +289,6 @@ class ClientDatabase(Database):
     def validate_session_token(self, client_id, session_token) :
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
-        print query
         row = self.select_one(query)
         user_id = None
         if row :
@@ -2032,10 +2031,8 @@ class ClientDatabase(Database):
             aliases, join_type,  join_condition,
             assignee_condition
         )
-        print assignee_rows
         approval_compliances = []
         for assignee in assignee_rows:
-            print "inside for"
             query_columns = "compliance_history_id, tch.compliance_id, start_date,"+\
             " tch.due_date, documents, completion_date, completed_on, next_due_date, "+\
             "concurred_by, remarks, datediff(tch.due_date, completion_date ),compliance_task,"+\
@@ -7251,50 +7248,43 @@ class ClientDatabase(Database):
         start_date = self.string_to_datetime(start_date)
         duration = duration.split(" ")
         duration_value = duration[0]
-        duration_type = [1]
+        duration_type = duration[1]
         due_date = None
         if duration_type == "Day(s)":
-            due_date = start_date + datetime.timedelta(days = duration_value)
+            due_date = start_date + datetime.timedelta(days = int(duration_value))
         elif duration_type == "Hour(s)":
-            due_date = start_date + datetime.timedelta(hours = duration_value)
+            due_date = start_date + datetime.timedelta(hours = int(duration_value))
         values = [
             compliance_history_id, unit_id, compliance_id, start_date, due_date,
             session_user
         ]
+
+        approval_columns = "approval_person, concurrence_person"
+        approval_condition = " compliance_id = '%d' and unit_id = '%d' " % (
+            compliance_id, unit_id
+        )
+        rows = self.get_data(
+            self.tblAssignedCompliances, approval_columns, approval_condition
+        )
+        concurred_by = rows[0][1]
+        approved_by = rows[0][0]
         if self.is_two_levels_of_approval():
-            approval_columns = "approval_person, concurrence_person"
-            approval_condition = " compliance_id = '%d' and unit_id = '%d' " % (
-                compliance_id, unit_id
-            )
-            rows = self.get_data(
-                self.tblAssignedCompliances, approval_columns, approval_condition
-            )
-            concurred_by = rows[0][1]
-            approved_by = rows[0][0]
             columns.append("concurred_by")
             values.append(concurred_by)
-            columns.append("approved_by")
-            values.append(approved_by)
-        else:
-            approval_columns = "approval_person"
-            approval_condition = " compliance_id = '%d' and unit_id = '%d' " % (
-                compliance_id, unit_id
-            )
-            rows = self.get_data(
-                self.tblAssignedCompliances, approval_columns, approval_condition
-            )
-            approved_by = rows[0][0]
-            columns.append("approved_by")
-            values.append(approved_by)
-        try:
-            email.notify_task_assigned(
-                self, receiver, assignee_name, compliance_name, due_date
-            )
-        except Exception, e:
-            print "Error sending email :{}".format(e)
-        return self.insert(
+        columns.append("approved_by")
+        values.append(approved_by)
+
+        history_id = self.insert(
             self.tblComplianceHistory, columns, values
         )
+        try:
+            email.notify_task(
+                self, history_id, "Start"
+            )
+            return True
+        except Exception, e:
+            print "Error sending email :{}".format(e)
+         
 
     def get_form_ids_for_admin(self):
         columns = "group_concat(form_id)"
