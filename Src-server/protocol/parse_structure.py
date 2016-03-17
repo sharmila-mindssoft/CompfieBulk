@@ -3056,7 +3056,7 @@ def parse_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping
     data = parse_list(data)
     d = {}
     for key, value in data:
-        key = parse_structure_SignedIntegerType_8(key)
+        key = parse_structure_UnsignedIntegerType_32(key)
         value = parse_structure_RecordType_core_StatutoryMapping(value)
         d[key] = value
     return d
