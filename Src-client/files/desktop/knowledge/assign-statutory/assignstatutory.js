@@ -12,6 +12,7 @@ var unitsList;
 var statutoriesList;
 var assignStatutoryUnitIds = [];
 var assignStatutoryUnitValues = [];
+var accordionstatus = true;
 
 function clearMessage() {
   $(".error-message").hide();
@@ -140,6 +141,7 @@ function actstatus(element){
       this.checked = false;
     });
   }
+  accordionstatus = false;
 }
 
 function compliancestatus(element){
@@ -191,7 +193,7 @@ function load_secondwizard(){
     if (not_applicable_remarks == null) not_applicable_remarks = '';
     var acttableRow=$('#act-templates .font1 .tbody-heading');
     var clone=acttableRow.clone();
-    $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:100px;"> <label for="act'+actCount+'" style="margin-top:100px;"></label> ');
+    $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:100px;"> <label for="act'+actCount+'" style="margin-top:100px;" class="act-label"></label> ');
     $('.actname', clone).html('<div style="float:left;margin-top:5px;">'+actname+'</div> <div style="float:right; width:500px;" class="default-display-none remark'+actCount+'" ><div style="float:right;  width:250px;margin-top:-3px;"> <input type="text" maxlength="250" id="remarkvalue'+actCount+'" value="'+not_applicable_remarks+'" class="input-box" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:5px;"> Remarks</div></div>');
     $('.tbody-assignstatutory').append(clone);
 
@@ -276,11 +278,19 @@ function load_secondwizard(){
   }
 
   $(document).ready(function($) {
+    $(".act-label").on("click", function(event){
+      accordionstatus = false;
+    });
+
     $('#accordion').find('.accordion-toggle').click(function(){
-      //Expand or collapse this panel
-      $(this).next().slideToggle('fast');
-      //Hide the other panels
-      $(".accordion-content").not($(this).next()).slideUp('fast');
+      if(accordionstatus){
+        //Expand or collapse this panel
+        $(this).next().slideToggle('fast');
+        //Hide the other panels
+        $(".accordion-content").not($(this).next()).slideUp('fast');
+      }else{
+        accordionstatus = true;
+      }
     });
   });
 }
@@ -489,6 +499,7 @@ $("#unit").click(function(event){
     }else{
        $('#domain').empty();
     }
+    $('ul.setup-panel li:eq(1)').addClass('disabled');
   }
 });
 
@@ -719,21 +730,21 @@ allWells = $('.setup-content');
 allWells.hide();
 navListItems.click(function(e)
 {
-e.preventDefault();
-var $target = $($(this).attr('href')),
-$item = $(this).closest('li');
-if (!$item.hasClass('disabled')) {
-navListItems.closest('li').removeClass('active');
-$item.addClass('active');
-allWells.hide();
-$target.show();
-}
+  e.preventDefault();
+  var $target = $($(this).attr('href')),
+  $item = $(this).closest('li');
+  if (!$item.hasClass('disabled')) {
+    navListItems.closest('li').removeClass('active');
+    $item.addClass('active');
+    allWells.hide();
+    $target.show();
+  }
 });
 $('ul.setup-panel li.active a').trigger('click');
 $('#activate-step-2').on('click', function(e) {
 if (validate_firsttab()){
-$('ul.setup-panel li:eq(1)').removeClass('disabled');
-$('ul.setup-panel li a[href="#step-2"]').trigger('click');
+  $('ul.setup-panel li:eq(1)').removeClass('disabled');
+  $('ul.setup-panel li a[href="#step-2"]').trigger('click');
 }
 })
 $('#backward-step-1').on('click', function(e) {
@@ -855,16 +866,6 @@ $('#activate-step-submit').on('click', function(e) {
 function displayEdit(client_statutory_id, country_id, group_id, location_id, domain_id, unit_id, submit_type){
    function onSuccess(data){
       clearValues('all');
-      /*$('ul.setup-panel li:eq(0)').hide();
-      $('ul.setup-panel li:eq(1)').addClass('active');
-      $("#step-1").hide();
-      $("#step-2").show();
-      $('ul.setup-panel li:eq(1)').css({'width': '100%'});
-      //$('ul.setup-panel li:eq(1)').html('<a href="#step-2"><h4 class="list-group-item-heading">Select Statutory</h4></a>');
-      $('ul.setup-panel li:eq(1)').addClass('active');
-      $("#assignstatutory-view").hide();
-      $("#assignstatutory-add").show();*/
-
       $('ul.setup-panel li:eq(0)').removeClass('active');
       $('ul.setup-panel li:eq(0)').addClass('disabled');
       $('ul.setup-panel li:eq(1)').removeClass('disabled');

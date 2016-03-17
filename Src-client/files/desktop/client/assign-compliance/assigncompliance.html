@@ -1,6 +1,8 @@
 {% extends "files/desktop/client/home/container.html" %}
 {% block content %}
-
+<div class='loading-indicator-spin'>
+  <span><img src='/files/desktop/common/images/loading-img.gif' alt=""></span>
+</div>
   <div class="content-container width100" >
     <div class="content-area">
       <h1>Assign Compliance</h1>
@@ -24,16 +26,15 @@
         <div class="setup-content" id="step-1">
           <div class="innercontent">
             <div class="form-container-grid-table">
-              <table style="border:1px solid #ccc; margin-bottom:5px; height:450px !important;">
+
+              <table style="border:1px solid #ccc; margin-bottom:5px; height:200px !important;">
                 <tr align="left">
-                  <th width="18%">Country<span class="mandatory">*</span></th>
-                  <th width="18%">Business Group </th>
-                  <th width="18%">Legal Entity<span class="mandatory">*</span> </th>
-                  <th width="20%">Division</th>
-                  <th width="26%">Unit<span class="mandatory">*</span></th>
+                  <th width="33.3%">Country<span class="mandatory">*</span></th>
+                  <th width="33.3%">Business Group </th>
+                  <th width="33.3%">Legal Entity<span class="mandatory">*</span> </th>
                 </tr>
                 <tr>
-                  <td>
+                 <td>
                     <input type="text" class="filter-text-box" id="filter_country">
                   </td>
                   <td>
@@ -42,36 +43,55 @@
                   <td>
                     <input type="text" class="filter-text-box" id="filter_legalentity">
                   </td>
+                </tr>
+
+                <tr>
+                 <td>
+                    <ul style="height:200px;overflow-y:scroll" id="country">
+                    </ul>
+                  </td>
+                
+                  <td>
+                    <ul style="height:200px;overflow-y:scroll" id="businessgroup">
+                    </ul>
+                  </td>
+                  <td>
+                    <ul style="height:200px;overflow-y:scroll" id="legalentity">
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+
+              <table>
+                <tr align="left">
+                  <th width="33.3%">Division</th>
+                  <th width="33.3%">Unit<span class="mandatory">*</span></th>
+                  <th width="33.3%" >Domain <span class="mandatory">*</span></th>
+                </tr>
+                <tr>
                   <td>
                     <input type="text" class="filter-text-box" id="filter_division">
                   </td>
                   <td>
                     <input type="text" class="filter-text-box" id="filter_unit">
                   </td>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_domain">
+                  </td>
                 </tr>
                 <tr>
-                  <td>
-                    <ul style="height:450px;overflow-y:scroll" id="country">
-                    </ul>
-                  </td>
-                
-                  <td>
-                    <ul style="height:450px;overflow-y:scroll" id="businessgroup">
+                 <td>
+                    <ul style="height:200px;overflow-y:scroll" id="division">
                     </ul>
                   </td>
                   <td>
-                    <ul style="height:450px;overflow-y:scroll" id="legalentity">
+                    <ul style="height:200px;overflow-y:scroll" id="unit">
                     </ul>
                   </td>
                   <td>
-                    <ul style="height:450px;overflow-y:scroll" id="division">
+                    <ul style="height:200px;overflow-y:scroll" id="domain">
                     </ul>
                   </td>
-                  <td>
-                    <ul style="height:450px;overflow-y:scroll" id="unit">
-                    </ul>
-                  </td>
-
                 </tr>
               </table>
             </div>
@@ -190,7 +210,6 @@
 <div id="act-templates" class="default-display-none">
   <table class="font1" >
   <tbody class="accordion-toggle tbody-heading">
-
     <tr align="left" class="rightside tableRow " style="margin-bottom:1em; border:1px solid #ccc;">
       <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; vertical-align:middle;" width="95%" class="actname" colspan="8"></div>
       </th>
@@ -235,9 +254,11 @@
     <div class="content">
     <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;color:#000">Applicable Units</h1>
      <table width="100%" id="popup_table">
+     <tbody class="popup-list"> 
         <tr align="left" class = "popup_row">
           <td class="popup_unitname"></td>
         </tr>
+    </tbody>
     </table>
     </div>
   </div>

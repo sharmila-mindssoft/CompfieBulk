@@ -222,7 +222,7 @@ class API(object):
             db.commit()
             respond(response_data)
         except Exception, e:
-            # print(traceback.format_exc())
+            print(traceback.format_exc())
             # print e
             logger.logClient("error", "client.py-handle-api", e)
             logger.logClient("error", "client.py", traceback.format_exc())

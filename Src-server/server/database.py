@@ -167,13 +167,10 @@ class Database(object) :
     def get_data(
         self, table, columns, condition
     ):
-        try:
-            query = "SELECT %s FROM %s " % (columns, table)
-            if condition is not None :
-                query += " WHERE %s" % (condition)
-            return self.select_all(query)
-        except:
-            print query
+        query = "SELECT %s FROM %s " % (columns, table)
+        if condition is not None :
+            query += " WHERE %s" % (condition)
+        return self.select_all(query)
 
     def get_data_from_multiple_tables(
         self, columns, tables, aliases, join_type,
@@ -198,6 +195,7 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
+        print query
         return self.select_all(query)
 
     def insert(self, table, columns, values, client_id=None) :
@@ -473,7 +471,13 @@ class Database(object) :
         count = rows[0][0]
         user_id = rows[0][1]
         if count == 1:
-            return user_id
+            column = "count(*)"
+            condition = "user_id = '%d' and is_active = 1" % user_id
+            rows = self.get_data(self.tblUsers, column, condition)
+            if rows[0][0] > 0:
+                return user_id
+            else:
+                return None
         else:
             return None
 
@@ -2061,6 +2065,16 @@ class KnowledgeDatabase(Database):
             else :
                 industry_names = self.get_industry_by_id(industry_ids)
 
+            approval = int(d["approval_status"])
+            if approval == 0 :
+                approval_status_text = "Pending"
+            elif approval == 1 :
+                approval_status_text = "Approved"
+            elif approval == 2 :
+                approval_status_text = "Rejected"
+            else :
+                approval_status_text = "Approved & Notified"
+
             statutory = core.StatutoryMapping(
                 d["country_id"], d["country_name"],
                 d["domain_id"], d["domain_name"],
@@ -2069,7 +2083,7 @@ class KnowledgeDatabase(Database):
                 statutory_ids, statutory_mapping_list,
                 compliances, compliance_names, geography_ids,
                 geography_mapping_list, int(d["approval_status"]),
-                bool(d["is_active"]),
+                bool(d["is_active"]), approval_status_text
             )
             mapping_data_list[mapping_id] = statutory
         return mapping_data_list
@@ -2301,12 +2315,12 @@ class KnowledgeDatabase(Database):
     #
 
     def convert_base64_to_file(self, file_name, file_content, file_path=None):
-
         if file_path is None :
             file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
         else:
             if not os.path.exists(file_path):
                 os.makedirs(file_path)
+                os.chmod(file_path, 0777)
             file_path = "%s/%s" % (file_path, file_name)
         self.remove_uploaded_file(file_path)
         new_file = open(file_path, "wb")
@@ -2317,7 +2331,7 @@ class KnowledgeDatabase(Database):
         if os.path.exists(file_path) :
             os.remove(file_path)
 
-    def check_duplicate_statutory_mapping(self, data) :
+    def check_duplicate_statutory_mapping(self, data, statutory_mapping_id=None) :
         country_id = data.country_id
         domain_id = data.domain_id
         statutory_nature = data.statutory_nature_id
@@ -2346,6 +2360,8 @@ class KnowledgeDatabase(Database):
                 statutory_id,
                 industry_id
             )
+        if statutory_mapping_id is not None :
+            q = q + " AND t1.statutory_mapping_id != %s" % statutory_mapping_id
         row = self.select_one(q)
         if row :
             return row[0]
@@ -2700,8 +2716,9 @@ class KnowledgeDatabase(Database):
             file_size = 0
             file_content = ""
             saved_file_name = saved_file[0]
-            if len(saved_file_name) == 0 :
-                saved_file_name = None
+            if saved_file_name :
+                if len(saved_file_name) == 0 :
+                    saved_file_name = None
 
             if file_list is None :
                 pass
@@ -4227,7 +4244,7 @@ class KnowledgeDatabase(Database):
 
     def verify_username(self, username):
         columns = "count(*), user_id"
-        condition = "email_id='%s'" % (username)
+        condition = "email_id='%s' and is_active = 1" % (username)
         rows = self.get_data(self.tblUsers, columns, condition)
         count = rows[0][0]
         if count == 1:

@@ -1117,7 +1117,13 @@ class Compliance(object):
 #
 
 class StatutoryMapping(object):
-    def __init__(self, country_id, country_name, domain_id, domain_name, industry_ids, industry_names, statutory_nature_id, statutory_nature_name, statutory_ids, statutory_mappings, compliances, compliance_names, geography_ids, geography_mappings, approval_status, is_active):
+    def __init__(
+        self, country_id, country_name, domain_id,
+        domain_name, industry_ids, industry_names,
+        statutory_nature_id, statutory_nature_name,
+        statutory_ids, statutory_mappings, compliances,
+        compliance_names, geography_ids, geography_mappings,
+        approval_status, is_active, approval_status_text):
         self.country_id = country_id
         self.country_name = country_name
         self.domain_id = domain_id
@@ -1134,10 +1140,19 @@ class StatutoryMapping(object):
         self.geography_mappings = geography_mappings
         self.approval_status = approval_status
         self.is_active = is_active
+        self.approval_status_text = approval_status_text
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["country_id", "country_name", "domain_id", "domain_name", "industry_ids", "industry_names", "statutory_nature_id", "statutory_nature_name", "statutory_ids", "statutory_mappings", "compliances", "compliance_names", "geography_ids", "geography_mappings", "approval_status", "is_active"])
+        data = parse_dictionary(data, [
+            "country_id", "country_name", "domain_id",
+            "domain_name", "industry_ids", "industry_names",
+            "statutory_nature_id", "statutory_nature_name",
+            "statutory_ids", "statutory_mappings",
+            "compliances", "compliance_names", "geography_ids",
+            "geography_mappings", "approval_status", "is_active",
+            "approval_status_text"
+        ])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         country_name = data.get("country_name")
@@ -1170,7 +1185,15 @@ class StatutoryMapping(object):
         approval_status = parse_structure_SignedIntegerType_8(approval_status)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
-        return StatutoryMapping(country_id, country_name, domain_id, domain_name, industry_ids, industry_names, statutory_nature_id, statutory_nature_name, statutory_ids, statutory_mappings, compliances, compliance_names, geography_ids, geography_mappings, approval_status, is_active)
+        approval_status_text = data.get("approval_status_text")
+        approval_status_text = parse_structure_CustomTextType_100(approval_status_text)
+        return StatutoryMapping(
+            country_id, country_name, domain_id, domain_name,
+            industry_ids, industry_names, statutory_nature_id,
+            statutory_nature_name, statutory_ids, statutory_mappings,
+            compliances, compliance_names, geography_ids,
+            geography_mappings, approval_status, is_active, approval_status_text
+        )
 
     def to_structure(self):
         return {
@@ -1190,6 +1213,7 @@ class StatutoryMapping(object):
             "geography_mappings": to_structure_VectorType_Text(self.geography_mappings),
             "approval_status": to_structure_UnsignedIntegerType_32(self.approval_status),
             "is_active": to_structure_Bool(self.is_active),
+            "approval_status_text": to_structure_CustomTextType_100(self.approval_status_text)
         }
 
 #

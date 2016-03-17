@@ -9,6 +9,14 @@ function displayMessage(message) {
   $(".error-message").show();
 }
 
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
+
+
 function load_compliances (compliancesList) {
   var j = 1;
   $(".tbody-complainces-list").find("tr").remove();
@@ -51,17 +59,41 @@ function load_compliances (compliancesList) {
     }
 }
 
+function convert_date (data){
+  var date = data.split("-");
+  var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  for(var j=0;j<months.length;j++){
+      if(date[1]==months[j]){
+           date[1]=months.indexOf(months[j])+1;
+       }                      
+  } 
+  if(date[1]<10){
+      date[1]='0'+date[1];
+  }       
+  return new Date(date[2], date[1]-1, date[0]);
+}
+
 function submitOnOccurence(complianceId, count, unitId, complete_within_days){
   var startdate = $('#startdate'+count).val();
+  var currentDate = new Date();
+
   if(startdate != ''){
+    var convertDueDate = convert_date(startdate);
+    if (convertDueDate < currentDate) {
+        displayMessage("Start date is less than today's date");
+        return false;
+    }
+    displayLoader();
     function onSuccess(data){
-      //displayMessage("Task started successfully");
+      displayMessage("Action taken successfully");
       //getOnOccuranceCompliances ();
       $('#startdate'+count).val('');
-      window.location.href='/compliance-task-details'
+      hideLoader();
+      //window.location.href='/compliance-task-details'
     }
     function onFailure(error){
-      displayMessage(error)
+      displayMessage(error);
+      hideLoader();
     }
     client_mirror.startOnOccurrenceCompliance(complianceId, startdate, unitId, complete_within_days, 
       function (error, response) {
@@ -79,7 +111,6 @@ function submitOnOccurence(complianceId, count, unitId, complete_within_days){
   }
   
 }
-
 
 function getOnOccuranceCompliances () {
   function onSuccess(data){

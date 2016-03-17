@@ -1,56 +1,140 @@
-2016-03-15 15:39:50,454 - knowledge_logger - main.py-handle-api : %d format: a number is required, not NoneType
-2016-03-15 15:39:50,479 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 47, in process_techno_request
-    return update_client(db, request_frame, session_user)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 303, in update_client
-    if db.is_invalid_id( db.tblLegalEntities, "legal_entity_id", legal_entity_id):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 300, in is_invalid_id
-    condition = "%s = '%d'" % (field, value)
-TypeError: %d format: a number is required, not NoneType
+2016-03-16 17:44:28,312 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-16 17:44:28,362 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
 
-2016-03-15 16:07:48,815 - knowledge_logger - main.py-handle-api : %d format: a number is required, not NoneType
-2016-03-15 16:07:48,815 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 47, in process_techno_request
-    return update_client(db, request_frame, session_user)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 303, in update_client
-    if db.is_invalid_id( db.tblLegalEntities, "legal_entity_id", legal_entity_id):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 300, in is_invalid_id
-    condition = "%s = '%d'" % (field, value)
-TypeError: %d format: a number is required, not NoneType
+2016-03-16 17:44:32,078 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-16 17:44:32,078 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
 
-2016-03-15 16:20:38,175 - knowledge_logger - main.py-handle-api : %d format: a number is required, not NoneType
-2016-03-15 16:20:38,175 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 47, in process_techno_request
-    return update_client(db, request_frame, session_user)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 303, in update_client
-    if db.is_invalid_id( db.tblLegalEntities, "legal_entity_id", legal_entity_id):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 300, in is_invalid_id
-    condition = "%s = '%d'" % (field, value)
-TypeError: %d format: a number is required, not NoneType
+2016-03-16 17:44:32,592 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-16 17:44:32,593 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
 
-2016-03-15 16:23:12,008 - knowledge_logger - main.py-handle-api : %d format: a number is required, not NoneType
-2016-03-15 16:23:12,008 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 47, in process_techno_request
-    return update_client(db, request_frame, session_user)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 303, in update_client
-    if db.is_invalid_id( db.tblLegalEntities, "legal_entity_id", legal_entity_id):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 300, in is_invalid_id
-    condition = "%s = '%d'" % (field, value)
-TypeError: %d format: a number is required, not NoneType
+2016-03-16 17:44:32,796 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-16 17:44:32,796 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+
+2016-03-16 17:44:33,023 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-16 17:44:33,024 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+
+2016-03-16 17:44:33,253 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-16 17:44:33,254 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+
+2016-03-16 17:44:36,076 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-16 17:44:36,077 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+
+2016-03-16 17:44:36,352 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-16 17:44:36,352 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+
+2016-03-16 17:44:36,555 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-16 17:44:36,555 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+
+2016-03-16 17:44:36,784 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-16 17:44:36,785 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
 

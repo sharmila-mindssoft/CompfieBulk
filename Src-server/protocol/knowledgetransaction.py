@@ -206,11 +206,12 @@ class SaveStatutoryMapping(Request):
 
 class UpdateStatutoryMapping(Request):
     def __init__(
-        self, statutory_mapping_id, domain_id,
+        self, statutory_mapping_id, country_id, domain_id,
         industry_ids, statutory_nature_id, statutory_ids,
         compliances, geography_ids, mappings
     ):
         self.statutory_mapping_id = statutory_mapping_id
+        self.country_id = country_id
         self.domain_id = domain_id
         self.industry_ids = industry_ids
         self.statutory_nature_id = statutory_nature_id
@@ -222,12 +223,14 @@ class UpdateStatutoryMapping(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "statutory_mapping_id", "domain_id", "industry_ids",
+            "statutory_mapping_id", "country_id", "domain_id", "industry_ids",
             "statutory_nature_id", "statutory_ids", "compliances",
             "geography_ids", "mappings"
         ])
         statutory_mapping_id = data.get("statutory_mapping_id")
         statutory_mapping_id = parse_structure_UnsignedIntegerType_32(statutory_mapping_id)
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         industry_ids = data.get("industry_ids")
@@ -243,7 +246,7 @@ class UpdateStatutoryMapping(Request):
         mappings = data.get("mappings")
         mappings = parse_structure_VectorType_Text(mappings)
         return UpdateStatutoryMapping(
-            statutory_mapping_id, domain_id, industry_ids,
+            statutory_mapping_id, country_id, domain_id, industry_ids,
             statutory_nature_id, statutory_ids, compliances,
             geography_ids, mappings
         )
@@ -251,6 +254,7 @@ class UpdateStatutoryMapping(Request):
     def to_inner_structure(self):
         return {
             "statutory_mapping_id": to_structure_UnsignedIntegerType_32(self.statutory_mapping_id),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
             "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "industry_ids": to_structure_VectorType_UnsignedIntegerType_32(self.industry_ids),
             "statutory_nature_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
@@ -464,6 +468,18 @@ class SaveStatutoryMappingSuccess(Response):
     def to_inner_structure(self):
         return {
         }
+
+class StatutoryMappingAlreadyExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return StatutoryMappingAlreadyExists()
+
+    def to_inner_structure(self):
+        return {}
 
 class CheckDuplicateStatutoryMappingResponse(Response):
     def __init__(self, is_exists):

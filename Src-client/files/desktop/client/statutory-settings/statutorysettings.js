@@ -1,6 +1,7 @@
 var assignedStatutoriesList;
 var sList;
 var assignedStatutories = [];
+var accordionstatus = true;
 
 function clearMessage() {
   $(".error-message").hide();
@@ -30,6 +31,7 @@ function actstatus(element){
       $('.cremarkadd'+this.value).hide();                     
     });  
   }
+  accordionstatus = false;
 }
 
 function compliancestatus(element, viewremarks){
@@ -62,15 +64,20 @@ function compliancestatus(element, viewremarks){
   }
 
   var actSelect = sClass.substr(sClass.lastIndexOf("s") + 1);
-  $('#act'+actSelect).prop("checked",true);
-  $('.remark'+actSelect).hide();
-
-  /*var cStatus = false;
+  var cStatus = false;
   $('.'+sClass).each(function() { 
-    if(this.checked = true){
+    if(this.checked){
       cStatus = true;
     }
-  });*/
+  });
+
+  if(cStatus){
+    $('#act'+actSelect).prop("checked",true);
+    $('.remark'+actSelect).hide();
+  }else{
+    $('#act'+actSelect).prop("checked",false);
+    $('.remark'+actSelect).show();
+  }
 }
 
 function part_compliance (remark) {
@@ -119,7 +126,7 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
 
       var acttableRow=$('#act-templates .font1 .tbody-heading');
       var clone=acttableRow.clone();
-      $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:100px;"> <label for="act'+actCount+'" style="margin-top:100px;"></label> ');
+      $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:100px;"> <label for="act'+actCount+'" style="margin-top:100px;" class="act-label"></label> ');
       
       $('.actname', clone).html('<div style="float:left;margin-top:5px;">'+actname+'</div> <div style="float:right; width:500px;" class="default-display-none remark'+actCount+
         '" ><div style="float:right;  width:250px;margin-top:-3px;"> <input type="text" maxlength="250" id="remarkvalue'+actCount+
@@ -192,15 +199,21 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
     }
   });
   $(document).ready(function($) {
-      $("#accordion").find(".accordion-toggle").click(function(){
+    $(".act-label").on("click", function(event){
+      accordionstatus = false;
+    });
+    $("#accordion").find(".accordion-toggle").click(function(){
+      if(accordionstatus){
         //Expand or collapse this panel
-        //$(this).next().slideToggle('fast');
-        //alert($("#accordion"));
         $(this).next('tbody').slideToggle('fast');
         //Hide the other panels
         $(".accordion-content").not($(this).next()).slideUp('fast');
-      });
+      }else{
+        accordionstatus = true;
+      }
+      
     });
+  });
 }
 
 function submit_statutory(){
@@ -242,6 +255,8 @@ $('.close').click(function(){
   $('.overlay').css("visibility","hidden");
   $('.overlay').css("opacity","0");
 });
+
+
 
 $("#submit").click(function() {
 
@@ -363,11 +378,11 @@ function loadStatutorySettingsList(assignedStatutoriesList){
       unit_id = assignedStatutoriesList[entity]["unit_id"];
       var bGroup = assignedStatutoriesList[entity]["business_group_name"];
       if(bGroup == null){
-        bGroup = 'Nil';
+        bGroup = '-';
       }
       var dName = assignedStatutoriesList[entity]["division_name"];
       if(dName == null){
-        dName = 'Nil';
+        dName = '-';
       }
       var tableRow=$('#templates .table-statutorysettings .table-row');
       var clone=tableRow.clone();
@@ -414,9 +429,15 @@ $(".listfilter").keyup(function() {
   var filteredList=[];
   for(var entity in assignedStatutoriesList) {
     var filter1val = assignedStatutoriesList[entity]["country_name"];
-    var filter2val = assignedStatutoriesList[entity]["business_group_name"];
+
+     var filter2val = '-';
+    if(assignedStatutoriesList[entity]["business_group_name"] != null) filter2val = assignedStatutoriesList[entity]["business_group_name"];
+  
     var filter3val = assignedStatutoriesList[entity]["legal_entity_name"];
-    var filter4val = assignedStatutoriesList[entity]["division_name"];
+
+    var filter4val = '-';
+    if(assignedStatutoriesList[entity]["division_name"] != null) filter4val = assignedStatutoriesList[entity]["division_name"];
+
     var filter5val = assignedStatutoriesList[entity]["unit_name"];
     var domainList = assignedStatutoriesList[entity]["domain_names"];
     var domains = '';

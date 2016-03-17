@@ -3056,7 +3056,7 @@ def parse_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping
     data = parse_list(data)
     d = {}
     for key, value in data:
-        key = parse_structure_SignedIntegerType_8(key)
+        key = parse_structure_UnsignedIntegerType_32(key)
         value = parse_structure_RecordType_core_StatutoryMapping(value)
         d[key] = value
     return d
@@ -3883,3 +3883,13 @@ def parse_structure_VectorType_RecordType_core_GroupCompanyForUnitCreation(data)
 def parse_structure_RecordType_core_GroupCompanyForUnitCreation(data):
     from protocol import core
     return core.GroupCompanyForUnitCreation.parse_structure(data)
+
+def parse_structure_RecordType_clienttransactions_NewUnitSettings(data):
+    from protocol import clienttransactions
+    return clienttransactions.NewUnitSettings.parse_structure(data)
+
+def parse_structure_VectorType_RecodType_clienttransactionns_NewUnitSettings(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_clienttransactions_NewUnitSettings(item))

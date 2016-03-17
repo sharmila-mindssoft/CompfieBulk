@@ -832,7 +832,7 @@ class CheckContractExpirationSuccesss(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "no_of_days_left", "notification_count", "reminder_count", 
+                "no_of_days_left", "notification_count", "reminder_count",
                 "escalation_count"
             ]
         )
@@ -1712,7 +1712,7 @@ class DrillDownData(object):
         unit_name = parse_structure_CustomTextType_100(unit_name)
         address = data.get("address")
         address = parse_structure_CustomTextType_500(address)
-        industry_name =  data.geT("industry_name")
+        industry_name = data.get("industry_name")
         industry_name = parse_structure_CustomTextType_50(industry_name)
         compliances = data.get("compliances")
         compliances = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance(compliances)
@@ -1720,10 +1720,10 @@ class DrillDownData(object):
 
     def to_structure(self):
         return {
-            "business_group": to_structure_CustomTextType_50(self.business_group),
+            "business_group": to_structure_OptionalType_CustomTextType_50(self.business_group),
             "legal_entity": to_structure_CustomTextType_50(self.legal_entity),
-            "division": to_structure_CustomTextType_50(self.division),
-            "unit_name": to_structure_CustomTextType_100(self.unit_name),
+            "division": to_structure_OptionalType_CustomTextType_50(self.division),
+            "unit_name": to_structure_CustomTextType_250(self.unit_name),
             "address": to_structure_CustomTextType_500(self.address),
             "industry_name": to_structure_CustomTextType_50(self.industry_name),
             "compliances": to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance(self.compliances),
