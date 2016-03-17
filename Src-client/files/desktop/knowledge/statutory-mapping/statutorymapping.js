@@ -339,28 +339,35 @@ function loadStatutoryLevels(countryval,domainval){
     var filter6 = $("#filter6").val().toLowerCase();
 
     var filteredList={};
-    for(var entity in statutoryMappingsList) {
-      var filter1val = statutoryMappingsList[entity]["country_name"];
-      var filter2val = statutoryMappingsList[entity]["domain_name"];
-      var filter3val = statutoryMappingsList[entity]["industry_names"];
-      var filter4val = statutoryMappingsList[entity]["statutory_nature_name"];
+    if((filter1 == '' || filter1.length >= 3) && (filter2 == '' || filter2.length >= 3) && (filter3 == '' || filter3.length >= 3) &&
+       (filter4 == '' || filter4.length >= 3) && (filter5 == '' || filter5.length >= 3) && (filter6 == '' || filter6.length >= 3)){
 
-      var filter5val='';
-      for(var i=0; i<statutoryMappingsList[entity]["statutory_mappings"].length; i++){
-        filter5val = filter5val + statutoryMappingsList[entity]["statutory_mappings"][i] + " <br>";
+      for(var entity in statutoryMappingsList) {
+        var filter1val = statutoryMappingsList[entity]["country_name"];
+        var filter2val = statutoryMappingsList[entity]["domain_name"];
+        var filter3val = statutoryMappingsList[entity]["industry_names"];
+        var filter4val = statutoryMappingsList[entity]["statutory_nature_name"];
+
+        var filter5val='';
+        for(var i=0; i<statutoryMappingsList[entity]["statutory_mappings"].length; i++){
+          filter5val = filter5val + statutoryMappingsList[entity]["statutory_mappings"][i] + " <br>";
+        }
+        var filter6val='';
+        for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
+          filter6val = filter6val + statutoryMappingsList[entity]["compliance_names"][i]["compliance_name"] + " <br>";
+        }
+        if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2)
+          && ~filter3val.toLowerCase().indexOf(filter3) && ~filter4val.toLowerCase().indexOf(filter4)
+          && ~filter5val.toLowerCase().indexOf(filter5) && ~filter6val.toLowerCase().indexOf(filter6))
+        {
+          filteredList [entity] = statutoryMappingsList[entity];
+        }
       }
-      var filter6val='';
-      for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
-        filter6val = filter6val + statutoryMappingsList[entity]["compliance_names"][i]["compliance_name"] + " <br>";
-      }
-      if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2)
-        && ~filter3val.toLowerCase().indexOf(filter3) && ~filter4val.toLowerCase().indexOf(filter4)
-        && ~filter5val.toLowerCase().indexOf(filter5) && ~filter6val.toLowerCase().indexOf(filter6))
-      {
-        filteredList [entity] = statutoryMappingsList[entity];
-      }
+
+      loadStatutoryMappingList(filteredList);
     }
-    loadStatutoryMappingList(filteredList);
+    
+    
   });
 
   //check & uncheck list data for single selection
