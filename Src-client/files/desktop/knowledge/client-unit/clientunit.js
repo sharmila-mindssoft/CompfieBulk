@@ -659,7 +659,7 @@ function loadglevelsupdate(countryid, lastClass){
         displayMessage('Enter Country');
     }
     else{
-        $('.'+lastClass).empty();
+        $('.'+lastClass).find('option').not(':first').remove();
         for(var glevel in geographyLevelList[countryid]){
             var glevellist = geographyLevelList[countryid][glevel];
             $('.'+lastClass).append($('<option value = "'+glevellist['level_id']+'">'+glevellist['level_name']+'</option>'));

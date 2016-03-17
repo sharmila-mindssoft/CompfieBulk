@@ -250,7 +250,6 @@ function showSideBar(idval, data){
             displayMessage("Select Next Due Date");
         }
         else{
-            console.log(compliance_history_id+"--"+approval_status+"--"+remarks+"--"+validity_date+"--"+next_due_date);
             function onSuccess(data){
                 initialize();
             }

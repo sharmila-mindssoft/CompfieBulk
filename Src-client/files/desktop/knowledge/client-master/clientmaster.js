@@ -380,7 +380,7 @@ function clientgroup_active(clientId, isActive){
         }
         function onFailure(error){
             if(error == "CannotDeactivateClient"){
-                displayMessage("Cannot deactivate client, since client has one or more active units")
+                alert("Cannot deactivate client, since client has one or more active units")
             }
             else{
                 displayMessage(error);
