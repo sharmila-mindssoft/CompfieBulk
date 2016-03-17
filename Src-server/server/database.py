@@ -5005,7 +5005,7 @@ class KnowledgeDatabase(Database):
             if statutory_opted is not None :
                 statutory_opted = bool(statutory_opted)
             statutory_id = int(r["statutory_id"])
-            mapping_id = int(r["statutory_mapping_id"])
+            # mapping_id = int(r["statutory_mapping_id"])
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
             s_mapping = statutory_data[1]
             level_map = s_mapping.split(">>")
@@ -5289,6 +5289,7 @@ class KnowledgeDatabase(Database):
                 unit_address = "%s, %s, %s" % (
                     data["address"], ', '.join(ordered), data["postal_code"]
                 )
+                print client_statutory_id
                 statutories = self.return_assigned_compliances_by_id(client_statutory_id, level_1_statutory_id)
                 unit_statutories = technoreports.UNIT_WISE_ASSIGNED_STATUTORIES(
                     data["unit_id"],
@@ -5301,6 +5302,7 @@ class KnowledgeDatabase(Database):
                     statutories
                 )
             else :
+                print client_statutory_id , "new"
                 statutories = unit_statutories.assigned_statutories
                 new_stautory = self.return_assigned_compliances_by_id(client_statutory_id)
                 for new_s in new_stautory :
@@ -5313,9 +5315,6 @@ class KnowledgeDatabase(Database):
                             break
                     if is_exists is False :
                         statutories.append(new_s)
-                statutories.extend(
-                    self.return_assigned_compliances_by_id(client_statutory_id)
-                )
                 unit_statutories.assigned_statutories = statutories
 
             unit_wise_statutories_dict[unit_id] = unit_statutories
