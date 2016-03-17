@@ -37,6 +37,13 @@ function displayMessage(message) {
   $(".error-message").show();
 }
 
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
+
 function resetvalues(){
   $('.sdate').val('');
 }
@@ -269,14 +276,17 @@ function getStatutoryMappingsMastersList() {
 }
 
 function getStatutoryMappings(){
+  displayLoader();
   mirror.getStatutoryMappings(
     function (error, data) {
           if (error == null){
             statutoryMappingsList = data["statutory_mappings"];
             loadStatutoryMappingList(statutoryMappingsList);
+            hideLoader();
           }
           else {
             console.log(error);
+            hideLoader();
           }
       }
   );
