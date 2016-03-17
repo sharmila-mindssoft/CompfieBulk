@@ -95,8 +95,8 @@
             <span class="mandatory">*</span>
           </div>
           <div class="field-input">
-            <input type="hidden" id="domain" value="1">
-            <input type="text" class="input-box icon-autocomplete" id="domainval" value="Finance Law"  onkeyup="loadauto_domains(this.value)">
+            <input type="hidden" id="domain" value="">
+            <input type="text" class="input-box icon-autocomplete" id="domainval" value=""  onkeyup="loadauto_domains(this.value)">
             <div id="selectboxview-domains" class="ac-textbox" style="display:none;" onclick="hidedomainslist();">
               <ul style="width:195px;"></ul>
             </div>
@@ -109,6 +109,7 @@
           </div>
           <div class="field-input">
             <select class="input-box" id="user-type" >
+              <option value="">Select</option>
               <option value="Inhouse">Inhouse</option>
               <option value="ServiceProvider">Service Provider</option>
             </select>

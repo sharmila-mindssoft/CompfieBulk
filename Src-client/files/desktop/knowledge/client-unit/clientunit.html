@@ -166,6 +166,7 @@
         </td>
         <td><input type="text" class="input-box unit-name" maxlength="50"  ></td>
         <td><select class="input-box industry" onfocus="industrytype(this.className);" >
+        <option value="">Select</option>
         </select>
       </td>
       <td><input type="text" class="input-box unit-address" maxlength="250" /></td>
@@ -181,7 +182,7 @@
 </tr>
 </tbody>
 <tr>
-<td colspan="9" align="right"><div style="float:right" class="add-unit-row" onclick="addNewUnitRow(this)" ><img src="/images/icon-plus.png" alt="Add New Unit" />Add Unit</div></td>
+<td colspan="9" align="right" ><div class="add-unit-row" onclick="addNewUnitRow(this)" ><img src="/images/icon-plus.png" alt="Add New Unit"  style="vertical-align: bottom;" />&nbsp;<span>Add Unit</span></div></td>
 </tr>
 </table>
 </div>
@@ -202,7 +203,7 @@
         <span class="full-location-list"></span></td>
         <td>
         <input type="hidden" class="unit-id">
-        <input type="text" class="input-box unit-code" maxlength="50">
+        <input type="text" class="input-box unit-code" maxlength="20">
         <span class="unit-code-lbl"></span>
         </td>
         <td><input type="text" class="input-box unit-name"  maxlength="50" ></td>

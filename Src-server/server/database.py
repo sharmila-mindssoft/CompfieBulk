@@ -167,13 +167,10 @@ class Database(object) :
     def get_data(
         self, table, columns, condition
     ):
-        try:
-            query = "SELECT %s FROM %s " % (columns, table)
-            if condition is not None :
-                query += " WHERE %s" % (condition)
-            return self.select_all(query)
-        except:
-            print query
+        query = "SELECT %s FROM %s " % (columns, table)
+        if condition is not None :
+            query += " WHERE %s" % (condition)
+        return self.select_all(query)
 
     def get_data_from_multiple_tables(
         self, columns, tables, aliases, join_type,
@@ -474,7 +471,13 @@ class Database(object) :
         count = rows[0][0]
         user_id = rows[0][1]
         if count == 1:
-            return user_id
+            column = "count(*)"
+            condition = "user_id = '%d' and is_active = 1" % user_id
+            rows = self.get_data(self.tblUsers, column, condition)
+            if rows[0][0] > 0:
+                return user_id
+            else:
+                return None
         else:
             return None
 
@@ -2067,7 +2070,7 @@ class KnowledgeDatabase(Database):
                 approval_status_text = "Pending"
             elif approval == 1 :
                 approval_status_text = "Approved"
-            elif approval_status_text == 2 :
+            elif approval == 2 :
                 approval_status_text = "Rejected"
             else :
                 approval_status_text = "Approved & Notified"
@@ -4241,7 +4244,7 @@ class KnowledgeDatabase(Database):
 
     def verify_username(self, username):
         columns = "count(*), user_id"
-        condition = "email_id='%s'" % (username)
+        condition = "email_id='%s' and is_active = 1" % (username)
         rows = self.get_data(self.tblUsers, columns, condition)
         count = rows[0][0]
         if count == 1:

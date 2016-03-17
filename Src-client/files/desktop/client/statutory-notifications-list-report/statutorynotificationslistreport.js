@@ -110,7 +110,6 @@ $("#show-button").click(function(){
         displayMessage("Select From Date");
     }
     else{
-
         function onSuccess(data){
             $(".grid-table-rpt").show();
             loadStatutoryNotificationsList(data['statutory_wise_notifications']);
@@ -121,7 +120,7 @@ $("#show-button").click(function(){
 
         client_mirror.getStatutoryNotificationsListReport(
             countriesNameVal, domainNameVal, businessgroupid, legalentityid, divisionid, unitid, level1id, fromdate, todate,
-            function (error, response){
+            function (error, response){                
                 if(error == null){
                     onSuccess(response);
                 }
@@ -238,7 +237,7 @@ function loadauto_domains (textval) {
   document.getElementById('selectboxview-domains').style.display = 'block';
   var domains = domainsList;
   var suggestions = [];
-  $('#autocompleteview-domains ul').empty();
+  $('#selectboxview-domains ul').empty();
   if(textval.length>0){
     for(var i in domains){
         if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);

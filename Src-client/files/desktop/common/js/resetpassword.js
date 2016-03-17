@@ -94,13 +94,8 @@ $(document).ready(function(){
   }
 
   function onFailure(error){
-    console.log("inside onFailure"+error);
-    alert(error);
-    // if(error == "InvalidResetToken"){
-    //   displayMessage("Invalid Reset Token");
-    // }
-    // $(".error-message").html(status);
-    // window.location.href='/knowledge/login';
+    $(".error-message").html("Invalid Reset Token");
+    $(".error-message").show();
 
   }
   url = window.location.href;
