@@ -940,15 +940,18 @@ class ClientDatabase(Database):
         condition = " 1 "
         rows = None
         if user_id > 0:
+            print "inside if"
             condition = "  user_id = '%d'" % user_id
             rows = self.get_data(
                 self.tblUserUnits, columns, condition
             )
         else:
+            print "inside else"
             rows = self.get_data(
                 self.tblUnits, columns, condition
             )
         unit_ids = rows[0][0]
+        print unit_ids
 
         columns = "group_concat(division_id), group_concat(legal_entity_id), "+\
         "group_concat(business_group_id)"
