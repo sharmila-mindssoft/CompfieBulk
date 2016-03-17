@@ -136,7 +136,7 @@ def process_get_statutories_by_unit(
     domain_id = request.domain_id
     level_1_statutory_name = request.level_1_statutory_name
     compliance_frequency = request.compliance_frequency
-    country_id = 1
+    country_id = request.country_id
     statutory_wise_compliances = db.get_statutory_wise_compliances(
         unit_id,
         domain_id, level_1_statutory_name,

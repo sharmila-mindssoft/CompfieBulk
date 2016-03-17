@@ -533,15 +533,18 @@ class GetPastRecordsFormData(Request):
         }
 
 class GetStatutoriesByUnit(Request):
-    def __init__(self, unit_id, domain_id, level_1_statutory_name, compliance_frequency):
+    def __init__(self, unit_id, domain_id, level_1_statutory_name, 
+        compliance_frequency, country_id):
         self.unit_id = unit_id
         self.domain_id = domain_id
         self.level_1_statutory_name = level_1_statutory_name
         self.compliance_frequency = compliance_frequency
+        self.country_id = country_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["unit_id", "domain_id", "level_1_statutory_name", "compliance_frequency"])
+        data = parse_dictionary(data, ["unit_id", "domain_id", 
+            "level_1_statutory_name", "compliance_frequency", "country_id"])
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         domain_id = data.get("domain_id")
@@ -550,7 +553,12 @@ class GetStatutoriesByUnit(Request):
         level_1_statutory_name = parse_structure_OptionalType_CustomTextType_100(level_1_statutory_name)
         compliance_frequency = data.get("compliance_frequency")
         compliance_frequency = parse_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
-        return GetStatutoriesByUnit(unit_id, domain_id, level_1_statutory_name, compliance_frequency)
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        return GetStatutoriesByUnit(
+            unit_id, domain_id, level_1_statutory_name, 
+            compliance_frequency, country_id
+        )
 
     def to_inner_structure(self):
         return {
@@ -558,6 +566,7 @@ class GetStatutoriesByUnit(Request):
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
             "level_1_statutory_name": to_structure_OptionalType_CustomTextType_100(self.level_1_statutory_name),
             "compliance_frequency": to_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id)
         }
 
 class SavePastRecords(Request):

@@ -940,18 +940,15 @@ class ClientDatabase(Database):
         condition = " 1 "
         rows = None
         if user_id > 0:
-            print "inside if"
             condition = "  user_id = '%d'" % user_id
             rows = self.get_data(
                 self.tblUserUnits, columns, condition
             )
         else:
-            print "inside else"
             rows = self.get_data(
                 self.tblUnits, columns, condition
             )
         unit_ids = rows[0][0]
-        print unit_ids
 
         columns = "group_concat(division_id), group_concat(legal_entity_id), "+\
         "group_concat(business_group_id)"
@@ -1775,12 +1772,10 @@ class ClientDatabase(Database):
                     assingee_name = "%s - %s" % (
                         compliance["employee_code"], compliance["employee_name"]
                     )
-                    print "getting for : {}".format(compliance_name)
                     due_dates = []
                     statutory_dates_list = []
                     if ((compliance["frequency_id"] == 2) or (compliance["frequency_id"] == 3)):
                         if compliance["repeats_type_id"] == 1:# Days
-                            print "repeating for days"
                             due_dates, statutory_dates = self.calculate_due_date(
                                 repeat_by = 1,
                                 repeat_every = compliance["repeat_every"],
@@ -1788,11 +1783,7 @@ class ClientDatabase(Database):
                                 domain_id=domain_id,
                                 country_id=country_id
                             )
-                            print "due_dates : {}, statutory_dates: {}".format(
-                                due_dates, statutory_dates
-                            )
                         elif compliance["repeats_type_id"] == 2:# Months
-                            print "repeating for months"
                             due_dates, statutory_dates_list = self.calculate_due_date(
                                 statutory_dates = compliance["statutory_dates"],
                                 repeat_by = 2,
@@ -1800,9 +1791,6 @@ class ClientDatabase(Database):
                                 due_date = compliance["due_date"],
                                 domain_id=domain_id,
                                 country_id=country_id
-                            )
-                            print "due_dates : {}, statutory_dates_list:{}".format(
-                                due_dates, statutory_dates_list
                             )
                         elif compliance["repeats_type_id"] == 3:# years
                             due_dates, statutory_dates = self.calculate_due_date(
@@ -1882,7 +1870,6 @@ class ClientDatabase(Database):
                 result = True
             return result
         from_date, to_date = self.calculate_from_and_to_date_for_domain(country_id, domain_id)
-        print "from_date:{}, to_date:{}".format(from_date, to_date)
         due_dates = []
         statutory_dates_list = []
         # For Monthly Recurring compliances
@@ -1897,7 +1884,6 @@ class ClientDatabase(Database):
                     real_due_date = datetime.datetime(current_date.year - 1, month, date)
                 else:
                     real_due_date = due_date_guess
-                print "real_due_date:{}".format(real_due_date)
                 if from_date <= real_due_date <= to_date:
                     due_dates.append(
                         real_due_date
@@ -1910,7 +1896,6 @@ class ClientDatabase(Database):
                 else:
                     continue
         elif repeat_by:
-            print "inside repeat by"
             # For Compliances Recurring in days
             if repeat_by == 1:
                 previous_year_due_date = datetime.datetime(
@@ -1943,8 +1928,6 @@ class ClientDatabase(Database):
                 )
                 if r.months < 12:
                     due_dates.append(previous_due_date)
-        else:
-            print "inside else"
         return due_dates, statutory_dates_list
 
     def convert_base64_to_file(self, file_name, file_content, client_id):
@@ -5286,7 +5269,6 @@ class ClientDatabase(Database):
             #         assignee, concurrence, approval,
             #         unit_id, compliance_id
             #     )
-            print update_assign
             self.execute(update_assign)
 
             if history_id is not None :
@@ -5301,7 +5283,6 @@ class ClientDatabase(Database):
                 update_history = qry % (
                     due_date, assignee, approval, history_id
                 )
-                print update_history
                 self.execute(update_history)
 
         action = "Compliances reassigned %s to assignee %s" % (str(compliance_ids), assignee)
