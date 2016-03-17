@@ -4843,11 +4843,14 @@ class ClientDatabase(Database):
     def get_licence_holder_details(self, client_id):
         columns = "tcu.user_id, tcu.email_id, tcu.employee_name, tcu.employee_code," + \
             " tcu.contact_no, tcu.is_admin, tu.unit_code, tu.unit_name, tu.address," + \
-            " tcu.is_active"
-        tables = [self.tblUsers, self.tblUnits]
-        aliases = ["tcu", "tu"]
+            " tcu.is_active, tsp.service_provider_name"
+        tables = [self.tblUsers, self.tblUnits, self.tblServiceProviders]
+        aliases = ["tcu", "tu", "tsp"]
         join_type = "left join"
-        join_conditions = ["tcu.seating_unit_id = tu.unit_id"]
+        join_conditions = [
+            "tcu.seating_unit_id = tu.unit_id", 
+            "tcu.service_provider_id=tsp.service_provider_id"
+        ]
         where_condition = "1"
         return self.get_data_from_multiple_tables(
             columns, tables, aliases,
@@ -4881,7 +4884,7 @@ class ClientDatabase(Database):
                 employee_name = "%s - %s" % (row[3], row[2])
 
             if row[7] == None:
-                unit_name = "-"
+                unit_name = row[10]
             else:
                 unit_name = "%s - %s" % (row[6], row[7])
             user_id = row[0]
