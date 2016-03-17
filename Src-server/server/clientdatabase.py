@@ -1710,7 +1710,8 @@ class ClientDatabase(Database):
         return self.return_users(result)
 
     def get_statutory_wise_compliances(
-        self, unit_id, domain_id, level_1_statutory_name, frequency_name
+        self, unit_id, domain_id, level_1_statutory_name, frequency_name,
+        country_id
     ):
         condition = "1"
         if frequency_name:
@@ -1718,9 +1719,9 @@ class ClientDatabase(Database):
             if frequency_id is not None:
                 condition = "c.frequency_id = %d" % int(frequency_id)
 
-        compliance_ids_query = "SELECT group_concat(compliance_id) \
+        compliance_ids_query = "SELECT group_concat(distinct compliance_id) \
             FROM tbl_client_compliances \
-            WHERE client_statutory_id IN (SELECT group_concat(client_statutory_id) \
+            WHERE client_statutory_id IN (SELECT client_statutory_id \
             FROM tbl_client_statutories WHERE unit_id = %d AND domain_id = %d) \
             AND compliance_opted = 1 AND statutory_opted = 1" % (
                 unit_id, domain_id
@@ -1774,24 +1775,42 @@ class ClientDatabase(Database):
                     assingee_name = "%s - %s" % (
                         compliance["employee_code"], compliance["employee_name"]
                     )
+                    print "getting for : {}".format(compliance_name)
                     due_dates = []
                     statutory_dates_list = []
                     if ((compliance["frequency_id"] == 2) or (compliance["frequency_id"] == 3)):
                         if compliance["repeats_type_id"] == 1:# Days
+                            print "repeating for days"
                             due_dates, statutory_dates = self.calculate_due_date(
                                 repeat_by = 1,
                                 repeat_every = compliance["repeat_every"],
-                                due_date = compliance["due_date"]
+                                due_date = compliance["due_date"],
+                                domain_id=domain_id,
+                                country_id=country_id
+                            )
+                            print "due_dates : {}, statutory_dates: {}".format(
+                                due_dates, statutory_dates
                             )
                         elif compliance["repeats_type_id"] == 2:# Months
+                            print "repeating for months"
                             due_dates, statutory_dates_list = self.calculate_due_date(
-                                statutory_dates = compliance["statutory_dates"]
+                                statutory_dates = compliance["statutory_dates"],
+                                repeat_by = 2,
+                                repeat_every = compliance["repeat_every"],
+                                due_date = compliance["due_date"],
+                                domain_id=domain_id,
+                                country_id=country_id
+                            )
+                            print "due_dates : {}, statutory_dates_list:{}".format(
+                                due_dates, statutory_dates_list
                             )
                         elif compliance["repeats_type_id"] == 3:# years
                             due_dates, statutory_dates = self.calculate_due_date(
                                 repeat_by = 3,
                                 repeat_every = compliance["repeat_every"],
-                                due_date = compliance["due_date"]
+                                due_date = compliance["due_date"],
+                                domain_id=domain_id,
+                                country_id=country_id
                             )
                     elif (compliance["frequency_id"] == 1):
                         pass
@@ -1833,20 +1852,41 @@ class ClientDatabase(Database):
         else:
             return False
 
+    def calculate_from_and_to_date_for_domain(self, country_id, domain_id):
+        columns = "period_from, period_to"
+        condition = "country_id = '%d' and domain_id = '%d'" % (
+            country_id, domain_id
+        )
+        rows = self.get_data(self.tblClientConfigurations, columns, condition)
+        period_from = rows[0][0]
+        period_to = rows[0][0]
+        to_date = self.get_date_time()
+        current_year = to_date.year
+        previous_year = current_year-1
+        from_date = datetime.datetime(previous_year, period_from, 1)
+        r = relativedelta.relativedelta(to_date, from_date)
+        no_of_years = r.years
+        no_of_months = r.months
+        if no_of_years is not 0 or no_of_months >= 12:
+            from_date = datetime.datetime(current_year, period_from, 1)
+        return from_date, to_date
+
     def calculate_due_date(
-            self, statutory_dates = None, repeat_by = None, repeat_every = None, due_date = None
-        ):
+        self, country_id, domain_id, statutory_dates = None, repeat_by = None, 
+        repeat_every = None, due_date = None
+    ):
         def is_future_date(test_date):
             result = False
             current_date = datetime.datetime.today()
             if ((current_date - test_date).days < 0):
                 result = True
             return result
-
+        from_date, to_date = self.calculate_from_and_to_date_for_domain(country_id, domain_id)
+        print "from_date:{}, to_date:{}".format(from_date, to_date)
         due_dates = []
         statutory_dates_list = []
         # For Monthly Recurring compliances
-        if statutory_dates:
+        if statutory_dates and len(json.loads(statutory_dates)) > 1:
             for statutory_date in json.loads(statutory_dates):
                 date = statutory_date["statutory_date"]
                 month = statutory_date["statutory_month"]
@@ -1857,25 +1897,43 @@ class ClientDatabase(Database):
                     real_due_date = datetime.datetime(current_date.year - 1, month, date)
                 else:
                     real_due_date = due_date_guess
-                due_dates.append(
-                    real_due_date
-                )
-                statutory_dates_list.append(
-                    core.StatutoryDate(
-                        date, month, statutory_date["trigger_before_days"]
+                print "real_due_date:{}".format(real_due_date)
+                if from_date <= real_due_date <= to_date:
+                    due_dates.append(
+                        real_due_date
                     )
-                )
+                    statutory_dates_list.append(
+                        core.StatutoryDate(
+                            date, month, statutory_date["trigger_before_days"]
+                        )
+                    )
+                else:
+                    continue
         elif repeat_by:
+            print "inside repeat by"
             # For Compliances Recurring in days
             if repeat_by == 1:
                 previous_year_due_date = datetime.datetime(
                     due_date.year - 1, due_date.month, due_date.day
                 )
-                due_dates.append(previous_year_due_date)
+                if from_date <= previous_year_due_date <= to_date:
+                    due_dates.append(previous_year_due_date)
                 iter_due_date = previous_year_due_date
                 while not is_future_date(iter_due_date):
                     iter_due_date = iter_due_date + datetime.timedelta(days = repeat_every)
-                    due_dates.append(iter_due_date)
+                    if from_date <= iter_due_date <= to_date:
+                        due_dates.append(iter_due_date)
+            elif repeat_by == 2:
+                previous_year_due_date = datetime.datetime(
+                    due_date.year - 1, due_date.month, due_date.day
+                )
+                if from_date <= previous_year_due_date <= to_date:
+                    due_dates.append(previous_year_due_date)
+                iter_due_date = previous_year_due_date 
+                while not is_future_date(iter_due_date):
+                    iter_due_date = iter_due_date + relativedelta.relativedelta(months = repeat_every)
+                    if from_date <= iter_due_date <= to_date:
+                        due_dates.append(iter_due_date)   
             elif repeat_by == 3:
                 previous_due_date = datetime.datetime(
                     due_date.year - repeat_every, due_date.month, due_date.day
@@ -1885,6 +1943,8 @@ class ClientDatabase(Database):
                 )
                 if r.months < 12:
                     due_dates.append(previous_due_date)
+        else:
+            print "inside else"
         return due_dates, statutory_dates_list
 
     def convert_base64_to_file(self, file_name, file_content, client_id):

@@ -136,10 +136,11 @@ def process_get_statutories_by_unit(
     domain_id = request.domain_id
     level_1_statutory_name = request.level_1_statutory_name
     compliance_frequency = request.compliance_frequency
+    country_id = 1
     statutory_wise_compliances = db.get_statutory_wise_compliances(
         unit_id,
         domain_id, level_1_statutory_name,
-        compliance_frequency
+        compliance_frequency, country_id
     )
     users = db.get_users_by_unit_and_domain(unit_id, domain_id)
     return clienttransactions.GetStatutoriesByUnitSuccess(
