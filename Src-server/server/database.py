@@ -2716,8 +2716,9 @@ class KnowledgeDatabase(Database):
             file_size = 0
             file_content = ""
             saved_file_name = saved_file[0]
-            if len(saved_file_name) == 0 :
-                saved_file_name = None
+            if saved_file_name :
+                if len(saved_file_name) == 0 :
+                    saved_file_name = None
 
             if file_list is None :
                 pass
