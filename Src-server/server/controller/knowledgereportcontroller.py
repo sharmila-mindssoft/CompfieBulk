@@ -5,7 +5,7 @@ __all__ = [
     "process_knowledge_report_request"
 ]
 
-forms = [12, 13, 14, 15, 16, 17, 26]
+forms = [12, 13, 14, 15, 16, 17]
 
 
 def process_knowledge_report_request(request, db) :

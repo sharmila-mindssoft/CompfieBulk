@@ -5,7 +5,7 @@ __all__ = [
     "process_knowledge_master_request",
 ]
 
-forms = [1, 2, 5, 6, 7, 8, 9, 10]
+forms = [5, 6, 7, 8, 9, 10]
 
 #
 # knowledge - master - request

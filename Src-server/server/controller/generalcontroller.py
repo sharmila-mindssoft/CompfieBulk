@@ -13,7 +13,7 @@ __all__ = [
     "process_update_notification_status"
 ]
 
-forms = [1, 2, 26]
+forms = [1, 2]
 
 def process_general_request(request, db) :
     session_token = request.session_token
@@ -58,26 +58,32 @@ def validate_user_session(db, session_token):
     return db.validate_session_token(session_token)
 
 def validate_user_forms(db, user_id, form_ids, requet):
-    print form_ids
-    print type(requet)
-    print user_id
+    # if user_id == 0 and type(requet) in [
+    #     general.GetCountries,
+    #     general.GetCountriesForUser,
+    #     general.GetDomains,
+    # ] :
+    #     return True
+
+    if user_id == 0 and type(requet) in [
+        general.UpdateNotificationStatus,
+        general.UpdateUserProfile,
+        general.GetAuditTrails
+    ] :
+        return False
+
     if type(requet) not in [
         general.GetNotifications,
         general.UpdateNotificationStatus,
         general.UpdateUserProfile,
-        general.UpdateUserProfile
+        general.GetAuditTrails
     ] :
         valid = 0
         if user_id is not None :
-            if user_id == 0 :
-                alloted_forms = [1, 2, 3, 4]
-            else :
-                alloted_forms = db.get_user_form_ids(user_id)
-                alloted_forms = [int(x) for x in alloted_forms.split(",")]
-            print alloted_forms
-            print form_ids
-            for i in form_ids :
-                if i in alloted_forms :
+            alloted_forms = db.get_user_form_ids(user_id)
+            alloted_forms = [int(x) for x in alloted_forms.split(",")]
+            for i in alloted_forms :
+                if i in form_ids :
                     valid += 1
             if valid > 0 :
                 return True

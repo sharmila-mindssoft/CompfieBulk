@@ -5,7 +5,7 @@ __all__ =[
     "process_techno_report_request"
 ]
 
-forms = [22, 23, 24, 25, 26]
+forms = [22, 23, 24, 25]
 
 def process_techno_report_request(request, db):
     session_token = request.session_token
