@@ -6,6 +6,7 @@ var cCount;
 var two_level_approve;
 var client_admin;
 var accordionstatus = true;
+var currentUser;
 
 
 function clearMessage() {
@@ -59,6 +60,7 @@ function convert_date (data){
 }
 
 function load_allcompliances(userId, userName){
+  currentUser = userId;
   $("#reassign-view").hide();
   $("#reassign-detailview").show();
   $("#currentassignee").text(userName);
@@ -370,6 +372,9 @@ function submitcompliance(){
     $("#reassign-view").show();
     $("#reassign-detailview").hide();
     $("#currentassignee").text('');
+    $('#assignee').empty();
+    $('#concurrence').empty();
+    $('#approval').empty();
     reassignUserId = null;
   }
   function onFailure(error){
@@ -501,25 +506,21 @@ function loadUser(userType){
   var temp_assignee = null;
   var temp_concurrence = null;
   var temp_approval = null;
-  //var temp_id = null;
 
   if(userType == 'assignee'){
     selectedUnit = $("#assignee_unit").val();
     userClass = 'assigneelist';
-    /*if($('.assigneelist.active').attr('id') != undefined)
-      temp_id = parseInt($('.assigneelist.active').attr('id'));*/
+   
   }
   else if(userType == 'concurrence'){
     selectedUnit = $("#concurrence_unit").val();
     userClass = 'concurrencelist';
-    /*if($('.concurrencelist.active').attr('id') != undefined)
-      temp_id = parseInt($('.concurrencelist.active').attr('id'));*/
+    
   }
   else{
     selectedUnit = $("#approval_unit").val();
     userClass = 'approvallist';
-    /*if($('.approvallist.active').attr('id') != undefined)
-      temp_id = parseInt($('.approvallist.active').attr('id'));*/
+    
   }
   
   $('#'+userType).empty();
@@ -568,11 +569,7 @@ function loadUser(userType){
     if((assigneeUserId == null || assigneeUserId != client_admin)
     && (approvalUserId == null || approvalUserId != client_admin) 
     && (concurrenceUserId == null || concurrenceUserId != client_admin)){
-      /*if(temp_id == client_admin){
-        str='<li id="'+client_admin+'" class="'+userClass+' active" > Admin </li>';
-      }else{
-        str='<li id="'+client_admin+'" class="'+userClass+'" > Admin </li>';
-      }*/
+     
       str='<li id="'+client_admin+'" class="'+userClass+'" > Client Admin </li>';
     }
   }
@@ -601,12 +598,8 @@ function loadUser(userType){
 
       if(conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
         && (approvalUserId == null || approvalUserId != userId) 
-        && (concurrenceUserId == null || concurrenceUserId != userId)){
-        /*if(temp_id == userId){
-          str += '<li id="'+userId+'" class="'+userClass+ ' active'+'" >'+userName+'</li>';
-        }else{
-          str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
-        }*/
+        && (concurrenceUserId == null || concurrenceUserId != userId) && (currentUser != userId || userType != 'assignee')){
+        
         str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
       }
     }
@@ -669,6 +662,43 @@ $("#approval").click(function(event){
   }
 });
 
+
+$("#filter_assignee").keyup( function() {
+    var filter = $("#filter_assignee").val().toLowerCase();
+    var lis = document.getElementsByClassName('assigneelist');
+    for (var i = 0; i < lis.length; i++) {
+      var name = lis[i].innerHTML;
+      if (~name.toLowerCase().indexOf(filter))
+        lis[i].style.display = 'list-item';
+      else
+        lis[i].style.display = 'none';
+    }
+  });
+
+  $("#filter_concurrence").keyup( function() {
+    var filter = $("#filter_concurrence").val().toLowerCase();
+    var lis = document.getElementsByClassName('concurrencelist');
+    for (var i = 0; i < lis.length; i++) {
+      var name = lis[i].innerHTML;
+      if (~name.toLowerCase().indexOf(filter))
+        lis[i].style.display = 'list-item';
+      else
+        lis[i].style.display = 'none';
+    }
+  });
+
+  $("#filter_approval").keyup( function() {
+    var filter = $("#filter_approval").val().toLowerCase();
+    var lis = document.getElementsByClassName('approvallist');
+    for (var i = 0; i < lis.length; i++) {
+      var name = lis[i].innerHTML;
+      if (~name.toLowerCase().indexOf(filter))
+        lis[i].style.display = 'list-item';
+      else
+        lis[i].style.display = 'none';
+    }
+  });
+
 $('#assignee_unit').change(function() {
     loadUser('assignee');
 });
@@ -681,6 +711,21 @@ $('#approval_unit').change(function() {
     loadUser('approval');
 });
 
+$('#reason').keyup(function(e)
+  {
+  var maxLength = 500;
+  var textlength = this.value.length;
+  if (textlength >= maxLength)
+  {
+  $('#counter').html('You cannot write more then ' + maxLength + ' characters!');
+  this.value = this.value.substring(0, maxLength);
+  e.preventDefault();
+  }
+  else
+  {
+  $('#counter').html((maxLength - textlength) + ' characters left.');
+  }
+  });
 function validate_firsttab(){
   return true;
 }
