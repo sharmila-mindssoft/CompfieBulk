@@ -195,7 +195,6 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
-        print query
         return self.select_all(query)
 
     def insert(self, table, columns, values, client_id=None) :
@@ -570,6 +569,16 @@ class KnowledgeDatabase(Database):
         if row :
             user_id = row[0]
         return user_id
+
+    def get_user_form_ids(self, user_id) :
+        q = "select t1.form_ids from tbl_user_groups t1 \
+            INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id \
+            AND t2.user_id = %s" % (user_id)
+        row = self.select_one(q)
+        if row :
+            return row[0]
+        else :
+            return None
 
     def encrypt(self, value):
         m = hashlib.md5()

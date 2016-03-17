@@ -1,14 +1,21 @@
 from protocol import login, knowledgetransaction
-from generalcontroller import validate_user_session
+from generalcontroller import validate_user_session, validate_user_forms
 
 __all__ = [
     "process_knowledge_transaction_request"
 ]
 
+forms = [10, 11]
+
 def process_knowledge_transaction_request(request, db) :
     session_token = request.session_token
     request_frame = request.request
     user_id = validate_user_session(db, session_token)
+    if user_id is not None :
+        is_valid = validate_user_forms(db, user_id, forms, request_frame)
+        if is_valid is not True :
+            return login.InvalidSessionToken()
+
     if user_id is None:
         return login.InvalidSessionToken()
 
