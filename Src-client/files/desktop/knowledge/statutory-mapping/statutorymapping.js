@@ -959,6 +959,10 @@ $("#temp_addcompliance").click(function() {
   uploadFile = null;
   $("#uploaded_fileview").hide();
   $("#uploaded_filename").html('');
+  $('.multipleinput').prop("checked",false);
+  $('.multipleselectnone').show();
+  $('.multipleselect').hide();
+  $('#multipleview').hide();
   resetvalues();
   load_compliance();
   }
