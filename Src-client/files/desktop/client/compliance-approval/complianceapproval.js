@@ -1,6 +1,6 @@
 var approvalList;
 var file_list = [];
-
+var action;
 function clearMessage() {
     $(".error-message").hide();
     $(".error-message").text("");
@@ -124,7 +124,7 @@ function showSideBar(idval, data){
     }
 
     $(".sidebar-remarks span", cloneValSide).html(data["remarks"]);
-    var action = data["action"];
+    action = data["action"];
     if(action == "Approve"){
         $(".action-tr", cloneValSide).show();
         
@@ -166,8 +166,8 @@ function showSideBar(idval, data){
         $(".approval-action", cloneValSide).hide();
         
         $(".sidebar-remarks-textarea", cloneValSide).show();
-        $(".sidebar-action", cloneValSide).on("change", function(e, data){ 
-            if($(".sidebar-action option:selected", cloneValSide).val() == 'Reject'){
+        $(".concurr-action", cloneValSide).on("change", function(e, data){ 
+            if($(".concurr-action option:selected", cloneValSide).val() == 'Reject'){
                 $(".sidebar-remarks-textarea", cloneValSide).show();
             }
             else{
@@ -182,8 +182,8 @@ function showSideBar(idval, data){
         $(".approval-action", cloneValSide).show();
 
         $(".sidebar-remarks-textarea", cloneValSide).show(); 
-        $(".sidebar-action", cloneValSide).on("change", function(e, data){ 
-            if($(".sidebar-action option:selected", cloneValSide).val() == 'Reject'){
+        $(".approval-action", cloneValSide).on("change", function(e, data){ 
+            if($(".approval-action option:selected", cloneValSide).val() == 'Reject'){
                 $(".sidebar-remarks-textarea", cloneValSide).show();
             }
             else{
@@ -198,9 +198,20 @@ function showSideBar(idval, data){
         var next_due_date;
         var validity_date;
         compliance_history_id = data['compliance_history_id'];
-
-        approval_status = $(".sidebar-action option:selected").val();
+        if(action  ==  "Approve"){
+            approval_status = $(".approval-action option:selected").val();        
+        }
+        if(action  ==  "Concur"){
+            approval_status = $(".concurr-action option:selected").val();        
+        }
+        if(action  ==  "Reject Concurrence"){
+            approval_status = $(".concurr-action option:selected").val();        
+        }
+        if(action  ==  "Reject Approval"){
+            approval_status = $(".approval-action option:selected").val();        
+        }
         console.log(approval_status);
+        
         if(approval_status == ''){
             displayMessage("Select Any Action");
             return false;

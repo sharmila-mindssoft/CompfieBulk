@@ -679,7 +679,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('domainlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0) 
+      if (~name.toLowerCase().indexOf(filter)) 
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -691,7 +691,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('actlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0) 
+      if (~name.toLowerCase().indexOf(filter)) 
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -703,7 +703,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('frequencylist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0) 
+      if (~name.toLowerCase().indexOf(filter)) 
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -716,7 +716,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('countrylist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0) 
+      if (~name.toLowerCase().indexOf(filter)) 
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -728,7 +728,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('businessgrouplist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0) 
+      if (~name.toLowerCase().indexOf(filter)) 
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -740,7 +740,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('legalentitylist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0) 
+      if (~name.toLowerCase().indexOf(filter)) 
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -752,7 +752,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('divisionlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0) 
+      if (~name.toLowerCase().indexOf(filter)) 
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -765,7 +765,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('unitlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (name.toLowerCase().indexOf(filter) == 0) 
+      if (~name.toLowerCase().indexOf(filter)) 
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';

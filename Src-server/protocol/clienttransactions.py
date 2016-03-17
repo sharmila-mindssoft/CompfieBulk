@@ -328,6 +328,36 @@ class GetComplianceForUnits(Request):
             )
         }
 
+class NewUnitSettings(object):
+    def __init__(self, user_id, unit_ids, domain_id, country_id):
+        self.user_id = user_id
+        self.unit_ids = unit_ids
+        self.domain_id = domain_id
+        self.country_id = country_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "user_id", "unit_ids", "domain_id", "country_id"
+        ])
+        user_id = data.get("user_id")
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
+        unit_ids = data.get("unit_ids")
+        unit_ids = parse_structure_VectorType_UnsignedIntegerType_32(unit_ids)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        return NewUnitSettings(user_id, unit_ids, domain_id, country_id)
+
+    def to_structure(self):
+        return {
+            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
+            "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id)
+        }
+
 class SaveAssignedCompliance(Request):
     def __init__(
         self, country_id, assignee, assignee_name,

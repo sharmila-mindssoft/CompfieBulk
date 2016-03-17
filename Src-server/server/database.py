@@ -2070,11 +2070,10 @@ class KnowledgeDatabase(Database):
                 approval_status_text = "Pending"
             elif approval == 1 :
                 approval_status_text = "Approved"
-            elif approval_status_text == 2 :
+            elif approval == 2 :
                 approval_status_text = "Rejected"
             else :
                 approval_status_text = "Approved & Notified"
-
 
             statutory = core.StatutoryMapping(
                 d["country_id"], d["country_name"],
@@ -2717,8 +2716,9 @@ class KnowledgeDatabase(Database):
             file_size = 0
             file_content = ""
             saved_file_name = saved_file[0]
-            if len(saved_file_name) == 0 :
-                saved_file_name = None
+            if saved_file_name :
+                if len(saved_file_name) == 0 :
+                    saved_file_name = None
 
             if file_list is None :
                 pass

@@ -5255,11 +5255,11 @@ class ClientDatabase(Database):
         current_time_stamp = self.get_date_time()
         due_date = datetime.datetime(due_date.year, due_date.month, due_date.day)
         ageing = (current_time_stamp - due_date).days
-        # compliance_status = " %d days left" % abs(ageing)
+        compliance_status = " %d days left" % abs(ageing)
         if ageing > 0:
             compliance_status = "Overdue by %d days" % abs(ageing)
             return ageing, compliance_status
-        return 0, None
+        return 0, compliance_status
 
 
     def get_current_compliances_list(self, session_user, client_id):

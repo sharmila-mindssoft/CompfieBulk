@@ -1,6 +1,7 @@
 var assignedStatutoriesList;
 var sList;
 var assignedStatutories = [];
+var accordionstatus = true;
 
 function clearMessage() {
   $(".error-message").hide();
@@ -30,6 +31,7 @@ function actstatus(element){
       $('.cremarkadd'+this.value).hide();                     
     });  
   }
+  accordionstatus = false;
 }
 
 function compliancestatus(element, viewremarks){
@@ -124,7 +126,7 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
 
       var acttableRow=$('#act-templates .font1 .tbody-heading');
       var clone=acttableRow.clone();
-      $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:100px;"> <label for="act'+actCount+'" style="margin-top:100px;"></label> ');
+      $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:100px;"> <label for="act'+actCount+'" style="margin-top:100px;" class="act-label"></label> ');
       
       $('.actname', clone).html('<div style="float:left;margin-top:5px;">'+actname+'</div> <div style="float:right; width:500px;" class="default-display-none remark'+actCount+
         '" ><div style="float:right;  width:250px;margin-top:-3px;"> <input type="text" maxlength="250" id="remarkvalue'+actCount+
@@ -197,15 +199,21 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
     }
   });
   $(document).ready(function($) {
-      $("#accordion").find(".accordion-toggle").click(function(){
+    $(".act-label").on("click", function(event){
+      accordionstatus = false;
+    });
+    $("#accordion").find(".accordion-toggle").click(function(){
+      if(accordionstatus){
         //Expand or collapse this panel
-        //$(this).next().slideToggle('fast');
-        //alert($("#accordion"));
         $(this).next('tbody').slideToggle('fast');
         //Hide the other panels
         $(".accordion-content").not($(this).next()).slideUp('fast');
-      });
+      }else{
+        accordionstatus = true;
+      }
+      
     });
+  });
 }
 
 function submit_statutory(){
@@ -247,6 +255,8 @@ $('.close').click(function(){
   $('.overlay').css("visibility","hidden");
   $('.overlay').css("opacity","0");
 });
+
+
 
 $("#submit").click(function() {
 

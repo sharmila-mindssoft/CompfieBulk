@@ -45,10 +45,10 @@ function initialize(){
     );
 }
 $("#show-button").click(function(){ 
-    var countries = parseInt($("#country").val());
+    var countries = $("#country").val();
     countriesNameVal = $("#countryval").val();
     //Domain    
-    var domain = parseInt($("#domain").val());
+    var domain = $("#domain").val();
     domainNameVal = $("#domainval").val();
     //Usertype
     usertype = $("#user-type").val();
@@ -96,6 +96,9 @@ $("#show-button").click(function(){
     else if(domain == ""){
         displayMessage("Enter Domain");  
     }
+    else if(usertype  == null){
+        displayMessage("Select Usertype");     
+    }
     else if(fromdate != '' && todate ==''){
         displayMessage("Select To Date");
     }
@@ -111,7 +114,7 @@ $("#show-button").click(function(){
         }
 
         client_mirror.getComplianceActivityReportData(
-           usertype, userid,  countries, domain, level1id, unitid, complianceid, fromdate, todate,
+           usertype, userid,  parseInt(countries), parseInt(domain), level1id, unitid, complianceid, fromdate, todate,
             function (error, response){
                 if(error == null){
                     onSuccess(response);
