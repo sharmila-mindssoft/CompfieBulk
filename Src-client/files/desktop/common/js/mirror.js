@@ -290,6 +290,11 @@ function initMirror() {
         apiRequest("general", request, callback);
     }
 
+    function getDomainReport(callback) {
+        var request = ["GetDomainsReport", {}];
+        apiRequest("knowledge_report", request, callback);
+    }
+
     //Country Master
 
     function saveCountry(countryName, callback) {
@@ -324,6 +329,11 @@ function initMirror() {
     function getCountryListForUser(callback) {
         var request = ["GetCountriesForUser", {}];
         apiRequest("general", request, callback);
+    }
+
+    function getCountryReport(callback) {
+        var request = ["GetCountriesReport", {}];
+        apiRequest("knowledge_report", request, callback)
     }
 
     //Industry Master
@@ -1440,12 +1450,14 @@ function initMirror() {
         updateDomain: updateDomain,
         changeDomainStatus: changeDomainStatus,
         getDomainList: getDomainList,
+        getDomainReport: getDomainReport,
 
         saveCountry: saveCountry,
         updateCountry: updateCountry,
         changeCountryStatus: changeCountryStatus,
         getCountryList: getCountryList,
         getCountryListForUser: getCountryListForUser,
+        getCountryReport: getCountryReport,
 
         saveIndustry: saveIndustry,
         updateIndustry: updateIndustry,
