@@ -5,6 +5,7 @@ var reassignUserId=null;
 var cCount;
 var two_level_approve;
 var client_admin;
+var accordionstatus = true;
 
 
 function clearMessage() {
@@ -40,6 +41,7 @@ function actstatus(element){
       this.checked = false;                     
     });  
   }
+  accordionstatus = false;
 }
 
 function convert_date (data){
@@ -196,10 +198,14 @@ function load_allcompliances(userId, userName){
 
   $(document).ready(function($) {
     $('#accordion').find('.accordion-toggle').click(function(){
-      //Expand or collapse this panel
-      $(this).next().slideToggle('fast');
-      //Hide the other panels
-      $(".accordion-content").not($(this).next()).slideUp('fast');
+      if(accordionstatus){
+        //Expand or collapse this panel
+        $(this).next().slideToggle('fast');
+        //Hide the other panels
+        $(".accordion-content").not($(this).next()).slideUp('fast');
+      }else{
+        accordionstatus = true;
+      }
     });
   });
 }
