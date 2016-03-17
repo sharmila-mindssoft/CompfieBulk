@@ -1326,7 +1326,8 @@ class ClientDatabase(Database):
             t1.compliance_applicable, t1.compliance_opted, \
             t1.compliance_remarks, \
             t2.compliance_task, t2.document_name, t2.statutory_mapping,\
-            t2.statutory_provision, t2.compliance_description \
+            t2.statutory_provision, t2.compliance_description, \
+            t3.is_new\
             FROM tbl_client_compliances t1 \
             INNER JOIN tbl_compliances t2 \
             ON t1.compliance_id = t2.compliance_id \
@@ -1343,7 +1344,8 @@ class ClientDatabase(Database):
             "not_applicable_remarks", "compliance_applicable",
             "compliance_opted", "compliance_remarks",
             "compliance_task", "document_name", "statutory_mapping",
-            "statutory_provision", "compliance_description"
+            "statutory_provision", "compliance_description",
+            "is_new"
         ]
         results = self.convert_to_dict(rows, columns)
         statutory_wise_compliances = {}
@@ -1387,13 +1389,15 @@ class ClientDatabase(Database):
                 name = r["compliance_task"]
 
             compliance = clienttransactions.ComplianceApplicability(
+                r["client_statutory_id"],
                 r["compliance_id"],
                 name,
                 r["compliance_description"],
                 provision,
                 bool(r["compliance_applicable"]),
                 bool(compliance_opted),
-                compliance_remarks
+                compliance_remarks,
+                not bool(r["is_new"])
             )
 
             level_1_statutories = statutory_wise_compliances.get(
@@ -1501,7 +1505,7 @@ class ClientDatabase(Database):
                 t1.compliance_opted=%s, \
                 t1.compliance_remarks='%s',\
                 t1.updated_by=%s, \
-                t1.updated_on='%s' \
+                t1.updated_on='%s', t2.is_new = 1 \
                 WHERE t2.unit_id = %s \
                 AND t1.client_statutory_id = %s \
                 AND t1.compliance_id = %s" % (
