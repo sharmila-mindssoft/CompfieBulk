@@ -3145,7 +3145,7 @@ def to_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping(da
     data = parse_dictionary(data)
     dict = {}
     for key, value in data.items():
-        key = to_structure_SignedIntegerType_8(key)
+        key = to_structure_UnsignedIntegerType_32(key)
         value = to_structure_RecordType_core_StatutoryMapping(value)
         dict[key] = value
     return dict

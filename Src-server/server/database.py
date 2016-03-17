@@ -2075,7 +2075,6 @@ class KnowledgeDatabase(Database):
             else :
                 approval_status_text = "Approved & Notified"
 
-
             statutory = core.StatutoryMapping(
                 d["country_id"], d["country_name"],
                 d["domain_id"], d["domain_name"],
