@@ -347,23 +347,27 @@ class RequestFormat(object):
 #
 
 class ComplianceDetail(object):
-    def __init__(self, current_compliances, upcoming_compliances):
+    def __init__(self, current_compliances, upcoming_compliances, current_date):
         self.current_compliances = current_compliances
         self.upcoming_compliances = upcoming_compliances
+        self.current_date = current_date
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["current_compliances", "upcoming_compliances"])
+        data = parse_dictionary(data, ["current_compliances", "upcoming_compliances", "current_date"])
         current_compliances = data.get("current_compliances")
         current_compliances = parse_structure_VectorType_RecordType_core_ActiveCompliance(current_compliances)
         upcoming_compliances = data.get("upcoming_compliances")
         upcoming_compliances = parse_structure_VectorType_RecordType_core_UpcomingCompliance(upcoming_compliances)
-        return ComplianceDetail(current_compliances, upcoming_compliances)
+        current_date = data.get("current_date")
+        current_date = parse_structure_CustomTextType_20(current_date)
+        return ComplianceDetail(current_compliances, upcoming_compliances, current_date)
 
     def to_structure(self):
         return {
             "current_compliances": to_structure_VectorType_RecordType_core_ActiveCompliance(self.current_compliances),
-            "upcoming_compliances": to_structure_VectorType_RecordType_core_UpcomingCompliance(self.upcoming_compliances)
+            "upcoming_compliances": to_structure_VectorType_RecordType_core_UpcomingCompliance(self.upcoming_compliances),
+            "current_date" : to_structure_CustomTextType_20(self.current_date)
         }
 
 #
