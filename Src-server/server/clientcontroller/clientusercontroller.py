@@ -30,7 +30,10 @@ def process_client_user_request(request, db) :
 def process_get_compliance_detail(db, request, session_user, client_id):
 	current_compliances_list = db.get_current_compliances_list(session_user, client_id)
 	upcoming_compliances_list = db.get_upcoming_compliances_list(session_user, client_id)
+	current_date_time = db.get_date_time()
+	str_current_date_time = db.datetime_to_string_time(current_date_time)
 	compliance_details = clientuser.ComplianceDetail(
+		current_date=str_current_date_time,
 		current_compliances = current_compliances_list,
 		upcoming_compliances = upcoming_compliances_list
 	)
