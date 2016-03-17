@@ -10,6 +10,7 @@ var statutoriesList;
 var two_level_approve;
 var client_admin;
 var domainsList;
+var accordionstatus = true;
 
 function clearMessage() {
   $(".error-message").hide();
@@ -74,6 +75,7 @@ function actstatus(element){
       this.checked = false;
     });
   }
+  accordionstatus = false;
 }
 
 function compliancestatus(element){
@@ -297,7 +299,6 @@ function load_secondwizard(){
       count++;
     }
   
-
   if(count <= 1){
     var norecordtableRow=$('#no-record-templates .font1');
     var noclone=norecordtableRow.clone();
@@ -309,10 +310,15 @@ function load_secondwizard(){
 
   $(document).ready(function($) {
     $('#accordion').find('.accordion-toggle').click(function(){
-      //Expand or collapse this panel
-      $(this).next().slideToggle('fast');
-      //Hide the other panels
-      $(".accordion-content").not($(this).next()).slideUp('fast');
+      if(accordionstatus){
+        //Expand or collapse this panel
+        $(this).next().slideToggle('fast');
+        //Hide the other panels
+        $(".accordion-content").not($(this).next()).slideUp('fast');
+      }else{
+        accordionstatus = true;
+      }
+      
     });
   });
 }
