@@ -336,6 +336,11 @@ function initMirror() {
         apiRequest("knowledge_report", request, callback)
     }
 
+    function getCountriesForGroup(callback) {
+        var request = ["GetCountriesForGroup", {}];
+        apiRequest("techno_transaction", request, callback);
+    }
+
     //Industry Master
     function saveIndustry(industryName, callback) {
         var request = [
@@ -1470,6 +1475,7 @@ function initMirror() {
         getCountryList: getCountryList,
         getCountryListForUser: getCountryListForUser,
         getCountryReport: getCountryReport,
+        getCountriesForGroup: getCountriesForGroup,
 
         saveIndustry: saveIndustry,
         updateIndustry: updateIndustry,
