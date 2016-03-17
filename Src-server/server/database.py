@@ -4522,12 +4522,28 @@ class KnowledgeDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return return_unit_details(result)
 
+    def get_submited_statutory(self, unit_id, domain_id):
+        q = "select client_statutory_id from tbl_client_statutories \
+            where unit_id = %s and domain_id = %s and submission_type = 1" % (
+                int(unit_id), int(domain_id)
+            )
+        rows = self.select_all(q)
+        if rows :
+            result = self.convert_to_dict(rows, ["client_statutory_id"])
+            return result
+        else :
+            return None
+
     def get_assign_statutory_wizard_two(
         self, country_id, geography_id, industry_id,
         domain_id, unit_id, user_id
     ):
+        # save_statutos = self.get_submited_statutory(unit_id, domain_id)
+        # if save_statutos is not None :
         if unit_id is not None :
             return self.return_unassign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, unit_id)
+
+        print "NEw compliance"
         q = "select parent_ids from tbl_geographies where geography_id = %s" % (int(geography_id))
         row = self.select_one(q)
         if row :
@@ -5074,7 +5090,6 @@ class KnowledgeDatabase(Database):
                 FROM tbl_client_compliances c \
                 INNER JOIN tbl_client_statutories s\
                 ON c.client_statutory_id = s.client_statutory_id\
-                AND s.geography_id = %s \
                 AND s.domain_id = %s \
                 AND s.unit_id = %s \
                 ) \
@@ -5082,8 +5097,11 @@ class KnowledgeDatabase(Database):
                     domain_id, country_id, industry_id, geography_id,
                     str("%" + str(geography_id) + ",%"),
                     (str(tuple(parent_ids))),
-                    geography_id, domain_id, unit_id
+                    domain_id, unit_id
                 )
+
+        print
+        print query
 
         rows = self.select_all(query)
         columns = [
