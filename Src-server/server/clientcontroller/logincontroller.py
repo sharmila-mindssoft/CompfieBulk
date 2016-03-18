@@ -86,7 +86,10 @@ def user_login_response(db, data, client_id, ip):
     )
 
 def admin_login_response(db, client_id, ip):
-    user_id = 0
+    column = "admin_id"
+    condition = "1"
+    rows = db.get_data(db.tblAdmin, column, condition)
+    user_id = rows[0][0]
     email_id = None
     session_type = 1  # web
     session_token = db.add_session(

@@ -741,6 +741,15 @@ function initClientMirror() {
         }
     }
 
+    function newUnitSettings(userId, unitIds, domainId, countryId) {
+        return {
+            "user_id": userId,
+            "unit_ids": unitIds,
+            "domain_id": domainId,
+            "country_id": countryId
+        }
+    }
+
     function saveAssignedComplianceFormData(
         countryId, assignee, assigneeName,
         concurrence, concurrenceName,
@@ -845,23 +854,26 @@ function initClientMirror() {
             var file = files[i];
             file_name = file.name
             file_size = file.size
+            console.log("file.size : "+file.size);
+            console.log("max_limit : "+max_limit);
             if (file_size > max_limit) {
                 callback("File max limit exceeded");
-            }
-            file_content = null;
-            if (file) {
-                convert_to_base64(file, file_name, file_size, function(file_content, name, size) {
-                    if (file_content == null) {
-                        callback("File content is empty")
-                    }
-                    result = uploadFileFormat(
-                            size, name, file_content
-                    );
-                    results.push(result);
-                    if (results.length == files.length){
-                        callback(results)
-                    }
-                });
+            }else{
+                file_content = null;
+                if (file) {
+                    convert_to_base64(file, file_name, file_size, function(file_content, name, size) {
+                        if (file_content == null) {
+                            callback("File content is empty")
+                        }
+                        result = uploadFileFormat(
+                                size, name, file_content
+                        );
+                        results.push(result);
+                        if (results.length == files.length){
+                            callback(results)
+                        }
+                    });
+                }
             }
         }
 
@@ -1577,6 +1589,7 @@ function initClientMirror() {
         getAssignComplianceForUnits: getAssignComplianceForUnits,
         statutoryDates: statutoryDates,
         assignCompliances: assignCompliances,
+        newUnitSettings: newUnitSettings,
         saveAssignedComplianceFormData: saveAssignedComplianceFormData,
 
         getPastRecordsFormData: getPastRecordsFormData,

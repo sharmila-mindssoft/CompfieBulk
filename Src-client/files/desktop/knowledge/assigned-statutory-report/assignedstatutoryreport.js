@@ -467,8 +467,14 @@ function loadauto_unit (textval) {
     			if (~getunitidname.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]);
     		}
     	}
-    	else{
+    	else if($("#legalentityid").val() == ''){
     		if(unit[i]['division_id']==$("#divisionid").val()){
+    			if (~getunitidname.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]);
+    		}
+    	}
+    	else{
+
+    		if(unit[i]['client_id']==$("#group-id").val()){
     			if (~getunitidname.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]);
     		}
     	}

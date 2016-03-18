@@ -159,7 +159,6 @@ class EmailHandler(Email):
     def send_knowledge_user_credentials(
         self, receiver, password, employee_name, employee_code
     ):
-        print "inside send_knowledge_user_credentials"
         subject = "Account Created"
         message = '''
             Dear %s, <br> \
@@ -274,29 +273,56 @@ class EmailHandler(Email):
             compliance_history_id
         )
         user_ids = "%s, %s" % (assignee_id, approver_id)
-        if concurrence_id != 0:
+        action = "approve"
+        if db.is_two_levels_of_approval() and concurrence_id != 0:
             user_ids = "%s, %s, %s" % (assignee_id, concurrence_id, approver_id)
+            action = "concur"
         receiver, employee_name = db.get_user_email_name(user_ids)
         assignee = employee_name.split(",")[0]
+        cc = "%s" % (receiver.split(",")[0])
         subject = "Task Completed"
         message = '''
         Dear %s,
         <br>
-        Task %s Completed Successfully.
+        %s has completed the task %s successfully. Review and %s
         ''' % (
-            assignee, compliance_name
+            employee_name.split(',')[1], assignee , compliance_name, action
+        )
+        self.send_email(receiver.split(',')[1], subject, message, cc)
+
+    def notify_task_approved(
+        self, db, compliance_history_id, approval_status
+    ):
+        assignee_id, concurrence_id, approver_id, compliance_name, due_date = db.get_compliance_history_details(
+            compliance_history_id
+        )
+        user_ids = "%s, %s" % (assignee_id, approver_id)
+        if db.is_two_levels_of_approval() and concurrence_id != 0:
+            user_ids = "%s, %s, %s" % (assignee_id, concurrence_id, approver_id)
+        receiver, employee_name = db.get_user_email_name(user_ids)
+        assignee = employee_name.split(",")[0]
+        subject = "Task %s" % approval_status
+        message = '''
+        Dear %s,
+        <br>
+        Task %s %s Successfully.
+        ''' % (
+            assignee, compliance_name, approval_status
         )
         cc = None
-        self.send_email(receiver, subject, message, cc)
-
-
-    # def embed_email_content(
-    #     content
-    # ):
-
-    #     template_loader = jinja2.FileSystemLoader(
-    #         os.path.join(ROOT_PATH, "Src-client")
-    #     )
-    #     template_env = jinja2.Environment(loader=template_loader)
-
-Email()
+        if db.is_two_levels_of_approval() and concurrence_id != 0:
+            cc = receiver.split(",")[1]
+        self.send_email(receiver.split(",")[0], subject, message, cc)
+        if approval_status == "Concurred":
+            cc = "%s" % (receiver.split(",")[0])
+            subject = "Task Concurred"
+            message = '''
+            Dear %s,
+            <br>
+            %s has completed the task %s successfully and %s has concurred the compliance.\
+            Review and approve the compliance
+            ''' % (
+                employee_name.split(',')[2], assignee , compliance_name, 
+                employee_name.split(',')[1], action
+            )
+            self.send_email(receiver.split(',')[2], subject, message, cc)   

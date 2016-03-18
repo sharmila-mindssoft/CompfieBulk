@@ -72,7 +72,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_clienttransactions_PastRecordUnits,
     parse_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500,
     parse_structure_VectorType_UnsignedIntegerType_32,
-    parse_structure_VectorType_RecodType_clienttransactions_NewUnitSettings
+    parse_structure_OptionalType_VectorType_UnsignedIntegerType_32,
+    parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -153,7 +154,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_PastRecordUnits,
     to_structure_VectorType_UnsignedIntegerType_32,
     to_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500,
-    to_structure_VectorType_RecodType_clienttransactions_NewUnitSettings
+    to_structure_OptionalType_VectorType_UnsignedIntegerType_32,
+    to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings
 )
 
 #
@@ -345,9 +347,9 @@ class NewUnitSettings(object):
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         unit_ids = data.get("unit_ids")
-        unit_ids = parse_structure_VectorType_UnsignedIntegerType_32(unit_ids)
+        unit_ids = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(unit_ids)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        domain_id = parse_structure_OptionalType_UnsignedIntegerType_32(domain_id)
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         return NewUnitSettings(user_id, unit_ids, domain_id, country_id)
@@ -355,8 +357,8 @@ class NewUnitSettings(object):
     def to_structure(self):
         return {
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
-            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
+            "unit_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.unit_ids),
+            "domain_id": to_structure_OptionalType_UnsignedIntegerType_32(self.domain_id),
             "country_id": to_structure_UnsignedIntegerType_32(self.country_id)
         }
 
@@ -402,7 +404,7 @@ class SaveAssignedCompliance(Request):
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(compliances)
         new_units = data.get("new_units")
-        new_units = parse_structure_VectorType_RecodType_clienttransactions_NewUnitSettings(new_units)
+        new_units = parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(new_units)
         return SaveAssignedCompliance(
             country_id, assignee, assignee_name,
             concurrence_person, concurrence_person_name,
@@ -420,7 +422,7 @@ class SaveAssignedCompliance(Request):
             "approval_person": to_structure_OptionalType_UnsignedIntegerType_32(self.approval_person),
             "approval_person_name": to_structure_OptionalType_CustomTextType_100(self.approval_person_name),
             "compliances": to_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(self.compliances),
-            "new_units": to_structure_VectorType_RecodType_clienttransactions_NewUnitSettings(self.new_units)
+            "new_units": parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(self.new_units)
         }
 
 class GetUserwiseCompliances(Request):
