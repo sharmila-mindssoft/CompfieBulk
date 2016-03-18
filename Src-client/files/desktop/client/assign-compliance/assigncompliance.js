@@ -695,7 +695,7 @@ function submitcompliance(){
             assigneeText = assignComplianceDomainVal + " domain ";
 
           if(assigneeInserUnits.length > 0){
-            assigneeText = assigneeInserUnitsVal + " unit(s) ";
+            assigneeText = assigneeText + assigneeInserUnitsVal + " unit(s) ";
           }else{
             assigneeInserUnits = null;
           } 
@@ -708,7 +708,7 @@ function submitcompliance(){
             concurrenceText = assignComplianceDomainVal + " domain ";
 
           if(concurrenceInserUnits.length > 0){
-            concurrenceText = concurrenceInserUnitsVal + " unit(s) "
+            concurrenceText = concurrenceText + concurrenceInserUnitsVal + " unit(s) "
           }else{
             concurrenceInserUnits = null;
           }
@@ -721,7 +721,7 @@ function submitcompliance(){
             approvalText = assignComplianceDomainVal + " domain ";
 
           if(approvalInserUnits.length > 0){
-            approvalText = approvalInserUnitsVal + " unit(s) "
+            approvalText = approvalText + approvalInserUnitsVal + " unit(s) "
           }else{
             approvalInserUnits = null;
           }
