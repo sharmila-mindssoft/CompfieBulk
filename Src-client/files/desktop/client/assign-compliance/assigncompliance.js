@@ -846,9 +846,10 @@ $("#unit").click(function(event){
             return a.indexOf(v) !== -1;
         });
       });
+
       var str='';
       $('#domain').empty();
-      for(var domain in domainsList){
+      for(domain in domainsList){
         if(domainsList[domain]["is_active"] == true && $.inArray(domainsList[domain]["domain_id"], applicableDomains) >= 0){
           str += '<li id="'+domainsList[domain]["domain_id"]+'" class="domainlist" >'+domainsList[domain]["domain_name"]+'</li>';
         }
