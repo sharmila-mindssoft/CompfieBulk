@@ -35,6 +35,7 @@ function clearValues(levelvalue) {
     $('#legalentity').empty();
     $('#division').empty();
     $('#unit').empty();
+    $('#domain').empty();
   }
 
   if(levelvalue == 'businessgroup'){
@@ -43,6 +44,7 @@ function clearValues(levelvalue) {
     $('#legalentity').empty();
     $('#division').empty();
     $('#unit').empty();
+    $('#domain').empty();
   }
 
   if(levelvalue == 'legalentity'){
@@ -50,12 +52,14 @@ function clearValues(levelvalue) {
     assignStatutoryUnitValues = [];
     $('#division').empty();
     $('#unit').empty();
+    $('#domain').empty();
   }
 
   if(levelvalue == 'division'){
     assignStatutoryUnitIds = [];
     assignStatutoryUnitValues = [];
     $('#unit').empty();
+    $('#domain').empty();
   }
 
   if(levelvalue == 'unit'){
