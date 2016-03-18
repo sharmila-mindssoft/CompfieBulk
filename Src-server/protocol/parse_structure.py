@@ -3889,8 +3889,12 @@ def parse_structure_RecordType_clienttransactions_NewUnitSettings(data):
     from protocol import clienttransactions
     return clienttransactions.NewUnitSettings.parse_structure(data)
 
-def parse_structure_VectorType_RecodType_clienttransactions_NewUnitSettings(data):
+def parse_structure_VectorType_RecordType_clienttransactions_NewUnitSettings(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
         lst.append(parse_structure_RecordType_clienttransactions_NewUnitSettings(item))
+
+def parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(data):
+    if data is None: return data
+    return parse_structure_VectorType_RecordType_clienttransactions_NewUnitSettings(data)

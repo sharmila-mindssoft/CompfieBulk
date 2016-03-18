@@ -741,6 +741,15 @@ function initClientMirror() {
         }
     }
 
+    function newUnitSettings(userId, unitIds, domainId, countryId) {
+        return {
+            "user_id": userId,
+            "unit_ids": unitIds,
+            "domain_id": domainId,
+            "country_id": countryId
+        }
+    }
+
     function saveAssignedComplianceFormData(
         countryId, assignee, assigneeName,
         concurrence, concurrenceName,
@@ -1580,6 +1589,7 @@ function initClientMirror() {
         getAssignComplianceForUnits: getAssignComplianceForUnits,
         statutoryDates: statutoryDates,
         assignCompliances: assignCompliances,
+        newUnitSettings: newUnitSettings,
         saveAssignedComplianceFormData: saveAssignedComplianceFormData,
 
         getPastRecordsFormData: getPastRecordsFormData,
