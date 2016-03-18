@@ -3981,9 +3981,12 @@ def to_structure_RecordType_clienttransactions_NewUnitSettings(data):
 def to_structure_VectorType_RecordType_clienttransactions_NewUnitSettings(data):
     data = parse_list(data, 0)
     lst = []
-    for item in data:
+    for item in data :
         lst.append(to_structure_RecordType_clienttransactions_NewUnitSettings(item))
+    return lst
 
 def to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(data):
+    print data
+    print "to_structure"
     if data is None: return data
     return to_structure_VectorType_RecordType_clienttransactions_NewUnitSettings(data)

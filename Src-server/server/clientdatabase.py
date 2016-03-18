@@ -2519,6 +2519,11 @@ class ClientDatabase(Database):
             return None
 
     def save_assigned_compliance(self, request, session_user, client_id):
+        new_unit_settings = request.new_units
+        print new_unit_settings
+        if new_unit_settings is None :
+            return clienttransactions.SaveAssignedComplianceSuccess()
+
         created_on = self.get_date_time()
         country_id = int(request.country_id)
         assignee = int(request.assignee)
@@ -2527,9 +2532,9 @@ class ClientDatabase(Database):
             concurrence = ""
         approval = int(request.approval_person)
         compliances = request.compliances
-        new_units = request.new_units
-        print request.to_structure()
-        print new_units
+
+        # print request.to_structure()
+        print new_unit_settings
         compliance_names = []
         for c in compliances:
             compliance_id = int(c.compliance_id)
@@ -2579,8 +2584,8 @@ class ClientDatabase(Database):
                     )
                 self.execute(query)
             # self.update_user_units(assignee, unit_ids, client_id)
-        if new_units is not None :
-            update_user_settings(new_units)
+        if new_unit_settings is not None :
+            self.update_user_settings(new_unit_settings, client_id)
 
         compliance_names = ", ".join(compliance_names)
         if request.concurrence_person_name is None :
@@ -2598,7 +2603,7 @@ class ClientDatabase(Database):
         # email.notify_assign_compliance(receiver, request.assignee_name, action)
         return clienttransactions.SaveAssignedComplianceSuccess()
 
-    def update_user_settings(self, new_units):
+    def update_user_settings(self, new_units, client_id):
         print new_units
         for n in new_units :
             user_id = n.user_id
