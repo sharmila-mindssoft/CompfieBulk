@@ -316,7 +316,7 @@ function load_secondwizard(){
       }else{
         accordionstatus = true;
       }
-      
+
     });
   });
 }
@@ -426,8 +426,8 @@ function submitcompliance(){
     var currentDate = new Date();
 
     assignComplianceCountryId = parseInt($('.countrylist.active').attr('id'));
-    
-    
+
+
     if($('.assigneelist.active').attr('id') != undefined){
       assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
       assignComplianceAssigneeName = $('.assigneelist.active').text().trim();
@@ -453,7 +453,7 @@ function submitcompliance(){
     var actCount = 1;
 
     var applicableUnitsArray = [];
-    
+
     for(var entity in statutoriesList){
 
       var domainList = statutoriesList[entity];
@@ -599,7 +599,7 @@ if(assignComplianceAssigneeName != 'Client Admin' && assignComplianceAssigneeId 
     }
   }
 }
-  
+
 var concurrenceInserUnits = [];
 var concurrenceInserUnitsVal = [];
 
@@ -650,7 +650,7 @@ if(assignComplianceApprovalName != 'Client Admin' && assignComplianceApprovalId 
     }
   }
 }
-  
+
 if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalInserUnits.length >0){
   var assigneeText = '';
   var concurrenceText = '';
@@ -696,7 +696,7 @@ if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalI
       onFailure(error);
     }
   }
-  ); 
+  );
   }else{
     hideLoader();
   }
@@ -831,7 +831,7 @@ $("#unit").click(function(event){
         assignStatutoryUnitIds.push(parseInt(event.target.id));
         assignStatutoryUnitValues.push($(event.target).text());
       }
-      
+
       var domainArray = [];
       var applicableDomains = [];
       for(var unit in unitsList){
@@ -1211,16 +1211,7 @@ function getAssignCompliances () {
     usersList = data["users"];
     two_level_approve = data["two_level_approve"];
     client_admin = data["client_admin"];
-    //domainsList = data["domains"];
-    domainsList = [
-
-    {
-        "is_active":true,
-        "domain_id":1,
-        "domain_name":"Finance Law"
-    }
-
-];
+    domainsList = data["domains"];
     load_firstwizard();
   }
   function onFailure(error){
