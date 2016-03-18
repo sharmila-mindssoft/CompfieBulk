@@ -2502,6 +2502,24 @@ class ClientDatabase(Database):
             domain_wise_compliance[domain_id] = level_1_wise
         return domain_wise_compliance
 
+    def get_email_id_for_users(self, user_id):
+        if user_id == 0 :
+            q = "SELECT 'Administrator', username from tbl_admin where admin_id = %s" % (
+                user_id
+            )
+            pass
+        else :
+            q = "SELECT employee_name, email_id from tbl_users where user_id = %s" % (
+                user_id
+            )
+        cursor = db.cursor()
+        cursor.execute(q)
+        row = cursor.fetchone()
+        if row :
+            return row[0], row[1]
+        else :
+            return None
+
     def save_assigned_compliance(self, request, session_user, client_id):
         created_on = self.get_date_time()
         country_id = int(request.country_id)
@@ -2511,10 +2529,10 @@ class ClientDatabase(Database):
             concurrence = ""
         approval = int(request.approval_person)
         compliances = request.compliances
+        new_units = request.new_units
         compliance_names = []
         for c in compliances:
             compliance_id = int(c.compliance_id)
-            compliance_names.append(c.compliance_name)
             statutory_dates = c.statutory_dates
             if statutory_dates is not None :
                 date_list = []
@@ -2535,6 +2553,7 @@ class ClientDatabase(Database):
                 due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
             else :
                 due_date = ""
+            compliance_names.append("Complaince Name:" + c.compliance_name + "- Due Date:" + due_date)
             validity_date = c.validity_date
             if validity_date is not None :
                 validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
@@ -2560,38 +2579,71 @@ class ClientDatabase(Database):
                     )
                 self.execute(query)
             # self.update_user_units(assignee, unit_ids, client_id)
-        compliance_names = json.dumps(compliance_names)
+        if new_units is not None :
+            update_user_settings(new_units)
+
+        compliance_names = ", ".join(compliance_names)
         if request.concurrence_person_name is None :
-            action = "Compliances %s assigned to assignee - %s and approval-person - %s " % (
+            action = "Compliance(s) %s has assigned to assignee - %s and approval-person - %s " % (
                 str(compliance_names), request.assignee_name,
                 request.approval_person_name
             )
         else :
-            action = "Compliances %s assigned to assignee - %s concurrence-person - %s approval-person - %s " % (
+            action = "Compliance(s) %s has assigned to assignee - %s concurrence-person - %s approval-person - %s " % (
                 str(compliance_names), request.assignee_name, request.concurrence_person_name,
                 request.approval_person_name
             )
         action = json.dumps(action)
         self.save_activity(session_user, 7, action)
+        receiver = self.get_email_id_for_users(assignee)
+        email.notify_assign_compliance(receiver, assignee_name, action)
         return clienttransactions.SaveAssignedComplianceSuccess()
 
-    def update_user_units(self, user_id, unit_ids, client_id):
-        user_units = self.get_user_unit_ids(user_id, client_id)
-        user_units = [int(x) for x in user_units.split(',')]
-        new_units = []
-        for u_id in unit_ids :
-            if u_id not in user_units :
-                new_units.append(u_id)
+    def update_user_settings(self, new_units):
+        for n in new_units :
+            user_id = n.user_id
+            unit_ids = n.unit_ids
+            domain_id = n.domain_id
+            country_id = n.country_id
 
-        if len(new_units) > 0 :
-            unit_values_list = []
-            unit_columns = ["user_id", "unit_id"]
-            for unit_id in new_units:
-                unit_value_tuple = (int(user_id), int(unit_id))
-                unit_values_list.append(unit_value_tuple)
-            result4 = self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
-            action = "New units %s added for user %s while assign compliance " % (new_units, user_id)
-            self.save_activity(user_id, 7, action)
+            user_units = self.get_user_unit_ids(user_id)
+            user_units = [int(x) for x in user_units.split(',')]
+            new_unit = []
+            for u_id in unit_ids :
+                if u_id not in user_units :
+                    new_unit.append(u_id)
+
+            if len(new_unit) > 0 :
+                unit_values_list = []
+                unit_columns = ["user_id", "unit_id"]
+                for unit_id in new_units:
+                    unit_value_tuple = (int(user_id), int(unit_id))
+                    unit_values_list.append(unit_value_tuple)
+                self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
+                # action = "New units %s added for user %s while assign compliance " % (new_units, user_id)
+                # self.save_activity(user_id, 7, action)
+
+            if domain_id is not None :
+                user_domain_ids = self.get_user_domains(user_id)
+                user_domain_ids = [int(x) for x in user_domain_ids.split(',')]
+                if domain_id not in user_domain_ids :
+                    domain_columns = ["user_id", "domain_id"]
+                    values = (user_id, domain_id)
+                    value_list = [values]
+                    self.bulk_insert(self.tblUserDomains, domain_columns, value_list, client_id)
+                    # action = "New domains %s added for user %s while assign compliance " % (domain_id, user_id)
+                    # self.save_activity(user_id, 7, action)
+
+            if country_id is not None :
+                user_countries = self.get_user_countries(user_id)
+                user_countries = [int(x) for x in user_countries.split(',')]
+                country_columns = ["user_id", "country_id"]
+                values = (user_id, country_id)
+                value_list = [values]
+                self.bulk_insert(self.tblUserCountries, country_columns, value_list, client_id)
+
+
+
 
 #
 #   Chart Api
