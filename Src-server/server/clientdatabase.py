@@ -2533,7 +2533,7 @@ class ClientDatabase(Database):
                         int(session_user), created_on
                     )
                 self.execute(query)
-            self.update_user_units(assignee, unit_ids, client_id)
+            # self.update_user_units(assignee, unit_ids, client_id)
         compliance_names = json.dumps(compliance_names)
         if request.concurrence_person_name is None :
             action = "Compliances %s assigned to assignee - %s and approval-person - %s " % (
