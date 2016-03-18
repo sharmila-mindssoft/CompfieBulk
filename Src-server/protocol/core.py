@@ -1011,13 +1011,13 @@ class Compliance_Download(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["compliance_name", 'url'])
         compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_100(compliance_name)
+        compliance_name = parse_structure_CustomTextType_500(compliance_name)
         url = data.get("url")
         url = parse_structure_OptionalType_CustomTextType_500(url)
 
     def to_structure(self):
         return {
-            "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
+            "compliance_name": to_structure_CustomTextType_500(self.compliance_name),
             "url": to_structure_OptionalType_CustomTextType_500(self.url)
         }
 
@@ -2773,12 +2773,12 @@ class ComplianceFilter(object):
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
 
         compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_100(compliance_name)
+        compliance_name = parse_structure_CustomTextType_500(compliance_name)
 
         return ComplianceFilter(compliance_id, compliance_name)
 
     def to_structure(self):
         return {
             "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
-            "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
+            "compliance_name": to_structure_CustomTextType_500(self.compliance_name),
         }
