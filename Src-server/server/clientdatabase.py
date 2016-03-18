@@ -2643,10 +2643,11 @@ class ClientDatabase(Database):
             if country_id is not None :
                 user_countries = self.get_user_countries(user_id)
                 user_countries = [int(x) for x in user_countries.split(',')]
-                country_columns = ["user_id", "country_id"]
-                values = (user_id, country_id)
-                value_list = [values]
-                self.bulk_insert(self.tblUserCountries, country_columns, value_list, client_id)
+                if country_id not in user_countries :
+                    country_columns = ["user_id", "country_id"]
+                    values = (user_id, country_id)
+                    value_list = [values]
+                    self.bulk_insert(self.tblUserCountries, country_columns, value_list, client_id)
 
 
 
@@ -5294,9 +5295,12 @@ class ClientDatabase(Database):
                     date["trigger_before_days"]
                 )
                 date_list.append(s_date)
-            compliance_name = "%s - %s" % (
-                d["document_name"], d["compliance_task"]
-            )
+            if d["document_name"] not in (None, "None", "") :
+                compliance_name = "%s - %s" % (
+                    d["document_name"], d["compliance_task"]
+                )
+            else :
+                compliance_name = d["compliance_task"]
             if d["frequency_id"] in (2, 3) :
                 summary = "Repeats ever %s - %s" % (d["repeats_every"], d["repeat_type"])
             elif d["frequency_id"] == 4 :

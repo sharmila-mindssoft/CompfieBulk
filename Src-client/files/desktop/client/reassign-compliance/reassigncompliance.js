@@ -339,7 +339,12 @@ function submitcompliance(){
   reassignCompliance = [];
   var statutoriesCount= 1;
   var userCompliances = compliancesList[reassignUserId];
-  var currentDate = new Date();
+  var d = new Date();
+  var month = d.getMonth()+1;
+  var day = d.getDate();
+  var output = d.getFullYear() + '/' + month + '/' + day;
+  var currentDate = new Date(output);
+  
   var selectedStatus = false;
   for(ucompliance in userCompliances){
     var userUnitwiseCompliance = userCompliances[ucompliance]["units"];
