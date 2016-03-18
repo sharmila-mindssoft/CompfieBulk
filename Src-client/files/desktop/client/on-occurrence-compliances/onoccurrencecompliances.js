@@ -75,12 +75,16 @@ function convert_date (data){
 
 function submitOnOccurence(complianceId, count, unitId, complete_within_days){
   var startdate = $('#startdate'+count).val();
-  var currentDate = new Date();
+  
+  var d = new Date();
+  var month = d.getMonth()+1;
+  var day = d.getDate();
+  var output = d.getFullYear() + '/' + month + '/' + day;
+  var currentDate = new Date(output);
+
 
   if(startdate != ''){
     var convertDueDate = convert_date(startdate);
-    //alert(convertDueDate)
-    //alert(currentDate)
     if (convertDueDate < currentDate) {
         displayMessage("Start date is less than today's date");
         return false;

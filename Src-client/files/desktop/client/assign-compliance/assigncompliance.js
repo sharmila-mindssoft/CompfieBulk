@@ -102,12 +102,16 @@ function compliancestatus(element){
 
 function disppopup(units){
   $("#popup1").show();
-  $(".popup-list tr:gt(0)").remove();
+  //$(".popup-list tr:gt(0)").remove();
   for(var i=0; i<units.length; i++){
+    
     var dispUnit = '';
     $.each(unitsList, function(index, value) {
+     // alert(value.unit_id)
+     // alert(units[i])
     if (value.unit_id == units[i]) {
         dispUnit = value.unit_name + ' - ' + value.address;
+       // alert(dispUnit)
         var popuptableRow=$('#popup_table .popup_row');
         var clone=popuptableRow.clone();
         $(".popup_unitname",clone).text(dispUnit);
@@ -432,7 +436,11 @@ function submitcompliance(){
     var assignComplianceAssigneeName = null;
     var assignComplianceConcurrenceName = null;
     var assignComplianceApprovalName = null;
-    var currentDate = new Date();
+    var d = new Date();
+    var month = d.getMonth()+1;
+    var day = d.getDate();
+    var output = d.getFullYear() + '/' + month + '/' + day;
+    var currentDate = new Date(output);
 
     assignComplianceCountryId = parseInt($('.countrylist.active').attr('id'));
     assignComplianceDomainId = parseInt($('.domainlist.active').attr('id'));
@@ -637,7 +645,7 @@ function submitcompliance(){
 
         for(var k=0; k<applicableUnitsArray.length; k++){
           if($.inArray(applicableUnitsArray[k], userUnits) == -1){
-            assigneeInserUnits.push(applicableUnitsArray[k]);
+            concurrenceInserUnits.push(applicableUnitsArray[k]);
             for(var unit in unitsList){
               if(unitsList[unit]["unit_id"] == applicableUnitsArray[k]){
                 concurrenceInserUnitsVal.push(unitsList[unit]["unit_name"])
@@ -666,7 +674,7 @@ function submitcompliance(){
 
         for(var k=0; k<applicableUnitsArray.length; k++){
           if($.inArray(applicableUnitsArray[k], userUnits) == -1){
-            assigneeInserUnits.push(applicableUnitsArray[k]);
+            approvalInserUnits.push(applicableUnitsArray[k]);
             for(var unit in unitsList){
               if(unitsList[unit]["unit_id"] == applicableUnitsArray[k]){
                 approvalInserUnitsVal.push(unitsList[unit]["unit_name"])
@@ -691,7 +699,7 @@ function submitcompliance(){
           }else{
             assigneeInserUnits = null;
           } 
-          assigneeText = "not applicable for Assignee. "
+          assigneeText = assigneeText + "not applicable for Assignee. "
           newSetting = client_mirror.newUnitSettings(assignComplianceAssigneeId, assigneeInserUnits, approvalInserDomain, assignComplianceCountryId);
           newSettingsList.push(newSetting);
         }
@@ -704,7 +712,7 @@ function submitcompliance(){
           }else{
             concurrenceInserUnits = null;
           }
-          concurrenceText = "not applicable for Concurrence. "
+          concurrenceText = concurrenceText + "not applicable for Concurrence. "
           newSetting = client_mirror.newUnitSettings(assignComplianceConcurrenceId, concurrenceInserUnits, concurrenceInserDomain, assignComplianceCountryId);
           newSettingsList.push(newSetting);
         }
@@ -717,7 +725,7 @@ function submitcompliance(){
           }else{
             approvalInserUnits = null;
           }
-          approvalText = "not applicable for Approval. ";
+          approvalText = approvalText + "not applicable for Approval. ";
           newSetting = client_mirror.newUnitSettings(assignComplianceApprovalId, approvalInserUnits, approvalInserDomain, assignComplianceCountryId);
           newSettingsList.push(newSetting);
         }
