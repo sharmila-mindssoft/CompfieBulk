@@ -71,7 +71,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_CustomTextType_500,
     parse_structure_VectorType_RecordType_clienttransactions_PastRecordUnits,
     parse_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500,
-    parse_structure_VectorType_UnsignedIntegerType_32
+    parse_structure_VectorType_UnsignedIntegerType_32,
+    parse_structure_VectorType_RecodType_clienttransactions_NewUnitSettings
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -152,6 +153,7 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_PastRecordUnits,
     to_structure_VectorType_UnsignedIntegerType_32,
     to_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500,
+    to_structure_VectorType_RecodType_clienttransactions_NewUnitSettings
 )
 
 #
@@ -363,7 +365,7 @@ class SaveAssignedCompliance(Request):
         self, country_id, assignee, assignee_name,
         concurrence_person, concurrence_person_name,
         approval_person, approval_person_name,
-        compliances
+        compliances, new_units
     ):
         self.country_id = country_id
         self.assignee = assignee
@@ -373,13 +375,15 @@ class SaveAssignedCompliance(Request):
         self.approval_person = approval_person
         self.approval_person_name = approval_person_name
         self.compliances = compliances
+        self.new_units = new_units
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "country_id", "assignee", "assignee_name",
             "concurrence_person", "concurrence_person_name",
-            "approval_person", "approval_person_name", "compliances"
+            "approval_person", "approval_person_name", "compliances",
+            "new_units"
         ])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
@@ -397,11 +401,13 @@ class SaveAssignedCompliance(Request):
         approval_person_name = parse_structure_OptionalType_CustomTextType_100(approval_person_name)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(compliances)
+        new_units = data.get("new_units")
+        new_units = parse_structure_VectorType_RecodType_clienttransactions_NewUnitSettings(new_units)
         return SaveAssignedCompliance(
             country_id, assignee, assignee_name,
             concurrence_person, concurrence_person_name,
             approval_person, approval_person_name,
-            compliances
+            compliances, new_units
         )
 
     def to_inner_structure(self):
@@ -414,6 +420,7 @@ class SaveAssignedCompliance(Request):
             "approval_person": to_structure_OptionalType_UnsignedIntegerType_32(self.approval_person),
             "approval_person_name": to_structure_OptionalType_CustomTextType_100(self.approval_person_name),
             "compliances": to_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(self.compliances),
+            "new_units": to_structure_VectorType_RecodType_clienttransactions_NewUnitSettings(self.new_units)
         }
 
 class GetUserwiseCompliances(Request):
@@ -1462,7 +1469,9 @@ class PastRecordUnits(object):
 class ASSIGN_COMPLIANCE_USER(object):
     def __init__(
         self, user_id, user_name, user_level, seating_unit_id,
-        unit_ids, domain_ids
+        unit_ids, domain_ids,
+        is_assignee, is_approver,
+        is_concurrence
     ):
         self.user_id = user_id
         self.user_name = user_name
@@ -1470,12 +1479,16 @@ class ASSIGN_COMPLIANCE_USER(object):
         self.seating_unit_id = seating_unit_id
         self.unit_ids = unit_ids
         self.domain_ids = domain_ids
+        self.is_assignee = is_assignee
+        self.is_approver = is_approver
+        self.is_concurrence = is_concurrence
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "user_id", "user_name", "user_level",
-            "seating_unit_id", "unit_ids", "domain_ids"
+            "seating_unit_id", "unit_ids", "domain_ids",
+            "is_assignee", "is_approver", "is_concurrence"
         ])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
@@ -1489,9 +1502,17 @@ class ASSIGN_COMPLIANCE_USER(object):
         unit_ids = parse_structure_VectorType_SignedIntegerType_8(unit_ids)
         domain_ids = data.get("domain_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        is_assignee = data.get("is_assignee")
+        is_assignee = parse_structure_Bool(is_assignee)
+        is_approver = data.get("is_approver")
+        is_approver = parse_structure_Bool(is_approver)
+        is_concurrence = data.get("is_concurrence")
+        is_concurrence = parse_structure_Bool(is_concurrence)
         return ASSIGN_COMPLIANCE_USER(
             user_id, user_name, user_level, seating_unit_id,
-            unit_ids, domain_ids)
+            unit_ids, domain_ids,
+            is_assignee, is_concurrence, is_approver
+        )
 
     def to_structure(self):
         return {
@@ -1501,6 +1522,9 @@ class ASSIGN_COMPLIANCE_USER(object):
             "seating_unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.seating_unit_id),
             "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
+            "is_assignee": to_structure_Bool(self.is_assignee),
+            "is_concurrence": to_structure_Bool(self.is_concurrence),
+            "is_approver": to_structure_Bool(self.is_approver)
         }
 
 #
