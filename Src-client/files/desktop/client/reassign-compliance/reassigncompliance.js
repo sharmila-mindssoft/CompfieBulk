@@ -6,6 +6,7 @@ var cCount;
 var two_level_approve;
 var client_admin;
 var accordionstatus = true;
+var currentUser;
 
 
 function clearMessage() {
@@ -44,6 +45,22 @@ function actstatus(element){
   accordionstatus = false;
 }
 
+function compliancestatus(element){
+  var sClass = $(element).attr('class');
+  var actSelect = sClass.substr(sClass.lastIndexOf("s") + 1);
+  var cStatus = false;
+  $('.'+sClass).each(function() {
+    if(this.checked){
+      cStatus = true;
+    }
+  });
+  if(cStatus){
+    $('#act'+actSelect).prop("checked",true);
+  }else{
+    $('#act'+actSelect).prop("checked",false);
+  }
+}
+
 function convert_date (data){
   var date = data.split("-");
   var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -59,6 +76,7 @@ function convert_date (data){
 }
 
 function load_allcompliances(userId, userName){
+  currentUser = userId;
   $("#reassign-view").hide();
   $("#reassign-detailview").show();
   $("#currentassignee").text(userName);
@@ -97,7 +115,7 @@ function load_allcompliances(userId, userName){
       $('.accordion-content'+count).append(clone1);
 
       var actList = statutoriesList[statutory];
-      $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
+      //$('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
       for(var actentity in actList){    
         var compliance_id = actList[actentity]["compliance_id"];
         var compliance_name = actList[actentity]["compliance_name"];
@@ -149,7 +167,7 @@ function load_allcompliances(userId, userName){
 
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
-        $('.ckbox', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'">');
+        $('.ckbox', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this)">');
         
         $('.compliancetask', clone2).html('<abbr class="page-load" title="'+
           compliance_description+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliance_name);
@@ -307,7 +325,6 @@ function load_compliances () {
 
 }
 
-
 function submitcompliance(){
   displayLoader();
   var assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
@@ -318,7 +335,7 @@ function submitcompliance(){
   var statutoriesCount= 1;
   var userCompliances = compliancesList[reassignUserId];
   var currentDate = new Date();
-
+  var selectedStatus = false;
   for(ucompliance in userCompliances){
     var userUnitwiseCompliance = userCompliances[ucompliance]["units"];
     for(var entity in userUnitwiseCompliance){
@@ -330,6 +347,7 @@ function submitcompliance(){
           var complianceApplicable = false;
           if($('#statutory'+statutoriesCount).is(":checked")){
             complianceApplicable = true;
+            selectedStatus = true;
           }
           if(complianceApplicable){
             var compliance_id = actList[actentity]["compliance_id"];
@@ -340,15 +358,15 @@ function submitcompliance(){
             var due_date = null;
             if(cfrequency != 'On Occurrence'){
               due_date =  $('#duedate'+statutoriesCount).val();
-            }
 
             var convertDueDate = convert_date(due_date);
-            if (convertDueDate <= currentDate) {
-                displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
-                hideLoader();
-                return false;
+            if (convertDueDate < currentDate) {
+              displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
+              hideLoader();
+              return false;
             }
 
+            }
             reassignComplianceData = client_mirror.reassingComplianceDet(uId,
               compliance_id, compliance_history_id, due_date
             );
@@ -360,33 +378,43 @@ function submitcompliance(){
     }
   }
 
-  function onSuccess(data){
-    $('ul.setup-panel li:eq(0)').addClass('active');
-    $('ul.setup-panel li:eq(1)').addClass('disabled');
-    $('ul.setup-panel li a[href="#step-1"]').trigger('click');
-    $(".tbody-reassign-compliances-list").find("tbody").remove();
-    getReassignCompliances();
-    hideLoader();
-    $("#reassign-view").show();
-    $("#reassign-detailview").hide();
-    $("#currentassignee").text('');
-    reassignUserId = null;
-  }
-  function onFailure(error){
-    displayMessage(error);
-    hideLoader();
-  }
-  client_mirror.saveReassignCompliance(reassignUserId, assignComplianceAssigneeId, 
-    assignComplianceConcurrenceId, assignComplianceApprovalId, reassignCompliance, reason, 
-    function (error, response) {
-    if (error == null){
-      onSuccess(response);
+  if(selectedStatus){
+    function onSuccess(data){
+      $('ul.setup-panel li:eq(0)').addClass('active');
+      $('ul.setup-panel li:eq(1)').addClass('disabled');
+      $('ul.setup-panel li a[href="#step-1"]').trigger('click');
+      $(".tbody-reassign-compliances-list").find("tbody").remove();
+      getReassignCompliances();
+      hideLoader();
+      $("#reassign-view").show();
+      $("#reassign-detailview").hide();
+      $("#currentassignee").text('');
+      $('#assignee').empty();
+      $('#concurrence').empty();
+      $('#approval').empty();
+      $('#reason').val('');
+      reassignUserId = null;
     }
-    else {
-      onFailure(error);
+    function onFailure(error){
+      displayMessage(error);
+      hideLoader();
     }
+    client_mirror.saveReassignCompliance(reassignUserId, assignComplianceAssigneeId, 
+      assignComplianceConcurrenceId, assignComplianceApprovalId, reassignCompliance, reason, 
+      function (error, response) {
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+    }
+    );
+  }else{
+    hideLoader();
+    displayMessage("No compliance selected for reassign");
   }
-  );
+
 }
   
 function getReassignCompliances () {
@@ -501,25 +529,21 @@ function loadUser(userType){
   var temp_assignee = null;
   var temp_concurrence = null;
   var temp_approval = null;
-  //var temp_id = null;
 
   if(userType == 'assignee'){
     selectedUnit = $("#assignee_unit").val();
     userClass = 'assigneelist';
-    /*if($('.assigneelist.active').attr('id') != undefined)
-      temp_id = parseInt($('.assigneelist.active').attr('id'));*/
+   
   }
   else if(userType == 'concurrence'){
     selectedUnit = $("#concurrence_unit").val();
     userClass = 'concurrencelist';
-    /*if($('.concurrencelist.active').attr('id') != undefined)
-      temp_id = parseInt($('.concurrencelist.active').attr('id'));*/
+    
   }
   else{
     selectedUnit = $("#approval_unit").val();
     userClass = 'approvallist';
-    /*if($('.approvallist.active').attr('id') != undefined)
-      temp_id = parseInt($('.approvallist.active').attr('id'));*/
+    
   }
   
   $('#'+userType).empty();
@@ -568,11 +592,7 @@ function loadUser(userType){
     if((assigneeUserId == null || assigneeUserId != client_admin)
     && (approvalUserId == null || approvalUserId != client_admin) 
     && (concurrenceUserId == null || concurrenceUserId != client_admin)){
-      /*if(temp_id == client_admin){
-        str='<li id="'+client_admin+'" class="'+userClass+' active" > Admin </li>';
-      }else{
-        str='<li id="'+client_admin+'" class="'+userClass+'" > Admin </li>';
-      }*/
+     
       str='<li id="'+client_admin+'" class="'+userClass+'" > Client Admin </li>';
     }
   }
@@ -601,12 +621,8 @@ function loadUser(userType){
 
       if(conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
         && (approvalUserId == null || approvalUserId != userId) 
-        && (concurrenceUserId == null || concurrenceUserId != userId)){
-        /*if(temp_id == userId){
-          str += '<li id="'+userId+'" class="'+userClass+ ' active'+'" >'+userName+'</li>';
-        }else{
-          str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
-        }*/
+        && (concurrenceUserId == null || concurrenceUserId != userId) && (currentUser != userId || userType != 'assignee')){
+        
         str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
       }
     }
@@ -669,6 +685,43 @@ $("#approval").click(function(event){
   }
 });
 
+
+$("#filter_assignee").keyup( function() {
+    var filter = $("#filter_assignee").val().toLowerCase();
+    var lis = document.getElementsByClassName('assigneelist');
+    for (var i = 0; i < lis.length; i++) {
+      var name = lis[i].innerHTML;
+      if (~name.toLowerCase().indexOf(filter))
+        lis[i].style.display = 'list-item';
+      else
+        lis[i].style.display = 'none';
+    }
+  });
+
+  $("#filter_concurrence").keyup( function() {
+    var filter = $("#filter_concurrence").val().toLowerCase();
+    var lis = document.getElementsByClassName('concurrencelist');
+    for (var i = 0; i < lis.length; i++) {
+      var name = lis[i].innerHTML;
+      if (~name.toLowerCase().indexOf(filter))
+        lis[i].style.display = 'list-item';
+      else
+        lis[i].style.display = 'none';
+    }
+  });
+
+  $("#filter_approval").keyup( function() {
+    var filter = $("#filter_approval").val().toLowerCase();
+    var lis = document.getElementsByClassName('approvallist');
+    for (var i = 0; i < lis.length; i++) {
+      var name = lis[i].innerHTML;
+      if (~name.toLowerCase().indexOf(filter))
+        lis[i].style.display = 'list-item';
+      else
+        lis[i].style.display = 'none';
+    }
+  });
+
 $('#assignee_unit').change(function() {
     loadUser('assignee');
 });
@@ -681,6 +734,21 @@ $('#approval_unit').change(function() {
     loadUser('approval');
 });
 
+$('#reason').keyup(function(e)
+  {
+  var maxLength = 500;
+  var textlength = this.value.length;
+  if (textlength >= maxLength)
+  {
+  $('#counter').html('You cannot write more then ' + maxLength + ' characters!');
+  this.value = this.value.substring(0, maxLength);
+  e.preventDefault();
+  }
+  else
+  {
+  $('#counter').html((maxLength - textlength) + ' characters left.');
+  }
+  });
 function validate_firsttab(){
   return true;
 }

@@ -336,8 +336,10 @@ $('ul.setup-panel li a[href="#step-2"]').trigger('click');
 
 $('#activate-step-3').on('click', function(e) {
 if (validate_secondtab()){
-$('ul.setup-panel li:eq(2)').removeClass('disabled');
-$('ul.setup-panel li a[href="#step-3"]').trigger('click');
+  getStatutories();
+  $('#activate-step-finish').show();
+  $('ul.setup-panel li:eq(2)').removeClass('disabled');
+  $('ul.setup-panel li a[href="#step-3"]').trigger('click');
 }
 })
 
@@ -366,7 +368,9 @@ function getStatutories(){
   var assignComplianceDomainId = null;
   var assignComplianceActId = null;
   var assignComplianceFrequencyId = null;
+  var assignComplianceCountryId = null;
 
+  if($('.countrylist.active').attr('id') != undefined) assignComplianceCountryId = parseInt($('.countrylist.active').attr('id'));
   if($('.unitlist.active').attr('id') != undefined) assignComplianceUnitId = parseInt($('.unitlist.active').attr('id'));
   if($('.domainlist.active').attr('id') != undefined) assignComplianceDomainId = parseInt($('.domainlist.active').attr('id'));
   if($('.actlist.active').attr('id') != undefined) assignComplianceActId = $('.actlist.active').attr('id');
@@ -380,7 +384,7 @@ function getStatutories(){
     }
     function onFailure(error){
     }
-    client_mirror.getStatutoriesByUnit(assignComplianceUnitId, assignComplianceDomainId, assignComplianceActId, assignComplianceFrequencyId,
+    client_mirror.getStatutoriesByUnit(assignComplianceUnitId, assignComplianceDomainId, assignComplianceActId, assignComplianceFrequencyId, assignComplianceCountryId,
       function (error, response) {
             if (error == null){
               onSuccess(response);
@@ -468,9 +472,7 @@ $("#unit").click(function(event){
     
   }
   $('#frequency').append(str);
-
-  getStatutories();
-
+  $('ul.setup-panel li:eq(2)').addClass('disabled');
 });
 
 
@@ -572,9 +574,7 @@ $("#domain").click(function(event){
     }
   }
   $('#act').append(str);
-
-  getStatutories();
-
+  $('ul.setup-panel li:eq(2)').addClass('disabled');
 });
 
 $("#act").click(function(event){
@@ -584,8 +584,7 @@ $("#act").click(function(event){
     });
     $(event.target).addClass("active");
   }
-
-  getStatutories();
+  $('ul.setup-panel li:eq(2)').addClass('disabled');
 });
 
 $("#frequency").click(function(event){
@@ -595,7 +594,7 @@ $("#frequency").click(function(event){
     });
     $(event.target).addClass("active");
   }
-  getStatutories();
+  $('ul.setup-panel li:eq(2)').addClass('disabled');
 });
 
 function load_firstwizard(){

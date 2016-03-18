@@ -142,7 +142,7 @@ function load_secondwizard(){
       $('.accordion-content'+count).append(clone1);
 
       var actList = domainList[domainentity];
-      $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
+      //$('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
       for(var actentity in actList){
         var statutoryprovision = '';
         var compliance_id = actList[actentity]["compliance_id"];
@@ -298,14 +298,12 @@ function load_secondwizard(){
       actCount = actCount + 1;
       count++;
     }
-  
+  }
   if(count <= 1){
     var norecordtableRow=$('#no-record-templates .font1');
     var noclone=norecordtableRow.clone();
     $('.tbody-assignstatutory').append(noclone);
     $('#activate-step-3').hide();
-  }
-
   }
 
   $(document).ready(function($) {
