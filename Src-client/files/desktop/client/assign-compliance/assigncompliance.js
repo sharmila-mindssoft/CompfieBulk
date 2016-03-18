@@ -672,30 +672,6 @@ function submitcompliance(){
         }
       }
 
-<<<<<<< HEAD
-if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalInserUnits.length >0 ||
-  assigneeInserDomain != null || concurrenceInserDomain != null || approvalInserDomain != null){
-  var assigneeText = '';
-  var concurrenceText = '';
-  var approvalText = '';
-  if(assigneeInserUnits.length > 0 || assigneeInserDomain != null){
-    if(assigneeInserDomain != null)
-      assigneeText = assignComplianceDomainVal + "Domain, ";
-
-    if(assigneeInserUnits.length > 0){
-      assigneeText = assigneeInserUnitsVal + " unit(s) not applicable for Assignee. ";
-    }else{
-      assigneeInserUnits = null;
-    }
-
-    newSetting = client_mirror.newUnitSettings(assignComplianceAssigneeId, assigneeInserUnits, approvalInserDomain, assignComplianceCountryId);
-    newSettingsList.push(newSetting);
-  }
-  if(concurrenceInserUnits.length > 0 || concurrenceInserDomain != null){
-    if(concurrenceInserDomain != null)
-      concurrenceText = assignComplianceDomainVal + "Domain, ";
-=======
-
       if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalInserUnits.length >0 ||
         assigneeInserDomain != null || concurrenceInserDomain != null || approvalInserDomain != null){
         var assigneeText = '';
@@ -717,7 +693,6 @@ if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalI
         if(concurrenceInserUnits.length > 0 || concurrenceInserDomain != null){
           if(concurrenceInserDomain != null)
             concurrenceText = assignComplianceDomainVal + " domain ";
->>>>>>> shiva/master
 
           if(concurrenceInserUnits.length > 0){
             concurrenceText = concurrenceInserUnitsVal + " unit(s) "
@@ -732,14 +707,6 @@ if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalI
           if(approvalInserDomain != null)
             approvalText = assignComplianceDomainVal + " domain ";
 
-<<<<<<< HEAD
-    newSetting = client_mirror.newUnitSettings(assignComplianceConcurrenceId, concurrenceInserUnits, concurrenceInserDomain, assignComplianceCountryId);
-    newSettingsList.push(newSetting);
-  }
-  if(approvalInserUnits.length > 0 || approvalInserDomain != null){
-    if(approvalInserDomain != null)
-      approvalText = assignComplianceDomainVal + "Domain, ";
-=======
           if(approvalInserUnits.length > 0){
             approvalText = approvalInserUnitsVal + " unit(s) "
           }else{
@@ -749,7 +716,6 @@ if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalI
           newSetting = client_mirror.newUnitSettings(assignComplianceApprovalId, approvalInserUnits, approvalInserDomain, assignComplianceCountryId);
           newSettingsList.push(newSetting);
         }
->>>>>>> shiva/master
 
 
         var answer = confirm(assigneeText + concurrenceText + approvalText + 'Do you want to add in settings ?');
@@ -820,45 +786,8 @@ if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalI
         );
       }
     }else{
-<<<<<<< HEAD
-      approvalInserUnits = null;
-    }
-
-    newSetting = client_mirror.newUnitSettings(assignComplianceApprovalId, approvalInserUnits, approvalInserDomain, assignComplianceCountryId);
-    newSettingsList.push(newSetting);
-  }
-
-
-  var answer = confirm(assigneeText + concurrenceText + approvalText + 'Do you want to add in settings ?');
-  if (answer)
-  {
-    function onSuccess(data){
-    //getAssignedStatutories ();
-    $('ul.setup-panel li:eq(0)').addClass('active');
-    $('ul.setup-panel li:eq(1)').addClass('disabled');
-    $('ul.setup-panel li:eq(2)').addClass('disabled');
-    $('ul.setup-panel li a[href="#step-1"]').trigger('click');
-    $(".tbody-assignstatutory").find("tbody").remove();
-    $('#assignee').empty();
-    $('#concurrence').empty();
-    $('#approval').empty();
-    load_firstwizard();
-    hideLoader();
-  }
-  function onFailure(error){
-    displayMessage(error);
-    hideLoader();
-  }
-  client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,
-    assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
-    assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
-    function (error, response) {
-    if (error == null){
-      onSuccess(response);
-=======
       hideLoader();
       displayMessage("No compliance selected for assign");
->>>>>>> shiva/master
     }
 }
 

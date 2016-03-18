@@ -2528,6 +2528,8 @@ class ClientDatabase(Database):
         approval = int(request.approval_person)
         compliances = request.compliances
         new_units = request.new_units
+        print request.to_structure()
+        print new_units
         compliance_names = []
         for c in compliances:
             compliance_id = int(c.compliance_id)
@@ -2597,6 +2599,7 @@ class ClientDatabase(Database):
         return clienttransactions.SaveAssignedComplianceSuccess()
 
     def update_user_settings(self, new_units):
+        print new_units
         for n in new_units :
             user_id = n.user_id
             unit_ids = n.unit_ids
