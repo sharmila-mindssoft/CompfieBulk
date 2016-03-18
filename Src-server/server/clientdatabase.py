@@ -2326,7 +2326,7 @@ class ClientDatabase(Database):
             is_approver = False
             is_concurrence = False
 
-            if 11 in form_ids or 12 in forms_id :
+            if 11 in form_ids or 12 in form_ids :
                 is_assignee = True
             if 9 in form_ids :
                 is_concurrence = True
@@ -4922,7 +4922,7 @@ class ClientDatabase(Database):
         aliases = ["tcu", "tu", "tsp"]
         join_type = "left join"
         join_conditions = [
-            "tcu.seating_unit_id = tu.unit_id", 
+            "tcu.seating_unit_id = tu.unit_id",
             "tcu.service_provider_id=tsp.service_provider_id"
         ]
         where_condition = "1"
