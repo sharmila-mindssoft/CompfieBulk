@@ -1469,7 +1469,9 @@ class PastRecordUnits(object):
 class ASSIGN_COMPLIANCE_USER(object):
     def __init__(
         self, user_id, user_name, user_level, seating_unit_id,
-        unit_ids, domain_ids
+        unit_ids, domain_ids,
+        is_assignee, is_approver,
+        is_concurrence
     ):
         self.user_id = user_id
         self.user_name = user_name
@@ -1477,12 +1479,16 @@ class ASSIGN_COMPLIANCE_USER(object):
         self.seating_unit_id = seating_unit_id
         self.unit_ids = unit_ids
         self.domain_ids = domain_ids
+        self.is_assignee = is_assignee
+        self.is_approver = is_approver
+        self.is_concurrence = is_concurrence
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "user_id", "user_name", "user_level",
-            "seating_unit_id", "unit_ids", "domain_ids"
+            "seating_unit_id", "unit_ids", "domain_ids",
+            "is_assignee", "is_approver", "is_concurrence"
         ])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
@@ -1496,9 +1502,17 @@ class ASSIGN_COMPLIANCE_USER(object):
         unit_ids = parse_structure_VectorType_SignedIntegerType_8(unit_ids)
         domain_ids = data.get("domain_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        is_assignee = data.get("is_assignee")
+        is_assignee = parse_structure_Bool(is_assignee)
+        is_approver = data.get("is_approver")
+        is_approver = parse_structure_Bool(is_approver)
+        is_concurrence = data.get("is_concurrence")
+        is_concurrence = parse_structure_Bool(is_concurrence)
         return ASSIGN_COMPLIANCE_USER(
             user_id, user_name, user_level, seating_unit_id,
-            unit_ids, domain_ids)
+            unit_ids, domain_ids,
+            is_assignee, is_concurrence, is_approver
+        )
 
     def to_structure(self):
         return {
@@ -1508,6 +1522,9 @@ class ASSIGN_COMPLIANCE_USER(object):
             "seating_unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.seating_unit_id),
             "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
+            "is_assignee": to_structure_Bool(self.is_assignee),
+            "is_concurrence": to_structure_Bool(self.is_concurrence),
+            "is_approver": to_structure_Bool(self.is_approver)
         }
 
 #
