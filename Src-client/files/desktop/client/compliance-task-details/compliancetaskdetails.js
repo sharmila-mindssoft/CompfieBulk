@@ -112,7 +112,13 @@ function loadUpcomingCompliancesDetails(data){
         $('.uc-domain', cloneval).html(data[k]['domain_name']);
         $('.uc-startdate', cloneval).html(data[k]['start_date']);
         $('.uc-duedate', cloneval).html(data[k]['due_date']);
-        $('.format-file', cloneval).attr("href", data[k]['format_file_name']);
+        if(data[k]['format_file_name'] != ''){
+            $('.format-file', cloneval).attr("href", data[k]['format_file_name']);    
+        }
+        else{
+            $('.format-file', cloneval).hide();       
+        }
+        
         $('.tbody-upcoming-compliances-list').append(cloneval);
     }); 
 
@@ -336,6 +342,9 @@ $(function() {
 });
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
+});
+$(document).find('.js-filtertable-upcoming').each(function(){
+    $(this).filtertable().addFilter('.js-filtertable-upcoming');
 });
 $( document ).tooltip({
     position: {

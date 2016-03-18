@@ -335,25 +335,30 @@ $("#submit").click(function(){
 		var seatingunit = $('#seatingunit').val();	
 		var seatingunitname = $('#seatingunitval').val();		
 		if(seatingunit == ""){
-			displayMessage("Enter Seating Unit");	
+			displayMessage("Enter Seating Unit");
+            return;	
 		}
         if(seatingunitname == ""){
             displayMessage("Enter Seating Unit");   
+            return;
         }
 		if(employeeid == ""){
-			displayMessage("Enter Employee Code");	
+			displayMessage("Enter Employee Code");
+            return;
 		}	
 	}
 	if(usertype == "Service Provider"){
 		isserviceprovider = true;
 		serviceprovider = parseInt($('#serviceprovider').val());
 		if(serviceprovider.length == 0){
-			displayMessage("Enter Service Provider");	
+			displayMessage("Enter Service Provider");
+            return;
 		}
 	}
     console.log(seatingunit);
     if(usertype == ""){
         displayMessage("Select Usertype");
+        return;
     }	
 	else if(employeename == ''){
 		displayMessage("Enter Employee Name");
@@ -892,9 +897,10 @@ function unitview(){
                                     }
                                     var unitId = parseInt(val["unit_id"]);
                                     var unitName = val["unit_name"];
+                                    selectunitstatusd = '';
                                     for(var j=0; j<editunitvaldiv.length; j++){
-                                        if(editunitvaldiv[j]==val["unit_id"]){
-                                            selectunitstatusd='active';
+                                        if(editunitvaldiv[j] == val["unit_id"]){
+                                            selectunitstatusd = "active";
                                         }
                                     }
                                     if(selectunitstatusd == "active"){
@@ -936,9 +942,10 @@ function unitview(){
                                 }
                                 var unitId = parseInt(val["unit_id"]);
                                 var unitName = val["unit_name"];
+                                selectunitstatusl = "";
                                 for(var j=0; j<editunitvallegal.length; j++){
                                     if(editunitvallegal[j]==val["unit_id"]){
-                                        selectunitstatusl = 'active';
+                                        selectunitstatusl = "active";
                                     }
                                 }
                                 if(selectunitstatusl == "active"){
@@ -967,19 +974,22 @@ function unitview(){
     }    
 }
 function activateUnit(element){
+    console.log(element);
     var chkstatus = $(element).attr('class');
-    if(chkstatus == 'active'){
+    if(chkstatus == "active"){
         $(element).removeClass("active");
     }
     else{
-    $(element).addClass("active");
+        $(element).addClass("active");
     }
     var selids='';
-    var totalcount =  $(".active").length;
-    $(".active").each( function( index, el ) {
+    var totalcount =  $("#unitList li.active").length;
+    console.log(totalcount);
+    $("#unitList li.active").each( function( index, el ) {
         if (index === totalcount - 1) {
             selids = selids+el.id;
-        }else{
+        }
+        else{
             selids = selids+el.id+",";
         }
     });
@@ -1129,6 +1139,18 @@ function activate_text_sp (element,checkval,checkname) {
   $("#serviceproviderval").val(checkname);
   $("#serviceprovider").val(checkval);
 }
+
+$("#search-units").keyup(function() {
+    var count = 0;
+    var value = this.value.toLowerCase();
+    $("#unitList ul").find("li").each(function(index) {
+        console.log($(this).text());
+        if (index === 0) return;
+        var id = $(this).text().toLowerCase();
+        $(this).toggle(id.indexOf(value) !== -1);;
+    });
+});
+
 $(function() {
     initialize();
 });

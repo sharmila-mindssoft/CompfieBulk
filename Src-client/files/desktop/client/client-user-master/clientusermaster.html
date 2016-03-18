@@ -112,17 +112,17 @@
         </div>
         <div class="input-row">
           <div class="field-label">Employee Name:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" class="input-box" id="employee-name" value=""></div>
+          <div class="field-input"><input type="text" class="input-box" id="employee-name" value="" maxlength="50"></div>
         </div>
         <div class="input-row">
           <div class="field-label">Employee ID:<span class="mandatory star">*</span></div>
-          <div class="field-input"><input type="text" class="input-box" id="employee-id" value=""></div>
+          <div class="field-input"><input type="text" class="input-box" id="employee-id" value="" maxlength="50"></div>
         </div>
       </div>
       <div class="input-row-right">
          <div class="input-row">
           <div class="field-label">Contact No</div>
-          <div class="field-input"><input type="text" class="input-box countrycode" id="country-code" value=""> <input type="text" class="input-box areacode" value="" id="area-code"> <input type="text" class="input-box mobile" id="mobile-number" value=""></div>
+          <div class="field-input"><input type="text" class="input-box countrycode" id="country-code" value="" maxlength="4"> <input type="text" class="input-box areacode" value="" id="area-code" maxlength="4"> <input type="text" class="input-box mobile" id="mobile-number" value="" maxlength="10"></div>
         </div>
         <div class="input-row">
           <div class="field-label">User Group:<span class="mandatory">*</span></div>
@@ -227,7 +227,7 @@
         <div id="unitList">
           <ul style="height:183px; font-size:1em;">
             <li>
-              <input type="text" class="filter-text-box">
+              <input type="text" class="filter-text-box" id="search-units">
             </li>
           </ul>
           </div>

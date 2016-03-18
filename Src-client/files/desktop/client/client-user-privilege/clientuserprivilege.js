@@ -109,18 +109,18 @@ function loadUserGroupdata(userGroupList){
 }
 
 $("#submit").click(function(){
-	var groupIdVal = $("#user-privilege-id").val();
-	var groupNameVal = $("#user-privilege-name").val();
+	var groupIdVal = $("#user-privilege-id").val().trim();
+	var groupNameVal = $("#user-privilege-name").val().trim();
 	var chkArray = [];
 	$(".tbody-userprivilege-form-list .form-checkbox:checked").each(function() {
 		chkArray.push($(this).val());
 	}); 
 	
 	if(groupNameVal == ''){
-	  	displayMessage("Enter Group Name ");  	
+	  	displayMessage("Enter Group Name");  	
 	}
 	else if(chkArray.length == 0){
-		displayMessage("Select Atleast one form from list");  	 	
+		displayMessage("Select atleast one form from list");  	 	
 	}
 	else if(groupIdVal == ''){
 		chkArrayInt = chkArray.map(function(item) {
@@ -134,6 +134,9 @@ $("#submit").click(function(){
 		function onFailure(error){		
 			if(error == "UserGroupNameAlreadyExists"){
 	   			displayMessage("User Group Name Already Exists");
+	  		}
+	  		else{
+	  			displayMessage(error);
 	  		}
 		}
 		var userGroupInsertDetails;

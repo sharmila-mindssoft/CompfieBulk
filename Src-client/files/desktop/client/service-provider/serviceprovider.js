@@ -91,15 +91,15 @@ $("#submit").click(function(){
     function parseMyDate(s) {
         return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
     }
-    var serviceProviderIdValue = $("#service-provider-id").val();
-    var serviceProviderNameValue = $("#service-provider-name").val();
-    var contactPersonValue = $("#contact-person").val();
-    var countryCodeValue = $("#country-code").val();
-    var areaCodeValue = $("#area-code").val();
-    var mobileNumberValue = $("#mobile-number").val();
-    var addressValue = $("#address").val();
-    var contractFromValue = $("#contract-from").val();
-    var contractToValue = $("#contract-to").val();
+    var serviceProviderIdValue = $("#service-provider-id").val().trim();
+    var serviceProviderNameValue = $("#service-provider-name").val().trim();
+    var contactPersonValue = $("#contact-person").val().trim();
+    var countryCodeValue = $("#country-code").val().trim();
+    var areaCodeValue = $("#area-code").val().trim();
+    var mobileNumberValue = $("#mobile-number").val().trim();
+    var addressValue = $("#address").val().trim();
+    var contractFromValue = $("#contract-from").val().trim();
+    var contractToValue = $("#contract-to").val().trim();
     var todaydate = new Date();
 
     if(serviceProviderNameValue == ''){

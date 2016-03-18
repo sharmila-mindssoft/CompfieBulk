@@ -151,7 +151,8 @@ $(document).ready(function() {
             <tr>
               <td width="100%">
                 <div class="grid-table" style="padding-bottom:0em;">
-                  <table>
+                  <table class="js-filtertable-upcoming">
+                  <thead>
 
                     <tr align="left" style="background:#ccc;">
                       <td width="3%">
@@ -173,21 +174,20 @@ $(document).ready(function() {
                       <td>
                         <span style="font-weight:bold;padding-right:5px">Format</span>
                       </td>
-
                     </tr>
                     <tr>
                       <td></td>
                       <td align="center">
-                        <input type="text" class="filter-text-box" ></td>
+                        <input type="text" class="filter-text-box js-filter-upcoming"  ></td>
                       <td>
-                        <input type="text" class="filter-text-box"></td>
+                        <input type="text" class="filter-text-box js-filter-upcoming"></td>
                       <td align="center">
-                        <input type="text" class="filter-text-box"></td>
+                        <input type="text" class="filter-text-box js-filter-upcoming"></td>
                       <td align="center">
-                        <input type="text" class="filter-text-box"></td>
+                        <input type="text" class="filter-text-box js-filter-upcoming"></td>
                       <td></td>
-
                     </tr>
+                    </thead>
                     <tbody class="tbody-upcoming-compliances-list"></tbody>
                   </table>
                 </div>
