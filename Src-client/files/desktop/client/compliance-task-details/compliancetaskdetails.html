@@ -137,7 +137,6 @@ $(document).ready(function() {
                     </thead>
                     <tbody class="tbody-compliances-task-list-overdue"></tbody>
                     <tbody class="tbody-compliances-task-list-inprogress"></tbody>
-
                   </table>
                 </div>
               </td>
@@ -253,15 +252,22 @@ $(document).ready(function() {
           </a>
         </td>
       </tr>
+      <tr>
+        <td >
+          <span style="font-weight:bold;">Unit:</span>
+        </td>
+        <td class="sideview-compliance-unit"><abbr class="page-load" title=""><img src="/images/icon-info.png" style="margin-right:3px"></abbr><span></span></td>
+      </tr>
       <tr align="left">
         <td width="30%">
           <span style="font-weight:bold;">Compliance Task</span>
         </td>
-        <td width="70%" colspan="3">
-          <abbr class="page-load sideview-compliance-task" title="">
+        <td width="70%" colspan="3" class="sideview-compliance-task">
+          <abbr class="page-load" title="">
             <img src="/images/icon-info.png" style="margin-right:3px">
-            <span></span>
           </abbr>
+          <span class="ct"></span>
+
         </td>
       </tr>
       <tr>
@@ -294,7 +300,7 @@ $(document).ready(function() {
       </tr>
       <tr>
         <td>
-          <span style="font-weight:bold;">Document / Completion Date</span>
+          <span style="font-weight:bold;">Document / Completion Date<input type="hidden" class="sideview-startdate" /></span>
         </td>
         <td class="sideview-completion-date-td">
           
@@ -309,7 +315,7 @@ $(document).ready(function() {
             <img src="/images/icon-edit.png" class="validity1_icon" style="padding-left:40px;">
           </span>
           <span class="validity1_textbox" style="display:none;">
-            <input type="text" value="" class="input-box validity1-textbox-input"/>
+            <input type="text" value="" class="input-box validity1-textbox-input" readonly="readonly" />
           </span>
         </td>
       </tr>
@@ -320,7 +326,7 @@ $(document).ready(function() {
         <td>
           <span class="duedate1_label"><abbr></abbr></span>
           <span class="duedate1_textbox" style="display:none;">
-            <input type="text" value="" class="input-box duedate1-textbox-input "/>
+            <input type="text" value="" class="input-box duedate1-textbox-input" readonly="readonly"/>
           </span>
         </td>
       </tr>

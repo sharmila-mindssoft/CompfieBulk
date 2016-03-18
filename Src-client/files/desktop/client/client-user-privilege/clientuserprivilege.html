@@ -1,6 +1,6 @@
 {% extends "files/desktop/client/home/container.html" %}
 {% block content %}
-  <div class="content-container width45" id="userprivilege-view">
+  <div class="content-container width50" id="userprivilege-view">
     <div class="content-area">
       <h1>User Privileges</h1>
       <div class="filters-and-search">
@@ -47,7 +47,7 @@
             <div class="single-column-field-label">User Group Name:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
               <input type="hidden" id="user-privilege-id">
-              <input type="text" class="input-box" id="user-privilege-name">
+              <input type="text" class="input-box" id="user-privilege-name" maxlength="50">
             </div>
           </div>
         </div>

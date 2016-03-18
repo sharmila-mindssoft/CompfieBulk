@@ -149,7 +149,7 @@ $("#submit").click(function(){
 			}
 		);
 	}
-	if(groupIdVal != ''){
+	else if(groupIdVal != ''){
 		chkArrayInt = chkArray.map(function(item) {
 	   		return parseInt(item, 10);
 		});
@@ -179,11 +179,13 @@ $("#submit").click(function(){
 
 });
 function userPrivilegeEdit(userGroupId, userGroupName){
+	clearMessage();
 	$("#userprivilege-add").show();
 	$("#userprivilege-view").hide();
 	$("#user-privilege-name").val(userGroupName);
 	$("#user-privilege-id").val(userGroupId);  
 	$(".checkbox-full-check").prop('checked' , false);
+	$(".tbody-userprivilege-form-list").find("tr").remove();
 
 	function onSuccess(data){
 		loadFormListUpdate(data['forms']['menus'], data['user_groups'], userGroupId);     
@@ -230,21 +232,32 @@ function loadFormListUpdate(formList, userGroupList, userGroupId){
 	});
 }
 function userPrivilegeActive(userGroupId, isActive){
-  	function onSuccess(data){
-   		initialize();
-  	}
-  	function onFailure(error){
- 	}
-  	client_mirror.changeClientUserGroupStatus(userGroupId, isActive, 
-  		function (error, response){
-			if(error == null){
-				onSuccess(response);
+	var msgstatus='deactivate';
+    if(isActive){
+        msgstatus='activate';
+    }
+    var answer = confirm('Are you sure want to '+msgstatus+ '?');
+    if (answer)
+    {
+	  	function onSuccess(data){
+	   		initialize();
+	  	}
+	  	function onFailure(error){
+	  		if(error == "CannotDeactivateUserExists"){
+	  			displayMessage("Cannot Deactivate User group, One or More User Exists")
+	  		}
+	 	}
+	  	client_mirror.changeClientUserGroupStatus(userGroupId, isActive, 
+	  		function (error, response){
+				if(error == null){
+					onSuccess(response);
+				}
+				else{
+					onFailure(error);
+				}
 			}
-			else{
-				onFailure(error);
-			}
-		}
-	);
+		);
+	}
 }
 $("#search-user-group-name").keyup(function() { 
   var count=0;

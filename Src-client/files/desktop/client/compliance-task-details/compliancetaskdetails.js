@@ -1,5 +1,6 @@
 var currentCompliances;
 var file_list = [];
+var currentDate;
 
 function clearMessage() {
     $(".error-message").hide();
@@ -17,6 +18,7 @@ function initialize(){
         currentCompliances = data['compliance_detail']['current_compliances'];
         loadComplianceTaskDetails(currentCompliances);
         loadUpcomingCompliancesDetails(data['compliance_detail']['upcoming_compliances'])
+        currentDate = data['compliance_detail']['current_date'];
     }
     function onFailure(error){
         console.log(error);
@@ -136,9 +138,13 @@ function showSideBar(idval, data){
             var tableRowSide = $('#templates .sideview-div');
             var cloneValSide = tableRowSide.clone();
             var complianceStatus = data[k]['compliance_status'];
-            $('.sideview-compliance-task span', cloneValSide).html(data[k]['compliance_name']);
+            $('.sideview-compliance-unit span', cloneValSide).html(data[k]['unit_name']);
+            $('.sideview-compliance-unit abbr', cloneValSide).attr("title", data[k]['address']);
+            $('.sideview-compliance-task .ct', cloneValSide).html(data[k]['compliance_name']);
+            $('.sideview-compliance-task abbr', cloneValSide).attr("title", data[k]['compliance_description']);
             $('.sideview-compliance-frequency', cloneValSide).html(data[k]['compliance_frequency']);
-            $('.sideview-completion-date-td', cloneValSide).html("<input  type='text' class='input-box datepick sideview-completion-date' id='completion-date'>");
+            $('.sideview-startdate', cloneValSide).val(data[k]['start_date']);
+            $('.sideview-completion-date-td', cloneValSide).html("<input  type='text' class='input-box datepick sideview-completion-date' id='completion-date' readonly='readonly'>");
             $('.sideview-compliance-status', cloneValSide).html(complianceStatus);
             $('.sideview-upload-date', cloneValSide).html(d);
             $('.sideview-remarks-td', cloneValSide).html("<textarea class='input-box sideview-remarks' maxlength='500'></textarea>");
@@ -165,7 +171,11 @@ function showSideBar(idval, data){
                 var documents;
                 var validity_date;
                 var next_due_date;
+                var start_date;
                 compliance_history_id = data[k]['compliance_history_id'];
+                function parseMyDate(s) {
+                    return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
+                }
                
                 documents = file_list;
                 if(documents.length == 0){
@@ -188,17 +198,50 @@ function showSideBar(idval, data){
                     }
                 }
                 remarks = $('.sideview-remarks').val();
+                start_date = $('.sideview-startdate').val();
 
                 if(remarks == ''){
                     remarks = null;
                 }
                 if(completion_date == ''){
                     displayMessage("Select Completion Date");
+                    return;
                 }
-                else if(validity_date == ''){
+                if(validity_date == ''){
                     displayMessage("Select Validity Date");
+                    return;
+                }
+                if(parseMyDate(start_date) > parseMyDate(completion_date)){
+                    displayMessage("Completion Date is Greater than or equal to Start Date");
+                    return;
+                }
+                if(validity_date != null){
+                    if(parseMyDate(start_date) > parseMyDate(validity_date)){
+                        displayMessage("Validity Date is Greater than or equal to Start Date");
+                        return;
+                    }
+                }
+                if(next_due_date != null){
+                    if(parseMyDate(start_date) > parseMyDate(next_due_date)){
+                        displayMessage("Due Date is Greater than or equal to Start Date");    
+                        return;
+                    }                    
+                }
+                if(currentDate != null && validity_date != null){
+                    if(parseMyDate(currentDate) > parseMyDate(next_due_date)){
+                        displayMessage("Validity Date is Greater than Current Date");
+                        return;
+                    }
+                }
+                if(validity_date != null  && next_due_date != null){
+                    if(parseMyDate(next_due_date) > parseMyDate(validity_date)){
+                        displayMessage("Validity Date is Greater than or equal to Due Date");
+                        return;
+                    }
                 }
                 else{
+                    displayMessage("Welcome to api");
+                    return;
                     function onSuccess(data){
                         initialize();
                     }
@@ -223,14 +266,30 @@ function showSideBar(idval, data){
             $('.half-width-task-details').append(cloneValSide);    
         }        
     });
-    $(".datepick" ).datepicker({
+    $(".datepick").datepicker({
         changeMonth: true,
         changeYear: true,
         numberOfMonths: 1,
         dateFormat: "dd-M-yy",
         monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     });
+    $(".duedate1-textbox-input").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    });
+    $(".validity1-textbox-input").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    });    
 }
 
 function showTextbox(complianceStatus){
@@ -247,6 +306,10 @@ function closeicon(){
 
 function uploadedfile(e){
     client_mirror.uploadFile(e, function result_data(data) {
+        if(data == "File max limit exceeded"){
+            displayMessage("File max limit exceeded");
+            $(".uploaded_filename").html('');
+        }
         if(data != 'File max limit exceeded' || data != 'File content is empty'){
             uploadFile = data;
             file_list = data
@@ -273,4 +336,18 @@ $(function() {
 });
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
+});
+$( document ).tooltip({
+    position: {
+        my: "center bottom-20",
+        at: "center top",
+        using: function( position, feedback ) {
+            $( this ).css( position );
+            $( "<div>" )
+                .addClass( "arrow" )
+                .addClass( feedback.vertical )
+                .addClass( feedback.horizontal )
+                .appendTo( this );
+        }
+    }
 });
