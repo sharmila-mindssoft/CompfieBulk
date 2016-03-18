@@ -258,23 +258,24 @@ function hidebgroupslist(){
     document.getElementById('autocompleteview-bgroups').style.display = 'none';
 }
 function loadauto_businessgroups (textval) {
-  document.getElementById('autocompleteview-bgroups').style.display = 'block';
-  var bgroups = businessgroupsList;
-  var suggestions = [];
-  $('#autocompleteview-bgroups ul').empty();
-  if(textval.length>0){
-    for(var i in bgroups){
-        if(bgroups[i]['client_id']==$("#group-id").val()){
-            if (~bgroups[i]['business_group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([bgroups[i]["business_group_id"],bgroups[i]["business_group_name"]]);     
-        }      
+    document.getElementById('autocompleteview-bgroups').style.display = 'block';
+    var bgroups = businessgroupsList;
+    var suggestions = [];
+    $('#autocompleteview-bgroups ul').empty();
+    if(textval.length>0){
+        for(var i in bgroups){
+            if(bgroups[i]['client_id']==$("#group-id").val()){
+                if (~bgroups[i]['business_group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([bgroups[i]["business_group_id"],bgroups[i]["business_group_name"]]);     
+            }      
+        }
+        var str='';
+        for(var i in suggestions){
+          str += '<li id="'+suggestions[i][0]+'" onclick="activate_businessgroups(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+        }
+        $('#autocompleteview-bgroups ul').append(str);
+        $("#businessgroupid").val('');
     }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_businessgroups(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview-bgroups ul').append(str);
-    $("#businessgroupid").val('');
-    }else{
+    else{
       $("#businessgroupid").val('');
       $("#autocompleteview-bgroups").hide();
     }
@@ -333,12 +334,17 @@ function loadauto_division (textval) {
   $('#autocompleteview-division ul').empty();
   if(textval.length>0){
     for(var i in division){
-        if(division[i]['legal_entity_id']==$("#legalentityid").val()){
-            if (~division[i]['division_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([division[i]["division_id"],division[i]["division_name"]]);    
+        if($("#legalentityid").val() != ''){
+            if(division[i]['legal_entity_id']==$("#legalentityid").val()){
+                if (~division[i]['division_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([division[i]["division_id"],division[i]["division_name"]]);    
+            }
+        }
+        else{
+            if(division[i]['client_id']==$("#group-id").val()){
+               if (~division[i]['division_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([division[i]["division_id"],division[i]["division_name"]]);    
+            }
         }   
-        if(division[i]['client_id']==$("#group-id").val()){
-            if (~division[i]['division_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([division[i]["division_id"],division[i]["division_name"]]);    
-        }       
+               
     }
     var str='';
     for(var i in suggestions){
@@ -361,43 +367,42 @@ function hideunitlist(){
     document.getElementById('autocompleteview-unit').style.display = 'none';
 }
 function loadauto_unit (textval) {
-  document.getElementById('autocompleteview-unit').style.display = 'block';
-  var unit = unitList;
-  var suggestions = [];
-  $('#autocompleteview-unit ul').empty();
-  if(textval.length>0){
-    for(var i in unit){
-        if($("#divisionid").val()==''){
-            if(unit[i]['legal_entity_id'] == $("#legalentityid").val()){
-                if (~unit[i]['unit_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"]]);    
-            }       
+    document.getElementById('autocompleteview-unit').style.display = 'block';
+    var unit = unitList;
+    var suggestions = [];
+    $('#autocompleteview-unit ul').empty();
+    if(textval.length>0){
+        for(var i in unit){
+            if($("#legalentityid").val() != ''){
+                if(unit[i]['legal_entity_id'] == $("#legalentityid").val()){
+                    if (~unit[i]['unit_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"] ]);    
+                }       
+            }
+            else if($("#divisionid").val() != ''){
+                if(unit[i]['division_id']==$("#divisionid").val()){
+                    if (~unit[i]['unit_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]);    
+                }       
+            }
+            else{
+                if(unit[i]['client_id'] == $("#group-id").val()){
+                    if (~unit[i]['unit_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]);    
+                } 
+            }        
         }
-        else if($("#legalentityid").val() == ''){
-            if(unit[i]['client_id']==$("#group-id").val()){
-                if (~unit[i]['unit_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"]]);    
-            }    
+        var str='';
+        for(var i in suggestions){
+            str += '<li id="'+suggestions[i][0]+'" onclick="activate_unit(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\', \''+suggestions[i][2]+'\')">'+suggestions[i][2]+'-'+suggestions[i][1]+'</li>';
         }
-        else {
-            if(unit[i]['division_id']==$("#divisionid").val()){
-                if (~unit[i]['unit_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"]]);    
-            }       
-        }
-        
-        
+        $('#autocompleteview-unit ul').append(str);
+        $("#unitid").val('');
     }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_unit(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview-unit ul').append(str);
-    $("#unitid").val('');
-    }else{
+    else{
       $("#unitid").val('');
       $("#autocompleteview-unit").hide();
     }
 }
-function activate_unit (element,checkval,checkname) {
-  $("#unitval").val(checkname);
+function activate_unit (element,checkval,checkname, unitcode) {
+  $("#unitval").val(unitcode+"-"+checkname);
   $("#unitid").val(checkval);
 }
 //Domains------------------------------------------------------------------------------------------------

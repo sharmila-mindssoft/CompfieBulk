@@ -282,6 +282,8 @@ function userGroupEdit(userGroupId, userGroupName, catgid){
 	$("#userGroupView").hide();
 	$("#groupId").val(userGroupId);
 	$("#groupName").val(userGroupName);
+	$("#categoryName").val('');
+	$('#categoryName option:gt(0)').remove();
  	loadFormCategories();
  	$('#categoryName option[value = '+catgid+']').attr('selected','selected');
 	function onSuccess(data){

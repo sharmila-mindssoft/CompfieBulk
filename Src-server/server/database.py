@@ -3754,7 +3754,6 @@ class KnowledgeDatabase(Database):
         con = self._mysql_server_connect(host, username, password)
         cursor = con.cursor()
         query = "DROP DATABASE IF EXISTS %s" % database_name
-        print query
         cursor.execute(query)
         con.commit()
 
