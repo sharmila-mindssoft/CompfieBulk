@@ -491,7 +491,7 @@ INSERT INTO tbl_forms VALUES(21, 4, 'Reassigned History', '/reassigned-history',
 INSERT INTO tbl_forms VALUES(22, 4, 'Statutory Notifications List', '/statutory-notifications-list', 22, null, 0);
 INSERT INTO tbl_forms VALUES(23, 4, 'Login Trace', '/login-trace', 23, null, 1);
 INSERT INTO tbl_forms VALUES(24, 4, 'Audit Trail', '/audit-trail', 24, null, 1);
-INSERT INTO tbl_forms VALUES(25, 4, 'Settings', '/settings',  25, null, 1);
+INSERT INTO tbl_forms VALUES(25, 5, 'Settings', '/settings',  25, null, 1);
 INSERT INTO tbl_forms VALUES(26, 5, 'View Profile', '/view-profile',  26, null, 0);
 INSERT INTO tbl_session_types VALUES(1, "web");
 INSERT INTO tbl_session_types VALUES(2, "android");

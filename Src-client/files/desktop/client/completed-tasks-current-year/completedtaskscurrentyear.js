@@ -366,7 +366,9 @@ function getStatutories(){
   var assignComplianceDomainId = null;
   var assignComplianceActId = null;
   var assignComplianceFrequencyId = null;
+  var assignComplianceCountryId = null;
 
+  if($('.countrylist.active').attr('id') != undefined) assignComplianceCountryId = parseInt($('.countrylist.active').attr('id'));
   if($('.unitlist.active').attr('id') != undefined) assignComplianceUnitId = parseInt($('.unitlist.active').attr('id'));
   if($('.domainlist.active').attr('id') != undefined) assignComplianceDomainId = parseInt($('.domainlist.active').attr('id'));
   if($('.actlist.active').attr('id') != undefined) assignComplianceActId = $('.actlist.active').attr('id');
@@ -380,7 +382,7 @@ function getStatutories(){
     }
     function onFailure(error){
     }
-    client_mirror.getStatutoriesByUnit(assignComplianceUnitId, assignComplianceDomainId, assignComplianceActId, assignComplianceFrequencyId,
+    client_mirror.getStatutoriesByUnit(assignComplianceUnitId, assignComplianceDomainId, assignComplianceActId, assignComplianceFrequencyId, assignComplianceCountryId,
       function (error, response) {
             if (error == null){
               onSuccess(response);
