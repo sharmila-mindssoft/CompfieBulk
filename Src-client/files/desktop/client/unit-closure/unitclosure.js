@@ -31,7 +31,8 @@ function showPopup(unitId){
 	$('.overlay').css("visibility","visible");
 	$('.overlay').css("opacity","1");
 	$('.popup-error-msg').html("");
-	$('#password').html("");
+	$("input[name=password]").html("");
+	$("#password").html("");
 }
 $('.close').click(function(){
 	$('#unitidval').val("");

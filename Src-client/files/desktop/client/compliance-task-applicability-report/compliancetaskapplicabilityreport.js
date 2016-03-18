@@ -164,23 +164,26 @@ function loadTaskApplicabilityStatusList(data){
             $('.tbody-task-applicability-list').append(cloneLevel1);
             var tableRowList = $('#templates .table-task-applicability-list .list-heading');
             var cloneList = tableRowList.clone();
-            $('.tbody-task-applicability-list').append(cloneList);
+            $('.tbody-task-applicability-list').append(cloneList);            
             var list = actwiselist[ke];
             $.each(list, function(i, val) { 
-                var valcomp = list[i]["compliances"];
-                var tableRow = $('#templates .table-task-applicability-list .task-list');
-                var clone = tableRow.clone();
-                sno = sno + 1;
-                $('.sno', clone).text(sno);
-                $('.statutory-provision', clone).html(valcomp['statutory_provision']);
-                $('.unit-name', clone).html(valu["unit-name"]);
-                $('.compliance-task a', clone).html(valcomp['compliance_name']);
-                $('.compliance-task a', clone).attr("href",valcomp['compliance_name']);
-                $('.compliance-description', clone).html(valcomp['description']);
-                $('.penal-consequences', clone).html(valcomp['penal_consequences']);
-                $('.compliance-frequency', clone).html(valcomp['compliance_frequency']);
-                $('.repeats', clone).html(valcomp['repeats']);
-                $('.tbody-task-applicability-list').append(clone);
+                var listval = list[i]["compliances"];                                
+                $.each(listval, function(i, valcomp) { 
+                    var tableRow = $('#templates .table-task-applicability-list .task-list');
+                    var clone = tableRow.clone();
+                    sno = sno + 1;
+                    $('.sno', clone).text(sno);
+                    $('.statutory-provision', clone).html(valcomp['statutory_provision']);
+                    $('.unit span', clone).html(val["unit_name"]);
+                    $('.unit abbr', clone).attr("title", val["address"]);
+                    $('.compliance-task a', clone).html(valcomp['compliance_name'][0]);
+                    $('.compliance-task a', clone).attr("href",valcomp['compliance_name'][1]);
+                    $('.compliance-description', clone).html(valcomp['description']);
+                    $('.penal-consequences', clone).html(valcomp['penal_consequences']);
+                    $('.compliance-frequency', clone).html(valcomp['compliance_frequency']);
+                    $('.repeats', clone).html(valcomp['repeats']);
+                    $('.tbody-task-applicability-list').append(clone);
+                });
             });
         });
     });
@@ -398,4 +401,19 @@ function loadApplicableStatus(list){
 }
 $(function() {
     initialize();
+});
+
+$( document ).tooltip({
+    position: {
+        my: "center bottom-20",
+        at: "center top",
+        using: function( position, feedback ) {
+            $( this ).css( position );
+            $( "<div>" )
+                .addClass( "arrow" )
+                .addClass( feedback.vertical )
+                .addClass( feedback.horizontal )
+                .appendTo( this );
+        }
+    }
 });
