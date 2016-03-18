@@ -1291,6 +1291,10 @@ class ClientDatabase(Database):
 #
 
     def get_statutory_settings(self, session_user, client_id):
+        if session_user == 0 :
+            user_id = '%'
+        else :
+            user_id = int(session_user)
         query = "SELECT distinct t1.geography, \
             t1.country_id, t1.domain_id, t1.unit_id,t2.unit_name, \
             (select business_group_name from tbl_business_groups \
@@ -1304,7 +1308,11 @@ class ClientDatabase(Database):
             (select domain_name from tbl_domains where domain_id = t1.domain_id)domain_name \
             FROM tbl_client_statutories t1 \
             INNER JOIN tbl_units t2 \
-            ON t1.unit_id = t2.unit_id "
+            ON t1.unit_id = t2.unit_id \
+            WHERE t1.unit_id in (select unit_id from tbl_user_units where user_id LIKE '%s') \
+            AND t1.domain_id in (select domain_id from tbl_user_domains where user_id LIKE '%s')" % (
+                user_id, user_id
+            )
 
         rows = self.select_all(query)
         columns = [
@@ -2387,6 +2395,7 @@ class ClientDatabase(Database):
             (SELECT A.unit_id, A.client_statutory_id, B.compliance_id FROM tbl_client_statutories A \
             INNER JOIN tbl_client_compliances B \
             ON A.client_statutory_id = B.client_statutory_id \
+            AND B.compliance_opted = 1 \
             AND A.unit_id IN %s) U \
             group by U.compliance_id )UC \
             ON t2.compliance_id = UC.compliance_id \
