@@ -591,7 +591,7 @@ if(assignComplianceAssigneeName != 'Client Admin' && assignComplianceAssigneeId 
     if(usersList[user]["user_id"] == assignComplianceAssigneeId){
       userUnits = usersList[user]["unit_ids"];
       userDomains = usersList[user]["domain_ids"];
-      if($.inArray(userDomains, assignComplianceDomainId) == -1){
+      if($.inArray(assignComplianceDomainId, userDomains) == -1){
         assigneeInserDomain = assignComplianceDomainId;
       }
     }
@@ -620,7 +620,7 @@ if(assignComplianceConcurrenceId != null){
     if(usersList[user]["user_id"] == assignComplianceConcurrenceId){
       userUnits = usersList[user]["unit_ids"];
       userDomains = usersList[user]["domain_ids"];
-      if($.inArray(userDomains, assignComplianceDomainId) == -1){
+      if($.inArray(assignComplianceDomainId, userDomains) == -1){
         concurrenceInserDomain = assignComplianceDomainId;
       }
     }
@@ -649,7 +649,7 @@ if(assignComplianceApprovalName != 'Client Admin' && assignComplianceApprovalId 
     if(usersList[user]["user_id"] == assignComplianceApprovalId){
       userUnits = usersList[user]["unit_ids"];
       userDomains = usersList[user]["domain_ids"];
-      if($.inArray(userDomains, assignComplianceDomainId) == -1){
+      if($.inArray(assignComplianceDomainId, userDomains) == -1){
         approvalInserDomain = assignComplianceDomainId;
       }
     }
@@ -667,28 +667,55 @@ if(assignComplianceApprovalName != 'Client Admin' && assignComplianceApprovalId 
   }
 }
 
+var newSettingsList = [];
+var newSetting = null;
 
 if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalInserUnits.length >0 ||
   assigneeInserDomain != null || concurrenceInserDomain != null || approvalInserDomain != null){
   var assigneeText = '';
   var concurrenceText = '';
   var approvalText = '';
-  if(assigneeInserUnits.length > 0){
-    if(assigneeInserDomain != null) assigneeText = assignComplianceDomainVal + "Domain, ";
+  if(assigneeInserUnits.length > 0 || assigneeInserDomain != null){
+    if(assigneeInserDomain != null) 
+      assigneeText = assignComplianceDomainVal + "Domain, ";
 
-    assigneeText = assigneeInserUnitsVal + " unit(s) not applicable for Assignee. "
-  }
-  if(concurrenceInserUnits.length > 0){
-    if(concurrenceInserDomain != null) concurrenceText = assignComplianceDomainVal + "Domain, ";
+    if(assigneeInserUnits.length > 0){
+      assigneeText = assigneeInserUnitsVal + " unit(s) not applicable for Assignee. ";
+    }else{
+      assigneeInserUnits = null;
+    } 
 
-    concurrenceText = concurrenceInserUnitsVal + " unit(s) not applicable for Concurrence. "
+    newSetting = client_mirror.newUnitSettings(assignComplianceAssigneeId, assigneeInserUnits, approvalInserDomain, assignComplianceCountryId);
+    newSettingsList.push(newSetting);
   }
-  if(approvalInserUnits.length > 0){
-    if(approvalInserDomain != null) approvalText = assignComplianceDomainVal + "Domain, ";
-    
-    approvalText = approvalInserUnitsVal + " unit(s) not applicable for Approval. "
+  if(concurrenceInserUnits.length > 0 || concurrenceInserDomain != null){
+    if(concurrenceInserDomain != null) 
+      concurrenceText = assignComplianceDomainVal + "Domain, ";
+
+    if(concurrenceInserUnits.length > 0){
+      concurrenceText = concurrenceInserUnitsVal + " unit(s) not applicable for Concurrence. "
+    }else{
+      concurrenceInserUnits = null;
+    }
+
+    newSetting = client_mirror.newUnitSettings(assignComplianceConcurrenceId, concurrenceInserUnits, concurrenceInserDomain, assignComplianceCountryId);
+    newSettingsList.push(newSetting);
+  }
+  if(approvalInserUnits.length > 0 || approvalInserDomain != null){
+    if(approvalInserDomain != null) 
+      approvalText = assignComplianceDomainVal + "Domain, ";
+
+    if(approvalInserUnits.length > 0){
+      approvalText = approvalInserUnitsVal + " unit(s) not applicable for Approval. "
+    }else{
+      approvalInserUnits = null;
+    }
+
+    newSetting = client_mirror.newUnitSettings(assignComplianceApprovalId, approvalInserUnits, approvalInserDomain, assignComplianceCountryId);
+    newSettingsList.push(newSetting);
   }
 
+  
   var answer = confirm(assigneeText + concurrenceInserUnits + approvalInserUnits + 'Do you want to add in settings ?');
   if (answer)
   {
@@ -711,7 +738,7 @@ if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalI
   }
   client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,
     assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
-    assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance,
+    assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
     function (error, response) {
     if (error == null){
       onSuccess(response);
@@ -725,6 +752,7 @@ if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalI
     hideLoader();
   }
 }else{
+  newSettingsList = null;
   function onSuccess(data){
     //getAssignedStatutories ();
     $('ul.setup-panel li:eq(0)').addClass('active');
@@ -744,7 +772,7 @@ if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalI
   }
   client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,
     assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
-    assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance,
+    assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
     function (error, response) {
     if (error == null){
       onSuccess(response);

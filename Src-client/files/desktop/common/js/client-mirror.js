@@ -754,7 +754,7 @@ function initClientMirror() {
         countryId, assignee, assigneeName,
         concurrence, concurrenceName,
         approval, approvalName,
-        compliances, callback
+        compliances, newUnits, callback
     ) {
         var request = [
             "SaveAssignedCompliance", {
@@ -765,7 +765,8 @@ function initClientMirror() {
                 "concurrence_person_name": concurrenceName,
                 "approval_person": approval,
                 "approval_person_name": approvalName,
-                "compliances": compliances
+                "compliances": compliances,
+                "new_units" : newUnits
             }
         ];
         var callerName = "client_transaction";
