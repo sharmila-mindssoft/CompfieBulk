@@ -122,9 +122,37 @@ class GetGeographyReport(Request):
         return {
         }
 
+class GetDomainsReport(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetDomainsReport()
+
+    def to_inner_structure(self):
+        return {}
+
+class GetCountriesReport(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetCountriesReport()
+
+    def to_inner_structure(self):
+        return {}
+
 
 def _init_Request_class_map():
-    classes = [GetStatutoryMappingReportFilters, GetStatutoryMappingReportData, GetGeographyReport]
+    classes = [
+        GetStatutoryMappingReportFilters,
+        GetStatutoryMappingReportData, GetGeographyReport,
+        GetDomainsReport, GetCountriesReport
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

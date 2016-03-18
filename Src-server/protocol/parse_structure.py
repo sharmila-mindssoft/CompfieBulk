@@ -282,6 +282,7 @@ def parse_structure_VectorType_RecordType_core_ClientConfiguration(data):
     return lst
 
 def parse_structure_SignedIntegerType_8(data):
+    # return parse_number(data, -128, 127)
     return parse_number(data, 0, 4294967295)
 
 def parse_structure_UnsignedIntegerType_32(data):

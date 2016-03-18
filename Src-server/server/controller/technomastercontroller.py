@@ -41,7 +41,7 @@ def create_database(
     db_password, email_id, client_id, short_name, db,
     country_ids, domain_ids
 ):
-    try:        
+    try:
         password = db._create_database(
             host, username, password, database_name, db_username,
             db_password, email_id, client_id, short_name, country_ids,
@@ -103,7 +103,7 @@ def save_client_group(db, request, session_user):
                 return q
             result_q = enthread()
             result = result_q.get()
-        
+
             db.save_client_group(client_id, request, session_user)
             db.save_date_configurations(client_id, request.date_configurations,
                 session_user)
@@ -118,7 +118,7 @@ def save_client_group(db, request, session_user):
             db.notify_incharge_persons(request)
             # while create_database_thread.isAlive():
             #     continue
-            if result[0] : 
+            if result[0] :
                 send_client_credentials_thread = threading.Thread(
                     target=send_client_credentials, args=[
                         request.short_name, request.email_id, result[1]

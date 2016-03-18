@@ -1,14 +1,24 @@
 from protocol import login, knowledgereport
-from generalcontroller import validate_user_session
+from generalcontroller import (
+    validate_user_session, validate_user_forms,
+    process_get_domains, process_get_countries
+)
 
 __all__ = [
     "process_knowledge_report_request"
 ]
 
+forms = [12, 13, 14, 15, 16, 17]
+
+
 def process_knowledge_report_request(request, db) :
     session_token = request.session_token
     request_frame = request.request
     user_id = validate_user_session(db, session_token)
+    if user_id is not None :
+        is_valid = validate_user_forms(db, user_id, forms, request_frame)
+        if is_valid is not True :
+            return login.InvalidSessionToken()
     if user_id is None:
         return login.InvalidSessionToken()
 
@@ -20,6 +30,12 @@ def process_knowledge_report_request(request, db) :
 
     elif type(request_frame) is knowledgereport.GetGeographyReport:
         return process_get_geography_report(db, request_frame, user_id)
+
+    elif type(request_frame) is knowledgereport.GetDomainsReport:
+        return process_get_domain_report(db, user_id)
+
+    elif type(request_frame) is knowledgereport.GetCountriesReport:
+        return process_get_country_report(db, user_id)
 
 def process_get_statutory_mapping_filters(db, request_frame, user_id):
     countries = db.get_countries_for_user(user_id)
@@ -63,3 +79,9 @@ def process_get_geography_report(db, request_frame, user_id):
     return knowledgereport.GetGeographyReportSuccess(
         countries, geography_data
     )
+
+def process_get_country_report(db, user_id):
+    return process_get_countries(db, user_id)
+
+def process_get_domain_report(db, user_id):
+    return process_get_domains(db, user_id)

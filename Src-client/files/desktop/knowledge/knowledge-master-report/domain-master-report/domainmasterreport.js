@@ -4,7 +4,7 @@ function initialize(){
     }
     function failure(status, data){
     }
-    mirror.getDomainList(success, failure);
+    mirror.getDomainReport(success, failure);
 }
 
 function loadDomainList(domainList){
