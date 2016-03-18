@@ -250,10 +250,10 @@ function load_secondwizard(){
         var compliance_applicable_status = newCompliances[newCompliance]["compliance_applicable_status"];
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
-        $('.sno', clone2).html('<font color="blue">'+statutoriesCount+'</font>');
-        $('.statutoryprovision', clone2).html('<font color="blue">'+newCompliances[newCompliance]["statutory_provision"]+'</font>');
-        $('.compliancetask', clone2).html('<font color="blue">'+newCompliances[newCompliance]["compliance_name"]+'</font>');
-        $('.compliancedescription', clone2).html('<font color="blue">'+newCompliances[newCompliance]["description"]+'</font>');
+        $('.sno', clone2).html('<font color="#0404B4">'+statutoriesCount+'</font>');
+        $('.statutoryprovision', clone2).html('<font color="#0404B4">'+newCompliances[newCompliance]["statutory_provision"]+'</font>');
+        $('.compliancetask', clone2).html('<font color="#0404B4">'+newCompliances[newCompliance]["compliance_name"]+'</font>');
+        $('.compliancedescription', clone2).html('<font color="#0404B4">'+newCompliances[newCompliance]["description"]+'</font>');
         $('.complianceapplicable', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'"><label for="statutory'+statutoriesCount+'"></label>');
         $('.accordion-content'+count).append(clone2);
 

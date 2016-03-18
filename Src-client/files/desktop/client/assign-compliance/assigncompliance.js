@@ -846,9 +846,10 @@ $("#unit").click(function(event){
             return a.indexOf(v) !== -1;
         });
       });
+
       var str='';
       $('#domain').empty();
-      for(var domain in domainsList){
+      for(domain in domainsList){
         if(domainsList[domain]["is_active"] == true && $.inArray(domainsList[domain]["domain_id"], applicableDomains) >= 0){
           str += '<li id="'+domainsList[domain]["domain_id"]+'" class="domainlist" >'+domainsList[domain]["domain_name"]+'</li>';
         }
@@ -1211,16 +1212,7 @@ function getAssignCompliances () {
     usersList = data["users"];
     two_level_approve = data["two_level_approve"];
     client_admin = data["client_admin"];
-    //domainsList = data["domains"];
-    domainsList = [
-
-    {
-        "is_active":true,
-        "domain_id":1,
-        "domain_name":"Finance Law"
-    }
-
-];
+    domainsList = data["domains"];
     load_firstwizard();
   }
   function onFailure(error){

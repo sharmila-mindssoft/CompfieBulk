@@ -164,24 +164,45 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
         }else{
           compliance_remarks_part = part_compliance(compliance_remarks)
         }
+        var isNew = complianceslist[compliance]["is_new"];
+        var openTag = '';
+        var closeTag = ''
+        if(isNew){
+          openTag = '<font color="#0404B4">';
+          closeTag = '</font>'
+        }
+
+        var optedTitle = 'Not Opted';
+        if(compliance_opted_status){
+          optedTitle = 'Opted';
+        }
 
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
-        $('.sno', clone2).text(statutoriesCount);
-        $('.statutoryprovision', clone2).text(complianceslist[compliance]["statutory_provision"]);
-        $('.compliancetask', clone2).text(complianceslist[compliance]["compliance_name"]);
-        $('.compliancedescription', clone2).text(complianceslist[compliance]["description"]);
-        $('.complianceopted', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" value="'+statutoriesCount+'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this,'+viewremarks+')"><label for="statutory'+statutoriesCount+'"></label>');
-        $('.cremark', clone2).html('<span class="cremarkadd'+statutoriesCount+' default-display-none" > <textarea id="cremarkvalue'+statutoriesCount+'" class="input-box" maxlength="500" style="height:30px;"  placeholder="Enter client decision"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></span><span class="cremarkview'+statutoriesCount+'"><abbr class="page-load tipso_style" title="'+compliance_remarks+'"><img src="images/icon-info.png"/>'+compliance_remarks_part+'</abbr></span>');
+        $('.sno', clone2).html(openTag + statutoriesCount + closeTag);
+        $('.statutoryprovision', clone2).html(openTag + complianceslist[compliance]["statutory_provision"] + closeTag);
+        $('.compliancetask', clone2).html( openTag + complianceslist[compliance]["compliance_name"] + closeTag);
+        $('.compliancedescription', clone2).html( openTag + complianceslist[compliance]["description"] + closeTag);
+        
+        $('.complianceopted', clone2).html('<input type="checkbox" checked="checked" id="statutory'+
+          statutoriesCount+'" value="'+statutoriesCount
+          +'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this,'+
+            viewremarks+')"><label for="statutory'+statutoriesCount+'" title="'+optedTitle+'"></label>');
 
+        $('.cremark', clone2).html('<span class="cremarkadd'+statutoriesCount+
+          ' default-display-none" > <textarea id="cremarkvalue'+statutoriesCount+
+          '" class="input-box" maxlength="500" style="height:30px;"  placeholder="Enter client decision"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></span><span class="cremarkview'+statutoriesCount+
+          '"><abbr class="page-load tipso_style" title="'+compliance_remarks+'"><img src="images/icon-info.png"/>'+compliance_remarks_part+'</abbr></span>');
+        
         if(compliance_applicable_status){
-          $('.applicable', clone2).html('<img src=\'/images/tick1bold.png\' /> <input type="hidden" id="applicable'+statutoriesCount+'" value="'+compliance_applicable_status+'"> </input> ');
+          $('.applicable', clone2).html('<img src=\'/images/tick1bold.png\' title="Applicable"/> <input type="hidden" id="applicable'+statutoriesCount+
+            '" value="'+compliance_applicable_status+'"> </input> ');
         }
         else{
-          $('.applicable', clone2).html('<img src=\'/images/deletebold.png\'/> <input type="hidden" id="applicable'+statutoriesCount+'" value="'+compliance_applicable_status+'"> </input>');
+          $('.applicable', clone2).html('<img src=\'/images/deletebold.png\' title="Not Applicable"/> <input type="hidden" id="applicable'+statutoriesCount+
+            '" value="'+compliance_applicable_status+'"> </input>');
         }
         $('.accordion-content'+count).append(clone2);
-
 
         if(compliance_remarks == ''){
           $('.cremarkview'+statutoriesCount).hide();
@@ -220,6 +241,7 @@ function submit_statutory(){
   var password = $('#password').val();
   if(password == ''){
     $('.popup-error-msg').html("Please Enter password");
+    $('#password').focus();
   }else{
     var uId = $("#unit").val();
     var uVal = $("#unitval").val();
@@ -234,6 +256,7 @@ function submit_statutory(){
     function onFailure(error){
       if(error == 'InvalidPassword'){
         $('.popup-error-msg').html("Enter Correct password");
+        $('#password').focus();
         $('#password').val("");
       }
     }
@@ -268,7 +291,6 @@ $("#submit").click(function() {
     var saveflag = true;
     $.each(sList, function(key, value){
       for(var statutory in value){
-        var client_statutory_id = value[statutory]["client_statutory_id"];
         var applicableStatus = null;
         var notApplicableRemarks = null;
         
@@ -277,7 +299,7 @@ $("#submit").click(function() {
         }
         else{
           applicableStatus = false;
-          notApplicableRemarks = $('#remarkvalue'+actCount).val();
+          notApplicableRemarks = $('#remarkvalue'+actCount).val().trim();
           if(notApplicableRemarks.length==0){
             displayMessage("Remarks required for not opted act");
             saveflag = false;
@@ -287,7 +309,8 @@ $("#submit").click(function() {
 
       var complianceslist = value[statutory]["compliances"];
       var compliances = { };
-      for(var compliance in complianceslist){    
+      for(var compliance in complianceslist){   
+        var client_statutory_id = complianceslist[compliance]["client_statutory_id"]; 
         var complianceId = complianceslist[compliance]["compliance_id"];
         var complianceApplicableStatus = false;
         var compliancenotApplicableRemarks = null;
@@ -340,7 +363,7 @@ $("#submit").click(function() {
     $('.popup-error-msg').html("");
     $('#password').val("");
     $('#password').focus();
-
+    window.scrollTo(0, 0);
   }
 });
 
@@ -460,4 +483,5 @@ $(".listfilter").keyup(function() {
 
 $(document).ready(function () {
   getStatutorySettings ();
+
 });
