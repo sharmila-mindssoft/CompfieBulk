@@ -1291,7 +1291,7 @@ class ClientDatabase(Database):
 #
 
     def get_statutory_settings(self, session_user, client_id):
-        query = "SELECT distinct t1.client_statutory_id,  t1.geography, \
+        query = "SELECT distinct t1.geography, \
             t1.country_id, t1.domain_id, t1.unit_id,t2.unit_name, \
             (select business_group_name from tbl_business_groups \
                 where business_group_id = t2.business_group_id)business_group_name, \
@@ -1308,7 +1308,7 @@ class ClientDatabase(Database):
 
         rows = self.select_all(query)
         columns = [
-            "client_statutory_id", "geography",
+            "geography",
             "country_id", "domain_id", "unit_id", "unit_name",
             "business_group_name", "legal_entity_name",
             "division_name", "address", "postal_code", "unit_code",
@@ -1318,8 +1318,7 @@ class ClientDatabase(Database):
         return self.return_statutory_settings(result, client_id)
 
     def return_compliance_for_statutory_settings(
-        self, domain_id, client_statutory_id,
-        client_id
+        self, domain_id, unit_id
     ):
         query = "SELECT t1.client_statutory_id, t1.compliance_id, \
             t1.statutory_applicable, t1.statutory_opted,\
@@ -1327,15 +1326,16 @@ class ClientDatabase(Database):
             t1.compliance_applicable, t1.compliance_opted, \
             t1.compliance_remarks, \
             t2.compliance_task, t2.document_name, t2.statutory_mapping,\
-            t2.statutory_provision, t2.compliance_description \
+            t2.statutory_provision, t2.compliance_description, \
+            t3.is_new\
             FROM tbl_client_compliances t1 \
             INNER JOIN tbl_compliances t2 \
             ON t1.compliance_id = t2.compliance_id \
             INNER JOIN tbl_client_statutories t3 \
             ON t1.client_statutory_id = t3.client_statutory_id \
             WHERE t3.domain_id = %s AND \
-            t1.client_statutory_id = %s" % (
-                domain_id, client_statutory_id
+            t3.unit_id = %s" % (
+                domain_id, unit_id
             )
         rows = self.select_all(query)
         columns = [
@@ -1344,10 +1344,12 @@ class ClientDatabase(Database):
             "not_applicable_remarks", "compliance_applicable",
             "compliance_opted", "compliance_remarks",
             "compliance_task", "document_name", "statutory_mapping",
-            "statutory_provision", "compliance_description"
+            "statutory_provision", "compliance_description",
+            "is_new"
         ]
         results = self.convert_to_dict(rows, columns)
         statutory_wise_compliances = {}
+        print statutory_wise_compliances
         for r in results :
             statutory_opted = r["statutory_opted"]
             if statutory_opted is None :
@@ -1369,6 +1371,7 @@ class ClientDatabase(Database):
 
             mappings = r["statutory_mapping"].split('>>')
             statutory_name = mappings[0].strip()
+            statutory_name = statutory_name.strip()
             if len(mappings) > 1 :
                 provision = "%s - %s" % (
                     ','.join(mappings[1:]),
@@ -1377,7 +1380,7 @@ class ClientDatabase(Database):
             else :
                 provision = r["statutory_provision"]
 
-            if r["document_name"] is not None :
+            if r["document_name"] not in [None, "None"] :
                 name = "%s - %s" % (
                     r["document_name"], r["compliance_task"]
                 )
@@ -1386,13 +1389,15 @@ class ClientDatabase(Database):
                 name = r["compliance_task"]
 
             compliance = clienttransactions.ComplianceApplicability(
+                r["client_statutory_id"],
                 r["compliance_id"],
                 name,
                 r["compliance_description"],
                 provision,
                 bool(r["compliance_applicable"]),
                 bool(compliance_opted),
-                compliance_remarks
+                compliance_remarks,
+                not bool(r["is_new"])
             )
 
             level_1_statutories = statutory_wise_compliances.get(
@@ -1413,6 +1418,7 @@ class ClientDatabase(Database):
                 level_1_statutories.compliances = compliance_list
 
             statutory_wise_compliances[statutory_name] = level_1_statutories
+        print statutory_wise_compliances
         return statutory_wise_compliances
 
     def return_statutory_settings(self, data, client_id):
@@ -1427,9 +1433,9 @@ class ClientDatabase(Database):
                 d["postal_code"]
             )
             domain_id = d["domain_id"]
-            client_statutory_id = d["client_statutory_id"]
+            # client_statutory_id = d["client_statutory_id"]
             statutories = self.return_compliance_for_statutory_settings(
-                domain_id, client_statutory_id, client_id
+                domain_id, unit_id
             )
             statutory_val = []
             for key in sorted(statutories):
@@ -1499,7 +1505,7 @@ class ClientDatabase(Database):
                 t1.compliance_opted=%s, \
                 t1.compliance_remarks='%s',\
                 t1.updated_by=%s, \
-                t1.updated_on='%s' \
+                t1.updated_on='%s', t2.is_new = 1 \
                 WHERE t2.unit_id = %s \
                 AND t1.client_statutory_id = %s \
                 AND t1.compliance_id = %s" % (
@@ -1860,7 +1866,7 @@ class ClientDatabase(Database):
         return from_date, to_date
 
     def calculate_due_date(
-        self, country_id, domain_id, statutory_dates = None, repeat_by = None, 
+        self, country_id, domain_id, statutory_dates = None, repeat_by = None,
         repeat_every = None, due_date = None
     ):
         def is_future_date(test_date):
@@ -1914,11 +1920,11 @@ class ClientDatabase(Database):
                 )
                 if from_date <= previous_year_due_date <= to_date:
                     due_dates.append(previous_year_due_date)
-                iter_due_date = previous_year_due_date 
+                iter_due_date = previous_year_due_date
                 while not is_future_date(iter_due_date):
                     iter_due_date = iter_due_date + relativedelta.relativedelta(months = repeat_every)
                     if from_date <= iter_due_date <= to_date:
-                        due_dates.append(iter_due_date)   
+                        due_dates.append(iter_due_date)
             elif repeat_by == 3:
                 previous_due_date = datetime.datetime(
                     due_date.year - repeat_every, due_date.month, due_date.day
@@ -2450,7 +2456,7 @@ class ClientDatabase(Database):
                 due_date_list.append(due_date)
 
             if r["frequency_id"] in (2, 3) :
-                summary = "Repeats ever %s - %s" % (r["repeats_every"], r["repeat_type"])
+                summary = "Repeats every %s - %s" % (r["repeats_every"], r["repeat_type"])
             elif r["frequency_id"] == 4 :
                 summary = "To complete within %s - %s" % (r["duration"], r["duration_type"])
             else :
@@ -7349,7 +7355,7 @@ class ClientDatabase(Database):
             return True
         except Exception, e:
             print "Error sending email :{}".format(e)
-         
+
 
     def get_form_ids_for_admin(self):
         columns = "group_concat(form_id)"

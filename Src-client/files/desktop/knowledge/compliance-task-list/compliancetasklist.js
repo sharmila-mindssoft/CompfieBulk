@@ -37,7 +37,7 @@ function getStatutoryMappings(){
   function onFailure(error){
     displayMessage(error);
   }
-  mirror.getStatutoryMappingsReportFilter(
+  mirror.getComplianceTaskFilter(
     function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -84,7 +84,7 @@ function loadresult(filterList){
       for(var j=0; j<complianceFrequencyList.length; j++){
         for(var i=0; i<filterList[entity].length; i++){
           for(var a=0; a< filterList[entity][i]["industry_ids"].length; a++){
-            
+
             if(industriesList[indus]["industry_id"] == filterList[entity][i]["industry_ids"][a]){
               for(var k=0; k<filterList[entity][i]["compliances"].length; k++){
                 if((compliance_frequency == 'All' || compliance_frequency == filterList[entity][i]["compliances"][k]["frequency_id"]) ){
@@ -185,14 +185,14 @@ function loadresult(filterList){
                     for(z = 0; z < statutory_date.length; z++){
                       var sDay = '';
                       if(statutory_date[z]["statutory_date"] != null) sDay = statutory_date[z]["statutory_date"];
-                      
+
                       var sMonth = '';
                       if(statutory_date[z]["statutory_month"] != null) sMonth = statutory_date[z]["statutory_month"];
 
                       if(sMonth == 1) sMonth = "January"
                       else if(sMonth == 2) sMonth = "February"
                       else if(sMonth == 3) sMonth = "March"
-                      else if(sMonth == 4) sMonth = "April"  
+                      else if(sMonth == 4) sMonth = "April"
                       else if(sMonth == 5) sMonth = "May"
                       else if(sMonth == 6) sMonth = "June"
                       else if(sMonth == 7) sMonth = "July"
@@ -203,7 +203,7 @@ function loadresult(filterList){
                       else if(sMonth == 12) sMonth = "December"
                       statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
                     }
-                    
+
                     $('.tbl_description', clone1).text(filterList[entity][i]["compliances"][k]["description"]);
                     $('.tbl_penalconsequences', clone1).text(filterList[entity][i]["compliances"][k]["penal_consequences"]);
                     $('.tbl_occurance', clone1).text(statutorydate);
@@ -226,7 +226,7 @@ function loadresult(filterList){
       $('.accordion-content'+count).append(clone1);
     }
     count++;
-  }  
+  }
   $('.compliance_count').text("Total : "+ (compliance_count) +" records");
   $(document).ready(function($) {
     $('#accordion').find('.accordion-toggle').click(function(){
@@ -256,7 +256,7 @@ $("#submit").click(function(){
     displayMessage("Country Required");
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");  
+    displayMessage("Domain Required");
   }
   else{
       displayMessage("");
@@ -275,7 +275,7 @@ $("#submit").click(function(){
       function onFailure(error){
         onFailure(error);
       }
-      mirror.getStatutoryMappingsReportData(filterdata, 
+      mirror.getComplianceTaskReport(filterdata,
         function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -290,7 +290,7 @@ $("#submit").click(function(){
 //Autocomplete Script Starts
 //Hide list items after select
 $(".hidemenu").click(function(){
-  $("#autocompleteview").hide(); 
+  $("#autocompleteview").hide();
   $("#autocomplete_domain").hide();
   $("#autocomplete_industry").hide();
   $("#autocomplete_statutorynature").hide();
@@ -298,7 +298,7 @@ $(".hidemenu").click(function(){
   $("#autocomplete_statutory").hide();
 });
 
-//load country list in autocomplete text box  
+//load country list in autocomplete text box
 $("#countryval").keyup(function(){
   var textval = $(this).val();
   $("#autocompleteview").show();
@@ -307,7 +307,7 @@ $("#countryval").keyup(function(){
   $('#ulist_text').empty();
   if(textval.length>0){
     for(var i in countries){
-      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
+      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -326,7 +326,7 @@ function activate_text (element,checkval,checkname) {
   $("#country").val(checkval);
 }
 
-//load domain list in autocomplete text box  
+//load domain list in autocomplete text box
 $("#domainval").keyup(function(){
   var textval = $(this).val();
   $("#autocomplete_domain").show();
@@ -335,7 +335,7 @@ $("#domainval").keyup(function(){
   $('#ulist_domain').empty();
   if(textval.length>0){
     for(var i in domains){
-      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == true) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 
+      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == true) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -354,7 +354,7 @@ function activate_domain (element,checkval,checkname) {
   $("#domain").val(checkval);
 }
 
-//load domain list in autocomplete text box  
+//load domain list in autocomplete text box
 $("#industryval").keyup(function(){
   var textval = $(this).val();
   $("#autocomplete_industry").show();
@@ -363,7 +363,7 @@ $("#industryval").keyup(function(){
   $('#ulist_industry').empty();
   if(textval.length>0){
     for(var i in industries){
-      if (~industries[i]["industry_name"].toLowerCase().indexOf(textval.toLowerCase()) && industries[i]["is_active"] == true) suggestions.push([industries[i]["industry_id"],industries[i]["industry_name"]]); 
+      if (~industries[i]["industry_name"].toLowerCase().indexOf(textval.toLowerCase()) && industries[i]["is_active"] == true) suggestions.push([industries[i]["industry_id"],industries[i]["industry_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -383,7 +383,7 @@ function activate_industry (element,checkval,checkname) {
 }
 
 
-//load statutorynature list in autocomplete text box  
+//load statutorynature list in autocomplete text box
 $("#statutorynatureval").keyup(function(){
   var textval = $(this).val();
   $("#autocomplete_statutorynature").show();
@@ -392,7 +392,7 @@ $("#statutorynatureval").keyup(function(){
   $('#ulist_statutorynature').empty();
   if(textval.length>0){
     for(var i in statutorynatures){
-      if (~statutorynatures[i]["statutory_nature_name"].toLowerCase().indexOf(textval.toLowerCase()) && statutorynatures[i]["is_active"] == true) suggestions.push([statutorynatures[i]["statutory_nature_id"],statutorynatures[i]["statutory_nature_name"]]); 
+      if (~statutorynatures[i]["statutory_nature_name"].toLowerCase().indexOf(textval.toLowerCase()) && statutorynatures[i]["is_active"] == true) suggestions.push([statutorynatures[i]["statutory_nature_id"],statutorynatures[i]["statutory_nature_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -411,7 +411,7 @@ function activate_statutorynature (element,checkval,checkname) {
   $("#statutorynature").val(checkval);
 }
 
-//load statutorynature list in autocomplete text box  
+//load statutorynature list in autocomplete text box
 $("#geographyval").keyup(function(){
   var textval = $(this).val();
   $("#autocomplete_geography").show();
@@ -420,7 +420,7 @@ $("#geographyval").keyup(function(){
   $('#ulist_geography').empty();
   if(textval.length>0){
     for(var i in geographies){
-      if (~geographies[i]["geography_name"].toLowerCase().indexOf(textval.toLowerCase()) && geographies[i]["is_active"] == true) suggestions.push([geographies[i]["geography_id"],geographies[i]["geography_name"]]); 
+      if (~geographies[i]["geography_name"].toLowerCase().indexOf(textval.toLowerCase()) && geographies[i]["is_active"] == true) suggestions.push([geographies[i]["geography_id"],geographies[i]["geography_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -439,7 +439,7 @@ function activate_geography (element,checkval,checkname) {
   $("#geography").val(checkval);
 }
 
-//load statutorynature list in autocomplete text box  
+//load statutorynature list in autocomplete text box
 $("#statutoryval").keyup(function(){
   var textval = $(this).val();
   $("#autocomplete_statutory").show();
@@ -448,7 +448,7 @@ $("#statutoryval").keyup(function(){
   $('#ulist_statutory').empty();
   if(textval.length>0){
     for(var i in statutories){
-      if (~statutories[i]["statutory_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([statutories[i]["statutory_id"],statutories[i]["statutory_name"]]); 
+      if (~statutories[i]["statutory_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([statutories[i]["statutory_id"],statutories[i]["statutory_name"]]);
     }
     var str='';
     for(var i in suggestions){

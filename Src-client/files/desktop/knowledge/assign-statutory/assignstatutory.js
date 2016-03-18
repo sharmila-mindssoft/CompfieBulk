@@ -147,9 +147,9 @@ function actstatus(element){
 function compliancestatus(element){
   var sClass = $(element).attr('class');
   var actSelect = sClass.substr(sClass.lastIndexOf("s") + 1);
-  
+
   var cStatus = false;
-  $('.'+sClass).each(function() { 
+  $('.'+sClass).each(function() {
     if(this.checked){
       cStatus = true;
     }
@@ -173,8 +173,8 @@ function make_breadcrumbs(){
   if(bc_businessgroup != '') bc_businessgroup = arrowimage + bc_businessgroup;
   if(bc_divisionname != '') bc_divisionname = arrowimage + bc_divisionname;
 
-$(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + $('.grouplist.active').text() 
-+ bc_businessgroup + arrowimage + $('.legalentitylist.active').text() + bc_divisionname + arrowimage + $('.locationlist.active').text() 
+$(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + $('.grouplist.active').text()
++ bc_businessgroup + arrowimage + $('.legalentitylist.active').text() + bc_divisionname + arrowimage + $('.locationlist.active').text()
   + arrowimage + $('.industrylist.active').text() + arrowimage + assignStatutoryUnitValues + arrowimage + $('.domainlist.active').text());
 }
 
@@ -194,7 +194,7 @@ function load_secondwizard(){
     var acttableRow=$('#act-templates .font1 .tbody-heading');
     var clone=acttableRow.clone();
     $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:100px;"> <label for="act'+actCount+'" style="margin-top:100px;" class="act-label"></label> ');
-    $('.actname', clone).html('<div style="float:left;margin-top:5px;">'+actname+'</div> <div style="float:right; width:500px;" class="default-display-none remark'+actCount+'" ><div style="float:right;  width:250px;margin-top:-3px;"> <input type="text" maxlength="250" id="remarkvalue'+actCount+'" value="'+not_applicable_remarks+'" class="input-box" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:5px;"> Remarks</div></div>');
+    $('.actname', clone).html('<div style="float:left;margin-top:5px;">'+actname+'</div> <div style="float:right; width:500px;" class="default-display-none remark'+actCount+'" ><div style="float:right;  width:250px;margin-top:-3px;"> <input type="text" maxlength="500" id="remarkvalue'+actCount+'" value="'+not_applicable_remarks+'" class="input-box" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:5px;"> Remarks</div></div>');
     $('.tbody-assignstatutory').append(clone);
 
     if(applicable_status == false){
@@ -610,7 +610,7 @@ $(".breadcrumbs").html('');
 $("#activate-step-submit").hide();
 $('#activate-step-finish').show();
 $("#backward-step-1").show();
-        
+
 $('ul.setup-panel li:eq(0)').show();
 $('ul.setup-panel li:eq(0)').removeClass('disabled');
 $('ul.setup-panel li:eq(0)').addClass('active');
@@ -630,7 +630,7 @@ function onSuccess(data){
 function onFailure(error){
   displayMessage(error);
 }
-mirror.getCountryListForUser(
+mirror.getCountriesForGroup(
   function (error, response) {
           if (error == null){
               onSuccess(response);
@@ -893,9 +893,9 @@ function displayEdit(client_statutory_id, country_id, group_id, location_id, dom
       if(data["business_group_name"] != null) bc_businessgroup = arrowimage + data["business_group_name"];
       if(data["division_name"] != null) bc_divisionname = arrowimage + data["division_name"];
 
-      $(".breadcrumbs").html(data["country_name"] + arrowimage + data["group_name"] + bc_businessgroup + arrowimage + 
+      $(".breadcrumbs").html(data["country_name"] + arrowimage + data["group_name"] + bc_businessgroup + arrowimage +
       data["legal_entity_name"] + bc_divisionname + arrowimage + data["geography_name"] + arrowimage + data["industry_name"]
-      + arrowimage + data["unit_name"] + 
+      + arrowimage + data["unit_name"] +
       arrowimage + data["domain_name"]);
 
       statutoriesList = data["statutories"];
@@ -1017,7 +1017,7 @@ $(".listfilter").keyup(function() {
     var filter2val = assignedStatutoriesList[entity]["group_name"];
     var filter3val = '-';
     if(assignedStatutoriesList[entity]["business_group_name"] != null) filter3val = assignedStatutoriesList[entity]["business_group_name"];
-  
+
     var filter4val = assignedStatutoriesList[entity]["legal_entity_name"];
 
     var filter5val = '-';

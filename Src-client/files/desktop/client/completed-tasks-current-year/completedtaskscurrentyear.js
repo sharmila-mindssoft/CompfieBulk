@@ -336,8 +336,10 @@ $('ul.setup-panel li a[href="#step-2"]').trigger('click');
 
 $('#activate-step-3').on('click', function(e) {
 if (validate_secondtab()){
-$('ul.setup-panel li:eq(2)').removeClass('disabled');
-$('ul.setup-panel li a[href="#step-3"]').trigger('click');
+  getStatutories();
+  $('#activate-step-finish').show();
+  $('ul.setup-panel li:eq(2)').removeClass('disabled');
+  $('ul.setup-panel li a[href="#step-3"]').trigger('click');
 }
 })
 
@@ -470,9 +472,7 @@ $("#unit").click(function(event){
     
   }
   $('#frequency').append(str);
-
-  getStatutories();
-
+  $('ul.setup-panel li:eq(2)').addClass('disabled');
 });
 
 
@@ -574,9 +574,7 @@ $("#domain").click(function(event){
     }
   }
   $('#act').append(str);
-
-  getStatutories();
-
+  $('ul.setup-panel li:eq(2)').addClass('disabled');
 });
 
 $("#act").click(function(event){
@@ -586,8 +584,7 @@ $("#act").click(function(event){
     });
     $(event.target).addClass("active");
   }
-
-  getStatutories();
+  $('ul.setup-panel li:eq(2)').addClass('disabled');
 });
 
 $("#frequency").click(function(event){
@@ -597,7 +594,7 @@ $("#frequency").click(function(event){
     });
     $(event.target).addClass("active");
   }
-  getStatutories();
+  $('ul.setup-panel li:eq(2)').addClass('disabled');
 });
 
 function load_firstwizard(){

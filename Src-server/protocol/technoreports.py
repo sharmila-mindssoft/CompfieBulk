@@ -242,8 +242,66 @@ class GetAssignedStatutoryReport(Request):
         }
 
 
+class GetComplianceTaskFilter(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetComplianceTaskFilter()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class GetComplianceTaskReport(Request):
+    def __init__(self, country_id, domain_id, industry_id, statutory_nature_id, geography_id, level_1_statutory_id):
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.industry_id = industry_id
+        self.statutory_nature_id = statutory_nature_id
+        self.geography_id = geography_id
+        self.level_1_statutory_id = level_1_statutory_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["country_id", "domain_id", "industry_id", "statutory_nature_id", "geography_id", "level_1_statutory_id"])
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        industry_id = data.get("industry_id")
+        industry_id = parse_structure_OptionalType_SignedIntegerType_8(industry_id)
+        statutory_nature_id = data.get("statutory_nature_id")
+        statutory_nature_id = parse_structure_OptionalType_SignedIntegerType_8(statutory_nature_id)
+        geography_id = data.get("geography_id")
+        geography_id = parse_structure_OptionalType_SignedIntegerType_8(geography_id)
+        level_1_statutory_id = data.get("level_1_statutory_id")
+        level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
+        return GetComplianceTaskReport(country_id, domain_id, industry_id, statutory_nature_id, geography_id, level_1_statutory_id)
+
+    def to_inner_structure(self):
+        return {
+            "country_id": to_structure_SignedIntegerType_8(self.country_id),
+            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "industry_id": to_structure_OptionalType_SignedIntegerType_8(self.industry_id),
+            "statutory_nature_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_nature_id),
+            "geography_id": to_structure_OptionalType_SignedIntegerType_8(self.geography_id),
+            "level_1_statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_id),
+        }
+
 def _init_Request_class_map():
-    classes = [GetClientDetailsReportFilters, GetClientDetailsReportData, GetStatutoryNotificationsFilters, GetStatutoryNotificationsReportData,  GetAssignedStatutoryReportFilters, GetAssignedStatutoryReport]
+    classes = [
+        GetClientDetailsReportFilters,
+        GetClientDetailsReportData,
+        GetStatutoryNotificationsFilters,
+        GetStatutoryNotificationsReportData,
+        GetAssignedStatutoryReportFilters,
+        GetAssignedStatutoryReport,
+        GetComplianceTaskFilter,
+        GetComplianceTaskReport
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

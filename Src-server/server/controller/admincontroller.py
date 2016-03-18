@@ -1,14 +1,22 @@
 from protocol import (admin, core, login)
 from corecontroller import process_user_menus
+from generalcontroller import validate_user_session, validate_user_forms
 
 __all__ = [
     "process_admin_request", "get_user_groups"
 ]
 
+forms = [3, 4]
+
 def process_admin_request(request, db) :
     session_token = request.session_token
     request_frame = request.request
-    session_user = db.validate_session_token(session_token)
+    session_user = validate_user_session(db, session_token)
+    if session_user is not None :
+        is_valid = validate_user_forms(db, session_user, forms, request_frame)
+        if is_valid is not True :
+            return login.InvalidSessionToken()
+
     if session_user is None:
         return login.InvalidSessionToken()
 

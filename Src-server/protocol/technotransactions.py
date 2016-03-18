@@ -241,9 +241,28 @@ class SaveAssignedStatutory(Request):
             "assigned_statutories": to_structure_VectorType_RecordType_technotransactions_AssignedStatutoryCompliance(self.assigned_statutories),
         }
 
+class GetCountriesForGroup(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetCountriesForGroup()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 def _init_Request_class_map():
-    classes = [GetAssignedStatutoriesList, GetAssignedStatutoriesById, GetAssignedStatutoryWizardOneData, GetStatutoryWizardTwoData, SaveAssignedStatutory]
+    classes = [
+        GetAssignedStatutoriesList,
+        GetAssignedStatutoriesById,
+        GetAssignedStatutoryWizardOneData,
+        GetStatutoryWizardTwoData,
+        SaveAssignedStatutory,
+        GetCountriesForGroup
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
