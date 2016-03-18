@@ -64,6 +64,7 @@ class Email(object):
             msg['Cc'] = cc
             receiver += cc
         msg.attach(MIMEText(message, 'html'))
+        print msg.as_string()
         response = server.sendmail(self.sender, receiver,  msg.as_string())
         print response
         server.close()
@@ -187,6 +188,7 @@ class EmailHandler(Email):
         message = "Dear %s, %s" % (
             assignee_name, compliance_info,
         )
+        print message
         self.send_email(receiver, subject, message)
 
     def notify_task(

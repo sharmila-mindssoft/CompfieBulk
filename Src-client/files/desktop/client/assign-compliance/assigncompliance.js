@@ -415,7 +415,7 @@ function convert_date (data){
 
 function submitcompliance(){
 
-    displayLoader();
+    // displayLoader();
     var assignComplianceCountryId = null;
     var assignComplianceDomainId = null;
     var assignComplianceDomainVal = null;
@@ -676,20 +676,20 @@ if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalI
   var concurrenceText = '';
   var approvalText = '';
   if(assigneeInserUnits.length > 0 || assigneeInserDomain != null){
-    if(assigneeInserDomain != null) 
+    if(assigneeInserDomain != null)
       assigneeText = assignComplianceDomainVal + "Domain, ";
 
     if(assigneeInserUnits.length > 0){
       assigneeText = assigneeInserUnitsVal + " unit(s) not applicable for Assignee. ";
     }else{
       assigneeInserUnits = null;
-    } 
+    }
 
     newSetting = client_mirror.newUnitSettings(assignComplianceAssigneeId, assigneeInserUnits, approvalInserDomain, assignComplianceCountryId);
     newSettingsList.push(newSetting);
   }
   if(concurrenceInserUnits.length > 0 || concurrenceInserDomain != null){
-    if(concurrenceInserDomain != null) 
+    if(concurrenceInserDomain != null)
       concurrenceText = assignComplianceDomainVal + "Domain, ";
 
     if(concurrenceInserUnits.length > 0){
@@ -702,7 +702,7 @@ if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalI
     newSettingsList.push(newSetting);
   }
   if(approvalInserUnits.length > 0 || approvalInserDomain != null){
-    if(approvalInserDomain != null) 
+    if(approvalInserDomain != null)
       approvalText = assignComplianceDomainVal + "Domain, ";
 
     if(approvalInserUnits.length > 0){
@@ -715,8 +715,8 @@ if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalI
     newSettingsList.push(newSetting);
   }
 
-  
-  var answer = confirm(assigneeText + concurrenceInserUnits + approvalInserUnits + 'Do you want to add in settings ?');
+
+  var answer = confirm(assigneeText + concurrenceText + approvalText + 'Do you want to add in settings ?');
   if (answer)
   {
     function onSuccess(data){
