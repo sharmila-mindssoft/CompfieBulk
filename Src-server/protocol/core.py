@@ -1975,7 +1975,7 @@ class ActiveCompliance(object):
     def __init__(self, compliance_history_id, compliance_name, compliance_frequency,
         domain_name, start_date, due_date, compliance_status, validity_date,
         next_due_date, ageing, format_file_name, unit_name, address,
-        compliance_description, remarks):
+        compliance_description, remarks, compliance_id):
         self.compliance_history_id = compliance_history_id
         self.compliance_name = compliance_name
         self.compliance_frequency = compliance_frequency
@@ -1991,6 +1991,7 @@ class ActiveCompliance(object):
         self.address = address
         self.compliance_description = compliance_description
         self.remarks = remarks
+        self.compliance_id = compliance_id
 
     @staticmethod
     def parse_structure(data):
@@ -1999,7 +2000,7 @@ class ActiveCompliance(object):
                 "compliance_frequency", "domain_name", "start_date", "due_date",
                 "compliance_status", "validity_date", "next_due_date", "ageing",
                 "format_file_name", "unit_name", "address", "compliance_description",
-                "remarks"
+                "remarks", "compliance_id"
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
@@ -2032,12 +2033,14 @@ class ActiveCompliance(object):
         compliance_description = parse_structure_CustomTextType_500(compliance_description)
         remarks = data.get("remarks")
         remarks = parse_structure_OptionalType_CustomTextType_500(compliance_description)
+        compliance_id = data.get("compliance_id")
+        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         return ActiveCompliance(
             compliance_history_id, compliance_name,
             compliance_frequency, domain_name, start_date, due_date,
             compliance_status, validity_date, next_due_date, ageing,
             format_file_name, unit_name, address, compliance_description,
-            remarks
+            remarks, compliance_id
         )
 
     def to_structure(self):
@@ -2056,7 +2059,8 @@ class ActiveCompliance(object):
             "unit_name" : to_structure_CustomTextType_200(self.unit_name),
             "address" : to_structure_CustomTextType_500(self.address),
             "compliance_description" : to_structure_CustomTextType_500(self.compliance_description),
-            "remarks" : to_structure_OptionalType_CustomTextType_500(self.remarks)
+            "remarks" : to_structure_OptionalType_CustomTextType_500(self.remarks),
+            "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id)
         }
 
 #

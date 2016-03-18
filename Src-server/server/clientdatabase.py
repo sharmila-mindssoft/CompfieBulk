@@ -2112,22 +2112,23 @@ class ClientDatabase(Database):
             for row in rows:
                 download_urls = []
                 file_name = []
-                if row[4] is not None:
+                if row[4] is not None and len(row[4]) > 0:
                     for document in row[4].split(","):
-                        dl_url = "%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, document)
-                        download_urls.append(dl_url)
-                        file_name_part = document.split("-")[0]
-                        file_extn_parts = document.split(".")
-                        file_extn_part = None
-                        if len(file_extn_parts) > 1:
-                            file_extn_part = file_extn_parts[len(file_extn_parts)-1]
-                        if file_extn_part is not None:
-                            name  = "%s.%s" % (
-                                file_name_part, file_extn_part
-                            )
-                            file_name.append(name)
-                        else:
-                           file_name.append(file_name_part)
+                        if documents is not None and document.strip(',') != '':
+                            dl_url = "%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, document)
+                            download_urls.append(dl_url)
+                            file_name_part = document.split("-")[0]
+                            file_extn_parts = document.split(".")
+                            file_extn_part = None
+                            if len(file_extn_parts) > 1:
+                                file_extn_part = file_extn_parts[len(file_extn_parts)-1]
+                            if file_extn_part is not None:
+                                name  = "%s.%s" % (
+                                    file_name_part, file_extn_part
+                                )
+                                file_name.append(name)
+                            else:
+                               file_name.append(file_name_part)
                 concurred_by_id = None if row[8] is None else int(row[8])
                 compliance_history_id = row[0]
                 compliance_id = row[1]
@@ -4124,6 +4125,24 @@ class ClientDatabase(Database):
             unit_id, compliance_id, "Approved", status,
             remarks
         )
+        # notify_compliance_approved = threading.Thread(
+        #     target=self.notify_compliance_approved, args=[
+        #         self, compliance_history_id, "Approved"
+        #     ]
+        # )
+        # notify_compliance_approved.start()
+        email.notify_task_approved(
+                self, compliance_history_id, "Approved"
+        )
+        return True
+
+    def notify_compliance_approved(self, db, compliance_history_id, approval_status):
+        try:
+            email.notify_task_approved(
+                db, compliance_history_id, approval_status
+            )
+        except Exception, e:
+            print "Error while sending email : {}".format(e)
 
     def reject_compliance_approval(self, compliance_history_id, remarks,
         next_due_date, client_id):
@@ -4153,9 +4172,24 @@ class ClientDatabase(Database):
         values = [0, remarks, None, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
 
+        # notify_compliance_rejected = threading.Thread(
+        #     target=self.notify_compliance_rejected, args=[
+        #         self, compliance_history_id, remarks, "Reject Approval"
+        #     ]
+        # )
+        # notify_compliance_rejected.start()
         email.notify_task_rejected(
-            self, compliance_history_id, remarks, "Reject Approval"
+                self, compliance_history_id, remarks, "Reject Approval"
         )
+        return True
+
+    def notify_compliance_rejected(self, db, compliance_history_id, remarks, reject_status):
+        try:
+            email.notify_task_rejected(
+                self, compliance_history_id, remarks, reject_status
+            )
+        except Exception, e:
+            print "Error while sending email : {}".format(e)
 
     def concur_compliance(self, compliance_history_id, remarks,
         next_due_date, validity_date, client_id):
@@ -4187,6 +4221,16 @@ class ClientDatabase(Database):
             unit_id, compliance_id, "Concurred", status,
             remarks
         )
+        # notify_compliance_approved = threading.Thread(
+        #     target=self.notify_compliance_approved, args=[
+        #         self, compliance_history_id, "Concurred"
+        #     ]
+        # )
+        # notify_compliance_approved.start()
+        email.notify_task_approved(
+                self, compliance_history_id, "Concurred"
+        )
+        return True
 
     def reject_compliance_concurrence(self, compliance_history_id, remarks,
         next_due_date, client_id):
@@ -4214,9 +4258,17 @@ class ClientDatabase(Database):
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0,  remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
+
+        # notify_compliance_rejected = threading.Thread(
+        #     target=self.notify_compliance_rejected, args=[
+        #         self, compliance_history_id, remarks, "Reject Concurrence"
+        #     ]
+        # )
+        # notify_compliance_rejected.start()
         email.notify_task_rejected(
             self, compliance_history_id, remarks, "Reject Concurrence"
         )
+        return True
 
     def get_client_level_1_statutoy(self, user_id, client_id=None) :
         query = "SELECT (case when (LEFT(statutory_mapping,INSTR(statutory_mapping,'>>')-1) = '') \
@@ -5311,7 +5363,8 @@ class ClientDatabase(Database):
             "validity_date, next_due_date, document_name, compliance_task, " + \
             "compliance_description, format_file, unit_code, unit_name," + \
             "address, (select domain_name from %s d \
-            where d.domain_id = c.domain_id) as domain_name, frequency, remarks" % (
+            where d.domain_id = c.domain_id) as domain_name, frequency, remarks,\
+            ch.compliance_id" % (
                 self.tblDomains
             )
         tables = [
@@ -5351,7 +5404,7 @@ class ClientDatabase(Database):
             if no_of_days > 0:
                 compliance_status = core.COMPLIANCE_STATUS("Not Complied")
             format_files = None
-            if compliance[8] is not None:
+            if compliance[8] is not None and compliance[8].strip() != '':
                 format_files = [ "%s/%s" % (
                         FORMAT_DOWNLOAD_URL, x
                     ) for x in compliance[8].split(",")]
@@ -5370,7 +5423,8 @@ class ClientDatabase(Database):
                     format_file_name=format_files,
                     unit_name=unit_name, address=compliance[11],
                     compliance_description=compliance[7],
-                    remarks=compliance[14]
+                    remarks=compliance[14],
+                    compliance_id=compliance[15]
                 )
             )
         return current_compliances_list
@@ -5413,7 +5467,7 @@ class ClientDatabase(Database):
                 compliance[8],  compliance[9]
             )
             format_files = None
-            if compliance[4] is not None:
+            if compliance[4] is not None and compliance[4].strip() != '':
                 format_files = [ "%s/%s" % (
                         FORMAT_DOWNLOAD_URL, x
                     ) for x in compliance[4].split(",")]
@@ -7355,8 +7409,9 @@ class ClientDatabase(Database):
             self.delete(self.tblClientCompliances, condition)
 
         action_column = "unit_code, unit_name"
+        action_condition = "unit_id='{}'".format(unit_id)
         rows = self.get_data(
-            self.tblUnits, action_column, condition
+            self.tblUnits, action_column, action_condition
         )
         action = "Closed Unit \"%s - %s\"" % (rows[0][0], rows[0][1])
         self.save_activity(session_user, 5, action)
