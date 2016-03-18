@@ -13,10 +13,16 @@ __all__ = [
     "process_update_notification_status"
 ]
 
+forms = [1, 2, 26]
+
 def process_general_request(request, db) :
     session_token = request.session_token
     request_frame = request.request
     user_id = validate_user_session(db, session_token)
+    if user_id is not None :
+        is_valid = validate_user_forms(db, user_id, forms, request_frame)
+        if is_valid is not True :
+            return login.InvalidSessionToken()
     if user_id is None:
         return login.InvalidSessionToken()
 
@@ -50,6 +56,35 @@ def process_general_request(request, db) :
 
 def validate_user_session(db, session_token):
     return db.validate_session_token(session_token)
+
+def validate_user_forms(db, user_id, form_ids, requet):
+    print form_ids
+    print type(requet)
+    print user_id
+    if type(requet) not in [
+        general.GetNotifications,
+        general.UpdateNotificationStatus,
+        general.UpdateUserProfile,
+        general.UpdateUserProfile
+    ] :
+        valid = 0
+        if user_id is not None :
+            if user_id == 0 :
+                alloted_forms = [1, 2, 3, 4]
+            else :
+                alloted_forms = db.get_user_form_ids(user_id)
+                alloted_forms = [int(x) for x in alloted_forms.split(",")]
+            print alloted_forms
+            print form_ids
+            for i in form_ids :
+                if i in alloted_forms :
+                    valid += 1
+            if valid > 0 :
+                return True
+        return False
+
+    else :
+        return True
 
 def process_save_domain(db, request, user_id):
     domain_name = request.domain_name

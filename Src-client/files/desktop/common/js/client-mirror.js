@@ -775,13 +775,14 @@ function initClientMirror() {
     }
 
     function getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_name,
-        compliance_frequency, callback) {
+        compliance_frequency, country_id, callback) {
         var request = [
             "GetStatutoriesByUnit", {
                 "unit_id": unit_id,
                 "domain_id": domain_id,
                 "level_1_statutory_name": level_1_statutory_name,
-                "compliance_frequency": compliance_frequency
+                "compliance_frequency": compliance_frequency,
+                "country_id": country_id
             }
         ]
         clientApiRequest("client_transaction", request, callback);

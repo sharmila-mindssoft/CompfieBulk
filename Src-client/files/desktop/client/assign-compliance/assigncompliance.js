@@ -733,7 +733,6 @@ if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalI
   }
   );
 }
-
 }
 
 var navListItems = $('ul.setup-panel li a'),
