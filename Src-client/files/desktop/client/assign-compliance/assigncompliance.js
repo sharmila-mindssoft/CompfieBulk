@@ -137,7 +137,7 @@ function load_secondwizard(){
       actname = domainentity;
       var acttableRow=$('#act-templates .font1 .tbody-heading');
       var clone=acttableRow.clone();
-      $('.actname', clone).html('<input style="margin-top:5px" type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)"> <label for="act'+actCount+'">'+actname+'</label> <span><img src="/images/chevron_black_down.png"></span>');
+      $('.actname', clone).html('<input style="margin-top:5px" type="checkbox" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)"> <label for="act'+actCount+'">'+actname+'</label> <span><img src="/images/chevron_black_down.png"></span>');
       $('.tbody-assignstatutory').append(clone);
 
       $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
@@ -212,7 +212,7 @@ function load_secondwizard(){
 
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
-        $('.ckbox', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this)">');
+        $('.ckbox', clone2).html('<input type="checkbox" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this)">');
         $('.compliancetask', clone2).html('<abbr class="page-load" title="'+
           compliance_description+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliance_name);
 
@@ -736,6 +736,7 @@ function submitcompliance(){
         {
           function onSuccess(data){
           //getAssignedStatutories ();
+          getAssignCompliances ();
           $('ul.setup-panel li:eq(0)').addClass('active');
           $('ul.setup-panel li:eq(1)').addClass('disabled');
           $('ul.setup-panel li:eq(2)').addClass('disabled');
@@ -770,6 +771,7 @@ function submitcompliance(){
         newSettingsList = null;
         function onSuccess(data){
           //getAssignedStatutories ();
+          getAssignCompliances ();
           $('ul.setup-panel li:eq(0)').addClass('active');
           $('ul.setup-panel li:eq(1)').addClass('disabled');
           $('ul.setup-panel li:eq(2)').addClass('disabled');
