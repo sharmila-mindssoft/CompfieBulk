@@ -103,7 +103,7 @@ function load_allcompliances(userId, userName){
       actname = statutory;
       var acttableRow=$('#act-templates .font1 .tbody-heading');
       var clone=acttableRow.clone();
-      $('.actname', clone).html('<input style="margin-top:5px" type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)"> <label for="act'+actCount+'">'+actname+'</label> <span><img src="/images/chevron_black_down.png"></span>');
+      $('.actname', clone).html('<input style="margin-top:5px" type="checkbox" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)"> <label for="act'+actCount+'">'+actname+'</label> <span><img src="/images/chevron_black_down.png"></span>');
       $('.tbody-assignstatutory').append(clone);
       $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
       if(count==1){
@@ -167,7 +167,7 @@ function load_allcompliances(userId, userName){
 
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
-        $('.ckbox', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this)">');
+        $('.ckbox', clone2).html('<input type="checkbox" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this)">');
         
         $('.compliancetask', clone2).html('<abbr class="page-load" title="'+
           compliance_description+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliance_name);
@@ -344,7 +344,7 @@ function submitcompliance(){
   var day = d.getDate();
   var output = d.getFullYear() + '/' + month + '/' + day;
   var currentDate = new Date(output);
-  
+
   var selectedStatus = false;
   for(ucompliance in userCompliances){
     var userUnitwiseCompliance = userCompliances[ucompliance]["units"];
