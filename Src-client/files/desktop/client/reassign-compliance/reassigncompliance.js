@@ -6,7 +6,7 @@ var cCount;
 var two_level_approve;
 var client_admin;
 var accordionstatus = true;
-var currentUser;
+//var currentUser;
 
 
 function clearMessage() {
@@ -76,7 +76,7 @@ function convert_date (data){
 }
 
 function load_allcompliances(userId, userName){
-  currentUser = userId;
+  //currentUser = userId;
   $("#reassign-view").hide();
   $("#reassign-detailview").show();
   $("#currentassignee").text(userName);
@@ -247,6 +247,11 @@ function load_UserCompliances(uCompliances, uId){
       if(unitsList[unit]["unit_id"] == seatingUnitId){
         seatingUnit = unitsList[unit]["unit_name"];
       }
+    }
+
+    if(uId == 0){
+      userName = "Client Admin";
+      seatingUnit = "-";
     }
 
     var tableRow1=$('#templates .table-compliances .table-row');
@@ -635,7 +640,8 @@ function loadUser(userType){
 
       if(userPermission && conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
         && (approvalUserId == null || approvalUserId != userId) 
-        && (concurrenceUserId == null || concurrenceUserId != userId) && (currentUser != userId || userType != 'assignee')){
+        && (concurrenceUserId == null || concurrenceUserId != userId)){
+        //&& (currentUser != userId || userType != 'assignee') - for same assignee not loaded in assignee list
         
         str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
       }
