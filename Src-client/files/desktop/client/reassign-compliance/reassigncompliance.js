@@ -602,6 +602,20 @@ function loadUser(userType){
       var userId= usersList[user]["user_id"];
       var uLevel = usersList[user]["user_level"];
       var userName= usersList[user]["user_name"] + ' - Level ' + uLevel;
+      var isAssignee = usersList[user]["is_assignee"];
+      var isConcurrence = usersList[user]["is_concurrence"];
+      var isApprover = usersList[user]["is_approver"];
+
+      var userPermission;
+      if(userType == 'assignee'){
+        userPermission = isAssignee;
+      }
+      else if(userType == 'concurrence'){
+        userPermission = isConcurrence;
+      }
+      else if(userType == 'approval'){
+       userPermission = isApprover;
+      }
      
       if(userLevel != null){
         if(userType == 'assignee'){
@@ -619,7 +633,7 @@ function loadUser(userType){
           conditionResult1 = (uLevel >= userLevel1);
       }
 
-      if(conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
+      if(userPermission && conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
         && (approvalUserId == null || approvalUserId != userId) 
         && (concurrenceUserId == null || concurrenceUserId != userId) && (currentUser != userId || userType != 'assignee')){
         

@@ -2325,7 +2325,7 @@ class ClientDatabase(Database):
             is_approver = False
             is_concurrence = False
 
-            if 11 in form_ids or 12 in forms_id :
+            if 11 in form_ids or 12 in form_ids :
                 is_assignee = True
             if 9 in form_ids :
                 is_concurrence = True

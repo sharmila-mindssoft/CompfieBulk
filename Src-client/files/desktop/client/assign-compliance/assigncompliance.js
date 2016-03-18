@@ -417,6 +417,8 @@ function submitcompliance(){
 
     displayLoader();
     var assignComplianceCountryId = null;
+    var assignComplianceDomainId = null;
+    var assignComplianceDomainVal = null;
     var assignComplianceAssigneeId = null;
     var assignComplianceConcurrenceId = null;
     var assignComplianceApprovalId = null;
@@ -426,6 +428,8 @@ function submitcompliance(){
     var currentDate = new Date();
 
     assignComplianceCountryId = parseInt($('.countrylist.active').attr('id'));
+    assignComplianceDomainId = parseInt($('.domainlist.active').attr('id'));
+    assignComplianceDomainVal = $('.domainlist.active').text();
 
 
     if($('.assigneelist.active').attr('id') != undefined){
@@ -575,8 +579,10 @@ function submitcompliance(){
       }
     }
 
+
 var assigneeInserUnits = [];
 var assigneeInserUnitsVal = [];
+var assigneeInserDomain = null;
 
 if(assignComplianceAssigneeName != 'Client Admin' && assignComplianceAssigneeId != null){
   var userUnits;
@@ -585,6 +591,9 @@ if(assignComplianceAssigneeName != 'Client Admin' && assignComplianceAssigneeId 
     if(usersList[user]["user_id"] == assignComplianceAssigneeId){
       userUnits = usersList[user]["unit_ids"];
       userDomains = usersList[user]["domain_ids"];
+      if($.inArray(userDomains, assignComplianceDomainId) == -1){
+        assigneeInserDomain = assignComplianceDomainId;
+      }
     }
   }
 
@@ -602,6 +611,7 @@ if(assignComplianceAssigneeName != 'Client Admin' && assignComplianceAssigneeId 
 
 var concurrenceInserUnits = [];
 var concurrenceInserUnitsVal = [];
+var concurrenceInserDomain = null;
 
 if(assignComplianceConcurrenceId != null){
   var userUnits;
@@ -610,6 +620,9 @@ if(assignComplianceConcurrenceId != null){
     if(usersList[user]["user_id"] == assignComplianceConcurrenceId){
       userUnits = usersList[user]["unit_ids"];
       userDomains = usersList[user]["domain_ids"];
+      if($.inArray(userDomains, assignComplianceDomainId) == -1){
+        concurrenceInserDomain = assignComplianceDomainId;
+      }
     }
   }
 
@@ -627,7 +640,7 @@ if(assignComplianceConcurrenceId != null){
 
 var approvalInserUnits = [];
 var approvalInserUnitsVal = [];
-
+var approvalInserDomain = null;
 
 if(assignComplianceApprovalName != 'Client Admin' && assignComplianceApprovalId != null){
   var userUnits;
@@ -636,6 +649,9 @@ if(assignComplianceApprovalName != 'Client Admin' && assignComplianceApprovalId 
     if(usersList[user]["user_id"] == assignComplianceApprovalId){
       userUnits = usersList[user]["unit_ids"];
       userDomains = usersList[user]["domain_ids"];
+      if($.inArray(userDomains, assignComplianceDomainId) == -1){
+        approvalInserDomain = assignComplianceDomainId;
+      }
     }
   }
 
@@ -651,17 +667,25 @@ if(assignComplianceApprovalName != 'Client Admin' && assignComplianceApprovalId 
   }
 }
 
-if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalInserUnits.length >0){
+
+if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalInserUnits.length >0 ||
+  assigneeInserDomain != null || concurrenceInserDomain != null || approvalInserDomain != null){
   var assigneeText = '';
   var concurrenceText = '';
   var approvalText = '';
   if(assigneeInserUnits.length > 0){
+    if(assigneeInserDomain != null) assigneeText = assignComplianceDomainVal + "Domain, ";
+
     assigneeText = assigneeInserUnitsVal + " unit(s) not applicable for Assignee. "
   }
   if(concurrenceInserUnits.length > 0){
+    if(concurrenceInserDomain != null) concurrenceText = assignComplianceDomainVal + "Domain, ";
+
     concurrenceText = concurrenceInserUnitsVal + " unit(s) not applicable for Concurrence. "
   }
   if(approvalInserUnits.length > 0){
+    if(approvalInserDomain != null) approvalText = assignComplianceDomainVal + "Domain, ";
+    
     approvalText = approvalInserUnitsVal + " unit(s) not applicable for Approval. "
   }
 
@@ -1051,6 +1075,21 @@ function loadUser(userType){
       var uLevel = usersList[user]["user_level"];
       var userName= usersList[user]["user_name"] + ' - Level ' + uLevel;
 
+      var isAssignee = usersList[user]["is_assignee"];
+      var isConcurrence = usersList[user]["is_concurrence"];
+      var isApprover = usersList[user]["is_approver"];
+
+      var userPermission;
+      if(userType == 'assignee'){
+        userPermission = isAssignee;
+      }
+      else if(userType == 'concurrence'){
+        userPermission = isConcurrence;
+      }
+      else if(userType == 'approval'){
+       userPermission = isApprover;
+      }
+
       if(userLevel != null){
         if(userType == 'assignee'){
           conditionResult = (uLevel >= userLevel);
@@ -1067,15 +1106,10 @@ function loadUser(userType){
           conditionResult1 = (uLevel >= userLevel1);
       }
 
-      if(conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
+      if(userPermission && conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
         && (approvalUserId == null || approvalUserId != userId)
         && (concurrenceUserId == null || concurrenceUserId != userId)){
-        /*if(temp_id == userId){
-          str += '<li id="'+userId+'" class="'+userClass+ ' active'+'" >'+userName+'</li>';
-        }else{
           str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
-        }*/
-        str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
       }
     }
   }
