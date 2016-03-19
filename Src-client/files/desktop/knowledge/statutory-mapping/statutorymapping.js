@@ -303,7 +303,7 @@ function loadStatutoryLevels(countryval,domainval){
           var tableRow=$('#statutory-level-templates');
           var clone=tableRow.clone();
           $('.statutory_title', clone).text(statutoryLevelList[j]["level_name"]);
-          $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="statutoryfilter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" maxlength="50" class="input-box addleft" placeholder="" style="width:90%" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+          $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="statutoryfilter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" maxlength="100" class="input-box addleft" placeholder="" style="width:90%" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
           $('.tbody-statutory-level').append(clone);
         }
         var setlevelstage= 1;
@@ -540,7 +540,6 @@ function saverecord(j,e){
             onSuccess(response);
           }
           else {
-            alert(data)
             onFailure(error);
           }
         }
@@ -568,7 +567,6 @@ function saverecord(j,e){
             onSuccessUpdate(response);
           }
           else {
-            alert(data)
             onFailureUpdate(error);
           }
         }
@@ -831,7 +829,11 @@ $("#temp_addcompliance").click(function() {
         repeats_every = parseInt($('#repeats_every').val());
         repeats_every_length = $('#repeats_every').val().trim().length;
 
-        if(repeats_type == '1' && repeats_every_length > 3){
+        if(repeats_every == 0){
+          displayMessage("Invalid repeats every value");
+          return false;
+        }
+        else if(repeats_type == '1' && repeats_every_length > 3){
           displayMessage("Days maximum 3 digits");
           return false;
         }else if(repeats_type == '2' && repeats_every_length > 2){
@@ -862,7 +864,7 @@ $("#temp_addcompliance").click(function() {
               statutory_day = null;
               statutory_month = null;
               trigger_before_days = null;
-              if($('#multiple_statutory_month'+i).val() == '' || $('#multiple_statutory_month'+i).val() == '' || $('#multiple_triggerbefore'+i).val().trim().length == 0){
+              if($('#multiple_statutory_date'+i).val() == '' || $('#multiple_statutory_month'+i).val() == '' || $('#multiple_triggerbefore'+i).val().trim().length == 0){
                 displayMessage("Statutory dates and trigger dates mandatory for multiple inputs");
                 return false;
               }else{
@@ -1014,6 +1016,12 @@ function temp_editcompliance(edit_id){
     $('#Recurring').show();
     $('#Occasional').hide();
     $('#One_Time').hide();
+
+    if(compliance_frequency == "2"){
+      $('.frequency_type').html('Periodical');
+    }else{
+      $('.frequency_type').html('Review');
+    }
     if(statutory_dates.length > 1){
       $('.multipleinput').prop("checked",true);
       $('#multipleview').show();
@@ -1687,6 +1695,39 @@ $(function()
   $('#counter').html((maxLength - textlength) + ' characters left.');
   }
   });
+
+
+  $('#statutory_provision').keyup(function(e)
+  {
+  var maxLength = 500;
+  var textlength = this.value.length;
+  if (textlength >= maxLength)
+  {
+  $('#counter1').html('You cannot write more then ' + maxLength + ' characters!');
+  this.value = this.value.substring(0, maxLength);
+  e.preventDefault();
+  }
+  else
+  {
+  $('#counter1').html((maxLength - textlength) + ' characters left.');
+  }
+  });
+
+  $('#penal_consequences').keyup(function(e)
+  {
+  var maxLength = 500;
+  var textlength = this.value.length;
+  if (textlength >= maxLength)
+  {
+  $('#counter2').html('You cannot write more then ' + maxLength + ' characters!');
+  this.value = this.value.substring(0, maxLength);
+  e.preventDefault();
+  }
+  else
+  {
+  $('#counter2').html((maxLength - textlength) + ' characters left.');
+  }
+  });
   $('#duration').keyup(function()
   {
     var durationVal = $('#duration').val();
@@ -2299,10 +2340,16 @@ if($(this).val()=="1")
 });
 $('.tasktype').on('keyup change', function() {
   if($(this).val()=="2" || $(this).val()=="3")
-  {
+  { 
     $('#Recurring').show();
     $('#Occasional').hide();
     $('#One_Time').hide();
+    if($(this).val() == "2"){
+      $('.frequency_type').html('Periodical');
+    }else{
+      $('.frequency_type').html('Review');
+    }
+
   }
 
   else if($(this).val() == "4" )
