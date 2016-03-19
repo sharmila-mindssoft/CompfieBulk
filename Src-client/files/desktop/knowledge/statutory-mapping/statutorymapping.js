@@ -1054,7 +1054,7 @@ function temp_editcompliance(edit_id){
           $('#multiple_statutory_date'+i).hide();
         }
         $('#single_statutory_date').hide();
-        $('#statutory_date').hide();
+        
 
       }else{
         $('#dayofmonth').prop("checked", true);
@@ -1062,7 +1062,7 @@ function temp_editcompliance(edit_id){
           $('#multiple_statutory_date'+i).show();
         }
         $('#single_statutory_date').show();
-        $('#statutory_date').show();
+        
       }
       load_data();
       //siva
@@ -1078,11 +1078,11 @@ function temp_editcompliance(edit_id){
     if(statutory_dates[0]["repeat_by"] == 'enddayofmonth'){
       $('#enddayofmonth').prop("checked", true);
       $('#single_statutory_date').hide();
-      $('#statutory_date').hide();
+      
     }else{
       $('#dayofmonth').prop("checked", true);
       $('#single_statutory_date').show();
-      $('#statutory_date').show();
+     
     }
     }
     load_data();
@@ -1090,11 +1090,17 @@ function temp_editcompliance(edit_id){
 
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
      $('#single_statutory_date').hide();
-     $('#statutory_date').hide();
      $('#sdate').hide();
     }else{
       $('#single_statutory_date').show();
-     $('#statutory_date').show();
+    }
+
+    if($('#repeats_type').val() == 1){
+      $('#single_statutory_date').hide();
+    }
+
+    if($('#repeats_type').val() == 3){
+       $('#sdate').show();
     }
 
 
@@ -2336,6 +2342,7 @@ $('#multiple_statutory_month12').change(function() {
     $('#sdate').show();
     $('.repeatby-view').show();
     load_stautorydates();
+
   }
   else if($('#repeats_type').val() == '1'){
     $('#single_statutory_date').hide();
@@ -2345,6 +2352,8 @@ $('#multiple_statutory_month12').change(function() {
     $('#sdate').hide();
     $('#multipleview').hide();
     $('.repeatby-view').hide();
+
+
   }
   else if($('#repeats_type').val() == '3'){
     $('#single_statutory_date').show();
@@ -2354,6 +2363,12 @@ $('#multiple_statutory_month12').change(function() {
     $('#sdate').show();
     $('.repeatby-view').show();
     $('#multipleview').hide();
+
+    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+     $('#single_statutory_date').hide();
+    }
+
+   // siva
   }
   else if($('#repeats_type').val() == '2' && $('.multipleinput').prop("checked") == false && $('#repeats_every').val() != ''){
     var rep_every = parseInt($('#repeats_every').val());
@@ -2376,6 +2391,14 @@ $('#multiple_statutory_month12').change(function() {
       $('#multipleview').hide();
       $('.multipleinput').prop("checked", false);
     }
+    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+     $('#single_statutory_date').hide();
+     $('#sdate').hide();
+    }
+  }
+
+  if($('#repeats_type').val() == '2'){
+    $('.repeatby-view').show();
   }
   //resetvalues();
 
