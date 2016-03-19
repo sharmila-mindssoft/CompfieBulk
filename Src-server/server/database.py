@@ -2395,7 +2395,7 @@ class KnowledgeDatabase(Database):
                     country_id, domain_id, compliance_name
                 )
             if compliance_id is not None :
-                q = q + " AND compliance_id != '%s" % (compliance_id)
+                q = q + " AND t1.compliance_id != %s" % (compliance_id)
             row = self.select_one(q)
             if row[0] > 0 :
                 compliance_names.append(compliance_name)

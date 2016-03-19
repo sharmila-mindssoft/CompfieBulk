@@ -85,10 +85,14 @@ def process_save_statutory_mapping(db, request_frame, user_id):
 
 
 def process_update_statutory_mapping(db, request_frame, user_id):
-    if (db.update_statutory_mapping(request_frame, user_id)):
-        return knowledgetransaction.UpdateStatutoryMappingSuccess()
+    is_duplicate = db.check_duplicate_compliance_name(request_frame)
+    if is_duplicate is False:
+        if (db.update_statutory_mapping(request_frame, user_id)):
+            return knowledgetransaction.UpdateStatutoryMappingSuccess()
+        else :
+            return knowledgetransaction.InvalidStatutoryMappingId()
     else :
-        return knowledgetransaction.InvalidStatutoryMappingId()
+        return knowledgetransaction.ComplianceNameAlreadyExists(is_duplicate)
 
 def process_change_statutory_mapping_status(db, request_frame, user_id):
     if (db.change_statutory_mapping_status(request_frame, user_id)) :
