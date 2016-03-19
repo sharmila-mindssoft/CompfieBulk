@@ -967,6 +967,9 @@ $("#temp_addcompliance").click(function() {
   $('#multipleview').hide();
   $('#dayofmonth').prop("checked", true);
   $('.repeatby-view').show();
+  $('#counter').html('');
+  $('#counter1').html('');
+  $('#counter2').html('');
   resetvalues();
   load_compliance();
   }
@@ -1041,6 +1044,13 @@ function temp_editcompliance(edit_id){
       $('#multiple_statutory_month'+i).val('');
       $('#multiple_triggerbefore'+i).val('');
       }
+
+      if(statutory_dates[0]["repeat_by"] == 'enddayofmonth'){
+        $('#enddayofmonth').prop("checked", true);
+      }else{
+        $('#dayofmonth').prop("checked", true);
+      }
+      load_data();
   }else{
     $('.multipleinput').prop("checked",false);
     $('.multipleselectnone').show();
@@ -1049,11 +1059,12 @@ function temp_editcompliance(edit_id){
     $('#single_statutory_date').val(statutory_dates[0]["statutory_date"]);
     $('#single_statutory_month').val(statutory_dates[0]["statutory_month"]);
     $('#single_triggerbefore').val(statutory_dates[0]["trigger_before_days"]);
-    }
+
     if(statutory_dates[0]["repeat_by"] == 'enddayofmonth'){
       $('#enddayofmonth').prop("checked", true);
     }else{
       $('#dayofmonth').prop("checked", true);
+    }
     }
     load_data();
 //siva
