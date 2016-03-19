@@ -1354,9 +1354,10 @@ function savestatutorymapping(){
       $("#uploaded_filename").html('');
       $("#statutorymapping-view").show();
   }
-  function onFailure(error){
-    if(error == "StatutoryMappingAlreadyExists"){
-      displayMessage("Statutory Mapping Already Exists for same statutory");
+  function onFailure(error, response){
+    if(error == "ComplianceNameAlreadyExists"){
+      var duplicateComplianceList = response['compliance_name'];
+      displayMessage("Compliance name already exists - " + duplicateComplianceList);
     }else{
       displayMessage(error);
     }
@@ -1397,7 +1398,7 @@ function savestatutorymapping(){
             onSuccess(response);
           }
           else {
-            onFailure(error);
+            onFailure(error, response);
           }
       }
   );
