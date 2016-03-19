@@ -809,6 +809,7 @@ $("#temp_addcompliance").click(function() {
     displayMessage("Duration Type Required");
   }else{
     displayMessage("");
+    var repeatBy = $('input[name="repeatby"]:checked').val();
     if(compliance_frequency == "1"){
       if($('#statutory_date').val() != '')
         statutory_day = parseInt($('#statutory_date').val());
@@ -821,8 +822,7 @@ $("#temp_addcompliance").click(function() {
           return false;
         }
       }
-
-      statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days);
+      statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
       statutory_dates.push(statutory_date);
       }else if (compliance_frequency == "2" || compliance_frequency == "3"){
         repeats_type = parseInt($('#repeats_type').val());
@@ -876,7 +876,7 @@ $("#temp_addcompliance").click(function() {
                   return false;
                 }
 
-                statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days);
+                statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
                 statutory_dates.push(statutory_date);
               }
             }
@@ -892,7 +892,7 @@ $("#temp_addcompliance").click(function() {
                 displayMessage("Trigger before days should not exceed 100");
                 return false;
               }
-            statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days);
+            statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
             statutory_dates.push(statutory_date);
             }
           }
@@ -965,6 +965,8 @@ $("#temp_addcompliance").click(function() {
   $('.multipleselectnone').show();
   $('.multipleselect').hide();
   $('#multipleview').hide();
+  $('#dayofmonth').prop("checked", true);
+  $('.repeatby-view').show();
   resetvalues();
   load_compliance();
   }
@@ -1017,6 +1019,7 @@ function temp_editcompliance(edit_id){
     $('#Occasional').hide();
     $('#One_Time').hide();
 
+
     if(compliance_frequency == "2"){
       $('.frequency_type').html('Periodical');
     }else{
@@ -1047,6 +1050,13 @@ function temp_editcompliance(edit_id){
     $('#single_statutory_month').val(statutory_dates[0]["statutory_month"]);
     $('#single_triggerbefore').val(statutory_dates[0]["trigger_before_days"]);
     }
+    if(statutory_dates[0]["repeat_by"] == 'enddayofmonth'){
+      $('#enddayofmonth').prop("checked", true);
+    }else{
+      $('#dayofmonth').prop("checked", true);
+    }
+    load_data();
+//siva
   }
 }else{
   $('#Recurring').hide();
@@ -2240,6 +2250,8 @@ $('#multiple_statutory_month12').change(function() {
       $('#multiple_statutory_date'+i).show();
       $('#multiple_statutory_date'+i).val('');
     }
+    $('#single_statutory_date').val('');
+    $('#statutory_date').val('');
     $('#single_statutory_date').show();
     $('#sdate').show();
     //$('#statutory_date').show();
