@@ -97,6 +97,7 @@ $("#show-button").click(function(){
 	}
 	else{
 		function onSuccess(data){
+      clearMessage();
 			$(".grid-table-rpt").show();
 			loadUnitDetailsList(data['units']);		
 		}
