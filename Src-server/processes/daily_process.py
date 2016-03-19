@@ -38,7 +38,7 @@ from email.MIMEText import MIMEText
 
 mysqlHost = "localhost"
 mysqlUser = "root"
-mysqlPassword = "123456"
+mysqlPassword = "Msft!@#$%^"
 mysqlDatabase = "compfie_knowledge"
 mysqlPort = 3306
 
@@ -513,7 +513,7 @@ def start_new_task(db, client_id, current_date):
             d["concurrence_person"], d["approval_person"],
             notification_text, extra_details, notification_type_id
         )
-        a_name, assignee_email = get_email_id_for_fusers(db, d["assignee"])
+        a_name, assignee_email = get_email_id_for_users(db, d["assignee"])
         email.notify_compliance_start(
             a_name, compliance_name, unit_name,
             d["due_date"], assignee_email

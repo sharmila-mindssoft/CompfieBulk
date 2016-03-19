@@ -102,16 +102,8 @@ function getUserGroupName(userGroupId){
     }
     return usergroupname;
 }
-function getUnitNameAndAddress(unitId, serviceproviderid){
+function getUnitNameAndAddress(unitId){
     var unit = {};
-    if(unitId == 0 || unitId == null){
-        $.each(serviceProviderList, function(key, value) {
-            if(value['service_provider_id'] == serviceproviderid){
-                unit['unitName'] = value['service_provider_name'];
-                unit['unitAddress'] = value['service_provider_name'];
-            }
-        });
-    }
     if(unitId != null){
         $.each(unitList, function(key, value) {
             if(value['unit_id'] == unitId){
@@ -119,8 +111,7 @@ function getUnitNameAndAddress(unitId, serviceproviderid){
                 unit['unitAddress'] = value['unit_address'];
             }
         });
-    }
-    
+    }    
     return unit;
 }
 
@@ -180,8 +171,12 @@ function loadClientUserList(){
             
             $('.group-name', clone).text(getUserGroupName(userGroupId));
             $('.level-name', clone).text("Level "+users["user_level"]);
-            $('.seating-unit', clone).html('<abbr class="page-load" title="'+getUnitNameAndAddress(seatingUnitId, serviceProviderId)['unitAddress']+'"><img src="/images/icon-info.png" style="margin-right:10px"/>'+getUnitNameAndAddress(seatingUnitId, serviceProviderId)['unitName']);
-
+            if(userList[i]["is_service_provider"] == true){
+                $('.seating-unit', clone).html("-");
+            }
+            else{
+             $('.seating-unit', clone).html('<abbr class="page-load" title="'+getUnitNameAndAddress(seatingUnitId)['unitAddress']+'"><img src="/images/icon-info.png" style="margin-right:10px"/>'+getUnitNameAndAddress(seatingUnitId)['unitName']);   
+            }
             $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
             if (isPrimaryAdmin == false){
                 $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+')"/>');
@@ -496,7 +491,7 @@ $("#submit").click(function(){
 	}
 });
 function user_active(userId, isActive){
-     var msgstatus='deactivate';
+    var msgstatus='deactivate';
     if(isActive){
         msgstatus='activate';
     }
@@ -524,25 +519,36 @@ function user_active(userId, isActive){
     }
 }
 function user_isadmin(userId, isAdmin){
-    function onSuccess(data){
-        initialize();
+    var msgstatus;
+    if(isAdmin == 1){
+        msgstatus='activate promote admin';    
+    }    
+    if(isAdmin == 0){
+        msgstatus='deactivate promote admin';
     }
-    function onFailure(error){
-        if (error == "CannotPromoteServiceProvider"){
-            alert("Cannot promote a service provider as admin");
-        }else if (error == "CannotChangePrimaryAdminStatus"){
-            alert("Only Techno team can change status of primary admin");
+    var answer = confirm('Are you sure to '+msgstatus+ '?');
+    if (answer)
+    {
+        function onSuccess(data){
+            initialize();
         }
+        function onFailure(error){
+            if (error == "CannotPromoteServiceProvider"){
+                alert("Cannot promote a service provider as admin");
+            }else if (error == "CannotChangePrimaryAdminStatus"){
+                alert("Only Techno team can change status of primary admin");
+            }
+        }
+        client_mirror.changeAdminStatus(userId, isAdmin,
+            function(error, response){
+                if(error == null){
+                    onSuccess(response);
+                }
+                else{
+                    onFailure(error);
+                }
+            });
     }
-    client_mirror.changeAdminStatus(userId, isAdmin,
-        function(error, response){
-            if(error == null){
-                onSuccess(response);
-            }
-            else{
-                onFailure(error);
-            }
-        });
 }
 
 function checkdomainids(arrayunitdomain, arrayalldomain ){

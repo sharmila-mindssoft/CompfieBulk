@@ -332,6 +332,6 @@ class EmailHandler(Email):
             Review and approve the compliance
             ''' % (
                 employee_name.split(',')[2], assignee , compliance_name,
-                employee_name.split(',')[1], action
+                employee_name.split(',')[1]
             )
             self.send_email(receiver.split(',')[2], subject, message, cc)

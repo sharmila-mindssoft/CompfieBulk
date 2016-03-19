@@ -17,7 +17,10 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_50,
     parse_structure_SignedIntegerType_8,
     parse_structure_VectorType_CustomTextType_50,
-    parse_structure_VectorType_UnsignedIntegerType_32
+    parse_structure_VectorType_UnsignedIntegerType_32,
+    parse_structure_CustomTextType_100,
+    parse_structure_Text,
+    parse_structure_VectorType_CustomTextType_100
 )
 from protocol.to_structure import (
     to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
@@ -36,7 +39,10 @@ from protocol.to_structure import (
     to_structure_CustomTextType_50,
     to_structure_VectorType_CustomTextType_50,
     to_structure_VectorType_UnsignedIntegerType_32,
-    to_structure_UnsignedIntegerType_32
+    to_structure_UnsignedIntegerType_32,
+    to_structure_CustomTextType_100,
+    to_structure_Text,
+    to_structure_VectorType_CustomTextType_100
 )
 
 #
@@ -403,20 +409,20 @@ class SaveStatutory(Request):
         statutory_level_id = data.get("statutory_level_id")
         statutory_level_id = parse_structure_UnsignedIntegerType_32(statutory_level_id)
         statutory_name = data.get("statutory_name")
-        statutory_name = parse_structure_CustomTextType_50(statutory_name)
+        statutory_name = parse_structure_CustomTextType_100(statutory_name)
         parent_ids = data.get("parent_ids")
         parent_ids = parse_structure_VectorType_UnsignedIntegerType_32(parent_ids)
         parent_names = data.get("parent_names")
-        parent_names = parse_structure_VectorType_CustomTextType_50(parent_names)
+        parent_names = parse_structure_VectorType_CustomTextType_100(parent_names)
         return SaveStatutory(domain_id, statutory_level_id, statutory_name, parent_ids, parent_names)
 
     def to_inner_structure(self):
         return {
             "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "statutory_level_id": to_structure_UnsignedIntegerType_32(self.statutory_level_id),
-            "statutory_name": to_structure_CustomTextType_50(self.statutory_name),
+            "statutory_name": to_structure_CustomTextType_100(self.statutory_name),
             "parent_ids": to_structure_VectorType_UnsignedIntegerType_32(self.parent_ids),
-            "parent_names": to_structure_VectorType_CustomTextType_50(self.parent_names)
+            "parent_names": to_structure_VectorType_CustomTextType_100(self.parent_names)
         }
 
 class UpdateStatutory(Request):
@@ -435,20 +441,20 @@ class UpdateStatutory(Request):
         statutory_level_id = data.get("statutory_level_id")
         statutory_level_id = parse_structure_UnsignedIntegerType_32(statutory_level_id)
         statutory_name = data.get("statutory_name")
-        statutory_name = parse_structure_CustomTextType_50(statutory_name)
+        statutory_name = parse_structure_CustomTextType_100(statutory_name)
         parent_ids = data.get("parent_ids")
         parent_ids = parse_structure_VectorType_UnsignedIntegerType_32(parent_ids)
         parent_names = data.get("parent_names")
-        parent_names = parse_structure_VectorType_CustomTextType_50(parent_names)
+        parent_names = parse_structure_VectorType_CustomTextType_100(parent_names)
         return UpdateStatutory(statutory_id, statutory_level_id, statutory_name, parent_ids, parent_names)
 
     def to_inner_structure(self):
         return {
             "statutory_id": to_structure_UnsignedIntegerType_32(self.statutory_id),
             "statutory_level_id": to_structure_UnsignedIntegerType_32(self.statutory_level_id),
-            "statutory_name": to_structure_CustomTextType_50(self.statutory_name),
+            "statutory_name": to_structure_CustomTextType_100(self.statutory_name),
             "parent_ids": parse_structure_VectorType_UnsignedIntegerType_32(self.parent_ids),
-            "parent_names": to_structure_VectorType_CustomTextType_50(self.parent_names)
+            "parent_names": to_structure_VectorType_CustomTextType_100(self.parent_names)
         }
 
 
