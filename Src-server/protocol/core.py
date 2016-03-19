@@ -2547,27 +2547,31 @@ class ComplianceShortDescription(object):
 #
 
 class StatutoryDate(object):
-    def __init__(self, statutory_date, statutory_month, trigger_before_days):
+    def __init__(self, statutory_date, statutory_month, trigger_before_days, repeat_by):
         self.statutory_date = statutory_date
         self.statutory_month = statutory_month
         self.trigger_before_days = trigger_before_days
+        self.repeat_by = repeat_by
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["statutory_date", "statutory_month", "trigger_before_days"])
+        data = parse_dictionary(data, ["statutory_date", "statutory_month", "trigger_before_days", "repeat_by"])
         statutory_date = data.get("statutory_date")
         statutory_date = parse_structure_OptionalType_CustomIntegerType_1_31(statutory_date)
         statutory_month = data.get("statutory_month")
         statutory_month = parse_structure_OptionalType_CustomIntegerType_1_12(statutory_month)
         trigger_before_days = data.get("trigger_before_days")
         trigger_before_days = parse_structure_OptionalType_CustomIntegerType_1_100(trigger_before_days)
-        return StatutoryDate(statutory_date, statutory_month, trigger_before_days)
+        repeat_by = data.get("repeat_by")
+        repeat_by = parse_structure_OptionalType_CustomTextType_20(repeat_by)
+        return StatutoryDate(statutory_date, statutory_month, trigger_before_days, repeat_by)
 
     def to_structure(self):
         return {
             "statutory_date": to_structure_OptionalType_CustomIntegerType_1_31(self.statutory_date),
             "statutory_month": to_structure_OptionalType_CustomIntegerType_1_12(self.statutory_month),
             "trigger_before_days": to_structure_OptionalType_CustomIntegerType_1_100(self.trigger_before_days),
+            "repeat_by": to_structure_OptionalType_CustomTextType_20(self.repeat_by)
         }
 
 #

@@ -1872,8 +1872,8 @@ class ClientDatabase(Database):
         return from_date, to_date
 
     def calculate_due_date(
-        self, country_id, domain_id, statutory_dates = None, repeat_by = None,
-        repeat_every = None, due_date = None
+        self, country_id, domain_id, statutory_dates=None, repeat_by=None,
+        repeat_every=None, due_date=None
     ):
         def is_future_date(test_date):
             result = False
@@ -1902,7 +1902,9 @@ class ClientDatabase(Database):
                     )
                     statutory_dates_list.append(
                         core.StatutoryDate(
-                            date, month, statutory_date["trigger_before_days"]
+                            date, month,
+                            statutory_date["trigger_before_days"],
+                            statutory_date["repeat_by"]
                         )
                     )
                 else:
@@ -1917,7 +1919,7 @@ class ClientDatabase(Database):
                     due_dates.append(previous_year_due_date)
                 iter_due_date = previous_year_due_date
                 while not is_future_date(iter_due_date):
-                    iter_due_date = iter_due_date + datetime.timedelta(days = repeat_every)
+                    iter_due_date = iter_due_date + datetime.timedelta(days=repeat_every)
                     if from_date <= iter_due_date <= to_date:
                         due_dates.append(iter_due_date)
             elif repeat_by == 2:
@@ -1928,7 +1930,7 @@ class ClientDatabase(Database):
                     due_dates.append(previous_year_due_date)
                 iter_due_date = previous_year_due_date
                 while not is_future_date(iter_due_date):
-                    iter_due_date = iter_due_date + relativedelta.relativedelta(months = repeat_every)
+                    iter_due_date = iter_due_date + relativedelta.relativedelta(months=repeat_every)
                     if from_date <= iter_due_date <= to_date:
                         due_dates.append(iter_due_date)
             elif repeat_by == 3:
@@ -2167,7 +2169,8 @@ class ClientDatabase(Database):
                     s_date = core.StatutoryDate(
                         date["statutory_date"],
                         date["statutory_month"],
-                        date["trigger_before_days"]
+                        date["trigger_before_days"],
+                        date["repeat_by"]
                     )
                     date_list.append(s_date)
 
@@ -2458,7 +2461,8 @@ class ClientDatabase(Database):
                 s_date = core.StatutoryDate(
                     date["statutory_date"],
                     date["statutory_month"],
-                    date["trigger_before_days"]
+                    date["trigger_before_days"],
+                    date["repeat_by"]
                 )
                 date_list.append(s_date)
 
@@ -3791,7 +3795,8 @@ class ClientDatabase(Database):
                         s_date = core.StatutoryDate(
                             date["statutory_date"],
                             date["statutory_month"],
-                            date["trigger_before_days"]
+                            date["trigger_before_days"],
+                            date["repeat_by"]
                         )
                         date_list.append(s_date)
 
@@ -3899,7 +3904,8 @@ class ClientDatabase(Database):
                         s_date = core.StatutoryDate(
                             date["statutory_date"],
                             date["statutory_month"],
-                            date["trigger_before_days"]
+                            date["trigger_before_days"],
+                            date["repeat_by"]
                         )
                         date_list.append(s_date)
 
@@ -4116,7 +4122,8 @@ class ClientDatabase(Database):
             for s in statutory_dates :
                 s_date = core.StatutoryDate(
                     s["statutory_date"], s["statutory_month"],
-                    s["trigger_before_days"]
+                    s["trigger_before_days"],
+                    s["repeat_by"]
                 )
                 date_list.append(s_date)
 
@@ -4477,7 +4484,8 @@ class ClientDatabase(Database):
                         s_date = core.StatutoryDate(
                             date["statutory_date"],
                             date["statutory_month"],
-                            date["trigger_before_days"]
+                            date["trigger_before_days"],
+                            date["repeat_by"]
                         )
                         date_list.append(s_date)
 
@@ -5300,7 +5308,8 @@ class ClientDatabase(Database):
                 s_date = core.StatutoryDate(
                     date["statutory_date"],
                     date["statutory_month"],
-                    date["trigger_before_days"]
+                    date["trigger_before_days"],
+                    date["repeat_by"]
                 )
                 date_list.append(s_date)
             if d["document_name"] not in (None, "None", "") :

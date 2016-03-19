@@ -2274,7 +2274,8 @@ class KnowledgeDatabase(Database):
                 s_date = core.StatutoryDate(
                     date["statutory_date"],
                     date["statutory_month"],
-                    date["trigger_before_days"]
+                    date["trigger_before_days"],
+                    date["repeat_by"]
                 )
                 date_list.append(s_date)
 
