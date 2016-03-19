@@ -576,7 +576,7 @@ function submitcompliance(){
                   return false;
                 }
               }
-              statutoryDateList = client_mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days);
+              statutoryDateList = client_mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, null);
               statutory_dates.push(statutoryDateList);
             }
             }
