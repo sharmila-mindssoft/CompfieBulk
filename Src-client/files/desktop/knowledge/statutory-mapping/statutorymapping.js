@@ -830,7 +830,7 @@ $("#temp_addcompliance").click(function() {
         repeats_every_length = $('#repeats_every').val().trim().length;
 
         if(repeats_every == 0){
-          displayMessage("Invalid repeats every value");
+          displayMessage("Repeats every is invalid");
           return false;
         }
         else if(repeats_type == '1' && repeats_every_length > 3){
@@ -1062,8 +1062,12 @@ function temp_editcompliance(edit_id){
 
     if(statutory_dates[0]["repeat_by"] == 'enddayofmonth'){
       $('#enddayofmonth').prop("checked", true);
+      $('#single_statutory_date').hide();
+      $('#statutory_date').hide();
     }else{
       $('#dayofmonth').prop("checked", true);
+      $('#single_statutory_date').show();
+      $('#statutory_date').show();
     }
     }
     load_data();
@@ -1350,9 +1354,10 @@ function savestatutorymapping(){
       $("#uploaded_filename").html('');
       $("#statutorymapping-view").show();
   }
-  function onFailure(error){
-    if(error == "StatutoryMappingAlreadyExists"){
-      displayMessage("Statutory Mapping Already Exists for same statutory");
+  function onFailure(error, response){
+    if(error == "ComplianceNameAlreadyExists"){
+      var duplicateComplianceList = response['compliance_name'];
+      displayMessage("Compliance name already exists - " + duplicateComplianceList);
     }else{
       displayMessage(error);
     }
@@ -1393,7 +1398,7 @@ function savestatutorymapping(){
             onSuccess(response);
           }
           else {
-            onFailure(error);
+            onFailure(error, response);
           }
       }
   );

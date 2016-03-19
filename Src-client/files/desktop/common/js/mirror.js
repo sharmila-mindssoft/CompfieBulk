@@ -151,7 +151,7 @@ function initMirror() {
                     window.location.href = login_url;
                 }
                 else {
-                    callback(status, null)
+                    callback(status, response)
                 }
             }
         )
