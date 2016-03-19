@@ -1,14 +1,21 @@
 from protocol import login, core, technotransactions
-from generalcontroller import validate_user_session
+from generalcontroller import validate_user_session, validate_user_forms, process_get_countries_for_user
 
 __all__ =[
     "process_techno_transaction_request"
 ]
 
+forms = [21]
+
 def process_techno_transaction_request(request, db):
     session_token = request.session_token
     request_frame = request.request
     user_id = validate_user_session(db, session_token)
+    if user_id is not None :
+        is_valid = validate_user_forms(db, user_id, forms, request_frame)
+        if is_valid is not True :
+            return login.InvalidSessionToken()
+
     if user_id is None:
         return login.InvalidSessionToken()
 
@@ -26,6 +33,9 @@ def process_techno_transaction_request(request, db):
 
     elif type(request_frame) is technotransactions.SaveAssignedStatutory:
         return process_save_assigned_statutory(db, request_frame, user_id)
+
+    elif type(request_frame) is technotransactions.GetCountriesForGroup:
+        return process_get_countries_for_groups(db, user_id)
 
 def process_get_assigned_statutories(db, user_id):
     return db.get_assigned_statutories_list(user_id)
@@ -65,3 +75,6 @@ def process_get_assigned_statutory_wizard_two(db, request_frame, user_id):
 
 def process_save_assigned_statutory(db, request_frame, user_id):
     return db.save_assigned_statutories(request_frame, user_id)
+
+def process_get_countries_for_groups(db, user_id):
+    return process_get_countries_for_user(db, user_id)

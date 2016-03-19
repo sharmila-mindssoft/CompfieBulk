@@ -151,7 +151,7 @@ function initMirror() {
                     window.location.href = login_url;
                 }
                 else {
-                    callback(status, null)
+                    callback(status, response)
                 }
             }
         )
@@ -290,6 +290,11 @@ function initMirror() {
         apiRequest("general", request, callback);
     }
 
+    function getDomainReport(callback) {
+        var request = ["GetDomainsReport", {}];
+        apiRequest("knowledge_report", request, callback);
+    }
+
     //Country Master
 
     function saveCountry(countryName, callback) {
@@ -324,6 +329,16 @@ function initMirror() {
     function getCountryListForUser(callback) {
         var request = ["GetCountriesForUser", {}];
         apiRequest("general", request, callback);
+    }
+
+    function getCountryReport(callback) {
+        var request = ["GetCountriesReport", {}];
+        apiRequest("knowledge_report", request, callback)
+    }
+
+    function getCountriesForGroup(callback) {
+        var request = ["GetCountriesForGroup", {}];
+        apiRequest("techno_transaction", request, callback);
     }
 
     //Industry Master
@@ -517,11 +532,12 @@ function initMirror() {
         apiRequest("knowledge_master", request, callback);
     }
 
-    function statutoryDates(date, month, triggerBefore) {
+    function statutoryDates(date, month, triggerBefore, repeatBy) {
         var statutoryDate = {};
         statutoryDate["statutory_date"] = date;
         statutoryDate["statutory_month"] = month;
         statutoryDate["trigger_before_days"] = triggerBefore;
+        statutoryDate["repeat_by"] = repeatBy;
         return statutoryDate;
     }
 
@@ -746,6 +762,18 @@ function initMirror() {
     function getStatutoryMappingsReportData(filterDatas, callback) {
         var request = ["GetStatutoryMappingReportData", filterDatas];
         apiRequest("knowledge_report", request, callback);
+    }
+
+    // compliance task list
+
+    function getComplianceTaskFilter(callback) {
+        var request = ["GetComplianceTaskFilter", {}];
+        apiRequest("techno_report", request, callback);
+    }
+
+    function getComplianceTaskReport(filterDatas, callback) {
+        var request = ["GetComplianceTaskReport", filterDatas]
+        apiRequest("techno_report", request, callback);
     }
 
     // Admin User Group Master
@@ -1440,12 +1468,15 @@ function initMirror() {
         updateDomain: updateDomain,
         changeDomainStatus: changeDomainStatus,
         getDomainList: getDomainList,
+        getDomainReport: getDomainReport,
 
         saveCountry: saveCountry,
         updateCountry: updateCountry,
         changeCountryStatus: changeCountryStatus,
         getCountryList: getCountryList,
         getCountryListForUser: getCountryListForUser,
+        getCountryReport: getCountryReport,
+        getCountriesForGroup: getCountriesForGroup,
 
         saveIndustry: saveIndustry,
         updateIndustry: updateIndustry,
@@ -1543,6 +1574,8 @@ function initMirror() {
         getAssignedStatutoryReport: getAssignedStatutoryReport,
         getStatutoryNotificationsFilters: getStatutoryNotificationsFilters,
         getStatutoryNotificationsReportData: getStatutoryNotificationsReportData,
+        getComplianceTaskFilter: getComplianceTaskFilter,
+        getComplianceTaskReport: getComplianceTaskReport,
 
         get_ip: get_ip,
         getAuditTrail: getAuditTrail,

@@ -18,7 +18,12 @@ function displayMessage(message) {
   $(".error-message").text(message);
   $(".error-message").show();
 }
-
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
 function clearValues(levelvalue) {
   if(levelvalue == 'country'){
     $('#businessgroup').empty();
@@ -246,6 +251,7 @@ function validate_thirdtab(){
 }
 
 function submitcompliance(){
+    displayLoader();
     var unit_id = parseInt($('.unitlist.active').attr('id'));;
     compliance_list = [];
     var statutoriesCount= 1;
@@ -269,12 +275,15 @@ function submitcompliance(){
 
           if(completion_date == ''){
             displayMessage("Compliance Date Required");
+            hideLoader();
             return false;
           }else if(validity_date == ''){
             displayMessage("Validity Date Required");
+            hideLoader();
             return false;
           }else if(completed_by == ''){
             displayMessage("Assignee Required");
+            hideLoader();
             return false;
           }else{
             displayMessage("");
@@ -295,9 +304,11 @@ function submitcompliance(){
     $('ul.setup-panel li a[href="#step-1"]').trigger('click');
     $(".tbody-assignstatutory").find("tr").remove();
     load_firstwizard();
+    hideLoader();
   }
   function onFailure(error){
-    displayMessage(error)
+    displayMessage(error);
+    hideLoader();
   }
   client_mirror.savePastRecords(compliance_list, 
     function (error, response) {
@@ -336,8 +347,10 @@ $('ul.setup-panel li a[href="#step-2"]').trigger('click');
 
 $('#activate-step-3').on('click', function(e) {
 if (validate_secondtab()){
-$('ul.setup-panel li:eq(2)').removeClass('disabled');
-$('ul.setup-panel li a[href="#step-3"]').trigger('click');
+  getStatutories();
+  $('#activate-step-finish').show();
+  $('ul.setup-panel li:eq(2)').removeClass('disabled');
+  $('ul.setup-panel li a[href="#step-3"]').trigger('click');
 }
 })
 
@@ -361,7 +374,7 @@ $('#activate-step-finish').on('click', function(e) {
 
 
 function getStatutories(){
-
+  displayLoader();
   var assignComplianceUnitId = null;
   var assignComplianceDomainId = null;
   var assignComplianceActId = null;
@@ -379,8 +392,10 @@ function getStatutories(){
     statutoriesList = data["statutory_wise_compliances"];
     usersList = data["users"];
     load_thirdwizard();
+    hideLoader();
     }
     function onFailure(error){
+      hideLoader();
     }
     client_mirror.getStatutoriesByUnit(assignComplianceUnitId, assignComplianceDomainId, assignComplianceActId, assignComplianceFrequencyId, assignComplianceCountryId,
       function (error, response) {
@@ -470,9 +485,7 @@ $("#unit").click(function(event){
     
   }
   $('#frequency').append(str);
-
-  getStatutories();
-
+  $('ul.setup-panel li:eq(2)').addClass('disabled');
 });
 
 
@@ -574,9 +587,7 @@ $("#domain").click(function(event){
     }
   }
   $('#act').append(str);
-
-  getStatutories();
-
+  $('ul.setup-panel li:eq(2)').addClass('disabled');
 });
 
 $("#act").click(function(event){
@@ -586,8 +597,7 @@ $("#act").click(function(event){
     });
     $(event.target).addClass("active");
   }
-
-  getStatutories();
+  $('ul.setup-panel li:eq(2)').addClass('disabled');
 });
 
 $("#frequency").click(function(event){
@@ -597,7 +607,7 @@ $("#frequency").click(function(event){
     });
     $(event.target).addClass("active");
   }
-  getStatutories();
+  $('ul.setup-panel li:eq(2)').addClass('disabled');
 });
 
 function load_firstwizard(){

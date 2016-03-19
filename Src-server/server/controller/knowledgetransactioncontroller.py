@@ -1,14 +1,21 @@
 from protocol import login, knowledgetransaction
-from generalcontroller import validate_user_session
+from generalcontroller import validate_user_session, validate_user_forms
 
 __all__ = [
     "process_knowledge_transaction_request"
 ]
 
+forms = [10, 11]
+
 def process_knowledge_transaction_request(request, db) :
     session_token = request.session_token
     request_frame = request.request
     user_id = validate_user_session(db, session_token)
+    if user_id is not None :
+        is_valid = validate_user_forms(db, user_id, forms, request_frame)
+        if is_valid is not True :
+            return login.InvalidSessionToken()
+
     if user_id is None:
         return login.InvalidSessionToken()
 
@@ -69,15 +76,23 @@ def process_check_statutory_mapping(db, request_frame):
     return knowledgetransaction.CheckDuplicateStatutoryMappingSuccess(is_duplicate)
 
 def process_save_statutory_mapping(db, request_frame, user_id):
-    if (db.save_statutory_mapping(request_frame, user_id)) :
-        return knowledgetransaction.SaveStatutoryMappingSuccess()
+    is_duplicate = db.check_duplicate_compliance_name(request_frame)
+    if is_duplicate is False:
+        if (db.save_statutory_mapping(request_frame, user_id)) :
+            return knowledgetransaction.SaveStatutoryMappingSuccess()
+    else :
+        return knowledgetransaction.ComplianceNameAlreadyExists(is_duplicate)
 
 
 def process_update_statutory_mapping(db, request_frame, user_id):
-    if (db.update_statutory_mapping(request_frame, user_id)):
-        return knowledgetransaction.UpdateStatutoryMappingSuccess()
+    is_duplicate = db.check_duplicate_compliance_name(request_frame)
+    if is_duplicate is False:
+        if (db.update_statutory_mapping(request_frame, user_id)):
+            return knowledgetransaction.UpdateStatutoryMappingSuccess()
+        else :
+            return knowledgetransaction.InvalidStatutoryMappingId()
     else :
-        return knowledgetransaction.InvalidStatutoryMappingId()
+        return knowledgetransaction.ComplianceNameAlreadyExists(is_duplicate)
 
 def process_change_statutory_mapping_status(db, request_frame, user_id):
     if (db.change_statutory_mapping_status(request_frame, user_id)) :

@@ -721,11 +721,12 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function statutoryDates(date, month, triggerBefore) {
+    function statutoryDates(date, month, triggerBefore, repeatBy) {
         var statutoryDate = {};
         statutoryDate["statutory_date"] = date;
         statutoryDate["statutory_month"] = month;
         statutoryDate["trigger_before_days"] = triggerBefore;
+        statutoryDate["repeat_by"] = repeatBy;
         return statutoryDate;
     }
 
@@ -741,11 +742,20 @@ function initClientMirror() {
         }
     }
 
+    function newUnitSettings(userId, unitIds, domainId, countryId) {
+        return {
+            "user_id": userId,
+            "unit_ids": unitIds,
+            "domain_id": domainId,
+            "country_id": countryId
+        }
+    }
+
     function saveAssignedComplianceFormData(
         countryId, assignee, assigneeName,
         concurrence, concurrenceName,
         approval, approvalName,
-        compliances, callback
+        compliances, newUnits, callback
     ) {
         var request = [
             "SaveAssignedCompliance", {
@@ -756,7 +766,8 @@ function initClientMirror() {
                 "concurrence_person_name": concurrenceName,
                 "approval_person": approval,
                 "approval_person_name": approvalName,
-                "compliances": compliances
+                "compliances": compliances,
+                "new_units" : newUnits
             }
         ];
         var callerName = "client_transaction";
@@ -1580,6 +1591,7 @@ function initClientMirror() {
         getAssignComplianceForUnits: getAssignComplianceForUnits,
         statutoryDates: statutoryDates,
         assignCompliances: assignCompliances,
+        newUnitSettings: newUnitSettings,
         saveAssignedComplianceFormData: saveAssignedComplianceFormData,
 
         getPastRecordsFormData: getPastRecordsFormData,

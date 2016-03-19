@@ -6,7 +6,7 @@ var cCount;
 var two_level_approve;
 var client_admin;
 var accordionstatus = true;
-var currentUser;
+//var currentUser;
 
 
 function clearMessage() {
@@ -45,6 +45,22 @@ function actstatus(element){
   accordionstatus = false;
 }
 
+function compliancestatus(element){
+  var sClass = $(element).attr('class');
+  var actSelect = sClass.substr(sClass.lastIndexOf("s") + 1);
+  var cStatus = false;
+  $('.'+sClass).each(function() {
+    if(this.checked){
+      cStatus = true;
+    }
+  });
+  if(cStatus){
+    $('#act'+actSelect).prop("checked",true);
+  }else{
+    $('#act'+actSelect).prop("checked",false);
+  }
+}
+
 function convert_date (data){
   var date = data.split("-");
   var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -60,7 +76,7 @@ function convert_date (data){
 }
 
 function load_allcompliances(userId, userName){
-  currentUser = userId;
+  //currentUser = userId;
   $("#reassign-view").hide();
   $("#reassign-detailview").show();
   $("#currentassignee").text(userName);
@@ -87,7 +103,7 @@ function load_allcompliances(userId, userName){
       actname = statutory;
       var acttableRow=$('#act-templates .font1 .tbody-heading');
       var clone=acttableRow.clone();
-      $('.actname', clone).html('<input style="margin-top:5px" type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)"> <label for="act'+actCount+'">'+actname+'</label> <span><img src="/images/chevron_black_down.png"></span>');
+      $('.actname', clone).html('<input style="margin-top:5px" type="checkbox" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)"> <label for="act'+actCount+'">'+actname+'</label> <span><img src="/images/chevron_black_down.png"></span>');
       $('.tbody-assignstatutory').append(clone);
       $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
       if(count==1){
@@ -99,7 +115,7 @@ function load_allcompliances(userId, userName){
       $('.accordion-content'+count).append(clone1);
 
       var actList = statutoriesList[statutory];
-      $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
+      //$('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
       for(var actentity in actList){    
         var compliance_id = actList[actentity]["compliance_id"];
         var compliance_name = actList[actentity]["compliance_name"];
@@ -151,7 +167,7 @@ function load_allcompliances(userId, userName){
 
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
-        $('.ckbox', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'">');
+        $('.ckbox', clone2).html('<input type="checkbox" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this)">');
         
         $('.compliancetask', clone2).html('<abbr class="page-load" title="'+
           compliance_description+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliance_name);
@@ -233,6 +249,11 @@ function load_UserCompliances(uCompliances, uId){
       }
     }
 
+    if(uId == 0){
+      userName = "Client Admin";
+      seatingUnit = "-";
+    }
+
     var tableRow1=$('#templates .table-compliances .table-row');
     var clone1=tableRow1.clone();
     $('.sno', clone1).text(cCount);
@@ -309,7 +330,6 @@ function load_compliances () {
 
 }
 
-
 function submitcompliance(){
   displayLoader();
   var assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
@@ -319,8 +339,13 @@ function submitcompliance(){
   reassignCompliance = [];
   var statutoriesCount= 1;
   var userCompliances = compliancesList[reassignUserId];
-  var currentDate = new Date();
+  var d = new Date();
+  var month = d.getMonth()+1;
+  var day = d.getDate();
+  var output = d.getFullYear() + '/' + month + '/' + day;
+  var currentDate = new Date(output);
 
+  var selectedStatus = false;
   for(ucompliance in userCompliances){
     var userUnitwiseCompliance = userCompliances[ucompliance]["units"];
     for(var entity in userUnitwiseCompliance){
@@ -332,6 +357,7 @@ function submitcompliance(){
           var complianceApplicable = false;
           if($('#statutory'+statutoriesCount).is(":checked")){
             complianceApplicable = true;
+            selectedStatus = true;
           }
           if(complianceApplicable){
             var compliance_id = actList[actentity]["compliance_id"];
@@ -342,15 +368,15 @@ function submitcompliance(){
             var due_date = null;
             if(cfrequency != 'On Occurrence'){
               due_date =  $('#duedate'+statutoriesCount).val();
-            }
 
             var convertDueDate = convert_date(due_date);
-            if (convertDueDate <= currentDate) {
-                displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
-                hideLoader();
-                return false;
+            if (convertDueDate < currentDate) {
+              displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
+              hideLoader();
+              return false;
             }
 
+            }
             reassignComplianceData = client_mirror.reassingComplianceDet(uId,
               compliance_id, compliance_history_id, due_date
             );
@@ -362,36 +388,43 @@ function submitcompliance(){
     }
   }
 
-  function onSuccess(data){
-    $('ul.setup-panel li:eq(0)').addClass('active');
-    $('ul.setup-panel li:eq(1)').addClass('disabled');
-    $('ul.setup-panel li a[href="#step-1"]').trigger('click');
-    $(".tbody-reassign-compliances-list").find("tbody").remove();
-    getReassignCompliances();
-    hideLoader();
-    $("#reassign-view").show();
-    $("#reassign-detailview").hide();
-    $("#currentassignee").text('');
-    $('#assignee').empty();
-    $('#concurrence').empty();
-    $('#approval').empty();
-    reassignUserId = null;
-  }
-  function onFailure(error){
-    displayMessage(error);
-    hideLoader();
-  }
-  client_mirror.saveReassignCompliance(reassignUserId, assignComplianceAssigneeId, 
-    assignComplianceConcurrenceId, assignComplianceApprovalId, reassignCompliance, reason, 
-    function (error, response) {
-    if (error == null){
-      onSuccess(response);
+  if(selectedStatus){
+    function onSuccess(data){
+      $('ul.setup-panel li:eq(0)').addClass('active');
+      $('ul.setup-panel li:eq(1)').addClass('disabled');
+      $('ul.setup-panel li a[href="#step-1"]').trigger('click');
+      $(".tbody-reassign-compliances-list").find("tbody").remove();
+      getReassignCompliances();
+      hideLoader();
+      $("#reassign-view").show();
+      $("#reassign-detailview").hide();
+      $("#currentassignee").text('');
+      $('#assignee').empty();
+      $('#concurrence').empty();
+      $('#approval').empty();
+      $('#reason').val('');
+      reassignUserId = null;
     }
-    else {
-      onFailure(error);
+    function onFailure(error){
+      displayMessage(error);
+      hideLoader();
     }
+    client_mirror.saveReassignCompliance(reassignUserId, assignComplianceAssigneeId, 
+      assignComplianceConcurrenceId, assignComplianceApprovalId, reassignCompliance, reason, 
+      function (error, response) {
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+    }
+    );
+  }else{
+    hideLoader();
+    displayMessage("No compliance selected for reassign");
   }
-  );
+
 }
   
 function getReassignCompliances () {
@@ -579,6 +612,20 @@ function loadUser(userType){
       var userId= usersList[user]["user_id"];
       var uLevel = usersList[user]["user_level"];
       var userName= usersList[user]["user_name"] + ' - Level ' + uLevel;
+      var isAssignee = usersList[user]["is_assignee"];
+      var isConcurrence = usersList[user]["is_concurrence"];
+      var isApprover = usersList[user]["is_approver"];
+
+      var userPermission;
+      if(userType == 'assignee'){
+        userPermission = isAssignee;
+      }
+      else if(userType == 'concurrence'){
+        userPermission = isConcurrence;
+      }
+      else if(userType == 'approval'){
+       userPermission = isApprover;
+      }
      
       if(userLevel != null){
         if(userType == 'assignee'){
@@ -596,9 +643,10 @@ function loadUser(userType){
           conditionResult1 = (uLevel >= userLevel1);
       }
 
-      if(conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
+      if(userPermission && conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
         && (approvalUserId == null || approvalUserId != userId) 
-        && (concurrenceUserId == null || concurrenceUserId != userId) && (currentUser != userId || userType != 'assignee')){
+        && (concurrenceUserId == null || concurrenceUserId != userId)){
+        //&& (currentUser != userId || userType != 'assignee') - for same assignee not loaded in assignee list
         
         str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
       }

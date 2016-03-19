@@ -304,7 +304,7 @@ class SaveCompliance(Request):
         remarks = data.get("remarks")
         remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
         return SaveCompliance(
-            compliance_history_id, user_id, documents, completion_date, validity_date, 
+            compliance_history_id, user_id, documents, completion_date, validity_date,
             next_due_date, remarks
         )
 
@@ -334,7 +334,7 @@ class ApproveCompliance(object):
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "compliance_history_id", "approval_status", "concurrence_status", 
+                "compliance_history_id", "approval_status", "concurrence_status",
                 "approved_on", "concurred_on", "remarks"
             ]
         )
@@ -522,9 +522,9 @@ class GetUsersSuccess(Response):
 
 class GetUnitDetailsSuccess(Response):
     def __init__(
-        self, unit_id, unit_name, country_id, country_name, domain_ids, 
-        domain_names, industry_id, industry_name, group_id, business_group_id, 
-        business_group_name, legal_entity_id, legal_entity_name, division_id, 
+        self, unit_id, unit_name, country_id, country_name, domain_ids,
+        domain_names, industry_id, industry_name, group_id, business_group_id,
+        business_group_name, legal_entity_id, legal_entity_name, division_id,
         division_name
     ):
         self.unit_id = unit_id
@@ -547,9 +547,9 @@ class GetUnitDetailsSuccess(Response):
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "unit_id", "unit_name", "country_id", "country_name", "domain_ids", 
-                "domain_names", "industry_id", "group_id", "business_group_id", 
-                "business_group_name", "legal_entity_id", "legal_entity_name", 
+                "unit_id", "unit_name", "country_id", "country_name", "domain_ids",
+                "domain_names", "industry_id", "group_id", "business_group_id",
+                "business_group_name", "legal_entity_id", "legal_entity_name",
                 "division_id", "division_name"
             ]
         )
@@ -568,7 +568,7 @@ class GetUnitDetailsSuccess(Response):
         industry_id = data.get("industry_id")
         industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         industry_name = data.get("industry_name")
-        industry_name = parse_structure_CustomTextType_50(industry_name)        
+        industry_name = parse_structure_CustomTextType_50(industry_name)
         group_id = data.get("group_id")
         group_id = parse_structure_UnsignedIntegerType_32(group_id)
         business_group_id = data.get("business_group_id")
@@ -584,9 +584,9 @@ class GetUnitDetailsSuccess(Response):
         division_name = data.get("division_name")
         division_name = parse_structure_CustomTextType_50(division_name)
         return GetUnitDetailsSuccess(
-            unit_id, unit_name, country_id, country_name, domain_ids, 
-            domain_names, industry_id, industry_name, group_id, business_group_id, 
-            business_group_name, legal_entity_id, legal_entity_name, division_id, 
+            unit_id, unit_name, country_id, country_name, domain_ids,
+            domain_names, industry_id, industry_name, group_id, business_group_id,
+            business_group_name, legal_entity_id, legal_entity_name, division_id,
             division_name
         )
 
@@ -611,7 +611,7 @@ class GetUnitDetailsSuccess(Response):
 
 class ComplianceApplicability(object):
     def __init__(
-        self, country_id, domain_id, unit_id, compliance_id, compliance_name, 
+        self, country_id, domain_id, unit_id, compliance_id, compliance_name,
         compliance_frequency, compliance_applicable, compliance_opted
     ):
         self.country_id = country_id
@@ -626,8 +626,8 @@ class ComplianceApplicability(object):
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "country_id", "domain_id", "unit_id", "compliance_id", 
-                "compliance_name", "compliance_frequency", 
+                "country_id", "domain_id", "unit_id", "compliance_id",
+                "compliance_name", "compliance_frequency",
                 "compliance_applicable", "compliance_opted"
             ]
         )
@@ -640,7 +640,7 @@ class ComplianceApplicability(object):
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_100(compliance_name)
+        compliance_name = parse_structure_CustomTextType_500(compliance_name)
         compliance_frequency = data.get("compliance_frequency")
         compliance_frequency = parse_structure_CustomTextType_100(compliance_frequency)
         compliance_applicable = data.get("compliance_applicable")
@@ -648,7 +648,7 @@ class ComplianceApplicability(object):
         compliance_opted = data.get("compliance_opted")
         compliance_opted = parse_structure_VectorType_CustomTextType_50(compliance_opted)
         return ComplianceApplicability(
-            country_id, domain_id, unit_id, compliance_id, compliance_name, 
+            country_id, domain_id, unit_id, compliance_id, compliance_name,
             compliance_frequency, compliance_applicable, compliance_opted
         )
 
@@ -658,7 +658,7 @@ class ComplianceApplicability(object):
             "domain_id" : to_structure_UnsignedIntegerType_32(self.domain_id),
             "unit_id" : to_structure_UnsignedIntegerType_32(self.unit_id),
             "compliance_id" : to_structure_UnsignedIntegerType_32(self.compliance_id),
-            "compliance_name" : to_structure_CustomTextType_100(self.compliance_name),
+            "compliance_name" : to_structure_CustomTextType_500(self.compliance_name),
             "compliance_frequency" : to_structure_CustomTextType_100(self.compliance_frequency),
             "compliance_applicable" : to_structure_VectorType_CustomTextType_50(self.compliance_applicable),
             "compliance_opted" : to_structure_CustomTextType_50(self.compliance_opted)
@@ -669,6 +669,7 @@ class GetComplianceApplicabilityStatusSuccess(Response):
         self, applicabilty_list
     ):
         self.applicabilty_list = applicabilty_list
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
@@ -689,10 +690,10 @@ class GetComplianceApplicabilityStatusSuccess(Response):
 
 class ComplianceHistory(object):
     def __init__(
-        self, compliance_history_id, unit_id, compliance_id, start_date, 
-        due_date, completion_date, documents, validity_date, next_due_date, 
-        remarks, completed_by, completed_on, concurrence_status, concurred_by, 
-        concurred_on, approval_status, approved_by, approved_on 
+        self, compliance_history_id, unit_id, compliance_id, start_date,
+        due_date, completion_date, documents, validity_date, next_due_date,
+        remarks, completed_by, completed_on, concurrence_status, concurred_by,
+        concurred_on, approval_status, approved_by, approved_on
     ):
         self.compliance_history_id = compliance_history_id
         self.unit_id = unit_id
@@ -717,11 +718,11 @@ class ComplianceHistory(object):
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "compliance_history_id", "unit_id", "compliance_id", "start_date", 
-                "due_date", "completion_date", "documents", "validity_date", 
-                "next_due_date", "remarks", "completed_by", "completed_on", 
-                "concurrence_status", "concurred_by", "concurred_on", 
-                "approval_status", "approved_by", "approved_on" 
+                "compliance_history_id", "unit_id", "compliance_id", "start_date",
+                "due_date", "completion_date", "documents", "validity_date",
+                "next_due_date", "remarks", "completed_by", "completed_on",
+                "concurrence_status", "concurred_by", "concurred_on",
+                "approval_status", "approved_by", "approved_on"
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
@@ -761,9 +762,9 @@ class ComplianceHistory(object):
         approved_on = data.get("approved_on")
         approved_on = parse_structure_CustomTextType_20(approved_on)
         return ComplianceHistory(
-            compliance_history_id, unit_id, compliance_id, start_date, 
-            due_date, completion_date, documents, validity_date, next_due_date, 
-            remarks, completed_by, completed_on, concurrence_status, concurred_by, 
+            compliance_history_id, unit_id, compliance_id, start_date,
+            due_date, completion_date, documents, validity_date, next_due_date,
+            remarks, completed_by, completed_on, concurrence_status, concurred_by,
             concurred_on, approval_status, approved_by, approved_on
         )
 
@@ -814,8 +815,8 @@ class GetComplianceHistorySuccess(Response):
 
 class ReassignHistory(object):
     def __init__(
-        self, compliance_history_id, unit_id, assignee, 
-        reassigned_from, reassigned_date, remarks 
+        self, compliance_history_id, unit_id, assignee,
+        reassigned_from, reassigned_date, remarks
     ):
         self.compliance_history_id = compliance_history_id
         self.unit_id = unit_id
@@ -828,8 +829,8 @@ class ReassignHistory(object):
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "compliance_history_id", "unit_id", "assignee", 
-                "reassigned_from", "reassigned_date", "remarks"  
+                "compliance_history_id", "unit_id", "assignee",
+                "reassigned_from", "reassigned_date", "remarks"
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
@@ -869,9 +870,9 @@ class ReassignHistory(object):
         approved_on = data.get("approved_on")
         approved_on = parse_structure_CustomTextType_20(approved_on)
         return ReassignHistory(
-            compliance_history_id, unit_id, compliance_id, start_date, 
-            due_date, completion_date, documents, validity_date, next_due_date, 
-            remarks, completed_by, completed_on, concurrence_status, concurred_by, 
+            compliance_history_id, unit_id, compliance_id, start_date,
+            due_date, completion_date, documents, validity_date, next_due_date,
+            remarks, completed_by, completed_on, concurrence_status, concurred_by,
             concurred_on, approval_status, approved_by, approved_on
         )
 

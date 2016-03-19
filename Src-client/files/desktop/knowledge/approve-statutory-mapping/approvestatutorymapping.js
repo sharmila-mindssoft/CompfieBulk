@@ -257,7 +257,7 @@ function loadApproveStatutory(){
         $('.statutory', clone).html(statutoryMappings);
         var complianceNames='';
         for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
-          complianceNames = complianceNames + '<a href="#popup1" onclick="disppopup('+statutorymappingId+','+i+')">'+(i+1)+'. '+statutoryMappingsList[entity]["compliance_names"][i]['compliance_name']+'</a> <br>';
+          complianceNames = complianceNames + '<a href="#popup1" class="new-link" onclick="disppopup('+statutorymappingId+','+i+',this)">'+(i+1)+'. '+statutoryMappingsList[entity]["compliance_names"][i]['compliance_name']+'</a> <br>';
         }
         $('.compliancetask', clone).html(complianceNames);
         $('.applicablelocation', clone).html(applicableLocation);
@@ -301,10 +301,11 @@ $("#submit").click(function(){
   loadApproveStatutory();
 });
 
-function disppopup(sm_id,compliance_id){
+function disppopup(sm_id,compliance_id,element){
   $("#popup1").show();
-  var sm = statutoryMappingsList[sm_id];
+  $(element).removeClass("new-link");
 
+  var sm = statutoryMappingsList[sm_id];
   var compliances = sm["compliances"];
   var statutoryMappings='';
   for(var i=0; i<sm["statutory_mappings"].length; i++){
@@ -317,16 +318,13 @@ function disppopup(sm_id,compliance_id){
   }
   });
   
-
   var sdateDesc = '';
   var duration = compliances[compliance_id]["duration"];
   var duration_type_id = compliances[compliance_id]["duration_type_id"];
   var repeats_every = compliances[compliance_id]["repeats_every"];
   var repeats_type_id = compliances[compliance_id]["repeats_type_id"];
-
   var statutory_date =  compliances[compliance_id]["statutory_dates"];
   var statutorydate = '';
-
   var duration_type = '';
   var repeats_type = '';
 
@@ -336,7 +334,7 @@ function disppopup(sm_id,compliance_id){
     }else{
       duration_type = 'Hour(s)';
     }
-    sdateDesc = duration + ' ' + duration_type;
+    sdateDesc = 'To complete with in ' +duration + ' ' + duration_type;
   }
   else if(frequency == 'One Time'){
     sdateDesc = '';
@@ -349,7 +347,7 @@ function disppopup(sm_id,compliance_id){
     }else{
       repeats_type = 'Year(s)';
     }
-    sdateDesc = 'Every ' + repeats_every + ' ' + repeats_type;
+    sdateDesc = 'Repets every ' + repeats_every + ' ' + repeats_type;
   }
 
   if(frequency != "On Occurrence"){
@@ -375,7 +373,11 @@ function disppopup(sm_id,compliance_id){
     statutorydate +=  sMonth +' '+ sDay +' ';
     }
     if(sdateDesc != ''){
-      statutorydate = sdateDesc + ' ( '+statutorydate+' )';
+      if(statutorydate.trim() == ''){
+        statutorydate = sdateDesc;
+      }else{
+        statutorydate = sdateDesc + ' ( '+statutorydate+' )';
+      }
     }
   }else{
     statutorydate = sdateDesc;

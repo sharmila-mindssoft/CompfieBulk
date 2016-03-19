@@ -35,6 +35,7 @@ function clearValues(levelvalue) {
     $('#legalentity').empty();
     $('#division').empty();
     $('#unit').empty();
+    $('#domain').empty();
   }
 
   if(levelvalue == 'businessgroup'){
@@ -43,6 +44,7 @@ function clearValues(levelvalue) {
     $('#legalentity').empty();
     $('#division').empty();
     $('#unit').empty();
+    $('#domain').empty();
   }
 
   if(levelvalue == 'legalentity'){
@@ -50,12 +52,14 @@ function clearValues(levelvalue) {
     assignStatutoryUnitValues = [];
     $('#division').empty();
     $('#unit').empty();
+    $('#domain').empty();
   }
 
   if(levelvalue == 'division'){
     assignStatutoryUnitIds = [];
     assignStatutoryUnitValues = [];
     $('#unit').empty();
+    $('#domain').empty();
   }
 
   if(levelvalue == 'unit'){
@@ -96,15 +100,16 @@ function compliancestatus(element){
   }
 }
 
-function disppopup(units){
+function disppopup(units_string){
   $("#popup1").show();
   $(".popup-list tr:gt(0)").remove();
+  var units = units_string.split(',');
   for(var i=0; i<units.length; i++){
     var dispUnit = '';
     $.each(unitsList, function(index, value) {
-    if (value.unit_id == units[i]) {
+    if (value.unit_id == parseInt(units[i])) {
         dispUnit = value.unit_name + ' - ' + value.address;
-        var popuptableRow=$('#popup_table .popup_row');
+        var popuptableRow=$('#popup_table .popup-list .popup_row');
         var clone=popuptableRow.clone();
         $(".popup_unitname",clone).text(dispUnit);
         $('#popup_table').append(clone);
@@ -129,7 +134,7 @@ function load_secondwizard(){
       actname = domainentity;
       var acttableRow=$('#act-templates .font1 .tbody-heading');
       var clone=acttableRow.clone();
-      $('.actname', clone).html('<input style="margin-top:5px" type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)"> <label for="act'+actCount+'">'+actname+'</label> <span><img src="/images/chevron_black_down.png"></span>');
+      $('.actname', clone).html('<input style="margin-top:5px" type="checkbox" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)"> <label for="act'+actCount+'">'+actname+'</label> <span><img src="/images/chevron_black_down.png"></span>');
       $('.tbody-assignstatutory').append(clone);
 
       $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
@@ -142,7 +147,7 @@ function load_secondwizard(){
       $('.accordion-content'+count).append(clone1);
 
       var actList = domainList[domainentity];
-      $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
+      //$('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
       for(var actentity in actList){
         var statutoryprovision = '';
         var compliance_id = actList[actentity]["compliance_id"];
@@ -204,12 +209,17 @@ function load_secondwizard(){
 
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
-        $('.ckbox', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this)">');
+        $('.ckbox', clone2).html('<input type="checkbox" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this)">');
         $('.compliancetask', clone2).html('<abbr class="page-load" title="'+
           compliance_description+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliance_name);
 
         var dispApplicableUnits = applicable_units.length + '/' + assignStatutoryUnitIds.length;
-        $('.applicableunit', clone2).html('<a href="#popup1" onclick="disppopup(\''+applicable_units+'\')">'+dispApplicableUnits+'</a>');
+
+        var dispUnit = '';
+        for(var i=0; i<applicable_units.length; i++){
+          dispUnit = applicable_units[i]+',';
+        }
+        $('.applicableunit', clone2).html('<a href="#popup1" onclick="disppopup(\''+dispUnit+'\')">'+dispApplicableUnits+'</a>');
         $('.compliancefrequency', clone2).text(frequency);
 
         if(summary != null){
@@ -239,7 +249,6 @@ function load_secondwizard(){
         }
 
         $('.accordion-content'+count).append(clone2);
-
 
         var duename = statutoriesCount;
         if(due_date.length > 1){
@@ -298,14 +307,12 @@ function load_secondwizard(){
       actCount = actCount + 1;
       count++;
     }
-  
+  }
   if(count <= 1){
     var norecordtableRow=$('#no-record-templates .font1');
     var noclone=norecordtableRow.clone();
     $('.tbody-assignstatutory').append(noclone);
     $('#activate-step-3').hide();
-  }
-
   }
 
   $(document).ready(function($) {
@@ -318,7 +325,7 @@ function load_secondwizard(){
       }else{
         accordionstatus = true;
       }
-      
+
     });
   });
 }
@@ -418,18 +425,29 @@ function convert_date (data){
 function submitcompliance(){
 
     displayLoader();
+    var newSettingsList = [];
+    var newSetting = null;
+
     var assignComplianceCountryId = null;
+    var assignComplianceDomainId = null;
+    var assignComplianceDomainVal = null;
     var assignComplianceAssigneeId = null;
     var assignComplianceConcurrenceId = null;
     var assignComplianceApprovalId = null;
     var assignComplianceAssigneeName = null;
     var assignComplianceConcurrenceName = null;
     var assignComplianceApprovalName = null;
-    var currentDate = new Date();
+    var d = new Date();
+    var month = d.getMonth()+1;
+    var day = d.getDate();
+    var output = d.getFullYear() + '/' + month + '/' + day;
+    var currentDate = new Date(output);
 
     assignComplianceCountryId = parseInt($('.countrylist.active').attr('id'));
-    
-    
+    assignComplianceDomainId = parseInt($('.domainlist.active').attr('id'));
+    assignComplianceDomainVal = $('.domainlist.active').text();
+
+
     if($('.assigneelist.active').attr('id') != undefined){
       assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
       assignComplianceAssigneeName = $('.assigneelist.active').text().trim();
@@ -453,9 +471,10 @@ function submitcompliance(){
     assignCompliance = [];
     var statutoriesCount= 1;
     var actCount = 1;
+    var selectedStatus = false;
 
     var applicableUnitsArray = [];
-    
+
     for(var entity in statutoriesList){
 
       var domainList = statutoriesList[entity];
@@ -465,6 +484,7 @@ function submitcompliance(){
           var complianceApplicable = false;
           if($('#statutory'+statutoriesCount).is(":checked")){
             complianceApplicable = true;
+            selectedStatus = true;
           }
           if(complianceApplicable){
             var compliance_id = actList[actentity]["compliance_id"];
@@ -505,7 +525,7 @@ function submitcompliance(){
                 current_due_dates.push([dDate,tDay]);
               }
               var convertDueDate = convert_date(dDate);
-              if (convertDueDate <= currentDate) {
+              if (convertDueDate < currentDate) {
                   displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
                   hideLoader();
                   return false;
@@ -577,162 +597,213 @@ function submitcompliance(){
       }
     }
 
-var assigneeInserUnits = [];
-var assigneeInserUnitsVal = [];
+    if(selectedStatus){
+      var assigneeInserUnits = [];
+      var assigneeInserUnitsVal = [];
+      var assigneeInserDomain = null;
 
-if(assignComplianceAssigneeName != 'Client Admin' && assignComplianceAssigneeId != null){
-  var userUnits;
-  var userDomains;
-  for(var user in usersList){
-    if(usersList[user]["user_id"] == assignComplianceAssigneeId){
-      userUnits = usersList[user]["unit_ids"];
-      userDomains = usersList[user]["domain_ids"];
-    }
-  }
+      if(assignComplianceAssigneeName != 'Client Admin' && assignComplianceAssigneeId != null){
+        var userUnits;
+        var userDomains;
+        for(var user in usersList){
+          if(usersList[user]["user_id"] == assignComplianceAssigneeId){
+            userUnits = usersList[user]["unit_ids"];
+            userDomains = usersList[user]["domain_ids"];
+            if($.inArray(assignComplianceDomainId, userDomains) == -1){
+              assigneeInserDomain = assignComplianceDomainId;
+            }
+          }
+        }
 
-  for(var k=0; k<applicableUnitsArray.length; k++){
-    if($.inArray(applicableUnitsArray[k], userUnits) == -1){
-      assigneeInserUnits.push(applicableUnitsArray[k]);
-      for(var unit in unitsList){
-        if(unitsList[unit]["unit_id"] == applicableUnitsArray[k]){
-          assigneeInserUnitsVal.push(unitsList[unit]["unit_name"])
+        for(var k=0; k<applicableUnitsArray.length; k++){
+          if($.inArray(applicableUnitsArray[k], userUnits) == -1){
+            assigneeInserUnits.push(applicableUnitsArray[k]);
+            for(var unit in unitsList){
+              if(unitsList[unit]["unit_id"] == applicableUnitsArray[k]){
+                assigneeInserUnitsVal.push(unitsList[unit]["unit_name"])
+              }
+            }
+          }
         }
       }
-    }
-  }
-}
-  
-var concurrenceInserUnits = [];
-var concurrenceInserUnitsVal = [];
 
-if(assignComplianceConcurrenceId != null){
-  var userUnits;
-  var userDomains;
-  for(var user in usersList){
-    if(usersList[user]["user_id"] == assignComplianceConcurrenceId){
-      userUnits = usersList[user]["unit_ids"];
-      userDomains = usersList[user]["domain_ids"];
-    }
-  }
+      var concurrenceInserUnits = [];
+      var concurrenceInserUnitsVal = [];
+      var concurrenceInserDomain = null;
 
-  for(var k=0; k<applicableUnitsArray.length; k++){
-    if($.inArray(applicableUnitsArray[k], userUnits) == -1){
-      assigneeInserUnits.push(applicableUnitsArray[k]);
-      for(var unit in unitsList){
-        if(unitsList[unit]["unit_id"] == applicableUnitsArray[k]){
-          concurrenceInserUnitsVal.push(unitsList[unit]["unit_name"])
+      if(assignComplianceConcurrenceId != null){
+        var userUnits;
+        var userDomains;
+        for(var user in usersList){
+          if(usersList[user]["user_id"] == assignComplianceConcurrenceId){
+            userUnits = usersList[user]["unit_ids"];
+            userDomains = usersList[user]["domain_ids"];
+            if($.inArray(assignComplianceDomainId, userDomains) == -1){
+              concurrenceInserDomain = assignComplianceDomainId;
+            }
+          }
+        }
+
+        for(var k=0; k<applicableUnitsArray.length; k++){
+          if($.inArray(applicableUnitsArray[k], userUnits) == -1){
+            concurrenceInserUnits.push(applicableUnitsArray[k]);
+            for(var unit in unitsList){
+              if(unitsList[unit]["unit_id"] == applicableUnitsArray[k]){
+                concurrenceInserUnitsVal.push(unitsList[unit]["unit_name"])
+              }
+            }
+          }
         }
       }
-    }
-  }
-}
 
-var approvalInserUnits = [];
-var approvalInserUnitsVal = [];
+      var approvalInserUnits = [];
+      var approvalInserUnitsVal = [];
+      var approvalInserDomain = null;
 
+      if(assignComplianceApprovalName != 'Client Admin' && assignComplianceApprovalId != null){
+        var userUnits;
+        var userDomains;
+        for(var user in usersList){
+          if(usersList[user]["user_id"] == assignComplianceApprovalId){
+            userUnits = usersList[user]["unit_ids"];
+            userDomains = usersList[user]["domain_ids"];
+            if($.inArray(assignComplianceDomainId, userDomains) == -1){
+              approvalInserDomain = assignComplianceDomainId;
+            }
+          }
+        }
 
-if(assignComplianceApprovalName != 'Client Admin' && assignComplianceApprovalId != null){
-  var userUnits;
-  var userDomains;
-  for(var user in usersList){
-    if(usersList[user]["user_id"] == assignComplianceApprovalId){
-      userUnits = usersList[user]["unit_ids"];
-      userDomains = usersList[user]["domain_ids"];
-    }
-  }
-
-  for(var k=0; k<applicableUnitsArray.length; k++){
-    if($.inArray(applicableUnitsArray[k], userUnits) == -1){
-      assigneeInserUnits.push(applicableUnitsArray[k]);
-      for(var unit in unitsList){
-        if(unitsList[unit]["unit_id"] == applicableUnitsArray[k]){
-          approvalInserUnitsVal.push(unitsList[unit]["unit_name"])
+        for(var k=0; k<applicableUnitsArray.length; k++){
+          if($.inArray(applicableUnitsArray[k], userUnits) == -1){
+            approvalInserUnits.push(applicableUnitsArray[k]);
+            for(var unit in unitsList){
+              if(unitsList[unit]["unit_id"] == applicableUnitsArray[k]){
+                approvalInserUnitsVal.push(unitsList[unit]["unit_name"])
+              }
+            }
+          }
         }
       }
-    }
-  }
-}
-  
-if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalInserUnits.length >0){
-  var assigneeText = '';
-  var concurrenceText = '';
-  var approvalText = '';
-  if(assigneeInserUnits.length > 0){
-    assigneeText = assigneeInserUnitsVal + " unit(s) not applicable for Assignee. "
-  }
-  if(concurrenceInserUnits.length > 0){
-    concurrenceText = concurrenceInserUnitsVal + " unit(s) not applicable for Concurrence. "
-  }
-  if(approvalInserUnits.length > 0){
-    approvalText = approvalInserUnitsVal + " unit(s) not applicable for Approval. "
-  }
 
-  var answer = confirm(assigneeText + concurrenceInserUnits + approvalInserUnits + 'Do you want to add in settings ?');
-  if (answer)
-  {
-    function onSuccess(data){
-    //getAssignedStatutories ();
-    $('ul.setup-panel li:eq(0)').addClass('active');
-    $('ul.setup-panel li:eq(1)').addClass('disabled');
-    $('ul.setup-panel li:eq(2)').addClass('disabled');
-    $('ul.setup-panel li a[href="#step-1"]').trigger('click');
-    $(".tbody-assignstatutory").find("tbody").remove();
-    $('#assignee').empty();
-    $('#concurrence').empty();
-    $('#approval').empty();
-    load_firstwizard();
-    hideLoader();
-  }
-  function onFailure(error){
-    displayMessage(error);
-    hideLoader();
-  }
-  client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,
-    assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
-    assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance,
-    function (error, response) {
-    if (error == null){
-      onSuccess(response);
+      if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalInserUnits.length >0 ||
+        assigneeInserDomain != null || concurrenceInserDomain != null || approvalInserDomain != null){
+        var assigneeText = '';
+        var concurrenceText = '';
+        var approvalText = '';
+        if(assigneeInserUnits.length > 0 || assigneeInserDomain != null){
+          if(assigneeInserDomain != null)
+            assigneeText = assignComplianceDomainVal + " domain ";
+
+          if(assigneeInserUnits.length > 0){
+            assigneeText = assigneeText + assigneeInserUnitsVal + " unit(s) ";
+          }else{
+            assigneeInserUnits = null;
+          }
+          assigneeText = assigneeText + "not applicable for Assignee. "
+          newSetting = client_mirror.newUnitSettings(assignComplianceAssigneeId, assigneeInserUnits, approvalInserDomain, assignComplianceCountryId);
+          newSettingsList.push(newSetting);
+        }
+        if(concurrenceInserUnits.length > 0 || concurrenceInserDomain != null){
+          if(concurrenceInserDomain != null)
+            concurrenceText = assignComplianceDomainVal + " domain ";
+
+          if(concurrenceInserUnits.length > 0){
+            concurrenceText = concurrenceText + concurrenceInserUnitsVal + " unit(s) "
+          }else{
+            concurrenceInserUnits = null;
+          }
+          concurrenceText = concurrenceText + "not applicable for Concurrence. "
+          newSetting = client_mirror.newUnitSettings(assignComplianceConcurrenceId, concurrenceInserUnits, concurrenceInserDomain, assignComplianceCountryId);
+          newSettingsList.push(newSetting);
+        }
+        if(approvalInserUnits.length > 0 || approvalInserDomain != null){
+          if(approvalInserDomain != null)
+            approvalText = assignComplianceDomainVal + " domain ";
+
+          if(approvalInserUnits.length > 0){
+            approvalText = approvalText + approvalInserUnitsVal + " unit(s) "
+          }else{
+            approvalInserUnits = null;
+          }
+          approvalText = approvalText + "not applicable for Approval. ";
+          newSetting = client_mirror.newUnitSettings(assignComplianceApprovalId, approvalInserUnits, approvalInserDomain, assignComplianceCountryId);
+          newSettingsList.push(newSetting);
+        }
+
+
+        var answer = confirm(assigneeText + concurrenceText + approvalText + 'Do you want to add in settings ?');
+        if (answer)
+        {
+          function onSuccess(data){
+          //getAssignedStatutories ();
+          getAssignCompliances ();
+          $('ul.setup-panel li:eq(0)').addClass('active');
+          $('ul.setup-panel li:eq(1)').addClass('disabled');
+          $('ul.setup-panel li:eq(2)').addClass('disabled');
+          $('ul.setup-panel li a[href="#step-1"]').trigger('click');
+          $(".tbody-assignstatutory").find("tbody").remove();
+          $('#assignee').empty();
+          $('#concurrence').empty();
+          $('#approval').empty();
+          load_firstwizard();
+          hideLoader();
+        }
+        function onFailure(error){
+          displayMessage(error);
+          hideLoader();
+        }
+        client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,
+          assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
+          assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
+          function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+        }
+        );
+        }else{
+          hideLoader();
+        }
+      }else{
+        newSettingsList = null;
+        function onSuccess(data){
+          //getAssignedStatutories ();
+          getAssignCompliances ();
+          $('ul.setup-panel li:eq(0)').addClass('active');
+          $('ul.setup-panel li:eq(1)').addClass('disabled');
+          $('ul.setup-panel li:eq(2)').addClass('disabled');
+          $('ul.setup-panel li a[href="#step-1"]').trigger('click');
+          $(".tbody-assignstatutory").find("tbody").remove();
+          $('#assignee').empty();
+          $('#concurrence').empty();
+          $('#approval').empty();
+          load_firstwizard();
+          hideLoader();
+        }
+        function onFailure(error){
+          displayMessage(error);
+          hideLoader();
+        }
+        client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,
+          assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
+          assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
+          function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+        }
+        );
+      }
+    }else{
+      hideLoader();
+      displayMessage("No compliance selected for assign");
     }
-    else {
-      onFailure(error);
-    }
-  }
-  ); 
-  }else{
-    hideLoader();
-  }
-}else{
-  function onSuccess(data){
-    //getAssignedStatutories ();
-    $('ul.setup-panel li:eq(0)').addClass('active');
-    $('ul.setup-panel li:eq(1)').addClass('disabled');
-    $('ul.setup-panel li:eq(2)').addClass('disabled');
-    $('ul.setup-panel li a[href="#step-1"]').trigger('click');
-    $(".tbody-assignstatutory").find("tbody").remove();
-    $('#assignee').empty();
-    $('#concurrence').empty();
-    $('#approval').empty();
-    load_firstwizard();
-    hideLoader();
-  }
-  function onFailure(error){
-    displayMessage(error);
-    hideLoader();
-  }
-  client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,
-    assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
-    assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance,
-    function (error, response) {
-    if (error == null){
-      onSuccess(response);
-    }
-    else {
-      onFailure(error);
-    }
-  }
-  );
-}
 }
 
 var navListItems = $('ul.setup-panel li a'),
@@ -833,7 +904,7 @@ $("#unit").click(function(event){
         assignStatutoryUnitIds.push(parseInt(event.target.id));
         assignStatutoryUnitValues.push($(event.target).text());
       }
-      
+
       var domainArray = [];
       var applicableDomains = [];
       for(var unit in unitsList){
@@ -848,9 +919,10 @@ $("#unit").click(function(event){
             return a.indexOf(v) !== -1;
         });
       });
+
       var str='';
       $('#domain').empty();
-      for(var domain in domainsList){
+      for(domain in domainsList){
         if(domainsList[domain]["is_active"] == true && $.inArray(domainsList[domain]["domain_id"], applicableDomains) >= 0){
           str += '<li id="'+domainsList[domain]["domain_id"]+'" class="domainlist" >'+domainsList[domain]["domain_name"]+'</li>';
         }
@@ -1052,6 +1124,21 @@ function loadUser(userType){
       var uLevel = usersList[user]["user_level"];
       var userName= usersList[user]["user_name"] + ' - Level ' + uLevel;
 
+      var isAssignee = usersList[user]["is_assignee"];
+      var isConcurrence = usersList[user]["is_concurrence"];
+      var isApprover = usersList[user]["is_approver"];
+
+      var userPermission;
+      if(userType == 'assignee'){
+        userPermission = isAssignee;
+      }
+      else if(userType == 'concurrence'){
+        userPermission = isConcurrence;
+      }
+      else if(userType == 'approval'){
+       userPermission = isApprover;
+      }
+
       if(userLevel != null){
         if(userType == 'assignee'){
           conditionResult = (uLevel >= userLevel);
@@ -1068,15 +1155,10 @@ function loadUser(userType){
           conditionResult1 = (uLevel >= userLevel1);
       }
 
-      if(conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
+      if(userPermission && conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
         && (approvalUserId == null || approvalUserId != userId)
         && (concurrenceUserId == null || concurrenceUserId != userId)){
-        /*if(temp_id == userId){
-          str += '<li id="'+userId+'" class="'+userClass+ ' active'+'" >'+userName+'</li>';
-        }else{
           str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
-        }*/
-        str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
       }
     }
   }
@@ -1213,16 +1295,7 @@ function getAssignCompliances () {
     usersList = data["users"];
     two_level_approve = data["two_level_approve"];
     client_admin = data["client_admin"];
-    //domainsList = data["domains"];
-    domainsList = [
-
-    {
-        "is_active":true,
-        "domain_id":1,
-        "domain_name":"Finance Law"
-    }
-
-];
+    domainsList = data["domains"];
     load_firstwizard();
   }
   function onFailure(error){

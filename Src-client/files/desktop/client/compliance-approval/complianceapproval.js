@@ -46,6 +46,7 @@ function loadComplianceApprovalDetails(data){
             var clonelist = tableRowvalues.clone();
             $('.sno-ca', clonelist).html(sno);
             $('.compliance-task span', clonelist).html(val['compliance_name']);
+            $('.compliance-task abbr', clonelist).attr("title", data['description']);
             $('.compliance-task', clonelist).attr("title", val['description']);
             $('.domain', clonelist).html(val['domain_name']);
             $('.startdate', clonelist).html(val['start_date']);
@@ -82,15 +83,19 @@ function showSideBar(idval, data){
     var tableRowSide = $('#templates .sideview-div');
     var cloneValSide = tableRowSide.clone();
     var complianceFrequency = data['compliance_frequency'];
+
+    //$('.sidebar-unit span', cloneValSide).html(data['unit_name']);
+    //$('.sidebar-unit abbr', cloneValSide).attr("title", data['address']);
     $('.sidebar-compliance-task span', cloneValSide).html(data['compliance_name']);
+    $('.sidebar-compliance-task abbr', cloneValSide).attr("title", data['description']);
     $('.sidebar-compliance-frequency', cloneValSide).html(complianceFrequency);
     fileslist = data['file_names'];
     documentslist = data['documents'];
     if( fileslist != null){
         for (var i = 0; i < fileslist.length; i++){
-            console.log( documentslist[i]);
-            $('.sidebar-uploaded-documents', cloneValSide).append("<span>"+fileslist[i]+"<a href='' download='"+documentslist[i]+"' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' /></a><a href='"+ documentslist[i] +"' target='_new' class='view-file'> <img src='/images/view.png' style='width:16px;height:16px;' /></a></span>");    
-            
+            if(fileslist[i] != ""){
+                $('.sidebar-uploaded-documents', cloneValSide).append("<span>"+fileslist[i]+"<a href='' download='"+documentslist[i]+"' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' /></a><a href='"+ documentslist[i] +"' target='_new' class='view-file'> <img src='/images/view.png' style='width:16px;height:16px;' /></a></span>");        
+            }     
         }    
     }
     // $(".view-file", cloneValSide).on("click", function(e){
@@ -122,8 +127,10 @@ function showSideBar(idval, data){
     if(data['delayedby'] == null){
         $(".sidebar-status", cloneValSide).html("InProgress");    
     }
-
-    $(".sidebar-remarks span", cloneValSide).html(data["remarks"]);
+    if(data["remarks"] != "None"){
+        $(".sidebar-remarks span", cloneValSide).html(data["remarks"]);    
+    }
+    
     action = data["action"];
     if(action == "Approve"){
         $(".action-tr", cloneValSide).show();
@@ -245,30 +252,31 @@ function showSideBar(idval, data){
         }      
         else if(validity_date == ''){
             displayMessage("Select Validity Date");
+            return;
         }
-        if(next_due_date == ''){
+        else if(next_due_date == ''){
             displayMessage("Select Next Due Date");
+            return;
         }
-        else{
-            console.log(compliance_history_id+"--"+approval_status+"--"+remarks+"--"+validity_date+"--"+next_due_date);
-            function onSuccess(data){
-                initialize();
-            }
-            function onFailure(error){
-                console.log(error);
-            }
-            client_mirror.approveCompliance(compliance_history_id, approval_status,
-                remarks, validity_date, next_due_date,                
-                function (error, response){
-                    if(error == null){
-                        onSuccess(response);
-                    }
-                    else{
-                        onFailure(error);
-                    }
-                }    
-            );   
+    
+        function onSuccess(data){
+            initialize();
         }
+        function onFailure(error){
+            console.log(error);
+        }
+        client_mirror.approveCompliance(compliance_history_id, approval_status,
+            remarks, validity_date, next_due_date,                
+            function (error, response){
+                if(error == null){
+                    onSuccess(response);
+                }
+                else{
+                    onFailure(error);
+                }
+            }    
+        );   
+    
          
     });
 
@@ -281,6 +289,23 @@ function showSideBar(idval, data){
         monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
     });
+    $(".validity1-textbox-input" ).datepicker({
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
+    });
+    $(".duedate1-textbox-input" ).datepicker({
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
+    });
+
 }
 
 function showTextbox(){
@@ -306,4 +331,18 @@ $(function() {
 });
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
+});
+$( document ).tooltip({
+    position: {
+        my: "center bottom-20",
+        at: "center top",
+        using: function( position, feedback ) {
+            $( this ).css( position );
+            $( "<div>" )
+                .addClass( "arrow" )
+                .addClass( feedback.vertical )
+                .addClass( feedback.horizontal )
+                .appendTo( this );
+        }
+    }
 });

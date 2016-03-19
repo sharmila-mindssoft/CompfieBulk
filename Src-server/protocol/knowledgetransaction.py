@@ -481,6 +481,21 @@ class StatutoryMappingAlreadyExists(Response):
     def to_inner_structure(self):
         return {}
 
+class ComplianceNameAlreadyExists(Response):
+    def __init__(self, compliance_name):
+        self.compliance_name = compliance_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["compliance_name"])
+        compliance_name = data.get("compliance_name")
+        return ComplianceNameAlreadyExists(compliance_name)
+
+    def to_inner_structure(self):
+        return {
+            "compliance_name": self.compliance_name
+        }
+
 class CheckDuplicateStatutoryMappingResponse(Response):
     def __init__(self, is_exists):
         self.is_exists = is_exists

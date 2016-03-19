@@ -97,6 +97,7 @@ $("#show-button").click(function(){
 	}
 	else{
 		function onSuccess(data){
+      clearMessage();
 			$(".grid-table-rpt").show();
 			loadUnitDetailsList(data['units']);		
 		}
@@ -123,7 +124,6 @@ function getdomainnames(list){
 		var domainname = domainsList[key]['domain_name'];
 		
 		if(jQuery.inArray(domainid, list ) > -1){
-			console.log(domainid+"---"+list+"--"+domainname);
 			domainsNames += domainname + ", ";
 		}
 	});				
@@ -179,7 +179,6 @@ function loadUnitDetailsList(data){
     var sno = 0;
     
     $.each(data, function(key, value) {
-    	console.log(data);
         var tableRowHeading = $('#templates .table-unitdetails-list .filter-heading-list');
         var cloneHeading = tableRowHeading.clone();
         $('.filter-country-name', cloneHeading).text(countriesText);

@@ -251,7 +251,7 @@ DROP TABLE IF EXISTS `tbl_statutories`;
 CREATE TABLE `tbl_statutories` (
   `statutory_id` int(11) NOT NULL,
   `level_id` int(11) NOT NULL,
-  `statutory_name` varchar(50) NOT NULL,
+  `statutory_name` varchar(100) NOT NULL,
   `parent_ids` varchar(50) DEFAULT NULL,
   `parent_names` varchar(500) DEFAULT NULL,
   `statutory_mapping_ids` varchar(50) DEFAULT NULL,

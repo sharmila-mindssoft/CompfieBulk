@@ -325,7 +325,8 @@ def to_structure_VectorType_RecordType_core_ClientConfiguration(data):
     return lst
 
 def to_structure_SignedIntegerType_8(data):
-    return parse_number(data, -128, 127)
+    # return parse_number(data, -128, 127)
+    return parse_number(data, 0, 4294967295)
 
 def to_structure_UnsignedIntegerType_32(data):
     return parse_number(data, 0, 4294967295)
@@ -3972,3 +3973,20 @@ def to_structure_VectorType_RecordType_core_GroupCompanyForUnitCreation(data):
 def to_structure_RecordType_core_GroupCompanyForUnitCreation(data):
     from protocol import core
     return core.GroupCompanyForUnitCreation.to_structure(data)
+
+def to_structure_RecordType_clienttransactions_NewUnitSettings(data):
+    from protocol import clienttransactions
+    return clienttransactions.NewUnitSettings.to_structure(data)
+
+def to_structure_VectorType_RecordType_clienttransactions_NewUnitSettings(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(to_structure_RecordType_clienttransactions_NewUnitSettings(item))
+    return lst
+
+def to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(data):
+    print data
+    print "to_structure"
+    if data is None: return data
+    return to_structure_VectorType_RecordType_clienttransactions_NewUnitSettings(data)

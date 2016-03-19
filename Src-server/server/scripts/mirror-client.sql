@@ -258,6 +258,7 @@ CREATE TABLE `tbl_client_statutories` (
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
+  `is_new` tinyint(4) DEFAULT 0,
   PRIMARY KEY (`client_statutory_id`),
   CONSTRAINT `fk_client_statutories_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `fk_client_statutories_domains` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),

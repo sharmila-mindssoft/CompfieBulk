@@ -1035,9 +1035,9 @@ class ClientDatabase(Database):
         table = self.tblUnits
         result = None
         condition = 1
-        if user_id > 0 :
-            table = self.tblUserUnits
-            condition = " user_id = %s " % user_id
+        # if user_id > 0 :
+        #     table = self.tblUserUnits
+        #     condition = " user_id = %s " % user_id
         rows = self.get_data(
             table, columns, condition
         )
@@ -1050,9 +1050,9 @@ class ClientDatabase(Database):
         table = self.tblUnits
         result = None
         condition = 1
-        if user_id > 0 :
-            table = self.tblUserUnits
-            condition = " user_id = %s " % user_id
+        # if user_id > 0 :
+        #     table = self.tblUserUnits
+        #     condition = " user_id = %s " % user_id
         rows = self.get_data(
             table, columns, condition
         )
@@ -1065,9 +1065,9 @@ class ClientDatabase(Database):
         table = self.tblUnits
         result = None
         condition = 1
-        if user_id > 0 :
-            table = self.tblUserUnits
-            condition = " user_id = %s " % user_id
+        # if user_id > 0 :
+        #     table = self.tblUserUnits
+        #     condition = " user_id = %s " % user_id
         rows = self.get_data(
             table, columns, condition
         )
@@ -1313,7 +1313,15 @@ class ClientDatabase(Database):
 #
 
     def get_statutory_settings(self, session_user, client_id):
-        query = "SELECT distinct t1.client_statutory_id,  t1.geography, \
+        if session_user == 0 :
+            where_qry = ''
+        else :
+            user_id = int(session_user)
+            where_qry = " WHERE t1.unit_id in (select unit_id from tbl_user_units where user_id LIKE '%s') \
+            AND t1.domain_id in (select domain_id from tbl_user_domains where user_id LIKE '%s')" % (
+                user_id, user_id
+            )
+        query = "SELECT distinct t1.geography, \
             t1.country_id, t1.domain_id, t1.unit_id,t2.unit_name, \
             (select business_group_name from tbl_business_groups \
                 where business_group_id = t2.business_group_id)business_group_name, \
@@ -1326,11 +1334,11 @@ class ClientDatabase(Database):
             (select domain_name from tbl_domains where domain_id = t1.domain_id)domain_name \
             FROM tbl_client_statutories t1 \
             INNER JOIN tbl_units t2 \
-            ON t1.unit_id = t2.unit_id "
-
+            ON t1.unit_id = t2.unit_id %s " % (where_qry)
+        print query
         rows = self.select_all(query)
         columns = [
-            "client_statutory_id", "geography",
+            "geography",
             "country_id", "domain_id", "unit_id", "unit_name",
             "business_group_name", "legal_entity_name",
             "division_name", "address", "postal_code", "unit_code",
@@ -1340,8 +1348,7 @@ class ClientDatabase(Database):
         return self.return_statutory_settings(result, client_id)
 
     def return_compliance_for_statutory_settings(
-        self, domain_id, client_statutory_id,
-        client_id
+        self, domain_id, unit_id
     ):
         query = "SELECT t1.client_statutory_id, t1.compliance_id, \
             t1.statutory_applicable, t1.statutory_opted,\
@@ -1349,15 +1356,16 @@ class ClientDatabase(Database):
             t1.compliance_applicable, t1.compliance_opted, \
             t1.compliance_remarks, \
             t2.compliance_task, t2.document_name, t2.statutory_mapping,\
-            t2.statutory_provision, t2.compliance_description \
+            t2.statutory_provision, t2.compliance_description, \
+            t3.is_new\
             FROM tbl_client_compliances t1 \
             INNER JOIN tbl_compliances t2 \
             ON t1.compliance_id = t2.compliance_id \
             INNER JOIN tbl_client_statutories t3 \
             ON t1.client_statutory_id = t3.client_statutory_id \
             WHERE t3.domain_id = %s AND \
-            t1.client_statutory_id = %s" % (
-                domain_id, client_statutory_id
+            t3.unit_id = %s" % (
+                domain_id, unit_id
             )
         rows = self.select_all(query)
         columns = [
@@ -1366,7 +1374,8 @@ class ClientDatabase(Database):
             "not_applicable_remarks", "compliance_applicable",
             "compliance_opted", "compliance_remarks",
             "compliance_task", "document_name", "statutory_mapping",
-            "statutory_provision", "compliance_description"
+            "statutory_provision", "compliance_description",
+            "is_new"
         ]
         results = self.convert_to_dict(rows, columns)
         statutory_wise_compliances = {}
@@ -1391,6 +1400,7 @@ class ClientDatabase(Database):
 
             mappings = r["statutory_mapping"].split('>>')
             statutory_name = mappings[0].strip()
+            statutory_name = statutory_name.strip()
             if len(mappings) > 1 :
                 provision = "%s - %s" % (
                     ','.join(mappings[1:]),
@@ -1399,7 +1409,7 @@ class ClientDatabase(Database):
             else :
                 provision = r["statutory_provision"]
 
-            if r["document_name"] is not None :
+            if r["document_name"] not in [None, "None"] :
                 name = "%s - %s" % (
                     r["document_name"], r["compliance_task"]
                 )
@@ -1408,13 +1418,15 @@ class ClientDatabase(Database):
                 name = r["compliance_task"]
 
             compliance = clienttransactions.ComplianceApplicability(
+                r["client_statutory_id"],
                 r["compliance_id"],
                 name,
                 r["compliance_description"],
                 provision,
                 bool(r["compliance_applicable"]),
                 bool(compliance_opted),
-                compliance_remarks
+                compliance_remarks,
+                not bool(r["is_new"])
             )
 
             level_1_statutories = statutory_wise_compliances.get(
@@ -1449,9 +1461,9 @@ class ClientDatabase(Database):
                 d["postal_code"]
             )
             domain_id = d["domain_id"]
-            client_statutory_id = d["client_statutory_id"]
+            # client_statutory_id = d["client_statutory_id"]
             statutories = self.return_compliance_for_statutory_settings(
-                domain_id, client_statutory_id, client_id
+                domain_id, unit_id
             )
             statutory_val = []
             for key in sorted(statutories):
@@ -1521,7 +1533,7 @@ class ClientDatabase(Database):
                 t1.compliance_opted=%s, \
                 t1.compliance_remarks='%s',\
                 t1.updated_by=%s, \
-                t1.updated_on='%s' \
+                t1.updated_on='%s', t2.is_new = 1 \
                 WHERE t2.unit_id = %s \
                 AND t1.client_statutory_id = %s \
                 AND t1.compliance_id = %s" % (
@@ -1882,8 +1894,8 @@ class ClientDatabase(Database):
         return from_date, to_date
 
     def calculate_due_date(
-        self, country_id, domain_id, statutory_dates = None, repeat_by = None, 
-        repeat_every = None, due_date = None
+        self, country_id, domain_id, statutory_dates=None, repeat_by=None,
+        repeat_every=None, due_date=None
     ):
         def is_future_date(test_date):
             result = False
@@ -1912,7 +1924,9 @@ class ClientDatabase(Database):
                     )
                     statutory_dates_list.append(
                         core.StatutoryDate(
-                            date, month, statutory_date["trigger_before_days"]
+                            date, month,
+                            statutory_date["trigger_before_days"],
+                            statutory_date.get("repeat_by")
                         )
                     )
                 else:
@@ -1927,7 +1941,7 @@ class ClientDatabase(Database):
                     due_dates.append(previous_year_due_date)
                 iter_due_date = previous_year_due_date
                 while not is_future_date(iter_due_date):
-                    iter_due_date = iter_due_date + datetime.timedelta(days = repeat_every)
+                    iter_due_date = iter_due_date + datetime.timedelta(days=repeat_every)
                     if from_date <= iter_due_date <= to_date:
                         due_dates.append(iter_due_date)
             elif repeat_by == 2:
@@ -1936,11 +1950,11 @@ class ClientDatabase(Database):
                 )
                 if from_date <= previous_year_due_date <= to_date:
                     due_dates.append(previous_year_due_date)
-                iter_due_date = previous_year_due_date 
+                iter_due_date = previous_year_due_date
                 while not is_future_date(iter_due_date):
-                    iter_due_date = iter_due_date + relativedelta.relativedelta(months = repeat_every)
+                    iter_due_date = iter_due_date + relativedelta.relativedelta(months=repeat_every)
                     if from_date <= iter_due_date <= to_date:
-                        due_dates.append(iter_due_date)   
+                        due_dates.append(iter_due_date)
             elif repeat_by == 3:
                 previous_due_date = datetime.datetime(
                     due_date.year - repeat_every, due_date.month, due_date.day
@@ -2177,7 +2191,8 @@ class ClientDatabase(Database):
                     s_date = core.StatutoryDate(
                         date["statutory_date"],
                         date["statutory_month"],
-                        date["trigger_before_days"]
+                        date["trigger_before_days"],
+                        date.get("repeat_by")
                     )
                     date_list.append(s_date)
 
@@ -2305,7 +2320,8 @@ class ClientDatabase(Database):
             (select group_concat(distinct domain_id) from tbl_user_domains where user_id = t1.user_id) domain_ids, \
             (select group_concat(distinct unit_id) from tbl_user_units where user_id = t1.user_id ) unit_ids,\
             t1.is_service_provider, \
-            (select service_provider_name from  tbl_service_providers where service_provider_id = t1.service_provider_id) service_provider\
+            (select service_provider_name from  tbl_service_providers where service_provider_id = t1.service_provider_id) service_provider, \
+            (select form_ids from tbl_user_groups where user_group_id = t1.user_group_id)fomr_ids\
             FROM tbl_users t1 \
             INNER JOIN tbl_user_units t2 \
             ON t1.user_id = t2.user_id "
@@ -2317,7 +2333,8 @@ class ClientDatabase(Database):
             "user_id", "employee_name", "employee_code",
             "seating_unit_id", "user_level",
             "domain_ids", "unit_ids",
-            "is_service_provider", "service_provider"
+            "is_service_provider", "service_provider",
+            "form_ids"
         ]
         result = self.convert_to_dict(rows, columns)
         user_list = []
@@ -2335,13 +2352,27 @@ class ClientDatabase(Database):
             unit_ids = [
                 int(y) for y in r["unit_ids"].split(',')
             ]
+            form_ids = [int(x) for x in r["form_ids"].split(',')]
+            is_assignee = False
+            is_approver = False
+            is_concurrence = False
+
+            if 11 in form_ids or 12 in form_ids :
+                is_assignee = True
+            if 9 in form_ids :
+                is_concurrence = True
+                is_approver = True
+
             user = clienttransactions.ASSIGN_COMPLIANCE_USER(
                 r["user_id"],
                 name,
                 r["user_level"],
                 unit_id,
                 unit_ids,
-                domain_ids
+                domain_ids,
+                is_assignee,
+                is_approver,
+                is_concurrence
             )
             # user_list = seating_unit_users.get(unit_id)
             # if user_list is None :
@@ -2387,6 +2418,7 @@ class ClientDatabase(Database):
             (SELECT A.unit_id, A.client_statutory_id, B.compliance_id FROM tbl_client_statutories A \
             INNER JOIN tbl_client_compliances B \
             ON A.client_statutory_id = B.client_statutory_id \
+            AND B.compliance_opted = 1 \
             AND A.unit_id IN %s) U \
             group by U.compliance_id )UC \
             ON t2.compliance_id = UC.compliance_id \
@@ -2451,7 +2483,8 @@ class ClientDatabase(Database):
                 s_date = core.StatutoryDate(
                     date["statutory_date"],
                     date["statutory_month"],
-                    date["trigger_before_days"]
+                    date["trigger_before_days"],
+                    date.get("repeat_by")
                 )
                 date_list.append(s_date)
 
@@ -2472,7 +2505,7 @@ class ClientDatabase(Database):
                 due_date_list.append(due_date)
 
             if r["frequency_id"] in (2, 3) :
-                summary = "Repeats ever %s - %s" % (r["repeats_every"], r["repeat_type"])
+                summary = "Repeats every %s - %s" % (r["repeats_every"], r["repeat_type"])
             elif r["frequency_id"] == 4 :
                 summary = "To complete within %s - %s" % (r["duration"], r["duration_type"])
             else :
@@ -2493,7 +2526,27 @@ class ClientDatabase(Database):
             domain_wise_compliance[domain_id] = level_1_wise
         return domain_wise_compliance
 
+    def get_email_id_for_users(self, user_id):
+        if user_id == 0 :
+            q = "SELECT 'Administrator', username from tbl_admin where admin_id = %s" % (
+                user_id
+            )
+            pass
+        else :
+            q = "SELECT employee_name, email_id from tbl_users where user_id = %s" % (
+                user_id
+            )
+        row = self.select_one(q)
+        if row :
+            return row[0], row[1]
+        else :
+            return None
+
     def save_assigned_compliance(self, request, session_user, client_id):
+        new_unit_settings = request.new_units
+        if new_unit_settings is None :
+            return clienttransactions.SaveAssignedComplianceSuccess()
+
         created_on = self.get_date_time()
         country_id = int(request.country_id)
         assignee = int(request.assignee)
@@ -2502,10 +2555,11 @@ class ClientDatabase(Database):
             concurrence = ""
         approval = int(request.approval_person)
         compliances = request.compliances
+
+        # print request.to_structure()
         compliance_names = []
         for c in compliances:
             compliance_id = int(c.compliance_id)
-            compliance_names.append(c.compliance_name)
             statutory_dates = c.statutory_dates
             if statutory_dates is not None :
                 date_list = []
@@ -2526,6 +2580,7 @@ class ClientDatabase(Database):
                 due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
             else :
                 due_date = ""
+            compliance_names.append("Complaince Name:" + c.compliance_name + "- Due Date:" + str(due_date))
             validity_date = c.validity_date
             if validity_date is not None :
                 validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
@@ -2550,39 +2605,72 @@ class ClientDatabase(Database):
                         int(session_user), created_on
                     )
                 self.execute(query)
-            self.update_user_units(assignee, unit_ids, client_id)
-        compliance_names = json.dumps(compliance_names)
+            # self.update_user_units(assignee, unit_ids, client_id)
+        if new_unit_settings is not None :
+            self.update_user_settings(new_unit_settings, client_id)
+
+        compliance_names = ", ".join(compliance_names)
         if request.concurrence_person_name is None :
-            action = "Compliances %s assigned to assignee - %s and approval-person - %s " % (
+            action = " %s has assigned to assignee - %s and approval-person - %s " % (
                 str(compliance_names), request.assignee_name,
                 request.approval_person_name
             )
         else :
-            action = "Compliances %s assigned to assignee - %s concurrence-person - %s approval-person - %s " % (
+            action = " %s has assigned to assignee - %s concurrence-person - %s approval-person - %s " % (
                 str(compliance_names), request.assignee_name, request.concurrence_person_name,
                 request.approval_person_name
             )
-        action = json.dumps(action)
-        self.save_activity(session_user, 7, action)
+        self.save_activity(session_user, 7, json.dumps(action))
+        receiver = self.get_email_id_for_users(assignee)
+        # email.notify_assign_compliance(receiver, request.assignee_name, action)
         return clienttransactions.SaveAssignedComplianceSuccess()
 
-    def update_user_units(self, user_id, unit_ids, client_id):
-        user_units = self.get_user_unit_ids(user_id, client_id)
-        user_units = [int(x) for x in user_units.split(',')]
-        new_units = []
-        for u_id in unit_ids :
-            if u_id not in user_units :
-                new_units.append(u_id)
+    def update_user_settings(self, new_units, client_id):
+        for n in new_units :
+            user_id = n.user_id
+            unit_ids = n.unit_ids
+            domain_id = n.domain_id
+            country_id = n.country_id
 
-        if len(new_units) > 0 :
-            unit_values_list = []
-            unit_columns = ["user_id", "unit_id"]
-            for unit_id in new_units:
-                unit_value_tuple = (int(user_id), int(unit_id))
-                unit_values_list.append(unit_value_tuple)
-            result4 = self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
-            action = "New units %s added for user %s while assign compliance " % (new_units, user_id)
-            self.save_activity(user_id, 7, action)
+            user_units = self.get_user_unit_ids(user_id)
+            user_units = [int(x) for x in user_units.split(',')]
+            new_unit = []
+            for u_id in unit_ids :
+                if u_id not in user_units :
+                    new_unit.append(u_id)
+
+            if len(new_unit) > 0 :
+                unit_values_list = []
+                unit_columns = ["user_id", "unit_id"]
+                for unit_id in new_unit:
+                    unit_value_tuple = (int(user_id), int(unit_id))
+                    unit_values_list.append(unit_value_tuple)
+                self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
+                # action = "New units %s added for user %s while assign compliance " % (new_units, user_id)
+                # self.save_activity(user_id, 7, action)
+
+            if domain_id is not None :
+                user_domain_ids = self.get_user_domains(user_id)
+                user_domain_ids = [int(x) for x in user_domain_ids.split(',')]
+                if domain_id not in user_domain_ids :
+                    domain_columns = ["user_id", "domain_id"]
+                    values = (user_id, domain_id)
+                    value_list = [values]
+                    self.bulk_insert(self.tblUserDomains, domain_columns, value_list, client_id)
+                    # action = "New domains %s added for user %s while assign compliance " % (domain_id, user_id)
+                    # self.save_activity(user_id, 7, action)
+
+            if country_id is not None :
+                user_countries = self.get_user_countries(user_id)
+                user_countries = [int(x) for x in user_countries.split(',')]
+                if country_id not in user_countries :
+                    country_columns = ["user_id", "country_id"]
+                    values = (user_id, country_id)
+                    value_list = [values]
+                    self.bulk_insert(self.tblUserCountries, country_columns, value_list, client_id)
+
+
+
 
 #
 #   Chart Api
@@ -2706,10 +2794,15 @@ class ClientDatabase(Database):
             filter_type_ids = ""
 
         if user_id == 0 :
-            user_id = '%'
+            user_qry = '1'
+        else :
+            user_qry = "(T1.completed_by LIKE '%s' OR T1.concurred_by LIKE '%s' \
+            OR T1.approved_by LIKE '%s')" % (user_id, user_id, user_id)
 
         date_qry = ""
         if from_date is not None and to_date is not None :
+            from_date = self.string_to_datetime(from_date)
+            to_date = self.string_to_datetime(to_date)
             date_qry = "AND T1.due_date >= '%s' AND T1.due_date <= '%s' " % (from_date, to_date)
         query = "SELECT \
             %s, \
@@ -2722,7 +2815,7 @@ class ClientDatabase(Database):
             INNER JOIN tbl_compliances T2 ON T1.compliance_id = T2.compliance_id  \
             INNER JOIN tbl_units T3  \
             ON T1.unit_id = T3.unit_id  \
-            WHERE T1.completed_by LIKE '%s'\
+            WHERE %s \
             %s \
             %s \
             %s \
@@ -2732,7 +2825,7 @@ class ClientDatabase(Database):
             GROUP BY month, year, T2.domain_id, %s\
             ORDER BY month desc, year desc, %s" % (
                 group_by_name,
-                user_id,
+                user_qry,
                 year_range_qry,
                 status_type_qry,
                 date_qry,
@@ -2742,7 +2835,6 @@ class ClientDatabase(Database):
                 group_by_name,
                 group_by_name
             )
-
         rows = self.select_all(query)
         columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
         return filter_ids, self.convert_to_dict(rows, columns)
@@ -3101,7 +3193,11 @@ class ClientDatabase(Database):
         if len(domain_ids) == 1 :
             domain_ids.append(0)
         if user_id == 0 :
-            user_id = '%'
+            user_id = ''
+        else :
+            user_qry = "(T1.completed_by LIKE '%s' OR T1.concurred_by LIKE '%s' \
+            OR T1.approved_by LIKE '%s')" % (user_id, user_id, user_id)
+
         query = "SELECT \
             T1.compliance_history_id, T1.unit_id,\
             T1.compliance_id, T1.start_date, \
@@ -3124,13 +3220,13 @@ class ClientDatabase(Database):
             INNER JOIN tbl_compliances T4  ON T1.compliance_id = T4.compliance_id  \
             INNER JOIN tbl_units T5 ON T1.unit_id = T5.unit_id \
             INNER JOIN tbl_users T10 ON T1.completed_by = T10.user_id \
-            WHERE T1.completed_by LIKE '%s' AND \
+            WHERE %s AND \
             T4.domain_id IN %s  \
             %s \
             %s \
             %s \
             ORDER BY T1.due_date desc" % (
-                user_id,
+                user_qry,
                 str(tuple(domain_ids)),
                 date_qry,
                 status_qry,
@@ -3196,6 +3292,8 @@ class ClientDatabase(Database):
 
         date_qry = ""
         if from_date is not None and to_date is not None :
+            from_date = self.string_to_datetime(from_date)
+            to_date = self.string_to_datetime(to_date)
             date_qry = " AND T1.due_date >= '%s' AND T1.due_date <= '%s' " % (from_date, to_date)
 
         result = self.compliance_details_query(domain_ids, date_qry, status_qry, filter_type_qry, session_user)
@@ -3339,7 +3437,11 @@ class ClientDatabase(Database):
         # Sum compliance for filter_type wise
         escalation_years = {}
 
+        filter_ids = request.filter_ids
+
         for filter_type, value in calculated_data.iteritems():
+            if filter_type not in filter_ids :
+                continue
             for key, val in value.iteritems():
                 for k , v in val.iteritems():
                     year = k
@@ -3715,7 +3817,8 @@ class ClientDatabase(Database):
                         s_date = core.StatutoryDate(
                             date["statutory_date"],
                             date["statutory_month"],
-                            date["trigger_before_days"]
+                            date["trigger_before_days"],
+                            date.get("repeat_by")
                         )
                         date_list.append(s_date)
 
@@ -3823,7 +3926,8 @@ class ClientDatabase(Database):
                         s_date = core.StatutoryDate(
                             date["statutory_date"],
                             date["statutory_month"],
-                            date["trigger_before_days"]
+                            date["trigger_before_days"],
+                            date.get("repeat_by")
                         )
                         date_list.append(s_date)
 
@@ -4040,7 +4144,8 @@ class ClientDatabase(Database):
             for s in statutory_dates :
                 s_date = core.StatutoryDate(
                     s["statutory_date"], s["statutory_month"],
-                    s["trigger_before_days"]
+                    s["trigger_before_days"],
+                    s.get("repeat_by")
                 )
                 date_list.append(s_date)
 
@@ -4401,7 +4506,8 @@ class ClientDatabase(Database):
                         s_date = core.StatutoryDate(
                             date["statutory_date"],
                             date["statutory_month"],
-                            date["trigger_before_days"]
+                            date["trigger_before_days"],
+                            date.get("repeat_by")
                         )
                         date_list.append(s_date)
 
@@ -4922,7 +5028,7 @@ class ClientDatabase(Database):
         aliases = ["tcu", "tu", "tsp"]
         join_type = "left join"
         join_conditions = [
-            "tcu.seating_unit_id = tu.unit_id", 
+            "tcu.seating_unit_id = tu.unit_id",
             "tcu.service_provider_id=tsp.service_provider_id"
         ]
         where_condition = "1"
@@ -5227,12 +5333,16 @@ class ClientDatabase(Database):
                 s_date = core.StatutoryDate(
                     date["statutory_date"],
                     date["statutory_month"],
-                    date["trigger_before_days"]
+                    date["trigger_before_days"],
+                    date.get("repeat_by")
                 )
                 date_list.append(s_date)
-            compliance_name = "%s - %s" % (
-                d["document_name"], d["compliance_task"]
-            )
+            if d["document_name"] not in (None, "None", "") :
+                compliance_name = "%s - %s" % (
+                    d["document_name"], d["compliance_task"]
+                )
+            else :
+                compliance_name = d["compliance_task"]
             if d["frequency_id"] in (2, 3) :
                 summary = "Repeats ever %s - %s" % (d["repeats_every"], d["repeat_type"])
             elif d["frequency_id"] == 4 :
@@ -7333,7 +7443,7 @@ class ClientDatabase(Database):
             return True
         except Exception, e:
             print "Error sending email :{}".format(e)
-         
+
 
     def get_form_ids_for_admin(self):
         columns = "group_concat(form_id)"

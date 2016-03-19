@@ -1,140 +1,38 @@
-2016-03-16 17:44:28,312 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-16 17:44:28,362 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+2016-03-19 11:35:56,284 - knowledge_logger - main.py-parse-request : expected a string with max length(50), but received: '1234567891234567891234567891234567891234567891234512345678912345678912345678912345678912345678912345'
+2016-03-19 11:35:56,403 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgemaster.py", line 973, in parse_structure
+    request = parse_structure_VariantType_knowledgemaster_Request(request)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 112, in parse_structure_VariantType_knowledgemaster_Request
+    return knowledgemaster.Request.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgemaster.py", line 62, in parse_structure
     return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgemaster.py", line 406, in parse_inner_structure
+    statutory_name = parse_structure_CustomTextType_50(statutory_name)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 687, in parse_structure_CustomTextType_50
     return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
+    x
+ValueError: expected a string with max length(50), but received: '1234567891234567891234567891234567891234567891234512345678912345678912345678912345678912345678912345'
 
-2016-03-16 17:44:32,078 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-16 17:44:32,078 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
-
-2016-03-16 17:44:32,592 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-16 17:44:32,593 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
-
-2016-03-16 17:44:32,796 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-16 17:44:32,796 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
-
-2016-03-16 17:44:33,023 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-16 17:44:33,024 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
-
-2016-03-16 17:44:33,253 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-16 17:44:33,254 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
-
-2016-03-16 17:44:36,076 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-16 17:44:36,077 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
-
-2016-03-16 17:44:36,352 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-16 17:44:36,352 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
-
-2016-03-16 17:44:36,555 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-16 17:44:36,555 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
-
-2016-03-16 17:44:36,784 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-16 17:44:36,785 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
-    session_token = parse_structure_CustomTextType_50(session_token)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 686, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
-    raise empty_error()
-ValueError: null is not allowed
+2016-03-19 13:50:21,379 - knowledge_logger - main.py-handle-api : 'repeat_by'
+2016-03-19 13:50:21,379 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 197, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 26, in process_knowledge_transaction_request
+    return process_get_statutory_mappings(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 65, in process_get_statutory_mappings
+    statutory_mappings = db.get_statutory_mappings(user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 2025, in get_statutory_mappings
+    return self.return_statutory_mappings(result)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 2044, in return_statutory_mappings
+    compliance_ids, is_report
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 2264, in get_compliance_by_id
+    return self.return_compliance(result)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 2278, in return_compliance
+    date["repeat_by"]
+KeyError: 'repeat_by'
 

@@ -75,7 +75,13 @@ function convert_date (data){
 
 function submitOnOccurence(complianceId, count, unitId, complete_within_days){
   var startdate = $('#startdate'+count).val();
-  var currentDate = new Date();
+  
+  var d = new Date();
+  var month = d.getMonth()+1;
+  var day = d.getDate();
+  var output = d.getFullYear() + '/' + month + '/' + day;
+  var currentDate = new Date(output);
+
 
   if(startdate != ''){
     var convertDueDate = convert_date(startdate);

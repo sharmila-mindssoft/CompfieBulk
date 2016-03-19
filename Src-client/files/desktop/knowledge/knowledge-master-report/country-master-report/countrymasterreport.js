@@ -4,7 +4,7 @@ function initialize(){
     }
     function failure(status, data){
     }
-    mirror.getCountryList(success, failure);
+    mirror.getCountryReport(success, failure);
 }
 
 function loadCountriesList(countriesList){

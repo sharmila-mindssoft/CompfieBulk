@@ -137,11 +137,13 @@ class ReplicationManager(object) :
 
     def _execute_insert_statement(self, changes, error_ok=False):
         assert (len(changes)) > 0
-        # print changes)
+        # print changes
         tbl_name = changes[0].tbl_name
         auto_id = self._auto_id_columns.get(tbl_name)
         column_count = self._columns_count.get(tbl_name)
+        # print tbl_name
         column_count -= 1
+        # print column_count
         assert auto_id is not None
         if error_ok:
             if column_count != len(changes):
@@ -169,19 +171,21 @@ class ReplicationManager(object) :
         )
         # print query
         try :
+            pass
             self._db.execute(query)
+            self._temp_count = changes[-1].audit_trail_id
             # print "INSERT success ",  query
             # print '' * 100
+            #
+
         except Exception, e:
             pass
-            # print e
+            print e
             # print
             # print "self._received_count ", self._received_count
             # print "self._temp_count ", self._temp_count
-            # print query
+            print query
             # print
-
-        self._temp_count = changes[-1].audit_trail_id
 
     def _execute_update_statement(self, change):
         auto_id = self._auto_id_columns.get(change.tbl_name)

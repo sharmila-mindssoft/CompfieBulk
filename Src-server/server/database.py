@@ -572,6 +572,18 @@ class KnowledgeDatabase(Database):
             user_id = row[0]
         return user_id
 
+    def get_user_form_ids(self, user_id) :
+        if user_id == 0 :
+            return "1, 2, 3, 4"
+        q = "select t1.form_ids from tbl_user_groups t1 \
+            INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id \
+            AND t2.user_id = %s" % (user_id)
+        row = self.select_one(q)
+        if row :
+            return row[0]
+        else :
+            return None
+
     def encrypt(self, value):
         m = hashlib.md5()
         m.update(value)
@@ -2264,7 +2276,8 @@ class KnowledgeDatabase(Database):
                 s_date = core.StatutoryDate(
                     date["statutory_date"],
                     date["statutory_month"],
-                    date["trigger_before_days"]
+                    date["trigger_before_days"],
+                    date.get("repeat_by")
                 )
                 date_list.append(s_date)
 
@@ -2368,6 +2381,30 @@ class KnowledgeDatabase(Database):
             return row[0]
         else :
             return None
+
+    def check_duplicate_compliance_name(self, request_frame):
+        compliances = request_frame.compliances
+        country_id = request_frame.country_id
+        domain_id = request_frame.domain_id
+        compliance_names = []
+        for c in compliances :
+            compliance_name = c.compliance_task
+            compliance_id = c.compliance_id
+            q = "SELECT count(t1.compliance_task) FROM tbl_compliances t1 INNER JOIN \
+                tbl_statutory_mappings t2 on t1.statutory_mapping_id = t2.statutory_mapping_id \
+                WHERE t2.country_id = %s AND t2.domain_id = %s AND \
+                LOWER(t1.compliance_task) = LOWER('%s')" % (
+                    country_id, domain_id, compliance_name
+                )
+            if compliance_id is not None :
+                q = q + " AND t1.compliance_id != %s" % (compliance_id)
+            row = self.select_one(q)
+            if row[0] > 0 :
+                compliance_names.append(compliance_name)
+        if len(compliance_names) > 0 :
+            return compliance_names
+        else :
+            return False
 
     def save_statutory_mapping(self, data, created_by) :
         country_id = data.country_id
@@ -4522,12 +4559,28 @@ class KnowledgeDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return return_unit_details(result)
 
+    def get_submited_statutory(self, unit_id, domain_id):
+        q = "select client_statutory_id from tbl_client_statutories \
+            where unit_id = %s and domain_id = %s and submission_type = 1" % (
+                int(unit_id), int(domain_id)
+            )
+        rows = self.select_all(q)
+        if rows :
+            result = self.convert_to_dict(rows, ["client_statutory_id"])
+            return result
+        else :
+            return None
+
     def get_assign_statutory_wizard_two(
         self, country_id, geography_id, industry_id,
         domain_id, unit_id, user_id
     ):
+        # save_statutos = self.get_submited_statutory(unit_id, domain_id)
+        # if save_statutos is not None :
         if unit_id is not None :
             return self.return_unassign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, unit_id)
+
+        print "NEw compliance"
         q = "select parent_ids from tbl_geographies where geography_id = %s" % (int(geography_id))
         row = self.select_one(q)
         if row :
@@ -4978,7 +5031,7 @@ class KnowledgeDatabase(Database):
             if statutory_opted is not None :
                 statutory_opted = bool(statutory_opted)
             statutory_id = int(r["statutory_id"])
-            mapping_id = int(r["statutory_mapping_id"])
+            # mapping_id = int(r["statutory_mapping_id"])
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
             s_mapping = statutory_data[1]
             level_map = s_mapping.split(">>")
@@ -5074,7 +5127,6 @@ class KnowledgeDatabase(Database):
                 FROM tbl_client_compliances c \
                 INNER JOIN tbl_client_statutories s\
                 ON c.client_statutory_id = s.client_statutory_id\
-                AND s.geography_id = %s \
                 AND s.domain_id = %s \
                 AND s.unit_id = %s \
                 ) \
@@ -5082,8 +5134,11 @@ class KnowledgeDatabase(Database):
                     domain_id, country_id, industry_id, geography_id,
                     str("%" + str(geography_id) + ",%"),
                     (str(tuple(parent_ids))),
-                    geography_id, domain_id, unit_id
+                    domain_id, unit_id
                 )
+
+        print
+        print query
 
         rows = self.select_all(query)
         columns = [
@@ -5260,6 +5315,7 @@ class KnowledgeDatabase(Database):
                 unit_address = "%s, %s, %s" % (
                     data["address"], ', '.join(ordered), data["postal_code"]
                 )
+                print client_statutory_id
                 statutories = self.return_assigned_compliances_by_id(client_statutory_id, level_1_statutory_id)
                 unit_statutories = technoreports.UNIT_WISE_ASSIGNED_STATUTORIES(
                     data["unit_id"],
@@ -5272,6 +5328,7 @@ class KnowledgeDatabase(Database):
                     statutories
                 )
             else :
+                print client_statutory_id , "new"
                 statutories = unit_statutories.assigned_statutories
                 new_stautory = self.return_assigned_compliances_by_id(client_statutory_id)
                 for new_s in new_stautory :
@@ -5284,9 +5341,6 @@ class KnowledgeDatabase(Database):
                             break
                     if is_exists is False :
                         statutories.append(new_s)
-                statutories.extend(
-                    self.return_assigned_compliances_by_id(client_statutory_id)
-                )
                 unit_statutories.assigned_statutories = statutories
 
             unit_wise_statutories_dict[unit_id] = unit_statutories

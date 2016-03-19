@@ -282,6 +282,7 @@ def parse_structure_VectorType_RecordType_core_ClientConfiguration(data):
     return lst
 
 def parse_structure_SignedIntegerType_8(data):
+    # return parse_number(data, -128, 127)
     return parse_number(data, 0, 4294967295)
 
 def parse_structure_UnsignedIntegerType_32(data):
@@ -3888,8 +3889,15 @@ def parse_structure_RecordType_clienttransactions_NewUnitSettings(data):
     from protocol import clienttransactions
     return clienttransactions.NewUnitSettings.parse_structure(data)
 
-def parse_structure_VectorType_RecodType_clienttransactionns_NewUnitSettings(data):
+def parse_structure_VectorType_RecordType_clienttransactions_NewUnitSettings(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
         lst.append(parse_structure_RecordType_clienttransactions_NewUnitSettings(item))
+    return lst
+
+def parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(data):
+    print data
+    print "parse_structure"
+    if data is None: return data
+    return parse_structure_VectorType_RecordType_clienttransactions_NewUnitSettings(data)

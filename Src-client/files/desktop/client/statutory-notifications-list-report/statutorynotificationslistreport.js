@@ -134,7 +134,6 @@ $("#show-button").click(function(){
 
 
 function loadStatutoryNotificationsList(data){
-    alert("loadStatutoryNotificationsList");
     $('.tbody-statutory-notifications-list tr').remove();
     var sno = 0;
 
