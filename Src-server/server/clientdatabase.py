@@ -1014,9 +1014,9 @@ class ClientDatabase(Database):
         table = self.tblUnits
         result = None
         condition = 1
-        if user_id > 0 :
-            table = self.tblUserUnits
-            condition = " user_id = %s " % user_id
+        # if user_id > 0 :
+        #     table = self.tblUserUnits
+        #     condition = " user_id = %s " % user_id
         rows = self.get_data(
             table, columns, condition
         )
@@ -1029,9 +1029,9 @@ class ClientDatabase(Database):
         table = self.tblUnits
         result = None
         condition = 1
-        if user_id > 0 :
-            table = self.tblUserUnits
-            condition = " user_id = %s " % user_id
+        # if user_id > 0 :
+        #     table = self.tblUserUnits
+        #     condition = " user_id = %s " % user_id
         rows = self.get_data(
             table, columns, condition
         )
@@ -1044,9 +1044,9 @@ class ClientDatabase(Database):
         table = self.tblUnits
         result = None
         condition = 1
-        if user_id > 0 :
-            table = self.tblUserUnits
-            condition = " user_id = %s " % user_id
+        # if user_id > 0 :
+        #     table = self.tblUserUnits
+        #     condition = " user_id = %s " % user_id
         rows = self.get_data(
             table, columns, condition
         )
@@ -1292,9 +1292,13 @@ class ClientDatabase(Database):
 
     def get_statutory_settings(self, session_user, client_id):
         if session_user == 0 :
-            user_id = '%'
+            where_qry = ''
         else :
             user_id = int(session_user)
+            where_qry = " WHERE t1.unit_id in (select unit_id from tbl_user_units where user_id LIKE '%s') \
+            AND t1.domain_id in (select domain_id from tbl_user_domains where user_id LIKE '%s')" % (
+                user_id, user_id
+            )
         query = "SELECT distinct t1.geography, \
             t1.country_id, t1.domain_id, t1.unit_id,t2.unit_name, \
             (select business_group_name from tbl_business_groups \
@@ -1308,12 +1312,8 @@ class ClientDatabase(Database):
             (select domain_name from tbl_domains where domain_id = t1.domain_id)domain_name \
             FROM tbl_client_statutories t1 \
             INNER JOIN tbl_units t2 \
-            ON t1.unit_id = t2.unit_id \
-            WHERE t1.unit_id in (select unit_id from tbl_user_units where user_id LIKE '%s') \
-            AND t1.domain_id in (select domain_id from tbl_user_domains where user_id LIKE '%s')" % (
-                user_id, user_id
-            )
-
+            ON t1.unit_id = t2.unit_id %s " % (where_qry)
+        print query
         rows = self.select_all(query)
         columns = [
             "geography",
@@ -1357,7 +1357,6 @@ class ClientDatabase(Database):
         ]
         results = self.convert_to_dict(rows, columns)
         statutory_wise_compliances = {}
-        print statutory_wise_compliances
         for r in results :
             statutory_opted = r["statutory_opted"]
             if statutory_opted is None :
@@ -1426,7 +1425,6 @@ class ClientDatabase(Database):
                 level_1_statutories.compliances = compliance_list
 
             statutory_wise_compliances[statutory_name] = level_1_statutories
-        print statutory_wise_compliances
         return statutory_wise_compliances
 
     def return_statutory_settings(self, data, client_id):
@@ -2520,7 +2518,6 @@ class ClientDatabase(Database):
 
     def save_assigned_compliance(self, request, session_user, client_id):
         new_unit_settings = request.new_units
-        print new_unit_settings
         if new_unit_settings is None :
             return clienttransactions.SaveAssignedComplianceSuccess()
 
@@ -2534,7 +2531,6 @@ class ClientDatabase(Database):
         compliances = request.compliances
 
         # print request.to_structure()
-        print new_unit_settings
         compliance_names = []
         for c in compliances:
             compliance_id = int(c.compliance_id)
@@ -2604,7 +2600,6 @@ class ClientDatabase(Database):
         return clienttransactions.SaveAssignedComplianceSuccess()
 
     def update_user_settings(self, new_units, client_id):
-        print new_units
         for n in new_units :
             user_id = n.user_id
             unit_ids = n.unit_ids
@@ -2618,7 +2613,6 @@ class ClientDatabase(Database):
                 if u_id not in user_units :
                     new_unit.append(u_id)
 
-            print new_unit
             if len(new_unit) > 0 :
                 unit_values_list = []
                 unit_columns = ["user_id", "unit_id"]
@@ -2774,10 +2768,15 @@ class ClientDatabase(Database):
             filter_type_ids = ""
 
         if user_id == 0 :
-            user_id = '%'
+            user_qry = '1'
+        else :
+            user_qry = "(T1.completed_by LIKE '%s' OR T1.concurred_by LIKE '%s' \
+            OR T1.approved_by LIKE '%s')" % (user_id, user_id, user_id)
 
         date_qry = ""
         if from_date is not None and to_date is not None :
+            from_date = self.string_to_datetime(from_date)
+            to_date = self.string_to_datetime(to_date)
             date_qry = "AND T1.due_date >= '%s' AND T1.due_date <= '%s' " % (from_date, to_date)
         query = "SELECT \
             %s, \
@@ -2790,7 +2789,7 @@ class ClientDatabase(Database):
             INNER JOIN tbl_compliances T2 ON T1.compliance_id = T2.compliance_id  \
             INNER JOIN tbl_units T3  \
             ON T1.unit_id = T3.unit_id  \
-            WHERE T1.completed_by LIKE '%s'\
+            WHERE %s \
             %s \
             %s \
             %s \
@@ -2800,7 +2799,7 @@ class ClientDatabase(Database):
             GROUP BY month, year, T2.domain_id, %s\
             ORDER BY month desc, year desc, %s" % (
                 group_by_name,
-                user_id,
+                user_qry,
                 year_range_qry,
                 status_type_qry,
                 date_qry,
@@ -2810,7 +2809,6 @@ class ClientDatabase(Database):
                 group_by_name,
                 group_by_name
             )
-
         rows = self.select_all(query)
         columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
         return filter_ids, self.convert_to_dict(rows, columns)
@@ -3169,7 +3167,11 @@ class ClientDatabase(Database):
         if len(domain_ids) == 1 :
             domain_ids.append(0)
         if user_id == 0 :
-            user_id = '%'
+            user_id = ''
+        else :
+            user_qry = "(T1.completed_by LIKE '%s' OR T1.concurred_by LIKE '%s' \
+            OR T1.approved_by LIKE '%s')" % (user_id, user_id, user_id)
+
         query = "SELECT \
             T1.compliance_history_id, T1.unit_id,\
             T1.compliance_id, T1.start_date, \
@@ -3192,13 +3194,13 @@ class ClientDatabase(Database):
             INNER JOIN tbl_compliances T4  ON T1.compliance_id = T4.compliance_id  \
             INNER JOIN tbl_units T5 ON T1.unit_id = T5.unit_id \
             INNER JOIN tbl_users T10 ON T1.completed_by = T10.user_id \
-            WHERE T1.completed_by LIKE '%s' AND \
+            WHERE %s AND \
             T4.domain_id IN %s  \
             %s \
             %s \
             %s \
             ORDER BY T1.due_date desc" % (
-                user_id,
+                user_qry,
                 str(tuple(domain_ids)),
                 date_qry,
                 status_qry,
@@ -3264,6 +3266,8 @@ class ClientDatabase(Database):
 
         date_qry = ""
         if from_date is not None and to_date is not None :
+            from_date = self.string_to_datetime(from_date)
+            to_date = self.string_to_datetime(to_date)
             date_qry = " AND T1.due_date >= '%s' AND T1.due_date <= '%s' " % (from_date, to_date)
 
         result = self.compliance_details_query(domain_ids, date_qry, status_qry, filter_type_qry, session_user)
@@ -3407,7 +3411,11 @@ class ClientDatabase(Database):
         # Sum compliance for filter_type wise
         escalation_years = {}
 
+        filter_ids = request.filter_ids
+
         for filter_type, value in calculated_data.iteritems():
+            if filter_type not in filter_ids :
+                continue
             for key, val in value.iteritems():
                 for k , v in val.iteritems():
                     year = k
