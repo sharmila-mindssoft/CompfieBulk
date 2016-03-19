@@ -685,27 +685,26 @@ function submitcompliance(){
         }
       }
 
-
       if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalInserUnits.length >0 ||
         assigneeInserDomain != null || concurrenceInserDomain != null || approvalInserDomain != null){
         var assigneeText = '';
         var concurrenceText = '';
         var approvalText = '';
         if(assigneeInserUnits.length > 0 || assigneeInserDomain != null){
-          if(assigneeInserDomain != null) 
+          if(assigneeInserDomain != null)
             assigneeText = assignComplianceDomainVal + " domain ";
 
           if(assigneeInserUnits.length > 0){
             assigneeText = assigneeText + assigneeInserUnitsVal + " unit(s) ";
           }else{
             assigneeInserUnits = null;
-          } 
+          }
           assigneeText = assigneeText + "not applicable for Assignee. "
           newSetting = client_mirror.newUnitSettings(assignComplianceAssigneeId, assigneeInserUnits, approvalInserDomain, assignComplianceCountryId);
           newSettingsList.push(newSetting);
         }
         if(concurrenceInserUnits.length > 0 || concurrenceInserDomain != null){
-          if(concurrenceInserDomain != null) 
+          if(concurrenceInserDomain != null)
             concurrenceText = assignComplianceDomainVal + " domain ";
 
           if(concurrenceInserUnits.length > 0){
@@ -718,7 +717,7 @@ function submitcompliance(){
           newSettingsList.push(newSetting);
         }
         if(approvalInserUnits.length > 0 || approvalInserDomain != null){
-          if(approvalInserDomain != null) 
+          if(approvalInserDomain != null)
             approvalText = assignComplianceDomainVal + " domain ";
 
           if(approvalInserUnits.length > 0){
@@ -731,7 +730,7 @@ function submitcompliance(){
           newSettingsList.push(newSetting);
         }
 
-        
+
         var answer = confirm(assigneeText + concurrenceText + approvalText + 'Do you want to add in settings ?');
         if (answer)
         {

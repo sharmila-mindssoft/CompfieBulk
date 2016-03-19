@@ -6,12 +6,22 @@ function clearMessage() {
     $(".error-message").hide();
     $(".error-message").text("");
 }
+
 function displayMessage(message) {
     $(".error-message").text(message);
     $(".error-message").show();
 }
 
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
+
 function initialize(){
+    hideLoader();   
     function onSuccess(data){
         clearMessage();
         closeicon();
@@ -75,6 +85,9 @@ function loadComplianceTaskDetails(data){
         if(data[k]['compliance_status'] == "Not Complied"){
             $('.days-text', cloneval).attr("style", "color:#f00;");
         }
+        if(data[k]['remarks'] != null){
+            $('.table-row-list', cloneval).attr("style", "color:#f00;");
+        }
         $('.status', cloneval).html(data[k]['compliance_status']);
         if(data[k]['format_file_name']  != null){
             $('.format-file', cloneval).attr("href", data[k]['format_file_name']);    
@@ -112,7 +125,7 @@ function loadUpcomingCompliancesDetails(data){
         $('.uc-domain', cloneval).html(data[k]['domain_name']);
         $('.uc-startdate', cloneval).html(data[k]['start_date']);
         $('.uc-duedate', cloneval).html(data[k]['due_date']);
-        if(data[k]['format_file_name'] != ''){
+        if(data[k]['format_file_name'] != null){
             $('.format-file', cloneval).attr("href", data[k]['format_file_name']);    
         }
         else{
@@ -144,6 +157,7 @@ function showSideBar(idval, data){
             var tableRowSide = $('#templates .sideview-div');
             var cloneValSide = tableRowSide.clone();
             var complianceStatus = data[k]['compliance_status'];
+
             $('.sideview-compliance-unit span', cloneValSide).html(data[k]['unit_name']);
             $('.sideview-compliance-unit abbr', cloneValSide).attr("title", data[k]['address']);
             $('.sideview-compliance-task .ct', cloneValSide).html(data[k]['compliance_name']);
@@ -152,7 +166,7 @@ function showSideBar(idval, data){
             $('.sideview-startdate', cloneValSide).val(data[k]['start_date']);
             $('.sideview-completion-date-td', cloneValSide).html("<input  type='text' class='input-box datepick sideview-completion-date' id='completion-date' readonly='readonly'>");
             $('.sideview-compliance-status', cloneValSide).html(complianceStatus);
-            $('.sideview-upload-date', cloneValSide).html(d);
+            $('.sideview-upload-date', cloneValSide).html(currentDate.substring(0, 11));
             $('.sideview-remarks-td', cloneValSide).html("<textarea class='input-box sideview-remarks' maxlength='500'></textarea>");
             $("#upload_file", cloneValSide).on("change", function(e) {
                 if (e.originalEvent.defaultPrevented) return;
@@ -161,7 +175,7 @@ function showSideBar(idval, data){
             if(data[k]['compliance_frequency'] == 'One Time') {
                 $('.validityAndDueDate', cloneValSide).hide();
             }
-            if(data[k]['compliance_frequency'] != 'One Time'){
+            else if(data[k]['compliance_frequency'] != 'One Time'){
                 $('.validityAndDueDate').show();
                 $('.validity1_icon', cloneValSide).on("click", function(e, complianceStatus){  
                     showTextbox(complianceStatus);
@@ -170,6 +184,9 @@ function showSideBar(idval, data){
                 $('.duedate1_label abbr', cloneValSide).html(data[k]['next_due_date']); 
                 $('.validity1-textbox-input', cloneValSide).val(data[k]['validity_date']);
                 $('.duedate1-textbox-input', cloneValSide).val(data[k]['next_due_date']);  
+            }
+            else if(data[k]['compliance_frequency'] == 'On Occurrence') {
+                $('.validityAndDueDate', cloneValSide).hide();
             }
             $('.btn-submit', cloneValSide).on("click", function(e){
                 var completion_date;
@@ -245,28 +262,28 @@ function showSideBar(idval, data){
                         return;
                     }
                 }
-                else{
-                    displayMessage("Welcome to api");
-                    return;
-                    function onSuccess(data){
-                        initialize();
-                    }
-                    function onFailure(error){
-                        console.log(error);
-                    }
-                    client_mirror.updateComplianceDetail(compliance_history_id, documents,
-                        completion_date, validity_date, next_due_date, remarks,
-                        
-                        function (error, response){
-                            if(error == null){
-                                onSuccess(response);
-                            }
-                            else{
-                                onFailure(error);
-                            }
-                        }    
-                    );   
+                
+                function onSuccess(data){
+                    hideLoader();
+                    initialize();
                 }
+                function onFailure(error){
+                    hideLoader();
+                    console.log(error);
+                }
+                displayLoader();
+                client_mirror.updateComplianceDetail(compliance_history_id, documents,
+                    completion_date, validity_date, next_due_date, remarks,
+                    
+                    function (error, response){
+                        if(error == null){
+                            onSuccess(response);
+                        }
+                        else{
+                            onFailure(error);
+                        }
+                    }    
+                );                     
                  
             });
             $('.half-width-task-details').append(cloneValSide);    
@@ -288,7 +305,7 @@ function showSideBar(idval, data){
         monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     });
-    $(".validity1-textbox-input").datepicker({
+    $(".validity1-textbox-input").datepicker({ //input-box validity1-textbox-input hasDatepicker
         changeMonth: true,
         changeYear: true,
         numberOfMonths: 1,
@@ -305,6 +322,7 @@ function showTextbox(complianceStatus){
     $('.validity1_label').hide();
 }
 function closeicon(){
+    $('.uploaded-filename').html('');
     $('.half-width-task-details').hide();
     $('.full-width-list').attr("width", "100%");
     $('.half-width-task-details').attr("width", "0%");
@@ -315,6 +333,8 @@ function uploadedfile(e){
         if(data == "File max limit exceeded"){
             displayMessage("File max limit exceeded");
             $(".uploaded_filename").html('');
+            $("#upload_file").val();
+            return;
         }
         if(data != 'File max limit exceeded' || data != 'File content is empty'){
             uploadFile = data;

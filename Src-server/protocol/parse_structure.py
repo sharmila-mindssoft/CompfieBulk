@@ -3894,7 +3894,10 @@ def parse_structure_VectorType_RecordType_clienttransactions_NewUnitSettings(dat
     lst = []
     for item in data:
         lst.append(parse_structure_RecordType_clienttransactions_NewUnitSettings(item))
+    return lst
 
 def parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(data):
+    print data
+    print "parse_structure"
     if data is None: return data
     return parse_structure_VectorType_RecordType_clienttransactions_NewUnitSettings(data)

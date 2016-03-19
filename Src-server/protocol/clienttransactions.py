@@ -422,7 +422,7 @@ class SaveAssignedCompliance(Request):
             "approval_person": to_structure_OptionalType_UnsignedIntegerType_32(self.approval_person),
             "approval_person_name": to_structure_OptionalType_CustomTextType_100(self.approval_person_name),
             "compliances": to_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(self.compliances),
-            "new_units": parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(self.new_units)
+            "new_units": to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(self.new_units)
         }
 
 class GetUserwiseCompliances(Request):
