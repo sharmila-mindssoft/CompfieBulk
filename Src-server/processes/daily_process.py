@@ -523,7 +523,6 @@ def start_new_task(db, client_id, current_date):
 
     print " %s compliances started for - %s" % (count, current_date)
 
-<<<<<<< HEAD
 def get_inprogress_compliances(db):
     query = "SELECT t1.compliance_history_id, t1.unit_id, t1.compliance_id, t1.start_date, \
         t1.due_date, t3.document_name, t3.compliance_task, \
