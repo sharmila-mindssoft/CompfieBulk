@@ -1904,7 +1904,7 @@ class ClientDatabase(Database):
                         core.StatutoryDate(
                             date, month,
                             statutory_date["trigger_before_days"],
-                            statutory_date["repeat_by"]
+                            statutory_date.get("repeat_by")
                         )
                     )
                 else:
@@ -2170,7 +2170,7 @@ class ClientDatabase(Database):
                         date["statutory_date"],
                         date["statutory_month"],
                         date["trigger_before_days"],
-                        date["repeat_by"]
+                        date.get("repeat_by")
                     )
                     date_list.append(s_date)
 
@@ -2462,7 +2462,7 @@ class ClientDatabase(Database):
                     date["statutory_date"],
                     date["statutory_month"],
                     date["trigger_before_days"],
-                    date["repeat_by"]
+                    date.get("repeat_by")
                 )
                 date_list.append(s_date)
 
@@ -3796,7 +3796,7 @@ class ClientDatabase(Database):
                             date["statutory_date"],
                             date["statutory_month"],
                             date["trigger_before_days"],
-                            date["repeat_by"]
+                            date.get("repeat_by")
                         )
                         date_list.append(s_date)
 
@@ -3905,7 +3905,7 @@ class ClientDatabase(Database):
                             date["statutory_date"],
                             date["statutory_month"],
                             date["trigger_before_days"],
-                            date["repeat_by"]
+                            date.get("repeat_by")
                         )
                         date_list.append(s_date)
 
@@ -4123,7 +4123,7 @@ class ClientDatabase(Database):
                 s_date = core.StatutoryDate(
                     s["statutory_date"], s["statutory_month"],
                     s["trigger_before_days"],
-                    s["repeat_by"]
+                    s.get("repeat_by")
                 )
                 date_list.append(s_date)
 
@@ -4485,7 +4485,7 @@ class ClientDatabase(Database):
                             date["statutory_date"],
                             date["statutory_month"],
                             date["trigger_before_days"],
-                            date["repeat_by"]
+                            date.get("repeat_by")
                         )
                         date_list.append(s_date)
 
@@ -5309,7 +5309,7 @@ class ClientDatabase(Database):
                     date["statutory_date"],
                     date["statutory_month"],
                     date["trigger_before_days"],
-                    date["repeat_by"]
+                    date.get("repeat_by")
                 )
                 date_list.append(s_date)
             if d["document_name"] not in (None, "None", "") :

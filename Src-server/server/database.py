@@ -2275,7 +2275,7 @@ class KnowledgeDatabase(Database):
                     date["statutory_date"],
                     date["statutory_month"],
                     date["trigger_before_days"],
-                    date["repeat_by"]
+                    date.get("repeat_by")
                 )
                 date_list.append(s_date)
 
@@ -2379,6 +2379,10 @@ class KnowledgeDatabase(Database):
             return row[0]
         else :
             return None
+
+    def check_duplicate_compliance_name(self, country_id, domain_id, compliance_name, compliance_id):
+        q = "SELECT count(t1.compliance_name) FROM tbl_compliances t1 INNER JOIN \
+            tbl_statutory_mappings t2 on t1.statutory_mapping_id = t2.statutory_mapping_id"
 
     def save_statutory_mapping(self, data, created_by) :
         country_id = data.country_id
