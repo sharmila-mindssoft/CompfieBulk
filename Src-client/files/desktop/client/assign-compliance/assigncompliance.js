@@ -100,19 +100,16 @@ function compliancestatus(element){
   }
 }
 
-function disppopup(units){
+function disppopup(units_string){
   $("#popup1").show();
-  //$(".popup-list tr:gt(0)").remove();
+  $(".popup-list tr:gt(0)").remove();
+  var units = units_string.split(',');
   for(var i=0; i<units.length; i++){
-
     var dispUnit = '';
     $.each(unitsList, function(index, value) {
-     // alert(value.unit_id)
-     // alert(units[i])
-    if (value.unit_id == units[i]) {
+    if (value.unit_id == parseInt(units[i])) {
         dispUnit = value.unit_name + ' - ' + value.address;
-       // alert(dispUnit)
-        var popuptableRow=$('#popup_table .popup_row');
+        var popuptableRow=$('#popup_table .popup-list .popup_row');
         var clone=popuptableRow.clone();
         $(".popup_unitname",clone).text(dispUnit);
         $('#popup_table').append(clone);
@@ -217,7 +214,12 @@ function load_secondwizard(){
           compliance_description+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliance_name);
 
         var dispApplicableUnits = applicable_units.length + '/' + assignStatutoryUnitIds.length;
-        $('.applicableunit', clone2).html('<a href="#popup1" onclick="disppopup(\''+applicable_units+'\')">'+dispApplicableUnits+'</a>');
+
+        var dispUnit = '';
+        for(var i=0; i<applicable_units.length; i++){
+          dispUnit = applicable_units[i]+',';
+        }
+        $('.applicableunit', clone2).html('<a href="#popup1" onclick="disppopup(\''+dispUnit+'\')">'+dispApplicableUnits+'</a>');
         $('.compliancefrequency', clone2).text(frequency);
 
         if(summary != null){
@@ -247,7 +249,6 @@ function load_secondwizard(){
         }
 
         $('.accordion-content'+count).append(clone2);
-
 
         var duename = statutoriesCount;
         if(due_date.length > 1){

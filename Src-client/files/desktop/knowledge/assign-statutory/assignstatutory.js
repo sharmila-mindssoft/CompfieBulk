@@ -840,7 +840,8 @@ function saveorsubmit(submissionType){
       $(".tbody-assignstatutory").find("tbody").remove();
     }
     function onFailure(error){
-      displayMessage(error)
+      displayMessage(error);
+      hideLoader();
     }
     mirror.saveOrSubmitAssignStatutory(assignStatutoryCountryId, assignStatutoryGroupId, assignStatutoryLocationId, assignStatutoryUnitIds, assignStatutoryDomainId, submissionType, clientStatutoryId, assignedStatutories,
       function (error, response) {
