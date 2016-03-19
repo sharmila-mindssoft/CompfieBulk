@@ -977,6 +977,9 @@ $("#temp_addcompliance").click(function() {
 });
 
 function temp_editcompliance(edit_id){
+  $('#dayofmonth').prop("checked", true);
+  $('#single_statutory_date').val('');
+
   $('#statutory_provision').val(compliances[edit_id]["statutory_provision"]);
   $('#compliance_task').val(compliances[edit_id]["compliance_task"]);
   $('#compliance_description').val(compliances[edit_id]["description"]);
@@ -1047,10 +1050,22 @@ function temp_editcompliance(edit_id){
 
       if(statutory_dates[0]["repeat_by"] == 'enddayofmonth'){
         $('#enddayofmonth').prop("checked", true);
+        for(i=1; i<=12; i++){
+          $('#multiple_statutory_date'+i).hide();
+        }
+        $('#single_statutory_date').hide();
+        $('#statutory_date').hide();
+
       }else{
         $('#dayofmonth').prop("checked", true);
+        for(i=1; i<=12; i++){
+          $('#multiple_statutory_date'+i).show();
+        }
+        $('#single_statutory_date').show();
+        $('#statutory_date').show();
       }
       load_data();
+      //siva
   }else{
     $('.multipleinput').prop("checked",false);
     $('.multipleselectnone').show();
@@ -1071,6 +1086,18 @@ function temp_editcompliance(edit_id){
     }
     }
     load_data();
+
+
+    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+     $('#single_statutory_date').hide();
+     $('#statutory_date').hide();
+     $('#sdate').hide();
+    }else{
+      $('#single_statutory_date').show();
+     $('#statutory_date').show();
+    }
+
+
 //siva
   }
 }else{
@@ -1382,7 +1409,7 @@ function savestatutorymapping(){
             onSuccess(response);
           }
           else {
-            onFailure(error);
+            onFailure(error, response);
           }
       }
   );
@@ -2318,7 +2345,6 @@ $('#multiple_statutory_month12').change(function() {
     $('#sdate').hide();
     $('#multipleview').hide();
     $('.repeatby-view').hide();
-
   }
   else if($('#repeats_type').val() == '3'){
     $('#single_statutory_date').show();
@@ -2352,6 +2378,8 @@ $('#multiple_statutory_month12').change(function() {
     }
   }
   //resetvalues();
+
+  
 }
 
 $(".dayhour").change(function(){
@@ -2401,7 +2429,7 @@ $('.tasktype').on('keyup change', function() {
   }
 });
 
-$("#statutory_date").empty();
+  $("#statutory_date").empty();
   var defaultoption = $("<option></option>");
   defaultoption.val("");
   defaultoption.text("")

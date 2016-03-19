@@ -347,7 +347,7 @@ function disppopup(sm_id,compliance_id,element){
     }else{
       repeats_type = 'Year(s)';
     }
-    sdateDesc = 'Repets every ' + repeats_every + ' ' + repeats_type;
+    sdateDesc = 'Repeats every ' + repeats_every + ' ' + repeats_type;
   }
 
   if(frequency != "On Occurrence"){

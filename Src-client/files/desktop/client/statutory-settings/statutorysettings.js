@@ -20,7 +20,8 @@ function actstatus(element){
   {
     $(remarkbox).hide();
     $(changestatusStatutories).each(function() { 
-      this.checked = true;
+      //this.checked = true;
+      alert(this.checked)
       if($('#applicable'+this.value).val() == "false")  
         $('.cremarkadd'+this.value).show();
     });
@@ -35,6 +36,7 @@ function actstatus(element){
 }
 
 function compliancestatus(element, viewremarks){
+
   var remarkadd = '.cremarkadd'+$(element).val();
   var remarkview = '.cremarkview'+$(element).val();
   var applicable = '#applicable'+$(element).val();
@@ -78,6 +80,12 @@ function compliancestatus(element, viewremarks){
     $('#act'+actSelect).prop("checked",false);
     $('.remark'+actSelect).show();
   }
+
+  $('.'+sClass).each(function() { 
+      //this.checked = true;
+      if($('#applicable'+this.value).val() == "false")  
+        $('.cremarkadd'+this.value).show();
+    });
 }
 
 function part_compliance (remark) {
