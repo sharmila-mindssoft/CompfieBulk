@@ -2380,9 +2380,29 @@ class KnowledgeDatabase(Database):
         else :
             return None
 
-    def check_duplicate_compliance_name(self, country_id, domain_id, compliance_name, compliance_id):
-        q = "SELECT count(t1.compliance_name) FROM tbl_compliances t1 INNER JOIN \
-            tbl_statutory_mappings t2 on t1.statutory_mapping_id = t2.statutory_mapping_id"
+    def check_duplicate_compliance_name(self, request_frame):
+        compliances = request_frame.compliances
+        country_id = request_frame.country_id
+        domain_id = request_frame.domain_id
+        compliance_names = []
+        for c in compliances :
+            compliance_name = c.compliance_task
+            compliance_id = c.compliance_id
+            q = "SELECT count(t1.compliance_task) FROM tbl_compliances t1 INNER JOIN \
+                tbl_statutory_mappings t2 on t1.statutory_mapping_id = t2.statutory_mapping_id \
+                WHERE t2.country_id = %s AND t2.domain_id = %s AND \
+                LOWER(t1.compliance_task) = LOWER('%s')" % (
+                    country_id, domain_id, compliance_name
+                )
+            if compliance_id is not None :
+                q = q + " AND t1.compliance_id != %s" % (compliance_id)
+            row = self.select_one(q)
+            if row[0] > 0 :
+                compliance_names.append(compliance_name)
+        if len(compliance_names) > 0 :
+            return compliance_names
+        else :
+            return False
 
     def save_statutory_mapping(self, data, created_by) :
         country_id = data.country_id
