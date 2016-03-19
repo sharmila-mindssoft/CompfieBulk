@@ -286,15 +286,20 @@ function ChartInput () {
         }
     }
 
-    this.setUnits = function (v, isAdd) {
+    this.setUnits = function (v, isAdd, isSingle) {
         v = parseInt(v);
         index = this.units.indexOf(v)
         if (index >= 0 && !isAdd) {
             this.units.splice(index, 1);
             return;
         }
-        if (isAdd) {
-            this.units.push(v);
+        if (isSingle) {
+            this.units = [v];
+        }
+        else {
+            if (isAdd) {
+                this.units.push(v);
+            }
         }
     }
 
@@ -306,10 +311,13 @@ function ChartInput () {
         if (this.units.length > 0)
             return copyArray(this.units);
         else {
-            if (this.filter_type == "unit")
-                return get_ids(
+            if (this.filter_type == "unit"){
+                ids = get_ids(
                     CHART_FILTERS_DATA.units, "unit_id"
                 );
+                console.log(ids)
+                return ids;
+            }
             else
                 return [];
         }
@@ -869,12 +877,12 @@ function updateCharts () {
     }
 }
 
-function updateDrillDown(status, data) {
+function updateDrillDown(status, data, filterTypeName) {
     $(".graph-container.compliance-status").hide();
     $(".graph-selections-bottom").hide();
     $(".drilldown-container").show();
     $(".btn-back").show();
-    showDrillDownRecord(status, data);
+    showDrillDownRecord(status, data, filterTypeName);
 }
 
 function updateEscalationDrillDown(data, year) {
@@ -1706,25 +1714,30 @@ function accordianType(idtype, toggleClass, contentClass){
 
 
 
-function showDrillDownRecord(status, data){
+function showDrillDownRecord(status, data, filterTypeName){
     var data = data["drill_down_data"];
     var filter_type = chartInput.getFilterType();
-    $('.drilldown-title').text("Compliances - Country: India, Status: "+status);
     if(filter_type == "group"){
         groupWiseComplianceDrillDown(status, data);
+        drilldownTitleText = "Compliances - Country: " +filterTypeName +", Status: "+status;
     }
     if(filter_type == "business_group"){
         businessgroupWiseComplianceDrillDown(status, data);
+        drilldownTitleText = "Compliances - Business Group: " +filterTypeName +", Status: "+status;
     }
     if(filter_type == "legal_entity"){
         legalentityWiseComplianceDrillDown(status, data);
+        drilldownTitleText = "Compliances - Legal Entity: " +filterTypeName +", Status: "+status;
     }
     if(filter_type == "division"){
         divisionWiseComplianceDrillDown(status, data);
+        drilldownTitleText = "Compliances - Division: " +filterTypeName +", Status: "+status;
     }
     if(filter_type == "unit"){
         unitWiseComplianceDrillDown(status, data);
+        drilldownTitleText = "Compliances - Unit: " +filterTypeName +", Status: "+status;
     }
+    $('.drilldown-title').text(drilldownTitleText);
 }
 
 function groupWiseComplianceDrillDown(status, data){
@@ -2739,7 +2752,7 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter
         requestData,
         function (status, data) {
             COMPLIANCE_STATUS_DRILL_DOWN_DATE = data;
-            updateDrillDown(compliance_status, data);
+            updateDrillDown(compliance_status, data, filter_type_name);
         }
     );
 }
@@ -3077,19 +3090,17 @@ function loadDomains () {
 
 function loadBusinessGroups (isSelectAll) {
     business_groups = CHART_FILTERS_DATA.business_groups;
-    if (business_groups.length > 0) {
-        for (var i = 0; i < business_groups.length; i++) {
-            var business_group = business_groups[i];
-            var option = getOptionElement(
-                business_group["business_group_id"],
-                business_group["business_group_name"],
-                isSelectAll
-            );
-            $('.bg-filter').append(option);
-        };
-    }
-    else {
-        $(".chart-filters").off("click");
+    for (var i = 0; i < business_groups.length; i++) {
+        var business_group = business_groups[i];
+        var option = getOptionElement(
+            business_group["business_group_id"],
+            business_group["business_group_name"],
+            isSelectAll
+        );
+        $('.bg-filter').append(option);
+    };
+    if (business_groups.length == 0) {
+        $(".btn-business-group").hide();
     }
 }
 
@@ -3117,6 +3128,9 @@ function loadDivisions (isSelectAll) {
         );
         $('.division-filter').append(option);
     };
+    if (divisions.length == 0) {
+        $(".btn-division").hide();
+    }
 }
 
 function loadUnits (isSelectAll) {
@@ -3204,7 +3218,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
         single: isSingleSelect,
         placeholder: "Select Unit",
         onClick: function (unit) {
-            chartInput.setUnits(unit.value, unit.checked);
+            chartInput.setUnits(unit.value, unit.checked, isSingleSelect);
         },
         onCheckAll: function () {
             units = get_ids(CHART_FILTERS_DATA.units, "unit_id");
@@ -3285,6 +3299,12 @@ function initializeFilters () {
             chartInput.setDateSelected(false);
             $('.date-selection').hide();
         }
+    });
+
+    $(".btn-date-filter").on("click", function () {
+        chartInput.setFromDate($("#fromdate").val());
+        chartInput.setToDate($("#todate").val());
+        loadCharts();
     });
 
     $(".chart-filter").on("click", function () {
