@@ -1716,7 +1716,7 @@ class APPROVALCOMPLIANCE(object):
         next_due_date = data.get("next_due_date")
         next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
         concurrenced_by = data.get("concurrenced_by")
-        concurrenced_by = parse_structure_OptionalType_CustomTextType_50(concurrenced_by)
+        concurrenced_by = parse_structure_OptionalType_CustomTextType_500(concurrenced_by)
         remarks = data.get("remarks")
         remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
         action = data.get("action")

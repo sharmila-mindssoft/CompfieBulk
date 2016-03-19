@@ -949,7 +949,7 @@ class Statutory(object):
         statutory_id = data.get("statutory_id")
         statutory_id = parse_structure_UnsignedIntegerType_32(statutory_id)
         statutory_name = data.get("statutory_name")
-        statutory_name = parse_structure_CustomTextType_50(statutory_name)
+        statutory_name = parse_structure_CustomTextType_100(statutory_name)
         level_id = data.get("level_id")
         level_id = parse_structure_UnsignedIntegerType_32(level_id)
         parent_ids = data.get("parent_ids")
@@ -963,7 +963,7 @@ class Statutory(object):
     def to_structure(self):
         return {
             "statutory_id": to_structure_UnsignedIntegerType_32(self.statutory_id),
-            "statutory_name": to_structure_CustomTextType_50(self.statutory_name),
+            "statutory_name": to_structure_CustomTextType_100(self.statutory_name),
             "level_id": to_structure_UnsignedIntegerType_32(self.level_id),
             "parent_ids": to_structure_VectorType_UnignedIntegerType_32(self.parent_ids),
             "parent_id": to_structure_UnsignedIntegerType_32(self.parent_id),
@@ -1061,7 +1061,7 @@ class Compliance(object):
         statutory_provision = data.get("statutory_provision")
         statutory_provision = parse_structure_CustomTextType_500(statutory_provision)
         compliance_task = data.get("compliance_task")
-        compliance_task = parse_structure_CustomTextType_50(compliance_task)
+        compliance_task = parse_structure_CustomTextType_100(compliance_task)
         description = data.get("description")
         description = parse_structure_CustomTextType_500(description)
         document_name = data.get("document_name")
@@ -1098,7 +1098,7 @@ class Compliance(object):
         return {
             "compliance_id": to_structure_OptionalType_UnsignedIntegerType_32(self.compliance_id),
             "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
-            "compliance_task": to_structure_CustomTextType_50(self.compliance_task),
+            "compliance_task": to_structure_CustomTextType_100(self.compliance_task),
             "description": to_structure_CustomTextType_500(self.description),
             "document_name": to_structure_OptionalType_CustomTextType_50(self.document_name),
             "format_file_list": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.format_file_list),
@@ -2006,7 +2006,7 @@ class ActiveCompliance(object):
         compliance_history_id = data.get("compliance_history_id")
         compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_200(compliance_name)
+        compliance_name = parse_structure_CustomTextType_250(compliance_name)
         compliance_frequency = data.get("compliance_frequency")
         compliance_frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
         domain_name = data.get("domain_name")
@@ -2046,7 +2046,7 @@ class ActiveCompliance(object):
     def to_structure(self):
         return {
             "compliance_history_id": to_structure_UnsignedIntegerType_32(self.compliance_history_id),
-            "compliance_name": to_structure_CustomTextType_200(self.compliance_name),
+            "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
             "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "start_date": to_structure_CustomTextType_20(self.start_date),
@@ -2479,7 +2479,7 @@ class ComplianceApplicability(object):
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         compliance_name = data.get("compliance_name")
-        compliance_name = to_structure_CustomTextType_200(compliance_name)
+        compliance_name = to_structure_CustomTextType_250(compliance_name)
         description = data.get("description")
         description = parse_structure_CustomTextType_500(description)
         statutory_provision = data.get("statutory_provision")
@@ -2497,7 +2497,7 @@ class ComplianceApplicability(object):
     def to_structure(self):
         return {
             "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
-            "compliance_name": to_structure_CustomTextType_200(self.compliance_name),
+            "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
             "description": to_structure_CustomTextType_500(self.description),
             "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
             "statutory_nature": to_structure_CustomTextType_50(self.statutory_nature),
