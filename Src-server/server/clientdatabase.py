@@ -960,9 +960,6 @@ class ClientDatabase(Database):
         columns = "group_concat(unit_id)"
         condition = " 1 "
         rows = None
-        print "admin_id : {}, user_id : {}, isequal = {}".format(
-            admin_id, user_id, admin_id==user_id
-        )
         if user_id > 0 and user_id != admin_id:
             condition = "  user_id = '%d'" % user_id
             rows = self.get_data(
@@ -5030,7 +5027,6 @@ class ClientDatabase(Database):
             "user_id = '%d'" % session_user
         )
         notifications = []
-        print notification_rows
         for notification in notification_rows:
             notification_id = notification[0]
             read_status = bool(notification[1])
@@ -5052,8 +5048,6 @@ class ClientDatabase(Database):
                 columns, tables, aliases, join_type,
                 join_conditions, where_condition
             )
-            print 
-            print notification_detail_row
             notification_detail = []
             if notification_detail_row:
                 notification_detail = notification_detail_row[0]
@@ -5323,7 +5317,6 @@ class ClientDatabase(Database):
             due_date = c.due_date
             if due_date is not None :
                 due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
-                print due_date
 
             history_id = c.compliance_history_id
 
@@ -6906,7 +6899,6 @@ class ClientDatabase(Database):
         self, country_id,  business_group_id, legal_entity_id, division_id, 
         unit_id, domain_ids, session_user
     ):
-        print "inside get client details report"
         condition = "country_id = '%d' "%(country_id)
         if business_group_id is not None:
             condition += " AND business_group_id = '%d'" % business_group_id
@@ -6946,7 +6938,6 @@ class ClientDatabase(Database):
             else:
                 where_condition += " AND unit_id in (%s)" % self.get_user_unit_ids(session_user)
             if domain_ids is not None:
-                print "inside domain_ids not None in 2nd condition"
                 for domain_id in domain_ids:
                     where_condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
                                 "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
