@@ -53,12 +53,10 @@ class Controller(object):
         self._company_manager = company_manager
 
     def handle_post(self, request, response):
-        print "inside handle post"
         data = None
         actual_data = None
         try:
             data = json.loads(request.body())
-            print "data:{}".format(data)
             if type(data) is not list:
                 send_bad_request(
                     response,
@@ -70,7 +68,6 @@ class Controller(object):
                 return
             token = data[0]
             actual_data = data[1]
-            print "actual_data:{}".format(actual_data)
             if type(token) is unicode :
                 token = token.encode("utf8")
             elif type(token) is str :

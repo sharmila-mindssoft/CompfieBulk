@@ -66,9 +66,12 @@ function changeStatus(notification_id, read_status){
         assigneeDetails = assignee.substring(assignee.indexOf(",")+1).trim();
     }
 
-    if(concurrence != ''){
+    if(concurrence != '' && concurrence != null){
         concurrenceName = concurrence.split(',')[0];
         concurrenceDetails = concurrence.substring(concurrence.indexOf(",")+1).trim();
+    }else{
+       concurrenceName = null
+       concurrenceDetails = null 
     }
 
     if(approval != ''){

@@ -513,7 +513,7 @@ def start_new_task(db, client_id, current_date):
             d["concurrence_person"], d["approval_person"],
             notification_text, extra_details, notification_type_id
         )
-        a_name, assignee_email = get_email_id_for_fusers(db, d["assignee"])
+        a_name, assignee_email = get_email_id_for_users(db, d["assignee"])
         email.notify_compliance_start(
             a_name, compliance_name, unit_name,
             d["due_date"], assignee_email
@@ -721,6 +721,19 @@ def notify_before_contract_period(db, client_id):
         print "contract period expire notification sent ot %s" % (group_name)
         print '*' * 10
 
+def check_service_provider_contract_period(
+    db, client_id
+):
+    query = "UPDATE tbl_service_providers set is_active = 0 WHERE \
+    now() not between contract_from and contract_to"
+    print query
+    cursor = db.cursor()
+    cursor.execute(query)
+    print '*' * 10 
+    print "Deactivated inactive service providers of client :{}".format(client_id)
+    print '*' * 10
+
+
 
 def main():
     print '--' * 20
@@ -734,6 +747,8 @@ def main():
                 start_new_task(db, client_id, current_date)
                 db.commit()
                 notify_task_details(db, client_id)
+                db.commit()
+                check_service_provider_contract_period(db, client_id)
                 # notify_before_contract_period(db, client_id)
                 db.commit()
             except Exception, e :

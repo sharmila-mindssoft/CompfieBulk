@@ -140,11 +140,13 @@ class ClientDatabase(Database):
             data_columns = [
                 "user_id", "user_group_id", "email_id",
                 "employee_name", "employee_code", "contact_no",
-                "user_group_name", "form_ids", "is_admin"
+                "user_group_name", "form_ids", "is_admin", 
+                "service_provider_id"
             ]
             query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, \
                 t1.employee_name, t1.employee_code, t1.contact_no, \
-                t2.user_group_name, t2.form_ids, t1.is_admin \
+                t2.user_group_name, t2.form_ids, t1.is_admin, \
+                t1.service_provider_id \
                 FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
                 ON t1.user_group_id = t2.user_group_id \
                 WHERE t1.password='%s' and t1.email_id='%s' and t1.is_active=1" % (
@@ -155,8 +157,18 @@ class ClientDatabase(Database):
                 return False
             else :
                 result = self.convert_to_dict(data_list, data_columns)
-                # result["client_id"] = client_id
-                return result
+                if self.is_service_proivder_user(result["user_id"]):
+                    if (
+                        self.is_service_provider_in_contract(
+                            result["service_provider_id"]
+                        )
+                    ):
+                        # result["client_id"] = client_id
+                        return result
+                    else:
+                        return False
+                else:
+                    return result
         else :
             return True
 
@@ -323,10 +335,17 @@ class ClientDatabase(Database):
             results.append(general.AuditTrailForm(form[0], form[1]))
         return results
 
+    def get_admin_id(self):
+        columns = "admin_id"
+        condition = "1"
+        rows = self.get_data(self.tblAdmin, columns, condition)
+        return rows[0][0]
+
     def get_countries_for_user(self, user_id, client_id=None) :
+        admin_id = self.get_admin_id()
         query = "SELECT distinct t1.country_id, t1.country_name, \
             t1.is_active FROM tbl_countries t1 "
-        if user_id > 0 :
+        if user_id > 0 and user_id != admin_id:
             query = query + " INNER JOIN tbl_user_countries t2 \
                 ON t1.country_id = t2.country_id WHERE t2.user_id = %s" % (
                     user_id
@@ -346,9 +365,10 @@ class ClientDatabase(Database):
         return results
 
     def get_domains_for_user(self, user_id, client_id=None) :
+        admin_id = self.get_admin_id()
         query = "SELECT distinct t1.domain_id, t1.domain_name, \
             t1.is_active FROM tbl_domains t1 "
-        if user_id > 0 :
+        if user_id > 0 and user_id != admin_id:
             query = query + " INNER JOIN tbl_user_domains t2 ON \
                 t1.domain_id = t2.domain_id WHERE t2.user_id = %s" % (user_id)
         rows = self.select_all(query)
@@ -936,10 +956,14 @@ class ClientDatabase(Database):
         return result
 
     def get_user_company_details(self, user_id, client_id=None):
+        admin_id = self.get_admin_id()
         columns = "group_concat(unit_id)"
         condition = " 1 "
         rows = None
-        if user_id > 0:
+        print "admin_id : {}, user_id : {}, isequal = {}".format(
+            admin_id, user_id, admin_id==user_id
+        )
+        if user_id > 0 and user_id != admin_id:
             condition = "  user_id = '%d'" % user_id
             rows = self.get_data(
                 self.tblUserUnits, columns, condition
@@ -950,8 +974,8 @@ class ClientDatabase(Database):
             )
         unit_ids = rows[0][0]
 
-        columns = "group_concat(division_id), group_concat(legal_entity_id), "+\
-        "group_concat(business_group_id)"
+        columns = "group_concat(distinct division_id), group_concat(distinct legal_entity_id), "+\
+        "group_concat(distinct business_group_id)"
         unit_condition = "1"
         if unit_ids != None:
             unit_condition = "unit_id in (%s)" % unit_ids
@@ -1138,8 +1162,9 @@ class ClientDatabase(Database):
 
     def get_service_providers(self, client_id=None):
         columns = "service_provider_id, service_provider_name, is_active"
+        condition = "1"
         rows = self.get_data(
-            self.tblServiceProviders, columns, "1"
+            self.tblServiceProviders, columns, condition
         )
         columns = ["service_provider_id", "service_provider_name", "is_active"]
         result = self.convert_to_dict(rows, columns)
@@ -5005,6 +5030,7 @@ class ClientDatabase(Database):
             "user_id = '%d'" % session_user
         )
         notifications = []
+        print notification_rows
         for notification in notification_rows:
             notification_id = notification[0]
             read_status = bool(notification[1])
@@ -5026,6 +5052,8 @@ class ClientDatabase(Database):
                 columns, tables, aliases, join_type,
                 join_conditions, where_condition
             )
+            print 
+            print notification_detail_row
             notification_detail = []
             if notification_detail_row:
                 notification_detail = notification_detail_row[0]
@@ -5035,7 +5063,7 @@ class ClientDatabase(Database):
                 due_date_rows = self.get_data(
                     self.tblComplianceHistory,
                     "due_date",
-                    "compliance_history_id = '%d'" % compliance_history_id
+                    "compliance_history_id = '%d'" % int(compliance_history_id)
                 )
                 due_date_as_date = due_date_rows[0][0]
                 due_date_as_datetime = datetime.datetime(
@@ -5062,9 +5090,12 @@ class ClientDatabase(Database):
                 assignee = self.get_user_contact_details_by_id(
                     notification_detail[8], client_id
                 )
-                concurrence_person = self.get_user_contact_details_by_id(
-                    notification_detail[9], client_id
-                )
+                if notification_detail[9] is not None:
+                    concurrence_person = self.get_user_contact_details_by_id(
+                        notification_detail[9], client_id
+                    )
+                else:
+                    concurrence_person = None
                 approval_person = self.get_user_contact_details_by_id(
                     notification_detail[10], client_id
                 )
@@ -6871,9 +6902,11 @@ class ClientDatabase(Database):
             result = rows[0][0]
         return result
 
-    def get_client_details_report(self, country_id,  business_group_id,
-            legal_entity_id, division_id, unit_id, domain_ids):
-
+    def get_client_details_report(
+        self, country_id,  business_group_id, legal_entity_id, division_id, 
+        unit_id, domain_ids, session_user
+    ):
+        print "inside get client details report"
         condition = "country_id = '%d' "%(country_id)
         if business_group_id is not None:
             condition += " AND business_group_id = '%d'" % business_group_id
@@ -6883,6 +6916,8 @@ class ClientDatabase(Database):
             condition += " AND division_id = '%d'" % division_id
         if unit_id is not None:
             condition += " AND unit_id = '%d'" % unit_id
+        else:
+            condition += " AND unit_id in (%s)" % self.get_user_unit_ids(session_user)
         if domain_ids is not None:
             for domain_id in domain_ids:
                 condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
@@ -6897,7 +6932,6 @@ class ClientDatabase(Database):
         for row in group_by_rows:
             columns = "unit_id, unit_code, unit_name, geography, "\
             "address, domain_ids, postal_code"
-
             where_condition = "legal_entity_id = '%d' "% row[1]
             if row[0] == None:
                 where_condition += " And business_group_id is NULL"
@@ -6909,12 +6943,23 @@ class ClientDatabase(Database):
                 where_condition += " And division_id = '%d'" % row[2]
             if unit_id is not None:
                 where_condition += " AND unit_id = '%d'" % unit_id
+            else:
+                where_condition += " AND unit_id in (%s)" % self.get_user_unit_ids(session_user)
+            if domain_ids is not None:
+                print "inside domain_ids not None in 2nd condition"
+                for domain_id in domain_ids:
+                    where_condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
+                                "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
+                                "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
+                                " or domain_ids LIKE '"+str(domain_id)+"') "
             result_rows = self.get_data(self.tblUnits, columns,  where_condition)
             units = []
             for result_row in result_rows:
-                units.append(clientreport.UnitDetails(result_row[0], result_row[3], result_row[1],
+                units.append(clientreport.UnitDetails(
+                    result_row[0], result_row[3], result_row[1],
                     result_row[2], result_row[4], result_row[6],
-                    [int(x) for x in result_row[5].split(",")]))
+                    [int(x) for x in result_row[5].split(",")])
+                )
             GroupedUnits.append(clientreport.GroupedUnits(row[2], row[1], row[0], units))
         return GroupedUnits
 
@@ -7009,58 +7054,6 @@ class ClientDatabase(Database):
         rows = self.get_data(self.tblComplianceHistory+" ch", columns, condition )
         if rows:
             return rows[0]
-
-    def get_client_details_report(
-        self, country_id,  business_group_id,
-        legal_entity_id, division_id, unit_id, domain_ids
-    ):
-
-        condition = "country_id = '%d' " % (country_id)
-        if business_group_id is not None:
-            condition += " AND business_group_id = '%d'" % business_group_id
-        if legal_entity_id is not None:
-            condition += " AND legal_entity_id = '%d'" % legal_entity_id
-        if division_id is not None:
-            condition += " AND division_id = '%d'" % division_id
-        if unit_id is not None:
-            condition += " AND unit_id = '%d'" % unit_id
-        if domain_ids is not None:
-            for domain_id in domain_ids:
-                condition += " AND  ( domain_ids LIKE  '%," + str(domain_id) + ",%' " +\
-                            "or domain_ids LIKE  '%," + str(domain_id) + "' " +\
-                            "or domain_ids LIKE  '" + str(domain_id) + ",%'" +\
-                            " or domain_ids LIKE '" + str(domain_id) + "') "
-
-        group_by_columns = "business_group_id, legal_entity_id, division_id"
-        group_by_condition = condition+" group by business_group_id, legal_entity_id, division_id"
-        group_by_rows = self.get_data(self.tblUnits, group_by_columns, group_by_condition)
-        GroupedUnits = []
-        for row in group_by_rows:
-            columns = "unit_id, unit_code, unit_name, geography, "\
-                "address, domain_ids, postal_code"
-
-            where_condition = "legal_entity_id = '%d' " % row[1]
-            if row[0] == None:
-                where_condition += " And business_group_id is NULL"
-            else:
-                where_condition += " And business_group_id = '%d'" % row[0]
-            if row[2] == None:
-                where_condition += " And division_id is NULL"
-            else:
-                where_condition += " And division_id = '%d'" % row[2]
-            if unit_id is not None:
-                where_condition += " AND unit_id = '%d'" % unit_id
-
-            result_rows = self.get_data(self.tblUnits, columns,  where_condition)
-            units = []
-            for result_row in result_rows:
-                units.append(clientreport.UnitDetails(
-                    result_row[0], result_row[3], result_row[1],
-                    result_row[2], result_row[4], result_row[6],
-                    [int(x) for x in result_row[5].split(",")]
-                ))
-            GroupedUnits.append(clientreport.GroupedUnits(row[2], row[1], row[0], units))
-        return GroupedUnits
 
     def get_compliance_task_applicability(self, request, session_user):
         business_group = request.business_group_id
@@ -7509,13 +7502,13 @@ class ClientDatabase(Database):
         escalation_ids = None if len(escalation_rows) <= 0 else escalation_rows[0][0]
 
         column = "count(*)"
-        notification_condition = None if notification_ids is None else "notification_ids in (%s) AND read_status=0 AND user_id = '%d'" % (
+        notification_condition = None if notification_ids is None else "notification_id in (%s) AND read_status=0 AND user_id = '%d'" % (
             notification_ids, session_user
         )
-        reminder_condition = None if reminder_ids is None else "notification_ids in (%s) AND read_status=0 AND user_id = '%d'" % (
+        reminder_condition = None if reminder_ids is None else "notification_id in (%s) AND read_status=0 AND user_id = '%d'" % (
             reminder_ids, session_user
         )
-        escalation_condition = None if escalation_ids is None else "notification_ids in (%s) AND read_status=0 AND user_id = '%d'" % (
+        escalation_condition = None if escalation_ids is None else "notification_id in (%s) AND read_status=0 AND user_id = '%d'" % (
             escalation_ids, session_user
         )
 
@@ -7527,21 +7520,21 @@ class ClientDatabase(Database):
                 self.tblNotificationUserLog, column, notification_condition
             )
             if notification_count_rows :
-                notification_count = notification_count_rows[0]
+                notification_count = notification_count_rows[0][0]
 
         if reminder_condition is not None:
             reminder_count_rows = self.get_data(
                 self.tblNotificationUserLog, column, reminder_condition
             )
             if reminder_count_rows :
-                reminder_count = reminder_count_rows[0]
+                reminder_count = reminder_count_rows[0][0]
 
         if escalation_condition is not None:
             escalation_count_rows = self.get_data(
                 self.tblNotificationUserLog, column, escalation_condition
             )
             if escalation_count_rows :
-                escalation_count = escalation_count_rows[0]
+                escalation_count = escalation_count_rows[0][0]
 
         ## Getting statutory notifications
         statutory_column = "count(*)"
@@ -7568,6 +7561,16 @@ class ClientDatabase(Database):
         column = "count(*)"
         condition = "user_id = '%d' and is_service_provider = 1" % user_id
         rows = self.get_data(self.tblUsers, column, condition)
+        if rows[0][0] > 0:
+            return True
+        else:
+            return False
+
+    def is_service_provider_in_contract(self, service_provider_id):
+        column = "count(*)"
+        condition = "now() between contract_from and contract_to \
+        and service_provider_id = '%d' and is_active = 1" % service_provider_id
+        rows = self.get_data(self.tblServiceProviders, column, condition)
         if rows[0][0] > 0:
             return True
         else:
