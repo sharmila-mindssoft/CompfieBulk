@@ -411,6 +411,7 @@ def save_in_compliance_history(
     cursor = db.cursor()
     cursor.execute(query)
     cursor.close()
+    return compliance_history_id
 
 def update_assign_compliance_due_date(db, trigger_before, due_date, unit_id, compliance_id):
     query = "UPDATE tbl_assigned_compliances set due_date='%s', trigger_before_days=%s \
@@ -472,7 +473,7 @@ def start_new_task(db, client_id, current_date):
         if d["frequency"] == 1 :
             next_due_date = ""
             print "going to save in compliance history"
-            save_in_compliance_history(
+            compliance_history_id = save_in_compliance_history(
                 db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
                 d["due_date"], next_due_date, int(d["assignee"]),
                 d["concurrence_person"], int(approval_person)
@@ -491,7 +492,7 @@ def start_new_task(db, client_id, current_date):
                 d["repeats_every"], d["due_date"]
             )
             print next_due_date, d["frequency"], d["statutory_dates"], d["repeat_type_id"]
-            save_in_compliance_history(
+            compliance_history_id = save_in_compliance_history(
                 db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
                 d["due_date"], next_due_date, int(d["assignee"]), d["concurrence_person"], int(approval_person)
             )
@@ -505,7 +506,7 @@ def start_new_task(db, client_id, current_date):
             compliance_name = d["compliance_task"]
         unit_name = d["unit_code"] + " - " + d["unit_name"]
         notification_text = "Compliance task %s started" % (compliance_name)
-        extra_details = "Compliance Started"
+        extra_details = " %s - Compliance Started" % (compliance_history_id)
         notification_type_id = 1   # 1 = notification
         save_in_notification(
             db, d["country_id"], d["domain_id"], d["business_group_id"], d["legal_entity_id"],
