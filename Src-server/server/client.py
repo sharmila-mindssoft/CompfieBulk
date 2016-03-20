@@ -81,7 +81,7 @@ class ReplicationManager(object) :
             self._received_count = self._db.get_trail_id()
             self._db.commit()
         except Exception, e:
-            # print e
+            print e
             self._received_count = None
             self._db.rollback()
         assert self._received_count is not None
@@ -121,7 +121,7 @@ class ReplicationManager(object) :
                     json.loads(response.body)
                 )
             except Exception, e:
-                # print err, e
+                print err, e
                 self._poll()
                 return
             if type(r) is InvalidReceivedCount:
@@ -184,7 +184,7 @@ class ReplicationManager(object) :
             # print
             # print "self._received_count ", self._received_count
             # print "self._temp_count ", self._temp_count
-            print query
+            # print query
             # print
 
     def _execute_update_statement(self, change):
