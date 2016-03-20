@@ -1,18 +1,25 @@
 import os
 import json
 import traceback
+import mimetypes
+import jinja2
+import time
 from tornado.httpclient import AsyncHTTPClient
 from tornado.web import (
     StaticFileHandler, RequestHandler
 )
 from user_agents import parse
-import mimetypes
+from lxml import etree
 from basics.webserver import WebServer
 from basics.ioloop import IOLoop
 from webfrontend.handlerequest import HandleRequest
 from webfrontend.client import CompanyManager
-from server.constants import CLIENT_TEMPLATE_PATHS
-import jinja2
+from server.constants import CLIENT_TEMPLATE_PATHS, IS_DEVELOPMENT, VERSION
+
+if IS_DEVELOPMENT :
+    FILE_VERSION = time.time()
+else :
+    FILE_VERSION = VERSION
 
 
 #
@@ -114,6 +121,27 @@ class TemplateHandler(RequestHandler):
         self.__parameters = parameters
         self._company_manager = company_manager
 
+    def update_static_urls(self, content):
+        parser = etree.HTMLParser()
+        tree = etree.fromstring(content, parser)
+        for node in tree.xpath('//*[@src]'):
+            url = node.get('src')
+            if node.tag == "script" or node.tag == "img" :
+                url += "?v=%s" % (FILE_VERSION)
+            node.set('src', url)
+
+        for node in tree.xpath('//*[@href]'):
+            url = node.get('href')
+            if not url.startswith("#"):
+                if node.tag == "link" :
+                    url += "?v=%s" % (FILE_VERSION)
+            else :
+                if node.tag == "link" :
+                    url += "?v=%s" % (FILE_VERSION)
+            node.set('href', url)
+        data = etree.tostring(tree, method="html")
+        return data
+
     def get(self, url=None, token=None) :
         if url is not None:
             print 'GOT URL %s' % (url,)
@@ -138,6 +166,7 @@ class TemplateHandler(RequestHandler):
         self.set_header("Content-Type", mime_type)
         template = template_env.get_template(path)
         output = template.render(**self.__parameters)
+        output = self.update_static_urls(output)
         self.write(output)
 
     def options(self) :
