@@ -65,7 +65,7 @@ class CompanyManager(object) :
                     json.loads(response.body)
                 )
             except Exception, e:
-                print err, e
+                # print err, e
                 self._poll()
                 return
             assert r is not None
@@ -74,7 +74,8 @@ class CompanyManager(object) :
                 self._servers[company.company_id] = company
             self._server_added_callback(self._servers)
         else :
-            print err, response.error
+            pass
+            # print err, response.error
         self._poll()
 
     def _get_company_id(self, security_token):

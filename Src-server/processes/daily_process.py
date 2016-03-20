@@ -523,6 +523,216 @@ def start_new_task(db, client_id, current_date):
 
     print " %s compliances started for - %s" % (count, current_date)
 
+def get_inprogress_compliances(db):
+    query = "SELECT t1.compliance_history_id, t1.unit_id, t1.compliance_id, t1.start_date, \
+        t1.due_date, t3.document_name, t3.compliance_task, \
+        t2.assignee, t2.concurrence_person, t2.approval_person, t4.unit_code, t4.unit_name, \
+        t4.business_group_id, t4.legal_entity_id, t4.division_id, t2.country_id, \
+        t3.domain_id FROM \
+        tbl_compliance_history t1 INNER JOIN tbl_assigned_compliances t2 on \
+        t1.compliance_id = t2.compliance_id \
+        INNER JOIN tbl_compliances t3 on t1.compliance_id = t3.compliance_id \
+        INNER JOIN tbl_units t4 on t1.unit_id = t4.unit_id WHERE \
+        IFNULL(t1.approve_status, 0) != 1"
+    # print query
+    cursor = db.cursor()
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    columns = [
+        "compliance_history_id", "unit_id", "compliance_id", "start_date", "due_date",
+        "document_name", "compliance_task", "assignee", "concurrence_person", "approval_person",
+        "unit_code", "unit_name", "business_group_id", "legal_entity_id", "division_id", "country_id",
+        "domain_id"
+    ]
+    result = convert_to_dict(rows, columns)
+    print '*' * 10
+    # print result
+    print '*' * 10
+
+    return result
+
+def get_client_settings(db):
+    query = "SELECT assignee_reminder, escalation_reminder_in_advance, escalation_reminder \
+        FROM tbl_client_groups"
+    cursor = db.cursor()
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    columns = ["assignee_reminder", "escalation_reminder_in_advance", "escalation_reminder"]
+    result = convert_to_dict(rows, columns)
+    return result
+
+def reminder_to_assignee(db, client_info, compliance_info):
+    current_date = get_current_date()
+    try :
+        print "begin process to remind inprogress compliance task %s " % (current_date)
+        # client_info = get_client_settings(db)
+        if client_info :
+            reminder_interval = int(client_info[0]["assignee_reminder"])
+            # compliance_info = get_inprogress_compliances(db)
+            count = 0
+            email = EmailNotification()
+            for c in compliance_info:
+                if c["document_name"] :
+                    compliance_name = c["document_name"] + " - " + c["compliance_task"]
+                else :
+                    compliance_name = c["compliance_task"]
+                date_diff = (current_date - c["start_date"]).days
+                days_left = (c["due_date"] - current_date).days
+                notification_text = "%s days left to complete %s task" % (days_left, compliance_name)
+                extra_details = ""
+                if (date_diff % reminder_interval) == 0 :
+                    save_in_notification(
+                        db, c["country_id"], c["domain_id"], c["business_group_id"], c["legal_entity_id"],
+                        c["division_id"], c["unit_id"], c["compliance_id"], c["assignee"],
+                        c["concurrence_person"], c["approval_person"],
+                        notification_text, extra_details, notification_type_id=2, notify_to_all=False
+                    )
+                    a_name, assignee_email = get_email_id_for_users(db, c["assignee"])
+                    email.notify_to_assignee(
+                        a_name, days_left, compliance_name,
+                        c["unit_name"], assignee_email
+                    )
+                    count += 1
+            print "%s compliances remindered" % (count)
+    except Exception, e:
+        print e
+        print(traceback.format_exc())
+
+def reminder_before_due_date(db, client_info, compliance_info):
+    current_date = get_current_date()
+    print "begin process to remind inprogress compliance task to all %s " % (current_date)
+    # client_info = get_client_settings(db)
+    email = EmailNotification()
+    reminder_interval = int(client_info[0]["escalation_reminder_in_advance"])
+    for c in compliance_info:
+        if c["document_name"] :
+            compliance_name = c["document_name"] + " - " + c["compliance_task"]
+        else :
+            compliance_name = c["compliance_task"]
+        days_left = (c["due_date"] - current_date).days
+        notification_text = "%s days left to complete %s task" % (days_left, compliance_name)
+        extra_details = ""
+        if days_left == reminder_interval:
+            save_in_notification(
+                db, c["country_id"], c["domain_id"], c["business_group_id"],
+                c["legal_entity_id"], c["division_id"], c["unit_id"], c["compliance_id"],
+                c["assignee"], c["concurrence_person"], c["approval_person"], notification_text,
+                extra_details, notification_type_id=2
+            )
+            a_name, assignee_email = get_email_id_for_users(db, c["assignee"])
+            cc_person = []
+            concurrence_person = c["concurrence_person"]
+            if concurrence_person == 0 :
+                concurrence_person = None
+            if concurrence_person is not None :
+                c_name, concurrence_email = get_email_id_for_users(db, concurrence_person)
+                cc_person.append(concurrence_email)
+            ap_name, approval_email = get_email_id_for_users(db, c["approval_person"])
+            cc_person.append(approval_email)
+            email.notify_before_due_date(
+                a_name, days_left, compliance_name,
+                c["unit_name"],
+                assignee_email, cc_person
+            )
+
+def notify_escalation_to_all(db, client_info, compliance_info):
+    current_date = get_current_date()
+    print "begin process to notify escalations to all %s" % (current_date)
+    escalation_interval = int(client_info[0]["escalation_reminder"])
+    email = EmailNotification()
+    for c in compliance_info :
+        if c["document_name"] :
+            compliance_name = c["document_name"] + " - " + c["compliance_task"]
+        else :
+            compliance_name = c["compliance_task"]
+        over_due_days = (current_date - c["due_date"]).days
+        if over_due_days == 0 :
+            continue
+        notification_text = "%s overdue by %s days" % (compliance_name, over_due_days)
+        extra_details = ""
+        if (over_due_days % escalation_interval) == 0 :
+            save_in_notification(
+                db, c["country_id"], c["domain_id"], c["business_group_id"],
+                c["legal_entity_id"], c["division_id"], c["unit_id"], c["compliance_id"],
+                c["assignee"], c["concurrence_person"], c["approval_person"], notification_text,
+                extra_details, notification_type_id=3
+            )
+            a_name, assignee_email = get_email_id_for_users(db, c["assignee"])
+            cc_person = []
+            concurrence_person = c["concurrence_person"]
+            if concurrence_person == 0 :
+                concurrence_person = None
+            if concurrence_person is not None :
+                c_name, concurrence_email = get_email_id_for_users(db, concurrence_person)
+                cc_person.append(concurrence_email)
+            ap_name, approval_email = get_email_id_for_users(db, c["approval_person"])
+            cc_person.append(approval_email)
+            email.notify_before_due_date(
+                a_name, compliance_name,
+                c["unit_name"], over_due_days,
+                assignee_email, cc_person
+            )
+
+def notify_task_details(db, client_id):
+    client_info = get_client_settings(db)
+    compliance_info = get_inprogress_compliances(db)
+    if compliance_info :
+        reminder_to_assignee(db, client_info, compliance_info)
+        reminder_before_due_date(db, client_info, compliance_info)
+        notify_escalation_to_all(db, client_info, compliance_info)
+
+def notify_before_contract_period(db, client_id):
+    query = "SELECT contract_to, group_name FROM tbl_client_groups"
+    cursor = db.cursor()
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    contract_to_str = str(rows[0][0])
+    group_name = str(rows[0][1])
+    contract_to_parts = [int(x) for x in contract_to_str.split("-")]
+    contract_to = datetime.date(
+        contract_to_parts[0], contract_to_parts[1], contract_to_parts[2]
+    )
+    delta = contract_to - datetime.datetime.now().date()
+    if delta.days <= 30:
+        notification_text = "Your contract with Compfie will expire in %d \
+        days. Kindly renew your contract to avail the services continuosuly" % (
+            delta.days
+        )
+        extra_details = "Reminder : Contract Expiration"
+
+        notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
+        created_on = datetime.datetime.now()
+        query = "INSERT INTO tbl_notifications_log \
+            (notification_id, notification_type_id,\
+            notification_text, extra_details, created_on\
+            ) VALUES (%s, %s, '%s', '%s', '%s')" % (
+                notification_id, 2,
+                notification_text, extra_details, created_on
+            )
+        cursor = db.cursor()
+        cursor.execute(query)
+        cursor.close()
+
+        q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
+            VALUES (%s, %s)" % (notification_id, 0)
+        cur = db.cursor()
+        cur.execute(q)
+        cur.close()
+        print '*' * 10
+        print "contract period expire notification sent ot %s" % (group_name)
+        print '*' * 10
+
+def check_service_provider_contract_period(
+    db, client_id
+):
+    query = "UPDATE tbl_service_providers set is_active = 0 WHERE \
+    now() not between contract_from and contract_to"
+    cursor = db.cursor()
+    cursor.execute(query)
+    print '*' * 10 
+    print "Deactivated inactive service providers of client :{}".format(client_id)
+    print '*' * 10
+
 def main():
     print '--' * 20
     print "begin daily_process"
@@ -534,6 +744,9 @@ def main():
             try :
                 start_new_task(db, client_id, current_date)
                 db.commit()
+                notify_task_details(db, client_id)
+                db.commit()
+                check_service_provider_contract_period(db, client_id)
                 # notify_task_details(db, client_id)
                 # notify_before_contract_period(db, client_id)
                 db.commit()
