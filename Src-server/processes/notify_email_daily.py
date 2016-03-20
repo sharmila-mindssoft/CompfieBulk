@@ -296,6 +296,8 @@ def reminder_to_assignee(db, client_info, compliance_info):
                 else :
                     compliance_name = c["compliance_task"]
                 date_diff = (current_date - c["start_date"]).days
+                if c["due_date"] is None :
+                    continue
                 days_left = (c["due_date"] - current_date).days
                 notification_text = "%s days left to complete %s task" % (days_left, compliance_name)
                 extra_details = ""
@@ -328,6 +330,9 @@ def reminder_before_due_date(db, client_info, compliance_info):
             compliance_name = c["document_name"] + " - " + c["compliance_task"]
         else :
             compliance_name = c["compliance_task"]
+        if c["due_date"] is None :
+            continue
+
         days_left = (c["due_date"] - current_date).days
         notification_text = "%s days left to complete %s task" % (days_left, compliance_name)
         extra_details = ""

@@ -2522,8 +2522,8 @@ class ClientDatabase(Database):
 
     def save_assigned_compliance(self, request, session_user, client_id):
         new_unit_settings = request.new_units
-        if new_unit_settings is None :
-            return clienttransactions.SaveAssignedComplianceSuccess()
+        # if new_unit_settings is None :
+        #     return clienttransactions.SaveAssignedComplianceSuccess()
 
         created_on = self.get_date_time()
         country_id = int(request.country_id)
@@ -2582,6 +2582,7 @@ class ClientDatabase(Database):
                         approval, trigger_before, due_date, validity_date,
                         int(session_user), created_on
                     )
+                print query
                 self.execute(query)
             # self.update_user_units(assignee, unit_ids, client_id)
         if new_unit_settings is not None :

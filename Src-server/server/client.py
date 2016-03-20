@@ -180,7 +180,7 @@ class ReplicationManager(object) :
 
         except Exception, e:
             pass
-            print e
+            # print e
             # print
             # print "self._received_count ", self._received_count
             # print "self._temp_count ", self._temp_count
