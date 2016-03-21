@@ -22,6 +22,14 @@ img, object {
 	max-width: 100%;
 	height: auto; 
 }
+
+.new-link {
+    color: blue;
+} 
+a:hover {
+    color: #0B0B61;
+}
+
 .clearfix:after {
   content: "";
   display: table;

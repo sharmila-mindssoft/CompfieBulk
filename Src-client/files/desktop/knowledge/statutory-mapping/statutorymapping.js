@@ -303,7 +303,7 @@ function loadStatutoryLevels(countryval,domainval){
           var tableRow=$('#statutory-level-templates');
           var clone=tableRow.clone();
           $('.statutory_title', clone).text(statutoryLevelList[j]["level_name"]);
-          $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="statutoryfilter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" maxlength="50" class="input-box addleft" placeholder="" style="width:90%" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+          $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="statutoryfilter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" maxlength="100" class="input-box addleft" placeholder="" style="width:90%" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
           $('.tbody-statutory-level').append(clone);
         }
         var setlevelstage= 1;
@@ -540,7 +540,6 @@ function saverecord(j,e){
             onSuccess(response);
           }
           else {
-            alert(data)
             onFailure(error);
           }
         }
@@ -568,7 +567,6 @@ function saverecord(j,e){
             onSuccessUpdate(response);
           }
           else {
-            alert(data)
             onFailureUpdate(error);
           }
         }
@@ -811,6 +809,7 @@ $("#temp_addcompliance").click(function() {
     displayMessage("Duration Type Required");
   }else{
     displayMessage("");
+    var repeatBy = $('input[name="repeatby"]:checked').val();
     if(compliance_frequency == "1"){
       if($('#statutory_date').val() != '')
         statutory_day = parseInt($('#statutory_date').val());
@@ -823,15 +822,18 @@ $("#temp_addcompliance").click(function() {
           return false;
         }
       }
-
-      statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days);
+      statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
       statutory_dates.push(statutory_date);
       }else if (compliance_frequency == "2" || compliance_frequency == "3"){
         repeats_type = parseInt($('#repeats_type').val());
         repeats_every = parseInt($('#repeats_every').val());
         repeats_every_length = $('#repeats_every').val().trim().length;
 
-        if(repeats_type == '1' && repeats_every_length > 3){
+        if(repeats_every == 0){
+          displayMessage("Repeats every is invalid");
+          return false;
+        }
+        else if(repeats_type == '1' && repeats_every_length > 3){
           displayMessage("Days maximum 3 digits");
           return false;
         }else if(repeats_type == '2' && repeats_every_length > 2){
@@ -862,7 +864,7 @@ $("#temp_addcompliance").click(function() {
               statutory_day = null;
               statutory_month = null;
               trigger_before_days = null;
-              if($('#multiple_statutory_month'+i).val() == '' || $('#multiple_statutory_month'+i).val() == '' || $('#multiple_triggerbefore'+i).val().trim().length == 0){
+              if($('#multiple_statutory_date'+i).val() == '' || $('#multiple_statutory_month'+i).val() == '' || $('#multiple_triggerbefore'+i).val().trim().length == 0){
                 displayMessage("Statutory dates and trigger dates mandatory for multiple inputs");
                 return false;
               }else{
@@ -874,7 +876,7 @@ $("#temp_addcompliance").click(function() {
                   return false;
                 }
 
-                statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days);
+                statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
                 statutory_dates.push(statutory_date);
               }
             }
@@ -890,7 +892,7 @@ $("#temp_addcompliance").click(function() {
                 displayMessage("Trigger before days should not exceed 100");
                 return false;
               }
-            statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days);
+            statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
             statutory_dates.push(statutory_date);
             }
           }
@@ -963,6 +965,11 @@ $("#temp_addcompliance").click(function() {
   $('.multipleselectnone').show();
   $('.multipleselect').hide();
   $('#multipleview').hide();
+  $('#dayofmonth').prop("checked", true);
+  $('.repeatby-view').show();
+  $('#counter').html('');
+  $('#counter1').html('');
+  $('#counter2').html('');
   resetvalues();
   load_compliance();
   }
@@ -970,6 +977,9 @@ $("#temp_addcompliance").click(function() {
 });
 
 function temp_editcompliance(edit_id){
+  $('#dayofmonth').prop("checked", true);
+  $('#single_statutory_date').val('');
+
   $('#statutory_provision').val(compliances[edit_id]["statutory_provision"]);
   $('#compliance_task').val(compliances[edit_id]["compliance_task"]);
   $('#compliance_description').val(compliances[edit_id]["description"]);
@@ -1014,6 +1024,13 @@ function temp_editcompliance(edit_id){
     $('#Recurring').show();
     $('#Occasional').hide();
     $('#One_Time').hide();
+
+
+    if(compliance_frequency == "2"){
+      $('.frequency_type').html('Periodical');
+    }else{
+      $('.frequency_type').html('Review');
+    }
     if(statutory_dates.length > 1){
       $('.multipleinput').prop("checked",true);
       $('#multipleview').show();
@@ -1030,6 +1047,25 @@ function temp_editcompliance(edit_id){
       $('#multiple_statutory_month'+i).val('');
       $('#multiple_triggerbefore'+i).val('');
       }
+
+      if(statutory_dates[0]["repeat_by"] == 'enddayofmonth'){
+        $('#enddayofmonth').prop("checked", true);
+        for(i=1; i<=12; i++){
+          $('#multiple_statutory_date'+i).hide();
+        }
+        $('#single_statutory_date').hide();
+        
+
+      }else{
+        $('#dayofmonth').prop("checked", true);
+        for(i=1; i<=12; i++){
+          $('#multiple_statutory_date'+i).show();
+        }
+        $('#single_statutory_date').show();
+        
+      }
+      load_data();
+      //siva
   }else{
     $('.multipleinput').prop("checked",false);
     $('.multipleselectnone').show();
@@ -1038,7 +1074,37 @@ function temp_editcompliance(edit_id){
     $('#single_statutory_date').val(statutory_dates[0]["statutory_date"]);
     $('#single_statutory_month').val(statutory_dates[0]["statutory_month"]);
     $('#single_triggerbefore').val(statutory_dates[0]["trigger_before_days"]);
+
+    if(statutory_dates[0]["repeat_by"] == 'enddayofmonth'){
+      $('#enddayofmonth').prop("checked", true);
+      $('#single_statutory_date').hide();
+      
+    }else{
+      $('#dayofmonth').prop("checked", true);
+      $('#single_statutory_date').show();
+     
     }
+    }
+    load_data();
+
+
+    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+     $('#single_statutory_date').hide();
+     $('#sdate').hide();
+    }else{
+      $('#single_statutory_date').show();
+    }
+
+    if($('#repeats_type').val() == 1){
+      $('#single_statutory_date').hide();
+    }
+
+    if($('#repeats_type').val() == 3){
+       $('#sdate').show();
+    }
+
+
+//siva
   }
 }else{
   $('#Recurring').hide();
@@ -1321,9 +1387,10 @@ function savestatutorymapping(){
       $("#uploaded_filename").html('');
       $("#statutorymapping-view").show();
   }
-  function onFailure(error){
-    if(error == "StatutoryMappingAlreadyExists"){
-      displayMessage("Statutory Mapping Already Exists for same statutory");
+  function onFailure(error, response){
+    if(error == "ComplianceNameAlreadyExists"){
+      var duplicateComplianceList = response['compliance_name'];
+      displayMessage("Compliance name already exists - " + duplicateComplianceList);
     }else{
       displayMessage(error);
     }
@@ -1348,7 +1415,7 @@ function savestatutorymapping(){
             onSuccess(response);
           }
           else {
-            onFailure(error);
+            onFailure(error, response);
           }
       }
   );
@@ -1364,7 +1431,7 @@ function savestatutorymapping(){
             onSuccess(response);
           }
           else {
-            onFailure(error);
+            onFailure(error, response);
           }
       }
   );
@@ -1685,6 +1752,39 @@ $(function()
   else
   {
   $('#counter').html((maxLength - textlength) + ' characters left.');
+  }
+  });
+
+
+  $('#statutory_provision').keyup(function(e)
+  {
+  var maxLength = 500;
+  var textlength = this.value.length;
+  if (textlength >= maxLength)
+  {
+  $('#counter1').html('You cannot write more then ' + maxLength + ' characters!');
+  this.value = this.value.substring(0, maxLength);
+  e.preventDefault();
+  }
+  else
+  {
+  $('#counter1').html((maxLength - textlength) + ' characters left.');
+  }
+  });
+
+  $('#penal_consequences').keyup(function(e)
+  {
+  var maxLength = 500;
+  var textlength = this.value.length;
+  if (textlength >= maxLength)
+  {
+  $('#counter2').html('You cannot write more then ' + maxLength + ' characters!');
+  this.value = this.value.substring(0, maxLength);
+  e.preventDefault();
+  }
+  else
+  {
+  $('#counter2').html((maxLength - textlength) + ' characters left.');
   }
   });
   $('#duration').keyup(function()
@@ -2199,6 +2299,8 @@ $('#multiple_statutory_month12').change(function() {
       $('#multiple_statutory_date'+i).show();
       $('#multiple_statutory_date'+i).val('');
     }
+    $('#single_statutory_date').val('');
+    $('#statutory_date').val('');
     $('#single_statutory_date').show();
     $('#sdate').show();
     //$('#statutory_date').show();
@@ -2240,6 +2342,7 @@ $('#multiple_statutory_month12').change(function() {
     $('#sdate').show();
     $('.repeatby-view').show();
     load_stautorydates();
+
   }
   else if($('#repeats_type').val() == '1'){
     $('#single_statutory_date').hide();
@@ -2250,6 +2353,7 @@ $('#multiple_statutory_month12').change(function() {
     $('#multipleview').hide();
     $('.repeatby-view').hide();
 
+
   }
   else if($('#repeats_type').val() == '3'){
     $('#single_statutory_date').show();
@@ -2259,6 +2363,12 @@ $('#multiple_statutory_month12').change(function() {
     $('#sdate').show();
     $('.repeatby-view').show();
     $('#multipleview').hide();
+
+    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+     $('#single_statutory_date').hide();
+    }
+
+   // siva
   }
   else if($('#repeats_type').val() == '2' && $('.multipleinput').prop("checked") == false && $('#repeats_every').val() != ''){
     var rep_every = parseInt($('#repeats_every').val());
@@ -2281,8 +2391,18 @@ $('#multiple_statutory_month12').change(function() {
       $('#multipleview').hide();
       $('.multipleinput').prop("checked", false);
     }
+    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+     $('#single_statutory_date').hide();
+     $('#sdate').hide();
+    }
+  }
+
+  if($('#repeats_type').val() == '2'){
+    $('.repeatby-view').show();
   }
   //resetvalues();
+
+  
 }
 
 $(".dayhour").change(function(){
@@ -2299,10 +2419,16 @@ if($(this).val()=="1")
 });
 $('.tasktype').on('keyup change', function() {
   if($(this).val()=="2" || $(this).val()=="3")
-  {
+  { 
     $('#Recurring').show();
     $('#Occasional').hide();
     $('#One_Time').hide();
+    if($(this).val() == "2"){
+      $('.frequency_type').html('Periodical');
+    }else{
+      $('.frequency_type').html('Review');
+    }
+
   }
 
   else if($(this).val() == "4" )
@@ -2326,7 +2452,7 @@ $('.tasktype').on('keyup change', function() {
   }
 });
 
-$("#statutory_date").empty();
+  $("#statutory_date").empty();
   var defaultoption = $("<option></option>");
   defaultoption.val("");
   defaultoption.text("")

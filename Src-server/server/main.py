@@ -234,6 +234,8 @@ class TemplateHandler(tornado.web.RequestHandler) :
             new_url = self.set_path(url)
             if node.tag == "script" :
                 new_url += "?v=%s" % (FILE_VERSION)
+            if node.tag == "img" :
+                new_url += "?v=%s" % (FILE_VERSION)
             node.set('src', new_url)
         for node in tree.xpath('//*[@href]'):
             url = node.get('href')

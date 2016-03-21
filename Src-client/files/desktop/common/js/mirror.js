@@ -151,7 +151,7 @@ function initMirror() {
                     window.location.href = login_url;
                 }
                 else {
-                    callback(status, null)
+                    callback(status, response)
                 }
             }
         )
@@ -532,11 +532,12 @@ function initMirror() {
         apiRequest("knowledge_master", request, callback);
     }
 
-    function statutoryDates(date, month, triggerBefore) {
+    function statutoryDates(date, month, triggerBefore, repeatBy) {
         var statutoryDate = {};
         statutoryDate["statutory_date"] = date;
         statutoryDate["statutory_month"] = month;
         statutoryDate["trigger_before_days"] = triggerBefore;
+        statutoryDate["repeat_by"] = repeatBy;
         return statutoryDate;
     }
 

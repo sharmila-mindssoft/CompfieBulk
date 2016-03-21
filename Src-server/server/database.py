@@ -170,6 +170,7 @@ class Database(object) :
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
+        print query
         return self.select_all(query)
 
     def get_data_from_multiple_tables(
@@ -195,6 +196,7 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
+        print query
         return self.select_all(query)
 
     def insert(self, table, columns, values, client_id=None) :
@@ -2274,7 +2276,8 @@ class KnowledgeDatabase(Database):
                 s_date = core.StatutoryDate(
                     date["statutory_date"],
                     date["statutory_month"],
-                    date["trigger_before_days"]
+                    date["trigger_before_days"],
+                    date.get("repeat_by")
                 )
                 date_list.append(s_date)
 
@@ -2378,6 +2381,30 @@ class KnowledgeDatabase(Database):
             return row[0]
         else :
             return None
+
+    def check_duplicate_compliance_name(self, request_frame):
+        compliances = request_frame.compliances
+        country_id = request_frame.country_id
+        domain_id = request_frame.domain_id
+        compliance_names = []
+        for c in compliances :
+            compliance_name = c.compliance_task
+            compliance_id = c.compliance_id
+            q = "SELECT count(t1.compliance_task) FROM tbl_compliances t1 INNER JOIN \
+                tbl_statutory_mappings t2 on t1.statutory_mapping_id = t2.statutory_mapping_id \
+                WHERE t2.country_id = %s AND t2.domain_id = %s AND \
+                LOWER(t1.compliance_task) = LOWER('%s')" % (
+                    country_id, domain_id, compliance_name
+                )
+            if compliance_id is not None :
+                q = q + " AND t1.compliance_id != %s" % (compliance_id)
+            row = self.select_one(q)
+            if row[0] > 0 :
+                compliance_names.append(compliance_name)
+        if len(compliance_names) > 0 :
+            return compliance_names
+        else :
+            return False
 
     def save_statutory_mapping(self, data, created_by) :
         country_id = data.country_id
@@ -2904,7 +2931,7 @@ class KnowledgeDatabase(Database):
             t1.domain_id, t3.domain_name, t1.industry_ids, \
             t1.statutory_nature_id, t4.statutory_nature_name, \
             t1.statutory_ids, t1.compliance_ids, \
-            t1.geography_ids, t1.approval_status  \
+            t1.geography_ids, t1.approval_status, t1.statutory_mapping  \
             FROM tbl_statutory_mappings t1 \
             INNER JOIN tbl_countries t2 \
             on t1.country_id = t2.country_id \
@@ -2919,7 +2946,7 @@ class KnowledgeDatabase(Database):
             "domain_name", "industry_ids", "statutory_nature_id",
             "statutory_nature_name", "statutory_ids",
             "compliance_ids", "geography_ids",
-            "approval_status"
+            "approval_status", "statutory_mapping"
         ]
         result = {}
         if rows :
@@ -2957,7 +2984,7 @@ class KnowledgeDatabase(Database):
             columns.extend(["rejected_reason"])
             values.extend([rejected_reason])
             notification_log_text = "Statutory Mapping: %s \
-                has been Rejected" % (provision)
+                has been Rejected and reason is %s" % (provision, rejected_reason)
         else :
             notification_log_text = "Statutory Mapping: %s \
                 has been Approved" % (provision)
@@ -2968,7 +2995,7 @@ class KnowledgeDatabase(Database):
                 statutory_mapping_id, notification_text
             )
             notification_log_text = "Statutory Mapping: %s \
-                has been Approve & Notified" % (provision)
+                has been Approved & Notified" % (provision)
 
         link = "/knowledge/statutory-mapping"
         if users["updated_by"] is None :
@@ -3065,8 +3092,8 @@ class KnowledgeDatabase(Database):
     def save_statutory_notifications(self, mapping_id, notification_text):
         # client notification
         client_info = self.get_statutory_assigned_to_client(mapping_id)
-        if client_info is None :
-            return
+        # if client_info is None :
+        #     return
         old_record = self.get_statutory_mapping_by_id(
             mapping_id
         )
@@ -3077,17 +3104,18 @@ class KnowledgeDatabase(Database):
             industry_name = self.get_industry_by_id(industry_ids[0])
         else :
             industry_name = self.get_industry_by_id(industry_ids)
-        provision = []
-        for sid in old_record["statutory_ids"][:-1].split(',') :
-            data = self.get_statutory_by_id(int(sid))
-            provision.append(data["parent_names"])
-        mappings = ','.join(str(x) for x in provision)
+        # provision = []
+        # for sid in old_record["statutory_ids"][:-1].split(',') :
+        #     data = self.get_statutory_by_id(int(sid))
+        #     provision.append(data["parent_names"])
+        # mappings = ','.join(str(x) for x in provision)
+        provision = old_record["statutory_mapping"]
         geo_map = []
         for gid in old_record["geography_ids"][:-1].split(',') :
             data = self.get_geography_by_id(int(gid))
             if data is not None :
-                data = data["parent_names"]
-            geo_map.append(data)
+                names = data["parent_names"]
+                geo_map.append(names)
         geo_mappings = ','.join(str(x) for x in geo_map)
 
         notification_id = self.get_new_id(
@@ -3118,16 +3146,23 @@ class KnowledgeDatabase(Database):
                     "statutory_notification_unit_id",
                     "tbl_statutory_notifications_units"
                 )
+                business_group = r["business_group_id"]
+                division_id = r["division_id"]
+                if r["business_group_id"] is None :
+                    business_group = 'NULL'
+                if r["division_id"] is None :
+                    division_id = 'NULL'
+
                 q = "INSERT INTO tbl_statutory_notifications_units \
                     (statutory_notification_unit_id, statutory_notification_id, client_id, \
                         business_group_id, legal_entity_id, division_id, unit_id) VALUES \
-                    (%s, %s, %s, %s, %s, %s, %s)" % (
+                    (%s, %s, %s, '%s', %s, '%s', %s)" % (
                         notification_unit_id,
                         statutory_notification_id,
                         int(r["client_id"]),
-                        int(r["business_group_id"]),
+                        business_group,
                         int(r["legal_entity_id"]),
-                        int(r["division_id"]),
+                        division_id,
                         int(r["unit_id"])
                     )
                 self.execute(q)
