@@ -473,18 +473,18 @@ INSERT INTO tbl_compliance_frequency VALUES(4, "On Occurrence");
 INSERT INTO tbl_notification_types VALUES(1, "Notification");
 INSERT INTO tbl_notification_types VALUES(2, "Reminder");
 INSERT INTO tbl_notification_types VALUES(3, "Escalation");
-DROP TRIGGER IF EXISTS `after_tbl_statutory_notifications_units_insert`;
-DELIMITER //
-CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON `tbl_statutory_notifications_units`
- FOR EACH ROW BEGIN
-    SET @notificationid = NEW.statutory_notification_id;
-    SET @unitid = NEW.unit_id;
+-- DROP TRIGGER IF EXISTS `after_tbl_statutory_notifications_units_insert`;
+-- DELIMITER //
+-- CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON `tbl_statutory_notifications_units`
+--  FOR EACH ROW BEGIN
+--     SET @notificationid = NEW.statutory_notification_id;
+--     SET @unitid = NEW.unit_id;
 
-    INSERT INTO tbl_statutory_notification_status (
-        statutory_notification_id,
-        user_id, read_status)
-    SELECT @notificationid, t1.user_id, 0
-    FROM tbl_user_units t1 where t1.unit_id = @unitid;
-END
-//
-DELIMITER ;
+--     INSERT INTO tbl_statutory_notification_status (
+--         statutory_notification_id,
+--         user_id, read_status)
+--     SELECT @notificationid, t1.user_id, 0
+--     FROM tbl_user_units t1 where t1.unit_id = @unitid;
+-- END
+-- //
+-- DELIMITER ;
