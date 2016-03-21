@@ -173,19 +173,19 @@ class ReplicationManager(object) :
         try :
             pass
             self._db.execute(query)
-            self._temp_count = changes[-1].audit_trail_id
             # print "INSERT success ",  query
             # print '' * 100
             #
 
         except Exception, e:
             pass
-            # print e
+            print e
             # print
             # print "self._received_count ", self._received_count
             # print "self._temp_count ", self._temp_count
             # print query
             # print
+        self._temp_count = changes[-1].audit_trail_id
 
     def _execute_update_statement(self, change):
         auto_id = self._auto_id_columns.get(change.tbl_name)
