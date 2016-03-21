@@ -2596,7 +2596,7 @@ class ClientDatabase(Database):
                 due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
             else :
                 due_date = ""
-            compliance_names.append("Complaince Name:" + c.compliance_name + "- Due Date:" + str(due_date))
+            compliance_names.append("Complaince Name:" + c.compliance_name + "- Due Date:" + str(c.due_date))
             validity_date = c.validity_date
             if validity_date is not None :
                 validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
@@ -2625,20 +2625,30 @@ class ClientDatabase(Database):
         if new_unit_settings is not None :
             self.update_user_settings(new_unit_settings, client_id)
 
-        compliance_names = ", ".join(compliance_names)
+        compliance_names = " <br> ".join(compliance_names)
         if request.concurrence_person_name is None :
-            action = " %s has assigned to assignee - %s and approval-person - %s " % (
-                str(compliance_names), request.assignee_name,
-                request.approval_person_name
+            action = " Following compliances has assigned to assignee - %s and approval-person - %s <br> %s" % (
+                request.assignee_name,
+                request.approval_person_name,
+                compliance_names
             )
         else :
-            action = " %s has assigned to assignee - %s concurrence-person - %s approval-person - %s " % (
-                str(compliance_names), request.assignee_name, request.concurrence_person_name,
-                request.approval_person_name
+            action = " Following compliances has assigned to assignee - %s concurrence-person - %s approval-person - %s <br> %s" % (
+                request.assignee_name,
+                request.concurrence_person_name,
+                request.approval_person_name,
+                compliance_names
             )
+        # print action
         self.save_activity(session_user, 7, json.dumps(action))
-        receiver = self.get_email_id_for_users(assignee)
-        email.notify_assign_compliance(receiver, request.assignee_name, action)
+        receiver = self.get_email_id_for_users(assignee)[1]
+        notify_assign_compliance = threading.Thread(
+            target=email.notify_assign_compliance,
+            args=[
+                receiver, request.assignee_name, action
+            ]
+        )
+        notify_assign_compliance.start()
         return clienttransactions.SaveAssignedComplianceSuccess()
 
     def update_user_settings(self, new_units, client_id):
@@ -2684,9 +2694,6 @@ class ClientDatabase(Database):
                     values = (user_id, country_id)
                     value_list = [values]
                     self.bulk_insert(self.tblUserCountries, country_columns, value_list, client_id)
-
-
-
 
 #
 #   Chart Api
@@ -3209,7 +3216,7 @@ class ClientDatabase(Database):
         if len(domain_ids) == 1 :
             domain_ids.append(0)
         if user_id == 0 :
-            user_id = ''
+            user_qry = '1'
         else :
             user_qry = "(T1.completed_by LIKE '%s' OR T1.concurred_by LIKE '%s' \
             OR T1.approved_by LIKE '%s')" % (user_id, user_id, user_id)
