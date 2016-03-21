@@ -19,10 +19,16 @@ function actstatus(element){
   if ($(element).is(":checked"))
   {
     $(remarkbox).hide();
-    $(changestatusStatutories).each(function() { 
+    $(changestatusStatutories).each(function() {
+      var cremark = $('.cremarkview'+this.value).text();
       this.checked = true;
-      if($('#applicable'+this.value).val() == "false")  
-        $('.cremarkadd'+this.value).show();
+      if($('#applicable'+this.value).val() == "false"){
+        if(cremark != ''){
+          $('.cremarkview'+this.value).show();
+        }else{
+          $('.cremarkadd'+this.value).show();
+        }
+      }  
     });
   }else{
     $(remarkbox).show();
@@ -74,9 +80,34 @@ function compliancestatus(element, viewremarks){
   if(cStatus){
     $('#act'+actSelect).prop("checked",true);
     $('.remark'+actSelect).hide();
+
+    $('.'+sClass).each(function() { 
+    var aStatus = $('#applicable'+this.value).val();
+    var oStatus = "false";
+    var cremark = $('.cremarkview'+this.value).text();
+    if($(this).is(":checked")){
+      oStatus = "true";
+    }
+    if(aStatus == oStatus){
+      $('.cremarkadd'+this.value).hide();
+    }
+    else{
+      if(cremark != ''){
+        $('.cremarkview'+this.value).show();
+      }else{
+        $('.cremarkadd'+this.value).show();
+        $('.cremarkview'+this.value).hide();
+      }
+    }
+  });
+
   }else{
     $('#act'+actSelect).prop("checked",false);
     $('.remark'+actSelect).show();
+
+    $('.'+sClass).each(function() { 
+      $('.cremarkadd'+this.value).hide();
+    });
   }
 }
 
@@ -284,7 +315,7 @@ $('.close').click(function(){
 
 $("#submit").click(function() {
 
-    
+    displayMessage("");
     assignedStatutories = [];
     var statutoriesCount= 1;
     var actCount = 1;
@@ -336,7 +367,7 @@ $("#submit").click(function() {
         if(addStatus){
           $('#cremarkvalue'+statutoriesCount).show();
 
-          if($('#cremarkvalue'+statutoriesCount).val() != ''){
+          if($('#cremarkvalue'+statutoriesCount).val().trim() != ''){
             compliancenotApplicableRemarks = $('#cremarkvalue'+statutoriesCount).val().trim();
           }else{
             compliancenotApplicableRemarks = compliance_remarks;
