@@ -223,7 +223,7 @@ function load_secondwizard(){
         $('.compliancefrequency', clone2).text(frequency);
 
         if(summary != null){
-          if(statutorydate != ''){
+          if(statutorydate.trim() != ''){
             statutorydate = summary + ' ( '+statutorydate+' )';
           }else{
             statutorydate = summary;
@@ -503,18 +503,16 @@ function submitcompliance(){
             var current_due_date = '';
             var current_trigger_day = '';
             var current_due_dates = [];
-
-
             var validitydate = null;
             if($('#validitydate'+statutoriesCount).val() != undefined && $('#validitydate'+statutoriesCount).val() != '') validitydate = $('#validitydate'+statutoriesCount).val();
 
 
             if(frequency != 'On Occurrence'){
+              var dDate = null;
+              var tDay = null;
+
               if(due_date.length > 1){
                 for(var k = 0; k < due_date.length; k++){
-                var dDate = null;
-                var tDay = null;
-
                 dDate = $('#duedate'+statutoriesCount+'-'+k).val();
                 tDay = $('#triggerdate'+statutoriesCount+'-'+k).val();
                 current_due_dates.push([dDate,tDay]);

@@ -970,6 +970,11 @@ $("#temp_addcompliance").click(function() {
   $('#counter').html('');
   $('#counter1').html('');
   $('#counter2').html('');
+
+  for(i=1; i<=12; i++){
+    $('#multiple_statutory_date'+i).show();
+  }
+  
   resetvalues();
   load_compliance();
   }
@@ -2393,6 +2398,7 @@ $('#multiple_statutory_month12').change(function() {
     }
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
      $('#single_statutory_date').hide();
+     $('#single_statutory_month').hide();
      $('#sdate').hide();
     }
   }
