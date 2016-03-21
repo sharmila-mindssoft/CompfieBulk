@@ -1520,9 +1520,11 @@ function domainunionclientdomainList(){
         var dupes = {};
         
         $.each(finalObj1, function(i, el) {
-            if (!dupes[el.domain_id]) {
-                dupes[el.domain_id] = true;
-                finalObj.push(el);
+            if(el != null){
+                if (!dupes[el['domain_id']]) {
+                    dupes[el['domain_id']] = true;
+                    finalObj.push(el);
+                }
             }
         });
         

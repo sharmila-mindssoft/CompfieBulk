@@ -489,13 +489,27 @@ function loadFormListUpdate(clientListData, clientGroupId){
 function dateConfigurations(dateconfigList){
     $('.tbody-dateconfiguration-list').empty();
     var countryarr = [];
+    var usercountryarr = [];
     var domainarr = [];
-    $.each(countriesList, function(k, val){
+    var userdomainarr = [];
+    var cl = countryunionclientcountry();
+    var dl = domainunionclientdomain();
+
+    var usercl = countriesList;
+    var userdl = domainsList;
+    $.each(usercl, function(k, val){
+         usercountryarr.push(val["country_id"]);
+    });
+    $.each(userdl, function(k, val){
+         userdomainarr.push(val["domain_id"]);
+    });
+    $.each(cl, function(k, val){
          countryarr.push(val["country_id"]);
     });
-    $.each(domainsList, function(k, val){
+    $.each(dl, function(k, val){
          domainarr.push(val["domain_id"]);
-    })
+    });
+    console.log(countryarr+"--"+domainarr);
     
     var countriesValue = $('#country').val();
     var domainsValue = $('#domain').val();
@@ -537,8 +551,10 @@ function dateConfigurations(dateconfigList){
     });
     for(var c = 0; c < countryarr.length; c++ ){
         for(var d = 0; d < domainarr.length; d++ ){
-            $('.tl-from-'+countryarr[c]+'-'+domainarr[d]).attr('disabled', false); 
-            $('.tl-to-'+countryarr[c]+'-'+domainarr[d]).attr('disabled', false); 
+            if($.inArray(countryarr[c], usercountryarr) != -1 && $.inArray(domainarr[d], userdomainarr) != -1){
+                $('.tl-from-'+countryarr[c]+'-'+domainarr[d]).attr('disabled', false); 
+                $('.tl-to-'+countryarr[c]+'-'+domainarr[d]).attr('disabled', false);     
+            }            
         }
     }
 }
@@ -744,13 +760,17 @@ function getClientCountriesNameunion(countryid){
     finalObj1 = c.concat(ccnew);
     var dupes = {};
     var finalObj = [];
-
-    $.each(finalObj1, function(i, el) {
-        if (!dupes[el.country_id]) {
-            dupes[el.country_id] = true;
-            finalObj.push(el);
-        }
-    });
+    if(finalObj1.length != 0){
+        $.each(finalObj1, function(i, el) {
+            if(el != null){
+                if (!dupes[el['country_id']]) {
+                    dupes[el['country_id']] = true;
+                    finalObj.push(el);
+                }
+            }
+        });    
+    }
+    
     $.each(finalObj, function(key, val){
         if(val['country_id'] == countryid){
             countryname = val['country_name'];
@@ -787,13 +807,16 @@ function countryunionclientcountry(){
     finalObj1 = c.concat(ccnew);
     var dupes = {};
     var finalObj = [];
-
-    $.each(finalObj1, function(i, el) {
-        if (!dupes[el.country_id]) {
-            dupes[el.country_id] = true;
-            finalObj.push(el);
-        }
-    });
+    if(finalObj1.length != 0){
+        $.each(finalObj1, function(i, el) {
+            if(el != null){
+                if (!dupes[el['country_id']]) {
+                    dupes[el['country_id']] = true;
+                    finalObj.push(el);
+                }    
+            }            
+        });
+    }
     return finalObj;
 }
 function domainunionclientdomain(){
@@ -825,13 +848,16 @@ function domainunionclientdomain(){
     
     var dupes = {};
     var finalObj = [];
-
-    $.each(finalObj1, function(i, el) {
-        if (!dupes[el.domain_id]) {
-            dupes[el.domain_id] = true;
-            finalObj.push(el);
-        }
-    });
+    if(finalObj1.length != 0){
+        $.each(finalObj1, function(i, el) {
+            if(el != null){
+                if (!dupes[el['domain_id']]) {
+                    dupes[el['domain_id']] = true;
+                    finalObj.push(el);
+                }
+            }
+        });
+    }
     return finalObj;
 }
 function getdomainunionclientdomainname(domainid){
@@ -866,9 +892,11 @@ function getdomainunionclientdomainname(domainid){
     var finalObj = [];
 
     $.each(finalObj1, function(i, el) {
-        if (!dupes[el.domain_id]) {
-            dupes[el.domain_id] = true;
-            finalObj.push(el);
+        if(el != null){
+            if (!dupes[el['domain_id']]) {
+                dupes[el['domain_id']] = true;
+                finalObj.push(el);
+            }
         }
     });
     $.each(finalObj, function(key, val){
