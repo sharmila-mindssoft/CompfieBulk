@@ -223,7 +223,7 @@ function load_secondwizard(){
         $('.compliancefrequency', clone2).text(frequency);
 
         if(summary != null){
-          if(statutorydate != ''){
+          if(statutorydate.trim() != ''){
             statutorydate = summary + ' ( '+statutorydate+' )';
           }else{
             statutorydate = summary;
