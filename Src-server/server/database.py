@@ -2403,14 +2403,13 @@ class KnowledgeDatabase(Database):
                         statutory_provision,
                         str("%" + statutory_mappings + "%")
                     )
-                print q
                 if compliance_id is not None :
                     q = q + " AND t1.compliance_id != %s" % (compliance_id)
                 row = self.select_one(q)
                 if row[0] > 0 :
                     compliance_names.append(compliance_name)
         if len(compliance_names) > 0 :
-            return compliance_names
+            return list(set(compliance_names))
         else :
             return False
 
