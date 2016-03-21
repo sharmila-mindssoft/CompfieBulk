@@ -165,18 +165,18 @@ $("#submit").click(function(){
     else if(contactPersonValue.length > 50){
         displayMessage('Contact Person Name is maximum 50 characters Allowed');
     }
-    else if(countryCodeValue == ''){
-        displayMessage('Enter Contact No. Country Code');
-    }
+    // else if(countryCodeValue == ''){
+    //     displayMessage('Enter Contact No. Country Code');
+    // }
     else if(countryCodeValue.length > 4){
         displayMessage('Contact No. Country Code is maximum 4 characters Allowed');
     }
     else if(areaCodeValue.length > 4){
         displayMessage('Contact No. Area Code is maximum 4 characters');
     }
-    else if(mobileNumberValue == ''){
-        displayMessage('Enter Contact No.');
-    }
+    // else if(mobileNumberValue == ''){
+    //     displayMessage('Enter Contact No.');
+    // }
     else if(mobileNumberValue.length > 12){
         displayMessage('Contact No. is maximum 12 characters Allowed');
     }

@@ -2,7 +2,6 @@ DROP TABLE IF EXISTS `tbl_audit_log`;
 CREATE TABLE `tbl_audit_log` (
   `audit_trail_id` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `tbl_form_type`;
 CREATE TABLE `tbl_form_type` (
   `form_type_id` int(11) NOT NULL,
@@ -18,8 +17,7 @@ CREATE TABLE `tbl_forms` (
   `form_order` int(11) NOT NULL,
   `parent_menu` varchar(50) DEFAULT NULL,
   `is_admin` tinyint(4) NOT NULL,
-  PRIMARY KEY (`form_id`),
-  CONSTRAINT `fk_form_type` FOREIGN KEY (`form_type_id`) REFERENCES `tbl_form_type` (`form_type_id`)
+  PRIMARY KEY (`form_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_countries`;
 CREATE TABLE `tbl_countries` (
@@ -72,8 +70,7 @@ CREATE TABLE `tbl_compliances` (
   `repeats_every` int(11)  NOT NULL,
   `duration` int(11)  NOT NULL,
   `is_active` tinyint(4) DEFAULT 1,
-  PRIMARY KEY (`compliance_id`),
-  CONSTRAINT `fk_compliance_frequency_compliances` FOREIGN KEY (`frequency_id`) REFERENCES `tbl_compliance_frequency` (`frequency_id`)
+  PRIMARY KEY (`compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_client_groups`;
 CREATE TABLE `tbl_client_groups` (
@@ -101,8 +98,7 @@ CREATE TABLE `tbl_client_configurations` (
   `domain_id` int(11) NOT NULL,
   `period_from` int(11) NOT NULL,
   `period_to` int(11) NOT NULL,
-  CONSTRAINT `fk_client_configurations_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
-  CONSTRAINT `fk_client_configurations_domains` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`)
+  PRIMARY KEY (`country_id`, `domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_business_groups`;
 CREATE TABLE `tbl_business_groups` (
@@ -123,8 +119,7 @@ CREATE TABLE `tbl_divisions` (
   `business_group_id` int(11) DEFAULT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `division_name` varchar(100) NOT NULL,
-  PRIMARY KEY (`division_id`),
-  CONSTRAINT `fk_divisions_legal_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`)
+  PRIMARY KEY (`division_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_units`;
 CREATE TABLE `tbl_units` (
@@ -142,9 +137,7 @@ CREATE TABLE `tbl_units` (
   `domain_ids` varchar(100) NOT NULL,
   `is_active` tinyint(1) DEFAULT '1',
   `is_closed` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`unit_id`),
-  CONSTRAINT `fk_units_legel_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
-  CONSTRAINT `fk_units_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`)
+  PRIMARY KEY (`unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_service_providers`;
 CREATE TABLE `tbl_service_providers` (
@@ -200,41 +193,32 @@ CREATE TABLE `tbl_users` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`user_id`),
-  CONSTRAINT `fk_client_user_details_client_user_groups` FOREIGN KEY (`user_group_id`) REFERENCES `tbl_user_groups` (`user_group_id`),
-  CONSTRAINT `fk_client_user_details_service_providers` FOREIGN KEY (`service_provider_id`) REFERENCES `tbl_service_providers` (`service_provider_id`)
+  PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_user_countries`;
 CREATE TABLE `tbl_user_countries` (
   `user_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
-  PRIMARY KEY (`country_id`,`user_id`),
-  CONSTRAINT `fk_tbl_users_countries_user_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`),
-  CONSTRAINT `fk_tbl_user_countries_countries_id` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`)
+  PRIMARY KEY (`country_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_user_domains`;
 CREATE TABLE `tbl_user_domains` (
   `user_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
-  PRIMARY KEY (`domain_id`,`user_id`),
-  CONSTRAINT `fk_tbl_user_domains_domains_id` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
-  CONSTRAINT `fk_tbl_user_domains_user_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+  PRIMARY KEY (`domain_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_user_units`;
 CREATE TABLE `tbl_user_units` (
   `user_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
-  PRIMARY KEY (`unit_id`,`user_id`),
-  CONSTRAINT `fk_tbl_user_units_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),
-  CONSTRAINT `fk_tbl_user_units_user_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+  PRIMARY KEY (`unit_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_user_login_history`;
 CREATE TABLE `tbl_user_login_history` (
   `user_id` int(11) NOT NULL,
   `login_time` int(11) DEFAULT NULL,
   `logout_time` int(11) DEFAULT NULL,
-  PRIMARY KEY (`user_id`),
-  CONSTRAINT `tbl_user_login_history_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+  PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_session_types`;
 CREATE TABLE `tbl_session_types` (
@@ -248,8 +232,7 @@ CREATE TABLE `tbl_user_sessions` (
   `user_id` int(11) NOT NULL,
   `session_type_id` int(11) DEFAULT NULL,
   `last_accessed_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`session_token`),
-  CONSTRAINT `fk_tbl_user_sessions_id_1` FOREIGN KEY (`session_type_id`) REFERENCES `tbl_session_types` (`session_type_id`)
+  PRIMARY KEY (`session_token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_client_statutories`;
 CREATE TABLE `tbl_client_statutories` (
@@ -259,10 +242,7 @@ CREATE TABLE `tbl_client_statutories` (
   `domain_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   `is_new` tinyint(4) DEFAULT 0,
-  PRIMARY KEY (`client_statutory_id`),
-  CONSTRAINT `fk_client_statutories_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
-  CONSTRAINT `fk_client_statutories_domains` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
-  CONSTRAINT `fk_client_statutories_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`)
+  PRIMARY KEY (`client_statutory_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_client_compliances`;
 CREATE TABLE `tbl_client_compliances` (
@@ -300,10 +280,7 @@ CREATE TABLE `tbl_assigned_compliances` (
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT `fk_assigned_compliances_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
-  CONSTRAINT `fk_assigned_compliances_units` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),
-  CONSTRAINT `fk_assigned_compliances_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`)
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_reassigned_compliances_history`;
 CREATE TABLE `tbl_reassigned_compliances_history` (
@@ -316,9 +293,7 @@ CREATE TABLE `tbl_reassigned_compliances_history` (
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT `fk_rch_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`),
-  CONSTRAINT `fk_rch_units` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`)
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_compliance_status`;
 CREATE TABLE `tbl_compliance_status` (
@@ -337,25 +312,23 @@ CREATE TABLE `tbl_compliance_history` (
   `compliance_history_id` int(11) NOT NULL,
   `unit_id` int(11) DEFAULT NULL,
   `compliance_id` int(11) DEFAULT NULL,
-  `start_date` date DEFAULT NULL,
-  `due_date` date DEFAULT NULL,
-  `completion_date` date DEFAULT NULL,
+  `start_date` datetime DEFAULT NULL,
+  `due_date` datetime DEFAULT NULL,
+  `completion_date` datetime DEFAULT NULL,
   `documents` longtext,
   `document_size` int(11) DEFAULT NULL,
-  `validity_date` date DEFAULT NULL,
-  `next_due_date` date DEFAULT NULL,
+  `validity_date` datetime DEFAULT NULL,
+  `next_due_date` datetime DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   `completed_by` int(11) DEFAULT NULL,
-  `completed_on` date DEFAULT NULL,
+  `completed_on` datetime DEFAULT NULL,
   `concurrence_status` varchar(20) DEFAULT NULL,
   `concurred_by` int(11) DEFAULT NULL,
-  `concurred_on` date DEFAULT NULL,
+  `concurred_on` datetime DEFAULT NULL,
   `approve_status` varchar(20) DEFAULT NULL,
   `approved_by` int(11) DEFAULT NULL,
-  `approved_on` date DEFAULT NULL,
-  PRIMARY KEY (`compliance_history_id`),
-  CONSTRAINT `fk_compliance_history_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`),
-  CONSTRAINT `fk_compliance_history_units` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`)
+  `approved_on` datetime DEFAULT NULL,
+  PRIMARY KEY (`compliance_history_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_compliance_activity_log`;
 CREATE TABLE `tbl_compliance_activity_log` (
@@ -367,9 +340,7 @@ CREATE TABLE `tbl_compliance_activity_log` (
   `compliance_status` varchar(20) DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`compliance_activity_id`),
-  CONSTRAINT `fk_compliance_activity_log_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`),
-  CONSTRAINT `fk_compliance_activity_log_units` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`)
+  PRIMARY KEY (`compliance_activity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_activity_log`;
 CREATE TABLE `tbl_activity_log` (
@@ -378,8 +349,7 @@ CREATE TABLE `tbl_activity_log` (
   `form_id` int(11) NOT NULL,
   `action` varchar(500) NOT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`activity_log_id`),
-  CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`)
+  PRIMARY KEY (`activity_log_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_email_verification`;
 CREATE TABLE `tbl_email_verification` (
@@ -392,8 +362,7 @@ CREATE TABLE `tbl_mobile_registration` (
   `registration_key` varchar(50) NOT NULL,
   `device_type_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  PRIMARY KEY (`registration_key`),
-  CONSTRAINT `fk_tbl_session_type_id` FOREIGN KEY (`device_type_id`) REFERENCES `tbl_session_types` (`session_type_id`)
+  PRIMARY KEY (`registration_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_statutory_notifications_log`;
 CREATE TABLE `tbl_statutory_notifications_log` (
@@ -447,12 +416,7 @@ CREATE TABLE `tbl_notifications_log` (
   `notification_text` longtext,
   `extra_details` longtext,
   `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`notification_id`),
-  CONSTRAINT `fk_notifications_log_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
-  CONSTRAINT `fk_notifications_log_domains` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
-  CONSTRAINT `fk_notifications_log_legal_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
-  CONSTRAINT `fk_notifications_log_units` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),
-  CONSTRAINT `fk_notifications_log_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`)
+  PRIMARY KEY (`notification_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_notification_user_log`;
 CREATE TABLE `tbl_notification_user_log` (
@@ -509,7 +473,6 @@ INSERT INTO tbl_compliance_frequency VALUES(4, "On Occurrence");
 INSERT INTO tbl_notification_types VALUES(1, "Notification");
 INSERT INTO tbl_notification_types VALUES(2, "Reminder");
 INSERT INTO tbl_notification_types VALUES(3, "Escalation");
-
 DROP TRIGGER IF EXISTS `after_tbl_statutory_notifications_units_insert`;
 DELIMITER //
 CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON `tbl_statutory_notifications_units`

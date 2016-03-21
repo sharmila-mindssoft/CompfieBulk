@@ -1,12 +1,444 @@
-2016-03-19 18:04:54,311 - knowledge_logger - main.py-parse-request : invalid request: GetCountriesForGroup
-2016-03-19 18:04:54,313 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-03-21 09:46:11,786 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-21 09:46:11,839 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technotransactions.py", line 469, in parse_structure
-    return class_map
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 1081, in parse_structure_VariantType_technotransactions_Request
-    from protocol import technotransactions
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technotransactions.py", line 80, in parse_structure
-    raise ValueError(msg)
-ValueError: invalid request: GetCountriesForGroup
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 687, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+
+2016-03-21 10:07:40,355 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-21 10:07:40,356 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 76, in parse_inner_structure
+    ip = parse_structure_CustomTextType_20(ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 513, in parse_structure_CustomTextType_20
+    return parse_custom_string(data, 20)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+
+2016-03-21 10:50:32,765 - knowledge_logger - main.py-handle-api : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') and is_active = 1 ORDER BY country_name' at line 1")
+2016-03-21 10:50:32,765 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 36, in process_techno_request
+    return get_client_groups(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 29, in get_client_groups
+    user_client_countries = db.get_user_client_countries(session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 5757, in get_user_client_countries
+    country_ids += countries.split(",")
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 174, in get_data
+    return self.select_all(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 144, in select_all
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') and is_active = 1 ORDER BY country_name' at line 1")
+
+2016-03-21 10:50:34,445 - knowledge_logger - main.py-handle-api : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') and is_active = 1 ORDER BY country_name' at line 1")
+2016-03-21 10:50:34,445 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 36, in process_techno_request
+    return get_client_groups(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 29, in get_client_groups
+    user_client_countries = db.get_user_client_countries(session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 5757, in get_user_client_countries
+    country_ids += countries.split(",")
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 174, in get_data
+    return self.select_all(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 144, in select_all
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') and is_active = 1 ORDER BY country_name' at line 1")
+
+2016-03-21 10:51:48,470 - knowledge_logger - main.py-handle-api : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') and is_active = 1 ORDER BY country_name' at line 1")
+2016-03-21 10:51:48,470 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 36, in process_techno_request
+    return get_client_groups(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 29, in get_client_groups
+    user_client_countries = db.get_user_client_countries(session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 5757, in get_user_client_countries
+    country_ids += countries.split(",")
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 174, in get_data
+    return self.select_all(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 144, in select_all
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') and is_active = 1 ORDER BY country_name' at line 1")
+
+2016-03-21 11:14:24,405 - knowledge_logger - main.py-handle-api : (1452, 'Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge`.`tbl_activity_log`, CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`))')
+2016-03-21 11:14:24,406 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 172, in handle_login
+    return controller.process_login_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 21, in process_login_request
+    return process_login(db, request)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 48, in process_login
+    return user_login_response(db, response, request.ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 60, in user_login_response
+    session_token = db.add_session(user_id, session_type, ip, employee)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 443, in add_session
+    self.save_activity(user_id, 0, action)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 599, in save_activity
+    self.execute(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 157, in execute
+    return cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+IntegrityError: (1452, 'Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge`.`tbl_activity_log`, CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`))')
+
+2016-03-21 11:22:36,537 - knowledge_logger - main.py-handle-api : (1452, 'Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge`.`tbl_activity_log`, CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`))')
+2016-03-21 11:22:36,537 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 172, in handle_login
+    return controller.process_login_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 21, in process_login_request
+    return process_login(db, request)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 48, in process_login
+    return user_login_response(db, response, request.ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 60, in user_login_response
+    session_token = db.add_session(user_id, session_type, ip, employee)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 443, in add_session
+    self.save_activity(user_id, 0, action)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 599, in save_activity
+    self.execute(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 157, in execute
+    return cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+IntegrityError: (1452, 'Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge`.`tbl_activity_log`, CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`))')
+
+2016-03-21 11:53:20,912 - knowledge_logger - main.py-handle-api : global name 'is_logo_in_image_format' is not defined
+2016-03-21 11:53:20,912 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 39, in process_techno_request
+    return save_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 82, in save_client_group
+    elif not is_logo_in_image_format(request.logo):
+NameError: global name 'is_logo_in_image_format' is not defined
+
+2016-03-21 13:16:16,659 - knowledge_logger - main.py-handle-api : global name 'domain_di' is not defined
+2016-03-21 13:16:16,660 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 167, in update_client_group
+    request.client_id, request.country_ids, request.domain_ids
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3804, in replicate_client_countries_and_domains
+    values_tuple = (client_id, domain_di)
+NameError: global name 'domain_di' is not defined
+
+2016-03-21 13:16:40,104 - knowledge_logger - main.py-handle-api : global name 'country_values_list' is not defined
+2016-03-21 13:16:40,104 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 167, in update_client_group
+    request.client_id, request.country_ids, request.domain_ids
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3808, in replicate_client_countries_and_domains
+    VALUES %s''' % ','.join(tuple(x) for x in country_values_list)
+NameError: global name 'country_values_list' is not defined
+
+2016-03-21 13:17:11,531 - knowledge_logger - main.py-handle-api : sequence item 0: expected string, tuple found
+2016-03-21 13:17:11,532 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 167, in update_client_group
+    request.client_id, request.country_ids, request.domain_ids
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3808, in replicate_client_countries_and_domains
+    VALUES %s''' % ','.join(tuple(x) for x in country_values_list)
+TypeError: sequence item 0: expected string, tuple found
+
+2016-03-21 13:17:32,314 - knowledge_logger - main.py-handle-api : (1136, "Column count doesn't match value count at row 1")
+2016-03-21 13:17:32,315 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 167, in update_client_group
+    request.client_id, request.country_ids, request.domain_ids
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3813, in replicate_client_countries_and_domains
+    cursor.execute(insert_countries_query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+OperationalError: (1136, "Column count doesn't match value count at row 1")
+
+2016-03-21 13:18:29,829 - knowledge_logger - main.py-handle-api : (1136, "Column count doesn't match value count at row 1")
+2016-03-21 13:18:29,830 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 167, in update_client_group
+    request.client_id, request.country_ids, request.domain_ids
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3819, in replicate_client_countries_and_domains
+    cursor.execute(insert_countries_query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+OperationalError: (1136, "Column count doesn't match value count at row 1")
+
+2016-03-21 13:19:28,542 - knowledge_logger - main.py-handle-api : (1062, "Duplicate entry '1' for key 'PRIMARY'")
+2016-03-21 13:19:28,542 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 167, in update_client_group
+    request.client_id, request.country_ids, request.domain_ids
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3819, in replicate_client_countries_and_domains
+    cursor.execute(insert_countries_query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+IntegrityError: (1062, "Duplicate entry '1' for key 'PRIMARY'")
+
+2016-03-21 13:23:11,874 - knowledge_logger - main.py-handle-api : (1054, "Unknown column '1L' in 'field list'")
+2016-03-21 13:23:11,875 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 167, in update_client_group
+    request.client_id, request.country_ids, request.domain_ids
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3818, in replicate_client_countries_and_domains
+    cursor.execute(insert_countries_query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+OperationalError: (1054, "Unknown column '1L' in 'field list'")
+
+2016-03-21 13:25:11,437 - knowledge_logger - main.py-handle-api : (1054, "Unknown column '1L' in 'field list'")
+2016-03-21 13:25:11,437 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 167, in update_client_group
+    request.client_id, request.country_ids, request.domain_ids
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3818, in replicate_client_countries_and_domains
+    cursor.execute(insert_countries_query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+OperationalError: (1054, "Unknown column '1L' in 'field list'")
+
+2016-03-21 13:25:43,179 - knowledge_logger - main.py-handle-api : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'INT), country_name, is_active FROM tbl_countries  WHERE country_id in (1,2)' at line 1")
+2016-03-21 13:25:43,180 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 167, in update_client_group
+    request.client_id, request.country_ids, request.domain_ids
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3799, in replicate_client_countries_and_domains
+    country_rows = self.get_data(self.tblCountries, columns, condition)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 174, in get_data
+    return self.select_all(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 144, in select_all
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'INT), country_name, is_active FROM tbl_countries  WHERE country_id in (1,2)' at line 1")
+
+2016-03-21 13:26:35,485 - knowledge_logger - main.py-handle-api : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') as INTEGER, country_name, is_active FROM tbl_countries  WHERE country_id in (1' at line 1")
+2016-03-21 13:26:35,486 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 167, in update_client_group
+    request.client_id, request.country_ids, request.domain_ids
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3799, in replicate_client_countries_and_domains
+    country_rows = self.get_data(self.tblCountries, columns, condition)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 174, in get_data
+    return self.select_all(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 144, in select_all
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') as INTEGER, country_name, is_active FROM tbl_countries  WHERE country_id in (1' at line 1")
+
+2016-03-21 13:29:41,173 - knowledge_logger - main.py-handle-api : (1054, "Unknown column '1L' in 'field list'")
+2016-03-21 13:29:41,173 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 167, in update_client_group
+    request.client_id, request.country_ids, request.domain_ids
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3818, in replicate_client_countries_and_domains
+    cursor.execute(insert_countries_query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+OperationalError: (1054, "Unknown column '1L' in 'field list'")
+
+2016-03-21 13:35:55,016 - knowledge_logger - main.py-handle-api : (1062, "Duplicate entry '1' for key 'PRIMARY'")
+2016-03-21 13:35:55,016 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 167, in update_client_group
+    request.client_id, request.country_ids, request.domain_ids
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3821, in replicate_client_countries_and_domains
+    cursor.execute(insert_countries_query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+IntegrityError: (1062, "Duplicate entry '1' for key 'PRIMARY'")
+
+2016-03-21 13:37:04,985 - knowledge_logger - main.py-handle-api : (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`compfie_abc_1`.`tbl_client_configurations`, CONSTRAINT `fk_client_configurations_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`))')
+2016-03-21 13:37:04,985 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 167, in update_client_group
+    request.client_id, request.country_ids, request.domain_ids
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3797, in replicate_client_countries_and_domains
+    cursor.execute(delete_countries_query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+IntegrityError: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`compfie_abc_1`.`tbl_client_configurations`, CONSTRAINT `fk_client_configurations_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`))')
+
+2016-03-21 13:39:03,376 - knowledge_logger - main.py-handle-api : (1054, "Unknown column 'client_id' in 'where clause'")
+2016-03-21 13:39:03,377 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 162, in update_client_group
+    session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3722, in save_date_configurations
+    if self.is_combination_already_exists(country_id, domain_id, client_id):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3751, in is_combination_already_exists
+    rows = self.get_data(self.tblClientConfigurations, columns, condition)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 174, in get_data
+    return self.select_all(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 144, in select_all
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+OperationalError: (1054, "Unknown column 'client_id' in 'where clause'")
+
+2016-03-21 13:43:09,196 - knowledge_logger - main.py-handle-api : (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`compfie_abc_1`.`tbl_units`, CONSTRAINT `fk_units_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`))')
+2016-03-21 13:43:09,196 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 165, in update_client_group
+    request.client_id, request.country_ids, request.domain_ids
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3797, in replicate_client_countries_and_domains
+    cursor.execute(delete_countries_query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+IntegrityError: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`compfie_abc_1`.`tbl_units`, CONSTRAINT `fk_units_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`))')
+
+2016-03-21 13:45:21,488 - knowledge_logger - main.py-handle-api : (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`compfie_abc_1`.`tbl_units`, CONSTRAINT `fk_units_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`))')
+2016-03-21 13:45:21,489 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
+    return update_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 165, in update_client_group
+    request.client_id, request.country_ids, request.domain_ids
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 3797, in replicate_client_countries_and_domains
+    cursor.execute(delete_countries_query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+IntegrityError: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`compfie_abc_1`.`tbl_units`, CONSTRAINT `fk_units_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`))')
 

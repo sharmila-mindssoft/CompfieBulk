@@ -38,11 +38,11 @@ from email.MIMEText import MIMEText
 
 mysqlHost = "localhost"
 mysqlUser = "root"
-mysqlPassword = "Msft!@#$%^"
+mysqlPassword = "123456"
 mysqlDatabase = "compfie_knowledge"
 mysqlPort = 3306
 
-CLIENT_URL = "http://52.11.242.90:8082/"
+CLIENT_URL = "http://127.0.0.1:8082/"
 
 
 class EmailNotification(object):
@@ -170,6 +170,7 @@ def db_connection(host, user, password, db, port):
 
 def get_client_db_list():
     print "begin fetching client info"
+    print "{},{},{},{},{}".format(mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase, mysqlPort)
     con = db_connection(mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase, mysqlPort)
     cursor = con.cursor()
     query = "SELECT T1.client_id, T1.database_ip, T1.database_port, \
@@ -317,6 +318,7 @@ def calculate_next_due_date(
     frequency, statutory_dates, repeat_type,
     repeat_every, old_due_date
 ):
+    print "inside calculate_next_due_date"
     # frequency 1: One Time, 2 : Periodical, 3 : Review, 4: On occurance
     #  repeat_type 1 : Days, 2 : Months, 3 : years
     repeat_every = int(repeat_every)
@@ -382,7 +384,8 @@ def calculate_next_due_date(
 
                 return (new_due_date, trigger_before_days)
     else :
-        return old_due_date
+        print "inside else returning old due date : {}".format(old_due_date)
+        return old_due_date, trigger_before_days
 
 def get_new_id(db, table_name, column_name):
     query = "SELECT MAX(%s)+1 FROM %s" % (column_name, table_name)
@@ -398,16 +401,22 @@ def save_in_compliance_history(
     db, unit_id, compliance_id, start_date, due_date, next_due_date,
     assignee, concurrence, approve
 ):
+    if concurrence is None:
+        concurrence = "NULL"
+
     print "new task saved in history (unit_id, compliance_id, start_date) %s, %s, %s" % (unit_id, compliance_id, start_date)
     compliance_history_id = get_new_id(db, "tbl_compliance_history", "compliance_history_id")
-    query = "INSERT INTO tbl_compliance_history (compliance_history_id, unit_id, compliance_id, \
-            start_date, due_date, next_due_date, completed_by, concurred_by, approved_by) \
-        VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s) " % (
-                compliance_history_id, unit_id, compliance_id,
-                start_date, due_date, next_due_date, assignee, concurrence, approve
-            )
-    # print
-    # print query
+    columns = "compliance_history_id, unit_id, compliance_id, \
+            start_date, due_date, next_due_date, completed_by, approved_by, concurred_by"
+    values = (
+        columns, compliance_history_id, unit_id, compliance_id,
+        start_date, due_date, next_due_date, assignee,  approve, concurrence
+    )
+    query = "INSERT INTO tbl_compliance_history (%s) \
+        VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s) " % values    
+    
+    print
+    print query
     cursor = db.cursor()
     cursor.execute(query)
     cursor.close()
@@ -437,6 +446,8 @@ def save_in_notification(
 
     notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
     created_on = datetime.datetime.now()
+    if concurrence_person is None:
+        concurrence_person = "NULL"
     query = "INSERT INTO tbl_notifications_log \
         (notification_id, country_id, domain_id, business_group_id, \
         legal_entity_id, division_id, unit_id, compliance_id,\
@@ -487,10 +498,14 @@ def start_new_task(db, client_id, current_date):
             cursor.execute(query)
         else:
             print "entering into else"
+            print d["repeats_every"]
+            print d["due_date"]
+            print d
             next_due_date, trigger_before = calculate_next_due_date(
                 d["frequency"], d["statutory_dates"], d["repeat_type_id"],
                 d["repeats_every"], d["due_date"]
             )
+            print next_due_date, trigger_before
             print next_due_date, d["frequency"], d["statutory_dates"], d["repeat_type_id"]
             compliance_history_id = save_in_compliance_history(
                 db, int(d["unit_id"]), int(d["compliance_id"]), current_date,

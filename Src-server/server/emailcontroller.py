@@ -194,13 +194,17 @@ class EmailHandler(Email):
     def notify_task(
         self, compliance_history_id, when
     ):
-        assignee_id, concurrence_id, approver_id, compliance_name,  user_ids, due_date = db.get_compliance_history_details(
+        assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = db.get_compliance_history_details(
             compliance_history_id
         )
+        user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
         receiver, employee_name = db.get_user_email_name(user_ids)
         cc = receiver.split(",")[2]
-        if concurrence_id is not None or concurrence_id != 0:
-            cc = receiver.split(",")[1]
+        if concurrence_id is not None or concurrence_id != 0 and db.is_two_levels_of_approval():
+            cc += ","+receiver.split(",")[1]
+        assignee_name = employee_name.split(",")[0]
+        if document_name is not None:
+            compliance_name = "%s - %s" % (document_name, compliance_name)
         if when == "Start":
             subject = "Task Started"
             message = "Dear %s,  Compliance %s has started. Due date for the compliance is %s" % (
@@ -219,14 +223,17 @@ class EmailHandler(Email):
         self.send_email(receiver, subject, message, cc)
 
     def notify_reassigned(self, receiver, reassigned_from, assignee, compliance_name, due_date):
-        assignee_id, concurrence_id, approver_id, compliance_name,  user_ids, due_date = db.get_compliance_history_details(
+        assignee_id, concurrence_id, approver_id,  compliance_name, document_name,  due_date = db.get_compliance_history_details(
             compliance_history_id
         )
+        user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
         receiver, employee_name = db.get_user_email_name(user_ids)
         cc = receiver.split(",")[2]
         if concurrence_id is not None or concurrence_id != 0:
-            cc += receiver.split(",")[1]
-
+            cc += ","+receiver.split(",")[1]
+        if document_name is not None:
+            compliance_name = "%s - %s" % (document_name, compliance_name)
+        assignee_name = employee_name.split(",")[0]
         subject = "Task Started"
         message = "Dear %s,  compliance %s is reassigned to you from %s. Due date for the compliance is %s" % (
         	assignee_name, compliance_name, reassigned_from, due_date
@@ -246,7 +253,7 @@ class EmailHandler(Email):
     def notify_task_rejected(
         self, db, compliance_history_id, rejected_reason, reject_type
     ):
-        assignee_id, concurrence_id, approver_id, compliance_name, due_date = db.get_compliance_history_details(
+        assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = db.get_compliance_history_details(
             compliance_history_id
         )
         user_ids = assignee_id
@@ -255,7 +262,8 @@ class EmailHandler(Email):
                 user_ids = "%d,%d" % (user_ids, concurrence_id)
         receiver, employee_name = db.get_user_email_name(user_ids)
         assignee = employee_name.split(",")[0]
-
+        if document_name is not None:
+            compliance_name = "%s - %s" % (document_name, compliance_name)
         subject = "Task Rejected"
         message = "Dear %s, Compliance %s has been rejected. The reason is %s." % (
             assignee, compliance_name, rejected_reason
@@ -278,16 +286,22 @@ class EmailHandler(Email):
     def notify_task_completed(
         self, db, compliance_history_id
     ):
-        assignee_id, concurrence_id, approver_id, compliance_name, due_date = db.get_compliance_history_details(
+        assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = db.get_compliance_history_details(
             compliance_history_id
         )
         user_ids = "%s, %s" % (assignee_id, approver_id)
         action = "approve"
-        if db.is_two_levels_of_approval() and concurrence_id != 0:
+        if db.is_two_levels_of_approval() and concurrence_id is not None:
             user_ids = "%s, %s, %s" % (assignee_id, concurrence_id, approver_id)
             action = "concur"
+        if document_name is not None:
+            compliance_name = "%s - %s" % (document_name, compliance_name)
+
         receiver, employee_name = db.get_user_email_name(user_ids)
-        assignee = employee_name.split(",")[0]
+        user_names = employee_name.split(",")
+        assignee = user_names[len(user_names)-1]
+        approval_or_concurrence_person = user_names[len(user_names)-2]
+
         cc = "%s" % (receiver.split(",")[0])
         subject = "Task Completed"
         message = '''
@@ -295,19 +309,21 @@ class EmailHandler(Email):
         <br>
         %s has completed the task %s successfully. Review and %s
         ''' % (
-            employee_name.split(',')[1], assignee , compliance_name, action
+            approval_or_concurrence_person, assignee ,compliance_name, action
         )
         self.send_email(receiver.split(',')[1], subject, message, cc)
 
     def notify_task_approved(
         self, db, compliance_history_id, approval_status
     ):
-        assignee_id, concurrence_id, approver_id, compliance_name, due_date = db.get_compliance_history_details(
+        assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = db.get_compliance_history_details(
             compliance_history_id
         )
         user_ids = "%s, %s" % (assignee_id, approver_id)
         if db.is_two_levels_of_approval() and concurrence_id != 0:
             user_ids = "%s, %s, %s" % (assignee_id, concurrence_id, approver_id)
+        if document_name is not None:
+            compliance_name = "%s - %s" % (document_name, compliance_name)
         receiver, employee_name = db.get_user_email_name(user_ids)
         assignee = employee_name.split(",")[0]
         subject = "Task %s" % approval_status

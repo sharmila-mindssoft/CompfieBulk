@@ -170,7 +170,6 @@ class Database(object) :
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        print query
         return self.select_all(query)
 
     def get_data_from_multiple_tables(
@@ -196,7 +195,6 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
-        print query
         return self.select_all(query)
 
     def insert(self, table, columns, values, client_id=None) :
@@ -349,10 +347,12 @@ class Database(object) :
         datetime_in_string = datetime_val.strftime("%d-%b-%Y %H:%M:%S")
         return datetime_in_string
 
-    def get_client_db_info(self):
+    def get_client_db_info(self, client_id=None):
         columns = "database_ip, client_id, "
         columns += " database_username, database_password, database_name"
         condition = "1"
+        if client_id is not None:
+            condition = "client_id = '%d'" % client_id
         return self.get_data("tbl_client_database", columns, condition)
 
     def get_new_id(self, field , table_name, client_id=None) :
@@ -441,7 +441,7 @@ class Database(object) :
         self.execute(query)
 
         action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
-        self.save_activity(user_id, 1, action)
+        self.save_activity(user_id, 0, action)
 
         return session_id
 
@@ -475,7 +475,7 @@ class Database(object) :
             column = "count(*)"
             condition = "user_id = '%d' and is_active = 1" % user_id
             rows = self.get_data(self.tblUsers, column, condition)
-            if rows[0][0] > 0:
+            if rows[0][0] > 0 or user_id == 0:
                 return user_id
             else:
                 return None
@@ -2386,23 +2386,31 @@ class KnowledgeDatabase(Database):
         compliances = request_frame.compliances
         country_id = request_frame.country_id
         domain_id = request_frame.domain_id
+        mapping = request_frame.mappings
         compliance_names = []
-        for c in compliances :
-            compliance_name = c.compliance_task
-            compliance_id = c.compliance_id
-            q = "SELECT count(t1.compliance_task) FROM tbl_compliances t1 INNER JOIN \
-                tbl_statutory_mappings t2 on t1.statutory_mapping_id = t2.statutory_mapping_id \
-                WHERE t2.country_id = %s AND t2.domain_id = %s AND \
-                LOWER(t1.compliance_task) = LOWER('%s')" % (
-                    country_id, domain_id, compliance_name
-                )
-            if compliance_id is not None :
-                q = q + " AND t1.compliance_id != %s" % (compliance_id)
-            row = self.select_one(q)
-            if row[0] > 0 :
-                compliance_names.append(compliance_name)
+        for m in mapping :
+            statutory_mappings = m
+            for c in compliances :
+                compliance_name = c.compliance_task
+                compliance_id = c.compliance_id
+                statutory_provision = c.statutory_provision
+                q = "SELECT count(t1.compliance_task) FROM tbl_compliances t1 INNER JOIN \
+                    tbl_statutory_mappings t2 on t1.statutory_mapping_id = t2.statutory_mapping_id \
+                    WHERE t2.country_id = %s AND t2.domain_id = %s AND \
+                    LOWER(t1.compliance_task) = LOWER('%s') \
+                    AND LOWER (t1.statutory_provision) = LOWER('%s') \
+                    AND LOWER(t2.statutory_mapping) LIKE LOWER('%s')" % (
+                        country_id, domain_id, compliance_name,
+                        statutory_provision,
+                        str("%" + statutory_mappings + "%")
+                    )
+                if compliance_id is not None :
+                    q = q + " AND t1.compliance_id != %s" % (compliance_id)
+                row = self.select_one(q)
+                if row[0] > 0 :
+                    compliance_names.append(compliance_name)
         if len(compliance_names) > 0 :
-            return compliance_names
+            return list(set(compliance_names))
         else :
             return False
 
@@ -3109,7 +3117,7 @@ class KnowledgeDatabase(Database):
         #     data = self.get_statutory_by_id(int(sid))
         #     provision.append(data["parent_names"])
         # mappings = ','.join(str(x) for x in provision)
-        provision = old_record["statutory_mapping"]
+        mappings = old_record["statutory_mapping"]
         geo_map = []
         for gid in old_record["geography_ids"][:-1].split(',') :
             data = self.get_geography_by_id(int(gid))
@@ -3776,6 +3784,52 @@ class KnowledgeDatabase(Database):
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblClientDomains, columns, values_list)
 
+    def replicate_client_countries_and_domains(self, client_id, country_ids, domain_ids):
+        rows = self.get_client_db_info(client_id)
+
+        ip = rows[0][0]
+        username = rows[0][2]
+        password = rows[0][3]
+        dbname = rows[0][4]
+
+        conn = self._db_connect(ip, username, password, dbname)
+        cursor = conn.cursor()
+
+        delete_countries_query = "delete from tbl_countries"
+        delete_domains_query = "delete from tbl_domains"
+
+        cursor.execute(delete_countries_query)
+        cursor.execute(delete_domains_query)
+
+        columns = "CAST(country_id as UNSIGNED), country_name, is_active"
+        condition = "country_id in (%s)" %','.join(str(x) for x in country_ids)
+        country_rows = self.get_data(self.tblCountries, columns, condition)
+
+        country_values_list = []
+        for country in country_rows:
+            country_values_tuple = (int(country[0]), country[1], country[2])
+            country_values_list.append(country_values_tuple)
+
+        columns = "CAST(domain_id as UNSIGNED), domain_name, is_active"
+        condition = "domain_id in (%s)" %','.join(str(x) for x in domain_ids)
+        domain_rows = self.get_data(self.tblDomains, columns, condition)
+
+        domain_values_list = []
+        for domain in domain_rows:
+            domain_values_tuple = (int(domain[0]), domain[1], domain[2])
+            domain_values_list.append(domain_values_tuple)
+
+        insert_countries_query = '''INSERT INTO tbl_countries \
+        VALUES %s''' % ','.join(str(x) for x in country_values_list)
+
+        insert_domains_query = '''INSERT INTO tbl_domains \
+        VALUES %s''' % ','.join(str(x) for x in domain_values_list)
+
+        cursor.execute(insert_countries_query)
+        cursor.execute(insert_domains_query)
+        conn.commit()
+        return True
+
     def _mysql_server_connect(self, host, username, password):
         return mysql.connect(host, username, password)
 
@@ -3817,17 +3871,18 @@ class KnowledgeDatabase(Database):
         file_obj.close()
         sql_commands = sql_file.split(';')
         size = len(sql_commands)
-        for index,command in enumerate(sql_commands):
+        for index, command in enumerate(sql_commands):
             if (index < size-1):
                 client_db_cursor.execute(command)
             else:
                 break
         encrypted_password, password = self.generate_and_return_password()
-        query = "insert into tbl_admin (username, password) values ('%s', '%s')" %(
+        query = "insert into tbl_admin (username, password) values ('%s', '%s')" % (
             email_id, encrypted_password)
         client_db_cursor.execute(query)
         self._save_client_countries(country_ids, client_db_cursor)
         self._save_client_domains(domain_ids, client_db_cursor)
+        self._create_trigger(client_db_cursor)
         client_db_con.commit()
         return password
 
@@ -3855,6 +3910,24 @@ class KnowledgeDatabase(Database):
             )
             cursor.execute(q)
 
+    def _create_trigger(self, cursor):
+        q = "CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON `tbl_statutory_notifications_units` \
+            FOR EACH ROW BEGIN \
+                INSERT INTO tbl_statutory_notification_status ( \
+                statutory_notification_id, \
+                user_id, read_status) \
+                SELECT NEW.statutory_notification_id, t1.user_id, 0 \
+                FROM tbl_user_units t1 where t1.unit_id = NEW.unit_id; \
+                \
+                INSERT INTO tbl_statutory_notification_status ( \
+                    statutory_notification_id, \
+                    user_id, read_status \
+                ) \
+                SELECT NEW.statutory_notification_id, t1.admin_id, 0 FROM \
+                tbl_admin t1 where t1.admin_id != 0; \
+            END; "
+
+        cursor.execute(q)
 
     def _get_server_details(self):
         columns = "ip, server_username,server_password, port"
@@ -4588,7 +4661,6 @@ class KnowledgeDatabase(Database):
         if unit_id is not None :
             return self.return_unassign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, unit_id)
 
-        print "NEw compliance"
         q = "select parent_ids from tbl_geographies where geography_id = %s" % (int(geography_id))
         row = self.select_one(q)
         if row :
@@ -5144,10 +5216,6 @@ class KnowledgeDatabase(Database):
                     (str(tuple(parent_ids))),
                     domain_id, unit_id
                 )
-
-        print
-        print query
-
         rows = self.select_all(query)
         columns = [
             "compliance_id", "compliance_task",
@@ -5323,7 +5391,6 @@ class KnowledgeDatabase(Database):
                 unit_address = "%s, %s, %s" % (
                     data["address"], ', '.join(ordered), data["postal_code"]
                 )
-                print client_statutory_id
                 statutories = self.return_assigned_compliances_by_id(client_statutory_id, level_1_statutory_id)
                 unit_statutories = technoreports.UNIT_WISE_ASSIGNED_STATUTORIES(
                     data["unit_id"],
@@ -5336,7 +5403,6 @@ class KnowledgeDatabase(Database):
                     statutories
                 )
             else :
-                print client_statutory_id , "new"
                 statutories = unit_statutories.assigned_statutories
                 new_stautory = self.return_assigned_compliances_by_id(client_statutory_id)
                 for new_s in new_stautory :
@@ -5622,6 +5688,12 @@ class KnowledgeDatabase(Database):
                 where_condition += " And tu.division_id = '%d'" % row[2]
             if unit_id is not None:
                 where_condition += " AND tu.unit_id = '%d'" % unit_id
+            if domain_ids is not None:
+                for domain_id in domain_ids:
+                    where_condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
+                                "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
+                                "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
+                                " or domain_ids LIKE '"+str(domain_id)+"') "
             result_rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type,
             join_conditions, where_condition)
             units = []
