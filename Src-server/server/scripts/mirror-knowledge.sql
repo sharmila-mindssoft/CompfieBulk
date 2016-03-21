@@ -539,7 +539,6 @@ CREATE TABLE `tbl_statutory_notifications_units` (
   `unit_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
 DROP TABLE IF EXISTS `tbl_activity_log`;
 CREATE TABLE `tbl_activity_log` (
   `activity_log_id` int(11) NOT NULL,

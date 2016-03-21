@@ -64,6 +64,14 @@ def send_client_credentials(
         return True
 
 
+def is_logo_in_image_format(logo):
+    name = logo.file_name.split('.')[0]
+    exten = logo.file_name.split('.')[1]
+    if exten in ["png", "jpg", "jpeg",]:
+        return True
+    else:
+        return False
+
 def save_client_group(db, request, session_user):
     session_user = int(session_user)
     client_id = db.generate_new_client_id()
@@ -71,6 +79,8 @@ def save_client_group(db, request, session_user):
         return technomasters.GroupNameAlreadyExists()
     elif db.is_duplicate_short_name(request.short_name, client_id):
         return technomasters.ShortNameAlreadyExists()
+    elif not is_logo_in_image_format(request.logo):
+        return technomasters.NotAnImageFile()
     else:
         group_name = re.sub('[^a-zA-Z0-9 \n\.]', '', request.group_name)
         group_name = group_name.replace(" ", "")
@@ -137,23 +147,28 @@ def save_client_group(db, request, session_user):
             return technomasters.ClientCreationFailed(error="Failed to create client")
 
 def update_client_group(db, request, session_user):
-	session_user = int(session_user)
-	if db.is_invalid_id(db.tblClientGroups, "client_id", request.client_id) :
-		return technomasters.InvalidClientId()
-	elif db.is_duplicate_group_name(request.group_name, request.client_id):
-		return technomasters.GroupNameAlreadyExists()
-	elif db.is_deactivated_existing_country(request.client_id, request.country_ids):
-		return technomasters.CannotDeactivateCountry()
-	elif db.is_deactivated_existing_domain(request.client_id, request.domain_ids):
-		return technomasters.CannotDeactivateDomain()
-	else:
-		db.update_client_group(request, session_user)
-		db.save_date_configurations(request.client_id, request.date_configurations,
-		 session_user)
-		db.save_client_countries(request.client_id, request.country_ids)
-		db.save_client_domains(request.client_id, request.domain_ids)
-		db.save_incharge_persons(request, request.client_id)
-		return technomasters.UpdateClientSuccess()
+    session_user = int(session_user)
+    if db.is_invalid_id(db.tblClientGroups, "client_id", request.client_id) :
+        return technomasters.InvalidClientId()
+    elif db.is_duplicate_group_name(request.group_name, request.client_id):
+        return technomasters.GroupNameAlreadyExists()
+    elif db.is_deactivated_existing_country(request.client_id, request.country_ids):
+        return technomasters.CannotDeactivateCountry()
+    elif db.is_deactivated_existing_domain(request.client_id, request.domain_ids):
+        return technomasters.CannotDeactivateDomain()
+    else:
+        db.update_client_group(request, session_user)
+        db.save_client_countries(request.client_id, request.country_ids)
+        db.save_client_domains(request.client_id, request.domain_ids)
+        db.save_incharge_persons(request, request.client_id)
+        db.replicate_client_countries_and_domains(
+            request.client_id, request.country_ids, request.domain_ids
+        )
+        db.save_date_configurations(
+            request.client_id, request.date_configurations,
+            session_user
+        )
+        return technomasters.UpdateClientSuccess()
 
 
 def change_client_group_status(db, request, session_user):

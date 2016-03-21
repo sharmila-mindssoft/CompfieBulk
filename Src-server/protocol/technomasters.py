@@ -1032,6 +1032,19 @@ class ShortNameAlreadyExists(Response):
         return {
         }
 
+class NotAnImageFile(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return NotAnImageFile()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class BusinessGroupNameAlreadyExists(Response):
     def __init__(self):
         pass
