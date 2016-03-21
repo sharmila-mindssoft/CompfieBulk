@@ -196,7 +196,6 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
-        print query
         return self.select_all(query)
 
     def insert(self, table, columns, values, client_id=None) :
@@ -441,7 +440,7 @@ class Database(object) :
         self.execute(query)
 
         action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
-        self.save_activity(user_id, 1, action)
+        self.save_activity(user_id, 0, action)
 
         return session_id
 
@@ -4607,7 +4606,6 @@ class KnowledgeDatabase(Database):
         if unit_id is not None :
             return self.return_unassign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, unit_id)
 
-        print "NEw compliance"
         q = "select parent_ids from tbl_geographies where geography_id = %s" % (int(geography_id))
         row = self.select_one(q)
         if row :
@@ -5163,10 +5161,6 @@ class KnowledgeDatabase(Database):
                     (str(tuple(parent_ids))),
                     domain_id, unit_id
                 )
-
-        print
-        print query
-
         rows = self.select_all(query)
         columns = [
             "compliance_id", "compliance_task",
@@ -5342,7 +5336,6 @@ class KnowledgeDatabase(Database):
                 unit_address = "%s, %s, %s" % (
                     data["address"], ', '.join(ordered), data["postal_code"]
                 )
-                print client_statutory_id
                 statutories = self.return_assigned_compliances_by_id(client_statutory_id, level_1_statutory_id)
                 unit_statutories = technoreports.UNIT_WISE_ASSIGNED_STATUTORIES(
                     data["unit_id"],
@@ -5355,7 +5348,6 @@ class KnowledgeDatabase(Database):
                     statutories
                 )
             else :
-                print client_statutory_id , "new"
                 statutories = unit_statutories.assigned_statutories
                 new_stautory = self.return_assigned_compliances_by_id(client_statutory_id)
                 for new_s in new_stautory :
