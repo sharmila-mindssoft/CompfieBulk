@@ -4,6 +4,9 @@ var countriesList;
 var dateconfigList;
 var uploadFile = [];
 var logo_file;
+var countriesListequal = null;
+var clientcountriesList = null;
+var clientdomainList = null;
 
 function clearMessage() {
     $(".error-message").hide();
@@ -142,13 +145,11 @@ $("#short-name").on('keyup', function(){
 function dataconfigurationvalidate(){
     var flag = 0;
     $(".tbody-dateconfiguration-list .tl-from").each(function(){
-        console.log($(this).val());
         if ($(this).val() == "") {
             flag = 1;
         }
     });
     $(".tbody-dateconfiguration-list .tl-to").each(function(){
-        console.log($(this).val());
         if ($(this).val() == "") {
             flag = 1;
         }
@@ -268,7 +269,6 @@ $("#btn-clientgroup-submit").click(function(){
         var arrayinchargePerson = [];
         for(var k = 0; k < arrayinchargePersonVal.length; k++) { arrayinchargePerson[k] = parseInt(arrayinchargePersonVal[k]); }
         inchargePersonVal = arrayinchargePerson;
-        console.log(logo_file);
         if($("#upload-logo").val() == ''){
             displayMessage('Logo Required');
             return false;
@@ -280,7 +280,6 @@ $("#btn-clientgroup-submit").click(function(){
             initialize();
         }
         function onFailure(error){
-            console.log("inside onFailure")
             hideLoader();
             if(error == 'GroupNameAlreadyExists'){
                 displayMessage('Group Name Already Exists');
@@ -407,11 +406,15 @@ function clientgroup_edit(clientGroupId){
     $("#clientgroup-add").show();
     $("#clientgroup-id").val(clientGroupId);
     function onSuccess(data){
+        countriesList = '';
+        clientcountriesList = '';
+        countriesListequal = '';
         userList = data["users"];
         domainsList = data["domains"];
         countriesList = data["countries"];
         clientcountriesList = data["client_countries"];
         clientdomainList = data["client_domains"];
+        countriesListequal = data["countries"];
         loadFormListUpdate(data['client_list'], clientGroupId);
     }
     function onFailure(error){
@@ -494,7 +497,7 @@ function dateConfigurations(dateconfigList){
                 var tableRow = $('#templates .table-dconfig-list .table-dconfig-countries-row');
                 var clone = tableRow.clone();
                 $('.inputCountry', clone).val(arrayCountries[ccount]);
-                $('.dconfig-country-name', clone).text(getClientCountriesName(arrayCountries[ccount]));
+                $('.dconfig-country-name', clone).text(getClientCountriesNameunion(arrayCountries[ccount]));
                 $('.dconfig-country-name', clone).addClass("heading");
                 $('.tbody-dateconfiguration-list').append(clone);
 
@@ -605,9 +608,8 @@ function loadauto() {
     if($("#clientgroup-id").val() == ''){
         var domains = domainsList;    
     }
-    else{
-        var domainsforuser = domainsList;
-        var domains = clientdomainList;    
+    if($("#clientgroup-id").val() != ''){
+        var domains = domainunionclientdomains();    
     } 
     
     $('#ulist').empty();
@@ -619,23 +621,32 @@ function loadauto() {
                 selectdomainstatus = 'checked';
             }
         }
-        var domainId=parseInt(domains[i]["domain_id"]);
-        var domainName=domains[i]["domain_name"];
+        var domainId = parseInt(domains[i]["domain_id"]);
+        var domainName = domains[i]["domain_name"];
 
-        if(checkdomain(domainId) == 1){
+        var ccdd =checkclientdomain(domainId);
+        var cdd = checkdomain(domainId);
+
+        if(ccdd == 1 && cdd == 1){
             if(selectdomainstatus == 'checked'){
-                str += '<li id = "'+domainId+'" class = "active_selectbox" onclick = "activate(this)" >'+domainName+'</li> ';
+                str += '<li id = "'+domainId+'" class="active_selectbox" onclick="activate(this)" >'+domainName+'</li> ';
             }else{
-                str += '<li id = "'+domainId+'" onclick = "activate(this)" >'+domainName+'</li> ';
+               str += '<li id="'+domainId+'" onclick="activate(this)" >'+domainName+'</li> ';
+            }    
+        }
+        else if(ccdd != 1 && cdd == 1){
+            str += '<li id="'+domainId+'" onclick="activate(this)" >'+domainName+'</li> ';
+            
+        }
+        else if(ccdd == 1 && cdd != 1){
+            if(selectdomainstatus == 'checked'){
+                str += '<li id="'+domainId+'" class="active_selectbox deactivate" >'+domainName+'</li> ';
+            }
+            else{
+                str += '<li id="'+domainId+'" class="deactivate" >'+domainName+'</li> ';   
             }
         }
-        else{
-            if(selectdomainstatus == 'checked'){
-                str += '<li id = "'+domainId+'" class = "active_selectbox deactivate">'+domainName+'</li> ';
-            }else{
-                //str += '<li id = "'+domainId+'" class = "deactivate">'+domainName+'</li> ';
-            }
-        }
+     
     }
   $('#ulist').append(str);
   $("#domainselected").val(editdomainval.length+" Selected")
@@ -672,18 +683,173 @@ function activate(element){
     }
 
 }
+function domainunionclientdomains(){
+    var d = domainsList;
+    var cd = clientdomainList;
+    var result = {};
 
-function checkcountry(countryid){
-    var returnval;
-    $.each(countriesList, function(key, value){
+    for(var key in d) result[key] = d[key];
+    for(var key in cd) result[key] = cd[key];
+
+    var finalObj = $.extend(result, d, cd);
+    return finalObj;
+}
+function checkingcountry(countryid){
+    var returnval = null;
+    $.each(countriesListequal, function(key, value){
         if(value['country_id'] == countryid){
             returnval = 1;
         }
     });
     return returnval;
 }
+function getClientCountriesNameunion(countryid){
+    var c = '';
+    var cc = '';
+    var ccnew = '';
+    var editcountryval = [];
+    var countryname;
+
+    c = countriesList;
+    cc = clientcountriesList;
+    
+    if($("#country").val() != ''){
+        editcountryval = $("#country").val().split(",");
+    }
+
+    var result = {};
+    ccnew = [];
+    var arrayCountries = [];
+    for(var i = 0; i < editcountryval.length; i++){ arrayCountries[i] = parseInt(editcountryval[i]); }
+    
+    $.each(cc, function(key){
+        if($.inArray(cc[key]['country_id'], arrayCountries) != -1){
+            ccnew[key] = cc[key];
+        }
+    });
+    var finalObj1 = [];
+    
+    finalObj1 = c.concat(ccnew);
+    var dupes = {};
+    var finalObj = [];
+
+    $.each(finalObj1, function(i, el) {
+        if (!dupes[el.country_id]) {
+            dupes[el.country_id] = true;
+            finalObj.push(el);
+        }
+    });
+    $.each(finalObj, function(key, val){
+        if(val['country_id'] == countryid){
+            countryname = val['country_name'];
+        }
+    });
+    return countryname;
+}
+
+function countryunionclientcountry(){
+    var c = '';
+    var cc = '';
+    var ccnew = '';
+    var editcountryval = [];
+
+    c = countriesList;
+    cc = clientcountriesList;
+    
+    if($("#country").val() != ''){
+        editcountryval = $("#country").val().split(",");
+    }
+
+    var result = {};
+    ccnew = [];
+    var arrayCountries = [];
+    for(var i = 0; i < editcountryval.length; i++){ arrayCountries[i] = parseInt(editcountryval[i]); }
+    
+    $.each(cc, function(key){
+        if($.inArray(cc[key]['country_id'], arrayCountries) != -1){
+            ccnew[key] = cc[key];
+        }
+    });
+    var finalObj1 = [];
+    
+    finalObj1 = c.concat(ccnew);
+    var dupes = {};
+    var finalObj = [];
+
+    $.each(finalObj1, function(i, el) {
+        if (!dupes[el.country_id]) {
+            dupes[el.country_id] = true;
+            finalObj.push(el);
+        }
+    });
+    return finalObj;
+}
+function domainunionclientdomain(){
+    var d = '';
+    var cd = '';
+    var cdnew = '';
+    var editdomainval = [];
+
+    d = domainsList;
+    cd = clientdomainList;
+    
+    if($("#domains").val() != ''){
+        editdomainval = $("#domains").val().split(",");
+    }
+
+    var result = {};
+    cdnew = [];
+    var arrayDomains = [];
+    for(var i = 0; i < editdomainval.length; i++){ arrayDomains[i] = parseInt(editdomainval[i]); }
+    
+    $.each(cd, function(key){
+        if($.inArray(cd[key]['domain_id'], arrayDomains) != -1){
+            cdnew[key] = cd[key];
+        }
+    });
+    var finalObj1 = [];
+    
+    finalObj1 = d.concat(cdnew);
+    
+    var dupes = {};
+    var finalObj = [];
+
+    $.each(finalObj1, function(i, el) {
+        if (!dupes[el.domain_id]) {
+            dupes[el.domain_id] = true;
+            finalObj.push(el);
+        }
+    });
+    return finalObj;
+}
+
+function checkclientcountry(countryid){
+    var returnval = null;
+    var arrayCountries = [];
+    var editcountryval;
+    editcountryval = $("#country").val().split(",");
+    for(var i = 0; i < editcountryval.length; i++){ arrayCountries[i] = parseInt(editcountryval[i]); }
+    if($.inArray(countryid, arrayCountries) != -1){
+        returnval = 1;        
+    }
+    return returnval;
+}
+
+
+function checkclientdomain(domainid){
+    var returnval = null;
+    var arrayDomains = [];
+    var editdomainval;
+    editdomainval = $("#domain").val().split(",");
+    for(var i = 0; i < editdomainval.length; i++){ arrayDomains[i] = parseInt(editdomainval[i]); }
+    if($.inArray(domainid, arrayDomains) != -1){
+        returnval = 1;        
+    }
+    return returnval;
+}
+
 function checkdomain(domainid){
-    var returnval;
+    var returnval = null;
     $.each(domainsList, function(key, value){
         if(value['domain_id'] == domainid){
             returnval = 1;
@@ -691,8 +857,28 @@ function checkdomain(domainid){
     });
     return returnval;
 }
+// function unioncountryids(){
+//     var c = [];
+//     var cc = [];
+//     var concatArraysUniqueWithSort = function (thisArray, otherArray) {
+//         var newArray = thisArray.concat(otherArray).sort(function (a, b) {
+//             return a > b ? 1 : a < b ? -1 : 0;
+//         });
+
+//         return newArray.filter(function (item, index) {
+//             return newArray.indexOf(item) === index;
+//         });
+//     };
+//     $.each(clientcountriesList, function(key, value){
+//         cc.push(value['country_id']);
+//     });
+//     $.each(countriesList, function(key, value){
+//         c.push(value['country_id']);
+//     });
+//     return concatArraysUniqueWithSort(c, cc);
+// }
+
 function loadautocountry() {
-    console.log("inside loadautocountry");
     document.getElementById('selectboxview-country').style.display = 'block';
     var editcountryval = [];
     if($("#country").val() != ''){
@@ -701,42 +887,61 @@ function loadautocountry() {
 
     if($("#clientgroup-id").val().trim() == ""){
         var countries = countriesList; 
+        $('#ulist-country').empty();
+
+        var str = '';
+        for(var i in countries){
+            var countryId = parseInt(countries[i]["country_id"]);
+            var countryName = countries[i]["country_name"];
+            
+            str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';
+            
+        }
+
     }
     if($("#clientgroup-id").val().trim() != ""){
-        var countriesforuser = countriesList;
-        var countries = clientcountriesList;
+        var countries = countryunionclientcountry();
+        $('#ulist-country').empty();
+        var str = '';
+        for(var i in countries){
+            var selectcountrystatus = '';
+            for(var j = 0; j < editcountryval.length; j++){
+                if(editcountryval[j] ==  countries[i]["country_id"]){
+                    selectcountrystatus = 'checked';
+                }
+            }
+            var countryId = parseInt(countries[i]["country_id"]);
+            var countryName = countries[i]["country_name"];
+
+            var cclientc = checkclientcountry(countryId);
+            var ccc = checkingcountry(countryId);
+
+            if( cclientc == 1 &&  ccc == 1){
+                if(selectcountrystatus == 'checked'){
+                   str += '<li id = "'+countryId+'" class="active_selectbox_country" onclick="activateCountry(this)" >'+countryName+'</li> ';
+                }else{
+                   str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';
+                }    
+            }
+            else if(cclientc != 1 && ccc == 1){
+                str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';
+                
+            }
+            else if(cclientc == 1 && ccc != 1){
+                if(selectcountrystatus == 'checked'){
+                    str += '<li id="'+countryId+'" class="active_selectbox_country deactivate" >'+countryName+'</li> ';
+                }
+                else{
+                    str += '<li id="'+countryId+'" class="deactivate" >'+countryName+'</li> ';   
+                }
+            }
+            
+        }
     }  
 
-    $('#ulist-country').empty();
-    var str = '';
-    for(var i in countries){
-        var selectcountrystatus = '';
-        for(var j = 0; j < editcountryval.length; j++){
-            if(editcountryval[j] == countries[i]["country_id"]){
-                selectcountrystatus = 'checked';
-            }
-        }
-        var countryId = parseInt(countries[i]["country_id"]);
-        var countryName = countries[i]["country_name"];
-        if(checkcountry(countryId) == 1){
-            if(selectcountrystatus == 'checked'){
-                str += '<li id = "'+countryId+'" class="active_selectbox_country" onclick="activateCountry(this)" >'+countryName+'</li> ';
-            }else{
-                str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';
-            }    
-        }
-        else{
-            if(selectcountrystatus == 'checked'){
-                str += '<li id="'+countryId+'" class="active_selectbox_country deactivate" >'+countryName+'</li> ';
-            }
-            else{
-               // str += '<li id="'+countryId+'" class="deactivate" >'+countryName+'</li> ';   
-            }
-        }
-        
-    }
-  $('#ulist-country').append(str);
-  $("#countryselected").val(editcountryval.length+" Selected");
+    
+    $('#ulist-country').append(str);
+    $("#countryselected").val(editcountryval.length+" Selected");
 }
 //check & uncheck process
 function activateCountry(element){
@@ -771,15 +976,10 @@ function activateCountry(element){
 }
 function dateconfig(){
     $('.tbody-dateconfiguration-list').empty();
-    // var countryarr = [];
-    // $.each(countriesList, function(k, val){
-    //     countryarr.push(val["country_id"]);
-    // });
     var countriesvalList = $('#country').val();
     var countriesNamesList = $('#countryNames').val();
     var domainsList = $('#domain').val();
     var domainNamesList = $('#domainNames').val();
-    //console.log(countriesList+"==="+domainsList);
     if(countriesvalList != '' && domainsList != ''){
         if(countriesvalList != ''){
             var arrayCountries = countriesvalList.split(",");
@@ -866,7 +1066,6 @@ function loadAutoUsers () {
 }
 //check & uncheck process
 function activateUsers(element){
-    console.log(element);
   var chkstatus = $(element).attr('class');
   if(chkstatus == 'active_selectbox_users'){
         $(element).removeClass("active_selectbox_users");

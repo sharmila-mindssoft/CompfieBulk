@@ -1741,6 +1741,7 @@ function showDrillDownRecord(status, data, filterTypeName){
 }
 
 function groupWiseComplianceDrillDown(status, data){
+    $(".table-drilldown-list thead").empty();
     $(".table-drilldown-list tbody").remove();
 
     $(".business-group-row").show();
@@ -1779,6 +1780,7 @@ function groupWiseComplianceDrillDown(status, data){
 }
 
 function businessgroupWiseComplianceDrillDown(status, data){
+    $(".table-drilldown-list thead").empty();
     $(".table-drilldown-list tbody").remove();
 
     $(".business-group-row").hide();
@@ -1817,6 +1819,7 @@ function businessgroupWiseComplianceDrillDown(status, data){
 }
 
 function legalentityWiseComplianceDrillDown(status, data){
+    $(".table-drilldown-list thead").empty();
     $(".table-drilldown-list tbody").remove();
 
     $(".business-group-row").hide();
@@ -1855,6 +1858,7 @@ function legalentityWiseComplianceDrillDown(status, data){
 }
 
 function divisionWiseComplianceDrillDown(status, data){
+    $(".table-drilldown-list thead").empty();
     $(".table-drilldown-list tbody").remove();
 
     $(".business-group-row").hide();
@@ -1894,6 +1898,7 @@ function divisionWiseComplianceDrillDown(status, data){
 }
 
 function unitWiseComplianceDrillDown(status, data){
+    $(".table-drilldown-list thead").empty();
     $(".table-drilldown-list tbody").remove();
     $(".business-group-row").hide();
     $(".businessgroup-name").hide();

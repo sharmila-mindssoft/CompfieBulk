@@ -2386,23 +2386,31 @@ class KnowledgeDatabase(Database):
         compliances = request_frame.compliances
         country_id = request_frame.country_id
         domain_id = request_frame.domain_id
+        mapping = request_frame.mappings
         compliance_names = []
-        for c in compliances :
-            compliance_name = c.compliance_task
-            compliance_id = c.compliance_id
-            q = "SELECT count(t1.compliance_task) FROM tbl_compliances t1 INNER JOIN \
-                tbl_statutory_mappings t2 on t1.statutory_mapping_id = t2.statutory_mapping_id \
-                WHERE t2.country_id = %s AND t2.domain_id = %s AND \
-                LOWER(t1.compliance_task) = LOWER('%s')" % (
-                    country_id, domain_id, compliance_name
-                )
-            if compliance_id is not None :
-                q = q + " AND t1.compliance_id != %s" % (compliance_id)
-            row = self.select_one(q)
-            if row[0] > 0 :
-                compliance_names.append(compliance_name)
+        for m in mapping :
+            statutory_mappings = m
+            for c in compliances :
+                compliance_name = c.compliance_task
+                compliance_id = c.compliance_id
+                statutory_provision = c.statutory_provision
+                q = "SELECT count(t1.compliance_task) FROM tbl_compliances t1 INNER JOIN \
+                    tbl_statutory_mappings t2 on t1.statutory_mapping_id = t2.statutory_mapping_id \
+                    WHERE t2.country_id = %s AND t2.domain_id = %s AND \
+                    LOWER(t1.compliance_task) = LOWER('%s') \
+                    AND LOWER (t1.statutory_provision) = LOWER('%s') \
+                    AND LOWER(t2.statutory_mapping) LIKE LOWER('%s')" % (
+                        country_id, domain_id, compliance_name,
+                        statutory_provision,
+                        str("%" + statutory_mappings + "%")
+                    )
+                if compliance_id is not None :
+                    q = q + " AND t1.compliance_id != %s" % (compliance_id)
+                row = self.select_one(q)
+                if row[0] > 0 :
+                    compliance_names.append(compliance_name)
         if len(compliance_names) > 0 :
-            return compliance_names
+            return list(set(compliance_names))
         else :
             return False
 
@@ -3109,7 +3117,7 @@ class KnowledgeDatabase(Database):
         #     data = self.get_statutory_by_id(int(sid))
         #     provision.append(data["parent_names"])
         # mappings = ','.join(str(x) for x in provision)
-        provision = old_record["statutory_mapping"]
+        mappings = old_record["statutory_mapping"]
         geo_map = []
         for gid in old_record["geography_ids"][:-1].split(',') :
             data = self.get_geography_by_id(int(gid))
@@ -3863,17 +3871,18 @@ class KnowledgeDatabase(Database):
         file_obj.close()
         sql_commands = sql_file.split(';')
         size = len(sql_commands)
-        for index,command in enumerate(sql_commands):
+        for index, command in enumerate(sql_commands):
             if (index < size-1):
                 client_db_cursor.execute(command)
             else:
                 break
         encrypted_password, password = self.generate_and_return_password()
-        query = "insert into tbl_admin (username, password) values ('%s', '%s')" %(
+        query = "insert into tbl_admin (username, password) values ('%s', '%s')" % (
             email_id, encrypted_password)
         client_db_cursor.execute(query)
         self._save_client_countries(country_ids, client_db_cursor)
         self._save_client_domains(domain_ids, client_db_cursor)
+        self._create_trigger(client_db_cursor)
         client_db_con.commit()
         return password
 
@@ -3901,6 +3910,24 @@ class KnowledgeDatabase(Database):
             )
             cursor.execute(q)
 
+    def _create_trigger(self, cursor):
+        q = "CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON `tbl_statutory_notifications_units` \
+            FOR EACH ROW BEGIN \
+                INSERT INTO tbl_statutory_notification_status ( \
+                statutory_notification_id, \
+                user_id, read_status) \
+                SELECT NEW.statutory_notification_id, t1.user_id, 0 \
+                FROM tbl_user_units t1 where t1.unit_id = NEW.unit_id; \
+                \
+                INSERT INTO tbl_statutory_notification_status ( \
+                    statutory_notification_id, \
+                    user_id, read_status \
+                ) \
+                SELECT NEW.statutory_notification_id, t1.admin_id, 0 FROM \
+                tbl_admin t1 where t1.admin_id != 0; \
+            END; "
+
+        cursor.execute(q)
 
     def _get_server_details(self):
         columns = "ip, server_username,server_password, port"

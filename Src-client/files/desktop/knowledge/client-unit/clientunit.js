@@ -1560,6 +1560,7 @@ function divisionExistingChecking(str){
         $("#division-existing").hide();
         $("#division-text").val("");
         $("#division-select").val("");
+        $('#division-select').find('option').not(':first').remove();
     }
 }
 function legalEntityExistingChecking(str){
@@ -1590,6 +1591,8 @@ function legalEntityExistingChecking(str){
         $("#division-select").val("");
         $("#entity-text").val("");
         $("#entity-select").val("");
+        $('#entity-select').find('option').not(':first').remove();
+        $('#division-select').find('option').not(':first').remove();
     }
 }
 function businessGroupExistingChecking(str){
@@ -1632,6 +1635,9 @@ function businessGroupExistingChecking(str){
         $("#entity-select").val("");
         $("#businessgroup-text").val("");
         $("#businessgroup-select").val("");
+        $('#businessgroup-select').find('option').not(':first').remove();
+        $('#entity-select').find('option').not(':first').remove();
+        $('#division-select').find('option').not(':first').remove();
     }
 }
 $(function() {
