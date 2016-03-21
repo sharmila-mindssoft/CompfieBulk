@@ -244,6 +244,9 @@ $("#btn-clientgroup-submit").click(function(){
     else if(fileSpaceVal == ''){
         displayMessage('File Space Required');
     }
+    else if(fileSpaceVal == '0'){
+        displayMessage('Invalid File Space Value');
+    }
     else if(!$.isNumeric(fileSpaceVal)){
         displayMessage('Invalid File Space Value');
     }

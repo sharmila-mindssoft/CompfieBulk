@@ -348,10 +348,12 @@ class Database(object) :
         datetime_in_string = datetime_val.strftime("%d-%b-%Y %H:%M:%S")
         return datetime_in_string
 
-    def get_client_db_info(self):
+    def get_client_db_info(self, client_id=None):
         columns = "database_ip, client_id, "
         columns += " database_username, database_password, database_name"
         condition = "1"
+        if client_id is not None:
+            condition = "client_id = '%d'" % client_id
         return self.get_data("tbl_client_database", columns, condition)
 
     def get_new_id(self, field , table_name, client_id=None) :
@@ -474,11 +476,14 @@ class Database(object) :
             column = "count(*)"
             condition = "user_id = '%d' and is_active = 1" % user_id
             rows = self.get_data(self.tblUsers, column, condition)
-            if rows[0][0] > 0:
+            if rows[0][0] > 0 or user_id == 0:
+                print "inside if"
                 return user_id
             else:
+                print "inside else"
                 return None
         else:
+            print "inside outside else"
             return None
 
     def delete_used_token(self, reset_token):
@@ -3775,6 +3780,52 @@ class KnowledgeDatabase(Database):
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblClientDomains, columns, values_list)
 
+    def replicate_client_countries_and_domains(self, client_id, country_ids, domain_ids):
+        rows = self.get_client_db_info(client_id)
+
+        ip = rows[0][0]
+        username = rows[0][2]
+        password = rows[0][3]
+        dbname = rows[0][4]
+
+        conn = self._db_connect(ip, username, password, dbname)
+        cursor = conn.cursor()
+
+        delete_countries_query = "delete from tbl_countries"
+        delete_domains_query = "delete from tbl_domains"
+
+        cursor.execute(delete_countries_query)
+        cursor.execute(delete_domains_query)
+
+        columns = "CAST(country_id as UNSIGNED), country_name, is_active"
+        condition = "country_id in (%s)" %','.join(str(x) for x in country_ids)
+        country_rows = self.get_data(self.tblCountries, columns, condition)
+
+        country_values_list = []
+        for country in country_rows:
+            country_values_tuple = (int(country[0]), country[1], country[2])
+            country_values_list.append(country_values_tuple)
+
+        columns = "CAST(domain_id as UNSIGNED), domain_name, is_active"
+        condition = "domain_id in (%s)" %','.join(str(x) for x in domain_ids)
+        domain_rows = self.get_data(self.tblDomains, columns, condition)
+
+        domain_values_list = []
+        for domain in domain_rows:
+            domain_values_tuple = (int(domain[0]), domain[1], domain[2])
+            domain_values_list.append(domain_values_tuple)
+
+        insert_countries_query = '''INSERT INTO tbl_countries \
+        VALUES %s''' % ','.join(str(x) for x in country_values_list)
+
+        insert_domains_query = '''INSERT INTO tbl_domains \
+        VALUES %s''' % ','.join(str(x) for x in domain_values_list)
+
+        cursor.execute(insert_countries_query)
+        cursor.execute(insert_domains_query)
+        conn.commit()
+        return True
+
     def _mysql_server_connect(self, host, username, password):
         return mysql.connect(host, username, password)
 
@@ -5614,6 +5665,12 @@ class KnowledgeDatabase(Database):
                 where_condition += " And tu.division_id = '%d'" % row[2]
             if unit_id is not None:
                 where_condition += " AND tu.unit_id = '%d'" % unit_id
+            if domain_ids is not None:
+                for domain_id in domain_ids:
+                    where_condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
+                                "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
+                                "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
+                                " or domain_ids LIKE '"+str(domain_id)+"') "
             result_rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type,
             join_conditions, where_condition)
             units = []
