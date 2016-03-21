@@ -1,6 +1,6 @@
 {% extends "files/desktop/client/home/container.html" %}
 {% block content %}
-<div class="content-container width70" id="service-provider-view">
+<div class="content-container width85" id="service-provider-view">
   <div class="content-area">
     <h1>Service Providers</h1>
     <div class="filters-and-search">
@@ -93,32 +93,4 @@
 </div>
 
 <script type="text/javascript" src="/files/desktop/client/service-provider/serviceprovider.js"></script>
-<script type="text/javascript">
-$(function() {
-    $( "#contract-from" ).datepicker({
-      changeMonth: true,
-      changeYear: true,
-      numberOfMonths: 1,
-      dateFormat: "d-M-yy",
-      monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-      onClose: function( selectedDate ) {
-        $( "#contract-to" ).datepicker( "option", "minDate", selectedDate );
-      }
-    });
-    $( "#contract-to" ).datepicker({
-      changeMonth: true,
-      changeYear: true,
-      numberOfMonths: 1,
-      dateFormat: "d-M-yy",
-      monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-      mindate: 0,
-      onClose: function( selectedDate ) {
-        $( "#contract-from" ).datepicker( "option", "maxDate", selectedDate );
-      }
-    });
-
-  });
-</script>
 {% endblock %}

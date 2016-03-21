@@ -245,6 +245,9 @@ $("#btn-clientgroup-submit").click(function(){
     else if(fileSpaceVal == ''){
         displayMessage('File Space Required');
     }
+    else if(fileSpaceVal == '0'){
+        displayMessage('Invalid File Space');
+    }
     else if(!$.isNumeric(fileSpaceVal)){
         displayMessage('Invalid File Space Value');
     }
@@ -270,6 +273,11 @@ $("#btn-clientgroup-submit").click(function(){
             displayMessage('Logo Required');
             return false;
         }
+        var ext = $('#upload-logo').val().split('.').pop().toLowerCase();
+        if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+            displayMessage('Logo is invalid');
+        }
+        
         function onSuccess(data){
             hideLoader();
             $("#clientgroup-add").hide();
@@ -317,6 +325,13 @@ $("#btn-clientgroup-submit").click(function(){
         inchargePersonVal = arrayinchargePerson;
         if($("#upload-logo").val() == ''){
             logo_file = null;
+        }
+        if($("#upload-logo").val() != ''){
+            var ext = $('#upload-logo').val().split('.').pop().toLowerCase();
+            if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+                displayMessage('Invalid Logo');
+                return false;
+            }
         }
         function onSuccess(data){
             $("#clientgroup-add").hide();
@@ -502,7 +517,7 @@ function dateConfigurations(dateconfigList){
                     var tableRowDomains = $('#templates .table-dconfig-list .table-dconfig-domain-row');
                     var clone1 = tableRowDomains.clone();
                     $('.inputDomain', clone1).val(arrayDomains[dcount]);
-                    $('.dconfig-domain-name', clone1).text(getClientDomainName(arrayDomains[dcount]));
+                    $('.dconfig-domain-name', clone1).text(getdomainunionclientdomainname(arrayDomains[dcount]));
                     $('.tl-from', clone1).addClass('tl-from-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]);
                     $('.tl-to', clone1).addClass('tl-to-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]);
                     $('.tbody-dateconfiguration-list').append(clone1);
@@ -606,7 +621,7 @@ function loadauto() {
         var domains = domainsList;    
     }
     if($("#clientgroup-id").val() != ''){
-        var domains = domainunionclientdomains();    
+        var domains = domainunionclientdomain();    
     } 
     
     $('#ulist').empty();
@@ -680,17 +695,17 @@ function activate(element){
     }
 
 }
-function domainunionclientdomains(){
-    var d = domainsList;
-    var cd = clientdomainList;
-    var result = {};
+// function domainunionclientdomains(){
+//     var d = domainsList;
+//     var cd = clientdomainList;
+//     var result = {};
 
-    for(var key in d) result[key] = d[key];
-    for(var key in cd) result[key] = cd[key];
+//     for(var key in d) result[key] = d[key];
+//     for(var key in cd) result[key] = cd[key];
 
-    var finalObj = $.extend(result, d, cd);
-    return finalObj;
-}
+//     var finalObj = $.extend(result, d, cd);
+//     return finalObj;
+// }
 function checkingcountry(countryid){
     var returnval = null;
     $.each(countriesListequal, function(key, value){
@@ -791,7 +806,7 @@ function domainunionclientdomain(){
     cd = clientdomainList;
     
     if($("#domains").val() != ''){
-        editdomainval = $("#domains").val().split(",");
+        editdomainval = $("#domain").val().split(",");
     }
 
     var result = {};
@@ -818,6 +833,50 @@ function domainunionclientdomain(){
         }
     });
     return finalObj;
+}
+function getdomainunionclientdomainname(domainid){
+    var d = '';
+    var cd = '';
+    var cdnew = '';
+    var editdomainval = [];
+    var domainname = '';
+
+    d = domainsList;
+    cd = clientdomainList;
+    
+    if($("#domains").val() != ''){
+        editdomainval = $("#domain").val().split(",");
+    }
+
+    var result = {};
+    cdnew = [];
+    var arrayDomains = [];
+    for(var i = 0; i < editdomainval.length; i++){ arrayDomains[i] = parseInt(editdomainval[i]); }
+    
+    $.each(cd, function(key){
+        if($.inArray(cd[key]['domain_id'], arrayDomains) != -1){
+            cdnew[key] = cd[key];
+        }
+    });
+    var finalObj1 = [];
+    
+    finalObj1 = d.concat(cdnew);
+    
+    var dupes = {};
+    var finalObj = [];
+
+    $.each(finalObj1, function(i, el) {
+        if (!dupes[el.domain_id]) {
+            dupes[el.domain_id] = true;
+            finalObj.push(el);
+        }
+    });
+    $.each(finalObj, function(key, val){
+        if(val['domain_id'] == domainid){
+            domainname = val['domain_name'];
+        }
+    });
+    return domainname;
 }
 
 function checkclientcountry(countryid){
