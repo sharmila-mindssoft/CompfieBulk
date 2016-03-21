@@ -26,3 +26,27 @@ ValueError: null is not allowed
     raise empty_error()
 ValueError: null is not allowed
 
+2016-03-21 13:51:07,142 - knowledge_logger - main.py-handle-api : (1452, 'Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge`.`tbl_activity_log`, CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`))')
+2016-03-21 13:51:07,143 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 172, in handle_login
+    return controller.process_login_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 21, in process_login_request
+    return process_login(db, request)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 48, in process_login
+    return user_login_response(db, response, request.ip)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 60, in user_login_response
+    session_token = db.add_session(user_id, session_type, ip, employee)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 443, in add_session
+    self.save_activity(user_id, 0, action)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 599, in save_activity
+    self.execute(query)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 157, in execute
+    return cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+IntegrityError: (1452, 'Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge`.`tbl_activity_log`, CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`))')
+

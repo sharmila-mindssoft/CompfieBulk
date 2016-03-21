@@ -367,15 +367,15 @@ function submitcompliance(){
             
             var due_date = null;
             if(cfrequency != 'On Occurrence'){
-              due_date =  $('#duedate'+statutoriesCount).val();
-
-            var convertDueDate = convert_date(due_date);
-            if (convertDueDate < currentDate) {
-              displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
-              hideLoader();
-              return false;
-            }
-
+              if(due_date != null && due_date != undefined){
+                due_date =  $('#duedate'+statutoriesCount).val();
+                var convertDueDate = convert_date(due_date);
+                if (convertDueDate < currentDate) {
+                  displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
+                  hideLoader();
+                  return false;
+                }
+              }
             }
             reassignComplianceData = client_mirror.reassingComplianceDet(uId,
               compliance_id, compliance_history_id, due_date

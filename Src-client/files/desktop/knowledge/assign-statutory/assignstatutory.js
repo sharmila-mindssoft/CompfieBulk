@@ -1029,7 +1029,7 @@ $(".listfilter").keyup(function() {
     var filter8val = assignedStatutoriesList[entity]["unit_name"];
     var filter9val = assignedStatutoriesList[entity]["domain_name"];
     var filter10val = null;
-    if(assignedStatutoriesList[entity]["submission_status"] == 2)
+    if(assignedStatutoriesList[entity]["submission_status"] == 1)
         filter10val = 'Submitted';
       else
         filter10val = "Pending";
