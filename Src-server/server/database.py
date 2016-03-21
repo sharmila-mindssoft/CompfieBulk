@@ -440,7 +440,7 @@ class Database(object) :
         self.execute(query)
 
         action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
-        self.save_activity(user_id, 1, action)
+        self.save_activity(user_id, 0, action)
 
         return session_id
 

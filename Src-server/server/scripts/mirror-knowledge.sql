@@ -547,8 +547,7 @@ CREATE TABLE `tbl_activity_log` (
   `form_id` int(11) NOT NULL,
   `action` varchar(500) NOT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`activity_log_id`),
-  CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`)
+  PRIMARY KEY (`activity_log_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_notifications`;
