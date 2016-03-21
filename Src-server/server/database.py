@@ -170,7 +170,6 @@ class Database(object) :
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        print query
         return self.select_all(query)
 
     def get_data_from_multiple_tables(
@@ -477,13 +476,10 @@ class Database(object) :
             condition = "user_id = '%d' and is_active = 1" % user_id
             rows = self.get_data(self.tblUsers, column, condition)
             if rows[0][0] > 0 or user_id == 0:
-                print "inside if"
                 return user_id
             else:
-                print "inside else"
                 return None
         else:
-            print "inside outside else"
             return None
 
     def delete_used_token(self, reset_token):

@@ -1345,7 +1345,6 @@ class ClientDatabase(Database):
             FROM tbl_client_statutories t1 \
             INNER JOIN tbl_units t2 \
             ON t1.unit_id = t2.unit_id %s " % (where_qry)
-        print query
         rows = self.select_all(query)
         columns = [
             "geography",
@@ -1784,7 +1783,6 @@ class ClientDatabase(Database):
             condition = "frequency like '%s%s%s'" % (
                 "%", frequency_name, "%"
             )
-        print "compliance_id_rows:{}".format(compliance_id_rows)
         if compliance_id_rows:
             compliance_ids = compliance_id_rows[0][0]
             if compliance_ids is not None:
@@ -1801,7 +1799,6 @@ class ClientDatabase(Database):
                         self.tblComplianceFrequency, self.tblComplianceRepeatType, compliance_ids,
                         1, unit_id, condition
                     )
-                print query
                 client_compliance_rows = self.select_all(query)
                 if client_compliance_rows:
                     columns = [
@@ -2227,31 +2224,21 @@ class ClientDatabase(Database):
                 domain_name = domain_name_row[0][0]
 
                 action = None
-                print
-                print "checking for compliance : {}".format(compliance_name)
                 if self.is_two_levels_of_approval():
-                    print "two levels of approval"
                     if concurred_by_id == session_user:
-                        print "session user is concurrence person"
                         if concurrence_status is True:
-                            print "already concurred"
                             continue
                         else:
-                            print "going to add in concur list"
                             action = "Concur"
                     elif concurrence_status is True and session_user == approved_by_id:
-                        print "already concurred going to add approve list"
                         action = "Approve"
                     elif concurred_by_id is None and session_user == approved_by_id:
                         action = "Approve"
                     else:
-                        print "session user is not concurrence person and compliance is not concurred"
                         continue
                 elif concurred_by_id != session_user and session_user == approved_by_id:
-                    print "session user is not concurrence person going to approve"
                     action = "Approve"
                 else:
-                    print "inside else"
                     continue
                 compliances.append(clienttransactions.APPROVALCOMPLIANCE(
                         compliance_history_id, compliance_name, description, domain_name,
@@ -2588,7 +2575,6 @@ class ClientDatabase(Database):
         approval = int(request.approval_person)
         compliances = request.compliances
 
-        # print request.to_structure()
         compliance_names = []
         for c in compliances:
             compliance_id = int(c.compliance_id)
@@ -2636,7 +2622,6 @@ class ClientDatabase(Database):
                         approval, trigger_before, due_date, validity_date,
                         int(session_user), created_on
                     )
-                print query
                 self.execute(query)
             # self.update_user_units(assignee, unit_ids, client_id)
         if new_unit_settings is not None :
@@ -3505,17 +3490,6 @@ class ClientDatabase(Database):
             chart_data.append(
                 escalation_years.get(y)
             )
-
-        # final_result_list = []
-        # print
-        # print escalation_years
-        # for k, v in filter_type_wise.items():
-        #     data_list = []
-        #     for i, j in v.items():
-        #         data_list.extend(j)
-        #     chart = dashboard.ChartDataMap(k, data_list)
-        #     final_result_list.append(chart)
-
         return dashboard.GetEscalationsChartSuccess(
             years, chart_data
         )
