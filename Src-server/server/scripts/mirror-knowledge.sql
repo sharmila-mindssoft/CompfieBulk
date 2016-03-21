@@ -626,12 +626,7 @@ CREATE TABLE `tbl_client_statutories` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`client_statutory_id`),
-  CONSTRAINT `fk_client_statutories_client_groups` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
-  CONSTRAINT `fk_client_statutories_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
-  CONSTRAINT `fk_client_statutories_domains` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
-  CONSTRAINT `fk_client_statutories_geographies` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`),
-  CONSTRAINT `fk_client_statutories_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`)
+  PRIMARY KEY (`client_statutory_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_client_compliances`;

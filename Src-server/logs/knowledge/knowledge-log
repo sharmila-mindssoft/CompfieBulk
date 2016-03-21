@@ -1,12 +1,28 @@
-2016-03-19 18:04:54,311 - knowledge_logger - main.py-parse-request : invalid request: GetCountriesForGroup
-2016-03-19 18:04:54,313 - knowledge_logger - main.py : Traceback (most recent call last):
+2016-03-21 09:46:11,786 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-21 09:46:11,839 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technotransactions.py", line 469, in parse_structure
-    return class_map
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 1081, in parse_structure_VariantType_technotransactions_Request
-    from protocol import technotransactions
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technotransactions.py", line 80, in parse_structure
-    raise ValueError(msg)
-ValueError: invalid request: GetCountriesForGroup
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 184, in parse_inner_structure
+    session_token = parse_structure_CustomTextType_50(session_token)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 687, in parse_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
+
+2016-03-21 10:07:40,355 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-21 10:07:40,356 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 50, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/login.py", line 76, in parse_inner_structure
+    ip = parse_structure_CustomTextType_20(ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 513, in parse_structure_CustomTextType_20
+    return parse_custom_string(data, 20)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 74, in parse_custom_string
+    raise empty_error()
+ValueError: null is not allowed
 
