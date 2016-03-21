@@ -11,16 +11,67 @@ $("#btn-service-provider-add").click(function(){
     $("#service-provider-view").hide();
     $("#service-provider-add").show();  
     $("#service-provider-id").val('');
+    $("input[id$='contract-from'], input[id$='contract-to']").datepicker( "option", "maxDate", null );
+    $("input[id$='contract-from'], input[id$='contract-to']").datepicker( "option", "minDate", null );
     clearMessage();
     var x = document.getElementsByTagName("input");
     for(i = 0; i <= x.length-1; i++){
         if(x.item(i).type != "submit" ){ x.item(i).value = ""; }
     }
     $("#address").val('');
+    $( "#contract-from" ).datepicker({
+      changeMonth: true,
+      changeYear: true,
+      numberOfMonths: 1,
+      dateFormat: "d-M-yy",
+      monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      onClose: function( selectedDate ) {
+        $( "#contract-to" ).datepicker( "option", "minDate", selectedDate );
+      }
+    });
+    $( "#contract-to" ).datepicker({
+      changeMonth: true,
+      changeYear: true,
+      numberOfMonths: 1,
+      dateFormat: "d-M-yy",
+      monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      mindate: 0,
+      onClose: function( selectedDate ) {
+        $( "#contract-from" ).datepicker( "option", "maxDate", selectedDate );
+      }
+    });
+
 });
 $("#btn-service-provider-cancel").click(function(){
     $("#service-provider-add").hide();
     $("#service-provider-view").show();
+    $("input[id$='contract-from'], input[id$='contract-to']").datepicker( "option", "maxDate", null );
+    $("input[id$='contract-from'], input[id$='contract-to']").datepicker( "option", "minDate", null );
+    $( "#contract-from" ).datepicker({
+      changeMonth: true,
+      changeYear: true,
+      numberOfMonths: 1,
+      dateFormat: "d-M-yy",
+      monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      onClose: function( selectedDate ) {
+        $( "#contract-to" ).datepicker( "option", "minDate", selectedDate );
+      }
+    });
+    $( "#contract-to" ).datepicker({
+      changeMonth: true,
+      changeYear: true,
+      numberOfMonths: 1,
+      dateFormat: "d-M-yy",
+      monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      mindate: 0,
+      onClose: function( selectedDate ) {
+        $( "#contract-from" ).datepicker( "option", "maxDate", selectedDate );
+      }
+    });
 });
 function initialize(){
     function onSuccess(data){
@@ -211,6 +262,8 @@ function serviceprovider_edit(serviceProviderId){
     $("#service-provider-view").hide();
     $("#service-provider-add").show();
     clearMessage();
+    $("input[id$='contract-from'], input[id$='contract-to']").datepicker( "option", "maxDate", null );
+    $("input[id$='contract-from'], input[id$='contract-to']").datepicker( "option", "minDate", null );
     $("#service-provider-id").val(serviceProviderId);
     for(var i in splist){
         var lists = splist[i];
@@ -229,6 +282,30 @@ function serviceprovider_edit(serviceProviderId){
                 $('#mobile-number').val(mobileno[2]);
             }   
         }
+         $( "#contract-from" ).datepicker({
+          changeMonth: true,
+          changeYear: true,
+          numberOfMonths: 1,
+          dateFormat: "d-M-yy",
+          monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          onClose: function( selectedDate ) {
+            $( "#contract-to" ).datepicker( "option", "minDate", selectedDate );
+          }
+        });
+        $( "#contract-to" ).datepicker({
+          changeMonth: true,
+          changeYear: true,
+          numberOfMonths: 1,
+          dateFormat: "d-M-yy",
+          monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          mindate: 0,
+          onClose: function( selectedDate ) {
+            $( "#contract-from" ).datepicker( "option", "maxDate", selectedDate );
+          }
+        });
+
     }
 }
 function serviceprovider_active(serviceProviderId, isActive){

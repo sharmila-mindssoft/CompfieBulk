@@ -76,8 +76,13 @@ function loadClientProfileList(groupId){
                 else{
                   $('.mobile-number', clone).text(lists[key]['contact_no']);
                 }
-                $('.seating-unit span', clone).html(lists[key]['seating_unit_name']);
-                $('.seating-unit abbr', clone).attr("title", lists[key]['address']);
+                if(lists[key]["is_service_provider"] == false){
+                    $('.seating-unit span', clone).html(lists[key]['seating_unit_name']);
+                    $('.seating-unit abbr', clone).attr("title", lists[key]['address']);
+                }
+                else{
+                    $('.seating-unit', clone).html("-");
+                }
                 var userId = lists[key]['user_id'];
                 var isAdmin = lists[key]["is_admin"];
                 var isActive = lists[key]["is_active"];
