@@ -313,14 +313,14 @@ function loadDivision() {
         }
     });
 }
-// function loadIndustry(className){
-//     $('.'+className+' option:not(:first)').remove();
-//     $.each(industryList, function(key, value){
-//         $('.'+className).append(
-//             $('<option value="'+value['industry_id']+'">'+value['industry_name']+'</option>')
-//         );
-//     })
-// }
+function loadIndustry(className){
+    $('.'+className+' option:not(:first)').remove();
+    $.each(industryList, function(key, value){
+        $('.'+className).append(
+            $('<option value="'+value['industry_id']+'">'+value['industry_name']+'</option>')
+        );
+    })
+}
 
 function loadupdateunitlocation(cid, gid){
     var units = {};
@@ -841,7 +841,7 @@ function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divis
     if(countryByCount != 1){
        $('.unitcode-checkbox-'+countryByCount).hide();
     }
-    industrytype('industry-'+countryByCount+'-'+1);
+    
     $(".postal-code", clone).on('input', function (event) {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
@@ -854,7 +854,8 @@ function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divis
     var gid = firstlist['geography_id'];
     var unitlts = loadupdateunitlocation(key, gid);
     loadglevelsupdate(key, "glevel-"+countryByCount+"-"+1);
-    //loadIndustry('industry-'+countryByCount+'-'+1);
+    industrytype('industry-'+countryByCount+'-'+1);
+    loadIndustry('industry-'+countryByCount+'-'+1);
     $('.glevel-'+countryByCount+'-'+1 +' option[value='+unitlts["level_id"]+']').attr("selected", "selected");
     $('.unitlocation-'+countryByCount+'-'+1).val(unitlts['gname']);
     $('.unitlocation-ids-'+countryByCount+'-'+1).val(gid);
@@ -910,7 +911,7 @@ function addUnitRowUpdate(clientunitId, businessgroupId, legalEntityId, division
 
     $('.'+tbodyclassname).append(clone1);
     unitcodeautogenerateids++;
-    industrytype('industry-'+countval+'-'+lastClassval);
+    
     $(".postal-code", clone1).on('input', function (event) {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
@@ -926,7 +927,8 @@ function addUnitRowUpdate(clientunitId, businessgroupId, legalEntityId, division
     $('.unit-id-'+countval+'-'+lastClassval).val(firstlist['unit_id']);
     $('.unit-code-'+countval+'-'+lastClassval).val(firstlist['unit_code']);
     $('.unit-name-'+countval+'-'+lastClassval).val(firstlist['unit_name']);
-    //loadIndustry('industry-'+countval+'-'+lastClassval);
+    industrytype('industry-'+countval+'-'+lastClassval);
+    loadIndustry('industry-'+countval+'-'+lastClassval);
     $('.industry-'+countval+'-'+lastClassval+' option[value='+firstlist["industry_id"]+']').attr("selected", "selected");
     $('.unit-address-'+countval+'-'+lastClassval).val(firstlist['unit_address']);
     $('.postal-code-'+countval+'-'+lastClassval).val(firstlist['postal_code']);
@@ -1487,7 +1489,9 @@ function activate_unitlocaion (element,checkval,checkname, ccount, mappingname) 
     $('.full-location-list'+ccount).html(mappingname);
 }
 function domainunionclientdomainList(){
-    $(".tbody-unit-list .domain").each(function (i){
+    var finalObj;
+    $(".add-country-unit-list .domain").each(function (i){
+        finalObj = [];
         var d = '';
         var cd = '';
         var cdnew = '';
@@ -1511,22 +1515,19 @@ function domainunionclientdomainList(){
             }
         });
         var finalObj1 = [];
-        console.log("d=="+JSON.stringify(d));
-        console.log("cdnew=="+JSON.stringify(cdnew));
         finalObj1 = d.concat(cdnew);
-        
-        var dupes = {};
-        var finalObj = [];
 
+        var dupes = {};
+        
         $.each(finalObj1, function(i, el) {
             if (!dupes[el.domain_id]) {
                 dupes[el.domain_id] = true;
                 finalObj.push(el);
             }
         });
-        return finalObj;
+        
     });
-    
+    return finalObj;    
 }
 function hidedomain(classval){
     var lastClass = classval.split(' ').pop();
@@ -1549,6 +1550,7 @@ function loaddomain(classval){
     }
     else if($("#client-unit-id").val() != ""){
         var domains = domainunionclientdomainList();
+        console.log(domainunionclientdomainList());
     }
 
     $('.ul-domain-list'+countval).empty();
