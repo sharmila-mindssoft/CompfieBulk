@@ -3864,6 +3864,13 @@ class KnowledgeDatabase(Database):
                 user_id, read_status) \
                 SELECT NEW.statutory_notification_id, t1.user_id, 0 \
                 FROM tbl_user_units t1 where t1.unit_id = NEW.unit_id; \
+                \
+                INSERT INTO tbl_statutory_notification_status ( \
+                    statutory_notification_id, \
+                    user_id, read_status \
+                ) \
+                SELECT NEW.statutory_notification_id, t1.admin_id, 0 FROM \
+                tbl_admin t1 where t1.admin_id != 0; \
             END; "
 
         cursor.execute(q)
