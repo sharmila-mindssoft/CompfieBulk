@@ -140,7 +140,7 @@ class ClientDatabase(Database):
             data_columns = [
                 "user_id", "user_group_id", "email_id",
                 "employee_name", "employee_code", "contact_no",
-                "user_group_name", "form_ids", "is_admin", 
+                "user_group_name", "form_ids", "is_admin",
                 "service_provider_id"
             ]
             query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, \
@@ -2448,7 +2448,7 @@ class ClientDatabase(Database):
             AND t1.unit_id IN %s \
             AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
-            AND t3.is_active = 1 " % (
+            AND t3.is_active = 1 AND t1.is_new = 1 " % (
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
@@ -2563,8 +2563,6 @@ class ClientDatabase(Database):
 
     def save_assigned_compliance(self, request, session_user, client_id):
         new_unit_settings = request.new_units
-        # if new_unit_settings is None :
-        #     return clienttransactions.SaveAssignedComplianceSuccess()
 
         created_on = self.get_date_time()
         country_id = int(request.country_id)
@@ -7015,7 +7013,7 @@ class ClientDatabase(Database):
         return result
 
     def get_client_details_report(
-        self, country_id,  business_group_id, legal_entity_id, division_id, 
+        self, country_id,  business_group_id, legal_entity_id, division_id,
         unit_id, domain_ids, session_user
     ):
         condition = "country_id = '%d' "%(country_id)
