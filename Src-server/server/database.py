@@ -170,6 +170,7 @@ class Database(object) :
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
+        print query
         return self.select_all(query)
 
     def get_data_from_multiple_tables(
@@ -439,7 +440,7 @@ class Database(object) :
         self.execute(query)
 
         action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
-        self.save_activity(user_id, 1, action)
+        self.save_activity(user_id, 0, action)
 
         return session_id
 
@@ -2384,21 +2385,30 @@ class KnowledgeDatabase(Database):
         compliances = request_frame.compliances
         country_id = request_frame.country_id
         domain_id = request_frame.domain_id
+        mapping = request_frame.mappings
         compliance_names = []
-        for c in compliances :
-            compliance_name = c.compliance_task
-            compliance_id = c.compliance_id
-            q = "SELECT count(t1.compliance_task) FROM tbl_compliances t1 INNER JOIN \
-                tbl_statutory_mappings t2 on t1.statutory_mapping_id = t2.statutory_mapping_id \
-                WHERE t2.country_id = %s AND t2.domain_id = %s AND \
-                LOWER(t1.compliance_task) = LOWER('%s')" % (
-                    country_id, domain_id, compliance_name
-                )
-            if compliance_id is not None :
-                q = q + " AND t1.compliance_id != %s" % (compliance_id)
-            row = self.select_one(q)
-            if row[0] > 0 :
-                compliance_names.append(compliance_name)
+        for m in mapping :
+            statutory_mappings = m
+            for c in compliances :
+                compliance_name = c.compliance_task
+                compliance_id = c.compliance_id
+                statutory_provision = c.statutory_provision
+                q = "SELECT count(t1.compliance_task) FROM tbl_compliances t1 INNER JOIN \
+                    tbl_statutory_mappings t2 on t1.statutory_mapping_id = t2.statutory_mapping_id \
+                    WHERE t2.country_id = %s AND t2.domain_id = %s AND \
+                    LOWER(t1.compliance_task) = LOWER('%s') \
+                    AND LOWER (t1.statutory_provision) = LOWER('%s') \
+                    AND LOWER(t2.statutory_mapping) LIKE LOWER('%s')" % (
+                        country_id, domain_id, compliance_name,
+                        statutory_provision,
+                        str("%" + statutory_mappings + "%")
+                    )
+                print q
+                if compliance_id is not None :
+                    q = q + " AND t1.compliance_id != %s" % (compliance_id)
+                row = self.select_one(q)
+                if row[0] > 0 :
+                    compliance_names.append(compliance_name)
         if len(compliance_names) > 0 :
             return compliance_names
         else :
@@ -2929,7 +2939,7 @@ class KnowledgeDatabase(Database):
             t1.domain_id, t3.domain_name, t1.industry_ids, \
             t1.statutory_nature_id, t4.statutory_nature_name, \
             t1.statutory_ids, t1.compliance_ids, \
-            t1.geography_ids, t1.approval_status  \
+            t1.geography_ids, t1.approval_status, t1.statutory_mapping  \
             FROM tbl_statutory_mappings t1 \
             INNER JOIN tbl_countries t2 \
             on t1.country_id = t2.country_id \
@@ -2944,7 +2954,7 @@ class KnowledgeDatabase(Database):
             "domain_name", "industry_ids", "statutory_nature_id",
             "statutory_nature_name", "statutory_ids",
             "compliance_ids", "geography_ids",
-            "approval_status"
+            "approval_status", "statutory_mapping"
         ]
         result = {}
         if rows :
@@ -2982,7 +2992,7 @@ class KnowledgeDatabase(Database):
             columns.extend(["rejected_reason"])
             values.extend([rejected_reason])
             notification_log_text = "Statutory Mapping: %s \
-                has been Rejected" % (provision)
+                has been Rejected and reason is %s" % (provision, rejected_reason)
         else :
             notification_log_text = "Statutory Mapping: %s \
                 has been Approved" % (provision)
@@ -2993,7 +3003,7 @@ class KnowledgeDatabase(Database):
                 statutory_mapping_id, notification_text
             )
             notification_log_text = "Statutory Mapping: %s \
-                has been Approve & Notified" % (provision)
+                has been Approved & Notified" % (provision)
 
         link = "/knowledge/statutory-mapping"
         if users["updated_by"] is None :
@@ -3090,8 +3100,8 @@ class KnowledgeDatabase(Database):
     def save_statutory_notifications(self, mapping_id, notification_text):
         # client notification
         client_info = self.get_statutory_assigned_to_client(mapping_id)
-        if client_info is None :
-            return
+        # if client_info is None :
+        #     return
         old_record = self.get_statutory_mapping_by_id(
             mapping_id
         )
@@ -3102,17 +3112,18 @@ class KnowledgeDatabase(Database):
             industry_name = self.get_industry_by_id(industry_ids[0])
         else :
             industry_name = self.get_industry_by_id(industry_ids)
-        provision = []
-        for sid in old_record["statutory_ids"][:-1].split(',') :
-            data = self.get_statutory_by_id(int(sid))
-            provision.append(data["parent_names"])
-        mappings = ','.join(str(x) for x in provision)
+        # provision = []
+        # for sid in old_record["statutory_ids"][:-1].split(',') :
+        #     data = self.get_statutory_by_id(int(sid))
+        #     provision.append(data["parent_names"])
+        # mappings = ','.join(str(x) for x in provision)
+        mappings = old_record["statutory_mapping"]
         geo_map = []
         for gid in old_record["geography_ids"][:-1].split(',') :
             data = self.get_geography_by_id(int(gid))
             if data is not None :
-                data = data["parent_names"]
-            geo_map.append(data)
+                names = data["parent_names"]
+                geo_map.append(names)
         geo_mappings = ','.join(str(x) for x in geo_map)
 
         notification_id = self.get_new_id(
@@ -3143,16 +3154,23 @@ class KnowledgeDatabase(Database):
                     "statutory_notification_unit_id",
                     "tbl_statutory_notifications_units"
                 )
+                business_group = r["business_group_id"]
+                division_id = r["division_id"]
+                if r["business_group_id"] is None :
+                    business_group = 'NULL'
+                if r["division_id"] is None :
+                    division_id = 'NULL'
+
                 q = "INSERT INTO tbl_statutory_notifications_units \
                     (statutory_notification_unit_id, statutory_notification_id, client_id, \
                         business_group_id, legal_entity_id, division_id, unit_id) VALUES \
-                    (%s, %s, %s, %s, %s, %s, %s)" % (
+                    (%s, %s, %s, '%s', %s, '%s', %s)" % (
                         notification_unit_id,
                         statutory_notification_id,
                         int(r["client_id"]),
-                        int(r["business_group_id"]),
+                        business_group,
                         int(r["legal_entity_id"]),
-                        int(r["division_id"]),
+                        division_id,
                         int(r["unit_id"])
                     )
                 self.execute(q)
@@ -3807,17 +3825,18 @@ class KnowledgeDatabase(Database):
         file_obj.close()
         sql_commands = sql_file.split(';')
         size = len(sql_commands)
-        for index,command in enumerate(sql_commands):
+        for index, command in enumerate(sql_commands):
             if (index < size-1):
                 client_db_cursor.execute(command)
             else:
                 break
         encrypted_password, password = self.generate_and_return_password()
-        query = "insert into tbl_admin (username, password) values ('%s', '%s')" %(
+        query = "insert into tbl_admin (username, password) values ('%s', '%s')" % (
             email_id, encrypted_password)
         client_db_cursor.execute(query)
         self._save_client_countries(country_ids, client_db_cursor)
         self._save_client_domains(domain_ids, client_db_cursor)
+        self._create_trigger(client_db_cursor)
         client_db_con.commit()
         return password
 
@@ -3845,6 +3864,24 @@ class KnowledgeDatabase(Database):
             )
             cursor.execute(q)
 
+    def _create_trigger(self, cursor):
+        q = "CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON `tbl_statutory_notifications_units` \
+            FOR EACH ROW BEGIN \
+                INSERT INTO tbl_statutory_notification_status ( \
+                statutory_notification_id, \
+                user_id, read_status) \
+                SELECT NEW.statutory_notification_id, t1.user_id, 0 \
+                FROM tbl_user_units t1 where t1.unit_id = NEW.unit_id; \
+                \
+                INSERT INTO tbl_statutory_notification_status ( \
+                    statutory_notification_id, \
+                    user_id, read_status \
+                ) \
+                SELECT NEW.statutory_notification_id, t1.admin_id, 0 FROM \
+                tbl_admin t1 where t1.admin_id != 0; \
+            END; "
+
+        cursor.execute(q)
 
     def _get_server_details(self):
         columns = "ip, server_username,server_password, port"
@@ -4578,7 +4615,6 @@ class KnowledgeDatabase(Database):
         if unit_id is not None :
             return self.return_unassign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, unit_id)
 
-        print "NEw compliance"
         q = "select parent_ids from tbl_geographies where geography_id = %s" % (int(geography_id))
         row = self.select_one(q)
         if row :
@@ -5134,10 +5170,6 @@ class KnowledgeDatabase(Database):
                     (str(tuple(parent_ids))),
                     domain_id, unit_id
                 )
-
-        print
-        print query
-
         rows = self.select_all(query)
         columns = [
             "compliance_id", "compliance_task",
@@ -5313,7 +5345,6 @@ class KnowledgeDatabase(Database):
                 unit_address = "%s, %s, %s" % (
                     data["address"], ', '.join(ordered), data["postal_code"]
                 )
-                print client_statutory_id
                 statutories = self.return_assigned_compliances_by_id(client_statutory_id, level_1_statutory_id)
                 unit_statutories = technoreports.UNIT_WISE_ASSIGNED_STATUTORIES(
                     data["unit_id"],
@@ -5326,7 +5357,6 @@ class KnowledgeDatabase(Database):
                     statutories
                 )
             else :
-                print client_statutory_id , "new"
                 statutories = unit_statutories.assigned_statutories
                 new_stautory = self.return_assigned_compliances_by_id(client_statutory_id)
                 for new_s in new_stautory :

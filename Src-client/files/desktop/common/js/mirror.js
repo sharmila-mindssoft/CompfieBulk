@@ -1,6 +1,7 @@
 // var BASE_URL = "http://127.0.0.1:8082/";
 var BASE_URL = "/knowledge/api/";
 var login_url = "/knowledge/login"
+var my_ip = null;
 
 function initMirror() {
     var DEBUG = true;
@@ -110,19 +111,11 @@ function initMirror() {
     }
 
     function get_ip(){
-        // alert("inside get_ip")
-        // var get = function(u){
-        //     var x = new XMLHttpRequest;
-        //     x.open('GET', u, false);
-        //     x.send();
-        //     return x.responseText;
-        // }
-
-        // response = JSON.parse(get('http://ifconfig.me/all.json'))
-        // return response["ip_addr"]
-        return "127.0.0.1"
+        $.getJSON("http://jsonip.com?callback=?", function (data) {
+            my_ip = data.ip;
+        });
     }
-
+    get_ip();
     function apiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
@@ -193,15 +186,19 @@ function initMirror() {
 
     // Login function
     function login(username, password, short_name, callback) {
+        if (my_ip == null){
+            get_ip();
+            my_ip = "unknown" 
+        }
         var request = [
             "Login", {
                 "login_type": "Web",
                 "username": username,
                 "password": password,
                 "short_name": short_name,
-                "ip" : get_ip()
+                "ip" : my_ip
             }
-        ]
+        ];
         jQuery.post(
             BASE_URL + "login",
             toJSON(request),
@@ -1585,4 +1582,5 @@ function initMirror() {
         createNewAdmin: createNewAdmin
     }
 }
+
 var mirror = initMirror();

@@ -253,7 +253,7 @@ CREATE TABLE `tbl_statutories` (
   `level_id` int(11) NOT NULL,
   `statutory_name` varchar(100) NOT NULL,
   `parent_ids` varchar(50) DEFAULT NULL,
-  `parent_names` varchar(500) DEFAULT NULL,
+  `parent_names` longtext DEFAULT NULL,
   `statutory_mapping_ids` varchar(50) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
@@ -547,8 +547,7 @@ CREATE TABLE `tbl_activity_log` (
   `form_id` int(11) NOT NULL,
   `action` varchar(500) NOT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`activity_log_id`),
-  CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`)
+  PRIMARY KEY (`activity_log_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_notifications`;
@@ -626,12 +625,7 @@ CREATE TABLE `tbl_client_statutories` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`client_statutory_id`),
-  CONSTRAINT `fk_client_statutories_client_groups` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
-  CONSTRAINT `fk_client_statutories_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
-  CONSTRAINT `fk_client_statutories_domains` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
-  CONSTRAINT `fk_client_statutories_geographies` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`),
-  CONSTRAINT `fk_client_statutories_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`)
+  PRIMARY KEY (`client_statutory_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_client_compliances`;

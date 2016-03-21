@@ -441,3 +441,10 @@ table.filtertable-1 tr td table tr td {
   border-radius: 5px;
   font-size: 1em;
 }
+
+.ms-drop input[type=radio]{
+  display: none;
+}
+.ms-drop label {
+  padding: 2px  0px 2px 5px;
+}

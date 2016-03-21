@@ -422,8 +422,7 @@ DROP TABLE IF EXISTS `tbl_statutory_notification_status`;
 CREATE TABLE `tbl_statutory_notification_status` (
   `statutory_notification_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `read_status` int(11) NOT NULL,
-  PRIMARY KEY (`statutory_notification_id`)
+  `read_status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_notification_type`;
 CREATE TABLE `tbl_notification_types` (
@@ -510,3 +509,5 @@ INSERT INTO tbl_compliance_frequency VALUES(4, "On Occurrence");
 INSERT INTO tbl_notification_types VALUES(1, "Notification");
 INSERT INTO tbl_notification_types VALUES(2, "Reminder");
 INSERT INTO tbl_notification_types VALUES(3, "Escalation");
+
+DROP TRIGGER IF EXISTS `after_tbl_statutory_notifications_units_insert`;

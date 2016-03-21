@@ -446,7 +446,8 @@ def get_client_details_report_filters(db, request, session_user, client_id):
 def get_client_details_report_data(db, request, session_user, client_id):
     units = db.get_client_details_report(
         request.country_id, request.business_group_id,
-        request.legal_entity_id, request.division_id, request.unit_id, request.domain_ids
+        request.legal_entity_id, request.division_id, request.unit_id, 
+        request.domain_ids, session_user
     )
     return clientreport.GetClientDetailsReportDataSuccess(units=units)
 

@@ -65,7 +65,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance,
-    parse_structure_VectorType_CustomTextType_500
+    parse_structure_VectorType_CustomTextType_500,
+    parse_structure_OptionalType_CustomTextType_100
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -134,7 +135,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_500,
     to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance,
-    to_structure_VectorType_CustomTextType_500
+    to_structure_VectorType_CustomTextType_500,
+    to_structure_OptionalType_CustomTextType_100
 )
 
 #
@@ -1785,7 +1787,7 @@ class Notification(object):
         assignee = data.get("assignee")
         assignee = parse_structure_CustomTextType_100(assignee)
         concurrence_person = data.get("concurrence_person")
-        concurrence_person = parse_structure_CustomTextType_100(concurrence_person)
+        concurrence_person = parse_structure_OptionalType_CustomTextType_100(concurrence_person)
         approval_person = data.get("approval_person")
         approval_person = parse_structure_CustomTextType_100(approval_person)
         compliance_name = data.get("compliance_name")
@@ -1816,7 +1818,7 @@ class Notification(object):
             "unit_name" : to_structure_CustomTextType_50(self.unit_name),
             "unit_address" : to_structure_CustomTextType_50(self.unit_address),
             "assignee" : to_structure_CustomTextType_100(self.assignee),
-            "concurrence_person" : to_structure_CustomTextType_100(self.concurrence_person),
+            "concurrence_person" : to_structure_OptionalType_CustomTextType_100(self.concurrence_person),
             "approval_person" : to_structure_CustomTextType_100(self.approval_person),
             "compliance_name" : to_structure_CustomTextType_500(self.compliance_name),
             "compliance_description" : to_structure_CustomTextType_500(self.compliance_description),
