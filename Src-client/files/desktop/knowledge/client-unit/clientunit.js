@@ -497,6 +497,7 @@ function addcountryrownew(){
             $('#unitcount').val(1);
             $('.unit-error-msg', clone).addClass('unit-error-msg-'+countryByCount);
             $('.add-country-unit-list').append(clone);
+            industrytype('industry-'+countryByCount+'-'+1);
             $('.no-of-units-'+countryByCount).val(1);
             $('.activedclass-'+countryByCount+'-'+1).text("Active");
             if(countryByCount != 1){
@@ -677,11 +678,11 @@ function loadglevels(classval){
 //load industry type--------------------------------------------------------------------------------------------------
 function industrytype(classval){
     //var lastClass = classval.split(' ').pop();
-    var lastClass = classval;
+    //var lastClass = classval;
     //var checkval = lastClass.split('-');
-    $('.'+lastClass+' option:not(:first)').remove();
+    $('.'+classval).find('option').not(':first').remove();
     for(var industry in industryList){
-        $('.'+lastClass).append(
+        $('.'+classval).append(
             $('<option value = "'+industryList[industry]['industry_id']+'">'+industryList[industry]['industry_name']+'</option>')
         );
     }
@@ -927,7 +928,6 @@ function addUnitRowUpdate(clientunitId, businessgroupId, legalEntityId, division
     $('.unit-id-'+countval+'-'+lastClassval).val(firstlist['unit_id']);
     $('.unit-code-'+countval+'-'+lastClassval).val(firstlist['unit_code']);
     $('.unit-name-'+countval+'-'+lastClassval).val(firstlist['unit_name']);
-    industrytype('industry-'+countval+'-'+lastClassval);
     loadIndustry('industry-'+countval+'-'+lastClassval);
     $('.industry-'+countval+'-'+lastClassval+' option[value='+firstlist["industry_id"]+']').attr("selected", "selected");
     $('.unit-address-'+countval+'-'+lastClassval).val(firstlist['unit_address']);
