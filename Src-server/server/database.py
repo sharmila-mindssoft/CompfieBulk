@@ -2385,21 +2385,30 @@ class KnowledgeDatabase(Database):
         compliances = request_frame.compliances
         country_id = request_frame.country_id
         domain_id = request_frame.domain_id
+        mapping = request_frame.mappings
         compliance_names = []
-        for c in compliances :
-            compliance_name = c.compliance_task
-            compliance_id = c.compliance_id
-            q = "SELECT count(t1.compliance_task) FROM tbl_compliances t1 INNER JOIN \
-                tbl_statutory_mappings t2 on t1.statutory_mapping_id = t2.statutory_mapping_id \
-                WHERE t2.country_id = %s AND t2.domain_id = %s AND \
-                LOWER(t1.compliance_task) = LOWER('%s')" % (
-                    country_id, domain_id, compliance_name
-                )
-            if compliance_id is not None :
-                q = q + " AND t1.compliance_id != %s" % (compliance_id)
-            row = self.select_one(q)
-            if row[0] > 0 :
-                compliance_names.append(compliance_name)
+        for m in mapping :
+            statutory_mappings = m
+            for c in compliances :
+                compliance_name = c.compliance_task
+                compliance_id = c.compliance_id
+                statutory_provision = c.statutory_provision
+                q = "SELECT count(t1.compliance_task) FROM tbl_compliances t1 INNER JOIN \
+                    tbl_statutory_mappings t2 on t1.statutory_mapping_id = t2.statutory_mapping_id \
+                    WHERE t2.country_id = %s AND t2.domain_id = %s AND \
+                    LOWER(t1.compliance_task) = LOWER('%s') \
+                    AND LOWER (t1.statutory_provision) = LOWER('%s') \
+                    AND LOWER(t2.statutory_mapping) LIKE LOWER('%s')" % (
+                        country_id, domain_id, compliance_name,
+                        statutory_provision,
+                        str("%" + statutory_mappings + "%")
+                    )
+                print q
+                if compliance_id is not None :
+                    q = q + " AND t1.compliance_id != %s" % (compliance_id)
+                row = self.select_one(q)
+                if row[0] > 0 :
+                    compliance_names.append(compliance_name)
         if len(compliance_names) > 0 :
             return compliance_names
         else :
