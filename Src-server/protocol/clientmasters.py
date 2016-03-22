@@ -751,15 +751,20 @@ class ChangeAdminStatusSuccess(Response):
         }
 
 class GetClientUsersSuccess(Response):
-    def __init__(self, countries,domains, business_groups, legal_entities,
-        divisions,units, user_groups, users,service_providers, remaining_licence
+    def __init__(
+        self, user_countries, user_domains, countries, domains, business_groups, 
+        legal_entities, divisions, units, session_user_units, user_groups, users, 
+        service_providers, remaining_licence
     ):
+        self.user_countries = user_countries
+        self.user_domains = user_domains
         self.countries = countries
         self.domains = domains
         self.business_groups = business_groups
         self.legal_entities = legal_entities
         self.divisions = divisions
         self.units = units
+        self.session_user_units = session_user_units
         self.user_groups = user_groups
         self.users = users
         self.service_providers = service_providers
@@ -767,11 +772,17 @@ class GetClientUsersSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries","domains", "business_groups", 
-	        	"legal_entities", "divisions", "units", "user_groups", "users",
-	        	"service_providers", "remaining_licence"
+        data = parse_dictionary(data, [
+                "user_countries", "user_domains", "countries","domains", "business_groups", 
+	        	"legal_entities", "divisions", "units", "session_user_units"
+                "user_groups", "users", "service_providers", 
+                "remaining_licence"
         	]
        	)
+        user_countries = data.get("user_countries")
+        user_countries = parse_structure_VectorType_RecordType_core_Country(user_countries)
+        user_domains = data.get("user_domains")
+        user_domains = parse_structure_VectorType_RecordType_core_Domain(user_domains)
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
@@ -784,6 +795,8 @@ class GetClientUsersSuccess(Response):
         divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_core_Unit(units)
+        session_user_units = data.get("session_user_units")
+        session_user_units = parse_structure_VectorType_RecordType_core_Unit(session_user_units)
         user_groups = data.get("user_groups")
         user_groups = parse_structure_VectorType_RecordType_core_UserGroup(user_groups)
         users = data.get("users")
@@ -793,19 +806,22 @@ class GetClientUsersSuccess(Response):
         remaining_licence = data.get("remaining_licence")
         remaining_licence = parse_structure_UnsignedIntegerType_32(remaining_licence)
         return GetClientUsersSuccess(
-        	countries,domains, business_groups, legal_entities,
-        	divisions,units, user_groups, users,service_providers, 
-        	remaining_licence
+        	user_countries, user_domains, countries,domains, business_groups, 
+            legal_entities, divisions, units, session_user_units, user_groups, 
+            users, service_providers, remaining_licence
         )
 
     def to_inner_structure(self):
         return {
+            "user_countries" : to_structure_VectorType_RecordType_core_Country(self.user_countries),
+            "user_domains" : to_structure_VectorType_RecordType_core_Domain(self.user_domains),
             "countries" : to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains" : to_structure_VectorType_RecordType_core_Domain(self.domains),
             "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
             "legal_entities" : to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
             "divisions" : to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
             "units" : to_structure_VectorType_RecordType_core_ClientUnit(self.units),
+            "session_user_units" : to_structure_VectorType_RecordType_core_ClientUnit(self.session_user_units),
             "user_groups" : to_structure_VectorType_RecordType_core_UserGroup(self.user_groups),
             "users" : to_structure_VectorType_RecordType_core_ClientUser(self.users),
             "service_providers" : to_structure_VectorType_RecordType_core_ServiceProvider(self.service_providers),

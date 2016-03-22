@@ -211,13 +211,14 @@ def get_client_users(db, request, session_user, client_id):
     user_company_info = db.get_user_company_details(
         session_user, client_id
     )
-    print "user_company_info : {}".format(user_company_info)
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
     business_group_ids = user_company_info[3]
-    country_list = db.get_countries_for_user(session_user, client_id)
-    domain_list = db.get_domains_for_user(session_user, client_id)
+    user_country_list = db.get_countries_for_user(session_user, client_id)
+    user_domain_list = db.get_domains_for_user(session_user, client_id)
+    country_list = db.get_countries()
+    domain_list = db.get_domains()
     business_group_list = db.get_business_groups_for_user(
         business_group_ids
     )
@@ -227,18 +228,22 @@ def get_client_users(db, request, session_user, client_id):
     division_list = db.get_divisions_for_user(
         division_ids
     )
-    unit_list = db.get_units_for_user(unit_ids, client_id)
+    unit_list = db.get_units_for_user(None)
+    session_user_unit_list = db.get_units_for_user(unit_ids)
     user_group_list = db.get_user_privileges(client_id)
     user_list = db.get_user_details(client_id, session_user)
     service_provider_list = db.get_service_providers(client_id)
     remaining_licence = db.get_no_of_remaining_licence()
     return clientmasters.GetClientUsersSuccess(
+        user_countries=user_country_list,
+        user_domains=user_domain_list,
         countries=country_list,
         domains=domain_list,
         business_groups=business_group_list,
         legal_entities=legal_entity_list,
         divisions=division_list,
         units=unit_list,
+        session_user_units=session_user_unit_list,
         user_groups=user_group_list,
         users=user_list,
         service_providers=service_provider_list,
