@@ -33,6 +33,19 @@ function displayMessage(message) {
 
 function initialize(){
     function onSuccess(data){
+        $("#clientunit-add").hide();
+        $("#clientunit-view").show();
+        
+        isUpdate = false;
+        countryByCount = 1;
+        countc = 0;
+        usercountrycount = 0;
+
+        $('#group-select  option:gt(0)').empty();
+        $('#businessgroup-select  option:gt(0)').empty();
+        $('#entity-select  option:gt(0)').empty();
+        $('#division-select  option:gt(0)').empty();
+
         groupList = data['group_companies'];
         businessGroupList = data['business_groups'];
         legalEntitiesList = data['legal_entities'];
@@ -43,6 +56,7 @@ function initialize(){
         industryList = data['industries'];
         domainList = data['domains'];
         unitList = data['units'];
+        clientdomainList = data["client_domains"];
         loadClientsList(data);
     }
     function onFailure(error){
@@ -338,7 +352,6 @@ function loadupdateunitlocation(cid, gid){
     return units;
 }
 function checkunits(clientid, businessGroupid, legalentityid, divisionid){  
-    console.log(clientid+"--"+businessGroupid+"--"+legalentityid+"--"+divisionid);
     var checkingunits = false;
     if(businessGroupid  == "") { 
         businessGroupid = null;
@@ -446,7 +459,6 @@ function addcountryrownew(){
     }        
     var usercountrycount = countryFulList.length;
 
-    console.log(countryCount+"=="+usercountrycount +"=="+ countc);
     if(groupId == '' && isUpdate == false){
         displayMessage("Select Group");
     }
@@ -460,7 +472,7 @@ function addcountryrownew(){
         displayMessage("Exceeds Maximum Countries for this User");
     }
     else{
-        console.log(countc);
+        
         clearMessage();
        
         if(countryCount > countc){
@@ -1498,7 +1510,6 @@ function loadauto_countrytext (textval, classval) {
         for(var i in countries){
             for(var j=0;j<arrayCountry.length;j++){
                 if(arrayCountry[j] == countries[i]['country_id']){
-                    //console.log(arrayCountry[j]+" == "+countries[i]['country_id']);
                     if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == 1) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]);
                 }
             }
@@ -1579,6 +1590,7 @@ function domainunionclientdomainList(){
                 cdnew[key] = cd[key];
             }
         });
+
         var finalObj1 = [];
         finalObj1 = d.concat(cdnew);
 
@@ -1617,7 +1629,6 @@ function loaddomain(classval){
     }
     else if($("#client-unit-id").val() != ""){
         var domains = domainunionclientdomainList();
-        console.log(domainunionclientdomainList());
     }
 
     $('.ul-domain-list'+countval).empty();
