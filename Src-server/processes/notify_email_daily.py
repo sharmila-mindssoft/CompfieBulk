@@ -35,6 +35,7 @@ class EmailNotification(object):
         response = server.sendmail(
             self.sender, receiver, msg.as_string()
         )
+        print response
         server.close()
 
     def notify_to_assignee(
@@ -233,6 +234,7 @@ def save_in_notification(
         )
     cursor = db.cursor()
     cursor.execute(query)
+    print "Notification saved"
     cursor.close()
     save_notification_users(notification_id, assignee)
     if notify_to_all:
