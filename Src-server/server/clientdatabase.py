@@ -3784,7 +3784,7 @@ class ClientDatabase(Database):
 
             else :
                 level_compliance = drill_down_data.compliances
-                compliance_list = level_compliance[level_1]
+                compliance_list = level_compliance.get(level_1)
                 if compliance_list is None :
                     compliance_list = []
                 compliance_list.append(compliance)
@@ -4644,7 +4644,7 @@ class ClientDatabase(Database):
             unit_name = "%s - %s " % (unit[1], unit[2])
             unit_address = unit[3]
 
-            query = "SELECT concat(c.document_name,'-',c.compliance_task), c.compliance_description, ch.validity_date, ch.due_date, \
+            query = "SELECT distinct ch.compliance_history_id, concat(c.document_name,'-',c.compliance_task), c.compliance_description, ch.validity_date, ch.due_date, \
                     (SELECT concat( u.employee_code, '-' ,u.employee_name ) FROM tbl_users u WHERE u.user_id = ch.completed_by) AS assigneename, \
                     ch.documents, ch.completion_date \
                     from tbl_compliances c,tbl_compliance_history ch, \
@@ -4653,7 +4653,7 @@ class ClientDatabase(Database):
                     AND ut.country_id = %s and ut.domain_ids like '%s' \
                     AND c.compliance_id = ch.compliance_id \
                     AND ch.completed_by like '%s'  AND c.statutory_mapping like '%s'  AND c.compliance_id like '%s' and ch.due_date BETWEEN '%s' AND '%s'" % (
-                    unit_id, country_id, domain_id,
+                    unit_id, country_id, str(domain_id)+"%",
                     assignee_id, str(statutory_id+"%"), compliance_id, start_date, end_date
                 )
             compliance_rows = self.select_all(query, client_id)
@@ -4661,19 +4661,19 @@ class ClientDatabase(Database):
             compliances_list = []
             for compliance in compliance_rows:
 
-                compliance_name = compliance[0]
-                assignee = compliance[4]
-                due_date = self.datetime_to_string(compliance[3])
+                compliance_name = compliance[1]
+                assignee = compliance[5]
+                due_date = self.datetime_to_string(compliance[4])
 
                 validity_date = None
-                if(compliance[2] != None):
-                    validity_date = self.datetime_to_string(compliance[2])
+                if(compliance[3] != None):
+                    validity_date = self.datetime_to_string(compliance[3])
 
-                documents = None if compliance[5] == "" else compliance[5]
+                documents = None if compliance[6] == "" else compliance[6]
                 remarks = "remarks"
                 completion_date = None
-                if(compliance[6] != None):
-                    completion_date = self.datetime_to_string(compliance[6])
+                if(compliance[7] != None):
+                    completion_date = self.datetime_to_string(compliance[7])
 
                 compliance = clientreport.ComplianceDetails(
                     compliance_name, assignee,

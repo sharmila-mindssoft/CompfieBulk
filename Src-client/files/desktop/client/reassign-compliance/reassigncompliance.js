@@ -335,6 +335,23 @@ function submitcompliance(){
   var assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
   var assignComplianceConcurrenceId = parseInt($('.concurrencelist.active').attr('id'));
   var assignComplianceApprovalId = parseInt($('.approvallist.active').attr('id'));
+
+  if($('.assigneelist.active').attr('id') != undefined){
+    assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
+  }
+
+  if($('.concurrencelist.active').attr('id') != undefined){
+    assignComplianceConcurrenceId = parseInt($('.concurrencelist.active').attr('id'));
+  }
+
+  if($('.approvallist.active').attr('id') != undefined){
+    assignComplianceApprovalId = parseInt($('.approvallist.active').attr('id'));
+  }
+
+  if(assignComplianceAssigneeName == 'Client Admin'){
+    assignComplianceApprovalId = assignComplianceAssigneeId;
+  }
+
   var reason = $('#reason').val();
   reassignCompliance = [];
   var statutoriesCount= 1;
@@ -367,8 +384,8 @@ function submitcompliance(){
             
             var due_date = null;
             if(cfrequency != 'On Occurrence'){
-              if(due_date != null && due_date != undefined){
-                due_date =  $('#duedate'+statutoriesCount).val();
+              due_date =  $('#duedate'+statutoriesCount).val();
+              if(due_date != '' && due_date != undefined){
                 var convertDueDate = convert_date(due_date);
                 if (convertDueDate < currentDate) {
                   displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");

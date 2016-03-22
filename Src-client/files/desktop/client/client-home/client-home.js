@@ -989,25 +989,50 @@ function showComplianceApplicabilityDrillDownRecord(data, type){
                   else if(sMonth == 11) sMonth = "Nov"
                   else if(sMonth == 12) sMonth = "Dec"
 
-                  statutorydate +=  sDay +' - '+ sMonth + ' ';
-                  triggerbefore +=  tBefore + ' ';
+                  statutorydate +=  sDay +' - '+ sMonth + ', ';
+                  triggerbefore +=  tBefore + ', ';
                 }
 
                 if(summary != null){
-                  if(statutorydate != ''){
-                    statutorydate = summary + ' ( '+statutorydate+' )';
+                  if(statutorydate.trim() != ''){
+                    statutorydate = statutorydate.replace(/,\s*$/, "");
+                    statutorydate = summary + ' ('+statutorydate+')';
                   }else{
                     statutorydate = summary;
                   }
                 }
 
+                if(triggerbefore != ''){
+                    triggerbefore = triggerbefore.replace(/,\s*$/, "");
+                }
                 var tableRow = $('#templates .compliance-applicable-status .table-row-list');
                 var clone = tableRow.clone();
+
+                var cDescription = val["description"];
+                var partDescription = cDescription;
+                if (cDescription != null && cDescription.length > 50){
+                  partDescription = cDescription.substring(0,49)+'...';
+                }
+
+                var cPenalConsequences = val["penal_consequences"];
+                var partPenalConsequences = cPenalConsequences;
+                if (cPenalConsequences != null && cPenalConsequences.length > 50){
+                  partPenalConsequences = cPenalConsequences.substring(0,49)+'...';
+                }
+
                 $(".sno", clone).html(sno);
                 $(".statutory-name", clone).html(val["statutory_provision"]);
-                $(".compliance-task-name", clone).html(val["compliance_task"])
-                $(".compliance-description-name", clone).html(val["description"]);
-                $(".penal-consequences-name", clone).html(val["penal_consequences"]);
+                var download_url = val["download_url"];
+                if(download_url == null){
+                    $(".compliance-task-name", clone).html(val["compliance_task"])
+                }else{
+                    $('.compliance-task-name', clone).html('<a href= "'+ download_url +'" target="_new">'+val["compliance_task"]+'</a>');
+                }
+
+                $(".compliance-description-name", clone).html('<abbr class="page-load" title="'+
+          cDescription+'">'+partDescription+'</abbr>');
+                $(".penal-consequences-name", clone).html('<abbr class="page-load" title="'+
+          cPenalConsequences+'">'+partPenalConsequences+'</abbr>');
                 $(".compliance-frequency-name", clone).html(frequency);
                 $(".repeats", clone).html(statutorydate);
                 //$(".statutory-date", clone).html(statutorydate);
