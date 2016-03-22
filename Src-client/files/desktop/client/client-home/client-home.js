@@ -1360,7 +1360,12 @@ function escalationDrilldown(status, data){
     var count = 1;
     var h2heading = $('#templates .escalation-status .tr-h2');
     var cloneh2 = h2heading.clone();
-    $(".escalation-status-value", cloneh2).html(status+" compliances");
+    if(status == "not_complied"){
+        $(".escalation-status-value", cloneh2).html("Not Complied compliances");    
+    }
+    if(status == "delayed"){
+        $(".escalation-status-value", cloneh2).html("Delayed compliances");       
+    }    
     $(".table-thead-drilldown-list").append(cloneh2);
 
     var tableHeading = $('#templates .escalation-status .tr-heading');
