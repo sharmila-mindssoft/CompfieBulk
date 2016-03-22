@@ -4756,7 +4756,7 @@ class ClientDatabase(Database):
         years = self.get_last_7_years()
         country_domain_timelines = self.get_country_domain_timelines(
             country_ids, domain_ids, years, client_id)
-        print country_domain_timelines
+        # print country_domain_timelines
         chart_data = []
         for country_wise_timeline in country_domain_timelines:
             country_id = country_wise_timeline[0]
@@ -7621,7 +7621,7 @@ class ClientDatabase(Database):
         )
 
         columns = ["is_active"]
-        values = [1, 0]
+        values = [0]
         result = self.update(
             self.tblAssignedCompliances, columns, values, condition
         )
