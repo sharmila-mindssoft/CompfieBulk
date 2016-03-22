@@ -335,6 +335,23 @@ function submitcompliance(){
   var assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
   var assignComplianceConcurrenceId = parseInt($('.concurrencelist.active').attr('id'));
   var assignComplianceApprovalId = parseInt($('.approvallist.active').attr('id'));
+
+  if($('.assigneelist.active').attr('id') != undefined){
+    assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
+  }
+
+  if($('.concurrencelist.active').attr('id') != undefined){
+    assignComplianceConcurrenceId = parseInt($('.concurrencelist.active').attr('id'));
+  }
+
+  if($('.approvallist.active').attr('id') != undefined){
+    assignComplianceApprovalId = parseInt($('.approvallist.active').attr('id'));
+  }
+
+  if(assignComplianceAssigneeName == 'Client Admin'){
+    assignComplianceApprovalId = assignComplianceAssigneeId;
+  }
+
   var reason = $('#reason').val();
   reassignCompliance = [];
   var statutoriesCount= 1;
