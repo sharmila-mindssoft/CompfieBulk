@@ -404,7 +404,7 @@ class ClientDatabase(Database):
         columns = "business_group_id, business_group_name"
         condition = "1"
         if business_group_ids is not None:
-            condition = "business_group_id in (%s)" % business_group_ids
+            condition = "business_group_id in (%s) ORDER BY business_group_name" % business_group_ids
         rows = self.get_data(
             self.tblBusinessGroups, columns, condition
         )
@@ -425,7 +425,7 @@ class ClientDatabase(Database):
         columns = "legal_entity_id, legal_entity_name, business_group_id"
         condition = "1"
         if legal_entity_ids is not None:
-            condition = "legal_entity_id in (%s)" % legal_entity_ids
+            condition = "legal_entity_id in (%s) ORDER BY legal_entity_name" % legal_entity_ids
         rows = self.get_data(
             self.tblLegalEntities, columns, condition
         )
@@ -450,7 +450,7 @@ class ClientDatabase(Database):
         columns = "division_id, division_name, legal_entity_id, business_group_id"
         condition = "1"
         if division_ids is not None:
-            condition = "division_id in (%s)" % division_ids
+            condition = "division_id in (%s) ORDER BY division_name" % division_ids
         rows = self.get_data(
             self.tblDivisions, columns, condition
         )
@@ -476,7 +476,7 @@ class ClientDatabase(Database):
         columns += " legal_entity_id, business_group_id, is_active, is_closed"
         condition = "1"
         if unit_ids is not None:
-            condition = "unit_id in (%s)" % unit_ids
+            condition = "unit_id in (%s) ORDER BY unit_name" % unit_ids
         rows = self.get_data(
             self.tblUnits, columns, condition
         )
@@ -489,16 +489,16 @@ class ClientDatabase(Database):
 
     def get_units_closure_for_user(self, unit_ids):
         columns = "unit_id, unit_code, unit_name, address, division_id, domain_ids, country_id,"
-        columns += " legal_entity_id, business_group_id, is_closed"
+        columns += " legal_entity_id, business_group_id, is_active, is_closed"
         condition = "1"
         if unit_ids is not None:
-            condition = "unit_id in (%s) and is_active = 1" % unit_ids
+            condition = "unit_id in (%s)  ORDER BY unit_name" % unit_ids
         rows = self.get_data(
             self.tblUnits, columns, condition
         )
         columns = [
             "unit_id", "unit_code", "unit_name", "unit_address", "division_id","domain_ids", "country_id",
-            "legal_entity_id", "business_group_id", "is_active"
+            "legal_entity_id", "business_group_id", "is_active", "is_closed"
         ]
 
         result = self.convert_to_dict(rows, columns)
@@ -593,7 +593,7 @@ class ClientDatabase(Database):
     def get_user_privileges(self, client_id):
         columns = "user_group_id, user_group_name, is_active"
         rows = self.get_data(
-            self.tblUserGroups, columns, "is_active = 1 ORDER BY user_group_name"
+            self.tblUserGroups, columns, "1 ORDER BY user_group_name"
         )
 
         columns = ["user_group_id", "user_group_name", "is_active"]
