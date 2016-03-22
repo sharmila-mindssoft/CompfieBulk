@@ -102,19 +102,19 @@ function compliancestatus(element){
 
 function disppopup(units_string){
   $("#popup1").show();
-  $(".popup-list tr:gt(0)").remove();
+  $(".popup-list").find("tr").remove();
   var units = units_string.split(',');
-  for(var i=0; i<units.length; i++){
+  for(var i=0; i<(units.length - 1); i++){
     var dispUnit = '';
     $.each(unitsList, function(index, value) {
     if (value.unit_id == parseInt(units[i])) {
         dispUnit = value.unit_name + ' - ' + value.address;
-        var popuptableRow=$('#popup_table .popup-list .popup_row');
-        var clone=popuptableRow.clone();
-        $(".popup_unitname",clone).text(dispUnit);
-        $('#popup_table').append(clone);
     }
     });
+    var tableRow=$('#templates .table-popup-list .table-row');
+    var clone=tableRow.clone();
+    $(".popup_unitname",clone).text(dispUnit);
+    $('.popup-list').append(clone);
   }
 }
 
@@ -217,7 +217,7 @@ function load_secondwizard(){
 
         var dispUnit = '';
         for(var i=0; i<applicable_units.length; i++){
-          dispUnit = applicable_units[i]+',';
+          dispUnit = dispUnit + applicable_units[i]+',';
         }
         $('.applicableunit', clone2).html('<a href="#popup1" onclick="disppopup(\''+dispUnit+'\')">'+dispApplicableUnits+'</a>');
         $('.compliancefrequency', clone2).text(frequency);
@@ -513,14 +513,26 @@ function submitcompliance(){
 
               if(due_date.length > 1){
                 for(var k = 0; k < due_date.length; k++){
-                dDate = $('#duedate'+statutoriesCount+'-'+k).val();
-                tDay = $('#triggerdate'+statutoriesCount+'-'+k).val();
-                current_due_dates.push([dDate,tDay]);
+                  dDate = $('#duedate'+statutoriesCount+'-'+k).val();
+                  if(dDate != ''){
+                    tDay = $('#triggerdate'+statutoriesCount+'-'+k).val();
+                    current_due_dates.push([dDate,tDay]);
+                  }else{
+                    displayMessage("Due date Required in Select Compliance Task Wizard");
+                    hideLoader();
+                    return false;
+                  }
                 }
               }else{
                 dDate = $('#duedate'+statutoriesCount).val();
-                tDay = $('#triggerdate'+statutoriesCount).val();
-                current_due_dates.push([dDate,tDay]);
+                if(dDate != ''){
+                  tDay = $('#triggerdate'+statutoriesCount).val();
+                  current_due_dates.push([dDate,tDay]);
+                }else{
+                  displayMessage("Due date Required in Select Compliance Task Wizard");
+                  hideLoader();
+                  return false;
+                }
               }
               var convertDueDate = convert_date(dDate);
               if (convertDueDate < currentDate) {
