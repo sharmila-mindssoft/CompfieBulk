@@ -72,6 +72,8 @@ function loadClientProfileList(profiles){
         var tableRow = $('#templates .table-clientprofile-list .table-row');
         var clone = tableRow.clone();
         sno = sno + 1;
+        var seating_unit = '-';
+        if(lists[key]['seating_unit_name'] != null) seating_unit = lists[key]['seating_unit_name'];
         $('.sno', clone).text(sno);
         $('.employee', clone).text(lists[key]['user_name']);
         $('.email', clone).text(lists[key]['email_id']);
@@ -81,7 +83,7 @@ function loadClientProfileList(profiles){
         else{
           $('.mobile-number', clone).text(lists[key]['contact_no']);
         }     
-        $('.seating-unit', clone).text(lists[key]['seating_unit_name']);
+        $('.seating-unit', clone).text(seating_unit);
         $('.unit-address', clone).text(lists[key]['address']);      
         $('.tbody-clientprofile-list').append(clone);
     });

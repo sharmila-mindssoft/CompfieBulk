@@ -494,13 +494,13 @@ class CloseUnit(Request):
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         password = data.get("password")
-        password = parse_structure_CustomTextType_20(password)
+        password = parse_structure_CustomTextType_100(password)
         return CloseUnit(unit_id, password)
 
     def to_inner_structure(self):
         return {
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "password": to_structure_CustomTextType_20(self.password),
+            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
+            "password": to_structure_CustomTextType_100(self.password),
         }
 
 class GetAuditTrails(Request):
