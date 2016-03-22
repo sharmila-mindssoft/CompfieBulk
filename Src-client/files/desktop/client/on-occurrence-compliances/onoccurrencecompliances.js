@@ -85,8 +85,8 @@ function submitOnOccurence(complianceId, count, unitId, complete_within_days){
 
   if(startdate != ''){
     var convertDueDate = convert_date(startdate);
-    if (convertDueDate < currentDate) {
-        displayMessage("Start date is less than today's date");
+    if (convertDueDate > currentDate) {
+        displayMessage("Start date is greater than today's date");
         return false;
     }
     displayLoader();

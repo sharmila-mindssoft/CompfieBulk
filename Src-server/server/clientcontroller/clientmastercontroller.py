@@ -211,6 +211,7 @@ def get_client_users(db, request, session_user, client_id):
     user_company_info = db.get_user_company_details(
         session_user, client_id
     )
+    print "user_company_info : {}".format(user_company_info)
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
@@ -228,7 +229,7 @@ def get_client_users(db, request, session_user, client_id):
     )
     unit_list = db.get_units_for_user(unit_ids, client_id)
     user_group_list = db.get_user_privileges(client_id)
-    user_list = db.get_user_details(client_id)
+    user_list = db.get_user_details(client_id, session_user)
     service_provider_list = db.get_service_providers(client_id)
     remaining_licence = db.get_no_of_remaining_licence()
     return clientmasters.GetClientUsersSuccess(
@@ -252,7 +253,7 @@ def save_client_user(db, request, session_user, client_id):
         return clientmasters.EmailIdAlreadyExists()
     elif db.is_duplicate_employee_code(
         user_id,
-        request.employee_code, client_id
+        request.employee_code.replace(" ",""), client_id
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
     # elif db.is_duplicate_user_contact_no(
@@ -267,7 +268,7 @@ def update_client_user(db, request, session_user, client_id):
         return clientmasters.InvalidUserId()
     elif db.is_duplicate_employee_code(
         request.user_id,
-        request.employee_code, client_id
+        request.employee_code.replace(" ",""), client_id
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
     # elif db.is_duplicate_user_contact_no(

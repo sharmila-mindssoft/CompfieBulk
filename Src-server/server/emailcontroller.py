@@ -58,11 +58,15 @@ class Email(object):
 
         msg = MIMEMultipart()
         msg['From'] = self.sender
+        print msg['From']
         msg['To'] = receiver
+        print msg['To']
         msg['Subject'] = subject
+        print msg['Subject']
         if cc is not None:
             msg['Cc'] = cc
-            receiver += cc
+            print msg['Cc']
+            # receiver += cc
         msg.attach(MIMEText(message, 'html'))
         print msg.as_string()
         response = server.sendmail(self.sender, receiver,  msg.as_string())
@@ -194,19 +198,12 @@ class EmailHandler(Email):
         self.send_email(receiver, subject, message)
 
     def notify_task(
-        self, compliance_history_id, when
+        self, assignee_email, assignee_name, 
+        concurrence_email, concurrence_name,
+        approver_email, approver_name, compliance_name, 
+        due_date, when
     ):
-        assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = db.get_compliance_history_details(
-            compliance_history_id
-        )
-        user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
-        receiver, employee_name = db.get_user_email_name(user_ids)
-        cc = receiver.split(",")[2]
-        if concurrence_id is not None or concurrence_id != 0 and db.is_two_levels_of_approval():
-            cc += ","+receiver.split(",")[1]
-        assignee_name = employee_name.split(",")[0]
-        if document_name is not None:
-            compliance_name = "%s - %s" % (document_name, compliance_name)
+        receiver = "%s, %s, %s" % (assignee_email, concurrence_email, approver_email)
         if when == "Start":
             subject = "Task Started"
             message = "Dear %s,  Compliance %s has started. Due date for the compliance is %s" % (
@@ -222,7 +219,7 @@ class EmailHandler(Email):
             message = "Dear %s, Compliance %s is delayed" % (
                 assignee_name, compliance_name, due_date
             )
-        self.send_email(receiver, subject, message, cc)
+        self.send_email(receiver, subject, message)
 
     def notify_reassigned(self, receiver, reassigned_from, assignee, compliance_name, due_date):
         assignee_id, concurrence_id, approver_id,  compliance_name, document_name,  due_date = db.get_compliance_history_details(
@@ -253,95 +250,62 @@ class EmailHandler(Email):
         self.send_email(receiver, subject, message)
 
     def notify_task_rejected(
-        self, db, compliance_history_id, rejected_reason, reject_type
+        self, compliance_history_id, remarks, reject_status,
+        assignee_name, assignee_email, concurrence_email,
+        concurrence_name
     ):
-        assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = db.get_compliance_history_details(
-            compliance_history_id
-        )
-        user_ids = assignee_id
-        if reject_type == "RejectApproval":
-            if concurrence_id is None or concurrence_id == 0:
-                user_ids = "%d,%d" % (user_ids, concurrence_id)
-        receiver, employee_name = db.get_user_email_name(user_ids)
-        assignee = employee_name.split(",")[0]
-        if document_name is not None:
-            compliance_name = "%s - %s" % (document_name, compliance_name)
         subject = "Task Rejected"
         message = "Dear %s, Compliance %s has been rejected. The reason is %s." % (
-            assignee, compliance_name, rejected_reason
+            assignee_name, compliance_name, rejected_reason
         )
-        sender = None
-        cc = None
-        if concurrence_id is not None and concurrence_id != 0:
-            sender = receiver.split(",")[0]
-            cc = receiver.split(",")[1]
+        if concurrence_email is not None and reject_type == "RejectApproval":
+            receiver = assignee_email 
+            cc = concurrence_email
         self.send_email(receiver, subject, message, cc)
-        # email_to = receiver.split(",")
-        # context = {
-        #     "User" : assignee,
-        #     "Compliance" : compliance_name,
-        #     "Reason" : rejected_reason
-        # }
-        # template_name = self.get_template("task_rejected")
-        # self.send_mail(template_name, email_to, context)
 
     def notify_task_completed(
-        self, db, compliance_history_id
+        self, assignee_email, assignee_name, concurrence_email, 
+        concurrence_name, approver_email, approver_name, action,
+        is_two_levels_of_approval, compliance_name
     ):
-        assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = db.get_compliance_history_details(
-            compliance_history_id
-        )
-        user_ids = "%s, %s" % (assignee_id, approver_id)
-        action = "approve"
-        if db.is_two_levels_of_approval() and concurrence_id is not None:
-            user_ids = "%s, %s, %s" % (assignee_id, concurrence_id, approver_id)
+        approval_or_concurrence_person = approver_name
+        approval_or_concurrence_email = approver_email
+        if is_two_levels_of_approval and concurrence_name is not None:
             action = "concur"
-        if document_name is not None:
-            compliance_name = "%s - %s" % (document_name, compliance_name)
+            approval_or_concurrence_person = concurrence_name
+            approval_or_concurrence_email = concurrence_email
 
-        receiver, employee_name = db.get_user_email_name(user_ids)
-        user_names = employee_name.split(",")
-        assignee = user_names[len(user_names)-1]
-        approval_or_concurrence_person = user_names[len(user_names)-2]
-
-        cc = "%s" % (receiver.split(",")[0])
+        cc = "%s" % (assignee_email)
         subject = "Task Completed"
         message = '''
         Dear %s,
         <br>
         %s has completed the task %s successfully. Review and %s
         ''' % (
-            approval_or_concurrence_person, assignee ,compliance_name, action
+            approval_or_concurrence_person, assignee_name, compliance_name, action
         )
-        self.send_email(receiver.split(',')[1], subject, message, cc)
+        self.send_email(approval_or_concurrence_email, subject, message, cc)
 
     def notify_task_approved(
-        self, db, compliance_history_id, approval_status
+        self, approval_status, assignee_name, assignee_email, 
+        concurrence_name, concurrence_email, approver_name, approver_email,
+        compliance_name, is_two_levels_of_approval
     ):
-        assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = db.get_compliance_history_details(
-            compliance_history_id
-        )
-        user_ids = "%s, %s" % (assignee_id, approver_id)
-        if db.is_two_levels_of_approval() and concurrence_id != 0:
-            user_ids = "%s, %s, %s" % (assignee_id, concurrence_id, approver_id)
-        if document_name is not None:
-            compliance_name = "%s - %s" % (document_name, compliance_name)
-        receiver, employee_name = db.get_user_email_name(user_ids)
-        assignee = employee_name.split(",")[0]
+
         subject = "Task %s" % approval_status
         message = '''
         Dear %s,
         <br>
         Task %s %s Successfully.
         ''' % (
-            assignee, compliance_name, approval_status
+            assignee_name, compliance_name, approval_status
         )
         cc = None
-        if db.is_two_levels_of_approval() and concurrence_id != 0:
-            cc = receiver.split(",")[1]
-        self.send_email(receiver.split(",")[0], subject, message, cc)
+        if is_two_levels_of_approval and concurrence_email is not None:
+            cc = concurrence_email
+        self.send_email(assignee_email, subject, message, cc)
         if approval_status == "Concurred":
-            cc = "%s" % (receiver.split(",")[0])
+            cc = "%s" % (assignee_email)
             subject = "Task Concurred"
             message = '''
             Dear %s,
@@ -349,7 +313,7 @@ class EmailHandler(Email):
             %s has completed the task %s successfully and %s has concurred the compliance.\
             Review and approve the compliance
             ''' % (
-                employee_name.split(',')[2], assignee , compliance_name,
-                employee_name.split(',')[1]
+                approver_name, assignee_name , compliance_name,
+                concurrence_name
             )
-            self.send_email(receiver.split(',')[2], subject, message, cc)
+            self.send_email(approver_email, subject, message, cc)

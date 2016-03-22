@@ -1658,7 +1658,8 @@ class APPROVALCOMPLIANCE(object):
     def __init__(self, compliance_history_id, compliance_name, description,
         domain_name, start_date, due_date, delayed_by, compliance_frequency,
         documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
-        remarks, action, statutory_dates, validity_date):
+        remarks, action, statutory_dates, validity_date, unit_name
+    ):
         self.compliance_history_id = compliance_history_id
         self.compliance_name = compliance_name
         self.description = description
@@ -1677,6 +1678,7 @@ class APPROVALCOMPLIANCE(object):
         self.action = action
         self.statutory_dates = statutory_dates
         self.validity_date = validity_date
+        self.unit_name = unit_name
 
     @staticmethod
     def parse_structure(data):
@@ -1686,7 +1688,7 @@ class APPROVALCOMPLIANCE(object):
                 "description", "domain_name", "file_names", "start_date", "due_date", "delayed_by",
                 "compliance_frequency", "documents", "upload_date", "completion_date",
                 "next_due_date", "concurrenced_by", "remarks", "action",
-                "statutory_dates", "validity_date"
+                "statutory_dates", "validity_date", "unit_name"
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
@@ -1725,11 +1727,13 @@ class APPROVALCOMPLIANCE(object):
         statutory_dates = parse_structure_VectorType_RecordType_core_StatutoryDate(statutory_dates)
         validity_date = data.get("validity_date")
         validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
+        unit_name = data.get("unit_name")
+        unit_name = parse_structure_CustomTextType_250(unit_name)
         return APPROVALCOMPLIANCE(
             compliance_history_id, compliance_name, description,
             domain_name, start_date, due_date, delayed_by, compliance_frequency,
             documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
-            remarks, action, statutory_dates, validity_date
+            remarks, action, statutory_dates, validity_date, unit_name
         )
 
     def to_structure(self):
@@ -1751,7 +1755,8 @@ class APPROVALCOMPLIANCE(object):
             "remarks": to_structure_OptionalType_CustomTextType_500(self.remarks),
             "action": to_structure_CustomTextType_20(self.action),
             "statutory_dates" : to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
-            "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date)
+            "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
+            "unit_name": to_structure_CustomTextType_250(self.unit_name)
         }
 
 #

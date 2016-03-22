@@ -595,7 +595,7 @@ function prepareComplianceStatusChartData (chart_data) {
         xAxisDrillDownSeries[xAxis[j]] = data_list
     }
     chartTitle =  chartTitle + " wise compliances";
-
+    console.log(chartDataSeries)
     return [xAxisName, xAxis, chartDataSeries, chartTitle, xAxisDrillDownSeries];
 }
 
@@ -691,7 +691,8 @@ function updateComplianceStatusStackBarChart(data) {
             title: {
                 text: 'Total compliances'
             },
-            allowDecimals: false
+            allowDecimals: false,
+            reversedStacks: false
         },
         tooltip: {
             headerFormat: '<b>{point.x}</b>: {point.percentage:.0f}% ',

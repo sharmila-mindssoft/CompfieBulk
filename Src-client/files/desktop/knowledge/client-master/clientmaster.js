@@ -972,13 +972,22 @@ function loadautocountry() {
     if($("#clientgroup-id").val().trim() == ""){
         var countries = countriesList; 
         $('#ulist-country').empty();
-
         var str = '';
         for(var i in countries){
+            selectcountrystatus = '';
+            for(var j = 0; j < editcountryval.length; j++){
+                if(editcountryval[j] ==  countries[i]["country_id"]){
+                    selectcountrystatus = 'checked';
+                }
+            }
             var countryId = parseInt(countries[i]["country_id"]);
             var countryName = countries[i]["country_name"];
-            
-            str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';
+            if(selectcountrystatus == 'checked'){
+                str += '<li id="'+countryId+'" class="active_selectbox_country" onclick="activateCountry(this)" >'+countryName+'</li> ';
+            }
+            else{
+                str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';   
+            }
             
         }
 
