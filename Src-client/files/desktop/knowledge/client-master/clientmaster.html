@@ -62,7 +62,7 @@
                 <input type="hidden" id="countryNames">
                 <input type="text" class="input-box icon-autocomplete" id="countryselected" value="" readonly="readonly" onclick="loadautocountry()">
                 <div id="selectboxview-country" class="ac-selectbox" style="display:none;">
-                <ul id="ulist-country" onmouseleave="hidemenu();" style="width:213px;"></ul>
+                <ul id="ulist-country" onmouseleave="hidemenu();" onclick = "hidemenu();" style="width:213px;"></ul>
               </div>
             </div>
           </div>
@@ -73,7 +73,7 @@
               <input type="hidden" id="domainNames">
               <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" readonly="readonly" onclick="loadauto()">
               <div id="selectboxview" class="ac-selectbox" style="display:none;">
-              <ul id="ulist" onmouseleave="hidemenu();" style="width:213px;"></ul>
+              <ul id="ulist" onmouseleave="hidemenu();" onclick = "hidemenu();" style="width:213px;"></ul>
             </div>
           </div>
         </div>
@@ -186,7 +186,7 @@
       </td>
       <td align="center" width="35%">
         <select class="input-box tl-from" style="width:100px">
-        <option value="">Select</option>
+        <!-- <option value="">Select</option> -->
         <option value="1">January</option>
         <option value="2">February</option>
         <option value="3">March</option>
@@ -203,7 +203,7 @@
       </td>
       <td align="center" width="35%">
         <select class="input-box tl-to" style="width:100px">
-        <option value="">Select</option>
+        <!-- <option value="">Select</option> -->
         <option value="1">January</option>
         <option value="2">February</option>
         <option value="3">March</option>
@@ -215,7 +215,7 @@
         <option value="9">September</option>
         <option value="10">October</option>
         <option value="11">November</option>
-        <option value="12">December</option>
+        <option value="12" selected="selected">December</option>
         </select>
       </td>
     </tr>

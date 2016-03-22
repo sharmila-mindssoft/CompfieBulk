@@ -177,42 +177,49 @@ function getDivisionName(divisionId){
 function loadClientDetailsList(data){
     $('.table-clientdetails-list tbody').empty();
     var sno = 0;
-    $.each(data, function(key, value) {
-        var tablefilter = $('#templates .tr-filter');
-        var clonefilter = tablefilter.clone();
-        $(".bgroupsval", clonefilter).text(getBusinessGroupName(value['business_group_id']));
-        $(".lentityval", clonefilter).text(getLegalEntityName(value['legal_entity_id']));
-        $(".divisionval", clonefilter).text(getDivisionName(value['division_id']));
-        $('.tbody-clientdetails-list').append(clonefilter);
+    if(data.length != 0 ){
+        $.each(data, function(key, value) {
+            var tablefilter = $('#templates .tr-filter');
+            var clonefilter = tablefilter.clone();
+            $(".bgroupsval", clonefilter).text(getBusinessGroupName(value['business_group_id']));
+            $(".lentityval", clonefilter).text(getLegalEntityName(value['legal_entity_id']));
+            $(".divisionval", clonefilter).text(getDivisionName(value['division_id']));
+            $('.tbody-clientdetails-list').append(clonefilter);
 
-        var tableheading = $('#templates .tr-heading');
-        var cloneheading = tableheading.clone();
-        $('.tbody-clientdetails-list').append(cloneheading);
+            var tableheading = $('#templates .tr-heading');
+            var cloneheading = tableheading.clone();
+            $('.tbody-clientdetails-list').append(cloneheading);
 
-        var list = value['units'];
-        $.each(list, function(k, val) { 
-            var arr = [];
-            var domainsNames = '';
-            var tableRow = $('#templates .table-row');
-            var clone = tableRow.clone();
-            sno = sno + 1;
-            $('.sno', clone).text(sno);
-            $('.unit-name', clone).html(val['unit_code']+" - "+val['unit_name']);
-            arr = val['domain_ids'];
-            $.each(domainsList, function(key, value){
-                var domianid = value['domain_id'];
-                var domainname = value['domain_name']
-                if(jQuery.inArray(domianid, arr ) > -1){
-                    domainsNames += domainname + ", ";
-                }
-            });                 
-            $('.domain-name', clone).html(domainsNames);
-            $('.unit-address', clone).text(val['unit_address']+", "+val['geography_name']);
-            $('.pincode', clone).html(val['postal_code']);
-            $('.tbody-clientdetails-list').append(clone);
+            var list = value['units'];
+            $.each(list, function(k, val) { 
+                var arr = [];
+                var domainsNames = '';
+                var tableRow = $('#templates .table-row');
+                var clone = tableRow.clone();
+                sno = sno + 1;
+                $('.sno', clone).text(sno);
+                $('.unit-name', clone).html(val['unit_code']+" - "+val['unit_name']);
+                arr = val['domain_ids'];
+                $.each(domainsList, function(key, value){
+                    var domianid = value['domain_id'];
+                    var domainname = value['domain_name']
+                    if(jQuery.inArray(domianid, arr ) > -1){
+                        domainsNames += domainname + ", ";
+                    }
+                });                 
+                $('.domain-name', clone).html(domainsNames);
+                $('.unit-address', clone).text(val['unit_address']+", "+val['geography_name']);
+                $('.pincode', clone).html(val['postal_code']);
+                $('.tbody-clientdetails-list').append(clone);
+            });
         });
-    });
-    $(".total-records").html("Total : "+sno+" records")
+        $(".total-records").html("Total : "+sno+" records")
+    }
+    else{
+        $(".tbody-clientdetails-list").html("<center style='padding:40px 0px; font-size:0.813em; '>No records found!</center>");
+        $(".total-records").html("");
+    }
+    
 }
 
 //Countries---------------------------------------------------------------------------------------------------------------

@@ -178,14 +178,16 @@ class EmailHandler(Email):
         self, receiver, assignee_name, compliance_name, due_date
     ):
         subject = "Task Assigned"
-        message = "Dear %s,  Compliance %s has assigned to you. Due date for the compliance is %s" % (
+        message = "Dear %s, <br>  \
+            Compliance %s has assigned to you. Due date for the compliance is %s" % (
             assignee_name, compliance_name, due_date
         )
         self.send_email(receiver, subject, message)
 
     def notify_assign_compliance(self, receiver, assignee_name, compliance_info):
         subject = "New compliance task assigned "
-        message = "Dear %s, %s" % (
+        message = "Dear %s, <br> \
+            <p>%s</p>" % (
             assignee_name, compliance_info,
         )
         print message

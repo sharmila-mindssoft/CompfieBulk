@@ -140,7 +140,7 @@ class ClientDatabase(Database):
             data_columns = [
                 "user_id", "user_group_id", "email_id",
                 "employee_name", "employee_code", "contact_no",
-                "user_group_name", "form_ids", "is_admin", 
+                "user_group_name", "form_ids", "is_admin",
                 "service_provider_id"
             ]
             query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, \
@@ -291,7 +291,7 @@ class ClientDatabase(Database):
             column = "count(*)"
             condition = "user_id = '%d' and is_active = 1" % user_id
             rows = self.get_data(self.tblUsers, column, condition)
-            if rows[0][0] > 0:
+            if rows[0][0] > 0 or user_id == 0:
                 return user_id
             else:
                 return None
@@ -1345,7 +1345,6 @@ class ClientDatabase(Database):
             FROM tbl_client_statutories t1 \
             INNER JOIN tbl_units t2 \
             ON t1.unit_id = t2.unit_id %s " % (where_qry)
-        print query
         rows = self.select_all(query)
         columns = [
             "geography",
@@ -1784,7 +1783,6 @@ class ClientDatabase(Database):
             condition = "frequency like '%s%s%s'" % (
                 "%", frequency_name, "%"
             )
-        print "compliance_id_rows:{}".format(compliance_id_rows)
         if compliance_id_rows:
             compliance_ids = compliance_id_rows[0][0]
             if compliance_ids is not None:
@@ -1801,7 +1799,6 @@ class ClientDatabase(Database):
                         self.tblComplianceFrequency, self.tblComplianceRepeatType, compliance_ids,
                         1, unit_id, condition
                     )
-                print query
                 client_compliance_rows = self.select_all(query)
                 if client_compliance_rows:
                     columns = [
@@ -2227,31 +2224,21 @@ class ClientDatabase(Database):
                 domain_name = domain_name_row[0][0]
 
                 action = None
-                print
-                print "checking for compliance : {}".format(compliance_name)
                 if self.is_two_levels_of_approval():
-                    print "two levels of approval"
                     if concurred_by_id == session_user:
-                        print "session user is concurrence person"
                         if concurrence_status is True:
-                            print "already concurred"
                             continue
                         else:
-                            print "going to add in concur list"
                             action = "Concur"
                     elif concurrence_status is True and session_user == approved_by_id:
-                        print "already concurred going to add approve list"
                         action = "Approve"
                     elif concurred_by_id is None and session_user == approved_by_id:
                         action = "Approve"
                     else:
-                        print "session user is not concurrence person and compliance is not concurred"
                         continue
                 elif concurred_by_id != session_user and session_user == approved_by_id:
-                    print "session user is not concurrence person going to approve"
                     action = "Approve"
                 else:
-                    print "inside else"
                     continue
                 compliances.append(clienttransactions.APPROVALCOMPLIANCE(
                         compliance_history_id, compliance_name, description, domain_name,
@@ -2461,7 +2448,7 @@ class ClientDatabase(Database):
             AND t1.unit_id IN %s \
             AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
-            AND t3.is_active = 1 " % (
+            AND t3.is_active = 1 AND t1.is_new = 1 " % (
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
@@ -2576,8 +2563,6 @@ class ClientDatabase(Database):
 
     def save_assigned_compliance(self, request, session_user, client_id):
         new_unit_settings = request.new_units
-        # if new_unit_settings is None :
-        #     return clienttransactions.SaveAssignedComplianceSuccess()
 
         created_on = self.get_date_time()
         country_id = int(request.country_id)
@@ -2588,7 +2573,6 @@ class ClientDatabase(Database):
         approval = int(request.approval_person)
         compliances = request.compliances
 
-        # print request.to_structure()
         compliance_names = []
         for c in compliances:
             compliance_id = int(c.compliance_id)
@@ -2612,7 +2596,7 @@ class ClientDatabase(Database):
                 due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
             else :
                 due_date = ""
-            compliance_names.append("Complaince Name:" + c.compliance_name + "- Due Date:" + str(due_date))
+            compliance_names.append("Complaince Name:" + c.compliance_name + "- Due Date:" + str(c.due_date))
             validity_date = c.validity_date
             if validity_date is not None :
                 validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
@@ -2636,26 +2620,35 @@ class ClientDatabase(Database):
                         approval, trigger_before, due_date, validity_date,
                         int(session_user), created_on
                     )
-                print query
                 self.execute(query)
             # self.update_user_units(assignee, unit_ids, client_id)
         if new_unit_settings is not None :
             self.update_user_settings(new_unit_settings, client_id)
 
-        compliance_names = ", ".join(compliance_names)
+        compliance_names = " <br> ".join(compliance_names)
         if request.concurrence_person_name is None :
-            action = " %s has assigned to assignee - %s and approval-person - %s " % (
-                str(compliance_names), request.assignee_name,
-                request.approval_person_name
+            action = " Following compliances has assigned to assignee - %s and approval-person - %s <br> %s" % (
+                request.assignee_name,
+                request.approval_person_name,
+                compliance_names
             )
         else :
-            action = " %s has assigned to assignee - %s concurrence-person - %s approval-person - %s " % (
-                str(compliance_names), request.assignee_name, request.concurrence_person_name,
-                request.approval_person_name
+            action = " Following compliances has assigned to assignee - %s concurrence-person - %s approval-person - %s <br> %s" % (
+                request.assignee_name,
+                request.concurrence_person_name,
+                request.approval_person_name,
+                compliance_names
             )
+        # print action
         self.save_activity(session_user, 7, json.dumps(action))
-        receiver = self.get_email_id_for_users(assignee)
-        email.notify_assign_compliance(receiver, request.assignee_name, action)
+        receiver = self.get_email_id_for_users(assignee)[1]
+        notify_assign_compliance = threading.Thread(
+            target=email.notify_assign_compliance,
+            args=[
+                receiver, request.assignee_name, action
+            ]
+        )
+        notify_assign_compliance.start()
         return clienttransactions.SaveAssignedComplianceSuccess()
 
     def update_user_settings(self, new_units, client_id):
@@ -2701,9 +2694,6 @@ class ClientDatabase(Database):
                     values = (user_id, country_id)
                     value_list = [values]
                     self.bulk_insert(self.tblUserCountries, country_columns, value_list, client_id)
-
-
-
 
 #
 #   Chart Api
@@ -3226,7 +3216,7 @@ class ClientDatabase(Database):
         if len(domain_ids) == 1 :
             domain_ids.append(0)
         if user_id == 0 :
-            user_id = ''
+            user_qry = '1'
         else :
             user_qry = "(T1.completed_by LIKE '%s' OR T1.concurred_by LIKE '%s' \
             OR T1.approved_by LIKE '%s')" % (user_id, user_id, user_id)
@@ -3505,17 +3495,6 @@ class ClientDatabase(Database):
             chart_data.append(
                 escalation_years.get(y)
             )
-
-        # final_result_list = []
-        # print
-        # print escalation_years
-        # for k, v in filter_type_wise.items():
-        #     data_list = []
-        #     for i, j in v.items():
-        #         data_list.extend(j)
-        #     chart = dashboard.ChartDataMap(k, data_list)
-        #     final_result_list.append(chart)
-
         return dashboard.GetEscalationsChartSuccess(
             years, chart_data
         )
@@ -7041,7 +7020,7 @@ class ClientDatabase(Database):
         return result
 
     def get_client_details_report(
-        self, country_id,  business_group_id, legal_entity_id, division_id, 
+        self, country_id,  business_group_id, legal_entity_id, division_id,
         unit_id, domain_ids, session_user
     ):
         condition = "country_id = '%d' "%(country_id)

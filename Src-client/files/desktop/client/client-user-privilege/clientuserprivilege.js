@@ -57,9 +57,11 @@ function loadFormData(formlist){
 $("#btn-userprivilege-cancel").click(function(){
 	$("#userprivilege-add").hide();
 	$("#userprivilege-view").show();
+	clearMessage(); 
 });
 function initialize(){
 	function onSuccess(data){
+		clearMessage(); 
 		loadUserGroupdata(data['user_groups']);
 	}
 	function onFailure(status, data){
@@ -164,6 +166,9 @@ $("#submit").click(function(){
 		function onFailure(error){
 			if(error == "UserGroupNameAlreadyExists"){
 				displayMessage("User Group Name Already Exists");
+			}
+			else{
+				displayMessage(error);
 			}
 		}
 		var userGroupUpdateDetails;
