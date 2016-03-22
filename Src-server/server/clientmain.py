@@ -277,17 +277,6 @@ def run_server(address, knowledge_server_address):
         web_server = WebServer(io_loop)
         client_docs_path = os.path.join(ROOT_PATH, "clientdocuments")
         exported_reports_path = os.path.join(ROOT_PATH, "exported_reports")
-        web_server.low_level_url(
-            r"/client/client_documents/(.*)",
-            StaticFileHandler,
-            dict(path=client_docs_path)
-        )
-
-        web_server.low_level_url(
-            r"/download/csv/(.*)",
-            StaticFileHandler,
-            dict(path=exported_reports_path)
-        )
 
         api = API(
             io_loop,
@@ -309,6 +298,16 @@ def run_server(address, knowledge_server_address):
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)
 
+        web_server.low_level_url(
+            r"/client/client_documents/(.*)",
+            StaticFileHandler,
+            dict(path=client_docs_path)
+        )
+
+        web_server.low_level_url(
+            r"/download/csv/(.*)", StaticFileHandler,
+            dict(path=exported_reports_path)
+        )
         print "Listening at: %s:%s" % (ip, port)
         web_server.start(port, backlog=1000)
 

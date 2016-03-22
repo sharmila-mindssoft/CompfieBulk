@@ -1858,6 +1858,7 @@ class ClientDatabase(Database):
                         self.tblComplianceFrequency, self.tblComplianceRepeatType, compliance_ids,
                         1, unit_id, condition, add_condition
                     )
+                print query
                 client_compliance_rows = self.select_all(query)
                 if client_compliance_rows:
                     columns = [
@@ -1911,6 +1912,9 @@ class ClientDatabase(Database):
                                 )
                         elif (compliance["frequency_id"] == 1):
                             pass
+                        print "due_dates for {} is {}".format(
+                            compliance["employee_name"], due_dates
+                        ) 
                         for due_date in due_dates:
                             if not self.is_already_completed_compliance(
                                 due_date, compliance["compliance_id"], unit_id
@@ -1972,6 +1976,7 @@ class ClientDatabase(Database):
         self, country_id, domain_id, statutory_dates=None, repeat_by=None,
         repeat_every=None, due_date=None
     ):
+        print "inside calculate_due_date=========>"
         def is_future_date(test_date):
             result = False
             current_date = datetime.datetime.today()
@@ -1979,10 +1984,12 @@ class ClientDatabase(Database):
                 result = True
             return result
         from_date, to_date = self.calculate_from_and_to_date_for_domain(country_id, domain_id)
+        print "from_date : {}, to_date: {}".format(from_date, to_date)
         due_dates = []
         statutory_dates_list = []
         # For Monthly Recurring compliances
         if statutory_dates and len(json.loads(statutory_dates)) > 1:
+            print "insided multiple statutory dates"
             for statutory_date in json.loads(statutory_dates):
                 date = statutory_date["statutory_date"]
                 month = statutory_date["statutory_month"]
@@ -2007,6 +2014,7 @@ class ClientDatabase(Database):
                 else:
                     continue
         elif repeat_by:
+            print "inside single statutory date"
             # For Compliances Recurring in days
             if repeat_by == 1:
                 previous_year_due_date = datetime.datetime(
@@ -4789,7 +4797,7 @@ class ClientDatabase(Database):
                 start_end_dates = domain_wise_timeline[1]
 
 
-                compliance_history_ids = self.get_compliance_history_ids_for_trend_chart(
+                compliance_history_ids, client_statutory_ids, unit_ids = self.get_compliance_history_ids_for_trend_chart(
                     country_id, domain_id, client_id
                 )
                 if compliance_history_ids is not None:
@@ -4799,7 +4807,9 @@ class ClientDatabase(Database):
                         condition = "due_date between '{}' and '{}'".format(
                             dates["start_date"], dates["end_date"]
                         )
-                        condition += " and compliance_history_id in (%s)" % (compliance_history_ids)
+                        print condition
+                        condition += " and compliance_history_id in ({})".format(compliance_history_ids)
+                        print condition
                         rows = self.get_data(
                             self.tblComplianceHistory,
                             columns, condition
