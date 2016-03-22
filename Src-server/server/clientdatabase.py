@@ -457,18 +457,18 @@ class ClientDatabase(Database):
 
     def get_units_for_user(self, unit_ids, client_id=None):
         columns = "unit_id, unit_code, unit_name, address, division_id, domain_ids, country_id,"
-        columns += " legal_entity_id, business_group_id, is_active"
+        columns += " legal_entity_id, business_group_id, is_active, is_closed"
         condition = "1"
         if unit_ids is not None:
-            condition = "unit_id in (%s) and is_closed = 0 and is_active = 1" % unit_ids
+            condition = "unit_id in (%s)" % unit_ids
         rows = self.get_data(
             self.tblUnits, columns, condition
         )
         columns = [
             "unit_id", "unit_code", "unit_name", "unit_address", "division_id","domain_ids", "country_id",
-            "legal_entity_id", "business_group_id", "is_active"
+            "legal_entity_id", "business_group_id", "is_active", "is_closed"
         ]
-
+        print rows
         result = self.convert_to_dict(rows, columns)
         return self.return_units(result)
 
@@ -539,7 +539,8 @@ class ClientDatabase(Database):
                 unit["unit_id"], division_id, unit["legal_entity_id"],
                 b_group_id, unit["unit_code"],
                 unit["unit_name"], unit["unit_address"], bool(unit["is_active"]),
-                [int(x) for x in unit["domain_ids"].split(",")], unit["country_id"]
+                [int(x) for x in unit["domain_ids"].split(",")], unit["country_id"],
+                bool(unit["is_closed"])
             ))
         return results
 
@@ -577,7 +578,7 @@ class ClientDatabase(Database):
     def get_user_privileges(self, client_id):
         columns = "user_group_id, user_group_name, is_active"
         rows = self.get_data(
-            self.tblUserGroups, columns, "1 ORDER BY user_group_name"
+            self.tblUserGroups, columns, "is_active = 1 ORDER BY user_group_name"
         )
 
         columns = ["user_group_id", "user_group_name", "is_active"]
@@ -671,25 +672,40 @@ class ClientDatabase(Database):
             contact_no, user_id)
         return self.is_already_exists(self.tblUsers, condition, client_id)
 
-    def get_user_details(self, client_id):
+    def get_user_details(self, client_id, session_user):
+        unit_ids = None
+        if not self.is_primary_admin(session_user):
+            unit_ids = self.get_user_unit_ids(session_user)
         columns = "user_id, email_id, user_group_id, employee_name,"+\
         "employee_code, contact_no, seating_unit_id, user_level, "+\
         " is_admin, is_service_provider, service_provider_id, is_active,\
-        is_primary_admin "
+        is_primary_admin, (select group_concat(unit_id) from %s tuu where \
+        tu.user_id = tuu.user_id) as unit_ids" % self.tblUserUnits
         condition = "1 ORDER BY employee_name"
         rows =  self.get_data(
-            self.tblUsers,columns, condition
+            self.tblUsers+ " tu",columns, condition
         )
         columns = ["user_id", "email_id", "user_group_id", "employee_name",
         "employee_code", "contact_no", "seating_unit_id", "user_level",
         "is_admin", "is_service_provider", "service_provider_id", "is_active",
-        "is_primary_admin"]
+        "is_primary_admin", "unit_ids"]
         result = self.convert_to_dict(rows, columns)
-        return self.return_user_details(result, client_id)
+        return self.return_user_details(result, client_id, unit_ids)
 
-    def return_user_details(self, users, client_id):
+    def return_user_details(
+        self, users, client_id, unit_ids=None
+    ):
+        unit_ids_list = []
+        if unit_ids is not None:
+            unit_ids_list = [int(x) for x in unit_ids.split(",")]
         results = []
         for user in users :
+            if len(unit_ids_list) > 0:
+                user_unit_ids = [int(x) for x in user["unit_ids"].split(",")]
+                if set(user_unit_ids) & set(unit_ids_list):
+                    pass
+                else:
+                    continue
             countries = self.get_user_countries(user["user_id"], client_id)
             domains = self.get_user_domains(user["user_id"], client_id)
             units = self.get_user_unit_ids(user["user_id"], client_id)
@@ -758,7 +774,7 @@ class ClientDatabase(Database):
         encrypted_password, password = self.generate_and_return_password()
         values = [ user_id, user.user_group_id, user.email_id,
                 encrypted_password, user.employee_name,
-                user.employee_code, user.contact_no, user.user_level,
+                user.employee_code.replace(" ", ""), user.contact_no, user.user_level,
                 0, user.is_service_provider, session_user,current_time_stamp,
                 session_user, current_time_stamp]
         if user.is_service_provider == 1:
@@ -834,7 +850,7 @@ class ClientDatabase(Database):
         columns = [ "user_group_id", "employee_name", "employee_code",
                 "contact_no", "seating_unit_id", "user_level",
                 "is_service_provider", "updated_on", "updated_by"]
-        values = [ user.user_group_id, user.employee_name, user.employee_code,
+        values = [ user.user_group_id, user.employee_name, user.employee_code.replace(" ", ""),
                 user.contact_no, user.seating_unit_id, user.user_level,
                 user.is_service_provider, current_time_stamp, session_user ]
         condition = "user_id='%d'" % user.user_id
@@ -1618,7 +1634,29 @@ class ClientDatabase(Database):
             results.append(statutory_obj)
         return results
 
+    def is_admin(self, user_id):
+        if user_id == 0:
+            return True
+        else:
+            columns = "count(*)"
+            condition = "(is_admin = 1 or is_primary_admin = 1) and user_id = '%d'" % user_id
+            rows = self.get_data(self.tblUsers, columns, condition)
+            if rows[0][0] > 0:
+                return True
+            else:
+                return False
+
     def get_level_1_statutories_for_user_with_domain(self, session_user, client_id, domain_id=None):
+        columns = "group_concat(distinct compliance_id)"
+        condition = "1"
+        if not self.is_admin(session_user):
+            condition = "assignee = '%d'" % session_user
+        rows = self.get_data(self.tblAssignedCompliances, columns, condition)
+        compliance_ids = None
+        if rows:
+            compliance_ids = rows[0][0]
+
+
         domain_ids = domain_id
         if domain_ids is None :
             columns = "group_concat(domain_id)"
@@ -1636,10 +1674,13 @@ class ClientDatabase(Database):
             domain_ids = domain_rows[0][0]
         level_1_statutory = {}
         for domain_id in domain_ids.split(","):
+            condition = "domain_id in (%s)" % (domain_id)
+            if compliance_ids is not None:
+                condition += "AND compliance_id in (%s)" % (compliance_ids)
             mapping_rows = self.get_data(
                 self.tblCompliances,
                 "statutory_mapping",
-                "domain_id in (%s)" % (domain_id)
+                condition
             )
             level_1_statutory[domain_id] = []
             for mapping in mapping_rows:
@@ -1757,7 +1798,7 @@ class ClientDatabase(Database):
 
     def get_statutory_wise_compliances(
         self, unit_id, domain_id, level_1_statutory_name, frequency_name,
-        country_id
+        country_id, session_user
     ):
         condition = "1"
         if frequency_name:
@@ -1786,6 +1827,9 @@ class ClientDatabase(Database):
         if compliance_id_rows:
             compliance_ids = compliance_id_rows[0][0]
             if compliance_ids is not None:
+                add_condition = "1"
+                if not self.is_admin(session_user):
+                    add_condition += " AND ac.assignee = '%d'" % session_user
                 query = "SELECT ac.compliance_id, ac.statutory_dates, ac.due_date, assignee, employee_code, \
                     employee_name, statutory_mapping, document_name, compliance_task, \
                     compliance_description, c.repeats_type_id, repeat_type, repeats_every, frequency, \
@@ -1794,10 +1838,10 @@ class ClientDatabase(Database):
                     LEFT JOIN %s f ON (c.frequency_id = f.frequency_id) \
                     LEFT JOIN %s rt ON (c.repeats_type_id = rt.repeat_type_id) \
                     WHERE ac.compliance_id IN (%s) AND ac.is_active = %d \
-                    AND unit_id = %d AND %s" % (
+                    AND unit_id = %d AND %s AND %s" % (
                         self.tblAssignedCompliances, self.tblUsers, self.tblCompliances,
                         self.tblComplianceFrequency, self.tblComplianceRepeatType, compliance_ids,
-                        1, unit_id, condition
+                        1, unit_id, condition, add_condition
                     )
                 client_compliance_rows = self.select_all(query)
                 if client_compliance_rows:
@@ -2134,20 +2178,21 @@ class ClientDatabase(Database):
             query_columns = "compliance_history_id, tch.compliance_id, start_date,"+\
             " tch.due_date, documents, completion_date, completed_on, next_due_date, "+\
             "concurred_by, remarks, datediff(tch.due_date, completion_date ),compliance_task,"+\
-            " compliance_description, tc.frequency_id, frequency, document_name, concurrence_status, \
-            tac.statutory_dates, tch.validity_date, approved_by"
+            " compliance_description, tc.frequency_id, frequency, document_name, concurrence_status,"+ \
+            "(select statutory_dates from tbl_assigned_compliances tac where "+\
+            "tac.compliance_id = tch.compliance_id limit 1), tch.validity_date, approved_by, concat(unit_code, '-', tu.unit_name)"
             join_type = "inner join"
             query_tables = [
                     self.tblComplianceHistory,
                     self.tblCompliances,
                     self.tblComplianceFrequency,
-                    self.tblAssignedCompliances
+                    self.tblUnits
             ]
-            aliases = ["tch", "tc", "tcf", "tac"]
+            aliases = ["tch", "tc", "tcf",  "tu"]
             join_condition = [
                     "tch.compliance_id = tc.compliance_id",
                     "tc.frequency_id = tcf.frequency_id",
-                    "tac.compliance_id = tc.compliance_id"
+                    "tch.unit_id = tu.unit_id"
             ]
             where_condition = "(completion_date is not Null and \
             completion_date != 0 ) and (completed_on is not Null \
@@ -2203,6 +2248,7 @@ class ClientDatabase(Database):
                 concurrence_status = bool(row[16])
                 statutory_dates = [] if row[17] is None else json.loads(row[17])
                 validity_date = None if row[18] is None else self.datetime_to_string(row[18])
+                unit_name = row[20]
                 date_list = []
                 for date in statutory_dates :
                     s_date = core.StatutoryDate(
@@ -2244,7 +2290,7 @@ class ClientDatabase(Database):
                         compliance_history_id, compliance_name, description, domain_name,
                         start_date, due_date, delayed_by, frequency, documents,
                         file_names, completion_date, completed_on, next_due_date,
-                        concurred_by, remarks, action, date_list, validity_date
+                        concurred_by, remarks, action, date_list, validity_date, unit_name
                     )
                 )
             assignee_id = assignee[0]
@@ -2640,7 +2686,7 @@ class ClientDatabase(Database):
             )
         self.save_activity(session_user, 7, json.dumps(action))
         receiver = self.get_email_id_for_users(assignee)
-        email.notify_assign_compliance(receiver, request.assignee_name, action)
+        email.notify_assign_compliance(receiver[1], request.assignee_name, action)
         return clienttransactions.SaveAssignedComplianceSuccess()
 
     def update_user_settings(self, new_units, client_id):
@@ -4259,22 +4305,34 @@ class ClientDatabase(Database):
             unit_id, compliance_id, "Approved", status,
             remarks
         )
-        # notify_compliance_approved = threading.Thread(
-        #     target=self.notify_compliance_approved, args=[
-        #         self, compliance_history_id, "Approved"
-        #     ]
-        # )
-        # notify_compliance_approved.start()
-        email.notify_task_approved(
-                self, compliance_history_id, "Approved"
-        )
+        self.notify_compliance_approved(compliance_history_id, "Approved")
         return True
 
-    def notify_compliance_approved(self, db, compliance_history_id, approval_status):
+    def notify_compliance_approved(
+        self, compliance_history_id, approval_status
+    ):
+        assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = self.get_compliance_history_details(
+            compliance_history_id
+        )
+        print "compliance_name : {}".format(compliance_name)
+        print "document_name : {}".format(document_name)
+        if document_name is not None and document_name != '' and document_name != 'None':
+            compliance_name = "%s - %s" % (document_name, compliance_name)
+        assignee_email, assignee_name = self.get_user_email_name(str(assignee_id))
+        approver_email, approver_name = self.get_user_email_name(str(approver_id))
+        concurrence_email, concurrence_name = (None, None)
+        if concurrence_id is not None and self.is_two_levels_of_approval():
+            concurrence_email, concurrence_name = self.get_user_email_name(str(concurrence_id))
         try:
-            email.notify_task_approved(
-                db, compliance_history_id, approval_status
+            notify_compliance_approved = threading.Thread(
+                target=email.notify_task_approved, args=[
+                    approval_status, assignee_name, assignee_email, 
+                    concurrence_name, concurrence_email, approver_name, 
+                    approver_email, compliance_name, self.is_two_levels_of_approval()
+                ]
             )
+            notify_compliance_approved.start()
+            return True
         except Exception, e:
             print "Error while sending email : {}".format(e)
 
@@ -4305,23 +4363,33 @@ class ClientDatabase(Database):
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0, remarks, None, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-
-        # notify_compliance_rejected = threading.Thread(
-        #     target=self.notify_compliance_rejected, args=[
-        #         self, compliance_history_id, remarks, "Reject Approval"
-        #     ]
-        # )
-        # notify_compliance_rejected.start()
-        email.notify_task_rejected(
-                self, compliance_history_id, remarks, "Reject Approval"
-        )
+        self.notify_compliance_rejected(compliance_history_id, remarks, "RejectApproval")
         return True
 
-    def notify_compliance_rejected(self, db, compliance_history_id, remarks, reject_status):
+    def notify_compliance_rejected(
+        self,  compliance_history_id, remarks, reject_status
+    ):
+        assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = self.get_compliance_history_details(
+            compliance_history_id
+        )
+        print "document_name : {}".format(document_name)
+        if document_name is not None and document_name != '' and document_name != "None":
+            compliance_name = "%s - %s" % (document_name, compliance_name)
+        assignee_email, assignee_name = self.get_user_email_name(str(assignee_id))
+        approver_email, approver_name = self.get_user_email_name(str(approver_id))
+        concurrence_email, concurrence_name = (None, None)
+        if concurrence_id is not None and self.is_two_levels_of_approval():
+            concurrence_email, concurrence_name = self.get_user_email_name(str(concurrence_id))
         try:
-            email.notify_task_rejected(
-                self, compliance_history_id, remarks, reject_status
+            notify_compliance_rejected_thread = threading.Thread(
+                target=email.notify_task_rejected, args=[
+                    compliance_history_id, remarks, reject_status,
+                    assignee_name, assignee_email, concurrence_email,
+                    concurrence_name
+                ]
             )
+            notify_compliance_rejected_thread.start()
+            return True
         except Exception, e:
             print "Error while sending email : {}".format(e)
 
@@ -4345,25 +4413,16 @@ class ClientDatabase(Database):
         due_date = rows[0][2]
         completion_date = rows[0][3]
         status = "Inprogress"
-        due_date_parts = str(due_date).split("-")
-        due_date = datetime.date(
-            int(due_date_parts[0]), int(due_date_parts[1]), int(due_date_parts[2])
-        )
+        # due_date = datetime.datetime(
+        #     int(due_date_parts[0]), int(due_date_parts[1]), int(due_date_parts[2])
+        # )
         if due_date < completion_date:
             status = "Not Complied"
         self.save_compliance_activity(
             unit_id, compliance_id, "Concurred", status,
             remarks
         )
-        # notify_compliance_approved = threading.Thread(
-        #     target=self.notify_compliance_approved, args=[
-        #         self, compliance_history_id, "Concurred"
-        #     ]
-        # )
-        # notify_compliance_approved.start()
-        email.notify_task_approved(
-                self, compliance_history_id, "Concurred"
-        )
+        self.notify_compliance_approved(compliance_history_id, "Concurred")
         return True
 
     def reject_compliance_concurrence(self, compliance_history_id, remarks,
@@ -4392,16 +4451,7 @@ class ClientDatabase(Database):
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0,  remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-
-        # notify_compliance_rejected = threading.Thread(
-        #     target=self.notify_compliance_rejected, args=[
-        #         self, compliance_history_id, remarks, "Reject Concurrence"
-        #     ]
-        # )
-        # notify_compliance_rejected.start()
-        email.notify_task_rejected(
-            self, compliance_history_id, remarks, "Reject Concurrence"
-        )
+        self.notify_compliance_rejected(compliance_history_id, remarks, "RejectConcurrence")
         return True
 
     def get_client_level_1_statutoy(self, user_id, client_id=None) :
@@ -5488,14 +5538,34 @@ class ClientDatabase(Database):
 #
 #   Manage Compliances / Compliances List / Upload Compliances
 #
-    def calculate_ageing(self, due_date):
+    def calculate_ageing(self, due_date, frequency_type=None):
         current_time_stamp = self.get_date_time()
-        due_date = datetime.datetime(due_date.year, due_date.month, due_date.day)
-        ageing = (current_time_stamp - due_date).days
-        compliance_status = " %d days left" % abs(ageing)
-        if ageing > 0:
-            compliance_status = "Overdue by %d days" % abs(ageing)
+        # due_date = datetime.datetime(due_date.year, due_date.month, due_date.day)
+        
+        if frequency_type =="On Occurrence":
+            ageing_in_days = (current_time_stamp - due_date).days
+            ageing = ageing_in_days * 24
+            if ageing < 0:
+                if ageing < 24:
+                    compliance_status = " %d hours left" % abs(ageing)
+                else:
+                    compliance_status = " %d days and %d hours left" % (
+                        abs(ageing/24), abs(ageing-ageing/24)
+                    )
+            else:
+                if ageing < 24:
+                    compliance_status = "Overdue by %d hours " % abs(ageing)
+                else:
+                    compliance_status = "Overdue by %d days and %d hours" % (
+                        abs(ageing/24), abs(ageing-ageing/24)
+                    )   
             return ageing, compliance_status
+        else:
+            ageing = (current_time_stamp - due_date).days
+            compliance_status = " %d days left" % abs(ageing)
+            if ageing > 0:
+                compliance_status = "Overdue by %d days" % abs(ageing)
+                return ageing, compliance_status
         return 0, compliance_status
 
 
@@ -5540,7 +5610,7 @@ class ClientDatabase(Database):
             unit_name = "%s - %s" % (
                 unit_code, unit_name
             )
-            no_of_days, ageing = self.calculate_ageing(compliance[2])
+            no_of_days, ageing = self.calculate_ageing(compliance[2], compliance[13])
             compliance_status = core.COMPLIANCE_STATUS("Inprogress")
             if no_of_days > 0:
                 compliance_status = core.COMPLIANCE_STATUS("Not Complied")
@@ -6256,9 +6326,7 @@ class ClientDatabase(Database):
             and completed_by ='%d'" % (
                 compliance_history_id, session_user
             )
-        email.notify_task_completed(
-            self, compliance_history_id
-        )
+        
         columns = "unit_id, compliance_id"
         condition = "compliance_history_id = '%d'" % compliance_history_id
         rows = self.get_data(
@@ -6270,11 +6338,38 @@ class ClientDatabase(Database):
             unit_id, compliance_id, "Submited", "Inprogress",
             remarks
         )
-        return self.update(
-            self.tblComplianceHistory,
-            history_columns, history_values,
+        self.update( 
+            self.tblComplianceHistory, history_columns, history_values,
             history_condition
         )
+        
+
+        assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = self.get_compliance_history_details(
+            compliance_history_id
+        )
+        print "document_name : {}".format(document_name)       
+        if document_name is not None and document_name != '' and document_name != 'None':
+            compliance_name = "%s - %s" % (document_name, compliance_name)
+
+        assignee_email, assignee_name = self.get_user_email_name(str(assignee_id))
+        approver_email, approver_name = self.get_user_email_name(str(approver_id))
+        approval_or_concurrence_person = approver_name
+        approval_or_concurrence_email = approver_email
+        action = "approve"
+        concurrence_email, concurrence_name = (None, None)
+        if self.is_two_levels_of_approval() and concurrence_id is not None:
+            concurrence_email, concurrence_name = self.get_user_email_name(str(concurrence_id))
+            action = "Concur"
+
+        notify_task_completed_thread = threading.Thread(
+            target=email.notify_task_completed, args=[
+                assignee_email, assignee_name, concurrence_email, 
+                concurrence_name, approver_email, approver_name, action,
+                self.is_two_levels_of_approval(), compliance_name
+            ]
+        )
+        notify_task_completed_thread.start()
+        return True
 
     def save_compliance_activity(
         self, unit_id, compliance_id, activity_status, compliance_status,
@@ -7448,13 +7543,30 @@ class ClientDatabase(Database):
         history_id = self.insert(
             self.tblComplianceHistory, columns, values
         )
+
+        assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = self.get_compliance_history_details(
+            compliance_history_id
+        )
+        user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
+        assignee_email, assignee_name = self.get_user_email_name(str(assignee_id))
+        approver_email, approver_name = self.get_user_email_name(str(approver_id))
+        if concurrence_id is not None and self.is_two_levels_of_approval():
+            concurrence_email, concurrence_name = self.get_user_email_name(str(concurrence_id))
+        if document_name is not None:
+            compliance_name = "%s - %s" % (document_name, compliance_name)
         try:
-            email.notify_task(
-                self, history_id, "Start"
+            notify_on_occur_thread = threading.Thread(
+                target=email.notify_task, args=[
+                    assignee_email, assignee_name, 
+                    concurrence_email, concurrence_name,
+                    approver_email, approver_name, compliance_name, 
+                    due_date, "Start"
+                ]
             )
-            return True
+            notify_on_occur_thread.start()
         except Exception, e:
             print "Error sending email :{}".format(e)
+        return True
 
 
     def get_form_ids_for_admin(self):
@@ -7498,6 +7610,18 @@ class ClientDatabase(Database):
         result = self.update(
             self.tblAssignedCompliances, columns, values, condition
         )
+
+        db_con = Database(
+            KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+            KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+        )
+        db_con.connect()
+        db_con.begin()
+        q = "UPDATE tbl_units set is_active = 0 where unit_id = '%d'" % unit_id
+        print q
+        print db_con.execute(q)
+        db_con.commit()
+        db_con.close()
 
         columns = "client_statutory_id"
         rows = self.get_data(self.tblClientStatutories, columns, condition)
