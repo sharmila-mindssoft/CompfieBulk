@@ -170,8 +170,7 @@ function loadresult(filterList){
   $('.compliance_count').text("Total : "+ (compliance_count) +" records");
 }
 
-
-$("#submit").click(function(){ 
+function loadCompliance(reportType){
   var country = $("#country").val();
   var domain = $("#domain").val();
   var act = $("#act").val().trim();
@@ -199,21 +198,19 @@ $("#submit").click(function(){
     displayMessage("Act Required");  
   }
   else{
-      var filterdata={};
-      filterdata["country_id"] = country;
-      filterdata["domain_id"] = domain;
-      filterdata["statutory_id"] = act;
-      filterdata["unit_id"] = unit;
-      filterdata["compliance_id"] = compliances;
-      filterdata["assignee_id"] = assignee;
-      filterdata["fromdate"] = fromdate;
-      filterdata["todate"] = todate;
-      filterdata["status"] = status;
-
-loadresult(unitWiseComplianceList);
+      loadresult(unitWiseComplianceList);
       function onSuccess(data){
         unitWiseComplianceList = data["unit_wise_compliancess"];
-        loadresult(unitWiseComplianceList);
+        if(reportType == "show"){
+          loadresult(unitWiseComplianceList);
+        }else{
+          loadresult(unitWiseComplianceList);
+
+          function callback(){
+            alert("hi")
+          }
+          client_mirror.exportToCSV(data, callback);
+        }
       }
       function onFailure(error){
         onFailure(error);
@@ -228,6 +225,14 @@ loadresult(unitWiseComplianceList);
           }
         });
   }
+}
+
+$("#submit").click(function(){ 
+  loadCompliance("show")
+});
+
+$("#export").click(function(){ 
+  loadCompliance("export")
 });
 
 //Autocomplete Script Starts
