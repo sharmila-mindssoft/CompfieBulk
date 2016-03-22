@@ -3309,7 +3309,7 @@ class ClientDatabase(Database):
             %s \
             %s \
             %s \
-            ORDER BY T1.due_date desc" % (
+            ORDER BY T1.due_date" % (
                 user_qry,
                 str(tuple(domain_ids)),
                 date_qry,
@@ -3385,7 +3385,7 @@ class ClientDatabase(Database):
         return self.return_compliance_details_drill_down(year_info, compliance_status, request.year, result, client_id)
 
     def return_compliance_details_drill_down(self, year_info, compliance_status, request_year, result, client_id) :
-        current_date = datetime.date.today()
+        current_date = datetime.datetime.today()
 
         unit_wise_data = {}
         for r in result :
@@ -3680,7 +3680,7 @@ class ClientDatabase(Database):
             "start_date", "due_date"
         ]
         not_complied = self.convert_to_dict(rows, columns)
-        current_date = datetime.date.today()
+        current_date = datetime.datetime.today()
         below_30 = 0
         below_60 = 0
         below_90 = 0
@@ -3739,7 +3739,7 @@ class ClientDatabase(Database):
             domain_ids, date_qry, not_complied_status_qry,
             filter_type_qry, session_user
         )
-        current_date = datetime.date.today()
+        current_date = datetime.datetime.today()
         not_complied_details_filtered = []
 
         for c in not_complied_details :
@@ -3759,7 +3759,6 @@ class ClientDatabase(Database):
                 if ageing > 90 :
                     not_complied_details_filtered.append(c)
 
-        current_date = datetime.date.today()
 
         unit_wise_data = {}
         for r in not_complied_details_filtered :
