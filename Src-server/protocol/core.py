@@ -920,13 +920,13 @@ class Level1Statutory(object):
         level_1_statutory_id = data.get("level_1_statutory_id")
         level_1_statutory_id = parse_structure_UnsignedIntegerType_32(level_1_statutory_id)
         level_1_statutory_name = data.get("level_1_statutory_name")
-        level_1_statutory_name = parse_structure_CustomTextType_50(level_1_statutory_name)
+        level_1_statutory_name = parse_structure_CustomTextType_500(level_1_statutory_name)
         return Statutory(level_1_statutory_id, level_1_statutory_name)
 
     def to_structure(self):
         return {
             "level_1_statutory_id": to_structure_UnsignedIntegerType_32(self.level_1_statutory_id),
-            "level_1_statutory_name": to_structure_CustomTextType_50(self.level_1_statutory_name)
+            "level_1_statutory_name": to_structure_CustomTextType_500(self.level_1_statutory_name)
         }
 
 
@@ -1691,7 +1691,7 @@ class ClientUnit(object):
         is_closed = parse_structure_Bool(is_closed)
         return Unit(
             unit_id, division_id, legal_entity_id, business_group_id,
-            unit_code, unit_name, unit_address, is_active, domain_ids, 
+            unit_code, unit_name, unit_address, is_active, domain_ids,
             country_id, is_closed
         )
 
@@ -1960,12 +1960,12 @@ class AssignedStatutory(object):
         level_1_statutory_id = data.get("level_1_statutory_id")
         level_1_statutory_id = parse_structure_UnsignedIntegerType_32(level_1_statutory_id)
         level_1_statutory_name = data.get("level_1_statutory_name")
-        level_1_statutory_name = parse_structure_CustomTextType_50(level_1_statutory_name)
+        level_1_statutory_name = parse_structure_CustomTextType_100(level_1_statutory_name)
         compliances = data.get("compliances")
         compliances = parse_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicability(compliances)
         applicable_status = data.get("applicable_status")
         applicable_status = parse_structure_Bool(applicable_status)
-        opted_status = data.get(opted_status)
+        opted_status = data.get("opted_status")
         opted_status = parse_structure_OptionalType_Bool(opted_status)
         not_applicable_remarks = data.get("not_applicable_remarks")
         not_applicable_remarks = parse_structure_OptionalType_CustomTextType_500(not_applicable_remarks)
