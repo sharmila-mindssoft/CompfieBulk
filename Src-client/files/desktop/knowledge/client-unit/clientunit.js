@@ -870,7 +870,14 @@ function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divis
     var domainsListArray = firstlist['domain_ids'];
     $('.domain-'+countryByCount+'-'+1).val(domainsListArray);
     $('.domainselected-'+countryByCount+'-'+1).val(domainsListArray.length+" Selected");
-    $('.activedclass-'+countryByCount+'-'+1).text("Active");
+    if(firstlist['is_active'] == true){
+        $('.activedclass-'+countryByCount+'-'+1).text("Active");    
+    }
+    else{
+        var classnamec =  'imgactivedclass-'+countryByCount+'-'+1;
+        $('.activedclass-'+countryByCount+'-'+1).html('<img src="/images/icon-inactive.png" onclick="reactiviteunit(this, \''+firstlist['unit_id']+'\', \''+clientunitId+'\');">');       
+    }
+    
     // if($('.unit-id-'+countryByCount+'-1').val() != ''){
     //     unitcodeautogenerateids++;
     //     console.log("addcountryrowupdate=="+unitcodeautogenerateids);
@@ -1356,7 +1363,65 @@ $("#btn-clientunit-submit").click(function(){
     }
 });
 
+function reactiviteunit(thisval, unitid, clientid){
+    $('#unitidval').val(unitid);
+    $('#clientidval').val(clientid);
 
+    $('.overlay').css("visibility","visible");
+    $('.overlay').css("opacity","1");
+    $('.popup-error-msg').html("");
+
+    $("input[name=password]").html("");
+    $("#password").html("");
+}
+
+$('.close').click(function(){
+    $('#unitidval').val("");
+    $('#clientidval').val("");
+    $('.overlay').css("visibility","hidden");
+    $('.overlay').css("opacity","0");
+});
+
+
+function unit_close(){
+    var unitidval=$('#unitidval').val();
+    var clientidval=$('#clientidval').val();
+    var password=$('#password').val();
+    if(password==''){
+        $('.popup-error-msg').html("Enter password");
+    }
+    else{
+        function onSuccess(data){
+            $('#unitidval').val("");
+            $('#clientidval').val("");
+            $('.overlay').css("visibility","hidden");
+            $('.overlay').css("opacity","0");
+            initialize();
+        }
+        function onFailure(error){
+            if(error == 'InvalidPassword'){
+                $('.popup-error-msg').html("Enter Correct password");
+                $('#password').val("");
+            }
+        }
+        mirror.reactivateUnit(parseInt(clientidval), parseInt(unitidval), password,
+            function (error, response){
+                if(error == null){
+                    onSuccess(response);
+                }
+                else{
+                    onFailure(error);
+                }
+            }
+        );
+    }
+}
+
+// function reactiviteunit(thisval, unitid, clientid){
+//     var classval = $(thisval).attr("class");
+    
+// }
+ 
 //Active or inactive Client Unit List --------------------------------------------------------------------------
 function clientunit_active(clientunitId, lentityId, divisionId, isActive){
     var msgstatus='deactivate';

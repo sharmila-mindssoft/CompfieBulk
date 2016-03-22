@@ -70,6 +70,7 @@ function unit_close(){
 		);
 	}
 }
+
 function getBusinessGroupsName(businessgroupid){
 	var businessGroupName;
 	if(businessgroupid != null){
