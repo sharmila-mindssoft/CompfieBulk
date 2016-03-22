@@ -341,6 +341,14 @@ class ClientDatabase(Database):
         rows = self.get_data(self.tblAdmin, columns, condition)
         return rows[0][0]
 
+    def get_countries(self):
+        query = "SELECT distinct t1.country_id, t1.country_name, \
+            t1.is_active FROM tbl_countries t1 "
+        rows = self.select_all(query)
+        columns = ["country_id", "country_name", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_countries(result)
+
     def get_countries_for_user(self, user_id, client_id=None) :
         admin_id = self.get_admin_id()
         query = "SELECT distinct t1.country_id, t1.country_name, \
@@ -363,6 +371,14 @@ class ClientDatabase(Database):
                 d["country_id"], d["country_name"], bool(d["is_active"])
             ))
         return results
+
+    def get_domains(self):
+        query = "SELECT distinct t1.domain_id, t1.domain_name, \
+            t1.is_active FROM tbl_domains t1 "
+        rows = self.select_all(query)
+        columns = ["domain_id", "domain_name", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_domains(result)
 
     def get_domains_for_user(self, user_id, client_id=None) :
         admin_id = self.get_admin_id()
@@ -388,7 +404,7 @@ class ClientDatabase(Database):
         columns = "business_group_id, business_group_name"
         condition = "1"
         if business_group_ids is not None:
-            condition = "business_group_id in (%s)" % business_group_ids
+            condition = "business_group_id in (%s) ORDER BY business_group_name" % business_group_ids
         rows = self.get_data(
             self.tblBusinessGroups, columns, condition
         )
@@ -409,7 +425,7 @@ class ClientDatabase(Database):
         columns = "legal_entity_id, legal_entity_name, business_group_id"
         condition = "1"
         if legal_entity_ids is not None:
-            condition = "legal_entity_id in (%s)" % legal_entity_ids
+            condition = "legal_entity_id in (%s) ORDER BY legal_entity_name" % legal_entity_ids
         rows = self.get_data(
             self.tblLegalEntities, columns, condition
         )
@@ -434,7 +450,7 @@ class ClientDatabase(Database):
         columns = "division_id, division_name, legal_entity_id, business_group_id"
         condition = "1"
         if division_ids is not None:
-            condition = "division_id in (%s)" % division_ids
+            condition = "division_id in (%s) ORDER BY division_name" % division_ids
         rows = self.get_data(
             self.tblDivisions, columns, condition
         )
@@ -460,7 +476,7 @@ class ClientDatabase(Database):
         columns += " legal_entity_id, business_group_id, is_active, is_closed"
         condition = "1"
         if unit_ids is not None:
-            condition = "unit_id in (%s)" % unit_ids
+            condition = "unit_id in (%s) ORDER BY unit_name" % unit_ids
         rows = self.get_data(
             self.tblUnits, columns, condition
         )
@@ -468,22 +484,21 @@ class ClientDatabase(Database):
             "unit_id", "unit_code", "unit_name", "unit_address", "division_id","domain_ids", "country_id",
             "legal_entity_id", "business_group_id", "is_active", "is_closed"
         ]
-        print rows
         result = self.convert_to_dict(rows, columns)
         return self.return_units(result)
 
     def get_units_closure_for_user(self, unit_ids):
         columns = "unit_id, unit_code, unit_name, address, division_id, domain_ids, country_id,"
-        columns += " legal_entity_id, business_group_id, is_closed"
+        columns += " legal_entity_id, business_group_id, is_active, is_closed"
         condition = "1"
         if unit_ids is not None:
-            condition = "unit_id in (%s) and is_active = 1" % unit_ids
+            condition = "unit_id in (%s)  ORDER BY unit_name" % unit_ids
         rows = self.get_data(
             self.tblUnits, columns, condition
         )
         columns = [
             "unit_id", "unit_code", "unit_name", "unit_address", "division_id","domain_ids", "country_id",
-            "legal_entity_id", "business_group_id", "is_active"
+            "legal_entity_id", "business_group_id", "is_active", "is_closed"
         ]
 
         result = self.convert_to_dict(rows, columns)
@@ -578,7 +593,7 @@ class ClientDatabase(Database):
     def get_user_privileges(self, client_id):
         columns = "user_group_id, user_group_name, is_active"
         rows = self.get_data(
-            self.tblUserGroups, columns, "is_active = 1 ORDER BY user_group_name"
+            self.tblUserGroups, columns, "1 ORDER BY user_group_name"
         )
 
         columns = ["user_group_id", "user_group_name", "is_active"]
@@ -4319,8 +4334,6 @@ class ClientDatabase(Database):
         assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = self.get_compliance_history_details(
             compliance_history_id
         )
-        print "compliance_name : {}".format(compliance_name)
-        print "document_name : {}".format(document_name)
         if document_name is not None and document_name != '' and document_name != 'None':
             compliance_name = "%s - %s" % (document_name, compliance_name)
         assignee_email, assignee_name = self.get_user_email_name(str(assignee_id))
@@ -4377,7 +4390,6 @@ class ClientDatabase(Database):
         assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = self.get_compliance_history_details(
             compliance_history_id
         )
-        print "document_name : {}".format(document_name)
         if document_name is not None and document_name != '' and document_name != "None":
             compliance_name = "%s - %s" % (document_name, compliance_name)
         assignee_email, assignee_name = self.get_user_email_name(str(assignee_id))
@@ -6352,7 +6364,6 @@ class ClientDatabase(Database):
         assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = self.get_compliance_history_details(
             compliance_history_id
         )
-        print "document_name : {}".format(document_name)
         if document_name is not None and document_name != '' and document_name != 'None':
             compliance_name = "%s - %s" % (document_name, compliance_name)
 
@@ -7623,8 +7634,6 @@ class ClientDatabase(Database):
         db_con.connect()
         db_con.begin()
         q = "UPDATE tbl_units set is_active = 0 where unit_id = '%d'" % unit_id
-        print q
-        print db_con.execute(q)
         db_con.commit()
         db_con.close()
 
