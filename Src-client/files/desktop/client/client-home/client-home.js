@@ -695,7 +695,7 @@ function updateComplianceStatusStackBarChart(data) {
             reversedStacks: false
         },
         tooltip: {
-            headerFormat: '<b>{point.x}</b>: {point.percentage:.0f}% ',
+            headerFormat: '<b>{point.series.name}</b>: {point.percentage:.0f}% ',
             pointFormat: '({point.y} out of {point.stackTotal})'
         },
         plotOptions: {
