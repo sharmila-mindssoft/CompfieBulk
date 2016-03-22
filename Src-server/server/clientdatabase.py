@@ -4756,6 +4756,7 @@ class ClientDatabase(Database):
         years = self.get_last_7_years()
         country_domain_timelines = self.get_country_domain_timelines(
             country_ids, domain_ids, years, client_id)
+        print country_domain_timelines
         chart_data = []
         for country_wise_timeline in country_domain_timelines:
             country_id = country_wise_timeline[0]
@@ -5039,7 +5040,7 @@ class ClientDatabase(Database):
                 )
                 if len(rows) > 0:
                     period_from = rows[0][0]
-                    period_to = rows[0][0]
+                    period_to = rows[0][1]
                     start_end_dates = []
                     for year in years:
                         start_year = year
@@ -5057,6 +5058,9 @@ class ClientDatabase(Database):
                             end_year
                         )
                         end_date = self.string_to_datetime(end_date_string)
+                        r = relativedelta.relativedelta(end_date, start_date)
+                        if r.years > 0:
+                            end_date = end_date - relativedelta.relativedelta(years=1)
                         start_end_dates.append(
                             {
                                 "year" : year,
@@ -7629,6 +7633,7 @@ class ClientDatabase(Database):
         db_con.connect()
         db_con.begin()
         q = "UPDATE tbl_units set is_active = 0 where unit_id = '%d'" % unit_id
+        db_con.execute(q)
         db_con.commit()
         db_con.close()
 
