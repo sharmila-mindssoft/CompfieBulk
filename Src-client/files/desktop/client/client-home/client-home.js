@@ -1266,8 +1266,8 @@ function groupWiseEscalationDrillDown(status, data){
     if (status == "not_complied") {
         $(".tr-level1 th").attr("colspan", "8");
         $(".tr-unit .unit-heading").attr("colspan", "7");
-        $(".delayed-by-row").show();
-        $(".over-due-row").hide();
+        $(".delayed-by-row").hide();
+        $(".over-due-row").show();
     }
     else if (status == "delayed") {
         $(".tr-level1 th").attr("colspan", "8");
@@ -1294,8 +1294,8 @@ function businessgroupWiseEscalationDrillDown(status, data){
     if (status == "not_complied") {
         $(".tr-level1 th").attr("colspan", "7");
         $(".tr-unit .unit-heading").attr("colspan", "6");
-        $(".delayed-by-row").show();
-        $(".over-due-row").hide();
+        $(".delayed-by-row").hide();
+        $(".over-due-row").show();
     }
     else if (status == "delayed") {
         $(".tr-level1 th").attr("colspan", "7");
@@ -1401,7 +1401,12 @@ function escalationDrilldown(status, data){
     var count = 1;
     var h2heading = $('#templates .escalation-status .tr-h2');
     var cloneh2 = h2heading.clone();
-    $(".escalation-status-value", cloneh2).html(status+" compliances");
+    if(status == "not_complied"){
+        $(".escalation-status-value", cloneh2).html("Not Complied compliances");    
+    }
+    if(status == "delayed"){
+        $(".escalation-status-value", cloneh2).html("Delayed compliances");       
+    }    
     $(".table-thead-drilldown-list").append(cloneh2);
 
     var tableHeading = $('#templates .escalation-status .tr-heading');
@@ -1440,6 +1445,7 @@ function escalationDrilldown(status, data){
                     $(".industry-type-name", clone).html(value["industry_name"]);
                     $(".compliance-name span", clone).html(val['compliance_name']);
                     $(".assigned-to", clone).html(val['assignee_name']);
+
                     if(val['status'] == "Delayed"){
                         $(".delayed-by", clone).html(val['ageing']+" Days");
                     }
