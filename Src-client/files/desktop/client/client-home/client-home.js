@@ -2140,12 +2140,12 @@ function updateEscalationChart(data) {
         },
         plotOptions: {
             series: {
-                pointWidth: 40
+                pointWidth: 40,
+                groupPadding: 0.4,
+                pointPadding: -0.0,
+                pointPlacement: -0.0
             },
             column: {
-                pointPadding: 0,
-                groupPadding: 0.3,
-                borderWidth: 0,
                 dataLabels: {
                     enabled: true,
                     textShadow:null,
