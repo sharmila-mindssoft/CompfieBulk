@@ -4329,8 +4329,6 @@ class ClientDatabase(Database):
         assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = self.get_compliance_history_details(
             compliance_history_id
         )
-        print "compliance_name : {}".format(compliance_name)
-        print "document_name : {}".format(document_name)
         if document_name is not None and document_name != '' and document_name != 'None':
             compliance_name = "%s - %s" % (document_name, compliance_name)
         assignee_email, assignee_name = self.get_user_email_name(str(assignee_id))
@@ -4387,7 +4385,6 @@ class ClientDatabase(Database):
         assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = self.get_compliance_history_details(
             compliance_history_id
         )
-        print "document_name : {}".format(document_name)
         if document_name is not None and document_name != '' and document_name != "None":
             compliance_name = "%s - %s" % (document_name, compliance_name)
         assignee_email, assignee_name = self.get_user_email_name(str(assignee_id))
@@ -6362,7 +6359,6 @@ class ClientDatabase(Database):
         assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = self.get_compliance_history_details(
             compliance_history_id
         )
-        print "document_name : {}".format(document_name)       
         if document_name is not None and document_name != '' and document_name != 'None':
             compliance_name = "%s - %s" % (document_name, compliance_name)
 
@@ -7633,8 +7629,6 @@ class ClientDatabase(Database):
         db_con.connect()
         db_con.begin()
         q = "UPDATE tbl_units set is_active = 0 where unit_id = '%d'" % unit_id
-        print q
-        print db_con.execute(q)
         db_con.commit()
         db_con.close()
 

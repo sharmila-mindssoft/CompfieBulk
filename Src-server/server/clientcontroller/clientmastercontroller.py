@@ -211,7 +211,6 @@ def get_client_users(db, request, session_user, client_id):
     user_company_info = db.get_user_company_details(
         session_user, client_id
     )
-    print "user_company_info : {}".format(user_company_info)
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
