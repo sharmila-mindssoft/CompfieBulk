@@ -1828,6 +1828,7 @@ class ClientDatabase(Database):
             AND compliance_opted = 1 AND statutory_opted = 1" % (
                 unit_id, domain_id
             )
+        print compliance_ids_query
         compliance_id_rows = self.select_all(compliance_ids_query)
         statutory_wise_compliances = []
         level_1_statutory_wise_compliances = {}
@@ -4766,7 +4767,7 @@ class ClientDatabase(Database):
         )
         compliance_ids = None
         if rows:
-            compliance_id = rows[0][0]
+            compliance_ids = rows[0][0]
 
         result = self.get_client_statutory_ids_and_unit_ids_for_trend_chart(
             country_id, domain_id, client_id, filter_id, filter_type
@@ -4790,7 +4791,6 @@ class ClientDatabase(Database):
         years = self.get_last_7_years()
         country_domain_timelines = self.get_country_domain_timelines(
             country_ids, domain_ids, years, client_id)
-        print country_domain_timelines
         chart_data = []
         for country_wise_timeline in country_domain_timelines:
             country_id = country_wise_timeline[0]
@@ -4799,11 +4799,13 @@ class ClientDatabase(Database):
             for domain_wise_timeline in domain_wise_timelines:
                 domain_id = domain_wise_timeline[0]
                 start_end_dates = domain_wise_timeline[1]
-
-
                 compliance_history_ids, client_statutory_ids, unit_ids = self.get_compliance_history_ids_for_trend_chart(
                     country_id, domain_id, client_id
                 )
+                print "compliance_history_ids for country:{}, domain:{}, {}".format(
+                    country_id, domain_id, compliance_history_ids
+                )
+
                 if compliance_history_ids is not None:
                     for index, dates in enumerate(start_end_dates):
                         columns = "count(*) as total, sum(case when approve_status = 1 then 1 " + \
@@ -4822,8 +4824,8 @@ class ClientDatabase(Database):
                             row = rows[0]
                             total_compliances = row[0]
                             complied_compliances = row[1] if row[1] != None else 0
-                            year_wise_count[index][0] += total_compliances if total_compliances is not None else 0
-                            year_wise_count[index][1] += complied_compliances if complied_compliances is not None else 0
+                            year_wise_count[index][0] += int(total_compliances) if total_compliances is not None else 0
+                            year_wise_count[index][1] += int(complied_compliances) if complied_compliances is not None else 0
             print
             print "for country : {}, domain:{}".format(country_id, domain_id)
             print year_wise_count
@@ -7679,20 +7681,20 @@ class ClientDatabase(Database):
         db_con.commit()
         db_con.close()
 
-        columns = "client_statutory_id"
-        rows = self.get_data(self.tblClientStatutories, columns, condition)
-        if rows:
-            client_statutory_id = rows[0][0]
+        # columns = "client_statutory_id"
+        # rows = self.get_data(self.tblClientStatutories, columns, condition)
+        # if rows:
+        #     client_statutory_id = rows[0][0]
 
-            condition = "client_statutory_id='{}' and unit_id='{}'".format(
-                client_statutory_id, unit_id
-            )
-            self.delete(self.tblClientStatutories, condition)
+        #     condition = "client_statutory_id='{}' and unit_id='{}'".format(
+        #         client_statutory_id, unit_id
+        #     )
+        #     self.delete(self.tblClientStatutories, condition)
 
-            condition = "client_statutory_id='{}' ".format(
-                client_statutory_id
-            )
-            self.delete(self.tblClientCompliances, condition)
+        #     condition = "client_statutory_id='{}' ".format(
+        #         client_statutory_id
+        #     )
+        #     self.delete(self.tblClientCompliances, condition)
 
         action_column = "unit_code, unit_name"
         action_condition = "unit_id='{}'".format(unit_id)
