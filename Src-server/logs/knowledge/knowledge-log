@@ -442,3 +442,47 @@ IntegrityError: (1451, 'Cannot delete or update a parent row: a foreign key cons
     raise errorclass, errorvalue
 IntegrityError: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`compfie_abc_1`.`tbl_units`, CONSTRAINT `fk_units_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`))')
 
+2016-03-21 16:28:04,852 - knowledge_logger - main.py-handle-api : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-21 16:28:04,852 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 155, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 609, in get_trail_id
+    row = self.select_one(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 150, in select_one
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-21 16:28:13,674 - knowledge_logger - main.py-handle-api : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-21 16:28:13,674 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 155, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 609, in get_trail_id
+    row = self.select_one(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 150, in select_one
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-21 17:36:52,035 - knowledge_logger - main.py-handle-api : tuple index out of range
+2016-03-21 17:36:52,035 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 39, in process_techno_request
+    return save_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 89, in save_client_group
+    host = row[0][0]
+IndexError: tuple index out of range
+

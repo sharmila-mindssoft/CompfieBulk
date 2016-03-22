@@ -341,6 +341,14 @@ class ClientDatabase(Database):
         rows = self.get_data(self.tblAdmin, columns, condition)
         return rows[0][0]
 
+    def get_countries(self):
+        query = "SELECT distinct t1.country_id, t1.country_name, \
+            t1.is_active FROM tbl_countries t1 "
+        rows = self.select_all(query)
+        columns = ["country_id", "country_name", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_countries(result)
+
     def get_countries_for_user(self, user_id, client_id=None) :
         admin_id = self.get_admin_id()
         query = "SELECT distinct t1.country_id, t1.country_name, \
@@ -363,6 +371,14 @@ class ClientDatabase(Database):
                 d["country_id"], d["country_name"], bool(d["is_active"])
             ))
         return results
+
+    def get_domains(self):
+        query = "SELECT distinct t1.domain_id, t1.domain_name, \
+            t1.is_active FROM tbl_domains t1 "
+        rows = self.select_all(query)
+        columns = ["domain_id", "domain_name", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_domains(result)
 
     def get_domains_for_user(self, user_id, client_id=None) :
         admin_id = self.get_admin_id()
@@ -468,7 +484,6 @@ class ClientDatabase(Database):
             "unit_id", "unit_code", "unit_name", "unit_address", "division_id","domain_ids", "country_id",
             "legal_entity_id", "business_group_id", "is_active", "is_closed"
         ]
-        print rows
         result = self.convert_to_dict(rows, columns)
         return self.return_units(result)
 
