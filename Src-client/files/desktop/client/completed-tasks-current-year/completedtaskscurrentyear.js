@@ -273,7 +273,12 @@ function submitcompliance(){
           var completed_by = $('#assignee'+statutoriesCount).val();
           if(completed_by != '') completed_by = parseInt(completed_by);
 
-          if(completion_date == ''){
+          if(due_date == ''){
+            displayMessage("Due Date Required");
+            hideLoader();
+            return false;
+          }
+          else if(completion_date == ''){
             displayMessage("Compliance Date Required");
             hideLoader();
             return false;

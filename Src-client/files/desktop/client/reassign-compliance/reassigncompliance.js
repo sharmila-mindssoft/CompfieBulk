@@ -384,8 +384,8 @@ function submitcompliance(){
             
             var due_date = null;
             if(cfrequency != 'On Occurrence'){
-              if(due_date != null && due_date != undefined){
-                due_date =  $('#duedate'+statutoriesCount).val();
+              due_date =  $('#duedate'+statutoriesCount).val();
+              if(due_date != '' && due_date != undefined){
                 var convertDueDate = convert_date(due_date);
                 if (convertDueDate < currentDate) {
                   displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
