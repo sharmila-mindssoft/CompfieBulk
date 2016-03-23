@@ -744,9 +744,9 @@ def check_service_provider_contract_period(
     now() not between contract_from and contract_to"
     cursor = db.cursor()
     cursor.execute(query)
-    print '*' * 10
-    print "Deactivated inactive service providers of client :{}".format(client_id)
-    print '*' * 10
+    # print '*' * 10
+    # print "Deactivated inactive service providers of client :{}".format(client_id)
+    # print '*' * 10
 
 def main():
     print '--' * 20
@@ -759,10 +759,7 @@ def main():
             try :
                 start_new_task(db, client_id, current_date)
                 db.commit()
-                notify_task_details(db, client_id)
-                db.commit()
                 check_service_provider_contract_period(db, client_id)
-                # notify_task_details(db, client_id)
                 # notify_before_contract_period(db, client_id)
                 db.commit()
             except Exception, e :

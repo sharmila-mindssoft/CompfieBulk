@@ -304,7 +304,7 @@ def reminder_to_assignee(db, client_info, compliance_info):
                 if days_left <= 0 :
                     continue
                 notification_text = "%s day(s) left to complete %s task" % (days_left, compliance_name)
-                extra_details = ""
+                extra_details = " %s - Reminder" % (c["compliance_history_id"])
                 if (date_diff % reminder_interval) == 0 :
                     save_in_notification(
                         db, c["country_id"], c["domain_id"], c["business_group_id"], c["legal_entity_id"],
@@ -341,7 +341,7 @@ def reminder_before_due_date(db, client_info, compliance_info):
         if days_left <= 0 :
             continue
         notification_text = "%s day(s) left to complete %s task" % (days_left, compliance_name)
-        extra_details = ""
+        extra_details = " %s - Reminder" % (c["compliance_history_id"])
         if days_left == reminder_interval:
             save_in_notification(
                 db, c["country_id"], c["domain_id"], c["business_group_id"],
@@ -379,7 +379,7 @@ def notify_escalation_to_all(db, client_info, compliance_info):
         if over_due_days <= 0 :
             continue
         notification_text = "%s overdue by %s day(s)" % (compliance_name, over_due_days)
-        extra_details = ""
+        extra_details = " %s - Escalation" % (c["compliance_history_id"])
         if (over_due_days % escalation_interval) == 0 :
             save_in_notification(
                 db, c["country_id"], c["domain_id"], c["business_group_id"],
