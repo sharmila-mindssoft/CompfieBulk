@@ -1874,10 +1874,11 @@ class ClientDatabase(Database):
                                 continue
                         if statutories[0].strip() not in level_1_statutory_wise_compliances:
                             level_1_statutory_wise_compliances[statutories[0].strip()] = []
-
-                        compliance_name = "%s - %s" % (
-                            compliance["document_name"], compliance["compliance_task"]
-                        )
+                        compliance_name = compliance["compliance_task"]
+                        if compliance["document_name"] not in (None, "None", "") :
+                            compliance_name = "%s - %s" % (
+                                compliance["document_name"], compliance["compliance_task"]
+                            )
                         assingee_name = "%s - %s" % (
                             compliance["employee_code"], compliance["employee_name"]
                         )
@@ -2255,12 +2256,14 @@ class ClientDatabase(Database):
                 concurred_by = None if concurred_by_id is None else self.get_user_name_by_id(concurred_by_id, client_id)
                 remarks = row[9]
                 delayed_by = None if row[10] < 0 else row[10]
-                compliance_name = "%s - %s"%(row[15], row[11])
+                compliance_name = row[11]
+                if row[15] not in (None, "None", "") :
+                    compliance_name = "%s - %s"%(row[15], row[11])
                 compliance_description = row[12]
                 frequency_id = int(row[13])
                 frequency = core.COMPLIANCE_FREQUENCY(row[14])
                 description = row[12]
-                concurrence_status = bool(row[16])
+                concurrence_status = None if row[16] is None else bool(int(row[16]))
                 statutory_dates = [] if row[17] is None else json.loads(row[17])
                 validity_date = None if row[18] is None else self.datetime_to_string(row[18])
                 unit_name = row[20]
@@ -5254,7 +5257,7 @@ class ClientDatabase(Database):
         notifications = []
         for notification in notification_rows:
             notification_id = notification[0]
-            read_status = bool(notification[1])
+            read_status = bool(int(notification[1]))
             # Getting notification details
             columns = "notification_id, notification_text, created_on, extra_details, " + \
                 "statutory_provision, unit_code, unit_name, address, assignee, " + \
@@ -5276,8 +5279,9 @@ class ClientDatabase(Database):
             notification_detail = []
             if notification_detail_row:
                 notification_detail = notification_detail_row[0]
-                extra_details = notification_detail[3].split("-")
-                compliance_history_id = int(extra_details[0])
+                extra_details_with_history_id = notification_detail[3].split("-")
+                compliance_history_id = int(extra_details_with_history_id[0])
+                extra_details = extra_details_with_history_id[1]
 
                 due_date_rows = self.get_data(
                     self.tblComplianceHistory,
@@ -5299,7 +5303,6 @@ class ClientDatabase(Database):
 
                 notification_id = notification_detail[0]
                 notification_text = notification_detail[1]
-                extra_details = notification_detail[3]
                 updated_on = self.datetime_to_string(notification_detail[2])
                 unit_name = "%s - %s" % (
                     notification_detail[5],
@@ -5318,9 +5321,12 @@ class ClientDatabase(Database):
                 approval_person = self.get_user_contact_details_by_id(
                     notification_detail[10], client_id
                 )
-                compliance_name = "%s - %s" % (
-                    notification_detail[13], notification_detail[12]
-                )
+                compliance_name = notification_detail[12]
+                if notification_detail[13] is not None and notification_detail[13].replace(" ","") != "None":
+                    compliance_name = "%s - %s" % (
+                        notification_detail[13], notification_detail[12]
+                    )
+
                 compliance_description = notification_detail[14]
                 penal_consequences = notification_detail[15]
                 notifications.append(
@@ -5603,31 +5609,34 @@ class ClientDatabase(Database):
     def calculate_ageing(self, due_date, frequency_type=None):
         current_time_stamp = self.get_date_time()
         # due_date = datetime.datetime(due_date.year, due_date.month, due_date.day)
-        
+        print "inside calculate ageing"
         if frequency_type =="On Occurrence":
-            ageing_in_days = (current_time_stamp - due_date).days
-            ageing = ageing_in_days * 24
-            if ageing < 0:
-                if ageing < 24:
-                    compliance_status = " %d hours left" % abs(ageing)
+            r = relativedelta.relativedelta(due_date, current_time_stamp)
+            if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
+                if r.days == 0:
+                    compliance_status = " %d.%d hours left" % (
+                        abs(r.hours), abs(r.minutes)
+                    )
                 else:
-                    compliance_status = " %d days and %d hours left" % (
-                        abs(ageing/24), abs(ageing-ageing/24)
+                    compliance_status = " %d days and %d.%d hours left" % (
+                        abs(r.days), abs(r.hours), abs(r.minutes)
                     )
             else:
-                if ageing < 24:
-                    compliance_status = "Overdue by %d hours " % abs(ageing)
+                if r.days == 0:
+                    compliance_status = "Overdue by %d.%d hours " % (
+                        abs(r.hours), abs(r.minutes)
+                    )
                 else:
-                    compliance_status = "Overdue by %d days and %d hours" % (
-                        abs(ageing/24), abs(ageing-ageing/24)
+                    compliance_status = "Overdue by %d days and %d.%d hours" % (
+                        abs(r.days), abs(r.hours), abs(r.minutes)
                     )   
-            return ageing, compliance_status
+            return r.days, compliance_status
         else:
-            ageing = (current_time_stamp - due_date).days
+            r = relativedelta.relativedelta(due_date, current_time_stamp)
             compliance_status = " %d days left" % abs(ageing)
-            if ageing > 0:
-                compliance_status = "Overdue by %d days" % abs(ageing)
-                return ageing, compliance_status
+            if r.days < 0 and r.hours < 0 and r.minutes < 0:
+                compliance_status = "Overdue by %d days" % abs(r.days)
+                return r.days, compliance_status
         return 0, compliance_status
 
 
@@ -5663,9 +5672,11 @@ class ClientDatabase(Database):
         for compliance in current_compliances_row:
             document_name = compliance[5]
             compliance_task = compliance[6]
-            compliance_name = "%s - %s" % (
-                document_name, compliance_task
-            )
+            compliance_name = compliance_task
+            if document_name not in (None, "None", "") :
+                compliance_name = "%s - %s" % (
+                    document_name, compliance_task
+                )
 
             unit_code = compliance[9]
             unit_name = compliance[10]
@@ -5674,7 +5685,7 @@ class ClientDatabase(Database):
             )
             no_of_days, ageing = self.calculate_ageing(compliance[2], compliance[13])
             compliance_status = core.COMPLIANCE_STATUS("Inprogress")
-            if no_of_days > 0:
+            if no_of_days < 0:
                 compliance_status = core.COMPLIANCE_STATUS("Not Complied")
             format_files = None
             if compliance[8] is not None and compliance[8].strip() != '':
@@ -5729,7 +5740,9 @@ class ClientDatabase(Database):
         for compliance in upcoming_compliances_rows:
             document_name = compliance[1]
             compliance_task = compliance[2]
-            compliance_name = "%s - %s" % (document_name, compliance_task)
+            compliance_name = compliance_task
+            if document_name not in (None, "None", "") :
+                compliance_name = "%s - %s" % (document_name, compliance_task)
 
             unit_code = compliance[5]
             unit_name = compliance[6]
@@ -5963,9 +5976,11 @@ class ClientDatabase(Database):
                                 compliance_rows, compliance_columns
                             )
                             for compliance in compliance_rows:
-                                compliance_name = "%s - %s" % (
-                                    compliance["document_name"], compliance["compliance_task"]
-                                )
+                                compliance_name = compliance["compliance_task"]
+                                if compliance["document_name"] not in (None, "None", "") :
+                                    compliance_name = "%s - %s" % (
+                                        compliance["document_name"], compliance["compliance_task"]
+                                    )
                                 statutory_mapping = "%s >> %s" % (
                                     compliance["statutory_mapping"], compliance["statutory_provision"]
                                 )
@@ -6110,9 +6125,11 @@ class ClientDatabase(Database):
                                 compliance_rows, compliance_columns
                             )
                             for compliance in compliance_rows:
-                                compliance_name = "%s - %s" % (
-                                    compliance["document_name"], compliance["compliance_task"]
-                                )
+                                compliance_name = compliance["compliance_task"]
+                                if compliance["document_name"] not in (None, "None", "") :
+                                    compliance_name = "%s - %s" % (
+                                        compliance["document_name"], compliance["compliance_task"]
+                                    )
                                 statutory_mapping = "%s >> %s" % (
                                     compliance["statutory_mapping"], compliance["statutory_provision"]
                                 )
@@ -6262,9 +6279,11 @@ class ClientDatabase(Database):
                                 compliance_rows, compliance_columns
                             )
                             for compliance in compliance_rows:
-                                compliance_name = "%s - %s" % (
-                                    compliance["document_name"], compliance["compliance_task"]
-                                )
+                                compliance_name =  compliance["compliance_task"]
+                                if compliance["document_name"] not in (None, "None", "") :
+                                    compliance_name = "%s - %s" % (
+                                        compliance["document_name"], compliance["compliance_task"]
+                                    )
                                 statutory_mapping = "%s >> %s" % (
                                     compliance["statutory_mapping"], compliance["statutory_provision"]
                                 )
@@ -6503,9 +6522,11 @@ class ClientDatabase(Database):
                     )
 
                     for compliance in compliance_rows:
-                        compliance_name = "%s - %s" % (
-                            compliance["document_name"], compliance["compliance_task"]
-                        )
+                        compliance_name = compliance["compliance_task"]
+                        if compliance["document_name"] not in (None, "None", "") :
+                            compliance_name = "%s - %s" % (
+                                compliance["document_name"], compliance["compliance_task"]
+                            )
                         reassign_columns = "assignee, reassigned_from, reassigned_date, remarks"
                         condition = "1"
                         if user_id is not None:
@@ -6688,7 +6709,9 @@ class ClientDatabase(Database):
                         self.tblCompliances, compliance_columns, compliance_condition
                     )
                     if compliance_rows:
-                        compliance_name = "%s - %s" % (compliance_rows[0][1], compliance_rows[0][2])
+                        compliance_name = compliance_rows[0][2]
+                        if compliance_rows[0][1] not in (None, "None", "") :
+                            compliance_name = "%s - %s" % (compliance_rows[0][1], compliance_rows[0][2])
 
                         compliance_activity_columns = "activity_date, activity_status, compliance_status," \
                         "remarks"
@@ -7446,7 +7469,7 @@ class ClientDatabase(Database):
             unit_wise = act_wise.get(level_1_statutory)
 
             document_name = r["document_name"]
-            if document_name :
+            if document_name not in (None, "None", "") :
                 compliance_name = "%s - %s" % (document_name, r["compliance_task"])
             else :
                 compliance_name = r["compliance_task"]
@@ -7535,8 +7558,8 @@ class ClientDatabase(Database):
                     "c.duration_type_id = cd.duration_type_id"
                 ]
                 where_condition = "ac.unit_id = (%d) and c.domain_id in (%s) and \
-                c.frequency_id = 4" % (
-                    unit, user_domain_ids
+                c.frequency_id = 4 and assignee='%d'" % (
+                    unit, user_domain_ids, session_user
                 )
                 rows = self.get_data_from_multiple_tables(
                     columns, tables, aliases, join_type,
@@ -7613,7 +7636,7 @@ class ClientDatabase(Database):
         approver_email, approver_name = self.get_user_email_name(str(approver_id))
         if concurrence_id is not None and self.is_two_levels_of_approval():
             concurrence_email, concurrence_name = self.get_user_email_name(str(concurrence_id))
-        if document_name is not None:
+        if document_name not in (None, "None", "") :
             compliance_name = "%s - %s" % (document_name, compliance_name)
         try:
             notify_on_occur_thread = threading.Thread(
