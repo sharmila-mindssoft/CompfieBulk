@@ -1,12 +1,20 @@
-import json
-from protocol.jsonvalidators import (parse_dictionary)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
     parse_structure_UnsignedIntegerType_32,
     parse_structure_OptionalType_VectorType_RecordType_core_FileList,
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_Bool,
-    parse_structure_CustomTextType_50
+    parse_structure_CustomTextType_50,
+    parse_structure_CustomTextType_20,
+    parse_structure_VectorType_RecordType_mobile_ApproveCompliance,
+    parse_structure_CustomTextType_100,
+    parse_structure_VectorType_SignedIntegerType_8,
+    parse_structure_VectorType_CustomTextType_50,
+    parse_structure_OptionalType_SignedIntegerType_8,
+    parse_structure_CustomTextType_500,
+    parse_structure_VectorType_RecordType_mobile_ComplianceApplicability,
+    parse_structure_VectorType_RecordType_mobile_ComplianceHistory
 )
 from protocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
@@ -14,7 +22,16 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_20,
     to_structure_OptionalType_CustomTextType_500,
     to_structure_Bool,
-    to_structure_CustomTextType_50
+    to_structure_CustomTextType_50,
+    to_structure_CustomTextType_20,
+    to_structure_VectorType_RecordType_mobile_ApproveCompliance,
+    to_structure_CustomTextType_100,
+    to_structure_VectorType_SignedIntegerType_8,
+    to_structure_VectorType_CustomTextType_50,
+    to_structure_OptionalType_SignedIntegerType_8,
+    to_structure_CustomTextType_500,
+    to_structure_VectorType_RecordType_mobile_ComplianceApplicability,
+    to_structure_VectorType_RecordType_mobile_ComplianceHistory
 )
 
 #
@@ -50,11 +67,11 @@ class GetVersions(Request):
         reassign_history_version
     ):
         self.group_id = group_id
-		self.unit_details_version = unit_details_version
-		self.user_details_version = user_details_version
-		self.compliance_applicability_version = compliance_applicability_version
-		self.compliance_history_version = compliance_history_version
-		self.reassign_history_version = reassign_history_version
+        self.unit_details_version = unit_details_version
+        self.user_details_version = user_details_version
+        self.compliance_applicability_version = compliance_applicability_version
+        self.compliance_history_version = compliance_history_version
+        self.reassign_history_version = reassign_history_version
 
     @staticmethod
     def parse_inner_structure(data):
@@ -369,6 +386,7 @@ class ApproveComplianceList(object):
         self, compliances
     ):
         self.compliances = compliances
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
@@ -412,7 +430,16 @@ class GetTrendChartData(Request):
         }
 
 def _init_Request_class_map():
-    classes = [GetUserGroups, SaveUserGroup, UpdateUserGroup, ChangeUserGroupStatus, GetUsers, SaveUser, UpdateUser, ChangeUserStatus]
+    classes = [
+    GetUserGroups,
+    SaveUserGroup,
+    UpdateUserGroup,
+    ChangeUserGroupStatus,
+    GetUsers,
+    SaveUser,
+    UpdateUser,
+    ChangeUserStatus
+]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -445,6 +472,14 @@ class Response(object):
     @staticmethod
     def parse_inner_structure(data):
         raise NotImplementedError
+
+class UserLoginResponse(Response):
+    def __init__(
+        self, user_id, name, session_token
+    ):
+        self.user_id = user_id
+        self.name = name
+        self.session_token = session_token
 
 class GetVersionsSuccess(Response):
     def __init__(
@@ -795,6 +830,7 @@ class GetComplianceHistorySuccess(Response):
         self, compliance_history
     ):
         self.compliance_history = compliance_history
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
@@ -897,3 +933,14 @@ class ReassignHistory(object):
             "approved_by" : to_structure_UnsignedIntegerType_32(self.approved_by),
             "approved_on" : to_structure_CustomTextType_20(self.approved_on)
         }
+
+def _init_Response_class_map():
+    classes = [
+
+    ]
+    class_map = {}
+    for c in classes:
+        class_map[c.__name__] = c
+    return class_map
+
+_Response_class_map = _init_Response_class_map()
