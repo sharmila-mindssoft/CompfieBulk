@@ -1,3 +1,4 @@
+import re
 from collections import OrderedDict
 
 __all__ = [
@@ -21,7 +22,7 @@ __all__ = [
 
 def expectation_error(expected, received) :
     msg = "expected %s, but received: %s"
-    return ValueError(msg % (expected, repr(received)))
+    return ValueError(msg % (expected, str(received)))
 
 def empty_error():
     return ValueError("null is not allowed")
@@ -60,7 +61,9 @@ def parse_string(x) :
     #     raise empty_error()
     t = type(x)
     if t is unicode :
+        print x
         x = x.encode("utf8")
+        print x
         x = x.replace("'", "")
         return x
     elif t is str:
