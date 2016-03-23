@@ -219,11 +219,11 @@ def get_client_database():
     return client_db
 
 def get_current_date():
-    date = datetime.date.today()
+    date = datetime.datetime.today()
     return date
 
 def get_current_month():
-    month = datetime.date.today().month
+    month = get_current_date().month
     return month
 
 def get_country_wise_timestamp():
