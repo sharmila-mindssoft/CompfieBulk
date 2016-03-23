@@ -329,6 +329,17 @@ class Database(object) :
         string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y")
         return string_in_date
 
+    def string_to_datetime_with_time(self, string):
+        # date = string.split("-")
+        # datetime_val = datetime.datetime(
+        #     year=int(date[2]),
+        #     month=self.integer_months[date[1]],
+        #     day=int(date[0])
+        # )
+        # return datetime_val.date()
+        string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y %H:%M")
+        return string_in_date
+
     def datetime_to_string(self, datetime_val):
         # return "%d-%s-%d" % (
         #     datetime_val.day,

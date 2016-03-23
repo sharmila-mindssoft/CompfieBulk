@@ -432,7 +432,7 @@ class GetAssigneeWiseComplianceDrillDown(Request):
         assignee_id = data.get("assignee_id")
         assignee_id = parse_structure_UnsignedIntegerType_32(assignee_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_VectorType_UnsignedIntegerType_32(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         year = data.get("year")
         year = parse_structure_OptionalType_UnsignedIntegerType_32(year)
         return GetAssigneeWiseComplianceDrillDown(assignee_id, domain_id, year)
@@ -440,7 +440,7 @@ class GetAssigneeWiseComplianceDrillDown(Request):
     def to_inner_structure(self):
         return {
             "assignee_id": to_structure_UnsignedIntegerType_32(self.assignee_id),
-            "domain_id": to_structure_VectorType_UnsignedIntegerType_32(self.domain_id),
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "year": to_structure_OptionalType_UnsignedIntegerType_32(self.year),
         }
 
@@ -1630,7 +1630,7 @@ class AssigneeWiseLevel1Compliance(object):
             "compliance_name": to_structure_CustomTextType_500(self.compliance_name),
             "description": to_structure_CustomTextType_500(self.description),
             "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
-            "assigned_date": to_structure_CustomTextType_20(self.assigned_date),
+            "assigned_date": to_structure_OptionalType_CustomTextType_20(self.assigned_date),
             "due_date": to_structure_CustomTextType_20(self.due_date),
             "completion_date": to_structure_OptionalType_CustomTextType_20(self.completion_date)
         }
