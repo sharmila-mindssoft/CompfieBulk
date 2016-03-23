@@ -3297,6 +3297,7 @@ class ClientDatabase(Database):
             T1.completed_by,\
             T4.compliance_task, T4.document_name, \
             T4.compliance_description, T4.statutory_mapping, \
+            T4.frequency_id, T4.duration_type_id, \
             unit_name, \
             (select division_name from tbl_divisions where division_id = T5.division_id)division_name, \
             (select legal_entity_name from tbl_legal_entities where legal_entity_id = T5.legal_entity_id)legal_entity_name,  \
@@ -3330,7 +3331,8 @@ class ClientDatabase(Database):
             "compliance_id", "start_date", "due_date",
             "completion_date", "assignee", "compliance_task",
             "document_name", "compliance_description",
-            "statutory_mapping", "unit_name", "division_name",
+            "statutory_mapping", "frequency_id", "duration_type_id",
+            "unit_name", "division_name",
             "legal_entity_name", "business_group_name",
             "country_name", "employee_name",
             "unit_code", "address", "geography",
@@ -3338,6 +3340,7 @@ class ClientDatabase(Database):
             "country_id", "domain_id",
             "year", "month"
         ]
+        print query
         result = self.convert_to_dict(rows, columns)
         return result
 
@@ -3392,6 +3395,16 @@ class ClientDatabase(Database):
         year_info = self.get_client_domain_configuration(int(year))[0]
         return self.return_compliance_details_drill_down(year_info, compliance_status, request.year, result, client_id)
 
+    def calculate_ageing_in_hours(self, ageing) :
+        day = ageing.days
+        hour = 0
+        if day > 0 :
+            hour += day * 24
+        hour += (ageing.seconds / 3600)
+        minutes = (ageing.seconds / 60 % 60)
+        summary = "%s:%s Hour(s)" % (hour, minutes)
+        return summary
+
     def return_compliance_details_drill_down(self, year_info, compliance_status, request_year, result, client_id) :
         current_date = datetime.datetime.today()
 
@@ -3439,16 +3452,42 @@ class ClientDatabase(Database):
             level_1 = statutories[0].strip()
             ageing = 0
             due_date = r["due_date"]
+            print due_date
             completion_date = r["completion_date"]
 
             if compliance_status == "Inprogress" :
-                ageing = abs((due_date - current_date).days) + 1
+                if r["frequency_id"] != 4 :
+                    ageing = abs((due_date - current_date).days) + 1
+                else :
+                    diff = (due_date - current_date)
+                    if r["duration_type_id"] == 2 :
+                        ageing = self.calculate_ageing_in_hours(diff)
+                    else :
+                        ageing = diff
             elif compliance_status == "Complied" :
                 ageing = 0
             elif compliance_status == "Not Complied" :
-                ageing = abs((current_date - due_date).days) + 1
+                if r["frequency_id"] != 4 :
+                    ageing = abs((current_date - due_date).days) + 1
+                else :
+                    diff = (current_date - due_date)
+                    if r["duration_type_id"] == 2 :
+                        ageing = self.calculate_ageing_in_hours(diff)
+                    else :
+                        ageing = diff
             elif compliance_status == "Delayed Compliance" :
                 ageing = abs((completion_date - due_date).days) + 1
+                if r["frequency_id"] != 4 :
+                    ageing = abs((completion_date - due_date).days) + 1
+                else :
+                    diff = (completion_date - due_date)
+                    if r["duration_type_id"] == 2 :
+                        ageing = selfcalculate_ageing_in_hours(diff)
+                    else :
+                        ageing = diff
+
+            if type(ageing) is int :
+                ageing = " %s Day(s)" % ageing
 
             status = core.COMPLIANCE_STATUS(compliance_status)
             if r["document_name"] not in ("", "None", None):
@@ -3459,7 +3498,7 @@ class ClientDatabase(Database):
                 name, r["compliance_description"], r["employee_name"],
                 str(r["start_date"]), str(due_date),
                 str(completion_date), status,
-                ageing
+                str(ageing)
             )
 
             drill_down_data = unit_wise_data.get(unit_id)
@@ -3778,7 +3817,17 @@ class ClientDatabase(Database):
             due_date = r["due_date"]
             completion_date = r["completion_date"]
 
-            ageing = abs((current_date - due_date).days) + 1
+            if r["frequency_id"] != 4 :
+                    ageing = abs((current_date - due_date).days) + 1
+            else :
+                diff = (current_date - due_date)
+                if r["duration_type_id"] == 2 :
+                    ageing = self.calculate_ageing_in_hours(diff)
+                else :
+                    ageing = diff
+
+            if type(ageing) is int :
+                ageing = " %s Day(s)" % ageing
 
             status = core.COMPLIANCE_STATUS("Not Complied")
             name = "%s-%s" % (r["document_name"], r["compliance_task"])
@@ -3786,7 +3835,7 @@ class ClientDatabase(Database):
                 name, r["compliance_description"], r["employee_name"],
                 str(r["start_date"]), str(due_date),
                 str(completion_date), status,
-                ageing
+                str(ageing)
             )
 
             drill_down_data = unit_wise_data.get(unit_id)
@@ -4229,25 +4278,25 @@ class ClientDatabase(Database):
                 )
                 date_list.append(s_date)
 
-            format_file = r["format_file"]
+            format_file = r["format_file"].strip()
             format_file_size = r["format_file_size"]
-            file_list = []
-            download_file_list = []
+            file_list = None
+            download_file_list = None
             if format_file is not None and format_file_size is not None :
-                file_info = core.FileList(
-                    int(format_file_size), format_file, None
-                )
-                file_list.append(file_info)
-                # file_name = format_file.split('-')[0]
-                file_download = "%s/%s" % (
-                    FORMAT_DOWNLOAD_URL, format_file
-                )
-                download_file_list.append(
-                        file_download
+                if len(format_file) != 0 :
+                    file_list = []
+                    download_file_list = []
+                    file_info = core.FileList(
+                        int(format_file_size), format_file, None
                     )
-            else :
-                file_list = None
-                download_file_list = None
+                    file_list.append(file_info)
+                    # file_name = format_file.split('-')[0]
+                    file_download = "%s/%s" % (
+                        FORMAT_DOWNLOAD_URL, format_file
+                    )
+                    download_file_list.append(
+                            file_download
+                        )
 
             if int(r["frequency_id"]) == 1 :
                 summary = None
