@@ -773,6 +773,7 @@ $("#temp_addcompliance").click(function() {
   var compliance_document = null;
 
   if($('#compliance_document').val().trim().length > 0) compliance_document = $('#compliance_document').val().trim();
+  
   var file_format = null;
   if(uploadFile != null){
     file_format = [];

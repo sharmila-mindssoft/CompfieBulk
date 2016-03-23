@@ -252,14 +252,15 @@ class EmailHandler(Email):
     def notify_task_rejected(
         self, compliance_history_id, remarks, reject_status,
         assignee_name, assignee_email, concurrence_email,
-        concurrence_name
+        concurrence_name, compliance_name
     ):
         subject = "Task Rejected"
         message = "Dear %s, Compliance %s has been rejected. The reason is %s." % (
-            assignee_name, compliance_name, rejected_reason
+            assignee_name, compliance_name, remarks
         )
-        if concurrence_email is not None and reject_type == "RejectApproval":
-            receiver = assignee_email 
+        receiver = assignee_email 
+        cc = None
+        if concurrence_email is not None and reject_status == "RejectApproval":
             cc = concurrence_email
         self.send_email(receiver, subject, message, cc)
 

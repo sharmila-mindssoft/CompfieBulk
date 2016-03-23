@@ -218,11 +218,25 @@ def run_web_front_end(port, knowledge_server_address):
         server_path = os.path.join(ROOT_PATH, "Src-server")
         server_path = os.path.join(server_path, "server")
         format_path = os.path.join(server_path, "knowledgeformat")
+        reports_path = os.path.join(ROOT_PATH, "exported_reports")
+        client_docs_path = os.path.join(ROOT_PATH, "clientdocuments")
 
         web_server.low_level_url(
             r"/client/compliance_format/(.*)",
             StaticFileHandler,
             dict(path=format_path)
+        )
+
+        web_server.low_level_url(
+            r"/download/csv/(.*)",
+            StaticFileHandler,
+            dict(path=reports_path)
+        )
+
+        web_server.low_level_url(
+            r"/client/client_documents/(.*)",
+            StaticFileHandler,
+            dict(path=client_docs_path)
         )
 
         static_path = os.path.join(ROOT_PATH, "Src-client")
