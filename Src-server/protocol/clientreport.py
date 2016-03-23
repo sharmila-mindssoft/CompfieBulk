@@ -2380,14 +2380,14 @@ class StatutoryReassignCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["level_1_statutory_name", "compliance"])
         level_1_statutory_name = data.get("level_1_statutory_name")
-        level_1_statutory_name = parse_structure_CustomTextType_50(level_1_statutory_name)
+        level_1_statutory_name = parse_structure_CustomTextType_500(level_1_statutory_name)
         compliance = data.get("compliance")
         compliance = parse_structure_VectorType_RecordType_clientreport_ReassignUnitCompliance(compliance)
         return StatutoryReassignCompliance(level_1_statutory_name, compliance)
 
     def to_structure(self):
         return {
-            "level_1_statutory_name": to_structure_CustomTextType_50(self.level_1_statutory_name),
+            "level_1_statutory_name": to_structure_CustomTextType_500(self.level_1_statutory_name),
             "compliance": to_structure_VectorType_RecordType_clientreport_ReassignUnitCompliance(self.compliance),
         }
 

@@ -1800,7 +1800,7 @@ class STATUTORY_WISE_COMPLIANCES(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["level_1_statutory_name", "compliences"])
         level_1_statutory_name = data.get("level_1_statutory_name")
-        level_1_statutory_name = parse_structure_CustomTextType_50(level_1_statutory_name)
+        level_1_statutory_name = parse_structure_CustomTextType_500(level_1_statutory_name)
         compliences = data.get("compliences")
         compliences = parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(compliences)
         return STATUTORY_WISE_COMPLIANCES(
@@ -1809,7 +1809,7 @@ class STATUTORY_WISE_COMPLIANCES(object):
 
     def to_structure(self):
         return {
-            "level_1_statutory_name": to_structure_CustomTextType_50(self.level_1_statutory_name),
+            "level_1_statutory_name": to_structure_CustomTextType_500(self.level_1_statutory_name),
             "compliences": to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(self.compliences),
         }
 
@@ -1832,7 +1832,7 @@ class AssignedStatutory(object):
         client_statutory_id = data.get("client_statutory_id")
         client_statutory_id = parse_structure_UnsignedIntegerType_32(client_statutory_id)
         level_1_statutory_name = data.get("level_1_statutory_name")
-        level_1_statutory_name = parse_structure_CustomTextType_50(level_1_statutory_name)
+        level_1_statutory_name = parse_structure_CustomTextType_500(level_1_statutory_name)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_clienttransactions_ComplianceApplicability(compliances)
         applicable_status = data.get("applicable_status")
@@ -1846,7 +1846,7 @@ class AssignedStatutory(object):
     def to_structure(self):
         return {
             "client_statutory_id": to_structure_UnsignedIntegerType_32(self.client_statutory_id),
-            "level_1_statutory_name": to_structure_CustomTextType_50(self.level_1_statutory_name),
+            "level_1_statutory_name": to_structure_CustomTextType_500(self.level_1_statutory_name),
             "compliances": to_structure_VectorType_RecordType_clienttransactions_ComplianceApplicability(self.compliances),
             "applicable_status": to_structure_Bool(self.applicable_status),
             "opted_status": to_structure_Bool(self.opted_status),

@@ -7,6 +7,7 @@ var logo_file;
 var countriesListequal = null;
 var clientcountriesList = null;
 var clientdomainList = null;
+var clientdata = null;
 
 function clearMessage() {
     $(".error-message").hide();
@@ -77,10 +78,20 @@ $("#btn-clientgroup-cancel").click(function(){
     clearMessage();
     $("#clientgroup-add").hide();
     $("#clientgroup-view").show();
+    var x=document.getElementsByTagName("input");
+    for(i = 0; i<=x.length-1; i++){
+       if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
+    }
+    loadClientGroupList(clientdata);
 });
 function initialize(){
+    var x=document.getElementsByTagName("input");
+    for(i = 0; i<=x.length-1; i++){
+       if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
+    }
     hideLoader();
     function onSuccess(data){
+        clientdata = data['client_list'];
         loadClientGroupList(data['client_list']);
     }
     function onFailure(error){
@@ -609,15 +620,15 @@ $("#upload-logo").on("change", function(e) {
         }
      });
 });
-$("#search-clientgroup-name").keyup(function() {
-    var count = 0;
-    var value = this.value.toLowerCase();
-    $("table").find("tr:not(:first)").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".clientgroup-name").text().toLowerCase();
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
+// $("#search-clientgroup-name").keyup(function() {
+//     var count = 0;
+//     var value = this.value.toLowerCase();
+//     $("table").find("tr:not(:first)").each(function(index) {
+//         if (index === 0) return;
+//         var id = $(this).find(".clientgroup-name").text().toLowerCase();
+//         $(this).toggle(id.indexOf(value) !== -1);;
+//     });
+// });
 
 //Autocomplete Script Starts and Hide list items after select
 function hidemenu() {
@@ -1183,4 +1194,7 @@ function gototop(){
 }
 $(function() {
     initialize();
+});
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });

@@ -206,8 +206,12 @@ function ChartInput () {
             this.business_groups.splice(index, 1);
             return;
         }
-        if (isAdd) {
-            this.business_groups.push(v);
+        if (isSingle) {
+            this.business_groups = [v];
+        } else {
+            if (isAdd) {
+                this.business_groups.push(v);
+            }
         }
     }
 
@@ -235,8 +239,12 @@ function ChartInput () {
             this.legal_entities.splice(index, 1);
             return;
         }
-        if (isAdd) {
-            this.legal_entities.push(v);
+        if (isSingle) {
+            this.legal_entities = [v];
+        } else {
+            if (isAdd) {
+                this.legal_entities.push(v);
+            }
         }
     }
 
@@ -264,8 +272,13 @@ function ChartInput () {
             this.divisions.splice(index, 1);
             return;
         }
-        if (isAdd) {
-            this.divisions.push(v);
+        if (isSingle) {
+            this.divisions = [v];
+        }
+        else {
+            if (isAdd) {
+                this.divisions.push(v);
+            }
         }
     }
 
@@ -695,7 +708,7 @@ function updateComplianceStatusStackBarChart(data) {
             reversedStacks: false
         },
         tooltip: {
-            headerFormat: '<b>{point.x}</b>: {point.percentage:.0f}% ',
+            headerFormat: '<b>{point.series.name}</b>: {point.percentage:.0f}% ',
             pointFormat: '({point.y} out of {point.stackTotal})'
         },
         plotOptions: {
@@ -899,6 +912,9 @@ function updateNotCompliedDrillDown(status, data) {
     $(".graph-selections-bottom").hide();
     $(".drilldown-container").show();
     $(".btn-back").show();
+    $(".btn-back").on("click", function() {
+        loadNotCompliedChart();
+    });
     showNotCompliedDrillDownRecord(data);
 }
 
@@ -1250,8 +1266,8 @@ function groupWiseEscalationDrillDown(status, data){
     if (status == "not_complied") {
         $(".tr-level1 th").attr("colspan", "8");
         $(".tr-unit .unit-heading").attr("colspan", "7");
-        $(".delayed-by-row").show();
-        $(".over-due-row").hide();
+        $(".delayed-by-row").hide();
+        $(".over-due-row").show();
     }
     else if (status == "delayed") {
         $(".tr-level1 th").attr("colspan", "8");
@@ -1278,8 +1294,8 @@ function businessgroupWiseEscalationDrillDown(status, data){
     if (status == "not_complied") {
         $(".tr-level1 th").attr("colspan", "7");
         $(".tr-unit .unit-heading").attr("colspan", "6");
-        $(".delayed-by-row").show();
-        $(".over-due-row").hide();
+        $(".delayed-by-row").hide();
+        $(".over-due-row").show();
     }
     else if (status == "delayed") {
         $(".tr-level1 th").attr("colspan", "7");
@@ -1385,7 +1401,12 @@ function escalationDrilldown(status, data){
     var count = 1;
     var h2heading = $('#templates .escalation-status .tr-h2');
     var cloneh2 = h2heading.clone();
-    $(".escalation-status-value", cloneh2).html(status+" compliances");
+    if(status == "not_complied"){
+        $(".escalation-status-value", cloneh2).html("Not Complied compliances");    
+    }
+    if(status == "delayed"){
+        $(".escalation-status-value", cloneh2).html("Delayed compliances");       
+    }    
     $(".table-thead-drilldown-list").append(cloneh2);
 
     var tableHeading = $('#templates .escalation-status .tr-heading');
@@ -1424,6 +1445,7 @@ function escalationDrilldown(status, data){
                     $(".industry-type-name", clone).html(value["industry_name"]);
                     $(".compliance-name span", clone).html(val['compliance_name']);
                     $(".assigned-to", clone).html(val['assignee_name']);
+
                     if(val['status'] == "Delayed"){
                         $(".delayed-by", clone).html(val['ageing']+" Days");
                     }
@@ -2124,12 +2146,12 @@ function updateEscalationChart(data) {
         },
         plotOptions: {
             series: {
-                pointWidth: 40
+                pointWidth: 40,
+                groupPadding: 0.4,
+                pointPadding: -0.0,
+                pointPlacement: -0.0
             },
             column: {
-                pointPadding: 0,
-                groupPadding: 0.3,
-                borderWidth: 0,
                 dataLabels: {
                     enabled: true,
                     textShadow:null,
@@ -2764,6 +2786,8 @@ function loadComplianceStatusChart () {
 }
 
 function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter_type_name) {
+    $(".btn-bar-chart").hide();
+    $(".btn-pie-chart").hide();
     var filter_type = chartInput.getFilterType();
     var filterType = filter_type.replace("_", "-");
     filterType = hyphenatedToUpperCamelCase(filterType);
@@ -2917,9 +2941,6 @@ function loadNotCompliedDrillDown(type){
         "filter_ids": filter_ids,
         "not_complied_type": type
     }
-    $(".btn-back").on("click", function() {
-        loadNotCompliedChart();
-    });
     client_mirror.getNotCompliedDrillDown(
         requestData,
         function (status, data) {
@@ -3051,6 +3072,10 @@ function loadCharts () {
 
 function initializeChartTabs () {
     $(".chart-tab").on("click", function () {
+        $(".chart-filter").removeClass("active");
+        $(".filtertable .selections").hide();
+        $(".btn-group").addClass("active");
+        chartInput.setFilterType("group");
         $(".chart-tab").removeClass("active");
         if ($(this).hasClass("compliance-status-tab")) {
             $(".chart-tab.compliance-status-tab").addClass("active");
@@ -3353,7 +3378,15 @@ function initializeFilters () {
             return;
         var filter_type_selection = filter_type.replace("_", "-") + "-selection";
         $("." + filter_type_selection).show();
-        loadCharts();
+        var chart_type = chartInput.getChartType();
+        if (chart_type == "compliance_status") {
+            loadCharts();
+        }
+        else {
+            if (filter_type == "group") {
+                loadCharts();
+            }
+        }
     });
 
     $(".common-filter .btn-go input").on("click", function () {

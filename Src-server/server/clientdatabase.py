@@ -1828,6 +1828,7 @@ class ClientDatabase(Database):
             AND compliance_opted = 1 AND statutory_opted = 1" % (
                 unit_id, domain_id
             )
+        print compliance_ids_query
         compliance_id_rows = self.select_all(compliance_ids_query)
         statutory_wise_compliances = []
         level_1_statutory_wise_compliances = {}
@@ -1914,7 +1915,7 @@ class ClientDatabase(Database):
                             pass
                         print "due_dates for {} is {}".format(
                             compliance["employee_name"], due_dates
-                        ) 
+                        )
                         for due_date in due_dates:
                             if not self.is_already_completed_compliance(
                                 due_date, compliance["compliance_id"], unit_id
@@ -3316,7 +3317,7 @@ class ClientDatabase(Database):
             %s \
             %s \
             %s \
-            ORDER BY T1.due_date desc" % (
+            ORDER BY T1.due_date" % (
                 user_qry,
                 str(tuple(domain_ids)),
                 date_qry,
@@ -3392,7 +3393,7 @@ class ClientDatabase(Database):
         return self.return_compliance_details_drill_down(year_info, compliance_status, request.year, result, client_id)
 
     def return_compliance_details_drill_down(self, year_info, compliance_status, request_year, result, client_id) :
-        current_date = datetime.date.today()
+        current_date = datetime.datetime.today()
 
         unit_wise_data = {}
         for r in result :
@@ -3687,7 +3688,7 @@ class ClientDatabase(Database):
             "start_date", "due_date"
         ]
         not_complied = self.convert_to_dict(rows, columns)
-        current_date = datetime.date.today()
+        current_date = datetime.datetime.today()
         below_30 = 0
         below_60 = 0
         below_90 = 0
@@ -3746,7 +3747,7 @@ class ClientDatabase(Database):
             domain_ids, date_qry, not_complied_status_qry,
             filter_type_qry, session_user
         )
-        current_date = datetime.date.today()
+        current_date = datetime.datetime.today()
         not_complied_details_filtered = []
 
         for c in not_complied_details :
@@ -3766,7 +3767,6 @@ class ClientDatabase(Database):
                 if ageing > 90 :
                     not_complied_details_filtered.append(c)
 
-        current_date = datetime.date.today()
 
         unit_wise_data = {}
         for r in not_complied_details_filtered :
@@ -3807,7 +3807,7 @@ class ClientDatabase(Database):
 
             else :
                 level_compliance = drill_down_data.compliances
-                compliance_list = level_compliance[level_1]
+                compliance_list = level_compliance.get(level_1)
                 if compliance_list is None :
                     compliance_list = []
                 compliance_list.append(compliance)
@@ -4777,7 +4777,7 @@ class ClientDatabase(Database):
         )
         compliance_ids = None
         if rows:
-            compliance_id = rows[0][0]
+            compliance_ids = rows[0][0]
 
         result = self.get_client_statutory_ids_and_unit_ids_for_trend_chart(
             country_id, domain_id, client_id, filter_id, filter_type
@@ -4790,7 +4790,7 @@ class ClientDatabase(Database):
             columns = "group_concat(compliance_history_id)"
             condition = "compliance_id in (%s) and unit_id in (%s)" % (
                 compliance_ids, unit_ids
-            ) 
+            )
             result = self.get_data(
                 self.tblComplianceHistory, columns, condition
             )
@@ -4801,7 +4801,6 @@ class ClientDatabase(Database):
         years = self.get_last_7_years()
         country_domain_timelines = self.get_country_domain_timelines(
             country_ids, domain_ids, years, client_id)
-        print country_domain_timelines
         chart_data = []
         for country_wise_timeline in country_domain_timelines:
             country_id = country_wise_timeline[0]
@@ -4810,11 +4809,13 @@ class ClientDatabase(Database):
             for domain_wise_timeline in domain_wise_timelines:
                 domain_id = domain_wise_timeline[0]
                 start_end_dates = domain_wise_timeline[1]
-
-
                 compliance_history_ids, client_statutory_ids, unit_ids = self.get_compliance_history_ids_for_trend_chart(
                     country_id, domain_id, client_id
                 )
+                print "compliance_history_ids for country:{}, domain:{}, {}".format(
+                    country_id, domain_id, compliance_history_ids
+                )
+
                 if compliance_history_ids is not None:
                     for index, dates in enumerate(start_end_dates):
                         columns = "count(*) as total, sum(case when approve_status = 1 then 1 " + \
@@ -4833,8 +4834,8 @@ class ClientDatabase(Database):
                             row = rows[0]
                             total_compliances = row[0]
                             complied_compliances = row[1] if row[1] != None else 0
-                            year_wise_count[index][0] += total_compliances if total_compliances is not None else 0
-                            year_wise_count[index][1] += complied_compliances if complied_compliances is not None else 0
+                            year_wise_count[index][0] += int(total_compliances) if total_compliances is not None else 0
+                            year_wise_count[index][1] += int(complied_compliances) if complied_compliances is not None else 0
             print
             print "for country : {}, domain:{}".format(country_id, domain_id)
             print year_wise_count
@@ -7691,20 +7692,20 @@ class ClientDatabase(Database):
         db_con.commit()
         db_con.close()
 
-        columns = "client_statutory_id"
-        rows = self.get_data(self.tblClientStatutories, columns, condition)
-        if rows:
-            client_statutory_id = rows[0][0]
+        # columns = "client_statutory_id"
+        # rows = self.get_data(self.tblClientStatutories, columns, condition)
+        # if rows:
+        #     client_statutory_id = rows[0][0]
 
-            condition = "client_statutory_id='{}' and unit_id='{}'".format(
-                client_statutory_id, unit_id
-            )
-            self.delete(self.tblClientStatutories, condition)
+        #     condition = "client_statutory_id='{}' and unit_id='{}'".format(
+        #         client_statutory_id, unit_id
+        #     )
+        #     self.delete(self.tblClientStatutories, condition)
 
-            condition = "client_statutory_id='{}' ".format(
-                client_statutory_id
-            )
-            self.delete(self.tblClientCompliances, condition)
+        #     condition = "client_statutory_id='{}' ".format(
+        #         client_statutory_id
+        #     )
+        #     self.delete(self.tblClientCompliances, condition)
 
         action_column = "unit_code, unit_name"
         action_condition = "unit_id='{}'".format(unit_id)
