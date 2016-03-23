@@ -37,7 +37,7 @@ function load_compliances (compliancesList) {
         $('.compliance-task', clone1).text(compliances[compliance]["statutory_provision"]);
         $('.description', clone1).text(compliances[compliance]["description"]);
         $('.duration', clone1).text(completeDays);
-        $('.startdate', clone1).html('<input type="text" class="input-box" readonly="readonly" id="startdate'+j+'"/>');
+        $('.startdate', clone1).html('<input type="text" class="input-box" width="200px" readonly="readonly" id="startdate'+j+'"/>');
         $('.action', clone1).html('<input type="button" class="btn-submit" value="Start" onclick="submitOnOccurence('+complianceId+','+j+','+unitId+',\''+completeDays+'\')"/>');
 
         /*$(clone1, '.action').on("click", function(e){   
@@ -46,7 +46,7 @@ function load_compliances (compliancesList) {
 
         $('.tbody-compliances-list').append(clone1);
         
-        $("#startdate"+j).datepicker({
+        $("#startdate"+j).datetimepicker({
             changeMonth: true,
             changeYear: true,
             numberOfMonths: 1,
@@ -60,7 +60,8 @@ function load_compliances (compliancesList) {
 }
 
 function convert_date (data){
-  var date = data.split("-");
+  var datetime = data.split(" ");
+  var date = datetime[0].split("-");
   var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   for(var j=0;j<months.length;j++){
       if(date[1]==months[j]){
