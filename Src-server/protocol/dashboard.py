@@ -1779,7 +1779,7 @@ class Notification(object):
         updated_on = data.get("updated_on")
         updated_on = parse_structure_CustomTextType_20(updated_on)
         level_1_statutory = data.get("level_1_statutory")
-        level_1_statutory = parse_structure_CustomTextType_50(level_1_statutory)
+        level_1_statutory = parse_structure_CustomTextType_500(level_1_statutory)
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_50(unit_name)
         unit_address = data.get("unit_address")
@@ -1814,7 +1814,7 @@ class Notification(object):
             "notification_text" : to_structure_CustomTextType_500(self.notification_text),
             "extra_details" : to_structure_CustomTextType_500(self.extra_details),
             "updated_on" : to_structure_CustomTextType_20(self.updated_on),
-            "level_1_statutory" : to_structure_CustomTextType_50(self.level_1_statutory),
+            "level_1_statutory" : to_structure_CustomTextType_500(self.level_1_statutory),
             "unit_name" : to_structure_CustomTextType_50(self.unit_name),
             "unit_address" : to_structure_CustomTextType_50(self.unit_address),
             "assignee" : to_structure_CustomTextType_100(self.assignee),

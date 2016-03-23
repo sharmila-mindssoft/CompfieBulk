@@ -1,86 +1,96 @@
-2016-03-22 10:25:26,143 - knowledge_logger - main.py-handle-api : (1452, 'Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge`.`tbl_activity_log`, CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`))')
-2016-03-22 10:25:26,161 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 172, in handle_login
-    return controller.process_login_request(request, db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 21, in process_login_request
-    return process_login(db, request)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 48, in process_login
-    return user_login_response(db, response, request.ip)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 60, in user_login_response
-    session_token = db.add_session(user_id, session_type, ip, employee)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 444, in add_session
-    self.save_activity(user_id, 0, action)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 600, in save_activity
-    self.execute(query)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 157, in execute
-    return cursor.execute(query)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
-    self.errorhandler(self, exc, value)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
-    raise errorclass, errorvalue
-IntegrityError: (1452, 'Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge`.`tbl_activity_log`, CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`))')
-
-2016-03-22 12:02:07,465 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-22 12:02:07,491 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+2016-03-22 12:44:18,065 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-22 12:44:18,095 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
     data
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1302, in parse_structure
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1302, in parse_structure
     request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 346, in parse_structure_VariantType_technomasters_Request
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 346, in parse_structure_VariantType_technomasters_Request
     return technomasters.Request.parse_structure(data)
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 110, in parse_structure
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 110, in parse_structure
     return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 554, in parse_inner_structure
-    client_id = parse_structure_UnsignedIntegerType_32(client_id)
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 289, in parse_structure_UnsignedIntegerType_32
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 257, in parse_inner_structure
+    date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 281, in parse_structure_VectorType_RecordType_core_ClientConfiguration
+    lst.append(parse_structure_RecordType_core_ClientConfiguration(item))
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 2200, in parse_structure_RecordType_core_ClientConfiguration
+    return core.ClientConfiguration.parse_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 1410, in parse_structure
+    period_from = parse_structure_UnsignedIntegerType_32(period_from)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 289, in parse_structure_UnsignedIntegerType_32
     return parse_number(data, 0, 4294967295)
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 38, in parse_number
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 38, in parse_number
     raise empty_error()
 ValueError: null is not allowed
 
-2016-03-21 16:28:04,852 - knowledge_logger - main.py-handle-api : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
-2016-03-21 16:28:04,852 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 155, in handle_replication
-    actual_count = db.get_trail_id()
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 609, in get_trail_id
-    row = self.select_one(query)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 150, in select_one
-    cursor.execute(query)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
-    self.errorhandler(self, exc, value)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
-    raise errorclass, errorvalue
-ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-22 12:44:18,987 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-22 12:44:18,987 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1302, in parse_structure
+    request = parse_structure_VariantType_technomasters_Request(request)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 346, in parse_structure_VariantType_technomasters_Request
+    return technomasters.Request.parse_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 110, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 257, in parse_inner_structure
+    date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 281, in parse_structure_VectorType_RecordType_core_ClientConfiguration
+    lst.append(parse_structure_RecordType_core_ClientConfiguration(item))
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 2200, in parse_structure_RecordType_core_ClientConfiguration
+    return core.ClientConfiguration.parse_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 1410, in parse_structure
+    period_from = parse_structure_UnsignedIntegerType_32(period_from)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 289, in parse_structure_UnsignedIntegerType_32
+    return parse_number(data, 0, 4294967295)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 38, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
 
-2016-03-21 16:28:13,674 - knowledge_logger - main.py-handle-api : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
-2016-03-21 16:28:13,674 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 155, in handle_replication
-    actual_count = db.get_trail_id()
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 609, in get_trail_id
-    row = self.select_one(query)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 150, in select_one
-    cursor.execute(query)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
-    self.errorhandler(self, exc, value)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
-    raise errorclass, errorvalue
-ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-22 12:44:53,260 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-22 12:44:53,260 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1302, in parse_structure
+    request = parse_structure_VariantType_technomasters_Request(request)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 346, in parse_structure_VariantType_technomasters_Request
+    return technomasters.Request.parse_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 110, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 257, in parse_inner_structure
+    date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 281, in parse_structure_VectorType_RecordType_core_ClientConfiguration
+    lst.append(parse_structure_RecordType_core_ClientConfiguration(item))
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 2200, in parse_structure_RecordType_core_ClientConfiguration
+    return core.ClientConfiguration.parse_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 1410, in parse_structure
+    period_from = parse_structure_UnsignedIntegerType_32(period_from)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 289, in parse_structure_UnsignedIntegerType_32
+    return parse_number(data, 0, 4294967295)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 38, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
 
-2016-03-21 17:36:52,035 - knowledge_logger - main.py-handle-api : tuple index out of range
-2016-03-21 17:36:52,035 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 39, in process_techno_request
-    return save_client_group(db, request_frame, session_user)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 89, in save_client_group
-    host = row[0][0]
-IndexError: tuple index out of range
+2016-03-22 12:45:02,325 - knowledge_logger - main.py-parse-request : null is not allowed
+2016-03-22 12:45:02,326 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1302, in parse_structure
+    request = parse_structure_VariantType_technomasters_Request(request)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 346, in parse_structure_VariantType_technomasters_Request
+    return technomasters.Request.parse_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 110, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 257, in parse_inner_structure
+    date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 281, in parse_structure_VectorType_RecordType_core_ClientConfiguration
+    lst.append(parse_structure_RecordType_core_ClientConfiguration(item))
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 2200, in parse_structure_RecordType_core_ClientConfiguration
+    return core.ClientConfiguration.parse_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 1410, in parse_structure
+    period_from = parse_structure_UnsignedIntegerType_32(period_from)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 289, in parse_structure_UnsignedIntegerType_32
+    return parse_number(data, 0, 4294967295)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 38, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
 

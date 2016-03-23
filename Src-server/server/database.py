@@ -3511,20 +3511,22 @@ class KnowledgeDatabase(Database):
         condition = "url_short_name ='%s' AND client_id != '%d'" % (short_name, client_id)
         return self.is_already_exists(self.tblClientGroups, condition)
 
-    def is_unit_exists_under_country(self, country):
+    def is_unit_exists_under_country(self, country, client_id):
         columns = "count(*)"
-        condition = "country_id = '{}'".format(country)
+        condition = "country_id = '{}' and client_id = '{}'".format(
+            country, client_id
+        )
         rows = self.get_data(self.tblUnits, columns, condition)
         if rows[0][0] > 0:
             return True
         else:
             return False
 
-    def is_unit_exists_under_domain(self, domain):
+    def is_unit_exists_under_domain(self, domain, client_id):
         columns = "count(*)"
-        condition = "(domain_ids like '{}{}{}') or \
-        (domain_ids like '{}{}') or (domain_ids like '{}{}')".format(
-            "%", domain, "%", domain, "%", "%", domain
+        condition = "((domain_ids like '{}{}{}') or \
+        (domain_ids like '{}{}') or (domain_ids like '{}{}')) and client_id = {}".format(
+            "%", domain, "%", domain, "%", "%", domain, client_id
         )
         rows = self.get_data(self.tblUnits, columns, condition)
         if rows[0][0] > 0:
@@ -3540,7 +3542,7 @@ class KnowledgeDatabase(Database):
         current_countries = [int(x) for x in country_ids]
         for country in existing_countries_list:
             if country not in current_countries:
-                if self.is_unit_exists_under_country(country):
+                if self.is_unit_exists_under_country(country, client_id):
                     return True
                 else:
                     continue
@@ -3557,7 +3559,7 @@ class KnowledgeDatabase(Database):
         current_domains = [int(x) for x in domain_ids]
         for domain in existing_domains_list:
             if domain not in current_domains:
-                if self.is_unit_exists_under_domain(domain):
+                if self.is_unit_exists_under_domain(domain, client_id):
                     return True
                 else:
                     continue

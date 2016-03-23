@@ -43,7 +43,7 @@ class EmailNotification(object):
     ):
         subject = "Compliance Task Reminder"
         message = "Dear %s, \
-            Only %s days left to complete %s task for unit %s" % (
+            Only %s day(s) left to complete %s task for unit %s" % (
                 assignee, days_left, compliance_name,
                 unit_name
             )
@@ -61,7 +61,7 @@ class EmailNotification(object):
     ):
         subject = "Compliance Task Reminder"
         message = "Dear %s, \
-            Only %s days left to complete %s task for unit %s" % (
+            Only %s day(s) left to complete %s task for unit %s" % (
                 assignee, days_left, compliance_name,
                 unit_name
             )
@@ -78,7 +78,7 @@ class EmailNotification(object):
     ):
         subject = "Compliance Escalation Notification"
         message = "Dear %s, \
-            Compliance %s for unit %s has overdue by %s days." % (
+            Compliance %s for unit %s has overdue by %s day(s)." % (
                 assignee, compliance_name, unit_name, over_due_days
             )
         try :
@@ -168,11 +168,11 @@ def get_client_database():
     return client_db
 
 def get_current_date():
-    date = datetime.date.today()
+    date = datetime.datetime.today()
     return date
 
 def get_current_month():
-    month = datetime.date.today().month
+    month = get_current_date().month
     return month
 
 def get_new_id(db, table_name, column_name):
@@ -218,7 +218,7 @@ def save_in_notification(
             cur.close()
 
     notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
-    created_on = datetime.datetime.now()
+    created_on = get_current_date()
     query = "INSERT INTO tbl_notifications_log \
         (notification_id, country_id, domain_id, business_group_id, \
         legal_entity_id, division_id, unit_id, compliance_id,\
@@ -298,8 +298,10 @@ def reminder_to_assignee(db, client_info, compliance_info):
                 date_diff = (current_date - c["start_date"]).days
                 if c["due_date"] is None :
                     continue
-                days_left = (c["due_date"] - current_date).days
-                notification_text = "%s days left to complete %s task" % (days_left, compliance_name)
+                days_left = (c["due_date"] - current_date).days + 1
+                if days_left <= 0 :
+                    continue
+                notification_text = "%s day(s) left to complete %s task" % (days_left, compliance_name)
                 extra_details = ""
                 if (date_diff % reminder_interval) == 0 :
                     save_in_notification(
@@ -333,8 +335,10 @@ def reminder_before_due_date(db, client_info, compliance_info):
         if c["due_date"] is None :
             continue
 
-        days_left = (c["due_date"] - current_date).days
-        notification_text = "%s days left to complete %s task" % (days_left, compliance_name)
+        days_left = (c["due_date"] - current_date).days + 1
+        if days_left <= 0 :
+            continue
+        notification_text = "%s day(s) left to complete %s task" % (days_left, compliance_name)
         extra_details = ""
         if days_left == reminder_interval:
             save_in_notification(
@@ -369,10 +373,10 @@ def notify_escalation_to_all(db, client_info, compliance_info):
             compliance_name = c["document_name"] + " - " + c["compliance_task"]
         else :
             compliance_name = c["compliance_task"]
-        over_due_days = (current_date - c["due_date"]).days
-        if over_due_days == 0 :
+        over_due_days = (current_date - c["due_date"]).days + 1
+        if over_due_days <= 0 :
             continue
-        notification_text = "%s overdue by %s days" % (compliance_name, over_due_days)
+        notification_text = "%s overdue by %s day(s)" % (compliance_name, over_due_days)
         extra_details = ""
         if (over_due_days % escalation_interval) == 0 :
             save_in_notification(
@@ -392,8 +396,8 @@ def notify_escalation_to_all(db, client_info, compliance_info):
             ap_name, approval_email = get_email_id_for_users(db, c["approval_person"])
             cc_person.append(approval_email)
             email.notify_before_due_date(
-                a_name, compliance_name,
-                c["unit_name"], over_due_days,
+                a_name, over_due_days, compliance_name,
+                c["unit_name"],
                 assignee_email, cc_person
             )
 
@@ -453,6 +457,8 @@ def main():
     client_info = get_client_database()
     if client_info is not None :
         for client_id, db in client_info.iteritems() :
+            print "~~~~~~~~~~~"
+            print client_id
             try :
                 db.commit()
                 notify_task_details(db, client_id)
