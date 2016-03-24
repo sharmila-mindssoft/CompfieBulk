@@ -6650,6 +6650,8 @@ class ClientDatabase(Database):
             values.append(int(history["completed_by"]))
         elif action == "ApproveRejectedToConcur":
             values.append(int(history["concurred_by"]))
+        elif action == "Started":
+            values.append(int(history["completed_by"]))
         return self.insert(self.tblNotificationUserLog, columns, values)
 
     def save_compliance_activity(
@@ -7839,6 +7841,11 @@ class ClientDatabase(Database):
             concurrence_email, concurrence_name = self.get_user_email_name(str(concurrence_id))
         if document_name not in (None, "None", "") :
             compliance_name = "%s - %s" % (document_name, compliance_name)
+        notification_text = "Compliance task %s has started" % compliance_name 
+        self.save_compliance_notification(
+            history_id, notification_text, "Compliance Started", 
+            "Started"
+        )
         try:
             notify_on_occur_thread = threading.Thread(
                 target=email.notify_task, args=[
