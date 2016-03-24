@@ -142,7 +142,7 @@ function initializeNavBar () {
     $("ul", settingsMenuObject).append(item);
     $("#cssmenu .menu-ul").append(settingsMenuObject)
 
-    if ((typeof(client_name) != "undefined") || (client_name != null) ){
+    if ((typeof(client_name) != "undefined") && (client_name != null) ){
         var liObject = $("#nav-bar-templates .notification li").clone();
         $("#cssmenu .menu-ul").append(liObject);
 

@@ -97,7 +97,6 @@ function initMirror() {
         if (info != null){
             return info["menu"]["menus"];
         }else{
-            console.log(window.localStorage["login_url"])
             window.location.href = window.localStorage["login_url"];
         }
     }
@@ -125,7 +124,6 @@ function initMirror() {
             BASE_URL + callerName,
             toJSON(requestFrame),
             function (data) {
-                console.log(data)
                 var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
@@ -911,7 +909,6 @@ function initMirror() {
     }
 
     function updateAdminUser(userDetail, callback) {
-        console.log("inside update admin user")
         callerName = "admin"
         var request = [
             "UpdateUser",
@@ -1376,7 +1373,6 @@ function initMirror() {
                 "applicability_status" : applicableStatus
             }
         ];
-        console.log(request)
         callerName = "techno_report";
         apiRequest(callerName, request, callback);
     }
