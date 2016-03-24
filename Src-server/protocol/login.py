@@ -483,6 +483,19 @@ class ContractExpired(Response):
         return {
         }
 
+class NotConfigured(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return NotConfigured()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class EnterDifferentPassword(Response):
     def __init__(self):
         pass
@@ -502,7 +515,8 @@ def _init_Response_class_map():
         ForgotPasswordSuccess, InvalidUserName, ResetSessionTokenValidationSuccess, 
         InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess, 
         InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken, 
-        ClientDatabaseNotExists, ContractExpired, EnterDifferentPassword
+        ClientDatabaseNotExists, ContractExpired, EnterDifferentPassword,
+        NotConfigured
     ]
     class_map = {}
     for c in classes:

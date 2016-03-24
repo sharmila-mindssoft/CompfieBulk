@@ -107,6 +107,17 @@ class ClientDatabase(Database):
         trail_id = row[0]
         return trail_id
 
+    def is_configured(self):
+        columns = "count(*)"
+        condition = "1"
+        rows = self.get_data(
+            self.tblClientGroups, columns, condition
+        )
+        if rows[0][0] <= 0:
+            return False
+        else:
+            return True
+
     def is_in_contract(self):
         columns = "count(*)"
         condition = "now() BETWEEN contract_from and contract_to "
