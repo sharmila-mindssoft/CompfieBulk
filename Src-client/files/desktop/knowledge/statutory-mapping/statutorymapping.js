@@ -289,7 +289,7 @@ function callPage(pageId){
 
 function loadStatutoryMappingList(statutoryMappingsList) {
 
-  pageSize = 10;
+  pageSize = 100;
   var listSize = Math.ceil(Object.keys(statutoryMappingsList).length / pageSize);
 
   startCount = 0;
