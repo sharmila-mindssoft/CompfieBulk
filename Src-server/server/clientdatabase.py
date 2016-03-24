@@ -6413,7 +6413,6 @@ class ClientDatabase(Database):
             history_condition
         )
 
-
         assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = self.get_compliance_history_details(
             compliance_history_id
         )
