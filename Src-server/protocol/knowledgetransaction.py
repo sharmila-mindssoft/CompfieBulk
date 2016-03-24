@@ -284,6 +284,19 @@ class ChangeStatutoryMappingStatus(Request):
             "is_active": to_structure_Bool(self.is_active),
         }
 
+class GetApproveStatutoryMappings(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetApproveStatutoryMappings()
+
+    def to_inner_structure(self):
+        return {}
+
+
 class ApproveMapping(object):
     def __init__(self, statutory_mapping_id, approval_status, rejected_reason, statutory_provision, notification_text):
         self.statutory_mapping_id = statutory_mapping_id
@@ -335,7 +348,7 @@ class ApproveStatutoryMapping(Request):
 
 
 def _init_Request_class_map():
-    classes = [GetStatutoryMappingsMaster, GetStatutoryMappings, SaveStatutoryMapping, UpdateStatutoryMapping, ChangeStatutoryMappingStatus, ApproveStatutoryMapping, CheckDuplicateStatutoryMapping]
+    classes = [GetStatutoryMappingsMaster, GetStatutoryMappings, SaveStatutoryMapping, UpdateStatutoryMapping, ChangeStatutoryMappingStatus, GetApproveStatutoryMappings, ApproveStatutoryMapping, CheckDuplicateStatutoryMapping]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

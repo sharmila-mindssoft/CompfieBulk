@@ -79,6 +79,7 @@ class API(object):
     ):
         self._io_loop = io_loop
         self._db = db
+        self._ip_addess = None
 
     def _send_response(
         self, response_data, response
@@ -112,7 +113,8 @@ class API(object):
         request_data_type
     ):
         response.set_default_header("Access-Control-Allow-Origin", "*")
-        ip_address = unicode(request.remote_ip())
+        ip_address = str(request.remote_ip())
+        self._ip_addess = ip_address
         request_data = self._parse_request(
             request_data_type, request, response
         )
@@ -135,7 +137,8 @@ class API(object):
         except Exception, e:
             print e
             print(traceback.format_exc())
-            logger.logKnowledge("error", "main.py-handle-api", e)
+            print ip_address
+            logger.logKnowledge("error", "main.py-handle-api-", e)
             logger.logKnowledge("error", "main.py", traceback.format_exc())
 
             self._db.rollback()
@@ -169,7 +172,8 @@ class API(object):
 
     @api_request(login.Request)
     def handle_login(self, request, db):
-        return controller.process_login_request(request, db)
+        print self._ip_addess
+        return controller.process_login_request(request, db, self._ip_addess)
         # return login.ResetPasswordSuccess()
 
     @api_request(admin.RequestFormat)

@@ -2006,7 +2006,7 @@ class KnowledgeDatabase(Database):
         else :
             return status[int(approval_id)]
 
-    def get_statutory_mappings(self, user_id) :
+    def get_statutory_mappings(self, user_id, for_approve=False) :
         q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
             t1.domain_id, \
@@ -2019,16 +2019,15 @@ class KnowledgeDatabase(Database):
             t1.approval_status, t1.is_active,  \
             (select group_concat(distinct compliance_id) from tbl_compliances where statutory_mapping_id = t1.statutory_mapping_id) compliance_ids\
             FROM tbl_statutory_mappings t1 \
-            INNER JOIN tbl_statutory_industry t2 \
-            ON t1.statutory_mapping_id = t2.statutory_mapping_id \
-            INNER JOIN tbl_statutory_geographies t3 \
-            ON t1.statutory_mapping_id = t3.statutory_mapping_id \
             INNER JOIN tbl_user_domains t5 \
-            ON t1.domain_id = t5.domain_id \
+            ON t5.domain_id = t1.domain_id \
             and t5.user_id = %s \
             INNER JOIN tbl_user_countries t6 \
-            ON t1.country_id = t6.country_id \
+            ON t6.country_id = t1.country_id \
             and t6.user_id = %s" % (user_id, user_id)
+
+        if for_approve is True :
+            q = q + " WHERE t1.approval_status in (0, 2)"
         q = q + " ORDER BY country_name, domain_name, statutory_nature_name"
         rows = self.select_all(q)
         columns = [
@@ -2120,7 +2119,7 @@ class KnowledgeDatabase(Database):
 
     def get_statutory_mapping_report(
         self, country_id, domain_id, industry_id,
-        statutory_nature_id, geography_id, user_id
+        statutory_nature_id, geography_id, level_1_statutory_id, user_id
     ) :
         qry_where = ""
         if industry_id is not None :
@@ -2142,17 +2141,11 @@ class KnowledgeDatabase(Database):
             t1.approval_status, t1.is_active,  \
             (select group_concat(distinct compliance_id) from tbl_compliances where statutory_mapping_id = t1.statutory_mapping_id) compliance_ids \
             FROM tbl_statutory_mappings t1 \
-            INNER JOIN tbl_statutory_industry t2 \
-            ON t1.statutory_mapping_id = t2.statutory_mapping_id \
-            INNER JOIN tbl_statutory_geographies t3 \
-            ON t1.statutory_mapping_id = t3.statutory_mapping_id \
-            INNER JOIN tbl_compliances t4 \
-            ON t1.statutory_mapping_id = t4.statutory_mapping_id \
             INNER JOIN tbl_user_domains t5 \
-            ON t1.domain_id = t5.domain_id \
+            ON t5.domain_id = t1.domain_id \
             and t5.user_id = %s \
             INNER JOIN tbl_user_countries t6 \
-            ON t1.country_id = t6.country_id \
+            ON t6.country_id = t1.country_id \
             and t6.user_id = %s \
             WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
             t1.country_id = %s \
@@ -2176,7 +2169,7 @@ class KnowledgeDatabase(Database):
         report_data = self.return_statutory_mappings(result, is_report=True)
 
         return self.return_knowledge_report(
-            country_id, domain_id, report_data
+            country_id, domain_id, report_data, level_1_statutory_id
         )
 
     def get_mappings_id(self, statutory_id) :
@@ -2202,15 +2195,18 @@ class KnowledgeDatabase(Database):
             )
         return result
 
-    def return_knowledge_report(self, country_id, domain_id, report_data):
+    def return_knowledge_report(self, country_id, domain_id, report_data, level_1_statutory_id):
         level_1_statutory = self.get_country_wise_level_1_statutoy()
 
         level1s = level_1_statutory[country_id].get(domain_id)
         if level1s is None :
             level1s = []
-        level_1_mappings = {}
+        level_1_mappings = []
         for x in level1s :
             statutory_id = x.statutory_id
+            if level_1_statutory_id is not None and statutory_id != level_1_statutory_id :
+                continue
+            statutory_name = x.statutory_name
             rows = self.get_mappings_id(statutory_id)
             mapping_list = []
             for row in rows :
@@ -2221,7 +2217,23 @@ class KnowledgeDatabase(Database):
                     continue
 
                 def get_data(i) :
-                    return report_data.get(int(i))
+                    master = report_data.get(int(i))
+                    if master :
+                        report = knowledgereport.StatutoryMappingReport(
+                            master.country_name,
+                            master.domain_name,
+                            master.industry_names,
+                            master.statutory_nature_name,
+                            master.statutory_mappings,
+                            master.compliances,
+                            master.compliance_names,
+                            master.geography_mappings,
+                            master.approval_status,
+                            master.is_active,
+                            master.approval_status_text,
+                            statutory_name
+                        )
+                        return report
                 # mapping_list.extend(
                 #     [get_data(x) for x in mapping_ids[:-1].split(',') if get_data(x) is not None]
                 # )
@@ -2229,7 +2241,7 @@ class KnowledgeDatabase(Database):
                 if info is not None :
                     mapping_list.append(info)
             if mapping_list:
-                level_1_mappings[statutory_id] = mapping_list
+                level_1_mappings.extend(mapping_list)
         return level_1_mappings
 
     #
@@ -2266,7 +2278,7 @@ class KnowledgeDatabase(Database):
             t1.statutory_dates, t1.repeats_every, \
             t1.repeats_type_id, \
             t1.duration, t1.duration_type_id, t1.is_active \
-            FROM tbl_compliances t1 %s" % q
+            FROM tbl_compliances t1 %s ORDER BY t1.frequency_id" % q
         rows = self.select_all(qry)
         columns = [
             "compliance_id", "statutory_provision",

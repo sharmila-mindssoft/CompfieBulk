@@ -1280,6 +1280,11 @@ def parse_structure_RecordType_core_StatutoryMapping(data):
     from protocol import core
     return core.StatutoryMapping.parse_structure(data)
 
+def parse_structure_RecordType_knowledgereport_StatutoryMapping(data):
+    from protocol import knowledgereport
+    return knowledgereport.StatutoryMappingReport.parse_structure(data)
+
+
 def parse_structure_VectorType_RecordType_dashboard_DrillDownData(data):
     data = parse_list(data, 0)
     lst = []
@@ -3217,6 +3222,14 @@ def parse_structure_VectorType_RecordType_core_StatutoryMapping(data):
     for item in data:
         lst.append(parse_structure_RecordType_core_StatutoryMapping(item))
     return lst
+
+def parse_structure_VectorType_RecordType_knowledgereport_StatutoryMapping(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_knowledgereport_StatutoryMapping(item))
+    return lst
+
 
 def parse_structure_RecordType_clientreport_Response_GetComplianceDetailsReportSuccess(data):
     from protocol import clientreport

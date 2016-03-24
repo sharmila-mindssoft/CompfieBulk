@@ -688,6 +688,13 @@ function loadglevels(classval){
         }
     }
 }
+function changelocation(classval){
+    var lastClass = classval.split(' ').pop();
+    var checkval = lastClass.split('-');
+    $(".unitlocation-"+checkval[1]+"-"+checkval[2]).val("");
+    $(".unitlocation-ids-"+checkval[1]+"-"+checkval[2]).val("");
+    $(".full-location-list-"+checkval[1]+"-"+checkval[2]).html("");
+}
 
 //load industry type--------------------------------------------------------------------------------------------------
 function industrytype(classval){
@@ -1592,49 +1599,77 @@ function activate_unitlocaion (element,checkval,checkname, ccount, mappingname) 
     $('.unitlocation-ids'+ccount).val(checkval);
     $('.full-location-list'+ccount).html(mappingname);
 }
-function domainunionclientdomainList(){
+function domainunionclientdomainList(classval){
+    console.log(classval);
     var finalObj;
-    $(".add-country-unit-list .domain").each(function (i){
-        finalObj = [];
-        var d = '';
-        var cd = '';
-        var cdnew = '';
-        var editdomainval = [];
 
-        d = domainList;
-        cd = clientdomainList;
-        
-        if($(this).val() != ''){
-            editdomainval = $(this).val().split(",");
+    var d = '';
+    var cd = '';
+    var cdnew = '';
+    var editdomainval = [];
+
+    d = domainList;
+    cd = clientdomainList;
+    
+    if($('.domain'+classval).val() != ''){
+        editdomainval = $('.domain'+classval).val().split(",");
+    }
+
+    var result = {};
+    cdnew = [];
+    var arrayDomains = [];
+    for(var i = 0; i < editdomainval.length; i++){ arrayDomains[i] = parseInt(editdomainval[i]); }
+    
+    $.each(cd, function(key){
+        if($.inArray(cd[key]['domain_id'], arrayDomains) != -1){
+            cdnew[key] = cd[key];
         }
-
-        var result = {};
-        cdnew = [];
-        var arrayDomains = [];
-        for(var i = 0; i < editdomainval.length; i++){ arrayDomains[i] = parseInt(editdomainval[i]); }
-        
-        $.each(cd, function(key){
-            if($.inArray(cd[key]['domain_id'], arrayDomains) != -1){
-                cdnew[key] = cd[key];
-            }
-        });
-
-        var finalObj1 = [];
-        finalObj1 = d.concat(cdnew);
-
-        var dupes = {};
-        
-        $.each(finalObj1, function(i, el) {
-            if(el != null){
-                if (!dupes[el['domain_id']]) {
-                    dupes[el['domain_id']] = true;
-                    finalObj.push(el);
-                }
-            }
-        });
-        
     });
+
+    var finalObj1 = [];
+    finalObj1 = d.concat(cdnew);
+
+    var dupes = {};
+    finalObj = [];
+    $.each(finalObj1, function(i, el) {
+        if(el != null){
+            if (!dupes[el['domain_id']]) {
+                dupes[el['domain_id']] = true;
+                finalObj.push(el);
+            }
+        }
+    });
+    
+    //});
     return finalObj;    
+}
+
+function checkclientdomain(domainid, classcount){
+    var returnval = null;
+    var arrayDomains = [];
+    var editdomainval;
+    editdomainval = $(".domain"+classcount).val().split(",");
+    for(var i = 0; i < editdomainval.length; i++){ arrayDomains[i] = parseInt(editdomainval[i]); }
+    if($.inArray(domainid, arrayDomains) != -1){
+        returnval = 1;        
+    }
+    return returnval;
+}
+function checkdomainforadd(clientdomainsid, domainid){
+    var returnval = null;
+    if($.inArray(domainid, clientdomainsid) != -1){
+        returnval = 1;        
+    }
+    return returnval;
+}
+function checkdomain(domainid, classcount){
+    var returnval = null;
+    $.each(domainList , function(key, value){
+        if(value['domain_id'] == domainid){
+            returnval = 1;
+        }
+    });
+    return returnval;
 }
 function hidedomain(classval){
     var lastClass = classval.split(' ').pop();
@@ -1648,32 +1683,86 @@ function loaddomain(classval){
     var ccount = lastClass.split('-');
     var countval = '-'+ccount[1]+'-'+ccount[2];
     $('.domain-selectbox-view'+countval).css("display", "block");
+    var getClientid = $('#group-select').val();
+    var clientdomainsid;
+    $.each(groupList, function(key, val){
+        if(val['client_id'] == getClientid){
+            clientdomainsid = val['domain_ids'];
+        }
+    });
     var editdomainval=[];
     if($('.domain'+countval).val() != ''){
         editdomainval = $('.domain'+countval).val().split(",");
     }
     if($("#client-unit-id").val() == ""){
         var domains = domainList;
+        $('.ul-domain-list'+countval).empty();
+        var str='';
+        for(var i in domains){
+            var selectdomainstatus='';
+            for(var j=0; j<editdomainval.length; j++){
+                if(editdomainval[j] == domains[i]["domain_id"]){
+                    selectdomainstatus='checked';
+                }
+            }
+            var domainId = parseInt(domains[i]["domain_id"]);
+            var domainName = domains[i]["domain_name"];
+            if(checkdomainforadd(clientdomainsid, domainId) == 1){
+                if(selectdomainstatus == 'checked'){
+                    str += '<li id="'+domainId+'" class="active_selectbox'+countval+' active" onclick="activate(this,\''+countval+'\' )" >'+domainName+'</li> ';
+                }
+                else{
+                    str += '<li id="'+domainId+'" onclick="activate(this,\''+countval+'\')" >'+domainName+'</li> ';
+                }    
+            }            
+        }
     }
     else if($("#client-unit-id").val() != ""){
-        var domains = domainunionclientdomainList();
-    }
-
-    $('.ul-domain-list'+countval).empty();
-    var str='';
-    for(var i in domains){
-        var selectdomainstatus='';
-        for(var j=0; j<editdomainval.length; j++){
-            if(editdomainval[j] == domains[i]["domain_id"]){
-                selectdomainstatus='checked';
+        var domains = domainunionclientdomainList(countval);
+        //console.log(domains);
+ 
+        $('.ul-domain-list'+countval).empty();
+        var str='';
+        for(var i in domains){
+            var selectdomainstatus='';
+            for(var j=0; j<editdomainval.length; j++){
+                if(editdomainval[j] == domains[i]["domain_id"]){
+                    selectdomainstatus='checked';
+                }
             }
-        }
-        var domainId=parseInt(domains[i]["domain_id"]);
-        var domainName=domains[i]["domain_name"];
-        if(selectdomainstatus == 'checked'){
-            str += '<li id="'+domainId+'" class="active_selectbox'+countval+' active" onclick="activate(this,\''+countval+'\' )" >'+domainName+'</li> ';
-        }else{
-            str += '<li id="'+domainId+'" onclick="activate(this,\''+countval+'\')" >'+domainName+'</li> ';
+            var domainId = parseInt(domains[i]["domain_id"]);
+            var domainName = domains[i]["domain_name"];
+
+            var ccdd =checkclientdomain(domainId, countval);
+            var cdd = checkdomain(domainId, countval);
+            console.log("Checkingdomain--"+ccdd+"--"+cdd);
+            if(ccdd == 1 && cdd == 1){
+                console.log("enter 1")
+                if(selectdomainstatus == 'checked'){
+                    str += '<li id = "'+domainId+'" class="active_selectbox'+countval+' active" onclick="activate(this, \''+countval+'\')" >'+domainName+'</li> ';
+                }else{
+                   str += '<li id="'+domainId+'" onclick="activate(this, \''+countval+'\')" >'+domainName+'</li> ';
+                }    
+            }
+            else if(ccdd != 1 && cdd == 1){
+                console.log("enter 2")
+                str += '<li id="'+domainId+'" onclick="activate(this, \''+countval+'\')" >'+domainName+'</li> ';
+                
+            }
+            else if(ccdd == 1 && cdd != 1){
+                console.log("enter 3")
+                if(selectdomainstatus == 'checked'){
+                    str += '<li id="'+domainId+'" class="active_selectbox'+countval+' active deactivate" >'+domainName+'</li> ';
+                }
+                else{
+                    str += '<li id="'+domainId+'" class="deactivate" >'+domainName+'</li> ';   
+                }
+            }
+            // if(selectdomainstatus == 'checked'){
+            //     str += '<li id="'+domainId+'" class="active_selectbox'+countval+' active" onclick="activate(this,\''+countval+'\' )" >'+domainName+'</li> ';
+            // }else{
+            //     str += '<li id="'+domainId+'" onclick="activate(this,\''+countval+'\')" >'+domainName+'</li> ';
+            // }
         }
     }
     $('.ul-domain-list'+countval).append(str);

@@ -5,7 +5,7 @@ var my_ip = null;
 function initClientMirror() {
     var DEBUG = true;
 
-    if (my_ip == null || my_ip == "unknown"){
+    if (window.localStorage["my_ip"] == null || window.localStorage["my_ip"] == "unknown"){
         get_ip();
     }
 
@@ -62,7 +62,7 @@ function initClientMirror() {
 
     function get_ip(){
         $.getJSON("http://jsonip.com?callback=?", function (data) {
-            my_ip = data.ip;
+            window.localStorage["my_ip"] = data.ip;
         });
     }
 
@@ -166,8 +166,10 @@ function initClientMirror() {
 
     // Login function
     function login(username, password, short_name, callback) {
-        if (my_ip == null){
+        if (window.localStorage["my_ip"] == null){
             my_ip = "unknown"
+        }else{
+            my_ip = window.localStorage["my_ip"]
         }
         var request = [
             short_name, [

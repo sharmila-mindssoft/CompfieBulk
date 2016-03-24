@@ -1,7 +1,5 @@
-import json
 from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
-parse_structure_VectorType_RecordType_knowledgereport_MappingReport,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_knowledgereport_GeographyMapping,
     parse_structure_Text,
     parse_structure_VectorType_RecordType_core_Domain,
@@ -15,10 +13,15 @@ parse_structure_VectorType_RecordType_knowledgereport_MappingReport,
     parse_structure_OptionalType_SignedIntegerType_8,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping,
     parse_structure_VectorType_RecordType_core_StatutoryNature,
-    parse_structure_VectorType_RecordType_core_ComplianceFrequency
+    parse_structure_VectorType_RecordType_core_ComplianceFrequency,
+    parse_structure_VectorType_Text,
+    parse_structure_VectorType_RecordType_core_Compliance,
+    parse_structure_VectorType_RecordType_core_Compliance_Download,
+    parse_structure_SignedIntegerType_8,
+    parse_structure_CustomTextType_100,
+    parse_structure_VectorType_RecordType_knowledgereport_StatutoryMapping
 )
 from protocol.to_structure import (
-    to_structure_VectorType_RecordType_knowledgereport_MappingReport,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_knowledgereport_GeographyMapping,
     to_structure_Text, to_structure_VectorType_RecordType_core_Domain,
     to_structure_SignedIntegerType_8,
@@ -31,7 +34,12 @@ from protocol.to_structure import (
     to_structure_OptionalType_SignedIntegerType_8,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping,
     to_structure_VectorType_RecordType_core_StatutoryNature,
-    to_structure_VectorType_RecordType_core_ComplianceFrequency
+    to_structure_VectorType_RecordType_core_ComplianceFrequency,
+    to_structure_VectorType_Text,
+    to_structure_VectorType_RecordType_core_Compliance,
+    to_structure_VectorType_RecordType_core_Compliance_Download,
+    to_structure_CustomTextType_100,
+    to_structure_VectorType_RecordType_knowledgereport_StatutoryMapping
 )
 
 #
@@ -230,21 +238,94 @@ class GetStatutoryMappingReportFiltersSuccess(Response):
             "compliance_frequency": to_structure_VectorType_RecordType_core_ComplianceFrequency(self.compliance_frequency),
         }
 
-# class GetStatutoryMappingReportDataSuccess(Response):
-#     def __init__(self, country_wise_statutory_mappings):
-#         self.country_wise_statutory_mappings = country_wise_statutory_mappings
+class StatutoryMappingReport(object):
+    def __init__(
+        self, country_name,
+        domain_name, industry_names,
+        statutory_nature_name,
+        statutory_mappings, compliances,
+        compliance_names, geography_mappings,
+        approval_status, is_active, approval_status_text,
+        act_name
+    ):
+        self.country_name = country_name
+        self.domain_name = domain_name
+        self.industry_names = industry_names
+        self.statutory_nature_name = statutory_nature_name
+        self.statutory_mappings = statutory_mappings
+        self.compliances = compliances
+        self.compliance_names = compliance_names
+        self.geography_mappings = geography_mappings
+        self.approval_status = approval_status
+        self.is_active = is_active
+        self.approval_status_text = approval_status_text
+        self.act_name = act_name
 
-#     @staticmethod
-#     def parse_inner_structure(data):
-#         data = parse_dictionary(data, ["country_wise_statutory_mappings"])
-#         country_wise_statutory_mappings = data.get("country_wise_statutory_mappings")
-#         country_wise_statutory_mappings = parse_structure_VectorType_RecordType_knowledgereport_MappingReport(country_wise_statutory_mappings)
-#         return GetStatutoryMappingReportDataSuccess(country_wise_statutory_mappings)
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "country_name",
+            "domain_name", "industry_names",
+            "statutory_nature_name",
+            "statutory_mappings",
+            "compliances", "compliance_names",
+            "geography_mappings", "approval_status", "is_active",
+            "approval_status_text",
+            "act_name"
+        ])
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        country_name = data.get("country_name")
+        country_name = parse_structure_CustomTextType_50(country_name)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        domain_name = data.get("domain_name")
+        domain_name = parse_structure_CustomTextType_50(domain_name)
+        industry_names = data.get("industry_names")
+        industry_names = parse_structure_Text(industry_names)
+        statutory_nature_name = data.get("statutory_nature_name")
+        statutory_nature_name = parse_structure_CustomTextType_50(statutory_nature_name)
+        statutory_mappings = data.get("statutory_mappings")
+        statutory_mappings = parse_structure_VectorType_Text(statutory_mappings)
+        compliances = data.get("compliances")
+        compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
+        compliance_names = data.get("compliance_names")
+        compliance_names = parse_structure_VectorType_RecordType_core_Compliance_Download(compliance_names)
+        geography_mappings = data.get("geography_mappings")
+        geography_mappings = parse_structure_VectorType_Text(geography_mappings)
+        approval_status = data.get("approval_status")
+        approval_status = parse_structure_SignedIntegerType_8(approval_status)
+        is_active = data.get("is_active")
+        is_active = parse_structure_Bool(is_active)
+        approval_status_text = data.get("approval_status_text")
+        approval_status_text = parse_structure_CustomTextType_100(approval_status_text)
+        act_name = data.get("act_name")
+        act_name = parse_structure_CustomTextType_100(act_name)
+        return StatutoryMappingReport(
+            country_name, domain_name,
+            industry_names,
+            statutory_nature_name, statutory_mappings,
+            compliances, compliance_names,
+            geography_mappings, approval_status, is_active, approval_status_text,
+            act_name
+        )
 
-#     def to_inner_structure(self):
-#         return {
-#             "country_wise_statutory_mappings": to_structure_VectorType_RecordType_knowledgereport_MappingReport(self.country_wise_statutory_mappings),
-#         }
+    def to_structure(self):
+        return {
+            "country_name": to_structure_CustomTextType_50(self.country_name),
+            "domain_name": to_structure_CustomTextType_50(self.domain_name),
+            "industry_names": to_structure_Text(self.industry_names),
+            "statutory_nature_name": to_structure_CustomTextType_50(self.statutory_nature_name),
+            "statutory_mappings": to_structure_VectorType_Text(self.statutory_mappings),
+            "compliances": to_structure_VectorType_RecordType_core_Compliance(self.compliances),
+            "compliance_names": to_structure_VectorType_RecordType_core_Compliance_Download(self.compliance_names),
+            "geography_mappings": to_structure_VectorType_Text(self.geography_mappings),
+            "approval_status": to_structure_SignedIntegerType_8(self.approval_status),
+            "is_active": to_structure_Bool(self.is_active),
+            "approval_status_text": to_structure_CustomTextType_100(self.approval_status_text),
+            "act_name": to_structure_CustomTextType_100(self.act_name)
+        }
+
 
 class GetStatutoryMappingReportDataSuccess(Response):
     def __init__(self, country_id, domain_id, statutory_mappings):
@@ -260,7 +341,7 @@ class GetStatutoryMappingReportDataSuccess(Response):
         domain_id = data.get("domain_id")
         domain_id = parse_structure_SignedIntegerType_8(domain_id)
         statutory_mappings = data.get("statutory_mappings")
-        statutory_mappings = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping(statutory_mappings)
+        statutory_mappings = to_structure_VectorType_RecordType_knowledgereport_StatutoryMapping(statutory_mappings)
         return GetStatutoryMappingReportDataSuccess(
             country_id, domain_id, statutory_mappings
         )
@@ -269,10 +350,8 @@ class GetStatutoryMappingReportDataSuccess(Response):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "statutory_mappings": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping(self.statutory_mappings),
+            "statutory_mappings": to_structure_VectorType_RecordType_knowledgereport_StatutoryMapping(self.statutory_mappings),
         }
-
-
 
 class GetGeographyReportSuccess(Response):
     def __init__(self, countries, geographies):

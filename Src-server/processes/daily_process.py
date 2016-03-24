@@ -465,7 +465,7 @@ def save_in_notification(
     cursor.close()
     save_notification_users(notification_id, assignee)
     if notify_to_all:
-        if approval_person is not None :
+        if approval_person is not None and assignee != approval_person:
             save_notification_users(notification_id, approval_person)
         if concurrence_person is not None or concurrence_person is not "NULL" :
             save_notification_users(notification_id, concurrence_person)

@@ -431,7 +431,7 @@ CREATE TABLE `tbl_mobile_sync_versions` (
   `user_details_version` int(11) NOT NULL,
   `compliance_applicability_version` int(11) NOT NULL,
   `compliance_history_version` int(11) NOT NULL,
-  `reassign_history_version` int(11) NOT NULL,
+  `reassign_history_version` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 INSERT INTO tbl_audit_log VALUES(0);
 INSERT INTO tbl_form_type VALUES(1, "Home");
