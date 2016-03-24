@@ -29,7 +29,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_CustomTextType_20,
     parse_structure_CustomTextType_500,
-    parse_structure_OptionalType_CustomTextType_50
+    parse_structure_OptionalType_CustomTextType_50,
+    parse_structure_Text
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Domain,
@@ -61,7 +62,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_techno_report_GroupedUnits,
     to_structure_VectorType_RecordType_technoreports_NOTIFICATIONS,
     to_structure_CustomTextType_500,
-    to_structure_OptionalType_CustomTextType_50
+    to_structure_OptionalType_CustomTextType_50,
+    to_structure_Text
 )
 
 #
@@ -649,7 +651,7 @@ class NOTIFICATIONS(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["statutory_provision", "notification_text", "date_and_time"])
         statutory_provision = data.get("statutory_provision")
-        statutory_provision = parse_structure_CustomTextType_500(statutory_provision)
+        statutory_provision = parse_structure_Text(statutory_provision)
         notification_text = data.get("notification_text")
         notification_text = parse_structure_CustomTextType_500(notification_text)
         date_and_time = data.get("date_and_time")
@@ -658,7 +660,7 @@ class NOTIFICATIONS(object):
 
     def to_structure(self):
         return {
-            "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
+            "statutory_provision": to_structure_Text(self.statutory_provision),
             "notification_text": to_structure_CustomTextType_500(self.notification_text),
             "date_and_time": to_structure_CustomTextType_20(self.date_and_time)
         }

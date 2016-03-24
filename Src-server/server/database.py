@@ -2128,6 +2128,8 @@ class KnowledgeDatabase(Database):
             qry_where += "AND t3.geography_id = %s " % (geography_id)
         if statutory_nature_id is not None :
             qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
+        # if level_1_statutory_id is not None :
+        #     qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, '%') from tbl_statutories where statutory_id = %s)" % (level_1_statutory_id)
 
         q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
@@ -2138,9 +2140,17 @@ class KnowledgeDatabase(Database):
             statutory_nature_name, \
             t1.statutory_ids, \
             t1.geography_ids, \
-            t1.approval_status, t1.is_active,  \
-            (select group_concat(distinct compliance_id) from tbl_compliances where statutory_mapping_id = t1.statutory_mapping_id) compliance_ids \
+            t1.approval_status, t1.is_active, t1.statutory_mapping,  \
+            t2.compliance_id, t2.statutory_provision, \
+            t2.compliance_task, t2.compliance_description, \
+            t2.document_name, t2.format_file, t2.format_file_size, \
+            t2.penal_consequences, t2.frequency_id, \
+            t2.statutory_dates, t2.repeats_every, \
+            t2.repeats_type_id, \
+            t2.duration, t2.duration_type_id \
             FROM tbl_statutory_mappings t1 \
+            INNER JOIN tbl_compliances t2 \
+            ON t2.statutory_mapping_id = t1.statutory_mapping_id\
             INNER JOIN tbl_user_domains t5 \
             ON t5.domain_id = t1.domain_id \
             and t5.user_id = %s \
@@ -2150,26 +2160,33 @@ class KnowledgeDatabase(Database):
             WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
             t1.country_id = %s \
             and t1.domain_id = %s \
-            %s" % (
+            %s \
+            ORDER BY t1.statutory_mapping, t2.frequency_id" % (
                 user_id, user_id,
                 country_id, domain_id,
                 qry_where
             )
         rows = self.select_all(q)
+        print q
         columns = [
             "statutory_mapping_id", "country_id",
             "country_name", "domain_id", "domain_name", "industry_ids",
             "statutory_nature_id", "statutory_nature_name",
             "statutory_ids", "geography_ids",
-            "approval_status", "is_active", "compliance_ids"
+            "approval_status", "is_active", "statutory_mapping",
+            "compliance_id", "statutory_provision",
+            "compliance_task", "compliance_description",
+            "document_name", "format_file",
+            "format_file_size", "penal_consequences",
+            "frequency_id", "statutory_dates", "repeats_every",
+            "repeats_type_id", "duration", "duration_type_id"
         ]
-        result = []
         if rows :
-            result = self.convert_to_dict(rows, columns)
-        report_data = self.return_statutory_mappings(result, is_report=True)
+            report_data = self.convert_to_dict(rows, columns)
+        # report_data = self.return_statutory_mappings(result, is_report=True)
 
         return self.return_knowledge_report(
-            country_id, domain_id, report_data, level_1_statutory_id
+            report_data
         )
 
     def get_mappings_id(self, statutory_id) :
@@ -2195,54 +2212,141 @@ class KnowledgeDatabase(Database):
             )
         return result
 
-    def return_knowledge_report(self, country_id, domain_id, report_data, level_1_statutory_id):
-        level_1_statutory = self.get_country_wise_level_1_statutoy()
+    def return_knowledge_report(self, report_data):
+        if bool(self.geography_parent_mapping) is False :
+            self.get_geographies()
 
-        level1s = level_1_statutory[country_id].get(domain_id)
-        if level1s is None :
-            level1s = []
-        level_1_mappings = []
-        for x in level1s :
-            statutory_id = x.statutory_id
-            if level_1_statutory_id is not None and statutory_id != level_1_statutory_id :
-                continue
-            statutory_name = x.statutory_name
-            rows = self.get_mappings_id(statutory_id)
-            mapping_list = []
-            for row in rows :
-                mapping_ids = row["statutory_mapping_ids"]
-                if mapping_ids is None:
-                    continue
-                if mapping_ids == "" :
-                    continue
+        report_list = []
+        for r in report_data :
+            mapping = r["statutory_mapping"].split(">>")
+            act_name = mapping[0].strip()
+            statutory_provision = " >>".join(mapping[1:])
+            statutory_provision += r["statutory_provision"]
+            compliance_task = r["compliance_task"]
+            document_name = r["document_name"]
+            if document_name == "None":
+                document_name = None
+            if document_name :
+                name = "%s - %s" % (
+                    document_name, compliance_task
+                )
+            else :
+                name = compliance_task
 
-                def get_data(i) :
-                    master = report_data.get(int(i))
-                    if master :
-                        report = knowledgereport.StatutoryMappingReport(
-                            master.country_name,
-                            master.domain_name,
-                            master.industry_names,
-                            master.statutory_nature_name,
-                            master.statutory_mappings,
-                            master.compliances,
-                            master.compliance_names,
-                            master.geography_mappings,
-                            master.approval_status,
-                            master.is_active,
-                            master.approval_status_text,
-                            statutory_name
-                        )
-                        return report
-                # mapping_list.extend(
-                #     [get_data(x) for x in mapping_ids[:-1].split(',') if get_data(x) is not None]
-                # )
-                info = get_data(mapping_ids)
-                if info is not None :
-                    mapping_list.append(info)
-            if mapping_list:
-                level_1_mappings.extend(mapping_list)
-        return level_1_mappings
+            format_file = r["format_file"]
+            format_file_size = r["format_file_size"]
+            if format_file_size is not None :
+                format_file_size = int(format_file_size)
+            if format_file :
+                url = "%s/%s" % (
+                    FORMAT_DOWNLOAD_URL, format_file
+                )
+            else :
+                url = None
+
+            industry_ids = [
+                int(x) for x in r["industry_ids"][:-1].split(',')
+            ]
+            if len(industry_ids) == 1:
+                industry_names = self.get_industry_by_id(industry_ids[0])
+            else :
+                industry_names = self.get_industry_by_id(industry_ids)
+
+            geography_ids = [
+                int(x) for x in r["geography_ids"][:-1].split(',')
+            ]
+            geography_mapping_list = []
+            for g_id in geography_ids :
+                map_data = self.geography_parent_mapping.get(int(g_id))
+                if map_data is not None:
+                    map_data = map_data[0]
+                geography_mapping_list.append(map_data)
+
+            statutory_dates = r["statutory_dates"]
+            statutory_dates = json.loads(statutory_dates)
+            date_list = []
+            for date in statutory_dates :
+                s_date = core.StatutoryDate(
+                    date["statutory_date"],
+                    date["statutory_month"],
+                    date["trigger_before_days"],
+                    date.get("repeat_by")
+                )
+                date_list.append(s_date)
+
+            info = knowledgereport.StatutoryMappingReport(
+                r["country_name"],
+                r["domain_name"],
+                industry_names,
+                r["statutory_nature_name"],
+                geography_mapping_list,
+                r["approval_status"],
+                bool(r["is_active"]),
+                act_name,
+                r["compliance_id"],
+                statutory_provision,
+                name,
+                r["compliance_description"],
+                r["penal_consequences"],
+                r["frequency_id"],
+                date_list,
+                r["repeats_type_id"],
+                r["repeats_every"],
+                r["duration_type_id"],
+                r["duration"],
+                url
+            )
+            report_list.append(info)
+        return report_list
+
+    # def return_knowledge_report(self, country_id, domain_id, report_data, level_1_statutory_id):
+    #     level_1_statutory = self.get_country_wise_level_1_statutoy()
+
+    #     level1s = level_1_statutory[country_id].get(domain_id)
+    #     if level1s is None :
+    #         level1s = []
+    #     level_1_mappings = []
+    #     for x in level1s :
+    #         statutory_id = x.statutory_id
+    #         if level_1_statutory_id is not None and statutory_id != level_1_statutory_id :
+    #             continue
+    #         statutory_name = x.statutory_name
+    #         rows = self.get_mappings_id(statutory_id)
+    #         mapping_list = []
+    #         for row in rows :
+    #             mapping_ids = row["statutory_mapping_ids"]
+    #             if mapping_ids is None:
+    #                 continue
+    #             if mapping_ids == "" :
+    #                 continue
+
+    #             def get_data(i) :
+    #                 master = report_data.get(int(i))
+    #                 if master :
+    #                     report = knowledgereport.StatutoryMappingReport(
+    #                         master.country_name,
+    #                         master.domain_name,
+    #                         master.industry_names,
+    #                         master.statutory_nature_name,
+    #                         master.statutory_mappings,
+    #                         master.compliances,
+    #                         master.compliance_names,
+    #                         master.geography_mappings,
+    #                         master.approval_status,
+    #                         master.is_active,
+    #                         master.approval_status_text,
+    #                         statutory_name
+    #                     )
+    #                     return report
+    #             # mapping_list.extend(
+    #             #     [get_data(x) for x in mapping_ids[:-1].split(',') if get_data(x) is not None]
+    #             # )
+    #             info = get_data(mapping_ids)
+    #             if info is not None :
+    #                 mapping_list.append(info)
+    #         if mapping_list:
+    #             level_1_mappings.extend(mapping_list)
+    #     return level_1_mappings
 
     #
     # compliance

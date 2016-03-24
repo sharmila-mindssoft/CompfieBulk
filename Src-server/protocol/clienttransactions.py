@@ -73,7 +73,8 @@ from protocol.parse_structure import (
     parse_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500,
     parse_structure_VectorType_UnsignedIntegerType_32,
     parse_structure_OptionalType_VectorType_UnsignedIntegerType_32,
-    parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings
+    parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings,
+    parse_structure_Text
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -156,6 +157,7 @@ from protocol.to_structure import (
     to_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500,
     to_structure_OptionalType_VectorType_UnsignedIntegerType_32,
     to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings
+    to_structure_Text
 )
 
 #
@@ -1890,7 +1892,7 @@ class ComplianceApplicability(object):
         description = data.get("description")
         description = parse_structure_CustomTextType_500(description)
         statutory_provision = data.get("statutory_provision")
-        statutory_provision = parse_structure_CustomTextType_500(statutory_provision)
+        statutory_provision = parse_structure_Text(statutory_provision)
         compliance_applicable_status = data.get("compliance_applicable_status")
         compliance_applicable_status = parse_structure_Bool(compliance_applicable_status)
         compliance_opted_status = data.get("compliance_opted_status")
@@ -1912,7 +1914,7 @@ class ComplianceApplicability(object):
             "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
             "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
             "description": to_structure_CustomTextType_500(self.description),
-            "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
+            "statutory_provision": parse_structure_Text(self.statutory_provision),
             "compliance_applicable_status": to_structure_Bool(self.compliance_applicable_status),
             "compliance_opted_status": to_structure_OptionalType_Bool(self.compliance_opted_status),
             "compliance_remarks": to_structure_OptionalType_CustomTextType_500(self.compliance_remarks),
