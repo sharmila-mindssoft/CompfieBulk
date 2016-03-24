@@ -115,7 +115,6 @@ function initMirror() {
             my_ip = data.ip;
         });
     }
-    get_ip();
     function apiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {

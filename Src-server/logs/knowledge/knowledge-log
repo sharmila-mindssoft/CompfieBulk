@@ -1,96 +1,60 @@
-2016-03-22 12:44:18,065 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-22 12:44:18,095 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1302, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 346, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 110, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 257, in parse_inner_structure
-    date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 281, in parse_structure_VectorType_RecordType_core_ClientConfiguration
-    lst.append(parse_structure_RecordType_core_ClientConfiguration(item))
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 2200, in parse_structure_RecordType_core_ClientConfiguration
-    return core.ClientConfiguration.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 1410, in parse_structure
-    period_from = parse_structure_UnsignedIntegerType_32(period_from)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 289, in parse_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 38, in parse_number
-    raise empty_error()
-ValueError: null is not allowed
+2016-03-23 18:37:39,407 - knowledge_logger - main.py-handle-api : 'str' object has no attribute 'tzinfo'
+2016-03-23 18:37:39,421 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 189, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 50, in process_general_request
+    return process_get_audit_trails(db, request_frame, user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 195, in process_get_audit_trails
+    audit_trails = db.get_audit_trails(user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 5640, in get_audit_trails
+    date = self.datetime_to_string_time(row[3])
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 361, in datetime_to_string_time
+    local_dt = local.localize(datetime_in_string, is_dst=None)
+  File "/usr/lib/python2.7/dist-packages/pytz/tzinfo.py", line 303, in localize
+    if dt.tzinfo is not None:
+AttributeError: 'str' object has no attribute 'tzinfo'
 
-2016-03-22 12:44:18,987 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-22 12:44:18,987 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1302, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 346, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 110, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 257, in parse_inner_structure
-    date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 281, in parse_structure_VectorType_RecordType_core_ClientConfiguration
-    lst.append(parse_structure_RecordType_core_ClientConfiguration(item))
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 2200, in parse_structure_RecordType_core_ClientConfiguration
-    return core.ClientConfiguration.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 1410, in parse_structure
-    period_from = parse_structure_UnsignedIntegerType_32(period_from)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 289, in parse_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 38, in parse_number
-    raise empty_error()
-ValueError: null is not allowed
+2016-03-23 18:38:33,350 - knowledge_logger - main.py-handle-api : 'str' object has no attribute 'tzinfo'
+2016-03-23 18:38:33,350 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 189, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 50, in process_general_request
+    return process_get_audit_trails(db, request_frame, user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 195, in process_get_audit_trails
+    audit_trails = db.get_audit_trails(user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 5640, in get_audit_trails
+    date = self.datetime_to_string_time(row[3])
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 361, in datetime_to_string_time
+    local_dt = local.localize(datetime_in_string, is_dst=None)
+  File "/usr/lib/python2.7/dist-packages/pytz/tzinfo.py", line 303, in localize
+    if dt.tzinfo is not None:
+AttributeError: 'str' object has no attribute 'tzinfo'
 
-2016-03-22 12:44:53,260 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-22 12:44:53,260 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1302, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 346, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 110, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 257, in parse_inner_structure
-    date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 281, in parse_structure_VectorType_RecordType_core_ClientConfiguration
-    lst.append(parse_structure_RecordType_core_ClientConfiguration(item))
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 2200, in parse_structure_RecordType_core_ClientConfiguration
-    return core.ClientConfiguration.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 1410, in parse_structure
-    period_from = parse_structure_UnsignedIntegerType_32(period_from)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 289, in parse_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 38, in parse_number
-    raise empty_error()
-ValueError: null is not allowed
-
-2016-03-22 12:45:02,325 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-22 12:45:02,326 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1302, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 346, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 110, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 257, in parse_inner_structure
-    date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 281, in parse_structure_VectorType_RecordType_core_ClientConfiguration
-    lst.append(parse_structure_RecordType_core_ClientConfiguration(item))
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 2200, in parse_structure_RecordType_core_ClientConfiguration
-    return core.ClientConfiguration.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 1410, in parse_structure
-    period_from = parse_structure_UnsignedIntegerType_32(period_from)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 289, in parse_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 38, in parse_number
-    raise empty_error()
-ValueError: null is not allowed
+2016-03-23 18:41:00,360 - knowledge_logger - main.py-handle-api : expected a string, but received: datetime.datetime(2016, 3, 21, 11, 46, 31, tzinfo=<UTC>)
+2016-03-23 18:41:00,360 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 134, in handle_api_request
+    respond(response_data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 124, in respond
+    response_data, response
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 87, in _send_response
+    data = response_data.to_structure()
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/general.py", line 297, in to_structure
+    inner = self.to_inner_structure()
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/general.py", line 559, in to_inner_structure
+    "audit_trail_details": to_structure_VectorType_RecordType_general_AuditTrail(self.audit_trails),
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/to_structure.py", line 52, in to_structure_VectorType_RecordType_general_AuditTrail
+    lst.append(to_structure_RecordType_general_AuditTrail(item))
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/to_structure.py", line 164, in to_structure_RecordType_general_AuditTrail
+    return general.AuditTrail.to_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/general.py", line 670, in to_structure
+    "date": to_structure_CustomTextType_20(self.date)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/to_structure.py", line 571, in to_structure_CustomTextType_20
+    return parse_custom_string(data, 20)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 87, in parse_custom_string
+    raise expectation_error("a string", x)
+ValueError: expected a string, but received: datetime.datetime(2016, 3, 21, 11, 46, 31, tzinfo=<UTC>)
 
