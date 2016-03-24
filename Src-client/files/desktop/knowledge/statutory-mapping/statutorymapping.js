@@ -18,7 +18,7 @@ var sm_statutorynatureid='';
 var sm_industryids=[];
 var sm_countryval='';
 var sm_domainval='';
-var sm_industryvals = [];
+var sm_industryvals = []
 var sm_statutorynatureval='';
 var sm_statutoryids = [];
 var disp_statutories = [];
@@ -172,6 +172,7 @@ function changeStatus (statutorymappingId,isActive) {
   if (answer)
   {
     function onSuccess(data){
+      $(".listfilter").val('');
       getStatutoryMappings();
     }
     function onFailure(error){
@@ -295,21 +296,22 @@ function loadStatutoryMappingList(statutoryMappingsList) {
   startCount = 0;
   endCount = pageSize;
 
-  var str='<li><a href="#" onclick="callPage('+1+')">«</a></li>';
-  $('.pagination').empty();
-  var j;
-  for(j=1; j<=listSize; j++){
-    if(j==1){
-      str += '<li><a href="#" id = "pageview'+j+'" class="page active"  onclick="callPage('+j+')">'+j+'</a></li>';
-    }else{
-      str += '<li><a href="#" id = "pageview'+j+'" class="page" onclick="callPage('+j+')">'+j+'</a></li>';
+  if(Object.keys(statutoryMappingsList).length > 0){
+    var str='<li><a href="#" onclick="callPage('+1+')">«</a></li>';
+    $('.pagination').empty();
+    var j;
+    for(j=1; j<=listSize; j++){
+      if(j==1){
+        str += '<li><a href="#" id = "pageview'+j+'" class="page active"  onclick="callPage('+j+')">'+j+'</a></li>';
+      }else{
+        str += '<li><a href="#" id = "pageview'+j+'" class="page" onclick="callPage('+j+')">'+j+'</a></li>';
+      }
     }
+    str += '<li><a href="#" onclick="callPage('+(j-1)+')">»</a></li>';
+    $('.pagination').append(str);
   }
-  str += '<li><a href="#" onclick="callPage('+(j-1)+')">»</a></li>';
-  $('.pagination').append(str);
-
+  
   finalList = statutoryMappingsList;
-
   var keys_list = Object.keys(finalList);
   var sub_keys_list = get_sub_array(keys_list, startCount, endCount);
   loadCountwiseStatutoryMapping(sub_keys_list, finalList);
@@ -458,6 +460,12 @@ function loadStatutoryLevels(countryval,domainval){
 
       if(sm_countryid != '' && sm_domainid !='' && type !='.statutorynaturelist'){
         loadStatutoryLevels(sm_countryid,sm_domainid);
+        sm_statutoryids = [];
+        load_statories();
+        $('ul.setup-panel li:eq(0)').addClass('active');
+        $('ul.setup-panel li:eq(1)').addClass('disabled');
+        $('ul.setup-panel li:eq(2)').addClass('disabled');
+        $('ul.setup-panel li:eq(3)').addClass('disabled');
       }
       if(sm_countryid != '' && type !='.statutorynaturelist'){
         loadGeographyLevels(sm_countryid);
@@ -1454,6 +1462,7 @@ function filter_geography(position){
 function savestatutorymapping(){
   function onSuccess(data){
       getStatutoryMappings();
+      $(".listfilter").val('');
       //getStatutoryMappingsMastersList();
       //displayMessage("Record Added Successfully");
       $("#statutorymapping-add").hide();
