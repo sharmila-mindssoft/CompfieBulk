@@ -1,9 +1,8 @@
 from corecontroller import process_user_forms
-from generalcontroller import validate_user_session
 from server.emailcontroller import EmailHandler as email
-from protocol import login, core
+from protocol import login, mobile
 from server.constants import (
-    CLIENT_URL, KNOWLEDGE_URL
+    KNOWLEDGE_URL
 )
 
 
@@ -16,9 +15,9 @@ __all__ = [
     "process_logout"
 ]
 
-def process_login_request(request, db) :
+def process_login_request(request, db, session_user_ip) :
     if type(request) is login.Login:
-        return process_login(db, request)
+        return process_login(db, request, session_user_ip)
 
     if type(request) is login.ForgotPassword :
         return process_forgot_password(db, request)
@@ -35,7 +34,7 @@ def process_login_request(request, db) :
     if type(request) is login.Logout:
         return process_logout(db, request)
 
-def process_login(db, request):
+def process_login(db, request, session_user_ip):
     login_type = request.login_type
     username = request.username
     password = request.password
@@ -45,9 +44,33 @@ def process_login(db, request):
         return admin_login_response(db, request.ip)
     else :
         if bool(response):
-            return user_login_response(db, response, request.ip)
+            if login_type == "Web" :
+                return user_login_response(db, response, request.ip)
+            else :
+                return mobile_user_login_respone(db, response, request, session_user_ip)
         else :
             return login.InvalidCredentials()
+
+
+def mobile_user_login_respone(db, data, login_type, ip):
+    if login_type.lower() == "web" :
+        session_type = 1
+    elif login_type.lower() == "android" :
+        session_type = 2
+    elif login_type.lower() == "ios" :
+        session_type = 3
+    elif login_type.lower() == "blackberry" :
+        session_type = 4
+    user_id = data["user_id"]
+    employee_name = data["employee_name"]
+    employee_code = data["employee_code"]
+    employee = "%s - %s" % (employee_code, employee_name)
+    session_token = db.add_session(user_id, session_type, ip, employee)
+    return mobile.UserLoginResponse(
+        data["user_id"],
+        data["employee_name"],
+        session_token
+    )
 
 
 def user_login_response(db, data, ip):
