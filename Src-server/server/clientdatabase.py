@@ -1337,7 +1337,7 @@ class ClientDatabase(Database):
             user_id = row[0]
             form_id = row[1]
             action = row[2]
-            date = self.datetime_to_string(row[3])
+            date = self.datetime_to_string_time(row[3])
             audit_trail_details.append(
                 general.AuditTrail(user_id, form_id, action, date)
             )
@@ -4338,6 +4338,35 @@ class ClientDatabase(Database):
         concurrence_email, concurrence_name = (None, None)
         if concurrence_id is not None and self.is_two_levels_of_approval():
             concurrence_email, concurrence_name = self.get_user_email_name(str(concurrence_id))
+            if approval_status == "Approved":
+                notification_text = "Compliance %s, completed by %s and concurred by you \
+                has approved by %s" % (
+                    compliance_name, assignee_name, approver_name
+                )
+                self.save_compliance_notification(
+                    compliance_history_id, notification_text, "Compliance Approved", 
+                    "ApprovedToConcur"
+                )
+            else:
+                notification_text = "Compliance %s,has completed by %s and concurred by %s \
+                Review and approve" % (
+                    compliance_name, assignee_name, concurrence_name
+                )
+                self.save_compliance_notification(
+                    compliance_history_id, notification_text, "Compliance Concurred", 
+                    "Approve"
+                )
+
+        who_approved = approver_name if approval_status == "Approved" else concurrence_name
+        category = "Compliance Approved" if approval_status == "Approved" else "Compliance Concurred"
+        notification_text = "Compliance %s has %s by %s" % (
+            compliance_name, approval_status, who_approved
+        )
+        self.save_compliance_notification(
+            compliance_history_id, notification_text, category, 
+            "ApprovedToAssignee"
+        )
+    
         try:
             notify_compliance_approved = threading.Thread(
                 target=email.notify_task_approved, args=[
@@ -4394,6 +4423,26 @@ class ClientDatabase(Database):
         concurrence_email, concurrence_name = (None, None)
         if concurrence_id is not None and self.is_two_levels_of_approval():
             concurrence_email, concurrence_name = self.get_user_email_name(str(concurrence_id))
+            if reject_status == "RejectApproval":
+                notification_text = "Compliance %s, completed by %s and concurred by you \
+                has rejected by %s" % (
+                    compliance_name, assignee_name, approver_name
+                )
+                self.save_compliance_notification(
+                    compliance_history_id, notification_text, "Compliance Approved", 
+                    "ApproveRejectedToConcur"
+                )
+
+        who_rejected = approver_name if reject_status == "RejectApproval" else concurrence_name
+        category = "Compliance Approval Rejected" if reject_status == "RejectApproval" else "Compliance Concurrence Rejected"
+        notification_text = "Compliance %s has rejected by %s. the reason is %s" % (
+            compliance_name, who_rejected, remarks
+        )
+        action = "ApproveRejectedToAssignee" if reject_status == "RejectApproval" else "ConcurRejected"
+        self.save_compliance_notification(
+            compliance_history_id, notification_text, category, 
+            action
+        )
         try:
             notify_compliance_rejected_thread = threading.Thread(
                 target=email.notify_task_rejected, args=[
@@ -5252,7 +5301,7 @@ class ClientDatabase(Database):
         notification_rows = self.get_data(
             self.tblNotificationUserLog,
             "notification_id, read_status",
-            "user_id = '%d'" % session_user
+            "user_id = '%d' ORDER BY notification_id DESC" % session_user
         )
         notifications = []
         for notification in notification_rows:
@@ -5271,7 +5320,7 @@ class ClientDatabase(Database):
             ]
             join_type = " left join"
             where_condition = "notification_id = '%d'" % notification_id
-            where_condition += " and notification_type_id = '%d' order by created_on DESC limit 30" % notification_type_id
+            where_condition += " and notification_type_id = '%d' order by notification_id DESC limit 30" % notification_type_id
             notification_detail_row = self.get_data_from_multiple_tables(
                 columns, tables, aliases, join_type,
                 join_conditions, where_condition
@@ -5340,15 +5389,24 @@ class ClientDatabase(Database):
         return notifications
 
     def get_user_contact_details_by_id(self, user_id, client_id):
-        columns = "employee_code, employee_name, contact_no, email_id"
-        condition = "user_id = '%d'" % user_id
-        rows = self.get_data(self.tblUsers, columns, condition)
-        employee_name_with_contact_details = "%s - %s, (%s, %s)" % (
-            rows[0][0],
-            rows[0][1],
-            rows[0][2],
-            rows[0][3]
-        )
+        employee_name_with_contact_details = None
+        if user_id > 0:
+            columns = "employee_code, employee_name, contact_no, email_id"
+            condition = "user_id = '%d'" % user_id
+            rows = self.get_data(self.tblUsers, columns, condition)
+            employee_name_with_contact_details = "%s - %s, (%s, %s)" % (
+                rows[0][0],
+                rows[0][1],
+                rows[0][2],
+                rows[0][3]
+            )
+        else:
+            columns = "username"
+            rows = self.get_data(self.tblAdmin, columns, "1")  
+            employee_name_with_contact_details = "Administrator - %s" % (
+                rows[0][0]
+            )
+
         return employee_name_with_contact_details
 
     def update_notification_status(self, notification_id, has_read, session_user, client_id):
@@ -5633,7 +5691,7 @@ class ClientDatabase(Database):
             return r.days, compliance_status
         else:
             r = relativedelta.relativedelta(due_date, current_time_stamp)
-            compliance_status = " %d days left" % abs(ageing)
+            compliance_status = " %d days left" % abs(r.days)
             if r.days < 0 and r.hours < 0 and r.minutes < 0:
                 compliance_status = "Overdue by %d days" % abs(r.days)
                 return r.days, compliance_status
@@ -6436,10 +6494,20 @@ class ClientDatabase(Database):
         approval_or_concurrence_person = approver_name
         approval_or_concurrence_email = approver_email
         action = "approve"
+        notification_text = "%s has completed the compliance %s. Review and approve" % (
+            assignee_name, compliance_name
+        )
         concurrence_email, concurrence_name = (None, None)
         if self.is_two_levels_of_approval() and concurrence_id is not None:
             concurrence_email, concurrence_name = self.get_user_email_name(str(concurrence_id))
             action = "Concur"
+            notification_text = "%s has completed the compliance %s. Review and concur" % (
+                assignee_name, compliance_name
+            )
+
+        self.save_compliance_notification(
+            compliance_history_id, notification_text, "Compliance Completed", action
+        )
 
         notify_task_completed_thread = threading.Thread(
             target=email.notify_task_completed, args=[
@@ -6450,6 +6518,87 @@ class ClientDatabase(Database):
         )
         notify_task_completed_thread.start()
         return True
+
+    def save_compliance_notification(
+        self, compliance_history_id, notification_text, category, action
+    ):
+        notification_id = self.get_new_id(
+            "notification_id", self.tblNotificationsLog
+        )
+        current_time_stamp = self.get_date_time()
+
+        # Get history details from compliance history id
+        history_columns = "unit_id, compliance_id, completed_by, concurred_by, \
+        approved_by"
+        history_condition = "compliance_history_id = '%d'" % compliance_history_id
+        history_rows = self.get_data(
+            self.tblComplianceHistory, history_columns, history_condition
+        )
+        history_columns_list = [
+            "unit_id", "compliance_id", "completed_by", 
+            "concurred_by", "approved_by"
+        ]
+        history = self.convert_to_dict(history_rows[0], history_columns_list)
+        unit_id = history["unit_id"]
+        compliance_id = history["compliance_id"]
+
+        # Getting Unit details from unit_id
+        unit_columns = "country_id, business_group_id, legal_entity_id, division_id"
+        unit_condition = "unit_id = '%d'" % int(unit_id)
+        unit_rows = self.get_data(self.tblUnits, unit_columns, unit_condition)
+        unit_columns_list = [
+            "country_id", "business_group_id", "legal_entity_id", "division_id"
+        ]
+        unit = self.convert_to_dict(unit_rows[0], unit_columns_list)
+
+        # Getting compliance_details from compliance_id 
+        compliance_columns = "domain_id"
+        compliance_condition = "compliance_id = '%d'" % compliance_id
+        compliance_rows = self.get_data(
+            self.tblCompliances, compliance_columns, compliance_condition
+        )
+        domain_id = compliance_rows[0][0]
+
+        # Saving notification
+        columns = [
+            "notification_id", "country_id", "domain_id", "business_group_id",
+            "legal_entity_id", "division_id", "unit_id", "compliance_id",
+            "assignee", "concurrence_person", "approval_person", "notification_type_id",
+            "notification_text", "extra_details", "created_on"
+        ]
+        extra_details = "%d-%s" % (compliance_history_id, category)
+        values = [
+            notification_id, unit["country_id"], domain_id, unit["business_group_id"],
+            unit["legal_entity_id"], unit["division_id"], unit_id, compliance_id,
+            history["completed_by"], history["concurred_by"], history["approved_by"],
+            1, notification_text, extra_details, current_time_stamp
+        ]
+        self.insert(self.tblNotificationsLog, columns, values)
+
+        # Saving in user log
+        columns = [
+            "notification_id", "read_status", "updated_on", "user_id"
+        ]
+        values = [
+            notification_id, 0, current_time_stamp
+        ]
+        if action == "Concur":
+            values.append(int(history["concurred_by"]))
+        elif action == "Approve":
+            values.append(int(history["approved_by"]))
+        elif action == "Concurred":
+            values.append(int(history["completed_by"]))
+        elif action == "ApprovedToAssignee":
+            values.append(int(history["completed_by"]))
+        elif action == "ApprovedToConcur":
+            values.append(int(history["concurred_by"]))
+        elif action == "ConcurRejected":
+            values.append(int(history["completed_by"]))
+        elif action == "ApproveRejectedToAssignee":
+            values.append(int(history["completed_by"]))
+        elif action == "ApproveRejectedToConcur":
+            values.append(int(history["concurred_by"]))
+        return self.insert(self.tblNotificationUserLog, columns, values)
 
     def save_compliance_activity(
         self, unit_id, compliance_id, activity_status, compliance_status,
@@ -7558,7 +7707,7 @@ class ClientDatabase(Database):
                     "c.duration_type_id = cd.duration_type_id"
                 ]
                 where_condition = "ac.unit_id = (%d) and c.domain_id in (%s) and \
-                c.frequency_id = 4 and assignee='%d'" % (
+                c.frequency_id = 4 and ac.assignee='%d'" % (
                     unit, user_domain_ids, session_user
                 )
                 rows = self.get_data_from_multiple_tables(
@@ -7798,14 +7947,11 @@ class ClientDatabase(Database):
     def get_dashboard_notification_counts(
         self, session_user
     ):
-        column = "notification_id"
+        column = "group_concat(notification_id)"
 
-        notification_condition = "notification_type_id = 1 ORDER BY created_on \
-        DESC limit 30"
-        reminder_condition = "notification_type_id = 2 ORDER BY created_on \
-        DESC limit 30"
-        escalation_condition = "notification_type_id = 3 ORDER BY created_on \
-        DESC limit 30"
+        notification_condition = "notification_type_id = 1 ORDER BY notification_id DESC"
+        reminder_condition = "notification_type_id = 2 ORDER BY notification_id DESC"
+        escalation_condition = "notification_type_id = 3 ORDER BY notification_id DESC"
 
         notification_rows = self.get_data(
             self.tblNotificationsLog, column, notification_condition
@@ -7816,10 +7962,10 @@ class ClientDatabase(Database):
         escalation_rows = self.get_data(
             self.tblNotificationsLog, column, escalation_condition
         )
-
-        notification_ids = None if len(notification_rows) <= 0 else notification_rows[0][0]
-        reminder_ids = None if len(reminder_rows) <= 0 else reminder_rows[0][0]
-        escalation_ids = None if len(escalation_rows) <= 0 else escalation_rows[0][0]
+        
+        notification_ids = None if notification_rows[0][0] is None else notification_rows[0][0]
+        reminder_ids = None if reminder_rows[0][0] is None else reminder_rows[0][0]
+        escalation_ids = None if escalation_rows[0][0] is None else escalation_rows[0][0]
 
         column = "count(*)"
         notification_condition = None if notification_ids is None else "notification_id in (%s) AND read_status=0 AND user_id = '%d'" % (
@@ -7831,7 +7977,6 @@ class ClientDatabase(Database):
         escalation_condition = None if escalation_ids is None else "notification_id in (%s) AND read_status=0 AND user_id = '%d'" % (
             escalation_ids, session_user
         )
-
         notification_count = 0
         reminder_count = 0
         escalation_count = 0
