@@ -329,7 +329,9 @@ class Database(object) :
         return self.localize(string_in_date)
 
     def localize(self, time_stamp):
-        local_dt = LOCAL_TIMEZONE.localize(time_stamp, is_dst=None)
+        local_dt = time_stamp
+        if time_stamp.tzinfo is not None:
+            local_dt = LOCAL_TIMEZONE.localize(time_stamp, is_dst=None)
         return local_dt
 
     def datetime_to_string(self, datetime_val):
