@@ -2773,7 +2773,9 @@ class ClientDatabase(Database):
         (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
         t1.domain_id,\
         (select domain_name from tbl_domains where domain_id = t1.domain_id)domain_name,\
-        t1.period_from, t1.period_to from tbl_client_configurations t1"
+        t1.period_from, t1.period_to from tbl_client_configurations t1 INNER JOIN \
+        tbl_countries TC ON TC.country_id = t1.country_id  \
+        INNER JOIN tbl_domains TD ON TD.domain_id = t1.domain_id"
         rows = self.select_all(q)
         columns = [
             "country_id", "country_name",
@@ -3297,7 +3299,7 @@ class ClientDatabase(Database):
             (select legal_entity_name from tbl_legal_entities where legal_entity_id = T5.legal_entity_id)legal_entity_name,  \
             (select business_group_name from tbl_business_groups where business_group_id = T5.business_group_id )business_group_name, \
             (select country_name from tbl_countries where country_id = T5.country_id)country_name, \
-            employee_name,\
+            (select employee_name from tbl_users where user_id = T1.completed_by) employee_name,\
             T5.unit_code, T5.address, T5.geography, T5.postal_code,\
             T5.industry_name, T5.country_id, \
             T4.domain_id, \
@@ -3306,7 +3308,6 @@ class ClientDatabase(Database):
             FROM tbl_compliance_history T1  \
             INNER JOIN tbl_compliances T4  ON T1.compliance_id = T4.compliance_id  \
             INNER JOIN tbl_units T5 ON T1.unit_id = T5.unit_id \
-            INNER JOIN tbl_users T10 ON T1.completed_by = T10.user_id \
             WHERE %s AND \
             T4.domain_id IN %s  \
             %s \
@@ -3446,7 +3447,6 @@ class ClientDatabase(Database):
             level_1 = statutories[0].strip()
             ageing = 0
             due_date = r["due_date"]
-            print due_date
             completion_date = r["completion_date"]
 
             if compliance_status == "Inprogress" :
@@ -3488,8 +3488,12 @@ class ClientDatabase(Database):
                 name = "%s-%s" % (r["document_name"], r["compliance_task"])
             else :
                 name = r["compliance_task"]
+            if r["employee_name"] is None :
+                employee_name = "Administrator"
+            else :
+                employee_name = r["employee_name"]
             compliance = dashboard.Level1Compliance(
-                name, r["compliance_description"], r["employee_name"],
+                name, r["compliance_description"], employee_name,
                 str(r["start_date"]), str(due_date),
                 str(completion_date), status,
                 str(ageing)
@@ -4397,7 +4401,7 @@ class ClientDatabase(Database):
                     compliance_name, assignee_name, approver_name
                 )
                 self.save_compliance_notification(
-                    compliance_history_id, notification_text, "Compliance Approved", 
+                    compliance_history_id, notification_text, "Compliance Approved",
                     "ApprovedToConcur"
                 )
             else:
@@ -4406,7 +4410,7 @@ class ClientDatabase(Database):
                     compliance_name, assignee_name, concurrence_name
                 )
                 self.save_compliance_notification(
-                    compliance_history_id, notification_text, "Compliance Concurred", 
+                    compliance_history_id, notification_text, "Compliance Concurred",
                     "Approve"
                 )
 
@@ -4416,10 +4420,10 @@ class ClientDatabase(Database):
             compliance_name, approval_status, who_approved
         )
         self.save_compliance_notification(
-            compliance_history_id, notification_text, category, 
+            compliance_history_id, notification_text, category,
             "ApprovedToAssignee"
         )
-    
+
         try:
             notify_compliance_approved = threading.Thread(
                 target=email.notify_task_approved, args=[
@@ -4482,7 +4486,7 @@ class ClientDatabase(Database):
                     compliance_name, assignee_name, approver_name
                 )
                 self.save_compliance_notification(
-                    compliance_history_id, notification_text, "Compliance Approved", 
+                    compliance_history_id, notification_text, "Compliance Approved",
                     "ApproveRejectedToConcur"
                 )
 
@@ -4493,7 +4497,7 @@ class ClientDatabase(Database):
         )
         action = "ApproveRejectedToAssignee" if reject_status == "RejectApproval" else "ConcurRejected"
         self.save_compliance_notification(
-            compliance_history_id, notification_text, category, 
+            compliance_history_id, notification_text, category,
             action
         )
         try:
@@ -5465,7 +5469,7 @@ class ClientDatabase(Database):
             )
         else:
             columns = "username"
-            rows = self.get_data(self.tblAdmin, columns, "1")  
+            rows = self.get_data(self.tblAdmin, columns, "1")
             employee_name_with_contact_details = "Administrator - %s" % (
                 rows[0][0]
             )
@@ -5749,7 +5753,7 @@ class ClientDatabase(Database):
                 else:
                     compliance_status = "Overdue by %d days and %d.%d hours" % (
                         abs(r.days), abs(r.hours), abs(r.minutes)
-                    )   
+                    )
             return r.days, compliance_status
         else:
             r = relativedelta.relativedelta(due_date, current_time_stamp)
@@ -6597,7 +6601,7 @@ class ClientDatabase(Database):
             self.tblComplianceHistory, history_columns, history_condition
         )
         history_columns_list = [
-            "unit_id", "compliance_id", "completed_by", 
+            "unit_id", "compliance_id", "completed_by",
             "concurred_by", "approved_by"
         ]
         history = self.convert_to_dict(history_rows[0], history_columns_list)
@@ -6613,7 +6617,7 @@ class ClientDatabase(Database):
         ]
         unit = self.convert_to_dict(unit_rows[0], unit_columns_list)
 
-        # Getting compliance_details from compliance_id 
+        # Getting compliance_details from compliance_id
         compliance_columns = "domain_id"
         compliance_condition = "compliance_id = '%d'" % compliance_id
         compliance_rows = self.get_data(
@@ -7851,9 +7855,9 @@ class ClientDatabase(Database):
             concurrence_email, concurrence_name = self.get_user_email_name(str(concurrence_id))
         if document_name not in (None, "None", "") :
             compliance_name = "%s - %s" % (document_name, compliance_name)
-        notification_text = "Compliance task %s has started" % compliance_name 
+        notification_text = "Compliance task %s has started" % compliance_name
         self.save_compliance_notification(
-            history_id, notification_text, "Compliance Started", 
+            history_id, notification_text, "Compliance Started",
             "Started"
         )
         try:
@@ -8031,7 +8035,7 @@ class ClientDatabase(Database):
         escalation_rows = self.get_data(
             self.tblNotificationsLog, column, escalation_condition
         )
-        
+
         notification_ids = None if notification_rows[0][0] is None else notification_rows[0][0]
         reminder_ids = None if reminder_rows[0][0] is None else reminder_rows[0][0]
         escalation_ids = None if escalation_rows[0][0] is None else escalation_rows[0][0]
