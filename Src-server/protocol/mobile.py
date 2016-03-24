@@ -7,14 +7,11 @@ from protocol.parse_structure import (
     parse_structure_Bool,
     parse_structure_CustomTextType_50,
     parse_structure_CustomTextType_20,
-    parse_structure_VectorType_RecordType_mobile_ApproveCompliance,
     parse_structure_CustomTextType_100,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_CustomTextType_50,
     parse_structure_OptionalType_SignedIntegerType_8,
     parse_structure_CustomTextType_500,
-    parse_structure_VectorType_RecordType_mobile_ComplianceApplicability,
-    parse_structure_VectorType_RecordType_mobile_ComplianceHistory
 )
 from protocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
@@ -24,14 +21,11 @@ from protocol.to_structure import (
     to_structure_Bool,
     to_structure_CustomTextType_50,
     to_structure_CustomTextType_20,
-    to_structure_VectorType_RecordType_mobile_ApproveCompliance,
     to_structure_CustomTextType_100,
     to_structure_VectorType_SignedIntegerType_8,
     to_structure_VectorType_CustomTextType_50,
     to_structure_OptionalType_SignedIntegerType_8,
     to_structure_CustomTextType_500,
-    to_structure_VectorType_RecordType_mobile_ComplianceApplicability,
-    to_structure_VectorType_RecordType_mobile_ComplianceHistory
 )
 
 #
@@ -431,15 +425,7 @@ class GetTrendChartData(Request):
 
 def _init_Request_class_map():
     classes = [
-    GetUserGroups,
-    SaveUserGroup,
-    UpdateUserGroup,
-    ChangeUserGroupStatus,
-    GetUsers,
-    SaveUser,
-    UpdateUser,
-    ChangeUserStatus
-]
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -480,6 +466,23 @@ class UserLoginResponse(Response):
         self.user_id = user_id
         self.name = name
         self.session_token = session_token
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_id", "name", "session_token"])
+        user_id = data.get("user_id")
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
+        name = data.get("name")
+        name = parse_structure_CustomTextType_50(name)
+        session_token = data.get("session_token")
+        session_token = parse_structure_CustomTextType_50(session_token)
+
+    def to_inner_structure(self):
+        return {
+            "user_id": self.user_id,
+            "name": self.name,
+            "session_token": self.session_token
+        }
 
 class GetVersionsSuccess(Response):
     def __init__(
@@ -936,7 +939,7 @@ class ReassignHistory(object):
 
 def _init_Response_class_map():
     classes = [
-
+        UserLoginResponse
     ]
     class_map = {}
     for c in classes:
