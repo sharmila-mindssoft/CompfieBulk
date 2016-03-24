@@ -5398,7 +5398,7 @@ class ClientDatabase(Database):
 
                 due_date_rows = self.get_data(
                     self.tblComplianceHistory,
-                    "due_date",
+                    "due_date, completion_date, approve_status",
                     "compliance_history_id = '%d'" % int(compliance_history_id)
                 )
                 due_date_as_date = due_date_rows[0][0]
@@ -5408,9 +5408,19 @@ class ClientDatabase(Database):
                     due_date_as_date.day
                 )
                 due_date = self.datetime_to_string(due_date_as_datetime)
-
-                diff = self.get_date_time() - due_date_as_datetime
-                delayed_days = "%d days" % diff.days
+                completion_date = due_date_rows[0][1]
+                approve_status = due_date_rows[0][2]
+                delayed_days = "-"
+                if completion_date is None or approve_status == 0:
+                    no_of_days, delayed_days = self.calculate_ageing(due_date_as_datetime)
+                else:
+                    r = relativedelta.relativedelta(due_date_as_datetime, completion_date)
+                    delayed_days = "-"
+                    if r.days < 0 and r.hours < 0 and r.minutes < 0:
+                        delayed_days = "Overdue by %d days" % abs(r.days)
+                if "Overdue" not in delayed_days:
+                    delayed_days = "-"
+                # diff = self.get_date_time() - due_date_as_datetime
                 statutory_provision = notification_detail[4].split(">>")
                 level_1_statutory = statutory_provision[0]
 
@@ -5733,7 +5743,6 @@ class ClientDatabase(Database):
         # due_date = datetime.datetime(due_date.year, due_date.month, due_date.day)
         if frequency_type =="On Occurrence":
             r = relativedelta.relativedelta(due_date, current_time_stamp)
-            print r
             if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
                 if r.days == 0:
                     compliance_status = " %d.%d hours left" % (
@@ -6511,6 +6520,9 @@ class ClientDatabase(Database):
                 else:
                     return clienttransactions.NotEnoughSpaceAvailable()
 
+        assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = self.get_compliance_history_details(
+            compliance_history_id
+        )
         current_time_stamp = self.get_date_time()
         history_columns = [
             "completion_date", "documents", "validity_date",
@@ -6544,46 +6556,48 @@ class ClientDatabase(Database):
             unit_id, compliance_id, "Submited", "Inprogress",
             remarks
         )
+        if assignee_id == approver_id:
+            history_columns.append("approve_status")
+            history_columns.append("approved_on")
+            history_values.append(1)
+            history_values.append(current_time_stamp)
         self.update(
             self.tblComplianceHistory, history_columns, history_values,
             history_condition
         )
 
+        if assignee_id != approver_id:
+            if document_name is not None and document_name != '' and document_name != 'None':
+                compliance_name = "%s - %s" % (document_name, compliance_name)
 
-        assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = self.get_compliance_history_details(
-            compliance_history_id
-        )
-        if document_name is not None and document_name != '' and document_name != 'None':
-            compliance_name = "%s - %s" % (document_name, compliance_name)
-
-        assignee_email, assignee_name = self.get_user_email_name(str(assignee_id))
-        approver_email, approver_name = self.get_user_email_name(str(approver_id))
-        approval_or_concurrence_person = approver_name
-        approval_or_concurrence_email = approver_email
-        action = "approve"
-        notification_text = "%s has completed the compliance %s. Review and approve" % (
-            assignee_name, compliance_name
-        )
-        concurrence_email, concurrence_name = (None, None)
-        if self.is_two_levels_of_approval() and concurrence_id is not None:
-            concurrence_email, concurrence_name = self.get_user_email_name(str(concurrence_id))
-            action = "Concur"
-            notification_text = "%s has completed the compliance %s. Review and concur" % (
+            assignee_email, assignee_name = self.get_user_email_name(str(assignee_id))
+            approver_email, approver_name = self.get_user_email_name(str(approver_id))
+            approval_or_concurrence_person = approver_name
+            approval_or_concurrence_email = approver_email
+            action = "approve"
+            notification_text = "%s has completed the compliance %s. Review and approve" % (
                 assignee_name, compliance_name
             )
+            concurrence_email, concurrence_name = (None, None)
+            if self.is_two_levels_of_approval() and concurrence_id is not None:
+                concurrence_email, concurrence_name = self.get_user_email_name(str(concurrence_id))
+                action = "Concur"
+                notification_text = "%s has completed the compliance %s. Review and concur" % (
+                    assignee_name, compliance_name
+                )
 
-        self.save_compliance_notification(
-            compliance_history_id, notification_text, "Compliance Completed", action
-        )
+            self.save_compliance_notification(
+                compliance_history_id, notification_text, "Compliance Completed", action
+            )
 
-        notify_task_completed_thread = threading.Thread(
-            target=email.notify_task_completed, args=[
-                assignee_email, assignee_name, concurrence_email,
-                concurrence_name, approver_email, approver_name, action,
-                self.is_two_levels_of_approval(), compliance_name
-            ]
-        )
-        notify_task_completed_thread.start()
+            notify_task_completed_thread = threading.Thread(
+                target=email.notify_task_completed, args=[
+                    assignee_email, assignee_name, concurrence_email,
+                    concurrence_name, approver_email, approver_name, action,
+                    self.is_two_levels_of_approval(), compliance_name
+                ]
+            )
+            notify_task_completed_thread.start()
         return True
 
     def save_compliance_notification(
