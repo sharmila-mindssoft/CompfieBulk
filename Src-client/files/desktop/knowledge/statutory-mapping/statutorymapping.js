@@ -154,13 +154,8 @@ $(".btn-statutorymapping-add").click(function(){
   sm_statutorynatureval='';
   sm_statutoryids=[];
   sm_industryids=[];
-<<<<<<< HEAD
-  sm_industryvals = [];
-  compliances = [];
-=======
   sm_industryvals=[];
   compliances=[];
->>>>>>> shiva/master
   load_selectdomain_master();
   $(".tbody-statutory-list").find("tr").remove();
   $(".tbody-compliance-list").find("tr").remove();
@@ -295,10 +290,6 @@ function callPage(pageId){
 
 
 function loadStatutoryMappingList(statutoryMappingsList) {
-<<<<<<< HEAD
-
-=======
->>>>>>> shiva/master
   pageSize = 50;
   var listSize = Math.ceil(Object.keys(statutoryMappingsList).length / pageSize);
 

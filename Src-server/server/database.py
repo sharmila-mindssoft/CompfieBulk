@@ -2138,17 +2138,11 @@ class KnowledgeDatabase(Database):
             t1.approval_status, t1.is_active,  \
             (select group_concat(distinct compliance_id) from tbl_compliances where statutory_mapping_id = t1.statutory_mapping_id) compliance_ids \
             FROM tbl_statutory_mappings t1 \
-            INNER JOIN tbl_statutory_industry t2 \
-            ON t1.statutory_mapping_id = t2.statutory_mapping_id \
-            INNER JOIN tbl_statutory_geographies t3 \
-            ON t1.statutory_mapping_id = t3.statutory_mapping_id \
-            INNER JOIN tbl_compliances t4 \
-            ON t1.statutory_mapping_id = t4.statutory_mapping_id \
             INNER JOIN tbl_user_domains t5 \
-            ON t1.domain_id = t5.domain_id \
+            ON t5.domain_id = t1.domain_id \
             and t5.user_id = %s \
             INNER JOIN tbl_user_countries t6 \
-            ON t1.country_id = t6.country_id \
+            ON t6.country_id = t1.country_id \
             and t6.user_id = %s \
             WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
             t1.country_id = %s \
@@ -2262,7 +2256,7 @@ class KnowledgeDatabase(Database):
             t1.statutory_dates, t1.repeats_every, \
             t1.repeats_type_id, \
             t1.duration, t1.duration_type_id, t1.is_active \
-            FROM tbl_compliances t1 %s" % q
+            FROM tbl_compliances t1 %s ORDER BY t1.frequency_id" % q
         rows = self.select_all(qry)
         columns = [
             "compliance_id", "statutory_provision",
