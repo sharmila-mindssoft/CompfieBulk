@@ -2019,17 +2019,14 @@ class KnowledgeDatabase(Database):
             t1.approval_status, t1.is_active,  \
             (select group_concat(distinct compliance_id) from tbl_compliances where statutory_mapping_id = t1.statutory_mapping_id) compliance_ids\
             FROM tbl_statutory_mappings t1 \
-            INNER JOIN tbl_statutory_industry t2 \
-            ON t1.statutory_mapping_id = t2.statutory_mapping_id \
-            INNER JOIN tbl_statutory_geographies t3 \
-            ON t1.statutory_mapping_id = t3.statutory_mapping_id \
             INNER JOIN tbl_user_domains t5 \
-            ON t1.domain_id = t5.domain_id \
+            ON t5.domain_id = t1.domain_id \
             and t5.user_id = %s \
             INNER JOIN tbl_user_countries t6 \
-            ON t1.country_id = t6.country_id \
+            ON t6.country_id = t1.country_id \
             and t6.user_id = %s" % (user_id, user_id)
         q = q + " ORDER BY country_name, domain_name, statutory_nature_name"
+        print q
         rows = self.select_all(q)
         columns = [
             "statutory_mapping_id", "country_id",
