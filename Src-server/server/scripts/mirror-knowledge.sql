@@ -293,7 +293,7 @@ CREATE TABLE `tbl_compliances` (
   `frequency_id` int(11) NOT NULL,
   `repeats_type_id` int(11) DEFAULT NULL,
   `duration_type_id` int(11) DEFAULT NULL,
-  `statutory_provision` varchar(250) NOT NULL,
+  `statutory_provision` varchar(500) NOT NULL,
   `compliance_task` varchar(100) NOT NULL,
   `compliance_description` longtext,
   `document_name` varchar(100) DEFAULT NULL,
