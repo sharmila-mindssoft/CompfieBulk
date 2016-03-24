@@ -70,6 +70,8 @@ function performLogin(e_button, e_email, e_password) {
         message = "Unable to login. Incorrect username / password!";
         if(status == "ContractExpired"){
             message = "Contract Expired"
+        }else if (status == "NotConfigured"){
+            message = "Please Wait...Your account configuration is under progress.."
         }
         displayLoginMessage(message);
         $("input").val("");
