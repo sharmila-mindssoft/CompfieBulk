@@ -3345,7 +3345,6 @@ class ClientDatabase(Database):
             "country_id", "domain_id",
             "year", "month"
         ]
-        print query
         result = self.convert_to_dict(rows, columns)
         return result
 
@@ -3457,7 +3456,6 @@ class ClientDatabase(Database):
             level_1 = statutories[0].strip()
             ageing = 0
             due_date = r["due_date"]
-            print due_date
             completion_date = r["completion_date"]
 
             if compliance_status == "Inprogress" :
@@ -5764,7 +5762,7 @@ class ClientDatabase(Database):
             return r.days, compliance_status
         else:
             r = relativedelta.relativedelta(due_date, current_time_stamp)
-            compliance_status = " %d days left" % abs(r.days)
+            compliance_status = " %d days left" % abs(r.days+1)
             if r.days < 0 and r.hours < 0 and r.minutes < 0:
                 compliance_status = "Overdue by %d days" % abs(r.days)
                 return r.days, compliance_status
@@ -7999,6 +7997,11 @@ class ClientDatabase(Database):
         no_of_licence = rows[0][0]
 
         remaining_licence = int(no_of_licence) - int(no_of_licence_holders)
+
+        columns = "admin_id"
+        rows = self.get_data(self.tblAdmin, columns, condition)
+        if rows[0][0] == 0:
+            remaining_licence -= 1
         return remaining_licence
 
     def get_no_of_days_left_for_contract_expiration(self):
