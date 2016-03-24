@@ -2026,7 +2026,6 @@ class KnowledgeDatabase(Database):
             ON t6.country_id = t1.country_id \
             and t6.user_id = %s" % (user_id, user_id)
         q = q + " ORDER BY country_name, domain_name, statutory_nature_name"
-        print q
         rows = self.select_all(q)
         columns = [
             "statutory_mapping_id", "country_id",

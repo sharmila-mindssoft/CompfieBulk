@@ -154,6 +154,7 @@ $(".btn-statutorymapping-add").click(function(){
   sm_statutorynatureval='';
   sm_statutoryids=[];
   sm_industryids=[];
+  sm_industryvals = [];
   compliances = [];
   load_selectdomain_master();
   $(".tbody-statutory-list").find("tr").remove();
@@ -265,7 +266,7 @@ function loadCountwiseStatutoryMapping(keysList, statutoryMappingsList){
 
 
 function get_sub_array(object, start, end){
-    if(!end){ end=-1;} 
+    if(!end){ end=-1;}
     return object.slice(start, end);
 }
 
@@ -283,13 +284,13 @@ function callPage(pageId){
   var keys_list = Object.keys(finalList);
   var sub_keys_list = get_sub_array(keys_list, startCount, endCount);
   loadCountwiseStatutoryMapping(sub_keys_list, finalList);
-  
+
 };
 
 
 function loadStatutoryMappingList(statutoryMappingsList) {
 
-  pageSize = 100;
+  pageSize = 50;
   var listSize = Math.ceil(Object.keys(statutoryMappingsList).length / pageSize);
 
   startCount = 0;
@@ -429,8 +430,8 @@ function loadStatutoryLevels(countryval,domainval){
 
       loadStatutoryMappingList(filteredList);
     }
-    
-    
+
+
   });
 
   //check & uncheck list data for single selection
@@ -836,7 +837,7 @@ $("#temp_addcompliance").click(function() {
   var compliance_document = null;
 
   if($('#compliance_document').val().trim().length > 0) compliance_document = $('#compliance_document').val().trim();
-  
+
   var file_format = null;
   if(uploadFile != null){
     file_format = [];
@@ -1050,7 +1051,7 @@ $("#temp_addcompliance").click(function() {
   for(i=1; i<=12; i++){
     $('#multiple_statutory_date'+i).show();
   }
-  
+
   resetvalues();
   load_compliance();
   }
@@ -1135,7 +1136,7 @@ function temp_editcompliance(edit_id){
           $('#multiple_statutory_date'+i).hide();
         }
         $('#single_statutory_date').hide();
-        
+
 
       }else{
         $('#dayofmonth').prop("checked", true);
@@ -1143,7 +1144,7 @@ function temp_editcompliance(edit_id){
           $('#multiple_statutory_date'+i).show();
         }
         $('#single_statutory_date').show();
-        
+
       }
       load_data();
       //siva
@@ -1159,11 +1160,11 @@ function temp_editcompliance(edit_id){
     if(statutory_dates[0]["repeat_by"] == 'enddayofmonth'){
       $('#enddayofmonth').prop("checked", true);
       $('#single_statutory_date').hide();
-      
+
     }else{
       $('#dayofmonth').prop("checked", true);
       $('#single_statutory_date').show();
-     
+
     }
     }
     load_data();
@@ -2491,7 +2492,7 @@ $('#multiple_statutory_month12').change(function() {
   }
   //resetvalues();
 
-  
+
 }
 
 $(".dayhour").change(function(){
@@ -2508,7 +2509,7 @@ if($(this).val()=="1")
 });
 $('.tasktype').on('keyup change', function() {
   if($(this).val()=="2" || $(this).val()=="3")
-  { 
+  {
     $('#Recurring').show();
     $('#Occasional').hide();
     $('#One_Time').hide();
