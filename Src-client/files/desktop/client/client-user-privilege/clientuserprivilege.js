@@ -10,6 +10,7 @@ $("#btn-userprivilege-add").click(function(){
 	$("#userprivilege-view").hide();
 	$("#userprivilege-add").show();
 	clearMessage(); 
+	$("#search-user-group-name").val("");
   	$("#user-privilege-id").val('');
   	$("#user-privilege-name").val('');
   	$(".checkbox-full-check").prop('checked', false);
@@ -57,10 +58,14 @@ function loadFormData(formlist){
 $("#btn-userprivilege-cancel").click(function(){
 	$("#userprivilege-add").hide();
 	$("#userprivilege-view").show();
+	clearMessage(); 
+	$("#search-user-group-name").val("");
 });
 function initialize(){
 	function onSuccess(data){
+		clearMessage(); 
 		loadUserGroupdata(data['user_groups']);
+		$("#search-user-group-name").val("");
 	}
 	function onFailure(status, data){
 		console.log(status);
@@ -165,6 +170,9 @@ $("#submit").click(function(){
 			if(error == "UserGroupNameAlreadyExists"){
 				displayMessage("User Group Name Already Exists");
 			}
+			else{
+				displayMessage(error);
+			}
 		}
 		var userGroupUpdateDetails;
 		userGroupUpdateDetails = client_mirror.getUpdateClientUserGroupDict(parseInt(groupIdVal), groupNameVal, chkArrayInt);
@@ -262,16 +270,6 @@ function userPrivilegeActive(userGroupId, isActive){
 		);
 	}
 }
-$("#search-user-group-name").keyup(function() { 
-  var count=0;
-    var value = this.value.toLowerCase();
-    $("table").find("tr:not(:first)").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".usergroup-name").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-   
-});
 
 $('.checkbox-full-check').click(function(event) {  
 	if(this.checked) { 
@@ -287,4 +285,7 @@ $('.checkbox-full-check').click(function(event) {
 });
 $(function() {
 	initialize();
+});
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });

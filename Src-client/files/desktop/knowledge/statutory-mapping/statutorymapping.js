@@ -821,6 +821,10 @@ $("#temp_addcompliance").click(function() {
           displayMessage("Trigger before days should not exceed 100");
           return false;
         }
+        if(trigger_before_days == 0){
+          displayMessage("Trigger before days should be 1 to 100");
+          return false;
+        }
       }
       statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
       statutory_dates.push(statutory_date);
@@ -875,6 +879,10 @@ $("#temp_addcompliance").click(function() {
                   displayMessage("Trigger before days should not exceed 100");
                   return false;
                 }
+                if(trigger_before_days == 0){
+                  displayMessage("Trigger before days should be 1 to 100");
+                  return false;
+                }
 
                 statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
                 statutory_dates.push(statutory_date);
@@ -890,6 +898,10 @@ $("#temp_addcompliance").click(function() {
                 trigger_before_days = parseInt($('#single_triggerbefore').val());
               if(trigger_before_days > 100){
                 displayMessage("Trigger before days should not exceed 100");
+                return false;
+              }
+              if(trigger_before_days == 0){
+                displayMessage("Trigger before days should be 1 to 100");
                 return false;
               }
             statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
@@ -970,6 +982,11 @@ $("#temp_addcompliance").click(function() {
   $('#counter').html('');
   $('#counter1').html('');
   $('#counter2').html('');
+
+  for(i=1; i<=12; i++){
+    $('#multiple_statutory_date'+i).show();
+  }
+  
   resetvalues();
   load_compliance();
   }
@@ -1735,6 +1752,13 @@ function load_stautorydates(){
     $('.multipleinput').prop("checked", false);
   }
 
+  if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+    for(i=1; i<=12; i++){
+      $('#multiple_statutory_date'+i).hide();
+    }
+     $('#single_statutory_date').hide();
+  }
+
 }
 
 $(function()
@@ -2393,6 +2417,7 @@ $('#multiple_statutory_month12').change(function() {
     }
     if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
      $('#single_statutory_date').hide();
+     $('#single_statutory_month').hide();
      $('#sdate').hide();
     }
   }

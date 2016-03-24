@@ -1,5 +1,17 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
+<style type="text/css">
+.popup {
+    width: 30%;
+}
+.overlay {
+  z-index: 1000;
+}
+.popup-error-msg{
+  font-size: 0.813em;
+  color: red;
+}
+</style>
   <div class="content-container width80" id="clientunit-view">
     <div class="content-area">
       <h1>Clients Unit</h1>
@@ -115,6 +127,19 @@
         </div>
       </div>
     </div>
+    <div id="popup" class="overlay" >
+  <div class="popup">
+    <a class="close" href="#">X</a>
+    <div class="content">
+      Password<br>
+      <input type="hidden" id="unitidval">
+       <input type="hidden" id="clientidval">
+     <input type="password" name="password" class="input-box" autofocus tabindex="0" id="password" maxlength="20" style="margin-top:10px;"><br>
+     <input type="submit" name="submit" class="btn-submit" id="popup-submit" value="Submit" onclick="unit_close()" style="margin-top:10px;">
+     <span class="popup-error-msg"></span>
+    </div>
+  </div>
+</div>
     <div id="templates">
       <div class="grid-table">
         <table class="btable">
@@ -165,7 +190,7 @@
         <span class="unit-code-lbl"></span>
         </td>
         <td><input type="text" class="input-box unit-name" maxlength="50"  ></td>
-        <td><select class="input-box industry" onfocus="industrytype(this.className);" >
+        <td><select class="input-box industry" > <!-- onfocus="industrytype(this.className);"  -->
         <option value="">Select</option>
         </select>
       </td>
@@ -182,7 +207,7 @@
 </tr>
 </tbody>
 <tr>
-<td colspan="9" align="right" ><div class="add-unit-row" onclick="addNewUnitRow(this)" ><img src="/images/icon-plus.png" alt="Add New Unit"  style="vertical-align: bottom;" />&nbsp;<span>Add Unit</span></div></td>
+<td colspan="9" align="right" ><div class="add-unit-row" onclick="addNewUnitRow(this)" style="width: 100px; " ><img src="/images/icon-plus.png" alt="Add New Unit"  style="vertical-align: bottom;" />&nbsp;<span>Add Unit</span></div></td>
 </tr>
 </table>
 </div>
@@ -207,7 +232,7 @@
         <span class="unit-code-lbl"></span>
         </td>
         <td><input type="text" class="input-box unit-name"  maxlength="50" ></td>
-        <td><select class="input-box industry" onfocus="industrytype(this.className);">
+        <td><select class="input-box industry" ><!-- onfocus="industrytype(this.className);" -->
           <option value="">Select</option>
         </select>
         </td>
@@ -222,6 +247,7 @@
         <td align="center" class="activedclass"></td>
     </tr>
 </table>
+
 </div>
 <script type="text/javascript" src="/files/desktop/knowledge/client-unit/clientunit.js"></script>
 {% endblock %}

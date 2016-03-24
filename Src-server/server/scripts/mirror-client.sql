@@ -425,6 +425,14 @@ CREATE TABLE `tbl_notification_user_log` (
   `read_status` tinyint(1) DEFAULT '0',
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+DROP TABLE IF EXISTS `tbl_mobile_sync_versions`;
+CREATE TABLE `tbl_mobile_sync_versions` (
+  `unit_details_version` int(11) NOT NULL,
+  `user_details_version` int(11) NOT NULL,
+  `compliance_applicability_version` int(11) NOT NULL,
+  `compliance_history_version` int(11) NOT NULL,
+  `reassign_history_version` int(11) NOT NULL,
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 INSERT INTO tbl_audit_log VALUES(0);
 INSERT INTO tbl_form_type VALUES(1, "Home");
 INSERT INTO tbl_form_type VALUES(2, "Master");
@@ -473,18 +481,4 @@ INSERT INTO tbl_compliance_frequency VALUES(4, "On Occurrence");
 INSERT INTO tbl_notification_types VALUES(1, "Notification");
 INSERT INTO tbl_notification_types VALUES(2, "Reminder");
 INSERT INTO tbl_notification_types VALUES(3, "Escalation");
--- DROP TRIGGER IF EXISTS `after_tbl_statutory_notifications_units_insert`;
--- DELIMITER //
--- CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON `tbl_statutory_notifications_units`
---  FOR EACH ROW BEGIN
---     SET @notificationid = NEW.statutory_notification_id;
---     SET @unitid = NEW.unit_id;
-
---     INSERT INTO tbl_statutory_notification_status (
---         statutory_notification_id,
---         user_id, read_status)
---     SELECT @notificationid, t1.user_id, 0
---     FROM tbl_user_units t1 where t1.unit_id = @unitid;
--- END
--- //
--- DELIMITER ;
+DROP TRIGGER IF EXISTS `after_tbl_statutory_notifications_units_insert`;

@@ -206,8 +206,12 @@ function ChartInput () {
             this.business_groups.splice(index, 1);
             return;
         }
-        if (isAdd) {
-            this.business_groups.push(v);
+        if (isSingle) {
+            this.business_groups = [v];
+        } else {
+            if (isAdd) {
+                this.business_groups.push(v);
+            }
         }
     }
 
@@ -235,8 +239,12 @@ function ChartInput () {
             this.legal_entities.splice(index, 1);
             return;
         }
-        if (isAdd) {
-            this.legal_entities.push(v);
+        if (isSingle) {
+            this.legal_entities = [v];
+        } else {
+            if (isAdd) {
+                this.legal_entities.push(v);
+            }
         }
     }
 
@@ -264,8 +272,13 @@ function ChartInput () {
             this.divisions.splice(index, 1);
             return;
         }
-        if (isAdd) {
-            this.divisions.push(v);
+        if (isSingle) {
+            this.divisions = [v];
+        }
+        else {
+            if (isAdd) {
+                this.divisions.push(v);
+            }
         }
     }
 
@@ -546,7 +559,7 @@ function prepareComplianceStatusChartData (chart_data) {
     // if (xAxis.length == 0)
     //     return null;
     var xAxisName = getXAxisName();
-    var yAxis = ["Complied", "Delay Compliance", "Inprogress", "Not Complied"];
+    var yAxis = ["Complied", "Delayed Compliance", "Inprogress", "Not Complied"];
     var yAxisData = [
         yAxisComplied, yAxisDelayed, yAxisInprogress, yAxisNotComplied
     ];
@@ -595,7 +608,7 @@ function prepareComplianceStatusChartData (chart_data) {
         xAxisDrillDownSeries[xAxis[j]] = data_list
     }
     chartTitle =  chartTitle + " wise compliances";
-
+    console.log(chartDataSeries)
     return [xAxisName, xAxis, chartDataSeries, chartTitle, xAxisDrillDownSeries];
 }
 
@@ -643,7 +656,7 @@ function updateComplianceStatusStackBarChart(data) {
     var chartDataSeries = data[2];
     var chartTitle = data[3];
     var drilldownSeries = data[4]
-    var yAxisname = ["Complied", "Delay Compliance", "Inprogress", "Not Complied"];
+    var yAxisname = ["Complied", "Delayed Compliance", "Inprogress", "Not Complied"];
 
     var highchart;
     // function setChart(name) {
@@ -691,10 +704,11 @@ function updateComplianceStatusStackBarChart(data) {
             title: {
                 text: 'Total compliances'
             },
-            allowDecimals: false
+            allowDecimals: false,
+            reversedStacks: false
         },
         tooltip: {
-            headerFormat: '<b>{point.x}</b>: {point.percentage:.0f}% ',
+            headerFormat: '<b>{point.series.name}</b>: {point.percentage:.0f}% ',
             pointFormat: '({point.y} out of {point.stackTotal})'
         },
         plotOptions: {
@@ -972,25 +986,50 @@ function showComplianceApplicabilityDrillDownRecord(data, type){
                   else if(sMonth == 11) sMonth = "Nov"
                   else if(sMonth == 12) sMonth = "Dec"
 
-                  statutorydate +=  sDay +' - '+ sMonth + ' ';
-                  triggerbefore +=  tBefore + ' ';
+                  statutorydate +=  sDay +' - '+ sMonth + ', ';
+                  triggerbefore +=  tBefore + ', ';
                 }
 
                 if(summary != null){
-                  if(statutorydate != ''){
-                    statutorydate = summary + ' ( '+statutorydate+' )';
+                  if(statutorydate.trim() != ''){
+                    statutorydate = statutorydate.replace(/,\s*$/, "");
+                    statutorydate = summary + ' ('+statutorydate+')';
                   }else{
                     statutorydate = summary;
                   }
                 }
 
+                if(triggerbefore != ''){
+                    triggerbefore = triggerbefore.replace(/,\s*$/, "");
+                }
                 var tableRow = $('#templates .compliance-applicable-status .table-row-list');
                 var clone = tableRow.clone();
+
+                var cDescription = val["description"];
+                var partDescription = cDescription;
+                if (cDescription != null && cDescription.length > 50){
+                  partDescription = cDescription.substring(0,49)+'...';
+                }
+
+                var cPenalConsequences = val["penal_consequences"];
+                var partPenalConsequences = cPenalConsequences;
+                if (cPenalConsequences != null && cPenalConsequences.length > 50){
+                  partPenalConsequences = cPenalConsequences.substring(0,49)+'...';
+                }
+
                 $(".sno", clone).html(sno);
                 $(".statutory-name", clone).html(val["statutory_provision"]);
-                $(".compliance-task-name", clone).html(val["compliance_task"])
-                $(".compliance-description-name", clone).html(val["description"]);
-                $(".penal-consequences-name", clone).html(val["penal_consequences"]);
+                var download_url = val["download_url"];
+                if(download_url == null){
+                    $(".compliance-task-name", clone).html(val["compliance_task"])
+                }else{
+                    $('.compliance-task-name', clone).html('<a href= "'+ download_url +'" target="_new">'+val["compliance_task"]+'</a>');
+                }
+
+                $(".compliance-description-name", clone).html('<abbr class="page-load" title="'+
+          cDescription+'">'+partDescription+'</abbr>');
+                $(".penal-consequences-name", clone).html('<abbr class="page-load" title="'+
+          cPenalConsequences+'">'+partPenalConsequences+'</abbr>');
                 $(".compliance-frequency-name", clone).html(frequency);
                 $(".repeats", clone).html(statutorydate);
                 //$(".statutory-date", clone).html(statutorydate);
@@ -1012,7 +1051,6 @@ function accordianType(idtype, toggleClass, contentClass){
 }
 
 function showNotCompliedDrillDownRecord(data){
-
     $(".table-thead-drilldown-list").empty();
     $(".table-drilldown-list tbody").remove();
     $(".drilldown-title").text("Over due compliances of "+GROUP_NAME);
@@ -1131,6 +1169,12 @@ function unitWiseNotCompliedDrillDown(status, data){
 }
 
 function notCompliedDrilldown(status, data){
+    $(".btn-back").on("click", function() {
+        $(".graph-container.compliance-status").show();
+        $(".drilldown-container").hide();
+        loadNotCompliedChart();
+    });
+
     var sno = 1;
     var count = 1;
 
@@ -1169,7 +1213,7 @@ function notCompliedDrilldown(status, data){
                 $(".industry-type-name", clone).html(value["industry_name"]);
                 $(".compliance-name span", clone).html(val['compliance_name']);
                 $(".assigned-to", clone).html(val['assignee_name']);
-                $(".over-due", clone).html(val['ageing']+" Days");
+                $(".over-due", clone).html(val['ageing']);
                 $('.accordion-content'+count).append(clone);
                 sno = sno + 1;
 
@@ -1224,8 +1268,8 @@ function groupWiseEscalationDrillDown(status, data){
     if (status == "not_complied") {
         $(".tr-level1 th").attr("colspan", "8");
         $(".tr-unit .unit-heading").attr("colspan", "7");
-        $(".delayed-by-row").show();
-        $(".over-due-row").hide();
+        $(".delayed-by-row").hide();
+        $(".over-due-row").show();
     }
     else if (status == "delayed") {
         $(".tr-level1 th").attr("colspan", "8");
@@ -1252,8 +1296,8 @@ function businessgroupWiseEscalationDrillDown(status, data){
     if (status == "not_complied") {
         $(".tr-level1 th").attr("colspan", "7");
         $(".tr-unit .unit-heading").attr("colspan", "6");
-        $(".delayed-by-row").show();
-        $(".over-due-row").hide();
+        $(".delayed-by-row").hide();
+        $(".over-due-row").show();
     }
     else if (status == "delayed") {
         $(".tr-level1 th").attr("colspan", "7");
@@ -1359,7 +1403,12 @@ function escalationDrilldown(status, data){
     var count = 1;
     var h2heading = $('#templates .escalation-status .tr-h2');
     var cloneh2 = h2heading.clone();
-    $(".escalation-status-value", cloneh2).html(status+" compliances");
+    if(status == "not_complied"){
+        $(".escalation-status-value", cloneh2).html("Not Complied compliances");
+    }
+    if(status == "delayed"){
+        $(".escalation-status-value", cloneh2).html("Delayed compliances");
+    }
     $(".table-thead-drilldown-list").append(cloneh2);
 
     var tableHeading = $('#templates .escalation-status .tr-heading');
@@ -1398,11 +1447,12 @@ function escalationDrilldown(status, data){
                     $(".industry-type-name", clone).html(value["industry_name"]);
                     $(".compliance-name span", clone).html(val['compliance_name']);
                     $(".assigned-to", clone).html(val['assignee_name']);
-                    if(val['status'] == "Delayed"){
-                        $(".delayed-by", clone).html(val['ageing']+" Days");
+
+                    if(val['status'] == "Delayed Compliance"){
+                        $(".delayed-by", clone).html(val['ageing']);
                     }
                     if(val['status'] == "Not Complied"){
-                        $(".over-due", clone).html(val['ageing']+" Days");
+                        $(".over-due", clone).html(val['ageing']);
                     }
                     $('.accordion-content'+count).append(clone);
                     sno = sno + 1;
@@ -1767,7 +1817,7 @@ function groupWiseComplianceDrillDown(status, data){
         $(".tr-unit .unit-heading").attr("colspan", "7");
         $(".over-due-row").show();
     }
-    else if (status == "Delayed") {
+    else if (status == "Delayed Compliance") {
         $(".tr-level1 th").attr("colspan", "8");
         $(".tr-unit .unit-heading").attr("colspan", "7");
         $(".delayed-by-row").show();
@@ -1806,7 +1856,7 @@ function businessgroupWiseComplianceDrillDown(status, data){
         $(".tr-unit .unit-heading").attr("colspan", "6");
         $(".over-due-row").show();
     }
-    else if (status == "Delayed") {
+    else if (status == "Delayed Compliance") {
         $(".tr-level1 th").attr("colspan", "7");
         $(".tr-unit .unit-heading").attr("colspan", "6");
         $(".delayed-by-row").show();
@@ -1845,7 +1895,7 @@ function legalentityWiseComplianceDrillDown(status, data){
         $(".tr-unit .unit-heading").attr("colspan", "5");
         $(".over-due-row").show();
     }
-    else if (status == "Delayed") {
+    else if (status == "Delayed Compliance") {
         $(".tr-level1 th").attr("colspan", "6");
         $(".tr-unit .unit-heading").attr("colspan", "5");
         $(".delayed-by-row").show();
@@ -1885,7 +1935,7 @@ function divisionWiseComplianceDrillDown(status, data){
         $(".tr-unit .unit-heading").attr("colspan", "4");
         $(".over-due-row").show();
     }
-    else if (status == "Delayed") {
+    else if (status == "Delayed Compliance") {
         $(".tr-level1 th").attr("colspan", "5");
         $(".tr-unit .unit-heading").attr("colspan", "4");
         $(".delayed-by-row").show();
@@ -1924,7 +1974,7 @@ function unitWiseComplianceDrillDown(status, data){
         $(".tr-unit .unit-heading").attr("colspan", "4");
         $(".over-due-row").show();
     }
-    else if (status == "Delayed") {
+    else if (status == "Delayed Compliance") {
         $(".tr-level1 th").attr("colspan", "5");
         $(".tr-unit .unit-heading").attr("colspan", "4");
         $(".delayed-by-row").show();
@@ -1970,14 +2020,14 @@ function complianceStatusDrilldown(status, data){
                 $(".industry-type-name", clone).html(value["industry_name"]);
                 $(".compliance-name span", clone).html(val['compliance_name']);
                 $(".assigned-to", clone).html(val['assignee_name']);
-                if(val['status'] == "Delayed"){
-                    $(".delayed-by", clone).html(val['ageing']+" Days");
+                if(val['status'] == "Delayed Compliance"){
+                    $(".delayed-by", clone).html(val['ageing']);
                 }
                 if(val['status'] == "Inprogress"){
-                    $(".dates-left-to-complete", clone).html(val['ageing']+" Days");
+                    $(".dates-left-to-complete", clone).html(val['ageing']);
                 }
                 if(val['status'] == "Not Complied"){
-                    $(".over-due", clone).html(val['ageing']+" Days");
+                    $(".over-due", clone).html(val['ageing']);
                 }
                 $('.accordion-content'+count).append(clone);
                 sno = sno + 1;
@@ -2027,7 +2077,7 @@ function prepareEscalationChartdata(source_data) {
         else {
             delayed_data.push({
                 "y": delayed,
-                "drilldown": "Delay Compliance",
+                "drilldown": "Delayed Compliance",
                 "year": year
             });
             not_complied_data.push({
@@ -2040,7 +2090,7 @@ function prepareEscalationChartdata(source_data) {
     });
 
     chartDataSeries.push({
-        "name": "Delay Compliance",
+        "name": "Delayed Compliance",
         "data": delayed_data
     });
     chartDataSeries.push(
@@ -2098,12 +2148,12 @@ function updateEscalationChart(data) {
         },
         plotOptions: {
             series: {
-                pointWidth: 40
+                pointWidth: 40,
+                groupPadding: 0.4,
+                pointPadding: -0.0,
+                pointPlacement: -0.0
             },
             column: {
-                pointPadding: 0,
-                groupPadding: 0.3,
-                borderWidth: 0,
                 dataLabels: {
                     enabled: true,
                     textShadow:null,
@@ -2738,6 +2788,8 @@ function loadComplianceStatusChart () {
 }
 
 function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter_type_name) {
+    $(".btn-bar-chart").hide();
+    $(".btn-pie-chart").hide();
     var filter_type = chartInput.getFilterType();
     var filterType = filter_type.replace("_", "-");
     filterType = hyphenatedToUpperCamelCase(filterType);
@@ -2891,9 +2943,6 @@ function loadNotCompliedDrillDown(type){
         "filter_ids": filter_ids,
         "not_complied_type": type
     }
-    $(".btn-back").on("click", function() {
-        loadNotCompliedChart();
-    });
     client_mirror.getNotCompliedDrillDown(
         requestData,
         function (status, data) {
@@ -2943,6 +2992,8 @@ function loadComplianceApplicabilityDrillDown(type){
         "applicability_status": type
     }
     $(".btn-back").on("click", function() {
+        $(".graph-container.compliance-status").show();
+        $(".drilldown-container").hide();
         loadComplianceApplicabilityChart();
     });
     client_mirror.getComplianceApplicabilityDrillDown(
@@ -3025,6 +3076,10 @@ function loadCharts () {
 
 function initializeChartTabs () {
     $(".chart-tab").on("click", function () {
+        $(".chart-filter").removeClass("active");
+        $(".filtertable .selections").hide();
+        $(".btn-group").addClass("active");
+        chartInput.setFilterType("group");
         $(".chart-tab").removeClass("active");
         if ($(this).hasClass("compliance-status-tab")) {
             $(".chart-tab.compliance-status-tab").addClass("active");
@@ -3327,7 +3382,15 @@ function initializeFilters () {
             return;
         var filter_type_selection = filter_type.replace("_", "-") + "-selection";
         $("." + filter_type_selection).show();
-        loadCharts();
+        var chart_type = chartInput.getChartType();
+        if (chart_type == "compliance_status") {
+            loadCharts();
+        }
+        else {
+            if (filter_type == "group") {
+                loadCharts();
+            }
+        }
     });
 
     $(".common-filter .btn-go input").on("click", function () {

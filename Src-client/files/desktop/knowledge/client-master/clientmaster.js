@@ -7,6 +7,7 @@ var logo_file;
 var countriesListequal = null;
 var clientcountriesList = null;
 var clientdomainList = null;
+var clientdata = null;
 
 function clearMessage() {
     $(".error-message").hide();
@@ -77,10 +78,20 @@ $("#btn-clientgroup-cancel").click(function(){
     clearMessage();
     $("#clientgroup-add").hide();
     $("#clientgroup-view").show();
+    var x=document.getElementsByTagName("input");
+    for(i = 0; i<=x.length-1; i++){
+       if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
+    }
+    loadClientGroupList(clientdata);
 });
 function initialize(){
+    var x=document.getElementsByTagName("input");
+    for(i = 0; i<=x.length-1; i++){
+       if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
+    }
     hideLoader();
     function onSuccess(data){
+        clientdata = data['client_list'];
         loadClientGroupList(data['client_list']);
     }
     function onFailure(error){
@@ -273,6 +284,11 @@ $("#btn-clientgroup-submit").click(function(){
             displayMessage('Logo Required');
             return false;
         }
+        var ext = $('#upload-logo').val().split('.').pop().toLowerCase();
+        if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+            displayMessage('Logo is invalid');
+        }
+        
         function onSuccess(data){
             hideLoader();
             $("#clientgroup-add").hide();
@@ -320,6 +336,13 @@ $("#btn-clientgroup-submit").click(function(){
         inchargePersonVal = arrayinchargePerson;
         if($("#upload-logo").val() == ''){
             logo_file = null;
+        }
+        if($("#upload-logo").val() != ''){
+            var ext = $('#upload-logo').val().split('.').pop().toLowerCase();
+            if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+                displayMessage('Invalid Logo');
+                return false;
+            }
         }
         function onSuccess(data){
             $("#clientgroup-add").hide();
@@ -477,13 +500,27 @@ function loadFormListUpdate(clientListData, clientGroupId){
 function dateConfigurations(dateconfigList){
     $('.tbody-dateconfiguration-list').empty();
     var countryarr = [];
+    var usercountryarr = [];
     var domainarr = [];
-    $.each(countriesList, function(k, val){
+    var userdomainarr = [];
+    var cl = countryunionclientcountry();
+    var dl = domainunionclientdomain();
+
+    var usercl = countriesList;
+    var userdl = domainsList;
+    $.each(usercl, function(k, val){
+         usercountryarr.push(val["country_id"]);
+    });
+    $.each(userdl, function(k, val){
+         userdomainarr.push(val["domain_id"]);
+    });
+    $.each(cl, function(k, val){
          countryarr.push(val["country_id"]);
     });
-    $.each(domainsList, function(k, val){
+    $.each(dl, function(k, val){
          domainarr.push(val["domain_id"]);
-    })
+    });
+    console.log(countryarr+"--"+domainarr);
     
     var countriesValue = $('#country').val();
     var domainsValue = $('#domain').val();
@@ -505,7 +542,7 @@ function dateConfigurations(dateconfigList){
                     var tableRowDomains = $('#templates .table-dconfig-list .table-dconfig-domain-row');
                     var clone1 = tableRowDomains.clone();
                     $('.inputDomain', clone1).val(arrayDomains[dcount]);
-                    $('.dconfig-domain-name', clone1).text(getClientDomainName(arrayDomains[dcount]));
+                    $('.dconfig-domain-name', clone1).text(getdomainunionclientdomainname(arrayDomains[dcount]));
                     $('.tl-from', clone1).addClass('tl-from-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]);
                     $('.tl-to', clone1).addClass('tl-to-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]);
                     $('.tbody-dateconfiguration-list').append(clone1);
@@ -525,8 +562,10 @@ function dateConfigurations(dateconfigList){
     });
     for(var c = 0; c < countryarr.length; c++ ){
         for(var d = 0; d < domainarr.length; d++ ){
-            $('.tl-from-'+countryarr[c]+'-'+domainarr[d]).attr('disabled', false); 
-            $('.tl-to-'+countryarr[c]+'-'+domainarr[d]).attr('disabled', false); 
+            if($.inArray(countryarr[c], usercountryarr) != -1 && $.inArray(domainarr[d], userdomainarr) != -1){
+                $('.tl-from-'+countryarr[c]+'-'+domainarr[d]).attr('disabled', false); 
+                $('.tl-to-'+countryarr[c]+'-'+domainarr[d]).attr('disabled', false);     
+            }            
         }
     }
 }
@@ -581,15 +620,15 @@ $("#upload-logo").on("change", function(e) {
         }
      });
 });
-$("#search-clientgroup-name").keyup(function() {
-    var count = 0;
-    var value = this.value.toLowerCase();
-    $("table").find("tr:not(:first)").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".clientgroup-name").text().toLowerCase();
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
+// $("#search-clientgroup-name").keyup(function() {
+//     var count = 0;
+//     var value = this.value.toLowerCase();
+//     $("table").find("tr:not(:first)").each(function(index) {
+//         if (index === 0) return;
+//         var id = $(this).find(".clientgroup-name").text().toLowerCase();
+//         $(this).toggle(id.indexOf(value) !== -1);;
+//     });
+// });
 
 //Autocomplete Script Starts and Hide list items after select
 function hidemenu() {
@@ -609,7 +648,7 @@ function loadauto() {
         var domains = domainsList;    
     }
     if($("#clientgroup-id").val() != ''){
-        var domains = domainunionclientdomains();    
+        var domains = domainunionclientdomain();    
     } 
     
     $('#ulist').empty();
@@ -683,17 +722,17 @@ function activate(element){
     }
 
 }
-function domainunionclientdomains(){
-    var d = domainsList;
-    var cd = clientdomainList;
-    var result = {};
+// function domainunionclientdomains(){
+//     var d = domainsList;
+//     var cd = clientdomainList;
+//     var result = {};
 
-    for(var key in d) result[key] = d[key];
-    for(var key in cd) result[key] = cd[key];
+//     for(var key in d) result[key] = d[key];
+//     for(var key in cd) result[key] = cd[key];
 
-    var finalObj = $.extend(result, d, cd);
-    return finalObj;
-}
+//     var finalObj = $.extend(result, d, cd);
+//     return finalObj;
+// }
 function checkingcountry(countryid){
     var returnval = null;
     $.each(countriesListequal, function(key, value){
@@ -732,13 +771,17 @@ function getClientCountriesNameunion(countryid){
     finalObj1 = c.concat(ccnew);
     var dupes = {};
     var finalObj = [];
-
-    $.each(finalObj1, function(i, el) {
-        if (!dupes[el.country_id]) {
-            dupes[el.country_id] = true;
-            finalObj.push(el);
-        }
-    });
+    if(finalObj1.length != 0){
+        $.each(finalObj1, function(i, el) {
+            if(el != null){
+                if (!dupes[el['country_id']]) {
+                    dupes[el['country_id']] = true;
+                    finalObj.push(el);
+                }
+            }
+        });    
+    }
+    
     $.each(finalObj, function(key, val){
         if(val['country_id'] == countryid){
             countryname = val['country_name'];
@@ -775,13 +818,16 @@ function countryunionclientcountry(){
     finalObj1 = c.concat(ccnew);
     var dupes = {};
     var finalObj = [];
-
-    $.each(finalObj1, function(i, el) {
-        if (!dupes[el.country_id]) {
-            dupes[el.country_id] = true;
-            finalObj.push(el);
-        }
-    });
+    if(finalObj1.length != 0){
+        $.each(finalObj1, function(i, el) {
+            if(el != null){
+                if (!dupes[el['country_id']]) {
+                    dupes[el['country_id']] = true;
+                    finalObj.push(el);
+                }    
+            }            
+        });
+    }
     return finalObj;
 }
 function domainunionclientdomain(){
@@ -794,7 +840,49 @@ function domainunionclientdomain(){
     cd = clientdomainList;
     
     if($("#domains").val() != ''){
-        editdomainval = $("#domains").val().split(",");
+        editdomainval = $("#domain").val().split(",");
+    }
+
+    var result = {};
+    cdnew = [];
+    var arrayDomains = [];
+    for(var i = 0; i < editdomainval.length; i++){ arrayDomains[i] = parseInt(editdomainval[i]); }
+    
+    $.each(cd, function(key){
+        if($.inArray(cd[key]['domain_id'], arrayDomains) != -1){
+            cdnew[key] = cd[key];
+        }
+    });
+    var finalObj1 = [];
+    
+    finalObj1 = d.concat(cdnew);
+    
+    var dupes = {};
+    var finalObj = [];
+    if(finalObj1.length != 0){
+        $.each(finalObj1, function(i, el) {
+            if(el != null){
+                if (!dupes[el['domain_id']]) {
+                    dupes[el['domain_id']] = true;
+                    finalObj.push(el);
+                }
+            }
+        });
+    }
+    return finalObj;
+}
+function getdomainunionclientdomainname(domainid){
+    var d = '';
+    var cd = '';
+    var cdnew = '';
+    var editdomainval = [];
+    var domainname = '';
+
+    d = domainsList;
+    cd = clientdomainList;
+    
+    if($("#domains").val() != ''){
+        editdomainval = $("#domain").val().split(",");
     }
 
     var result = {};
@@ -815,12 +903,19 @@ function domainunionclientdomain(){
     var finalObj = [];
 
     $.each(finalObj1, function(i, el) {
-        if (!dupes[el.domain_id]) {
-            dupes[el.domain_id] = true;
-            finalObj.push(el);
+        if(el != null){
+            if (!dupes[el['domain_id']]) {
+                dupes[el['domain_id']] = true;
+                finalObj.push(el);
+            }
         }
     });
-    return finalObj;
+    $.each(finalObj, function(key, val){
+        if(val['domain_id'] == domainid){
+            domainname = val['domain_name'];
+        }
+    });
+    return domainname;
 }
 
 function checkclientcountry(countryid){
@@ -888,13 +983,22 @@ function loadautocountry() {
     if($("#clientgroup-id").val().trim() == ""){
         var countries = countriesList; 
         $('#ulist-country').empty();
-
         var str = '';
         for(var i in countries){
+            selectcountrystatus = '';
+            for(var j = 0; j < editcountryval.length; j++){
+                if(editcountryval[j] ==  countries[i]["country_id"]){
+                    selectcountrystatus = 'checked';
+                }
+            }
             var countryId = parseInt(countries[i]["country_id"]);
             var countryName = countries[i]["country_name"];
-            
-            str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';
+            if(selectcountrystatus == 'checked'){
+                str += '<li id="'+countryId+'" class="active_selectbox_country" onclick="activateCountry(this)" >'+countryName+'</li> ';
+            }
+            else{
+                str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';   
+            }
             
         }
 
@@ -1090,4 +1194,7 @@ function gototop(){
 }
 $(function() {
     initialize();
+});
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });

@@ -273,7 +273,12 @@ function submitcompliance(){
           var completed_by = $('#assignee'+statutoriesCount).val();
           if(completed_by != '') completed_by = parseInt(completed_by);
 
-          if(completion_date == ''){
+          if(due_date == ''){
+            displayMessage("Due Date Required");
+            hideLoader();
+            return false;
+          }
+          else if(completion_date == ''){
             displayMessage("Compliance Date Required");
             hideLoader();
             return false;
@@ -440,7 +445,7 @@ function loadunit(){
             iUnits[unit]["legal_entity_id"] == assignStatutoryLegalEntityId && 
             iUnits[unit]["country_id"] == assignStatutoryCountryId){
             str += splittext + '<li id="'+iUnits[unit]["unit_id"]+'" class="unitlist" > <abbr class="page-load" title="'+
-            iUnits[unit]["unit_address"]+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+ 
+            iUnits[unit]["address"]+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+ 
             iUnits[unit]["unit_name"]+'</li>';
             splittext = '';
         }

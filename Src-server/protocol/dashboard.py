@@ -66,7 +66,8 @@ from protocol.parse_structure import (
     parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance,
     parse_structure_VectorType_CustomTextType_500,
-    parse_structure_OptionalType_CustomTextType_100
+    parse_structure_OptionalType_CustomTextType_100,
+    parse_structure_OptionalType_VectorType_CustomTextType_500
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -136,7 +137,8 @@ from protocol.to_structure import (
     to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance,
     to_structure_VectorType_CustomTextType_500,
-    to_structure_OptionalType_CustomTextType_100
+    to_structure_OptionalType_CustomTextType_100,
+    to_structure_OptionalType_VectorType_CustomTextType_500
 )
 
 #
@@ -1572,7 +1574,7 @@ class Level1Compliance(object):
         status = data.get("status")
         status = parse_structure_EnumType_core_COMPLIANCE_STATUS(status)
         ageing = data.get("ageing")
-        ageing = parse_structure_UnsignedIntegerType_32(ageing)
+        ageing = parse_structure_CustomTextType_100(ageing)
         return Level1Compliance(
             compliance_name, description, assignee_name, assigned_date,
             due_date, completion_date,
@@ -1588,7 +1590,7 @@ class Level1Compliance(object):
             "due_date": to_structure_CustomTextType_20(self.due_date),
             "completion_date": to_structure_CustomTextType_20(self.completion_date),
             "status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.status),
-            "ageing": to_structure_UnsignedIntegerType_32(self.ageing)
+            "ageing": to_structure_CustomTextType_100(self.ageing)
         }
 
 #
@@ -1779,7 +1781,7 @@ class Notification(object):
         updated_on = data.get("updated_on")
         updated_on = parse_structure_CustomTextType_20(updated_on)
         level_1_statutory = data.get("level_1_statutory")
-        level_1_statutory = parse_structure_CustomTextType_50(level_1_statutory)
+        level_1_statutory = parse_structure_CustomTextType_500(level_1_statutory)
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_50(unit_name)
         unit_address = data.get("unit_address")
@@ -1814,7 +1816,7 @@ class Notification(object):
             "notification_text" : to_structure_CustomTextType_500(self.notification_text),
             "extra_details" : to_structure_CustomTextType_500(self.extra_details),
             "updated_on" : to_structure_CustomTextType_20(self.updated_on),
-            "level_1_statutory" : to_structure_CustomTextType_50(self.level_1_statutory),
+            "level_1_statutory" : to_structure_CustomTextType_500(self.level_1_statutory),
             "unit_name" : to_structure_CustomTextType_50(self.unit_name),
             "unit_address" : to_structure_CustomTextType_50(self.unit_address),
             "assignee" : to_structure_CustomTextType_100(self.assignee),
@@ -1949,7 +1951,7 @@ class Compliance(object):
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         download_url = data.get("download_url")
-        download_url = parse_structure_VectorType_CustomTextType_500(download_url)
+        download_url = parse_structure_OptionalType_VectorType_CustomTextType_500(download_url)
         summary = data.get("summary")
         summary = parse_structure_OptionalType_CustomTextType_500(summary)
         return Compliance(
@@ -1974,6 +1976,6 @@ class Compliance(object):
             "frequency": to_structure_OptionalType_CustomTextType_50(self.frequency),
             "statutory_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
             "is_active": to_structure_Bool(self.is_active),
-            "download_url": to_structure_VectorType_CustomTextType_500(self.download_url),
+            "download_url": to_structure_OptionalType_VectorType_CustomTextType_500(self.download_url),
             "summary": to_structure_OptionalType_CustomTextType_500(self.summary)
         }
