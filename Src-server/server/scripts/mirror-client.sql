@@ -425,6 +425,14 @@ CREATE TABLE `tbl_notification_user_log` (
   `read_status` tinyint(1) DEFAULT '0',
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+DROP TABLE IF EXISTS `tbl_mobile_sync_versions`;
+CREATE TABLE `tbl_mobile_sync_versions` (
+  `unit_details_version` int(11) NOT NULL,
+  `user_details_version` int(11) NOT NULL,
+  `compliance_applicability_version` int(11) NOT NULL,
+  `compliance_history_version` int(11) NOT NULL,
+  `reassign_history_version` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 INSERT INTO tbl_audit_log VALUES(0);
 INSERT INTO tbl_form_type VALUES(1, "Home");
 INSERT INTO tbl_form_type VALUES(2, "Master");

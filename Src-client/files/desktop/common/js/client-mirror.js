@@ -1,8 +1,13 @@
 // var CLIENT_BASE_URL = "http://localhost:8080/";
 var CLIENT_BASE_URL = "/api/";
+var my_ip = null;
 
 function initClientMirror() {
     var DEBUG = true;
+
+    if (window.localStorage["my_ip"] == null || window.localStorage["my_ip"] == "unknown"){
+        get_ip();
+    }
 
     function log() {
         if (window.console) {
@@ -33,7 +38,6 @@ function initClientMirror() {
         }
 
     }
-
     // function updateUser_Session(user) {
     //     var info = parseJSON(window.localStorage["userInfo"])
     //     delete window.localStorage["userInfo"];
@@ -41,6 +45,9 @@ function initClientMirror() {
     //     info.userProfile = user;
     //     window.localStorage["userInfo"] = toJSON(info);
     // }
+
+
+
 
     function clearSession() {
         delete window.localStorage["userInfo"];
@@ -54,17 +61,9 @@ function initClientMirror() {
     }
 
     function get_ip(){
-        // alert("inside get_ip")
-        // var get = function(u){
-        //     var x = new XMLHttpRequest;
-        //     x.open('GET', u, false);
-        //     x.send();
-        //     return x.responseText;
-        // }
-
-        // response = JSON.parse(get('http://ifconfig.me/all.json'))
-        // return response["ip_addr"]
-        return "127.0.0.1"
+        $.getJSON("http://jsonip.com?callback=?", function (data) {
+            window.localStorage["my_ip"] = data.ip;
+        });
     }
 
     function getUserProfile() {
@@ -167,6 +166,11 @@ function initClientMirror() {
 
     // Login function
     function login(username, password, short_name, callback) {
+        if (window.localStorage["my_ip"] == null){
+            my_ip = "unknown"
+        }else{
+            my_ip = window.localStorage["my_ip"]
+        }
         var request = [
             short_name, [
                 "Login", {
@@ -174,7 +178,7 @@ function initClientMirror() {
                     "username": username,
                     "password": password,
                     "short_name": short_name,
-                    "ip": get_ip()
+                    "ip": my_ip
                 }
             ]
         ]

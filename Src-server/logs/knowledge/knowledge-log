@@ -1,214 +1,96 @@
-2016-03-22 12:44:18,065 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-22 12:44:18,095 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+2016-03-24 11:38:44,881 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x8      0xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2 ds adasda'
+2016-03-24 11:38:44,926 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1302, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 346, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 110, in parse_structure
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
     return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 257, in parse_inner_structure
-    date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 281, in parse_structure_VectorType_RecordType_core_ClientConfiguration
-    lst.append(parse_structure_RecordType_core_ClientConfiguration(item))
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 2200, in parse_structure_RecordType_core_ClientConfiguration
-    return core.ClientConfiguration.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 1410, in parse_structure
-    period_from = parse_structure_UnsignedIntegerType_32(period_from)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 289, in parse_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 38, in parse_number
-    raise empty_error()
-ValueError: null is not allowed
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
+    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
+    lst.append(parse_structure_RecordType_core_Compliance(item))
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
+    return core.Compliance.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
+    compliance_task = parse_structure_CustomTextType_100(compliance_task)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
+    return parse_custom_string(data, 100)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
+    "a string with max length(%s)" % (
+ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x8      0xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2 ds adasda'
 
-2016-03-22 12:44:18,987 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-22 12:44:18,987 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+2016-03-24 11:43:21,705 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
+2016-03-24 11:43:21,705 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1302, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 346, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 110, in parse_structure
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
     return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 257, in parse_inner_structure
-    date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 281, in parse_structure_VectorType_RecordType_core_ClientConfiguration
-    lst.append(parse_structure_RecordType_core_ClientConfiguration(item))
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 2200, in parse_structure_RecordType_core_ClientConfiguration
-    return core.ClientConfiguration.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 1410, in parse_structure
-    period_from = parse_structure_UnsignedIntegerType_32(period_from)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 289, in parse_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 38, in parse_number
-    raise empty_error()
-ValueError: null is not allowed
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
+    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
+    lst.append(parse_structure_RecordType_core_Compliance(item))
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
+    return core.Compliance.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
+    compliance_task = parse_structure_CustomTextType_100(compliance_task)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
+    return parse_custom_string(data, 100)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
+    "a string with max length(%s)" % (
+ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
 
-2016-03-22 12:44:53,260 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-22 12:44:53,260 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+2016-03-24 11:45:11,591 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
+2016-03-24 11:45:11,592 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1302, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 346, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 110, in parse_structure
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
     return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 257, in parse_inner_structure
-    date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 281, in parse_structure_VectorType_RecordType_core_ClientConfiguration
-    lst.append(parse_structure_RecordType_core_ClientConfiguration(item))
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 2200, in parse_structure_RecordType_core_ClientConfiguration
-    return core.ClientConfiguration.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 1410, in parse_structure
-    period_from = parse_structure_UnsignedIntegerType_32(period_from)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 289, in parse_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 38, in parse_number
-    raise empty_error()
-ValueError: null is not allowed
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
+    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
+    lst.append(parse_structure_RecordType_core_Compliance(item))
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
+    return core.Compliance.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
+    compliance_task = parse_structure_CustomTextType_100(compliance_task)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
+    return parse_custom_string(data, 100)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
+    "a string with max length(%s)" % (
+ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
 
-2016-03-22 12:45:02,325 - knowledge_logger - main.py-parse-request : null is not allowed
-2016-03-22 12:45:02,326 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+2016-03-24 11:46:36,109 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
+2016-03-24 11:46:36,110 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
     data
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1302, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 346, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 110, in parse_structure
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
     return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 257, in parse_inner_structure
-    date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 281, in parse_structure_VectorType_RecordType_core_ClientConfiguration
-    lst.append(parse_structure_RecordType_core_ClientConfiguration(item))
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 2200, in parse_structure_RecordType_core_ClientConfiguration
-    return core.ClientConfiguration.parse_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/core.py", line 1410, in parse_structure
-    period_from = parse_structure_UnsignedIntegerType_32(period_from)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 289, in parse_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 38, in parse_number
-    raise empty_error()
-ValueError: null is not allowed
-
-2016-03-23 18:03:52,902 - knowledge_logger - main.py-handle-api : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
-2016-03-23 18:03:52,939 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 51, in process_techno_request
-    return save_client(db, request_frame, session_user)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 277, in save_client
-    result4 = db.save_unit(client_id, units_list, business_group_id, legal_entity_id, division_id, session_user)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 4290, in save_unit
-    result = self.bulk_insert(self.tblUnits, columns, values_list)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 222, in bulk_insert
-    return self.execute(query)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 157, in execute
-    return cursor.execute(query)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
-    self.errorhandler(self, exc, value)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
-    raise errorclass, errorvalue
-ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
-
-2016-03-23 18:10:28,765 - knowledge_logger - main.py-handle-api : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
-2016-03-23 18:10:28,765 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 51, in process_techno_request
-    return save_client(db, request_frame, session_user)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 277, in save_client
-    result4 = db.save_unit(client_id, units_list, business_group_id, legal_entity_id, division_id, session_user)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 4290, in save_unit
-    result = self.bulk_insert(self.tblUnits, columns, values_list)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 222, in bulk_insert
-    return self.execute(query)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 157, in execute
-    return cursor.execute(query)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
-    self.errorhandler(self, exc, value)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
-    raise errorclass, errorvalue
-ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
-
-2016-03-23 18:11:34,146 - knowledge_logger - main.py-handle-api : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
-2016-03-23 18:11:34,146 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 51, in process_techno_request
-    return save_client(db, request_frame, session_user)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 277, in save_client
-    result4 = db.save_unit(client_id, units_list, business_group_id, legal_entity_id, division_id, session_user)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 4290, in save_unit
-    result = self.bulk_insert(self.tblUnits, columns, values_list)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 222, in bulk_insert
-    return self.execute(query)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 157, in execute
-    return cursor.execute(query)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
-    self.errorhandler(self, exc, value)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
-    raise errorclass, errorvalue
-ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
-
-2016-03-23 18:19:34,735 - knowledge_logger - main.py-handle-api : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
-2016-03-23 18:19:34,735 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 51, in process_techno_request
-    return save_client(db, request_frame, session_user)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 277, in save_client
-    result4 = db.save_unit(client_id, units_list, business_group_id, legal_entity_id, division_id, session_user)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 4290, in save_unit
-    result = self.bulk_insert(self.tblUnits, columns, values_list)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 222, in bulk_insert
-    return self.execute(query)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 157, in execute
-    return cursor.execute(query)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
-    self.errorhandler(self, exc, value)
-  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
-    raise errorclass, errorvalue
-ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
-
-2016-03-23 19:01:38,012 - knowledge_logger - main.py-parse-request : expected a number, but received: u'1'
-2016-03-23 19:01:38,478 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1302, in parse_structure
-    request = parse_structure_VariantType_technomasters_Request(request)
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 346, in parse_structure_VariantType_technomasters_Request
-    return technomasters.Request.parse_structure(data)
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 110, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 502, in parse_inner_structure
-    country_wise_units = parse_structure_VectorType_RecordType_techno_master_COUNTRYWISEUNITS(country_wise_units)
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 306, in parse_structure_VectorType_RecordType_techno_master_COUNTRYWISEUNITS
-    lst.append(parse_structure_RecordType_techno_master_COUNTRYWISEUNITS(item))
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 2146, in parse_structure_RecordType_techno_master_COUNTRYWISEUNITS
-    return technomasters.COUNTRYWISEUNITS.parse_structure(data)
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 441, in parse_structure
-    units = parse_structure_VectorType_RecordType_techno_master_UNIT(units)
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 1475, in parse_structure_VectorType_RecordType_techno_master_UNIT
-    lst.append(parse_structure_RecordType_techno_master_UNIT(item))
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 1946, in parse_structure_RecordType_techno_master_UNIT
-    return technomasters.UNIT.parse_structure(data)
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 400, in parse_structure
-    industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 289, in parse_structure_UnsignedIntegerType_32
-    return parse_number(data, 0, 4294967295)
-  File "/home/king/projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 40, in parse_number
-    raise expectation_error("a number", x)
-ValueError: expected a number, but received: u'1'
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
+    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
+    lst.append(parse_structure_RecordType_core_Compliance(item))
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
+    return core.Compliance.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
+    compliance_task = parse_structure_CustomTextType_100(compliance_task)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
+    return parse_custom_string(data, 100)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
+    "a string with max length(%s)" % (
+ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
 

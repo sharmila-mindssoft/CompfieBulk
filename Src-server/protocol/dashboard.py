@@ -66,7 +66,8 @@ from protocol.parse_structure import (
     parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance,
     parse_structure_VectorType_CustomTextType_500,
-    parse_structure_OptionalType_CustomTextType_100
+    parse_structure_OptionalType_CustomTextType_100,
+    parse_structure_OptionalType_VectorType_CustomTextType_500
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -136,7 +137,8 @@ from protocol.to_structure import (
     to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance,
     to_structure_VectorType_CustomTextType_500,
-    to_structure_OptionalType_CustomTextType_100
+    to_structure_OptionalType_CustomTextType_100,
+    to_structure_OptionalType_VectorType_CustomTextType_500
 )
 
 #
@@ -432,7 +434,7 @@ class GetAssigneeWiseComplianceDrillDown(Request):
         assignee_id = data.get("assignee_id")
         assignee_id = parse_structure_UnsignedIntegerType_32(assignee_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_VectorType_UnsignedIntegerType_32(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         year = data.get("year")
         year = parse_structure_OptionalType_UnsignedIntegerType_32(year)
         return GetAssigneeWiseComplianceDrillDown(assignee_id, domain_id, year)
@@ -440,7 +442,7 @@ class GetAssigneeWiseComplianceDrillDown(Request):
     def to_inner_structure(self):
         return {
             "assignee_id": to_structure_UnsignedIntegerType_32(self.assignee_id),
-            "domain_id": to_structure_VectorType_UnsignedIntegerType_32(self.domain_id),
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "year": to_structure_OptionalType_UnsignedIntegerType_32(self.year),
         }
 
@@ -1572,7 +1574,7 @@ class Level1Compliance(object):
         status = data.get("status")
         status = parse_structure_EnumType_core_COMPLIANCE_STATUS(status)
         ageing = data.get("ageing")
-        ageing = parse_structure_UnsignedIntegerType_32(ageing)
+        ageing = parse_structure_CustomTextType_100(ageing)
         return Level1Compliance(
             compliance_name, description, assignee_name, assigned_date,
             due_date, completion_date,
@@ -1588,7 +1590,7 @@ class Level1Compliance(object):
             "due_date": to_structure_CustomTextType_20(self.due_date),
             "completion_date": to_structure_CustomTextType_20(self.completion_date),
             "status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.status),
-            "ageing": to_structure_UnsignedIntegerType_32(self.ageing)
+            "ageing": to_structure_CustomTextType_100(self.ageing)
         }
 
 #
@@ -1630,7 +1632,7 @@ class AssigneeWiseLevel1Compliance(object):
             "compliance_name": to_structure_CustomTextType_500(self.compliance_name),
             "description": to_structure_CustomTextType_500(self.description),
             "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
-            "assigned_date": to_structure_CustomTextType_20(self.assigned_date),
+            "assigned_date": to_structure_OptionalType_CustomTextType_20(self.assigned_date),
             "due_date": to_structure_CustomTextType_20(self.due_date),
             "completion_date": to_structure_OptionalType_CustomTextType_20(self.completion_date)
         }
@@ -1949,7 +1951,7 @@ class Compliance(object):
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         download_url = data.get("download_url")
-        download_url = parse_structure_VectorType_CustomTextType_500(download_url)
+        download_url = parse_structure_OptionalType_VectorType_CustomTextType_500(download_url)
         summary = data.get("summary")
         summary = parse_structure_OptionalType_CustomTextType_500(summary)
         return Compliance(
@@ -1974,6 +1976,6 @@ class Compliance(object):
             "frequency": to_structure_OptionalType_CustomTextType_50(self.frequency),
             "statutory_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
             "is_active": to_structure_Bool(self.is_active),
-            "download_url": to_structure_VectorType_CustomTextType_500(self.download_url),
+            "download_url": to_structure_OptionalType_VectorType_CustomTextType_500(self.download_url),
             "summary": to_structure_OptionalType_CustomTextType_500(self.summary)
         }

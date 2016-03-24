@@ -142,7 +142,7 @@ function initializeNavBar () {
     $("ul", settingsMenuObject).append(item);
     $("#cssmenu .menu-ul").append(settingsMenuObject)
 
-    if ((typeof(client_name) != "undefined") || (client_name != null) ){
+    if ((typeof(client_name) != "undefined") && (client_name != null) ){
         var liObject = $("#nav-bar-templates .notification li").clone();
         $("#cssmenu .menu-ul").append(liObject);
 
@@ -151,9 +151,37 @@ function initializeNavBar () {
 
         var liObject = $("#nav-bar-templates .escalations li").clone();
         $("#cssmenu .menu-ul").append(liObject);
+        get_notification_count();
     }
 }
 
+function get_notification_count(){
+    client_mirror.checkContractExpiration(function (status, data) {
+            if (data == null) {
+                return
+                $(".contract_timer_container").hide()
+            }else{
+                no_of_days_left = data.no_of_days_left
+                $(".contract_timer_container").show()
+                if (no_of_days_left <= 30){
+                    $(".contract_timer").html(
+                        "Contract Expires in "+no_of_days_left+" days"
+                    )
+                }
+                else{
+                    // alert("Contract not expired yet"+no_of_days_left)
+                }
+                notification_count = data.notification_count;
+                reminder_count = data.reminder_count;
+                escalation_count = data.escalation_count;
+                $("#notification_count").text(notification_count);
+                $("#reminder_count").text(reminder_count);
+                $("#escalation_count").text(escalation_count);
+            }
+        }
+    )
+}
+    
 $(document).ready(function () {
     initializeNavBar();
 });

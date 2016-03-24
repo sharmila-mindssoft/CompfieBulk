@@ -128,15 +128,15 @@ function loadresult(filterList){
           compStatus = 'Complied';
         } 
         else if (completionDate != '' && dateDifference > 0) {
-          remark = 'Over due by '+ dateDifference +'Days';
+          remark = 'Over due by '+ dateDifference +' Days';
           compStatus = 'Complied';
         }
         else if (completionDate == '' && dateDifference > 0) {
-          remark = 'Delayed by '+ dateDifference +'Days';
+          remark = 'Delayed by '+ dateDifference +' Days';
           compStatus = 'DelayedCompliance';
         }
         else if (completionDate == '' && dateDifference <= 0) {
-          remark =  dateDifference +'Days left';
+          remark =  dateDifference +' Days left';
           compStatus = 'Inprogress';
         }
 
@@ -146,15 +146,18 @@ function loadresult(filterList){
           $('.tbl_sno', clone3).text(compliance_count+1);
           $('.tbl_compliance', clone3).html(compliancelists[compliancelist]["compliance_name"]);
           $('.tbl_assignee', clone3).text(compliancelists[compliancelist]["assignee"]);
-
           $('.tbl_duedate', clone3).text(dueDate);
           $('.tbl_completiondate', clone3).text(completionDate);
           $('.tbl_validitydate', clone3).text(vDate);
           $('.tbl_remarks', clone3).text(remark);
-
-          if(compliancelists[compliancelist]["documents"] != null)
-            $('.tbl_document', clone3).html('<a href="#"> Download </a> ');
-
+          if(compliancelists[compliancelist]["documents"] != null){
+            var documentsList = compliancelists[compliancelist]["documents"];
+            var url = '';
+            for(var i=0; i<documentsList.length; i++){
+              url = url + '<a href="'+documentsList[i]+'" target="_new"> Download '+ (i+1) +' </a> ';
+            }
+            $('.tbl_document', clone3).html(url);
+          }
           $('.tbody-unit').append(clone3);
           compliance_count++;
         }
@@ -170,8 +173,7 @@ function loadresult(filterList){
   $('.compliance_count').text("Total : "+ (compliance_count) +" records");
 }
 
-
-$("#submit").click(function(){ 
+function loadCompliance(reportType){
   var country = $("#country").val();
   var domain = $("#domain").val();
   var act = $("#act").val().trim();
@@ -199,21 +201,24 @@ $("#submit").click(function(){
     displayMessage("Act Required");  
   }
   else{
-      var filterdata={};
-      filterdata["country_id"] = country;
-      filterdata["domain_id"] = domain;
-      filterdata["statutory_id"] = act;
-      filterdata["unit_id"] = unit;
-      filterdata["compliance_id"] = compliances;
-      filterdata["assignee_id"] = assignee;
-      filterdata["fromdate"] = fromdate;
-      filterdata["todate"] = todate;
-      filterdata["status"] = status;
-
-loadresult(unitWiseComplianceList);
+      loadresult(unitWiseComplianceList);
       function onSuccess(data){
         unitWiseComplianceList = data["unit_wise_compliancess"];
-        loadresult(unitWiseComplianceList);
+        if(reportType == "show"){
+          loadresult(unitWiseComplianceList);
+        }else{
+          loadresult(unitWiseComplianceList);
+          client_mirror.exportToCSV(data, 
+            function (error, response) {
+              if (error == null){
+                var download_url = response["link"];
+                window.open(download_url, '_blank');
+              }
+              else {
+                displayMessage(error);
+              }
+            });
+        }
       }
       function onFailure(error){
         onFailure(error);
@@ -228,6 +233,14 @@ loadresult(unitWiseComplianceList);
           }
         });
   }
+}
+
+$("#submit").click(function(){ 
+  loadCompliance("show")
+});
+
+$("#export").click(function(){ 
+  loadCompliance("export")
 });
 
 //Autocomplete Script Starts

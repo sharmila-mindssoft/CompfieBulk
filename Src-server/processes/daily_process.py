@@ -413,8 +413,8 @@ def save_in_compliance_history(
         start_date, due_date, next_due_date, assignee,  approve, concurrence
     )
     query = "INSERT INTO tbl_compliance_history (%s) \
-        VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s) " % values    
-    
+        VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s) " % values
+
     print
     print query
     cursor = db.cursor()
@@ -465,7 +465,7 @@ def save_in_notification(
     cursor.close()
     save_notification_users(notification_id, assignee)
     if notify_to_all:
-        if approval_person is not None :
+        if approval_person is not None and assignee != approval_person:
             save_notification_users(notification_id, approval_person)
         if concurrence_person is not None or concurrence_person is not "NULL" :
             save_notification_users(notification_id, concurrence_person)
@@ -744,9 +744,9 @@ def check_service_provider_contract_period(
     now() not between contract_from and contract_to"
     cursor = db.cursor()
     cursor.execute(query)
-    print '*' * 10 
-    print "Deactivated inactive service providers of client :{}".format(client_id)
-    print '*' * 10
+    # print '*' * 10
+    # print "Deactivated inactive service providers of client :{}".format(client_id)
+    # print '*' * 10
 
 def main():
     print '--' * 20
@@ -759,10 +759,7 @@ def main():
             try :
                 start_new_task(db, client_id, current_date)
                 db.commit()
-                notify_task_details(db, client_id)
-                db.commit()
                 check_service_provider_contract_period(db, client_id)
-                # notify_task_details(db, client_id)
                 # notify_before_contract_period(db, client_id)
                 db.commit()
             except Exception, e :

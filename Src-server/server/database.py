@@ -7,6 +7,7 @@ import random
 import datetime
 import uuid
 import json
+import pytz
 from types import *
 from protocol import (
     core, knowledgereport, technomasters,
@@ -27,6 +28,7 @@ KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
 FORMAT_DOWNLOAD_URL = "compliance_format"
 CLIENT_LOGO_PATH = os.path.join(ROOT_PATH, "clientlogo")
 LOGO_URL = "knowledge/clientlogo"
+LOCAL_TIMEZONE = pytz.timezone ("Asia/Kolkata")
 
 class Database(object) :
     def __init__(
@@ -329,6 +331,19 @@ class Database(object) :
         string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y")
         return string_in_date
 
+    def string_to_datetime_with_time(self, string):
+        # date = string.split("-")
+        # datetime_val = datetime.datetime(
+        #     year=int(date[2]),
+        #     month=self.integer_months[date[1]],
+        #     day=int(date[0])
+        # )
+        # return datetime_val.date()
+        string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y %H:%M")
+        local_dt = LOCAL_TIMEZONE.localize(string_in_date, is_dst=None)
+        utc_dt = local_dt.astimezone (pytz.utc)
+        return utc_dt
+
     def datetime_to_string(self, datetime_val):
         # return "%d-%s-%d" % (
         #     datetime_val.day,
@@ -344,7 +359,9 @@ class Database(object) :
         #     self.string_months[datetime_val.month],
         #     datetime_val.year
         # )
-        datetime_in_string = datetime_val.strftime("%d-%b-%Y %H:%M:%S")
+        local_dt = LOCAL_TIMEZONE.localize(datetime_val, is_dst=None)
+        utc_dt = local_dt.astimezone (pytz.utc)
+        datetime_in_string = utc_dt.strftime("%d-%b-%Y %H:%M:%S")
         return datetime_in_string
 
     def get_client_db_info(self, client_id=None):
@@ -2002,15 +2019,11 @@ class KnowledgeDatabase(Database):
             t1.approval_status, t1.is_active,  \
             (select group_concat(distinct compliance_id) from tbl_compliances where statutory_mapping_id = t1.statutory_mapping_id) compliance_ids\
             FROM tbl_statutory_mappings t1 \
-            INNER JOIN tbl_statutory_industry t2 \
-            ON t1.statutory_mapping_id = t2.statutory_mapping_id \
-            INNER JOIN tbl_statutory_geographies t3 \
-            ON t1.statutory_mapping_id = t3.statutory_mapping_id \
             INNER JOIN tbl_user_domains t5 \
-            ON t1.domain_id = t5.domain_id \
+            ON t5.domain_id = t1.domain_id \
             and t5.user_id = %s \
             INNER JOIN tbl_user_countries t6 \
-            ON t1.country_id = t6.country_id \
+            ON t6.country_id = t1.country_id \
             and t6.user_id = %s" % (user_id, user_id)
         q = q + " ORDER BY country_name, domain_name, statutory_nature_name"
         rows = self.select_all(q)
@@ -5622,7 +5635,7 @@ class KnowledgeDatabase(Database):
             user_id = row[0]
             form_id = row[1]
             action = row[2]
-            date = self.datetime_to_string(row[3])
+            date = self.datetime_to_string_time(row[3])
             audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
         users = None
         if session_user != 0:

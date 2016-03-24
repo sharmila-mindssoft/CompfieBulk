@@ -559,7 +559,7 @@ function prepareComplianceStatusChartData (chart_data) {
     // if (xAxis.length == 0)
     //     return null;
     var xAxisName = getXAxisName();
-    var yAxis = ["Complied", "Delay Compliance", "Inprogress", "Not Complied"];
+    var yAxis = ["Complied", "Delayed Compliance", "Inprogress", "Not Complied"];
     var yAxisData = [
         yAxisComplied, yAxisDelayed, yAxisInprogress, yAxisNotComplied
     ];
@@ -656,7 +656,7 @@ function updateComplianceStatusStackBarChart(data) {
     var chartDataSeries = data[2];
     var chartTitle = data[3];
     var drilldownSeries = data[4]
-    var yAxisname = ["Complied", "Delay Compliance", "Inprogress", "Not Complied"];
+    var yAxisname = ["Complied", "Delayed Compliance", "Inprogress", "Not Complied"];
 
     var highchart;
     // function setChart(name) {
@@ -912,9 +912,6 @@ function updateNotCompliedDrillDown(status, data) {
     $(".graph-selections-bottom").hide();
     $(".drilldown-container").show();
     $(".btn-back").show();
-    $(".btn-back").on("click", function() {
-        loadNotCompliedChart();
-    });
     showNotCompliedDrillDownRecord(data);
 }
 
@@ -1054,7 +1051,6 @@ function accordianType(idtype, toggleClass, contentClass){
 }
 
 function showNotCompliedDrillDownRecord(data){
-
     $(".table-thead-drilldown-list").empty();
     $(".table-drilldown-list tbody").remove();
     $(".drilldown-title").text("Over due compliances of "+GROUP_NAME);
@@ -1173,6 +1169,12 @@ function unitWiseNotCompliedDrillDown(status, data){
 }
 
 function notCompliedDrilldown(status, data){
+    $(".btn-back").on("click", function() {
+        $(".graph-container.compliance-status").show();
+        $(".drilldown-container").hide();
+        loadNotCompliedChart();
+    });
+
     var sno = 1;
     var count = 1;
 
@@ -1211,7 +1213,7 @@ function notCompliedDrilldown(status, data){
                 $(".industry-type-name", clone).html(value["industry_name"]);
                 $(".compliance-name span", clone).html(val['compliance_name']);
                 $(".assigned-to", clone).html(val['assignee_name']);
-                $(".over-due", clone).html(val['ageing']+" Days");
+                $(".over-due", clone).html(val['ageing']);
                 $('.accordion-content'+count).append(clone);
                 sno = sno + 1;
 
@@ -1399,11 +1401,11 @@ function escalationDrilldown(status, data){
     var h2heading = $('#templates .escalation-status .tr-h2');
     var cloneh2 = h2heading.clone();
     if(status == "not_complied"){
-        $(".escalation-status-value", cloneh2).html("Not Complied compliances");    
+        $(".escalation-status-value", cloneh2).html("Not Complied compliances");
     }
     if(status == "delayed"){
-        $(".escalation-status-value", cloneh2).html("Delayed compliances");       
-    }    
+        $(".escalation-status-value", cloneh2).html("Delayed compliances");
+    }
     $(".table-thead-drilldown-list").append(cloneh2);
 
     var tableHeading = $('#templates .escalation-status .tr-heading');
@@ -1443,11 +1445,11 @@ function escalationDrilldown(status, data){
                     $(".compliance-name span", clone).html(val['compliance_name']);
                     $(".assigned-to", clone).html(val['assignee_name']);
 
-                    if(val['status'] == "Delayed"){
-                        $(".delayed-by", clone).html(val['ageing']+" Days");
+                    if(val['status'] == "Delayed Compliance"){
+                        $(".delayed-by", clone).html(val['ageing']);
                     }
                     if(val['status'] == "Not Complied"){
-                        $(".over-due", clone).html(val['ageing']+" Days");
+                        $(".over-due", clone).html(val['ageing']);
                     }
                     $('.accordion-content'+count).append(clone);
                     sno = sno + 1;
@@ -1818,7 +1820,7 @@ function groupWiseComplianceDrillDown(status, data){
         $(".tr-unit .unit-heading").attr("colspan", "7");
         $(".over-due-row").show();
     }
-    else if (status == "Delayed") {
+    else if (status == "Delayed Compliance") {
         $(".tr-level1 th").attr("colspan", "8");
         $(".tr-unit .unit-heading").attr("colspan", "7");
         $(".delayed-by-row").show();
@@ -1857,7 +1859,7 @@ function businessgroupWiseComplianceDrillDown(status, data){
         $(".tr-unit .unit-heading").attr("colspan", "6");
         $(".over-due-row").show();
     }
-    else if (status == "Delayed") {
+    else if (status == "Delayed Compliance") {
         $(".tr-level1 th").attr("colspan", "7");
         $(".tr-unit .unit-heading").attr("colspan", "6");
         $(".delayed-by-row").show();
@@ -1896,7 +1898,7 @@ function legalentityWiseComplianceDrillDown(status, data){
         $(".tr-unit .unit-heading").attr("colspan", "5");
         $(".over-due-row").show();
     }
-    else if (status == "Delayed") {
+    else if (status == "Delayed Compliance") {
         $(".tr-level1 th").attr("colspan", "6");
         $(".tr-unit .unit-heading").attr("colspan", "5");
         $(".delayed-by-row").show();
@@ -1936,7 +1938,7 @@ function divisionWiseComplianceDrillDown(status, data){
         $(".tr-unit .unit-heading").attr("colspan", "4");
         $(".over-due-row").show();
     }
-    else if (status == "Delayed") {
+    else if (status == "Delayed Compliance") {
         $(".tr-level1 th").attr("colspan", "5");
         $(".tr-unit .unit-heading").attr("colspan", "4");
         $(".delayed-by-row").show();
@@ -1975,7 +1977,7 @@ function unitWiseComplianceDrillDown(status, data){
         $(".tr-unit .unit-heading").attr("colspan", "4");
         $(".over-due-row").show();
     }
-    else if (status == "Delayed") {
+    else if (status == "Delayed Compliance") {
         $(".tr-level1 th").attr("colspan", "5");
         $(".tr-unit .unit-heading").attr("colspan", "4");
         $(".delayed-by-row").show();
@@ -2021,14 +2023,14 @@ function complianceStatusDrilldown(status, data){
                 $(".industry-type-name", clone).html(value["industry_name"]);
                 $(".compliance-name span", clone).html(val['compliance_name']);
                 $(".assigned-to", clone).html(val['assignee_name']);
-                if(val['status'] == "Delayed"){
-                    $(".delayed-by", clone).html(val['ageing']+" Days");
+                if(val['status'] == "Delayed Compliance"){
+                    $(".delayed-by", clone).html(val['ageing']);
                 }
                 if(val['status'] == "Inprogress"){
-                    $(".dates-left-to-complete", clone).html(val['ageing']+" Days");
+                    $(".dates-left-to-complete", clone).html(val['ageing']);
                 }
                 if(val['status'] == "Not Complied"){
-                    $(".over-due", clone).html(val['ageing']+" Days");
+                    $(".over-due", clone).html(val['ageing']);
                 }
                 $('.accordion-content'+count).append(clone);
                 sno = sno + 1;
@@ -2078,7 +2080,7 @@ function prepareEscalationChartdata(source_data) {
         else {
             delayed_data.push({
                 "y": delayed,
-                "drilldown": "Delay Compliance",
+                "drilldown": "Delayed Compliance",
                 "year": year
             });
             not_complied_data.push({
@@ -2091,7 +2093,7 @@ function prepareEscalationChartdata(source_data) {
     });
 
     chartDataSeries.push({
-        "name": "Delay Compliance",
+        "name": "Delayed Compliance",
         "data": delayed_data
     });
     chartDataSeries.push(
@@ -2993,6 +2995,8 @@ function loadComplianceApplicabilityDrillDown(type){
         "applicability_status": type
     }
     $(".btn-back").on("click", function() {
+        $(".graph-container.compliance-status").show();
+        $(".drilldown-container").hide();
         loadComplianceApplicabilityChart();
     });
     client_mirror.getComplianceApplicabilityDrillDown(
@@ -3484,31 +3488,31 @@ $(document).ready(function () {
         return;
     }
 
-    client_mirror.checkContractExpiration(function (status, data) {
-            if (data == null) {
-                return
-                $(".contract_timer_container").hide()
-            }else{
-                no_of_days_left = data.no_of_days_left
-                $(".contract_timer_container").show()
-                if (no_of_days_left <= 30){
-                    $(".contract_timer").html(
-                        "Contract Expires in "+no_of_days_left+" days"
-                    )
-                }
-                else{
-                    // alert("Contract not expired yet"+no_of_days_left)
-                }
-                notification_count = data.notification_count;
-                console.log("notification_count"+notification_count);
-                reminder_count = data.reminder_count;
-                escalation_count = data.escalation_count;
-                $("#notification_count").text(notification_count);
-                $("#reminder_count").text(reminder_count);
-                $("#escalation_count").text(escalation_count);
-            }
-        }
-    )
+    // client_mirror.checkContractExpiration(function (status, data) {
+    //         if (data == null) {
+    //             return
+    //             $(".contract_timer_container").hide()
+    //         }else{
+    //             no_of_days_left = data.no_of_days_left
+    //             $(".contract_timer_container").show()
+    //             if (no_of_days_left <= 30){
+    //                 $(".contract_timer").html(
+    //                     "Contract Expires in "+no_of_days_left+" days"
+    //                 )
+    //             }
+    //             else{
+    //                 // alert("Contract not expired yet"+no_of_days_left)
+    //             }
+    //             notification_count = data.notification_count;
+    //             console.log("notification_count"+notification_count);
+    //             reminder_count = data.reminder_count;
+    //             escalation_count = data.escalation_count;
+    //             $("#notification_count").text(notification_count);
+    //             $("#reminder_count").text(reminder_count);
+    //             $("#escalation_count").text(escalation_count);
+    //         }
+    //     }
+    // )
 
     client_mirror.getChartFilters(function (status, data) {
         if (data == null) {

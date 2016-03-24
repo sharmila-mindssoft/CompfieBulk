@@ -12,6 +12,10 @@ function initMirror() {
         }
     }
 
+    if (window.localStorage["my_ip"] == null || window.localStorage["my_ip"] == "unknown"){
+        get_ip();
+    }
+
     function toJSON(data) {
         return JSON.stringify(data, null, " ");
     }
@@ -97,7 +101,6 @@ function initMirror() {
         if (info != null){
             return info["menu"]["menus"];
         }else{
-            console.log(window.localStorage["login_url"])
             window.location.href = window.localStorage["login_url"];
         }
     }
@@ -112,10 +115,9 @@ function initMirror() {
 
     function get_ip(){
         $.getJSON("http://jsonip.com?callback=?", function (data) {
-            my_ip = data.ip;
+            window.localStorage["my_ip"]  = data.ip;
         });
     }
-    get_ip();
     function apiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
@@ -150,6 +152,7 @@ function initMirror() {
         )
         .fail(
             function (jqXHR, textStatus, errorThrown) {
+                callback(jqXHR["responseText"], errorThrown);
                 // alert("jqXHR:"+jqXHR.status);
                 // alert("textStatus:"+textStatus);
                 // alert("errorThrown:"+errorThrown);
@@ -186,9 +189,10 @@ function initMirror() {
 
     // Login function
     function login(username, password, short_name, callback) {
-        if (my_ip == null){
-            get_ip();
-            my_ip = "unknown" 
+        if (window.localStorage["my_ip"] == null){
+            my_ip = "unknown"
+        }else{
+            my_ip = window.localStorage["my_ip"]
         }
         var request = [
             "Login", {
@@ -910,7 +914,6 @@ function initMirror() {
     }
 
     function updateAdminUser(userDetail, callback) {
-        console.log("inside update admin user")
         callerName = "admin"
         var request = [
             "UpdateUser",
@@ -1375,7 +1378,6 @@ function initMirror() {
                 "applicability_status" : applicableStatus
             }
         ];
-        console.log(request)
         callerName = "techno_report";
         apiRequest(callerName, request, callback);
     }

@@ -306,29 +306,29 @@ function loadUserUpdate(userId){
 }
 
 $("#submit").click(function(){
-    var userId = $("#user-id").val();
-	var usertype = $('#usertype').val();
-	var employeename = $('#employee-name').val();	
-	var employeeid = $('#employee-id').val();
-	var countrycode = $('#country-code').val();
-	var areacode = $('#area-code').val();
-	var mobilenumber = $('#mobile-number').val();
-	var usergroup = $('#usergroup').val();
-	var userlevel = $('#user-level').val();
-	var emailid = $('#email-id').val();
-	var country = $('#country').val();
-	var businessgroups = $('#business-groups').val();
-	var legalentities = $('#legal-entities').val();
-	var division = $('#division').val();
-	var domains = $('#domains').val();
-	var units = $('#units').val();
+    var userId = $("#user-id").val().trim();
+	var usertype = $('#usertype').val().trim();
+	var employeename = $('#employee-name').val().trim();	
+	var employeeid = $('#employee-id').val().trim();
+	var countrycode = $('#country-code').val().trim();
+	var areacode = $('#area-code').val().trim();
+	var mobilenumber = $('#mobile-number').val().trim();
+	var usergroup = $('#usergroup').val().trim();
+	var userlevel = $('#user-level').val().trim();
+	var emailid = $('#email-id').val().trim();
+	var country = $('#country').val().trim();
+	var businessgroups = $('#business-groups').val().trim();
+	var legalentities = $('#legal-entities').val().trim();
+	var division = $('#division').val().trim();
+	var domains = $('#domains').val().trim();
+	var units = $('#units').val().trim();
 	var isserviceprovider, serviceprovider;
 
 	if(usertype == "Inhouse"){
 		isserviceprovider = false;
 		serviceprovider = null;
-		var seatingunit = $('#seatingunit').val();	
-		var seatingunitname = $('#seatingunitval').val();		
+		var seatingunit = $('#seatingunit').val().trim();	
+		var seatingunitname = $('#seatingunitval').val().trim();		
 		if(seatingunit == ""){
 			displayMessage("Enter Seating Unit");
             return;	
@@ -1102,7 +1102,9 @@ function loadauto_usergroup (textval) {
   $('#usergroupview ul').empty();
   if(textval.length>0){
     for(var i in usergroups){
-      if (~usergroups[i]["user_group_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([usergroups[i]["user_group_id"],usergroups[i]["user_group_name"]]);
+        if(usergroups[i]["is_active"] == true){
+            if (~usergroups[i]["user_group_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([usergroups[i]["user_group_id"],usergroups[i]["user_group_name"]]);
+        }
     }
     var str='';
     for(var i in suggestions){

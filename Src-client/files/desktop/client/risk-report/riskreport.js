@@ -115,8 +115,7 @@ function loadresult(filterList){
  
 }
 
-
-$("#submit").click(function(){ 
+function loadCompliance(reportType){
   var country = $("#country").val();
   var domain = $("#domain").val();
   var businessgroup = null;
@@ -140,91 +139,55 @@ $("#submit").click(function(){
     displayMessage("Domain Required");  
   }
   else{
+    var filterdata={};
+    filterdata["country_id"] = country;
+    filterdata["domain_id"] = domain;
+    filterdata["businessgroup_id"] = businessgroup;
+    filterdata["legalentity_id"] = legalentity;
+    filterdata["division_id"] = division;
+    filterdata["unit_id"] = unit;
+    filterdata["statutory_id"] = act;
+    filterdata["statutory_status"] = statutory_status;
 
-      /*riskComplianceList =
-            [{
-              "business_group_name" : "BUSINESS_GROUP_NAME",
-              "legal_entity_name" : "LEGAL_ENTITY_NAME",
-              "division_name" : "DIVISION_NAME",
-              "level_1_statutory_wise_units":{
-                "LEVEL_1_STATUTORY_NAME" : [
-                    {
-                        "unit_name": "UNIT_CODE - UNIT_NAME",
-                        "address": "ADDRESS",
-                        "compliances": [
-                            {
-                                "statutory_mapping": "SM",
-                                "compliance_name": "DOCUMENT_NAME - COMPLIANCE_TASK_NAME",
-                                "description": "description",
-                                "penal_consequences"  : "penal_consequences",
-                                "compliance_frequency": "COMPLIANCE_FREQUENCY",
-                                "repeats"  : "repeats"
-                            },
-                            {
-                                "statutory_mapping": "SM1",
-                                "compliance_name": "DOCUMENT_NAME1 - COMPLIANCE_TASK_NAME1",
-                                "description": "description1",
-                                "penal_consequences"  : "penal_consequences1",
-                                "compliance_frequency": "COMPLIANCE_FREQUENCY1",
-                                "repeats"  : "repeats1"
-                            },
-                        ]
-                    },
-                    ],
-                    "LEVEL_1_STATUTORY_NAME1" : [
-                    {
-                        "unit_name": "UNIT_CODE1 - UNIT_NAME1",
-                        "address": "ADDRESS1",
-                        "compliances": [
-                            {
-                                "statutory_mapping": "SM",
-                                "compliance_name": "DOCUMENT_NAME - COMPLIANCE_TASK_NAME",
-                                "description": "description",
-                                "penal_consequences"  : "penal_consequences",
-                                "compliance_frequency": "COMPLIANCE_FREQUENCY",
-                                "repeats"  : "repeats"
-                            },
-                            {
-                                "statutory_mapping": "SM1",
-                                "compliance_name": "DOCUMENT_NAME1 - COMPLIANCE_TASK_NAME1",
-                                "description": "description1",
-                                "penal_consequences"  : "penal_consequences1",
-                                "compliance_frequency": "COMPLIANCE_FREQUENCY1",
-                                "repeats"  : "repeats1"
-                            },
-                        ]
-                    },
-                ],
-              }
-           }]
-           loadresult(riskComplianceList);*/
-      var filterdata={};
-      filterdata["country_id"] = country;
-      filterdata["domain_id"] = domain;
-      filterdata["businessgroup_id"] = businessgroup;
-      filterdata["legalentity_id"] = legalentity;
-      filterdata["division_id"] = division;
-      filterdata["unit_id"] = unit;
-      filterdata["statutory_id"] = act;
-      filterdata["statutory_status"] = statutory_status;
-
-      function onSuccess(data){
-        riskComplianceList = data["delayed_compliance"];
+    function onSuccess(data){
+      riskComplianceList = data["delayed_compliance"];
+      if(reportType == "show"){
         loadresult(riskComplianceList);
+      }else{
+        loadresult(riskComplianceList);
+        client_mirror.exportToCSV(data, 
+          function (error, response) {
+            if (error == null){
+              var download_url = response["link"];
+              window.open(download_url, '_blank');
+            }
+            else {
+              displayMessage(error);
+            }
+          });
       }
-      function onFailure(error){
-        onFailure(error);
-      }
-      client_mirror.getRiskReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), act, parseInt(statutory_status), 
-        function (error, response) {
-          if (error == null){
-            onSuccess(response);
-          }
-          else {
-            onFailure(error);
-          }
-        });
+    }
+    function onFailure(error){
+      onFailure(error);
+    }
+    client_mirror.getRiskReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), act, parseInt(statutory_status), 
+      function (error, response) {
+        if (error == null){
+          onSuccess(response);
+        }
+        else {
+          onFailure(error);
+        }
+      });
   }
+}
+
+$("#submit").click(function(){ 
+  loadCompliance("show")
+});
+
+$("#export").click(function(){ 
+  loadCompliance("export")
 });
 
 
