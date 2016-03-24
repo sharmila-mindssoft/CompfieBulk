@@ -193,15 +193,20 @@ class ReplicationManager(object) :
         if change.value is None:
             val = ""
         else:
-            val = "'" + change.value.replace("'", "\\'") + "'"
-        query = "UPDATE %s SET %s = %s WHERE %s = %s;" % (
+            val = change.value
+            # val = "'" + change.value.replace("'", "\\'") + "'"
+        query = "UPDATE %s SET %s = '%s' WHERE %s = %s;" % (
             change.tbl_name,
             change.column_name,
             val,
             auto_id,
             change.tbl_auto_id
         )
-        self._db.execute(query)
+        try :
+            self._db.execute(query)
+        except Exception, e :
+            print e,
+            print query
 
         self._temp_count = change.audit_trail_id
 
