@@ -5733,6 +5733,7 @@ class ClientDatabase(Database):
         # due_date = datetime.datetime(due_date.year, due_date.month, due_date.day)
         if frequency_type =="On Occurrence":
             r = relativedelta.relativedelta(due_date, current_time_stamp)
+            print r
             if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
                 if r.days == 0:
                     compliance_status = " %d.%d hours left" % (
@@ -5806,13 +5807,16 @@ class ClientDatabase(Database):
             )
             no_of_days, ageing = self.calculate_ageing(compliance[2], compliance[13])
             compliance_status = core.COMPLIANCE_STATUS("Inprogress")
-            if no_of_days < 0:
+            if "Overdue" in ageing:
                 compliance_status = core.COMPLIANCE_STATUS("Not Complied")
             format_files = None
             if compliance[8] is not None and compliance[8].strip() != '':
                 format_files = [ "%s/%s" % (
                         FORMAT_DOWNLOAD_URL, x
                     ) for x in compliance[8].split(",")]
+            remarks = compliance[14]
+            if remarks in ["None", None, ""]:
+                remarks = None
             current_compliances_list.append(
                 core.ActiveCompliance(
                     compliance_history_id=compliance[0],
@@ -5828,7 +5832,7 @@ class ClientDatabase(Database):
                     format_file_name=format_files,
                     unit_name=unit_name, address=compliance[11],
                     compliance_description=compliance[7],
-                    remarks=compliance[14],
+                    remarks=remarks,
                     compliance_id=compliance[15]
                 )
             )
