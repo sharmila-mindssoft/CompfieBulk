@@ -688,6 +688,13 @@ function loadglevels(classval){
         }
     }
 }
+function changelocation(classval){
+    var lastClass = classval.split(' ').pop();
+    var checkval = lastClass.split('-');
+    $(".unitlocation-"+checkval[1]+"-"+checkval[2]).val("");
+    $(".unitlocation-ids-"+checkval[1]+"-"+checkval[2]).val("");
+    $(".full-location-list-"+checkval[1]+"-"+checkval[2]).html("");
+}
 
 //load industry type--------------------------------------------------------------------------------------------------
 function industrytype(classval){
