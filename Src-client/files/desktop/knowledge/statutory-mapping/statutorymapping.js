@@ -28,6 +28,11 @@ var compliances = [];
 var uploadFile = null
 var isAllComplianceActive;
 
+var finalList;
+var pageSize;
+var startCount;
+var endCount;
+
 function clearMessage() {
   $(".error-message").hide();
   $(".error-message").text("");
@@ -183,13 +188,14 @@ function changeStatus (statutorymappingId,isActive) {
   }
 }
 
-function loadStatutoryMappingList(statutoryMappingsList) {
+
+function loadCountwiseStatutoryMapping(keysList, statutoryMappingsList){
+
   $('#activate-step-finish').prop('disabled', false);
   $('#activate-step-finish').text('Submit');
   $('#activate-step-finish').addClass('btn-right');
   $('#activate-step-finish').removeClass('btn-right-submiting');
-
-  var j = 1;
+  var j = startCount+1;
   var imgName = '';
   var passStatus = '';
   var statutorymappingId = 0;
@@ -200,11 +206,15 @@ function loadStatutoryMappingList(statutoryMappingsList) {
   var domainName = '';
   var approvalStatus = '';
   var title='';
-
   $(".tbody-statutorymapping-list").find("tr").remove();
-  for(var entity in statutoryMappingsList) {
-    statutorymappingId = entity;
 
+  if(endCount>Object.keys(finalList).length) endCount = Object.keys(finalList).length
+  $('.view-count-message').text("Showing " + (startCount+1) + " to " + endCount + " of " + Object.keys(finalList).length );
+
+  for(var k=0; k<keysList.length; k++){
+    //console.log(entity)
+    var entity = keysList[k];
+    statutorymappingId = entity;
     industryName = statutoryMappingsList[entity]["industry_names"];
     statutoryNatureName = statutoryMappingsList[entity]["statutory_nature_name"];
     var statutoryMappings='';
@@ -251,6 +261,59 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     $('.tbody-statutorymapping-list').append(clone);
     j = j + 1;
     }
+}
+
+
+function get_sub_array(object, start, end){
+    if(!end){ end=-1;} 
+    return object.slice(start, end);
+}
+
+function callPage(pageId){
+  var type = '.page'
+  $(type).each( function( index, el ) {
+    $(el).removeClass( "active" );
+      });
+   $('#pageview'+pageId).addClass("active");
+
+  //var pageNo = $(this).attr('id');
+  startCount = pageSize * (pageId-1);
+  endCount = pageSize * pageId;
+
+  var keys_list = Object.keys(finalList);
+  var sub_keys_list = get_sub_array(keys_list, startCount, endCount);
+  loadCountwiseStatutoryMapping(sub_keys_list, finalList);
+  
+};
+
+
+function loadStatutoryMappingList(statutoryMappingsList) {
+
+  pageSize = 100;
+  var listSize = Math.ceil(Object.keys(statutoryMappingsList).length / pageSize);
+
+  startCount = 0;
+  endCount = pageSize;
+
+  var str='<li><a href="#" onclick="callPage('+1+')">«</a></li>';
+  $('.pagination').empty();
+  var j;
+  for(j=1; j<=listSize; j++){
+    if(j==1){
+      str += '<li><a href="#" id = "pageview'+j+'" class="page active"  onclick="callPage('+j+')">'+j+'</a></li>';
+    }else{
+      str += '<li><a href="#" id = "pageview'+j+'" class="page" onclick="callPage('+j+')">'+j+'</a></li>';
+    }
+  }
+  str += '<li><a href="#" onclick="callPage('+(j-1)+')">»</a></li>';
+  $('.pagination').append(str);
+
+  finalList = statutoryMappingsList;
+
+  var keys_list = Object.keys(finalList);
+  var sub_keys_list = get_sub_array(keys_list, startCount, endCount);
+  loadCountwiseStatutoryMapping(sub_keys_list, finalList);
+
 }
 
 function getStatutoryMappingsMastersList() {
@@ -773,6 +836,7 @@ $("#temp_addcompliance").click(function() {
   var compliance_document = null;
 
   if($('#compliance_document').val().trim().length > 0) compliance_document = $('#compliance_document').val().trim();
+  
   var file_format = null;
   if(uploadFile != null){
     file_format = [];

@@ -4756,9 +4756,9 @@ class ClientDatabase(Database):
             unit_name = "%s - %s " % (unit[1], unit[2])
             unit_address = unit[3]
 
-            query = "SELECT distinct ch.compliance_history_id, concat(c.document_name,'-',c.compliance_task), c.compliance_description, ch.validity_date, ch.due_date, \
+            query = "SELECT distinct ch.compliance_history_id, c.document_name, c.compliance_description, ch.validity_date, ch.due_date, \
                     (SELECT concat( u.employee_code, '-' ,u.employee_name ) FROM tbl_users u WHERE u.user_id = ch.completed_by) AS assigneename, \
-                    ch.documents, ch.completion_date \
+                    ch.documents, ch.completion_date, c.compliance_task \
                     from tbl_compliances c,tbl_compliance_history ch, \
                     tbl_units ut where \
                     ch.unit_id = %s \
@@ -4768,20 +4768,30 @@ class ClientDatabase(Database):
                     unit_id, country_id, str(domain_id)+"%",
                     assignee_id, str(statutory_id+"%"), compliance_id, start_date, end_date
                 )
+            print query
             compliance_rows = self.select_all(query, client_id)
 
             compliances_list = []
             for compliance in compliance_rows:
 
-                compliance_name = compliance[1]
-                assignee = compliance[5]
+                if compliance[1] == "None" :
+                    compliance_name = compliance[8]
+                else :
+                    compliance_name = compliance[1]+' - '+compliance[8]
+
+                if compliance[5] is None :
+                    assignee = 'Administrator'
+                else :
+                    assignee = compliance[5]
+
                 due_date = self.datetime_to_string(compliance[4])
 
                 validity_date = None
                 if(compliance[3] != None):
                     validity_date = self.datetime_to_string(compliance[3])
 
-                documents = None if compliance[6] == "" else compliance[6]
+                documents = [x for x in compliance[6].split(",")] if compliance[6] != None else None
+
                 remarks = "remarks"
                 completion_date = None
                 if(compliance[7] != None):
@@ -6534,10 +6544,10 @@ class ClientDatabase(Database):
             history_condition
         )
 
-
         assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = self.get_compliance_history_details(
             compliance_history_id
         )
+
         if document_name is not None and document_name != '' and document_name != 'None':
             compliance_name = "%s - %s" % (document_name, compliance_name)
 

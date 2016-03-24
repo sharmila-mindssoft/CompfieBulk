@@ -141,7 +141,7 @@ function loadresult(filterList){
               $('.tbl_statutoryprovision', clone1).text(filterList[entity][i]["compliances"][k]["statutory_provision"]);
               var compliance_name = filterList[entity][i]["compliance_names"][k]["compliance_name"]
 
-              var download_url = filterList[entity][i]["compliance_names"][k]["url"]
+              var download_url = filterList[entity][i]["compliance_names"][k]["url"];
               if(download_url == null){
                 $('.tbl_compliancetask', clone1).html(compliance_name);
               }else{
