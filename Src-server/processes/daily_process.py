@@ -219,11 +219,11 @@ def get_client_database():
     return client_db
 
 def get_current_date():
-    date = datetime.date.today()
+    date = datetime.datetime.today()
     return date
 
 def get_current_month():
-    month = datetime.date.today().month
+    month = get_current_date().month
     return month
 
 def get_country_wise_timestamp():
@@ -413,8 +413,8 @@ def save_in_compliance_history(
         start_date, due_date, next_due_date, assignee,  approve, concurrence
     )
     query = "INSERT INTO tbl_compliance_history (%s) \
-        VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s) " % values    
-    
+        VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s) " % values
+
     print
     print query
     cursor = db.cursor()
@@ -744,9 +744,9 @@ def check_service_provider_contract_period(
     now() not between contract_from and contract_to"
     cursor = db.cursor()
     cursor.execute(query)
-    print '*' * 10 
-    print "Deactivated inactive service providers of client :{}".format(client_id)
-    print '*' * 10
+    # print '*' * 10
+    # print "Deactivated inactive service providers of client :{}".format(client_id)
+    # print '*' * 10
 
 def main():
     print '--' * 20
@@ -759,10 +759,7 @@ def main():
             try :
                 start_new_task(db, client_id, current_date)
                 db.commit()
-                notify_task_details(db, client_id)
-                db.commit()
                 check_service_provider_contract_period(db, client_id)
-                # notify_task_details(db, client_id)
                 # notify_before_contract_period(db, client_id)
                 db.commit()
             except Exception, e :

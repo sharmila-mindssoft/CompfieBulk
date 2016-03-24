@@ -115,7 +115,6 @@ function initMirror() {
             my_ip = data.ip;
         });
     }
-    get_ip();
     function apiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
@@ -126,6 +125,7 @@ function initMirror() {
             BASE_URL + callerName,
             toJSON(requestFrame),
             function (data) {
+                console.log(data)
                 var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
@@ -150,6 +150,7 @@ function initMirror() {
         )
         .fail(
             function (jqXHR, textStatus, errorThrown) {
+                callback(jqXHR["responseText"], errorThrown);
                 // alert("jqXHR:"+jqXHR.status);
                 // alert("textStatus:"+textStatus);
                 // alert("errorThrown:"+errorThrown);
@@ -188,7 +189,7 @@ function initMirror() {
     function login(username, password, short_name, callback) {
         if (my_ip == null){
             get_ip();
-            my_ip = "unknown" 
+            my_ip = "unknown"
         }
         var request = [
             "Login", {

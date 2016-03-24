@@ -230,7 +230,7 @@ class EmailHandler(Email):
         cc = receiver.split(",")[2]
         if concurrence_id is not None or concurrence_id != 0:
             cc += ","+receiver.split(",")[1]
-        if document_name is not None:
+        if document_name not in [None, "None", ""]:
             compliance_name = "%s - %s" % (document_name, compliance_name)
         assignee_name = employee_name.split(",")[0]
         subject = "Task Started"

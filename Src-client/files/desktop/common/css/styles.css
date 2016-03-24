@@ -1529,18 +1529,17 @@ list-style-type:none; line-height:25px;
   background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li:hover{
-  background:  #EAE8E8 url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+  background: #EAE8E8 url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox {
-  background: url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox:hover {
-  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+  background: #EAE8E8 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox_country {
   background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
 }
-
 .ac-selectbox ul li.active_selectbox_bgroups {
   background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
 }
