@@ -61,9 +61,7 @@ def parse_string(x) :
     #     raise empty_error()
     t = type(x)
     if t is unicode :
-        print x
-        x = x.encode("utf8")
-        print x
+        x = x.encode("utf-8")
         x = x.replace("'", "")
         return x
     elif t is str:
@@ -80,7 +78,7 @@ def parse_custom_string(x, length) :
     t = type(x)
     custom_string = None
     if t is unicode :
-        x = x.encode("utf8")
+        x = x.encode("utf-8")
         x = x.replace("'", "")
         custom_string = x
     elif t is str :
