@@ -85,8 +85,14 @@ function loadComplianceTaskDetails(data){
         if(data[k]['compliance_status'] == "Not Complied"){
             $('.days-text', cloneval).attr("style", "color:#f00;");
         }
-        if(data[k]['remarks'] != null){
-            $('.table-row-list', cloneval).attr("style", "color:#f00;");
+        if(data[k]['remarks'] != "None"){
+            $('.sno', cloneval).attr("style", "color:#f00;");
+            $('.compliance-task', cloneval).attr("style", "color:#f00;");
+            $('.domain', cloneval).attr("style", "color:#f00;");
+            $('.startdate', cloneval).attr("style", "color:#f00;");
+            $('.duedate', cloneval).attr("style", "color:#f00;");
+            $('.days-text', cloneval).attr("style", "color:#f00;");
+            $('.status', cloneval).attr("style", "color:#f00;");
         }
         $('.status', cloneval).html(data[k]['compliance_status']);
         if(data[k]['format_file_name']  != null){
@@ -172,7 +178,7 @@ function showSideBar(idval, data){
                 if (e.originalEvent.defaultPrevented) return;
                 uploadedfile(e);
             });
-            if(data[k]['compliance_frequency'] == 'One Time') {
+            if(data[k]['compliance_frequency'] == 'One Time' ||  data[k]['compliance_frequency'] == 'On Occurrence') {
                 $('.validityAndDueDate', cloneValSide).hide();
             }
             else if(data[k]['compliance_frequency'] != 'One Time'){
@@ -184,9 +190,6 @@ function showSideBar(idval, data){
                 $('.duedate1_label abbr', cloneValSide).html(data[k]['next_due_date']); 
                 $('.validity1-textbox-input', cloneValSide).val(data[k]['validity_date']);
                 $('.duedate1-textbox-input', cloneValSide).val(data[k]['next_due_date']);  
-            }
-            else if(data[k]['compliance_frequency'] == 'On Occurrence') {
-                $('.validityAndDueDate', cloneValSide).hide();
             }
             $('.btn-submit', cloneValSide).on("click", function(e){
                 var completion_date;
@@ -333,7 +336,7 @@ function uploadedfile(e){
         if(data == "File max limit exceeded"){
             displayMessage("File max limit exceeded");
             $(".uploaded_filename").html('');
-            $("#upload_file").val();
+            $("#upload_file").val("");
             return;
         }
         if(data != 'File max limit exceeded' || data != 'File content is empty'){
@@ -356,6 +359,7 @@ function uploadedfile(e){
 }
 function remove_temp_file(classnameval){
     $('.'+classnameval).remove();
+    $("#upload_file").val("");
 }
 $(function() {
     initialize();

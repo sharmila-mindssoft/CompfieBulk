@@ -58,3 +58,121 @@ AttributeError: 'str' object has no attribute 'tzinfo'
     raise expectation_error("a string", x)
 ValueError: expected a string, but received: datetime.datetime(2016, 3, 21, 11, 46, 31, tzinfo=<UTC>)
 
+2016-03-23 18:03:52,902 - knowledge_logger - main.py-handle-api : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
+2016-03-23 18:03:52,939 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 51, in process_techno_request
+    return save_client(db, request_frame, session_user)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 277, in save_client
+    result4 = db.save_unit(client_id, units_list, business_group_id, legal_entity_id, division_id, session_user)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 4290, in save_unit
+    result = self.bulk_insert(self.tblUnits, columns, values_list)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 222, in bulk_insert
+    return self.execute(query)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 157, in execute
+    return cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
+
+2016-03-23 18:10:28,765 - knowledge_logger - main.py-handle-api : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
+2016-03-23 18:10:28,765 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 51, in process_techno_request
+    return save_client(db, request_frame, session_user)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 277, in save_client
+    result4 = db.save_unit(client_id, units_list, business_group_id, legal_entity_id, division_id, session_user)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 4290, in save_unit
+    result = self.bulk_insert(self.tblUnits, columns, values_list)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 222, in bulk_insert
+    return self.execute(query)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 157, in execute
+    return cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
+
+2016-03-23 18:11:34,146 - knowledge_logger - main.py-handle-api : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
+2016-03-23 18:11:34,146 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 51, in process_techno_request
+    return save_client(db, request_frame, session_user)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 277, in save_client
+    result4 = db.save_unit(client_id, units_list, business_group_id, legal_entity_id, division_id, session_user)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 4290, in save_unit
+    result = self.bulk_insert(self.tblUnits, columns, values_list)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 222, in bulk_insert
+    return self.execute(query)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 157, in execute
+    return cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
+
+2016-03-23 18:19:34,735 - knowledge_logger - main.py-handle-api : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
+2016-03-23 18:19:34,735 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 181, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 51, in process_techno_request
+    return save_client(db, request_frame, session_user)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 277, in save_client
+    result4 = db.save_unit(client_id, units_list, business_group_id, legal_entity_id, division_id, session_user)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 4290, in save_unit
+    result = self.bulk_insert(self.tblUnits, columns, values_list)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 222, in bulk_insert
+    return self.execute(query)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 157, in execute
+    return cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1")
+
+2016-03-23 19:01:38,012 - knowledge_logger - main.py-parse-request : expected a number, but received: u'1'
+2016-03-23 19:01:38,478 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/king/projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1302, in parse_structure
+    request = parse_structure_VariantType_technomasters_Request(request)
+  File "/home/king/projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 346, in parse_structure_VariantType_technomasters_Request
+    return technomasters.Request.parse_structure(data)
+  File "/home/king/projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 110, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/king/projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 502, in parse_inner_structure
+    country_wise_units = parse_structure_VectorType_RecordType_techno_master_COUNTRYWISEUNITS(country_wise_units)
+  File "/home/king/projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 306, in parse_structure_VectorType_RecordType_techno_master_COUNTRYWISEUNITS
+    lst.append(parse_structure_RecordType_techno_master_COUNTRYWISEUNITS(item))
+  File "/home/king/projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 2146, in parse_structure_RecordType_techno_master_COUNTRYWISEUNITS
+    return technomasters.COUNTRYWISEUNITS.parse_structure(data)
+  File "/home/king/projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 441, in parse_structure
+    units = parse_structure_VectorType_RecordType_techno_master_UNIT(units)
+  File "/home/king/projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 1475, in parse_structure_VectorType_RecordType_techno_master_UNIT
+    lst.append(parse_structure_RecordType_techno_master_UNIT(item))
+  File "/home/king/projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 1946, in parse_structure_RecordType_techno_master_UNIT
+    return technomasters.UNIT.parse_structure(data)
+  File "/home/king/projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 400, in parse_structure
+    industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
+  File "/home/king/projects/aparajitha-saas/Src-server/protocol/parse_structure.py", line 289, in parse_structure_UnsignedIntegerType_32
+    return parse_number(data, 0, 4294967295)
+  File "/home/king/projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 40, in parse_number
+    raise expectation_error("a number", x)
+ValueError: expected a number, but received: u'1'
+

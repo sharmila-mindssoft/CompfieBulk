@@ -13,6 +13,7 @@ function displayMessage(message) {
 function initialize(){
     function onSuccess(data){
         closeicon();
+        clearMessage();
         approvalList = data['approval_list'];
         loadComplianceApprovalDetails(approvalList);     
     }
@@ -46,8 +47,8 @@ function loadComplianceApprovalDetails(data){
             var clonelist = tableRowvalues.clone();
             $('.sno-ca', clonelist).html(sno);
             $('.compliance-task span', clonelist).html(val['compliance_name']);
-            $('.compliance-task abbr', clonelist).attr("title", data['description']);
-            $('.compliance-task', clonelist).attr("title", val['description']);
+            $('.compliance-task abbr', clonelist).attr("title", val['description']);
+            //$('.compliance-task', clonelist).attr("title", val['description']);
             $('.domain', clonelist).html(val['domain_name']);
             $('.startdate', clonelist).html(val['start_date']);
             $('.duedate', clonelist).html(val['due_date']);
@@ -84,8 +85,8 @@ function showSideBar(idval, data){
     var cloneValSide = tableRowSide.clone();
     var complianceFrequency = data['compliance_frequency'];
 
-    //$('.sidebar-unit span', cloneValSide).html(data['unit_name']);
-    //$('.sidebar-unit abbr', cloneValSide).attr("title", data['address']);
+    $('.sidebar-unit span', cloneValSide).html(data['unit_name']);
+   // $('.sidebar-unit abbr', cloneValSide).attr("title", data['address']);
     $('.sidebar-compliance-task span', cloneValSide).html(data['compliance_name']);
     $('.sidebar-compliance-task abbr', cloneValSide).attr("title", data['description']);
     $('.sidebar-compliance-frequency', cloneValSide).html(complianceFrequency);
@@ -139,7 +140,10 @@ function showSideBar(idval, data){
         $(".approval-action", cloneValSide).show();
         
         $(".approval-action", cloneValSide).on("change", function(e, data){ 
-            if($(".approval-action", cloneValSide).text() == 'Reject'){
+            if($(".approval-action", cloneValSide).val() == 'Reject'){
+                $(".sidebar-remarks-textarea", cloneValSide).val();
+            }
+            else if($(".approval-action", cloneValSide).val() == "Reject Approval"){
                 $(".sidebar-remarks-textarea", cloneValSide).show();
             }
             else{
@@ -156,7 +160,7 @@ function showSideBar(idval, data){
         $(".sidebar-concurrence span", cloneValSide).html(data['concurrenced_by']);               
         $(".action-tr", cloneValSide).show();
         $(".concurr-action", cloneValSide).on("change", function(e, data){ 
-            if($(".concurr-action option:selected", cloneValSide).text() == 'Reject'){
+            if($(".concurr-action option:selected", cloneValSide).val() == 'Reject'){
                 $(".sidebar-remarks-textarea", cloneValSide).show();
             }
             else{
@@ -183,6 +187,7 @@ function showSideBar(idval, data){
         });    
     }
     if(action == "Reject Approval"){
+
         $(".action-tr", cloneValSide).show();   
 
         $(".concurr-action", cloneValSide).hide();
@@ -223,21 +228,24 @@ function showSideBar(idval, data){
             displayMessage("Select Any Action");
             return false;
         }
-        if(approval_status == 'Reject'){
+        else if(approval_status == "Reject"){
+            remarks = $(".remarks-textarea", cloneValSide).val();
+        }
+        else if(approval_status == "Reject Approval"){
             remarks = $(".remarks-textarea").val();
         }
 
-        validity_date = $('.validitydate1_label').html();
-        console.log(validity_date);
+        validity_date = $('.validitydate1_label', cloneValSide).html();
+        
         if(validity_date == ''){
-            validity_date = $('.validity1-textbox-input').val();
+            validity_date = $('.validity1-textbox-input', cloneValSide).val();
             if(validity_date == ''){
                 validity_date = null;
             }
         }
-        next_due_date = $('.duedate1_label abbr').val();
+        next_due_date = $('.duedate1_label abbr', cloneValSide).val();
         if(next_due_date == ''){
-            next_due_date = $('.duedate1-textbox-input').val();
+            next_due_date = $('.duedate1-textbox-input', cloneValSide).val();
             if(next_due_date == ''){
                 next_due_date = null;
             }
@@ -248,7 +256,7 @@ function showSideBar(idval, data){
             remarks = null;
         }
         else if(typeof remarks == 'undefined'){
-            remarks = null
+            remarks = null;
         }      
         else if(validity_date == ''){
             displayMessage("Select Validity Date");
@@ -258,7 +266,7 @@ function showSideBar(idval, data){
             displayMessage("Select Next Due Date");
             return;
         }
-    
+        
         function onSuccess(data){
             initialize();
         }
