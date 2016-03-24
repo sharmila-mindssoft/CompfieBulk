@@ -8,6 +8,11 @@ var statutoriesList;
 var complianceFrequencyList;
 var temp_act = null;
 
+var finalList;
+var pageSize = 10;
+var startCount = 1;
+var endCount = 10;
+
 function clearMessage() {
   $(".error-message").hide();
   $(".error-message").text("");
@@ -15,6 +20,13 @@ function clearMessage() {
 function displayMessage(message) {
   $(".error-message").text(message);
   $(".error-message").show();
+}
+
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
 }
 
 function getStatutoryMappings(){
@@ -216,6 +228,8 @@ function loadresult(filterList){
               $('.tbl_applicablelocation', clone1).text(filterList[entity][i]["geography_mappings"]);
               $('.accordion-content'+count).append(clone1);
               compliance_count = compliance_count + 1;
+
+
             }
           }
         }
@@ -239,22 +253,55 @@ function loadresult(filterList){
       $(".accordion-content").not($(this).next()).slideUp('fast');
     });
   });
-  var currentTime = new Date();
-  hour = currentTime.getHours();
-  min  = currentTime.getMinutes();
-  sec  = currentTime.getSeconds();
-  ms = currentTime.getMilliseconds();
-  console.log("End progress : "+ hour + ":" + min + ":" + sec + ":" + ms  );
-
 }
 
+
+/*function get_sub_array(object, start, end){
+    if(!end){ end=-1;} 
+    return object.slice(start, end);
+}
+
+function callPage(pageId){
+  var type = '.page'
+  $(type).each( function( index, el ) {
+    $(el).removeClass( "active" );
+      });
+   $('#pageview'+pageId).addClass("active");
+
+  //var pageNo = $(this).attr('id');
+  startCount = pageSize * (pageId-1);
+  endCount = pageSize * pageId;
+
+  var keys_list = Object.keys(finalList);
+  var sub_keys_list = get_sub_array(keys_list, startCount, endCount);
+  loadCountwiseStatutoryMapping(sub_keys_list, finalList);
+  
+};
+
+
+function loadresult(statutoryMappingsList) {
+  pageSize = 5;
+  var listSize = Math.ceil(Object.keys(statutoryMappingsList).length / pageSize);
+
+  startCount = 0;
+  endCount = pageSize;
+
+  if(Object.keys(statutoryMappingsList).length > 0){
+    //<li><a href="#" onclick="callPage('+(j-1)+')">»</a></li>
+    $('.pagination').show();
+    
+  }
+  
+  finalList = statutoryMappingsList;
+  var keys_list = Object.keys(finalList); 
+  var sub_act_list =  keys_list.slice(0, 1);
+  var sub_keys_list = get_sub_array(sub_act_list, startCount, endCount);
+  console.log(sub_keys_list)
+  alert(sub_keys_list)
+  //loadCountwiseStatutoryMapping(sub_keys_list, finalList);
+}*/
+
 $("#submit").click(function(){
-  var currentTime = new Date();
-  hour = currentTime.getHours();
-  min  = currentTime.getMinutes();
-  sec  = currentTime.getSeconds();
-  ms = currentTime.getMilliseconds();
-  console.log("Start Progress : "+ hour + ":" + min + ":" + sec + ":" + ms  );
 
   var country = $("#country").val();
   var domain = $("#domain").val();
@@ -276,6 +323,7 @@ $("#submit").click(function(){
     displayMessage("Domain Required");
   }
   else{
+    displayLoader();
     /*if((country == temp_country) && (domain == temp_domain) && (temp_industry == null || industry == temp_industry) && (temp_statutorynature == null || statutorynature == temp_statutorynature) &&
      (temp_geography == null || geography == temp_geography)){
       loadresult(statutoryMappingDataList);
@@ -290,24 +338,19 @@ $("#submit").click(function(){
 
       function onSuccess(data){
         statutoryMappingDataList = data["statutory_mappings"];
-        var currentTime = new Date();
+        /*var currentTime = new Date();
         hour = currentTime.getHours();
         min  = currentTime.getMinutes();
         sec  = currentTime.getSeconds();
         ms = currentTime.getMilliseconds();
-        console.log("API Response: "+ hour + ":" + min + ":" + sec + ":" + ms  );
+        console.log("API Response: "+ hour + ":" + min + ":" + sec + ":" + ms  );*/
         loadresult(statutoryMappingDataList);
+        hideLoader();
       }
       function onFailure(error){
         onFailure(error);
+        hideLoader();
       }
-
-      var currentTime = new Date();
-      hour = currentTime.getHours();
-      min  = currentTime.getMinutes();
-      sec  = currentTime.getSeconds();
-      ms = currentTime.getMilliseconds();
-      console.log("Call API : "+ hour + ":" + min + ":" + sec + ":" + ms  );
 
       mirror.getStatutoryMappingsReportData(filterdata,
         function (error, response) {

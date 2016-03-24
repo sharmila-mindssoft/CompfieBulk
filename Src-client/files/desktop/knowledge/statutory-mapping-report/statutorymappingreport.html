@@ -1,5 +1,8 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
+  <div class='loading-indicator-spin'>
+    <span><img src='/files/desktop/common/images/loading-img.gif' alt="">   </span>
+  </div>
   <div class="content-container">
     <div class="content-area">
       <div class="add-container">
@@ -9,7 +12,7 @@
             <div class="field-label">Country:<span class="mandatory">*</span></div>
             <div class="field-input">
               <input type="text" class="input-box icon-autocomplete" id="countryval" placeholder="Enter Country" value="">
-              <input type="hidden" id="country" value="">
+              <input type="hidden" id="country" value="1">
               <div id="autocompleteview" class="ac-textbox default-display-none">
               <ul id="ulist_text" style="width:215px;" class="hidemenu"></ul>
             </div>
@@ -19,7 +22,7 @@
           <div class="field-label">Domain:<span class="mandatory">*</span></div>
           <div class="field-input">
             <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" value="" >
-            <input type="hidden" id="domain" value="">
+            <input type="hidden" id="domain" value="1">
             <div id="autocomplete_domain" class="ac-textbox default-display-none">
             <ul id="ulist_domain" style="width:215px;" class="hidemenu"></ul>
           </div>
@@ -95,6 +98,8 @@
 
 </table>
 <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
+
+<p class="pagination default-display-none" > <a href="#"> Show more records </a> </p>
 </div>
 </div>
 </div>
