@@ -55,15 +55,24 @@ $("#show-button").click(function(){
         displayMessage(" Select to Date");
     }
     else{
+        fromdate = fromdate+" 00:00:00";
+        todate = todate+" 23:59:59";
         $('.grid-table').show();
         $('.tbody-login-trace-list tr').remove();
         var sno = 0;
         $.each(logintraceList, function(key, value) {
+            var formname;            
+            if(logintraceList[key]['action'].substring(0, 6) == "Log In"){
+                formname = "Login"
+            }
+            else{
+                formname = "Logout"
+            }
             if((fromdate <= logintraceList[key]['created_on']) && (todate >= logintraceList[key]['created_on']) && userid == ''){ 
                 var tableRow = $('#templates .table-logintrace-list .table-row');
                 var clone = tableRow.clone();
                 $('.date-time', clone).text(logintraceList[key]['created_on']);
-                $('.form-name', clone).text(logintraceList[key]['form_name']);
+                $('.form-name', clone).text(formname);
                 $('.info-text', clone).text(logintraceList[key]['action']);
                 $('.tbody-login-trace-list').append(clone);
                 sno++;
@@ -72,7 +81,7 @@ $("#show-button").click(function(){
                 var tableRow= $('#templates .table-logintrace-list .table-row');
                 var clone= tableRow.clone();
                 $('.date-time', clone).text(logintraceList[key]['created_on']);
-                $('.form-name', clone).text(logintraceList[key]['form_name']);
+                $('.form-name', clone).text(formname);
                 $('.info-text', clone).text(logintraceList[key]['action']);
                 $('.tbody-login-trace-list').append(clone);
                 sno++;

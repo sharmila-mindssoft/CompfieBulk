@@ -142,6 +142,7 @@ function loadTaskApplicabilityStatusList(data){
    
     $('.tbody-task-applicability-list').append(clonefilterHeading);
     $.each(data, function(key, value) {
+        count = 0;
         var tableRowHeading = $('#templates .table-task-applicability-list .applicable-status-list');
         var cloneHeading = tableRowHeading.clone();
         if(key == "applicable"){
@@ -154,9 +155,16 @@ function loadTaskApplicabilityStatusList(data){
             keyvalue = "Not Applicable"
         }
         $('.applicable-status-heading', cloneHeading).text(keyvalue);
-        $('.tbody-task-applicability-list').append(cloneHeading);
+        for(var i in value){
+            if(value[i] != '')
+                count++;
+        }
+        if(count != '0'){
+            $('.tbody-task-applicability-list').append(cloneHeading);    
+        }        
         var actwiselist = data[key];
         $.each(actwiselist, function(ke, valu) { 
+            count = 0;
             var arr = [];
             var tableRowLevel1 = $('#templates .table-task-applicability-list .level1-list');
             var cloneLevel1 = tableRowLevel1.clone();
