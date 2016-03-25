@@ -156,7 +156,7 @@ from protocol.to_structure import (
     to_structure_VectorType_UnsignedIntegerType_32,
     to_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500,
     to_structure_OptionalType_VectorType_UnsignedIntegerType_32,
-    to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings
+    to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings,
     to_structure_Text
 )
 

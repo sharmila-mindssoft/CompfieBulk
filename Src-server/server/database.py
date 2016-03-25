@@ -2128,8 +2128,8 @@ class KnowledgeDatabase(Database):
             qry_where += "AND t3.geography_id = %s " % (geography_id)
         if statutory_nature_id is not None :
             qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
-        # if level_1_statutory_id is not None :
-        #     qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, '%') from tbl_statutories where statutory_id = %s)" % (level_1_statutory_id)
+        if level_1_statutory_id is not None :
+            qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, '%s') from tbl_statutories where statutory_id = %s)" % (str("%"), level_1_statutory_id)
 
         q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
@@ -2167,7 +2167,6 @@ class KnowledgeDatabase(Database):
                 qry_where
             )
         rows = self.select_all(q)
-        print q
         columns = [
             "statutory_mapping_id", "country_id",
             "country_name", "domain_id", "domain_name", "industry_ids",
