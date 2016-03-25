@@ -1,60 +1,96 @@
-2016-03-23 18:37:39,407 - knowledge_logger - main.py-handle-api : 'str' object has no attribute 'tzinfo'
-2016-03-23 18:37:39,421 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 189, in handle_general
-    return controller.process_general_request(request, db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 50, in process_general_request
-    return process_get_audit_trails(db, request_frame, user_id)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 195, in process_get_audit_trails
-    audit_trails = db.get_audit_trails(user_id)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 5640, in get_audit_trails
-    date = self.datetime_to_string_time(row[3])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 361, in datetime_to_string_time
-    local_dt = local.localize(datetime_in_string, is_dst=None)
-  File "/usr/lib/python2.7/dist-packages/pytz/tzinfo.py", line 303, in localize
-    if dt.tzinfo is not None:
-AttributeError: 'str' object has no attribute 'tzinfo'
+2016-03-24 11:38:44,881 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x8      0xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2 ds adasda'
+2016-03-24 11:38:44,926 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
+    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
+    lst.append(parse_structure_RecordType_core_Compliance(item))
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
+    return core.Compliance.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
+    compliance_task = parse_structure_CustomTextType_100(compliance_task)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
+    return parse_custom_string(data, 100)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
+    "a string with max length(%s)" % (
+ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x8      0xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2 ds adasda'
 
-2016-03-23 18:38:33,350 - knowledge_logger - main.py-handle-api : 'str' object has no attribute 'tzinfo'
-2016-03-23 18:38:33,350 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 189, in handle_general
-    return controller.process_general_request(request, db)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 50, in process_general_request
-    return process_get_audit_trails(db, request_frame, user_id)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 195, in process_get_audit_trails
-    audit_trails = db.get_audit_trails(user_id)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 5640, in get_audit_trails
-    date = self.datetime_to_string_time(row[3])
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 361, in datetime_to_string_time
-    local_dt = local.localize(datetime_in_string, is_dst=None)
-  File "/usr/lib/python2.7/dist-packages/pytz/tzinfo.py", line 303, in localize
-    if dt.tzinfo is not None:
-AttributeError: 'str' object has no attribute 'tzinfo'
+2016-03-24 11:43:21,705 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
+2016-03-24 11:43:21,705 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
+    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
+    lst.append(parse_structure_RecordType_core_Compliance(item))
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
+    return core.Compliance.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
+    compliance_task = parse_structure_CustomTextType_100(compliance_task)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
+    return parse_custom_string(data, 100)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
+    "a string with max length(%s)" % (
+ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
 
-2016-03-23 18:41:00,360 - knowledge_logger - main.py-handle-api : expected a string, but received: datetime.datetime(2016, 3, 21, 11, 46, 31, tzinfo=<UTC>)
-2016-03-23 18:41:00,360 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 134, in handle_api_request
-    respond(response_data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 124, in respond
-    response_data, response
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 87, in _send_response
-    data = response_data.to_structure()
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/general.py", line 297, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/general.py", line 559, in to_inner_structure
-    "audit_trail_details": to_structure_VectorType_RecordType_general_AuditTrail(self.audit_trails),
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/to_structure.py", line 52, in to_structure_VectorType_RecordType_general_AuditTrail
-    lst.append(to_structure_RecordType_general_AuditTrail(item))
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/to_structure.py", line 164, in to_structure_RecordType_general_AuditTrail
-    return general.AuditTrail.to_structure(data)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/general.py", line 670, in to_structure
-    "date": to_structure_CustomTextType_20(self.date)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/to_structure.py", line 571, in to_structure_CustomTextType_20
-    return parse_custom_string(data, 20)
-  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 87, in parse_custom_string
-    raise expectation_error("a string", x)
-ValueError: expected a string, but received: datetime.datetime(2016, 3, 21, 11, 46, 31, tzinfo=<UTC>)
+2016-03-24 11:45:11,591 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
+2016-03-24 11:45:11,592 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
+    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
+    lst.append(parse_structure_RecordType_core_Compliance(item))
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
+    return core.Compliance.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
+    compliance_task = parse_structure_CustomTextType_100(compliance_task)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
+    return parse_custom_string(data, 100)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
+    "a string with max length(%s)" % (
+ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
+
+2016-03-24 11:46:36,109 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
+2016-03-24 11:46:36,110 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
+    data
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
+    request = parse_structure_VariantType_knowledgetransaction_Request(request)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
+    return knowledgetransaction.Request.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
+    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
+    lst.append(parse_structure_RecordType_core_Compliance(item))
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
+    return core.Compliance.parse_structure(data)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
+    compliance_task = parse_structure_CustomTextType_100(compliance_task)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
+    return parse_custom_string(data, 100)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
+    "a string with max length(%s)" % (
+ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
 

@@ -155,42 +155,61 @@ function loadComplianceActivityReportList(data){
         $('.compliance-activity-list .heading-list').append(cloneUnit);
 
         var level1list = data[key]['statutory_wise_compliances'];
-
+        var acc_count = 1;
         $.each(level1list, function(ke, valu) { 
             var tableRow = $('#templates .table-compliance-activity-list .table-level1-heading');
             var clone = tableRow.clone();
             $('.level1-heading', clone).text(ke);
-            $('.compliance-activity-list .tbody-compliance-activity-list').append(clone);
+            $('.compliance-activity-list .heading-list').append(clone);
 
             var list = level1list[ke];
             $.each(list, function(k, val){
-                var tableRowvalues = $('#templates .table-compliance-activity-list .table-row-list');
+                var tableRowvalues = $('#templates .table-compliance-activity-list .tbody-activity-list');
                 var cloneval = tableRowvalues.clone();
                 sno = sno + 1;
-                console.log(k);
                 $('.sno', cloneval).text(sno);
                 $('.compliance-task', cloneval).html(k);
                 var clist = list[k];
                 var count = 0;
+                
                 $.each(clist, function(k1, val1){
-                    $('.compliance-date', cloneval).html(clist[k1]['activity_date']);
-                    $('.activity-status', cloneval).html(clist[k1]['activity_status']);
-                    $('.compliance-task-status', cloneval).html(clist[k1]['compliance_status']);
-                    $('.remarks', cloneval).html(clist[k1]['remarks']);
                     if(count == 0){
-                        $('.compliance-activity-list .tbody-compliance-activity-list').append(cloneval);
+                        $('.compliance-date', cloneval).html(clist[k1]['activity_date']);
+                        $('.activity-status', cloneval).html(clist[k1]['activity_status']);
+                        $('.compliance-task-status', cloneval).html(clist[k1]['compliance_status']);
+                        $('.remarks', cloneval).html(clist[k1]['remarks']);                    
+                        $('.compliance-activity-list .table-compliance-activity-list').append(cloneval);                        
+                        $('.table-compliance-activity-list').append('<tbody class="accordion-content accordion-content'+acc_count+'"></tbody>');
+                        $('.accordion-content'+acc_count).addClass("default");
                     }
                     else{
-                        $('.compliance-activity-list .tbody-compliance-activity-list').append(cloneval);   
+                        console.log('accordion-content'+acc_count);
+                        var tableRowvalues_ul = $('#templates .tree-tr');
+                        var cloneval_ul = tableRowvalues_ul.clone();
+                        $('.li-date', cloneval_ul).html(clist[k1]['activity_date']);
+                        $('.li-activitystatus', cloneval_ul).html(clist[k1]['activity_status']);
+                        $('.li-taskstatus', cloneval_ul).html(clist[k1]['compliance_status']);
+                        $('.li-remarks', cloneval_ul).html(clist[k1]['remarks']);  
+                        $('.accordion-content'+acc_count).append(cloneval_ul);   
                     }
                     count++;                    
                 });
+
+                acc_count++;
                 
-            });            
-        });        
+            });   
+            
+        }); 
+        $('#accordion').find('.accordion-toggle').click(function(){
+            //Expand or collapse this panel
+            $(this).next().slideToggle('fast');
+            //Hide the other panels
+            $(".accordion-content").not($(this).next()).slideUp('fast');
+        });       
     });
     $(".total-records").html("Total : "+sno+" records")
 }
+
 $("#accordion-bgwhite").find(".accordion-toggle-bgwhite").click(function(){
     $(this).next('tbody').slideToggle('fast');
     $(".accordion-content-bgwhite").not($(this).next()).slideUp('fast');

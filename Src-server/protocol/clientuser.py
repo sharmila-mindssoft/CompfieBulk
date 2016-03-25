@@ -17,7 +17,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence,
-    parse_structure_CustomTextType_250
+    parse_structure_CustomTextType_250,
+    parse_structure_Text
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_UpcomingCompliance,
@@ -36,7 +37,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_500,
     to_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence,
     to_structure_UnsignedIntegerType_32,
-    to_structure_CustomTextType_250
+    to_structure_CustomTextType_250,
+    to_structure_Text
 )
 
 #
@@ -399,7 +401,7 @@ class ComplianceOnOccurrence(object):
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         statutory_provision = data.get("statutory_provision")
-        statutory_provision = parse_structure_CustomTextType_500(statutory_provision)
+        statutory_provision = parse_structure_Text(statutory_provision)
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_250(compliance_name)
         description = data.get("description")
@@ -416,7 +418,7 @@ class ComplianceOnOccurrence(object):
     def to_structure(self):
         return {
             "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
-            "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
+            "statutory_provision": to_structure_Text(self.statutory_provision),
             "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
             "description": to_structure_CustomTextType_500(self.description),
             "complete_within_days": to_structure_CustomTextType_50(self.complete_within_days),

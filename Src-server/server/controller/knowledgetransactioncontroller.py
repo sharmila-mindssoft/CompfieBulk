@@ -37,6 +37,9 @@ def process_knowledge_transaction_request(request, db) :
     elif type(request_frame) is knowledgetransaction.ChangeStatutoryMappingStatus :
         return process_change_statutory_mapping_status(db, request_frame, user_id)
 
+    elif type(request_frame) is knowledgetransaction.GetApproveStatutoryMappings :
+        return process_get_approve_statutory_mappings(db, user_id)
+
     elif type(request_frame) is knowledgetransaction.ApproveStatutoryMapping :
         return process_approve_statutory_mapping(db, request_frame, user_id)
 
@@ -62,7 +65,7 @@ def process_get_statutory_mapping_master(db, user_id):
     )
 
 def process_get_statutory_mappings(db, user_id):
-    statutory_mappings = db.get_statutory_mappings(user_id)
+    statutory_mappings = db.get_statutory_mappings(user_id, for_approve=False)
     return knowledgetransaction.GetStatutoryMappingsSuccess(
         statutory_mappings
     )
@@ -99,6 +102,12 @@ def process_change_statutory_mapping_status(db, request_frame, user_id):
         return knowledgetransaction.ChangeStatutoryMappingStatusSuccess()
     else :
         return knowledgetransaction.InvalidStatutoryMappingId()
+
+def process_get_approve_statutory_mappings(db, user_id):
+    statutory_mappings = db.get_statutory_mappings(user_id, for_approve=True)
+    return knowledgetransaction.GetStatutoryMappingsSuccess(
+        statutory_mappings
+    )
 
 def process_approve_statutory_mapping(db, request_frame, user_id):
     is_approved = False

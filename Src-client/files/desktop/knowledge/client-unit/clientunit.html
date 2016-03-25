@@ -173,7 +173,7 @@
           <tr class="table-row" style="vertical-align:top;">
             <td><input type="hidden" class="no-of-units">
             
-            <select class="input-box geography-levels" onfocus="loadglevels(this.className);" >
+            <select class="input-box geography-levels" onfocus="loadglevels(this.className);"  onchange="changelocation(this.className);">
               <option value="">Select</option>
             </select>
           </td>
@@ -191,11 +191,11 @@
         </td>
         <td><input type="text" class="input-box unit-name" maxlength="50"  ></td>
         <td><select class="input-box industry" > <!-- onfocus="industrytype(this.className);"  -->
-        <option value="">Select</option>
+       <!--  <option value="">Select</option> -->
         </select>
       </td>
       <td><input type="text" class="input-box unit-address" maxlength="250" /></td>
-      <td><input type="text" class="input-box postal-code" maxlength="11" ></td>
+      <td><input type="text" class="input-box postal-code" maxlength="8" ></td>
       <td> <input type="text" class="input-box icon-autocomplete  domainselected" value="" readonly="readonly" onclick="loaddomain(this.className)">
       <input type="hidden" class="domain">
       <div class="domain-selectbox-view ac-selectbox" style="display:none;">
@@ -220,7 +220,7 @@
             <option value="">Select</option>
         </select>
         </td>
-        <td><input type="text" class="input-box icon-autocomplete unit-location" onkeyup="loadlocation(this.value, this.className);" style="width:150px;"  value="">
+        <td><input type="text" class="input-box icon-autocomplete unit-location" onkeyup="loadlocation(this.value, this.className);"  onchange="changelocation(this.className);" style="width:150px;"  value="">
         <input type="hidden" class="unit-location-ids">
         <div class="auto-complete-unit-location ac-textbox" style="display:none;" onclick="hideunitlocation(this.className);" onmouseleave="hideunitlocation(this.className);" >
             <ul class="unitlocationlist-text" style="width:195px;"></ul>
@@ -233,11 +233,11 @@
         </td>
         <td><input type="text" class="input-box unit-name"  maxlength="50" ></td>
         <td><select class="input-box industry" ><!-- onfocus="industrytype(this.className);" -->
-          <option value="">Select</option>
+        <!--   <option value="">Select</option> -->
         </select>
         </td>
         <td><input type="text" class="input-box unit-address"  maxlength="250" /></td>
-        <td><input type="text" class="input-box postal-code" maxlength="11" ></td>
+        <td><input type="text" class="input-box postal-code" maxlength="8" ></td>
         <td> <input type="text" class="input-box icon-autocomplete domainselected" value="" readonly="readonly" onclick="loaddomain(this.className)">
         <input type="hidden" class="domain">
         <div class="domain-selectbox-view ac-selectbox" style="display:none;">

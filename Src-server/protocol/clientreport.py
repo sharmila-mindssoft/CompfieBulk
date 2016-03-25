@@ -2253,26 +2253,22 @@ class FormName(object):
 #
 
 class LoginTrace(object):
-    def __init__(self,  created_on, form_name, action):
+    def __init__(self,  created_on, action):
         self.created_on = created_on
-        self.form_name = form_name
         self.action = action
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["created_on", "form_name", "action"])
+        data = parse_dictionary(data, ["created_on", "action"])
         created_on = data.get("created_on")
         created_on = parse_structure_CustomTextType_50(created_on)
-        form_name = data.get("form_name")
-        form_name = parse_structure_CustomTextType_50(form_name)
         action = data.get("action")
         action = to_structure_CustomTextType_500(action)
-        return LoginTrace(created_on, form_name, action)
+        return LoginTrace(created_on,  action)
 
     def to_structure(self):
         return {
             "created_on": to_structure_CustomTextType_20(self.created_on),
-            "form_name": to_structure_CustomTextType_50(self.form_name),
             "action": to_structure_CustomTextType_500(self.action),
         }
 

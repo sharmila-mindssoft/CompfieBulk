@@ -30,12 +30,13 @@ function showPopup(unitId){
 	$('#unitidval').val(unitId);
 	$('.overlay').css("visibility","visible");
 	$('.overlay').css("opacity","1");
-	$('.popup-error-msg').html("");
-	$("input[name=password]").html("");
-	$("#password").html("");
+	$('.popup-error-msg').html("");	
+	$("#password").val("");
+	$('#password').focus();
 }
 $('.close').click(function(){
 	$('#unitidval').val("");
+	$("#password").val("");		
 	$('.overlay').css("visibility","hidden");
 	$('.overlay').css("opacity","0");
 });
@@ -56,6 +57,7 @@ function unit_close(){
 			if(error == 'InvalidPassword'){
 				$('.popup-error-msg').html("Enter Correct password");
 				$('#password').val("");
+				$('#password').focus();
 			}
 		}
 		client_mirror.closeUnit(parseInt(unitidval), password,

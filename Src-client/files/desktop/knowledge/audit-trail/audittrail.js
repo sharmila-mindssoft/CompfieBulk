@@ -83,19 +83,9 @@ $("#show").click(function(){
 		var sno = 0;
 
 		$.each(auditTrailList, function (key, value){
-			//from Date Conversion
-			var fromDate = fromDateValue.split("-");
-			var fromsplitDate = fromDate[1]+","+fromDate[0]+","+fromDate[2];
-			var fromDateVal = new Date(fromsplitDate).getTime();
-			//To Date Conversion
-			var toDate = toDateValue.split("-");
-			var tosplitDate = toDate[1]+","+toDate[0]+","+toDate[2];
-			var toDateVal = new Date(tosplitDate).getTime();
-			//Api Date conversion
-			var auditDateValue = auditTrailList[key]['date'];
-			var auditDate = auditDateValue.split("-");
-			var auditdatesplit = auditDate[1]+","+auditDate[0]+","+auditDate[2];
-			var auditDateVal = new Date(auditdatesplit).getTime();
+			var fromDateVal = fromDateValue+" 00:00:00";
+			var toDateVal = toDateValue+" 23:59:59";
+			var auditDateVal = auditTrailList[key]['date'];
 
 			var auditUser = auditTrailList[key]['user_id'];
 			var auditFormId = auditTrailList[key]['form_id'];
@@ -109,7 +99,7 @@ $("#show").click(function(){
 				sno = sno + 1;
 				$('.sno', clone).text(sno);
 				$('.username', clone).text(getUserName(auditUser));
-				$('.datetime', clone).text(auditDateValue);
+				$('.datetime', clone).text(auditDateVal);
 				$('.formname', clone).text(getFormName(auditFormId));
 				$('.action', clone).text(auditTrailList[key]['action']);
 				$('.tbody-audittrail-list').append(clone);
@@ -122,7 +112,7 @@ $("#show").click(function(){
 				sno = sno + 1;
 				$('.sno', clone).text(sno);
 				$('.username', clone).text(getUserName(auditUser));
-				$('.datetime', clone).text(auditDateValue);
+				$('.datetime', clone).text(auditDateVal);
 				$('.formname', clone).text(getFormName(auditFormId));
 				$('.action', clone).text(auditTrailList[key]['action']);
 				$('.tbody-audittrail-list').append(clone);
@@ -135,7 +125,7 @@ $("#show").click(function(){
 				sno = sno + 1;
 				$('.sno', clone).text(sno);
 				$('.username', clone).text(getUserName(auditUser));
-				$('.datetime', clone).text(auditDateValue);
+				$('.datetime', clone).text(auditDateVal);
 				$('.formname', clone).text(getFormName(auditFormId));
 				$('.action', clone).text(auditTrailList[key]['action']);
 				$('.tbody-audittrail-list').append(clone);
@@ -148,7 +138,7 @@ $("#show").click(function(){
 				sno = sno + 1;
 				$('.sno', clone).text(sno);
 				$('.username', clone).text(getUserName(auditUser));
-				$('.datetime', clone).text(auditDateValue);
+				$('.datetime', clone).text(auditDateVal);
 				$('.formname', clone).text(getFormName(auditFormId));
 				$('.action', clone).text(auditTrailList[key]['action']);
 				$('.tbody-audittrail-list').append(clone);

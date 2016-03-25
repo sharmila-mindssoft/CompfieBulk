@@ -431,7 +431,7 @@ CREATE TABLE `tbl_mobile_sync_versions` (
   `user_details_version` int(11) NOT NULL,
   `compliance_applicability_version` int(11) NOT NULL,
   `compliance_history_version` int(11) NOT NULL,
-  `reassign_history_version` int(11) NOT NULL,
+  `reassign_history_version` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 INSERT INTO tbl_audit_log VALUES(0);
 INSERT INTO tbl_form_type VALUES(1, "Home");
@@ -482,3 +482,4 @@ INSERT INTO tbl_notification_types VALUES(1, "Notification");
 INSERT INTO tbl_notification_types VALUES(2, "Reminder");
 INSERT INTO tbl_notification_types VALUES(3, "Escalation");
 DROP TRIGGER IF EXISTS `after_tbl_statutory_notifications_units_insert`;
+INSERT INTO tbl_mobile_sync_versions VALUES(0, 0, 0, 0, 0);

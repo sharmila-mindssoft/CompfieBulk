@@ -1232,30 +1232,42 @@ function showEscalationDrillDownRecord(data, year){
     var filter_type = chartInput.getFilterType();
     $('.drilldown-title').text("Escalations of "+GROUP_NAME+" for the year "+year);
     if(filter_type == "group"){
+        $(".table-thead-drilldown-list").empty();
+        $(".table-drilldown-list tbody").remove();
+
         groupWiseEscalationDrillDown("delayed", data);
         groupWiseEscalationDrillDown("not_complied", data);
     }
     if(filter_type == "business_group"){
+        $(".table-thead-drilldown-list").empty();
+        $(".table-drilldown-list tbody").remove();
+
         businessgroupWiseEscalationDrillDown("delayed", data);
         businessgroupWiseEscalationDrillDown("not_complied", data);
     }
     if(filter_type == "legal_entity"){
+        $(".table-thead-drilldown-list").empty();
+        $(".table-drilldown-list tbody").remove();
+
         legalentityWiseEscalationDrillDown("delayed", data);
         legalentityWiseEscalationDrillDown("not_complied", data);
     }
     if(filter_type == "division"){
+        $(".table-thead-drilldown-list").empty();
+        $(".table-drilldown-list tbody").remove();
+
         divisionWiseEscalationDrillDown("delayed", data);
         divisionWiseEscalationDrillDown("not_complied", data);
     }
     if(filter_type == "unit"){
+        $(".table-thead-drilldown-list").empty();
+        $(".table-drilldown-list tbody").remove();
+
         unitWiseEscalationDrillDown("delayed", data);
         unitWiseEscalationDrillDown("not_complied", data);
     }
 }
 function groupWiseEscalationDrillDown(status, data){
-    $(".table-thead-drilldown-list").empty();
-    $(".table-drilldown-list tbody").remove();
-
     $(".business-group-row").show();
     $(".businessgroup-name").show();
 
@@ -1281,9 +1293,6 @@ function groupWiseEscalationDrillDown(status, data){
     escalationDrilldown(status, data);
 }
 function businessgroupWiseEscalationDrillDown(status, data){
-    $(".table-thead-drilldown-list").empty();
-    $(".table-drilldown-list tbody").remove();
-
     $(".business-group-row").hide();
     $(".businessgroup-name").hide();
 
@@ -1309,9 +1318,6 @@ function businessgroupWiseEscalationDrillDown(status, data){
     escalationDrilldown(status, data);
 }
 function legalentityWiseEscalationDrillDown(status, data){
-    $(".table-thead-drilldown-list").empty();
-    $(".table-drilldown-list tbody").remove();
-
     $(".business-group-row").hide();
     $(".businessgroup-name").hide();
 
@@ -1337,9 +1343,6 @@ function legalentityWiseEscalationDrillDown(status, data){
 }
 
 function divisionWiseEscalationDrillDown(status, data){
-    $(".table-thead-drilldown-list").empty();
-    $(".table-drilldown-list tbody").remove();
-
     $(".business-group-row").hide();
     $(".businessgroup-name").hide();
 
@@ -1361,15 +1364,10 @@ function divisionWiseEscalationDrillDown(status, data){
         $(".delayed-by-row").show();
         $(".over-due-row").hide();
     }
-
     escalationDrilldown(status, data);
-
 }
 
 function unitWiseEscalationDrillDown(status, data){
-    $(".table-thead-drilldown-list").empty();
-    $(".table-drilldown-list tbody").remove();
-
     $(".business-group-row").hide();
     $(".businessgroup-name").hide();
 
@@ -1398,7 +1396,6 @@ function unitWiseEscalationDrillDown(status, data){
 }
 
 function escalationDrilldown(status, data){
-
     var sno = 1;
     var count = 1;
     var h2heading = $('#templates .escalation-status .tr-h2');
@@ -1419,7 +1416,7 @@ function escalationDrilldown(status, data){
     var cloneFilter = tableFilter.clone();
     $(".table-thead-drilldown-list").append(cloneFilter);
 
-    //if(data[status].length > 0){
+    if(data[status].length > 0){
         $.each(data[status], function(key, value){
             var tableUnit = $('#templates .escalation-status .tr-unit');
             var cloneUnit = tableUnit.clone();
@@ -1463,7 +1460,13 @@ function escalationDrilldown(status, data){
         });
 
         accordianType('accordion', 'accordion-toggle', 'accordion-content');
-    //}
+    }
+    else{
+        var tableRow = $('#templates .escalation-status .norecords-list');
+        var clone = tableRow.clone();
+        $('.norecord', clone).html("No Record Found");
+        $('.table-drilldown-list').append(clone);
+    }
     $('.js-filtertable').on('keyup', function () {
         $(this).filtertable().addFilter('.js-filter');
     });
