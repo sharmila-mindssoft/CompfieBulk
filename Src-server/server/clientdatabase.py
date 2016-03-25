@@ -531,9 +531,9 @@ class ClientDatabase(Database):
         for industry in industry_rows:
             industry_name = industry[0]
             units = []
-            condition += " and industry_name = '%s' and is_active = 1" % industry_name
+            ad_condition = " and industry_name = '%s' and is_active = 1" % industry_name
             rows = self.get_data(
-                self.tblUnits, columns, condition
+                self.tblUnits, columns, condition+ad_condition
             )
             for unit in rows:
                 domain_ids_list = [int(x) for x in unit[7].split(",")]
@@ -2081,6 +2081,26 @@ class ClientDatabase(Database):
         condition = "1"
         self.increment( self.tblClientGroups, columns, condition, value = file_size)
 
+        total_used_space = 0
+
+        rows = self.get_data(self.tblClientGroups, "total_disk_space_used, client_id", "1")
+        client_id = rows[0][1]
+        if rows[0][0] is not None:
+            total_used_space = int(rows[0][0])
+
+        db_con = Database(
+            KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+            KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+        )
+        db_con.connect()
+        db_con.begin()
+        q = "UPDATE tbl_client_groups set total_disk_space_used = '%d' where client_id = '%d'" % (
+            total_used_space, client_id
+        )
+        db_con.execute(q)
+        db_con.commit()
+        db_con.close()
+
     def save_past_record(
             self, unit_id, compliance_id, due_date, completion_date, documents,
             validity_date, completed_by, client_id
@@ -3346,7 +3366,6 @@ class ClientDatabase(Database):
             "country_id", "domain_id",
             "year", "month"
         ]
-        print query
         result = self.convert_to_dict(rows, columns)
         return result
 
@@ -5330,13 +5349,15 @@ class ClientDatabase(Database):
                     user_id, employee_name, email_id, contact_no,
                     unit_name, address
                 ))
+        remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
         if not is_admin_is_a_user:
             licence_holders.append(
                 clientadminsettings.LICENCE_HOLDER(
                     0, "Administrator", admin_email, None,
                     None, None
                 ))
-        remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
+            remaining_licence -= 1
+        
         profile_detail = clientadminsettings.PROFILE_DETAIL(
             contract_from,
             contract_to,
@@ -5754,7 +5775,7 @@ class ClientDatabase(Database):
 #
     def calculate_ageing(self, due_date, frequency_type=None):
         current_time_stamp = self.get_date_time()
-        # due_date = datetime.datetime(due_date.year, due_date.month, due_date.day)
+        due_date = self.localize(due_date)
         if frequency_type =="On Occurrence":
             r = relativedelta.relativedelta(due_date, current_time_stamp)
             if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
@@ -5778,7 +5799,7 @@ class ClientDatabase(Database):
             return r.days, compliance_status
         else:
             r = relativedelta.relativedelta(due_date, current_time_stamp)
-            compliance_status = " %d days left" % abs(r.days)
+            compliance_status = " %d days left" % abs(r.days+1)
             if r.days < 0 and r.hours < 0 and r.minutes < 0:
                 compliance_status = "Overdue by %d days" % abs(r.days)
                 return r.days, compliance_status
@@ -8011,6 +8032,11 @@ class ClientDatabase(Database):
         no_of_licence = rows[0][0]
 
         remaining_licence = int(no_of_licence) - int(no_of_licence_holders)
+
+        columns = "admin_id"
+        rows = self.get_data(self.tblAdmin, columns, condition)
+        if rows[0][0] == 0:
+            remaining_licence -= 1
         return remaining_licence
 
     def get_no_of_days_left_for_contract_expiration(self):

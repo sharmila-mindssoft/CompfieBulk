@@ -321,47 +321,26 @@ class Database(object) :
         return m.hexdigest()
 
     def string_to_datetime(self, string):
-        # date = string.split("-")
-        # datetime_val = datetime.datetime(
-        #     year=int(date[2]),
-        #     month=self.integer_months[date[1]],
-        #     day=int(date[0])
-        # )
-        # return datetime_val.date()
         string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y")
-        return string_in_date
+        return self.localize(string_in_date)
 
     def string_to_datetime_with_time(self, string):
-        # date = string.split("-")
-        # datetime_val = datetime.datetime(
-        #     year=int(date[2]),
-        #     month=self.integer_months[date[1]],
-        #     day=int(date[0])
-        # )
-        # return datetime_val.date()
         string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y %H:%M")
-        local_dt = LOCAL_TIMEZONE.localize(string_in_date, is_dst=None)
-        utc_dt = local_dt.astimezone (pytz.utc)
-        return utc_dt
+        return self.localize(string_in_date)
+
+    def localize(self, time_stamp):
+        local_dt = time_stamp
+        if time_stamp.tzinfo is not None:
+            local_dt = LOCAL_TIMEZONE.localize(time_stamp, is_dst=None)
+        return local_dt
 
     def datetime_to_string(self, datetime_val):
-        # return "%d-%s-%d" % (
-        #     datetime_val.day,
-        #     self.string_months[datetime_val.month],
-        #     datetime_val.year
-        # )
         date_in_string = datetime_val.strftime("%d-%b-%Y")
         return date_in_string
 
     def datetime_to_string_time(self, datetime_val):
-        # return "%d-%s-%d" % (
-        #     datetime_val.day,
-        #     self.string_months[datetime_val.month],
-        #     datetime_val.year
-        # )
-        local_dt = LOCAL_TIMEZONE.localize(datetime_val, is_dst=None)
-        utc_dt = local_dt.astimezone (pytz.utc)
-        datetime_in_string = utc_dt.strftime("%d-%b-%Y %H:%M:%S")
+        local_dt = self.localize(datetime_val)
+        datetime_in_string = local_dt.strftime("%d-%b-%Y %H:%M")
         return datetime_in_string
 
     def get_client_db_info(self, client_id=None):
@@ -386,7 +365,8 @@ class Database(object) :
         return newId
 
     def get_date_time(self) :
-        return datetime.datetime.now()
+        time_stamp = datetime.datetime.now()
+        return self.localize(time_stamp)
 
     def verify_login(self, username, password):
         tblAdminCondition = "password='%s' and username='%s'" % (
@@ -5727,9 +5707,10 @@ class KnowledgeDatabase(Database):
             form_category_id = rows[0][0]
             form_ids = rows[0][1]
 
+            form_category_ids = "%d, 4" % form_category_id
             column = "group_concat(form_id)"
-            condition = "form_category_id = '%d' AND \
-            form_type_id != 3" % form_category_id
+            condition = "form_category_id in (%s) AND \
+            form_type_id != 3" % form_category_ids
             rows = self.get_data(
                 self.tblForms, column, condition
             )
