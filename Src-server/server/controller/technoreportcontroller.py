@@ -121,7 +121,7 @@ def process_get_compliance_task_report(db, request_frame, user_id):
 
     report_data = db.get_statutory_mapping_report(
         country_id, domain_id, industry_id,
-        nature_id, geography_id, user_id
+        nature_id, geography_id, level_1_id, user_id
     )
     statutory_mappings = {}
     if level_1_id is None:

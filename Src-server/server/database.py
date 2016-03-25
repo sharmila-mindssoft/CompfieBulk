@@ -2114,9 +2114,9 @@ class KnowledgeDatabase(Database):
     ) :
         qry_where = ""
         if industry_id is not None :
-            qry_where += "AND t2.industry_id = %s " % (industry_id)
+            qry_where += "AND t3.industry_id = %s " % (industry_id)
         if geography_id is not None :
-            qry_where += "AND t3.geography_id = %s " % (geography_id)
+            qry_where += "AND t4.geography_id = %s " % (geography_id)
         if statutory_nature_id is not None :
             qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
         if level_1_statutory_id is not None :
@@ -2142,6 +2142,10 @@ class KnowledgeDatabase(Database):
             FROM tbl_statutory_mappings t1 \
             INNER JOIN tbl_compliances t2 \
             ON t2.statutory_mapping_id = t1.statutory_mapping_id\
+            INNER JOIN tbl_statutory_industry t3 \
+            ON t3.statutory_mapping_id = t1.statutory_mapping_id\
+            INNER JOIN tbl_statutory_geographies t4 \
+            ON t4.statutory_mapping_id = t1.statutory_mapping_id\
             INNER JOIN tbl_user_domains t5 \
             ON t5.domain_id = t1.domain_id \
             and t5.user_id = %s \
@@ -2152,7 +2156,7 @@ class KnowledgeDatabase(Database):
             t1.country_id = %s \
             and t1.domain_id = %s \
             %s \
-            ORDER BY t1.statutory_mapping, t2.frequency_id" % (
+            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), t2.frequency_id" % (
                 user_id, user_id,
                 country_id, domain_id,
                 qry_where
@@ -2171,6 +2175,7 @@ class KnowledgeDatabase(Database):
             "frequency_id", "statutory_dates", "repeats_every",
             "repeats_type_id", "duration", "duration_type_id"
         ]
+        report_data = []
         if rows :
             report_data = self.convert_to_dict(rows, columns)
         # report_data = self.return_statutory_mappings(result, is_report=True)
