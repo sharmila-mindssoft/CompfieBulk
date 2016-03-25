@@ -321,8 +321,8 @@ $("#submit").click(function(){
       function onFailure(error){
         onFailure(error);
       }
-      //mirror.getComplianceTaskReport(filterdata,
-      mirror.getStatutoryMappingsReportData(filterdata,
+      mirror.getComplianceTaskReport(filterdata,
+      //mirror.getStatutoryMappingsReportData(filterdata,
         function (error, response) {
           if (error == null){
             onSuccess(response);
