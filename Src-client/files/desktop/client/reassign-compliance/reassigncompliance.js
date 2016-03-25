@@ -335,9 +335,11 @@ function submitcompliance(){
   var assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
   var assignComplianceConcurrenceId = parseInt($('.concurrencelist.active').attr('id'));
   var assignComplianceApprovalId = parseInt($('.approvallist.active').attr('id'));
+  var assignComplianceAssigneeName = null;
 
   if($('.assigneelist.active').attr('id') != undefined){
     assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
+    assignComplianceAssigneeName = $('.assigneelist.active').text().trim();
   }
 
   if($('.concurrencelist.active').attr('id') != undefined){

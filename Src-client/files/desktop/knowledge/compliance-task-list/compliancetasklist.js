@@ -7,6 +7,17 @@ var statutoryNaturesList;
 var statutoriesList;
 var complianceFrequencyList;
 
+var finalList;
+var pageSize;
+var startCount;
+var endCount;
+
+var count=1;
+var compliance_count=0;
+var lastActName = '';
+var lastOccuranceid = 0;
+var lastIndustryName = '';
+
 function clearMessage() {
   $(".error-message").hide();
   $(".error-message").text("");
@@ -14,6 +25,13 @@ function clearMessage() {
 function displayMessage(message) {
   $(".error-message").text(message);
   $(".error-message").show();
+}
+
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
 }
 
 function getStatutoryMappings(){
@@ -49,186 +67,156 @@ function getStatutoryMappings(){
   );
 }
 
-function loadresult(filterList){
-  $(".grid-table-rpt").show();
-  var country = $("#countryval").val();
-  var domain = $("#domainval").val();
-  var compliance_frequency = $("#compliance_frequency").val();
-  $(".country").text(country);
-  $(".domain").text(domain);
-  $(".tbody-compliance").find("tbody").remove();
-  var count=1;
-  var compliance_count=0;
-  for(var entity in filterList){
-    var checkNoCompliance = true;
-    var actname = '';
-    $.each(statutoriesList[$("#country").val()][$("#domain").val()], function(index, value) {
-    if (value.statutory_id == entity) {
-        actname = value.statutory_name;
-    }
-    });
-    var tableRow=$('#act-templates .table-act-list .table-row-act-list');
-    var clone=tableRow.clone();
-    $('.actname', clone).html(actname +'<span><img src="/images/chevron_black_down.png"></span>');
-    $('.tbody-compliance').append(clone);
-    $('.tbody-compliance').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
-    if(count==1){
-      $('.accordion-content'+count).addClass("default");
-    }
-    for(var indus in industriesList){
-      var display_industry=true;
-      var display_occurance1=true;
-      var display_occurance2=true;
-      var display_occurance3=true;
-      var display_occurance4=true;
-      for(var j=0; j<complianceFrequencyList.length; j++){
-        for(var i=0; i<filterList[entity].length; i++){
-          for(var a=0; a< filterList[entity][i]["industry_ids"].length; a++){
+function loadCountwiseResult(filterList){
 
-            if(industriesList[indus]["industry_id"] == filterList[entity][i]["industry_ids"][a]){
-              for(var k=0; k<filterList[entity][i]["compliances"].length; k++){
-                if((compliance_frequency == 'All' || compliance_frequency == filterList[entity][i]["compliances"][k]["frequency_id"]) ){
-                  var occurance = '';
-                  var occuranceid;
-                  $.each(complianceFrequencyList, function(index, value) {
-                    if (value.frequency_id == filterList[entity][i]["compliances"][k]["frequency_id"]) {
-                      occurance = value.frequency;
-                      occuranceid = value.frequency_id;
-                      checkNoCompliance = false;
-                    }
-                  });
-                  if(occuranceid == 1 && (j+1)==1){
-                    if(display_industry){
-                      var tableRow3=$('#industry-head-templates .table-industry-list .table-row-industry');
-                      var clone3=tableRow3.clone();
-                      $('.tbl_industry_heading', clone3).html('Industry : '+ industriesList[indus]["industry_name"]);
-                      $('.accordion-content'+count).append(clone3);
-                      display_industry = false;
-                    }
-                    if(display_occurance1){
-                      var tableRow2=$('#head-templates .table-compliance-frequency-list .table-row-com-frequency');
-                      var clone2=tableRow2.clone();
-                      $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;width:150px;">'+occurance+'</div>');
-                      $('.accordion-content'+count).append(clone2);
-                      display_occurance1 = false;
-                    }
-                  }
-                  if(occuranceid == 2 && (j+1)==2){
-                    if(display_industry){
-                      var tableRow3=$('#industry-head-templates .table-industry-list .table-row-industry');
-                      var clone3=tableRow3.clone();
-                      $('.tbl_industry_heading', clone3).html("Industry : " +industriesList[indus]["industry_name"]);
-                      $('.accordion-content'+count).append(clone3);
-                      display_industry = false;
-                    }
-                    if(display_occurance2){
-                      var tableRow2=$('#head-templates .table-compliance-frequency-list .table-row-com-frequency');
-                      var clone2=tableRow2.clone();
-                      $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;width:150px;">'+occurance+'</div>');
-                      $('.accordion-content'+count).append(clone2);
-                      display_occurance2 = false;
-                    }
-                  }
-                  if(occuranceid == 3 && (j+1)==3){
-                    if(display_industry){
-                      var tableRow3=$('#industry-head-templates .table-industry-list .table-row-industry');
-                      var clone3=tableRow3.clone();
-                      $('.tbl_industry_heading', clone3).html("Industry : " +industriesList[indus]["industry_name"]);
-                      $('.accordion-content'+count).append(clone3);
-                      display_industry = false;
-                    }
-                    if(display_occurance3){
-                      var tableRow2=$('#head-templates  .table-compliance-frequency-list .table-row-com-frequency');
-                      var clone2=tableRow2.clone();
-                      $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;width:150px;">'+occurance+'</div>');
-                      $('.accordion-content'+count).append(clone2);
-                      display_occurance3 = false;
-                    }
-                  }
-                  if(occuranceid == 4 && (j+1)==4){
-                    if(display_industry){
-                      var tableRow3=$('#industry-head-templates .table-industry-list .table-row-industry');
-                      var clone3=tableRow3.clone();
-                      $('.tbl_industry_heading', clone3).html("Industry : " +industriesList[indus]["industry_name"]);
-                      $('.accordion-content'+count).append(clone3);
-                      display_industry = false;
-                    }
-                    if(display_occurance4){
-                      var tableRow2=$('#head-templates  .table-compliance-frequency-list .table-row-com-frequency');
-                      var clone2=tableRow2.clone();
-                      $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;width:150px;">'+occurance+'</div>');
-                      $('.accordion-content'+count).append(clone2);
-                      display_occurance4 = false;
-                    }
-                  }
-                  if(occuranceid == 1 && (j+1)==1 || occuranceid == 2 && (j+1)==2 || occuranceid == 3 && (j+1)==3 || occuranceid == 4 && (j+1)==4){
-                    var tableRow1=$('#compliance-templates .table-compliances-list .table-row');
-                    var clone1=tableRow1.clone();
-                    $('.tbody-compliance').append(clone1);
-                    $('.tbl_sno', clone1).text(compliance_count+1);
-                    $('.tbl_compliancefrequency', clone1).text(occurance);
-                    $('.tbl_statutorynature',   clone1).text(filterList[entity][i]["statutory_nature_name"]);
-                    $('.tbl_statutoryprovision', clone1).text(filterList[entity][i]["compliances"][k]["statutory_provision"]);
-
-                    var download_url = filterList[entity][i]["compliance_names"][k]["url"]
-                    if(download_url == null){
-                      $('.tbl_compliancetask', clone1).html(filterList[entity][i]["compliance_names"][k]["compliance_name"]);
-                    }else{
-                      $('.tbl_compliancetask', clone1).html('<a href="'+download_url+'" target="_balnk">'+filterList[entity][i]["compliance_names"][k]["compliance_name"]+'</a>');
-                    }
-
-                    var sdateDesc = '';
-                    var statutory_date =  filterList[entity][i]["compliances"][k]["statutory_dates"];
-                    var statutorydate = '';
-
-                    if(occurance == 'Periodical' || occurance == 'Review') sdateDesc = 'Every';
-                    for(z = 0; z < statutory_date.length; z++){
-                      var sDay = '';
-                      if(statutory_date[z]["statutory_date"] != null) sDay = statutory_date[z]["statutory_date"];
-
-                      var sMonth = '';
-                      if(statutory_date[z]["statutory_month"] != null) sMonth = statutory_date[z]["statutory_month"];
-
-                      if(sMonth == 1) sMonth = "January"
-                      else if(sMonth == 2) sMonth = "February"
-                      else if(sMonth == 3) sMonth = "March"
-                      else if(sMonth == 4) sMonth = "April"
-                      else if(sMonth == 5) sMonth = "May"
-                      else if(sMonth == 6) sMonth = "June"
-                      else if(sMonth == 7) sMonth = "July"
-                      else if(sMonth == 8) sMonth = "Auguest"
-                      else if(sMonth == 9) sMonth = "September"
-                      else if(sMonth == 10) sMonth = "October"
-                      else if(sMonth == 11) sMonth = "November"
-                      else if(sMonth == 12) sMonth = "December"
-                      statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
-                    }
-
-                    $('.tbl_description', clone1).text(filterList[entity][i]["compliances"][k]["description"]);
-                    $('.tbl_penalconsequences', clone1).text(filterList[entity][i]["compliances"][k]["penal_consequences"]);
-                    $('.tbl_occurance', clone1).text(statutorydate);
-                    $('.tbl_applicablelocation', clone1).text(filterList[entity][i]["geography_mappings"]);
-                    $('.accordion-content'+count).append(clone1);
-                    compliance_count = compliance_count + 1;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    if(checkNoCompliance){
-      var tableRow1=$('#nocompliance-templates .table-nocompliances-list .table-row');
-      var clone1=tableRow1.clone();
-      $('.tbody-compliance').append(clone1);
-      $('.tbl_norecords', clone1).text("No Records");
-      $('.accordion-content'+count).append(clone1);
-    }
-    count++;
+  if(startCount <= 0){
+    $(".grid-table-rpt").show();
+    var country = $("#countryval").val();
+    var domain = $("#domainval").val();
+    var compliance_frequency = $("#compliance_frequency").val();
+    $(".country").text(country);
+    $(".domain").text(domain);
+    $(".tbody-compliance").find("tbody").remove();
+    count=1;
+    compliance_count=0;
+    lastActName = '';
+    lastOccuranceid = 0;
+    lastIndustryName = '';
   }
-  $('.compliance_count').text("Total : "+ (compliance_count) +" records");
-  $(document).ready(function($) {
+
+  for(var entity in filterList){
+    var actname = filterList[entity]["act_name"];
+    var frequency_id = filterList[entity]["frequency_id"];
+    var industry_names = filterList[entity]["industry_names"];
+    var statutory_nature_name = filterList[entity]["statutory_nature_name"];
+    var statutory_provision = filterList[entity]["statutory_provision"];
+    var compliance_name = filterList[entity]["compliance_task"];
+    var download_url = filterList[entity]["url"];
+    console.log(frequency_id)
+
+    if(actname != lastActName){
+      var tableRow=$('#act-templates .table-act-list .table-row-act-list');
+      var clone=tableRow.clone();
+      $('.actname', clone).html(actname +'<span><img src="/images/chevron_black_down.png"></span>');
+      $('.tbody-compliance').append(clone);
+      $('.tbody-compliance').append('<tbody class="accordion-content accordion-content'+count+' default"></tbody>');
+      /*if(count==1){
+        $('.accordion-content'+count).addClass("default");
+      }*/
+      count++;
+    }
+    
+    if(industry_names != lastIndustryName){
+      var tableRow3=$('#industry-head-templates .table-industry-list .table-row-industry');
+      var clone3=tableRow3.clone();
+      $('.tbl_industry_heading', clone3).html("Industry : " +industry_names);
+      $('.accordion-content'+count).append(clone3);
+    }
+
+    var occurance = '';
+    var occuranceid;
+    if(frequency_id != lastOccuranceid){
+      $.each(complianceFrequencyList, function(index, value) {
+      if (value.frequency_id == frequency_id) {
+        occurance = value.frequency;
+        occuranceid = value.frequency_id;
+      }
+      });
+      var tableRow2=$('#head-templates .table-compliance-frequency-list .table-row-com-frequency');
+      var clone2=tableRow2.clone();
+      $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;width:150px;">'+occurance+'</div>');
+      $('.accordion-content'+(count-1)).append(clone2);
+    }
+        
+    var tableRow1=$('#compliance-templates .table-compliances-list .table-row');
+    var clone1=tableRow1.clone();
+    $('.tbody-compliance').append(clone1);
+    $('.tbl_sno', clone1).text(compliance_count+1);
+    $('.tbl_compliancefrequency', clone1).text(occurance);
+    $('.tbl_statutorynature',   clone1).text(statutory_nature_name);
+    $('.tbl_statutoryprovision', clone1).text(statutory_provision);
+    if(download_url == null){
+      $('.tbl_compliancetask', clone1).html(compliance_name);
+    }else{
+      $('.tbl_compliancetask', clone1).html('<a href= "'+ download_url +'" target="_new">'+compliance_name+'</a>');
+    }
+
+    var sdateDesc = '';
+    var duration = filterList[entity]["duration"];
+    var duration_type_id = filterList[entity]["duration_type_id"];
+    var repeats_every = filterList[entity]["repeats_every"];
+    var repeats_type_id = filterList[entity]["repeats_type_id"];
+    var statutory_date =  filterList[entity]["statutory_dates"];
+    var statutorydate = '';
+    var duration_type = '';
+    var repeats_type = '';
+    if(occurance == "On Occurrence"){
+      if(duration_type_id == 1){
+        duration_type = 'Day(s)';
+      }else{
+        duration_type = 'Hour(s)';
+      }
+      sdateDesc = duration + ' ' + duration_type;
+    }
+    else if(occurance == 'One Time'){
+      sdateDesc = '';
+    }
+    else{
+      if(repeats_type_id == 1){
+        repeats_type = 'Day(s)';
+      }else if(repeats_type_id == 2){
+        repeats_type = 'Month(s)';
+      }else{
+        repeats_type = 'Year(s)';
+      }
+      sdateDesc = 'Every ' + repeats_every + ' ' + repeats_type;
+    }
+
+    if(occurance != "On Occurrence"){
+      for(z = 0; z < statutory_date.length; z++){
+      var sDay = '';
+      if(statutory_date[z]["statutory_date"] != null) sDay = statutory_date[z]["statutory_date"];
+      
+      var sMonth = '';
+      if(statutory_date[z]["statutory_month"] != null) sMonth = statutory_date[z]["statutory_month"];
+
+      if(sMonth == 1) sMonth = "January"
+      else if(sMonth == 2) sMonth = "February"
+      else if(sMonth == 3) sMonth = "March"
+      else if(sMonth == 4) sMonth = "April"  
+      else if(sMonth == 5) sMonth = "May"
+      else if(sMonth == 6) sMonth = "June"
+      else if(sMonth == 7) sMonth = "July"
+      else if(sMonth == 8) sMonth = "Auguest"
+      else if(sMonth == 9) sMonth = "September"
+      else if(sMonth == 10) sMonth = "October"
+      else if(sMonth == 11) sMonth = "November"
+      else if(sMonth == 12) sMonth = "December"
+      statutorydate +=  sMonth +' '+ sDay +' ';
+      }
+      if(sdateDesc != ''){
+        statutorydate = sdateDesc + ' ( '+statutorydate+' )';
+      }
+    }else{
+      statutorydate = sdateDesc;
+    }
+    $('.tbl_description', clone1).text(filterList[entity]["description"]);
+    $('.tbl_penalconsequences', clone1).text(filterList[entity]["penal_consequences"]);
+    $('.tbl_occurance', clone1).text(statutorydate);
+    $('.tbl_applicablelocation', clone1).text(filterList[entity]["geography_mappings"]);
+    $('.accordion-content'+(count-1)).append(clone1);
+
+    compliance_count = compliance_count + 1;
+    lastActName = actname;
+    lastOccuranceid = frequency_id;
+    lastIndustryName = industry_names;
+  }
+  
+  if(endCount > finalList.length) endCount = finalList.length
+  $('.compliance_count').text("Showing " + 1 + " to " + endCount + " of " + Object.keys(finalList).length);
+  
+  if(endCount >= finalList.length){
+    $(document).ready(function($) {
     $('#accordion').find('.accordion-toggle').click(function(){
       //Expand or collapse this panel
       $(this).next().slideToggle('fast');
@@ -236,7 +224,65 @@ function loadresult(filterList){
       $(".accordion-content").not($(this).next()).slideUp('fast');
     });
   });
+  }
+  
+  if(count == 1){
+    var tableRow1=$('#nocompliance-templates .table-nocompliances-list .table-row');
+    var clone1=tableRow1.clone();
+    $('.tbody-compliance').append(clone1);
+    $('.tbl_norecords', clone1).text("No Records");
+    $('.accordion-content'+count).append(clone1);
+  }
 }
+
+
+function get_sub_array(object, start, end){
+    if(!end){ end=-1;} 
+    return object.slice(start, end);
+}
+
+$('#pagination').click(function(e){
+  startCount = endCount;
+  endCount = startCount + pageSize;
+  var sub_act_list =  finalList;
+  var sub_keys_list = get_sub_array(sub_act_list, startCount, endCount);
+  if(sub_keys_list.length < pageSize){
+    $('#pagination').hide();
+  }
+  //alert(startCount + '-' + endCount + '-' +sub_keys_list.length)
+  loadCountwiseResult(sub_keys_list);
+  e.preventDefault();
+});
+
+function loadresult() {
+
+  pageSize = 500;
+  startCount = 0;
+  endCount = pageSize;
+
+  var c_frequency = $("#compliance_frequency").val();
+  if(c_frequency == 'All'){
+    finalList = statutoryMappingDataList;
+  }else{
+    var filteredList=[];
+    for(var entity in statutoryMappingDataList) {
+      var filter_frequency = statutoryMappingDataList[entity]["frequency_id"];
+      if (c_frequency == filter_frequency) filteredList.push(statutoryMappingDataList[entity]);
+    }
+    finalList = filteredList;
+  }
+
+  if(finalList.length > pageSize){
+    $('#pagination').show();
+  }else{
+    $('#pagination').hide();
+  }
+
+  var sub_act_list =  finalList;
+  var sub_keys_list = get_sub_array(sub_act_list, startCount, endCount);
+  loadCountwiseResult(sub_keys_list);
+}
+
 
 $("#submit").click(function(){
   var country = $("#country").val();
@@ -270,12 +316,13 @@ $("#submit").click(function(){
 
       function onSuccess(data){
         statutoryMappingDataList = data["statutory_mappings"];
-        loadresult(statutoryMappingDataList);
+        loadresult();
       }
       function onFailure(error){
         onFailure(error);
       }
-      mirror.getComplianceTaskReport(filterdata,
+      //mirror.getComplianceTaskReport(filterdata,
+      mirror.getStatutoryMappingsReportData(filterdata,
         function (error, response) {
           if (error == null){
             onSuccess(response);

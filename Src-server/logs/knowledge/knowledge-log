@@ -1,96 +1,222 @@
-2016-03-24 11:38:44,881 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x8      0xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2 ds adasda'
-2016-03-24 11:38:44,926 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
-    request = parse_structure_VariantType_knowledgetransaction_Request(request)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
-    return knowledgetransaction.Request.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
-    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
-    lst.append(parse_structure_RecordType_core_Compliance(item))
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
-    return core.Compliance.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
-    compliance_task = parse_structure_CustomTextType_100(compliance_task)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
-    return parse_custom_string(data, 100)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
-    "a string with max length(%s)" % (
-ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x8      0xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2 ds adasda'
+2016-03-25 12:05:32,295 - knowledge_logger - main.py-handle-api- : (1054, "Unknown column 't3.geography_id' in 'where clause'")
+2016-03-25 12:05:32,296 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 205, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgereportcontroller.py", line 29, in process_knowledge_report_request
+    return process_get_statutory_mapping_report_data(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgereportcontroller.py", line 63, in process_get_statutory_mapping_report_data
+    nature_id, geography_id, level_1_id, user_id
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 2169, in get_statutory_mapping_report
+    rows = self.select_all(q)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 146, in select_all
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+OperationalError: (1054, "Unknown column 't3.geography_id' in 'where clause'")
 
-2016-03-24 11:43:21,705 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
-2016-03-24 11:43:21,705 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
-    request = parse_structure_VariantType_knowledgetransaction_Request(request)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
-    return knowledgetransaction.Request.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
-    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
-    lst.append(parse_structure_RecordType_core_Compliance(item))
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
-    return core.Compliance.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
-    compliance_task = parse_structure_CustomTextType_100(compliance_task)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
-    return parse_custom_string(data, 100)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
-    "a string with max length(%s)" % (
-ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
+2016-03-25 12:06:24,185 - knowledge_logger - main.py-handle-api- : local variable 'report_data' referenced before assignment
+2016-03-25 12:06:24,185 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 205, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgereportcontroller.py", line 29, in process_knowledge_report_request
+    return process_get_statutory_mapping_report_data(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgereportcontroller.py", line 63, in process_get_statutory_mapping_report_data
+    nature_id, geography_id, level_1_id, user_id
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 2189, in get_statutory_mapping_report
+    report_data
+UnboundLocalError: local variable 'report_data' referenced before assignment
 
-2016-03-24 11:45:11,591 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
-2016-03-24 11:45:11,592 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
-    request = parse_structure_VariantType_knowledgetransaction_Request(request)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
-    return knowledgetransaction.Request.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
-    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
-    lst.append(parse_structure_RecordType_core_Compliance(item))
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
-    return core.Compliance.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
-    compliance_task = parse_structure_CustomTextType_100(compliance_task)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
-    return parse_custom_string(data, 100)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
-    "a string with max length(%s)" % (
-ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
+2016-03-25 16:59:18,969 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+2016-03-25 16:59:18,969 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 213, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 36, in process_techno_report_request
+    return process_get_compliance_task_report(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 124, in process_get_compliance_task_report
+    nature_id, geography_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 8 arguments (7 given)
 
-2016-03-24 11:46:36,109 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
-2016-03-24 11:46:36,110 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
-    request = parse_structure_VariantType_knowledgetransaction_Request(request)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
-    return knowledgetransaction.Request.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
-    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
-    lst.append(parse_structure_RecordType_core_Compliance(item))
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
-    return core.Compliance.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
-    compliance_task = parse_structure_CustomTextType_100(compliance_task)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
-    return parse_custom_string(data, 100)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
-    "a string with max length(%s)" % (
-ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
+2016-03-25 17:00:18,644 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+2016-03-25 17:00:18,644 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 213, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 36, in process_techno_report_request
+    return process_get_compliance_task_report(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 124, in process_get_compliance_task_report
+    nature_id, geography_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+
+2016-03-25 17:00:24,021 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+2016-03-25 17:00:24,021 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 213, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 36, in process_techno_report_request
+    return process_get_compliance_task_report(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 124, in process_get_compliance_task_report
+    nature_id, geography_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+
+2016-03-25 17:09:05,001 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+2016-03-25 17:09:05,001 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 213, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 36, in process_techno_report_request
+    return process_get_compliance_task_report(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 124, in process_get_compliance_task_report
+    nature_id, geography_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+
+2016-03-25 17:09:29,435 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+2016-03-25 17:09:29,435 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 213, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 36, in process_techno_report_request
+    return process_get_compliance_task_report(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 124, in process_get_compliance_task_report
+    nature_id, geography_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+
+2016-03-25 17:10:37,948 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+2016-03-25 17:10:37,949 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 213, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 36, in process_techno_report_request
+    return process_get_compliance_task_report(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 124, in process_get_compliance_task_report
+    nature_id, geography_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+
+2016-03-25 17:10:59,091 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+2016-03-25 17:10:59,091 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 213, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 36, in process_techno_report_request
+    return process_get_compliance_task_report(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 124, in process_get_compliance_task_report
+    nature_id, geography_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+
+2016-03-25 17:10:59,750 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+2016-03-25 17:10:59,750 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 213, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 36, in process_techno_report_request
+    return process_get_compliance_task_report(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 124, in process_get_compliance_task_report
+    nature_id, geography_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+
+2016-03-25 17:10:59,979 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+2016-03-25 17:10:59,980 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 213, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 36, in process_techno_report_request
+    return process_get_compliance_task_report(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 124, in process_get_compliance_task_report
+    nature_id, geography_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+
+2016-03-25 17:11:00,213 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+2016-03-25 17:11:00,213 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 213, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 36, in process_techno_report_request
+    return process_get_compliance_task_report(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 124, in process_get_compliance_task_report
+    nature_id, geography_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+
+2016-03-25 17:11:00,476 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+2016-03-25 17:11:00,477 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 213, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 36, in process_techno_report_request
+    return process_get_compliance_task_report(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 124, in process_get_compliance_task_report
+    nature_id, geography_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+
+2016-03-25 17:11:58,017 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+2016-03-25 17:11:58,017 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 213, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 36, in process_techno_report_request
+    return process_get_compliance_task_report(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 124, in process_get_compliance_task_report
+    nature_id, geography_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+
+2016-03-25 17:22:17,224 - knowledge_logger - main.py-handle-api- : (1054, "Unknown column 't2.industry_id' in 'where clause'")
+2016-03-25 17:22:17,225 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 205, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgereportcontroller.py", line 29, in process_knowledge_report_request
+    return process_get_statutory_mapping_report_data(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgereportcontroller.py", line 63, in process_get_statutory_mapping_report_data
+    nature_id, geography_id, level_1_id, user_id
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 2169, in get_statutory_mapping_report
+    rows = self.select_all(q)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 146, in select_all
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+OperationalError: (1054, "Unknown column 't2.industry_id' in 'where clause'")
+
+2016-03-25 18:27:24,729 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+2016-03-25 18:27:24,729 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 213, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 36, in process_techno_report_request
+    return process_get_compliance_task_report(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 124, in process_get_compliance_task_report
+    nature_id, geography_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+
+2016-03-25 18:37:30,041 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 8 arguments (7 given)
+2016-03-25 18:37:30,041 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 213, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 36, in process_techno_report_request
+    return process_get_compliance_task_report(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technoreportcontroller.py", line 124, in process_get_compliance_task_report
+    nature_id, geography_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 8 arguments (7 given)
 
