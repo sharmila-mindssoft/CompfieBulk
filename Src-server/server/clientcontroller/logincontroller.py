@@ -36,6 +36,7 @@ def process_login_request(request, db, company_id) :
 
 
 def process_login(db, request, client_id):
+    login_type = request.login_type
     username = request.username
     password = request.password
     encrypt_password = db.encrypt(password)
@@ -49,13 +50,17 @@ def process_login(db, request, client_id):
         return login.InvalidCredentials()
     else:
         response = db.verify_login(username, encrypt_password)
-    if response is True:
-        return admin_login_response(db, client_id, request.ip)
-    else :
-        if bool(response):
-            return user_login_response(db, response, client_id, request.ip)
+    if login_type.lower() == "web":
+        if response is True:
+            return admin_login_response(db, client_id, request.ip)
         else :
-            return login.InvalidCredentials()
+            if bool(response):
+                return user_login_response(db, response, client_id, request.ip)
+            else :
+                return login.InvalidCredentials()
+    else :
+        pass
+
 
 
 def user_login_response(db, data, client_id, ip):
