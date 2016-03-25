@@ -103,6 +103,8 @@ function loadCountwiseResult(filterList){
       /*if(count==1){
         $('.accordion-content'+count).addClass("default");
       }*/
+      lastOccuranceid = 0;
+      lastIndustryName = '';
       count++;
     }
     
@@ -110,7 +112,7 @@ function loadCountwiseResult(filterList){
       var tableRow3=$('#industry-head-templates .table-industry-list .table-row-industry');
       var clone3=tableRow3.clone();
       $('.tbl_industry_heading', clone3).html("Industry : " +industry_names);
-      $('.accordion-content'+count).append(clone3);
+      $('.accordion-content'+(count-1)).append(clone3);
     }
 
     var occurance = '';
@@ -212,9 +214,10 @@ function loadCountwiseResult(filterList){
     lastIndustryName = industry_names;
   }
   
-  if(endCount > finalList.length) endCount = finalList.length
-  $('.compliance_count').text("Showing " + 1 + " to " + endCount + " of " + Object.keys(finalList).length);
-  
+  if(count > 1){
+    if(endCount > finalList.length) endCount = finalList.length
+    $('.compliance_count').text("Showing " + 1 + " to " + endCount + " of " + Object.keys(finalList).length);
+  }
   if(endCount >= finalList.length){
     $(document).ready(function($) {
     $('#accordion').find('.accordion-toggle').click(function(){
