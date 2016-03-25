@@ -337,7 +337,6 @@ function submitcompliance(){
   var assignComplianceApprovalId = parseInt($('.approvallist.active').attr('id'));
   var assignComplianceAssigneeName = null;
 
-
   if($('.assigneelist.active').attr('id') != undefined){
     assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
     assignComplianceAssigneeName = $('.assigneelist.active').text().trim();
