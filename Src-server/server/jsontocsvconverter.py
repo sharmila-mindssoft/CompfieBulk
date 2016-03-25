@@ -103,6 +103,16 @@ class ConvertJsonToCSV(object):
         self.format["validity_date"] = "Validity Date"
         self.format["assignee"] = "Assignee"
         self.format["completion_date"] = "Completion Date"
-        
-
-
+        self.format["compliance_frequency"] = "Completion Frequency"
+        self.format["description"] = "Description"
+        self.format["statutory_provision"] = "Statutory Provision"
+        self.format["repeats"] = "Repeats"
+        self.format["penal_consequences"] = "Penal Consequences"
+        self.format["division_id"] = "Division Id"
+        self.format["legal_entity_id"] = "Legal Entity Id"
+        self.format["business_group_id"] = "Business Group Id"
+        self.format["unit_address"] = "Unit Address"
+        self.format["unit_code"] = "Unit Code"
+        self.format["geography_name"] = "Geography Name"
+        self.format["postal_code"] = "Postal Code"
+        self.format["domain_ids"] = "Domain Ids"

@@ -43,7 +43,13 @@ function initialize(){
 		}
 	);
 }
-$("#show-button").click(function(){	
+$("#show-button").click(function(){
+    loadunitdetailsreport("show");
+});
+$("#export-button").click(function(){ 
+    loadunitdetailsreport("export");
+});
+function loadunitdetailsreport(buttontype){
 	var countries = $("#country").val();
 	countriesText = $("#countryval").val();
 	
@@ -100,6 +106,19 @@ $("#show-button").click(function(){
       clearMessage();
 			$(".grid-table-rpt").show();
 			loadUnitDetailsList(data['units']);		
+      if(buttontype == "export"){
+        client_mirror.exportToCSV(data, 
+          function (error, response) {
+              if (error == null){
+                  var download_url = response["link"];
+                  window.open(download_url, '_blank');
+              }
+              else {
+                  displayMessage(error);
+              }
+          }
+        );
+      }
 		}
 		function onFailure(error){
 			console.log(error);
@@ -116,7 +135,7 @@ $("#show-button").click(function(){
 			}
 		);
 	}
-});
+}
 function getdomainnames(list){
 	var domainsNames = '';
 	$.each(domainsList, function(key, value){

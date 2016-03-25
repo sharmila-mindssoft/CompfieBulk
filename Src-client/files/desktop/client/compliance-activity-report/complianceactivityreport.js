@@ -44,7 +44,13 @@ function initialize(){
         }
     );
 }
-$("#show-button").click(function(){ 
+$("#show-button").click(function(){     
+    loadcomplianceactivityreport("show");
+});
+$("#export-button").click(function(){ 
+    loadcomplianceactivityreport("export");
+});
+function loadcomplianceactivityreport(buttontype){
     var countries = $("#country").val();
     countriesNameVal = $("#countryval").val();
     //Domain    
@@ -107,7 +113,21 @@ $("#show-button").click(function(){
     }
     else{
         function onSuccess(data){
+            clearMessage();
             loadComplianceActivityReportList(data['activities']);     
+            if(buttontype == "export"){
+                client_mirror.exportToCSV(data, 
+                    function (error, response) {
+                        if (error == null){
+                            var download_url = response["link"];
+                            window.open(download_url, '_blank');
+                        }
+                        else {
+                            displayMessage(error);
+                        }
+                    }
+                );
+            }
         }
         function onFailure(error){
             console.log(error);
@@ -125,8 +145,7 @@ $("#show-button").click(function(){
             }
         );
     }
-});
-
+}
 
 function loadComplianceActivityReportList(data){
     $('.tbody-compliance-activity-list tr').remove();

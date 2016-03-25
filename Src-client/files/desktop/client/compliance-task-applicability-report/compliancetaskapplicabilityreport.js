@@ -49,6 +49,12 @@ function initialize(){
     );
 }
 $("#show-button").click(function(){ 
+    loadcompliancetaskapplicabilityreport("show");
+});
+$("#export-button").click(function(){ 
+    loadcompliancetaskapplicabilityreport("export");
+});
+function loadcompliancetaskapplicabilityreport(buttontype){
     var countries = $("#country").val();
     countriesText = $("#countryval").val();
     //Domain    
@@ -108,6 +114,19 @@ $("#show-button").click(function(){
         function onSuccess(data){
             $(".grid-table-rpt").show();
             loadTaskApplicabilityStatusList(data);     
+            if(buttontype == "export"){
+                client_mirror.exportToCSV(data, 
+                    function (error, response) {
+                        if (error == null){
+                            var download_url = response["link"];
+                            window.open(download_url, '_blank');
+                        }
+                        else {
+                            displayMessage(error);
+                        }
+                    }
+                );
+            }
         }
         function onFailure(error){
             console.log(error);
@@ -126,7 +145,7 @@ $("#show-button").click(function(){
             }
         );
     }
-});
+}
 
 
 function loadTaskApplicabilityStatusList(data){
