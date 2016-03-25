@@ -482,3 +482,4 @@ INSERT INTO tbl_notification_types VALUES(1, "Notification");
 INSERT INTO tbl_notification_types VALUES(2, "Reminder");
 INSERT INTO tbl_notification_types VALUES(3, "Escalation");
 DROP TRIGGER IF EXISTS `after_tbl_statutory_notifications_units_insert`;
+INSERT INTO tbl_mobile_sync_versions VALUES(0, 0, 0, 0, 0);

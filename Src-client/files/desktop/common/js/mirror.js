@@ -717,6 +717,11 @@ function initMirror() {
         apiRequest("knowledge_transaction", request, callback);
     }
 
+    function getApproveStatutoryMapings(callback) {
+        var request = ["GetApproveStatutoryMappings", {}];
+        apiRequest("knowledge_transaction", request, callback);
+    }
+
     function approveStatutoryList(statutoryMappingId, statutoryProvision,
         approvalStatus, reason, notificationText) {
         var dict = {}
@@ -1520,6 +1525,7 @@ function initMirror() {
         getStatutoryMappingsReportFilter: getStatutoryMappingsReportFilter,
         filterData: filterData,
         getStatutoryMappingsReportData: getStatutoryMappingsReportData,
+        getApproveStatutoryMapings: getApproveStatutoryMapings,
 
         getSaveAdminUserGroupDict: getSaveAdminUserGroupDict,
         saveAdminUserGroup: saveAdminUserGroup,

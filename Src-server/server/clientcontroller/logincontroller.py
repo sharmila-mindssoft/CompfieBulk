@@ -1,6 +1,6 @@
 from server.controller.corecontroller import process_user_forms
 from server.emailcontroller import EmailHandler as email
-from protocol import login
+from protocol import login, mobile
 from server.constants import (
     CLIENT_URL, KNOWLEDGE_URL
 )

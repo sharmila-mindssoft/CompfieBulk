@@ -50,11 +50,11 @@ function getStatutoryMappings(){
   function onSuccess(data){
     statutoryMappingsList = data["statutory_mappings"];
     tempstatutoryMappingsList = data["statutory_mappings"];
-    
+
   }
   function onFailure(error){
   }
-  mirror.getStatutoryMappings(
+  mirror.getApproveStatutoryMapings(
     function (error, response) {
       if (error == null){
         onSuccess(response);
@@ -70,13 +70,13 @@ function getStatutoryMappings(){
 //Autocomplete Script Starts
 //Hide list items after select
 $(".hidemenu").click(function(){
-  $("#autocompleteview").hide(); 
+  $("#autocompleteview").hide();
   $("#autocomplete_domain").hide();
   $("#autocomplete_industry").hide();
   $("#autocomplete_statutorynature").hide();
 });
 
-//load country list in autocomplete text box  
+//load country list in autocomplete text box
 $("#countryval").keyup(function(){
   var textval = $(this).val();
   $("#autocompleteview").show();
@@ -85,7 +85,7 @@ $("#countryval").keyup(function(){
   $('#ulist_text').empty();
   if(textval.length>0){
     for(var i in countries){
-      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == 1) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
+      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == 1) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -104,7 +104,7 @@ function activate_text (element,checkval,checkname) {
   $("#country").val(checkval);
 }
 
-//load domain list in autocomplete text box  
+//load domain list in autocomplete text box
 $("#domainval").keyup(function(){
   var textval = $(this).val();
   $("#autocomplete_domain").show();
@@ -113,7 +113,7 @@ $("#domainval").keyup(function(){
   $('#ulist_domain').empty();
   if(textval.length>0){
     for(var i in domains){
-      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == 1) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 
+      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == 1) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -132,7 +132,7 @@ function activate_domain (element,checkval,checkname) {
   $("#domain").val(checkval);
 }
 
-//load domain list in autocomplete text box  
+//load domain list in autocomplete text box
 $("#industryval").keyup(function(){
   var textval = $(this).val();
   $("#autocomplete_industry").show();
@@ -141,7 +141,7 @@ $("#industryval").keyup(function(){
   $('#ulist_industry').empty();
   if(textval.length>0){
     for(var i in industries){
-      if (~industries[i]["industry_name"].toLowerCase().indexOf(textval.toLowerCase()) && industries[i]["is_active"] == 1) suggestions.push([industries[i]["industry_id"],industries[i]["industry_name"]]); 
+      if (~industries[i]["industry_name"].toLowerCase().indexOf(textval.toLowerCase()) && industries[i]["is_active"] == 1) suggestions.push([industries[i]["industry_id"],industries[i]["industry_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -161,7 +161,7 @@ function activate_industry (element,checkval,checkname) {
 }
 
 
-//load statutorynature list in autocomplete text box  
+//load statutorynature list in autocomplete text box
 $("#statutorynatureval").keyup(function(){
   var textval = $(this).val();
   $("#autocomplete_statutorynature").show();
@@ -170,7 +170,7 @@ $("#statutorynatureval").keyup(function(){
   $('#ulist_statutorynature').empty();
   if(textval.length>0){
     for(var i in statutorynatures){
-      if (~statutorynatures[i]["statutory_nature_name"].toLowerCase().indexOf(textval.toLowerCase()) && statutorynatures[i]["is_active"] == 1) suggestions.push([statutorynatures[i]["statutory_nature_id"],statutorynatures[i]["statutory_nature_name"]]); 
+      if (~statutorynatures[i]["statutory_nature_name"].toLowerCase().indexOf(textval.toLowerCase()) && statutorynatures[i]["is_active"] == 1) suggestions.push([statutorynatures[i]["statutory_nature_id"],statutorynatures[i]["statutory_nature_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -200,7 +200,7 @@ function loadApproveStatutory(){
     displayMessage("Country Required");
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");  
+    displayMessage("Domain Required");
   }
   else{
     j = 1;
@@ -208,7 +208,7 @@ function loadApproveStatutory(){
     var industryName = '';
     var statutoryNatureName = '';
     var approvalStatus = '';
-    
+
     var isActive = false;
     var countryId = '';
     var domainId = '';
@@ -223,7 +223,7 @@ function loadApproveStatutory(){
       industryIds = statutoryMappingsList[entity]["industry_ids"];
       industryName = statutoryMappingsList[entity]["industry_names"];
       statutoryNatureName = statutoryMappingsList[entity]["statutory_nature_name"];
-      statutoryNatureId = statutoryMappingsList[entity]["statutory_nature_id"];        
+      statutoryNatureId = statutoryMappingsList[entity]["statutory_nature_id"];
       var statutoryMappings='';
       var statutoryprovision = '';
       for(var i=0; i<statutoryMappingsList[entity]["statutory_mappings"].length; i++){
@@ -231,7 +231,7 @@ function loadApproveStatutory(){
         statutoryprovision = statutoryprovision + statutoryMappingsList[entity]["statutory_mappings"][i];
       }
       statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
-      
+
       var applicableLocation = '';
 
       for(var i=0; i<statutoryMappingsList[entity]["geography_mappings"].length; i++){
@@ -317,7 +317,7 @@ function disppopup(sm_id,compliance_id,element){
       frequency = value.frequency;
   }
   });
-  
+
   var sdateDesc = '';
   var duration = compliances[compliance_id]["duration"];
   var duration_type_id = compliances[compliance_id]["duration_type_id"];
@@ -354,14 +354,14 @@ function disppopup(sm_id,compliance_id,element){
     for(z = 0; z < statutory_date.length; z++){
     var sDay = '';
     if(statutory_date[z]["statutory_date"] != null) sDay = statutory_date[z]["statutory_date"];
-    
+
     var sMonth = '';
     if(statutory_date[z]["statutory_month"] != null) sMonth = statutory_date[z]["statutory_month"];
 
     if(sMonth == 1) sMonth = "January"
     else if(sMonth == 2) sMonth = "February"
     else if(sMonth == 3) sMonth = "March"
-    else if(sMonth == 4) sMonth = "April"  
+    else if(sMonth == 4) sMonth = "April"
     else if(sMonth == 5) sMonth = "May"
     else if(sMonth == 6) sMonth = "June"
     else if(sMonth == 7) sMonth = "July"
@@ -422,7 +422,7 @@ function reloadStatutoryMapping(){
     }
       function onFailure(error){
     }
-    mirror.getStatutoryMappings(
+    mirror.getApproveStatutoryMapings(
       function (error, response) {
         if (error == null){
           onSuccess(response);
@@ -437,11 +437,11 @@ function reloadStatutoryMapping(){
 $("#saverecord").click(function(){
   approvelist = [];
   for(var i=1; i<j; i++){
-    var statutory_mapping_id = parseInt($("#mapping_id"+i).val()); 
+    var statutory_mapping_id = parseInt($("#mapping_id"+i).val());
     var statutory_provision = $("#statutoryprovision"+i).val();
-    var approval_status = parseInt($("#action"+i).val()); 
-    var rejected_reason = $("#reason"+i).val(); 
-    var notification_text = $("#notifyreason"+i).val(); 
+    var approval_status = parseInt($("#action"+i).val());
+    var rejected_reason = $("#reason"+i).val();
+    var notification_text = $("#notifyreason"+i).val();
     if(approval_status != '0'){
       approveStatutoryList = mirror.approveStatutoryList(statutory_mapping_id, statutory_provision, approval_status, rejected_reason, notification_text);
       approvelist.push(approveStatutoryList);
