@@ -2,7 +2,7 @@ from server.controller.corecontroller import process_user_forms
 from server.emailcontroller import EmailHandler as email
 from protocol import login, mobile
 from server.constants import (
-    CLIENT_URL, KNOWLEDGE_URL
+    CLIENT_URL
 )
 
 
@@ -59,9 +59,37 @@ def process_login(db, request, client_id):
             else :
                 return login.InvalidCredentials()
     else :
-        pass
+        return mobile_user_login_respone(db, response, login_type, client_id, request.ip)
 
-
+def mobile_user_login_respone(db, data, login_type, client_id, ip):
+    if login_type.lower() == "web" :
+        session_type = 1
+    elif login_type.lower() == "android" :
+        session_type = 2
+    elif login_type.lower() == "ios" :
+        session_type = 3
+    elif login_type.lower() == "blackberry" :
+        session_type = 4
+    user_id = data["user_id"]
+    employee_name = data["employee_name"]
+    employee_code = data["employee_code"]
+    form_ids = db.get_form_ids_for_admin()
+    menu = process_user_forms(db, form_ids, client_id, 1)
+    employee = "%s - %s" % (employee_code, employee_name)
+    session_token = db.add_session(user_id, session_type, ip, employee)
+    client_info = db.get_client_group()
+    group_name = client_info["group_name"]
+    group_id = client_info["client_id"]
+    configuration = db.get_client_configuration()
+    return mobile.ClientUserLoginResponse(
+        data["user_id"],
+        data["employee_name"],
+        session_token,
+        group_id,
+        group_name,
+        configuration,
+        menu
+    )
 
 def user_login_response(db, data, client_id, ip):
     user_id = data["user_id"]
@@ -84,7 +112,7 @@ def user_login_response(db, data, client_id, ip):
         for form_id in report_form_ids:
             if form_id not in form_ids_list:
                 form_ids_list.append(form_id)
-        form_ids = ",".join(str(x) for x in  form_ids_list)
+        form_ids = ",".join(str(x) for x in form_ids_list)
     menu = process_user_forms(db, form_ids, client_id, 0)
     return login.UserLoginSuccess(
         user_id, session_token, email_id, user_group_name,

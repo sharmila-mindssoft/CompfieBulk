@@ -2495,7 +2495,7 @@ class ComplianceApplicability(object):
         compliance_name = data.get("compliance_name")
         compliance_name = to_structure_CustomTextType_250(compliance_name)
         description = data.get("description")
-        description = parse_structure_CustomTextType_500(description)
+        description = parse_structure_Text(description)
         statutory_provision = data.get("statutory_provision")
         statutory_provision = parse_structure_Text(statutory_provision)
         statutory_nature = data.get("statutory_nature")
@@ -2512,7 +2512,7 @@ class ComplianceApplicability(object):
         return {
             "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
             "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
-            "description": to_structure_CustomTextType_500(self.description),
+            "description": to_structure_Text(self.description),
             "statutory_provision": to_structure_Text(self.statutory_provision),
             "statutory_nature": to_structure_CustomTextType_50(self.statutory_nature),
             "compliance_applicable_status": to_structure_Bool(self.compliance_applicable_status),

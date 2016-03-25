@@ -5357,7 +5357,7 @@ class ClientDatabase(Database):
                     None, None
                 ))
             remaining_licence -= 1
-        
+
         profile_detail = clientadminsettings.PROFILE_DETAIL(
             contract_from,
             contract_to,
@@ -8161,3 +8161,34 @@ class ClientDatabase(Database):
             return True
         else:
             return False
+
+
+#
+# mobile_api
+#
+
+    def get_client_group(self):
+        q = "SELECT client_id, group_name from  tbl_client_groups"
+        row = self.select_one(q)
+        result = []
+        if row :
+            result = self.convert_to_dict(row, ["client_id", "group_name"])
+        return result
+
+    def get_client_configuration(self):
+        q = "SELECT country_id, domain_id, period_from, period_to from tbl_client_configurations"
+        rows = self.select_all(q)
+        result = []
+        if rows :
+            result = self.convert_to_dict(rows, ["country_id", "domain_id", "period_from", "period_to"])
+        c_list = []
+        if r in result :
+            info = core.ClientConfiguration(
+                r["country_id"],
+                r["domain_id"],
+                r["period_from"],
+                r["period_to"]
+            )
+            c_list.append(info)
+
+        return c_list
