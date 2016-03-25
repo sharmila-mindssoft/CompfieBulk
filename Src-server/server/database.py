@@ -9,6 +9,7 @@ import uuid
 import json
 import pytz
 from types import *
+from dateutil.parser import parse
 from protocol import (
     core, knowledgereport, technomasters,
     technotransactions, technoreports, general
@@ -328,10 +329,20 @@ class Database(object) :
         string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y %H:%M")
         return self.localize(string_in_date)
 
+    def toUTC(self, time_stamp):
+        tz = pytz.timezone('UTC')
+        utc_time_stamp = tz.normalize(
+            tz.localize(time_stamp)
+        ).astimezone(pytz.utc)
+        return utc_time_stamp
+
     def localize(self, time_stamp):
-        local_dt = time_stamp
-        if time_stamp.tzinfo is not None:
-            local_dt = LOCAL_TIMEZONE.localize(time_stamp, is_dst=None)
+        local_dt = LOCAL_TIMEZONE.localize(
+            time_stamp
+        )
+        tzoffseet = local_dt.utcoffset()
+        local_dt = local_dt.replace(tzinfo=None)
+        local_dt = local_dt+tzoffseet
         return local_dt
 
     def datetime_to_string(self, datetime_val):
@@ -339,8 +350,8 @@ class Database(object) :
         return date_in_string
 
     def datetime_to_string_time(self, datetime_val):
-        local_dt = self.localize(datetime_val)
-        datetime_in_string = local_dt.strftime("%d-%b-%Y %H:%M")
+        # local_dt = self.localize(datetime_val)
+        datetime_in_string = datetime_val.strftime("%d-%b-%Y %H:%M")
         return datetime_in_string
 
     def get_client_db_info(self, client_id=None):
@@ -365,7 +376,7 @@ class Database(object) :
         return newId
 
     def get_date_time(self) :
-        time_stamp = datetime.datetime.now()
+        time_stamp = datetime.datetime.utcnow()
         return self.localize(time_stamp)
 
     def verify_login(self, username, password):
