@@ -6855,19 +6855,16 @@ class ClientDatabase(Database):
 
     #login trace
     def get_login_trace(self, client_id, session_user ):
-        query = "SELECT al.created_on, f.form_name, al.action \
+        query = "SELECT al.created_on, al.action \
                 FROM tbl_activity_log al \
                 INNER JOIN \
                 tbl_users u ON \
                 al.user_id  = u.user_id \
-                INNER JOIN \
-                tbl_forms f ON \
-                al.form_id = f.form_id \
                 WHERE \
-                al.form_id in (26, 27)"
+                al.form_id = 0"
 
         rows = self.select_all(query)
-        columns = ["created_on", "form_name", "action"]
+        columns = ["created_on", "action"]
         result = self.convert_to_dict(rows, columns)
         return self.return_logintrace(result)
 
@@ -6875,9 +6872,7 @@ class ClientDatabase(Database):
         results = []
         for d in data :
             created_on = self.datetime_to_string_time(d["created_on"])
-            results.append(clientreport.LoginTrace(
-                 created_on, d["form_name"], d["action"]
-            ))
+            results.append(clientreport.LoginTrace(created_on, d["action"]))
         return results
 
 #

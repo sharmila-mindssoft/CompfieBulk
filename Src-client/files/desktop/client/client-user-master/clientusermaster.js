@@ -38,12 +38,13 @@ $("#btn-user-add").click(function(){
     for(i = 0; i<=x.length-1; i++){
         if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
     }
+
     clearMessage();
     $("#user-privilege-id").val('');
     $("#unitList li:gt(0)").remove();
     $("#email-id").removeAttr("readonly");
     $("#usertype").val("");
-    $("#user-level").val("");
+    $("#user-level option:selected").removeAttr("selected");
     loadautocountry();
     hidemenu();
     loadautobusinessgroups();
@@ -58,7 +59,17 @@ $("#btn-user-add").click(function(){
 $("#btn-user-cancel").click(function(){
     $("#user-add").hide();
     $("#user-view").show();
+    var x=document.getElementsByTagName("input");
+    for(i = 0; i<=x.length-1; i++){
+        if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
+    }
 
+    clearMessage();
+    $("#user-privilege-id").val('');
+    $("#unitList li:gt(0)").remove();
+    $("#email-id").removeAttr("readonly");
+    $("#usertype").val("");
+    $("#user-level option:selected").removeAttr("selected");
 });
 function initialize(){
     function onSuccess(data){
