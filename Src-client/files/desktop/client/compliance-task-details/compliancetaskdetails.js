@@ -85,7 +85,7 @@ function loadComplianceTaskDetails(data){
         if(data[k]['compliance_status'] == "Not Complied"){
             $('.days-text', cloneval).attr("style", "color:#f00;");
         }
-        if(data[k]['remarks'] != "None"){
+        if(data[k]['remarks'] != null || data[k]['remarks'] != "None"){
             $('.sno', cloneval).attr("style", "color:#f00;");
             $('.compliance-task', cloneval).attr("style", "color:#f00;");
             $('.domain', cloneval).attr("style", "color:#f00;");
@@ -339,7 +339,7 @@ function uploadedfile(e){
             $("#upload_file").val("");
             return;
         }
-        if(data != 'File max limit exceeded' || data != 'File content is empty'){
+        else if(data != 'File max limit exceeded' || data != 'File content is empty'){
             uploadFile = data;
             file_list = data
             var result = ""

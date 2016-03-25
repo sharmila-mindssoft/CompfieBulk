@@ -52,7 +52,13 @@ $("#show").click(function(){
 	var toDateValue = $("#to-date").val();
 	var userIdValue = $("#userid").val();
 	var formIdValue = $("#formid").val();
-
+	if($("#user").val().trim() == ''){
+		userIdValue = '';
+	}
+	if($("#formname").val().trim() == ''){
+		formIdValue = '';
+	}
+	
 	if(fromDateValue == ''){
 		displayMessage('Select From Date');
 	}
@@ -98,8 +104,7 @@ $("#show").click(function(){
 			var auditFormId = value['form_id'];
 			var formCheckval;
 			var userCheckval;
-			//userid empty, formid empty
-			console.log(fromDateVal +"<="+ auditDateVal+" && "+toDateVal+">="+auditDateVal);
+			//userid empty, formid empty			
 			if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == '' && formIdValue == ''){	
 
 				var tableRow = $('#templates .table-audittrail-list .tableRow');
@@ -113,7 +118,7 @@ $("#show").click(function(){
 				$('.tbody-audittrail-list').append(clone);
 			}
 			//userid empty
-			if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && (userIdValue == '') && (formIdValue == auditFormId)){	
+			else if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && (userIdValue == '') && (formIdValue == auditFormId)){	
 
 				var tableRow = $('#templates .table-audittrail-list .tableRow');
 				var clone = tableRow.clone();
@@ -126,7 +131,7 @@ $("#show").click(function(){
 				$('.tbody-audittrail-list').append(clone);
 			}
 			//formid empty
-			if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == auditUser && formIdValue == ''){	
+			else if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == auditUser && formIdValue == ''){	
 
 				var tableRow = $('#templates .table-audittrail-list .tableRow');
 				var clone = tableRow.clone();
@@ -139,7 +144,7 @@ $("#show").click(function(){
 				$('.tbody-audittrail-list').append(clone);
 			}
 			//all != empty
-			if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == auditUser && formIdValue == auditFormId){	
+			 else if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == auditUser && formIdValue == auditFormId){	
 
 				var tableRow = $('#templates .table-audittrail-list .tableRow');
 				var clone = tableRow.clone();

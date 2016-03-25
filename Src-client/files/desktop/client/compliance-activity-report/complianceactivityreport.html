@@ -1,21 +1,17 @@
 {% extends "files/desktop/client/home/container.html" %}
 {% block content %}
 <style type="text/css">
-
-  .smallfont td
-  {
-    font-size: 0.75em !important;
-  
-  }
-  .largefont td
-  {
-   font-size: 1.0em;
-   border:1px solid red;
-      
- }
-
- .tree,
- .tree ul {
+.smallfont td
+{
+  font-size: 0.75em !important;
+}
+.largefont td
+{
+  font-size: 1.0em;
+  border:1px solid red;    
+}
+.tree,
+.tree ul {
   margin:0 0 0 1em; /* indentation */
   padding:0;
   list-style:none;
@@ -174,7 +170,7 @@
       <div class="submit-button-container">
         <input type="submit" name="cancel" value="Show" id="show-button" class="btn-submit">
         &nbsp;&nbsp;
-        <input type="submit" name="cancel" value="Export" class="btn-submit"></div>
+        <input type="submit" name="cancel" value="Export" id="export-button" class="btn-submit"></div>
       <div class="clearfix"></div>
       <div class="grid-table-rpt default-display-none">
         <h1>Compliance Activity Report</h1>
