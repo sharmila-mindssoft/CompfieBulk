@@ -119,7 +119,7 @@ def process_get_compliance_task_report(db, request_frame, user_id):
     geography_id = request_frame.geography_id
     level_1_id = request_frame.level_1_statutory_id
 
-    report_data = db.get_statutory_mapping_report(
+    report_data = db.get_compliance_list_report_techno(
         country_id, domain_id, industry_id,
         nature_id, geography_id, level_1_id, user_id
     )

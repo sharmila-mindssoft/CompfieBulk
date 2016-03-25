@@ -2184,6 +2184,86 @@ class KnowledgeDatabase(Database):
             report_data
         )
 
+    def get_compliance_list_report_techno(
+        self, country_id, domain_id, industry_id,
+        statutory_nature_id, geography_id, level_1_statutory_id, user_id
+    ) :
+        qry_where = ""
+        if industry_id is not None :
+            qry_where += "AND t3.industry_id = %s " % (industry_id)
+        if geography_id is not None :
+            qry_where += "AND t4.geography_id = %s " % (geography_id)
+        if statutory_nature_id is not None :
+            qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
+        if level_1_statutory_id is not None :
+            qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, '%s') from tbl_statutories where statutory_id = %s)" % (str("%"), level_1_statutory_id)
+
+        q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
+            (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
+            t1.domain_id, \
+            (select domain_name from tbl_domains where domain_id = t1.domain_id) domain_name, \
+            t1.industry_ids, t1.statutory_nature_id, \
+            (select statutory_nature_name from tbl_statutory_natures where statutory_nature_id = t1.statutory_nature_id)\
+            statutory_nature_name, \
+            t1.statutory_ids, \
+            t1.geography_ids, \
+            t1.approval_status, t1.is_active, t1.statutory_mapping,  \
+            t2.compliance_id, t2.statutory_provision, \
+            t2.compliance_task, t2.compliance_description, \
+            t2.document_name, t2.format_file, t2.format_file_size, \
+            t2.penal_consequences, t2.frequency_id, \
+            t2.statutory_dates, t2.repeats_every, \
+            t2.repeats_type_id, \
+            t2.duration, t2.duration_type_id, \
+            (select group_concat(I.industry_name) from tbl_industries I where I.industry_id  in \
+            (select industry_id from tbl_statutory_industry where statutory_mapping_id = t1.statutory_mapping_id))industry \
+            FROM tbl_statutory_mappings t1 \
+            INNER JOIN tbl_compliances t2 \
+            ON t2.statutory_mapping_id = t1.statutory_mapping_id\
+            INNER JOIN tbl_statutory_industry t3 \
+            ON t3.statutory_mapping_id = t1.statutory_mapping_id\
+            INNER JOIN tbl_statutory_geographies t4 \
+            ON t4.statutory_mapping_id = t1.statutory_mapping_id\
+            INNER JOIN tbl_user_domains t5 \
+            ON t5.domain_id = t1.domain_id \
+            and t5.user_id = %s \
+            INNER JOIN tbl_user_countries t6 \
+            ON t6.country_id = t1.country_id \
+            and t6.user_id = %s \
+            WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
+            t1.country_id = %s \
+            and t1.domain_id = %s \
+            %s \
+            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
+                industry, t2.frequency_id" % (
+                user_id, user_id,
+                country_id, domain_id,
+                qry_where
+            )
+        print q
+        rows = self.select_all(q)
+        columns = [
+            "statutory_mapping_id", "country_id",
+            "country_name", "domain_id", "domain_name", "industry_ids",
+            "statutory_nature_id", "statutory_nature_name",
+            "statutory_ids", "geography_ids",
+            "approval_status", "is_active", "statutory_mapping",
+            "compliance_id", "statutory_provision",
+            "compliance_task", "compliance_description",
+            "document_name", "format_file",
+            "format_file_size", "penal_consequences",
+            "frequency_id", "statutory_dates", "repeats_every",
+            "repeats_type_id", "duration", "duration_type_id", "industry"
+        ]
+        report_data = []
+        if rows :
+            report_data = self.convert_to_dict(rows, columns)
+        # report_data = self.return_statutory_mappings(result, is_report=True)
+
+        return self.return_knowledge_report(
+            report_data
+        )
+
     def get_mappings_id(self, statutory_id) :
         query = "select distinct t1.statutory_mapping_id \
             from tbl_statutory_statutories t1 \
