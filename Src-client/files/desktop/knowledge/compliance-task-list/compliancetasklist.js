@@ -308,6 +308,7 @@ $("#submit").click(function(){
     displayMessage("Domain Required");
   }
   else{
+    
       displayMessage("");
       var filterdata={};
       filterdata["country_id"]=parseInt(country);

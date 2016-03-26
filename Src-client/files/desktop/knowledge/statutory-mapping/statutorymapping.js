@@ -271,13 +271,31 @@ function get_sub_array(object, start, end){
     return object.slice(start, end);
 }
 
-function callPage(pageId){
+$(".pagination").click(function(event){
+  var text = $(event.target).attr('id');
+  var pageId = text.substring(text.lastIndexOf('w') + 1);
+  var type = '.page'
+
+  $(type).each( function( index, el ) {
+    $(el).removeClass( "active" );
+  });
+  $('#pageview'+pageId).addClass("active");
+
+  startCount = pageSize * (pageId-1);
+  endCount = pageSize * pageId;
+
+  var keys_list = Object.keys(finalList);
+  var sub_keys_list = get_sub_array(keys_list, startCount, endCount);
+  loadCountwiseStatutoryMapping(sub_keys_list, finalList);
+});
+
+
+/*function callPage(pageId){
   var type = '.page'
   $(type).each( function( index, el ) {
     $(el).removeClass( "active" );
-      });
-   $('#pageview'+pageId).addClass("active");
-
+  });
+  $('#pageview'+pageId).addClass("active");
   //var pageNo = $(this).attr('id');
   startCount = pageSize * (pageId-1);
   endCount = pageSize * pageId;
@@ -285,8 +303,7 @@ function callPage(pageId){
   var keys_list = Object.keys(finalList);
   var sub_keys_list = get_sub_array(keys_list, startCount, endCount);
   loadCountwiseStatutoryMapping(sub_keys_list, finalList);
-
-};
+};*/
 
 
 function loadStatutoryMappingList(statutoryMappingsList) {
@@ -297,17 +314,17 @@ function loadStatutoryMappingList(statutoryMappingsList) {
   endCount = pageSize;
 
   if(Object.keys(statutoryMappingsList).length > 0){
-    var str='<li><a href="#" onclick="callPage('+1+')">«</a></li>';
+    var str='<li id="pview1">«</li>';
     $('.pagination').empty();
     var j;
     for(j=1; j<=listSize; j++){
       if(j==1){
-        str += '<li><a href="#" id = "pageview'+j+'" class="page active"  onclick="callPage('+j+')">'+j+'</a></li>';
+        str += '<li class="page active" id="pageview'+j+'">'+j+'</li>';
       }else{
-        str += '<li><a href="#" id = "pageview'+j+'" class="page" onclick="callPage('+j+')">'+j+'</a></li>';
+        str += '<li class="page" id="pageview'+j+'">'+j+'</li>';
       }
     }
-    str += '<li><a href="#" onclick="callPage('+(j-1)+')">»</a></li>';
+    str += '<li id="pview'+(j-1)+'">»</li>';
     $('.pagination').append(str);
   }
 

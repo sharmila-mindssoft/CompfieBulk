@@ -102,6 +102,7 @@ function loadCountwiseResult(filterList){
       /*if(count==1){
         $('.accordion-content'+count).addClass("default");
       }*/
+      lastOccuranceid = 0;
       count++;
     }
     
