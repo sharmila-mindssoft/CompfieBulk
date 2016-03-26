@@ -1218,7 +1218,7 @@ function initClientMirror() {
 
     function getRiskReport(
         country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id,
-        level_1_statutory_name, statutory_status, callback
+        level_1_statutory_name, statutory_status, csv, callback
     ) {
         var request = [
             "GetRiskReport", {
@@ -1229,7 +1229,8 @@ function initClientMirror() {
                 "division_id": division_id,
                 "unit_id": unit_id,
                 "level_1_statutory_name": level_1_statutory_name,
-                "statutory_status": statutory_status
+                "statutory_status": statutory_status,
+                "csv" : csv
             }
         ];
         callerName = "client_reports";

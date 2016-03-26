@@ -4802,7 +4802,6 @@ class ClientDatabase(Database):
                     unit_id, country_id, str(domain_id)+"%",
                     assignee_id, str(statutory_id+"%"), compliance_id, start_date, end_date
                 )
-            print query
             compliance_rows = self.select_all(query, client_id)
 
             compliances_list = []
@@ -7179,7 +7178,7 @@ class ClientDatabase(Database):
                                 employee_code, '-', employee_name) from %s u where u.user_id = rh.reassigned_from\
                                 )" % self.tblUsers
                                 rh_condition = "compliance_id = '%d' and assignee = '%d'" % (
-                                    delayed[0], user_id
+                                    int(delayed[0]), int(user_id)
                                 )
                                 rh_rows = self.get_data(
                                     self.tblReassignedCompliancesHistory+" rh", rh_columns, rh_condition
@@ -8068,25 +8067,37 @@ class ClientDatabase(Database):
     def get_dashboard_notification_counts(
         self, session_user
     ):
-        column = "group_concat(notification_id)"
+        current_date = self.get_date_time()
+        start_date = current_date - relativedelta.relativedelta(days = 10)
 
-        notification_condition = "notification_type_id = 1 ORDER BY notification_id DESC"
-        reminder_condition = "notification_type_id = 2 ORDER BY notification_id DESC"
-        escalation_condition = "notification_type_id = 3 ORDER BY notification_id DESC"
+        column = "notification_id"
+        notification_condition = "notification_type_id = 1 and created_on > '{}' ORDER BY notification_id DESC".format(start_date)
+        reminder_condition = "notification_type_id = 2 and created_on > '{}' ORDER BY notification_id DESC".format(start_date)
+        escalation_condition = "notification_type_id = 3 and created_on > '{}' ORDER BY notification_id DESC".format(start_date)
 
-        notification_rows = self.get_data(
+        notification_result = self.get_data(
             self.tblNotificationsLog, column, notification_condition
         )
-        reminder_rows = self.get_data(
+        notification_rows = ()
+        for row in notification_result:
+            notification_rows += row
+        notification_ids = ",".join(str(int(x)) for x in notification_rows)
+
+        reminder_result = self.get_data(
             self.tblNotificationsLog, column, reminder_condition
         )
-        escalation_rows = self.get_data(
+        reminder_rows = ()
+        for row in reminder_result:
+            reminder_rows += row
+        reminder_ids = ",".join(str(int(x)) for x in reminder_rows)
+
+        escalation_result = self.get_data(
             self.tblNotificationsLog, column, escalation_condition
         )
-
-        notification_ids = None if notification_rows[0][0] is None else notification_rows[0][0]
-        reminder_ids = None if reminder_rows[0][0] is None else reminder_rows[0][0]
-        escalation_ids = None if escalation_rows[0][0] is None else escalation_rows[0][0]
+        escalation_rows = ()
+        for row in escalation_result:
+            escalation_rows += row
+        escalation_ids = ",".join(str(int(x)) for x in escalation_rows)
 
         column = "count(*)"
         notification_condition = None if notification_ids is None else "notification_id in (%s) AND read_status=0 AND user_id = '%d'" % (
@@ -8125,7 +8136,7 @@ class ClientDatabase(Database):
         ## Getting statutory notifications
         statutory_column = "count(*)"
         statutory_condition = "user_id = '%d' and read_status = 0 ORDER BY \
-        statutory_notification_id DESC limit 30" % session_user
+        statutory_notification_id DESC" % session_user
         statutory_notification_rows = self.get_data(
             self.tblStatutoryNotificationStatus, statutory_column, statutory_condition
         )

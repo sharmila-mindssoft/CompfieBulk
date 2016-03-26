@@ -268,7 +268,11 @@ class GetRiskReportFilters(Request):
         }
 
 class GetRiskReport(Request):
-    def __init__(self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, level_1_statutory_name, statutory_status):
+    def __init__(
+        self, country_id, domain_id, business_group_id, 
+        legal_entity_id, division_id, unit_id, level_1_statutory_name, 
+        statutory_status, csv
+    ):
         self.country_id = country_id
         self.domain_id = domain_id
         self.business_group_id = business_group_id
@@ -277,10 +281,17 @@ class GetRiskReport(Request):
         self.unit_id = unit_id
         self.level_1_statutory_name = level_1_statutory_name
         self.statutory_status = statutory_status
+        self.csv = csv
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "business_group_id", "legal_entity_id", "division_id", "unit_id", "level_1_statutory_name", "statutory_status"])
+        data = parse_dictionary(
+            data, [
+                "country_id", "domain_id", "business_group_id", 
+                "legal_entity_id", "division_id", "unit_id", 
+                "level_1_statutory_name", "statutory_status", "csv"
+            ]
+        )
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
@@ -297,7 +308,13 @@ class GetRiskReport(Request):
         level_1_statutory_name = parse_structure_OptionalType_CustomTextType_100(level_1_statutory_name)
         statutory_status = data.get("statutory_status")
         statutory_status = parse_structure_OptionalType_UnsignedIntegerType_32(statutory_status)
-        return GetRiskReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, level_1_statutory_name, statutory_status)
+        csv = data.get("csv")
+        csv = parse_structure_Bool(csv)
+        return GetRiskReport(
+            country_id, domain_id, business_group_id, 
+            legal_entity_id, division_id, unit_id, level_1_statutory_name, 
+            statutory_status, csv
+        )
 
     def to_inner_structure(self):
         return {
@@ -309,6 +326,7 @@ class GetRiskReport(Request):
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
             "level_1_statutory_name": to_structure_OptionalType_CustomTextType_100(self.level_1_statutory_name),
             "statutory_status": to_structure_OptionalType_SignedIntegerType_8(self.statutory_status),
+            "csv": to_structure_Bool(self.csv)
         }
 
 class GetServiceProviderReportFilters(Request):

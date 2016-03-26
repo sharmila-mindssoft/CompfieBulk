@@ -584,11 +584,12 @@
 				legal_entity_id = 1;
 				division_id = 1;
 				unit_id = 1;
-			    level_1_statutory_name = "Gratuity Act, 1972"
+			    level_1_statutory_name = "Gratituity Act"
 			    statutory_status = 1
+			    csv = true
 				client_mirror.getRiskReport(
 			        country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, 
-			        level_1_statutory_name, statutory_status, callback
+			        level_1_statutory_name, statutory_status, csv, callback
 			    );
 			}
 			function getAssigneewiseComplianesFilters(){

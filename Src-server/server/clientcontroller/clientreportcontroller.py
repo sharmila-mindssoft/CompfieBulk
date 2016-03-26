@@ -323,36 +323,41 @@ def get_risk_report(db, request, session_user, client_id):
     not_complied = [] # 2
     not_opted = [] # 3
     unassigned = [] # 4
-    if statutory_status == 1 or statutory_status == 0:
-        delayed_compliance = db.get_risk_report(
-            country_id, domain_id, business_group_id,
-            legal_entity_id, division_id, unit_id, level_1_statutory_name, 1,
-            client_id, session_user
+    if request.csv == False:
+        if statutory_status == 1 or statutory_status == 0:
+            delayed_compliance = db.get_risk_report(
+                country_id, domain_id, business_group_id,
+                legal_entity_id, division_id, unit_id, level_1_statutory_name, 1,
+                client_id, session_user
+            )
+        if statutory_status == 2 or statutory_status == 0:
+            not_complied = db.get_risk_report(
+                country_id, domain_id, business_group_id,
+                legal_entity_id, division_id, unit_id, level_1_statutory_name, 2,
+                client_id, session_user
+            )
+        if statutory_status == 3 or statutory_status == 0:
+            not_opted = db.get_not_opted_compliances(
+                country_id, domain_id, business_group_id,
+                legal_entity_id, division_id, unit_id, level_1_statutory_name, 3,
+                client_id, session_user
+            )
+        if statutory_status == 4 or statutory_status == 0:
+            unassigned = db.get_unasssigned_compliances(
+                country_id, domain_id, business_group_id,
+                legal_entity_id, division_id, unit_id, level_1_statutory_name, 4,
+                client_id, session_user
+            )
+    
+        return clientreport.GetRiskReportSuccess(
+            delayed_compliance = delayed_compliance,
+            not_complied = not_complied,
+            not_opted = not_opted,
+            unassigned_compliance = unassigned
         )
-    if statutory_status == 2 or statutory_status == 0:
-        not_complied = db.get_risk_report(
-            country_id, domain_id, business_group_id,
-            legal_entity_id, division_id, unit_id, level_1_statutory_name, 2,
-            client_id, session_user
-        )
-    if statutory_status == 3 or statutory_status == 0:
-        not_opted = db.get_not_opted_compliances(
-            country_id, domain_id, business_group_id,
-            legal_entity_id, division_id, unit_id, level_1_statutory_name, 3,
-            client_id, session_user
-        )
-    if statutory_status == 4 or statutory_status == 0:
-        unassigned = db.get_unasssigned_compliances(
-            country_id, domain_id, business_group_id,
-            legal_entity_id, division_id, unit_id, level_1_statutory_name, 4,
-            client_id, session_user
-        )
-    return clientreport.GetRiskReportSuccess(
-        delayed_compliance = delayed_compliance,
-        not_complied = not_complied,
-        not_opted = not_opted,
-        unassigned_compliance = unassigned
-    )
+    else:
+        converter = ConvertJsonToCSV(db, request, session_user, client_id, "RiskReport")
+        return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
 
 def get_login_trace(db, request, session_user, client_id):
     users_list = db.get_client_users()
@@ -399,7 +404,7 @@ def get_compliance_activity_report(db, request, session_user, client_id):
             activities=activities
         )
     else:
-        converter = ConvertJsonToCSV(db, request, session_user, client_id)
+        converter = ConvertJsonToCSV(db, request, session_user, client_id, "ActivityReport")
         return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
 
 
