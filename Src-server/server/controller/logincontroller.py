@@ -44,7 +44,7 @@ def process_login(db, request, session_user_ip):
         return admin_login_response(db, request.ip)
     else :
         if bool(response):
-            if login_type == "Web" :
+            if login_type.lower() == "web" :
                 return user_login_response(db, response, request.ip)
             else :
                 return mobile_user_login_respone(db, response, request, session_user_ip)
@@ -52,7 +52,8 @@ def process_login(db, request, session_user_ip):
             return login.InvalidCredentials()
 
 
-def mobile_user_login_respone(db, data, login_type, ip):
+def mobile_user_login_respone(db, data, request, ip):
+    login_type = request.login_type
     if login_type.lower() == "web" :
         session_type = 1
     elif login_type.lower() == "android" :
@@ -74,7 +75,6 @@ def mobile_user_login_respone(db, data, login_type, ip):
         data["employee_name"],
         session_token
     )
-
 
 def user_login_response(db, data, ip):
     user_id = data["user_id"]

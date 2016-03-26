@@ -864,7 +864,9 @@ function initClientMirror() {
             console.log("max_limit : "+max_limit);
             if (file_size > max_limit) {
                 callback("File max limit exceeded");
-            }else{
+                return;
+            }
+            else{
                 file_content = null;
                 if (file) {
                     convert_to_base64(file, file_name, file_size, function(file_content, name, size) {

@@ -12,7 +12,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_CustomTextType_50,
     parse_structure_OptionalType_SignedIntegerType_8,
     parse_structure_CustomTextType_500,
-    parse_structure_VectorType_RecordType_core_ClientConfiguration
+    parse_structure_VectorType_RecordType_core_ClientConfiguration,
+    parse_structure_RecordType_core_Menu
 )
 from protocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
@@ -27,7 +28,8 @@ from protocol.to_structure import (
     to_structure_VectorType_CustomTextType_50,
     to_structure_OptionalType_SignedIntegerType_8,
     to_structure_CustomTextType_500,
-    to_structure_VectorType_RecordType_core_ClientConfiguration
+    to_structure_VectorType_RecordType_core_ClientConfiguration,
+    to_structure_RecordType_core_Menu
 )
 
 #
@@ -490,7 +492,8 @@ class UserLoginResponse(Response):
 class ClientUserLoginResponse(Response):
     def __init__(
         self, user_id, name, session_token,
-        group_id, group_name, configuration
+        group_id, group_name, configuration,
+        menu
     ):
         self.user_id = user_id
         self.name = name
@@ -498,13 +501,14 @@ class ClientUserLoginResponse(Response):
         self.group_id = group_id
         self.group_name = group_name
         self.configuration = configuration
+        self.menu = menu
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "user_id", "name", "session_token",
             "group_id", "group_name",
-            "configuration"
+            "configuration", "menu"
         ])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
@@ -518,7 +522,9 @@ class ClientUserLoginResponse(Response):
         group_name = parse_structure_CustomTextType_100(group_name)
         configuration = data.get("configuration")
         configuration = parse_structure_VectorType_RecordType_core_ClientConfiguration(configuration)
-        return ClientUserLoginResponse(user_id, name, session_token, group_id, group_name, configuration)
+        menu = data.get("menu")
+        menu = parse_structure_RecordType_core_Menu(menu)
+        return ClientUserLoginResponse(user_id, name, session_token, group_id, group_name, configuration, menu)
 
     def to_inner_structure(self):
         return {
@@ -527,7 +533,8 @@ class ClientUserLoginResponse(Response):
             "session_token": to_structure_CustomTextType_50(self.session_token),
             "group_id": to_structure_UnsignedIntegerType_32(self.group_id),
             "group_name": to_structure_CustomTextType_100(self.group_name),
-            "configuration": to_structure_VectorType_RecordType_core_ClientConfiguration(self.configuration)
+            "configuration": to_structure_VectorType_RecordType_core_ClientConfiguration(self.configuration),
+            "menu": to_structure_RecordType_core_Menu(self.menu)
         }
 
 

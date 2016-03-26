@@ -1402,9 +1402,23 @@ function escalationDrilldown(status, data){
     var cloneh2 = h2heading.clone();
     if(status == "not_complied"){
         $(".escalation-status-value", cloneh2).html("Not Complied compliances");
+        $("#business-group-row", cloneh2).addClass("js-filter_not_c");
+        $("#legal-entity-row", cloneh2).addClass("js-filter_not_c");
+        $("#division-row", cloneh2).addClass("js-filter_not_c");
+        $("#type-row", cloneh2).addClass("js-filter_not_c");
+        $("#compliance-row", cloneh2).addClass("js-filter_not_c");
+        $("#assigned-to-row", cloneh2).addClass("js-filter_not_c");        
+        $("#over-due-row", cloneh2).addClass("js-filter_not_c");
     }
     if(status == "delayed"){
         $(".escalation-status-value", cloneh2).html("Delayed compliances");
+        $("#business-group-row", cloneh2).addClass("js-filter");
+        $("#legal-entity-row", cloneh2).addClass("js-filter");
+        $("#division-row", cloneh2).addClass("js-filter");
+        $("#type-row", cloneh2).addClass("js-filter");
+        $("#compliance-row", cloneh2).addClass("js-filter");
+        $("#assigned-to-row", cloneh2).addClass("js-filter");        
+        $("#delayed-by-row", cloneh2).addClass("js-filter");
     }
     $(".table-thead-drilldown-list").append(cloneh2);
 
@@ -1417,6 +1431,7 @@ function escalationDrilldown(status, data){
     $(".table-thead-drilldown-list").append(cloneFilter);
 
     if(data[status].length > 0){
+
         $.each(data[status], function(key, value){
             var tableUnit = $('#templates .escalation-status .tr-unit');
             var cloneUnit = tableUnit.clone();
@@ -1467,9 +1482,17 @@ function escalationDrilldown(status, data){
         $('.norecord', clone).html("No Record Found");
         $('.table-drilldown-list').append(clone);
     }
-    $('.js-filtertable').on('keyup', function () {
-        $(this).filtertable().addFilter('.js-filter');
-    });
+    if(status == "delayed"){
+        $('.js-filtertable').on('keyup', function () {
+            $(this).filtertable().addFilter('.js-filter');
+        });
+    }
+    if(status == "not_complied"){
+        $('.js-filtertable_not_c').on('keyup', function () {
+            $(this).filtertable().addFilter('.js-filter_not_c');
+        });
+    }
+
 
 }
 
@@ -2617,6 +2640,10 @@ function updateAssigneeWiseComplianceList(data){
                 $('.complied-count', cloneval).html(val['complied_count']);
                 if(val['delayed_compliance']['reassigned_count'] == 0){
                     $('.delayed-count', cloneval).html(val['delayed_compliance']['assigned_count']);
+                    $(cloneval, ".delayed-count").on("click", function(e){
+                        $("#popup-reassigned").show();
+                        showPopupCompDelayed(reassignedlist);
+                    });
                 }
                 else{
                     var delayvalue = val['delayed_compliance']['assigned_count']+"("+val['delayed_compliance']['reassigned_count']+")";
@@ -2763,6 +2790,26 @@ function showPopup(assigneewiselist){
                 updateComplianceList(userid, domainArr, parseInt(val['year']));
             });
             $('.tbody-popup-list').append(cloneval);
+        });
+    });
+}
+function showPopupCompDelayed(reassignedlist){
+    $.each(reassignedlist, function(ke, valu) {
+        $('.popupoverlay').css("visibility","visible");
+        $('.popupoverlay').css("opacity","1");
+        var popupdelayedsno = 0;
+        $.each(reassignedlist, function(k, val){
+            var tableRow = $('#templates .comp-list-delayed-row-list');
+            var cloneval = tableRow.clone();
+            popupdelayedsno = popupdelayedsno + 1;
+            $('.comp-delayed-sno', cloneval).text(popupdelayedsno);
+            $('.comp-delayed-compliance', cloneval).html(val['compliance']);
+            $('.comp-delayed-reassigned-from', cloneval).html(val['reassigned_from']);
+            $('.comp-delayed-startdate', cloneval).html(val['start_date']);
+            $('.comp-delayed-duedate', cloneval).html(val['due_date']);
+            $('.comp-delayed-reassigned-date', cloneval).html(val['reassigned_from']);
+            $('.comp-delayed-completed-date', cloneval).html(val['completion_date']);           
+            $('.tbody-popup-reassigned-list').append(cloneval);
         });
     });
 }

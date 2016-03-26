@@ -50,9 +50,14 @@ function initialize(){
 $("#show").click(function(){
 	var fromDateValue = $("#from-date").val();
 	var toDateValue = $("#to-date").val();
-	var userIdValue = $("#userid").val();
-	var formIdValue = $("#formid").val();
-
+	var userIdValue = $("#userid").val().trim();
+	var formIdValue = $("#formid").val().trim();
+	if($("#user").val().trim() == ''){
+		userIdValue = '';
+	}
+	if($("#formname").val().trim() == ''){
+		formIdValue = '';
+	}
 	if(fromDateValue == ''){
 		displayMessage('Enter From Date');
 	}
@@ -91,9 +96,11 @@ $("#show").click(function(){
 			var auditFormId = auditTrailList[key]['form_id'];
 			var formCheckval;
 			var userCheckval;
+			console.log(fromDateVal +"----"+auditDateVal+"----"+toDateVal+"----"+auditDateVal+"----"+userIdValue +"----"+auditUser +"----"+formIdValue +"----"+ auditFormId);
+
 			//userid empty, formid empty
 			if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == '' && formIdValue == ''){	
-
+				console.log("enter 1")
 				var tableRow = $('#templates .table-audittrail-list .tableRow');
 				var clone = tableRow.clone();
 				sno = sno + 1;
@@ -105,8 +112,8 @@ $("#show").click(function(){
 				$('.tbody-audittrail-list').append(clone);
 			}
 			//userid empty
-			if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && (userIdValue == '') && (formIdValue == auditFormId)){	
-
+			else if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && (userIdValue == '') && (formIdValue == auditFormId)){	
+				console.log("enter 2")
 				var tableRow = $('#templates .table-audittrail-list .tableRow');
 				var clone = tableRow.clone();
 				sno = sno + 1;
@@ -118,8 +125,8 @@ $("#show").click(function(){
 				$('.tbody-audittrail-list').append(clone);
 			}
 			//formid empty
-			if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == auditUser && formIdValue == ''){	
-
+			else if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == auditUser && formIdValue == ''){	
+					console.log("enter 3")
 				var tableRow = $('#templates .table-audittrail-list .tableRow');
 				var clone = tableRow.clone();
 				sno = sno + 1;
@@ -131,8 +138,8 @@ $("#show").click(function(){
 				$('.tbody-audittrail-list').append(clone);
 			}
 			//all != empty
-			if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == auditUser && formIdValue == auditFormId){	
-
+			else if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == auditUser && formIdValue == auditFormId){	
+				console.log("enter 4")
 				var tableRow = $('#templates .table-audittrail-list .tableRow');
 				var clone = tableRow.clone();
 				sno = sno + 1;

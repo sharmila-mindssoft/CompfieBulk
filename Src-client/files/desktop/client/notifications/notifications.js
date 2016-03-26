@@ -24,6 +24,10 @@ function loadNotifications(notifications){
         }
         str += '<li class="'+readStatus+'" onclick="changeStatus('+notificationId+','+notifications[key]["read_status"]+')"><a href="#popup1" style="text-decoration: none;"> '+notificationText+'<p class="subtext"><span class="time">'+updatedon+'</span><span class="notification-cat">Category: '+extraDetails+'</span></p> </a></li>';
     });
+
+    if(str == ''){
+        str += '<li><a href="#popup1" style="text-decoration: none;"> '+notificationText+'<p class="subtext"><span class="time">'+updatedon+'</span><span class="notification-cat">Category: '+extraDetails+'</span></p> </a></li>';
+    }
     $('#notificationsList').append(str);      
 }
 
