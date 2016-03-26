@@ -8192,3 +8192,17 @@ class ClientDatabase(Database):
             c_list.append(info)
 
         return c_list
+
+    def get_version(self):
+        q = "SELECT unit_datetils_version, user_details_version, \
+            compliance_applicability_version, compliance_history_version, \
+            reassign_history_version FROM tbl_mobile_sync_versions"
+        rows = self.select_one(q)
+        column = [
+            "unit_details", "user_details",
+            "compliance_applicability",
+            "compliance_history",
+            "reassign_history"
+        ]
+        result = self.convert_to_dict(rows, column)
+        return result
