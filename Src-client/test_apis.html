@@ -13,6 +13,12 @@
 			var file_list = []
 			var logo_file;
 			var jsonResponse;
+			function parseJSON(data) {
+		        return JSON.parse(data);
+		    }
+			function toJSON(data) {
+		        return JSON.stringify(data, null, " ");
+		    }
 			function createSession(){
 				var userDetails = {
 		            "user_id": 0,
@@ -30,15 +36,35 @@
 			}
 
 			function login () {
-				mirror.login(
-					"sharmi",
-					"123456",
-					function (status, response) {
-						console.log(status, response);
-					}, function (data) {
-						console.log(data);
-					}
-				);
+
+				var request = [
+					"Login",
+					 {
+					  "login_type": "Android",
+					  "username": "admin",
+					  "password": "123456",
+					  "short_name": null,
+					  "ip": "122.164.164.35"
+					 }
+				];
+		        jQuery.post(
+		            BASE_URL + "login",
+		            toJSON(request),
+		            function (data) {
+		                var data = parseJSON(data);
+		                var status = data[0];
+		                var response = data[1];
+		                matchString = 'success';
+		                if (status.toLowerCase().indexOf(matchString) != -1){
+		                    console.log("mirror success");
+		                    initSession(response)
+		                    callback(null, response);
+		                }
+		                else {
+		                    callback(status, null);
+		                }
+		            }
+		        )
 			}
 			function logout () {
 				mirror.logout();
@@ -543,8 +569,9 @@
 				from_date = null;
 				to_date = null;
 				user_type = "Inhouse";
+				csv = true;
 				client_mirror.getComplianceActivityReportData(
-					user_type, assignee_id, country_id, domain_id, level_1_statutory_id, unit_id, compliance_id, from_date, to_date, callback
+					user_type, assignee_id, country_id, domain_id, level_1_statutory_id, unit_id, compliance_id, from_date, to_date, csv, callback
 				);
 			}
 			function getRiskReportFilters(){
@@ -602,7 +629,19 @@
 			    );
 			}
 			function exportToCSV(){
-				client_mirror.exportToCSV(jsonResponse, callback);
+				country_id = 1
+				assignee_id = null;
+				domain_id = 1;
+				level_1_statutory_id = null;
+				unit_id = 1;
+				compliance_id = null;
+				from_date = null;
+				to_date = null;
+				user_type = "Inhouse";
+				report = "ComplianceActivity"
+				client_mirror.exportToCSV(
+					user_type, assignee_id, country_id, domain_id,level_1_statutory_id, unit_id, compliance_id, from_date, to_date, report, callback
+				);
 			}
 		</script>
 	</head>

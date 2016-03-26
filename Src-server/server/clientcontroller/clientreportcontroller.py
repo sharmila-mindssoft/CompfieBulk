@@ -390,13 +390,18 @@ def get_compliance_activity_report(db, request, session_user, client_id):
     to_date = request.to_date
     compliance_id = request.compliance_id
     level_1_statutory_name = request.level_1_statutory_name
-    activities = db.get_compliance_activity_report(
-        country_id, domain_id, user_type, user_id, unit_id, compliance_id, level_1_statutory_name,
-        from_date, to_date, session_user, client_id
-    )
-    return clientreport.GetComplianceActivityReportSuccess(
-        activities=activities
-    )
+    if request.csv == False:
+        activities = db.get_compliance_activity_report(
+            country_id, domain_id, user_type, user_id, unit_id, compliance_id, level_1_statutory_name,
+            from_date, to_date, session_user, client_id
+        )
+        return clientreport.GetComplianceActivityReportSuccess(
+            activities=activities
+        )
+    else:
+        converter = ConvertJsonToCSV(db, request, session_user, client_id)
+        return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
+
 
 def process_get_task_applicability_status_filters(db, request, session_user):
     user_company_info = db.get_user_company_details(session_user)
@@ -452,6 +457,5 @@ def get_client_details_report_data(db, request, session_user, client_id):
     return clientreport.GetClientDetailsReportDataSuccess(units=units)
 
 def export_to_csv(db, request, session_user, client_id):
-    data = request.json_data
-    converter = ConvertJsonToCSV(data)
+    converter = ConvertJsonToCSV(db, request, session_user)
     return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)

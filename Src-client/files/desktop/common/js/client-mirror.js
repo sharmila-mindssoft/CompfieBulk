@@ -1329,7 +1329,7 @@ function initClientMirror() {
 
     function getComplianceActivityReportData(
             user_type, user_id, country_id, domain_id, level_1_statutory_name, unit_id,
-            compliance_id, from_date, to_date, callback
+            compliance_id, from_date, to_date, csv, callback
         ){
         var request = [
             "GetComplianceActivityReport",
@@ -1342,9 +1342,10 @@ function initClientMirror() {
                 "unit_id": unit_id,
                 "compliance_id": compliance_id,
                 "from_date" : from_date,
-                "to_date" : to_date
+                "to_date" : to_date,
+                "csv" : csv
             }
-        ];
+        ];            
         callerName = "client_reports";
         clientApiRequest(callerName, request, callback);
 

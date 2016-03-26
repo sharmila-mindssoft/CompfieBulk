@@ -1,6 +1,6 @@
 import json
 from protocol.jsonvalidators import (
-    parse_enum, parse_dictionary, parse_static_list, parse_list
+    parse_enum, parse_dictionary, parse_static_list, parse_list, parse_bool
 )
 from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
@@ -79,7 +79,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_CustomTextType_500,
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_Text,
-    parse_structure_VectorType_Text
+    parse_structure_VectorType_Text,
+    parse_structure_Bool
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
@@ -162,7 +163,8 @@ from protocol.to_structure import (
     to_structure_VectorType_CustomTextType_500,
     to_structure_OptionalType_CustomTextType_500,
     to_structure_Text,
-    to_structure_VectorType_Text
+    to_structure_VectorType_Text,
+    to_structure_Bool
 )
 
 #
@@ -627,7 +629,7 @@ class GetComplianceActivityReportFilters(Request):
 
 class GetComplianceActivityReport(Request):
     def __init__(self, user_type, user_id, domain_id, country_id, level_1_statutory_name, unit_id,
-        compliance_id, from_date, to_date):
+        compliance_id, from_date, to_date,  csv):
         self.user_type = user_type
         self.user_id = user_id
         self.domain_id = domain_id
@@ -637,13 +639,15 @@ class GetComplianceActivityReport(Request):
         self.compliance_id = compliance_id
         self.from_date = from_date
         self.to_date = to_date
+        self.csv = csv
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
                 "user_type", "user_id", "domain_id", "country_id",
-                "level_1_statutory_name", "unit_id", "compliance_id", "from_date", "to_date"
+                "level_1_statutory_name", "unit_id", "compliance_id", 
+                "from_date", "to_date", "csv"
             ]
         )
         user_type = data.get("user_type")
@@ -664,9 +668,11 @@ class GetComplianceActivityReport(Request):
         from_date = parse_structure_OptionalType_CustomTextType_20(from_date)
         to_date = data.get("to_date")
         to_date = parse_structure_OptionalType_CustomTextType_20(to_date)
+        csv = data.get("csv")
+        csv = parse_structure_Bool(csv)
         return GetComplianceActivityReport(
             user_type, user_id, domain_id, country_id, level_1_statutory_name, unit_id, compliance_id,
-            from_date, to_date
+            from_date, to_date, csv
         )
 
     def to_inner_structure(self):
@@ -680,6 +686,7 @@ class GetComplianceActivityReport(Request):
             "compliance_id": to_structure_OptionalType_SignedIntegerType_8(self.compliance_id),
             "from_date": to_structure_OptionalType_CustomTextType_20(self.from_date),
             "to_date": to_structure_OptionalType_CustomTextType_20(self.to_date),
+            "csv" : to_structure_Bool(self.csv)
         }
 
 class GetReassignedHistoryReportFilters(Request):
