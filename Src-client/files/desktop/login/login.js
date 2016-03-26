@@ -161,10 +161,10 @@ $(document).ready(function () {
     console.log("short name"+short_name);
     if (short_name === null) {
         console.log("short name null");
-        if (mirror.verifyLoggedIn()) {
-            navigateToHome()
-            return;
-        }
+        // if (mirror.verifyLoggedIn()) {
+        //     navigateToHome()
+        //     return;
+        // }
         var url = "/knowledge/forgot-password";
         $('.text-forgot-password a').attr('href', url);
     }
@@ -172,12 +172,12 @@ $(document).ready(function () {
         console.log("short name not null");
         var url = "/forgot_password/"+short_name;
         $('.text-forgot-password a').attr('href', url);
-        if (short_name == client_mirror.getClientShortName()) {
-            navigateToHome();
-        }
-        else  {
-            client_mirror.clearSession();
-        }
+        // if (short_name == client_mirror.getClientShortName()) {
+        //     navigateToHome();
+        // }
+        // else  {
+        //     client_mirror.clearSession();
+        // }
     }
 
 
