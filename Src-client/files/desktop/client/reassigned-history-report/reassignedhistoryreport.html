@@ -151,7 +151,7 @@
       </div>
       <div class="submit-button-container">
         <input type="submit" name="cancel" value="Show" id="show-button" class="btn-submit">
-        <input type="submit" name="cancel" value="Export" class="btn-submit"></div>
+        <input type="submit" name="cancel" value="Export" id="export-button" class="btn-submit"></div>
       <div class="clearfix"></div>
       <div class="grid-table-rpt default-display-none">
         <h1>Reassigned History</h1>
@@ -172,92 +172,8 @@
           </div>
         </div>
         <div class="clearfix"></div>
-        <table style="border:1px dotted #CCCCCC;" class="filtertable">
-          <tr align="left" style="height:30px;">
-            <th style="background:#ccc;" width="3%" align="center" >#</th>
-            <th style="background:#ccc;" width="15%">Compliance Task</th>
-            <th style="background:#ccc;" width="9%">Due Date</th>
-            <th style="background:#ccc;" width="15%">Assignee</th>
-            <th style="background:#ccc;" width="11%">Reassign date</th>
-            <th style="background:#ccc;" width="14%">Reassigned From</th>
-            <th style="background:#ccc;" width="14%">Reason</th>
-
-          </tr>
-          <tbody class="tbody-reassigned-list">
-          </tbody>
-          <!-- <tr>
-          <td colspan="7">
-          <h2 style="background:#f1e9f6;font-weight:bold;text-align:center;">Batteries Act</h2>
-          </td>
-          </tr>
-          <tr>
-            <td colspan="7">
-              <span class="heading"> <abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai, 600002"><img src="/images/icon-info.png"></abbr>
-                RG1008 - Branch Office - 1
-              </span>
-            </td>
-          </tr>
-          <tr class="largefont" >
-            <td align="center">1</td>
-            <td>FORM I - Half yearly returns Submission</td>
-            <td>25-Aug-2015</td>
-            <td>EMP1004 - Ramasubbu</td>
-            <td>24-Aug-2015</td>
-            <td>EMP1002 - Rajkumar</td>
-            <td>Content Goes Here</td>
-
-          </tr>
-        <tr><td colspan="7">
-        <ul class="tree">
-          <li>
-            <table>
-              <tr class="smallfont" style="background-color:#eae8e8; color:#000000;" >
-                <td colspan="4" align="right"></td>
-                <td width="28%">EMP1002 - Rajkumar</td>
-                <td width="20%">02-Aug-2015</td>
-                <td width="26%">EMP1019 - Krishna</td>
-
-                <td>Content Goes Here</td>
-              </tr>
-            </table>
-          </li>
-          <li>
-            <table>
-              <tr class="smallfont" style="background-color:#eae8e8; color:#000000;" >
-                <td colspan="4" align="right"></td>
-                <td width="28%">EMP1019 - Krishna</td>
-                <td width="20%">10-Aug-2015</td>
-                <td width="26%">EMP1006 - Rajuram</td>
-                <td>Content Goes Here</td>
-              </tr>
-            </table>
-          </li>
-          <li>
-            <table>
-              <tr class="smallfont" style="background-color:#eae8e8; color:#000000;" >
-                <td colspan="4" align="right"></td>
-                <td width="28%">EMP1006 - Rajuram</td>
-                <td width="20%">17-Aug-2015</td>
-                <td width="26%">EMP1017 - Sivaram</td>
-                <td>Content Goes Here</td>
-              </tr>
-            </table>
-          </li>
-        </ul>
-        </tr>
-          <tr  class="largefont">
-            <td  width="3%" align="center">2</td>
-
-            <td width="15%">FORM II - Registration</td>
-            <td width="9%">12-Sep-2015</td>
-            <td width="15%">EMP1011 - Vignesh</td>
-            <td width="11%">04-Sep-2015</td>
-            <td width="14%">EMP1012 - Krishnakumar</td>
-
-            <td width="14%">Content Goes Here</td>
-
-          </tr> -->
-
+        <table style="border:1px dotted #CCCCCC;" class="filtertable table-reassignedhistory-list"  id="accordion">
+         
         </table>
 
         <p class="total-records"></p>
@@ -267,27 +183,45 @@
 </div>
 <div id="templates">
 <table class="table-reassigned-list">
-<tr class="level1-list">
+<tbody class="level1-list">
+<tr class="">
   <td colspan="7">
   <h2 style="background:#f1e9f6;font-weight:bold;text-align:center;" class="level1-heading"></h2>
   </td>
 </tr>
- <tr class="unit-list">
+</tbody>
+ <tbody class="heading-list">
+ <tr align="left" style="height:30px;" class="">
+    <th style="background:#ccc;" width="3%" align="center" >#</th>
+    <th style="background:#ccc;" width="15%">Compliance Task</th>
+    <th style="background:#ccc;" width="9%">Due Date</th>
+    <th style="background:#ccc;" width="15%">Assignee</th>
+    <th style="background:#ccc;" width="11%">Reassign date</th>
+    <th style="background:#ccc;" width="14%">Reassigned From</th>
+    <th style="background:#ccc;" width="14%">Reason</th>
+
+  </tr>
+  </tbody>
+  <tbody class="unit-list">
+ <tr >
   <td colspan="7">
     <span class="heading"> <abbr class="page-load tipso_style" title=""><img src="/images/icon-info.png"></abbr>
       <span class="unit-heading"></span>
     </span>
   </td>
 </tr>
-<tr  class="largefont reassigned-row-list">
-  <td  width="3%" align="center" class="sno"></td>
-  <td width="15%" class="compliance-task"></td>
-  <td width="9%" class="due-date"></td>
-  <td width="15%" class="assignee"></td>
-  <td width="11%" class="reassign-date"></td>
-  <td width="14%" class="reassigned-from"></td>
-  <td width="14%" class="reason"></td>
-</tr>
+</tbody>
+<tbody class="accordion-toggle tbody-reassigned-list">
+  <tr  class="largefont reassigned-row-list">
+    <td  width="3%" align="center" class="sno"></td>
+    <td width="15%" class="compliance-task"></td>
+    <td width="9%" class="due-date" style="width: 100px;"></td>
+    <td width="15%" class="assignee" style="width: 100px;"></td>
+    <td width="11%" class="reassign-date" style="width: 100px;"></td>
+    <td width="14%" class="reassigned-from" style="width: 100px;"></td>
+    <td width="14%" class="reason" style="width: 100px;"></td>
+  </tr>
+</tbody>
 <tr class="reassigned-inner-list">
   <td colspan="7">
     <ul class="tree">
@@ -295,10 +229,10 @@
         <table>
           <tr class="smallfont" style="background-color:#eae8e8; color:#000000;">
             <td colspan="4" align="right"></td>
-            <td width="28%" class="inner-assignee"></td>
-            <td width="20%" class="inner-reassigndate"></td>
-            <td width="26%" class="reassigned-from"></td>
-            <td class="inner-reason"></td>
+            <td width="28%" class="inner-assignee" style="width: 100px;"></td>
+            <td width="20%" class="inner-reassigndate"  style="width: 120px;"></td>
+            <td width="26%" class="inner-reassigned-from"  style="width: 100px;"></td>
+            <td class="inner-reason"  style="width: 100px;"></td>
           </tr>
         </table>
       </li>

@@ -371,10 +371,10 @@
                     </div>
                   </div>
 
-                  <div class="modal modal1" style="width:75%; margin-left:-37.5%;">
+                  <div id="popup-reassigned" class="popupoverlay" >
+                  <a class="close-delayed" onclick="closepopupdelayed()">x</a>
                     <header>
-                    <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">EMP1028 - Sivaraman</h1>
-                    <div class="close toggleModal1"></div>
+                    <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;" class="comp-delayed-heading"></h1>
                     </header>
                     <section>
                     <p style="font-size:0.8em; padding-top:10px;">
@@ -388,24 +388,8 @@
                     <th width="12%" align="center">Reassigned Date</th>
                     <th width="13%" align="center">Completed Date</th>
                     </tr>
-                    <tr >
-                    <td align="center">1</td>
-                    <td align="left">Form T - Wage Slip Submission</td>
-                    <td align="left">EMP1020 - Raguram</td>
-                    <td align="center">20-Oct-2015</td>
-                    <td align="center">30-Dec-2015</td>
-                    <td align="center">28-Dec-2015</td>
-                    <td align="center">03-Jan-2015</td>
-                    </tr>
-                    <tr >
-                    <td align="center">2</td>
-                    <td align="left">Form Q - Register of employment</td>
-                    <td align="left">EMP1022 - Vijayakumar</td>
-                    <td align="center">01-Nov-2015</td>
-                    <td align="center">30-Dec-2015</td>
-                    <td align="center">01-Jan-2015</td>
-                    <td align="center">03-Jan-2015</td>
-                    </tr>
+                    <tbod class="tbody-popup-reassigned-list"></tbody>                   
+                   
                     </table>
                     </p>
                     </section>
@@ -493,14 +477,14 @@
         </tr>
         <tr class="tr-filter">
           <td align="center"></td>
-          <td class="business-group-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
-          <td class="legal-entity-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
-          <td class="division-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
-          <td class="type-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
-          <td class="compliance-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
-          <td class="assigned-to-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
-          <td class="delayed-by-row"><input type="text"  class="filter-text-box js-filter" placeholder="Search"></td>
-          <td class="over-due-row"><input type="text"  class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="business-group-row"><input type="text" class="filter-text-box " placeholder="Search"></td>
+          <td class="legal-entity-row"><input type="text" class="filter-text-box " placeholder="Search"></td>
+          <td class="division-row"><input type="text" class="filter-text-box " placeholder="Search"></td>
+          <td class="type-row"><input type="text" class="filter-text-box " placeholder="Search"></td>
+          <td class="compliance-row"><input type="text" class="filter-text-box " placeholder="Search"></td>
+          <td class="assigned-to-row"><input type="text" class="filter-text-box " placeholder="Search"></td>
+          <td class="delayed-by-row"><input type="text"  class="filter-text-box " placeholder="Search"></td>
+          <td class="over-due-row"><input type="text"  class="filter-text-box " placeholder="Search"></td>
         </tr>
         <tbody class="tr-unit accordion-toggle">
           <tr style="padding:10px;text-align:left;">
@@ -672,6 +656,17 @@
     <td class="comp-list-startdate"></td>
     <td class="comp-list-duedate"></td>
     <td class="comp-list-completiondate" colspan="2"></td>
+    </tr>
+
+
+    <tr class="comp-list-delayed-row-list" >
+    <td align="center" class="comp-delayed-sno"></td>
+    <td align="left" class="comp-delayed-compliance"></td>
+    <td align="left" class="comp-delayed-reassigned-from"></td>
+    <td align="center" class="comp-delayed-startdate"></td>
+    <td align="center" class="comp-delayed-duedate"></td>
+    <td align="center" class="comp-delayed-reassigned-date"></td>
+    <td align="center" class="comp-delayed-completed-date"></td>
     </tr>
   </table>
 
