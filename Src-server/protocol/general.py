@@ -10,7 +10,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_general_AuditTrail,
     parse_structure_VectorType_RecordType_general_User,
     parse_structure_VectorType_RecordType_general_AuditTrailForm,
-    parse_structure_VectorType_RecordType_core_Country
+    parse_structure_VectorType_RecordType_core_Country,
+    parse_structure_Text
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_general_Notification,
@@ -25,6 +26,7 @@ from protocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
     to_structure_VectorType_RecordType_general_User,
     to_structure_VectorType_RecordType_general_AuditTrailForm,
+    to_structure_Text
 )
 
 #
@@ -621,7 +623,7 @@ class Notification(object):
         notification_id = data.get("notification_id")
         notification_id = parse_structure_UnsignedIntegerType_32(notification_id)
         notification_text = data.get("notification_text")
-        notification_text = parse_structure_CustomTextType_500(notification_text)
+        notification_text = parse_structure_Text(notification_text)
         link = data.get("link")
         link = parse_structure_CustomTextType_500(link)
         has_read = data.get("has_read")
@@ -633,7 +635,7 @@ class Notification(object):
     def to_structure(self):
         return {
             "notification_id": to_structure_UnsignedIntegerType_32(self.notification_id),
-            "notification_text": to_structure_CustomTextType_500(self.notification_text),
+            "notification_text": to_structure_Text(self.notification_text),
             "link": to_structure_CustomTextType_500(self.link),
             "has_read": to_structure_Bool(self.has_read),
             "date_and_time": to_structure_CustomTextType_20(self.date_and_time),
