@@ -203,9 +203,10 @@ function loadCountwiseResult(filterList){
     lastOccuranceid = frequency_id;
   }
   
-  if(endCount > finalList.length) endCount = finalList.length
-  $('.compliance_count').text("Showing " + 1 + " to " + endCount + " of " + Object.keys(finalList).length);
-  
+  if(count > 1){
+    if(endCount > finalList.length) endCount = finalList.length
+    $('.compliance_count').text("Showing " + 1 + " to " + endCount + " of " + Object.keys(finalList).length);
+  }
   if(endCount >= finalList.length){
     $(document).ready(function($) {
     $('#accordion').find('.accordion-toggle').click(function(){
@@ -246,7 +247,7 @@ $('#pagination').click(function(e){
 
 function loadresult() {
 
-  pageSize = 100;
+  pageSize = 500;
   startCount = 0;
   endCount = pageSize;
 
