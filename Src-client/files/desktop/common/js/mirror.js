@@ -571,14 +571,9 @@ function initMirror() {
         console.log(file_size)
         if (file_size > max_limit) {
             callback("File max limit exceeded");
-        }
-        // file_extension = file_name.substr(
-        //     file_name.lastIndexOf('.') + 1
-        // );
-        file_content = null
-
-
-        if (files && file) {
+        }else{
+            file_content = null
+            if (files && file) {
             convert_to_base64(file, function(file_content) {
                 if (file_content == null) {
                     callback("File content is empty")
@@ -590,6 +585,10 @@ function initMirror() {
             });
         }
 
+        }
+        // file_extension = file_name.substr(
+        //     file_name.lastIndexOf('.') + 1
+        // );
     }
 
     function complianceDetails (
