@@ -2966,6 +2966,7 @@ class KnowledgeDatabase(Database):
             description = data.description
             document_name = data.document_name
             file_list = data.format_file_list
+            print file_list
             file_name = ""
             file_size = 0
             file_content = ""
@@ -2992,6 +2993,9 @@ class KnowledgeDatabase(Database):
                 else :
                     file_list = file_list[0]
                     file_name = saved_file_name
+                    if len(file_name) == 0 :
+                        file_name = None
+
                     if file_name is None :
                         file_name = file_list.file_name
                         name = file_list.file_name.split('.')[0]
