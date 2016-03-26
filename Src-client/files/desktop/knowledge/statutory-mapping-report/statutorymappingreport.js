@@ -247,7 +247,6 @@ $('#pagination').click(function(e){
 });
 
 function loadresult() {
-
   pageSize = 500;
   startCount = 0;
   endCount = pageSize;

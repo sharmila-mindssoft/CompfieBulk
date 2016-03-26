@@ -1786,7 +1786,7 @@ class Level1Compliance(object):
         compliance_frequency = data.get("compliance_frequency")
         compliance_frequency = parse_structure_CustomTextType_50(compliance_frequency)
         repeats = data.get("repeats")
-        repeats = parse_structure_CustomTextType_50(repeats)
+        repeats = parse_structure_CustomTextType_500(repeats)
         return Level1Compliance(statutory_mapping, compliance_name, description,
         penal_consequences, compliance_frequency, repeats)
 
@@ -1797,7 +1797,7 @@ class Level1Compliance(object):
             "description": to_structure_CustomTextType_250(self.description),
             "penal_consequences": to_structure_CustomTextType_250(self.penal_consequences),
             "compliance_frequency": to_structure_CustomTextType_50(self.compliance_frequency),
-            "repeats"  : to_structure_CustomTextType_50(self.repeats)
+            "repeats"  : to_structure_CustomTextType_500(self.repeats)
         }
 
 class Level1Statutory(object):
