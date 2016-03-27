@@ -535,7 +535,7 @@ class GetVersionsSuccess(Response):
             "reassign_history_version": to_structure_UnsignedIntegerType_32(self.reassign_history_version)
         }
 
-class GetUsersSuccess(Response):
+class GetUsersList(object):
     def __init__(
         self, user_id, user_name
     ):
@@ -553,7 +553,7 @@ class GetUsersSuccess(Response):
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         user_name = data.get("user_name")
         user_name = parse_structure_CustomTextType_50(user_name)
-        return GetUsersSuccess(
+        return GetUsersList(
             user_id, user_name
         )
 
@@ -562,6 +562,20 @@ class GetUsersSuccess(Response):
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
             "user_name": to_structure_CustomTextType_50(self.user_name)
         }
+
+class GetUsersSuccess(Response):
+    def __init__(self, user_list):
+        self.user_list = user_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_list"])
+        user_list = data.get("user_list")
+        return GetUsersSuccess(user_list)
+
+    def to_inner_structure(self):
+        return
+
 
 class GetUnitDetailsSuccess(Response):
     def __init__(
