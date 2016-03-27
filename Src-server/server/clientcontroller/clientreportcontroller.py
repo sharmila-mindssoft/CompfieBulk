@@ -66,7 +66,7 @@ def process_client_report_requests(request, db) :
         return process_get_task_applicability_status_filters(db, request, session_user)
 
     elif type(request) is clientreport.GetComplianceTaskApplicabilityStatusReport:
-        return process_get_task_applicability_report_data(db, request, session_user)
+        return process_get_task_applicability_report_data(db, request, session_user, client_id)
 
     elif type(request) is clientreport.GetClientDetailsReportFilters:
         return get_client_details_report_filters(db, request, session_user, client_id)
@@ -165,19 +165,23 @@ def get_serviceprovider_report_filters(db, request, session_user):
     )
 
 def get_serviceproviderwise_compliance(db, request, session_user, client_id):
-    country_id = request.country_id
-    domain_id = request.domain_id
-    statutory_id = request.statutory_id
-    unit_id = request.unit_id
-    service_provider_id = request.service_provider_id
+    if request.csv:
+        converter = ConvertJsonToCSV(db, request, session_user, client_id, "ServiceProviderWise")
+        return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
+    else:
+        country_id = request.country_id
+        domain_id = request.domain_id
+        statutory_id = request.statutory_id
+        unit_id = request.unit_id
+        service_provider_id = request.service_provider_id
 
-    if service_provider_id is None :
-        service_provider_id = '%'
+        if service_provider_id is None :
+            service_provider_id = '%'
 
-    serviceprovider_wise_compliances_list = db.get_serviceproviderwise_compliance_report(
-        country_id, domain_id, statutory_id, unit_id, service_provider_id, client_id, session_user
-    )
-    return clientreport.GetServiceProviderWiseComplianceSuccess(serviceprovider_wise_compliances_list)
+        serviceprovider_wise_compliances_list = db.get_serviceproviderwise_compliance_report(
+            country_id, domain_id, statutory_id, unit_id, service_provider_id, client_id, session_user
+        )
+        return clientreport.GetServiceProviderWiseComplianceSuccess(serviceprovider_wise_compliances_list)
 
 def get_compliancedetails_report_filters(db, request, session_user, client_id):
     user_company_info = db.get_user_company_details(session_user)
@@ -188,7 +192,6 @@ def get_compliancedetails_report_filters(db, request, session_user, client_id):
     level_1_statutories_list = db.get_client_level_1_statutoy(session_user)
     compliances_list = db.get_client_compliances(session_user)
     users_list = db.get_client_users()
-
     return clientreport.GetComplianceDetailsReportFiltersSuccess(
         countries=country_list,
         domains=domain_list,
@@ -225,32 +228,40 @@ def get_statutory_notifications_list_filters(db, request, session_user, client_i
     )
 
 def get_statutory_notifications_list_report(db, request, session_user, client_id):
-    result = db.get_statutory_notifications_list_report(request, client_id)
-    return clientreport.GetStatutoryNotificationsListReportSuccess(result)
+    if request.csv:
+        converter = ConvertJsonToCSV(db, request, session_user, client_id, "StatutoryNotification")
+        return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
+    else:
+        result = db.get_statutory_notifications_list_report(request, client_id)
+        return clientreport.GetStatutoryNotificationsListReportSuccess(result)
 
 def get_compliancedetails_report(db, request, session_user, client_id):
-    country_id = request.country_id
-    domain_id = request.domain_id
-    statutory_id = request.statutory_id
-    unit_id = request.unit_id
-    compliance_id = request.compliance_id
-    assignee_id = request.assignee_id
-    from_date = request.from_date
-    to_date = request.to_date
+    if request.csv:
+        converter = ConvertJsonToCSV(db, request, session_user, client_id, "ComplianceDetails")
+        return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
+    else:
+        country_id = request.country_id
+        domain_id = request.domain_id
+        statutory_id = request.statutory_id
+        unit_id = request.unit_id
+        compliance_id = request.compliance_id
+        assignee_id = request.assignee_id
+        from_date = request.from_date
+        to_date = request.to_date
 
-    if compliance_id is None :
-        compliance_id = '%'
-    if assignee_id is None :
-        assignee_id = '%'
-    if request.compliance_status is None :
-        compliance_status = '%'
-    else :
-        compliance_status = core.COMPLIANCE_STATUS(request.compliance_status)
+        if compliance_id is None :
+            compliance_id = '%'
+        if assignee_id is None :
+            assignee_id = '%'
+        if request.compliance_status is None :
+            compliance_status = '%'
+        else :
+            compliance_status = core.COMPLIANCE_STATUS(request.compliance_status)
 
-    compliance_details_list = db.get_compliance_details_report(
-        country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date, compliance_status, client_id, session_user
-    )
-    return clientreport.GetComplianceDetailsReportSuccess(compliance_details_list)
+        compliance_details_list = db.get_compliance_details_report(
+            country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date, compliance_status, client_id, session_user
+        )
+        return clientreport.GetComplianceDetailsReportSuccess(compliance_details_list)
 
 def get_risk_report_filters(db, request, session_user, client_id):
     user_company_info = db.get_user_company_details(session_user)
@@ -296,19 +307,24 @@ def get_reassignedhistory_report_filters(db, request, session_user, client_id):
 
 
 def get_reassignedhistory_report(db, request, session_user, client_id):
-    country_id = request.country_id
-    domain_id = request.domain_id
-    level_1_statutory_id = request.level_1_statutory_id
-    unit_id = request.unit_id
-    compliance_id = request.compliance_id
-    user_id = request.user_id
-    from_date = request.from_date
-    to_date = request.to_date
-    reassigned_history_list = db.get_reassigned_history_report(
-    country_id, domain_id, level_1_statutory_id,
-        unit_id, compliance_id, user_id, from_date, to_date, client_id, session_user
-    )
-    return clientreport.GetReassignedHistoryReportSuccess(reassigned_history_list)
+    if not request.csv:
+        country_id = request.country_id
+        domain_id = request.domain_id
+        level_1_statutory_id = request.level_1_statutory_id
+        unit_id = request.unit_id
+        compliance_id = request.compliance_id
+        user_id = request.user_id
+        from_date = request.from_date
+        to_date = request.to_date
+        reassigned_history_list = db.get_reassigned_history_report(
+        country_id, domain_id, level_1_statutory_id,
+            unit_id, compliance_id, user_id, from_date, to_date, client_id, session_user
+        )
+        return clientreport.GetReassignedHistoryReportSuccess(reassigned_history_list)
+    else:
+        converter = ConvertJsonToCSV(db, request, session_user, client_id, "Reassign")
+        return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
+
 
 def get_risk_report(db, request, session_user, client_id):
     country_id = request.country_id
@@ -324,26 +340,30 @@ def get_risk_report(db, request, session_user, client_id):
     not_opted = [] # 3
     unassigned = [] # 4
     if request.csv == False:
-        if statutory_status == 1 or statutory_status == 0:
+        if statutory_status in [1, None, "None", ""]:# Delayed compliance
+            print "getting delayed compliance"
             delayed_compliance = db.get_risk_report(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name, 1,
                 client_id, session_user
             )
-        if statutory_status == 2 or statutory_status == 0:
+        if statutory_status in [2, None, "None", ""]: # Not complied
+            print "getting not complied"
             not_complied = db.get_risk_report(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name, 2,
                 client_id, session_user
             )
-        if statutory_status == 3 or statutory_status == 0:
-            not_opted = db.get_not_opted_compliances(
+        if statutory_status in [3, None, "None", ""]: # Not opted
+            print "getting not opted"
+            not_opted = db.get_risk_report(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name, 3,
                 client_id, session_user
             )
-        if statutory_status == 4 or statutory_status == 0:
-            unassigned = db.get_unasssigned_compliances(
+        if statutory_status in [4, None, "None", ""]: # Unassigned
+            print "getting unassigned"
+            unassigned = db.get_risk_report(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name, 4,
                 client_id, session_user
@@ -428,8 +448,12 @@ def process_get_task_applicability_status_filters(db, request, session_user):
         divisions, units, level1_statutories, applicable_status
     )
 
-def process_get_task_applicability_report_data(db, request, session_user):
-    return db.get_compliance_task_applicability(request, session_user)
+def process_get_task_applicability_report_data(db, request, session_user, client_id):
+    if request.csv:
+        converter = ConvertJsonToCSV(db, request, session_user, client_id, "TaskApplicability")
+        return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
+    else:
+        return db.get_compliance_task_applicability(request, session_user)
 
 def get_client_details_report_filters(db, request, session_user, client_id):
     countries = db.get_countries_for_user(session_user, client_id)
@@ -454,12 +478,16 @@ def get_client_details_report_filters(db, request, session_user, client_id):
     )
 
 def get_client_details_report_data(db, request, session_user, client_id):
-    units = db.get_client_details_report(
-        request.country_id, request.business_group_id,
-        request.legal_entity_id, request.division_id, request.unit_id, 
-        request.domain_ids, session_user
-    )
-    return clientreport.GetClientDetailsReportDataSuccess(units=units)
+    if request.csv:
+        converter = ConvertJsonToCSV(db, request, session_user, client_id, "ClientDetails")
+        return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH) 
+    else:
+        units = db.get_client_details_report(
+            request.country_id, request.business_group_id,
+            request.legal_entity_id, request.division_id, request.unit_id, 
+            request.domain_ids, session_user
+        )
+        return clientreport.GetClientDetailsReportDataSuccess(units=units)
 
 def export_to_csv(db, request, session_user, client_id):
     converter = ConvertJsonToCSV(db, request, session_user)

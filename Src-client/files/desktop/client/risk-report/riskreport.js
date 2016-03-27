@@ -155,22 +155,21 @@ function loadCompliance(reportType){
         loadresult(riskComplianceList);
       }else{
         loadresult(riskComplianceList);
-        client_mirror.exportToCSV(data, 
-          function (error, response) {
-            if (error == null){
-              var download_url = response["link"];
-              window.open(download_url, '_blank');
-            }
-            else {
-              displayMessage(error);
-            }
-          });
+        var download_url = data["link"];
+        window.open(download_url, '_blank'); 
       }
     }
     function onFailure(error){
       onFailure(error);
     }
-    client_mirror.getRiskReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), act, parseInt(statutory_status), 
+    csv = true
+    if(reportType == "show"){
+      csv = false
+    }
+    client_mirror.getRiskReport( 
+      parseInt(country), parseInt(domain), parseInt(businessgroup), 
+      parseInt(legalentity), parseInt(division), parseInt(unit), 
+      act, parseInt(statutory_status), csv, 
       function (error, response) {
         if (error == null){
           onSuccess(response);

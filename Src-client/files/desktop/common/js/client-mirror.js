@@ -643,7 +643,7 @@ function initClientMirror() {
     }
 
     function getClientDetailsReport(countryId, clientId, businessGroupId, legalEntityId, divisionId,
-        unitId, domainIds, callback) {
+        unitId, domainIds, csv, callback) {
         callerName = "techno"
         var request = [
             "GetClientDetailsReport", {
@@ -653,7 +653,8 @@ function initClientMirror() {
                 "legal_entity_id": legalEntityId,
                 "division_id": divisionId,
                 "unit_id": unitId,
-                "domain_ids": domainIds
+                "domain_ids": domainIds,
+                "csv": csv
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -1024,14 +1025,16 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getServiceProviderWiseCompliance(country_id, domain_id, statutory_id, unit_id, service_provider_id, callback) {
+    function getServiceProviderWiseCompliance(
+        country_id, domain_id, statutory_id, unit_id, service_provider_id, csv, callback) {
         var request = [
             "GetServiceProviderWiseCompliance", {
                 "country_id": country_id,
                 "domain_id": domain_id,
                 "statutory_id": statutory_id,
                 "unit_id": unit_id,
-                "service_provider_id": service_provider_id
+                "service_provider_id": service_provider_id,
+                "csv": csv
             }
         ];
         callerName = "client_reports";
@@ -1047,7 +1050,10 @@ function initClientMirror() {
     }
 
 
-    function getComplianceDetailsReport(country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date, compliance_status, callback) {
+    function getComplianceDetailsReport(
+        country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date, 
+        compliance_status, csv, callback
+    ) {
         var request = [
             "GetComplianceDetailsReport", {
                 "country_id": country_id,
@@ -1058,7 +1064,8 @@ function initClientMirror() {
                 "assignee_id": assignee_id,
                 "from_date": from_date,
                 "to_date": to_date,
-                "compliance_status": compliance_status
+                "compliance_status": compliance_status,
+                "csv" : csv
             }
         ];
         callerName = "client_reports";
@@ -1266,7 +1273,7 @@ function initClientMirror() {
     }
 
     function getStatutoryNotificationsListReport(countryName, domainName, businessGroupId,
-        legalEntityId, divisionId, unitId, level1Id, fromdate, todate, callback){
+        legalEntityId, divisionId, unitId, level1Id, fromdate, todate, csv, callback){
         callerName = "client_reports"
         var request = [
             "GetStatutoryNotificationsListReport",
@@ -1279,7 +1286,8 @@ function initClientMirror() {
                 "unit_id": unitId,
                 "level_1_statutory_name": level1Id,
                 "from_date": fromdate,
-                "to_date": todate
+                "to_date": todate,
+                "csv": csv
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -1295,7 +1303,7 @@ function initClientMirror() {
     }
 
     function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id,
-        compliance_id, user_id, from_date, to_date, callback) {
+        compliance_id, user_id, from_date, to_date, csv, callback) {
         var request = [
             "GetReassignedHistoryReport", {
 
@@ -1306,7 +1314,8 @@ function initClientMirror() {
                 "compliance_id": compliance_id,
                 "user_id": user_id,
                 "from_date" : from_date,
-                "to_date" : to_date
+                "to_date" : to_date,
+                "csv": csv
             }
         ];
         callerName = "client_reports";
@@ -1364,7 +1373,7 @@ function initClientMirror() {
     }
 
     function getClientDetailsReportData(countryId, businessGroupId, legalEntityId, divisionId,
-        unitId, domainIds, callback){
+        unitId, domainIds, csv, callback){
         callerName = "client_reports"
         var request = [
             "GetClientDetailsReportData",
@@ -1374,7 +1383,8 @@ function initClientMirror() {
                 "legal_entity_id" : legalEntityId,
                 "division_id" : divisionId,
                 "unit_id": unitId,
-                "domain_ids" : domainIds
+                "domain_ids" : domainIds,
+                "csv": csv
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -1439,7 +1449,7 @@ function initClientMirror() {
     function getTaskApplicabilityReportData(
         country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id,
-        statutory_name, applicable_status, callback
+        statutory_name, applicable_status, csv, callback
     ) {
         var request = [
             "GetComplianceTaskApplicabilityStatusReport", {
@@ -1450,7 +1460,8 @@ function initClientMirror() {
                 "division_id": division_id,
                 "unit_id": unit_id,
                 "statutory_name": statutory_name,
-                "applicable_status": applicable_status
+                "applicable_status": applicable_status,
+                "csv": csv
             }
         ];
         callerName = "client_reports";
