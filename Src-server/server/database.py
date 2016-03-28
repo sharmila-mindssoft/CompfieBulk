@@ -1998,6 +1998,7 @@ class KnowledgeDatabase(Database):
             return status[int(approval_id)]
 
     def get_statutory_mappings(self, user_id, for_approve=False) :
+
         q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
             t1.domain_id, \
@@ -2019,6 +2020,7 @@ class KnowledgeDatabase(Database):
 
         if for_approve is True :
             q = q + " WHERE t1.approval_status in (0, 2)"
+
         q = q + " ORDER BY country_name, domain_name, statutory_nature_name"
         rows = self.select_all(q)
         columns = [
@@ -2028,6 +2030,7 @@ class KnowledgeDatabase(Database):
             "statutory_ids", "geography_ids",
             "approval_status", "is_active", "compliance_ids"
         ]
+
         result = []
         if rows :
             result = self.convert_to_dict(rows, columns)
