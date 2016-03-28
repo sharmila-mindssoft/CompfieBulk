@@ -2074,9 +2074,6 @@ class KnowledgeDatabase(Database):
                 statutory_mapping_list.append(
                     s_map_data
                 )
-            # approval_status = self.get_approval_status(
-            #     int(d["approval_status"])
-            # )
             industry_ids = [
                 int(x) for x in d["industry_ids"][:-1].split(',')
             ]
@@ -2179,7 +2176,6 @@ class KnowledgeDatabase(Database):
         report_data = []
         if rows :
             report_data = self.convert_to_dict(rows, columns)
-        # report_data = self.return_statutory_mappings(result, is_report=True)
 
         return self.return_knowledge_report(
             report_data
@@ -2259,7 +2255,6 @@ class KnowledgeDatabase(Database):
         report_data = []
         if rows :
             report_data = self.convert_to_dict(rows, columns)
-        # report_data = self.return_statutory_mappings(result, is_report=True)
 
         return self.return_knowledge_report(
             report_data
@@ -2275,11 +2270,6 @@ class KnowledgeDatabase(Database):
                 int(statutory_id),
                 str("" + str(statutory_id) + ",%")
             )
-        # query = "SELECT t1.statutory_mapping_ids from tbl_statutories t1 \
-        #     WHERE t1.statutory_id = %s OR t1.parent_ids like '%s'" % (
-        #             int(statutory_id),
-        #             str("" + str(statutory_id) + ",%")
-        #         )
         rows = self.select_all(query)
         result = []
         if rows :
@@ -2319,7 +2309,6 @@ class KnowledgeDatabase(Database):
                 )
             else :
                 url = None
-
             industry_ids = [
                 int(x) for x in r["industry_ids"][:-1].split(',')
             ]
@@ -2374,7 +2363,6 @@ class KnowledgeDatabase(Database):
             )
             report_list.append(info)
         return report_list
-
     #
     # compliance
     #
@@ -2389,7 +2377,6 @@ class KnowledgeDatabase(Database):
                 q = " WHERE t1.compliance_id in %s" % (
                     str(tuple(compliance_id))
                 )
-
         else :
             is_active = int(is_active)
 
