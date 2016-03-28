@@ -151,6 +151,7 @@ function initializeNavBar () {
 
         var liObject = $("#nav-bar-templates .escalations li").clone();
         $("#cssmenu .menu-ul").append(liObject);
+        get_notification_count()
         setInterval(function() {
             get_notification_count();
         }, 10000);
