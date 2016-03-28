@@ -2112,6 +2112,7 @@ class KnowledgeDatabase(Database):
         self, country_id, domain_id, industry_id,
         statutory_nature_id, geography_id, level_1_statutory_id, user_id
     ) :
+
         qry_where = ""
         if industry_id is not None :
             qry_where += "AND t3.industry_id = %s " % (industry_id)
