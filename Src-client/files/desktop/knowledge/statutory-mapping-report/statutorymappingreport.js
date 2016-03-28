@@ -186,9 +186,14 @@ function loadCountwiseResult(filterList){
       else if(sMonth == 11) sMonth = "November"
       else if(sMonth == 12) sMonth = "December"
       statutorydate +=  sMonth +' '+ sDay +' ';
+      if(statutorydate.trim() != '') statutorydate += ', ';
+
       }
-      if(sdateDesc != ''){
+      if(sdateDesc != '' && statutorydate.trim() != ''){
+        statutorydate = statutorydate.replace(/,\s*$/, "");
         statutorydate = sdateDesc + ' ( '+statutorydate+' )';
+      }else{
+        statutorydate = sdateDesc;
       }
     }else{
       statutorydate = sdateDesc;
@@ -242,8 +247,9 @@ $('#pagination').click(function(e){
     $('#pagination').hide();
   }
   //alert(startCount + '-' + endCount + '-' +sub_keys_list.length)
-  loadCountwiseResult(sub_keys_list);
   e.preventDefault();
+  loadCountwiseResult(sub_keys_list);
+  
 });
 
 function loadresult() {
