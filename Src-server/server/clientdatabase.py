@@ -3963,6 +3963,7 @@ class ClientDatabase(Database):
                         country_id, domain_id,
                         unit_id, user_id
                     )
+                print query
                 compliance_rows = self.select_all(query)
 
                 compliances_list = []
