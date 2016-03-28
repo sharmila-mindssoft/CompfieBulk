@@ -1,15 +1,11 @@
-from sets import Set
 from protocol.jsonvalidators import (
     parse_bool,
     parse_number,
     parse_point_numbers,
     parse_string,
     parse_custom_string,
-    parse_bytes,
     parse_list,
-    parse_dictionary,
-    parse_enum,
-    parse_date
+    parse_dictionary
 )
 
 def parse_structure_VectorType_RecordType_clientreport_User(data):
@@ -3914,3 +3910,14 @@ def parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUni
     print "parse_structure"
     if data is None: return data
     return parse_structure_VectorType_RecordType_clienttransactions_NewUnitSettings(data)
+
+def parse_structure_RecordType_mobile_GetUSersList(data):
+    from protocol import mobile
+    return mobile.GetUsersList.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_mobile_GetUsersList(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(parse_structure_RecordType_mobile_GetUsersList(item))
+    return lst
