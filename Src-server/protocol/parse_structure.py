@@ -3919,5 +3919,16 @@ def parse_structure_VectorType_RecordType_mobile_GetUsersList(data):
     data = parse_list(data, 0)
     lst = []
     for item in data :
-        lst.append(parse_structure_RecordType_mobile_GetUsersList(item))
+        lst.append(parse_structure_RecordType_mobile_GetUSersList(item))
+    return lst
+
+def parse_structure_RecordType_mobile_ComplianceApplicability(data):
+    from protocol import mobile
+    return mobile.ComplianceApplicability.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_mobile_ComplianceApplicability(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(parse_structure_RecordType_mobile_ComplianceApplicability(item))
     return lst

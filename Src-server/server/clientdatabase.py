@@ -2378,14 +2378,14 @@ class ClientDatabase(Database):
 
     def get_units_for_assign_compliance(self, session_user, client_id=None):
         if session_user > 0 :
-            qry = ' WHERE t1.unit_id in (select distinct unit_id from tbl_user_units where user_id = %s) ' % (int(session_user))
+            qry = ' AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id = %s) ' % (int(session_user))
         else :
             qry = ""
 
         query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, \
             t1.division_id, t1.legal_entity_id, t1.business_group_id, \
             t1.address, t1.country_id, domain_ids\
-            FROM tbl_units t1 "
+            FROM tbl_units t1 WHERE t1.is_closed = 0  "
         query += qry
         rows = self.select_all(query)
         columns = [
@@ -8221,7 +8221,7 @@ class ClientDatabase(Database):
             (select form_ids from tbl_user_groups where user_group_id = t1.user_group_id)fomr_ids\
             FROM tbl_users t1 \
             INNER JOIN tbl_user_units t2 \
-            ON t1.user_id = t2.user_id "
+            ON t1.user_id = t2.user_id AND t1.is_active = 1 "
 
         if session_user > 0 :
             query = query + where_condition
@@ -8241,5 +8241,61 @@ class ClientDatabase(Database):
             else :
                 name = "%s - %s" % (r["service_provider"], r["employee_name"])
 
-            code = r["employee_code"]
+            user_id = r["user_id"]
+            user_list.append(mobile.GetUsersList(user_id, name))
+
         return user_list
+
+    def get_business_groups_for_mobile(self):
+        columns = "business_group_id, business_group_name"
+        condition = "order by business_group_name"
+        rows = self.get_data(self.tblBusinessGroups, columns, condition)
+        result = self.convert_to_dict(rows, ["business_group_id", "business_group_name", "client_id"])
+        business_group_list = []
+        for r in result :
+            business_group_list.append(
+                core.ClientBusinessGroup(
+                    r["business_group_id"],
+                    r["business_group_name"]
+                )
+            )
+        return business_group_list
+
+    def get_legal_entities_for_mobile(self):
+        columns = "legal_entity_id, legal_entity_name, business_group_id"
+        condition = " ORDER BY legal_entity_name"
+        rows = self.get_data(
+            self.tblLegalEntities, columns, condition
+        )
+        result = self.convert_to_dict(rows, ["legal_entity_id", "legal_entity_name", "business_group_id"])
+        legal_entity_list = []
+        for r in result :
+            business_group_list.append(
+                core.ClientLegalEntity(
+                    r["legal_entity_id"],
+                    r["legal_entity_name"],
+                    r["business_group_id"]
+                )
+            )
+        return legal_entity_list
+
+    def get_divisions_for_mobile(self):
+        columns = "division_id, division_name, legal_entity_id, business_group_id"
+        condition = " ORDER BY division_name"
+        rows = self.get_data(
+            self.tblDivisions, columns, condition
+        )
+        columns = [
+            "division_id", "division_name", "legal_entity_id",
+            "business_group_id"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        division_list = []
+        for r in result:
+            division_list.append(core.ClientDivision(
+                r["division_id"],
+                r["division_name"],
+                r["legal_entity_id"],
+                r["business_group_id"]
+            ))
+        return division_list
