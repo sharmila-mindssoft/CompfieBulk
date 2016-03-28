@@ -1,96 +1,24 @@
-2016-03-24 11:38:44,881 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x8      0xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2 ds adasda'
-2016-03-24 11:38:44,926 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
-    request = parse_structure_VariantType_knowledgetransaction_Request(request)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
-    return knowledgetransaction.Request.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
-    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
-    lst.append(parse_structure_RecordType_core_Compliance(item))
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
-    return core.Compliance.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
-    compliance_task = parse_structure_CustomTextType_100(compliance_task)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
-    return parse_custom_string(data, 100)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
-    "a string with max length(%s)" % (
-ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x8      0xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2 ds adasda'
+2016-03-28 12:44:30,833 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 7 arguments (8 given)
+2016-03-28 12:44:30,834 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 205, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgereportcontroller.py", line 29, in process_knowledge_report_request
+    return process_get_statutory_mapping_report_data(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgereportcontroller.py", line 63, in process_get_statutory_mapping_report_data
+    nature_id, geography_id, level_1_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 7 arguments (8 given)
 
-2016-03-24 11:43:21,705 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
-2016-03-24 11:43:21,705 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
-    request = parse_structure_VariantType_knowledgetransaction_Request(request)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
-    return knowledgetransaction.Request.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
-    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
-    lst.append(parse_structure_RecordType_core_Compliance(item))
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
-    return core.Compliance.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
-    compliance_task = parse_structure_CustomTextType_100(compliance_task)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
-    return parse_custom_string(data, 100)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
-    "a string with max length(%s)" % (
-ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
-
-2016-03-24 11:45:11,591 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
-2016-03-24 11:45:11,592 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
-    request = parse_structure_VariantType_knowledgetransaction_Request(request)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
-    return knowledgetransaction.Request.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
-    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
-    lst.append(parse_structure_RecordType_core_Compliance(item))
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
-    return core.Compliance.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
-    compliance_task = parse_structure_CustomTextType_100(compliance_task)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
-    return parse_custom_string(data, 100)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
-    "a string with max length(%s)" % (
-ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
-
-2016-03-24 11:46:36,109 - knowledge_logger - main.py-parse-request : expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
-2016-03-24 11:46:36,110 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 98, in _parse_request
-    data
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 610, in parse_structure
-    request = parse_structure_VariantType_knowledgetransaction_Request(request)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1253, in parse_structure_VariantType_knowledgetransaction_Request
-    return knowledgetransaction.Request.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 81, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 243, in parse_inner_structure
-    compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 1096, in parse_structure_VectorType_RecordType_core_Compliance
-    lst.append(parse_structure_RecordType_core_Compliance(item))
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 2776, in parse_structure_RecordType_core_Compliance
-    return core.Compliance.parse_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1064, in parse_structure
-    compliance_task = parse_structure_CustomTextType_100(compliance_task)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/parse_structure.py", line 577, in parse_structure_CustomTextType_100
-    return parse_custom_string(data, 100)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 93, in parse_custom_string
-    "a string with max length(%s)" % (
-ValueError: expected a string with max length(100), but received: 'xe2x80x80xe2x80x80xe2x8nb  fsd \xe2\x80\x970x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2x80x80xe2\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97\xe2\x80\x97'
+2016-03-28 12:48:36,810 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 7 arguments (8 given)
+2016-03-28 12:48:36,810 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 205, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgereportcontroller.py", line 29, in process_knowledge_report_request
+    return process_get_statutory_mapping_report_data(db, request_frame, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgereportcontroller.py", line 63, in process_get_statutory_mapping_report_data
+    nature_id, geography_id, level_1_id, user_id
+TypeError: get_statutory_mapping_report() takes exactly 7 arguments (8 given)
 
