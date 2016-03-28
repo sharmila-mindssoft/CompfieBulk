@@ -686,9 +686,8 @@ class GetComplianceApplicabilityStatusSuccess(Response):
         )
 
     def to_inner_structure(self):
-        return {
-            "applicabilty_list": to_structure_VectorType_RecordType_mobile_ComplianceApplicability(self.applicabilty_list)
-        }
+        return to_structure_VectorType_RecordType_mobile_ComplianceApplicability(self.applicabilty_list)
+
 
 class ComplianceHistory(object):
     def __init__(
