@@ -1880,7 +1880,7 @@ class Level1Compliance(object):
         compliance_frequency = data.get("compliance_frequency")
         compliance_frequency = parse_structure_CustomTextType_50(compliance_frequency)
         repeats = data.get("repeats")
-        repeats = parse_structure_CustomTextType_50(repeats)
+        repeats = parse_structure_CustomTextType_500(repeats)
         return Level1Compliance(statutory_mapping, compliance_name, description,
         penal_consequences, compliance_frequency, repeats)
 
@@ -1891,7 +1891,7 @@ class Level1Compliance(object):
             "description": to_structure_CustomTextType_500(self.description),
             "penal_consequences": to_structure_CustomTextType_500(self.penal_consequences),
             "compliance_frequency": to_structure_CustomTextType_50(self.compliance_frequency),
-            "repeats"  : to_structure_CustomTextType_50(self.repeats)
+            "repeats"  : to_structure_CustomTextType_500(self.repeats)
         }
 
 class Level1Statutory(object):
@@ -2673,7 +2673,7 @@ class UserWiseCompliance(object):
         concurrence_person = data.get("concurrence_person")
         concurrence_person = parse_structure_OptionalType_CustomTextType_100(concurrence_person)
         approval_person = data.get("approval_person")
-        approval_person = parse_structure_CustomTextType_100(approval_person)
+        approval_person = parse_structure_OptionalType_CustomTextType_100(approval_person)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_clientreport_ComplianceUnit(compliances)
         return UserWiseCompliance(assignee, concurrence_person, approval_person, compliances)
@@ -2682,7 +2682,7 @@ class UserWiseCompliance(object):
         return {
             "assignee": to_structure_CustomTextType_100(self.assignee),
             "concurrence_person": to_structure_OptionalType_CustomTextType_100(self.concurrence_person),
-            "approval_person": to_structure_CustomTextType_100(self.approval_person),
+            "approval_person": to_structure_OptionalType_CustomTextType_100(self.approval_person),
             "compliances": to_structure_VectorType_RecordType_clientreport_ComplianceUnit(self.compliances),
         }
 
