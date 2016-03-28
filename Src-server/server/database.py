@@ -322,26 +322,12 @@ class Database(object) :
         return m.hexdigest()
 
     def string_to_datetime(self, string):
-        # date = string.split("-")
-        # datetime_val = datetime.datetime(
-        #     year=int(date[2]),
-        #     month=self.integer_months[date[1]],
-        #     day=int(date[0])
-        # )
-        # return datetime_val.date()
         string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y")
-        return string_in_date
+        return self.localize(string_in_date)
 
     def string_to_datetime_with_time(self, string):
-        # date = string.split("-")
-        # datetime_val = datetime.datetime(
-        #     year=int(date[2]),
-        #     month=self.integer_months[date[1]],
-        #     day=int(date[0])
-        # )
-        # return datetime_val.date()
         string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y %H:%M")
-        return string_in_date
+        return self.localize(string_in_date)
 
     def toUTC(self, time_stamp):
         tz = pytz.timezone('UTC')
@@ -360,20 +346,11 @@ class Database(object) :
         return local_dt
 
     def datetime_to_string(self, datetime_val):
-        # return "%d-%s-%d" % (
-        #     datetime_val.day,
-        #     self.string_months[datetime_val.month],
-        #     datetime_val.year
-        # )
         date_in_string = datetime_val.strftime("%d-%b-%Y")
         return date_in_string
 
     def datetime_to_string_time(self, datetime_val):
-        # return "%d-%s-%d" % (
-        #     datetime_val.day,
-        #     self.string_months[datetime_val.month],
-        #     datetime_val.year
-        # )
+        # local_dt = self.localize(datetime_val)
         datetime_in_string = datetime_val.strftime("%d-%b-%Y %H:%M")
         return datetime_in_string
 
@@ -2020,7 +1997,8 @@ class KnowledgeDatabase(Database):
         else :
             return status[int(approval_id)]
 
-    def get_statutory_mappings(self, user_id) :
+    def get_statutory_mappings(self, user_id, for_approve=False) :
+
         q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
             t1.domain_id, \
@@ -2039,6 +2017,10 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_countries t6 \
             ON t6.country_id = t1.country_id \
             and t6.user_id = %s" % (user_id, user_id)
+
+        if for_approve is True :
+            q = q + " WHERE t1.approval_status in (0, 2)"
+
         q = q + " ORDER BY country_name, domain_name, statutory_nature_name"
         rows = self.select_all(q)
         columns = [
@@ -2048,6 +2030,7 @@ class KnowledgeDatabase(Database):
             "statutory_ids", "geography_ids",
             "approval_status", "is_active", "compliance_ids"
         ]
+
         result = []
         if rows :
             result = self.convert_to_dict(rows, columns)
@@ -2137,6 +2120,8 @@ class KnowledgeDatabase(Database):
             qry_where += "AND t4.geography_id = %s " % (geography_id)
         if statutory_nature_id is not None :
             qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
+        if level_1_statutory_id is not None :
+            qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, '%s') from tbl_statutories where statutory_id = %s)" % (str("%"), level_1_statutory_id)
 
         q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
@@ -2147,8 +2132,14 @@ class KnowledgeDatabase(Database):
             statutory_nature_name, \
             t1.statutory_ids, \
             t1.geography_ids, \
-            t1.approval_status, t1.is_active,  \
-            (select group_concat(distinct compliance_id) from tbl_compliances where statutory_mapping_id = t1.statutory_mapping_id) compliance_ids \
+            t1.approval_status, t1.is_active, t1.statutory_mapping,  \
+            t2.compliance_id, t2.statutory_provision, \
+            t2.compliance_task, t2.compliance_description, \
+            t2.document_name, t2.format_file, t2.format_file_size, \
+            t2.penal_consequences, t2.frequency_id, \
+            t2.statutory_dates, t2.repeats_every, \
+            t2.repeats_type_id, \
+            t2.duration, t2.duration_type_id \
             FROM tbl_statutory_mappings t1 \
             INNER JOIN tbl_compliances t2 \
             ON t2.statutory_mapping_id = t1.statutory_mapping_id\
@@ -2157,10 +2148,10 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_statutory_geographies t4 \
             ON t4.statutory_mapping_id = t1.statutory_mapping_id\
             INNER JOIN tbl_user_domains t5 \
-            ON t1.domain_id = t5.domain_id \
+            ON t5.domain_id = t1.domain_id \
             and t5.user_id = %s \
             INNER JOIN tbl_user_countries t6 \
-            ON t1.country_id = t6.country_id \
+            ON t6.country_id = t1.country_id \
             and t6.user_id = %s \
             WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
             t1.country_id = %s \
@@ -2185,7 +2176,6 @@ class KnowledgeDatabase(Database):
             "frequency_id", "statutory_dates", "repeats_every",
             "repeats_type_id", "duration", "duration_type_id"
         ]
-
         report_data = []
         if rows :
             report_data = self.convert_to_dict(rows, columns)
@@ -2270,7 +2260,7 @@ class KnowledgeDatabase(Database):
             report_data = self.convert_to_dict(rows, columns)
 
         return self.return_knowledge_report(
-            country_id, domain_id, report_data
+            report_data
         )
 
     def get_mappings_id(self, statutory_id) :
@@ -2409,7 +2399,7 @@ class KnowledgeDatabase(Database):
             t1.statutory_dates, t1.repeats_every, \
             t1.repeats_type_id, \
             t1.duration, t1.duration_type_id, t1.is_active \
-            FROM tbl_compliances t1 %s" % q
+            FROM tbl_compliances t1 %s ORDER BY t1.frequency_id" % q
         rows = self.select_all(qry)
         columns = [
             "compliance_id", "statutory_provision",
@@ -5758,9 +5748,10 @@ class KnowledgeDatabase(Database):
             form_category_id = rows[0][0]
             form_ids = rows[0][1]
 
+            form_category_ids = "%d, 4" % form_category_id
             column = "group_concat(form_id)"
-            condition = "form_category_id = '%d' AND \
-            form_type_id != 3" % form_category_id
+            condition = "form_category_id in (%s) AND \
+            form_type_id != 3" % form_category_ids
             rows = self.get_data(
                 self.tblForms, column, condition
             )
