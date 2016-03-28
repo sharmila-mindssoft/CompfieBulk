@@ -116,25 +116,25 @@ function loadcomplianceactivityreport(buttontype){
             clearMessage();
             loadComplianceActivityReportList(data['activities']);     
             if(buttontype == "export"){
-                client_mirror.exportToCSV(data, 
-                    function (error, response) {
-                        if (error == null){
-                            var download_url = response["link"];
-                            window.open(download_url, '_blank');
-                        }
-                        else {
-                            displayMessage(error);
-                        }
-                    }
-                );
+                if (error == null){
+                    var download_url = data["link"];
+                    window.open(download_url, '_blank');
+                }
+                else {
+                    displayMessage(error);
+                }
             }
         }
         function onFailure(error){
             console.log(error);
         }
-
+        var csv = false
+        if(buttontype == "export"){
+            csv = true
+        }
         client_mirror.getComplianceActivityReportData(
-           usertype, userid,  parseInt(countries), parseInt(domain), level1id, unitid, complianceid, fromdate, todate,
+           usertype, userid,  parseInt(countries), parseInt(domain), 
+           level1id, unitid, complianceid, fromdate, todate, csv,
             function (error, response){
                 if(error == null){
                     onSuccess(response);

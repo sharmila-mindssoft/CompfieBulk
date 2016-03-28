@@ -207,7 +207,14 @@ function loadCompliance(reportType){
     function onFailure(error){
       onFailure(error);
     }
-    client_mirror.getRiskReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), act, parseInt(statutory_status), 
+    var csv = true
+    if(reportType == "show"){
+      csv = false
+    }
+    client_mirror.getRiskReport( 
+      parseInt(country), parseInt(domain), parseInt(businessgroup), 
+      parseInt(legalentity), parseInt(division), parseInt(unit), 
+      act, parseInt(statutory_status), csv, 
       function (error, response) {
         if (error == null){
           onSuccess(response);

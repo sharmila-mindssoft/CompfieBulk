@@ -42,7 +42,13 @@ function initialize(){
         }
     );
 }
-$("#show-button").click(function(){
+$("#show-button").click(function(){     
+    loadStatutoryNotificationsListreport("show");
+});
+$("#export-button").click(function(){ 
+    loadStatutoryNotificationsListreport("export");
+});
+function loadStatutoryNotificationsListreport(buttontype){
 
     var countries = $("#country").val();
     countriesNameVal = $("#countryval").val();
@@ -113,13 +119,21 @@ $("#show-button").click(function(){
         function onSuccess(data){
             $(".grid-table-rpt").show();
             loadStatutoryNotificationsList(data['statutory_wise_notifications']);
+            if(buttontype == "export"){
+                var download_url = data["link"];
+                window.open(download_url, '_blank');      
+            }
         }
         function onFailure(error){
             console.log(error);
         }
-
+        csv = false
+        if(buttontype == "export"){
+            csv = true   
+        } 
         client_mirror.getStatutoryNotificationsListReport(
-            countriesNameVal, domainNameVal, businessgroupid, legalentityid, divisionid, unitid, level1id, fromdate, todate,
+            countriesNameVal, domainNameVal, businessgroupid, legalentityid, divisionid, 
+            unitid, level1id, fromdate, todate, csv,
             function (error, response){                
                 if(error == null){
                     onSuccess(response);
@@ -130,7 +144,7 @@ $("#show-button").click(function(){
             }
         );
     }
-});
+}
 
 
 function loadStatutoryNotificationsList(data){

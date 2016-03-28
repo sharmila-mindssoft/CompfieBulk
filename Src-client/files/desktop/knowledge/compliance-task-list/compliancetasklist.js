@@ -107,7 +107,7 @@ function loadCountwiseResult(filterList){
       lastIndustryName = '';
       count++;
     }
-    
+
     if(industry_names != lastIndustryName){
       var tableRow3=$('#industry-head-templates .table-industry-list .table-row-industry');
       var clone3=tableRow3.clone();
@@ -129,7 +129,7 @@ function loadCountwiseResult(filterList){
       $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;width:150px;">'+occurance+'</div>');
       $('.accordion-content'+(count-1)).append(clone2);
     }
-        
+
     var tableRow1=$('#compliance-templates .table-compliances-list .table-row');
     var clone1=tableRow1.clone();
     $('.tbody-compliance').append(clone1);
@@ -178,14 +178,14 @@ function loadCountwiseResult(filterList){
       for(z = 0; z < statutory_date.length; z++){
       var sDay = '';
       if(statutory_date[z]["statutory_date"] != null) sDay = statutory_date[z]["statutory_date"];
-      
+
       var sMonth = '';
       if(statutory_date[z]["statutory_month"] != null) sMonth = statutory_date[z]["statutory_month"];
 
       if(sMonth == 1) sMonth = "January"
       else if(sMonth == 2) sMonth = "February"
       else if(sMonth == 3) sMonth = "March"
-      else if(sMonth == 4) sMonth = "April"  
+      else if(sMonth == 4) sMonth = "April"
       else if(sMonth == 5) sMonth = "May"
       else if(sMonth == 6) sMonth = "June"
       else if(sMonth == 7) sMonth = "July"
@@ -213,7 +213,7 @@ function loadCountwiseResult(filterList){
     lastOccuranceid = frequency_id;
     lastIndustryName = industry_names;
   }
-  
+
   if(count > 1){
     if(endCount > finalList.length) endCount = finalList.length
     $('.compliance_count').text("Showing " + 1 + " to " + endCount + " of " + Object.keys(finalList).length);
@@ -228,7 +228,7 @@ function loadCountwiseResult(filterList){
     });
   });
   }
-  
+
   if(count == 1){
     var tableRow1=$('#nocompliance-templates .table-nocompliances-list .table-row');
     var clone1=tableRow1.clone();
@@ -240,7 +240,7 @@ function loadCountwiseResult(filterList){
 
 
 function get_sub_array(object, start, end){
-    if(!end){ end=-1;} 
+    if(!end){ end=-1;}
     return object.slice(start, end);
 }
 
@@ -308,7 +308,7 @@ $("#submit").click(function(){
     displayMessage("Domain Required");
   }
   else{
-    
+      displayLoader();
       displayMessage("");
       var filterdata={};
       filterdata["country_id"]=parseInt(country);
@@ -321,9 +321,11 @@ $("#submit").click(function(){
       function onSuccess(data){
         statutoryMappingDataList = data["statutory_mappings"];
         loadresult();
+        hideLoader();
       }
       function onFailure(error){
         onFailure(error);
+        hideLoader();
       }
       mirror.getComplianceTaskReport(filterdata,
       //mirror.getStatutoryMappingsReportData(filterdata,

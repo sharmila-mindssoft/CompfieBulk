@@ -123,12 +123,7 @@ def process_get_compliance_task_report(db, request_frame, user_id):
         country_id, domain_id, industry_id,
         nature_id, geography_id, level_1_id, user_id
     )
-    statutory_mappings = {}
-    if level_1_id is None:
-        statutory_mappings = report_data
-    else :
-        statutory_mappings[level_1_id] = report_data[level_1_id]
 
     return knowledgereport.GetStatutoryMappingReportDataSuccess(
-        country_id, domain_id, statutory_mappings
+        country_id, domain_id, report_data
     )

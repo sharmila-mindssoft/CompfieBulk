@@ -323,9 +323,9 @@ class StatutoryMappingReport(object):
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_OptionalType_UnsignedIntegerType_32(compliance_id)
         statutory_provision = data.get("statutory_provision")
-        statutory_provision = parse_structure_CustomTextType_500(statutory_provision)
+        statutory_provision = parse_structure_Text(statutory_provision)
         compliance_task = data.get("compliance_task")
-        compliance_task = parse_structure_CustomTextType_100(compliance_task)
+        compliance_task = to_structure_Text(compliance_task)
         description = data.get("description")
         description = parse_structure_CustomTextType_500(description)
         penal_consequences = data.get("penal_consequences")
@@ -369,8 +369,8 @@ class StatutoryMappingReport(object):
             "is_active": to_structure_Bool(self.is_active),
             "act_name": to_structure_CustomTextType_100(self.act_name),
             "compliance_id": to_structure_OptionalType_UnsignedIntegerType_32(self.compliance_id),
-            "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
-            "compliance_task": to_structure_CustomTextType_100(self.compliance_task),
+            "statutory_provision": to_structure_Text(self.statutory_provision),
+            "compliance_task": to_structure_Text(self.compliance_task),
             "description": to_structure_CustomTextType_500(self.description),
             "penal_consequences": to_structure_OptionalType_CustomTextType_500(self.penal_consequences),
             "frequency_id": to_structure_OptionalType_SignedIntegerType_8(self.frequency_id),
@@ -487,4 +487,3 @@ class GeographyMapping(object):
             "geography": to_structure_Text(self.geography),
             "is_active": to_structure_Bool(self.is_active),
         }
-

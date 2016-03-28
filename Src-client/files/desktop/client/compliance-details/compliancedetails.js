@@ -208,22 +208,22 @@ function loadCompliance(reportType){
           loadresult(unitWiseComplianceList);
         }else{
           loadresult(unitWiseComplianceList);
-          client_mirror.exportToCSV(data, 
-            function (error, response) {
-              if (error == null){
-                var download_url = response["link"];
-                window.open(download_url, '_blank');
-              }
-              else {
-                displayMessage(error);
-              }
-            });
+          var download_url = data["link"];
+          window.open(download_url, '_blank');
+              
         }
       }
       function onFailure(error){
         onFailure(error);
       }
-      client_mirror.getComplianceDetailsReport( parseInt(country), parseInt(domain), act, parseInt(unit), parseInt(compliances), parseInt(assignee), fromdate, todate, status, 
+      csv = true
+      if(reportType == "show"){
+        csv = false
+      }
+      client_mirror.getComplianceDetailsReport( 
+        parseInt(country), parseInt(domain), act, parseInt(unit), 
+        parseInt(compliances), parseInt(assignee), fromdate, todate, 
+        status, csv,
         function (error, response) {
           if (error == null){
             onSuccess(response);

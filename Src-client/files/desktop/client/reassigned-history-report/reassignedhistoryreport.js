@@ -18,7 +18,6 @@ function displayMessage(message) {
 
 function initialize(){
     function onSuccess(data){
-        console.log(data);
         countriesList = data['countries'];
         domainsList = data['domains'];
         unitList = data['units'];
@@ -40,7 +39,13 @@ function initialize(){
         }
     );
 }
-$("#show-button").click(function(){ 
+$("#show-button").click(function(){   
+    loadreassignedhistory("show");
+});
+$("#export-button").click(function(){ 
+    loadreassignedhistory("export");
+});
+function loadreassignedhistory(buttontype){
     var countries = parseInt($("#country").val());
     countriesNameVal = $("#countryval").val();
     //Domain    
@@ -92,14 +97,22 @@ $("#show-button").click(function(){
     }
     else{
         function onSuccess(data){
-            loadReassignedHistoryList(data['statutory_wise_compliances']);     
+            if(buttontype == "export"){
+                var download_url = data["link"];
+                window.open(download_url, '_blank');        
+            }else{
+                loadReassignedHistoryList(data['statutory_wise_compliances']);     
+            }
         }
         function onFailure(error){
             console.log(error);
         }
-
+        csv = false
+        if(buttontype == "export"){
+            csv = true
+        }
         client_mirror.getReassignedHistoryReport(
-            countries, domain, unitid, level1id,  compliancesid , userid, fromdate, todate, 
+            countries, domain, unitid, level1id,  compliancesid , userid, fromdate, todate, csv,
             function (error, response){
                 if(error == null){
                     onSuccess(response);
@@ -110,12 +123,12 @@ $("#show-button").click(function(){
             }
         );
     }
-});
+}
 
 
 function loadReassignedHistoryList(data){
     $('.grid-table-rpt').show();
-    $('.tbody-reassigned-list tr').remove();
+    $('.table-reassignedhistory-list').empty();
     var sno = 0;  
     $('.country-name').text(countriesNameVal);
     $('.domain-name').text(domainNameVal);
@@ -123,34 +136,61 @@ function loadReassignedHistoryList(data){
         var tableRowHeading = $('#templates .table-reassigned-list .table-level1-heading');
         var cloneHeading = tableRowHeading.clone();
         $('.level1-heading', cloneHeading).text(data[key]['level_1_statutory_name']);
-        $('.tbody-reassigned-list').append(cloneHeading);
+        $('.table-reassignedhistory-list').append(cloneHeading);
+
+        var tableRow_tr = $('#templates .table-reassigned-list .heading-list');
+        var clonetr = tableRow_tr.clone();
+        $('.table-reassignedhistory-list').append(clonetr);
 
         var clist = data[key]['compliance'];
-
         $.each(clist, function(ke, val) {         
             var tableRowUnit = $('#templates .table-reassigned-list .unit-list');
             var cloneUnit = tableRowUnit.clone();
             $('.unit-heading', cloneUnit).html(clist[ke]['unit_name']);              
-            $('.tbody-reassigned-list').append(cloneUnit);
+            $('.table-reassignedhistory-list').append(cloneUnit);
             var list = clist[ke]['reassign_compliances'];
-            
+            var acc_count = 1;
+
             $.each(list, function(k, val) {   
-                var tableRow = $('#templates .table-reassigned-list .reassigned-row-list');
+                var tableRow = $('#templates .table-reassigned-list .tbody-reassigned-list');
                 var clone = tableRow.clone();      
                 sno = sno + 1;
                 $('.sno', clone).text(sno);
                 $('.compliance-task', clone).html(list[k]['compliance_name']);
-                var rhistory = list[r]['reassign_history'];
-                $.each(rhistory, function(k1, val1) {   
-                  $('.due-date', clone).html(rhistory[k1]['due_date']);
-                  $('.assignee', clone).html(rhistory[k1]['reassigned_to']);
-                  $('.reassign-date', clone).html(rhistory[k1]['reassigned_date']);
-                  $('.reassigned-from', clone).html(rhistory[k1]['reassigned_from']);
-                  $('.reason', clone).html(rhistory[k1]['reassign_reason']);
-                  $('.tbody-reassigned-list').append(clone);
+                $('.due-date', clone).html(list[k]['due_date']);
+                var rhistory = list[k]['reassign_history'];
+                var count = 0;
+                $.each(rhistory, function(k1, val1) {                      
+                    if(count == 0){
+                        console.log("count=="+rhistory[k1]['reassigned_to']);
+                        $('.assignee', clone).html(rhistory[k1]['reassigned_to']);
+                        $('.reassign-date', clone).html(rhistory[k1]['reassigned_date']);
+                        $('.reassigned-from', clone).html(rhistory[k1]['reassigned_from']);
+                        $('.reason', clone).html(rhistory[k1]['reassign_reason']);
+                        $('.table-reassignedhistory-list').append(clone);
+                        $('.table-reassignedhistory-list').append('<tbody class="accordion-content accordion-content'+acc_count+'"></tbody>');
+                        $('.accordion-content'+acc_count).addClass("default");
+                        
+                    }
+                    else{
+                        var tableRowvalues_ul = $('#templates .reassigned-inner-list');
+                        var cloneval_ul = tableRowvalues_ul.clone();
+                        $('.inner-assignee', cloneval_ul).html(rhistory[k1]['reassigned_to']);
+                        $('.inner-reassigndate', cloneval_ul).html(rhistory[k1]['reassigned_date']);
+                        $('.inner-reassigned-from', cloneval_ul).html(rhistory[k1]['reassigned_from']);
+                        $('.inner-reason', cloneval_ul).html(rhistory[k1]['reassign_reason']);
+                        $('.accordion-content'+acc_count).append(cloneval_ul);   
+                    }
+                    count++;
                 });
+                acc_count++;
             });
-        });
+
+            $('#accordion').find('.accordion-toggle').click(function(){
+                $(this).next().slideToggle('fast');
+                $(".accordion-content").not($(this).next()).slideUp('fast');
+            });     
+        });          
     });
     $(".total-records").html("Total : "+sno+" records")
 }

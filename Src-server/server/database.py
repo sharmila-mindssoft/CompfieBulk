@@ -322,12 +322,26 @@ class Database(object) :
         return m.hexdigest()
 
     def string_to_datetime(self, string):
+        # date = string.split("-")
+        # datetime_val = datetime.datetime(
+        #     year=int(date[2]),
+        #     month=self.integer_months[date[1]],
+        #     day=int(date[0])
+        # )
+        # return datetime_val.date()
         string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y")
-        return self.localize(string_in_date)
+        return string_in_date
 
     def string_to_datetime_with_time(self, string):
+        # date = string.split("-")
+        # datetime_val = datetime.datetime(
+        #     year=int(date[2]),
+        #     month=self.integer_months[date[1]],
+        #     day=int(date[0])
+        # )
+        # return datetime_val.date()
         string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y %H:%M")
-        return self.localize(string_in_date)
+        return string_in_date
 
     def toUTC(self, time_stamp):
         tz = pytz.timezone('UTC')
@@ -346,11 +360,20 @@ class Database(object) :
         return local_dt
 
     def datetime_to_string(self, datetime_val):
+        # return "%d-%s-%d" % (
+        #     datetime_val.day,
+        #     self.string_months[datetime_val.month],
+        #     datetime_val.year
+        # )
         date_in_string = datetime_val.strftime("%d-%b-%Y")
         return date_in_string
 
     def datetime_to_string_time(self, datetime_val):
-        # local_dt = self.localize(datetime_val)
+        # return "%d-%s-%d" % (
+        #     datetime_val.day,
+        #     self.string_months[datetime_val.month],
+        #     datetime_val.year
+        # )
         datetime_in_string = datetime_val.strftime("%d-%b-%Y %H:%M")
         return datetime_in_string
 
@@ -1997,7 +2020,7 @@ class KnowledgeDatabase(Database):
         else :
             return status[int(approval_id)]
 
-    def get_statutory_mappings(self, user_id, for_approve=False) :
+    def get_statutory_mappings(self, user_id) :
         q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
             t1.domain_id, \
@@ -2016,9 +2039,6 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_countries t6 \
             ON t6.country_id = t1.country_id \
             and t6.user_id = %s" % (user_id, user_id)
-
-        if for_approve is True :
-            q = q + " WHERE t1.approval_status in (0, 2)"
         q = q + " ORDER BY country_name, domain_name, statutory_nature_name"
         rows = self.select_all(q)
         columns = [
@@ -2110,7 +2130,7 @@ class KnowledgeDatabase(Database):
 
     def get_statutory_mapping_report(
         self, country_id, domain_id, industry_id,
-        statutory_nature_id, geography_id, level_1_statutory_id, user_id
+        statutory_nature_id, geography_id, user_id
     ) :
         qry_where = ""
         if industry_id is not None :
@@ -2119,8 +2139,6 @@ class KnowledgeDatabase(Database):
             qry_where += "AND t4.geography_id = %s " % (geography_id)
         if statutory_nature_id is not None :
             qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
-        if level_1_statutory_id is not None :
-            qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, '%s') from tbl_statutories where statutory_id = %s)" % (str("%"), level_1_statutory_id)
 
         q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
@@ -2131,14 +2149,8 @@ class KnowledgeDatabase(Database):
             statutory_nature_name, \
             t1.statutory_ids, \
             t1.geography_ids, \
-            t1.approval_status, t1.is_active, t1.statutory_mapping,  \
-            t2.compliance_id, t2.statutory_provision, \
-            t2.compliance_task, t2.compliance_description, \
-            t2.document_name, t2.format_file, t2.format_file_size, \
-            t2.penal_consequences, t2.frequency_id, \
-            t2.statutory_dates, t2.repeats_every, \
-            t2.repeats_type_id, \
-            t2.duration, t2.duration_type_id \
+            t1.approval_status, t1.is_active,  \
+            (select group_concat(distinct compliance_id) from tbl_compliances where statutory_mapping_id = t1.statutory_mapping_id) compliance_ids \
             FROM tbl_statutory_mappings t1 \
             INNER JOIN tbl_compliances t2 \
             ON t2.statutory_mapping_id = t1.statutory_mapping_id\
@@ -2147,10 +2159,10 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_statutory_geographies t4 \
             ON t4.statutory_mapping_id = t1.statutory_mapping_id\
             INNER JOIN tbl_user_domains t5 \
-            ON t5.domain_id = t1.domain_id \
+            ON t1.domain_id = t5.domain_id \
             and t5.user_id = %s \
             INNER JOIN tbl_user_countries t6 \
-            ON t6.country_id = t1.country_id \
+            ON t1.country_id = t6.country_id \
             and t6.user_id = %s \
             WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
             t1.country_id = %s \
@@ -2175,6 +2187,7 @@ class KnowledgeDatabase(Database):
             "frequency_id", "statutory_dates", "repeats_every",
             "repeats_type_id", "duration", "duration_type_id"
         ]
+
         report_data = []
         if rows :
             report_data = self.convert_to_dict(rows, columns)
@@ -2257,11 +2270,11 @@ class KnowledgeDatabase(Database):
         ]
         report_data = []
         if rows :
-            report_data = self.convert_to_dict(rows, columns)
-        # report_data = self.return_statutory_mappings(result, is_report=True)
+            result = self.convert_to_dict(rows, columns)
+        report_data = self.return_statutory_mappings(result, is_report=True)
 
         return self.return_knowledge_report(
-            report_data
+            country_id, domain_id, report_data
         )
 
     def get_mappings_id(self, statutory_id) :
@@ -2287,141 +2300,35 @@ class KnowledgeDatabase(Database):
             )
         return result
 
-    def return_knowledge_report(self, report_data):
-        if bool(self.geography_parent_mapping) is False :
-            self.get_geographies()
+    def return_knowledge_report(self, country_id, domain_id, report_data):
+        level_1_statutory = self.get_country_wise_level_1_statutoy()
 
-        report_list = []
-        for r in report_data :
-            mapping = r["statutory_mapping"].split(">>")
-            act_name = mapping[0].strip()
-            statutory_provision = " >>".join(mapping[1:])
-            statutory_provision += r["statutory_provision"]
-            compliance_task = r["compliance_task"]
-            document_name = r["document_name"]
-            if document_name == "None":
-                document_name = None
-            if document_name :
-                name = "%s - %s" % (
-                    document_name, compliance_task
-                )
-            else :
-                name = compliance_task
+        level1s = level_1_statutory[country_id].get(domain_id)
+        if level1s is None :
+            level1s = []
+        level_1_mappings = {}
+        for x in level1s :
+            statutory_id = x.statutory_id
+            rows = self.get_mappings_id(statutory_id)
+            mapping_list = []
+            for row in rows :
+                mapping_ids = row["statutory_mapping_ids"]
+                if mapping_ids is None:
+                    continue
+                if mapping_ids == "" :
+                    continue
 
-            format_file = r["format_file"]
-            format_file_size = r["format_file_size"]
-            if format_file_size is not None :
-                format_file_size = int(format_file_size)
-            if format_file :
-                url = "%s/%s" % (
-                    FORMAT_DOWNLOAD_URL, format_file
-                )
-            else :
-                url = None
-
-            industry_ids = [
-                int(x) for x in r["industry_ids"][:-1].split(',')
-            ]
-            if len(industry_ids) == 1:
-                industry_names = self.get_industry_by_id(industry_ids[0])
-            else :
-                industry_names = self.get_industry_by_id(industry_ids)
-
-            geography_ids = [
-                int(x) for x in r["geography_ids"][:-1].split(',')
-            ]
-            geography_mapping_list = []
-            for g_id in geography_ids :
-                map_data = self.geography_parent_mapping.get(int(g_id))
-                if map_data is not None:
-                    map_data = map_data[0]
-                geography_mapping_list.append(map_data)
-
-            statutory_dates = r["statutory_dates"]
-            statutory_dates = json.loads(statutory_dates)
-            date_list = []
-            for date in statutory_dates :
-                s_date = core.StatutoryDate(
-                    date["statutory_date"],
-                    date["statutory_month"],
-                    date["trigger_before_days"],
-                    date.get("repeat_by")
-                )
-                date_list.append(s_date)
-
-            info = knowledgereport.StatutoryMappingReport(
-                r["country_name"],
-                r["domain_name"],
-                industry_names,
-                r["statutory_nature_name"],
-                geography_mapping_list,
-                r["approval_status"],
-                bool(r["is_active"]),
-                act_name,
-                r["compliance_id"],
-                statutory_provision,
-                name,
-                r["compliance_description"],
-                r["penal_consequences"],
-                r["frequency_id"],
-                date_list,
-                r["repeats_type_id"],
-                r["repeats_every"],
-                r["duration_type_id"],
-                r["duration"],
-                url
-            )
-            report_list.append(info)
-        return report_list
-
-    # def return_knowledge_report(self, country_id, domain_id, report_data, level_1_statutory_id):
-    #     level_1_statutory = self.get_country_wise_level_1_statutoy()
-
-    #     level1s = level_1_statutory[country_id].get(domain_id)
-    #     if level1s is None :
-    #         level1s = []
-    #     level_1_mappings = []
-    #     for x in level1s :
-    #         statutory_id = x.statutory_id
-    #         if level_1_statutory_id is not None and statutory_id != level_1_statutory_id :
-    #             continue
-    #         statutory_name = x.statutory_name
-    #         rows = self.get_mappings_id(statutory_id)
-    #         mapping_list = []
-    #         for row in rows :
-    #             mapping_ids = row["statutory_mapping_ids"]
-    #             if mapping_ids is None:
-    #                 continue
-    #             if mapping_ids == "" :
-    #                 continue
-
-    #             def get_data(i) :
-    #                 master = report_data.get(int(i))
-    #                 if master :
-    #                     report = knowledgereport.StatutoryMappingReport(
-    #                         master.country_name,
-    #                         master.domain_name,
-    #                         master.industry_names,
-    #                         master.statutory_nature_name,
-    #                         master.statutory_mappings,
-    #                         master.compliances,
-    #                         master.compliance_names,
-    #                         master.geography_mappings,
-    #                         master.approval_status,
-    #                         master.is_active,
-    #                         master.approval_status_text,
-    #                         statutory_name
-    #                     )
-    #                     return report
-    #             # mapping_list.extend(
-    #             #     [get_data(x) for x in mapping_ids[:-1].split(',') if get_data(x) is not None]
-    #             # )
-    #             info = get_data(mapping_ids)
-    #             if info is not None :
-    #                 mapping_list.append(info)
-    #         if mapping_list:
-    #             level_1_mappings.extend(mapping_list)
-    #     return level_1_mappings
+                def get_data(i) :
+                    return report_data.get(int(i))
+                # mapping_list.extend(
+                #     [get_data(x) for x in mapping_ids[:-1].split(',') if get_data(x) is not None]
+                # )
+                info = get_data(mapping_ids)
+                if info is not None :
+                    mapping_list.append(info)
+            if mapping_list:
+                level_1_mappings[statutory_id] = mapping_list
+        return level_1_mappings
 
     #
     # compliance
@@ -2457,7 +2364,7 @@ class KnowledgeDatabase(Database):
             t1.statutory_dates, t1.repeats_every, \
             t1.repeats_type_id, \
             t1.duration, t1.duration_type_id, t1.is_active \
-            FROM tbl_compliances t1 %s ORDER BY t1.frequency_id" % q
+            FROM tbl_compliances t1 %s" % q
         rows = self.select_all(qry)
         columns = [
             "compliance_id", "statutory_provision",
@@ -2966,6 +2873,7 @@ class KnowledgeDatabase(Database):
             description = data.description
             document_name = data.document_name
             file_list = data.format_file_list
+            print file_list
             file_name = ""
             file_size = 0
             file_content = ""
@@ -2992,6 +2900,9 @@ class KnowledgeDatabase(Database):
                 else :
                     file_list = file_list[0]
                     file_name = saved_file_name
+                    if len(file_name) == 0 :
+                        file_name = None
+
                     if file_name is None :
                         file_name = file_list.file_name
                         name = file_list.file_name.split('.')[0]
@@ -5803,10 +5714,9 @@ class KnowledgeDatabase(Database):
             form_category_id = rows[0][0]
             form_ids = rows[0][1]
 
-            form_category_ids = "%d, 4" % form_category_id
             column = "group_concat(form_id)"
-            condition = "form_category_id in (%s) AND \
-            form_type_id != 3" % form_category_ids
+            condition = "form_category_id = '%d' AND \
+            form_type_id != 3" % form_category_id
             rows = self.get_data(
                 self.tblForms, column, condition
             )
