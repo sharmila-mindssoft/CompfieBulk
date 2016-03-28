@@ -143,15 +143,15 @@ function loadCountwiseResult(filterList){
     var statutorydate = '';
     var duration_type = '';
     var repeats_type = '';
-    if(occurance == "On Occurrence"){
+    if(frequency_id == 4){
       if(duration_type_id == 1){
         duration_type = 'Day(s)';
       }else{
         duration_type = 'Hour(s)';
       }
-      sdateDesc = duration + ' ' + duration_type;
+      sdateDesc = 'To complete with in ' +duration + ' ' + duration_type;
     }
-    else if(occurance == 'One Time'){
+    else if(frequency_id == 1){
       sdateDesc = '';
     }
     else{
@@ -165,7 +165,7 @@ function loadCountwiseResult(filterList){
       sdateDesc = 'Every ' + repeats_every + ' ' + repeats_type;
     }
 
-    if(occurance != "On Occurrence"){
+    if(frequency_id != 4){
       for(z = 0; z < statutory_date.length; z++){
       var sDay = '';
       if(statutory_date[z]["statutory_date"] != null) sDay = statutory_date[z]["statutory_date"];
@@ -247,7 +247,6 @@ $('#pagination').click(function(e){
 });
 
 function loadresult() {
-
   pageSize = 500;
   startCount = 0;
   endCount = pageSize;

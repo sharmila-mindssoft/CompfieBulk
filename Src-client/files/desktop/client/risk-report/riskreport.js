@@ -1,4 +1,7 @@
-var riskComplianceList;
+var unassignedComplianceList;
+var delayedComplianceList;
+var notCompliedComplianceList;
+var notOptedComplianceList;
 var countriesList;
 var domainsList;
 var businessGroupsList;
@@ -43,25 +46,28 @@ function getRiskReportFilters(){
   );
 }
 
-function loadresult(filterList){
-  $(".grid-table-rpt").show();
+function loadresult(complianceList, heading){
+  
   var country = $("#country").find('option:selected').text();
   var domain = $("#domainval").val();
-
-  $(".tbody-unit").find("tbody").remove();
   var compliance_count=0;
-  for(var entity in filterList){
 
+  var tableRowStatus=$('#statutory-status-templates .table-unit-name .table-row-unit-name');
+  var cloneStatus=tableRowStatus.clone();
+  $('.tbl_statutory_status', cloneStatus).text(heading);
+  $('.tbody-unit').append(cloneStatus);
+
+  for(var entity in complianceList){
     var tableRow=$('#unit-list-templates .table-unit-list .table-row-unit-list');
     var clone=tableRow.clone();
     $('.tbl_country', clone).text(country);
     $('.tbl_domain', clone).text(domain);
-    $('.tbl_businessgroup', clone).text(filterList[entity]["business_group_name"]);
-    $('.tbl_division', clone).text(filterList[entity]["division_name"]);
-    $('.tbl_legalentity', clone).text(filterList[entity]["legal_entity_name"]);
+    $('.tbl_businessgroup', clone).text(complianceList[entity]["business_group_name"]);
+    $('.tbl_division', clone).text(complianceList[entity]["division_name"]);
+    $('.tbl_legalentity', clone).text(complianceList[entity]["legal_entity_name"]);
     $('.tbody-unit').append(clone);
 
-    var statutoryUnits = filterList[entity]["level_1_statutory_wise_units"]
+    var statutoryUnits = complianceList[entity]["level_1_statutory_wise_units"]
     for(var statutoryUnit in statutoryUnits){
 
       var tableRow5=$('#unit-head-templates .table-unit-head .table-row-act-name');
@@ -101,17 +107,30 @@ function loadresult(filterList){
         $('.tbody-unit').append(clone3);
         compliance_count++;
       }
-
-      if(uCompliences.length == 0){
-        var tableRow4=$('#unit-content-templates .table-unit-content .table-row-unit-content');
-        var clone4=tableRow4.clone();
-        $('.tbl_description', clone4).text("No Compliance Found");
-        $('.tbody-unit').append(clone4);
-      }
     }
     }   
   }  
-  $('.compliance_count').text("Total : "+ (compliance_count) +" records");
+
+  if(compliance_count == 0){
+        var tableRow4=$('#nocompliance-templates .table-nocompliances-list .table-row');
+        var clone4=tableRow4.clone();
+        $('.tbody-compliance').append(clone4);
+        $('.tbl_norecords', clone4).text("No Records Found");
+        $('.tbody-unit').append(clone4);
+
+       /* var tableRow4=$('#nocompliance-templates .table-nocompliances-list .table-row');
+        var clone4=tableRow4.clone();
+        $('.tbl_description', clone4).text("No Compliance Found");
+        $('.tbody-unit').append(clone4);*/
+      }
+
+  if(compliance_count >= 1){
+    var tableRowCount=$('#compliance-count-templates .table-unit-name .table-row-unit-name');
+    var cloneCount=tableRowCount.clone();
+    $('.compliance_count', cloneCount).text("Total : "+ (compliance_count) +" records");
+    $('.tbody-unit').append(cloneCount);
+  }
+  //$('.compliance_count').text("Total : "+ (compliance_count) +" records");
  
 }
 
@@ -130,7 +149,7 @@ function loadCompliance(reportType){
   if($("#division").val() != '') division = $("#division").val();
   if($("#unit").val() != '') unit = $("#unit").val();
   if($("#act").val() != '') act = $("#act").val().trim();
-  if($("#statutory_status").val() != '') statutory_status = $("#statutory_status").val();
+  statutory_status = $("#statutory_status").val();
 
   if(country.length == 0){
     displayMessage("Country Required");
@@ -150,27 +169,52 @@ function loadCompliance(reportType){
     filterdata["statutory_status"] = statutory_status;
 
     function onSuccess(data){
-      riskComplianceList = data["delayed_compliance"];
-      if(reportType == "show"){
-        loadresult(riskComplianceList);
+      delayedComplianceList = data["delayed_compliance"];
+      unassignedComplianceList = data["unassigned_compliance"];
+      notCompliedComplianceList = data["not_complied"];
+      notOptedComplianceList = data["not_opted"];
+      $(".grid-table-rpt").show();
+      $(".tbody-unit").find("tbody").remove();
+
+      if(statutory_status == 1){
+        loadresult(delayedComplianceList, 'Delayed Compliances');
+      }else if(statutory_status == 2){
+        loadresult(notCompliedComplianceList, 'Not Complied Compliances');
+      }else if(statutory_status == 3){
+        loadresult(notOptedComplianceList, 'Not Opted Compliances');
+      }else if(statutory_status == 4){
+        loadresult(unassignedComplianceList, 'Un assigned Compliances');
       }else{
-        loadresult(riskComplianceList);
+        loadresult(delayedComplianceList, 'Delayed Compliances');
+        loadresult(notCompliedComplianceList, 'Not Complied Compliances');
+        loadresult(notOptedComplianceList, 'Not Opted Compliances');
+        loadresult(unassignedComplianceList, 'Un assigned Compliances');
+      }
+
+      if(reportType == "export"){
         client_mirror.exportToCSV(data, 
-          function (error, response) {
-            if (error == null){
-              var download_url = response["link"];
-              window.open(download_url, '_blank');
-            }
-            else {
-              displayMessage(error);
-            }
-          });
+        function (error, response) {
+          if (error == null){
+            var download_url = response["link"];
+            window.open(download_url, '_blank');
+          }
+          else {
+            displayMessage(error);
+          }
+        });
       }
     }
     function onFailure(error){
       onFailure(error);
     }
-    client_mirror.getRiskReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), act, parseInt(statutory_status), 
+    var csv = true
+    if(reportType == "show"){
+      csv = false
+    }
+    client_mirror.getRiskReport( 
+      parseInt(country), parseInt(domain), parseInt(businessgroup), 
+      parseInt(legalentity), parseInt(division), parseInt(unit), 
+      act, parseInt(statutory_status), csv, 
       function (error, response) {
         if (error == null){
           onSuccess(response);

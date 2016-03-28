@@ -155,7 +155,7 @@ function loadresult(filterList){
   $('.compliance_count').text("Total : "+ (compliance_count) +" records");
 }
 
-$("#submit").click(function(){ 
+function loadCompliance(reportType){ 
   var country = $("#country").val();
   var domain = $("#domain").val();
   var act = $("#act").val().trim();
@@ -185,11 +185,30 @@ $("#submit").click(function(){
       function onSuccess(data){
         serviceProviderWiseComplianceList = data["compliance_list"];
         loadresult(serviceProviderWiseComplianceList);
+
+        if(reportType == "export"){
+          client_mirror.exportToCSV(data, 
+          function (error, response) {
+            if (error == null){
+              var download_url = response["link"];
+              window.open(download_url, '_blank');
+            }
+            else {
+              displayMessage(error);
+            }
+          });
+        }
       }
       function onFailure(error){
         onFailure(error);
       }
-      client_mirror.getServiceProviderWiseCompliance( parseInt(country), parseInt(domain), act, parseInt(unit), parseInt(serviceprovider), 
+
+      var csv = true
+      if(reportType == "show"){
+        csv = false
+      }
+
+      client_mirror.getServiceProviderWiseCompliance( parseInt(country), parseInt(domain), act, parseInt(unit), parseInt(serviceprovider), csv,
         function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -199,6 +218,14 @@ $("#submit").click(function(){
           }
         });
   }
+}
+
+$("#submit").click(function(){ 
+  loadCompliance("show")
+});
+
+$("#export").click(function(){ 
+  loadCompliance("export")
 });
 
 //Autocomplete Script Starts

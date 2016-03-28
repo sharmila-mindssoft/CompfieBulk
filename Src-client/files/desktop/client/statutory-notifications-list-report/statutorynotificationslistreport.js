@@ -120,25 +120,20 @@ function loadStatutoryNotificationsListreport(buttontype){
             $(".grid-table-rpt").show();
             loadStatutoryNotificationsList(data['statutory_wise_notifications']);
             if(buttontype == "export"){
-                client_mirror.exportToCSV(data, 
-                    function (error, response) {
-                        if (error == null){
-                            var download_url = response["link"];
-                            window.open(download_url, '_blank');
-                        }
-                        else {
-                            displayMessage(error);
-                        }
-                    }
-                );
+                var download_url = data["link"];
+                window.open(download_url, '_blank');      
             }
         }
         function onFailure(error){
             console.log(error);
         }
-
+        csv = false
+        if(buttontype == "export"){
+            csv = true   
+        } 
         client_mirror.getStatutoryNotificationsListReport(
-            countriesNameVal, domainNameVal, businessgroupid, legalentityid, divisionid, unitid, level1id, fromdate, todate,
+            countriesNameVal, domainNameVal, businessgroupid, legalentityid, divisionid, 
+            unitid, level1id, fromdate, todate, csv,
             function (error, response){                
                 if(error == null){
                     onSuccess(response);

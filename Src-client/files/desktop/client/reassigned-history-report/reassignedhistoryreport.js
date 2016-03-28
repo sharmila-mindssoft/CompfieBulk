@@ -97,27 +97,22 @@ function loadreassignedhistory(buttontype){
     }
     else{
         function onSuccess(data){
-            loadReassignedHistoryList(data['statutory_wise_compliances']);     
             if(buttontype == "export"){
-                client_mirror.exportToCSV(data, 
-                    function (error, response) {
-                        if (error == null){
-                            var download_url = response["link"];
-                            window.open(download_url, '_blank');
-                        }
-                        else {
-                            displayMessage(error);
-                        }
-                    }
-                );
+                var download_url = data["link"];
+                window.open(download_url, '_blank');        
+            }else{
+                loadReassignedHistoryList(data['statutory_wise_compliances']);     
             }
         }
         function onFailure(error){
             console.log(error);
         }
-
+        csv = false
+        if(buttontype == "export"){
+            csv = true
+        }
         client_mirror.getReassignedHistoryReport(
-            countries, domain, unitid, level1id,  compliancesid , userid, fromdate, todate, 
+            countries, domain, unitid, level1id,  compliancesid , userid, fromdate, todate, csv,
             function (error, response){
                 if(error == null){
                     onSuccess(response);

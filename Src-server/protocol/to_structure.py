@@ -489,11 +489,11 @@ def to_structure_RecordType_core_EscalationsDrillDown(data):
     from protocol import core
     return core.EscalationsDrillDown.to_structure(data)
 
-def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ApplicabilityCompliance(data):
+def to_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ApplicabilityCompliance(data):
     data = parse_dictionary(data)
     dict = {}
     for key, value in data.items():
-        key = to_structure_CustomTextType_50(key)
+        key = to_structure_CustomTextType_500(key)
         value = to_structure_VectorType_RecordType_clientreport_ApplicabilityCompliance(value)
         dict[key] = value
     return dict
@@ -1611,11 +1611,11 @@ def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Co
         dict[key] = value
     return dict
 
-def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory(data):
+def to_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_Level1Statutory(data):
     data = parse_dictionary(data)
     dict = {}
     for key, value in data.items():
-        key = to_structure_CustomTextType_50(key)
+        key = to_structure_CustomTextType_500(key)
         value = to_structure_VectorType_RecordType_clientreport_Level1Statutory(value)
         dict[key] = value
     return dict
@@ -3720,11 +3720,11 @@ def to_structure_VectorType_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS
         lst.append(to_structure_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS(item))
     return lst
 
-def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_LEVEL_1_STATUTORY_NOTIFICATIONS(data):
+def to_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_LEVEL_1_STATUTORY_NOTIFICATIONS(data):
     data = parse_dictionary(data)
     dict = {}
     for key, value in data.items():
-        key = to_structure_CustomTextType_50(key)
+        key = to_structure_CustomTextType_500(key)
         value = to_structure_VectorType_RecordType_clientreports_LEVEL_1_STATUTORY_NOTIFICATIONS(value)
         dict[key] = value
     return dict

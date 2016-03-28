@@ -113,28 +113,25 @@ function loadcompliancetaskapplicabilityreport(buttontype){
     else{
         function onSuccess(data){
             $(".grid-table-rpt").show();
-            loadTaskApplicabilityStatusList(data);     
+                 
             if(buttontype == "export"){
-                client_mirror.exportToCSV(data, 
-                    function (error, response) {
-                        if (error == null){
-                            var download_url = response["link"];
-                            window.open(download_url, '_blank');
-                        }
-                        else {
-                            displayMessage(error);
-                        }
-                    }
-                );
+                var download_url = data["link"];
+                window.open(download_url, '_blank');     
+            }else{
+                loadTaskApplicabilityStatusList(data);
             }
         }
         function onFailure(error){
             console.log(error);
         }
+        csv = false
+        if(buttontype == "export"){
+            csv = true
+        }
 
         client_mirror.getTaskApplicabilityReportData(
             parseInt(countries), parseInt(domain), businessgroupid,
-            legalentityid, divisionid, unitid, level1id, appstatus,
+            legalentityid, divisionid, unitid, level1id, appstatus, csv,
             function (error, response){
                 if(error == null){
                     onSuccess(response);
