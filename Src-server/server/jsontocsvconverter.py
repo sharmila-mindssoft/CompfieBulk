@@ -231,23 +231,23 @@ class ConvertJsonToCSV(object):
                 unit_wise_compliances = []
                 for unit_id in unit_ids_list:
                     compliance_ids_list = [""] * 4
-                    if statutory_status in [1, 2, None, "None", ""]:
-                        if statutory_status in [1,None, "None", ""]: # Delayed compliance
-                            query = "SELECT compliance_id FROM tbl_compliance_history \
+                    if statutory_status in [1, 2, None, "None", "", 0]:
+                        if statutory_status in [1,None, "None", "", 0]: # Delayed compliance
+                            query = "SELECT group_concat(distinct compliance_id) FROM tbl_compliance_history \
                                 WHERE unit_id = '%d' AND completed_on > due_date AND \
-                                approve_status = 1" 
+                                approve_status = 1" % unit_id
                             compliance_history_rows = db.select_all(query)
                             if len(compliance_history_rows) > 0:
                                 compliance_ids_list[0] = compliance_history_rows[0][0]
-                        if statutory_status in [2, None, "None", ""]: # Not complied 
-                            query = "SELECT compliance_id FROM tbl_compliance_history \
+                        if statutory_status in [2, None, "None", "", 0]: # Not complied 
+                            query = "SELECT group_concat(distinct compliance_id) FROM tbl_compliance_history \
                                 WHERE unit_id = '%d' AND (approve_status = 0 or \
                                 approve_status is null) AND due_date < now()" % unit_id
                             compliance_history_rows = db.select_all(query)
                             if len(compliance_history_rows) > 0:
                                 compliance_ids_list[1] = compliance_history_rows[0][0]
-                    if statutory_status in [4, None, "None", ""]:# Unassigned compliances
-                        query = "SELECT GROUP_CONCAT(compliance_id) FROM tbl_client_compliances WHERE \
+                    if statutory_status in [4, None, "None", "", 0]:# Unassigned compliances
+                        query = "SELECT GROUP_CONCAT(distinct compliance_id) FROM tbl_client_compliances WHERE \
                             client_statutory_id IN (SELECT client_statutory_id FROM \
                             tbl_client_statutories WHERE unit_id = '%d') and compliance_id \
                             NOT IN (SELECT compliance_id FROM tbl_assigned_compliances \
@@ -255,8 +255,8 @@ class ConvertJsonToCSV(object):
                         result = db.select_all(query)
                         if len(result) > 0:
                             compliance_ids_list[3] = result[0][0]
-                    if statutory_status in [3, None, "None", ""]: # Not Opted
-                        query = "SELECT GROUP_CONCAT(compliance_id) FROM tbl_client_compliances where \
+                    if statutory_status in [3, None, "None", "", 0]: # Not Opted
+                        query = "SELECT GROUP_CONCAT(distinct compliance_id) FROM tbl_client_compliances where \
                             client_statutory_id IN (SELECT client_statutory_id FROM \
                             tbl_client_statutories WHERE unit_id = '%d') AND \
                             compliance_opted = 0" % (unit_id)
