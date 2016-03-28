@@ -13,10 +13,10 @@ def process_client_mobile_request(request, db):
         return login.InvalidSessionToken()
 
     elif type(request_frame) is mobile.GetVersions :
-        return process_get_version()
+        return process_get_version(db, request)
 
     elif type(request_frame) is mobile.GetUsers :
-        return process_get_users()
+        return process_get_users(db, request)
 
     elif type(request_frame) is mobile.GetUnitDatails :
         return process_get_unit_details()
@@ -24,10 +24,17 @@ def process_client_mobile_request(request, db):
     elif type(request_frame) is mobile.GetComplianceApplicabilityStatus :
         return process_get_compliance_applicability()
 
-def process_get_version():
-    pass
+def process_get_version(db, request):
+    data = db.get_version()
+    return mobile.GetVersionsSuccess(
+        int(data["unit_details"]),
+        int(data["user_details"]),
+        int(data["compliance_applicability"]),
+        int(data["compliance_history"]),
+        int(data["reassign_history"])
+    )
 
-def process_get_users():
+def process_get_users(db):
     pass
 
 def process_get_unit_details():

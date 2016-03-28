@@ -59,82 +59,32 @@ class Request(object):
         raise NotImplementedError
 
 class GetVersions(Request):
-    def __init__(
-        self, group_id, unit_details_version, user_details_version,
-        compliance_applicability_version, compliance_history_version,
-        reassign_history_version
-    ):
-        self.group_id = group_id
-        self.unit_details_version = unit_details_version
-        self.user_details_version = user_details_version
-        self.compliance_applicability_version = compliance_applicability_version
-        self.compliance_history_version = compliance_history_version
-        self.reassign_history_version = reassign_history_version
+    def __init__(self):
+        pass
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, [
-                "group_id", "unit_details_version", "user_details_version",
-                "compliance_applicability_version", "compliance_history_version",
-                "reassign_history_version"
-            ]
-        )
-        group_id = data.get("group_id")
-        group_id = parse_structure_UnsignedIntegerType_32(group_id)
-        unit_details_version = data.get("unit_details_version")
-        unit_details_version = parse_structure_UnsignedIntegerType_32(unit_details_version)
-        user_details_version = data.get("user_details_version")
-        user_details_version = parse_structure_UnsignedIntegerType_32(user_details_version)
-        compliance_applicability_version = data.get("compliance_applicability_version")
-        compliance_applicability_version = parse_structure_UnsignedIntegerType_32(compliance_applicability_version)
-        compliance_history_version = data.get("compliance_history_version")
-        compliance_history_version = parse_structure_UnsignedIntegerType_32(compliance_history_version)
-        reassign_history_version = data.get("reassign_history_version")
-        reassign_history_version = parse_structure_UnsignedIntegerType_32(reassign_history_version)
-        return GetVersions(
-            group_id, unit_details_version, user_details_version,
-            compliance_applicability_version, compliance_history_version,
-            reassign_history_version
-        )
+        data = parse_dictionary(data)
+        return GetVersions()
 
     def to_inner_structure(self):
         return {
-            "group_id": to_structure_UnsignedIntegerType_32(self.group_id),
-            "unit_details_version": to_structure_UnsignedIntegerType_32(self.unit_details_version),
-            "user_details_version": to_structure_UnsignedIntegerType_32(self.user_details_version),
-            "compliance_applicability_version": to_structure_UnsignedIntegerType_32(self.compliance_applicability_version),
-            "compliance_history_version": to_structure_UnsignedIntegerType_32(self.compliance_history_version),
-            "reassign_history_version": to_structure_UnsignedIntegerType_32(self.reassign_history_version)
         }
+
 
 class GetUsers(Request):
-    def __init__(
-        self, user_id, version
-    ):
-        self.user_id = user_id
-        self.version = version
+    def __init__(self):
+        pass
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, [
-                "user_id", "version",
-            ]
-        )
-        user_id = data.get("user_id")
-        user_id = parse_structure_UnsignedIntegerType_32(user_id)
-        version = data.get("version")
-        version = parse_structure_UnsignedIntegerType_32(version)
-        return GetUsers(
-            user_id, version
-        )
+        data = parse_dictionary(data)
+        return GetUsers()
 
     def to_inner_structure(self):
         return {
-            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "version": to_structure_UnsignedIntegerType_32(self.version),
         }
+
 
 class GetUnitDetails(Request):
     def __init__(
@@ -429,6 +379,7 @@ class GetTrendChartData(Request):
 
 def _init_Request_class_map():
     classes = [
+        GetVersions
     ]
     class_map = {}
     for c in classes:
@@ -584,7 +535,7 @@ class GetVersionsSuccess(Response):
             "reassign_history_version": to_structure_UnsignedIntegerType_32(self.reassign_history_version)
         }
 
-class GetUsersSuccess(Response):
+class GetUsersList(object):
     def __init__(
         self, user_id, user_name
     ):
@@ -602,7 +553,7 @@ class GetUsersSuccess(Response):
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         user_name = data.get("user_name")
         user_name = parse_structure_CustomTextType_50(user_name)
-        return GetUsersSuccess(
+        return GetUsersList(
             user_id, user_name
         )
 
@@ -611,6 +562,20 @@ class GetUsersSuccess(Response):
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
             "user_name": to_structure_CustomTextType_50(self.user_name)
         }
+
+class GetUsersSuccess(Response):
+    def __init__(self, user_list):
+        self.user_list = user_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_list"])
+        user_list = data.get("user_list")
+        return GetUsersSuccess(user_list)
+
+    def to_inner_structure(self):
+        return
+
 
 class GetUnitDetailsSuccess(Response):
     def __init__(
@@ -993,7 +958,9 @@ class ReassignHistory(object):
 
 def _init_Response_class_map():
     classes = [
-        UserLoginResponse
+        UserLoginResponse,
+        GetVersionsSuccess
+
     ]
     class_map = {}
     for c in classes:

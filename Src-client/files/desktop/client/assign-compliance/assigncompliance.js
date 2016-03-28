@@ -1248,6 +1248,7 @@ function load_firstwizard(){
   $('#legalentity').empty();
   $('#division').empty();
   $('#unit').empty();
+  $('#domain').empty();
 
   var str='';
   $('#country').empty();

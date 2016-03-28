@@ -2966,6 +2966,7 @@ class KnowledgeDatabase(Database):
             description = data.description
             document_name = data.document_name
             file_list = data.format_file_list
+            print file_list
             file_name = ""
             file_size = 0
             file_content = ""
@@ -2992,6 +2993,9 @@ class KnowledgeDatabase(Database):
                 else :
                     file_list = file_list[0]
                     file_name = saved_file_name
+                    if len(file_name) == 0 :
+                        file_name = None
+
                     if file_name is None :
                         file_name = file_list.file_name
                         name = file_list.file_name.split('.')[0]
@@ -4967,14 +4971,13 @@ class KnowledgeDatabase(Database):
             assigned_statutory_list
         )
 
-
     def return_assign_statutory_wizard_two(self, country_id, domain_id, data):
         if bool(self.statutory_parent_mapping) is False:
             self.get_statutory_master()
         level_1_compliance = {}
         for d in data :
             mapping_id = int(d["statutory_mapping_id"])
-            statutory_nature_name  = d["statutory_nature_name"]
+            statutory_nature_name = d["statutory_nature_name"]
             statutory_id = int(d["statutory_id"])
             compliance_list = self.get_compliance_by_mapping_id(mapping_id)
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
@@ -5284,7 +5287,7 @@ class KnowledgeDatabase(Database):
             t3.statutory_provision, t3.compliance_description, \
             t5.statutory_nature_name,\
             (select distinct level_position from tbl_statutory_levels where level_id = t2.level_id)level,\
-            t2.statutory_name\
+            t2.statutory_name, t4.statutory_mapping\
             FROM tbl_client_compliances t1 \
             INNER JOIN tbl_statutories t2 \
             ON t1.statutory_id = t2.statutory_id \
@@ -5308,7 +5311,8 @@ class KnowledgeDatabase(Database):
             "statutory_name", "compliance_task", "document_name",
             "statutory_mapping_id",
             "statutory_provision", "compliance_description",
-            "statutory_nature_name", "level", "statutory_name"
+            "statutory_nature_name", "level", "statutory_name",
+            "statutory_mapping"
         ]
         results = self.convert_to_dict(rows, columns)
         level_1_statutory_compliance = {}
@@ -5322,13 +5326,12 @@ class KnowledgeDatabase(Database):
                 statutory_opted = bool(statutory_opted)
             statutory_id = int(r["statutory_id"])
             # mapping_id = int(r["statutory_mapping_id"])
-            statutory_data = self.statutory_parent_mapping.get(statutory_id)
-            s_mapping = statutory_data[1]
+            s_mapping = r["statutory_mapping"]
             level_map = s_mapping.split(">>")
             if len(level_map) == 1 :
                 level_map = None
             else :
-                level_map = ">>".join(level_map[-1:])
+                level_map = ">> ".join(level_map[-1:])
             if level_map :
                 provision = "%s - %s" % (level_map, r["statutory_provision"])
             else :
