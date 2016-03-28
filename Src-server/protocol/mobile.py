@@ -13,7 +13,16 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_SignedIntegerType_8,
     parse_structure_CustomTextType_500,
     parse_structure_VectorType_RecordType_core_ClientConfiguration,
-    parse_structure_RecordType_core_Menu
+    parse_structure_RecordType_core_Menu,
+    parse_structure_VectorType_RecordType_mobile_GetUsersList,
+    parse_structure_VectorType_RecordType_core_Country,
+    parse_structure_VectorType_RecordType_core_Domain,
+    parse_structure_VectorType_RecordType_core_Industry,
+    parse_structure_VectorType_RecordType_core_BusinessGroup,
+    parse_structure_VectorType_RecordType_core_LegalEntity,
+    parse_structure_VectorType_RecordType_core_Division,
+    parse_structure_VectorType_RecordType_technotransactions_UNIT,
+    parse_structure_VectorType_RecordType_mobile_ComplianceApplicability
 )
 from protocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
@@ -29,8 +38,18 @@ from protocol.to_structure import (
     to_structure_OptionalType_SignedIntegerType_8,
     to_structure_CustomTextType_500,
     to_structure_VectorType_RecordType_core_ClientConfiguration,
-    to_structure_RecordType_core_Menu
+    to_structure_RecordType_core_Menu,
+    to_structure_VectorType_RecordType_mobile_GetUsersList,
+    to_structure_VectorType_RecordType_core_Country,
+    to_structure_VectorType_RecordType_core_Domain,
+    to_structure_VectorType_RecordType_core_Industry,
+    to_structure_VectorType_RecordType_core_BusinessGroup,
+    to_structure_VectorType_RecordType_core_LegalEntity,
+    to_structure_VectorType_RecordType_core_Division,
+    to_structure_VectorType_RecordType_technotransactions_UNIT,
+    to_structure_VectorType_RecordType_mobile_ComplianceApplicability
 )
+
 
 #
 # Request
@@ -87,59 +106,30 @@ class GetUsers(Request):
 
 
 class GetUnitDetails(Request):
-    def __init__(
-        self, user_id, version
-    ):
-        self.user_id = user_id
-        self.version = version
+    def __init__(self):
+        pass
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, [
-                "user_id", "version",
-            ]
-        )
-        user_id = data.get("user_id")
-        user_id = parse_structure_UnsignedIntegerType_32(user_id)
-        version = data.get("version")
-        version = parse_structure_UnsignedIntegerType_32(version)
-        return GetUnitDetails(
-            user_id, version
-        )
+        data = parse_dictionary(data)
+        return GetUnitDetails()
 
     def to_inner_structure(self):
         return {
-            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "version": to_structure_UnsignedIntegerType_32(self.version),
         }
 
+
 class GetComplianceApplicabilityStatus(Request):
-    def __init__(
-        self, user_id, version
-    ):
-        self.user_id = user_id
-        self.version = version
+    def __init__(self):
+        pass
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, [
-                "user_id", "version",
-            ]
-        )
-        user_id = data.get("user_id")
-        user_id = parse_structure_UnsignedIntegerType_32(user_id)
-        version = data.get("version")
-        version = parse_structure_UnsignedIntegerType_32(version)
-        return GetComplianceApplicabilityStatus(
-            user_id, version
-        )
+        data = parse_dictionary(data)
+        return GetComplianceApplicabilityStatus()
 
     def to_inner_structure(self):
         return {
-            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "version": to_structure_UnsignedIntegerType_32(self.version),
         }
 
 class GetComplianceHistory(Request):
@@ -379,7 +369,10 @@ class GetTrendChartData(Request):
 
 def _init_Request_class_map():
     classes = [
-        GetVersions
+        GetVersions,
+        GetUsers,
+        GetUnitDetails,
+        GetComplianceApplicabilityStatus
     ]
     class_map = {}
     for c in classes:
@@ -488,7 +481,6 @@ class ClientUserLoginResponse(Response):
             "menu": to_structure_RecordType_core_Menu(self.menu)
         }
 
-
 class GetVersionsSuccess(Response):
     def __init__(
         self, unit_details_version, user_details_version,
@@ -571,99 +563,52 @@ class GetUsersSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["user_list"])
         user_list = data.get("user_list")
+        user_list = parse_structure_VectorType_RecordType_mobile_GetUsersList(user_list)
         return GetUsersSuccess(user_list)
 
     def to_inner_structure(self):
-        return
-
+        return to_structure_VectorType_RecordType_mobile_GetUsersList(self.user_list)
 
 class GetUnitDetailsSuccess(Response):
-    def __init__(
-        self, unit_id, unit_name, country_id, country_name, domain_ids,
-        domain_names, industry_id, industry_name, group_id, business_group_id,
-        business_group_name, legal_entity_id, legal_entity_name, division_id,
-        division_name
-    ):
-        self.unit_id = unit_id
-        self.unit_name = unit_name
-        self.country_id = country_id
-        self.country_name = country_name
-        self.domain_ids = domain_ids
-        self.domain_names = domain_names
-        self.industry_id = industry_id
-        self.industry_name = industry_name
-        self.group_id = group_id
-        self.business_group_id = business_group_id
-        self.business_group_name = business_group_name
-        self.legal_entity_id = legal_entity_id
-        self.legal_entity_name = legal_entity_name
-        self.division_id = division_id
-        self.division_name = division_name
+    def __init__(self, countries, domains, business_groups, legal_entities, divisions, units):
+        self.countries = countries
+        self.domains = domains
+        self.business_groups = business_groups
+        self.legal_entities = legal_entities
+        self.divisions = divisions
+        self.units = units
 
     @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(
-            data, [
-                "unit_id", "unit_name", "country_id", "country_name", "domain_ids",
-                "domain_names", "industry_id", "group_id", "business_group_id",
-                "business_group_name", "legal_entity_id", "legal_entity_name",
-                "division_id", "division_name"
-            ]
-        )
-        unit_id = data.get("unit_id")
-        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
-        unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_100(unit_name)
-        country_id = data.get("country_id")
-        country_id = parse_structure_UnsignedIntegerType_32(country_id)
-        country_name = data.get("country_name")
-        country_name = parse_structure_CustomTextType_100(country_name)
-        domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
-        domain_names = data.get("domain_names")
-        domain_names = parse_structure_VectorType_CustomTextType_50(domain_names)
-        industry_id = data.get("industry_id")
-        industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
-        industry_name = data.get("industry_name")
-        industry_name = parse_structure_CustomTextType_50(industry_name)
-        group_id = data.get("group_id")
-        group_id = parse_structure_UnsignedIntegerType_32(group_id)
-        business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
-        business_group_name = data.get("business_group_name")
-        business_group_name = parse_structure_CustomTextType_50(business_group_name)
-        legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
-        legal_entity_name = data.get("legal_entity_name")
-        legal_entity_name = parse_structure_CustomTextType_50(legal_entity_name)
-        division_id = data.get("division_id")
-        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
-        division_name = data.get("division_name")
-        division_name = parse_structure_CustomTextType_50(division_name)
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["countries", "domains", "industries", "business_groups", "legal_entities", "divisions", "units"])
+        countries = data.get("countries")
+        countries = parse_structure_VectorType_RecordType_core_Country(countries)
+        domains = data.get("domains")
+        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
+        industries = data.get("industries")
+        industries = parse_structure_VectorType_RecordType_core_Industry(industries)
+        business_groups = data.get("business_groups")
+        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup(business_groups)
+        legal_entities = data.get("legal_entities")
+        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
+        divisions = data.get("divisions")
+        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        units = data.get("units")
+        units = parse_structure_VectorType_RecordType_technotransactions_UNIT(units)
         return GetUnitDetailsSuccess(
-            unit_id, unit_name, country_id, country_name, domain_ids,
-            domain_names, industry_id, industry_name, group_id, business_group_id,
-            business_group_name, legal_entity_id, legal_entity_name, division_id,
-            division_name
+            countries, domains, industries, business_groups,
+            legal_entities, divisions, units
         )
 
-    def to_structure(self):
+    def to_inner_structure(self):
         return {
-            "unit_id" : to_structure_UnsignedIntegerType_32(self.unit_id),
-            "unit_name" : to_structure_CustomTextType_100(self.unit_name),
-            "country_id" : to_structure_UnsignedIntegerType_32(self.country_id),
-            "country_name" : to_structure_CustomTextType_100(self.country_name),
-            "domain_ids" : to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "domain_names" : to_structure_VectorType_CustomTextType_50(self.domain_names),
-            "industry_id" : to_structure_UnsignedIntegerType_32(self.industry_id),
-            "industry_name" : to_structure_CustomTextType_50(self.industry_name),
-            "group_id" : to_structure_UnsignedIntegerType_32(self.group_id),
-            "business_group_id" : to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
-            "business_group_name" : to_structure_CustomTextType_50(self.business_group_name),
-            "legal_entity_id" : to_structure_UnsignedIntegerType_32(self.legal_entity_id),
-            "legal_entity_name" : to_structure_CustomTextType_50(self.legal_entity_name),
-            "division_id" : to_structure_OptionalType_SignedIntegerType_8(self.division_id),
-            "division_name" : to_structure_CustomTextType_50(self.division_name)
+            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
+            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
+            "industries": to_structure_VectorType_RecordType_core_Industry(self.industries),
+            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
+            "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
+            "units": to_structure_VectorType_RecordType_technotransactions_UNIT(self.units),
         }
 
 class ComplianceApplicability(object):
@@ -959,7 +904,9 @@ class ReassignHistory(object):
 def _init_Response_class_map():
     classes = [
         UserLoginResponse,
-        GetVersionsSuccess
+        GetVersionsSuccess,
+        GetUsersSuccess,
+        GetUnitDetailsSuccess
 
     ]
     class_map = {}
