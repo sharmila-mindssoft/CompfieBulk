@@ -189,11 +189,13 @@ function loadCountwiseResult(filterList){
       if(statutorydate.trim() != '') statutorydate += ', ';
 
       }
-      if(sdateDesc != '' && statutorydate.trim() != ''){
+      if(statutorydate.trim() != ''){
         statutorydate = statutorydate.replace(/,\s*$/, "");
-        statutorydate = sdateDesc + ' ( '+statutorydate+' )';
-      }else{
-        statutorydate = sdateDesc;
+        if(sdateDesc == ''){
+          statutorydate = statutorydate;
+        }else{
+          statutorydate = sdateDesc + ' ( '+statutorydate+' )';
+        } 
       }
     }else{
       statutorydate = sdateDesc;
