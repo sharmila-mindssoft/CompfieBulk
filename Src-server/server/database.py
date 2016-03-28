@@ -2094,9 +2094,6 @@ class KnowledgeDatabase(Database):
                 statutory_mapping_list.append(
                     s_map_data
                 )
-            # approval_status = self.get_approval_status(
-            #     int(d["approval_status"])
-            # )
             industry_ids = [
                 int(x) for x in d["industry_ids"][:-1].split(',')
             ]
@@ -2130,9 +2127,9 @@ class KnowledgeDatabase(Database):
 
     def get_statutory_mapping_report(
         self, country_id, domain_id, industry_id,
-        statutory_nature_id, geography_id, user_id
+        statutory_nature_id, geography_id,
+        level_1_statutory_id, user_id
     ) :
-
         qry_where = ""
         if industry_id is not None :
             qry_where += "AND t3.industry_id = %s " % (industry_id)
@@ -2192,7 +2189,6 @@ class KnowledgeDatabase(Database):
         report_data = []
         if rows :
             report_data = self.convert_to_dict(rows, columns)
-        # report_data = self.return_statutory_mappings(result, is_report=True)
 
         return self.return_knowledge_report(
             report_data
@@ -2200,7 +2196,8 @@ class KnowledgeDatabase(Database):
 
     def get_compliance_list_report_techno(
         self, country_id, domain_id, industry_id,
-        statutory_nature_id, geography_id, level_1_statutory_id, user_id
+        statutory_nature_id, geography_id,
+        level_1_statutory_id, user_id
     ) :
         qry_where = ""
         if industry_id is not None :
@@ -2254,7 +2251,6 @@ class KnowledgeDatabase(Database):
                 country_id, domain_id,
                 qry_where
             )
-        print q
         rows = self.select_all(q)
         columns = [
             "statutory_mapping_id", "country_id",
@@ -2271,8 +2267,7 @@ class KnowledgeDatabase(Database):
         ]
         report_data = []
         if rows :
-            result = self.convert_to_dict(rows, columns)
-        report_data = self.return_statutory_mappings(result, is_report=True)
+            report_data = self.convert_to_dict(rows, columns)
 
         return self.return_knowledge_report(
             country_id, domain_id, report_data
@@ -2288,11 +2283,6 @@ class KnowledgeDatabase(Database):
                 int(statutory_id),
                 str("" + str(statutory_id) + ",%")
             )
-        # query = "SELECT t1.statutory_mapping_ids from tbl_statutories t1 \
-        #     WHERE t1.statutory_id = %s OR t1.parent_ids like '%s'" % (
-        #             int(statutory_id),
-        #             str("" + str(statutory_id) + ",%")
-        #         )
         rows = self.select_all(query)
         result = []
         if rows :
@@ -2301,36 +2291,91 @@ class KnowledgeDatabase(Database):
             )
         return result
 
-    def return_knowledge_report(self, country_id, domain_id, report_data):
-        level_1_statutory = self.get_country_wise_level_1_statutoy()
+    def return_knowledge_report(self, report_data):
+        if bool(self.geography_parent_mapping) is False :
+            self.get_geographies()
 
-        level1s = level_1_statutory[country_id].get(domain_id)
-        if level1s is None :
-            level1s = []
-        level_1_mappings = {}
-        for x in level1s :
-            statutory_id = x.statutory_id
-            rows = self.get_mappings_id(statutory_id)
-            mapping_list = []
-            for row in rows :
-                mapping_ids = row["statutory_mapping_ids"]
-                if mapping_ids is None:
-                    continue
-                if mapping_ids == "" :
-                    continue
+        report_list = []
+        for r in report_data :
+            mapping = r["statutory_mapping"].split(">>")
+            act_name = mapping[0].strip()
+            statutory_provision = " >>".join(mapping[1:])
+            statutory_provision += r["statutory_provision"]
+            compliance_task = r["compliance_task"]
+            document_name = r["document_name"]
+            if document_name == "None":
+                document_name = None
+            if document_name :
+                name = "%s - %s" % (
+                    document_name, compliance_task
+                )
+            else :
+                name = compliance_task
 
-                def get_data(i) :
-                    return report_data.get(int(i))
-                # mapping_list.extend(
-                #     [get_data(x) for x in mapping_ids[:-1].split(',') if get_data(x) is not None]
-                # )
-                info = get_data(mapping_ids)
-                if info is not None :
-                    mapping_list.append(info)
-            if mapping_list:
-                level_1_mappings[statutory_id] = mapping_list
-        return level_1_mappings
+            format_file = r["format_file"]
+            format_file_size = r["format_file_size"]
+            if format_file_size is not None :
+                format_file_size = int(format_file_size)
+            if format_file :
+                url = "%s/%s" % (
+                    FORMAT_DOWNLOAD_URL, format_file
+                )
+            else :
+                url = None
+            industry_ids = [
+                int(x) for x in r["industry_ids"][:-1].split(',')
+            ]
+            if len(industry_ids) == 1:
+                industry_names = self.get_industry_by_id(industry_ids[0])
+            else :
+                industry_names = self.get_industry_by_id(industry_ids)
 
+            geography_ids = [
+                int(x) for x in r["geography_ids"][:-1].split(',')
+            ]
+            geography_mapping_list = []
+            for g_id in geography_ids :
+                map_data = self.geography_parent_mapping.get(int(g_id))
+                if map_data is not None:
+                    map_data = map_data[0]
+                geography_mapping_list.append(map_data)
+
+            statutory_dates = r["statutory_dates"]
+            statutory_dates = json.loads(statutory_dates)
+            date_list = []
+            for date in statutory_dates :
+                s_date = core.StatutoryDate(
+                    date["statutory_date"],
+                    date["statutory_month"],
+                    date["trigger_before_days"],
+                    date.get("repeat_by")
+                )
+                date_list.append(s_date)
+
+            info = knowledgereport.StatutoryMappingReport(
+                r["country_name"],
+                r["domain_name"],
+                industry_names,
+                r["statutory_nature_name"],
+                geography_mapping_list,
+                r["approval_status"],
+                bool(r["is_active"]),
+                act_name,
+                r["compliance_id"],
+                statutory_provision,
+                name,
+                r["compliance_description"],
+                r["penal_consequences"],
+                r["frequency_id"],
+                date_list,
+                r["repeats_type_id"],
+                r["repeats_every"],
+                r["duration_type_id"],
+                r["duration"],
+                url
+            )
+            report_list.append(info)
+        return report_list
     #
     # compliance
     #
@@ -2345,7 +2390,6 @@ class KnowledgeDatabase(Database):
                 q = " WHERE t1.compliance_id in %s" % (
                     str(tuple(compliance_id))
                 )
-
         else :
             is_active = int(is_active)
 
