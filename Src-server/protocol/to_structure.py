@@ -4001,3 +4001,25 @@ def to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSe
     print "to_structure"
     if data is None: return data
     return to_structure_VectorType_RecordType_clienttransactions_NewUnitSettings(data)
+
+def to_structure_RecordType_mobile_GetUSersList(data):
+    from protocol import mobile
+    return mobile.GetUsersList.to_structure(data)
+
+def to_structure_VectorType_RecordType_mobile_GetUsersList(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(to_structure_RecordType_mobile_GetUSersList(item))
+    return lst
+
+def to_structure_RecordType_mobile_ComplianceApplicability(data):
+    from protocol import mobile
+    return mobile.ComplianceApplicability.to_structure(data)
+
+def to_structure_VectorType_RecordType_mobile_ComplianceApplicability(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(to_structure_RecordType_mobile_ComplianceApplicability(item))
+    return lst
