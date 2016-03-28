@@ -7899,7 +7899,6 @@ class ClientDatabase(Database):
         else:
             return False
 
-
 #
 # mobile_api
 #
@@ -7943,3 +7942,41 @@ class ClientDatabase(Database):
         ]
         result = self.convert_to_dict(rows, column)
         return result
+
+    def get_users_for_mobile(self, session_user):
+        where_condition = "WHERE t2.unit_id \
+            IN \
+            (select distinct unit_id from tbl_user_units where user_id = %s)" % (session_user)
+
+        query = "SELECT distinct t1.user_id, t1.employee_name, \
+            t1.employee_code, \
+            t1.seating_unit_id, t1.user_level, \
+            (select group_concat(distinct domain_id) from tbl_user_domains where user_id = t1.user_id) domain_ids, \
+            (select group_concat(distinct unit_id) from tbl_user_units where user_id = t1.user_id ) unit_ids,\
+            t1.is_service_provider, \
+            (select service_provider_name from  tbl_service_providers where service_provider_id = t1.service_provider_id) service_provider, \
+            (select form_ids from tbl_user_groups where user_group_id = t1.user_group_id)fomr_ids\
+            FROM tbl_users t1 \
+            INNER JOIN tbl_user_units t2 \
+            ON t1.user_id = t2.user_id "
+
+        if session_user > 0 :
+            query = query + where_condition
+        rows = self.select_all(query)
+        columns = [
+            "user_id", "employee_name", "employee_code",
+            "seating_unit_id", "user_level",
+            "domain_ids", "unit_ids",
+            "is_service_provider", "service_provider",
+            "form_ids"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        user_list = []
+        for r in result :
+            if int(r["is_service_provider"]) == 0 :
+                name = "%s - %s" % (r["employee_code"], r["employee_name"])
+            else :
+                name = "%s - %s" % (r["service_provider"], r["employee_name"])
+
+            code = r["employee_code"]
+        return user_list

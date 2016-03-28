@@ -34,7 +34,7 @@ def process_get_version(db, request):
         int(data["reassign_history"])
     )
 
-def process_get_users(db, ):
+def process_get_users(db):
     pass
 
 def process_get_unit_details():
