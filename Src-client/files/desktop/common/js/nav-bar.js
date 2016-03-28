@@ -143,10 +143,10 @@ function initializeNavBar () {
     $("#cssmenu .menu-ul").append(settingsMenuObject)
 
     if ((typeof(client_name) != "undefined") && (client_name != null) ){
-        var liObject = $("#nav-bar-templates .notification li").clone();
+        var liObject = $("#nav-bar-templates .reminder li").clone();
         $("#cssmenu .menu-ul").append(liObject);
 
-        var liObject = $("#nav-bar-templates .reminder li").clone();
+        var liObject = $("#nav-bar-templates .notification li").clone();
         $("#cssmenu .menu-ul").append(liObject);
 
         var liObject = $("#nav-bar-templates .escalations li").clone();

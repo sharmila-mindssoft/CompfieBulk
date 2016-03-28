@@ -1142,11 +1142,11 @@ $("#btn-clientunit-submit").click(function(){
                             return;
                         }
                         else if(unitIndustryName == ""){
-                            $(".unit-error-msg-"+i).html("Select Industry");
+                            $(".unit-error-msg-"+i).html("Select Industry Type");
                             return;
                         }
                         else if(unitIndustryId == 0){
-                            $(".unit-error-msg-"+i).html("Select Industry");
+                            $(".unit-error-msg-"+i).html("Select Industry Type");
                             return;
                         }
                         else if(unitAddress == ''){

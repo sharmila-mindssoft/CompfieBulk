@@ -1,3 +1,5 @@
+var counList;
+
 function clearMessage() {
     $(".error-message").hide();
     $(".error-message").text("");
@@ -17,10 +19,14 @@ $(".btn-country-add").click(function(){
 $(".btn-country-cancel").click(function(){
     $("#country-add").hide();
     $("#country-view").show();
+    $("#search-country-name").val("");
+    loadCountriesList(counList);
 });
 
 function initialize(){
     function onSuccess(data){
+        $("#search-country-name").val("");
+        counList = data;
         loadCountriesList(data);
     }
     function onFailure(error){
@@ -87,6 +93,7 @@ $("#submit").click(function(){
             function onSuccess(response){
                 $("#country-add").hide();
                 $("#country-view").show();
+                $("#search-country-name").val("");
                 initialize();
             }
             function onFailure(error){
