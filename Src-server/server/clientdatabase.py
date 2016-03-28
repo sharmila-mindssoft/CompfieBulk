@@ -7802,7 +7802,9 @@ class ClientDatabase(Database):
         notification_rows = ()
         for row in notification_result:
             notification_rows += row
-        notification_ids = ",".join(str(int(x)) for x in notification_rows)
+        notification_ids = None
+        if len(notification_rows) > 0:
+            notification_ids = ",".join(str(int(x)) for x in notification_rows)
 
         reminder_result = self.get_data(
             self.tblNotificationsLog, column, reminder_condition
@@ -7810,7 +7812,9 @@ class ClientDatabase(Database):
         reminder_rows = ()
         for row in reminder_result:
             reminder_rows += row
-        reminder_ids = ",".join(str(int(x)) for x in reminder_rows)
+        reminder_ids = None
+        if len(reminder_rows) > 0:
+            reminder_ids = ",".join(str(int(x)) for x in reminder_rows)
 
         escalation_result = self.get_data(
             self.tblNotificationsLog, column, escalation_condition
@@ -7818,7 +7822,9 @@ class ClientDatabase(Database):
         escalation_rows = ()
         for row in escalation_result:
             escalation_rows += row
-        escalation_ids = ",".join(str(int(x)) for x in escalation_rows)
+        escalation_ids = None
+        if len(escalation_rows) > 0:
+            escalation_ids = ",".join(str(int(x)) for x in escalation_rows)
 
         column = "count(*)"
         notification_condition = None if notification_ids is None else "notification_id in (%s) AND read_status=0 AND user_id = '%d'" % (
