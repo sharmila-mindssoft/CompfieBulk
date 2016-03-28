@@ -80,8 +80,8 @@
 <div class="input-row">
   <div class="field-label">Statutory Status:</div>
   <div class="field-input">
-  <select class="input-box" id="status">
-  <option value=''>Select</option>
+  <select class="input-box" id="statutory_status">
+  <option value='0'>All</option>
   <option value='1'>Delayed Compliance</option>
   <option value='2'>Not Complied</option>
   <option value='3'>Not Opted</option>
@@ -101,23 +101,40 @@
 <div class="grid-table-rpt" style="padding-bottom:0em;" class="default-display-none">
 <h1>Risk Report</h1>
 
-<h2 style="background:#f1e9f6;font-size:0.8em !important;text-align:left;">Delayed Compliance</h2>
 
 <table class="tbody-unit" width="100%">
-
 </table>
 
+</div>
+</div>
+</div>
+</div>
+
+<div id="statutory-status-templates">
+<table class="table-unit-name">
+<tr class="table-row-unit-name">
+<td colspan="7" style="background:#999;font-size:0.8em !important;text-align:left;font-weight:bold;color:#fff" class="tbl_statutory_status">
+</td>
+</tr>
+</table>
+</div>
+
+<div id="compliance-count-templates">
+<table class="table-unit-name">
+<tr class="table-row-unit-name">
+<td colspan="7">
 <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
-</div>
-</div>
-</div>
+</td>
+</tr>
+</table>
+<div class="clearfix"></div>
 </div>
 
 
-<div id="unit-list-templates" style="display:none;" >
+<div id="unit-list-templates" style="display:none;">
 <table class="table-unit-list" width="100%">
 <tr class="table-row-unit-list" >
-<td colspan="11" style="padding-top:30px;">
+<td colspan="11">
 <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
   <div style="margin-left:10px; font-size:1em;padding-bottom:1em;">Country:<span style="margin-left:10px; font-weight:bold;" class="tbl_country"></span> </div>
 
@@ -146,12 +163,12 @@
 
 <tr align="left" class="table-row-unit-head">
 <th width="3%" align="center">#</th>
-<th width="13%">Statutory Provision</th>
-<th width="13%">Compliance Task</th>
+<th width="20%">Statutory Provision</th>
+<th width="15%">Compliance Task</th>
 <th width="18%">Compliance Description</th>
 <th width="14%">Penal Consequences</th>
-<th width="12%">Compliance Frequency</th>
-<th width="20%">Repeats</th>
+<th width="10%">Compliance Frequency</th>
+<th width="13%">Repeats</th>
 </tr>
 </table>
 </div>
@@ -174,9 +191,9 @@
 <tr align="left" class="table-row-unit-content">
 
 <td  align="center" class="tbl_sno"></td>
-<td class="tbl_statutoryprovision"> </td>
-<td class="tbl_compliance"> </td>
-<td class="tbl_description"></td>
+<td class="tbl_statutoryprovision" style="padding-right:5px;"> </td>
+<td class="tbl_compliance" style="padding-right:5px;"> </td>
+<td class="tbl_description" style="padding-right:5px;"></td>
 <td class="tbl_penalconsequences" > </td>
 <td class="tbl_frequency" ></td>
 <td class="tbl_repeats"></td>
@@ -185,6 +202,13 @@
 </table>
 </div>
 
+<div id="nocompliance-templates" style="display:none;">
+<table width="100%" style="border:1px dotted #CCCCCC;font-size:1em;" class="table-nocompliances-list">
+<tr class="table-row" >
+<td align="center" colspan="7" class="tbl_norecords"></td>
+</tr>
+</table>
+</div>
 
 <script type="text/javascript" src="/files/desktop/client/risk-report/riskreport.js"></script>
 {% endblock %}
