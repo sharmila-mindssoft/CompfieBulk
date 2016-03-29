@@ -5207,7 +5207,7 @@ class ClientDatabase(Database):
         return seven_years_list
 
     def get_country_domain_timelines(
-        self, country_ids, domain_ids, years, client_id
+        self, country_ids, domain_ids, years, client_id=None
     ):
         country_wise_timelines = []
         for country_id in country_ids:
@@ -8081,3 +8081,74 @@ class ClientDatabase(Database):
                 bool(r["compliance_opted"])
             )
         return applicability
+
+    def get_trend_chart_for_mobile(self, session_user):
+        years = self.get_last_7_years()
+        unit_ids = self.get_user_unit_ids(session_user)
+        unit_wise_details = []
+        for unit_id in [int(x) for x in unit_ids.split(",")]:
+            unit_details_column = "country_id, domain_ids"
+            unit_details_condition = "unit_id = '%d'" % unit_id
+            rows = self.get_data(
+                self.tblUnits, unit_details_column, unit_details_condition
+            )
+            country_id = rows[0][0]
+            domain_ids = rows[0][1]
+            country_ids_list = [country_id]
+            domain_ids_list = [int(x) for x in domain_ids.split(",")]
+            country_domain_timelines = self.get_country_domain_timelines(
+                country_ids_list, domain_ids_list, years
+            )
+            chart_data = []
+            for country_wise_timeline in country_domain_timelines:
+                country_id = country_wise_timeline[0]
+                domain_wise_timelines = country_wise_timeline[1]
+                domain_wise_details = []
+                for domain_wise_timeline in domain_wise_timelines:
+                    year_wise_count = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
+                    domain_id = domain_wise_timeline[0]
+                    start_end_dates = domain_wise_timeline[1]
+                    
+                    history_columns = "group_concat(compliance_history_id)"
+                    history_condition = "compliance_id in ( SELECT compliance_id \
+                    FROM %s WHERE domain_id = '%d') AND unit_id = '%d'" % (
+                        self.tblCompliances, domain_id, unit_id
+                    )
+                    history_rows = self.get_data(
+                        self.tblComplianceHistory, history_columns, 
+                        history_condition
+                    )
+                    compliance_history_ids = history_rows[0][0]
+
+                    if compliance_history_ids not in [None, '', "None"]:
+                        for index, dates in enumerate(start_end_dates):
+                            columns = "count(*) as total, sum(case when approve_status = 1 then 1 " + \
+                                "else 0 end) as complied"
+                            condition = "due_date between '{}' and '{}'".format(
+                                dates["start_date"], dates["end_date"]
+                            )
+                            condition += " and compliance_history_id in ({})".format(compliance_history_ids)
+                            rows = self.get_data(
+                                self.tblComplianceHistory,
+                                columns, condition
+                            )
+                            if len(rows) > 0:
+                                row = rows[0]
+                                total_compliances = row[0]
+                                complied_compliances = row[1] if row[1] != None else 0
+                                year_wise_count[index][0] += int(total_compliances) if total_compliances is not None else 0
+                                year_wise_count[index][1] += int(complied_compliances) if complied_compliances is not None else 0
+                    
+                    for index, count_of_year in enumerate(year_wise_count):
+                        domain_wise_details.append(
+                            mobile.DomainWiseCount(
+                                domain_id=domain_id,
+                                year=years[index],
+                                total_compliances=int(count_of_year[0]),
+                                complied_compliances_count=int(count_of_year[1])
+                            ))
+            unit_wise_details.append(mobile.UnitWiseCount(
+                unit_id=unit_id,
+                domain_wise_count=domain_wise_details
+            ))
+        return unit_wise_details
