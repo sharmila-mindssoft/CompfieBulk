@@ -8,11 +8,12 @@ from basics.ioloop import IOLoop
 from protocol import (
     clientadminsettings, clientmasters, clientreport,
     clienttransactions, dashboard,
-    login, general, clientuser
+    login, general, clientuser, mobile
 )
 from server.clientdatabase import ClientDatabase
 
 import clientcontroller as controller
+from mobilecontroller import clientmobilecontroller
 from webfrontend.client import CompanyManager
 from server.client import ReplicationManager
 
@@ -232,6 +233,10 @@ class API(object):
     def handle_login(self, request, db, client_id):
         return controller.process_login_request(request, db, client_id)
 
+    @api_request(mobile.RequestFormat)
+    def handle_mobile(self, request, db):
+        return clientmobilecontroller.process_client_mobile_request(request, db)
+
     @api_request(clientmasters.RequestFormat)
     def handle_client_masters(self, request, db):
         return controller.process_client_master_requests(request, db)
@@ -294,6 +299,7 @@ def run_server(address, knowledge_server_address):
             ("/api/client_admin_settings", api.handle_client_admin_settings),
             ("/api/general", api.handle_general),
             ("/api/client_user", api.handle_client_user),
+            ("/api/mobile", api.handle_mobile),
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

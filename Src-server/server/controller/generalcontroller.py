@@ -54,8 +54,11 @@ def process_general_request(request, db) :
         return process_get_notifications(db, request_frame, user_id)
 
 
-def validate_user_session(db, session_token):
-    return db.validate_session_token(session_token)
+def validate_user_session(db, session_token, client_id=None):
+    if client_id:
+        return db.validate_session_token(client_id, session_token)
+    else:
+        return db.validate_session_token(session_token)
 
 def validate_user_forms(db, user_id, form_ids, requet):
     # if user_id == 0 and type(requet) in [

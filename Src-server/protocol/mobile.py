@@ -24,7 +24,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_technotransactions_UNIT,
     parse_structure_VectorType_RecordType_mobile_ComplianceApplicability,
     parse_structure_VectorType_RecordType_mobile_UnitWiseCount,
-    parse_structure_VectorType_RecordType_mobile_DomainWiseCount
+    parse_structure_VectorType_RecordType_mobile_DomainWiseCount,
+    parse_structure_VariantType_mobile_Request
 )
 from protocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
@@ -51,7 +52,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_technotransactions_UNIT,
     to_structure_VectorType_RecordType_mobile_ComplianceApplicability,
     to_structure_VectorType_RecordType_mobile_UnitWiseCount,
-    to_structure_VectorType_RecordType_mobile_DomainWiseCount
+    to_structure_VectorType_RecordType_mobile_DomainWiseCount,
+    to_structure_VariantType_mobile_Request
 )
 
 
@@ -376,7 +378,8 @@ def _init_Request_class_map():
         GetVersions,
         GetUsers,
         GetUnitDetails,
-        GetComplianceApplicabilityStatus
+        GetComplianceApplicabilityStatus,
+        GetTrendChartData
     ]
     class_map = {}
     for c in classes:
@@ -906,19 +909,19 @@ class ReassignHistory(object):
 
 class DomainWiseCount(object):
     def __init__(
-        self, domain_id, year, total_compliances, complied_compliances
+        self, domain_id, year, total_compliances, complied_compliances_count
     ):
         self.domain_id = domain_id
         self.year = year
         self.total_compliances = total_compliances
-        self.complied_compliances = complied_compliances
+        self.complied_compliances_count = complied_compliances_count
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
                 "domain_id", "year", "total_compliances",
-                "complied_compliances"
+                "complied_compliances_count"
             ]
         )
         domain_id = data.get("domain_id")
@@ -927,10 +930,10 @@ class DomainWiseCount(object):
         year = parse_structure_UnsignedIntegerType_32(year)
         total_compliances = data.get("total_compliances")
         total_compliances = parse_structure_UnsignedIntegerType_32(total_compliances)
-        complied_compliances = data.get("complied_compliances")
-        complied_compliances = parse_structure_UnsignedIntegerType_32(complied_compliances)
+        complied_compliances_count = data.get("complied_compliances")
+        complied_compliances_count = parse_structure_UnsignedIntegerType_32(complied_compliances_count)
         return DomainWiseCount(
-            domain_id, year, total_compliances, complied_compliances
+            domain_id, year, total_compliances, complied_compliances_count
         )
 
     def to_structure(self):
@@ -938,7 +941,7 @@ class DomainWiseCount(object):
             "domain_id" : to_structure_UnsignedIntegerType_32(self.domain_id),
             "year" : to_structure_UnsignedIntegerType_32(self.year),
             "total_compliances" : to_structure_UnsignedIntegerType_32(self.total_compliances),
-            "complied_compliances" : to_structure_UnsignedIntegerType_32(self.complied_compliances)
+            "complied_compliances_count" : to_structure_UnsignedIntegerType_32(self.complied_compliances_count)
         }
 
 class UnitWiseCount(object):
@@ -1008,3 +1011,27 @@ def _init_Response_class_map():
     return class_map
 
 _Response_class_map = _init_Response_class_map()
+
+#
+# RequestFormat
+#
+
+class RequestFormat(object):
+    def __init__(self, session_token, request):
+        self.session_token = session_token
+        self.request = request
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["session_token", "request"])
+        session_token = data.get("session_token")
+        session_token = parse_structure_CustomTextType_50(session_token)
+        request = data.get("request")
+        request = parse_structure_VariantType_mobile_Request(request)
+        return RequestFormat(session_token, request)
+
+    def to_structure(self):
+        return {
+            "session_token": to_structure_CustomTextType_50(self.session_token),
+            "request": to_structure_VariantType_mobile_Request(self.request),
+        }

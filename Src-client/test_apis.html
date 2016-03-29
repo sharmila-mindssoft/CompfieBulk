@@ -645,11 +645,11 @@
 				);
 			}
 			function getTrendChartForMobile(){
-		        sessionToken = "1-577e7d8d3291431da87b66745bd4bad1";
+		        sessionToken = "1-b548802ecd8d4ec6a98f5d04f8169096";
 		        request = [
 		        	"GetTrendChartData",
 		        	{
-		        		"user_id": 3
+		        		"user_id": 0
 		        	}
 		        ];
 		        var requestFrame = {
@@ -660,7 +660,7 @@
 		            sessionToken, requestFrame
 		        ]
 		        jQuery.post(
-		            "",
+		            "/api/mobile",
 		            toJSON(body),
 		            function(data) {
 		                var data = parseJSON(data);
