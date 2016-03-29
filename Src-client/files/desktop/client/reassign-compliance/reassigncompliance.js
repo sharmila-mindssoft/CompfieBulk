@@ -383,7 +383,6 @@ function submitcompliance(){
             var compliance_history_id = actList[actentity]["compliance_history_id"];
             var cfrequency = actList[actentity]["compliance_frequency"];
             var compliance_name = actList[actentity]["compliance_name"];
-
             var due_date = null;
             if(cfrequency != 'On Occurrence'){
               due_date =  $('#duedate'+statutoriesCount).val();

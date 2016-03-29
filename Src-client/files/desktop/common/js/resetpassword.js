@@ -19,9 +19,8 @@ $("#submit").click(function(){
     } else if(confirmpassword.length == 0) {
       $(".error-message").html("Confirm Password Required");
     } else if(confirmpassword != newpassword) {
-      $(".error-message").html("New Password & Confirm Password is Not Match");
+      $(".error-message").html("New Password & Confirm Password Do Not Match");
     } else {
-
       url = window.location.href;
       url_parameters = url.split("/");
       console.log(url_parameters);
@@ -52,7 +51,6 @@ $("#submit").click(function(){
         );
       }else{
         
-
         function onSuccess(data){
             displayMessage("Password Reset Successfully");
             $("#newpassword").val("");
@@ -77,13 +75,18 @@ $("#submit").click(function(){
         }
         );
       }
-
-
-        
       }
   });
 
 $(document).ready(function(){
+
+  $('#newpassword').keyup('input', function (event) {
+      this.value = this.value.replace(/\s/g, '');
+  });
+  $('#confirmpassword').keyup('input', function (event) {
+      this.value = this.value.replace(/\s/g, '');
+  });
+
   function onSuccess(data){
     console.log("inside onSuccess" + data);
     // if (data[0] == "InvalidResetToken"){
@@ -96,7 +99,6 @@ $(document).ready(function(){
   function onFailure(error){
     $(".error-message").html("Invalid Reset Token");
     $(".error-message").show();
-
   }
   url = window.location.href;
   url_parameters = url.split("/");

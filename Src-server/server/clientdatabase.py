@@ -4051,15 +4051,15 @@ class ClientDatabase(Database):
                 query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
                         ac.assignee, cf.frequency FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
                         tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
-                        ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
+                        ch.compliance_id = ac.compliance_id and ch.next_due_date = ac.due_date and \
                         cs.country_id = %s and cs.domain_id = %s and cs.unit_id in (%s) \
                         and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
                         and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee = '%s' " % (
                         country_id, domain_id,
                         unit_ids, assignee_id
                     )
-
-                # print query
+                #and ch.unit_id = ac.unit_id
+                print query
                 compliance_rows = self.select_all(query)
 
                 compliances_list = []

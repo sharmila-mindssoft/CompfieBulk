@@ -1070,6 +1070,8 @@ $("#temp_addcompliance").click(function() {
   $('#counter').html('');
   $('#counter1').html('');
   $('#counter2').html('');
+  $('#duration_type').val('');
+  $("#summary").html("");
 
   for(i=1; i<=12; i++){
     $('#multiple_statutory_date'+i).show();

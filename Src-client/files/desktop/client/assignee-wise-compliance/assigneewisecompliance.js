@@ -44,7 +44,6 @@ function getClientReportFilters(){
 }
 
 function loadresult(filterList){
-  $(".grid-table-rpt").show();
   var country = $("#country").find('option:selected').text();
   var domain = $("#domainval").val();
   $(".country").text(country);
@@ -57,79 +56,88 @@ function loadresult(filterList){
     var compliancelists = filterList[entity]["user_wise_compliance"];
     if(compliancelists.length > 0){
       var tableRow=$('#assignee-list-templates .table-assignee-list .table-row-assignee-list');
-    var clone=tableRow.clone();
-    $('.tbl_country', clone).text(country);
-    $('.tbl_domain', clone).text(domain);
-    $('.tbl_businessgroup', clone).text(filterList[entity]["business_group_name"]);
-    $('.tbl_division', clone).text(filterList[entity]["division_name"]);
-    $('.tbl_legalentity', clone).text(filterList[entity]["legal_entity_name"]);
-    $('.tbody-assignee').append(clone);
+      var clone=tableRow.clone();
+      $('.tbl_country', clone).text(country);
+      $('.tbl_domain', clone).text(domain);
+      $('.tbl_businessgroup', clone).text(filterList[entity]["business_group_name"]);
+      $('.tbl_division', clone).text(filterList[entity]["division_name"]);
+      $('.tbl_legalentity', clone).text(filterList[entity]["legal_entity_name"]);
+      $('.tbody-assignee').append(clone);
 
-    var tableRow1=$('#assignee-head-templates .table-assignee-head .table-row-assignee-head');
-    var clone1=tableRow1.clone();
-    $('.tbody-assignee').append(clone1);
+      var tableRow1=$('#assignee-head-templates .table-assignee-head .table-row-assignee-head');
+      var clone1=tableRow1.clone();
+      $('.tbody-assignee').append(clone1);
 
-    for(var compliancelist in compliancelists){
-      var tableRow2=$('#assignee-name-templates .table-assignee-name .table-row-assignee-name');
-      var clone2=tableRow2.clone();
-      $('.tbl_assigneeheading', clone2).html(compliancelists[compliancelist]["assignee"]);
-      $('.tbody-assignee').append(clone2);
-      
-      var compliances = compliancelists[compliancelist]["compliances"];
+      for(var compliancelist in compliancelists){
+        var assignee_ = compliancelists[compliancelist]["assignee"];
+        var concurrence = compliancelists[compliancelist]["concurrence"];
+        var approval_ = compliancelists[compliancelist]["approval"];
 
-      for(i=0; i<compliances.length; i++){
-        var triggerdate = '';
-        var statutorydate = '';
+        if(assignee_ == null) assignee_ = 'Client Admin';
+        if(concurrence == null) concurrence = 'Nil';
+        if(approval_ == null) approval_ = 'Client Admin';
 
-        for(j=0; j<compliances[i]["statutory_dates"].length; j++){
+        var tableRow2=$('#assignee-name-templates .table-assignee-name .table-row-assignee-name');
+        var clone2=tableRow2.clone();
+        $('.tbl_assigneeheading', clone2).html('Assignee: ' + assignee_);
+        $('.tbl_concurrenceheading', clone2).html('concurrence: ' + concurrence);
+        $('.tbl_approvalheading', clone2).html('Approval: ' + approval_);
 
-          var sDay = '';
-          if(compliances[i]["statutory_dates"][j]["statutory_date"] != null) sDay = compliances[i]["statutory_dates"][j]["statutory_date"];
+        $('.tbody-assignee').append(clone2);
+        var compliances = compliancelists[compliancelist]["compliances"];
+        for(i=0; i<compliances.length; i++){
+          var triggerdate = '';
+          var statutorydate = '';
+          for(j=0; j<compliances[i]["statutory_dates"].length; j++){
+            var sDay = '';
+            if(compliances[i]["statutory_dates"][j]["statutory_date"] != null) sDay = compliances[i]["statutory_dates"][j]["statutory_date"];
 
-          var sMonth = '';
-          if(compliances[i]["statutory_dates"][j]["statutory_month"] != null) sMonth = compliances[i]["statutory_dates"][j]["statutory_month"];
+            var sMonth = '';
+            if(compliances[i]["statutory_dates"][j]["statutory_month"] != null) sMonth = compliances[i]["statutory_dates"][j]["statutory_month"];
 
-          var tDays = '';
-          if(compliances[i]["statutory_dates"][j]["trigger_before_days"] != null) tDays = compliances[i]["statutory_dates"][j]["trigger_before_days"];
+            var tDays = '';
+            if(compliances[i]["statutory_dates"][j]["trigger_before_days"] != null) tDays = compliances[i]["statutory_dates"][j]["trigger_before_days"];
 
-          if(sMonth == 1) sMonth = "January"
-          else if(sMonth == 2) sMonth = "February"
-          else if(sMonth == 3) sMonth = "March"
-          else if(sMonth == 4) sMonth = "April"  
-          else if(sMonth == 5) sMonth = "May"
-          else if(sMonth == 6) sMonth = "June"
-          else if(sMonth == 7) sMonth = "July"
-          else if(sMonth == 8) sMonth = "Auguest"
-          else if(sMonth == 9) sMonth = "September"
-          else if(sMonth == 10) sMonth = "October"
-          else if(sMonth == 11) sMonth = "November"
-          else if(sMonth == 12) sMonth = "December"
-            
-          triggerdate +=  tDays + " Days";
-          statutorydate +=  sDay + ' - ' + sMonth;
+            if(sMonth == 1) sMonth = "January"
+            else if(sMonth == 2) sMonth = "February"
+            else if(sMonth == 3) sMonth = "March"
+            else if(sMonth == 4) sMonth = "April"  
+            else if(sMonth == 5) sMonth = "May"
+            else if(sMonth == 6) sMonth = "June"
+            else if(sMonth == 7) sMonth = "July"
+            else if(sMonth == 8) sMonth = "Auguest"
+            else if(sMonth == 9) sMonth = "September"
+            else if(sMonth == 10) sMonth = "October"
+            else if(sMonth == 11) sMonth = "November"
+            else if(sMonth == 12) sMonth = "December"
+              
+            triggerdate +=  tDays + " Days" + ', ';
+            statutorydate +=  sDay + ' - ' + sMonth +', ';
+          }
+
+          if(statutorydate.trim() != '') statutorydate = statutorydate.replace(/,\s*$/, "");
+          if(triggerdate.trim() != '') triggerdate = triggerdate.replace(/,\s*$/, "");
+
+          var tableRow3=$('#assignee-content-templates .table-assignee-content .table-row-assignee-content');
+          var clone3=tableRow3.clone();
+          var cDescription = compliances[i]["description"];
+          $('.tbl_sno', clone3).text(compliance_count+1);
+          $('.tbl_compliance', clone3).html('<abbr class="page-load tipso_style" title="'+ cDescription +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliances[i]["compliance_name"]);
+          $('.tbl_frequency', clone3).text(compliances[i]["compliance_frequency"]);
+          $('.tbl_statutorydate', clone3).text(statutorydate);
+          $('.tbl_triggerbefore', clone3).text(triggerdate);
+          $('.tbl_duedate', clone3).text(compliances[i]["due_date"]);
+          var vDays = '';
+          if(compliances[i]["validity_date"] != null) vDays = compliances[i]["validity_date"];
+          $('.tbl_validitydate', clone3).text(vDays);
+          $('.tbody-assignee').append(clone3);
+          compliance_count++;
         }
-        var tableRow3=$('#assignee-content-templates .table-assignee-content .table-row-assignee-content');
-        var clone3=tableRow3.clone();
-        var cDescription = compliances[i]["description"];
-        $('.tbl_sno', clone3).text(compliance_count+1);
-        $('.tbl_compliance', clone3).html('<abbr class="page-load tipso_style" title="'+ cDescription +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliances[i]["compliance_name"]);
-        $('.tbl_frequency', clone3).text(compliances[i]["compliance_frequency"]);
-        $('.tbl_statutorydate', clone3).text(statutorydate);
-        $('.tbl_triggerbefore', clone3).text(triggerdate);
-        $('.tbl_duedate', clone3).text(compliances[i]["due_date"]);
-        var vDays = '';
-        if(compliances[i]["validity_date"] != null) vDays = compliances[i]["validity_date"];
-        $('.tbl_validitydate', clone3).text(vDays);
-        $('.tbody-assignee').append(clone3);
-        compliance_count++;
-      }
-    }   
+      }   
     }
-
-    
   }  
   $('.compliance_count').text("Total : "+ (compliance_count) +" records");
- 
+  $(".grid-table-rpt").show();
 }
 
 
