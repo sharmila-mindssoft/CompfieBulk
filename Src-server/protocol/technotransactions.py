@@ -350,7 +350,7 @@ class GetAssignedStatutoriesByIdSuccess(Response):
         division_name = data.get("division_name")
         division_name = parse_structure_OptionalType_CustomTextType_50(division_name)
         unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_50(unit_name)
+        unit_name = parse_structure_CustomTextType_100(unit_name)
         geography_name = data.get("geography_name")
         geography_name = parse_structure_CustomTextType_50(geography_name)
         domain_name = data.get("domain_name")
@@ -375,7 +375,7 @@ class GetAssignedStatutoriesByIdSuccess(Response):
             "business_group_name": to_structure_OptionalType_CustomTextType_50(self.business_group_name),
             "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
             "division_name": to_structure_OptionalType_CustomTextType_50(self.division_name),
-            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "geography_name": to_structure_CustomTextType_50(self.geography_name),
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "statutories": to_structure_VectorType_RecordType_core_AssignedStatutory(self.statutories),
@@ -555,7 +555,7 @@ class ASSIGNED_STATUTORIES(object):
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_50(unit_name)
+        unit_name = parse_structure_CustomTextType_100(unit_name)
         geography_id = data.get("geography_id")
         geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
         geography_name = data.get("geography_name")
@@ -586,7 +586,7 @@ class ASSIGNED_STATUTORIES(object):
             "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
             "division_name": to_structure_OptionalType_CustomTextType_50(self.division_name),
             "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "geography_id": to_structure_SignedIntegerType_8(self.geography_id),
             "geography_name": to_structure_CustomTextType_50(self.geography_name),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),

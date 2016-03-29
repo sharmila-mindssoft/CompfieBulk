@@ -1635,7 +1635,7 @@ class Unit(object):
             "business_group_id": to_structure_OptionalType_UnsignedIntegerType_32(self.business_group_id),
             "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
             "unit_code": to_structure_CustomTextType_20(self.unit_code),
-            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "unit_address": to_structure_CustomTextType_250(self.unit_address),
             "is_active": to_structure_Bool(self.is_active)
         }
@@ -1702,7 +1702,7 @@ class ClientUnit(object):
             "legal_entity_id": to_structure_UnsignedIntegerType_32(self.legal_entity_id),
             "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
             "unit_code": to_structure_CustomTextType_20(self.unit_code),
-            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "unit_address": to_structure_CustomTextType_250(self.unit_address),
             "is_active": to_structure_Bool(self.is_active),
             "domain_ids": to_structure_VectorType_UnsignedIntegerType_32(self.domain_ids),

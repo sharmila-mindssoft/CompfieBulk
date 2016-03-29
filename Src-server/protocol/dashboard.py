@@ -1527,7 +1527,7 @@ class AssigneeChartData(object):
 
     def to_structure(self):
         return {
-            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_500(self.address),
             "assignee_wise_details": to_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(self.assignee_wise_details),
         }
