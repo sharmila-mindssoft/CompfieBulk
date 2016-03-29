@@ -4023,3 +4023,18 @@ def to_structure_VectorType_RecordType_mobile_ComplianceApplicability(data):
     for item in data :
         lst.append(to_structure_RecordType_mobile_ComplianceApplicability(item))
     return lst
+
+def to_structure_VariantType_mobile_Request(data):
+    from protocol import mobile
+    return mobile.Request.to_structure(data)
+
+def to_structure_RecordType_mobile_ComplianceHistory(data):
+    from protocol import mobile
+    return mobile.ComplianceHistory.to_structure(data)
+
+def to_structure_VectorType_RecordType_mobile_ComplianceHistory(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(to_structure_RecordType_mobile_ComplianceHistory(item))
+    return lst
