@@ -50,6 +50,7 @@ def process_login(db, request, client_id):
         return login.InvalidCredentials()
     else:
         response = db.verify_login(username, encrypt_password)
+    print response
     if login_type.lower() == "web":
         if response is True:
             return admin_login_response(db, client_id, request.ip)
@@ -59,7 +60,46 @@ def process_login(db, request, client_id):
             else :
                 return login.InvalidCredentials()
     else :
-        return mobile_user_login_respone(db, response, login_type, client_id, request.ip)
+        if response is True :
+            return mobile_user_admin_response(db, login_type, client_id, request.ip)
+        else :
+            return mobile_user_login_respone(db, response, login_type, client_id, request.ip)
+
+def mobile_user_admin_response(db, login_type, client_id, ip):
+    if login_type.lower() == "web" :
+        session_type = 1
+    elif login_type.lower() == "android" :
+        session_type = 2
+    elif login_type.lower() == "ios" :
+        session_type = 3
+    elif login_type.lower() == "blackberry" :
+        session_type = 4
+
+    column = "admin_id"
+    condition = "1"
+    rows = db.get_data(db.tblAdmin, column, condition)
+    user_id = rows[0][0]
+    session_type = 1  # web
+    session_token = db.add_session(
+        user_id, session_type, ip, "Administrator", client_id
+    )
+    form_ids = db.get_form_ids_for_admin()
+    menu = process_user_forms(db, form_ids, client_id, 1)
+    employee_name = "Administrator"
+    client_info = db.get_client_group()
+    group_name = client_info["group_name"]
+    group_id = client_info["client_id"]
+    configuration = db.get_client_configuration()
+
+    return mobile.ClientUserLoginResponseSuccess(
+        user_id,
+        employee_name,
+        session_token,
+        group_id,
+        group_name,
+        configuration,
+        menu
+    )
 
 def mobile_user_login_respone(db, data, login_type, client_id, ip):
     if login_type.lower() == "web" :
@@ -73,15 +113,26 @@ def mobile_user_login_respone(db, data, login_type, client_id, ip):
     user_id = data["user_id"]
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
-    form_ids = db.get_form_ids_for_admin()
-    menu = process_user_forms(db, form_ids, client_id, 1)
     employee = "%s - %s" % (employee_code, employee_name)
     session_token = db.add_session(user_id, session_type, ip, employee)
     client_info = db.get_client_group()
     group_name = client_info["group_name"]
     group_id = client_info["client_id"]
     configuration = db.get_client_configuration()
-    return mobile.ClientUserLoginResponse(
+    form_ids = data["form_ids"]
+    is_promoted_admin = int(data["is_admin"])
+    if is_promoted_admin == 1:
+        form_ids = "%s, 3, 4, 6, 7, 8" % (form_ids)
+        form_ids_list = form_ids.split(",")
+        if 1 not in form_ids_list:
+            form_ids_list.append(1)
+        report_form_ids = db.get_report_form_ids().split(",")
+        for form_id in report_form_ids:
+            if form_id not in form_ids_list:
+                form_ids_list.append(form_id)
+        form_ids = ",".join(str(x) for x in form_ids_list)
+    menu = process_user_forms(db, form_ids, client_id, 0)
+    return mobile.ClientUserLoginResponseSuccess(
         data["user_id"],
         data["employee_name"],
         session_token,

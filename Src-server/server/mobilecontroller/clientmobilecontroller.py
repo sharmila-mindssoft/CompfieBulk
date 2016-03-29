@@ -1,14 +1,17 @@
 from protocol import mobile, login
-from generalcontroller import validate_user_session
+from server.controller.generalcontroller import validate_user_session
 
 __all__ = [
     "process_client_mobile_request"
 ]
 
 def process_client_mobile_request(request, db):
+    client_info = request.session_token.split("-")
     session_token = request.session_token
     request_frame = request.request
-    session_user = validate_user_session(db, session_token)
+    client_id = int(client_info[0])
+    session_user = db.validate_session_token(client_id, session_token)
+
     if session_user is None:
         return login.InvalidSessionToken()
 
@@ -18,11 +21,11 @@ def process_client_mobile_request(request, db):
     elif type(request_frame) is mobile.GetUsers :
         return process_get_users(db, session_user)
 
-    elif type(request_frame) is mobile.GetUnitDatails :
+    elif type(request_frame) is mobile.GetUnitDetails :
         return process_get_unit_details(db, session_user)
 
     elif type(request_frame) is mobile.GetComplianceApplicabilityStatus :
-        return process_get_compliance_applicability()
+        return process_get_compliance_applicability(db, session_user)
 
 def process_get_version(db, request):
     data = db.get_version()
@@ -54,3 +57,6 @@ def process_get_unit_details(db, session_user):
 def process_get_compliance_applicability(db, session_user):
     data = db.get_compliance_applicability_for_mobile(session_user)
     return mobile.GetComplianceApplicabilityStatusSuccess(data)
+
+def process_get_compliance_history(db, session_user, request):
+    pass

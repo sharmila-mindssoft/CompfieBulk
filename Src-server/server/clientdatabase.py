@@ -2,7 +2,8 @@ import os
 import threading
 from protocol import (
     core, general, clienttransactions, dashboard,
-    clientreport, clientadminsettings, clientuser
+    clientreport, clientadminsettings, clientuser,
+    mobile
 )
 from database import Database
 import json
@@ -7922,7 +7923,7 @@ class ClientDatabase(Database):
         if rows :
             result = self.convert_to_dict(rows, ["country_id", "domain_id", "period_from", "period_to"])
         c_list = []
-        if r in result :
+        for r in result :
             info = core.ClientConfiguration(
                 r["country_id"],
                 r["domain_id"],
@@ -7934,7 +7935,7 @@ class ClientDatabase(Database):
         return c_list
 
     def get_version(self):
-        q = "SELECT unit_datetils_version, user_details_version, \
+        q = "SELECT unit_details_version, user_details_version, \
             compliance_applicability_version, compliance_history_version, \
             reassign_history_version FROM tbl_mobile_sync_versions"
         rows = self.select_one(q)
@@ -7989,7 +7990,7 @@ class ClientDatabase(Database):
 
     def get_business_groups_for_mobile(self):
         columns = "business_group_id, business_group_name"
-        condition = "order by business_group_name"
+        condition = " 1 order by business_group_name"
         rows = self.get_data(self.tblBusinessGroups, columns, condition)
         result = self.convert_to_dict(rows, ["business_group_id", "business_group_name", "client_id"])
         business_group_list = []
@@ -8004,14 +8005,14 @@ class ClientDatabase(Database):
 
     def get_legal_entities_for_mobile(self):
         columns = "legal_entity_id, legal_entity_name, business_group_id"
-        condition = " ORDER BY legal_entity_name"
+        condition = " 1 ORDER BY legal_entity_name"
         rows = self.get_data(
             self.tblLegalEntities, columns, condition
         )
         result = self.convert_to_dict(rows, ["legal_entity_id", "legal_entity_name", "business_group_id"])
         legal_entity_list = []
         for r in result :
-            business_group_list.append(
+            legal_entity_list.append(
                 core.ClientLegalEntity(
                     r["legal_entity_id"],
                     r["legal_entity_name"],
@@ -8022,7 +8023,7 @@ class ClientDatabase(Database):
 
     def get_divisions_for_mobile(self):
         columns = "division_id, division_name, legal_entity_id, business_group_id"
-        condition = " ORDER BY division_name"
+        condition = " 1 ORDER BY division_name"
         rows = self.get_data(
             self.tblDivisions, columns, condition
         )
@@ -8045,7 +8046,7 @@ class ClientDatabase(Database):
         user_id = session_user
         if session_user == 0 :
             user_id = '%'
-        q = "SELECT t1.country_id, t1.domain_id, t1.unit_id \
+        q = "SELECT t1.country_id, t1.domain_id, t1.unit_id, \
             t2.compliance_id, t2.compliance_applicable, t2.compliance_opted, \
             t3.compliance_task, t3.document_name, \
             (select frequency from tbl_compliance_frequency where \
@@ -8055,11 +8056,11 @@ class ClientDatabase(Database):
             tbl_client_compliances t2 on \
             t1.client_statutory_id = t2.client_statutory_id \
             INNER JOIN \
-            tbl_compliances t3 t2.compliance_id = t3.compliance_id \
+            tbl_compliances t3 ON t2.compliance_id = t3.compliance_id \
             WHERE t1.is_new = 1 AND t1.unit_id in (select unit_id from tbl_user_units where \
             user_id LIKE '%s')" % (user_id)
 
-        rows = self.select_one(q)
+        rows = self.select_all(q)
         result = self.convert_to_dict(rows, [
             "country_id", "domain_id", "unit_id",
             "compliance_id", "compliance_applicable",
@@ -8068,17 +8069,87 @@ class ClientDatabase(Database):
         ])
         applicability = []
         for r in result :
+            print r
             if r["document_name"] not in ("None", "", None):
                 name = "%s - %s" % (r["document_name"], r["compliance_task"])
             else :
                 name = r["compliance_task"]
-            applicability.append(
+            applicability.append(mobile.ComplianceApplicability(
                 r["country_id"],
                 r["domain_id"],
+                r["unit_id"],
                 r["compliance_id"],
                 name,
                 r["frequency"],
                 bool(r["compliance_applicable"]),
                 bool(r["compliance_opted"])
-            )
+            ))
         return applicability
+
+    def get_compliance_history_for_mobile(self, user_id, request):
+        compliance_history_id = request.compliance_history_id
+        if user_id == 0 :
+            user_qry = '1'
+        else :
+            user_qry = "(t1.completed_by LIKE '%s' OR t1.concurred_by LIKE '%s' \
+            OR t1.approved_by LIKE '%s')" % (user_id, user_id, user_id)
+
+        q = "SELECT t1.compliance_history_id, t1.unit_id, \
+            t1.compliance_id, t1.start_date, t1.due_date, \
+            t1.completion_date, t1.documents, t1.document_size, \
+            t1.validity_date, t1.next_due_date, t1.remarks, \
+            t1.completed_by, t1.completed_on, t1.concurrence_status, \
+            t1.concurred_by, t1.concurred_on, t1.approve_status, \
+            t1.approved_by, t1.approved_on \
+            FROM tbl_compliance_history t1 \
+            WHERE t1.compliance_history_id > %s AND %s" % (
+                compliance_history_id, user_qry
+            )
+        rows = self.select_all(q)
+        column = [
+            "compliance_history_id", "unit_id", "compliance_id",
+            "start_date", "due_date", "completion_date",
+            "documents", "document_size", "validity_date",
+            "next_due_date", "remarks", "completed_by",
+            "completed_on", "concurrence_status",
+            "concurred_by", "concurred_on", "approve_status",
+            "approved_by", "approved_on"
+        ]
+        result = self.convert_to_dict(rows, column)
+        history_list = []
+        for r in result :
+            documents = r["documents"].stip().split(',')
+            document_list = None
+            if len(documents) > 0 :
+                document_list = []
+                for d in documents :
+                    document_list.append(
+                        core.FileList(
+                            d,
+                            r["document_size"],
+                            None
+                        )
+                    )
+
+            history_list.append(mobile.ComplianceHistory(
+                r["compliance_history_id"],
+                r["unit_id"],
+                r["compliance_id"],
+                r["start_date"],
+                r["due_date"],
+                r["completion_date"],
+                document_list,
+                r["validity_date"],
+                r["next_due_date"],
+                r["remarks"],
+                r["completed_by"],
+                r["completed_on"],
+                r["concurrence_status"],
+                r["concurred_by"],
+                r["concurred_on"],
+                r["approval_status"],
+                r["approved_by"],
+                r["approved_on"]
+            ))
+
+        return history_list

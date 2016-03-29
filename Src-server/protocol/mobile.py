@@ -18,11 +18,14 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_Country,
     parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_VectorType_RecordType_core_Industry,
-    parse_structure_VectorType_RecordType_core_BusinessGroup,
-    parse_structure_VectorType_RecordType_core_LegalEntity,
-    parse_structure_VectorType_RecordType_core_Division,
+    parse_structure_VectorType_RecordType_core_ClientBusinessGroup,
+    parse_structure_VectorType_RecordType_core_ClientLegalEntity,
+    parse_structure_VectorType_RecordType_core_ClientDivision,
     parse_structure_VectorType_RecordType_technotransactions_UNIT,
-    parse_structure_VectorType_RecordType_mobile_ComplianceApplicability
+    parse_structure_VectorType_RecordType_mobile_ComplianceApplicability,
+    parse_structure_VariantType_mobile_Request,
+    parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
+    parse_structure_VectorType_RecordType_mobile_ComplianceHistory
 )
 from protocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
@@ -43,11 +46,14 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Country,
     to_structure_VectorType_RecordType_core_Domain,
     to_structure_VectorType_RecordType_core_Industry,
-    to_structure_VectorType_RecordType_core_BusinessGroup,
-    to_structure_VectorType_RecordType_core_LegalEntity,
-    to_structure_VectorType_RecordType_core_Division,
+    to_structure_VectorType_RecordType_core_ClientBusinessGroup,
+    to_structure_VectorType_RecordType_core_ClientLegalEntity,
+    to_structure_VectorType_RecordType_core_ClientDivision,
     to_structure_VectorType_RecordType_technotransactions_UNIT,
-    to_structure_VectorType_RecordType_mobile_ComplianceApplicability
+    to_structure_VectorType_RecordType_mobile_ComplianceApplicability,
+    to_structure_VariantType_mobile_Request,
+    to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
+    to_structure_VectorType_RecordType_mobile_ComplianceHistory
 )
 
 
@@ -133,31 +139,25 @@ class GetComplianceApplicabilityStatus(Request):
         }
 
 class GetComplianceHistory(Request):
-    def __init__(
-        self, user_id, version
-    ):
-        self.user_id = user_id
-        self.version = version
+    def __init__(self, compliance_history_id):
+        self.compliance_history_id = compliance_history_id
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "user_id", "version",
+                "compliance_history_id"
             ]
         )
-        user_id = data.get("user_id")
-        user_id = parse_structure_UnsignedIntegerType_32(user_id)
-        version = data.get("version")
-        version = parse_structure_UnsignedIntegerType_32(version)
+        compliance_history_id = data.get("compliance_history_id")
+        compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         return GetComplianceHistory(
-            user_id, version
+            compliance_history_id
         )
 
     def to_inner_structure(self):
         return {
-            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "version": to_structure_UnsignedIntegerType_32(self.version),
+            "compliance_history_id": to_structure_UnsignedIntegerType_32(self.compliance_history_id)
         }
 
 class GetReassignedComplianceHistory(Request):
@@ -407,7 +407,7 @@ class Response(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
-class UserLoginResponse(Response):
+class UserLoginResponseSuccess(Response):
     def __init__(
         self, user_id, name, session_token
     ):
@@ -424,7 +424,7 @@ class UserLoginResponse(Response):
         name = parse_structure_CustomTextType_50(name)
         session_token = data.get("session_token")
         session_token = parse_structure_CustomTextType_50(session_token)
-        return UserLoginResponse(user_id, name, session_token)
+        return UserLoginResponseSuccess(user_id, name, session_token)
 
     def to_inner_structure(self):
         return {
@@ -433,7 +433,7 @@ class UserLoginResponse(Response):
             "session_token": to_structure_CustomTextType_50(self.session_token)
         }
 
-class ClientUserLoginResponse(Response):
+class ClientUserLoginResponseSuccess(Response):
     def __init__(
         self, user_id, name, session_token,
         group_id, group_name, configuration,
@@ -468,7 +468,7 @@ class ClientUserLoginResponse(Response):
         configuration = parse_structure_VectorType_RecordType_core_ClientConfiguration(configuration)
         menu = data.get("menu")
         menu = parse_structure_RecordType_core_Menu(menu)
-        return ClientUserLoginResponse(user_id, name, session_token, group_id, group_name, configuration, menu)
+        return ClientUserLoginResponseSuccess(user_id, name, session_token, group_id, group_name, configuration, menu)
 
     def to_inner_structure(self):
         return {
@@ -535,7 +535,7 @@ class GetUsersList(object):
         self.user_name = user_name
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         data = parse_dictionary(
             data, [
                 "user_id", "user_name"
@@ -549,7 +549,7 @@ class GetUsersList(object):
             user_id, user_name
         )
 
-    def to_inner_structure(self):
+    def to_structure(self):
         return {
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
             "user_name": to_structure_CustomTextType_50(self.user_name)
@@ -585,18 +585,16 @@ class GetUnitDetailsSuccess(Response):
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
-        industries = data.get("industries")
-        industries = parse_structure_VectorType_RecordType_core_Industry(industries)
         business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup(business_groups)
+        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
         legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
+        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
         divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_technotransactions_UNIT(units)
+        units = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(units)
         return GetUnitDetailsSuccess(
-            countries, domains, industries, business_groups,
+            countries, domains, business_groups,
             legal_entities, divisions, units
         )
 
@@ -604,11 +602,10 @@ class GetUnitDetailsSuccess(Response):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "industries": to_structure_VectorType_RecordType_core_Industry(self.industries),
-            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_VectorType_RecordType_technotransactions_UNIT(self.units),
+            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
+            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
+            "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units),
         }
 
 class ComplianceApplicability(object):
@@ -618,6 +615,7 @@ class ComplianceApplicability(object):
     ):
         self.country_id = country_id
         self.domain_id = domain_id
+        self.unit_id = unit_id
         self.compliance_id = compliance_id
         self.compliance_name = compliance_name
         self.compliance_frequency = compliance_frequency
@@ -646,9 +644,9 @@ class ComplianceApplicability(object):
         compliance_frequency = data.get("compliance_frequency")
         compliance_frequency = parse_structure_CustomTextType_100(compliance_frequency)
         compliance_applicable = data.get("compliance_applicable")
-        compliance_applicable = parse_structure_VectorType_SignedIntegerType_8(compliance_applicable)
+        compliance_applicable = parse_structure_Bool(compliance_applicable)
         compliance_opted = data.get("compliance_opted")
-        compliance_opted = parse_structure_VectorType_CustomTextType_50(compliance_opted)
+        compliance_opted = parse_structure_Bool(compliance_opted)
         return ComplianceApplicability(
             country_id, domain_id, unit_id, compliance_id, compliance_name,
             compliance_frequency, compliance_applicable, compliance_opted
@@ -662,8 +660,8 @@ class ComplianceApplicability(object):
             "compliance_id" : to_structure_UnsignedIntegerType_32(self.compliance_id),
             "compliance_name" : to_structure_CustomTextType_500(self.compliance_name),
             "compliance_frequency" : to_structure_CustomTextType_100(self.compliance_frequency),
-            "compliance_applicable" : to_structure_VectorType_CustomTextType_50(self.compliance_applicable),
-            "compliance_opted" : to_structure_CustomTextType_50(self.compliance_opted)
+            "compliance_applicable" : to_structure_Bool(self.compliance_applicable),
+            "compliance_opted" : to_structure_Bool(self.compliance_opted)
         }
 
 class GetComplianceApplicabilityStatusSuccess(Response):
@@ -811,9 +809,7 @@ class GetComplianceHistorySuccess(Response):
         )
 
     def to_inner_structure(self):
-        return {
-            "compliance_history": to_structure_VectorType_RecordType_mobile_ComplianceHistory(self.compliance_history)
-        }
+        return to_structure_VectorType_RecordType_mobile_ComplianceHistory(self.compliance_history)
 
 class ReassignHistory(object):
     def __init__(
@@ -902,7 +898,8 @@ class ReassignHistory(object):
 
 def _init_Response_class_map():
     classes = [
-        UserLoginResponse,
+        UserLoginResponseSuccess,
+        ClientUserLoginResponseSuccess,
         GetVersionsSuccess,
         GetUsersSuccess,
         GetUnitDetailsSuccess
@@ -914,3 +911,28 @@ def _init_Response_class_map():
     return class_map
 
 _Response_class_map = _init_Response_class_map()
+
+
+#
+# RequestFormat
+#
+
+class RequestFormat(object):
+    def __init__(self, session_token, request):
+        self.session_token = session_token
+        self.request = request
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["session_token", "request"])
+        session_token = data.get("session_token")
+        session_token = parse_structure_CustomTextType_50(session_token)
+        request = data.get("request")
+        request = parse_structure_VariantType_mobile_Request(request)
+        return RequestFormat(session_token, request)
+
+    def to_structure(self):
+        return {
+            "session_token": to_structure_CustomTextType_50(self.session_token),
+            "request": to_structure_VariantType_mobile_Request(self.request),
+        }
