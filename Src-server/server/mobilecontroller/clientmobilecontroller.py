@@ -52,4 +52,5 @@ def process_get_unit_details(db, session_user):
     )
 
 def process_get_compliance_applicability(db, session_user):
-    pass
+    data = db.get_compliance_applicability_for_mobile(session_user)
+    return mobile.GetComplianceApplicabilityStatusSuccess(data)

@@ -6129,7 +6129,7 @@ class ClientDatabase(Database):
                         if len(result) > 0:
                             compliance_ids_list[2] = result[0][0]
                     compliances_list = []
-                    for index, compliance_ids in enumerate(compliance_ids_list): 
+                    for index, compliance_ids in enumerate(compliance_ids_list):
                         status = None
                         if index == 0:
                             status = "Delayed Compliance"
@@ -8039,3 +8039,45 @@ class ClientDatabase(Database):
                 r["business_group_id"]
             ))
         return division_list
+
+    def get_compliance_applicability_for_mobile(self, session_user):
+        user_id = session_user
+        if session_user == 0 :
+            user_id = '%'
+        q = "SELECT t1.country_id, t1.domain_id, t1.unit_id \
+            t2.compliance_id, t2.compliance_applicable, t2.compliance_opted, \
+            t3.compliance_task, t3.document_name, \
+            (select frequency from tbl_compliance_frequency where \
+            frequency_id = t3.frequency_id) frequency \
+            FROM tbl_client_statutories t1 \
+            INNER JOIN \
+            tbl_client_compliances t2 on \
+            t1.client_statutory_id = t2.client_statutory_id \
+            INNER JOIN \
+            tbl_compliances t3 t2.compliance_id = t3.compliance_id \
+            WHERE t1.is_new = 1 AND t1.unit_id in (select unit_id from tbl_user_units where \
+            user_id LIKE '%s')" % (user_id)
+
+        rows = self.select_one(q)
+        result = self.convert_to_dict(rows, [
+            "country_id", "domain_id", "unit_id",
+            "compliance_id", "compliance_applicable",
+            "compliance_opted", "compliance_task",
+            "document_name", "frequency"
+        ])
+        applicability = []
+        for r in result :
+            if r["document_name"] not in ("None", "", None):
+                name = "%s - %s" % (r["document_name"], r["compliance_task"])
+            else :
+                name = r["compliance_task"]
+            applicability.append(
+                r["country_id"],
+                r["domain_id"],
+                r["compliance_id"],
+                name,
+                r["frequency"],
+                bool(r["compliance_applicable"]),
+                bool(r["compliance_opted"])
+            )
+        return applicability
