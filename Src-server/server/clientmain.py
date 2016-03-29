@@ -13,7 +13,7 @@ from protocol import (
 from server.clientdatabase import ClientDatabase
 
 import clientcontroller as controller
-from mobilecontroller import clientmobilecontroller
+import mobilecontroller as mobilecontroller
 from webfrontend.client import CompanyManager
 from server.client import ReplicationManager
 
@@ -233,10 +233,6 @@ class API(object):
     def handle_login(self, request, db, client_id):
         return controller.process_login_request(request, db, client_id)
 
-    @api_request(mobile.RequestFormat)
-    def handle_mobile(self, request, db):
-        return clientmobilecontroller.process_client_mobile_request(request, db)
-
     @api_request(clientmasters.RequestFormat)
     def handle_client_masters(self, request, db):
         return controller.process_client_master_requests(request, db)
@@ -264,6 +260,10 @@ class API(object):
     @api_request(clientuser.RequestFormat)
     def handle_client_user(self, request, db):
         return controller.process_client_user_request(request, db)
+
+    @api_request(mobile.RequestFormat)
+    def handle_mobile_request(self, request, db):
+        return mobilecontroller.process_client_mobile_request(request, db)
 
 #
 # run_server
@@ -299,7 +299,7 @@ def run_server(address, knowledge_server_address):
             ("/api/client_admin_settings", api.handle_client_admin_settings),
             ("/api/general", api.handle_general),
             ("/api/client_user", api.handle_client_user),
-            ("/api/mobile", api.handle_mobile),
+            ("/api/mobile", api.handle_mobile_request)
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

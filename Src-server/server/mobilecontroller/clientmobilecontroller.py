@@ -6,11 +6,12 @@ __all__ = [
 ]
 
 def process_client_mobile_request(request, db):
+    client_info = request.session_token.split("-")
     session_token = request.session_token
     request_frame = request.request
-    client_info = session_token.split("-")
     client_id = int(client_info[0])
-    session_user = validate_user_session(db, session_token, client_id)
+    session_user = db.validate_session_token(client_id, session_token)
+
     if session_user is None:
         return login.InvalidSessionToken()
 
@@ -24,7 +25,7 @@ def process_client_mobile_request(request, db):
         return process_get_unit_details(db, session_user)
 
     elif type(request_frame) is mobile.GetComplianceApplicabilityStatus :
-        return process_get_compliance_applicability()
+        return process_get_compliance_applicability(db, session_user)
 
     elif type(request_frame) is mobile.GetTrendChartData :
         return process_get_trend_chart(db, session_user)
@@ -63,3 +64,6 @@ def process_get_compliance_applicability(db, session_user):
 def process_get_trend_chart(db, session_user):
     data = db.get_trend_chart_for_mobile(session_user)
     return mobile.GetTrendChartDataSuccess(data)    
+
+def process_get_compliance_history(db, session_user, request):
+    pass
