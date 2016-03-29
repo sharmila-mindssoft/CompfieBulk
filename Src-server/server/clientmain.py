@@ -34,7 +34,7 @@ def cors_handler(request, response):
 
 #
 # api_request
-#m
+#
 
 def api_request(
     request_data_type, need_client_id=False
@@ -111,6 +111,7 @@ class API(object):
                     try:
                         db.connect()
                     except Exception, e:
+                        logger.logClient("error", "clientmain.py-server-added", e)
                         # print "Client database not available to connect ", company_id, company.to_structure()
                         continue
                     self._databases[company_id] = db
@@ -125,6 +126,7 @@ class API(object):
                     rep_man.start()
                     self._replication_managers[company_id] = rep_man
         except Exception, e :
+            logger.logClient("error", "clientmain.py-server-added", e)
             print db, e
 
     def _send_response(
@@ -224,8 +226,8 @@ class API(object):
         except Exception, e:
             print(traceback.format_exc())
             # print e
-            logger.logClient("error", "client.py-handle-api", e)
-            logger.logClient("error", "client.py", traceback.format_exc())
+            logger.logClient("error", "clientmain.py-handle-api", e)
+            logger.logClient("error", "clientmain.py", traceback.format_exc())
 
             db.rollback()
 

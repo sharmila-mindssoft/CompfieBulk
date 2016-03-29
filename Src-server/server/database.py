@@ -9,7 +9,6 @@ import uuid
 import json
 import pytz
 from types import *
-from dateutil.parser import parse
 from protocol import (
     core, knowledgereport, technomasters,
     technotransactions, technoreports, general
@@ -19,6 +18,7 @@ from distribution.protocol import (
 )
 from replication.protocol import Change
 from server.emailcontroller import EmailHandler as email
+import logger
 
 __all__ = [
     "KnowledgeDatabase", "Database"
@@ -108,13 +108,16 @@ class Database(object) :
 
     def connect(self):
         assert self._connection is None
-        connection = mysql.connect(
-            host=self._mysqlHost, user=self._mysqlUser,
-            passwd=self._mysqlPassword, db=self._mysqlDatabase,
-            port=self._mysqlPort
-        )
-        connection.autocommit(False)
-        self._connection = connection
+        try :
+            connection = mysql.connect(
+                host=self._mysqlHost, user=self._mysqlUser,
+                passwd=self._mysqlPassword, db=self._mysqlDatabase,
+                port=self._mysqlPort
+            )
+            connection.autocommit(False)
+            self._connection = connection
+        except Exception, e :
+            logger.logKnowledge("error", "database.py-connect", e)
 
     def close(self):
         assert self._connection is not None

@@ -15,6 +15,7 @@ from types import *
 from types import *
 from server.emailcontroller import EmailHandler
 from server.constants import KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+import logger
 
 __all__ = [
     "ClientDatabase"
@@ -786,6 +787,7 @@ class ClientDatabase(Database):
                 short_name, email_id, password, employee_name, employee_code
             )
         except Exception, e:
+            logger.logClient("error", "clientdatabase.py-notify-user", e)
             print "Error while sending email : {}".format(e)
 
     def save_user(self, user_id, user, session_user, client_id):
@@ -1639,6 +1641,7 @@ class ClientDatabase(Database):
             db_con.commit()
             db_con.close()
         except Exception, e :
+            logger.logClient("error", "clientdatabase.py-update_opted_status_in_knowledge", e)
             print e
             db_con.rollback()
 
@@ -4454,6 +4457,7 @@ class ClientDatabase(Database):
             notify_compliance_approved.start()
             return True
         except Exception, e:
+            logger.logClient("error", "clientdatabase.py-notifycomplianceapproved", e)
             print "Error while sending email : {}".format(e)
 
     def reject_compliance_approval(self, compliance_history_id, remarks,
@@ -4530,6 +4534,7 @@ class ClientDatabase(Database):
             notify_compliance_rejected_thread.start()
             return True
         except Exception, e:
+            logger.logClient("error", "clientdatabase.py-notify-compliance", e)
             print "Error while sending email : {}".format(e)
 
     def concur_compliance(self, compliance_history_id, remarks,
@@ -7637,6 +7642,7 @@ class ClientDatabase(Database):
             )
             notify_on_occur_thread.start()
         except Exception, e:
+            logger.logClient("error", "clientdatabase.py-start-on-occurance", e)
             print "Error sending email :{}".format(e)
         return True
 

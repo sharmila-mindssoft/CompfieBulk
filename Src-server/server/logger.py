@@ -5,8 +5,6 @@ knowledge_log_path = "logs/knowledge/knowledge-log"
 client_log_path = "logs/client/client-log"
 
 knowledge_log_format = logging.Formatter("%(asctime)s - %(name)s - %(message)s")
-
-
 rotateFileHandler = logging.handlers.TimedRotatingFileHandler(
     knowledge_log_path,
     when="midnight",
@@ -14,6 +12,7 @@ rotateFileHandler = logging.handlers.TimedRotatingFileHandler(
 )
 rotateFileHandler.suffix = "%Y-%m-%d"
 rotateFileHandler.setFormatter(knowledge_log_format)
+rotateFileHandler.setLevel(logging.DEBUG)
 
 knowledgeLogger = logging.getLogger("knowledge_logger")
 knowledgeLogger.setLevel(logging.DEBUG)
@@ -27,6 +26,7 @@ cRotateFileHandler = logging.handlers.TimedRotatingFileHandler(
 )
 cRotateFileHandler.suffix = "%Y-%m-%d"
 cRotateFileHandler.setFormatter(client_log_format)
+cRotateFileHandler.setLevel(logging.DEBUG)
 
 clientLogger = logging.getLogger("client_logger")
 clientLogger.setLevel(logging.DEBUG)
