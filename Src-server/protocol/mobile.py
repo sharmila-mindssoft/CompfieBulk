@@ -375,7 +375,8 @@ def _init_Request_class_map():
         GetUsers,
         GetUnitDetails,
         GetComplianceApplicabilityStatus,
-        GetComplianceHistory
+        GetComplianceHistory,
+        CheckDiskSpace
     ]
     class_map = {}
     for c in classes:
@@ -897,6 +898,26 @@ class ReassignHistory(object):
             "approval_status" : to_structure_Bool(self.approval_status),
             "approved_by" : to_structure_UnsignedIntegerType_32(self.approved_by),
             "approved_on" : to_structure_CustomTextType_20(self.approved_on)
+        }
+
+class CheckDiskSpaceSuccess(Response):
+    def __init__(self, total_space, available_space):
+        self.total_space = total_space
+        self.available_space = available_space
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["total_space", "available_space"])
+        total_space = data.get("total_space")
+        total_space = parse_structure_UnsignedIntegerType_32(total_space)
+        available_space = data.get("available_space")
+        available_space = parse_structure_UnsignedIntegerType_32(available_space)
+        return CheckDiskSpaceSuccess(total_space, available_space)
+
+    def to_inner_structure(self):
+        return {
+            "total_space": to_structure_UnsignedIntegerType_32(self.total_space),
+            "available_space": to_structure_UnsignedIntegerType_32(self.available_space)
         }
 
 def _init_Response_class_map():

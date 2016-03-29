@@ -8160,3 +8160,10 @@ class ClientDatabase(Database):
             ))
 
         return history_list
+
+    def get_check_disk_space_for_mobile(self):
+        q = "SELECT total_disk_space, IFNULL(total_disk_space_used, 0) FROM \
+            tbl_client_groups"
+        row = self.select_one(q)
+        result = self.convert_to_dict(row, ["total_disk_space", "total_disk_space_used"])
+        return result

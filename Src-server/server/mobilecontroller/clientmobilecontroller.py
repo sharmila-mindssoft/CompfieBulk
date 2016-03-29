@@ -28,6 +28,8 @@ def process_client_mobile_request(request, db):
         return process_get_compliance_applicability(db, session_user)
     elif type(request_frame) is mobile.GetComplianceHistory :
         return process_get_compliance_history(db, session_user, request_frame)
+    elif type(request_frame) is mobile.CheckDiskSpace :
+        return process_check_disk_space(db)
 
 def process_get_version(db, request):
     data = db.get_version()
@@ -63,3 +65,10 @@ def process_get_compliance_applicability(db, session_user):
 def process_get_compliance_history(db, session_user, request):
     data = db.get_compliance_history_for_mobile(session_user, request)
     return mobile.GetComplianceHistorySuccess(data)
+
+def process_check_disk_space(db):
+    data = db.get_check_disk_space_for_mobile()
+    return mobile.CheckDiskSpaceSuccess(
+        int(data["total_disk_space"]),
+        int(data["total_disk_space_used"])
+    )
