@@ -55,7 +55,7 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_mobile_ComplianceApplicability,
     to_structure_VectorType_RecordType_mobile_UnitWiseCount,
     to_structure_VectorType_RecordType_mobile_DomainWiseCount,
-    to_structure_VariantType_mobile_Request
+    to_structure_VariantType_mobile_Request,
     to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
     to_structure_VectorType_RecordType_mobile_ComplianceHistory
 )
