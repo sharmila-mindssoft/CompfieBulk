@@ -986,7 +986,7 @@ class FileList(object):
         file_size = data.get("file_size")
         file_size = parse_structure_UnsignedIntegerType_32(file_size)
         file_name = data.get("file_name")
-        file_name = parse_structure_CustomTextType_100(file_name)
+        file_name = parse_structure_Text(file_name)
         file_content = data.get("file_content")
         file_content = parse_structure_OptionalType_Text(file_content)
         return FileList(file_size, file_name, file_content)
@@ -994,7 +994,7 @@ class FileList(object):
     def to_structure(self):
         return {
             "file_size": to_structure_UnsignedIntegerType_32(self.file_size),
-            "file_name": to_structure_CustomTextType_100(self.file_name),
+            "file_name": to_structure_Text(self.file_name),
             "file_content": to_structure_OptionalType_Text(self.file_content)
         }
 
