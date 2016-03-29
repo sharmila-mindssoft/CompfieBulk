@@ -26,6 +26,8 @@ def process_client_mobile_request(request, db):
 
     elif type(request_frame) is mobile.GetComplianceApplicabilityStatus :
         return process_get_compliance_applicability(db, session_user)
+    elif type(request_frame) is mobile.GetComplianceHistory :
+        return process_get_compliance_history(db, session_user, request_frame)
 
 def process_get_version(db, request):
     data = db.get_version()
@@ -59,4 +61,5 @@ def process_get_compliance_applicability(db, session_user):
     return mobile.GetComplianceApplicabilityStatusSuccess(data)
 
 def process_get_compliance_history(db, session_user, request):
-    pass
+    data = db.get_compliance_history_for_mobile(session_user, request)
+    return mobile.GetComplianceHistorySuccess(data)
