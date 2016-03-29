@@ -47,7 +47,6 @@ def create_database(
             db_password, email_id, client_id, short_name, country_ids,
             domain_ids
         )
-        print "returning true"
         return True, password
     except Exception, ex:
         print "Error :{}".format(ex)
@@ -82,9 +81,9 @@ def save_client_group(db, request, session_user):
     elif not is_logo_in_image_format(request.logo):
         return technomasters.NotAnImageFile()
     else:
-        group_name = re.sub('[^a-zA-Z0-9 \n\.]', '', request.group_name)
-        group_name = group_name.replace(" ", "")
-        database_name = "compfie_%s_%d" % (group_name.lower(), client_id)
+        short_name = re.sub('[^a-zA-Z0-9 \n\.]', '', request.short_name)
+        short_name = short_name.replace(" ", "")
+        database_name = "compfie_%s_%d" % (short_name.lower(), client_id)
         row = db._get_server_details()
         host = row[0][0]
         username = row[0][1]
@@ -120,7 +119,7 @@ def save_client_group(db, request, session_user):
             db.save_client_countries(client_id, request.country_ids)
             db.save_client_domains(client_id, request.domain_ids)
             db.save_incharge_persons(request, client_id)
-            db.save_client_user(request, session_user, client_id)
+            db.save_client_user(request, session_user, client_id) 
             db.update_client_db_details(
                 host, client_id, db_username,
                 db_password, request.short_name, database_name, db_port

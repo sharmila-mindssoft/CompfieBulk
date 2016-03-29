@@ -2908,7 +2908,6 @@ class KnowledgeDatabase(Database):
             description = data.description
             document_name = data.document_name
             file_list = data.format_file_list
-            print file_list
             file_name = ""
             file_size = 0
             file_content = ""

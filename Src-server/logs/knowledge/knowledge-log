@@ -1,24 +1,16 @@
-2016-03-28 12:44:30,833 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 7 arguments (8 given)
-2016-03-28 12:44:30,834 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
+2016-03-29 15:20:04,958 - knowledge_logger - main.py-handle-api- : unexpected end of regular expression
+2016-03-29 15:20:04,958 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 205, in handle_knowledge_report
-    return controller.process_knowledge_report_request(request, db)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgereportcontroller.py", line 29, in process_knowledge_report_request
-    return process_get_statutory_mapping_report_data(db, request_frame, user_id)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgereportcontroller.py", line 63, in process_get_statutory_mapping_report_data
-    nature_id, geography_id, level_1_id, user_id
-TypeError: get_statutory_mapping_report() takes exactly 7 arguments (8 given)
-
-2016-03-28 12:48:36,810 - knowledge_logger - main.py-handle-api- : get_statutory_mapping_report() takes exactly 7 arguments (8 given)
-2016-03-28 12:48:36,810 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 131, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 205, in handle_knowledge_report
-    return controller.process_knowledge_report_request(request, db)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgereportcontroller.py", line 29, in process_knowledge_report_request
-    return process_get_statutory_mapping_report_data(db, request_frame, user_id)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgereportcontroller.py", line 63, in process_get_statutory_mapping_report_data
-    nature_id, geography_id, level_1_id, user_id
-TypeError: get_statutory_mapping_report() takes exactly 7 arguments (8 given)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 39, in process_techno_request
+    return save_client_group(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 86, in save_client_group
+    short_name = re.sub('[^a-zA-Z0-9 \n\]', '', request.short_name)
+  File "/usr/lib/python2.7/re.py", line 151, in sub
+    return _compile(pattern, flags).sub(repl, string, count)
+  File "/usr/lib/python2.7/re.py", line 244, in _compile
+    raise error, v # invalid expression
+error: unexpected end of regular expression
 
