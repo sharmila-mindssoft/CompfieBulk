@@ -254,6 +254,7 @@ function get_sub_array(object, start, end){
 }
 
 $('#pagination').click(function(e){
+  displayLoader();
   startCount = endCount;
   endCount = startCount + pageSize;
   var sub_act_list =  finalList;
@@ -264,11 +265,10 @@ $('#pagination').click(function(e){
   //alert(startCount + '-' + endCount + '-' +sub_keys_list.length)
   e.preventDefault();
   loadCountwiseResult(sub_keys_list);
-  
+  hideLoader();
 });
 
 function loadresult() {
-
   pageSize = 500;
   startCount = 0;
   endCount = pageSize;

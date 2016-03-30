@@ -243,6 +243,8 @@ function get_sub_array(object, start, end){
 }
 
 $('#pagination').click(function(e){
+  displayLoader();
+  group by compfie_abcgrooups_1.tbl_assigned_compliances.compliance_id
   startCount = endCount;
   endCount = startCount + pageSize;
   var sub_act_list =  finalList;
@@ -253,7 +255,7 @@ $('#pagination').click(function(e){
   //alert(startCount + '-' + endCount + '-' +sub_keys_list.length)
   e.preventDefault();
   loadCountwiseResult(sub_keys_list);
-  
+  hideLoader();
 });
 
 function loadresult() {
