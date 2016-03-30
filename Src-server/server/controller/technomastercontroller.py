@@ -82,7 +82,7 @@ def save_client_group(db, request, session_user):
     elif not is_logo_in_image_format(request.logo):
         return technomasters.NotAnImageFile()
     else:
-        group_name = re.sub('[^a-zA-Z0-9 \n\.]', '', request.group_name)
+        group_name = re.sub('[^a-zA-Z0-9 \n\.]', '', request.short_name)
         group_name = group_name.replace(" ", "")
         database_name = "compfie_%s_%d" % (group_name.lower(), client_id)
         row = db._get_server_details()

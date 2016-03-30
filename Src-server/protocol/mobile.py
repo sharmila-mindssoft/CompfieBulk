@@ -25,7 +25,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_mobile_ComplianceApplicability,
     parse_structure_VariantType_mobile_Request,
     parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
-    parse_structure_VectorType_RecordType_mobile_ComplianceHistory
+    parse_structure_VectorType_RecordType_mobile_ComplianceHistory,
+    parse_structure_OptionalType_UnsignedIntegerType_32
 )
 from protocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
@@ -53,7 +54,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_mobile_ComplianceApplicability,
     to_structure_VariantType_mobile_Request,
     to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
-    to_structure_VectorType_RecordType_mobile_ComplianceHistory
+    to_structure_VectorType_RecordType_mobile_ComplianceHistory,
+    to_structure_OptionalType_UnsignedIntegerType_32
 )
 
 
@@ -372,7 +374,9 @@ def _init_Request_class_map():
         GetVersions,
         GetUsers,
         GetUnitDetails,
-        GetComplianceApplicabilityStatus
+        GetComplianceApplicabilityStatus,
+        GetComplianceHistory,
+        CheckDiskSpace
     ]
     class_map = {}
     for c in classes:
@@ -743,7 +747,7 @@ class ComplianceHistory(object):
         next_due_date = data.get("next_due_date")
         next_due_date = parse_structure_CustomTextType_20(next_due_date)
         remarks = data.get("remarks")
-        remarks = parse_structure_CustomTextType_100(remarks)
+        remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
         completed_by = data.get("completed_by")
         completed_by = parse_structure_UnsignedIntegerType_32(completed_by)
         completed_on = data.get("completed_on")
@@ -751,7 +755,7 @@ class ComplianceHistory(object):
         concurrence_status = data.get("concurrence_status")
         concurrence_status = parse_structure_Bool(concurrence_status)
         concurred_by = data.get("concurred_by")
-        concurred_by = parse_structure_UnsignedIntegerType_32(concurred_by)
+        concurred_by = parse_structure_OptionalType_UnsignedIntegerType_32(concurred_by)
         concurred_on = data.get("concurred_on")
         concurred_on = parse_structure_CustomTextType_20(concurred_on)
         approval_status = data.get("approval_status")
@@ -778,11 +782,11 @@ class ComplianceHistory(object):
             "documents" : to_structure_OptionalType_VectorType_RecordType_core_FileList(self.documents),
             "validity_date" : to_structure_CustomTextType_20(self.validity_date),
             "next_due_date" : to_structure_CustomTextType_20(self.next_due_date),
-            "remarks" : to_structure_CustomTextType_100(self.remarks),
+            "remarks" : to_structure_OptionalType_CustomTextType_500(self.remarks),
             "completed_by" : to_structure_UnsignedIntegerType_32(self.completed_by),
             "completed_on" : to_structure_CustomTextType_20(self.completed_on),
             "concurrence_status" : to_structure_Bool(self.concurrence_status),
-            "concurred_by" : to_structure_UnsignedIntegerType_32(self.concurred_by),
+            "concurred_by" : to_structure_OptionalType_UnsignedIntegerType_32(self.concurred_by),
             "concurred_on" : to_structure_CustomTextType_20(self.concurred_on),
             "approval_status" : to_structure_Bool(self.approval_status),
             "approved_by" : to_structure_UnsignedIntegerType_32(self.approved_by),
@@ -896,13 +900,34 @@ class ReassignHistory(object):
             "approved_on" : to_structure_CustomTextType_20(self.approved_on)
         }
 
+class CheckDiskSpaceSuccess(Response):
+    def __init__(self, total_space, available_space):
+        self.total_space = total_space
+        self.available_space = available_space
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["total_space", "available_space"])
+        total_space = data.get("total_space")
+        total_space = parse_structure_UnsignedIntegerType_32(total_space)
+        available_space = data.get("available_space")
+        available_space = parse_structure_UnsignedIntegerType_32(available_space)
+        return CheckDiskSpaceSuccess(total_space, available_space)
+
+    def to_inner_structure(self):
+        return {
+            "total_space": to_structure_UnsignedIntegerType_32(self.total_space),
+            "available_space": to_structure_UnsignedIntegerType_32(self.available_space)
+        }
+
 def _init_Response_class_map():
     classes = [
         UserLoginResponseSuccess,
         ClientUserLoginResponseSuccess,
         GetVersionsSuccess,
         GetUsersSuccess,
-        GetUnitDetailsSuccess
+        GetUnitDetailsSuccess,
+        GetComplianceHistorySuccess
 
     ]
     class_map = {}

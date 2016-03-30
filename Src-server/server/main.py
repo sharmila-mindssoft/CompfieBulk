@@ -126,8 +126,8 @@ class API(object):
                 response_data, response
             )
 
-        self._db.begin()
         try:
+            self._db.begin()
             response_data = unbound_method(self, request_data, self._db)
             if type(response_data) != technomasters.ClientCreationFailed:
                 self._db.commit()
@@ -304,6 +304,7 @@ def run_server(port):
             KNOWLEDGE_DATABASE_NAME
         )
         db.connect()
+
         web_server = WebServer(io_loop)
 
         # web_server.url("/", GET=handle_root)

@@ -15,6 +15,7 @@ from types import *
 from types import *
 from server.emailcontroller import EmailHandler
 from server.constants import KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+import logger
 
 __all__ = [
     "ClientDatabase"
@@ -786,6 +787,7 @@ class ClientDatabase(Database):
                 short_name, email_id, password, employee_name, employee_code
             )
         except Exception, e:
+            logger.logClient("error", "clientdatabase.py-notify-user", e)
             print "Error while sending email : {}".format(e)
 
     def save_user(self, user_id, user, session_user, client_id):
@@ -1639,6 +1641,7 @@ class ClientDatabase(Database):
             db_con.commit()
             db_con.close()
         except Exception, e :
+            logger.logClient("error", "clientdatabase.py-update_opted_status_in_knowledge", e)
             print e
             db_con.rollback()
 
@@ -4454,6 +4457,7 @@ class ClientDatabase(Database):
             notify_compliance_approved.start()
             return True
         except Exception, e:
+            logger.logClient("error", "clientdatabase.py-notifycomplianceapproved", e)
             print "Error while sending email : {}".format(e)
 
     def reject_compliance_approval(self, compliance_history_id, remarks,
@@ -4530,6 +4534,7 @@ class ClientDatabase(Database):
             notify_compliance_rejected_thread.start()
             return True
         except Exception, e:
+            logger.logClient("error", "clientdatabase.py-notify-compliance", e)
             print "Error while sending email : {}".format(e)
 
     def concur_compliance(self, compliance_history_id, remarks,
@@ -7638,6 +7643,7 @@ class ClientDatabase(Database):
             )
             notify_on_occur_thread.start()
         except Exception, e:
+            logger.logClient("error", "clientdatabase.py-start-on-occurance", e)
             print "Error sending email :{}".format(e)
         return True
 
@@ -8097,10 +8103,10 @@ class ClientDatabase(Database):
 
         q = "SELECT t1.compliance_history_id, t1.unit_id, \
             t1.compliance_id, t1.start_date, t1.due_date, \
-            t1.completion_date, t1.documents, t1.document_size, \
+            t1.completion_date, t1.documents, IFNULL(t1.document_size, 0), \
             t1.validity_date, t1.next_due_date, t1.remarks, \
-            t1.completed_by, t1.completed_on, t1.concurrence_status, \
-            t1.concurred_by, t1.concurred_on, t1.approve_status, \
+            t1.completed_by, t1.completed_on, IFNULL(t1.concurrence_status, 0), \
+            t1.concurred_by, t1.concurred_on, IFNULL(t1.approve_status, 0), \
             t1.approved_by, t1.approved_on \
             FROM tbl_compliance_history t1 \
             WHERE t1.compliance_history_id > %s AND %s" % (
@@ -8119,38 +8125,46 @@ class ClientDatabase(Database):
         result = self.convert_to_dict(rows, column)
         history_list = []
         for r in result :
-            documents = r["documents"].stip().split(',')
             document_list = None
-            if len(documents) > 0 :
-                document_list = []
-                for d in documents :
-                    document_list.append(
-                        core.FileList(
-                            d,
-                            r["document_size"],
-                            None
+            if r["documents"] is not None :
+                documents = r["documents"].strip().split(',')
+                if len(documents) > 0 :
+                    document_list = []
+                    for d in documents :
+                        document_list.append(
+                            core.FileList(
+                                r["document_size"],
+                                d,
+                                None
+                            )
                         )
-                    )
 
             history_list.append(mobile.ComplianceHistory(
                 r["compliance_history_id"],
                 r["unit_id"],
                 r["compliance_id"],
-                r["start_date"],
-                r["due_date"],
-                r["completion_date"],
+                str(r["start_date"]),
+                str(r["due_date"]),
+                str(r["completion_date"]),
                 document_list,
-                r["validity_date"],
-                r["next_due_date"],
+                str(r["validity_date"]),
+                str(r["next_due_date"]),
                 r["remarks"],
                 r["completed_by"],
-                r["completed_on"],
-                r["concurrence_status"],
+                str(r["completed_on"]),
+                bool(r["concurrence_status"]),
                 r["concurred_by"],
-                r["concurred_on"],
-                r["approval_status"],
+                str(r["concurred_on"]),
+                bool(r["approve_status"]),
                 r["approved_by"],
-                r["approved_on"]
+                str(r["approved_on"])
             ))
 
         return history_list
+
+    def get_check_disk_space_for_mobile(self):
+        q = "SELECT total_disk_space, IFNULL(total_disk_space_used, 0) FROM \
+            tbl_client_groups"
+        row = self.select_one(q)
+        result = self.convert_to_dict(row, ["total_disk_space", "total_disk_space_used"])
+        return result
