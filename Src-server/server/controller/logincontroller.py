@@ -70,7 +70,7 @@ def mobile_user_login_respone(db, data, request, ip):
         return login.InvalidCredentials()
     employee = "%s - %s" % (employee_code, employee_name)
     session_token = db.add_session(user_id, session_type, ip, employee)
-    return mobile.UserLoginResponse(
+    return mobile.UserLoginResponseSuccess(
         data["user_id"],
         data["employee_name"],
         session_token

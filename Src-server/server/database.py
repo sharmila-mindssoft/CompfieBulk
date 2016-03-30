@@ -2290,7 +2290,7 @@ class KnowledgeDatabase(Database):
             mapping = r["statutory_mapping"].split(">>")
             act_name = mapping[0].strip()
             statutory_provision = " >>".join(mapping[1:])
-            statutory_provision += r["statutory_provision"]
+            statutory_provision += " " + r["statutory_provision"]
             compliance_task = r["compliance_task"]
             document_name = r["document_name"]
             if document_name == "None":
@@ -2686,7 +2686,7 @@ class KnowledgeDatabase(Database):
         columns = ["statutory_mapping_ids", "updated_by"]
 
         for x in difference :
-            old_map_id = [int(j) for j in old_statu_ids.get(x).split(',')]
+            old_map_id = [int(j) for j in old_statu_ids.get(x).strip().split(',') if j != '']
             if mapping_id in old_map_id:
                 old_map_id = old_map_id.remove(mapping_id)
 
@@ -5067,8 +5067,8 @@ class KnowledgeDatabase(Database):
         return row[0]
 
     def update_client_compliances(self, client_statutory_id, data, user_id, submited_on=None):
-        saved_compliance_ids = self.get_compliance_ids(client_statutory_id)
-        saved_compliance_ids = [int(x) for x in saved_compliance_ids.split(',')]
+        saved_compliance_ids = self.get_compliance_ids(client_statutory_id).strip()
+        saved_compliance_ids = [int(x) for x in saved_compliance_ids.strip().split(',') if x != '']
         for d in data :
             level_1_id = d.level_1_statutory_id
             applicable_status = int(d.applicable_status)
