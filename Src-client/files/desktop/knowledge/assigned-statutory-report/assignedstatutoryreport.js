@@ -16,8 +16,7 @@ var applicableStatus;
 var assignedStatutoryList;
 
 var finalList;
-var totalrecords = 0;
-var pageSize = 1000;
+var pageSize = 500;
 var startCount = 0;
 var endCount;
 var sno = 0;
@@ -90,49 +89,80 @@ $("#show-button").click(function(){
 
     //Business Groups
     var bgroups = $("#businessgroupid").val();
+    businessgroupsval = $("#businessgroupsval").val().trim();
     if(bgroups != ''){
-        var businessgroupid = parseInt(bgroups);
+        if(businessgroupsval != ''){
+            var businessgroupid = parseInt(bgroups);    
+        }
+        else{
+            var businessgroupid = null;       
+        }
+        
     }
     else{
      var businessgroupid = null;
     }
-    businessgroupsval = $("#businessgroupsval").val();
+    
     //Legal Entity
     var legalentity = $("#legalentityid").val();
+     legalentityval = $("#legalentityval").val().trim();
     if(legalentity != ''){
-        var lentityid = parseInt(legalentity);
+        if( legalentityval != ''){
+            var lentityid = parseInt(legalentity);
+        }
+        else{
+            var lentityid = null;       
+        }
     }
     else{
         var lentityid = null;
     }
-    legalentityval = $("#legalentityval").val();
+   
     //division
     var division = $("#divisionid").val();
-    if(division != ''){
-        var divisionid = parseInt(division);
+    divisionval = $("#divisionval").val().trim();
+    if(division != ''){        
+        if( divisionval != ''){
+          var divisionid = parseInt(division);
+        }
+        else{
+            var divisionid = null;       
+        }
     }
     else{
         var divisionid = null;
     }
-    divisionval = $("#divisionval").val();
+    
     //Units
     var units = $("#unitid").val();
+    unitval = $("#unitval").val().trim();
     if(units != ''){
-        var unitid = parseInt(units);
+        if( unitval != ''){
+            var unitid = parseInt(units);
+        }
+        else{
+            var unitid = null;       
+        }
     }
     else{
         var unitid = null;
     }
-    unitval = $("#unitval").val();
+    
     //Level1Statutory
     var level1Statutory = $("#level1id").val();
+    level1val = $("#level1val").val().trim();
     if(level1Statutory != ''){
-        var level1Statutoryid = parseInt(level1Statutory);
+        if( level1val != ''){
+            var level1Statutoryid = parseInt(level1Statutory);
+        }
+        else{
+            var level1Statutoryid = null;       
+        }
     }
     else{
         var level1Statutoryid = null;
     }
-    level1val = $("#level1val").val();
+   
 
     applicableStatus = $("#appliability-status option:selected").val();
     if(applicableStatus == "null"){
@@ -198,7 +228,7 @@ function get_sub_array(object, start, end){
 }
 
 $('#pagination').click(function(e){
-    
+    displayLoader();
     startCount = endCount;
     endCount = startCount + pageSize;
     //var sub_list =  fullArrayList;
@@ -222,12 +252,11 @@ $('#pagination').click(function(e){
             }                
         }        
     }
-  
+    hideLoader();  
 });
 
 function loadresult(finalList) {   
     endCount = pageSize;
-    console.log(finalList);
     $.each(finalList, function(i, val){
         var list = finalList[i];
         var list_assigned = val["assigned_statutories"]
@@ -382,6 +411,7 @@ function loadAssignedActdata(assignedList){
 
 function loadAssignedStatutoryList(data){
     $('.grid-table-rpt').show();
+    var totalrecords = 0;
     $('.tbody-assigned-statutory-list tr').remove();
     $.each(data, function(i, val){
         var assignedstat = val['assigned_statutories'];
