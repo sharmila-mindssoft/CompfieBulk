@@ -144,7 +144,7 @@ function loadresult(filterList){
       if(compliancelists[compliancelist].length == 0){
         var tableRow4=$('#unit-content-templates .table-unit-content .table-row-unit-content');
         var clone4=tableRow4.clone();
-        $('.tbl_statutorydate', clone4).text("No Compliance Found");
+        $('.tbl_description', clone4).text("No Compliance Found");
         $('.tbody-serviceprovider').append(clone4);
       }
     } 

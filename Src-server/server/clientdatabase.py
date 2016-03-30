@@ -4060,7 +4060,7 @@ class ClientDatabase(Database):
                         unit_ids, assignee_id
                     )
                 #and ch.unit_id = ac.unit_id
-                print query
+                #print query
                 compliance_rows = self.select_all(query)
 
                 compliances_list = []
@@ -4691,6 +4691,7 @@ class ClientDatabase(Database):
                         country_id, domain_id,
                         unit_id, user_ids, str(statutory_id+"%")
                     )
+                print query
                 compliance_rows = self.select_all(query)
 
                 compliances_list = []
@@ -7839,7 +7840,7 @@ class ClientDatabase(Database):
         escalation_condition = None if escalation_ids is None else "notification_id in (%s) AND read_status=0 AND user_id = '%d'" % (
             escalation_ids, session_user
         )
-        print escalation_condition
+        #print escalation_condition
         notification_count = 0
         reminder_count = 0
         escalation_count = 0
