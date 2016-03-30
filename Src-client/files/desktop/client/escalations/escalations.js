@@ -24,13 +24,22 @@ function loadEscalations(escalations){
         readStatus = '';
       }
 
-      str += '<a href="#popup1" style="text-decoration: none;"> <li class="'+readStatus+'" onclick="changeStatus('+notificationId+','+escalations[reminder]["read_status"]+')">'+notificationText+" <span style='font-weight:bold'>"+assigneesplit[0]+" <abbr class='page-load' title='"+assigneesplit[0]+"'> <img src='images/icon-info-blue.png'  style='width:15px;height:15px'> </abbr></span> </li></a>"
+      str += '<a href="#popup1" style="text-decoration: none;"> <li id="notification'+notificationId+
+      '" class="'+readStatus+'" onclick="changeStatus('+notificationId+','+escalations[reminder]["read_status"]+
+      ')"> <p style="width:90%;text-align:left">'+notificationText+
+      "</p> <span style='font-weight:bold;vertical-align:bottom'>"+assigneesplit[0]+
+      " <abbr class='page-load' title='"+assigneesplit[0]+
+      "'> <img src='images/icon-info-blue.png' style='width:15px;height:15px'> </abbr></span> </li></a>"
+    }
+
+    if(str == ''){
+      str += '<li style="text-align:center">'+"No Escalations Found"+"</li>"
     }
    $('#reminderList').append(str);      
 }
 
 function changeStatus(notification_id, read_status){
-
+  $('#notification'+notification_id).removeClass( "unread" );
   $("#popup1").show();
   var nId;
   var act;

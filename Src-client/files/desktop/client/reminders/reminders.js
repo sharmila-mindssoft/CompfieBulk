@@ -26,6 +26,9 @@ function loadReminders(reminders){
 
       str += '<a href="#popup1" style="text-decoration: none;"> <li class="'+readStatus+'" onclick="changeStatus('+notificationId+','+reminders[reminder]["read_status"]+')">'+notificationText+"<span style='font-weight:bold'>"+assigneesplit[0]+"</span> </li></a>"
     }
+    if(str == ''){
+      str += '<li style="text-align:center">'+"No Reminders Found"+"</li>"
+    }
    $('#reminderList').append(str);      
 }
 
