@@ -13,7 +13,6 @@ function displayMessage(message) {
 function initialize(){
     function onSuccess(data){
         closeicon();
-        clearMessage();
         approvalList = data['approval_list'];
         loadComplianceApprovalDetails(approvalList);     
     }
@@ -63,6 +62,7 @@ function loadComplianceApprovalDetails(data){
             $(clonelist, ".expand-compliance").on("click", function() {
                 //$(".table-row-list", clonelist).addClass("active1");
                 // tableRowvalues.addClass("active1");
+                clearMessage(); 
                 $(".table-row-list").removeClass("active1");
                 $(clonelist, ".table-row-list").addClass("active1");
                 showSideBar(compliance_history_id, val);
@@ -119,6 +119,9 @@ function showSideBar(idval, data){
             showTextbox();
         });        
     }
+    else if(complianceFrequency == "On Occurrence"){
+        $(".validityAndDueDate", cloneValSide).hide();
+    }
     else{
         $(".validityAndDueDate", cloneValSide).hide();        
     }
@@ -138,7 +141,10 @@ function showSideBar(idval, data){
         
         $(".concurr-action", cloneValSide).hide();
         $(".approval-action", cloneValSide).show();
-        
+        if(data['concurrenced_by'] != null){
+             $(".concurrance-tab", cloneValSide).show();
+             $(".sidebar-concurrence span", cloneValSide).html(data['concurrenced_by']);
+        }
         $(".approval-action", cloneValSide).on("change", function(e, data){ 
             if($(".approval-action", cloneValSide).val() == 'Reject'){
                 $(".sidebar-remarks-textarea", cloneValSide).val();
@@ -152,15 +158,15 @@ function showSideBar(idval, data){
         }); 
     }
     if(action == "Concur"){
-        $(".concurrance-tab", cloneValSide).show();
-
+        //$(".concurrance-tab", cloneValSide).show();
+    
         $(".concurr-action", cloneValSide).show();
         $(".approval-action", cloneValSide).hide();
         
-        $(".sidebar-concurrence span", cloneValSide).html(data['concurrenced_by']);               
+        //$(".sidebar-concurrence span", cloneValSide).html(data['concurrenced_by']);               
         $(".action-tr", cloneValSide).show();
         $(".concurr-action", cloneValSide).on("change", function(e, data){ 
-            if($(".concurr-action option:selected", cloneValSide).val() == 'Reject'){
+            if($(".concurr-action option:selected", cloneValSide).val() == 'Reject Concurrence'){
                 $(".sidebar-remarks-textarea", cloneValSide).show();
             }
             else{
@@ -178,7 +184,7 @@ function showSideBar(idval, data){
         
         $(".sidebar-remarks-textarea", cloneValSide).show();
         $(".concurr-action", cloneValSide).on("change", function(e, data){ 
-            if($(".concurr-action option:selected", cloneValSide).val() == 'Reject'){
+            if($(".concurr-action option:selected", cloneValSide).val() == 'Reject Concurrence'){
                 $(".sidebar-remarks-textarea", cloneValSide).show();
             }
             else{
@@ -268,10 +274,23 @@ function showSideBar(idval, data){
         }
         
         function onSuccess(data){
+            clearMessage();
+            if(approval_status == "Reject Concurrence"){
+                displayMessage("Compliance Concurrence Rejected");    
+            }
+            else if(approval_status == "Reject Approval"){
+                displayMessage("Compliance Approval Rejected");    
+            }
+            else if(approval_status == "Approve"){
+                displayMessage("Compliance Approved");    
+            }
+            else if(approval_status == "Concur"){
+                displayMessage("Compliance Concurred");    
+            }            
             initialize();
         }
         function onFailure(error){
-            console.log(error);
+            displayMessage(error);
         }
         client_mirror.approveCompliance(compliance_history_id, approval_status,
             remarks, validity_date, next_due_date,                
@@ -284,36 +303,34 @@ function showSideBar(idval, data){
                 }
             }    
         );   
-    
-         
+         $(".datepick" ).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
+        });
+        $(".validity1-textbox-input" ).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
+        });
+        $(".duedate1-textbox-input" ).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
+        });
     });
 
     $('.half-width-task-details').append(cloneValSide);   
-    $(".datepick" ).datepicker({
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        dateFormat: "dd-M-yy",
-        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
-    });
-    $(".validity1-textbox-input" ).datepicker({
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        dateFormat: "dd-M-yy",
-        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
-    });
-    $(".duedate1-textbox-input" ).datepicker({
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        dateFormat: "dd-M-yy",
-        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
-    });
-
+   
 }
 
 function showTextbox(){

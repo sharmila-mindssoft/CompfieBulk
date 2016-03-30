@@ -1079,7 +1079,7 @@ function hidemenuseatingunit(){
     document.getElementById('autocompleteview').style.display = 'none';
 }
 function loadauto_text (textval) {
-    if($("#usertype").val() == ""){
+    if($("#usertype option:selected").val() == ""){
         displayMessage("Select Usertype");
         return false;
     }
@@ -1103,6 +1103,7 @@ function loadauto_text (textval) {
 function activate_text (element,checkval,checkname) {
   $("#seatingunitval").val(checkname);
   $("#seatingunit").val(checkval);
+  clearMessage();
 }
 //USergroup====================================================================================
 

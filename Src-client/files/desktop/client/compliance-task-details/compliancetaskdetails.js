@@ -85,7 +85,7 @@ function loadComplianceTaskDetails(data){
         if(data[k]['compliance_status'] == "Not Complied"){
             $('.days-text', cloneval).attr("style", "color:#f00;");
         }
-        if(data[k]['remarks'] != null || data[k]['remarks'] != "None"){
+        if(data[k]['remarks'] != null){
             $('.sno', cloneval).attr("style", "color:#f00;");
             $('.compliance-task', cloneval).attr("style", "color:#f00;");
             $('.domain', cloneval).attr("style", "color:#f00;");
@@ -103,6 +103,8 @@ function loadComplianceTaskDetails(data){
         }
         var compliance_history_id = data[k]["compliance_history_id"];
         $(cloneval, ".expand-compliance").on("click", function() {
+            $(".table-row-list").removeClass("active1");
+            $(cloneval, ".table-row-list").addClass("active1");
             showSideBar(compliance_history_id, data);
         });
 
@@ -368,7 +370,7 @@ $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
 });
 $(document).find('.js-filtertable-upcoming').each(function(){
-    $(this).filtertable().addFilter('.js-filtertable-upcoming');
+    $(this).filtertable().addFilter('.js-filter-upcoming');
 });
 $( document ).tooltip({
     position: {

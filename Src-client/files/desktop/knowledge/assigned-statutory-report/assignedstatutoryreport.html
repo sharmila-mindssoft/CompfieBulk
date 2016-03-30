@@ -1,6 +1,8 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
-
+<div class='loading-indicator-spin'>
+  <span><img src='/files/desktop/common/images/loading-img.gif' alt="">   </span>
+</div>
 <div class="content-container">
   <div class="content-area">
     <div class="add-container">
@@ -10,7 +12,7 @@
           <div class="field-label">Country<span class="mandatory">*</span>:</div>
           <div class="field-input">
             <select class="input-box" id="countries">
-              <option value="">Select</option>
+              <option value="">Select</option> 
             </select>
           </div>
         </div>
@@ -105,16 +107,16 @@
       <div class="clearfix"></div>
       <div class="grid-table-rpt default-display-none">
         <h1>Assigned Statutory </h1>
-
-      <br>
-        
+      <br>        
         <div class="clearfix"></div>
-
-        <table style="border-bottom:dotted 1px #999999;">
-       
+        <table style="border-bottom:dotted 1px #999999;">       
           <tbody class="tbody-assigned-statutory-list" >
           </tbody>
-        </table>
+        </table>        
+        <div align="center" style="padding-top:10px;">
+          <input type="button" value="Show more records" class="btn-submit" id="pagination">
+        </div>
+
         <p style="border-top:1px dashed #ccc;" class="total-records"></p>
       </div>
     </div>
