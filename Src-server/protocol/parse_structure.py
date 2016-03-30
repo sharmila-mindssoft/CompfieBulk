@@ -3933,6 +3933,28 @@ def parse_structure_VectorType_RecordType_mobile_ComplianceApplicability(data):
         lst.append(parse_structure_RecordType_mobile_ComplianceApplicability(item))
     return lst
 
+def parse_structure_RecordType_mobile_DomainWiseCount(data):
+    from protocol import mobile
+    return mobile.DomainWiseCount.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_mobile_DomainWiseCount(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(parse_structure_RecordType_mobile_DomainWiseCount(item))
+    return lst
+
+def parse_structure_RecordType_mobile_UnitWiseCount(data):
+    from protocol import mobile
+    return mobile.UnitWiseCount.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_mobile_UnitWiseCount(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(parse_structure_RecordType_mobile_UnitWiseCount(item))
+    return lst
+
 def parse_structure_VariantType_mobile_Request(data):
     from protocol import mobile
     return mobile.Request.parse_structure(data)

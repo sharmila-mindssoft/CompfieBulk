@@ -5214,7 +5214,7 @@ class ClientDatabase(Database):
         return seven_years_list
 
     def get_country_domain_timelines(
-        self, country_ids, domain_ids, years, client_id
+        self, country_ids, domain_ids, years, client_id=None
     ):
         country_wise_timelines = []
         for country_id in country_ids:
@@ -6104,23 +6104,23 @@ class ClientDatabase(Database):
                 unit_wise_compliances = []
                 for unit_id in unit_ids_list:
                     compliance_ids_list = [""] * 4
-                    if statutory_status in [1, 2, None, "None", ""]:
-                        if statutory_status in [1,None, "None", ""]: # Delayed compliance
-                            query = "SELECT compliance_id FROM tbl_compliance_history \
+                    if statutory_status in [1, 2, None, "None", "", 0]:
+                        if statutory_status in [1,None, "None", "", 0]: # Delayed compliance
+                            query = "SELECT group_concat(distinct compliance_id) FROM tbl_compliance_history \
                                 WHERE unit_id = '%d' AND completed_on > due_date AND \
-                                approve_status = 1"
+                                approve_status = 1" % unit_id
                             compliance_history_rows = self.select_all(query)
                             if len(compliance_history_rows) > 0:
                                 compliance_ids_list[0] = compliance_history_rows[0][0]
-                        if statutory_status in [2, None, "None", ""]: # Not complied
-                            query = "SELECT compliance_id FROM tbl_compliance_history \
+                        if statutory_status in [2, None, "None", "", 0]: # Not complied
+                            query = "SELECT group_concat(distinct compliance_id) FROM tbl_compliance_history \
                                 WHERE unit_id = '%d' AND (approve_status = 0 or \
                                 approve_status is null) AND due_date < now()" % unit_id
                             compliance_history_rows = self.select_all(query)
                             if len(compliance_history_rows) > 0:
                                 compliance_ids_list[1] = compliance_history_rows[0][0]
-                    if statutory_status in [4, None, "None", ""]:# Unassigned compliances
-                        query = "SELECT GROUP_CONCAT(compliance_id) FROM tbl_client_compliances \
+                    if statutory_status in [4, None, "None", "", 0]:# Unassigned compliances
+                        query = "SELECT GROUP_CONCAT(distinct compliance_id) FROM tbl_client_compliances \
                             WHERE client_statutory_id IN (SELECT client_statutory_id FROM \
                             tbl_client_statutories WHERE unit_id = '%d') and compliance_id \
                             NOT IN (SELECT compliance_id FROM tbl_assigned_compliances \
@@ -6128,8 +6128,8 @@ class ClientDatabase(Database):
                         result = self.select_all(query)
                         if len(result) > 0:
                             compliance_ids_list[3] = result[0][0]
-                    if statutory_status in [3, None, "None", ""]: # Not Opted
-                        query = "SELECT GROUP_CONCAT(compliance_id) FROM tbl_client_compliances where \
+                    if statutory_status in [3, None, "None", "", 0]: # Not Opted
+                        query = "SELECT GROUP_CONCAT(distinct compliance_id) FROM tbl_client_compliances where \
                             client_statutory_id IN (SELECT client_statutory_id FROM \
                             tbl_client_statutories WHERE unit_id = '%d') AND compliance_opted = 0" % (unit_id)
                         result = self.select_all(query)
@@ -7846,7 +7846,6 @@ class ClientDatabase(Database):
         escalation_condition = None if escalation_ids is None else "notification_id in (%s) AND read_status=0 AND user_id = '%d'" % (
             escalation_ids, session_user
         )
-        #print escalation_condition
         notification_count = 0
         reminder_count = 0
         escalation_count = 0
@@ -8092,6 +8091,77 @@ class ClientDatabase(Database):
                 bool(r["compliance_opted"])
             ))
         return applicability
+
+    def get_trend_chart_for_mobile(self, session_user):
+        years = self.get_last_7_years()
+        unit_ids = self.get_user_unit_ids(session_user)
+        unit_wise_details = []
+        for unit_id in [int(x) for x in unit_ids.split(",")]:
+            unit_details_column = "country_id, domain_ids"
+            unit_details_condition = "unit_id = '%d'" % unit_id
+            rows = self.get_data(
+                self.tblUnits, unit_details_column, unit_details_condition
+            )
+            country_id = rows[0][0]
+            domain_ids = rows[0][1]
+            country_ids_list = [country_id]
+            domain_ids_list = [int(x) for x in domain_ids.split(",")]
+            country_domain_timelines = self.get_country_domain_timelines(
+                country_ids_list, domain_ids_list, years
+            )
+            chart_data = []
+            for country_wise_timeline in country_domain_timelines:
+                country_id = country_wise_timeline[0]
+                domain_wise_timelines = country_wise_timeline[1]
+                domain_wise_details = []
+                for domain_wise_timeline in domain_wise_timelines:
+                    year_wise_count = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
+                    domain_id = domain_wise_timeline[0]
+                    start_end_dates = domain_wise_timeline[1]
+
+                    history_columns = "group_concat(compliance_history_id)"
+                    history_condition = "compliance_id in ( SELECT compliance_id \
+                    FROM %s WHERE domain_id = '%d') AND unit_id = '%d'" % (
+                        self.tblCompliances, domain_id, unit_id
+                    )
+                    history_rows = self.get_data(
+                        self.tblComplianceHistory, history_columns,
+                        history_condition
+                    )
+                    compliance_history_ids = history_rows[0][0]
+
+                    if compliance_history_ids not in [None, '', "None"]:
+                        for index, dates in enumerate(start_end_dates):
+                            columns = "count(*) as total, sum(case when approve_status = 1 then 1 " + \
+                                "else 0 end) as complied"
+                            condition = "due_date between '{}' and '{}'".format(
+                                dates["start_date"], dates["end_date"]
+                            )
+                            condition += " and compliance_history_id in ({})".format(compliance_history_ids)
+                            rows = self.get_data(
+                                self.tblComplianceHistory,
+                                columns, condition
+                            )
+                            if len(rows) > 0:
+                                row = rows[0]
+                                total_compliances = row[0]
+                                complied_compliances = row[1] if row[1] != None else 0
+                                year_wise_count[index][0] += int(total_compliances) if total_compliances is not None else 0
+                                year_wise_count[index][1] += int(complied_compliances) if complied_compliances is not None else 0
+
+                    for index, count_of_year in enumerate(year_wise_count):
+                        domain_wise_details.append(
+                            mobile.DomainWiseCount(
+                                domain_id=domain_id,
+                                year=years[index],
+                                total_compliances=int(count_of_year[0]),
+                                complied_compliances_count=int(count_of_year[1])
+                            ))
+            unit_wise_details.append(mobile.UnitWiseCount(
+                unit_id=unit_id,
+                domain_wise_count=domain_wise_details
+            ))
+        return unit_wise_details
 
     def get_compliance_history_for_mobile(self, user_id, request):
         compliance_history_id = request.compliance_history_id
