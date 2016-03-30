@@ -1358,7 +1358,7 @@ def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Le
     data = parse_list(data)
     d = {}
     for key, value in data:
-        key = parse_structure_CustomTextType_50(key)
+        key = parse_structure_Text(key)
         value = parse_structure_VectorType_RecordType_dashboard_Level1Compliance(value)
         d[key] = value
     return d

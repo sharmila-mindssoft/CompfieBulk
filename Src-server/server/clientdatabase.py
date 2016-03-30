@@ -3495,7 +3495,7 @@ class ClientDatabase(Database):
                 else :
                     diff = (completion_date - due_date)
                     if r["duration_type_id"] == 2 :
-                        ageing = selfcalculate_ageing_in_hours(diff)
+                        ageing = self.calculate_ageing_in_hours(diff)
                     else :
                         ageing = diff
 

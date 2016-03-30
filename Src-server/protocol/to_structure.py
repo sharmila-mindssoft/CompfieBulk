@@ -1439,7 +1439,7 @@ def to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level
     data = parse_dictionary(data)
     dict = {}
     for key, value in data.items():
-        key = to_structure_CustomTextType_50(key)
+        key = to_structure_Text(key)
         value = to_structure_VectorType_RecordType_dashboard_Level1Compliance(value)
         dict[key] = value
     return dict
