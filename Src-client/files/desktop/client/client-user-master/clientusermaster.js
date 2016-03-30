@@ -317,7 +317,7 @@ function loadUserUpdate(userId){
 }
 
 $("#submit").click(function(){
-    var userId = $("#user-id").val().trim();
+    var userId = $("#user-id").val();
 	var usertype = $('#usertype').val().trim();
 	var employeename = $('#employee-name').val().trim();	
 	var employeeid = $('#employee-id').val().trim();
@@ -363,14 +363,14 @@ $("#submit").click(function(){
 	}
     console.log(seatingunit);
     if(usertype == ""){
-        displayMessage("Select Usertype");
+        displayMessage("Select User Type");
         return;
     }	
 	else if(employeename == ''){
 		displayMessage("Enter Employee Name");
 	}
 	else if(usergroup == ''){
-		displayMessage("Enter Usergroup");
+		displayMessage("Enter User Group");
 	}
 	else if(userlevel == ''){
 		displayMessage("Select User Level");
@@ -1079,20 +1079,24 @@ function hidemenuseatingunit(){
     document.getElementById('autocompleteview').style.display = 'none';
 }
 function loadauto_text (textval) {
-  document.getElementById('autocompleteview').style.display = 'block';
-  var units = unitList;
-  var suggestions = [];
-  $('#autocompleteview ul').empty();
-  if(textval.length>0){
-    for(var i in units){
-      if (~units[i]["unit_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],units[i]["unit_name"]]);
+    if($("#usertype").val() == ""){
+        displayMessage("Select Usertype");
+        return false;
     }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview ul').append(str);
-    $("#seatingunit").val('');
+    document.getElementById('autocompleteview').style.display = 'block';
+    var units = unitList;
+    var suggestions = [];
+    $('#autocompleteview ul').empty();
+    if(textval.length>0){
+        for(var i in units){
+            if (~units[i]["unit_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],units[i]["unit_name"]]);
+        }
+        var str='';
+        for(var i in suggestions){
+            str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+        }
+        $('#autocompleteview ul').append(str);
+        $("#seatingunit").val('');
     }
 }
 //set selected autocomplte value to textbox
