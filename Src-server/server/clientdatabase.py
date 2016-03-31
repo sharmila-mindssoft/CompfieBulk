@@ -4949,7 +4949,7 @@ class ClientDatabase(Database):
         filter_id=None, filter_type=None
     ):
         # Units related to the selected country and domain
-        unit_columns = "group_concat(unit_id)"
+        unit_columns = "unit_id"
         unit_condition = "country_id = '%d' " % country_id
         unit_condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
                 "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
@@ -4973,20 +4973,26 @@ class ClientDatabase(Database):
                 unit_condition += " AND unit_id ='%d' " % (
                     filter_id
                 )
-        rows = self.get_data(self.tblUnits, unit_columns, unit_condition)
+        unit_result_rows = self.get_data(self.tblUnits, unit_columns, unit_condition)
+        unit_rows = ()
+        for row in unit_result_rows:
+            unit_rows += row
         unit_ids = None
-        if rows:
-            unit_ids = rows[0][0]
+        if len(unit_rows) > 0:
+            unit_ids = ",".join(str(int(x)) for x in unit_rows)
 
-        # Compliances related to the domain
-        compliance_columns = "group_concat(compliance_id)"
+        # Compliances related to the domain sharmi
+        compliance_columns = "compliance_id"
         compliance_condition = "domain_id = '{}'".format(domain_id)
-        rows = self.get_data(
+        compliance_result_rows = self.get_data(
             self.tblCompliances, compliance_columns, compliance_condition
         )
+        compliance_rows = ()
+        for row in compliance_result_rows:
+            compliance_rows += row
         compliance_ids = None
-        if rows:
-            compliance_ids = rows[0][0]
+        if len(compliance_rows) > 0:
+            compliance_ids = ",".join(str(int(x)) for x in compliance_rows)
 
         result = self.get_client_statutory_ids_and_unit_ids_for_trend_chart(
             country_id, domain_id, client_id, filter_id, filter_type
@@ -5011,6 +5017,7 @@ class ClientDatabase(Database):
         country_domain_timelines = self.get_country_domain_timelines(
             country_ids, domain_ids, years, client_id)
         chart_data = []
+        count_flag = 0
         for country_wise_timeline in country_domain_timelines:
             country_id = country_wise_timeline[0]
             domain_wise_timelines = country_wise_timeline[1]
@@ -5041,6 +5048,7 @@ class ClientDatabase(Database):
                             year_wise_count[index][1] += int(complied_compliances) if complied_compliances is not None else 0
             compliance_chart_data = []
             for index, count_of_year in enumerate(year_wise_count):
+                count_flag += int(count_of_year[0])
                 compliance_chart_data.append(
                     dashboard.CompliedMap(
                         year=years[index],
@@ -5051,7 +5059,7 @@ class ClientDatabase(Database):
                 filter_id=country_id,
                 complied_compliance=compliance_chart_data
             ))
-        return years, chart_data
+        return years, chart_data, count_flag
 
     def get_trend_chart_drill_down(
         self, country_ids, domain_ids, filter_ids,
@@ -5229,6 +5237,7 @@ class ClientDatabase(Database):
         country_domain_timelines = self.get_country_domain_timelines(
             country_ids, domain_ids, years, client_id)
         chart_data = []
+        count_flag = 0
         for filter_id in filter_ids:
             year_wise_count = [
                 [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]
@@ -5262,6 +5271,7 @@ class ClientDatabase(Database):
                                 year_wise_count[index][1] += complied_compliances if complied_compliances is not None else 0
             compliance_chart_data = []
             for index, count_of_year in enumerate(year_wise_count):
+                count_flag += int(count_of_year[0])
                 compliance_chart_data.append(
                     dashboard.CompliedMap(
                         year=years[index],
@@ -5272,7 +5282,7 @@ class ClientDatabase(Database):
                 filter_id=filter_id,
                 complied_compliance=compliance_chart_data
             ))
-        return years, chart_data
+        return years, chart_data, count_flag
 
     def get_last_7_years(self):
         seven_years_list = []
@@ -8146,7 +8156,6 @@ class ClientDatabase(Database):
         ])
         applicability = []
         for r in result :
-            #print r
             if r["document_name"] not in ("None", "", None):
                 name = "%s - %s" % (r["document_name"], r["compliance_task"])
             else :
