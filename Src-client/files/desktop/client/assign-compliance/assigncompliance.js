@@ -234,7 +234,7 @@ function load_secondwizard(){
 
         if(frequency != 'On Occurrence'){
           if(triggerdate == ''){
-          $('.triggerbefore', clone2).html('<input type="text" value="" class="input-box trigger" id="triggerdate'+statutoriesCount+'" />');
+          $('.triggerbefore', clone2).html('<input type="text" value="" class="input-box trigger" id="triggerdate'+statutoriesCount+'" maxlength="3"/>');
           $('.duedate', clone2).html('<input type="text" value="" class="input-box" id="duedate'+statutoriesCount+'" />');
           }
           else{

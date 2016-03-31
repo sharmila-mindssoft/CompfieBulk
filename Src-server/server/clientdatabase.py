@@ -5676,7 +5676,7 @@ class ClientDatabase(Database):
             else :
                 compliance_name = d["compliance_task"]
             if d["frequency_id"] in (2, 3) :
-                summary = "Repeats ever %s - %s" % (d["repeats_every"], d["repeat_type"])
+                summary = "Repeats every %s - %s" % (d["repeats_every"], d["repeat_type"])
             elif d["frequency_id"] == 4 :
                 summary = "To complete within %s - %s" % (d["duration"], d["duration_type"])
             else :
