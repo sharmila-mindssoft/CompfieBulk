@@ -1402,37 +1402,40 @@ class ClientDatabase(Database):
         return self.return_statutory_settings(result, client_id)
 
     def return_compliance_for_statutory_settings(
-        self, domain_id, unit_id
+        self, unit_id
     ):
-        query = "SELECT t1.client_statutory_id, t1.compliance_id, \
+        query = "SELECT @rownum := @rownum + 1 as row_number, t1.client_statutory_id, t1.compliance_id, \
             t1.statutory_applicable, t1.statutory_opted,\
             t1.not_applicable_remarks, \
             t1.compliance_applicable, t1.compliance_opted, \
             t1.compliance_remarks, \
             t2.compliance_task, t2.document_name, t2.statutory_mapping,\
             t2.statutory_provision, t2.compliance_description, \
-            t3.is_new\
-            FROM tbl_client_compliances t1 \
+            t3.is_new, (select domain_name from tbl_domains where domain_id = t3.domain_id)\
+            FROM (SELECT @rownum := 0) r, tbl_client_compliances t1 \
             INNER JOIN tbl_compliances t2 \
             ON t1.compliance_id = t2.compliance_id \
             INNER JOIN tbl_client_statutories t3 \
             ON t1.client_statutory_id = t3.client_statutory_id \
-            WHERE t3.domain_id = %s AND \
-            t3.unit_id = %s" % (
-                domain_id, unit_id
+            WHERE \
+            t3.unit_id = %s \
+            ORDER BY t3.domain_id, t2.statutory_mapping" % (
+                unit_id
             )
+        print query
         rows = self.select_all(query)
         columns = [
+            "row_number",
             "client_statutory_id", "compliance_id",
             "statutory_applicable", "statutory_opted",
             "not_applicable_remarks", "compliance_applicable",
             "compliance_opted", "compliance_remarks",
             "compliance_task", "document_name", "statutory_mapping",
             "statutory_provision", "compliance_description",
-            "is_new"
+            "is_new", "domain"
         ]
         results = self.convert_to_dict(rows, columns)
-        statutory_wise_compliances = {}
+        statutory_wise_compliances = []
         for r in results :
             statutory_opted = r["statutory_opted"]
             if statutory_opted is None :
@@ -1472,6 +1475,10 @@ class ClientDatabase(Database):
                 name = r["compliance_task"]
 
             compliance = clienttransactions.ComplianceApplicability(
+                statutory_name,
+                bool(r["statutory_applicable"]),
+                statutory_opted,
+                r["not_applicable_remarks"],
                 r["client_statutory_id"],
                 r["compliance_id"],
                 name,
@@ -1480,27 +1487,30 @@ class ClientDatabase(Database):
                 bool(r["compliance_applicable"]),
                 bool(compliance_opted),
                 compliance_remarks,
-                not bool(r["is_new"])
+                not bool(r["is_new"]),
+                r["domain"]
             )
 
-            level_1_statutories = statutory_wise_compliances.get(
-                statutory_name
-            )
-            if level_1_statutories is None :
-                level_1_statutories = clienttransactions.AssignedStatutory(
-                    r["client_statutory_id"],
-                    statutory_name,
-                    [compliance],
-                    bool(r["statutory_applicable"]),
-                    statutory_opted,
-                    r["not_applicable_remarks"]
-                )
-            else :
-                compliance_list = level_1_statutories.compliances
-                compliance_list.append(compliance)
-                level_1_statutories.compliances = compliance_list
+            statutory_wise_compliances.append(compliance)
 
-            statutory_wise_compliances[statutory_name] = level_1_statutories
+            # level_1_statutories = statutory_wise_compliances.get(
+            #     statutory_name
+            # )
+            # if level_1_statutories is None :
+            #     level_1_statutories = clienttransactions.AssignedStatutory(
+            #         r["client_statutory_id"],
+            #         statutory_name,
+            #         [compliance],
+            #         bool(r["statutory_applicable"]),
+            #         statutory_opted,
+            #         r["not_applicable_remarks"]
+            #     )
+            # else :
+            #     compliance_list = level_1_statutories.compliances
+            #     compliance_list.append(compliance)
+            #     level_1_statutories.compliances = compliance_list
+
+            # statutory_wise_compliances[statutory_name] = level_1_statutories
         return statutory_wise_compliances
 
     def return_statutory_settings(self, data, client_id):
@@ -1514,21 +1524,21 @@ class ClientDatabase(Database):
                 d["geography"],
                 d["postal_code"]
             )
-            domain_id = d["domain_id"]
+            # domain_id = d["domain_id"]
             # client_statutory_id = d["client_statutory_id"]
-            statutories = self.return_compliance_for_statutory_settings(
-                domain_id, unit_id
-            )
-            statutory_val = []
-            for key in sorted(statutories):
-                statutory_val.append(
-                    statutories[key]
-                )
+            # statutories = self.return_compliance_for_statutory_settings(
+            #     domain_id, unit_id
+            # )
+            # statutory_val = []
+            # for key in sorted(statutories):
+            #     statutory_val.append(
+            #         statutories[key]
+            #     )
 
             unit_statutories = unit_wise_statutories.get(unit_id)
             if unit_statutories is None :
-                statutory_dict = {}
-                statutory_dict[domain_name] = statutory_val
+                # statutory_dict = {}
+                # statutory_dict[domain_name] = statutory_val
                 unit_statutories = clienttransactions.UnitStatutoryCompliances(
                     unit_id,
                     unit_name,
@@ -1538,23 +1548,22 @@ class ClientDatabase(Database):
                     d["business_group_name"],
                     d["legal_entity_name"],
                     d["division_name"],
-                    statutory_dict
                 )
             else :
                 domain_list = unit_statutories.domain_names
                 domain_list.append(domain_name)
                 domain_list = list(set(domain_list))
-                statutory_dict = unit_statutories.statutories
-                domain_statutories = statutory_dict.get(domain_name)
-                if domain_statutories is None :
-                    domain_statutories = statutories.values()
-                else :
-                    domain_statutories.extend(statutories.values())
-                statutory_dict[domain_name] = domain_statutories
+                # statutory_dict = unit_statutories.statutories
+                # domain_statutories = statutory_dict.get(domain_name)
+                # if domain_statutories is None :
+                #     domain_statutories = statutories.values()
+                # else :
+                #     domain_statutories.extend(statutories.values())
+                # statutory_dict[domain_name] = domain_statutories
 
                 # set values
                 unit_statutories.domain_names = domain_list
-                unit_statutories.statutories = statutory_dict
+                # unit_statutories.statutories = statutory_dict
             unit_wise_statutories[unit_id] = unit_statutories
 
         return clienttransactions.GetStatutorySettingsSuccess(

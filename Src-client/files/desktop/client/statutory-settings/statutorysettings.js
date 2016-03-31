@@ -40,14 +40,14 @@ function actstatus(element){
         }else{
           $('.cremarkadd'+this.value).show();
         }
-      }  
+      }
     });
   }else{
     $(remarkbox).show();
     $(changestatusStatutories).each(function() {
       this.checked = false;
-      $('.cremarkadd'+this.value).hide();                     
-    });  
+      $('.cremarkadd'+this.value).hide();
+    });
   }
   accordionstatus = false;
 }
@@ -57,7 +57,7 @@ function compliancestatus(element, viewremarks){
   var remarkview = '.cremarkview'+$(element).val();
   var applicable = '#applicable'+$(element).val();
   var sClass = $(element).attr('class');
-  
+
   $('#cremarkvalue'+$(element).val()).val('');
   var optedval = $(element).is(":checked");
   var applicableval = $(applicable).val();
@@ -83,7 +83,7 @@ function compliancestatus(element, viewremarks){
 
   var actSelect = sClass.substr(sClass.lastIndexOf("s") + 1);
   var cStatus = false;
-  $('.'+sClass).each(function() { 
+  $('.'+sClass).each(function() {
     if(this.checked){
       cStatus = true;
     }
@@ -93,7 +93,7 @@ function compliancestatus(element, viewremarks){
     $('#act'+actSelect).prop("checked",true);
     $('.remark'+actSelect).hide();
 
-    $('.'+sClass).each(function() { 
+    $('.'+sClass).each(function() {
     var aStatus = $('#applicable'+this.value).val();
     var oStatus = "false";
     var cremark = $('.cremarkview'+this.value).text();
@@ -117,7 +117,7 @@ function compliancestatus(element, viewremarks){
     $('#act'+actSelect).prop("checked",false);
     $('.remark'+actSelect).show();
 
-    $('.'+sClass).each(function() { 
+    $('.'+sClass).each(function() {
       $('.cremarkadd'+this.value).hide();
     });
   }
@@ -170,7 +170,7 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
       var acttableRow=$('#act-templates .font1 .tbody-heading');
       var clone=acttableRow.clone();
       $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:100px;"> <label for="act'+actCount+'" style="margin-top:100px;" class="act-label"></label> ');
-      
+
       $('.actname', clone).html('<div style="float:left;margin-top:5px;">'+actname+'</div> <div style="float:right; width:500px;" class="default-display-none remark'+actCount+
         '" ><div style="float:right;  width:250px;margin-top:-3px;"> <input type="text" maxlength="500" id="remarkvalue'+actCount+
         '" value="'+not_applicable_remarks+'" class="input-box" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:5px;"> Remarks</div></div>');
@@ -178,13 +178,13 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
 
       if(applicable_status == false){
         $('.remark'+actCount).show();
-        $('#act'+actCount).each(function() { 
-          this.checked = false;           
+        $('#act'+actCount).each(function() {
+          this.checked = false;
         });
       }
 
       $('.tbody-statutorysettings').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
-      
+
       if(count==1){
         $('.accordion-content'+count).addClass("default");
       }
@@ -192,8 +192,8 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
       var complianceHeadingtableRow=$('#statutory-templates .compliance-heading');
       var clone1=complianceHeadingtableRow.clone();
       $('.accordion-content'+count).append(clone1);
-     
-      for(var compliance in complianceslist){    
+
+      for(var compliance in complianceslist){
         var statutoryprovision = '';
         var compliance_id = complianceslist[compliance]["compliance_id"];
         var compliance_applicable_status = complianceslist[compliance]["compliance_applicable_status"];
@@ -226,7 +226,7 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
         $('.statutoryprovision', clone2).html(openTag + complianceslist[compliance]["statutory_provision"] + closeTag);
         $('.compliancetask', clone2).html( openTag + complianceslist[compliance]["compliance_name"] + closeTag);
         $('.compliancedescription', clone2).html( openTag + complianceslist[compliance]["description"] + closeTag);
-        
+
         $('.complianceopted', clone2).html('<input type="checkbox" checked="checked" id="statutory'+
           statutoriesCount+'" value="'+statutoriesCount
           +'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this,'+
@@ -236,7 +236,7 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
           ' default-display-none" > <textarea id="cremarkvalue'+statutoriesCount+
           '" class="input-box" maxlength="500" style="height:30px;"  placeholder="Enter client decision"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></span><span class="cremarkview'+statutoriesCount+
           '"><abbr class="page-load tipso_style" title="'+compliance_remarks+'"><img src="images/icon-info.png"/>'+compliance_remarks_part+'</abbr></span>');
-        
+
         if(compliance_applicable_status){
           $('.applicable', clone2).html('<img src=\'/images/tick1bold.png\' title="Applicable"/> <input type="hidden" id="applicable'+statutoriesCount+
             '" value="'+compliance_applicable_status+'"> </input> ');
@@ -252,12 +252,12 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
         }
 
         if(compliance_opted_status == false){
-          $('#statutory'+statutoriesCount).each(function() { 
-            this.checked = false;           
+          $('#statutory'+statutoriesCount).each(function() {
+            this.checked = false;
           });
         }
         statutoriesCount = statutoriesCount + 1;
-      }  
+      }
       actCount = actCount + 1;
       count++;
     }
@@ -275,7 +275,7 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
       }else{
         accordionstatus = true;
       }
-      
+
     });
   });
 }
@@ -306,7 +306,7 @@ function submit_statutory(){
       }
       hideLoader();
     }
-    client_mirror.updateStatutorySettings(password, uVal, parseInt(uId), assignedStatutories, 
+    client_mirror.updateStatutorySettings(password, uVal, parseInt(uId), assignedStatutories,
       function (error, response) {
       if (error == null){
         onSuccess(response);
@@ -339,7 +339,7 @@ $("#submit").click(function() {
       for(var statutory in value){
         var applicableStatus = null;
         var notApplicableRemarks = null;
-        
+
         if($('#act'+actCount).is(":checked")){
           applicableStatus = true;
         }
@@ -356,8 +356,8 @@ $("#submit").click(function() {
 
       var complianceslist = value[statutory]["compliances"];
       var compliances = { };
-      for(var compliance in complianceslist){   
-        var client_statutory_id = complianceslist[compliance]["client_statutory_id"]; 
+      for(var compliance in complianceslist){
+        var client_statutory_id = complianceslist[compliance]["client_statutory_id"];
         var complianceId = complianceslist[compliance]["compliance_id"];
         var complianceApplicableStatus = false;
         var compliancenotApplicableRemarks = null;
@@ -388,7 +388,7 @@ $("#submit").click(function() {
           }else{
             compliancenotApplicableRemarks = compliance_remarks;
           }
-         
+
           if(compliancenotApplicableRemarks == null && compliance_remarks == null && applicableStatus == true){
             displayMessage("Remarks required for not opted compliance");
             saveflag = false;
@@ -400,7 +400,7 @@ $("#submit").click(function() {
         assignedstatutoriesData = client_mirror.updateStatutory(client_statutory_id, applicableStatus, notApplicableRemarks, complianceId, complianceApplicableStatus, compliancenotApplicableRemarks);
         assignedStatutories.push(assignedstatutoriesData);
         statutoriesCount++;
-      } 
+      }
       actCount++;
     }
   });
@@ -422,6 +422,16 @@ $("#cancel").click(function() {
 });
 
 function displayEdit(unit_id){
+  client_mirror.getStatutorySettingsCompliance(unit_id, 0,
+    function (error, response) {
+        if (error == null){
+          console.log(response)
+        }
+        else {
+          console.log(error)
+        }
+    }
+  )
   displayLoader();
   displayMessage("");
   var dispBusinessGroup;
@@ -558,14 +568,14 @@ $(".listfilter").keyup(function() {
   var filter4 = $("#filter4").val().toLowerCase();
   var filter5 = $("#filter5").val().toLowerCase();
   var filter6 = $("#filter6").val().toLowerCase();
- 
+
   var filteredList=[];
   for(var entity in assignedStatutoriesList) {
     var filter1val = assignedStatutoriesList[entity]["country_name"];
 
      var filter2val = '-';
     if(assignedStatutoriesList[entity]["business_group_name"] != null) filter2val = assignedStatutoriesList[entity]["business_group_name"];
-  
+
     var filter3val = assignedStatutoriesList[entity]["legal_entity_name"];
 
     var filter4val = '-';
@@ -578,11 +588,11 @@ $(".listfilter").keyup(function() {
       domains += domainList[i];
     }
     var filter6val = domains;
-    
-    if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2) && ~filter3val.toLowerCase().indexOf(filter3) && ~filter4val.toLowerCase().indexOf(filter4) && ~filter5val.toLowerCase().indexOf(filter5) && ~filter6val.toLowerCase().indexOf(filter6) ) 
+
+    if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2) && ~filter3val.toLowerCase().indexOf(filter3) && ~filter4val.toLowerCase().indexOf(filter4) && ~filter5val.toLowerCase().indexOf(filter5) && ~filter6val.toLowerCase().indexOf(filter6) )
     {
       filteredList.push(assignedStatutoriesList[entity]);
-    }   
+    }
   }
   loadStatutorySettingsList(filteredList);
   });
