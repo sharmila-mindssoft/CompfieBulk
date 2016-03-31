@@ -8,7 +8,7 @@ var statutoriesList;
 var complianceFrequencyList;
 
 var finalList;
-var pageSize;
+var pageSize = 500;
 var startCount;
 var endCount;
 
@@ -223,10 +223,13 @@ function loadCountwiseResult(filterList){
     lastIndustryName = industry_names;
   }
 
-  if(count > 1){
+  if(finalList.length > 0){
     if(endCount > finalList.length) endCount = finalList.length
-    $('.compliance_count').text("Showing " + 1 + " to " + endCount + " of " + Object.keys(finalList).length);
+    $('.compliance_count').text("Showing " + 1 + " to " + endCount + " of " + finalList.length);
+  }else{
+    $('.compliance_count').text('');
   }
+
   if(endCount >= finalList.length){
     $(document).ready(function($) {
     $('#accordion').find('.accordion-toggle').click(function(){
@@ -282,7 +285,6 @@ $(function() {
 
 
 function loadresult() {
-  pageSize = 5;
   startCount = 0;
   endCount = pageSize;
 
