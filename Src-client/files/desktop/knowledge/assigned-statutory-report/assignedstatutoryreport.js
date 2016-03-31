@@ -38,6 +38,15 @@ function displayLoader() {
 function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
+function textchangeloadingshow(){    
+    $('#pagination').attr('disabled','disabled');
+    $('#pagination').val('Loading...');
+}
+function textchangeloadinghide(){
+    $('#pagination').removeAttr('disabled', 'disabled');
+    $('#pagination').val('Show more records');
+}
+
 function initialize(){
     function onSuccess(data){
         countriesList = data['countries'];
@@ -227,20 +236,36 @@ function get_sub_array(object, start, end){
     return object.slice(start, end);
 }
 
-$('#pagination').click(function(e){
-    displayLoader();
+$(function() {
+    $('#pagination').click(function(e){
+        $(".loading-indicator-spin").show();
+        if($('.loading-indicator-spin').css('display') != 'none')
+        {
+            setTimeout(function(){  
+                showloadrecord();
+            }, 500);
+            
+        }
+        setTimeout(function(){  
+            $(".loading-indicator-spin").hide();
+        }, 500);
+        
+    });
+});
+function showloadrecord() {
+
     startCount = endCount;
     endCount = startCount + pageSize;
-    //var sub_list =  fullArrayList;
-    
+      
     var list = get_sub_array(fullArrayList, startCount, endCount);
     if(list.length < pageSize){
         $('#pagination').hide();
     }
-    //alert(startCount + '-' + endCount + '-' +sub_keys_list.length)
-    e.preventDefault();
+    
+    //e.preventDefault();
     for(var y = 0;  y < pageSize; y++){
         if(list[y] !=  undefined){
+
             if(Object.keys(list[y])[0] == "division_name"){
                 loadAssignedStatutoriesheading(list[y]);
             }    
@@ -252,8 +277,8 @@ $('#pagination').click(function(e){
             }                
         }        
     }
-    hideLoader();  
-});
+    //textchangeloadinghide();
+}
 
 function loadresult(finalList) {   
     endCount = pageSize;
@@ -310,16 +335,16 @@ function loadAssignedStatutoriesheading(data){
     var tablefilter = $('#statutory-list .tr-filter');
     var clonefilter = tablefilter.clone();
 
-    $('.groupsval').text(value["group_name"]);
+    $('.groupsval', clonefilter).text(value["group_name"]);
     businessGroup = value["business_group_name"];
     if (businessGroup == null)
         businessGroup = "Nil";
-    $('.bgroupsval').text(businessGroup);
-    $('.lentityval').text(value["legal_entity_name"]);
+    $('.bgroupsval', clonefilter).text(businessGroup);
+    $('.lentityval', clonefilter).text(value["legal_entity_name"]);
     divisionName = value["division_name"];
     if (divisionName == null)
         divisionName = "Nil";
-    $('.divisionval').text(divisionName);
+    $('.divisionval', clonefilter).text(divisionName);
     $('.tbody-assigned-statutory-list').append(clonefilter);
 
     var tableheading = $('#statutory-list .tr-heading');
