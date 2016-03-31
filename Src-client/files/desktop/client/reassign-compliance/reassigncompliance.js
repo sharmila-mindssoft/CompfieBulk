@@ -158,7 +158,7 @@ function load_allcompliances(userId, userName){
         }
 
         if(summary != null){
-          if(statutorydate != ''){
+          if(statutorydate.trim() != ''){
             statutorydate = summary + ' ( '+statutorydate+' )';
           }else{
             statutorydate = summary;

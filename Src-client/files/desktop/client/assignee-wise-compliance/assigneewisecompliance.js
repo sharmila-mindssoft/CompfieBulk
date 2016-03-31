@@ -118,6 +118,15 @@ function loadresult(filterList){
           if(statutorydate.trim() != '') statutorydate = statutorydate.replace(/,\s*$/, "");
           if(triggerdate.trim() != '') triggerdate = triggerdate.replace(/,\s*$/, "");
 
+          var summary = compliances[i]["summary"];
+          if(summary != null){
+            if(statutorydate.trim() != ''){
+              statutorydate = summary + ' ( '+statutorydate+' )';
+            }else{
+              statutorydate = summary;
+            }
+          }
+
           var tableRow3=$('#assignee-content-templates .table-assignee-content .table-row-assignee-content');
           var clone3=tableRow3.clone();
           var cDescription = compliances[i]["description"];

@@ -122,9 +122,22 @@ function loadresult(filterList){
           else if(sMonth == 11) sMonth = "November"
           else if(sMonth == 12) sMonth = "December"
             
-          triggerdate +=  tDays + " Days";
-          statutorydate +=  sDay + ' - ' + sMonth;
+          triggerdate +=  tDays + " Days" + ', ';
+          statutorydate +=  sDay + ' - ' + sMonth +', ';
         }
+
+        if(statutorydate.trim() != '') statutorydate = statutorydate.replace(/,\s*$/, "");
+        if(triggerdate.trim() != '') triggerdate = triggerdate.replace(/,\s*$/, "");
+
+        var summary = compliancelists[compliancelist][i]["summary"];
+        if(summary != null){
+          if(statutorydate.trim() != ''){
+            statutorydate = summary + ' ( '+statutorydate+' )';
+          }else{
+            statutorydate = summary;
+          }
+        }
+        
         var tableRow3=$('#unit-content-templates .table-unit-content .table-row-unit-content');
         var clone3=tableRow3.clone();
         var cDescription = compliancelists[compliancelist][i]["description"];
