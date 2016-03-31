@@ -15,6 +15,7 @@ from types import *
 from types import *
 from server.emailcontroller import EmailHandler
 from server.constants import KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+import logger
 
 __all__ = [
     "ClientDatabase"
@@ -786,6 +787,7 @@ class ClientDatabase(Database):
                 short_name, email_id, password, employee_name, employee_code
             )
         except Exception, e:
+            logger.logClient("error", "clientdatabase.py-notify-user", e)
             print "Error while sending email : {}".format(e)
 
     def save_user(self, user_id, user, session_user, client_id):
@@ -1639,6 +1641,7 @@ class ClientDatabase(Database):
             db_con.commit()
             db_con.close()
         except Exception, e :
+            logger.logClient("error", "clientdatabase.py-update_opted_status_in_knowledge", e)
             print e
             db_con.rollback()
 
@@ -2591,14 +2594,39 @@ class ClientDatabase(Database):
                 s_day = date["statutory_date"]
                 current_date = n_date = datetime.date.today()
 
-                if s_date.statutory_month is not None :
-                    n_date = n_date.replace(month=s_month)
-
                 if s_date.statutory_date is not None :
-                    n_date = n_date.replace(day=s_day)
+                    try :
+                        n_date = n_date.replace(day=int(s_day))
+                    except ValueError :
+                        if n_date.month == 12 :
+                            days = 31
+                        else :
+                            days = (n_date.replace(month=n_date.month+1, day=1) - datetime.timedelta(days=1)).day
+                        n_date = n_date.replace(day=days)
 
+                if s_date.statutory_month is not None :
+                    if s_date.statutory_date is not None :
+                        n_date = n_date.replace(day=s_day, month=int(s_month))
+                    else :
+                        try :
+                            n_date = n_date.replace(month=int(s_month))
+                        except ValueError :
+                            if n_date.month == 12 :
+                                days = 31
+                            else :
+                                days = (n_date.replace(day=1, month=s_month+1) - datetime.timedelta(days=1)).day
+                                print days
+                            n_date = n_date.replace(day=days, month=int(s_month))
                 if current_date > n_date:
-                    n_date = n_date.replace(year=current_year+1)
+                    try :
+                        n_date = n_date.replace(year=current_year+1)
+                    except ValueError :
+                        if n_date.month == 12 :
+                            days = 31
+                        else :
+                            days = (n_date.replace(day=1, month=n_date.month+1, year=current_year+1) - datetime.timedelta(days=1)).day
+                            print days
+                        n_date = n_date.replace(day=days, year=current_year+1)
 
                 due_date = n_date.strftime("%d-%b-%Y")
                 due_date_list.append(due_date)
@@ -3492,7 +3520,7 @@ class ClientDatabase(Database):
                 else :
                     diff = (completion_date - due_date)
                     if r["duration_type_id"] == 2 :
-                        ageing = selfcalculate_ageing_in_hours(diff)
+                        ageing = self.calculate_ageing_in_hours(diff)
                     else :
                         ageing = diff
 
@@ -3940,7 +3968,10 @@ class ClientDatabase(Database):
                 unit_address = unit[3]
 
                 query = "select c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
-                        ac.assignee, cf.frequency from tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
+                        ac.assignee, cf.frequency, c.frequency_id, c.duration, c.repeats_every, \
+                        (select duration_type from tbl_compliance_duration_type where duration_type_id = c.duration_type_id) AS duration_type, \
+                        (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = c.repeats_type_id) AS repeat_type \
+                        from tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
                         tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
                         ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
                         cs.country_id = %s and cs.domain_id = %s and cs.unit_id like '%s' \
@@ -3978,11 +4009,18 @@ class ClientDatabase(Database):
                     if(validity_date is not None):
                         validity_date = self.datetime_to_string(compliance[3])
 
+                    if compliance[7] in (2, 3) :
+                        summary = "Repeats every %s - %s" % (compliance[9], compliance[11])
+                    elif compliance[7] == 4 :
+                        summary = "To complete within %s - %s" % (compliance[8], compliance[10])
+                    else :
+                        summary = None
+
                     compliances_list.append(
                         clientreport.ComplianceUnit(
                             compliance_name, unit_address,
                             compliance_frequency, description, statutory_date,
-                            due_date, validity_date
+                            due_date, validity_date, summary
                             )
                         )
                 unit_wise_compliances[unit_name] = compliances_list
@@ -4050,17 +4088,20 @@ class ClientDatabase(Database):
                 concurrence_person = assignee[2]
                 approval_person = assignee[3]
                 query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
-                        ac.assignee, cf.frequency FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
+                        ac.assignee, cf.frequency, c.frequency_id, c.duration, c.repeats_every, \
+                        (select duration_type from tbl_compliance_duration_type where duration_type_id = c.duration_type_id) AS duration_type, \
+                        (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = c.repeats_type_id) AS repeat_type \
+                        FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
                         tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
-                        ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
+                        ch.compliance_id = ac.compliance_id and ch.next_due_date = ac.due_date and \
                         cs.country_id = %s and cs.domain_id = %s and cs.unit_id in (%s) \
                         and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
                         and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee = '%s' " % (
                         country_id, domain_id,
                         unit_ids, assignee_id
                     )
-
-                # print query
+                #and ch.unit_id = ac.unit_id
+                #print query
                 compliance_rows = self.select_all(query)
 
                 compliances_list = []
@@ -4089,12 +4130,19 @@ class ClientDatabase(Database):
                     if(validity_date is not None):
                         validity_date = self.datetime_to_string(compliance[3])
 
+                    if compliance[7] in (2, 3) :
+                        summary = "Repeats every %s - %s" % (compliance[9], compliance[11])
+                    elif compliance[7] == 4 :
+                        summary = "To complete within %s - %s" % (compliance[8], compliance[10])
+                    else :
+                        summary = None
+
                     compliances_list.append(
                         clientreport.ComplianceUnit(
                             compliance_name, "unit_name",
                             compliance_frequency, description,
                             statutory_date,
-                            due_date, validity_date)
+                            due_date, validity_date, summary)
                         )
 
                 assignee_wise_compliances.append(
@@ -4454,6 +4502,7 @@ class ClientDatabase(Database):
             notify_compliance_approved.start()
             return True
         except Exception, e:
+            logger.logClient("error", "clientdatabase.py-notifycomplianceapproved", e)
             print "Error while sending email : {}".format(e)
 
     def reject_compliance_approval(self, compliance_history_id, remarks,
@@ -4530,6 +4579,7 @@ class ClientDatabase(Database):
             notify_compliance_rejected_thread.start()
             return True
         except Exception, e:
+            logger.logClient("error", "clientdatabase.py-notify-compliance", e)
             print "Error while sending email : {}".format(e)
 
     def concur_compliance(self, compliance_history_id, remarks,
@@ -4681,16 +4731,33 @@ class ClientDatabase(Database):
                 unit_address = unit[3]
 
                 query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
-                        ac.assignee, cf.frequency FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
+                        ac.assignee, cf.frequency, c.frequency_id, c.duration, c.repeats_every, \
+                        (select duration_type from tbl_compliance_duration_type where duration_type_id = c.duration_type_id) AS duration_type, \
+                        (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = c.repeats_type_id) AS repeat_type \
+                        FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
                         tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
-                        ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
+                        ch.next_due_date = ac.due_date and \
                         cs.country_id = %s and cs.domain_id = %s and cs.unit_id like '%s' \
-                        and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
+                        and cs.client_statutory_id = cc.client_statutory_id \
                         and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee in (%s) and \
-                        c.statutory_mapping like '%s' " % (
+                        c.statutory_mapping like '%s' group by ac.compliance_id" % (
                         country_id, domain_id,
                         unit_id, user_ids, str(statutory_id+"%")
                     )
+
+                # query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
+                #         ac.assignee, cf.frequency FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
+                #         tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
+                #         ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
+                #         cs.country_id = %s and cs.domain_id = %s and cs.unit_id like '%s' \
+                #         and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
+                #         and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee in (%s) and \
+                #         c.statutory_mapping like '%s' " % (
+                #         country_id, domain_id,
+                #         unit_id, user_ids, str(statutory_id+"%")
+                #     )
+
+                #print query
                 compliance_rows = self.select_all(query)
 
                 compliances_list = []
@@ -4717,12 +4784,22 @@ class ClientDatabase(Database):
                     if(validity_date is not None):
                         validity_date = self.datetime_to_string(compliance[3])
 
+                    if compliance[7] in (2, 3) :
+                        summary = "Repeats every %s - %s" % (compliance[9], compliance[11])
+                    elif compliance[7] == 4 :
+                        summary = "To complete within %s - %s" % (compliance[8], compliance[10])
+                    else :
+                        summary = None
+
                     compliances_list.append(clientreport.ComplianceUnit(
                         compliance_name, unit_address,
                         compliance_frequency, description, statutory_date,
-                        due_date, validity_date
+                        due_date, validity_date, summary
                     ))
-                unit_wise_compliances[unit_name] = compliances_list
+
+                if len(compliances_list) > 0 :
+                    unit_wise_compliances[unit_name] = compliances_list
+
             service_provider_wise_compliances_list.append(clientreport.ServiceProviderCompliance(
                 service_provider_name, address, contract_from, contract_to, contact_person, contact_no,
                 unit_wise_compliances))
@@ -6116,7 +6193,7 @@ class ClientDatabase(Database):
                             compliance_history_rows = self.select_all(query)
                             if len(compliance_history_rows) > 0:
                                 compliance_ids_list[0] = compliance_history_rows[0][0]
-                        if statutory_status in [2, None, "None", "", 0]: # Not complied 
+                        if statutory_status in [2, None, "None", "", 0]: # Not complied
                             query = "SELECT group_concat(distinct compliance_id) FROM tbl_compliance_history \
                                 WHERE unit_id = '%d' AND (approve_status = 0 or \
                                 approve_status is null) AND due_date < now()" % unit_id
@@ -7647,6 +7724,7 @@ class ClientDatabase(Database):
             )
             notify_on_occur_thread.start()
         except Exception, e:
+            logger.logClient("error", "clientdatabase.py-start-on-occurance", e)
             print "Error sending email :{}".format(e)
         return True
 
@@ -8120,14 +8198,14 @@ class ClientDatabase(Database):
                     year_wise_count = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
                     domain_id = domain_wise_timeline[0]
                     start_end_dates = domain_wise_timeline[1]
-                    
+
                     history_columns = "group_concat(compliance_history_id)"
                     history_condition = "compliance_id in ( SELECT compliance_id \
                     FROM %s WHERE domain_id = '%d') AND unit_id = '%d'" % (
                         self.tblCompliances, domain_id, unit_id
                     )
                     history_rows = self.get_data(
-                        self.tblComplianceHistory, history_columns, 
+                        self.tblComplianceHistory, history_columns,
                         history_condition
                     )
                     compliance_history_ids = history_rows[0][0]
@@ -8150,7 +8228,7 @@ class ClientDatabase(Database):
                                 complied_compliances = row[1] if row[1] != None else 0
                                 year_wise_count[index][0] += int(total_compliances) if total_compliances is not None else 0
                                 year_wise_count[index][1] += int(complied_compliances) if complied_compliances is not None else 0
-                    
+
                     for index, count_of_year in enumerate(year_wise_count):
                         domain_wise_details.append(
                             mobile.DomainWiseCount(
@@ -8175,10 +8253,10 @@ class ClientDatabase(Database):
 
         q = "SELECT t1.compliance_history_id, t1.unit_id, \
             t1.compliance_id, t1.start_date, t1.due_date, \
-            t1.completion_date, t1.documents, t1.document_size, \
+            t1.completion_date, t1.documents, IFNULL(t1.document_size, 0), \
             t1.validity_date, t1.next_due_date, t1.remarks, \
-            t1.completed_by, t1.completed_on, t1.concurrence_status, \
-            t1.concurred_by, t1.concurred_on, t1.approve_status, \
+            t1.completed_by, t1.completed_on, IFNULL(t1.concurrence_status, 0), \
+            t1.concurred_by, t1.concurred_on, IFNULL(t1.approve_status, 0), \
             t1.approved_by, t1.approved_on \
             FROM tbl_compliance_history t1 \
             WHERE t1.compliance_history_id > %s AND %s" % (
@@ -8197,38 +8275,46 @@ class ClientDatabase(Database):
         result = self.convert_to_dict(rows, column)
         history_list = []
         for r in result :
-            documents = r["documents"].stip().split(',')
             document_list = None
-            if len(documents) > 0 :
-                document_list = []
-                for d in documents :
-                    document_list.append(
-                        core.FileList(
-                            d,
-                            r["document_size"],
-                            None
+            if r["documents"] is not None :
+                documents = r["documents"].strip().split(',')
+                if len(documents) > 0 :
+                    document_list = []
+                    for d in documents :
+                        document_list.append(
+                            core.FileList(
+                                r["document_size"],
+                                d,
+                                None
+                            )
                         )
-                    )
 
             history_list.append(mobile.ComplianceHistory(
                 r["compliance_history_id"],
                 r["unit_id"],
                 r["compliance_id"],
-                r["start_date"],
-                r["due_date"],
-                r["completion_date"],
+                str(r["start_date"]),
+                str(r["due_date"]),
+                str(r["completion_date"]),
                 document_list,
-                r["validity_date"],
-                r["next_due_date"],
+                str(r["validity_date"]),
+                str(r["next_due_date"]),
                 r["remarks"],
                 r["completed_by"],
-                r["completed_on"],
-                r["concurrence_status"],
+                str(r["completed_on"]),
+                bool(r["concurrence_status"]),
                 r["concurred_by"],
-                r["concurred_on"],
-                r["approval_status"],
+                str(r["concurred_on"]),
+                bool(r["approve_status"]),
                 r["approved_by"],
-                r["approved_on"]
+                str(r["approved_on"])
             ))
 
         return history_list
+
+    def get_check_disk_space_for_mobile(self):
+        q = "SELECT total_disk_space, IFNULL(total_disk_space_used, 0) FROM \
+            tbl_client_groups"
+        row = self.select_one(q)
+        result = self.convert_to_dict(row, ["total_disk_space", "total_disk_space_used"])
+        return result

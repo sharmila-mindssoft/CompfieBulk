@@ -92,6 +92,7 @@ if(validate()){
       getDomains ();
       $("#domain-add").hide();
       $("#domain-view").show();
+      $("#search-domain-name").val('');
     }    function onFailure(error){
 
         if(error == "DomainNameAlreadyExists"){
@@ -113,6 +114,7 @@ if(validate()){
       getDomains();
       $("#domain-add").hide();
       $("#domain-view").show();
+      $("#search-domain-name").val('');
       }
     function onFailure(error) {
         if(error == "InvalidDomainId"){
@@ -163,6 +165,7 @@ function changeStatus (domainId,isActive) {
   {
     function onSuccess(response){
       getDomains ();
+      $("#search-domain-name").val('');
     }
     function onFailure(error){
       alert(error);

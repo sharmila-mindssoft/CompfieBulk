@@ -158,7 +158,7 @@ function load_allcompliances(userId, userName){
         }
 
         if(summary != null){
-          if(statutorydate != ''){
+          if(statutorydate.trim() != ''){
             statutorydate = summary + ' ( '+statutorydate+' )';
           }else{
             statutorydate = summary;
@@ -363,8 +363,8 @@ function submitcompliance(){
   var day = d.getDate();
   var output = d.getFullYear() + '/' + month + '/' + day;
   var currentDate = new Date(output);
-
   var selectedStatus = false;
+  
   for(ucompliance in userCompliances){
     var userUnitwiseCompliance = userCompliances[ucompliance]["units"];
     for(var entity in userUnitwiseCompliance){
@@ -383,7 +383,6 @@ function submitcompliance(){
             var compliance_history_id = actList[actentity]["compliance_history_id"];
             var cfrequency = actList[actentity]["compliance_frequency"];
             var compliance_name = actList[actentity]["compliance_name"];
-
             var due_date = null;
             if(cfrequency != 'On Occurrence'){
               due_date =  $('#duedate'+statutoriesCount).val();

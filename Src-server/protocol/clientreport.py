@@ -16,6 +16,7 @@ from protocol.parse_structure import (
     parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ActivityCompliance,
     parse_structure_VectorType_RecordType_core_ServiceProvider,
     parse_structure_CustomTextType_500,
+    parse_structure_OptionalType_CustomTextType_50,
     parse_structure_VectorType_RecordType_clientreport_UserName,
     parse_structure_VectorType_RecordType_clientreport_User,
     parse_structure_MapType_SignedIntegerType_8_VectorType_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
@@ -107,6 +108,7 @@ from protocol.to_structure import (
     to_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ApplicabilityCompliance,
     to_structure_OptionalType_SignedIntegerType_8,
     to_structure_CustomTextType_50,
+    to_structure_OptionalType_CustomTextType_50,
     to_structure_EnumType_core_COMPLIANCE_STATUS,
     to_structure_CustomTextType_100, to_structure_EnumType_core_USER_TYPE,
     to_structure_VectorType_RecordType_clientreport_ActivityLog,
@@ -210,7 +212,7 @@ class GetComplianceDetailsReportFilters(Request):
 
 class GetComplianceDetailsReport(Request):
     def __init__(
-        self, country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, 
+        self, country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date,
         to_date, compliance_status, csv
     ):
         self.country_id = country_id
@@ -227,7 +229,7 @@ class GetComplianceDetailsReport(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-                "country_id", "domain_id", "statutory_id", "unit_id", "compliance_id", "assignee_id", 
+                "country_id", "domain_id", "statutory_id", "unit_id", "compliance_id", "assignee_id",
                 "from_date", "to_date", "compliance_status", "csv"
             ]
         )
@@ -252,7 +254,7 @@ class GetComplianceDetailsReport(Request):
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
         return GetComplianceDetailsReport(
-            country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, 
+            country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date,
             to_date, compliance_status, csv
         )
 
@@ -285,8 +287,8 @@ class GetRiskReportFilters(Request):
 
 class GetRiskReport(Request):
     def __init__(
-        self, country_id, domain_id, business_group_id, 
-        legal_entity_id, division_id, unit_id, level_1_statutory_name, 
+        self, country_id, domain_id, business_group_id,
+        legal_entity_id, division_id, unit_id, level_1_statutory_name,
         statutory_status, csv
     ):
         self.country_id = country_id
@@ -303,8 +305,8 @@ class GetRiskReport(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "country_id", "domain_id", "business_group_id", 
-                "legal_entity_id", "division_id", "unit_id", 
+                "country_id", "domain_id", "business_group_id",
+                "legal_entity_id", "division_id", "unit_id",
                 "level_1_statutory_name", "statutory_status", "csv"
             ]
         )
@@ -327,8 +329,8 @@ class GetRiskReport(Request):
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
         return GetRiskReport(
-            country_id, domain_id, business_group_id, 
-            legal_entity_id, division_id, unit_id, level_1_statutory_name, 
+            country_id, domain_id, business_group_id,
+            legal_entity_id, division_id, unit_id, level_1_statutory_name,
             statutory_status, csv
         )
 
@@ -579,7 +581,7 @@ class GetClientDetailsReportData(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "country_id", "business_group_id", "legal_entity_id", "division_id", 
+                "country_id", "business_group_id", "legal_entity_id", "division_id",
                 "unit_id", "domain_ids", "csv"
             ]
         )
@@ -627,7 +629,7 @@ class GetTaskApplicabilityStatusFilters(Request):
 
 class GetComplianceTaskApplicabilityStatusReport(Request):
     def __init__(
-        self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, 
+        self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id,
         statutory_name, applicable_status, csv
     ):
         self.country_id = country_id
@@ -643,7 +645,7 @@ class GetComplianceTaskApplicabilityStatusReport(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-                "country_id", "domain_id", "business_group_id", "legal_entity_id", "division_id", 
+                "country_id", "domain_id", "business_group_id", "legal_entity_id", "division_id",
                 "unit_id", "statutory_name", "applicable_status", "csv"
             ]
         )
@@ -666,7 +668,7 @@ class GetComplianceTaskApplicabilityStatusReport(Request):
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
         return GetComplianceTaskApplicabilityStatusReport(
-            country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, 
+            country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id,
             statutory_name, applicable_status,csv
         )
 
@@ -715,7 +717,7 @@ class GetComplianceActivityReport(Request):
         data = parse_dictionary(
             data, [
                 "user_type", "user_id", "domain_id", "country_id",
-                "level_1_statutory_name", "unit_id", "compliance_id", 
+                "level_1_statutory_name", "unit_id", "compliance_id",
                 "from_date", "to_date", "csv"
             ]
         )
@@ -773,7 +775,7 @@ class GetReassignedHistoryReportFilters(Request):
 
 class GetReassignedHistoryReport(Request):
     def __init__(
-        self, country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id, 
+        self, country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id,
         from_date, to_date, csv
     ):
         self.country_id = country_id
@@ -789,7 +791,7 @@ class GetReassignedHistoryReport(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "country_id", "domain_id", "unit_id", "level_1_statutory_id", "compliance_id", 
+            "country_id", "domain_id", "unit_id", "level_1_statutory_id", "compliance_id",
             "user_id", "from_date", "to_date", "csv"]
         )
         country_id = data.get("country_id")
@@ -811,7 +813,7 @@ class GetReassignedHistoryReport(Request):
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
         return GetReassignedHistoryReport(
-            country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, 
+            country_id, domain_id, unit_id, level_1_statutory_id, compliance_id,
             user_id, from_date, to_date, csv)
 
     def to_inner_structure(self):
@@ -879,7 +881,7 @@ class GetStatutoryNotificationsListReport(Request):
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
         return GetStatutoryNotificationsListReport(
-            country_name, domain_name, business_group_id, legal_entity_id, division_id, 
+            country_name, domain_name, business_group_id, legal_entity_id, division_id,
             unit_id, level_1_statutory_name, from_date, to_date, csv
         )
 
@@ -1872,9 +1874,9 @@ class Level1Compliance(object):
         statutory_mapping = data.get("statutory_mapping")
         statutory_mapping = parse_structure_Text(statutory_mapping)
         compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_500(compliance_name)
+        compliance_name = parse_structure_Text(compliance_name)
         description = data.get("description")
-        description = parse_structure_CustomTextType_500(description)
+        description = parse_structure_Text(description)
         penal_consequences = data.get("penal_consequences")
         penal_consequences = parse_structure_CustomTextType_500(penal_consequences)
         compliance_frequency = data.get("compliance_frequency")
@@ -1888,7 +1890,7 @@ class Level1Compliance(object):
         return {
             "statutory_mapping": to_structure_Text(self.statutory_mapping),
             "compliance_name": to_structure_CustomTextType_500(self.compliance_name),
-            "description": to_structure_CustomTextType_500(self.description),
+            "description": to_structure_Text(self.description),
             "penal_consequences": to_structure_CustomTextType_500(self.penal_consequences),
             "compliance_frequency": to_structure_CustomTextType_50(self.compliance_frequency),
             "repeats"  : to_structure_CustomTextType_500(self.repeats)
@@ -2192,7 +2194,7 @@ class ComplianceForUnit(object):
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_500(compliance_name)
         description = data.get("description")
-        description = parse_structure_CustomTextType_500(description)
+        description = parse_structure_Text(description)
         statutory_dates = data.get("statutory_dates")
         statutory_dates = parse_structure_VectorType_RecordType_core_StatutoryDate(statutory_dates)
         due_date = data.get("due_date")
@@ -2204,7 +2206,7 @@ class ComplianceForUnit(object):
     def to_structure(self):
         return {
             "compliance_name": to_structure_CustomTextType_500(self.compliance_name),
-            "description": to_structure_CustomTextType_500(self.description),
+            "description": to_structure_Text(self.description),
             "statutory_dates": parse_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
             "due_date": to_structure_CustomTextType_20(self.due_date),
             "validity_date": to_structure_CustomTextType_20(self.validity_date),
@@ -2231,7 +2233,7 @@ class ComplianceList(object):
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_VectorType_Text(compliance_name)
         description = data.get("description")
-        description = parse_structure_CustomTextType_500(description)
+        description = parse_structure_Text(description)
         penal_consequences = data.get("penal_consequences")
         penal_consequences = parse_structure_CustomTextType_500(penal_consequences)
         compliance_frequency = data.get("compliance_frequency")
@@ -2244,7 +2246,7 @@ class ComplianceList(object):
         return {
             "statutory_provision": to_structure_Text(self.statutory_provision),
             "compliance_name": to_structure_VectorType_Text(self.compliance_name),
-            "description": to_structure_CustomTextType_500(self.description),
+            "description": to_structure_Text(self.description),
             "penal_consequences": to_structure_CustomTextType_500(self.penal_consequences),
             "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
             "repeats": to_structure_CustomTextType_500(self.repeats),
@@ -2255,7 +2257,7 @@ class ComplianceList(object):
 #
 
 class ComplianceUnit(object):
-    def __init__(self, compliance_name, unit_address, compliance_frequency, description, statutory_dates, due_date, validity_date):
+    def __init__(self, compliance_name, unit_address, compliance_frequency, description, statutory_dates, due_date, validity_date, summary):
         self.compliance_name = compliance_name
         self.unit_address = unit_address
         self.compliance_frequency = compliance_frequency
@@ -2263,10 +2265,11 @@ class ComplianceUnit(object):
         self.statutory_dates = statutory_dates
         self.due_date = due_date
         self.validity_date = validity_date
+        self.summary = summary
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_name", "unit_address", "compliance_frequency", "description", "statutory_dates", "due_date", "validity_date"])
+        data = parse_dictionary(data, ["compliance_name", "unit_address", "compliance_frequency", "description", "statutory_dates", "due_date", "validity_date", "summary"])
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_500(compliance_name)
         unit_address = data.get("unit_address")
@@ -2274,24 +2277,27 @@ class ComplianceUnit(object):
         compliance_frequency = data.get("compliance_frequency")
         compliance_frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
         description = data.get("description")
-        description = parse_structure_CustomTextType_500(description)
+        description = parse_structure_Text(description)
         statutory_dates = data.get("statutory_dates")
         statutory_dates = parse_structure_VectorType_RecordType_core_StatutoryDate(statutory_dates)
         due_date = data.get("due_date")
         due_date = parse_structure_CustomTextType_20(due_date)
         validity_date = data.get("validity_date")
         validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
-        return ComplianceUnit(compliance_name, unit_address, compliance_frequency, description, statutory_dates, due_date, validity_date)
+        summary = data.get("summary")
+        summary = parse_structure_OptionalType_CustomTextType_50(summary)
+        return ComplianceUnit(compliance_name, unit_address, compliance_frequency, description, statutory_dates, due_date, validity_date, summary)
 
     def to_structure(self):
         return {
             "compliance_name": to_structure_CustomTextType_500(self.compliance_name),
             "unit_address": to_structure_CustomTextType_500(self.unit_address),
             "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
-            "description": to_structure_CustomTextType_500(self.description),
+            "description": to_structure_Text(self.description),
             "statutory_dates": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
             "due_date": to_structure_CustomTextType_20(self.due_date),
             "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
+            "summary": to_structure_OptionalType_CustomTextType_50(self.summary),
         }
 
 #

@@ -670,7 +670,7 @@ class UnitStatutoryCompliances(object):
     def to_structure(self):
         return {
             "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_250(self.address),
             "country_name": to_structure_CustomTextType_50(self.country_name),
             "domain_names": to_structure_VectorType_CustomTextType_50(self.domain_names),
@@ -1268,7 +1268,7 @@ class UNIT_WISE_STATUTORIES(object):
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_250(compliance_name)
         description = data.get("description")
-        description = parse_structure_CustomTextType_500(description)
+        description = parse_structure_Text(description)
         frequency = data.get("frequency")
         frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(frequency)
         statutory_date = data.get("statutory_date")
@@ -1289,7 +1289,7 @@ class UNIT_WISE_STATUTORIES(object):
         return {
             "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
             "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
-            "description": to_structure_CustomTextType_500(self.description),
+            "description": to_structure_Text(self.description),
             "frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.frequency),
             "statutory_date": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_date),
             "due_date": to_structure_OptionalType_VectorType_CustomTextType_20(self.due_date),
@@ -1324,7 +1324,7 @@ class UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(object):
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_250(compliance_name)
         description = data.get("description")
-        description = parse_structure_CustomTextType_500(description)
+        description = parse_structure_Text(description)
         frequency = data.get("frequency")
         frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(frequency)
         statutory_date = data.get("statutory_date")
@@ -1342,7 +1342,7 @@ class UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(object):
         return {
             "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
             "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
-            "description": to_structure_CustomTextType_500(self.description),
+            "description": to_structure_Text(self.description),
             "frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.frequency),
             "statutory_date": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_date),
             "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
@@ -1565,7 +1565,7 @@ class STATUTORYWISECOMPLIANCE(object):
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_250(compliance_name)
         description = data.get("description")
-        description = parse_structure_CustomTextType_500(description)
+        description = parse_structure_Text(description)
         compliance_frequency = data.get("compliance_frequency")
         compliance_frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
         statutory_date = data.get("statutory_date")
@@ -1588,7 +1588,7 @@ class STATUTORYWISECOMPLIANCE(object):
             "compliance_history_id": to_structure_OptionalType_UnsignedIntegerType_32(self.compliance_history_id),
             "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
             "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
-            "description": to_structure_CustomTextType_500(self.description),
+            "description": to_structure_Text(self.description),
             "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
             "statutory_date": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_date),
             "due_date": to_structure_CustomTextType_20(self.due_date),
@@ -1698,7 +1698,7 @@ class APPROVALCOMPLIANCE(object):
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_250(compliance_name)
         description = data.get("description")
-        description = parse_structure_CustomTextType_500(description)
+        description = parse_structure_Text(description)
         domain_name = data.get("domain_name")
         domain_name = parse_structure_CustomTextType_500(domain_name)
         file_names = data.get("file_names")
@@ -1742,7 +1742,7 @@ class APPROVALCOMPLIANCE(object):
         return {
             "compliance_history_id": to_structure_SignedIntegerType_8(self.compliance_history_id),
             "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
-            "description": to_structure_CustomTextType_500(self.description),
+            "description": to_structure_Text(self.description),
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "start_date": to_structure_CustomTextType_20(self.start_date),
             "due_date": to_structure_CustomTextType_20(self.due_date),
@@ -1890,7 +1890,7 @@ class ComplianceApplicability(object):
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_250(compliance_name)
         description = data.get("description")
-        description = parse_structure_CustomTextType_500(description)
+        description = parse_structure_Text(description)
         statutory_provision = data.get("statutory_provision")
         statutory_provision = parse_structure_Text(statutory_provision)
         compliance_applicable_status = data.get("compliance_applicable_status")
@@ -1913,7 +1913,7 @@ class ComplianceApplicability(object):
             "client_statutory_id": to_structure_UnsignedIntegerType_32(self.client_statutory_id),
             "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
             "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
-            "description": to_structure_CustomTextType_500(self.description),
+            "description": to_structure_Text(self.description),
             "statutory_provision": parse_structure_Text(self.statutory_provision),
             "compliance_applicable_status": to_structure_Bool(self.compliance_applicable_status),
             "compliance_opted_status": to_structure_OptionalType_Bool(self.compliance_opted_status),

@@ -90,7 +90,6 @@ function loadresult(filterList){
           var tDays = '';
           if(compliancelists[compliancelist][i]["statutory_dates"][j]["trigger_before_days"] != null) tDays = compliancelists[compliancelist][i]["statutory_dates"][j]["trigger_before_days"];
 
-
           if(sMonth == 1) sMonth = "January"
           else if(sMonth == 2) sMonth = "February"
           else if(sMonth == 3) sMonth = "March"
@@ -103,10 +102,25 @@ function loadresult(filterList){
           else if(sMonth == 10) sMonth = "October"
           else if(sMonth == 11) sMonth = "November"
           else if(sMonth == 12) sMonth = "December"
-            
-          triggerdate +=  tDays + " Days";
-          statutorydate +=  sDay + ' - ' + sMonth;
+          triggerdate +=  tDays + " Day(s), ";
+          statutorydate +=  sMonth +' '+ sDay + ', ';
         }
+
+        var summary = compliancelists[compliancelist][i]["summary"];
+        if(statutorydate.trim() != ''){
+          statutorydate = statutorydate.replace(/,\s*$/, "");
+        }
+        if(triggerdate.trim() != ''){
+          triggerdate = triggerdate.replace(/,\s*$/, "");
+        }
+        if(summary != null){
+          if(statutorydate.trim() != ''){
+            statutorydate = summary + ' ( '+statutorydate+' )';
+          }else{
+            statutorydate = summary;
+          }
+        }
+
         var tableRow3=$('#unit-content-templates .table-unit-content .table-row-unit-content');
         var clone3=tableRow3.clone();
         var cDescription = compliancelists[compliancelist][i]["description"];

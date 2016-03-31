@@ -119,7 +119,7 @@ def save_client_group(db, request, session_user):
             db.save_client_countries(client_id, request.country_ids)
             db.save_client_domains(client_id, request.domain_ids)
             db.save_incharge_persons(request, client_id)
-            db.save_client_user(request, session_user, client_id) 
+            db.save_client_user(request, session_user, client_id)
             db.update_client_db_details(
                 host, client_id, db_username,
                 db_password, request.short_name, database_name, db_port

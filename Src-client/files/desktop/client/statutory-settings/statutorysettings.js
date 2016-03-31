@@ -2,6 +2,10 @@ var assignedStatutoriesList;
 var sList;
 var assignedStatutories = [];
 var accordionstatus = true;
+var finalList;
+var pageSize = 100;
+var startCount;
+var endCount;
 
 function clearMessage() {
   $(".error-message").hide();
@@ -11,6 +15,14 @@ function displayMessage(message) {
   $(".error-message").text(message);
   $(".error-message").show();
 }
+
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
+
 
 function actstatus(element){
   var remarkbox = '.remark'+$(element).val();
@@ -274,6 +286,7 @@ function submit_statutory(){
     $('.popup-error-msg').html("Please Enter password");
     $('#password').focus();
   }else{
+    displayLoader();
     var uId = $("#unit").val();
     var uVal = $("#unitval").val();
     function onSuccess(data){
@@ -283,6 +296,7 @@ function submit_statutory(){
       getStatutorySettings ();
       $("#statutorysettings-add").hide();
       $("#statutorysettings-view").show();
+      hideLoader();
     }
     function onFailure(error){
       if(error == 'InvalidPassword'){
@@ -290,6 +304,7 @@ function submit_statutory(){
         $('#password').focus();
         $('#password').val("");
       }
+      hideLoader();
     }
     client_mirror.updateStatutorySettings(password, uVal, parseInt(uId), assignedStatutories, 
       function (error, response) {
@@ -314,7 +329,7 @@ $('.close').click(function(){
 
 
 $("#submit").click(function() {
-
+    displayLoader();
     displayMessage("");
     assignedStatutories = [];
     var statutoriesCount= 1;
@@ -334,6 +349,7 @@ $("#submit").click(function() {
           if(notApplicableRemarks.length==0){
             displayMessage("Remarks required for not opted act");
             saveflag = false;
+            hideLoader();
             return false;
           }
         }
@@ -376,6 +392,7 @@ $("#submit").click(function() {
           if(compliancenotApplicableRemarks == null && compliance_remarks == null && applicableStatus == true){
             displayMessage("Remarks required for not opted compliance");
             saveflag = false;
+            hideLoader();
             return false;
           }
         }
@@ -395,6 +412,7 @@ $("#submit").click(function() {
     $('#password').val("");
     $('#password').focus();
     window.scrollTo(0, 0);
+    hideLoader();
   }
 });
 
@@ -404,6 +422,7 @@ $("#cancel").click(function() {
 });
 
 function displayEdit(unit_id){
+  displayLoader();
   displayMessage("");
   var dispBusinessGroup;
   var dispLegalEntity;
@@ -412,25 +431,27 @@ function displayEdit(unit_id){
   $("#statutorysettings-view").hide();
   $("#statutorysettings-add").show();
   for(var entity in assignedStatutoriesList) {
-      var check_unit_id = assignedStatutoriesList[entity]["unit_id"];
-      if(unit_id == check_unit_id){
-         sList = assignedStatutoriesList[entity]["statutories"];
-         dispBusinessGroup = assignedStatutoriesList[entity]["business_group_name"];
-         dispLegalEntity = assignedStatutoriesList[entity]["legal_entity_name"];
-         dispDivision = assignedStatutoriesList[entity]["division_name"];
-         dispUnit = assignedStatutoriesList[entity]["unit_name"];
-        break;
-      }
+    var check_unit_id = assignedStatutoriesList[entity]["unit_id"];
+    if(unit_id == check_unit_id){
+       sList = assignedStatutoriesList[entity]["statutories"];
+       dispBusinessGroup = assignedStatutoriesList[entity]["business_group_name"];
+       dispLegalEntity = assignedStatutoriesList[entity]["legal_entity_name"];
+       dispDivision = assignedStatutoriesList[entity]["division_name"];
+       dispUnit = assignedStatutoriesList[entity]["unit_name"];
+      break;
     }
-
+  }
   load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision, dispUnit, unit_id);
+  hideLoader();
 }
 
-function loadStatutorySettingsList(assignedStatutoriesList){
-  var j = 1;
+function loadCountwiseStatutorySettings(assignedStatutoriesList){
+  var j = startCount + 1;
   var unit_id = 0;
-
   $(".tbody-statutorysettings-list").find("tr").remove();
+  if(endCount>finalList.length) endCount = finalList.length
+  if(finalList.length > 0) $('.view-count-message').text("Showing " + (startCount+1) + " to " + endCount + " of " + finalList.length);
+
     for(var entity in assignedStatutoriesList) {
       unit_id = assignedStatutoriesList[entity]["unit_id"];
       var bGroup = assignedStatutoriesList[entity]["business_group_name"];
@@ -456,12 +477,67 @@ function loadStatutorySettingsList(assignedStatutoriesList){
     }
 }
 
+function get_sub_array(object, start, end){
+    if(!end){ end=-1;}
+    return object.slice(start, end);
+}
+
+$(".pagination").click(function(event){
+  var text = $(event.target).attr('id');
+  var pageId = text.substring(text.lastIndexOf('w') + 1);
+  var type = '.page'
+
+  $(type).each( function( index, el ) {
+    $(el).removeClass( "active" );
+  });
+  $('#pageview'+pageId).addClass("active");
+
+  startCount = pageSize * (pageId-1);
+  endCount = pageSize * pageId;
+
+  var sub_list = get_sub_array(finalList, startCount, endCount);
+  loadCountwiseStatutorySettings(sub_list);
+});
+
+function loadStatutorySettingsList(assignedStatutoriesList) {
+  var listSize = Math.ceil(assignedStatutoriesList.length / pageSize);
+  startCount = 0;
+  endCount = pageSize;
+
+  if(assignedStatutoriesList.length > 0){
+    var str='<li id="pview1">«</li>';
+    $('.pagination').empty();
+    var j;
+    for(j=1; j<=listSize; j++){
+      if(j==1){
+        str += '<li class="page active" id="pageview'+j+'">'+j+'</li>';
+      }else{
+        str += '<li class="page" id="pageview'+j+'">'+j+'</li>';
+      }
+    }
+    str += '<li id="pview'+(j-1)+'">»</li>';
+    $('.pagination').append(str);
+  }else{
+    $('.pagination').empty();
+    $('.view-count-message').text('');
+  }
+
+  finalList = assignedStatutoriesList;
+  var sub_list = get_sub_array(finalList, startCount, endCount);
+
+  loadCountwiseStatutorySettings(sub_list);
+}
+
 function getStatutorySettings () {
+  displayLoader();
   function onSuccess(data){
-  assignedStatutoriesList = data["statutories"];
-  loadStatutorySettingsList(assignedStatutoriesList);
+    assignedStatutoriesList = data["statutories"];
+    loadStatutorySettingsList(assignedStatutoriesList);
+    hideLoader();
   }
   function onFailure(error){
+    displayMessage(error);
+    hideLoader();
   }
   client_mirror.getStatutorySettings(
     function (error, response) {

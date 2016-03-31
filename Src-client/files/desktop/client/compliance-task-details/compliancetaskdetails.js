@@ -85,7 +85,7 @@ function loadComplianceTaskDetails(data){
         if(data[k]['compliance_status'] == "Not Complied"){
             $('.days-text', cloneval).attr("style", "color:#f00;");
         }
-        if(data[k]['remarks'] != null || data[k]['remarks'] != "None"){
+        if(data[k]['remarks'] != null){
             $('.sno', cloneval).attr("style", "color:#f00;");
             $('.compliance-task', cloneval).attr("style", "color:#f00;");
             $('.domain', cloneval).attr("style", "color:#f00;");
@@ -103,6 +103,8 @@ function loadComplianceTaskDetails(data){
         }
         var compliance_history_id = data[k]["compliance_history_id"];
         $(cloneval, ".expand-compliance").on("click", function() {
+            $(".table-row-list").removeClass("active1");
+            $(cloneval, ".table-row-list").addClass("active1");
             showSideBar(compliance_history_id, data);
         });
 
@@ -144,6 +146,7 @@ function loadUpcomingCompliancesDetails(data){
 }
 function showSideBar(idval, data){
     $('.half-width-task-details').empty();
+    clearMessage();
     var d = new Date().toLocaleDateString('en-GB', {  
         year: 'numeric',
         month: 'short',
@@ -253,19 +256,25 @@ function showSideBar(idval, data){
                         return;
                     }                    
                 }
-                if(currentDate != null && validity_date != null){
+                if(parseMyDate(completion_date) > parseMyDate(currentDate)){
+                    displayMessage("Completion Date is not Greater than Current Date");
+                    return;
+                }
+                if(currentDate != null && next_due_date != null){
+                    console.log(parseMyDate(currentDate)+"---"+parseMyDate(next_due_date));
                     if(parseMyDate(currentDate) > parseMyDate(next_due_date)){
-                        displayMessage("Validity Date is Greater than Current Date");
+                        displayMessage("Next Due Date is Greater than Current Date");
                         return;
                     }
                 }
                 if(validity_date != null  && next_due_date != null){
-                    if(parseMyDate(next_due_date) > parseMyDate(validity_date)){
+                    if(parseMyDate(validity_date) > parseMyDate(next_due_date)){
                         displayMessage("Validity Date is Greater than or equal to Due Date");
                         return;
                     }
                 }
-                
+                alert("welcome to api");
+                return;
                 function onSuccess(data){
                     hideLoader();
                     initialize();
@@ -368,7 +377,7 @@ $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
 });
 $(document).find('.js-filtertable-upcoming').each(function(){
-    $(this).filtertable().addFilter('.js-filtertable-upcoming');
+    $(this).filtertable().addFilter('.js-filter-upcoming');
 });
 $( document ).tooltip({
     position: {

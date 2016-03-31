@@ -111,7 +111,7 @@ img, object {
 }
 .loading-indicator-spin span {
 	width: 100%;
-	position: absolute;
+	position: fixed;
 	top: 40%;
 	left: 0;
 	text-align: center;

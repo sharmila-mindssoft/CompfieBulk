@@ -9,7 +9,6 @@ import uuid
 import json
 import pytz
 from types import *
-from dateutil.parser import parse
 from protocol import (
     core, knowledgereport, technomasters,
     technotransactions, technoreports, general
@@ -19,6 +18,7 @@ from distribution.protocol import (
 )
 from replication.protocol import Change
 from server.emailcontroller import EmailHandler as email
+import logger
 
 __all__ = [
     "KnowledgeDatabase", "Database"
@@ -108,13 +108,16 @@ class Database(object) :
 
     def connect(self):
         assert self._connection is None
-        connection = mysql.connect(
-            host=self._mysqlHost, user=self._mysqlUser,
-            passwd=self._mysqlPassword, db=self._mysqlDatabase,
-            port=self._mysqlPort
-        )
-        connection.autocommit(False)
-        self._connection = connection
+        try :
+            connection = mysql.connect(
+                host=self._mysqlHost, user=self._mysqlUser,
+                passwd=self._mysqlPassword, db=self._mysqlDatabase,
+                port=self._mysqlPort
+            )
+            connection.autocommit(False)
+            self._connection = connection
+        except Exception, e :
+            logger.logKnowledge("error", "database.py-connect", e)
 
     def close(self):
         assert self._connection is not None
@@ -5059,15 +5062,19 @@ class KnowledgeDatabase(Database):
         return True
 
     def get_compliance_ids(self, client_statutory_id):
-        query = "SELECT group_concat(distinct compliance_id) \
+        query = "SELECT distinct compliance_id \
             FROM tbl_client_compliances \
             WHERE client_statutory_id = %s" % (client_statutory_id)
-        row = self.select_one(query)
-        return row[0]
+        row = self.select_all(query)
+        compliance_ids = []
+        if row :
+            for r in row :
+                compliance_ids.append(int(r[0]))
+        return compliance_ids
 
     def update_client_compliances(self, client_statutory_id, data, user_id, submited_on=None):
-        saved_compliance_ids = self.get_compliance_ids(client_statutory_id).strip()
-        saved_compliance_ids = [int(x) for x in saved_compliance_ids.strip().split(',') if x != '']
+        saved_compliance_ids = self.get_compliance_ids(client_statutory_id)
+        # saved_compliance_ids = [int(x) for x in saved_compliance_ids.strip().split(',') if x != '']
         for d in data :
             level_1_id = d.level_1_statutory_id
             applicable_status = int(d.applicable_status)

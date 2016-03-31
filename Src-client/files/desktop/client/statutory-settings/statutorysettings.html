@@ -1,14 +1,8 @@
 {% extends "files/desktop/client/home/container.html" %}
 {% block content %}
-<style type="text/css">
-/*  td, th {
-    border : 1px solid red;
-  }
-
-tbody {
-  border : 1px solid blue;
-}*/
-</style>
+ <div class='loading-indicator-spin'>
+    <span><img src='/files/desktop/common/images/loading-img.gif' alt="">  </span>
+  </div>
   <div class="content-container" id="statutorysettings-view">
     <div class="content-area">
       <h1>Statutory Settings </h1>
@@ -38,6 +32,17 @@ tbody {
           <tbody class="tbody-statutorysettings-list">
           </tbody>
         </table>
+      </div>
+
+      <div style="background-color: #ffffff;">
+        <div align="right">
+        <ul class="pagination">
+        </ul>
+        </div>
+
+        <div style="padding-bottom:10px;padding-top:10px;padding-right:10px;" align="right">
+         <p class="view-count-message" style="font-size:0.8em">
+        </div>
       </div>
       
     </div>

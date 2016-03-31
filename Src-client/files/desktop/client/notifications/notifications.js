@@ -18,20 +18,22 @@ function loadNotifications(notifications){
         var notificationText = notifications[key]["notification_text"];
         var extraDetails = notifications[key]["extra_details"];
         var updatedon = notifications[key]["updated_on"];
-        
         if(notifications[key]["read_status"]){
             readStatus = '';
         }
-        str += '<li class="'+readStatus+'" onclick="changeStatus('+notificationId+','+notifications[key]["read_status"]+')"><a href="#popup1" style="text-decoration: none;"> '+notificationText+'<p class="subtext"><span class="time">'+updatedon+'</span><span class="notification-cat">Category: '+extraDetails+'</span></p> </a></li>';
+        str += '<a href="#popup1" style="text-decoration: none;"><li id="notification'+notificationId+'" class="'+readStatus+'" onclick="changeStatus('+notificationId+','+notifications[key]["read_status"]+')"> '+notificationText+'<p class="subtext"><span class="time">'+updatedon+'</span><span class="notification-cat">Category: '+extraDetails+'</span></p> </li></a>';
     });
 
     if(str == ''){
-        str += '<li><a href="#popup1" style="text-decoration: none;"> '+notificationText+'<p class="subtext"><span class="time">'+updatedon+'</span><span class="notification-cat">Category: '+extraDetails+'</span></p> </a></li>';
+      str += '<li style="text-align:center">'+"No Notification Found"+"</li>"
     }
+
     $('#notificationsList').append(str);      
 }
 
 function changeStatus(notification_id, read_status){
+
+    $('#notification'+notification_id).removeClass( "unread" );
     $("#popup1").show();
     var nId;
     var act;

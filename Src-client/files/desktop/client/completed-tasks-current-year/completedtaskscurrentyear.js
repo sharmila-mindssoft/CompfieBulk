@@ -53,10 +53,6 @@ function activate_assignee (element,checkval,checkname, clickvalue) {
   $("#assignee"+clickvalue).val(checkval);
 }
 
-$(".hidemenu").click(function(){
-  $(".ac-textbox").hide();
-});
-
 function load_thirdwizard(){
 
   var arrowimage = " <img src=\'/images/right_arrow.png\'/> ";
@@ -205,12 +201,15 @@ function load_thirdwizard(){
           }
       });
 
-
         statutoriesCount = statutoriesCount + 1;
       }  
       actCount = actCount + 1;
       count++;
   }
+
+  $(".hidemenu").click(function(){
+    $(".ac-textbox").hide();
+  });
 
   if(count <= 1){
     var norecordtableRow=$('#no-record-templates .font1');
@@ -250,6 +249,24 @@ function validate_thirdtab(){
   return true;
 }
 
+function convert_date (data){
+  var date = data.split("-");
+  var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  for(var j=0;j<months.length;j++){
+      if(date[1]==months[j]){
+           date[1]=months.indexOf(months[j])+1;
+       }
+  }
+  if(date[1]<10){
+      date[1]='0'+date[1];
+  }
+  return new Date(date[2], date[1]-1, date[0]);
+}
+
+function daydiff(first, second) {
+    return (second-first)/(1000*60*60*24)
+}
+
 function submitcompliance(){
     displayLoader();
     var unit_id = parseInt($('.unitlist.active').attr('id'));;
@@ -271,6 +288,9 @@ function submitcompliance(){
           var due_date = $('#duedate'+statutoriesCount).val();
           var completion_date = $('#completiondate'+statutoriesCount).val();
           var completed_by = $('#assignee'+statutoriesCount).val();
+          var frequency_ = actCompliances[ac]["frequency"];
+          var compliance_name = actCompliances[ac]["compliance_name"];
+
           if(completed_by != '') completed_by = parseInt(completed_by);
 
           if(due_date == ''){
@@ -282,7 +302,7 @@ function submitcompliance(){
             displayMessage("Compliance Date Required");
             hideLoader();
             return false;
-          }else if(validity_date == ''){
+          }else if(validity_date == '' && frequency_ == 'Periodical'){
             displayMessage("Validity Date Required");
             hideLoader();
             return false;
@@ -290,10 +310,24 @@ function submitcompliance(){
             displayMessage("Assignee Required");
             hideLoader();
             return false;
+          }else if(validity_date != '' && frequency_ == 'Periodical'){
+            var convertDueDate = convert_date(due_date);
+            var convertValidityDate = convert_date(validity_date);
+            var dateDifference = daydiff(convertDueDate, convertValidityDate);
+            if (convertDueDate > convertValidityDate) {
+              displayMessage("Due date must be less than validity date for '" + compliance_name + "'");
+              hideLoader();
+              return false;
+            }else if(dateDifference > 90){
+              displayMessage("Invalid due date for '" + compliance_name + "'");
+              hideLoader();
+              return false;
+            }else{
+              displayMessage("");
+            }
           }else{
             displayMessage("");
           }
-
           compliance = client_mirror.getPastRecordsComplianceDict(unit_id, compliance_id, due_date, completion_date, file_list, validity_date, completed_by);
           compliance_list.push(compliance);
         }
@@ -476,6 +510,7 @@ $("#unit").click(function(event){
 
   var str='';
   $('#domain').empty();
+  $('#act').empty();
   for(var domain in domainsList){
     if($.inArray(domainsList[domain]["domain_id"], unitDomains) >= 0){
       str += '<li id="'+domainsList[domain]["domain_id"]+'" class="domainlist" >'+domainsList[domain]["domain_name"]+'</li>';
@@ -620,6 +655,7 @@ function load_firstwizard(){
   $('#legalentity').empty();
   $('#division').empty();
   $('#unit').empty();
+
 
   var str='';
   $('#country').empty();

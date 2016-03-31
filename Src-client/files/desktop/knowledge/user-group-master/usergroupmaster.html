@@ -8,7 +8,8 @@
       </div>
       <div class="clearfix"></div>
       <div class="grid-table">
-        <table>
+        <table class="js-filtertable">
+          <thead>
           <tr align="left">
             <th width="9%" align="center">#</th>
             <th>Group Name</th>
@@ -18,11 +19,12 @@
           </tr>
           <tr>
             <td align="center"></td>
-            <td><input type="text" name="groupNameSearch" id="groupNameSearch" class="filter-text-box"></td>
-            <td><input type="text" name="categoryNameSearch" id="categoryNameSearch" class="filter-text-box"></td>
+            <td><input type="text" name="groupNameSearch" id="groupNameSearch" class="filter-text-box js-filter"></td>
+            <td><input type="text" name="categoryNameSearch" id="categoryNameSearch" class="filter-text-box js-filter"></td>
             <td align="center"></td>
             <td align="center"></td>
           </tr>
+          </thead>
           <tbody class="tbody-usergroups-list">
           </tbody>
         </table>
