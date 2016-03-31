@@ -126,7 +126,7 @@ class ReplicationManager(object) :
                 return
             if type(r) is InvalidReceivedCount:
                 # print "InvalidReceivedCount sent %s"
-                # self._poll()
+                self._poll()
                 return
             assert r is not None
             self._parse_data(r.changes)
@@ -141,9 +141,7 @@ class ReplicationManager(object) :
         tbl_name = changes[0].tbl_name
         auto_id = self._auto_id_columns.get(tbl_name)
         column_count = self._columns_count.get(tbl_name)
-        # print tbl_name
         column_count -= 1
-        # print column_count
         assert auto_id is not None
         if error_ok:
             if column_count != len(changes):
@@ -158,10 +156,7 @@ class ReplicationManager(object) :
             else:
                 values.append(str(x.value))
             val = str(values)[1:-1]
-            # if i != 0 :
-            #     values += "," + values
-            # values.append(str(x.value))
-            # values.append["'" + x.value.replace("'", "\\'") + "'"]
+
         query = "INSERT INTO %s (%s, %s) VALUES(%s, %s);" % (
             tbl_name,
             auto_id,
@@ -169,23 +164,14 @@ class ReplicationManager(object) :
             changes[0].tbl_auto_id,
             val
         )
-        # print query
         try :
             pass
             self._db.execute(query)
-            # print "INSERT success ",  query
-            # print '' * 100
-            #
 
         except Exception, e:
             pass
             print e
-            # print
-            # print "self._received_count ", self._received_count
-            # print "self._temp_count ", self._temp_count
-            # print query
-            # print
-        self._temp_count = changes[-1].audit_trail_id
+            self._temp_count = changes[-1].audit_trail_id
 
     def _execute_update_statement(self, change):
         auto_id = self._auto_id_columns.get(change.tbl_name)
@@ -211,9 +197,7 @@ class ReplicationManager(object) :
         self._temp_count = change.audit_trail_id
 
     def _parse_data(self, changes):
-        self._get_received_count()
-        # print "begin _parse_data", self._received_count
-        # print "_temp_count ", self._temp_count
+        # self._get_received_count()
 
         if self._temp_count > self._received_count :
             return
@@ -230,9 +214,11 @@ class ReplicationManager(object) :
                 # Update
                 if change.action == "1":
                     if is_insert:
+                        # print "inerst 1 ------------- "
                         self._execute_insert_statement(changes_list)
                     is_insert = False
                     changes_list = []
+                    # print "update 1 ---------------"
                     self._execute_update_statement(change)
                 else:
                     if is_insert is False:
@@ -240,6 +226,7 @@ class ReplicationManager(object) :
                         auto_id = change.tbl_auto_id
                         tbl_name = change.tbl_name
                     if auto_id != change.tbl_auto_id or tbl_name != change.tbl_name:
+                        # print "insert 2 ---------------"
                         self._execute_insert_statement(changes_list)
                         changes_list = []
                     auto_id = change.tbl_auto_id
@@ -255,8 +242,8 @@ class ReplicationManager(object) :
             self._db.commit()
             # self._temp_count = 0
         except Exception, e:
-            # print(traceback.format_exc())
-            # print e
+            print(traceback.format_exc())
+            print e
             logger.logClient("error", "client.py-parse-data", e)
             logger.logClient("error", "client.py", traceback.format_exc())
 

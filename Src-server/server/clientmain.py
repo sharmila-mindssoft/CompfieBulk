@@ -86,7 +86,6 @@ class API(object):
         # self._databases = {}
         try:
             #
-            # print "company manager"
             for company_id, db in self._databases.iteritems():
                 db.close()
 
@@ -101,33 +100,36 @@ class API(object):
                 ip, port = self._address
                 if company_server_ip.ip_address == ip and \
                         company_server_ip.port == port:
-                    db = ClientDatabase(
-                        company.db_ip.ip_address,
-                        company.db_ip.port,
-                        company.db_username,
-                        company.db_password,
-                        company.db_name
-                    )
                     try:
+                        db = ClientDatabase(
+                            company.db_ip.ip_address,
+                            company.db_ip.port,
+                            company.db_username,
+                            company.db_password,
+                            company.db_name
+                        )
                         db.connect()
+                        if db._connection is not None :
+                            self._databases[company_id] = db
+                            rep_man = ReplicationManager(
+                                self._io_loop,
+                                self._knowledge_server_address,
+                                self._http_client,
+                                db,
+                                company_id
+                            )
+                            # print "replication started ", company_id
+                            rep_man.start()
+                            self._replication_managers[company_id] = rep_man
                     except Exception, e:
+                        print e
                         logger.logClient("error", "clientmain.py-server-added", e)
                         # print "Client database not available to connect ", company_id, company.to_structure()
                         continue
-                    self._databases[company_id] = db
-                    rep_man = ReplicationManager(
-                        self._io_loop,
-                        self._knowledge_server_address,
-                        self._http_client,
-                        db,
-                        company_id
-                    )
-                    # print "replication started ", company_id
-                    rep_man.start()
-                    self._replication_managers[company_id] = rep_man
+
         except Exception, e :
             logger.logClient("error", "clientmain.py-server-added", e)
-            print db, e
+            logger.logClient("error", "clientmain.py-server-added", traceback.format_exc())
 
     def _send_response(
         self, response_data, response
@@ -224,7 +226,7 @@ class API(object):
             db.commit()
             respond(response_data)
         except Exception, e:
-            print(traceback.format_exc())
+            # print(traceback.format_exc())
             # print e
             logger.logClient("error", "clientmain.py-handle-api", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
