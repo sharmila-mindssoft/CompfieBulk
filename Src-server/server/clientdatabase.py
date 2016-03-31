@@ -3943,7 +3943,10 @@ class ClientDatabase(Database):
                 unit_address = unit[3]
 
                 query = "select c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
-                        ac.assignee, cf.frequency from tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
+                        ac.assignee, cf.frequency, c.frequency_id, c.duration, c.repeats_every, \
+                        (select duration_type from tbl_compliance_duration_type where duration_type_id = c.duration_type_id) AS duration_type, \
+                        (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = c.repeats_type_id) AS repeat_type \
+                        from tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
                         tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
                         ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
                         cs.country_id = %s and cs.domain_id = %s and cs.unit_id like '%s' \
@@ -3981,11 +3984,18 @@ class ClientDatabase(Database):
                     if(validity_date is not None):
                         validity_date = self.datetime_to_string(compliance[3])
 
+                    if compliance[7] in (2, 3) :
+                        summary = "Repeats every %s - %s" % (compliance[9], compliance[11])
+                    elif compliance[7] == 4 :
+                        summary = "To complete within %s - %s" % (compliance[8], compliance[10])
+                    else :
+                        summary = None
+
                     compliances_list.append(
                         clientreport.ComplianceUnit(
                             compliance_name, unit_address,
                             compliance_frequency, description, statutory_date,
-                            due_date, validity_date
+                            due_date, validity_date, summary
                             )
                         )
                 unit_wise_compliances[unit_name] = compliances_list
@@ -4053,7 +4063,10 @@ class ClientDatabase(Database):
                 concurrence_person = assignee[2]
                 approval_person = assignee[3]
                 query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
-                        ac.assignee, cf.frequency FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
+                        ac.assignee, cf.frequency, c.frequency_id, c.duration, c.repeats_every, \
+                        (select duration_type from tbl_compliance_duration_type where duration_type_id = c.duration_type_id) AS duration_type, \
+                        (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = c.repeats_type_id) AS repeat_type \
+                        FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
                         tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
                         ch.compliance_id = ac.compliance_id and ch.next_due_date = ac.due_date and \
                         cs.country_id = %s and cs.domain_id = %s and cs.unit_id in (%s) \
@@ -4092,12 +4105,19 @@ class ClientDatabase(Database):
                     if(validity_date is not None):
                         validity_date = self.datetime_to_string(compliance[3])
 
+                    if compliance[7] in (2, 3) :
+                        summary = "Repeats every %s - %s" % (compliance[9], compliance[11])
+                    elif compliance[7] == 4 :
+                        summary = "To complete within %s - %s" % (compliance[8], compliance[10])
+                    else :
+                        summary = None
+
                     compliances_list.append(
                         clientreport.ComplianceUnit(
                             compliance_name, "unit_name",
                             compliance_frequency, description,
                             statutory_date,
-                            due_date, validity_date)
+                            due_date, validity_date, summary)
                         )
 
                 assignee_wise_compliances.append(
@@ -4686,17 +4706,33 @@ class ClientDatabase(Database):
                 unit_address = unit[3]
 
                 query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
-                        ac.assignee, cf.frequency FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
+                        ac.assignee, cf.frequency, c.frequency_id, c.duration, c.repeats_every, \
+                        (select duration_type from tbl_compliance_duration_type where duration_type_id = c.duration_type_id) AS duration_type, \
+                        (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = c.repeats_type_id) AS repeat_type \
+                        FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
                         tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
-                        ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
+                        ch.next_due_date = ac.due_date and \
                         cs.country_id = %s and cs.domain_id = %s and cs.unit_id like '%s' \
-                        and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
+                        and cs.client_statutory_id = cc.client_statutory_id \
                         and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee in (%s) and \
-                        c.statutory_mapping like '%s' " % (
+                        c.statutory_mapping like '%s' group by ac.compliance_id" % (
                         country_id, domain_id,
                         unit_id, user_ids, str(statutory_id+"%")
                     )
-                print query
+
+                # query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
+                #         ac.assignee, cf.frequency FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
+                #         tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
+                #         ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
+                #         cs.country_id = %s and cs.domain_id = %s and cs.unit_id like '%s' \
+                #         and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
+                #         and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee in (%s) and \
+                #         c.statutory_mapping like '%s' " % (
+                #         country_id, domain_id,
+                #         unit_id, user_ids, str(statutory_id+"%")
+                #     )
+
+                #print query
                 compliance_rows = self.select_all(query)
 
                 compliances_list = []
@@ -4723,12 +4759,22 @@ class ClientDatabase(Database):
                     if(validity_date is not None):
                         validity_date = self.datetime_to_string(compliance[3])
 
+                    if compliance[7] in (2, 3) :
+                        summary = "Repeats every %s - %s" % (compliance[9], compliance[11])
+                    elif compliance[7] == 4 :
+                        summary = "To complete within %s - %s" % (compliance[8], compliance[10])
+                    else :
+                        summary = None
+
                     compliances_list.append(clientreport.ComplianceUnit(
                         compliance_name, unit_address,
                         compliance_frequency, description, statutory_date,
-                        due_date, validity_date
+                        due_date, validity_date, summary
                     ))
-                unit_wise_compliances[unit_name] = compliances_list
+
+                if len(compliances_list) > 0 :
+                    unit_wise_compliances[unit_name] = compliances_list
+
             service_provider_wise_compliances_list.append(clientreport.ServiceProviderCompliance(
                 service_provider_name, address, contract_from, contract_to, contact_person, contact_no,
                 unit_wise_compliances))
@@ -8075,7 +8121,7 @@ class ClientDatabase(Database):
         ])
         applicability = []
         for r in result :
-            print r
+            #print r
             if r["document_name"] not in ("None", "", None):
                 name = "%s - %s" % (r["document_name"], r["compliance_task"])
             else :

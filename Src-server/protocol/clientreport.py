@@ -16,6 +16,7 @@ from protocol.parse_structure import (
     parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ActivityCompliance,
     parse_structure_VectorType_RecordType_core_ServiceProvider,
     parse_structure_CustomTextType_500,
+    parse_structure_OptionalType_CustomTextType_50,
     parse_structure_VectorType_RecordType_clientreport_UserName,
     parse_structure_VectorType_RecordType_clientreport_User,
     parse_structure_MapType_SignedIntegerType_8_VectorType_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
@@ -107,6 +108,7 @@ from protocol.to_structure import (
     to_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ApplicabilityCompliance,
     to_structure_OptionalType_SignedIntegerType_8,
     to_structure_CustomTextType_50,
+    to_structure_OptionalType_CustomTextType_50,
     to_structure_EnumType_core_COMPLIANCE_STATUS,
     to_structure_CustomTextType_100, to_structure_EnumType_core_USER_TYPE,
     to_structure_VectorType_RecordType_clientreport_ActivityLog,
@@ -2255,7 +2257,7 @@ class ComplianceList(object):
 #
 
 class ComplianceUnit(object):
-    def __init__(self, compliance_name, unit_address, compliance_frequency, description, statutory_dates, due_date, validity_date):
+    def __init__(self, compliance_name, unit_address, compliance_frequency, description, statutory_dates, due_date, validity_date, summary):
         self.compliance_name = compliance_name
         self.unit_address = unit_address
         self.compliance_frequency = compliance_frequency
@@ -2263,10 +2265,11 @@ class ComplianceUnit(object):
         self.statutory_dates = statutory_dates
         self.due_date = due_date
         self.validity_date = validity_date
+        self.summary = summary
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_name", "unit_address", "compliance_frequency", "description", "statutory_dates", "due_date", "validity_date"])
+        data = parse_dictionary(data, ["compliance_name", "unit_address", "compliance_frequency", "description", "statutory_dates", "due_date", "validity_date", "summary"])
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_500(compliance_name)
         unit_address = data.get("unit_address")
@@ -2281,7 +2284,9 @@ class ComplianceUnit(object):
         due_date = parse_structure_CustomTextType_20(due_date)
         validity_date = data.get("validity_date")
         validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
-        return ComplianceUnit(compliance_name, unit_address, compliance_frequency, description, statutory_dates, due_date, validity_date)
+        summary = data.get("summary")
+        summary = parse_structure_OptionalType_CustomTextType_50(summary)
+        return ComplianceUnit(compliance_name, unit_address, compliance_frequency, description, statutory_dates, due_date, validity_date, summary)
 
     def to_structure(self):
         return {
@@ -2292,6 +2297,7 @@ class ComplianceUnit(object):
             "statutory_dates": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
             "due_date": to_structure_CustomTextType_20(self.due_date),
             "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
+            "summary": to_structure_OptionalType_CustomTextType_50(self.summary),
         }
 
 #

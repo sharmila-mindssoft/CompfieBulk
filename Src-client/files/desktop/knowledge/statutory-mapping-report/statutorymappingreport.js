@@ -9,7 +9,7 @@ var complianceFrequencyList;
 var temp_act = null;
 
 var finalList;
-var pageSize;
+var pageSize = 500;
 var startCount;
 var endCount;
 
@@ -213,9 +213,11 @@ function loadCountwiseResult(filterList){
     lastOccuranceid = frequency_id;
   }
 
-  if(count > 1){
+  if(finalList.length > 0){
     if(endCount > finalList.length) endCount = finalList.length
-    $('.compliance_count').text("Showing " + 1 + " to " + endCount + " of " + Object.keys(finalList).length);
+    $('.compliance_count').text("Showing " + 1 + " to " + endCount + " of " + finalList.length);
+  }else{
+    $('.compliance_count').text('');
   }
   if(endCount >= finalList.length){
     $(document).ready(function($) {
@@ -242,9 +244,7 @@ function get_sub_array(object, start, end){
     return object.slice(start, end);
 }
 
-$('#pagination').click(function(e){
-  displayLoader();
-  group by compfie_abcgrooups_1.tbl_assigned_compliances.compliance_id
+function showloadrecord(){
   startCount = endCount;
   endCount = startCount + pageSize;
   var sub_act_list =  finalList;
@@ -252,14 +252,31 @@ $('#pagination').click(function(e){
   if(sub_keys_list.length < pageSize){
     $('#pagination').hide();
   }
-  //alert(startCount + '-' + endCount + '-' +sub_keys_list.length)
-  e.preventDefault();
+  //e.preventDefault();
   loadCountwiseResult(sub_keys_list);
-  hideLoader();
+}
+
+$(function() {
+  $('#pagination').click(function(){
+    //displayLoader();
+    $(".loading-indicator-spin").show();
+    if($('.loading-indicator-spin').css('display') != 'none')
+    {
+        setTimeout(function(){  
+            showloadrecord();
+        }, 500);
+        
+    }
+    setTimeout(function(){  
+        $(".loading-indicator-spin").hide();
+    }, 500);
+
+    //hideLoader();
+
+  });
 });
 
 function loadresult() {
-  pageSize = 500;
   startCount = 0;
   endCount = pageSize;
 
