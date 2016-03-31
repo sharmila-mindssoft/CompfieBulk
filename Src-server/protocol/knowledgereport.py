@@ -327,7 +327,7 @@ class StatutoryMappingReport(object):
         compliance_task = data.get("compliance_task")
         compliance_task = to_structure_Text(compliance_task)
         description = data.get("description")
-        description = parse_structure_CustomTextType_500(description)
+        description = parse_structure_Text(description)
         penal_consequences = data.get("penal_consequences")
         penal_consequences = parse_structure_OptionalType_CustomTextType_500(penal_consequences)
         frequency_id = data.get("frequency_id")
@@ -371,7 +371,7 @@ class StatutoryMappingReport(object):
             "compliance_id": to_structure_OptionalType_UnsignedIntegerType_32(self.compliance_id),
             "statutory_provision": to_structure_Text(self.statutory_provision),
             "compliance_task": to_structure_Text(self.compliance_task),
-            "description": to_structure_CustomTextType_500(self.description),
+            "description": to_structure_Text(self.description),
             "penal_consequences": to_structure_OptionalType_CustomTextType_500(self.penal_consequences),
             "frequency_id": to_structure_OptionalType_SignedIntegerType_8(self.frequency_id),
             "statutory_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
