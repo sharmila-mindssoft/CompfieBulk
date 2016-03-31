@@ -1189,11 +1189,11 @@ def to_structure_VectorType_RecordType_dashboard_Compliance(data):
         lst.append(to_structure_RecordType_dashboard_Compliance(item))
     return lst
 
-def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance(data):
+def to_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_dashboard_Compliance(data):
     data = parse_dictionary(data)
     dict = {}
     for key, value in data.items():
-        key = to_structure_SignedIntegerType_8(key)
+        key = to_structure_UnsignedIntegerType_32(key)
         value = to_structure_VectorType_RecordType_dashboard_Compliance(value)
         dict[key] = value
     return dict

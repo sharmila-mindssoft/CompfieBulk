@@ -64,7 +64,7 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance,
+    parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_dashboard_Compliance,
     parse_structure_VectorType_CustomTextType_500,
     parse_structure_OptionalType_CustomTextType_100,
     parse_structure_OptionalType_VectorType_CustomTextType_500
@@ -135,7 +135,7 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
     to_structure_OptionalType_CustomTextType_500,
     to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance,
+    to_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_dashboard_Compliance,
     to_structure_VectorType_CustomTextType_500,
     to_structure_OptionalType_CustomTextType_100,
     to_structure_OptionalType_VectorType_CustomTextType_500
@@ -1165,15 +1165,15 @@ class ApplicableDrillDown(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["level1_statutory_name", "compliances"])
         level1_statutory_name = data.get("level1_statutory_name")
-        level1_statutory_name = parse_structure_CustomTextType_50(level1_statutory_name)
+        level1_statutory_name = parse_structure_CustomTextType_500(level1_statutory_name)
         compliances = data.get("compliances")
-        compliances = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance(compliances)
+        compliances = parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_dashboard_Compliance(compliances)
         return ApplicableDrillDown(level1_statutory_name, compliances)
 
     def to_structure(self):
         return {
-            "level1_statutory_name": to_structure_CustomTextType_50(self.level1_statutory_name),
-            "compliances": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance(self.compliances),
+            "level1_statutory_name": to_structure_CustomTextType_500(self.level1_statutory_name),
+            "compliances": to_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_dashboard_Compliance(self.compliances),
         }
 
 #
