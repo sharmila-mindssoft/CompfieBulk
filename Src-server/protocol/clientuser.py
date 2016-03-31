@@ -405,7 +405,7 @@ class ComplianceOnOccurrence(object):
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_250(compliance_name)
         description = data.get("description")
-        description = parse_structure_CustomTextType_500(description)
+        description = parse_structure_Text(description)
         complete_within_days = data.get("complete_within_days")
         complete_within_days = parse_structure_CustomTextType_50(complete_within_days)
         unit_id = data.get("unit_id")
@@ -420,7 +420,7 @@ class ComplianceOnOccurrence(object):
             "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
             "statutory_provision": to_structure_Text(self.statutory_provision),
             "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
-            "description": to_structure_CustomTextType_500(self.description),
+            "description": to_structure_Text(self.description),
             "complete_within_days": to_structure_CustomTextType_50(self.complete_within_days),
             "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
         }

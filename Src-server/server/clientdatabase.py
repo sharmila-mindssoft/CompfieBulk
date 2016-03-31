@@ -2594,14 +2594,39 @@ class ClientDatabase(Database):
                 s_day = date["statutory_date"]
                 current_date = n_date = datetime.date.today()
 
-                if s_date.statutory_month is not None :
-                    n_date = n_date.replace(month=s_month)
-
                 if s_date.statutory_date is not None :
-                    n_date = n_date.replace(day=s_day)
+                    try :
+                        n_date = n_date.replace(day=int(s_day))
+                    except ValueError :
+                        if n_date.month == 12 :
+                            days = 31
+                        else :
+                            days = (n_date.replace(month=n_date.month+1, day=1) - datetime.timedelta(days=1)).day
+                        n_date = n_date.replace(day=days)
 
+                if s_date.statutory_month is not None :
+                    if s_date.statutory_date is not None :
+                        n_date = n_date.replace(day=s_day, month=int(s_month))
+                    else :
+                        try :
+                            n_date = n_date.replace(month=int(s_month))
+                        except ValueError :
+                            if n_date.month == 12 :
+                                days = 31
+                            else :
+                                days = (n_date.replace(day=1, month=s_month+1) - datetime.timedelta(days=1)).day
+                                print days
+                            n_date = n_date.replace(day=days, month=int(s_month))
                 if current_date > n_date:
-                    n_date = n_date.replace(year=current_year+1)
+                    try :
+                        n_date = n_date.replace(year=current_year+1)
+                    except ValueError :
+                        if n_date.month == 12 :
+                            days = 31
+                        else :
+                            days = (n_date.replace(day=1, month=n_date.month+1, year=current_year+1) - datetime.timedelta(days=1)).day
+                            print days
+                        n_date = n_date.replace(day=days, year=current_year+1)
 
                 due_date = n_date.strftime("%d-%b-%Y")
                 due_date_list.append(due_date)
