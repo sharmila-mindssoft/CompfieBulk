@@ -1,6 +1,8 @@
 var approvalList;
 var file_list = [];
 var action;
+var currentDate;
+
 function clearMessage() {
     $(".error-message").hide();
     $(".error-message").text("");
@@ -14,6 +16,7 @@ function initialize(){
     function onSuccess(data){
         closeicon();
         approvalList = data['approval_list'];
+        currentDate = data['current_date'];
         loadComplianceApprovalDetails(approvalList);     
     }
     function onFailure(error){
@@ -110,6 +113,11 @@ function showSideBar(idval, data){
     $('.sidebar-uploaded-date', cloneValSide).html(data['upload_date']);
     $('.sidebar-completion-date', cloneValSide).html(data['completion_date']);
     if(complianceFrequency != 'One Time'){       
+        $(".validitydate1_textbox", cloneValSide).hide();
+        $(".validitydate1_label", cloneValSide).show();
+        $(".duedate1_textbox", cloneValSide).hide();
+        $(".duedate1_label", cloneValSide).show();
+
         $(".validityAndDueDate", cloneValSide).show();        
         $(".validitydate1_label", cloneValSide).html(data['validity_date']);
         $(".duedate1_label abbr ", cloneValSide).html(data['next_due_date']); 
@@ -119,12 +127,10 @@ function showSideBar(idval, data){
             showTextbox();
         });        
     }
-    else if(complianceFrequency == "On Occurrence"){
+    if(complianceFrequency == "On Occurrence"){
         $(".validityAndDueDate", cloneValSide).hide();
     }
-    else{
-        $(".validityAndDueDate", cloneValSide).hide();        
-    }
+    
     if(data['delayedby'] != null){
         $(".sidebar-status", cloneValSide).html("Not Complied");    
     }
@@ -209,6 +215,36 @@ function showSideBar(idval, data){
             }
         });   
     }
+    $(function() {
+        // $(".datepick" ).datepicker({
+        //     changeMonth: true,
+        //     changeYear: true,
+        //     numberOfMonths: 1,
+        //     dateFormat: "dd-M-yy",
+        //     monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        //     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
+        // });
+        $(".validity1-textbox-input", cloneValSide).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
+        });
+        $(".duedate1-textbox-input", cloneValSide).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
+        });
+    });
+    function parseMyDate(s) {
+        return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
+    }
+               
     $('.btn-submit', cloneValSide).on("click", function(e){
         var compliance_history_id;
         var approval_status;
@@ -272,7 +308,18 @@ function showSideBar(idval, data){
             displayMessage("Select Next Due Date");
             return;
         }
-        
+        if(validity_date != null  && next_due_date != null){
+            if(parseMyDate(validity_date) > parseMyDate(next_due_date)){
+                displayMessage("Validity Date is Greater than or equal to Due Date");
+                return;
+            }
+        }
+        // if(currentDate != null && validity_date != null){
+        //     if(parseMyDate(currentDate) > parseMyDate(next_due_date)){
+        //         displayMessage("Validity Date is Greater than Current Date");
+        //         return;
+        //     }
+        // }
         function onSuccess(data){
             clearMessage();
             if(approval_status == "Reject Concurrence"){
@@ -303,30 +350,7 @@ function showSideBar(idval, data){
                 }
             }    
         );   
-         $(".datepick" ).datepicker({
-            changeMonth: true,
-            changeYear: true,
-            numberOfMonths: 1,
-            dateFormat: "dd-M-yy",
-            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
-        });
-        $(".validity1-textbox-input" ).datepicker({
-            changeMonth: true,
-            changeYear: true,
-            numberOfMonths: 1,
-            dateFormat: "dd-M-yy",
-            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
-        });
-        $(".duedate1-textbox-input" ).datepicker({
-            changeMonth: true,
-            changeYear: true,
-            numberOfMonths: 1,
-            dateFormat: "dd-M-yy",
-            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
-        });
+       
     });
 
     $('.half-width-task-details').append(cloneValSide);   
@@ -338,6 +362,12 @@ function showTextbox(){
     $(".validitydate1_label").hide();
     $(".duedate1_textbox").show();
     $(".duedate1_label").hide();
+}
+function hideTextbox(){
+    $(".validitydate1_textbox").hide();
+    $(".validitydate1_label").show();
+    $(".duedate1_textbox").hide();
+    $(".duedate1_label").show();
 }
 function closeicon(){
     $(".half-width-task-details").hide();

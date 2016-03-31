@@ -436,6 +436,7 @@ function loadAssignedActdata(assignedList){
 
 function loadAssignedStatutoryList(data){
     $('.grid-table-rpt').show();
+    $("#pagination").hide();
     var totalrecords = 0;
     $('.tbody-assigned-statutory-list tr').remove();
     $.each(data, function(i, val){
