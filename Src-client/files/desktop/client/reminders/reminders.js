@@ -33,7 +33,6 @@ function loadReminders(reminders){
 }
 
 function changeStatus(notification_id, read_status){
-  
   $('#notification'+notification_id).removeClass( "unread" );
   $("#popup1").show();
   var nId;
