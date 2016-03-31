@@ -1,4 +1,6 @@
 var categoryList;
+var uglist;
+
 function clearMessage() {
     $(".error-message").hide();
     $(".error-message").text("");
@@ -10,6 +12,10 @@ function displayMessage(message) {
 $("#btnUserGroupCancel").click(function(){
 	$("#userGroupAdd").hide();
 	$("#userGroupView").show();
+	$("#groupNameSearch").val("");
+	$("#categoryNameSearch").val("");
+	loadUserGroupdata(uglist);
+
 });
 $("#btnUserGroupAdd").click(function(){
 	$("#userGroupView").hide();
@@ -36,7 +42,8 @@ function initialize(){
 	clearMessage();
 	function onSuccess(data){
 		categoryList = data['form_categories'];
-		loadUserGroupdata(data['user_groups']);
+		uglist = data['user_groups'];
+		loadUserGroupdata(uglist);
 	}
 	function onFailure(error){
 		console.log(error);
@@ -309,6 +316,9 @@ function userGroupActive(userGroupId, isActive){
 		initialize();
 	}
 	function onFailure(error){
+		if(error == "CannotDeactivateUserExists"){
+			displayMessage("Cannot deactivate.. One or more User Exists")
+		}
 	}
 	mirror.changeAdminUserGroupStatus(userGroupId, isActive,
 		function (error, response) {
@@ -322,25 +332,6 @@ function userGroupActive(userGroupId, isActive){
 	);
 }
 
-$("#groupNameSearch").keyup(function() {
-	var count = 0;
-    var value = this.value.toLowerCase();
-    $("table").find("tr:not(:first)").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".group-name").text().toLowerCase();
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
-$("#categoryNameSearch").keyup(function() {
-	var count = 0;
-    var value = this.value.toLowerCase();
-    $("table").find("tr:not(:first)").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".catg-name").text().toLowerCase();
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-
-});
 $('.checkbox-full-check').click(function(event) {
 	if(this.checked) {
 	  $('.checkedFormId').each(function() {
@@ -355,4 +346,8 @@ $('.checkbox-full-check').click(function(event) {
 
 $(function() {
 	initialize();
+});
+
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });

@@ -1,6 +1,14 @@
 var auditTrailList;
 var formList;
 var userList;
+
+var finalList;
+var pageSize;
+var startCount;
+var endCount;
+
+var tempadlist;
+
 function clearMessage() {
     $(".error-message").hide();
     $(".error-message").text("");
@@ -47,6 +55,74 @@ function initialize(){
 	);
 }
 
+function get_sub_array(object, start, end){
+    if(!end){ end=-1;}
+    return object.slice(start, end);
+}
+
+$('#pagination').click(function(e){
+    startCount = endCount;
+    endCount = startCount + pageSize;
+    var sub_act_list =  tempadlist;
+    var sub_keys_list = get_sub_array(sub_act_list, startCount, endCount);
+    if(sub_keys_list.length < pageSize){
+        $('#pagination').hide();
+    }
+    //alert(startCount + '-' + endCount + '-' +sub_keys_list.length)
+    loadaudittrail(sub_keys_list);
+    e.preventDefault();
+});
+
+function loadresult(tempadlist) {
+    pageSize = 50;
+    startCount = 0;
+    endCount = pageSize;
+
+    if(tempadlist.length > pageSize){
+        $('#pagination').show();
+    }else{
+        $('#pagination').hide();
+    }
+
+    var sub_keys_list = get_sub_array(tempadlist, startCount, endCount);
+    loadaudittrail(sub_keys_list);
+}
+
+
+function loadaudittrail(tempadlist){
+    var sno = 1;
+    $.each(tempadlist, function (key, value){
+        var tableRow = $('#templates .table-audittrail-list .tableRow');
+        var clone = tableRow.clone();
+        $('.sno', clone).text(sno++);
+        $('.username', clone).text(getUserName(value['user_id']));
+        $('.datetime', clone).text(value['date']);
+        $('.formname', clone).text(getFormName(value['form_id']));
+        $('.action', clone).text(value['action']);
+        $('.tbody-audittrail-list').append(clone);
+    });
+}
+
+function getUserName(userId){
+	var userName;
+	$.each(userList, function(key){
+		if(userList[key]['user_id'] == userId){
+			userName = userList[key]['employee_name'];
+		}
+	});
+	return userName;
+}
+function getFormName(formId){
+	var formName;
+	$.each(formList, function(key){
+		if(formList[key]['form_id'] == formId){
+			formName = formList[key]['form_name'];
+		}
+	});
+	return formName;
+}
+
+
 $("#show").click(function(){
 	var fromDateValue = $("#from-date").val();
 	var toDateValue = $("#to-date").val();
@@ -54,9 +130,11 @@ $("#show").click(function(){
 	var formIdValue = $("#formid").val().trim();
 	if($("#user").val().trim() == ''){
 		userIdValue = '';
+		$('#userid').val("");
 	}
 	if($("#formname").val().trim() == ''){
 		formIdValue = '';
+		$('#formid').val("");
 	}
 	if(fromDateValue == ''){
 		displayMessage('Enter From Date');
@@ -67,25 +145,9 @@ $("#show").click(function(){
 	else{
 	 	$(".tbody-audittrail-list").find("tr").remove();
 	 	$('.grid-table').show();
-	 	function getUserName(userId){
-	 		var userName;
-	 		$.each(userList, function(key){
-	 			if(userList[key]['user_id'] == userId){
-	 				userName = userList[key]['employee_name'];
-	 			}
-	 		});
-	 		return userName;
-	 	}
-	 	function getFormName(formId){
-	 		var formName;
-	 		$.each(formList, function(key){
-	 			if(formList[key]['form_id'] == formId){
-	 				formName = formList[key]['form_name'];
-	 			}
-	 		});
-	 		return formName;
-	 	}
+	 	
 		var sno = 0;
+		tempadlist = [];
 
 		$.each(auditTrailList, function (key, value){
 			var fromDateVal = fromDateValue+" 00:00:00";
@@ -96,62 +158,30 @@ $("#show").click(function(){
 			var auditFormId = auditTrailList[key]['form_id'];
 			var formCheckval;
 			var userCheckval;
-			console.log(fromDateVal +"----"+auditDateVal+"----"+toDateVal+"----"+auditDateVal+"----"+userIdValue +"----"+auditUser +"----"+formIdValue +"----"+ auditFormId);
-
 			//userid empty, formid empty
 			if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == '' && formIdValue == ''){	
-				console.log("enter 1")
-				var tableRow = $('#templates .table-audittrail-list .tableRow');
-				var clone = tableRow.clone();
-				sno = sno + 1;
-				$('.sno', clone).text(sno);
-				$('.username', clone).text(getUserName(auditUser));
-				$('.datetime', clone).text(auditDateVal);
-				$('.formname', clone).text(getFormName(auditFormId));
-				$('.action', clone).text(auditTrailList[key]['action']);
-				$('.tbody-audittrail-list').append(clone);
+				 sno++;
+                tempadlist.push(auditTrailList[key]);
 			}
 			//userid empty
 			else if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && (userIdValue == '') && (formIdValue == auditFormId)){	
-				console.log("enter 2")
-				var tableRow = $('#templates .table-audittrail-list .tableRow');
-				var clone = tableRow.clone();
-				sno = sno + 1;
-				$('.sno', clone).text(sno);
-				$('.username', clone).text(getUserName(auditUser));
-				$('.datetime', clone).text(auditDateVal);
-				$('.formname', clone).text(getFormName(auditFormId));
-				$('.action', clone).text(auditTrailList[key]['action']);
-				$('.tbody-audittrail-list').append(clone);
+				sno++;
+                tempadlist.push(auditTrailList[key]);
 			}
 			//formid empty
 			else if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == auditUser && formIdValue == ''){	
-					console.log("enter 3")
-				var tableRow = $('#templates .table-audittrail-list .tableRow');
-				var clone = tableRow.clone();
-				sno = sno + 1;
-				$('.sno', clone).text(sno);
-				$('.username', clone).text(getUserName(auditUser));
-				$('.datetime', clone).text(auditDateVal);
-				$('.formname', clone).text(getFormName(auditFormId));
-				$('.action', clone).text(auditTrailList[key]['action']);
-				$('.tbody-audittrail-list').append(clone);
+				 sno++;
+                tempadlist.push(auditTrailList[key]);
 			}
 			//all != empty
 			else if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == auditUser && formIdValue == auditFormId){	
-				console.log("enter 4")
-				var tableRow = $('#templates .table-audittrail-list .tableRow');
-				var clone = tableRow.clone();
-				sno = sno + 1;
-				$('.sno', clone).text(sno);
-				$('.username', clone).text(getUserName(auditUser));
-				$('.datetime', clone).text(auditDateVal);
-				$('.formname', clone).text(getFormName(auditFormId));
-				$('.action', clone).text(auditTrailList[key]['action']);
-				$('.tbody-audittrail-list').append(clone);
+				 sno++;
+                tempadlist.push(auditTrailList[key]);
 			}
 
 		});
+		$("#total-records").html('Total : '+sno+' records');
+        loadresult(tempadlist);
 	}
 });
 function hidemenu(){

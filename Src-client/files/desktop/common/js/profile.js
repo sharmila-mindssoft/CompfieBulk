@@ -47,16 +47,16 @@ $("#submit").click(function(){
 	var areacode = $(".areacode").val().trim();
 	var mobile = $(".mobile").val().trim();
 	var address = $(".address").val().trim();
-	if(countrycode == ''){
-		displayMessage("Enter country code");
-	}
-	else if(mobile == ''){
-		displayMessage("Enter Contact Number");
-	}
-	else if(isNaN(mobile)){
-		displayMessage("Contact Number Invalid");
-	}
-	else if(address == ''){
+	// if(countrycode == ''){
+	// 	displayMessage("Enter country code");
+	// }
+	// else if(mobile == ''){
+	// 	displayMessage("Enter Contact Number");
+	// }
+	// else if(isNaN(mobile)){
+	// 	displayMessage("Contact Number Invalid");
+	// }
+	if(address == ''){
 		displayMessage("Enter address")
 	}
 	else{

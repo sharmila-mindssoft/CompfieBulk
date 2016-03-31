@@ -23,6 +23,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_ClientDivision,
     parse_structure_VectorType_RecordType_technotransactions_UNIT,
     parse_structure_VectorType_RecordType_mobile_ComplianceApplicability,
+    parse_structure_VectorType_RecordType_mobile_UnitWiseCount,
+    parse_structure_VectorType_RecordType_mobile_DomainWiseCount,
     parse_structure_VariantType_mobile_Request,
     parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
     parse_structure_VectorType_RecordType_mobile_ComplianceHistory,
@@ -52,6 +54,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_ClientDivision,
     to_structure_VectorType_RecordType_technotransactions_UNIT,
     to_structure_VectorType_RecordType_mobile_ComplianceApplicability,
+    to_structure_VectorType_RecordType_mobile_UnitWiseCount,
+    to_structure_VectorType_RecordType_mobile_DomainWiseCount,
     to_structure_VariantType_mobile_Request,
     to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
     to_structure_VectorType_RecordType_mobile_ComplianceHistory,
@@ -376,7 +380,8 @@ def _init_Request_class_map():
         GetUnitDetails,
         GetComplianceApplicabilityStatus,
         GetComplianceHistory,
-        CheckDiskSpace
+        CheckDiskSpace,
+        GetTrendChartData
     ]
     class_map = {}
     for c in classes:
@@ -920,6 +925,95 @@ class CheckDiskSpaceSuccess(Response):
             "available_space": to_structure_UnsignedIntegerType_32(self.available_space)
         }
 
+class DomainWiseCount(object):
+    def __init__(
+        self, domain_id, year, total_compliances, complied_compliances_count
+    ):
+        self.domain_id = domain_id
+        self.year = year
+        self.total_compliances = total_compliances
+        self.complied_compliances_count = complied_compliances_count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "domain_id", "year", "total_compliances",
+                "complied_compliances_count"
+            ]
+        )
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        year = data.get("year")
+        year = parse_structure_UnsignedIntegerType_32(year)
+        total_compliances = data.get("total_compliances")
+        total_compliances = parse_structure_UnsignedIntegerType_32(total_compliances)
+        complied_compliances_count = data.get("complied_compliances")
+        complied_compliances_count = parse_structure_UnsignedIntegerType_32(complied_compliances_count)
+        return DomainWiseCount(
+            domain_id, year, total_compliances, complied_compliances_count
+        )
+
+    def to_structure(self):
+        return {
+            "domain_id" : to_structure_UnsignedIntegerType_32(self.domain_id),
+            "year" : to_structure_UnsignedIntegerType_32(self.year),
+            "total_compliances" : to_structure_UnsignedIntegerType_32(self.total_compliances),
+            "complied_compliances_count" : to_structure_UnsignedIntegerType_32(self.complied_compliances_count)
+        }
+
+class UnitWiseCount(object):
+    def __init__(
+        self, unit_id, domain_wise_count
+    ):
+        self.unit_id = unit_id
+        self.domain_wise_count = domain_wise_count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "unit_id", "domain_wise_count"
+            ]
+        )
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
+        domain_wise_count = data.get("domain_wise_count")
+        domain_wise_count = parse_structure_VectorType_RecordType_mobile_DomainWiseCount(domain_wise_count)
+        return UnitWiseCount(
+            unit_id, domain_wise_count
+        )
+
+    def to_structure(self):
+        return {
+            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
+            "domain_wise_count": to_structure_VectorType_RecordType_mobile_DomainWiseCount(self.domain_wise_count)
+        }
+
+class GetTrendChartDataSuccess(Response):
+    def __init__(
+        self, unit_wise_count
+    ):
+        self.unit_wise_count = unit_wise_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, [
+                "unit_wise_count"
+            ]
+        )
+        unit_wise_count = data.get("unit_wise_count")
+        unit_wise_count = parse_structure_VectorType_RecordType_mobile_UnitWiseCount(unit_wise_count)
+        return GetComplianceHistorySuccess(
+            unit_wise_count
+        )
+
+    def to_inner_structure(self):
+        return {
+            "unit_wise_count": to_structure_VectorType_RecordType_mobile_UnitWiseCount(self.unit_wise_count)
+        }
+
 def _init_Response_class_map():
     classes = [
         UserLoginResponseSuccess,
@@ -927,7 +1021,8 @@ def _init_Response_class_map():
         GetVersionsSuccess,
         GetUsersSuccess,
         GetUnitDetailsSuccess,
-        GetComplianceHistorySuccess
+        GetComplianceHistorySuccess,
+        GetTrendChartDataSuccess
 
     ]
     class_map = {}
@@ -936,7 +1031,6 @@ def _init_Response_class_map():
     return class_map
 
 _Response_class_map = _init_Response_class_map()
-
 
 #
 # RequestFormat

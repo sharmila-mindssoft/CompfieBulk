@@ -306,6 +306,9 @@ $("#btn-clientgroup-submit").click(function(){
             else if(error == 'ClientCreationFailed'){
                 displayMessage('Client Creation Failed. Check your server connection details');
             }
+            else if(error == "NotAnImageFile"){
+                displayMessage("Logo is Invalid");
+            }
             else{
                 displayMessage(error);
             }

@@ -31,6 +31,9 @@ def process_client_mobile_request(request, db):
     elif type(request_frame) is mobile.CheckDiskSpace :
         return process_check_disk_space(db)
 
+    elif type(request_frame) is mobile.GetTrendChartData :
+        return process_get_trend_chart(db, session_user)
+
 def process_get_version(db, request):
     data = db.get_version()
     return mobile.GetVersionsSuccess(
@@ -61,6 +64,10 @@ def process_get_unit_details(db, session_user):
 def process_get_compliance_applicability(db, session_user):
     data = db.get_compliance_applicability_for_mobile(session_user)
     return mobile.GetComplianceApplicabilityStatusSuccess(data)
+
+def process_get_trend_chart(db, session_user):
+    data = db.get_trend_chart_for_mobile(session_user)
+    return mobile.GetTrendChartDataSuccess(data)    
 
 def process_get_compliance_history(db, session_user, request):
     data = db.get_compliance_history_for_mobile(session_user, request)

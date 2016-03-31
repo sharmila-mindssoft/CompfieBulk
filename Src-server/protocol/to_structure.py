@@ -1439,7 +1439,7 @@ def to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level
     data = parse_dictionary(data)
     dict = {}
     for key, value in data.items():
-        key = to_structure_CustomTextType_50(key)
+        key = to_structure_Text(key)
         value = to_structure_VectorType_RecordType_dashboard_Level1Compliance(value)
         dict[key] = value
     return dict
@@ -4023,6 +4023,29 @@ def to_structure_VectorType_RecordType_mobile_ComplianceApplicability(data):
     for item in data :
         lst.append(to_structure_RecordType_mobile_ComplianceApplicability(item))
     return lst
+
+def to_structure_VectorType_RecordType_mobile_UnitWiseCount(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(to_structure_RecordType_mobile_UnitWiseCount(item))
+    return lst
+
+def to_structure_RecordType_mobile_UnitWiseCount(data):
+    from protocol import mobile
+    return mobile.UnitWiseCount.to_structure(data)
+
+
+def to_structure_VectorType_RecordType_mobile_DomainWiseCount(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(to_structure_RecordType_mobile_DomainWiseCount(item))
+    return lst
+
+def to_structure_RecordType_mobile_DomainWiseCount(data):
+    from protocol import mobile
+    return mobile.DomainWiseCount.to_structure(data)
 
 def to_structure_VariantType_mobile_Request(data):
     from protocol import mobile
