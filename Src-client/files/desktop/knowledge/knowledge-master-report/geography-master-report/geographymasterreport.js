@@ -56,6 +56,7 @@ $(".hidemenu").click(function(){
 
 //load country list in autocomplete text box  
 $("#countryval").keyup(function(){
+  $("#search-geography-name").val('');
   var textval = $(this).val();
   $("#autocompleteview").show();
   var countries = countriesList;

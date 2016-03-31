@@ -197,10 +197,11 @@ $("#insert-record").click(function(){
 	   			$("#levelid"+x).val($("#levelid"+s).val());
 	   		}
 	   	}
-	   	$("#insertlevel").val("1");
+	   	$("#insertlevel").val("2");
 		$("#insertvalue").val("");
 		$("#view-insert-level").hide();
 	  	$("#add").show();
+	  	displayMessage("");
 	}else{
 		displayMessage("Title should not be Empty");
 		$("#add").hide();

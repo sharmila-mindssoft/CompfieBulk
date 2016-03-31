@@ -88,4 +88,14 @@ $("#submit-client").click(function(){
 });
 $(document).ready(function(){
   $("#currentpassword").focus();
+
+  $('#currentpassword').keyup('input', function (event) {
+      this.value = this.value.replace(/\s/g, '');
+  });
+  $('#newpassword').keyup('input', function (event) {
+      this.value = this.value.replace(/\s/g, '');
+  });
+  $('#confirmpassword').keyup('input', function (event) {
+      this.value = this.value.replace(/\s/g, '');
+  });
 });

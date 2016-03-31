@@ -187,8 +187,8 @@ function loadCountwiseResult(filterList){
       else if(sMonth == 12) sMonth = "December"
       statutorydate +=  sMonth +' '+ sDay +' ';
       if(statutorydate.trim() != '') statutorydate += ', ';
-
       }
+
       if(statutorydate.trim() != ''){
         statutorydate = statutorydate.replace(/,\s*$/, "");
         if(sdateDesc == ''){
@@ -196,6 +196,8 @@ function loadCountwiseResult(filterList){
         }else{
           statutorydate = sdateDesc + ' ( '+statutorydate+' )';
         } 
+      }else{
+        statutorydate = sdateDesc;
       }
     }else{
       statutorydate = sdateDesc;

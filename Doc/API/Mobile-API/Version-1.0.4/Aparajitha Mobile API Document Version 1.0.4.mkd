@@ -560,8 +560,9 @@ All are int
 				{
 						"unit_id" : UNIT_ID,
 						"unit_name" : String,
-						"data" :[
+						"domain_wise_count" :[
 							{
+								"domain_id": int,
 								"year" : int,
 								"total_compliances" : int,
 								"complied_compliances_count" : int

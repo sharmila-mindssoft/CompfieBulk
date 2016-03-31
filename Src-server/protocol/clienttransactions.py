@@ -670,7 +670,7 @@ class UnitStatutoryCompliances(object):
     def to_structure(self):
         return {
             "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_250(self.address),
             "country_name": to_structure_CustomTextType_50(self.country_name),
             "domain_names": to_structure_VectorType_CustomTextType_50(self.domain_names),

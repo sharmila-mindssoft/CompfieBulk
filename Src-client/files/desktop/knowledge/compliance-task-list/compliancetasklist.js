@@ -205,6 +205,8 @@ function loadCountwiseResult(filterList){
         }else{
           statutorydate = sdateDesc + ' ( '+statutorydate+' )';
         } 
+      }else{
+        statutorydate = sdateDesc;
       }
     }else{
       statutorydate = sdateDesc;

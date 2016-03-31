@@ -1165,14 +1165,14 @@ class ApplicableDrillDown(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["level1_statutory_name", "compliances"])
         level1_statutory_name = data.get("level1_statutory_name")
-        level1_statutory_name = parse_structure_CustomTextType_50(level1_statutory_name)
+        level1_statutory_name = parse_structure_Text(level1_statutory_name)
         compliances = data.get("compliances")
         compliances = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance(compliances)
         return ApplicableDrillDown(level1_statutory_name, compliances)
 
     def to_structure(self):
         return {
-            "level1_statutory_name": to_structure_CustomTextType_50(self.level1_statutory_name),
+            "level1_statutory_name": to_structure_Text(self.level1_statutory_name),
             "compliances": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance(self.compliances),
         }
 
@@ -1527,7 +1527,7 @@ class AssigneeChartData(object):
 
     def to_structure(self):
         return {
-            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_500(self.address),
             "assignee_wise_details": to_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(self.assignee_wise_details),
         }
