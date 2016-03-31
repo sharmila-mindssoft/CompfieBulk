@@ -242,9 +242,7 @@ function get_sub_array(object, start, end){
     return object.slice(start, end);
 }
 
-$('#pagination').click(function(e){
-  displayLoader();
-  group by compfie_abcgrooups_1.tbl_assigned_compliances.compliance_id
+function showloadrecord(){
   startCount = endCount;
   endCount = startCount + pageSize;
   var sub_act_list =  finalList;
@@ -252,10 +250,28 @@ $('#pagination').click(function(e){
   if(sub_keys_list.length < pageSize){
     $('#pagination').hide();
   }
-  //alert(startCount + '-' + endCount + '-' +sub_keys_list.length)
-  e.preventDefault();
+  //e.preventDefault();
   loadCountwiseResult(sub_keys_list);
-  hideLoader();
+}
+
+$(function() {
+  $('#pagination').click(function(){
+    //displayLoader();
+    $(".loading-indicator-spin").show();
+    if($('.loading-indicator-spin').css('display') != 'none')
+    {
+        setTimeout(function(){  
+            showloadrecord();
+        }, 500);
+        
+    }
+    setTimeout(function(){  
+        $(".loading-indicator-spin").hide();
+    }, 500);
+
+    //hideLoader();
+
+  });
 });
 
 function loadresult() {

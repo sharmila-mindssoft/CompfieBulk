@@ -70,7 +70,7 @@ function convert_date (data){
   } 
   if(date[1]<10){
       date[1]='0'+date[1];
-  }       
+  } 
   return new Date(date[2], date[1]-1, date[0]);
 }
 
@@ -83,9 +83,9 @@ function submitOnOccurence(complianceId, count, unitId, complete_within_days){
   var output = d.getFullYear() + '/' + month + '/' + day;
   var currentDate = new Date(output);
 
-
   if(startdate != ''){
     var convertDueDate = convert_date(startdate);
+
     if (convertDueDate > currentDate) {
         displayMessage("Start date is greater than today's date");
         return false;
