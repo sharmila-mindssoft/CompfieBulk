@@ -97,6 +97,9 @@ def process_trend_chart(db, request, session_user, client_id):
         )
     years = trend_chart_info[0]
     data = trend_chart_info[1]
+    count_flag = trend_chart_info[2]
+    if count_flag == 0:
+        data = []
     return dashboard.GetTrendChartSuccess(
         years=years,
         data=data

@@ -4940,6 +4940,7 @@ class ClientDatabase(Database):
         country_domain_timelines = self.get_country_domain_timelines(
             country_ids, domain_ids, years, client_id)
         chart_data = []
+        count_flag = 0
         for country_wise_timeline in country_domain_timelines:
             country_id = country_wise_timeline[0]
             domain_wise_timelines = country_wise_timeline[1]
@@ -4970,6 +4971,7 @@ class ClientDatabase(Database):
                             year_wise_count[index][1] += int(complied_compliances) if complied_compliances is not None else 0
             compliance_chart_data = []
             for index, count_of_year in enumerate(year_wise_count):
+                count_flag += int(count_of_year[0])
                 compliance_chart_data.append(
                     dashboard.CompliedMap(
                         year=years[index],
@@ -4980,7 +4982,7 @@ class ClientDatabase(Database):
                 filter_id=country_id,
                 complied_compliance=compliance_chart_data
             ))
-        return years, chart_data
+        return years, chart_data, count_flag
 
     def get_trend_chart_drill_down(
         self, country_ids, domain_ids, filter_ids,
@@ -5158,6 +5160,7 @@ class ClientDatabase(Database):
         country_domain_timelines = self.get_country_domain_timelines(
             country_ids, domain_ids, years, client_id)
         chart_data = []
+        count_flag = 0
         for filter_id in filter_ids:
             year_wise_count = [
                 [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]
@@ -5191,6 +5194,7 @@ class ClientDatabase(Database):
                                 year_wise_count[index][1] += complied_compliances if complied_compliances is not None else 0
             compliance_chart_data = []
             for index, count_of_year in enumerate(year_wise_count):
+                count_flag += int(count_of_year[0])
                 compliance_chart_data.append(
                     dashboard.CompliedMap(
                         year=years[index],
@@ -5201,7 +5205,7 @@ class ClientDatabase(Database):
                 filter_id=filter_id,
                 complied_compliance=compliance_chart_data
             ))
-        return years, chart_data
+        return years, chart_data, count_flag
 
     def get_last_7_years(self):
         seven_years_list = []
