@@ -69,7 +69,7 @@ def process_get_statutory_settings(db, session_user, client_id):
 
 def process_get_statutory_compliance(db, session_user, request):
     from_count = request.record_count
-    to_count = from_count + 500
+    to_count = from_count + 2
     unit_id = request.unit_id
 
     data, total_count = db.return_compliance_for_statutory_settings(unit_id, from_count, to_count)
