@@ -68,16 +68,13 @@ def process_get_statutory_settings(db, session_user, client_id):
     return db.get_statutory_settings(session_user, client_id)
 
 def process_get_statutory_compliance(db, session_user, request):
-    record_count = request.record_count
+    from_count = request.record_count
+    to_count = from_count + 2
     unit_id = request.unit_id
-    data = db.return_compliance_for_statutory_settings(unit_id)
-    total_count = len(data)
-    actual_data = data
-    if len(data) > 2 :
-        actual_data = data[record_count: record_count+2]
 
+    data, total_count = db.return_compliance_for_statutory_settings(unit_id, from_count, to_count)
     return clienttransactions.GetSettingsCompliancesSuccess(
-        actual_data, total_count
+        data, total_count
     )
 
 def process_update_statutory_settings(db, request, session_user, client_id):
