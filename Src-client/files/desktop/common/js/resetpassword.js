@@ -102,7 +102,6 @@ $(document).ready(function(){
   }
   url = window.location.href;
   url_parameters = url.split("/");
-  console.log(url_parameters);
   reset_token = url_parameters[url_parameters.length - 1];
   if(url_parameters[url_parameters.length - 2] != "reset-password"){
        client_mirror.validateResetToken(reset_token, url_parameters[url_parameters.length - 2],

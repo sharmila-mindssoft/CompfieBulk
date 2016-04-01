@@ -111,9 +111,7 @@ function changeStatus(notification_id, read_status){
   }
 }
 
-
-function initialize(){
-
+function get_reminders(){
   function onSuccess(data){
     remindersList = data['notifications'];
     loadReminders(remindersList)
@@ -132,6 +130,14 @@ function initialize(){
         }
 
     );
+}
+
+function initialize(){
+  get_reminders();
+  setInterval(function() {
+      get_reminders();
+  }, 10000);
+  
 }
 
 $(function() {

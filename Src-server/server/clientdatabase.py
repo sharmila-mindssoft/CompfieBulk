@@ -122,7 +122,7 @@ class ClientDatabase(Database):
 
     def is_in_contract(self):
         columns = "count(*)"
-        condition = "now() BETWEEN contract_from and contract_to "
+        condition = "now() between contract_from and DATE_ADD(contract_to, INTERVAL 1 DAY)"
         rows = self.get_data(
             self.tblClientGroups, columns, condition
         )
@@ -1251,6 +1251,15 @@ class ClientDatabase(Database):
         return result
 
     def update_service_provider(self, service_provider, session_user, client_id):
+        column = "count(*)"
+        condition = "now() between contract_from and contract_to \
+        and service_provider_id = '%d'" % service_provider.service_provider_id
+        rows = self.get_data(self.tblServiceProviders, column, condition)
+        if int(rows[0][0]) > 0:
+            contract_status_before_update = True
+        else:
+            contract_status_before_update = False
+
         current_time_stamp = self.get_date_time()
         contract_from = self.string_to_datetime(service_provider.contract_from)
         contract_to = self.string_to_datetime(service_provider.contract_to)
@@ -1261,6 +1270,26 @@ class ClientDatabase(Database):
                 service_provider.contact_no, current_time_stamp, session_user]
         condition = "service_provider_id='%d'" % service_provider.service_provider_id
         result = self.update(self.tblServiceProviders, columns_list, values_list, condition, client_id)
+
+        column = "count(*)"
+        condition = "now() between contract_from and contract_to \
+        and service_provider_id = '%d'" % service_provider.service_provider_id
+        rows = self.get_data(self.tblServiceProviders, column, condition)
+
+
+        if int(rows[0][0]) > 0:
+            contract_status_after_update = True
+        else:
+            contract_status_after_update = False
+
+        if contract_status_before_update is False and contract_status_after_update is True:
+            self.update_service_provider_status(
+                service_provider.service_provider_id,  1, session_user, client_id
+            )
+        elif contract_status_before_update is True and contract_status_after_update is False:
+            self.update_service_provider_status(
+                service_provider.service_provider_id,  0, session_user, client_id
+            )
 
         action = "Updated Service Provider \"%s\"" % service_provider.service_provider_name
         self.save_activity(session_user, 2, action, client_id)
@@ -1343,6 +1372,7 @@ class ClientDatabase(Database):
             )
             form_ids = rows[0][0]
         columns = "user_id, form_id, action, created_on"
+        condition += " ORDER BY created_on DESC"
         rows = self.get_data(
             self.tblActivityLog, columns, condition
         )
@@ -2233,7 +2263,7 @@ class ClientDatabase(Database):
             where_condition = "(completion_date is not Null and \
             completion_date != 0 ) and (completed_on is not Null \
             and completed_on != 0) and \
-            (approve_status is Null or approve_status = 0) and completed_by = '%d'"% (
+            (approve_status is Null or approve_status = 0) and completed_by = '%d' and is_closed = 0"% (
                 assignee[0]
             )
             rows = self.get_data_from_multiple_tables(
@@ -2615,7 +2645,6 @@ class ClientDatabase(Database):
                                 days = 31
                             else :
                                 days = (n_date.replace(day=1, month=s_month+1) - datetime.timedelta(days=1)).day
-                                print days
                             n_date = n_date.replace(day=days, month=int(s_month))
                 if current_date > n_date:
                     try :
@@ -2625,7 +2654,6 @@ class ClientDatabase(Database):
                             days = 31
                         else :
                             days = (n_date.replace(day=1, month=n_date.month+1, year=current_year+1) - datetime.timedelta(days=1)).day
-                            print days
                         n_date = n_date.replace(day=days, year=current_year+1)
 
                 due_date = n_date.strftime("%d-%b-%Y")
@@ -5512,19 +5540,19 @@ class ClientDatabase(Database):
                     "compliance_history_id = '%d'" % int(compliance_history_id)
                 )
                 due_date_as_date = due_date_rows[0][0]
-                due_date_as_datetime = datetime.datetime(
-                    due_date_as_date.year,
-                    due_date_as_date.month,
-                    due_date_as_date.day
-                )
-                due_date = self.datetime_to_string(due_date_as_datetime)
+                # due_date_as_datetime = datetime.datetime(
+                #     due_date_as_date.year,
+                #     due_date_as_date.month,
+                #     due_date_as_date.day
+                # )
+                due_date = self.datetime_to_string_time(due_date_rows[0][0])
                 completion_date = due_date_rows[0][1]
                 approve_status = due_date_rows[0][2]
                 delayed_days = "-"
                 if completion_date is None or approve_status == 0:
-                    no_of_days, delayed_days = self.calculate_ageing(due_date_as_datetime)
+                    no_of_days, delayed_days = self.calculate_ageing(due_date_as_date)
                 else:
-                    r = relativedelta.relativedelta(due_date_as_datetime, completion_date)
+                    r = relativedelta.relativedelta(due_date_as_date, completion_date)
                     delayed_days = "-"
                     if r.days < 0 and r.hours < 0 and r.minutes < 0:
                         delayed_days = "Overdue by %d days" % abs(r.days)
@@ -5567,7 +5595,9 @@ class ClientDatabase(Database):
                         notification_id, read_status, notification_text, extra_details,
                         updated_on, level_1_statutory, unit_name, unit_address, assignee,
                         concurrence_person, approval_person, compliance_name,
-                        compliance_description, due_date, delayed_days, penal_consequences
+                        compliance_description, 
+                        self.datetime_to_string_time(due_date_rows[0][0]), 
+                        delayed_days, penal_consequences
                     )
                 )
         return notifications
@@ -5850,7 +5880,7 @@ class ClientDatabase(Database):
 #
     def calculate_ageing(self, due_date, frequency_type=None):
         current_time_stamp = self.get_date_time()
-        due_date = self.localize(due_date)
+        # due_date = self.localize(due_date)
         if frequency_type =="On Occurrence":
             r = relativedelta.relativedelta(due_date, current_time_stamp)
             if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
@@ -5882,8 +5912,8 @@ class ClientDatabase(Database):
 
 
     def get_current_compliances_list(self, session_user, client_id):
-        columns = "compliance_history_id, start_date, due_date, " +\
-            "validity_date, next_due_date, document_name, compliance_task, " + \
+        columns = "compliance_history_id, start_date, ch.due_date, " +\
+            "ch.validity_date, ch.next_due_date, document_name, compliance_task, " + \
             "compliance_description, format_file, unit_code, unit_name," + \
             "address, (select domain_name from %s d \
             where d.domain_id = c.domain_id) as domain_name, frequency, remarks,\
@@ -5892,18 +5922,20 @@ class ClientDatabase(Database):
             )
         tables = [
             self.tblComplianceHistory, self.tblCompliances, self.tblUnits,
-            self.tblComplianceFrequency
+            self.tblComplianceFrequency, self.tblAssignedCompliances
         ]
-        aliases = ["ch", "c" , "u", "cf"]
+        aliases = ["ch", "c" , "u", "cf", "ac"]
         join_conditions = [
             "ch.compliance_id = c.compliance_id",
-            "ch.unit_id = u.unit_id", "c.frequency_id = cf.frequency_id"
+            "ch.unit_id = u.unit_id",
+            "c.frequency_id = cf.frequency_id",
+            "ch.compliance_id = ac.compliance_id"
         ]
         join_type = "inner join"
-        where_condition = "ch.completed_by='%d'" % (
+        where_condition = "ch.completed_by='%d' and is_closed = 0 and ac.is_active = 1" % (
             session_user)
         where_condition += " and ((ch.completed_on is null or ch.completed_on = 0) \
-        and (ch.approve_status is null or ch.approve_status = 0))"
+        and (ch.approve_status is null or ch.approve_status = 0)) ORDER BY due_date ASC"
 
         current_compliances_row = self.get_data_from_multiple_tables(
             columns,
@@ -5973,7 +6005,7 @@ class ClientDatabase(Database):
             "ac.compliance_id = c.compliance_id"
         ]
         join_type = "inner join"
-        where_condition = " assignee = '%d'" % session_user
+        where_condition = " assignee = '%d' and is_closed = 0" % session_user
         where_condition += " and due_Date > DATE_SUB(now(), INTERVAL 6 MONTH) and ac.is_active = 1"
         upcoming_compliances_rows = self.get_data_from_multiple_tables(
             columns,
@@ -7386,8 +7418,17 @@ class ClientDatabase(Database):
 # Task Rejected notification
 
     def get_user_email_name(self, user_ids):
+        user_id_list = [int(x) for x in user_ids.split(",")]
+        admin_email = None
+        index = None
+        if 0 in user_id_list:
+            index = user_id_list.index(0)
+            column = "username"
+            admin_rows = self.get_data(self.tblAdmin, column, "1")
+            user_id_list.remove(0)
+            admin_email = admin_rows[0][0]
         column = "email_id, employee_name"
-        condition = "user_id in (%s)" % user_ids
+        condition = "user_id in (%s)" % ",".join(str(x) for x in user_ids)
         rows = self.get_data(
             self.tblUsers, column, condition
         )
@@ -7402,6 +7443,10 @@ class ClientDatabase(Database):
                 if row[1] is not None:
                     employee_name += ", %s" % row[1]
                 email_ids += ", %s" % row[0]
+        if admin_email is not None:
+            employee_name += "Administrator"
+            email_ids += admin_email
+
         return email_ids, employee_name
 
 
@@ -7694,7 +7739,7 @@ class ClientDatabase(Database):
         columns.append("approved_by")
         values.append(approved_by)
 
-        history_id = self.insert(
+        self.insert(
             self.tblComplianceHistory, columns, values
         )
 
@@ -7710,7 +7755,7 @@ class ClientDatabase(Database):
             compliance_name = "%s - %s" % (document_name, compliance_name)
         notification_text = "Compliance task %s has started" % compliance_name
         self.save_compliance_notification(
-            history_id, notification_text, "Compliance Started",
+            compliance_history_id, notification_text, "Compliance Started",
             "Started"
         )
         try:
@@ -7983,7 +8028,7 @@ class ClientDatabase(Database):
 
     def is_service_provider_in_contract(self, service_provider_id):
         column = "count(*)"
-        condition = "now() between contract_from and contract_to \
+        condition = "now() between contract_from and DATE_ADD(contract_to, INTERVAL 1 DAY)\
         and service_provider_id = '%d' and is_active = 1" % service_provider_id
         rows = self.get_data(self.tblServiceProviders, column, condition)
         if rows[0][0] > 0:

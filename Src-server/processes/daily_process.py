@@ -38,7 +38,7 @@ from email.MIMEText import MIMEText
 
 mysqlHost = "localhost"
 mysqlUser = "root"
-mysqlPassword = "Msft!@#$%^"
+mysqlPassword = "123456"
 mysqlDatabase = "compfie_knowledge"
 mysqlPort = 3306
 
