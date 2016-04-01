@@ -126,6 +126,8 @@ function load_secondwizard(){
 
   var selectedDomain = $('.domainlist.active').attr('id');
 
+
+
   var actname = '';
   var domainList = statutoriesList;
   for(var domainentity in domainList){
@@ -161,7 +163,7 @@ function load_secondwizard(){
       var elementTriggerdate = '';
       var elementDuedate = '';
 
-      if(due_date != null){
+      if(due_date != ''){
         if(due_date.length > 1){
         for(var k = 0; k < due_date.length; k++){
           elementDuedate += '<input type="text" id="duedate'+statutoriesCount+'-'+k+'" readonly="readonly" class="input-box" value="' + due_date[k] + '"/>';
@@ -230,19 +232,13 @@ function load_secondwizard(){
 
       $('.statutorydate', clone2).text(statutorydate);
 
-        if(frequency != 'On Occurrence'){
-          if(triggerdate == ''){
-          $('.triggerbefore', clone2).html('<input type="text" value="" class="input-box trigger" id="triggerdate'+statutoriesCount+'" maxlength="3"/>');
-          $('.duedate', clone2).html('<input type="text" value="" class="input-box" id="duedate'+statutoriesCount+'" />');
-          }
-          else{
-
-            $('.triggerbefore', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/delete.png" width="12"></span>'+triggerdate +
-              '<div class="edittriggertextbox'+statutoriesCount+'" style="display:none;padding-top:10px;">' + elementTriggerdate + '</div>');
-            $('.duedate', clone2).html('<div>' + elementDuedate + '</div>');
-          }
+      if(frequency != 'On Occurrence'){
+        if(triggerdate == ''){
+        $('.triggerbefore', clone2).html('<input type="text" value="" class="input-box trigger" id="triggerdate'+statutoriesCount+'" maxlength="3"/>');
+        $('.duedate', clone2).html('<input type="text" value="" class="input-box" id="duedate'+statutoriesCount+'" />');
         }
         else{
+
           $('.triggerbefore', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/delete.png" width="12"></span>'+triggerdate +
             '<div class="edittriggertextbox'+statutoriesCount+'" style="display:none;padding-top:10px;">' + elementTriggerdate + '</div>');
           $('.duedate', clone2).html('<div>' + elementDuedate + '</div>');
@@ -351,7 +347,7 @@ function validate_firsttab(){
     displayMessage("Domain Required");
     return false;
   }else{
-    var domainID = $(".domainlist.active").attr("id")
+    domainID = $(".domainlist.active").attr("id");
     displayMessage("");
     displayLoader();
     if(assignStatutoryUnitIds.length > 0){
@@ -363,9 +359,9 @@ function validate_firsttab(){
       function onFailure(error){
         hideLoader();
       }
-      client_mirror.getAssignComplianceForUnits(
-        assignStatutoryUnitIds,
+      client_mirror.getAssignComplianceForUnits(assignStatutoryUnitIds,
         parseInt(domainID),
+        0,
         function (error, response) {
               if (error == null){
                 onSuccess(response);

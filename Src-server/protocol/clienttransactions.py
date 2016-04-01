@@ -827,18 +827,22 @@ class GetAssignCompliancesFormDataSuccess(Response):
         }
 
 class GetComplianceForUnitsSuccess(Response):
-    def __init__(self, statutories):
+    def __init__(self, level_one_name, statutories):
+        self.level_one_name = level_one_name
         self.statutories = statutories
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutories"])
+        data = parse_dictionary(data, ["level_one_name", "statutories"])
         statutories = data.get("statutories")
         statutories = parse_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(statutories)
-        return GetComplianceForUnitsSuccess(statutories)
+        level_one_name = data.get("level_one_name")
+        level_one_name = parse_structure_VectorType_CustomTextType_100(level_one_name)
+        return GetComplianceForUnitsSuccess(level_one_name, statutories)
 
     def to_inner_structure(self):
         return {
+            "level_one_name": to_structure_VectorType_CustomTextType_100(self.level_one_name),
             "statutories": to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(self.statutories)
         }
 

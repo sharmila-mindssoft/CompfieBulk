@@ -2534,7 +2534,8 @@ class ClientDatabase(Database):
             AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
             AND t3.is_active = 1 AND t1.is_new = 1 \
-            ORDER BY t3.frequency_id, t3.statutory_mapping \
+            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), '>>', -1),\
+            t3.frequency_id \
             limit %s, %s" % (
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
@@ -2543,6 +2544,7 @@ class ClientDatabase(Database):
                 from_count,
                 to_count
             )
+        print query
 
         rows = self.select_all(query)
         columns = [
@@ -2564,8 +2566,8 @@ class ClientDatabase(Database):
 
         current_year = now.year
         level_1_wise = {}
+        level_1_name = []
         for r in result:
-            domain_id = int(r["domain_id"])
             maipping = r["statutory_mapping"].split(">>")
             level_1 = maipping[0].strip()
             unit_ids = [
@@ -2658,7 +2660,8 @@ class ClientDatabase(Database):
             )
             compliance_list.append(compliance)
             level_1_wise[level_1] = compliance_list
-        return level_1_wise
+            level_1_name = sorted(level_1_wise.keys())
+        return level_1_name, level_1_wise
 
     def get_email_id_for_users(self, user_id):
         if user_id == 0 :

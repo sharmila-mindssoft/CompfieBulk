@@ -727,7 +727,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssignComplianceForUnits(unitIds, domainId, record_count, callback) {
+    function getAssignComplianceForUnits(unitIds, domainId, recordCount, callback) {
         var request = [
             "GetComplianceForUnits", {
                 "unit_ids": unitIds,
