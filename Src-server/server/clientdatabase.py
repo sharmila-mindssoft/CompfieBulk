@@ -2487,7 +2487,7 @@ class ClientDatabase(Database):
         return user_list
 
     def get_assign_compliance_statutories_for_units(
-        self, unit_ids, session_user, client_id
+        self, unit_ids, domain_id, session_user, client_id
     ):
         if len(unit_ids) == 1 :
             unit_ids.append(0)
@@ -2529,12 +2529,15 @@ class ClientDatabase(Database):
             t2.compliance_id NOT IN (SELECT C.compliance_id \
             FROM tbl_assigned_compliances C WHERE \
             C.unit_id IN %s ) \
+            AND t1.domain_id = %s\
             AND t1.unit_id IN %s \
             AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
-            AND t3.is_active = 1 AND t1.is_new = 1 " % (
+            AND t3.is_active = 1 AND t1.is_new = 1 \
+            ORDER BY t3.frequency_id, t3.statutory_mapping" % (
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
+                domain_id,
                 str(tuple(unit_ids)),
             )
 
@@ -2557,7 +2560,7 @@ class ClientDatabase(Database):
         now = datetime.datetime.now()
 
         current_year = now.year
-        domain_wise_compliance = {}
+        level_1_wise = {}
         for r in result:
             domain_id = int(r["domain_id"])
             maipping = r["statutory_mapping"].split(">>")
@@ -2565,9 +2568,9 @@ class ClientDatabase(Database):
             unit_ids = [
                 int(x) for x in r["units"].split(',')
             ]
-            level_1_wise = domain_wise_compliance.get(domain_id)
-            if level_1_wise is None :
-                level_1_wise = {}
+            # level_1_wise = domain_wise_compliance.get(domain_id)
+            # if level_1_wise is None :
+            #     level_1_wise = {}
 
             compliance_list = level_1_wise.get(level_1)
             if compliance_list is None :
@@ -2616,7 +2619,6 @@ class ClientDatabase(Database):
                                 days = 31
                             else :
                                 days = (n_date.replace(day=1, month=s_month+1) - datetime.timedelta(days=1)).day
-                                print days
                             n_date = n_date.replace(day=days, month=int(s_month))
                 if current_date > n_date:
                     try :
@@ -2626,10 +2628,12 @@ class ClientDatabase(Database):
                             days = 31
                         else :
                             days = (n_date.replace(day=1, month=n_date.month+1, year=current_year+1) - datetime.timedelta(days=1)).day
-                            print days
                         n_date = n_date.replace(day=days, year=current_year+1)
 
-                due_date = n_date.strftime("%d-%b-%Y")
+                if s_day is None and s_month is None :
+                    due_date = ""
+                else :
+                    due_date = n_date.strftime("%d-%b-%Y")
                 due_date_list.append(due_date)
 
             if r["frequency_id"] in (2, 3) :
@@ -2651,8 +2655,7 @@ class ClientDatabase(Database):
             )
             compliance_list.append(compliance)
             level_1_wise[level_1] = compliance_list
-            domain_wise_compliance[domain_id] = level_1_wise
-        return domain_wise_compliance
+        return level_1_wise
 
     def get_email_id_for_users(self, user_id):
         if user_id == 0 :

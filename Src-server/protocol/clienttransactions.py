@@ -74,7 +74,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_UnsignedIntegerType_32,
     parse_structure_OptionalType_VectorType_UnsignedIntegerType_32,
     parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings,
-    parse_structure_Text
+    parse_structure_Text,
+    parse_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -157,7 +158,8 @@ from protocol.to_structure import (
     to_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500,
     to_structure_OptionalType_VectorType_UnsignedIntegerType_32,
     to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings,
-    to_structure_Text
+    to_structure_Text,
+    to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES
 )
 
 #
@@ -337,21 +339,25 @@ class GetAssignCompliancesFormData(Request):
         return {}
 
 class GetComplianceForUnits(Request):
-    def __init__(self, unit_ids):
+    def __init__(self, unit_ids, domain_id):
         self.unit_ids = unit_ids
+        self.domain_id = domain_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["unit_ids"])
+        data = parse_dictionary(data, ["unit_ids", "domain_id"])
         unit_ids = data.get("unit_ids")
         unit_ids = parse_structure_VectorType_UnsignedIntegerType_32(unit_ids)
-        return GetComplianceForUnits(unit_ids)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        return GetComplianceForUnits(unit_ids, domain_id)
 
     def to_inner_structure(self):
         return {
             "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(
                 self.unit_ids
-            )
+            ),
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id)
         }
 
 class NewUnitSettings(object):
@@ -824,12 +830,12 @@ class GetComplianceForUnitsSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["statutories"])
         statutories = data.get("statutories")
-        statutories = parse_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES(statutories)
+        statutories = parse_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(statutories)
         return GetComplianceForUnitsSuccess(statutories)
 
     def to_inner_structure(self):
         return {
-            "statutories": to_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES(self.statutories)
+            "statutories": to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(self.statutories)
         }
 
 class SaveAssignedComplianceSuccess(Response):

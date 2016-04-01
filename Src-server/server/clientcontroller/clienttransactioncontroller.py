@@ -110,8 +110,9 @@ def process_get_assign_compliance_form_data(db, session_user, client_id):
 
 def process_get_compliance_for_units(db, request, session_user, client_id):
     unit_ids = request.unit_ids
+    domain_id = request.domain_id
     statutories = db.get_assign_compliance_statutories_for_units(
-        unit_ids, session_user, client_id
+        unit_ids, domain_id, session_user, client_id
     )
     return clienttransactions.GetComplianceForUnitsSuccess(statutories)
 
