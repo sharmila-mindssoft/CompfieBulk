@@ -188,6 +188,7 @@ function load_statutory(sList){
 
     var statutoryprovision = '';
     var compliance_id = sList[statutory]["compliance_id"];
+    var client_statutory_id = sList[statutory]["client_statutory_id"];
     var compliance_applicable_status = sList[statutory]["compliance_applicable_status"];
     var compliance_opted_status = sList[statutory]["compliance_opted_status"];
     var compliance_remarks = sList[statutory]["compliance_remarks"];
@@ -211,10 +212,14 @@ function load_statutory(sList){
     if(compliance_opted_status){
       optedTitle = 'Opted';
     }
+    var combineId = compliance_id + '-' + client_statutory_id;
 
     var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
     var clone2=complianceDetailtableRow.clone();
-    $('.sno', clone2).html(openTag + statutoriesCount + closeTag);
+    $('.sno', clone2).html(openTag + statutoriesCount + closeTag + 
+      '<input type="hidden" id="combineid'+statutoriesCount+'" value="'+combineId+'"/>' +
+      '<input type="hidden" id="oldremark'+statutoriesCount+'" value="'+compliance_remarks+'"/>' );
+
     $('.statutoryprovision', clone2).html(openTag + sList[statutory]["statutory_provision"] + closeTag);
     $('.compliancetask', clone2).html( openTag + sList[statutory]["compliance_name"] + closeTag);
     $('.compliancedescription', clone2).html( openTag + sList[statutory]["description"] + closeTag);
@@ -377,78 +382,73 @@ $('.close').click(function(){
 
 
 $("#submit").click(function() {
-/*    displayLoader();
-    displayMessage("");
-    assignedStatutories = [];
-    
-    var saveflag = true;
-    for(var i=1; i<=(actCount-1); i++){
+  displayLoader();
+  displayMessage("");
+  assignedStatutories = [];
+  
+  var saveflag = true;
+  var totalCompliance = 1;
+
+  for(var i=1; i<=(actCount-1); i++){
+    var applicableStatus = null;
+    var notApplicableRemarks = null;
+    if($('#act'+i).is(":checked")){
+      applicableStatus = true;
+    }
+    else{
+      applicableStatus = false;
+      notApplicableRemarks = $('#remarkvalue'+i).val().trim();
+      if(notApplicableRemarks.length==0){
+        displayMessage("Remarks required for not opted act");
+        saveflag = false;
+        hideLoader();
+        return false;
+      }
+    }
+    var actComplianceCount = $('.statutoryclass'+i).length;
+    for(var j=1; j<=actComplianceCount; j++){
+      var combineidVal = $('#combineid'+totalCompliance).val().split('-');
+      var client_statutory_id = parseInt(combineidVal[1]);
+      var complianceId = parseInt(combineidVal[0]);
+      var compliance_remarks = $('#oldremark'+totalCompliance).val();
+      var complianceApplicableStatus = false;
+      var compliancenotApplicableRemarks = null;
       
-        var applicableStatus = null;
-        var notApplicableRemarks = null;
-
-        if($('#act'+actCount).is(":checked")){
-          applicableStatus = true;
+      var optedval = $('#statutory'+totalCompliance).is(":checked");
+      var applicableval = $('#applicable'+totalCompliance).val();
+      var addStatus = true;
+      if(applicableval == 'true'){
+        if(optedval){
+          addStatus = false;
         }
-        else{
-          applicableStatus = false;
-          notApplicableRemarks = $('#remarkvalue'+actCount).val().trim();
-          if(notApplicableRemarks.length==0){
-            displayMessage("Remarks required for not opted act");
-            saveflag = false;
-            hideLoader();
-            return false;
-          }
+      }else{
+        if(optedval == false){
+          addStatus = false;
         }
+      }
+      if($('#statutory'+totalCompliance).is(":checked")){
+        complianceApplicableStatus = true;
+      }
 
-      var complianceslist = value[statutory]["compliances"];
-      var compliances = { };*/
-/*      for(var compliance in complianceslist){
-        var client_statutory_id = complianceslist[compliance]["client_statutory_id"];
-        var complianceId = complianceslist[compliance]["compliance_id"];
-        var complianceApplicableStatus = false;
-        var compliancenotApplicableRemarks = null;
-        var compliance_remarks = complianceslist[compliance]["compliance_remarks"];
-
-        var optedval = $('#statutory'+statutoriesCount).is(":checked");
-        var applicableval = $('#applicable'+statutoriesCount).val();
-        var addStatus = true;
-        if(applicableval == 'true'){
-          if(optedval){
-            addStatus = false;
-          }
+      if(addStatus){
+        $('#cremarkvalue'+totalCompliance).show();
+        if($('#cremarkvalue'+totalCompliance).val().trim() != ''){
+          compliancenotApplicableRemarks = $('#cremarkvalue'+totalCompliance).val().trim();
         }else{
-          if(optedval == false){
-            addStatus = false;
-          }
+          compliancenotApplicableRemarks = compliance_remarks;
         }
-
-        if($('#statutory'+statutoriesCount).is(":checked")){
-          complianceApplicableStatus = true;
+        if(compliancenotApplicableRemarks == '' && compliance_remarks == '' && applicableStatus == true){
+          displayMessage("Remarks required for not opted compliance");
+          saveflag = false;
+          hideLoader();
+          return false;
         }
-
-        if(addStatus){
-          $('#cremarkvalue'+statutoriesCount).show();
-
-          if($('#cremarkvalue'+statutoriesCount).val().trim() != ''){
-            compliancenotApplicableRemarks = $('#cremarkvalue'+statutoriesCount).val().trim();
-          }else{
-            compliancenotApplicableRemarks = compliance_remarks;
-          }
-          if(compliancenotApplicableRemarks == null && compliance_remarks == null && applicableStatus == true){
-            displayMessage("Remarks required for not opted compliance");
-            saveflag = false;
-            hideLoader();
-            return false;
-          }
-        }
-        assignedstatutoriesData = client_mirror.updateStatutory(client_statutory_id, applicableStatus, notApplicableRemarks, complianceId, complianceApplicableStatus, compliancenotApplicableRemarks);
-        assignedStatutories.push(assignedstatutoriesData);
-        statutoriesCount++;
-      }*/
-/*    }
-  });
-
+      }
+      assignedstatutoriesData = client_mirror.updateStatutory(client_statutory_id, applicableStatus, notApplicableRemarks, complianceId, complianceApplicableStatus, compliancenotApplicableRemarks);
+      assignedStatutories.push(assignedstatutoriesData);
+      totalCompliance++;
+    }
+  }
   if(saveflag){
     $('.overlay').css("visibility","visible");
     $('.overlay').css("opacity","1");
@@ -457,7 +457,7 @@ $("#submit").click(function() {
     $('#password').focus();
     window.scrollTo(0, 0);
     hideLoader();
-  }*/
+  }
 });
 
 $("#cancel").click(function() {
@@ -483,6 +483,8 @@ function displayEdit(unit_id, dispBusinessGroup, dispLegalEntity, dispDivision, 
           count=1;
           statutoriesCount= 1;
           actCount = 1;
+          lastActName = '';
+          lastDomainName = '';
           displayMessage("");
           $("#statutorysettings-view").hide();
           $("#statutorysettings-add").show();
