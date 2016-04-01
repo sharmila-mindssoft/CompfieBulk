@@ -1402,41 +1402,52 @@ class ClientDatabase(Database):
         return self.return_statutory_settings(result, client_id)
 
     def return_compliance_for_statutory_settings(
-        self, unit_id
+        self, unit_id,  from_count, to_count
     ):
-        query = "SELECT @rownum := @rownum + 1 as row_number, t1.client_statutory_id, t1.compliance_id, \
+        query = "SELECT t1.client_statutory_id, t1.compliance_id, \
             t1.statutory_applicable, t1.statutory_opted,\
             t1.not_applicable_remarks, \
             t1.compliance_applicable, t1.compliance_opted, \
             t1.compliance_remarks, \
             t2.compliance_task, t2.document_name, t2.statutory_mapping,\
             t2.statutory_provision, t2.compliance_description, \
-            t3.is_new, (select domain_name from tbl_domains where domain_id = t3.domain_id)\
-            FROM (SELECT @rownum := 0) r, tbl_client_compliances t1 \
+            t3.is_new, (select domain_name from tbl_domains where domain_id = t3.domain_id), \
+            (select count(tc1.client_compliance_id) from tbl_client_compliances tc1 \
+            inner join tbl_client_statutories ts2 \
+            ON ts2.client_statutory_id = tc1.client_statutory_id \
+            AND ts2.unit_id = %s \
+            ) total\
+            FROM tbl_client_compliances t1 \
             INNER JOIN tbl_compliances t2 \
             ON t1.compliance_id = t2.compliance_id \
             INNER JOIN tbl_client_statutories t3 \
             ON t1.client_statutory_id = t3.client_statutory_id \
             WHERE \
             t3.unit_id = %s \
-            ORDER BY t3.domain_id, t2.statutory_mapping" % (
-                unit_id
+            ORDER BY t3.domain_id, t2.statutory_mapping \
+            limit %s, %s\
+            " % (
+                unit_id,
+                unit_id,
+                from_count,
+                to_count
             )
-        print query
+
         rows = self.select_all(query)
         columns = [
-            "row_number",
             "client_statutory_id", "compliance_id",
             "statutory_applicable", "statutory_opted",
             "not_applicable_remarks", "compliance_applicable",
             "compliance_opted", "compliance_remarks",
             "compliance_task", "document_name", "statutory_mapping",
             "statutory_provision", "compliance_description",
-            "is_new", "domain"
+            "is_new", "domain", "total"
         ]
         results = self.convert_to_dict(rows, columns)
         statutory_wise_compliances = []
+        total = 0
         for r in results :
+            total = r["total"]
             statutory_opted = r["statutory_opted"]
             if statutory_opted is None :
                 statutory_opted = bool(r["statutory_applicable"])
@@ -1492,26 +1503,7 @@ class ClientDatabase(Database):
             )
 
             statutory_wise_compliances.append(compliance)
-
-            # level_1_statutories = statutory_wise_compliances.get(
-            #     statutory_name
-            # )
-            # if level_1_statutories is None :
-            #     level_1_statutories = clienttransactions.AssignedStatutory(
-            #         r["client_statutory_id"],
-            #         statutory_name,
-            #         [compliance],
-            #         bool(r["statutory_applicable"]),
-            #         statutory_opted,
-            #         r["not_applicable_remarks"]
-            #     )
-            # else :
-            #     compliance_list = level_1_statutories.compliances
-            #     compliance_list.append(compliance)
-            #     level_1_statutories.compliances = compliance_list
-
-            # statutory_wise_compliances[statutory_name] = level_1_statutories
-        return statutory_wise_compliances
+        return statutory_wise_compliances, total
 
     def return_statutory_settings(self, data, client_id):
         unit_wise_statutories = {}
