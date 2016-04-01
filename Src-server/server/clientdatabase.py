@@ -1424,7 +1424,7 @@ class ClientDatabase(Database):
             ON t1.client_statutory_id = t3.client_statutory_id \
             WHERE \
             t3.unit_id = %s \
-            ORDER BY t3.domain_id, t2.statutory_mapping \
+            ORDER BY t3.domain_id, t2.statutory_mapping, t3.is_new \
             limit %s, %s\
             " % (
                 unit_id,
