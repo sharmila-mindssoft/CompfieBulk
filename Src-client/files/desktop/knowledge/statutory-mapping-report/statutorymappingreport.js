@@ -219,6 +219,7 @@ function loadCountwiseResult(filterList){
   }else{
     $('.compliance_count').text('');
   }
+  
   if(endCount >= finalList.length){
     $(document).ready(function($) {
     $('#accordion').find('.accordion-toggle').click(function(){
@@ -270,9 +271,7 @@ $(function() {
     setTimeout(function(){  
         $(".loading-indicator-spin").hide();
     }, 500);
-
     //hideLoader();
-
   });
 });
 
