@@ -2487,7 +2487,7 @@ class ClientDatabase(Database):
         return user_list
 
     def get_assign_compliance_statutories_for_units(
-        self, unit_ids, domain_id, session_user, client_id
+        self, unit_ids, domain_id, session_user, from_count, to_count
     ):
         if len(unit_ids) == 1 :
             unit_ids.append(0)
@@ -2534,11 +2534,14 @@ class ClientDatabase(Database):
             AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
             AND t3.is_active = 1 AND t1.is_new = 1 \
-            ORDER BY t3.frequency_id, t3.statutory_mapping" % (
+            ORDER BY t3.frequency_id, t3.statutory_mapping \
+            limit %s, %s" % (
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
                 domain_id,
                 str(tuple(unit_ids)),
+                from_count,
+                to_count
             )
 
         rows = self.select_all(query)

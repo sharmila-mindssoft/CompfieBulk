@@ -339,9 +339,10 @@ class GetAssignCompliancesFormData(Request):
         return {}
 
 class GetComplianceForUnits(Request):
-    def __init__(self, unit_ids, domain_id):
+    def __init__(self, unit_ids, domain_id, record_count):
         self.unit_ids = unit_ids
         self.domain_id = domain_id
+        self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
@@ -350,14 +351,17 @@ class GetComplianceForUnits(Request):
         unit_ids = parse_structure_VectorType_UnsignedIntegerType_32(unit_ids)
         domain_id = data.get("domain_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
-        return GetComplianceForUnits(unit_ids, domain_id)
+        record_count = data.get("record_count")
+        record_count = parse_structure_UnsignedIntegerType_32(record_count)
+        return GetComplianceForUnits(unit_ids, domain_id, record_count)
 
     def to_inner_structure(self):
         return {
             "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(
                 self.unit_ids
             ),
-            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id)
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
 class NewUnitSettings(object):
