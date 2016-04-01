@@ -73,8 +73,8 @@ def process_get_statutory_compliance(db, session_user, request):
     data = db.return_compliance_for_statutory_settings(unit_id)
     total_count = len(data)
     actual_data = data
-    if len(data) > 500 :
-        actual_data = data[record_count: record_count+500+1]
+    if len(data) > 2 :
+        actual_data = data[record_count: record_count+2]
 
     return clienttransactions.GetSettingsCompliancesSuccess(
         actual_data, total_count
