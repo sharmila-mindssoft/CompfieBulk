@@ -4033,7 +4033,8 @@ class ClientDatabase(Database):
                             due_date, validity_date, summary
                             )
                         )
-                unit_wise_compliances[unit_name] = compliances_list
+                if len(compliances_list) > 0 :
+                    unit_wise_compliances[unit_name] = compliances_list
             unit_wise_compliances_list.append(clientreport.UnitCompliance(
                 business_group_name, legal_entity_name, division_name,
                 unit_wise_compliances))
@@ -4100,7 +4101,8 @@ class ClientDatabase(Database):
                 query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
                         ac.assignee, cf.frequency, c.frequency_id, c.duration, c.repeats_every, \
                         (select duration_type from tbl_compliance_duration_type where duration_type_id = c.duration_type_id) AS duration_type, \
-                        (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = c.repeats_type_id) AS repeat_type \
+                        (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = c.repeats_type_id) AS repeat_type, \
+                        (select concat(unit_code,' - ',unit_name) from tbl_units where unit_id = ac.unit_id) AS unit_name \
                         FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
                         tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
                         ch.compliance_id = ac.compliance_id and ch.next_due_date = ac.due_date and \
@@ -4149,20 +4151,19 @@ class ClientDatabase(Database):
 
                     compliances_list.append(
                         clientreport.ComplianceUnit(
-                            compliance_name, "unit_name",
+                            compliance_name, compliance[12],
                             compliance_frequency, description,
                             statutory_date,
                             due_date, validity_date, summary)
                         )
-
-                assignee_wise_compliances.append(
-                    clientreport.UserWiseCompliance(
-                        assingee_name, concurrence_person,
-                        approval_person,
-                        compliances_list
-                        )
-                    )
-
+                if len(compliances_list) > 0 :
+                        assignee_wise_compliances.append(
+                            clientreport.UserWiseCompliance(
+                                assingee_name, concurrence_person,
+                                approval_person,
+                                compliances_list
+                                )
+                            )
             assignee_wise_compliances_list.append(
                 clientreport.AssigneeCompliance(
                     business_group_name, legal_entity_name,

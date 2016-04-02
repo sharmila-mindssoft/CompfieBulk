@@ -132,6 +132,7 @@ function loadresult(filterList){
           var cDescription = compliances[i]["description"];
           $('.tbl_sno', clone3).text(compliance_count+1);
           $('.tbl_compliance', clone3).html('<abbr class="page-load tipso_style" title="'+ cDescription +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliances[i]["compliance_name"]);
+          $('.tbl_unit', clone3).text(compliances[i]["unit_address"]);
           $('.tbl_frequency', clone3).text(compliances[i]["compliance_frequency"]);
           $('.tbl_statutorydate', clone3).text(statutorydate);
           $('.tbl_triggerbefore', clone3).text(triggerdate);
@@ -404,4 +405,19 @@ function activate_assignee (element,checkval,checkname) {
 $(function() {
   $(".grid-table-rpt").hide();
   getClientReportFilters();
+});
+
+$( document ).tooltip({
+    position: {
+        my: "center bottom-20",
+        at: "center top",
+        using: function( position, feedback ) {
+            $( this ).css( position );
+            $( "<div>" )
+                .addClass( "arrow" )
+                .addClass( feedback.vertical )
+                .addClass( feedback.horizontal )
+                .appendTo( this );
+        }
+    }
 });
