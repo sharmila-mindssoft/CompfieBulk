@@ -150,7 +150,7 @@ def process_get_past_records_form_data(db, request, session_user, client_id):
 
 def process_get_statutories_by_unit(
         db, request, session_user, client_id
-    ):
+):
     unit_id = request.unit_id
     domain_id = request.domain_id
     level_1_statutory_name = request.level_1_statutory_name
@@ -164,8 +164,8 @@ def process_get_statutories_by_unit(
     )
     users = db.get_users_by_unit_and_domain(unit_id, domain_id)
     return clienttransactions.GetStatutoriesByUnitSuccess(
-        statutory_wise_compliances = statutory_wise_compliances,
-        users = users
+        statutory_wise_compliances=statutory_wise_compliances,
+        users=users
     )
 
 def process_save_past_records(
