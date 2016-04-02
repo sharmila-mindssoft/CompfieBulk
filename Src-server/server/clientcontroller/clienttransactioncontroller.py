@@ -113,7 +113,7 @@ def process_get_compliance_for_units(db, request, session_user, client_id):
     unit_ids = request.unit_ids
     domain_id = request.domain_id
     from_count = request.record_count
-    to_count = from_count + 500
+    to_count = from_count + 2
     level_1_name, statutories = db.get_assign_compliance_statutories_for_units(
         unit_ids, domain_id, session_user, from_count, to_count
     )
