@@ -1411,7 +1411,8 @@ class ClientDatabase(Database):
             t1.compliance_remarks, \
             t2.compliance_task, t2.document_name, t2.statutory_mapping,\
             t2.statutory_provision, t2.compliance_description, \
-            t3.is_new, (select domain_name from tbl_domains where domain_id = t3.domain_id), \
+            (select is_new from tbl_client_statutories where client_statutory_id = t1.client_statutory_id), \
+            (select domain_name from tbl_domains where domain_id = t2.domain_id), \
             (select count(tc1.client_compliance_id) from tbl_client_compliances tc1 \
             inner join tbl_client_statutories ts2 \
             ON ts2.client_statutory_id = tc1.client_statutory_id \
@@ -1419,12 +1420,11 @@ class ClientDatabase(Database):
             ) total\
             FROM tbl_client_compliances t1 \
             INNER JOIN tbl_compliances t2 \
-            ON t1.compliance_id = t2.compliance_id \
-            INNER JOIN tbl_client_statutories t3 \
-            ON t1.client_statutory_id = t3.client_statutory_id \
+            ON t2.compliance_id = t1.compliance_id \
             WHERE \
-            t3.unit_id = %s \
-            ORDER BY t3.domain_id, t2.statutory_mapping, t3.is_new \
+            t1.client_statutory_id in (select distinct client_statutory_id from \
+            tbl_client_statutories where unit_id = %s)\
+            ORDER BY t2.domain_id, t2.statutory_mapping \
             limit %s, %s\
             " % (
                 unit_id,
@@ -2510,7 +2510,10 @@ class ClientDatabase(Database):
             t3.statutory_dates,\
             (select frequency from tbl_compliance_frequency where frequency_id = t3.frequency_id)frequency, t3.frequency_id, \
             (select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) duration_type, t3.duration,\
-            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t3.repeats_type_id) repeat_type, t3.repeats_every\
+            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t3.repeats_type_id) repeat_type, t3.repeats_every, \
+            (select count(distinct t1.compliance_id ) from tbl_client_compliances t1 inner join \
+            tbl_client_statutories t2 on t2.client_statutory_id = t1.client_statutory_id \
+            where t2.domain_id = %s and t2.unit_id in %s )\
             FROM tbl_client_compliances t2 \
             INNER JOIN tbl_client_statutories t1 \
             ON t2.client_statutory_id = t1.client_statutory_id \
@@ -2537,6 +2540,8 @@ class ClientDatabase(Database):
             ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), '>>', -1),\
             t3.frequency_id \
             limit %s, %s" % (
+                domain_id,
+                str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
                 domain_id,
@@ -2556,7 +2561,7 @@ class ClientDatabase(Database):
             "document_name", "compliance_description",
             "statutory_mapping", "statutory_provision",
             "statutory_dates", "frequency", "frequency_id", "duration_type", "duration",
-            "repeat_type", "repeats_every"
+            "repeat_type", "repeats_every", "total"
         ]
         result = self.convert_to_dict(rows, columns)
         return self.return_assign_compliance_data(result)
@@ -2567,7 +2572,9 @@ class ClientDatabase(Database):
         current_year = now.year
         level_1_wise = {}
         level_1_name = []
+        total = 0
         for r in result:
+            total = r["total"]
             maipping = r["statutory_mapping"].split(">>")
             level_1 = maipping[0].strip()
             unit_ids = [
@@ -2661,7 +2668,7 @@ class ClientDatabase(Database):
             compliance_list.append(compliance)
             level_1_wise[level_1] = compliance_list
             level_1_name = sorted(level_1_wise.keys())
-        return level_1_name, level_1_wise
+        return level_1_name, level_1_wise, total
 
     def get_email_id_for_users(self, user_id):
         if user_id == 0 :

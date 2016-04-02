@@ -114,11 +114,11 @@ def process_get_compliance_for_units(db, request, session_user, client_id):
     domain_id = request.domain_id
     from_count = request.record_count
     to_count = 500
-    level_1_name, statutories = db.get_assign_compliance_statutories_for_units(
+    level_1_name, statutories, total = db.get_assign_compliance_statutories_for_units(
         unit_ids, domain_id, session_user, from_count, to_count
     )
     return clienttransactions.GetComplianceForUnitsSuccess(
-        level_1_name, statutories
+        level_1_name, statutories, total
     )
 
 def process_save_assigned_compliance(db, request, session_user, client_id):
