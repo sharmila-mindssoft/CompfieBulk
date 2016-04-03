@@ -42,7 +42,7 @@ class HandleRequest(object):
                 "Content-Type": "application/json",
                 "X-Real-Ip": self._remote_ip
             },
-            request_timeout=20
+            request_timeout=30
         )
         self._http_client.fetch(request, client_callback)
 
