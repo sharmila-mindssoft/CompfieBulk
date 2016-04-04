@@ -128,7 +128,7 @@ function showSideBar(idval, data){
             showTextbox();
         });        
     }
-    else if(complianceFrequency == "On Occurrence"){
+    if(complianceFrequency == "On Occurrence"){
         $(".validityAndDueDate", cloneValSide).hide();
     }
 
@@ -272,11 +272,11 @@ function showSideBar(idval, data){
             displayMessage("Select Any Action");
             return false;
         }
-        else if(approval_status == "Reject"){
+        else if(approval_status == "Reject Concurrence"){
             remarks = $(".remarks-textarea", cloneValSide).val();
         }
         else if(approval_status == "Reject Approval"){
-            remarks = $(".remarks-textarea").val();
+            remarks = $(".remarks-textarea", cloneValSide).val();
         }
 
         validity_date = $('.validitydate1_label', cloneValSide).html();
