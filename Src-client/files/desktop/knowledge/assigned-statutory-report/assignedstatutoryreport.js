@@ -21,30 +21,24 @@ var startCount = 0;
 var endCount;
 var sno = 0;
 var unitcountid = null;
-var displayrowendid = null;
 var fullArrayList = [];
 
 function clearMessage() {
     $(".error-message").hide();
     $(".error-message").text("");
 }
+
 function displayMessage(message) {
     $(".error-message").text(message);
     $(".error-message").show();
 }
+
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
+
 function hideLoader() {
     $(".loading-indicator-spin").hide();
-}
-function textchangeloadingshow(){    
-    $('#pagination').attr('disabled','disabled');
-    $('#pagination').val('Loading...');
-}
-function textchangeloadinghide(){
-    $('#pagination').removeAttr('disabled', 'disabled');
-    $('#pagination').val('Show more records');
 }
 
 function initialize(){
@@ -202,6 +196,8 @@ $("#show-button").click(function(){
             hideLoader();
             clearMessage();
             sno = 0;
+            startCount = 0;
+            endCount = 0;
             $(".grid-table-rpt").show();
             $(".countryval").text(countriesText);
             $(".groupsval").text(groupsval);

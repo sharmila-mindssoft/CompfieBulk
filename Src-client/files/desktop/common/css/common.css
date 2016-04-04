@@ -132,3 +132,11 @@ img, object {
 	color: #ff0000;
 	font-weight: 100;
 }
+.custom-file-input{
+	color: transparent;
+}
+.sidebardocview{
+	display: inline-block;
+    overflow: hidden;
+    width: 162px;
+}

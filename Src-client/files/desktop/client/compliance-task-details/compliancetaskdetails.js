@@ -144,6 +144,10 @@ function loadUpcomingCompliancesDetails(data){
     }); 
 
 }
+
+function compliancealreadyexists(){
+
+}
 function showSideBar(idval, data){
     $('.half-width-task-details').empty();
     clearMessage();
@@ -240,6 +244,12 @@ function showSideBar(idval, data){
                     displayMessage("Select Validity Date");
                     return;
                 }
+                if(data[k]['compliance_frequency'] == "Periodical"){
+                    if(validity_date == '' || validity_date == null){
+                        displayMessage("Select Validity Date");
+                        return;
+                    } 
+                }
                 if(parseMyDate(start_date) > parseMyDate(completion_date)){
                     displayMessage("Completion Date is Greater than or equal to Start Date");
                     return;
@@ -273,8 +283,10 @@ function showSideBar(idval, data){
                         return;
                     }
                 }
-                alert("welcome to api");
-                return;
+                if(compliancealreadyexists() == 1){
+                    displayMessage("Same Compliance already Exist. so u can't edit validity date and due date");
+                    return;
+                }
                 function onSuccess(data){
                     hideLoader();
                     initialize();
@@ -283,7 +295,7 @@ function showSideBar(idval, data){
                     hideLoader();
                     console.log(error);
                 }
-                displayLoader();
+                displayLoader(compliance_history_id, );
                 client_mirror.updateComplianceDetail(compliance_history_id, documents,
                     completion_date, validity_date, next_due_date, remarks,
                     
