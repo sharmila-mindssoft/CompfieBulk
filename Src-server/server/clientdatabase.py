@@ -1597,7 +1597,6 @@ class ClientDatabase(Database):
         unit_name = data.unit_name
         statutories = data.statutories
         updated_on = self.get_date_time()
-        print self.get_date_time()
         for s in statutories :
             client_statutory_id = s.client_statutory_id
             statutory_opted_status = int(s.applicable_status)
@@ -1630,8 +1629,6 @@ class ClientDatabase(Database):
             self.execute(query)
 
         action = "Statutory settings updated for unit - %s " % (unit_name)
-        print action
-        print self.get_date_time()
         self.save_activity(session_user, 6, action)
         self.update_opted_status_in_knowledge(data)
 
@@ -2816,7 +2813,6 @@ class ClientDatabase(Database):
                 request.approval_person_name,
                 compliance_names
             )
-        # print action
         self.save_activity(session_user, 7, json.dumps(action))
         receiver = self.get_email_id_for_users(assignee)[1]
         notify_assign_compliance = threading.Thread(
@@ -4049,7 +4045,6 @@ class ClientDatabase(Database):
                         country_id, domain_id,
                         unit_id, user_id
                     )
-                #print query
                 compliance_rows = self.select_all(query)
 
                 compliances_list = []
@@ -4148,7 +4143,6 @@ class ClientDatabase(Database):
             ORDER BY ac.assignee" % (
                         country_id, row[0], row[1], row[2], domain_id, user_id
                     )
-            #print q
             assigneerows = self.select_all(q)
 
             assignee_wise_compliances = []
@@ -4171,8 +4165,6 @@ class ClientDatabase(Database):
                         country_id, domain_id,
                         unit_ids, assignee_id
                     )
-                #and ch.unit_id = ac.unit_id
-                #print query
                 compliance_rows = self.select_all(query)
 
                 compliances_list = []
@@ -4814,20 +4806,6 @@ class ClientDatabase(Database):
                         country_id, domain_id,
                         unit_id, user_ids, str(statutory_id+"%")
                     )
-
-                # query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
-                #         ac.assignee, cf.frequency FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
-                #         tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
-                #         ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
-                #         cs.country_id = %s and cs.domain_id = %s and cs.unit_id like '%s' \
-                #         and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
-                #         and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee in (%s) and \
-                #         c.statutory_mapping like '%s' " % (
-                #         country_id, domain_id,
-                #         unit_id, user_ids, str(statutory_id+"%")
-                #     )
-
-                #print query
                 compliance_rows = self.select_all(query)
 
                 compliances_list = []
@@ -6261,35 +6239,47 @@ class ClientDatabase(Database):
                     compliance_ids_list = [""] * 4
                     if statutory_status in [1, 2, None, "None", "", 0]:
                         if statutory_status in [1,None, "None", "", 0]: # Delayed compliance
-                            query = "SELECT group_concat(distinct compliance_id) FROM tbl_compliance_history \
+                            query = "SELECT distinct compliance_id FROM tbl_compliance_history \
                                 WHERE unit_id = '%d' AND completed_on > due_date AND \
                                 approve_status = 1" % unit_id
                             compliance_history_rows = self.select_all(query)
                             if len(compliance_history_rows) > 0:
-                                compliance_ids_list[0] = compliance_history_rows[0][0]
+                                concated_result = ()
+                                for row in compliance_history_rows:
+                                    concated_result += row
+                                compliance_ids_list[0] = ",".join(str(x) for x in concated_result)
                         if statutory_status in [2, None, "None", "", 0]: # Not complied
-                            query = "SELECT group_concat(distinct compliance_id) FROM tbl_compliance_history \
+                            query = "SELECT distinct compliance_id FROM tbl_compliance_history \
                                 WHERE unit_id = '%d' AND (approve_status = 0 or \
                                 approve_status is null) AND due_date < now()" % unit_id
                             compliance_history_rows = self.select_all(query)
                             if len(compliance_history_rows) > 0:
-                                compliance_ids_list[1] = compliance_history_rows[0][0]
+                                concated_result = ()
+                                for row in compliance_history_rows:
+                                    concated_result += row
+                                compliance_ids_list[1] = ",".join(str(x) for x in concated_result)
                     if statutory_status in [4, None, "None", "", 0]:# Unassigned compliances
-                        query = "SELECT GROUP_CONCAT(distinct compliance_id) FROM tbl_client_compliances \
+                        query = "SELECT distinct compliance_id FROM tbl_client_compliances \
                             WHERE client_statutory_id IN (SELECT client_statutory_id FROM \
                             tbl_client_statutories WHERE unit_id = '%d') and compliance_id \
                             NOT IN (SELECT compliance_id FROM tbl_assigned_compliances \
                             WHERE unit_id = '%d') AND compliance_opted = 1" % (unit_id, unit_id)
                         result = self.select_all(query)
                         if len(result) > 0:
-                            compliance_ids_list[3] = result[0][0]
+                            concated_result = ()
+                            for row in result:
+                                concated_result += row
+                            compliance_ids_list[3] = ",".join(str(x) for x in concated_result)
                     if statutory_status in [3, None, "None", "", 0]: # Not Opted
-                        query = "SELECT GROUP_CONCAT(distinct compliance_id) FROM tbl_client_compliances where \
+                        query = "SELECT distinct compliance_id FROM tbl_client_compliances where \
                             client_statutory_id IN (SELECT client_statutory_id FROM \
                             tbl_client_statutories WHERE unit_id = '%d') AND compliance_opted = 0" % (unit_id)
                         result = self.select_all(query)
                         if len(result) > 0:
-                            compliance_ids_list[2] = result[0][0]
+                            concated_result = ()
+                            for row in result:
+                                concated_result += row
+                            compliance_ids_list[2] = ",".join(str(x) for x in concated_result)
                     compliances_list = []
                     for index, compliance_ids in enumerate(compliance_ids_list):
                         status = None
