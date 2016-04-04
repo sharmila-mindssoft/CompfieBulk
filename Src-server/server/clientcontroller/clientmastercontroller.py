@@ -234,6 +234,7 @@ def get_client_users(db, request, session_user, client_id):
     user_list = db.get_user_details(client_id, session_user)
     service_provider_list = db.get_service_providers(client_id)
     remaining_licence = db.get_no_of_remaining_licence()
+    is_primary_admin = True if session_user == 0 else db.is_primary_admin(session_user)
     return clientmasters.GetClientUsersSuccess(
         user_countries=user_country_list,
         user_domains=user_domain_list,
@@ -247,7 +248,8 @@ def get_client_users(db, request, session_user, client_id):
         user_groups=user_group_list,
         users=user_list,
         service_providers=service_provider_list,
-        remaining_licence=remaining_licence
+        remaining_licence=remaining_licence,
+        is_primary_admin=is_primary_admin
     )
 
 def save_client_user(db, request, session_user, client_id):

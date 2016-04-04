@@ -85,10 +85,8 @@ function changeStatus(notification_id, read_status){
   }
 }
 
-
-function initialize(){
-
-  function onSuccess(data){
+function get_escalations(){
+    function onSuccess(data){
     escalationsList = data['notifications'];
     loadEscalations(escalationsList)
   }
@@ -106,6 +104,15 @@ function initialize(){
         }
 
     );
+}
+
+
+function initialize(){
+  get_escalations();
+  setInterval(function() {
+      get_escalations();
+  }, 10000);
+  
 }
 
 $(function() {

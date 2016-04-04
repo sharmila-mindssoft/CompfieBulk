@@ -754,7 +754,7 @@ class GetClientUsersSuccess(Response):
     def __init__(
         self, user_countries, user_domains, countries, domains, business_groups, 
         legal_entities, divisions, units, session_user_units, user_groups, users, 
-        service_providers, remaining_licence
+        service_providers, remaining_licence, is_primary_admin
     ):
         self.user_countries = user_countries
         self.user_domains = user_domains
@@ -769,6 +769,7 @@ class GetClientUsersSuccess(Response):
         self.users = users
         self.service_providers = service_providers
         self.remaining_licence = remaining_licence
+        self.is_primary_admin = is_primary_admin
 
     @staticmethod
     def parse_inner_structure(data):
@@ -776,7 +777,7 @@ class GetClientUsersSuccess(Response):
                 "user_countries", "user_domains", "countries","domains", "business_groups", 
 	        	"legal_entities", "divisions", "units", "session_user_units"
                 "user_groups", "users", "service_providers", 
-                "remaining_licence"
+                "remaining_licence", "is_primary_admin"
         	]
        	)
         user_countries = data.get("user_countries")
@@ -805,10 +806,12 @@ class GetClientUsersSuccess(Response):
         service_providers = parse_structure_VectorType_RecordType_core_ServiceProvider(service_providers)
         remaining_licence = data.get("remaining_licence")
         remaining_licence = parse_structure_UnsignedIntegerType_32(remaining_licence)
+        is_primary_admin = data.get("is_primary_admin")
+        is_primary_admin = parse_structure_Bool(is_primary_admin)
         return GetClientUsersSuccess(
         	user_countries, user_domains, countries,domains, business_groups, 
             legal_entities, divisions, units, session_user_units, user_groups, 
-            users, service_providers, remaining_licence
+            users, service_providers, remaining_licence, is_primary_admin
         )
 
     def to_inner_structure(self):
@@ -825,7 +828,8 @@ class GetClientUsersSuccess(Response):
             "user_groups" : to_structure_VectorType_RecordType_core_UserGroup(self.user_groups),
             "users" : to_structure_VectorType_RecordType_core_ClientUser(self.users),
             "service_providers" : to_structure_VectorType_RecordType_core_ServiceProvider(self.service_providers),
-            "remaining_licence" : to_structure_UnsignedIntegerType_32(self.remaining_licence)
+            "remaining_licence" : to_structure_UnsignedIntegerType_32(self.remaining_licence),
+            "is_primary_admin" : to_structure_Bool(self.is_primary_admin)
         }
 
 class SaveClientUserSuccess(Response):

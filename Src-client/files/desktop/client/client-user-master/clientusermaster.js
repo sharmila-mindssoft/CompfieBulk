@@ -7,6 +7,7 @@ var unitList;
 var userGroupsList;
 var serviceProviderList;
 var userList;
+var is_session_user_primary_admin;
 
 function clearMessage() {
     $(".error-message").hide();
@@ -83,6 +84,7 @@ function initialize(){
         serviceProviderList = data['service_providers'];
         userList = data['users'];
         remaining_licence = data["remaining_licence"]
+        is_session_user_primary_admin = data["is_primary_admin"]
         if (parseInt(remaining_licence) <= 0){
         	$(".btn-add").hide();
         }
@@ -191,7 +193,9 @@ function loadClientUserList(){
             $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
             if (isPrimaryAdmin == false){
                 $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+')"/>');
-                $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="user_isadmin('+userId+', '+adminstatus+')" />');    
+                if (is_session_user_primary_admin == true){
+                    $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="user_isadmin('+userId+', '+adminstatus+')" />');    
+                }
             } 
             $('.tbody-users-list').append(clone);
         }

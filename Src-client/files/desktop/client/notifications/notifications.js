@@ -113,8 +113,7 @@ function changeStatus(notification_id, read_status){
     }
 }
 
-
-function initialize(){
+function get_notifications(){
     function onSuccess(data){
         notificationsList = data['notifications'];
         loadNotifications(notificationsList)
@@ -133,6 +132,14 @@ function initialize(){
         }
 
     );
+}
+
+
+function initialize(){
+    get_notifications();
+    setInterval(function() {
+        get_notifications();
+    }, 10000);
 }
 
 $(function() {

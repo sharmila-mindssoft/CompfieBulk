@@ -173,8 +173,10 @@ function initMirror() {
                 log("API STATUS :"+status)
                 if (status.toLowerCase().indexOf(matchString) != -1){
                     callback(null, response);
+                }else{
+                    callback(status, null)    
                 }
-                callback(status, null)
+                
             }
         )
         .fail(

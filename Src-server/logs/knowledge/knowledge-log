@@ -1,54 +1,80 @@
-2016-03-31 10:42:47,352 - knowledge_logger - main.py-handle-api- : (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`compfie_creativegroups_1`.`tbl_assigned_compliances`, CONSTRAINT `fk_assigned_compliances_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`))')
-2016-03-31 10:42:47,353 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+2016-04-01 01:32:13,320 - knowledge_logger - main.py-handle-api- : (1054, "Unknown column 'is_closed' in 'field list'")
+2016-04-01 01:32:13,320 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
     return controller.process_techno_request(request, db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
-    return update_client_group(db, request_frame, session_user)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 165, in update_client_group
-    )
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 3957, in replicate_client_countries_and_domains
-    delete_domains_query = "delete from tbl_domains"
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 48, in process_techno_request
+    return get_clients(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 380, in get_clients
+    unit_list = db.get_unit_details_for_user(session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 5650, in get_unit_details_for_user
+    detail_rows = self.get_data(self.tblUnits, unit_columns, unit_condition)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 179, in get_data
+    return self.select_all(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 150, in select_all
+    cursor.execute(query)
   File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
     self.errorhandler(self, exc, value)
   File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
     raise errorclass, errorvalue
-IntegrityError: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`compfie_creativegroups_1`.`tbl_assigned_compliances`, CONSTRAINT `fk_assigned_compliances_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`))')
+OperationalError: (1054, "Unknown column 'is_closed' in 'field list'")
 
-2016-03-31 10:42:52,398 - knowledge_logger - main.py-handle-api- : (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`compfie_creativegroups_1`.`tbl_assigned_compliances`, CONSTRAINT `fk_assigned_compliances_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`))')
-2016-03-31 10:42:52,398 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+2016-04-01 01:40:24,572 - knowledge_logger - main.py-handle-api- : (1054, "Unknown column 'is_closed' in 'field list'")
+2016-04-01 01:40:24,572 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
     return controller.process_techno_request(request, db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
-    return update_client_group(db, request_frame, session_user)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 165, in update_client_group
-    )
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 3957, in replicate_client_countries_and_domains
-    delete_domains_query = "delete from tbl_domains"
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 430, in reactivate_unit
+    if db.reactivate_unit(client_id, unit_id, session_user):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4512, in reactivate_unit
+    result = self.update(self.tblUnits, columns, values, condition)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 238, in update
+    return self.execute(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 163, in execute
+    return cursor.execute(query)
   File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
     self.errorhandler(self, exc, value)
   File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
     raise errorclass, errorvalue
-IntegrityError: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`compfie_creativegroups_1`.`tbl_assigned_compliances`, CONSTRAINT `fk_assigned_compliances_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`))')
+OperationalError: (1054, "Unknown column 'is_closed' in 'field list'")
 
-2016-03-31 10:44:36,185 - knowledge_logger - main.py-handle-api- : (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`compfie_creativegroups_1`.`tbl_assigned_compliances`, CONSTRAINT `fk_assigned_compliances_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`))')
-2016-03-31 10:44:36,186 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+2016-04-01 01:41:17,158 - knowledge_logger - main.py-handle-api- : (1054, "Unknown column 'is_closed' in 'field list'")
+2016-04-01 01:41:17,158 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
     return controller.process_techno_request(request, db)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 42, in process_techno_request
-    return update_client_group(db, request_frame, session_user)
-  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 165, in update_client_group
-    )
-  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 3957, in replicate_client_countries_and_domains
-    delete_domains_query = "delete from tbl_domains"
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 430, in reactivate_unit
+    if db.reactivate_unit(client_id, unit_id, session_user):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4512, in reactivate_unit
+    result = self.update(self.tblUnits, columns, values, condition)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 238, in update
+    return self.execute(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 163, in execute
+    return cursor.execute(query)
   File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
     self.errorhandler(self, exc, value)
   File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
     raise errorclass, errorvalue
-IntegrityError: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`compfie_creativegroups_1`.`tbl_assigned_compliances`, CONSTRAINT `fk_assigned_compliances_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`))')
+OperationalError: (1054, "Unknown column 'is_closed' in 'field list'")
+
+2016-04-01 01:41:53,077 - knowledge_logger - main.py-handle-api- : global name 'db_name' is not defined
+2016-04-01 01:41:53,077 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 430, in reactivate_unit
+    if db.reactivate_unit(client_id, unit_id, session_user):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4520, in reactivate_unit
+    print db_name
+NameError: global name 'db_name' is not defined
 
