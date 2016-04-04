@@ -441,8 +441,7 @@ function validate_firsttab(){
       function onSuccess(data){
         statutoriesList = data["statutories"];
         statutoriesNameList = data["level_one_name"];
-        //totalRecord = data["total_count"];
-        totalRecord = 6;
+        totalRecord = data["total_count"];
         $('#pagination').show();
 
         load_secondwizard();
