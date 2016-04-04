@@ -121,12 +121,13 @@ function loadresult(filterList){
           compStatus = 'Complied';
         } 
         else if (completionDate != '' && dateDifference > 0) {
-          remark = 'Over due by '+ dateDifference +' Days';
-          compStatus = 'Complied';
+          remark = 'Delayed by '+ dateDifference +' Days';
+          compStatus = 'Delayed Compliance';
+          
         }
         else if (completionDate == '' && dateDifference > 0) {
-          remark = 'Delayed by '+ dateDifference +' Days';
-          compStatus = 'DelayedCompliance';
+          remark = 'Over due by '+ dateDifference +' Days';
+          compStatus = 'Complied';
         }
         else if (completionDate == '' && dateDifference <= 0) {
           remark =  Math.abs(dateDifference) +' Days left';
@@ -162,7 +163,6 @@ function loadresult(filterList){
           compliance_count++;
         }
     }   
-
     /*if(compliancelists.length == 0){
         var tableRow4=$('#unit-content-templates .table-unit-content .table-row-unit-content');
         var clone4=tableRow4.clone();
