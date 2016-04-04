@@ -201,7 +201,6 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
-        print query
         return self.select_all(query)
 
     def insert(self, table, columns, values, client_id=None) :
@@ -706,7 +705,6 @@ class KnowledgeDatabase(Database):
             query = query + " INNER JOIN tbl_user_domains t2 ON \
                 t1.domain_id = t2.domain_id WHERE t2.user_id = %s \
                 AND t1.is_active=1 ORDER BY t1.domain_name " % (user_id)
-        query = query + " ORDER BY t1.domain_name"
         rows = self.select_all(query)
         result = []
         if rows :

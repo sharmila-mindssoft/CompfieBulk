@@ -98,3 +98,63 @@ ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual
     raise errorclass, errorvalue
 ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY t1.domain_name' at line 1")
 
+2016-04-04 17:01:36,636 - knowledge_logger - main.py-handle-api- : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY t1.domain_name' at line 1")
+2016-04-04 17:01:36,637 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 201, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/knowledgetransactioncontroller.py", line 23, in process_knowledge_transaction_request
+    return process_get_statutory_mapping_master(db, user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/knowledgetransactioncontroller.py", line 48, in process_get_statutory_mapping_master
+    domains = db.get_domains_for_user(user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 709, in get_domains_for_user
+    query = query + " ORDER BY t1.domain_name"
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 150, in select_all
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY t1.domain_name' at line 1")
+
+2016-04-04 17:01:48,732 - knowledge_logger - main.py-handle-api- : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY t1.domain_name' at line 1")
+2016-04-04 17:01:48,733 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 201, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/knowledgetransactioncontroller.py", line 23, in process_knowledge_transaction_request
+    return process_get_statutory_mapping_master(db, user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/knowledgetransactioncontroller.py", line 48, in process_get_statutory_mapping_master
+    domains = db.get_domains_for_user(user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 709, in get_domains_for_user
+    query = query + " ORDER BY t1.domain_name"
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 150, in select_all
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY t1.domain_name' at line 1")
+
+2016-04-04 17:01:57,134 - knowledge_logger - main.py-handle-api- : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY t1.domain_name' at line 1")
+2016-04-04 17:01:57,134 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 201, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/knowledgetransactioncontroller.py", line 23, in process_knowledge_transaction_request
+    return process_get_statutory_mapping_master(db, user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/knowledgetransactioncontroller.py", line 48, in process_get_statutory_mapping_master
+    domains = db.get_domains_for_user(user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 709, in get_domains_for_user
+    query = query + " ORDER BY t1.domain_name"
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 150, in select_all
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY t1.domain_name' at line 1")
+
