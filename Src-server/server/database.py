@@ -201,6 +201,7 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
+        print query
         return self.select_all(query)
 
     def insert(self, table, columns, values, client_id=None) :
@@ -330,7 +331,7 @@ class Database(object) :
 
     def string_to_datetime_with_time(self, string):
         string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y %H:%M")
-        return self.localize(string_in_date)
+        return string_in_date
 
     def toUTC(self, time_stamp):
         tz = pytz.timezone('UTC')
@@ -4511,6 +4512,20 @@ class KnowledgeDatabase(Database):
         condition = "unit_id = '%d' and client_id = '%d' "% (unit_id, client_id)
         result = self.update(self.tblUnits, columns, values, condition)
 
+        rows = self.get_client_db_info(client_id)
+
+        ip = rows[0][0]
+        username = rows[0][2]
+        password = rows[0][3]
+        dbname = rows[0][4]
+        conn = self._db_connect(ip, username, password, dbname)
+        cursor = conn.cursor()
+
+        query = "update tbl_units set is_closed = 0 where unit_id = '%d'" % unit_id
+        cursor.execute(query)
+        conn.commit()
+        conn.close()
+
         action_column = "unit_code, unit_name"
         rows = self.get_data(self.tblUnits, action_column, condition)
         action = "Reactivated Unit \"%s-%s\"" % (rows[0][0], rows[0][1])
@@ -5776,6 +5791,7 @@ class KnowledgeDatabase(Database):
         else:
             condition = "1"
         columns = "user_id, form_id, action, created_on"
+        condition += " ORDER BY created_on DESC"
         rows = self.get_data(self.tblActivityLog, columns, condition)
         audit_trail_details = []
         for row in rows:
