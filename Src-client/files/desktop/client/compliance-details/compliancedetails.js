@@ -119,7 +119,6 @@ function loadresult(filterList){
           cDate = convert_date(completionDate);
         }
         var dateDifference = daydiff(cDueDate, cDate);
-        
         var remark = '';
         var compStatus = '';
 
@@ -136,7 +135,7 @@ function loadresult(filterList){
           compStatus = 'DelayedCompliance';
         }
         else if (completionDate == '' && dateDifference <= 0) {
-          remark =  dateDifference +' Days left';
+          remark =  Math.abs(dateDifference) +' Days left';
           compStatus = 'Inprogress';
         }
 
