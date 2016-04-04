@@ -83,11 +83,12 @@ function showSideBar(idval, data){
     $(".half-width-task-details").show();
     $(".full-width-list").attr("width", "60%");
     $(".half-width-task-details").attr("width", "40%");
+
     //SideView append ---------------------------------------------------------------------
     var tableRowSide = $('#templates .sideview-div');
     var cloneValSide = tableRowSide.clone();
     var complianceFrequency = data['compliance_frequency'];
-
+    $(".validityAndDueDate", cloneValSide).hide();  
     $('.sidebar-unit span', cloneValSide).html(data['unit_name']);
    // $('.sidebar-unit abbr', cloneValSide).attr("title", data['address']);
     $('.sidebar-compliance-task span', cloneValSide).html(data['compliance_name']);
@@ -127,9 +128,10 @@ function showSideBar(idval, data){
             showTextbox();
         });        
     }
-    if(complianceFrequency == "On Occurrence"){
+    else if(complianceFrequency == "On Occurrence"){
         $(".validityAndDueDate", cloneValSide).hide();
     }
+
     
     if(data['delayedby'] != null){
         $(".sidebar-status", cloneValSide).html("Not Complied");    

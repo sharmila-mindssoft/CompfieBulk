@@ -19,11 +19,17 @@ function initialize(){
         var curr_date = d.getDate();
         var curr_month = d.getMonth();
         var curr_year = d.getFullYear();
+         if(curr_date < 10) {
+            curr_date = "0"+curr_date;
+        }
         var todaydate = curr_date + "-" + m_names[curr_month] + "-" + curr_year;
         var currentDate = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 7);
         var day = currentDate.getDate()
         var month = currentDate.getMonth()
         var year = currentDate.getFullYear()
+        if(day < 10) {
+            day = "0"+day;
+        }
         var lastdate = day + "-" + m_names[month] + "-" + year;
 
         $("#to-date").val(todaydate);
@@ -44,7 +50,24 @@ function initialize(){
         }
     );
 }
-$("#show-button").click(function(){ 
+function datetonumber(datetime){
+    var date = datetime.substring(0,11);
+    var timeval = datetime.substring(12,18);
+    var date1 = date.split("-");
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    for(var j = 0; j < months.length; j++){
+        if(date1[1] == months[j]){
+             date1[1] = months.indexOf(months[j])+1;
+         }                      
+    } 
+    if(date1[1] < 10){
+        date1[1] = '0'+date1[1];
+    }                        
+    var formattedDate = date1[2]+"/"+date1[1]+"/"+date1[0];
+    var newdate = new Date(formattedDate+" "+timeval);
+    return Date.parse(newdate);
+}
+function showrecord(){
     var userid = $("#userid").val();   
     var fromdate = $("#from-date").val();
     var todate = $("#to-date").val();
@@ -68,7 +91,8 @@ $("#show-button").click(function(){
             else{
                 formname = "Logout"
             }
-            if((fromdate <= logintraceList[key]['created_on']) && (todate >= logintraceList[key]['created_on']) && userid == ''){ 
+            //console.log(datetonumber(fromdate) +"<="+ datetonumber(logintraceList[key]['created_on'])+" && "+ datetonumber(todate) +" >= "+datetonumber(logintraceList[key]['created_on'])+"--userid--"+userid);
+            if((datetonumber(fromdate) <= datetonumber(logintraceList[key]['created_on'])) && (datetonumber(todate) >= datetonumber(logintraceList[key]['created_on'])) && userid == ''){ 
                 var tableRow = $('#templates .table-logintrace-list .table-row');
                 var clone = tableRow.clone();
                 $('.date-time', clone).text(logintraceList[key]['created_on']);
@@ -77,7 +101,7 @@ $("#show-button").click(function(){
                 $('.tbody-login-trace-list').append(clone);
                 sno++;
             }
-            if((fromdate <= logintraceList[key]['created_on']) && (todate >= logintraceList[key]['created_on']) && userid == logintraceList[key]['user_id']){ 
+            if((datetonumber(fromdate) <= datetonumber(logintraceList[key]['created_on'])) && (datetonumber(todate) >= datetonumber(logintraceList[key]['created_on'])) && userid == logintraceList[key]['user_id']){ 
                 var tableRow= $('#templates .table-logintrace-list .table-row');
                 var clone= tableRow.clone();
                 $('.date-time', clone).text(logintraceList[key]['created_on']);
@@ -89,7 +113,7 @@ $("#show-button").click(function(){
         });
         $(".total-records").html("Total : "+sno+" records")
     }
-});
+}
 
 //User---------------------------------------------------------------------------------------------------------------
 
