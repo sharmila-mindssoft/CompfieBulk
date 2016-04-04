@@ -201,6 +201,7 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
+        print query
         return self.select_all(query)
 
     def insert(self, table, columns, values, client_id=None) :

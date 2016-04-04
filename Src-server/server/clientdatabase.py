@@ -327,7 +327,7 @@ class ClientDatabase(Database):
         aliases = ["tf",  "tft"]
         joinConditions = ["tf.form_type_id = tft.form_type_id"]
         whereCondition = " is_admin = 0 and tf.form_type_id not in (5) \
-        order by tf.form_order"
+        order by tf.form_order, tf.form_name ASC"
         joinType = "left join"
         rows = self.get_data_from_multiple_tables(
             columns, tables, aliases, joinType,
