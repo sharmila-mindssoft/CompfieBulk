@@ -341,28 +341,24 @@ def get_risk_report(db, request, session_user, client_id):
     unassigned = [] # 4
     if request.csv == False:
         if statutory_status in [1, None, "None", "", 0]:# Delayed compliance
-            print "getting delayed compliance"
             delayed_compliance = db.get_risk_report(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name, 1,
                 client_id, session_user
             )
         if statutory_status in [2, None, "None", "", 0]: # Not complied
-            print "getting not complied"
             not_complied = db.get_risk_report(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name, 2,
                 client_id, session_user
             )
         if statutory_status in [3, None, "None", "", 0]: # Not opted
-            print "getting not opted"
             not_opted = db.get_risk_report(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name, 3,
                 client_id, session_user
             )
         if statutory_status in [4, None, "None", "", 0]: # Unassigned
-            print "getting unassigned"
             unassigned = db.get_risk_report(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name, 4,

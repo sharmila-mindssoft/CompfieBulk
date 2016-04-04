@@ -201,7 +201,6 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
-        print query
         return self.select_all(query)
 
     def insert(self, table, columns, values, client_id=None) :
@@ -706,6 +705,7 @@ class KnowledgeDatabase(Database):
             query = query + " INNER JOIN tbl_user_domains t2 ON \
                 t1.domain_id = t2.domain_id WHERE t2.user_id = %s \
                 AND t1.is_active=1 ORDER BY t1.domain_name " % (user_id)
+        query = query + " ORDER BY t1.domain_name"
         rows = self.select_all(query)
         result = []
         if rows :
@@ -815,9 +815,10 @@ class KnowledgeDatabase(Database):
         if user_id > 0 :
             query = query + " INNER JOIN tbl_user_countries t2 \
                 ON t1.country_id = t2.country_id WHERE t2.user_id = %s \
-                AND t1.is_active = 1 ORDER BY t1.country_name " % (
+                AND t1.is_active = 1 " % (
                     user_id
                 )
+        query = query + " ORDER BY t1.country_name"
         rows = self.select_all(query)
         result = []
         if rows :
@@ -1513,10 +1514,12 @@ class KnowledgeDatabase(Database):
 
     def get_geography_report(self):
         q = "SELECT t1.geography_id, t1.geography_name, t1.parent_names, t1.is_active, \
-            (select distinct country_id FROM tbl_geography_levels where level_id = t1.level_id) country_id \
-            FROM tbl_geographies t1 "
+            (select distinct country_id FROM tbl_geography_levels where level_id = t1.level_id) country_id, \
+            (select level_position FROM tbl_geography_levels where level_id = t1.level_id) position \
+            FROM tbl_geographies t1 ORDER BY position, parent_names, geography_name"
+
         rows = self.select_all(q)
-        columns = ["geography_id", "geography_name", "parent_names", "is_active", "country_id"]
+        columns = ["geography_id", "geography_name", "parent_names", "is_active", "country_id", "position"]
         result = self.convert_to_dict(rows, columns)
 
         def return_report_data(result) :

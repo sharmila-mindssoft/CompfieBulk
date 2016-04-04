@@ -965,6 +965,19 @@ class InvalidServiceProviderId(Response):
         return {
         }
 
+class ReassignCompliancesBeforeDeactivate(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ReassignCompliancesBeforeDeactivate()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class CannotChangePrimaryAdminStatus(Response):
     def __init__(self):
         pass
@@ -1060,17 +1073,19 @@ class UserLimitExceeds(Response):
         } 
 
 def _init_Response_class_map():
-    classes = [GetServiceProvidersSuccess, SaveServiceProviderSuccess,
-    ServiceProviderNameAlreadyExists, UpdateServiceProviderSuccess,
-    ChangeServiceProviderStatusSuccess, GetUserPrivilegesSuccess,
-    UserGroupNameAlreadyExists, InvalidUserGroupId, SaveUserPrivilegesSuccess,
-    UpdateUserPrivilegesSuccess, ChangeUserPrivilegeStatusSuccess,
-    GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists,
-    UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess,
-    ChangeAdminStatusSuccess, GetAuditTrailSuccess, CannotDeactivateUserExists,
-    GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExists,
-    InvalidServiceProviderId, EmailIdAlreadyExists, CannotChangePrimaryAdminStatus ,
-    CannotPromoteServiceProvider]
+    classes = [
+        GetServiceProvidersSuccess, SaveServiceProviderSuccess,
+        ServiceProviderNameAlreadyExists, UpdateServiceProviderSuccess,
+        ChangeServiceProviderStatusSuccess, GetUserPrivilegesSuccess,
+        UserGroupNameAlreadyExists, InvalidUserGroupId, SaveUserPrivilegesSuccess,
+        UpdateUserPrivilegesSuccess, ChangeUserPrivilegeStatusSuccess,
+        GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists,
+        UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess,
+        ChangeAdminStatusSuccess, GetAuditTrailSuccess, CannotDeactivateUserExists,
+        GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExists,
+        InvalidServiceProviderId, EmailIdAlreadyExists, CannotChangePrimaryAdminStatus ,
+        CannotPromoteServiceProvider, ReassignCompliancesBeforeDeactivate
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
