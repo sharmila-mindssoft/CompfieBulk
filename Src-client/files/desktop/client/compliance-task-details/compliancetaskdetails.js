@@ -283,10 +283,6 @@ function showSideBar(idval, data){
                         return;
                     }
                 }
-                // if(compliancealreadyexists() == 1){
-                //     displayMessage("Same Compliance already Exist. so u can't edit validity date and due date");
-                //     return;
-                // }
                 function onSuccess(data){
                     hideLoader();
                     initialize();

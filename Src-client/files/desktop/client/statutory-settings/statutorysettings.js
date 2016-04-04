@@ -288,50 +288,33 @@ function load_statutory(sList){
   }
 }
 
-$(function() {
-  $('#pagination').click(function(){
-    //displayLoader();
-    unit_id =  parseInt($("#unit").val());
-    s_endCount = statutoriesCount - 1;
-    $(".loading-indicator-spin").show();
-    if($('.loading-indicator-spin').css('display') != 'none')
-    {
-        setTimeout(function(){  
-            displayLoader();
-            client_mirror.getStatutorySettingsCompliance(unit_id, s_endCount,
-              function (error, response) {
-                  if (error == null){
-                    sList = response["statutories"];
-                    totalRecord = response["total_count"];
-                    
-                    if(parseInt(totalRecord) > s_endCount){
-                      $('#pagination').show();
-                      $('#submit').hide();
-                      $('#cancel').hide();
-                    }else{
-                      $('#pagination').hide();
-                      $('#submit').show();
-                      $('#cancel').show();
-                    }
-                    load_statutory(sList);
-                    hideLoader();
-                  }
-                  else {
-                    displayMessage(error);
-                    hideLoader();
-                  }
-              }
-            )
-        }, 500);
-        
-    }
-    setTimeout(function(){  
-        $(".loading-indicator-spin").hide();
-    }, 500);
-    //hideLoader();
-  });
+$('#pagination').click(function(){
+  unit_id =  parseInt($("#unit").val());
+  s_endCount = statutoriesCount - 1;
+  displayLoader();
+  client_mirror.getStatutorySettingsCompliance(unit_id, s_endCount,
+    function (error, response) {
+        if (error == null){
+          sList = response["statutories"];
+          totalRecord = response["total_count"];
+          if(parseInt(totalRecord) > s_endCount){
+            $('#pagination').show();
+            $('#submit').hide();
+            $('#cancel').hide();
+          }else{
+            $('#pagination').hide();
+            $('#submit').show();
+            $('#cancel').show();
+          }
+          load_statutory(sList);
+          hideLoader();
+        }
+        else {
+          displayMessage(error);
+          hideLoader();
+        }
+    })
 });
-
 
 function submit_statutory(){
   var password = $('#password').val();
