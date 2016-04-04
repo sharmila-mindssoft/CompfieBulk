@@ -70,8 +70,8 @@ function loadresult(filterList){
 
       for(var compliancelist in compliancelists){
         var assignee_ = compliancelists[compliancelist]["assignee"];
-        var concurrence = compliancelists[compliancelist]["concurrence"];
-        var approval_ = compliancelists[compliancelist]["approval"];
+        var concurrence = compliancelists[compliancelist]["concurrence_person"];
+        var approval_ = compliancelists[compliancelist]["approval_person"];
 
         if(assignee_ == null) assignee_ = 'Client Admin';
         if(concurrence == null) concurrence = 'Nil';

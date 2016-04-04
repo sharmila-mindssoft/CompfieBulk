@@ -475,8 +475,8 @@ class ConvertJsonToCSV(object):
 
                 documents = compliance[6]
 
-                no_of_days, compliance_status = db.calculate_ageing(compliance[4])
-                
+                no_of_days, compliance_status = db.calculate_ageing(compliance[4], compliance[7])
+
                 completion_date = None
                 if(compliance[7] != None):
                     completion_date = db.datetime_to_string(compliance[7])

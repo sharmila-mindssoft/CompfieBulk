@@ -1402,7 +1402,7 @@ class ClientDatabase(Database):
             where_qry = ''
         else :
             user_id = int(session_user)
-            where_qry = " WHERE t1.unit_id in (select unit_id from tbl_user_units where user_id LIKE '%s') \
+            where_qry = " WHERE t2.is_closed=0 AND t1.unit_id in (select unit_id from tbl_user_units where user_id LIKE '%s') \
             AND t1.domain_id in (select domain_id from tbl_user_domains where user_id LIKE '%s')" % (
                 user_id, user_id
             )
@@ -1597,7 +1597,6 @@ class ClientDatabase(Database):
         unit_name = data.unit_name
         statutories = data.statutories
         updated_on = self.get_date_time()
-        print self.get_date_time()
         for s in statutories :
             client_statutory_id = s.client_statutory_id
             statutory_opted_status = int(s.applicable_status)
@@ -1630,8 +1629,6 @@ class ClientDatabase(Database):
             self.execute(query)
 
         action = "Statutory settings updated for unit - %s " % (unit_name)
-        print action
-        print self.get_date_time()
         self.save_activity(session_user, 6, action)
         self.update_opted_status_in_knowledge(data)
 
@@ -2816,7 +2813,6 @@ class ClientDatabase(Database):
                 request.approval_person_name,
                 compliance_names
             )
-        # print action
         self.save_activity(session_user, 7, json.dumps(action))
         receiver = self.get_email_id_for_users(assignee)[1]
         notify_assign_compliance = threading.Thread(
@@ -4049,7 +4045,6 @@ class ClientDatabase(Database):
                         country_id, domain_id,
                         unit_id, user_id
                     )
-                #print query
                 compliance_rows = self.select_all(query)
 
                 compliances_list = []
@@ -4148,7 +4143,6 @@ class ClientDatabase(Database):
             ORDER BY ac.assignee" % (
                         country_id, row[0], row[1], row[2], domain_id, user_id
                     )
-            #print q
             assigneerows = self.select_all(q)
 
             assignee_wise_compliances = []
@@ -4171,8 +4165,6 @@ class ClientDatabase(Database):
                         country_id, domain_id,
                         unit_ids, assignee_id
                     )
-                #and ch.unit_id = ac.unit_id
-                #print query
                 compliance_rows = self.select_all(query)
 
                 compliances_list = []
@@ -4326,11 +4318,11 @@ class ClientDatabase(Database):
             T4.statutory_dates, T4.repeats_every, T4.duration, T4.is_active \
             FROM tbl_client_compliances T1 \
             INNER JOIN tbl_client_statutories T2 \
-            ON T1.client_statutory_id = T2.client_statutory_id \
+            ON T2.client_statutory_id = T1.client_statutory_id \
             INNER JOIN tbl_units T3 \
-            ON T2.unit_id = T3.unit_id \
+            ON T3.unit_id = T2.unit_id \
             INNER JOIN tbl_compliances T4\
-            ON T1.compliance_id = T4.compliance_id\
+            ON T4.compliance_id = T1.compliance_id\
             WHERE T2.country_id IN %s \
             AND T2.domain_id IN %s \
             %s %s"
@@ -4814,20 +4806,6 @@ class ClientDatabase(Database):
                         country_id, domain_id,
                         unit_id, user_ids, str(statutory_id+"%")
                     )
-
-                # query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
-                #         ac.assignee, cf.frequency FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
-                #         tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
-                #         ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
-                #         cs.country_id = %s and cs.domain_id = %s and cs.unit_id like '%s' \
-                #         and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
-                #         and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee in (%s) and \
-                #         c.statutory_mapping like '%s' " % (
-                #         country_id, domain_id,
-                #         unit_id, user_ids, str(statutory_id+"%")
-                #     )
-
-                #print query
                 compliance_rows = self.select_all(query)
 
                 compliances_list = []
@@ -4971,9 +4949,9 @@ class ClientDatabase(Database):
                     due_date, completion_date, validity_date, documents, remarks
                 )
                 compliances_list.append(compliance)
-
-            unitwise = clientreport.ComplianceDetailsUnitWise(unit_id, unit_name, unit_address, compliances_list)
-            unit_wise_compliances.append(unitwise)
+            if len(compliances_list) > 0:
+                unitwise = clientreport.ComplianceDetailsUnitWise(unit_id, unit_name, unit_address, compliances_list)
+                unit_wise_compliances.append(unitwise)
         return unit_wise_compliances
 
 #
@@ -5637,8 +5615,8 @@ class ClientDatabase(Database):
                         notification_id, read_status, notification_text, extra_details,
                         updated_on, level_1_statutory, unit_name, unit_address, assignee,
                         concurrence_person, approval_person, compliance_name,
-                        compliance_description, 
-                        self.datetime_to_string_time(due_date_rows[0][0]), 
+                        compliance_description,
+                        self.datetime_to_string_time(due_date_rows[0][0]),
                         delayed_days, penal_consequences
                     )
                 )
@@ -5920,7 +5898,7 @@ class ClientDatabase(Database):
 #
 #   Manage Compliances / Compliances List / Upload Compliances
 #
-    def calculate_ageing(self, due_date, frequency_type=None):
+    def calculate_ageing(self, due_date, frequency_type=None, completion_date=None):
         current_time_stamp = self.get_date_time()
         # due_date = self.localize(due_date)
         if frequency_type =="On Occurrence":
@@ -6261,35 +6239,47 @@ class ClientDatabase(Database):
                     compliance_ids_list = [""] * 4
                     if statutory_status in [1, 2, None, "None", "", 0]:
                         if statutory_status in [1,None, "None", "", 0]: # Delayed compliance
-                            query = "SELECT group_concat(distinct compliance_id) FROM tbl_compliance_history \
+                            query = "SELECT distinct compliance_id FROM tbl_compliance_history \
                                 WHERE unit_id = '%d' AND completed_on > due_date AND \
                                 approve_status = 1" % unit_id
                             compliance_history_rows = self.select_all(query)
                             if len(compliance_history_rows) > 0:
-                                compliance_ids_list[0] = compliance_history_rows[0][0]
+                                concated_result = ()
+                                for row in compliance_history_rows:
+                                    concated_result += row
+                                compliance_ids_list[0] = ",".join(str(x) for x in concated_result)
                         if statutory_status in [2, None, "None", "", 0]: # Not complied
-                            query = "SELECT group_concat(distinct compliance_id) FROM tbl_compliance_history \
+                            query = "SELECT distinct compliance_id FROM tbl_compliance_history \
                                 WHERE unit_id = '%d' AND (approve_status = 0 or \
                                 approve_status is null) AND due_date < now()" % unit_id
                             compliance_history_rows = self.select_all(query)
                             if len(compliance_history_rows) > 0:
-                                compliance_ids_list[1] = compliance_history_rows[0][0]
+                                concated_result = ()
+                                for row in compliance_history_rows:
+                                    concated_result += row
+                                compliance_ids_list[1] = ",".join(str(x) for x in concated_result)
                     if statutory_status in [4, None, "None", "", 0]:# Unassigned compliances
-                        query = "SELECT GROUP_CONCAT(distinct compliance_id) FROM tbl_client_compliances \
+                        query = "SELECT distinct compliance_id FROM tbl_client_compliances \
                             WHERE client_statutory_id IN (SELECT client_statutory_id FROM \
                             tbl_client_statutories WHERE unit_id = '%d') and compliance_id \
                             NOT IN (SELECT compliance_id FROM tbl_assigned_compliances \
                             WHERE unit_id = '%d') AND compliance_opted = 1" % (unit_id, unit_id)
                         result = self.select_all(query)
                         if len(result) > 0:
-                            compliance_ids_list[3] = result[0][0]
+                            concated_result = ()
+                            for row in result:
+                                concated_result += row
+                            compliance_ids_list[3] = ",".join(str(x) for x in concated_result)
                     if statutory_status in [3, None, "None", "", 0]: # Not Opted
-                        query = "SELECT GROUP_CONCAT(distinct compliance_id) FROM tbl_client_compliances where \
+                        query = "SELECT distinct compliance_id FROM tbl_client_compliances where \
                             client_statutory_id IN (SELECT client_statutory_id FROM \
                             tbl_client_statutories WHERE unit_id = '%d') AND compliance_opted = 0" % (unit_id)
                         result = self.select_all(query)
                         if len(result) > 0:
-                            compliance_ids_list[2] = result[0][0]
+                            concated_result = ()
+                            for row in result:
+                                concated_result += row
+                            compliance_ids_list[2] = ",".join(str(x) for x in concated_result)
                     compliances_list = []
                     for index, compliance_ids in enumerate(compliance_ids_list):
                         status = None
@@ -6332,7 +6322,7 @@ class ClientDatabase(Database):
                                 statutory_mapping = "%s >> %s" % (
                                     compliance["statutory_mapping"], compliance["statutory_provision"]
                                 )
-                                repeats = None
+                                repeats = ""
                                 trigger = "Trigger :"
                                 if compliance["frequency_id"] != 1 and compliance["frequency_id"] != 4: # checking not onetime and onoccrence
                                     if compliance["repeats_type_id"] == 1: # Days
@@ -8405,3 +8395,13 @@ class ClientDatabase(Database):
         row = self.select_one(q)
         result = self.convert_to_dict(row, ["total_disk_space", "total_disk_space_used"])
         return result
+
+    def have_compliances(self, user_id):
+        column = "count(*)"
+        condition = "assignee = '%d' and is_active = 1" % user_id 
+        rows = self.get_data(self.tblAssignedCompliances, column, condition)
+        no_of_compliances = rows[0][0]
+        if no_of_compliances > 0:
+            return True
+        else:
+            return False

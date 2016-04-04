@@ -278,11 +278,6 @@ def update_client_user(db, request, session_user, client_id):
         request.employee_code.replace(" ",""), client_id
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
-    # elif db.is_duplicate_user_contact_no(
-    #     request.user_id,
-    #     request.contact_no, client_id
-    # ):
-    #     return clientmasters.ContactNumberAlreadyExists()
     elif db.update_user(request, session_user, client_id) :
         return clientmasters.UpdateClientUserSuccess()
 
@@ -291,6 +286,8 @@ def change_client_user_status(db, request, session_user, client_id):
         return clientmasters.InvalidUserId()
     elif db.is_primary_admin(request.user_id):
         return clientmasters.CannotChangePrimaryAdminStatus()
+    elif db.have_compliances(request.user_id) and request.is_active in [False, 0]:
+        return clientmasters.ReassignCompliancesBeforeDeactivate()
     elif db.update_user_status(
         request.user_id,
         request.is_active, session_user, client_id

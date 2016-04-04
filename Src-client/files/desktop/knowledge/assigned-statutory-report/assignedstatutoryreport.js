@@ -347,7 +347,6 @@ function loadAssignedStatutoriesheading(data){
     var cloneheading = tableheading.clone();
     $('.tbody-assigned-statutory-list').append(cloneheading);
 
-    
     var tableRow = $('#unit-details-list .table-unit-details-list .tablerow');
     var clone = tableRow.clone();
     var unitNameAddress = value['unit_name']+", "+value['address'];

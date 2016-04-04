@@ -369,48 +369,35 @@ function load_secondwizard(){
   }
 }
 
-$(function() {
-  $('#pagination').click(function(){
-    //displayLoader();
-    var domainID = $('.domainlist.active').attr('id');
-
-    unit_id =  parseInt($("#unit").val());
-    s_endCount = statutoriesCount - 1;
-    $(".loading-indicator-spin").show();
-    if($('.loading-indicator-spin').css('display') != 'none')
-    {
-        setTimeout(function(){
-            displayLoader();
-            client_mirror.getAssignComplianceForUnits(assignStatutoryUnitIds, parseInt(domainID), s_endCount,
-              function (error, response) {
-                  if (error == null){
-                    statutoriesList = response["statutories"];
-                    statutoriesNameList = response["level_one_name"];
-                    //totalRecord = data["total_count"];
-                    if(parseInt(totalRecord) > s_endCount){
-                      $('#pagination').show();
-                      $('#activate-step-3').hide();
-                    }else{
-                      $('#pagination').hide();
-                      $('#activate-step-3').show();
-                    }
-                    load_secondwizard();
-                    hideLoader();
-                  }
-                  else {
-                    displayMessage(error);
-                    hideLoader();
-                  }
-              }
-            )
-        }, 500);
+$('#pagination').click(function(){
+  var domainID = $('.domainlist.active').attr('id');
+  unit_id =  parseInt($("#unit").val());
+  s_endCount = statutoriesCount - 1;
+  displayLoader();
+  client_mirror.getAssignComplianceForUnits(assignStatutoryUnitIds, parseInt(domainID), s_endCount,
+    function (error, response) {
+        if (error == null){
+          statutoriesList = response["statutories"];
+          statutoriesNameList = response["level_one_name"];
+          totalRecord = response["total_count"];
+          if(parseInt(totalRecord) > s_endCount){
+            $('#pagination').show();
+            $('#activate-step-3').hide();
+          }else{
+            $('#pagination').hide();
+            $('#activate-step-3').show();
+          }
+          load_secondwizard();
+          hideLoader();
+        }
+        else {
+          displayMessage(error);
+          hideLoader();
+        }
     }
-    setTimeout(function(){
-        $(".loading-indicator-spin").hide();
-    }, 500);
-    //hideLoader();
-  });
+  )
 });
+
 
 function validate_firsttab(){
   if($('.countrylist.active').text() == ''){
@@ -442,7 +429,6 @@ function validate_firsttab(){
         statutoriesList = data["statutories"];
         statutoriesNameList = data["level_one_name"];
         totalRecord = data["total_count"];
-        // totalRecord = 6;
         $('#pagination').show();
 
         load_secondwizard();
@@ -631,13 +617,15 @@ function submitcompliance(){
               }
             }
 
-            var convertDueDate = convert_date(dDate);
-            if (convertDueDate < currentDate) {
-                displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
-                hideLoader();
-                return false;
+            if(dDate != undefined && dDate !=''){
+              var convertDueDate = convert_date(dDate);
+              if (convertDueDate < currentDate) {
+                  displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
+                  hideLoader();
+                  return false;
+              }
             }
-
+            
             var sort_elements = current_due_dates;
               if(current_due_dates.length > 1){
                 sort_elements.sort(function(a, b) {

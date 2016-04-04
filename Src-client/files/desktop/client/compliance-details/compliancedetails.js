@@ -97,13 +97,7 @@ function loadresult(filterList){
     var unitdisplay = true;
 
     for(var compliancelist in compliancelists){
-        if(unitdisplay){
-          var tableRow2=$('#unit-name-templates .table-unit-name .table-row-unit-name');
-          var clone2=tableRow2.clone();
-          $('.tbl_unitheading', clone2).html('<div class="heading" style="margin-top:5px;width:auto;">' + unitName + '</div>');
-          $('.tbody-unit').append(clone2);
-          unitdisplay = false;
-        }
+        
 
         var vDate = '';
         if(compliancelists[compliancelist]["validity_date"] != null) vDate = compliancelists[compliancelist]["validity_date"];
@@ -119,7 +113,6 @@ function loadresult(filterList){
           cDate = convert_date(completionDate);
         }
         var dateDifference = daydiff(cDueDate, cDate);
-        
         var remark = '';
         var compStatus = '';
 
@@ -128,19 +121,27 @@ function loadresult(filterList){
           compStatus = 'Complied';
         } 
         else if (completionDate != '' && dateDifference > 0) {
+          remark = 'Delayed by '+ dateDifference +' Days';
+          compStatus = 'Delayed Compliance';
+          
+        }
+        else if (completionDate == '' && dateDifference > 0) {
           remark = 'Over due by '+ dateDifference +' Days';
           compStatus = 'Complied';
         }
-        else if (completionDate == '' && dateDifference > 0) {
-          remark = 'Delayed by '+ dateDifference +' Days';
-          compStatus = 'DelayedCompliance';
-        }
         else if (completionDate == '' && dateDifference <= 0) {
-          remark =  dateDifference +' Days left';
+          remark =  Math.abs(dateDifference) +' Days left';
           compStatus = 'Inprogress';
         }
 
         if(status == '' || status == compStatus){
+          if(unitdisplay){
+            var tableRow2=$('#unit-name-templates .table-unit-name .table-row-unit-name');
+            var clone2=tableRow2.clone();
+            $('.tbl_unitheading', clone2).html('<div class="heading" style="margin-top:5px;width:auto;">' + unitName + '</div>');
+            $('.tbody-unit').append(clone2);
+            unitdisplay = false;
+          }
           var tableRow3=$('#unit-content-templates .table-unit-content .table-row-unit-content');
           var clone3=tableRow3.clone();
           $('.tbl_sno', clone3).text(compliance_count+1);
@@ -150,7 +151,7 @@ function loadresult(filterList){
           $('.tbl_completiondate', clone3).text(completionDate);
           $('.tbl_validitydate', clone3).text(vDate);
           $('.tbl_remarks', clone3).text(remark);
-          if(compliancelists[compliancelist]["documents"] != null){
+          if(compliancelists[compliancelist]["documents"] != null && compliancelists[compliancelist]["documents"] != ''){
             var documentsList = compliancelists[compliancelist]["documents"];
             var url = '';
             for(var i=0; i<documentsList.length; i++){
@@ -162,7 +163,6 @@ function loadresult(filterList){
           compliance_count++;
         }
     }   
-
     /*if(compliancelists.length == 0){
         var tableRow4=$('#unit-content-templates .table-unit-content .table-row-unit-content');
         var clone4=tableRow4.clone();
@@ -210,7 +210,6 @@ function loadCompliance(reportType){
           loadresult(unitWiseComplianceList);
           var download_url = data["link"];
           window.open(download_url, '_blank');
-              
         }
       }
       function onFailure(error){
