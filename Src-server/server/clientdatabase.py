@@ -5902,13 +5902,10 @@ class ClientDatabase(Database):
 #
     def calculate_ageing(self, due_date, frequency_type=None, completion_date=None):
         current_time_stamp = self.get_date_time()
-        print
         # due_date = self.localize(due_date)
         if frequency_type =="On Occurrence":
-            print "inside on Occurrence"
             r = relativedelta.relativedelta(due_date, current_time_stamp)
             if completion_date is not None:
-                print "inside completion date not None"
                 r = relativedelta.relativedelta(due_date, completion_date)
                 if r.days < 0 and r.hours < 0 and r.minutes < 0:
                     compliance_status = "On Time"
@@ -5923,7 +5920,6 @@ class ClientDatabase(Database):
                         )
                     return r.days, compliance_status  
             else:
-                print "inside completion date None"
                 if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
                     if r.days == 0:
                         compliance_status = " %d.%d hour(s) left" % (
@@ -5944,11 +5940,8 @@ class ClientDatabase(Database):
                             abs(r.days), abs(r.hours), abs(r.minutes)
                         )
                 return r.days, compliance_status
-        else:
-            print "inside others"
-            
+        else:            
             if completion_date is not None:
-                print "inside completion date is not None"
                 compliance_status = "On Time"
                 r = relativedelta.relativedelta(due_date.date(), completion_date.date())
                 if r.days < 0:
@@ -5956,11 +5949,7 @@ class ClientDatabase(Database):
                 return r.days, compliance_status
             else:
                 r = relativedelta.relativedelta(due_date.date(), current_time_stamp.date())
-                print due_date
-                print current_time_stamp
-                print "inside completion date None"
                 compliance_status = " %d days left" % abs(r.days+1)
-                print r
                 if r.days < 0:
                     compliance_status = "Overdue by %d day(s)" % abs(r.days)
                     return r.days, compliance_status
@@ -6013,7 +6002,6 @@ class ClientDatabase(Database):
                 unit_code, unit_name
             )
             no_of_days, ageing = self.calculate_ageing(due_date=compliance[2], frequency_type=compliance[13])
-            print "{} : days: {}, ageing:{}".format(compliance_name, no_of_days, ageing)
             compliance_status = core.COMPLIANCE_STATUS("Inprogress")
             if "Overdue" in ageing:
                 compliance_status = core.COMPLIANCE_STATUS("Not Complied")
