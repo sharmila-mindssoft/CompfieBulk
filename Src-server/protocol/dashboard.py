@@ -1173,7 +1173,7 @@ class ApplicableDrillDown(object):
     def to_structure(self):
         return {
             "level1_statutory_name": to_structure_Text(self.level1_statutory_name),
-            "compliances": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_dashboard_Compliance(self.compliances),
+            "compliances": to_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_dashboard_Compliance(self.compliances),
         }
 
 #

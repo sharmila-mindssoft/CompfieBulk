@@ -4326,11 +4326,11 @@ class ClientDatabase(Database):
             T4.statutory_dates, T4.repeats_every, T4.duration, T4.is_active \
             FROM tbl_client_compliances T1 \
             INNER JOIN tbl_client_statutories T2 \
-            ON T1.client_statutory_id = T2.client_statutory_id \
+            ON T2.client_statutory_id = T1.client_statutory_id \
             INNER JOIN tbl_units T3 \
-            ON T2.unit_id = T3.unit_id \
+            ON T3.unit_id = T2.unit_id \
             INNER JOIN tbl_compliances T4\
-            ON T1.compliance_id = T4.compliance_id\
+            ON T4.compliance_id = T1.compliance_id\
             WHERE T2.country_id IN %s \
             AND T2.domain_id IN %s \
             %s %s"
