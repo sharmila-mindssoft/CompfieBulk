@@ -1933,11 +1933,11 @@ class RiskData(object):
         data = parse_dictionary(data, [ "business_group_name", "legal_entity_name",
             "division_name", "level_1_statutory_wise_units"])
         business_group_name = data.get("business_group_name")
-        business_group_name = parse_structure_CustomTextType_100(business_group_name)
+        business_group_name = parse_structure_OptionalType_CustomTextType_100(business_group_name)
         legal_entity_name = data.get("legal_entity_name")
         legal_entity_name = parse_structure_CustomTextType_100(legal_entity_name)
         division_name = data.get("division_name")
-        division_name = parse_structure_CustomTextType_100(division_name)
+        division_name = parse_structure_OptionalType_CustomTextType_100(division_name)
         level_1_statutory_wise_units = data.get("level_1_statutory_wise_units")
         level_1_statutory_wise_units = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory(level_1_statutory_wise_units)
         return RiskData(business_group_name, legal_entity_name, division_name,
@@ -1945,9 +1945,9 @@ class RiskData(object):
 
     def to_structure(self):
         return {
-            "business_group_name": to_structure_CustomTextType_100(self.business_group_name),
+            "business_group_name": to_structure_OptionalType_CustomTextType_100(self.business_group_name),
             "legal_entity_name": to_structure_CustomTextType_100(self.legal_entity_name),
-            "division_name": to_structure_CustomTextType_100(self.division_name),
+            "division_name": to_structure_OptionalType_CustomTextType_100(self.division_name),
             "level_1_statutory_wise_units": to_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_Level1Statutory(self.level_1_statutory_wise_units),
         }
 

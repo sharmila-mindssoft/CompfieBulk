@@ -5904,10 +5904,15 @@ class ClientDatabase(Database):
         if frequency_type =="On Occurrence":
             r = relativedelta.relativedelta(due_date, current_time_stamp)
             if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
+                # if completion_date is None:
+                #     compliance_status = "On Time" % (
+                #         abs(r.hours), abs(r.minutes)
+                #     )
                 if r.days == 0:
                     compliance_status = " %d.%d hours left" % (
                         abs(r.hours), abs(r.minutes)
                     )
+                    
                 else:
                     compliance_status = " %d days and %d.%d hours left" % (
                         abs(r.days), abs(r.hours), abs(r.minutes)
