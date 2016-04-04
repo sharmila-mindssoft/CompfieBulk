@@ -1402,7 +1402,7 @@ class ClientDatabase(Database):
             where_qry = ''
         else :
             user_id = int(session_user)
-            where_qry = " WHERE t1.unit_id in (select unit_id from tbl_user_units where user_id LIKE '%s') \
+            where_qry = " WHERE t2.is_closed=0 AND t1.unit_id in (select unit_id from tbl_user_units where user_id LIKE '%s') \
             AND t1.domain_id in (select domain_id from tbl_user_domains where user_id LIKE '%s')" % (
                 user_id, user_id
             )
@@ -5637,8 +5637,8 @@ class ClientDatabase(Database):
                         notification_id, read_status, notification_text, extra_details,
                         updated_on, level_1_statutory, unit_name, unit_address, assignee,
                         concurrence_person, approval_person, compliance_name,
-                        compliance_description, 
-                        self.datetime_to_string_time(due_date_rows[0][0]), 
+                        compliance_description,
+                        self.datetime_to_string_time(due_date_rows[0][0]),
                         delayed_days, penal_consequences
                     )
                 )
