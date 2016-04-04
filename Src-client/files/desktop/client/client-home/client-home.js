@@ -386,7 +386,9 @@ function parseComplianceStatusApiInput () {
     var domainIds = chartInput.getDomains();
     // TODO: Validation of empty Country / Domain list.
     var filter_type = chartInput.getFilterType();
+    console.log(filter_type)
     var filterIds = getFilterIds(filter_type);
+    console.log(filterIds)
     var filterType = filter_type.replace("_", "-");
     filterType = hyphenatedToUpperCamelCase(filterType);
     var fromDate = chartInput.getFromDate();
@@ -1400,12 +1402,12 @@ function unitWiseEscalationDrillDown(status, data){
 function escalationDrilldown(status, data){
     var sno = 1;
     var count = 1;
-    
+
     if(status == "not_complied"){
         $(".escalation-drilldown-list .td-escalation").append('<table class="inner-table-notcomplied-escalation-list js-filtertable_not_c"><thead class="thead-itncel"></thead></table>');
         var h2heading = $('#templates .escalation-status .tr-h2');
-        var cloneh2 = h2heading.clone();        
-        $(".escalation-status-value", cloneh2).html("Not Complied compliances");        
+        var cloneh2 = h2heading.clone();
+        $(".escalation-status-value", cloneh2).html("Not Complied compliances");
         $(".thead-itncel").append(cloneh2);
 
         var tableHeading = $('#templates .escalation-status .tr-heading');
@@ -1421,7 +1423,7 @@ function escalationDrilldown(status, data){
         $(".inner-table-notcomplied-escalation-list .division-row .filter-text-box").addClass("js-filter_not_c");
         $(".inner-table-notcomplied-escalation-list .type-row .filter-text-box").addClass("js-filter_not_c");
         $(".inner-table-notcomplied-escalation-list .compliance-row .filter-text-box").addClass("js-filter_not_c");
-        $(".inner-table-notcomplied-escalation-list .assigned-to-row .filter-text-box").addClass("js-filter_not_c");        
+        $(".inner-table-notcomplied-escalation-list .assigned-to-row .filter-text-box").addClass("js-filter_not_c");
         $(".inner-table-notcomplied-escalation-list .over-due-row .filter-text-box").addClass("js-filter_not_c");
 
         if(data[status].length > 0){
@@ -1483,8 +1485,8 @@ function escalationDrilldown(status, data){
     if(status == "delayed"){
         $(".escalation-drilldown-list .td-escalation").append('<table class="inner-table-delayed-escalation-list js-filtertable_delayed"><thead-itdel class="thead-itdel"></thead></table>');
         var h2heading = $('#templates .escalation-status .tr-h2');
-        var cloneh2 = h2heading.clone();        
-        $(".escalation-status-value", cloneh2).html("Delayed compliances");        
+        var cloneh2 = h2heading.clone();
+        $(".escalation-status-value", cloneh2).html("Delayed compliances");
         $(".thead-itdel").append(cloneh2);
 
         var tableHeading = $('#templates .escalation-status .tr-heading');
@@ -1500,7 +1502,7 @@ function escalationDrilldown(status, data){
         $(".inner-table-delayed-escalation-list .division-row .filter-text-box").addClass("js-filter_delayed");
         $(".inner-table-delayed-escalation-list .type-row .filter-text-box").addClass("js-filter_delayed");
         $(".inner-table-delayed-escalation-list .compliance-row .filter-text-box").addClass("js-filter_delayed");
-        $(".inner-table-delayed-escalation-list .assigned-to-row .filter-text-box").addClass("js-filter_delayed");        
+        $(".inner-table-delayed-escalation-list .assigned-to-row .filter-text-box").addClass("js-filter_delayed");
         $(".inner-table-delayed-escalation-list .delayed-by-row .filter-text-box").addClass("js-filter_delayed");
 
         if(data[status].length > 0){
@@ -2873,7 +2875,7 @@ function showPopupCompDelayed(){
     //         $('.comp-delayed-startdate', cloneval).html(val['start_date']);
     //         $('.comp-delayed-duedate', cloneval).html(val['due_date']);
     //         $('.comp-delayed-reassigned-date', cloneval).html(val['reassigned_from']);
-    //         $('.comp-delayed-completed-date', cloneval).html(val['completion_date']);           
+    //         $('.comp-delayed-completed-date', cloneval).html(val['completion_date']);
     //         $('.tbody-popup-reassigned-list').append(cloneval);
     //     });
     // });

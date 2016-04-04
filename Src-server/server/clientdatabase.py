@@ -2932,8 +2932,9 @@ class ClientDatabase(Database):
         filter_type = request.filter_type
 
         # domain_ids = request.domain_ids
+        filter_ids = request.filter_ids
         year_range_qry = ""
-        filter_ids = country_ids
+
         if chart_type is None :
             from_date = request.from_date
             to_date = request.to_date
@@ -2954,10 +2955,11 @@ class ClientDatabase(Database):
         if filter_type == "Group" :
             group_by_name = "T3.country_id"
             filter_type_ids = ""
+            filter_ids = country_ids
 
         elif filter_type == "BusinessGroup" :
             filters = self.get_user_business_group_ids(user_id)
-            filter_ids = filters.split(',')
+            # filter_ids = filters.split(',')
             if len(filter_ids) == 1 :
                 filter_ids.append(0)
             group_by_name = "T3.business_group_id"
@@ -2965,7 +2967,7 @@ class ClientDatabase(Database):
 
         elif filter_type == "LegalEntity" :
             filters = self.get_user_legal_entity_ids(user_id)
-            filter_ids = filters.split(',')
+            # filter_ids = filters.split(',')
             if len(filter_ids) == 1 :
                 filter_ids.append(0)
             group_by_name = "T3.legal_entity_id"
@@ -2973,7 +2975,7 @@ class ClientDatabase(Database):
 
         elif filter_type == "Division" :
             filters = self.get_user_division_ids(user_id)
-            filter_ids = filters.split(',')
+            # filter_ids = filters.split(',')
             if len(filter_ids) == 1 :
                 filter_ids.append(0)
             group_by_name = "T3.division_id"
@@ -2981,7 +2983,7 @@ class ClientDatabase(Database):
 
         elif filter_type == "Unit":
             filters = self.get_user_unit_ids(user_id)
-            filter_ids = filters.split(',')
+            # filter_ids = filters.split(',')
             if len(filter_ids) == 1 :
                 filter_ids.append(0)
             group_by_name = "T3.unit_id"
@@ -2990,6 +2992,7 @@ class ClientDatabase(Database):
         elif filter_type == "Consolidated":
             group_by_name = "T3.country_id"
             filter_type_ids = ""
+            filter_ids = country_ids
 
         if user_id == 0 :
             user_qry = '1'
@@ -3174,6 +3177,7 @@ class ClientDatabase(Database):
                 years_range = y["years"]
 
                 year_wise = country.get(domain_id)
+
                 if year_wise is None :
                     year_wise = {}
 
@@ -3226,6 +3230,7 @@ class ClientDatabase(Database):
                                 ):
                                     compliance_count += int(c["compliances"])
 
+
                     if status == "inprogress":
                         compliance_count_info["inprogress_count"] += compliance_count
                     elif status == "complied" :
@@ -3237,6 +3242,7 @@ class ClientDatabase(Database):
 
                     compliance_count_info["domain_id"] = domain_id
                     compliance_count_info["country_id"] = country_id
+
                     year_wise[i[0]] = compliance_count_info
 
                 country[domain_id] = year_wise
@@ -3385,7 +3391,22 @@ class ClientDatabase(Database):
 
     def get_compliance_status_chart(self, request, session_user, client_id):
         result = self.get_status_wise_compliances_count(request, session_user)
-        return dashboard.GetComplianceStatusChartSuccess(result)
+        final = []
+        for r in result :
+            print r
+            data = r.data
+            for d in data :
+                if (
+                    d.inprogress_compliance_count == 0 and
+                    d.not_complied_count == 0 and
+                    d.delayed_compliance_count == 0 and
+                    d.complied_count == 0
+                ):
+                    pass
+                else :
+                    final.append(r)
+
+        return dashboard.GetComplianceStatusChartSuccess(final)
 
     def compliance_details_query(self, domain_ids, date_qry, status_qry, filter_type_qry, user_id) :
         if len(domain_ids) == 1 :
