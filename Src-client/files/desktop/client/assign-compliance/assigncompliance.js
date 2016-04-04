@@ -592,9 +592,8 @@ function submitcompliance(){
           if(frequency != 'On Occurrence'){
             var dDate = null;
             var tDay = null;
-            if(due_date.length > 1){
-              alert(enter)
-              for(var k = 0; k < due_date.length; k++){
+            if(due_date > 1){
+              for(var k = 0; k < due_date; k++){
                 dDate = $('#duedate'+totalCompliance+'-'+k).val();
                 if(dDate != ''){
                   tDay = $('#triggerdate'+totalCompliance+'-'+k).val();
@@ -645,7 +644,7 @@ function submitcompliance(){
             var statutory_day = null;
             var statutory_month = null;
             var trigger_before_days = null;
-            if(sort_elements[dDates][0] != ''){
+            if(sort_elements[dDates][0] != '' && sort_elements[dDates][0] != undefined){
               var splitDueDates = sort_elements[dDates][0].split('-');
               var strMonth = splitDueDates[1];
               statutory_day = parseInt(splitDueDates[0]);
