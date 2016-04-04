@@ -4949,9 +4949,9 @@ class ClientDatabase(Database):
                     due_date, completion_date, validity_date, documents, remarks
                 )
                 compliances_list.append(compliance)
-
-            unitwise = clientreport.ComplianceDetailsUnitWise(unit_id, unit_name, unit_address, compliances_list)
-            unit_wise_compliances.append(unitwise)
+            if len(compliances_list) > 0:
+                unitwise = clientreport.ComplianceDetailsUnitWise(unit_id, unit_name, unit_address, compliances_list)
+                unit_wise_compliances.append(unitwise)
         return unit_wise_compliances
 
 #
