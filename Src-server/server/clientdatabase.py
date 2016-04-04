@@ -2185,6 +2185,8 @@ class ClientDatabase(Database):
             approved_by = rows [0][0]
             if is_two_level:
                 concurred_by = rows[0][1]
+        if validity_date is not None:
+            validity_date = self.string_to_datetime(validity_date)
         columns = [
             "compliance_history_id", "unit_id", "compliance_id", "due_date", "completion_date",
             "validity_date", "next_due_date", "completed_by", "completed_on",
@@ -2192,7 +2194,7 @@ class ClientDatabase(Database):
         ]
         values = [
             compliance_history_id, unit_id, compliance_id, self.string_to_datetime(due_date),
-            completion_date, self.string_to_datetime(validity_date),
+            completion_date, validity_date,
             next_due_date, completed_by, completion_date, 1, approved_by, completion_date
         ]
         if is_two_level:
@@ -5900,62 +5902,73 @@ class ClientDatabase(Database):
 #
     def calculate_ageing(self, due_date, frequency_type=None, completion_date=None):
         current_time_stamp = self.get_date_time()
+        print
         # due_date = self.localize(due_date)
         if frequency_type =="On Occurrence":
+            print "inside on Occurrence"
             r = relativedelta.relativedelta(due_date, current_time_stamp)
             if completion_date is not None:
+                print "inside completion date not None"
                 r = relativedelta.relativedelta(due_date, completion_date)
                 if r.days < 0 and r.hours < 0 and r.minutes < 0:
                     compliance_status = "On Time"
                 else:
                     if r.days == 0:
-                        compliance_status = "Delayed by %d.%d hour/s " % (
+                        compliance_status = "Delayed by %d.%d hour(s) " % (
                             abs(r.hours), abs(r.minutes)
                         )
                     else:
-                        compliance_status = "Delayed by %d day/s and %d.%d hour/s" % (
+                        compliance_status = "Delayed by %d day(s) and %d.%d hour(s)" % (
                             abs(r.days), abs(r.hours), abs(r.minutes)
                         )
                     return r.days, compliance_status  
             else:
+                print "inside completion date None"
                 if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
                     if r.days == 0:
-                        compliance_status = " %d.%d hours left" % (
+                        compliance_status = " %d.%d hour(s) left" % (
                             abs(r.hours), abs(r.minutes)
                         )
                         
                     else:
-                        compliance_status = " %d day/s and %d.%d hour/s left" % (
+                        compliance_status = " %d day(s) and %d.%d hour(s) left" % (
                             abs(r.days), abs(r.hours), abs(r.minutes)
                         )
                 else:
                     if r.days == 0:
-                        compliance_status = "Overdue by %d.%d hour/s " % (
+                        compliance_status = "Overdue by %d.%d hour(s) " % (
                             abs(r.hours), abs(r.minutes)
                         )
                     else:
-                        compliance_status = "Overdue by %d day/s and %d.%d hours" % (
+                        compliance_status = "Overdue by %d day(s) and %d.%d hours" % (
                             abs(r.days), abs(r.hours), abs(r.minutes)
                         )
                 return r.days, compliance_status
         else:
-            r = relativedelta.relativedelta(due_date, current_time_stamp)
+            print "inside others"
+            
             if completion_date is not None:
+                print "inside completion date is not None"
                 compliance_status = "On Time"
                 r = relativedelta.relativedelta(due_date.date(), completion_date.date())
                 if r.days < 0:
-                    compliance_status = "Delayed by %d day/s" % abs(r.days)
+                    compliance_status = "Delayed by %d day(s)" % abs(r.days)
                 return r.days, compliance_status
             else:
+                r = relativedelta.relativedelta(due_date.date(), current_time_stamp.date())
+                print due_date
+                print current_time_stamp
+                print "inside completion date None"
                 compliance_status = " %d days left" % abs(r.days+1)
+                print r
                 if r.days < 0:
-                    compliance_status = "Overdue by %d day/s" % abs(r.days)
+                    compliance_status = "Overdue by %d day(s)" % abs(r.days)
                     return r.days, compliance_status
         return 0, compliance_status
 
 
     def get_current_compliances_list(self, session_user, client_id):
-        columns = "compliance_history_id, start_date, ch.due_date, " +\
+        columns = "DISTINCT compliance_history_id, start_date, ch.due_date, " +\
             "ch.validity_date, ch.next_due_date, document_name, compliance_task, " + \
             "compliance_description, format_file, unit_code, unit_name," + \
             "address, (select domain_name from %s d \
@@ -5999,7 +6012,8 @@ class ClientDatabase(Database):
             unit_name = "%s - %s" % (
                 unit_code, unit_name
             )
-            no_of_days, ageing = self.calculate_ageing(compliance[2], compliance[13])
+            no_of_days, ageing = self.calculate_ageing(due_date=compliance[2], frequency_type=compliance[13])
+            print "{} : days: {}, ageing:{}".format(compliance_name, no_of_days, ageing)
             compliance_status = core.COMPLIANCE_STATUS("Inprogress")
             if "Overdue" in ageing:
                 compliance_status = core.COMPLIANCE_STATUS("Not Complied")
