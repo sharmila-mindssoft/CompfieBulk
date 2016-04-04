@@ -98,7 +98,7 @@ function showSideBar(idval, data){
     if( fileslist != null){
         for (var i = 0; i < fileslist.length; i++){
             if(fileslist[i] != ""){
-                $('.sidebar-uploaded-documents', cloneValSide).append("<span>"+fileslist[i]+"<a href='' download='"+documentslist[i]+"' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' /></a><a href='"+ documentslist[i] +"' target='_new' class='view-file'> <img src='/images/view.png' style='width:16px;height:16px;' /></a></span>");        
+                $('.sidebar-uploaded-documents', cloneValSide).append("<span><abbr class='sidebardocview'>"+fileslist[i]+"</abbr><a href='' download='"+documentslist[i]+"' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' title='Download' /></a><a href='"+ documentslist[i] +"' target='_new' class='view-file'> <img src='/images/view.png' style='width:16px;height:16px;' title='View' /></a></span>");        
             }     
         }    
     }

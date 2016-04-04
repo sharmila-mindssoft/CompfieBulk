@@ -10,6 +10,7 @@ var businessgroupsval;
 var legalentityval;
 var divisionval;
 var unitval;
+var csv;
 
 function clearMessage() {
     $(".error-message").hide();
@@ -104,11 +105,13 @@ function loadunitdetailsreport(buttontype){
 	else{
 		function onSuccess(data){
       clearMessage();
-			$(".grid-table-rpt").show();
-			loadUnitDetailsList(data['units']);		
+			$(".grid-table-rpt").show();         
       if(buttontype == "export"){
-          var download_url = data["link"];
-          window.open(download_url, '_blank');    
+        var download_url = data["link"];
+        window.open(download_url, '_blank');    
+      }
+      else{
+        loadUnitDetailsList(data['units']);   
       }
 		}
 		function onFailure(error){

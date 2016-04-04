@@ -467,9 +467,9 @@ function addcountryrownew(){
     else if(legalEntityValue == '' && isUpdate == false){
         displayMessage('Select Existing Legal Entity or Create New');
     }
-    else if( countc >= countryCount ){
-        displayMessage("Exceeds Maximum Number of Countries");
-    }
+    // else if( countc >= countryCount ){
+    //     displayMessage("Exceeds Maximum Number of Countries");
+    // }
     else if(countc >= usercountrycount){
         displayMessage("Exceeds Maximum Countries for this User");
     }

@@ -1,5 +1,8 @@
 {% extends "files/desktop/client/home/container.html" %}
 {% block content %}
+<div class='loading-indicator-spin'>
+  <span><img src='/files/desktop/common/images/loading-img.gif' alt="">   </span>
+</div>
 <link href="/files/desktop/common/css/jquery-ui/jquery-ui.css" rel="stylesheet">
 <div class="content-container">
     <div class="content-area">
@@ -123,11 +126,13 @@
                         <tbody class="heading-list"> </tbody>
                         <tbody class="tbody-statutory-notifications-list"></tbody>
                     </table>
+                    <div align="center" style="padding-top:10px;">
+                        <input type="button" value="Show more records" class="btn-submit" id="pagination">
+                    </div>
                     <div class="clearfix"></div><br style="border-bottom:1px solid #ccc;">
                 </div>
                 <p style="border-top:1px dashed #ccc;" >
-                    Total :
-                    <span class="total-records"></span>
+                    Total : <span class="total-records"></span>
                 </p>
             </div>
         </div>
