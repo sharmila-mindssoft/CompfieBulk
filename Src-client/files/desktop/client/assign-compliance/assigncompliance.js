@@ -218,9 +218,9 @@ function load_secondwizard(){
       var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
       var clone2=complianceDetailtableRow.clone();
       $('.ckbox', clone2).html('<input type="checkbox" id="statutory'+statutoriesCount+'" class="statutoryclass'+(actCount-1)+'" onclick="compliancestatus(this)">');
-      $('.sno', clone2).html(statutoriesCount + 
-        '<input type="hidden" id="complianceid'+statutoriesCount+'" value="'+compliance_id+'"/>' + 
-        '<input type="hidden" id="compliancename'+statutoriesCount+'" value="'+compliance_name+'"/>' + 
+      $('.sno', clone2).html(statutoriesCount +
+        '<input type="hidden" id="complianceid'+statutoriesCount+'" value="'+compliance_id+'"/>' +
+        '<input type="hidden" id="compliancename'+statutoriesCount+'" value="'+compliance_name+'"/>' +
         '<input type="hidden" id="frequency'+statutoriesCount+'" value="'+frequency+'"/>' +
         '<input type="hidden" id="due_date_length'+statutoriesCount+'" value="'+due_date_length+'"/>' );
 
@@ -232,7 +232,7 @@ function load_secondwizard(){
       for(var i=0; i<applicable_units.length; i++){
         dispUnit = dispUnit + applicable_units[i]+',';
       }
-      $('.applicableunit', clone2).html('<input type="hidden" id="appl_unit'+statutoriesCount+'" value="'+ dispUnit + 
+      $('.applicableunit', clone2).html('<input type="hidden" id="appl_unit'+statutoriesCount+'" value="'+ dispUnit +
         '"/><a href="#popup1" onclick="disppopup(\''+dispUnit+'\')">'+dispApplicableUnits+'</a>');
       $('.compliancefrequency', clone2).text(frequency);
 
@@ -366,7 +366,7 @@ function load_secondwizard(){
         accordionstatus = true;
       }
     });
-  } 
+  }
 }
 
 $('#pagination').click(function(){
@@ -423,7 +423,7 @@ function validate_firsttab(){
     actCount = 1;
     lastActName = '';
     displayMessage("");
-    
+
     if(assignStatutoryUnitIds.length > 0){
       function onSuccess(data){
         statutoriesList = data["statutories"];

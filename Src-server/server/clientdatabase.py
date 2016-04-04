@@ -1441,7 +1441,8 @@ class ClientDatabase(Database):
             t1.compliance_remarks, \
             t2.compliance_task, t2.document_name, t2.statutory_mapping,\
             t2.statutory_provision, t2.compliance_description, \
-            t3.is_new, (select domain_name from tbl_domains where domain_id = t3.domain_id), \
+            (select is_new from tbl_client_statutories where client_statutory_id = t1.client_statutory_id), \
+            (select domain_name from tbl_domains where domain_id = t2.domain_id), \
             (select count(tc1.client_compliance_id) from tbl_client_compliances tc1 \
             inner join tbl_client_statutories ts2 \
             ON ts2.client_statutory_id = tc1.client_statutory_id \
@@ -1449,12 +1450,11 @@ class ClientDatabase(Database):
             ) total\
             FROM tbl_client_compliances t1 \
             INNER JOIN tbl_compliances t2 \
-            ON t1.compliance_id = t2.compliance_id \
-            INNER JOIN tbl_client_statutories t3 \
-            ON t1.client_statutory_id = t3.client_statutory_id \
+            ON t2.compliance_id = t1.compliance_id \
             WHERE \
-            t3.unit_id = %s \
-            ORDER BY t3.domain_id, t2.statutory_mapping, t3.is_new \
+            t1.client_statutory_id in (select distinct client_statutory_id from \
+            tbl_client_statutories where unit_id = %s)\
+            ORDER BY t2.domain_id, t2.statutory_mapping \
             limit %s, %s\
             " % (
                 unit_id,
@@ -1597,6 +1597,7 @@ class ClientDatabase(Database):
         unit_name = data.unit_name
         statutories = data.statutories
         updated_on = self.get_date_time()
+        print self.get_date_time()
         for s in statutories :
             client_statutory_id = s.client_statutory_id
             statutory_opted_status = int(s.applicable_status)
@@ -1611,7 +1612,7 @@ class ClientDatabase(Database):
 
             query = "UPDATE tbl_client_compliances t1 \
                 INNER JOIN tbl_client_statutories t2 \
-                ON t1.client_statutory_id = t2.client_statutory_id \
+                ON t2.client_statutory_id = t1.client_statutory_id \
                 SET \
                 t1.statutory_opted=%s, \
                 t1.not_applicable_remarks='%s', \
@@ -1629,6 +1630,8 @@ class ClientDatabase(Database):
             self.execute(query)
 
         action = "Statutory settings updated for unit - %s " % (unit_name)
+        print action
+        print self.get_date_time()
         self.save_activity(session_user, 6, action)
         self.update_opted_status_in_knowledge(data)
 
@@ -2516,6 +2519,32 @@ class ClientDatabase(Database):
 
         return user_list
 
+    def total_compliance_for_units(self, unit_ids, domain_id):
+        q = "select \
+            count(distinct t1.client_compliance_id) \
+        from \
+            tbl_client_compliances t1 \
+                inner join \
+            tbl_client_statutories t2 ON t2.client_statutory_id = t1.client_statutory_id \
+        where \
+        t2.domain_id = %s \
+        AND t1.statutory_opted = 1 \
+        AND t1.compliance_opted = 1 \
+        AND t2.is_new = 1 \
+                and t2.unit_id in %s \
+        and t1.compliance_id not in ( \
+        SELECT C.compliance_id FROM \
+            tbl_assigned_compliances C \
+        WHERE \
+            C.unit_id IN %s \
+        ) " % (
+            domain_id,
+            str(tuple(unit_ids)),
+            str(tuple(unit_ids))
+        )
+        row = self.select_one(q)
+        return row[0]
+
     def get_assign_compliance_statutories_for_units(
         self, unit_ids, domain_id, session_user, from_count, to_count
     ):
@@ -2523,6 +2552,7 @@ class ClientDatabase(Database):
             unit_ids.append(0)
         if session_user == 0 :
             session_user = '%'
+        total = self.total_compliance_for_units(unit_ids, domain_id)
         query = "SELECT distinct t2.compliance_id,\
             t1.domain_id,\
             UC.units,\
@@ -2540,7 +2570,7 @@ class ClientDatabase(Database):
             t3.statutory_dates,\
             (select frequency from tbl_compliance_frequency where frequency_id = t3.frequency_id)frequency, t3.frequency_id, \
             (select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) duration_type, t3.duration,\
-            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t3.repeats_type_id) repeat_type, t3.repeats_every\
+            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t3.repeats_type_id) repeat_type, t3.repeats_every \
             FROM tbl_client_compliances t2 \
             INNER JOIN tbl_client_statutories t1 \
             ON t2.client_statutory_id = t1.client_statutory_id \
@@ -2574,7 +2604,6 @@ class ClientDatabase(Database):
                 from_count,
                 to_count
             )
-        print query
 
         rows = self.select_all(query)
         columns = [
@@ -2589,9 +2618,9 @@ class ClientDatabase(Database):
             "repeat_type", "repeats_every"
         ]
         result = self.convert_to_dict(rows, columns)
-        return self.return_assign_compliance_data(result)
+        return self.return_assign_compliance_data(result, total)
 
-    def return_assign_compliance_data(self, result):
+    def return_assign_compliance_data(self, result, total):
         now = datetime.datetime.now()
 
         current_year = now.year
@@ -2691,7 +2720,7 @@ class ClientDatabase(Database):
             compliance_list.append(compliance)
             level_1_wise[level_1] = compliance_list
             level_1_name = sorted(level_1_wise.keys())
-        return level_1_name, level_1_wise
+        return level_1_name, level_1_wise, total
 
     def get_email_id_for_users(self, user_id):
         if user_id == 0 :

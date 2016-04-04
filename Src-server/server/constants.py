@@ -2,7 +2,7 @@ CLIENT_TEMPLATE_PATHS = [
     (
         r"/login/([a-zA-Z-0-9]+)",
         "files/desktop/login/login.html",
-        "files/mobile/login/login.html", {}
+        None, {}
     ),
     (
         "/profile",

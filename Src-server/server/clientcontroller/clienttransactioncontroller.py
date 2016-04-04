@@ -69,7 +69,7 @@ def process_get_statutory_settings(db, session_user, client_id):
 
 def process_get_statutory_compliance(db, session_user, request):
     from_count = request.record_count
-    to_count = from_count + 2
+    to_count = 500
     unit_id = request.unit_id
 
     data, total_count = db.return_compliance_for_statutory_settings(unit_id, from_count, to_count)
@@ -79,6 +79,7 @@ def process_get_statutory_compliance(db, session_user, request):
 
 def process_update_statutory_settings(db, request, session_user, client_id):
     password = request.password
+    print "update_statutory_settings"
     if db.verify_password(password, session_user) :
         return db.update_statutory_settings(request, session_user, client_id)
     else :
@@ -113,12 +114,12 @@ def process_get_compliance_for_units(db, request, session_user, client_id):
     unit_ids = request.unit_ids
     domain_id = request.domain_id
     from_count = request.record_count
-    to_count = from_count + 2
-    level_1_name, statutories = db.get_assign_compliance_statutories_for_units(
+    to_count = 500
+    level_1_name, statutories, total = db.get_assign_compliance_statutories_for_units(
         unit_ids, domain_id, session_user, from_count, to_count
     )
     return clienttransactions.GetComplianceForUnitsSuccess(
-        level_1_name, statutories
+        level_1_name, statutories, total
     )
 
 def process_save_assigned_compliance(db, request, session_user, client_id):
@@ -150,7 +151,7 @@ def process_get_past_records_form_data(db, request, session_user, client_id):
 
 def process_get_statutories_by_unit(
         db, request, session_user, client_id
-    ):
+):
     unit_id = request.unit_id
     domain_id = request.domain_id
     level_1_statutory_name = request.level_1_statutory_name
@@ -164,8 +165,8 @@ def process_get_statutories_by_unit(
     )
     users = db.get_users_by_unit_and_domain(unit_id, domain_id)
     return clienttransactions.GetStatutoriesByUnitSuccess(
-        statutory_wise_compliances = statutory_wise_compliances,
-        users = users
+        statutory_wise_compliances=statutory_wise_compliances,
+        users=users
     )
 
 def process_save_past_records(

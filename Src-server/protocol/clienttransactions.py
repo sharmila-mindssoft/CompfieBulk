@@ -827,23 +827,27 @@ class GetAssignCompliancesFormDataSuccess(Response):
         }
 
 class GetComplianceForUnitsSuccess(Response):
-    def __init__(self, level_one_name, statutories):
+    def __init__(self, level_one_name, statutories, total_count):
         self.level_one_name = level_one_name
         self.statutories = statutories
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["level_one_name", "statutories"])
+        data = parse_dictionary(data, ["level_one_name", "statutories", "total_count"])
         statutories = data.get("statutories")
         statutories = parse_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(statutories)
         level_one_name = data.get("level_one_name")
         level_one_name = parse_structure_VectorType_CustomTextType_100(level_one_name)
-        return GetComplianceForUnitsSuccess(level_one_name, statutories)
+        total_count = data.get("total_count")
+        total_count = parse_structure_UnsignedIntegerType_32(total_count)
+        return GetComplianceForUnitsSuccess(level_one_name, statutories, total_count)
 
     def to_inner_structure(self):
         return {
             "level_one_name": to_structure_VectorType_CustomTextType_100(self.level_one_name),
-            "statutories": to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(self.statutories)
+            "statutories": to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(self.statutories),
+            "total_count": to_structure_UnsignedIntegerType_32(self.total_count)
         }
 
 class SaveAssignedComplianceSuccess(Response):
