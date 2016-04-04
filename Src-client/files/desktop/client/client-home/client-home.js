@@ -2707,7 +2707,7 @@ function updateAssigneeWiseComplianceList(data){
                     $('.delayed-count', cloneval).html(val['delayed_compliance']['assigned_count']);
                     $(cloneval, ".delayed-count").on("click", function(e){
                         $("#popup-reassigned").show();
-                        showPopupCompDelayed(reassignedlist);
+                        showPopupCompDelayed();
                     });
                 }
                 else{
@@ -2858,25 +2858,25 @@ function showPopup(assigneewiselist){
         });
     });
 }
-function showPopupCompDelayed(reassignedlist){
-    $.each(reassignedlist, function(ke, valu) {
-        $('.popupoverlay').css("visibility","visible");
-        $('.popupoverlay').css("opacity","1");
-        var popupdelayedsno = 0;
-        $.each(reassignedlist, function(k, val){
-            var tableRow = $('#templates .comp-list-delayed-row-list');
-            var cloneval = tableRow.clone();
-            popupdelayedsno = popupdelayedsno + 1;
-            $('.comp-delayed-sno', cloneval).text(popupdelayedsno);
-            $('.comp-delayed-compliance', cloneval).html(val['compliance']);
-            $('.comp-delayed-reassigned-from', cloneval).html(val['reassigned_from']);
-            $('.comp-delayed-startdate', cloneval).html(val['start_date']);
-            $('.comp-delayed-duedate', cloneval).html(val['due_date']);
-            $('.comp-delayed-reassigned-date', cloneval).html(val['reassigned_from']);
-            $('.comp-delayed-completed-date', cloneval).html(val['completion_date']);           
-            $('.tbody-popup-reassigned-list').append(cloneval);
-        });
-    });
+function showPopupCompDelayed(){
+    // $.each(reassignedlist, function(ke, valu) {
+    //     $('.popupoverlay').css("visibility","visible");
+    //     $('.popupoverlay').css("opacity","1");
+    //     var popupdelayedsno = 0;
+    //     $.each(reassignedlist, function(k, val){
+    //         var tableRow = $('#templates .comp-list-delayed-row-list');
+    //         var cloneval = tableRow.clone();
+    //         popupdelayedsno = popupdelayedsno + 1;
+    //         $('.comp-delayed-sno', cloneval).text(popupdelayedsno);
+    //         $('.comp-delayed-compliance', cloneval).html(val['compliance']);
+    //         $('.comp-delayed-reassigned-from', cloneval).html(val['reassigned_from']);
+    //         $('.comp-delayed-startdate', cloneval).html(val['start_date']);
+    //         $('.comp-delayed-duedate', cloneval).html(val['due_date']);
+    //         $('.comp-delayed-reassigned-date', cloneval).html(val['reassigned_from']);
+    //         $('.comp-delayed-completed-date', cloneval).html(val['completion_date']);           
+    //         $('.tbody-popup-reassigned-list').append(cloneval);
+    //     });
+    // });
 }
 
 function close(){

@@ -295,7 +295,7 @@ function showSideBar(idval, data){
                     hideLoader();
                     console.log(error);
                 }
-                displayLoader(compliance_history_id, );
+                displayLoader();
                 client_mirror.updateComplianceDetail(compliance_history_id, documents,
                     completion_date, validity_date, next_due_date, remarks,
 
