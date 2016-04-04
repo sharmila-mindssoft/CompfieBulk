@@ -3560,7 +3560,7 @@ class ClientDatabase(Database):
 
             if compliance_status == "Inprogress" :
                 if r["frequency_id"] != 4 :
-                    ageing = abs((due_date - current_date).days) + 1
+                    ageing = abs((due_date.date() - current_date.date()).days) + 1
                 else :
                     diff = (due_date - current_date)
                     if r["duration_type_id"] == 2 :
@@ -3571,7 +3571,7 @@ class ClientDatabase(Database):
                 ageing = 0
             elif compliance_status == "Not Complied" :
                 if r["frequency_id"] != 4 :
-                    ageing = abs((current_date - due_date).days) + 1
+                    ageing = abs((current_date.date() - due_date.date()).days) + 1
                 else :
                     diff = (current_date - due_date)
                     if r["duration_type_id"] == 2 :
@@ -5704,8 +5704,8 @@ class ClientDatabase(Database):
             (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t2.repeats_type_id) repeat_type, t2.repeats_every,\
             tc.compliance_history_id \
             FROM tbl_compliance_history tc\
-            INNER JOIN tbl_assigned_compliances t1 on tc.compliance_id = t1.compliance_id \
-            INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id \
+            INNER JOIN tbl_assigned_compliances t1 on tc.compliance_id = t1.compliance_id AND t1.is_active = 1\
+            INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id AND t2.is_active = 1 \
             INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id \
             WHERE IFNULL(tc.approve_status, 0) != 1 \
             AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id like '%s') " % (user_id)
@@ -8398,7 +8398,7 @@ class ClientDatabase(Database):
 
     def have_compliances(self, user_id):
         column = "count(*)"
-        condition = "assignee = '%d' and is_active = 1" % user_id 
+        condition = "assignee = '%d' and is_active = 1" % user_id
         rows = self.get_data(self.tblAssignedCompliances, column, condition)
         no_of_compliances = rows[0][0]
         if no_of_compliances > 0:
