@@ -5903,36 +5903,54 @@ class ClientDatabase(Database):
         # due_date = self.localize(due_date)
         if frequency_type =="On Occurrence":
             r = relativedelta.relativedelta(due_date, current_time_stamp)
-            if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
-                # if completion_date is None:
-                #     compliance_status = "On Time" % (
-                #         abs(r.hours), abs(r.minutes)
-                #     )
-                if r.days == 0:
-                    compliance_status = " %d.%d hours left" % (
-                        abs(r.hours), abs(r.minutes)
-                    )
-                    
+            if completion_date is not None:
+                r = relativedelta.relativedelta(due_date, completion_date)
+                if r.days < 0 and r.hours < 0 and r.minutes < 0:
+                    compliance_status = "On Time"
                 else:
-                    compliance_status = " %d days and %d.%d hours left" % (
-                        abs(r.days), abs(r.hours), abs(r.minutes)
-                    )
+                    if r.days == 0:
+                        compliance_status = "Delayed by %d.%d hour/s " % (
+                            abs(r.hours), abs(r.minutes)
+                        )
+                    else:
+                        compliance_status = "Delayed by %d day/s and %d.%d hour/s" % (
+                            abs(r.days), abs(r.hours), abs(r.minutes)
+                        )
+                    return r.days, compliance_status  
             else:
-                if r.days == 0:
-                    compliance_status = "Overdue by %d.%d hours " % (
-                        abs(r.hours), abs(r.minutes)
-                    )
+                if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
+                    if r.days == 0:
+                        compliance_status = " %d.%d hours left" % (
+                            abs(r.hours), abs(r.minutes)
+                        )
+                        
+                    else:
+                        compliance_status = " %d day/s and %d.%d hour/s left" % (
+                            abs(r.days), abs(r.hours), abs(r.minutes)
+                        )
                 else:
-                    compliance_status = "Overdue by %d days and %d.%d hours" % (
-                        abs(r.days), abs(r.hours), abs(r.minutes)
-                    )
-            return r.days, compliance_status
+                    if r.days == 0:
+                        compliance_status = "Overdue by %d.%d hour/s " % (
+                            abs(r.hours), abs(r.minutes)
+                        )
+                    else:
+                        compliance_status = "Overdue by %d day/s and %d.%d hours" % (
+                            abs(r.days), abs(r.hours), abs(r.minutes)
+                        )
+                return r.days, compliance_status
         else:
             r = relativedelta.relativedelta(due_date, current_time_stamp)
-            compliance_status = " %d days left" % abs(r.days+1)
-            if r.days < 0 and r.hours < 0 and r.minutes < 0:
-                compliance_status = "Overdue by %d days" % abs(r.days)
+            if completion_date is not None:
+                compliance_status = "On Time"
+                r = relativedelta.relativedelta(due_date.date(), completion_date.date())
+                if r.days < 0:
+                    compliance_status = "Delayed by %d day/s" % abs(r.days)
                 return r.days, compliance_status
+            else:
+                compliance_status = " %d days left" % abs(r.days+1)
+                if r.days < 0:
+                    compliance_status = "Overdue by %d day/s" % abs(r.days)
+                    return r.days, compliance_status
         return 0, compliance_status
 
 
