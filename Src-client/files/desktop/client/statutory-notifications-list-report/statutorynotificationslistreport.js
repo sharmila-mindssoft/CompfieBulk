@@ -286,7 +286,7 @@ function statutorylist(data){
 
 function loadStatutoryNotificationsList(data){
     $('.tbody-statutory-notifications-list tr').remove();
-
+    var totalrecords = 0;
     $.each(data, function(key, value) {
         var level1list = data[key]['level_1_statutory_wise_notifications'];
         $.each(level1list, function(ke, valu) {           
