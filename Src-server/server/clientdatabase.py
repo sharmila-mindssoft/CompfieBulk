@@ -8363,3 +8363,13 @@ class ClientDatabase(Database):
         row = self.select_one(q)
         result = self.convert_to_dict(row, ["total_disk_space", "total_disk_space_used"])
         return result
+
+    def have_compliances(self, user_id):
+        column = "count(*)"
+        condition = "assignee = '%d' and is_active = 1" % user_id 
+        rows = self.get_data(self.tblAssignedCompliances, column, condition)
+        no_of_compliances = rows[0][0]
+        if no_of_compliances > 0:
+            return True
+        else:
+            return False
