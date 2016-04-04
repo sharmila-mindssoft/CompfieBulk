@@ -12,6 +12,15 @@ var client_admin;
 var domainsList;
 var accordionstatus = true;
 
+var statutoriesNameList;
+var totalRecord;
+var lastActName = '';
+var count = 1;
+var statutoriesCount = 1;
+var actCount = 1;
+var s_endCount = 0;
+
+
 function clearMessage() {
   $(".error-message").hide();
   $(".error-message").text("");
@@ -119,203 +128,215 @@ function disppopup(units_string){
 }
 
 function load_secondwizard(){
-  var count=1;
-  var statutoriesCount= 1;
-  var actCount = 1;
-  $(".tbody-assignstatutory").find("tbody").remove();
-
+  if(statutoriesCount <= 1){
+    $(".tbody-assignstatutory").find("tbody").remove();
+  }
   var selectedDomain = $('.domainlist.active').attr('id');
-
-  if(selectedDomain in statutoriesList){
-
-    var actname = '';
-    var domainList = statutoriesList[selectedDomain];
-    for(var domainentity in domainList){
-      actname = domainentity;
+  var actname = '';
+  for(var l=0; l<statutoriesNameList.length; l++){
+    actname = statutoriesNameList[l];
+    //alert($.inArray(actname, statutoriesNameList) == -1)
+    if(actname != lastActName){
       var acttableRow=$('#act-templates .font1 .tbody-heading');
       var clone=acttableRow.clone();
       $('.actname', clone).html('<input style="margin-top:5px" type="checkbox" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)"> <label for="act'+actCount+'">'+actname+'</label> <span><img src="/images/chevron_black_down.png"></span>');
       $('.tbody-assignstatutory').append(clone);
-
-      $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
-      if(count==1){
-        $('.accordion-content'+count).addClass("default");
-      }
+      $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+' default"></tbody>');
 
       var complianceHeadingtableRow=$('#statutory-templates .compliance-heading');
       var clone1=complianceHeadingtableRow.clone();
       $('.accordion-content'+count).append(clone1);
 
-      var actList = domainList[domainentity];
-      //$('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
-      for(var actentity in actList){
-        var statutoryprovision = '';
-        var compliance_id = actList[actentity]["compliance_id"];
-        var compliance_name = actList[actentity]["compliance_name"];
-        var compliance_description = actList[actentity]["description"];
-        var applicable_units =  actList[actentity]["applicable_units"];
-        var frequency =  actList[actentity]["frequency"];
-        var statutory_date =  actList[actentity]["statutory_date"];
-        var due_date =  actList[actentity]["due_date"];
-        var summary = actList[actentity]["summary"];
-        var triggerdate = '';
-        var statutorydate = '';
-        var elementTriggerdate = '';
-        var elementDuedate = '';
-
-        if(due_date != ''){
-          if(due_date.length > 1){
-          for(var k = 0; k < due_date.length; k++){
-            elementDuedate += '<input type="text" id="duedate'+statutoriesCount+'-'+k+'" readonly="readonly" class="input-box" value="' + due_date[k] + '"/>';
-          }
-          }else{
-            elementDuedate += '<input type="text" id="duedate'+statutoriesCount+'" readonly="readonly" class="input-box" value="' + due_date[0] + '"/>'
-          }
-        }
-        for(j = 0; j < statutory_date.length; j++){
-          var sDay = '';
-          if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
-
-          var sMonth = '';
-          if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
-
-          var tDays = '';
-          if(statutory_date[j]["trigger_before_days"] != null) tDays = statutory_date[j]["trigger_before_days"];
-
-          if(sMonth == 1) sMonth = "January"
-          else if(sMonth == 2) sMonth = "February"
-          else if(sMonth == 3) sMonth = "March"
-          else if(sMonth == 4) sMonth = "April"
-          else if(sMonth == 5) sMonth = "May"
-          else if(sMonth == 6) sMonth = "June"
-          else if(sMonth == 7) sMonth = "July"
-          else if(sMonth == 8) sMonth = "Auguest"
-          else if(sMonth == 9) sMonth = "September"
-          else if(sMonth == 10) sMonth = "October"
-          else if(sMonth == 11) sMonth = "November"
-          else if(sMonth == 12) sMonth = "December"
-
-          if(tDays != ''){
-            triggerdate +=  tDays + " Day(s) ";
-          }
-          statutorydate +=  sMonth +' '+ sDay + ' ';
-
-          if(statutory_date.length > 1){
-            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'-'+j+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
-          }else{
-            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
-          }
-        }
-
-        var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
-        var clone2=complianceDetailtableRow.clone();
-        $('.ckbox', clone2).html('<input type="checkbox" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this)">');
-        $('.compliancetask', clone2).html('<abbr class="page-load" title="'+
-          compliance_description+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliance_name);
-
-        var dispApplicableUnits = applicable_units.length + '/' + assignStatutoryUnitIds.length;
-
-        var dispUnit = '';
-        for(var i=0; i<applicable_units.length; i++){
-          dispUnit = dispUnit + applicable_units[i]+',';
-        }
-        $('.applicableunit', clone2).html('<a href="#popup1" onclick="disppopup(\''+dispUnit+'\')">'+dispApplicableUnits+'</a>');
-        $('.compliancefrequency', clone2).text(frequency);
-
-        if(summary != null){
-          if(statutorydate.trim() != ''){
-            statutorydate = summary + ' ( '+statutorydate+' )';
-          }else{
-            statutorydate = summary;
-          }
-        }
-
-        $('.statutorydate', clone2).text(statutorydate);
-
-        if(frequency != 'On Occurrence'){
-          if(triggerdate == ''){
-          $('.triggerbefore', clone2).html('<input type="text" value="" class="input-box trigger" id="triggerdate'+statutoriesCount+'" />');
-          $('.duedate', clone2).html('<input type="text" value="" class="input-box" id="duedate'+statutoriesCount+'" />');
-          }
-          else{
-            $('.triggerbefore', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/delete.png" width="12"></span>'+triggerdate +
-              '<div class="edittriggertextbox'+statutoriesCount+'" style="display:none;padding-top:10px;">' + elementTriggerdate + '</div>');
-            $('.duedate', clone2).html('<div>' + elementDuedate + '</div>');
-          }
-        }
-
-        if(frequency == 'Periodical' || frequency == 'Review'){
-          $('.validitydate', clone2).html('<input type="text" value="" class="input-box" readonly="readonly" id="validitydate'+statutoriesCount+'" />');
-        }
-
-        $('.accordion-content'+count).append(clone2);
-
-        var duename = statutoriesCount;
-        if(due_date.length > 1){
-          for(var k = 0; k < due_date.length; k++){
-            duename = statutoriesCount+'-'+k;
-            $("#duedate"+duename).datepicker({
-            changeMonth: true,
-            changeYear: true,
-            numberOfMonths: 1,
-            dateFormat: "dd-M-yy",
-            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-          });
-          }
-        }else{
-          $("#duedate"+duename).datepicker({
-            changeMonth: true,
-            changeYear: true,
-            numberOfMonths: 1,
-            dateFormat: "dd-M-yy",
-            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        });
-        }
-        $("#validitydate"+statutoriesCount ).datepicker({
-            changeMonth: true,
-            changeYear: true,
-            numberOfMonths: 1,
-            dateFormat: "dd-M-yy",
-            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        });
-
-        $('.edittrigger'+statutoriesCount).click(function(){
-          var text = $(this).attr('class');
-          var clickvalue = text.substring(text.lastIndexOf('r') + 1);
-          $('.edittriggertextbox'+clickvalue).show();
-          $('.closetrigger'+clickvalue).show();
-          $('.edittrigger'+clickvalue).hide();
-        });
-
-        $('.closetrigger'+statutoriesCount).click(function(){
-          var text = $(this).attr('class');
-          var clickvalue = text.substring(text.lastIndexOf('r') + 1);
-          $('.edittriggertextbox'+clickvalue).hide();
-          $('.edittrigger'+clickvalue).show();
-          $('.closetrigger'+clickvalue).hide();
-        });
-
-        $('.trigger').keyup('input', function (event) {
-          this.value = this.value.replace(/[^0-9]/g, '');
-        });
-
-        statutoriesCount = statutoriesCount + 1;
-      }
       actCount = actCount + 1;
       count++;
+      lastActName = actname;
+    }
+    /*if(count==1){
+      $('.accordion-content'+count).addClass("default");
+    }*/
+    var actList = statutoriesList[actname];
+    for(var actentity in actList){
+      var statutoryprovision = '';
+      var compliance_id = actList[actentity]["compliance_id"];
+      var compliance_name = actList[actentity]["compliance_name"];
+      var compliance_description = actList[actentity]["description"];
+      var applicable_units =  actList[actentity]["applicable_units"];
+      var frequency =  actList[actentity]["frequency"];
+      var statutory_date =  actList[actentity]["statutory_date"];
+      var due_date =  actList[actentity]["due_date"];
+      var summary = actList[actentity]["summary"];
+      var triggerdate = '';
+      var statutorydate = '';
+      var elementTriggerdate = '';
+      var elementDuedate = '';
+      var due_date_length = 0;
+
+      if(due_date != '' || due_date != null){
+        if(due_date.length > 1){
+        for(var k = 0; k < due_date.length; k++){
+          elementDuedate += '<input type="text" id="duedate'+statutoriesCount+'-'+k+'" readonly="readonly" class="input-box" value="' + due_date[k] + '"/>';
+        }
+        }else{
+          elementDuedate += '<input type="text" id="duedate'+statutoriesCount+'" readonly="readonly" class="input-box" value="' + due_date[0] + '"/>'
+        }
+        due_date_length = due_date.length;
+      }
+      for(j = 0; j < statutory_date.length; j++){
+        var sDay = '';
+        if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
+
+        var sMonth = '';
+        if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
+
+        var tDays = '';
+        if(statutory_date[j]["trigger_before_days"] != null) tDays = statutory_date[j]["trigger_before_days"];
+
+        if(sMonth == 1) sMonth = "January"
+        else if(sMonth == 2) sMonth = "February"
+        else if(sMonth == 3) sMonth = "March"
+        else if(sMonth == 4) sMonth = "April"
+        else if(sMonth == 5) sMonth = "May"
+        else if(sMonth == 6) sMonth = "June"
+        else if(sMonth == 7) sMonth = "July"
+        else if(sMonth == 8) sMonth = "Auguest"
+        else if(sMonth == 9) sMonth = "September"
+        else if(sMonth == 10) sMonth = "October"
+        else if(sMonth == 11) sMonth = "November"
+        else if(sMonth == 12) sMonth = "December"
+
+        if(tDays != ''){
+          triggerdate +=  tDays + " Day(s) ";
+        }
+        statutorydate +=  sMonth +' '+ sDay + ' ';
+        if(statutory_date.length > 1){
+          elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'-'+j+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
+        }else{
+          elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
+        }
+      }
+
+      var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
+      var clone2=complianceDetailtableRow.clone();
+      $('.ckbox', clone2).html('<input type="checkbox" id="statutory'+statutoriesCount+'" class="statutoryclass'+(actCount-1)+'" onclick="compliancestatus(this)">');
+      $('.sno', clone2).html(statutoriesCount +
+        '<input type="hidden" id="complianceid'+statutoriesCount+'" value="'+compliance_id+'"/>' +
+        '<input type="hidden" id="compliancename'+statutoriesCount+'" value="'+compliance_name+'"/>' +
+        '<input type="hidden" id="frequency'+statutoriesCount+'" value="'+frequency+'"/>' +
+        '<input type="hidden" id="due_date_length'+statutoriesCount+'" value="'+due_date_length+'"/>' );
+
+      $('.compliancetask', clone2).html('<abbr class="page-load" title="'+
+        compliance_description+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliance_name);
+
+      var dispApplicableUnits = applicable_units.length + '/' + assignStatutoryUnitIds.length;
+      var dispUnit = '';
+      for(var i=0; i<applicable_units.length; i++){
+        dispUnit = dispUnit + applicable_units[i]+',';
+      }
+      $('.applicableunit', clone2).html('<input type="hidden" id="appl_unit'+statutoriesCount+'" value="'+ dispUnit +
+        '"/><a href="#popup1" onclick="disppopup(\''+dispUnit+'\')">'+dispApplicableUnits+'</a>');
+      $('.compliancefrequency', clone2).text(frequency);
+
+      if(summary != null){
+        if(statutorydate.trim() != ''){
+          statutorydate = summary + ' ( '+statutorydate+' )';
+        }else{
+          statutorydate = summary;
+        }
+      }
+
+      $('.statutorydate', clone2).text(statutorydate);
+      if(frequency != 'On Occurrence'){
+        if(triggerdate == ''){
+        $('.triggerbefore', clone2).html('<input type="text" value="" class="input-box trigger" id="triggerdate'+statutoriesCount+'" maxlength="3"/>');
+        $('.duedate', clone2).html('<input type="text" value="" class="input-box" id="duedate'+statutoriesCount+'" />');
+        }
+        else{
+          $('.triggerbefore', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/delete.png" width="12"></span>'+triggerdate +
+            '<div class="edittriggertextbox'+statutoriesCount+'" style="display:none;padding-top:10px;">' + elementTriggerdate + '</div>');
+          $('.duedate', clone2).html('<div>' + elementDuedate + '</div>');
+        }
+      }
+
+      if(frequency == 'Periodical' || frequency == 'Review'){
+        $('.validitydate', clone2).html('<input type="text" value="" class="input-box" readonly="readonly" id="validitydate'+statutoriesCount+'" />');
+      }
+
+      $('.accordion-content'+(count-1)).append(clone2);
+
+      var duename = statutoriesCount;
+      if(due_date.length > 1){
+        for(var k = 0; k < due_date.length; k++){
+          duename = statutoriesCount+'-'+k;
+          $("#duedate"+duename).datepicker({
+          changeMonth: true,
+          changeYear: true,
+          numberOfMonths: 1,
+          dateFormat: "dd-M-yy",
+          monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        });
+        }
+      }else{
+        $("#duedate"+duename).datepicker({
+          changeMonth: true,
+          changeYear: true,
+          numberOfMonths: 1,
+          dateFormat: "dd-M-yy",
+          monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      });
+      }
+      $("#validitydate"+statutoriesCount ).datepicker({
+          changeMonth: true,
+          changeYear: true,
+          numberOfMonths: 1,
+          dateFormat: "dd-M-yy",
+          monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      });
+
+      $('.edittrigger'+statutoriesCount).click(function(){
+        var text = $(this).attr('class');
+        var clickvalue = text.substring(text.lastIndexOf('r') + 1);
+        $('.edittriggertextbox'+clickvalue).show();
+        $('.closetrigger'+clickvalue).show();
+        $('.edittrigger'+clickvalue).hide();
+      });
+
+      $('.closetrigger'+statutoriesCount).click(function(){
+        var text = $(this).attr('class');
+        var clickvalue = text.substring(text.lastIndexOf('r') + 1);
+        $('.edittriggertextbox'+clickvalue).hide();
+        $('.edittrigger'+clickvalue).show();
+        $('.closetrigger'+clickvalue).hide();
+      });
+
+      $('.trigger').keyup('input', function (event) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+      });
+
+      statutoriesCount = statutoriesCount + 1;
     }
   }
+
   if(count <= 1){
     var norecordtableRow=$('#no-record-templates .font1');
     var noclone=norecordtableRow.clone();
     $('.tbody-assignstatutory').append(noclone);
     $('#activate-step-3').hide();
+    $('#pagination').hide();
   }
 
-  $(document).ready(function($) {
+  if(statutoriesCount > 1){
+    $('.compliance_count').text("Showing " + 1 + " to " + (statutoriesCount-1) + " of " + totalRecord);
+  }else{
+    $('.compliance_count').text('');
+  }
+
+  if(totalRecord <= statutoriesCount){
+    $('#pagination').hide();
+    $('#activate-step-3').show();
+    $(document).ready(function($) {
     $('#accordion').find('.accordion-toggle').click(function(){
       if(accordionstatus){
         //Expand or collapse this panel
@@ -328,8 +349,54 @@ function load_secondwizard(){
 
     });
   });
+  }else{
+    $('#activate-step-3').hide();
+  }
+
+  if(statutoriesNameList.length ==0){
+    $('#pagination').hide();
+    $('#activate-step-3').show();
+    $('#accordion').find('.accordion-toggle').click(function(){
+      if(accordionstatus){
+        //Expand or collapse this panel
+        $(this).next().slideToggle('fast');
+        //Hide the other panels
+        $(".accordion-content").not($(this).next()).slideUp('fast');
+      }else{
+        accordionstatus = true;
+      }
+    });
+  }
 }
 
+$('#pagination').click(function(){
+  var domainID = $('.domainlist.active').attr('id');
+  unit_id =  parseInt($("#unit").val());
+  s_endCount = statutoriesCount - 1;
+  displayLoader();
+  client_mirror.getAssignComplianceForUnits(assignStatutoryUnitIds, parseInt(domainID), s_endCount,
+    function (error, response) {
+        if (error == null){
+          statutoriesList = response["statutories"];
+          statutoriesNameList = response["level_one_name"];
+          totalRecord = data["total_count"];
+          if(parseInt(totalRecord) > s_endCount){
+            $('#pagination').show();
+            $('#activate-step-3').hide();
+          }else{
+            $('#pagination').hide();
+            $('#activate-step-3').show();
+          }
+          load_secondwizard();
+          hideLoader();
+        }
+        else {
+          displayMessage(error);
+          hideLoader();
+        }
+    }
+  )
+});
 
 
 function validate_firsttab(){
@@ -346,11 +413,24 @@ function validate_firsttab(){
     displayMessage("Domain Required");
     return false;
   }else{
+    s_endCount = 0;
+    var domainID = $('.domainlist.active').attr('id');
     displayMessage("");
     displayLoader();
+
+    count=1;
+    statutoriesCount= 1;
+    actCount = 1;
+    lastActName = '';
+    displayMessage("");
+
     if(assignStatutoryUnitIds.length > 0){
       function onSuccess(data){
         statutoriesList = data["statutories"];
+        statutoriesNameList = data["level_one_name"];
+        totalRecord = data["total_count"];
+        $('#pagination').show();
+
         load_secondwizard();
         hideLoader();
       }
@@ -358,6 +438,8 @@ function validate_firsttab(){
         hideLoader();
       }
       client_mirror.getAssignComplianceForUnits(assignStatutoryUnitIds,
+        parseInt(domainID),
+        s_endCount,
         function (error, response) {
               if (error == null){
                 onSuccess(response);
@@ -469,64 +551,53 @@ function submitcompliance(){
     }
 
     assignCompliance = [];
-    var statutoriesCount= 1;
-    var actCount = 1;
+    var totalCompliance = 1;
     var selectedStatus = false;
-
     var applicableUnitsArray = [];
 
-    for(var entity in statutoriesList){
+    for(var i=1; i<=(actCount-1); i++){
+      var actComplianceCount = $('.statutoryclass'+i).length;
+      for(var j=1; j<=actComplianceCount; j++){
+        var complianceApplicable = false;
+        if($('#statutory'+totalCompliance).is(":checked")){
+          complianceApplicable = true;
+          selectedStatus = true;
+        }
+        if(complianceApplicable){
+          var compliance_id = parseInt($('#complianceid'+totalCompliance).val());
+          var compliance_name = $('#compliancename'+totalCompliance).val();
+          var due_date =  parseInt($('#due_date_length'+totalCompliance).val());
+          var frequency =  $('#frequency'+totalCompliance).val();
+          var appl_units =  $('#appl_unit'+totalCompliance).val();
+          if(appl_units != '') appl_units = appl_units.replace(/,\s*$/, "").split(',');
+          var applicable_units = [];
 
-      var domainList = statutoriesList[entity];
-      for(var domainentity in domainList){
-        var actList = domainList[domainentity];
-        for(var actentity in actList){
-          var complianceApplicable = false;
-          if($('#statutory'+statutoriesCount).is(":checked")){
-            complianceApplicable = true;
-            selectedStatus = true;
+          for(var u=0; u<appl_units.length; u++){
+            applicable_units.push(parseInt(appl_units[u]));
           }
-          if(complianceApplicable){
-            var compliance_id = actList[actentity]["compliance_id"];
-            var compliance_name = actList[actentity]["compliance_name"];
-            var applicable_units =  actList[actentity]["applicable_units"];
-            var due_date =  actList[actentity]["due_date"];
-            var frequency =  actList[actentity]["frequency"];
 
-            for(var k=0; k<applicable_units.length; k++ ){
-              if($.inArray(applicable_units[k], applicableUnitsArray) == -1){
-                applicableUnitsArray.push(applicable_units[k]);
-              }
+          for(var k=0; k<applicable_units.length; k++ ){
+            if($.inArray(applicable_units[k], applicableUnitsArray) == -1){
+              applicableUnitsArray.push(parseInt(applicable_units[k]));
             }
+          }
 
-            var statutory_dates = [];
-            var current_due_date = '';
-            var current_trigger_day = '';
-            var current_due_dates = [];
-            var validitydate = null;
-            if($('#validitydate'+statutoriesCount).val() != undefined && $('#validitydate'+statutoriesCount).val() != '') validitydate = $('#validitydate'+statutoriesCount).val();
+          var statutory_dates = [];
+          var current_due_date = '';
+          var current_trigger_day = '';
+          var current_due_dates = [];
+          var validitydate = null;
+          if($('#validitydate'+totalCompliance).val() != undefined && $('#validitydate'+totalCompliance).val() != '') validitydate = $('#validitydate'+totalCompliance).val();
 
-
-            if(frequency != 'On Occurrence'){
-              var dDate = null;
-              var tDay = null;
-
-              if(due_date.length > 1){
-                for(var k = 0; k < due_date.length; k++){
-                  dDate = $('#duedate'+statutoriesCount+'-'+k).val();
-                  if(dDate != ''){
-                    tDay = $('#triggerdate'+statutoriesCount+'-'+k).val();
-                    current_due_dates.push([dDate,tDay]);
-                  }else{
-                    displayMessage("Due date Required in Select Compliance Task Wizard");
-                    hideLoader();
-                    return false;
-                  }
-                }
-              }else{
-                dDate = $('#duedate'+statutoriesCount).val();
+          if(frequency != 'On Occurrence'){
+            var dDate = null;
+            var tDay = null;
+            if(due_date.length > 1){
+              alert(enter)
+              for(var k = 0; k < due_date.length; k++){
+                dDate = $('#duedate'+totalCompliance+'-'+k).val();
                 if(dDate != ''){
-                  tDay = $('#triggerdate'+statutoriesCount).val();
+                  tDay = $('#triggerdate'+totalCompliance+'-'+k).val();
                   current_due_dates.push([dDate,tDay]);
                 }else{
                   displayMessage("Due date Required in Select Compliance Task Wizard");
@@ -534,76 +605,85 @@ function submitcompliance(){
                   return false;
                 }
               }
-              var convertDueDate = convert_date(dDate);
-              if (convertDueDate < currentDate) {
-                  displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
-                  hideLoader();
-                  return false;
-              }
-
-              var sort_elements = current_due_dates;
-                if(current_due_dates.length > 1){
-                  sort_elements.sort(function(a, b) {
-                    a1 = convert_date(a[0]);
-                    b1 = convert_date(b[0]);
-                  return a1 - b1;
-                  });
-
-                current_due_date = sort_elements[0][0];
-                current_trigger_day = parseInt(sort_elements[0][1]);
             }else{
-              current_due_date = current_due_dates[0][0];
-              current_trigger_day = parseInt(sort_elements[0][1]);
+              dDate = $('#duedate'+totalCompliance).val();
+              if(dDate != ''){
+                tDay = $('#triggerdate'+totalCompliance).val();
+                current_due_dates.push([dDate,tDay]);
+              }else{
+                displayMessage("Due date Required in Select Compliance Task Wizard");
+                hideLoader();
+                return false;
+              }
             }
 
+            var convertDueDate = convert_date(dDate);
+            if (convertDueDate < currentDate) {
+                displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
+                hideLoader();
+                return false;
+            }
 
-            for(var dDates = 0; dDates < sort_elements.length; dDates++){
-              var statutory_day = null;
-              var statutory_month = null;
-              var trigger_before_days = null;
-              if(sort_elements[dDates][0] != ''){
-                var splitDueDates = sort_elements[dDates][0].split('-');
-                var strMonth = splitDueDates[1];
-                statutory_day = parseInt(splitDueDates[0]);
-                statutory_month = convert_month(strMonth);
-                trigger_before_days = sort_elements[dDates][1];
+            var sort_elements = current_due_dates;
+              if(current_due_dates.length > 1){
+                sort_elements.sort(function(a, b) {
+                  a1 = convert_date(a[0]);
+                  b1 = convert_date(b[0]);
+                return a1 - b1;
+                });
 
-                if(trigger_before_days != '') {
-                  trigger_before_days = parseInt(trigger_before_days);
-                  if(trigger_before_days > 100){
-                    displayMessage("Trigger days should not be exceed 100");
-                    hideLoader();
-                    return false;
-                  }
-                  if(trigger_before_days == 0){
-                    displayMessage("Trigger days should be 1 to 100");
-                    hideLoader();
-                    return false;
-                  }
-                }else{
-                  displayMessage("Trigger date Required in Select Compliance Task Wizard");
+              current_due_date = sort_elements[0][0];
+              current_trigger_day = parseInt(sort_elements[0][1]);
+          }else{
+            current_due_date = current_due_dates[0][0];
+            current_trigger_day = parseInt(sort_elements[0][1]);
+          }
+
+          for(var dDates = 0; dDates < sort_elements.length; dDates++){
+            var statutory_day = null;
+            var statutory_month = null;
+            var trigger_before_days = null;
+            if(sort_elements[dDates][0] != ''){
+              var splitDueDates = sort_elements[dDates][0].split('-');
+              var strMonth = splitDueDates[1];
+              statutory_day = parseInt(splitDueDates[0]);
+              statutory_month = convert_month(strMonth);
+              trigger_before_days = sort_elements[dDates][1];
+
+              if(trigger_before_days != '') {
+                trigger_before_days = parseInt(trigger_before_days);
+                if(trigger_before_days > 100){
+                  displayMessage("Trigger days should not be exceed 100");
                   hideLoader();
                   return false;
                 }
+                if(trigger_before_days == 0){
+                  displayMessage("Trigger days should be 1 to 100");
+                  hideLoader();
+                  return false;
+                }
+              }else{
+                displayMessage("Trigger date Required in Select Compliance Task Wizard");
+                hideLoader();
+                return false;
               }
-              statutoryDateList = client_mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, null);
-              statutory_dates.push(statutoryDateList);
             }
-            }
-            else{
-              var statutory_dates = null;
-              var current_due_date = null;
-              var current_trigger_day = null;
-            }
-            assignComplianceData = client_mirror.assignCompliances(
-            compliance_id, compliance_name, statutory_dates,
-            current_due_date, validitydate, current_trigger_day, applicable_units
-           );
-            assignCompliance.push(assignComplianceData);
+            statutoryDateList = client_mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, null);
+            statutory_dates.push(statutoryDateList);
           }
-          statutoriesCount = statutoriesCount + 1;
+          }
+          else{
+            var statutory_dates = null;
+            var current_due_date = null;
+            var current_trigger_day = null;
+          }
+          assignComplianceData = client_mirror.assignCompliances(
+          compliance_id, compliance_name, statutory_dates,
+          current_due_date, validitydate, current_trigger_day, applicable_units
+         );
+          assignCompliance.push(assignComplianceData);
         }
-        actCount = actCount + 1;
+        totalCompliance++;
       }
     }
 
@@ -611,7 +691,6 @@ function submitcompliance(){
       var assigneeInserUnits = [];
       var assigneeInserUnitsVal = [];
       var assigneeInserDomain = null;
-
       if(assignComplianceAssigneeName != 'Client Admin' && assignComplianceAssigneeId != null){
         var userUnits;
         var userDomains;
@@ -947,6 +1026,7 @@ $("#unit").click(function(event){
 });
 
 $("#domain").click(function(event){
+  $('#activate-step-3').show();
   if($(event.target).attr('class') == 'domainlist'){
     $('.'+$(event.target).attr('class')).each( function( index, el ) {
       $(el).removeClass( "active" );

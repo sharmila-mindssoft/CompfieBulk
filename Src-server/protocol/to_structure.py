@@ -3508,6 +3508,12 @@ def to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransact
         d[key] = value
     return d
 
+def to_structure_VectorType_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(item))
+    return lst
 
 def to_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES(data):
     data = parse_dictionary(data)

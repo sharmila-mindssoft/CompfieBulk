@@ -1,5 +1,8 @@
 {% extends "files/desktop/client/home/container.html" %}
 {% block content %}
+<div class='loading-indicator-spin'>
+  <span><img src='/files/desktop/common/images/loading-img.gif' alt="">   </span>
+</div>
 <div class="content-container">
   <div class="content-area">
     <div class="add-container">
@@ -120,6 +123,9 @@
         <tbody class="tbody-task-applicability-list"></tbody>
         
         </table>
+        <div align="center" style="padding-top:10px;">
+          <input type="button" value="Show more records" class="btn-submit" id="pagination">
+        </div>
         <p class="total-records"></p>
       </div>
     </div>

@@ -114,7 +114,9 @@ function loadcomplianceactivityreport(buttontype){
     else{
         function onSuccess(data){
             clearMessage();
-            loadComplianceActivityReportList(data['activities']);     
+            if(buttontype == "show"){
+                loadComplianceActivityReportList(data['activities']);     
+            }
             if(buttontype == "export"){
                 if (error == null){
                     var download_url = data["link"];

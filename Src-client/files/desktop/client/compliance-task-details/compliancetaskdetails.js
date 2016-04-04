@@ -21,7 +21,7 @@ function hideLoader() {
 }
 
 function initialize(){
-    hideLoader();   
+    hideLoader();
     function onSuccess(data){
         clearMessage();
         closeicon();
@@ -54,28 +54,28 @@ function loadComplianceTaskDetails(data){
     var snoInprogress = 1;
     var countOverdue = 0;
     var countInprogress = 0;
-  
+
     $.each(data, function(k, value) {
         if(data[k]['compliance_status'] == "Not Complied" && countOverdue == 0){
             var tableRowHeading = $('#templates .table-compliances-task-list .headingRow');
             var clone = tableRowHeading.clone();
-            $('.compliance-types', clone).html("Over due Compliances");      
+            $('.compliance-types', clone).html("Over due Compliances");
             $('.tbody-compliances-task-list-overdue').append(clone);
             countOverdue++;
         }
         if(data[k]['compliance_status'] == "Inprogress" && countInprogress == 0){
             var tableRowHeading = $('#templates .table-compliances-task-list .headingRow');
             var clone = tableRowHeading.clone();
-            $('.compliance-types', clone).html("Inprogress Compliances");      
+            $('.compliance-types', clone).html("Inprogress Compliances");
             $('.tbody-compliances-task-list-inprogress').append(clone);
             countInprogress++;
         }
 
         var tableRowvalues = $('#templates .table-compliances-task-list .table-row-list');
         var cloneval = tableRowvalues.clone();
-      
+
         //Full Width list append ---------------------------------------------------------------
-       
+
         $('.compliance-task span', cloneval).html(data[k]['compliance_name']);
         $('.compliance-task', cloneval).attr("title", data[k]['compliance_description']);
         $('.domain', cloneval).html(data[k]['domain_name']);
@@ -96,10 +96,10 @@ function loadComplianceTaskDetails(data){
         }
         $('.status', cloneval).html(data[k]['compliance_status']);
         if(data[k]['format_file_name']  != null){
-            $('.format-file', cloneval).attr("href", data[k]['format_file_name']);    
+            $('.format-file', cloneval).attr("href", data[k]['format_file_name']);
         }
         else{
-            $('.format-file', cloneval).hide();   
+            $('.format-file', cloneval).hide();
         }
         var compliance_history_id = data[k]["compliance_history_id"];
         $(cloneval, ".expand-compliance").on("click", function() {
@@ -115,10 +115,10 @@ function loadComplianceTaskDetails(data){
         }
         if(data[k]['compliance_status'] == "Inprogress" || data[k]['compliance_status'] == "Inprogress(Rejected)"){
             $('.sno', cloneval).text(snoInprogress);
-            $('.tbody-compliances-task-list-inprogress').append(cloneval);   
+            $('.tbody-compliances-task-list-inprogress').append(cloneval);
             snoInprogress = snoInprogress + 1
-        }      
-    });    
+        }
+    });
 }
 function loadUpcomingCompliancesDetails(data){
     $('.tbody-upcoming-compliances-list tr').remove();
@@ -134,20 +134,24 @@ function loadUpcomingCompliancesDetails(data){
         $('.uc-startdate', cloneval).html(data[k]['start_date']);
         $('.uc-duedate', cloneval).html(data[k]['due_date']);
         if(data[k]['format_file_name'] != null){
-            $('.format-file', cloneval).attr("href", data[k]['format_file_name']);    
+            $('.format-file', cloneval).attr("href", data[k]['format_file_name']);
         }
         else{
-            $('.format-file', cloneval).hide();       
+            $('.format-file', cloneval).hide();
         }
-        
+
         $('.tbody-upcoming-compliances-list').append(cloneval);
-    }); 
+    });
+
+}
+
+function compliancealreadyexists(){
 
 }
 function showSideBar(idval, data){
     $('.half-width-task-details').empty();
     clearMessage();
-    var d = new Date().toLocaleDateString('en-GB', {  
+    var d = new Date().toLocaleDateString('en-GB', {
         year: 'numeric',
         month: 'short',
         day: 'numeric'
@@ -186,13 +190,13 @@ function showSideBar(idval, data){
             }
             else if(data[k]['compliance_frequency'] != 'One Time'){
                 $('.validityAndDueDate').show();
-                $('.validity1_icon', cloneValSide).on("click", function(e, complianceStatus){  
+                $('.validity1_icon', cloneValSide).on("click", function(e, complianceStatus){
                     showTextbox(complianceStatus);
-                }); 
+                });
                 $('.validity1_label abbr', cloneValSide).html(data[k]['validity_date']);
-                $('.duedate1_label abbr', cloneValSide).html(data[k]['next_due_date']); 
+                $('.duedate1_label abbr', cloneValSide).html(data[k]['next_due_date']);
                 $('.validity1-textbox-input', cloneValSide).val(data[k]['validity_date']);
-                $('.duedate1-textbox-input', cloneValSide).val(data[k]['next_due_date']);  
+                $('.duedate1-textbox-input', cloneValSide).val(data[k]['next_due_date']);
             }
             $('.btn-submit', cloneValSide).on("click", function(e){
                 var completion_date;
@@ -205,7 +209,7 @@ function showSideBar(idval, data){
                 function parseMyDate(s) {
                     return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
                 }
-               
+
                 documents = file_list;
                 if(documents.length == 0){
                     documents = null;
@@ -240,41 +244,45 @@ function showSideBar(idval, data){
                     displayMessage("Select Validity Date");
                     return;
                 }
-                // if(parseMyDate(start_date) > parseMyDate(completion_date)){
-                //     displayMessage("Completion Date is Greater than or equal to Start Date");
-                //     return;
-                // }
-                // if(validity_date != null){
-                //     if(parseMyDate(start_date) > parseMyDate(validity_date)){
-                //         displayMessage("Validity Date is Greater than or equal to Start Date");
-                //         return;
-                //     }
-                // }
-                // if(next_due_date != null){
-                //     if(parseMyDate(start_date) > parseMyDate(next_due_date)){
-                //         displayMessage("Due Date is Greater than or equal to Start Date");    
-                //         return;
-                //     }                    
-                // }
-                // if(parseMyDate(completion_date) > parseMyDate(currentDate)){
-                //     displayMessage("Completion Date is not Greater than Current Date");
-                //     return;
-                // }
-                // if(currentDate != null && next_due_date != null){
-                //     console.log(parseMyDate(currentDate)+"---"+parseMyDate(next_due_date));
-                //     if(parseMyDate(currentDate) > parseMyDate(next_due_date)){
-                //         displayMessage("Next Due Date is Greater than Current Date");
-                //         return;
-                //     }
-                // }
-                // if(validity_date != null  && next_due_date != null){
-                //     if(parseMyDate(validity_date) > parseMyDate(next_due_date)){
-                //         displayMessage("Validity Date is Greater than or equal to Due Date");
-                //         return;
-                //     }
-                // }
-                // alert("welcome to api");
-                // return;
+                if(data[k]['compliance_frequency'] == "Periodical"){
+                    if(validity_date == '' || validity_date == null){
+                        displayMessage("Select Validity Date");
+                        return;
+                    }
+                }
+                if(parseMyDate(start_date) > parseMyDate(completion_date)){
+                    displayMessage("Completion Date is Greater than or equal to Start Date");
+                    return;
+                }
+                if(validity_date != null){
+                    if(parseMyDate(start_date) > parseMyDate(validity_date)){
+                        displayMessage("Validity Date is Greater than or equal to Start Date");
+                        return;
+                    }
+                }
+                if(next_due_date != null){
+                    if(parseMyDate(start_date) > parseMyDate(next_due_date)){
+                        displayMessage("Due Date is Greater than or equal to Start Date");
+                        return;
+                    }
+                }
+                if(parseMyDate(completion_date) > parseMyDate(currentDate)){
+                    displayMessage("Completion Date is not Greater than Current Date");
+                    return;
+                }
+                if(currentDate != null && next_due_date != null){
+                    console.log(parseMyDate(currentDate)+"---"+parseMyDate(next_due_date));
+                    if(parseMyDate(currentDate) > parseMyDate(next_due_date)){
+                        displayMessage("Next Due Date is Greater than Current Date");
+                        return;
+                    }
+                }
+                if(validity_date != null  && next_due_date != null){
+                    if(parseMyDate(validity_date) > parseMyDate(next_due_date)){
+                        displayMessage("Validity Date is Greater than or equal to Due Date");
+                        return;
+                    }
+                }
                 function onSuccess(data){
                     hideLoader();
                     initialize();
@@ -286,7 +294,7 @@ function showSideBar(idval, data){
                 displayLoader();
                 client_mirror.updateComplianceDetail(compliance_history_id, documents,
                     completion_date, validity_date, next_due_date, remarks,
-                    
+
                     function (error, response){
                         if(error == null){
                             onSuccess(response);
@@ -294,12 +302,12 @@ function showSideBar(idval, data){
                         else{
                             onFailure(error);
                         }
-                    }    
-                );                     
-                 
+                    }
+                );
+
             });
-            $('.half-width-task-details').append(cloneValSide);    
-        }        
+            $('.half-width-task-details').append(cloneValSide);
+        }
     });
     $(".datepick").datepicker({
         changeMonth: true,
@@ -324,7 +332,7 @@ function showSideBar(idval, data){
         dateFormat: "dd-M-yy",
         monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    });    
+    });
 }
 
 function showTextbox(complianceStatus){
@@ -352,12 +360,12 @@ function uploadedfile(e){
             uploadFile = data;
             file_list = data
             var result = ""
-            for(i = 0; i < data.length; i++){   
+            for(i = 0; i < data.length; i++){
                 var fileclassname;
-                var filename = data[i]['file_name']   
+                var filename = data[i]['file_name']
                 fileclassname = filename.replace(/[^\w\s]/gi,"");
                 fileclassname = fileclassname.replace(/\s/g, "");
-                result += "<span class='"+fileclassname+"'>" + filename + "<img src='/images/delete.png' class='removeicon' style='width:16px;height:16px;' onclick='remove_temp_file(\""+fileclassname+"\")' /></span>"; 
+                result += "<span class='"+fileclassname+"'>" + filename + "<img src='/images/delete.png' class='removeicon' style='width:16px;height:16px;' onclick='remove_temp_file(\""+fileclassname+"\")' /></span>";
             }
             $(".uploaded-filename").html(result);
         }

@@ -10,7 +10,7 @@ function displayMessage(message) {
 }
 
 function loadEscalations(escalations){
-    $("#reminderList").empty();
+    $("#escalationList").empty();
     var str='';
     for(var reminder in escalations){
       var readStatus = 'unread';
@@ -35,7 +35,7 @@ function loadEscalations(escalations){
     if(str == ''){
       str += '<li style="text-align:center">'+"No Escalations Found"+"</li>"
     }
-   $('#reminderList').append(str);      
+   $('#escalationList').append(str);      
 }
 
 function changeStatus(notification_id, read_status){

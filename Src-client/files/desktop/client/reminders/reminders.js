@@ -24,7 +24,7 @@ function loadReminders(reminders){
         readStatus = '';
       }
 
-      str += '<a href="#popup1" style="text-decoration: none;"> <li class="'+readStatus+'" onclick="changeStatus('+notificationId+','+reminders[reminder]["read_status"]+')">'+notificationText+"<span style='font-weight:bold'>"+assigneesplit[0]+"</span> </li></a>"
+      str += '<a href="#popup1" style="text-decoration: none;"> <li class="'+readStatus+'" id="notification'+notificationId+'" onclick="changeStatus('+notificationId+','+reminders[reminder]["read_status"]+')">'+notificationText+"<span style='font-weight:bold'>"+assigneesplit[0]+"</span> </li></a>"
     }
     if(str == ''){
       str += '<li style="text-align:center">'+"No Reminders Found"+"</li>"
@@ -33,7 +33,7 @@ function loadReminders(reminders){
 }
 
 function changeStatus(notification_id, read_status){
-
+  $('#notification'+notification_id).removeClass( "unread" );
   $("#popup1").show();
   var nId;
   var act;

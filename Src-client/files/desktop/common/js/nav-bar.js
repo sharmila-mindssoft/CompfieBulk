@@ -39,7 +39,7 @@ function initializeNavBar () {
         menus = ["Home", "Master", "Transaction", "Report"];
     }else{
         menus = ["Home", "Master", "Transaction", "Report"];
-    } 
+    }
     for (var i = 0; i < menus.length; i++) {
         var key = menus[i];
         if (!(key in navBarItems))
@@ -82,8 +82,8 @@ function initializeNavBar () {
                 }
                 $(".menu-items-ul.menu", liObject).append(parentLi);
             }
-        }    
-        
+        }
+
         $("#cssmenu .menu-ul").append(liObject);
     }
 
@@ -100,7 +100,7 @@ function initializeNavBar () {
 
     var client_name = client_mirror.getClientShortName();
     var employee_name = mirror.getEmployeeName();
-    
+
     if ((typeof(client_name) == "undefined") || (client_name == null) ){
         profile_url = "/knowledge/profile";
         change_password_url = "/knowledge/change-password";
@@ -154,8 +154,8 @@ function initializeNavBar () {
         get_notification_count()
         setInterval(function() {
             get_notification_count();
-        }, 10000);
-        
+        }, 100000);
+
     }
 }
 
@@ -185,7 +185,7 @@ function get_notification_count(){
         }
     )
 }
-    
+
 $(document).ready(function () {
     initializeNavBar();
 });
