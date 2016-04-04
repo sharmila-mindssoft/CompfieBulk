@@ -149,7 +149,7 @@ function loadresult(filterList){
           $('.tbl_completiondate', clone3).text(completionDate);
           $('.tbl_validitydate', clone3).text(vDate);
           $('.tbl_remarks', clone3).text(remark);
-          if(compliancelists[compliancelist]["documents"] != null){
+          if(compliancelists[compliancelist]["documents"] != null && compliancelists[compliancelist]["documents"] != ''){
             var documentsList = compliancelists[compliancelist]["documents"];
             var url = '';
             for(var i=0; i<documentsList.length; i++){
