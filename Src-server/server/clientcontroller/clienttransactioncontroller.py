@@ -130,7 +130,6 @@ def process_save_assigned_compliance(db, request, session_user, client_id):
 def process_get_past_records_form_data(db, request, session_user, client_id):
     countries = db.get_countries_for_user(session_user, client_id)
     row = db.get_user_company_details(session_user, client_id)
-    print row
     business_groups = db.get_business_groups_for_user(row[3])
     legal_entities = db.get_legal_entities_for_user(row[2])
     divisions = db.get_divisions_for_user(row[1])

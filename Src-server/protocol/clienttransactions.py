@@ -1004,13 +1004,13 @@ class IndustryWiseUnits(object):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["industry_name", "units"])
         industry_name = data.get("industry_name")
-        industry_name = parse_structure_CustomTextType_20(industry_name)
+        industry_name = parse_structure_CustomTextType_50(industry_name)
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_clienttransactions_PastRecordUnits(units)
 
     def to_structure(self):
         return {
-            "industry_name": to_structure_CustomTextType_20(self.industry_name),
+            "industry_name": to_structure_CustomTextType_50(self.industry_name),
             "units": to_structure_VectorType_RecordType_clienttransactions_PastRecordUnits(self.units)
         }
 
