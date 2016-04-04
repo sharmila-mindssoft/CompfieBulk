@@ -5898,7 +5898,7 @@ class ClientDatabase(Database):
 #
 #   Manage Compliances / Compliances List / Upload Compliances
 #
-    def calculate_ageing(self, due_date, frequency_type=None):
+    def calculate_ageing(self, due_date, frequency_type=None, completion_date=None):
         current_time_stamp = self.get_date_time()
         # due_date = self.localize(due_date)
         if frequency_type =="On Occurrence":
@@ -6322,7 +6322,7 @@ class ClientDatabase(Database):
                                 statutory_mapping = "%s >> %s" % (
                                     compliance["statutory_mapping"], compliance["statutory_provision"]
                                 )
-                                repeats = None
+                                repeats = ""
                                 trigger = "Trigger :"
                                 if compliance["frequency_id"] != 1 and compliance["frequency_id"] != 4: # checking not onetime and onoccrence
                                     if compliance["repeats_type_id"] == 1: # Days
