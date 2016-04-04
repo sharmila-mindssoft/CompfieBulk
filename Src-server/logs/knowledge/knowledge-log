@@ -78,3 +78,2175 @@ OperationalError: (1054, "Unknown column 'is_closed' in 'field list'")
     print db_name
 NameError: global name 'db_name' is not defined
 
+2016-03-31 13:11:49,359 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:11:49,377 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:11:49,491 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:11:49,491 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:11:49,560 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:11:49,561 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:11:49,740 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:11:49,741 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:11:49,829 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:11:49,830 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:11:49,907 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:11:49,908 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:11:49,996 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:11:49,996 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:11:50,086 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:11:50,087 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:11:56,395 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_client_database' doesn't exist")
+2016-03-31 13:11:56,395 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 151, in handle_server_list
+    db.get_servers()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 659, in get_servers
+    query += "database_password, client_short_name, "
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 147, in select_all
+    def select_all(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_client_database' doesn't exist")
+
+2016-03-31 13:12:00,346 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:00,346 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:00,494 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:00,495 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:00,562 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:00,563 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:00,740 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:00,740 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:00,830 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:00,831 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:00,909 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:00,909 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:00,997 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:00,998 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:01,087 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:01,088 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:11,358 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:11,358 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:11,495 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:11,495 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:11,563 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:11,565 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:11,742 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:11,742 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:11,831 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:11,832 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:11,910 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:11,910 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:12,000 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:12,000 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:12,090 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:12,090 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:22,368 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:22,369 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:22,497 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:22,498 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:22,564 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:22,564 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:22,743 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:22,744 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:22,834 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:22,835 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:22,911 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:22,912 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:23,000 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:23,001 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:23,091 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:23,091 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:33,376 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:33,377 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:33,498 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:33,499 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:33,565 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:33,566 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:33,745 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:33,745 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:33,833 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:33,834 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:33,913 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:33,913 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:34,001 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:34,002 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:34,092 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:34,092 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:41,706 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_client_database' doesn't exist")
+2016-03-31 13:12:41,706 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 151, in handle_server_list
+    db.get_servers()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 659, in get_servers
+    query += "database_password, client_short_name, "
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 147, in select_all
+    def select_all(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_client_database' doesn't exist")
+
+2016-03-31 13:12:44,379 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:44,379 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:44,499 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:44,500 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:44,566 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:44,567 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:44,746 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:44,746 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:44,835 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:44,836 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:44,914 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:44,915 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:45,003 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:45,003 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:45,093 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:45,094 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:55,382 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:55,382 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:55,502 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:55,502 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:55,567 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:55,568 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:55,748 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:55,748 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:55,837 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:55,837 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:55,915 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:55,916 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:56,005 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:56,005 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:12:56,095 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:12:56,095 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:06,394 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:06,395 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:06,462 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_client_database' doesn't exist")
+2016-03-31 13:13:06,462 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 151, in handle_server_list
+    db.get_servers()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 659, in get_servers
+    query += "database_password, client_short_name, "
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 147, in select_all
+    def select_all(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_client_database' doesn't exist")
+
+2016-03-31 13:13:06,502 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:06,502 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:06,568 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:06,568 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:06,749 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:06,749 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:06,837 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:06,838 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:06,917 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:06,917 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:07,005 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:07,006 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:07,096 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:07,096 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:17,400 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:17,401 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:17,502 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:17,502 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:17,570 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:17,570 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:17,749 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:17,750 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:17,838 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:17,838 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:17,919 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:17,919 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:18,006 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:18,007 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:18,097 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:18,098 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:28,408 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:28,408 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:28,504 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:28,504 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:28,571 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:28,572 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:28,750 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:28,750 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:28,839 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:28,840 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:28,921 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:28,921 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:29,008 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:29,008 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:29,098 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:29,099 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:39,412 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:39,413 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:39,504 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:39,505 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:39,572 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:39,573 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:39,752 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:39,752 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:39,840 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:39,841 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:39,920 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:39,921 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:40,008 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:40,009 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:40,100 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:40,100 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:50,418 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:50,419 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:50,506 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:50,506 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:50,573 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:50,573 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:50,753 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:50,754 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:50,841 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:50,841 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:50,923 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:50,924 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:51,010 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:51,011 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:51,099 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:13:51,100 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:13:51,716 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_client_database' doesn't exist")
+2016-03-31 13:13:51,716 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 151, in handle_server_list
+    db.get_servers()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 659, in get_servers
+    query += "database_password, client_short_name, "
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 147, in select_all
+    def select_all(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_client_database' doesn't exist")
+
+2016-03-31 13:14:01,429 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:01,429 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:01,507 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:01,507 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:01,573 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:01,574 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:01,754 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:01,754 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:01,843 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:01,844 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:01,921 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:01,922 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:02,012 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:02,012 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:02,102 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:02,102 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:12,434 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:12,435 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:12,508 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:12,509 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:12,575 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:12,576 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:12,754 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:12,755 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:12,845 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:12,845 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:12,923 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:12,923 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:13,012 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:13,012 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:13,103 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:13,103 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:16,509 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_client_database' doesn't exist")
+2016-03-31 13:14:16,509 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 151, in handle_server_list
+    db.get_servers()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 659, in get_servers
+    query += "database_password, client_short_name, "
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 147, in select_all
+    def select_all(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_client_database' doesn't exist")
+
+2016-03-31 13:14:23,444 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:23,445 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:23,510 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:23,510 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:23,576 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:23,577 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:23,757 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:23,758 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:23,845 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:23,845 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:23,923 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:23,923 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:24,012 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:24,013 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:24,102 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:24,102 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:34,454 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:34,454 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:34,510 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:34,511 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:34,578 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:34,578 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:34,759 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:34,759 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:34,846 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:34,846 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:34,925 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:34,926 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:35,014 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:35,015 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:35,104 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:35,105 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:45,457 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:45,458 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:45,512 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:45,513 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:45,580 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:45,581 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:45,761 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:45,761 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:45,848 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:45,848 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:45,926 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:45,927 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:46,016 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:46,016 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:14:46,107 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+2016-03-31 13:14:46,107 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 617, in get_trail_id
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 153, in select_one
+    def select_one(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_audit_log' doesn't exist")
+
+2016-03-31 13:15:01,717 - knowledge_logger - main.py-handle-api- : (1146, "Table 'compfie_knowledge.tbl_client_database' doesn't exist")
+2016-03-31 13:15:01,718 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 151, in handle_server_list
+    db.get_servers()
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 659, in get_servers
+    query += "database_password, client_short_name, "
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 147, in select_all
+    def select_all(self, query) :
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+ProgrammingError: (1146, "Table 'compfie_knowledge.tbl_client_database' doesn't exist")
+
+2016-03-31 13:16:20,757 - knowledge_logger - database.py-connect : (1045, "Access denied for user '5X5LHAD'@'localhost' (using password: YES)")
+2016-03-31 13:16:20,758 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'W7EE7HR'@'localhost' (using password: YES)")
+2016-03-31 13:17:20,777 - knowledge_logger - database.py-connect : (1045, "Access denied for user '5X5LHAD'@'localhost' (using password: YES)")
+2016-03-31 13:17:20,777 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'W7EE7HR'@'localhost' (using password: YES)")
+2016-03-31 13:18:20,815 - knowledge_logger - database.py-connect : (1045, "Access denied for user '5X5LHAD'@'localhost' (using password: YES)")
+2016-03-31 13:18:20,816 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'W7EE7HR'@'localhost' (using password: YES)")
+2016-03-31 13:19:20,869 - knowledge_logger - database.py-connect : (1045, "Access denied for user '5X5LHAD'@'localhost' (using password: YES)")
+2016-03-31 13:19:20,870 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'W7EE7HR'@'localhost' (using password: YES)")
+2016-03-31 13:20:20,935 - knowledge_logger - database.py-connect : (1045, "Access denied for user '5X5LHAD'@'localhost' (using password: YES)")
+2016-03-31 13:20:20,936 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'W7EE7HR'@'localhost' (using password: YES)")
+2016-03-31 13:20:22,802 - knowledge_logger - database.py-connect : (1045, "Access denied for user '5X5LHAD'@'localhost' (using password: YES)")
+2016-03-31 13:20:22,803 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'W7EE7HR'@'localhost' (using password: YES)")
+2016-03-31 13:21:22,859 - knowledge_logger - database.py-connect : (1045, "Access denied for user '5X5LHAD'@'localhost' (using password: YES)")
+2016-03-31 13:21:22,860 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'W7EE7HR'@'localhost' (using password: YES)")
+2016-03-31 13:21:51,827 - knowledge_logger - main.py-handle-api- : (1449, "The user specified as a definer ('root'@'%') does not exist")
+2016-03-31 13:21:51,827 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/main.py", line 209, in handle_techno_transaction
+    return controller.process_techno_transaction_request(request, db)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technotransactioncontroller.py", line 35, in process_techno_transaction_request
+    return process_save_assigned_statutory(db, request_frame, user_id)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/controller/technotransactioncontroller.py", line 77, in process_save_assigned_statutory
+    return db.save_assigned_statutories(request_frame, user_id)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 5008, in save_assigned_statutories
+    self.submit_client_statutories_compliances(client_statutory_id, assigned_statutories, user_id)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 5120, in submit_client_statutories_compliances
+    self.execute(query)
+  File "/home/king/projects/aparajitha-saas/Src-server/server/database.py", line 163, in execute
+    return cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+OperationalError: (1449, "The user specified as a definer ('root'@'%') does not exist")
+
