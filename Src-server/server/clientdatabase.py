@@ -2285,7 +2285,7 @@ class ClientDatabase(Database):
                 if row[4] is not None and len(row[4]) > 0:
                     for document in row[4].split(","):
                         if document is not None and document.strip(',') != '':
-                            dl_url = "%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, document)
+                            dl_url = "%s/%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document)
                             download_urls.append(dl_url)
                             file_name_part = document.split("-")[0]
                             file_extn_parts = document.split(".")
