@@ -5974,7 +5974,9 @@ class ClientDatabase(Database):
                                (abs(r.days) * 4 + abs(r.hours)), abs(r.minutes)
                             )
                         else:
-                            compliance_status = "Overdue by %d day(s)" 
+                            compliance_status = "Overdue by %d day(s)" %(
+                                abs(r.days)
+                            )
                 return r.days, compliance_status
         else:            
             if completion_date is not None:
