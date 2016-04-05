@@ -305,7 +305,7 @@ class ConvertJsonToCSV(object):
                                 statutory_mapping = "%s >> %s" % (
                                     compliance["statutory_mapping"], compliance["statutory_provision"]
                                 )
-                                repeats = None
+                                repeats = ""
                                 trigger = "Trigger :"
                                 if compliance["frequency_id"] != 1 and compliance["frequency_id"] != 4: # checking not onetime and onoccrence
                                     if compliance["repeats_type_id"] == 1: # Days
@@ -474,9 +474,7 @@ class ConvertJsonToCSV(object):
                     validity_date = db.datetime_to_string(compliance[3])
 
                 documents = compliance[6]
-
-                no_of_days, compliance_status = db.calculate_ageing(compliance[4], compliance[7])
-
+                no_of_days, compliance_status = db.calculate_ageing(due_date=compliance[4], completion_date=compliance[7])
                 completion_date = None
                 if(compliance[7] != None):
                     completion_date = db.datetime_to_string(compliance[7])

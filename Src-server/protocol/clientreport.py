@@ -156,7 +156,7 @@ from protocol.to_structure import (
     to_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_LEVEL_1_STATUTORY_NOTIFICATIONS,
     to_structure_VectorType_CustomTextType_100,
     to_structure_VectorType_RecordType_clientreport_ActivityData,
-    to_structure_MapType_CustomTextType_50_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ActivityData,
+    to_structure_MapType_CustomTextType_500_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ActivityData,
     to_structure_OptionalType_VectorType_SignedIntegerType_8,
     to_structure_VectorType_RecordType_client_report_GroupedUnits,
     to_structure_VectorType_RecordType_client_report_UnitDetails,
@@ -168,7 +168,8 @@ from protocol.to_structure import (
     to_structure_Text,
     to_structure_VectorType_Text,
     to_structure_Bool,
-    to_structure_OptionalType_VectorType_CustomTextType_500
+    to_structure_OptionalType_VectorType_CustomTextType_500,
+    to_structure_MapType_CustomTextType_500_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ActivityData
 )
 
 #
@@ -1940,8 +1941,10 @@ class RiskData(object):
         division_name = parse_structure_OptionalType_CustomTextType_100(division_name)
         level_1_statutory_wise_units = data.get("level_1_statutory_wise_units")
         level_1_statutory_wise_units = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory(level_1_statutory_wise_units)
-        return RiskData(business_group_name, legal_entity_name, division_name,
-        level_1_statutory_wise_units)
+        return RiskData(
+            business_group_name, legal_entity_name, division_name,
+            level_1_statutory_wise_units
+        )
 
     def to_structure(self):
         return {
@@ -2020,7 +2023,7 @@ class Activities(object):
         return {
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_250(self.address),
-            "statutory_wise_compliances": to_structure_MapType_CustomTextType_50_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ActivityData(self.statutory_wise_compliances)
+            "statutory_wise_compliances": to_structure_MapType_CustomTextType_500_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ActivityData(self.statutory_wise_compliances)
         }
 
 #

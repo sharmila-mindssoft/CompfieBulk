@@ -3775,21 +3775,21 @@ def to_structure_RecordType_clientreport_ActivityData(data):
     from protocol import clientreport
     return clientreport.ActivityData.to_structure(data)
 
-def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ActivityData(data):
+def to_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ActivityData(data):
     data = parse_dictionary(data)
     dict = {}
     for key, value in data.items():
-        key = to_structure_CustomTextType_50(key)
+        key = to_structure_CustomTextType_500(key)
         value = to_structure_VectorType_RecordType_clientreport_ActivityData(value)
         dict[key] = value
     return dict
 
-def to_structure_MapType_CustomTextType_50_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ActivityData(data):
+def to_structure_MapType_CustomTextType_500_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ActivityData(data):
     data = parse_dictionary(data)
     dict = {}
     for key, value in data.items():
-        key = to_structure_CustomTextType_50(key)
-        value = to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ActivityData(value)
+        key = to_structure_CustomTextType_500(key)
+        value = to_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ActivityData(value)
         dict[key] = value
     return dict
 

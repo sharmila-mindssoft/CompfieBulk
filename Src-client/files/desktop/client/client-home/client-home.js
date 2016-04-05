@@ -923,6 +923,8 @@ function updateComplianceApplicabilityDrillDown(status, data, type) {
     showComplianceApplicabilityDrillDownRecord(data, type);
 }
 
+
+
 function showComplianceApplicabilityDrillDownRecord(data, type){
     $(".drilldown-title").text(GROUP_NAME+" - "+type+" Compliances");
 

@@ -3976,3 +3976,4 @@ def parse_structure_VectorType_RecordType_mobile_ComplianceHistory(data):
     for item in data :
         lst.append(parse_structure_RecordType_mobile_ComplianceHistory(item))
     return lst
+    
