@@ -79,7 +79,6 @@ def process_get_statutory_compliance(db, session_user, request):
 
 def process_update_statutory_settings(db, request, session_user, client_id):
     password = request.password
-    print "update_statutory_settings"
     if db.verify_password(password, session_user) :
         return db.update_statutory_settings(request, session_user, client_id)
     else :
