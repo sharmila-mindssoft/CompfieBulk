@@ -332,9 +332,9 @@ function load_compliances () {
 
 function submitcompliance(){
   displayLoader();
-  var assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
-  var assignComplianceConcurrenceId = parseInt($('.concurrencelist.active').attr('id'));
-  var assignComplianceApprovalId = parseInt($('.approvallist.active').attr('id'));
+  var assignComplianceAssigneeId = null;
+  var assignComplianceConcurrenceId = null;
+  var assignComplianceApprovalId = null;
   var assignComplianceAssigneeName = null;
 
   if($('.assigneelist.active').attr('id') != undefined){
@@ -385,14 +385,14 @@ function submitcompliance(){
             var compliance_name = actList[actentity]["compliance_name"];
             var due_date = null;
             if(cfrequency != 'On Occurrence'){
-              due_date =  $('#duedate'+statutoriesCount).val();
               if(due_date != '' && due_date != undefined){
-                var convertDueDate = convert_date(due_date);
+                due_date =  $('#duedate'+statutoriesCount).val();
+                /*var convertDueDate = convert_date(due_date);
                 if (convertDueDate < currentDate) {
                   displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
                   hideLoader();
                   return false;
-                }
+                }*/
               }
             }
             reassignComplianceData = client_mirror.reassingComplianceDet(uId,
@@ -442,7 +442,6 @@ function submitcompliance(){
     hideLoader();
     displayMessage("No compliance selected for reassign");
   }
-
 }
 
 function getReassignCompliances () {
@@ -451,6 +450,7 @@ function getReassignCompliances () {
     usersList = data["users"];
     unitsList = data["units"];
     two_level_approve = data["two_level_approve"];
+    client_admin = data["client_admin"];
     $("#compliance-list").show();
     load_compliances();
   }

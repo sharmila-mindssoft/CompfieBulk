@@ -6,7 +6,6 @@ var compliancesList;
 var unitsList;
 var usersList;
 
-var finalList;
 var pageSize = 500;
 var startCount = 0;
 var endCount;
@@ -91,73 +90,31 @@ function unitList(data){
 
 function complianceListArray(data){
 
-  var status = $("#status").val();
-  var today = new Date();
-  var dd = today.getDate();
-  var mm = today.getMonth();
-  var yyyy = today.getFullYear();
-  if(dd<10){
-      dd='0'+dd
-  } 
-  if(mm<10){
-      mm='0'+mm
-  } 
-  var currentDate = new Date(yyyy, mm, dd);
-
   var vDate = '';
   if(data["validity_date"] != null) vDate = data["validity_date"];
-  
   var dueDate = data["due_date"];
   var completionDate = '';
   if(data["completion_date"] != null) completionDate = data["completion_date"];
   
-  var cDueDate = convert_date(data["due_date"]);
-  var cDate = currentDate;
-  if(completionDate != ''){
-    cDate = convert_date(completionDate);
-  }
-  var dateDifference = daydiff(cDueDate, cDate);
-  var remark = '';
-  var compStatus = '';
-
-  if(completionDate != '' && dateDifference <=0){
-    remark = 'On Time';
-    compStatus = 'Complied';
-  } 
-  else if (completionDate != '' && dateDifference > 0) {
-    remark = 'Delayed by '+ dateDifference +' Days';
-    compStatus = 'Delayed Compliance';
-  }
-  else if (completionDate == '' && dateDifference > 0) {
-    remark = 'Over due by '+ dateDifference +' Days';
-    compStatus = 'Inprogress';
-  }
-  else if (completionDate == '' && dateDifference <= 0) {
-    remark =  Math.abs(dateDifference) + 1 +' Days left';
-    compStatus = 'Inprogress';
-  }
-
-  if(status == '' || status == compStatus){
-    var tableRow3=$('#unit-content-templates .table-unit-content .table-row-unit-content');
-    var clone3=tableRow3.clone();
-    $('.tbl_sno', clone3).text(sno+1);
-    $('.tbl_compliance', clone3).html(data["compliance_name"]);
-    $('.tbl_assignee', clone3).text(data["assignee"]);
-    $('.tbl_duedate', clone3).text(dueDate);
-    $('.tbl_completiondate', clone3).text(completionDate);
-    $('.tbl_validitydate', clone3).text(vDate);
-    $('.tbl_remarks', clone3).text(remark);
-    if(data["documents"] != null && data["documents"] != ''){
-      var documentsList = data["documents"];
-      var url = '';
-      for(var i=0; i<documentsList.length; i++){
-        url = url + '<a href="'+documentsList[i]+'" target="_new"> Download '+ (i+1) +' </a> ';
-      }
-      $('.tbl_document', clone3).html(url);
+  var tableRow3=$('#unit-content-templates .table-unit-content .table-row-unit-content');
+  var clone3=tableRow3.clone();
+  $('.tbl_sno', clone3).text(sno+1);
+  $('.tbl_compliance', clone3).html(data["compliance_name"]);
+  $('.tbl_assignee', clone3).text(data["assignee"]);
+  $('.tbl_duedate', clone3).text(dueDate);
+  $('.tbl_completiondate', clone3).text(completionDate);
+  $('.tbl_validitydate', clone3).text(vDate);
+  $('.tbl_remarks', clone3).text(data["remarks"]);
+  if(data["documents"] != null && data["documents"] != ''){
+    var documentsList = data["documents"];
+    var url = '';
+    for(var i=0; i<documentsList.length; i++){
+      url = url + '<a href="'+documentsList[i]+'" target="_new"> Download '+ (i+1) +' </a> ';
     }
-    $('.tbody-unit').append(clone3);
-    sno++;
+    $('.tbl_document', clone3).html(url);
   }
+  $('.tbody-unit').append(clone3);
+  sno++;
 }
 
 function showloadrecord() {

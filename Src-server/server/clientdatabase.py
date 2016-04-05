@@ -4908,7 +4908,7 @@ class ClientDatabase(Database):
 
             query = "SELECT distinct ch.compliance_history_id, c.document_name, c.compliance_description, ch.validity_date, ch.due_date, \
                     (SELECT concat( u.employee_code, '-' ,u.employee_name ) FROM tbl_users u WHERE u.user_id = ch.completed_by) AS assigneename, \
-                    ch.documents, ch.completion_date, c.compliance_task \
+                    ch.documents, ch.completion_date, c.compliance_task, c.frequency_id \
                     from tbl_compliances c,tbl_compliance_history ch, \
                     tbl_units ut where \
                     ch.unit_id = %s \
@@ -4919,7 +4919,7 @@ class ClientDatabase(Database):
                     assignee_id, str(statutory_id+"%"), compliance_id, start_date, end_date
                 )
             compliance_rows = self.select_all(query, client_id)
-
+            print query
             compliances_list = []
             for compliance in compliance_rows:
 
@@ -4941,16 +4941,29 @@ class ClientDatabase(Database):
 
                 documents = [x for x in compliance[6].split(",")] if compliance[6] != None else None
 
-                remarks = "remarks"
                 completion_date = None
                 if(compliance[7] != None):
                     completion_date = self.datetime_to_string(compliance[7])
 
-                compliance = clientreport.ComplianceDetails(
-                    compliance_name, assignee,
-                    due_date, completion_date, validity_date, documents, remarks
-                )
-                compliances_list.append(compliance)
+                remarks = self.calculate_ageing(compliance[4], compliance[8], compliance[7])
+
+                if(compliance_status == 'Complied'):
+                    c_status = 'On Time'
+                elif(compliance_status == 'Delayed Compliance'):
+                    c_status = 'Delayed'
+                elif(compliance_status == 'Inprogress'):
+                    c_status = 'days left'
+                elif(compliance_status == 'Not Complied'):
+                    c_status = 'Overdue'
+                else:
+                    c_status = ''
+
+                if (c_status in remarks[1] or c_status == '') :
+                    compliance = clientreport.ComplianceDetails(
+                        compliance_name, assignee,
+                        due_date, completion_date, validity_date, documents, remarks[1]
+                    )
+                    compliances_list.append(compliance)
             if len(compliances_list) > 0:
                 unitwise = clientreport.ComplianceDetailsUnitWise(unit_id, unit_name, unit_address, compliances_list)
                 unit_wise_compliances.append(unitwise)

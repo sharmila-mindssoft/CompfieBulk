@@ -250,7 +250,7 @@ class GetComplianceDetailsReport(Request):
         to_date = data.get("to_date")
         to_date = parse_structure_OptionalType_CustomTextType_20(to_date)
         compliance_status = data.get("compliance_status")
-        compliance_status = parse_structure_OptionalType_EnumType_core_COMPLIANCE_STATUS(compliance_status)
+        compliance_status = parse_structure_OptionalType_CustomTextType_50(compliance_status)
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
         return GetComplianceDetailsReport(
@@ -268,7 +268,7 @@ class GetComplianceDetailsReport(Request):
             "assignee_id": to_structure_OptionalType_SignedIntegerType_8(self.assignee_id),
             "from_date": to_structure_OptionalType_CustomTextType_20(self.from_date),
             "to_date": to_structure_OptionalType_CustomTextType_20(self.to_date),
-            "compliance_status": to_structure_OptionalType_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
+            "compliance_status": to_structure_OptionalType_CustomTextType_50(self.compliance_status),
             "csv": to_structure_Bool(sef.csv)
         }
 
