@@ -6924,11 +6924,13 @@ class ClientDatabase(Database):
                 )
                 if client_statutory_rows:
                     client_statutory_ids = client_statutory_rows[0][0]
-                    client_compliance_columns = "group_concat(compliance_id)"
-                    client_compliance_conditions = "client_statutory_id in (%s)" % client_statutory_ids
-                    client_compliance_rows = self.get_data(
-                        self.tblClientCompliances, client_compliance_columns, client_compliance_conditions
-                    )
+                    client_compliance_rows = None
+                    if client_statutory_ids is not None:
+                        client_compliance_columns = "group_concat(compliance_id)"
+                        client_compliance_conditions = "client_statutory_id in (%s)" % client_statutory_ids
+                        client_compliance_rows = self.get_data(
+                            self.tblClientCompliances, client_compliance_columns, client_compliance_conditions
+                        )
                     if client_compliance_rows:
                         compliance_ids = client_compliance_rows[0][0]
                         compliance_ids_list = compliance_ids.split(",")

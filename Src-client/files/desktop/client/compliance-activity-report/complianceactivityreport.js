@@ -115,8 +115,7 @@ function loadcomplianceactivityreport(buttontype){
         function onSuccess(data){
             clearMessage();
             if(buttontype == "show"){
-                console.log(data)
-                // loadComplianceActivityReportList(data['activities']);     
+                loadComplianceActivityReportList(data['activities']);     
             }
             if(buttontype == "export"){
                 if (error == null){
