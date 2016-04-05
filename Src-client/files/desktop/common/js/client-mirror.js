@@ -1531,12 +1531,13 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function reassingComplianceDet(unitId, complianceId, complianceHistoryId, dueDate) {
+    function reassingComplianceDet(uID, cID, cNAME cHistoryId, dDate) {
         return {
-            "unit_id": unitId,
-            "compliance_id": complianceId,
-            "compliance_history_id": complianceHistoryId,
-            "due_date": dueDate
+            "u_id": uID,
+            "c_id": cID,
+            "c_name": cNAME,
+            "c_history_id": cHistoryId,
+            "d_date": dDate
         }
     }
 

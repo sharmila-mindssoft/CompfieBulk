@@ -5876,11 +5876,11 @@ class ClientDatabase(Database):
         created_on = self.get_date_time()
         reassigned_date = created_on.strftime("%Y-%m-%d")
         created_by = int(session_user)
-        compliance_ids = []
+        compliance_names = []
         for c in compliances :
             unit_id = c.unit_id
             compliance_id = c.compliance_id
-            compliance_ids.append(compliance_id)
+            compliance_names.append(self.get_compliance_name(compliance_id))
             due_date = c.due_date
             if due_date is not None :
                 due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
