@@ -1,26 +1,43 @@
-2016-04-04 14:12:15,320 - knowledge_logger - main.py-handle-api- : null is not allowed
-2016-04-04 14:12:15,321 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 136, in handle_api_request
-    respond(response_data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 126, in respond
-    response_data, response
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 88, in _send_response
-    data = response_data.to_structure()
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 366, in to_structure
-    inner = self.to_inner_structure()
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/knowledgetransaction.py", line 469, in to_inner_structure
-    "statutory_mappings": to_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping(self.statutory_mappings)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/to_structure.py", line 3154, in to_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping
-    value = to_structure_RecordType_core_StatutoryMapping(value)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/to_structure.py", line 1355, in to_structure_RecordType_core_StatutoryMapping
-    return core.StatutoryMapping.to_structure(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/core.py", line 1213, in to_structure
-    "geography_mappings": to_structure_VectorType_Text(self.geography_mappings),
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/to_structure.py", line 623, in to_structure_VectorType_Text
-    lst.append(to_structure_Text(item))
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/to_structure.py", line 449, in to_structure_Text
-    return parse_string(data)
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/protocol/jsonvalidators.py", line 59, in parse_string
-    raise empty_error()
-ValueError: null is not allowed
+2016-04-05 12:10:41,536 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+2016-04-05 12:10:42,346 - knowledge_logger - main.py-handle-api- : 
+2016-04-05 12:10:42,346 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 130, in handle_api_request
+    self._db.begin()
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 128, in begin
+    assert self._connection is not None
+AssertionError
+
+2016-04-05 12:10:43,430 - knowledge_logger - main.py-handle-api- : 
+2016-04-05 12:10:43,431 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 130, in handle_api_request
+    self._db.begin()
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 128, in begin
+    assert self._connection is not None
+AssertionError
+
+2016-04-05 12:11:42,736 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+2016-04-05 12:11:43,445 - knowledge_logger - main.py-handle-api- : 
+2016-04-05 12:11:43,445 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 130, in handle_api_request
+    self._db.begin()
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 128, in begin
+    assert self._connection is not None
+AssertionError
+
+2016-04-05 12:11:57,605 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+2016-04-05 12:12:42,390 - knowledge_logger - main.py-handle-api- : 
+2016-04-05 12:12:42,391 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 130, in handle_api_request
+    self._db.begin()
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 128, in begin
+    assert self._connection is not None
+AssertionError
+
+2016-04-05 12:12:43,509 - knowledge_logger - main.py-handle-api- : 
+2016-04-05 12:12:43,509 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 130, in handle_api_request
+    self._db.begin()
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 128, in begin
+    assert self._connection is not None
+AssertionError
 

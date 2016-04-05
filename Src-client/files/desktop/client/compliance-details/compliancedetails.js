@@ -52,11 +52,11 @@ function convert_date (data){
   for(var j=0;j<months.length;j++){
       if(date[1]==months[j]){
            date[1]=months.indexOf(months[j])+1;
-       }                      
-  } 
+       }
+  }
   if(date[1]<10){
       date[1]='0'+date[1];
-  }       
+  }
   return new Date(date[2], date[1]-1, date[0]);
 }
 
@@ -69,6 +69,7 @@ function filterList(data){
   var country = $("#country").find('option:selected').text();
   var domain = $("#domainval").val();
   var act = $("#actval").val();
+
   var tableRow=$('#unit-list-templates .table-unit-list .table-row-unit-list');
   var clone=tableRow.clone();
   $('.tbl_country', clone).text(country);
@@ -225,10 +226,10 @@ function loadCompliance(reportType){
     displayMessage("Country Required");
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");  
+    displayMessage("Domain Required");
   }
   else if(act.length == 0){
-    displayMessage("Act Required");  
+    displayMessage("Act Required");
   }
   else{
     function onSuccess(data){
@@ -270,11 +271,11 @@ function loadCompliance(reportType){
   }
 }
 
-$("#submit").click(function(){ 
+$("#submit").click(function(){
   loadCompliance("show")
 });
 
-$("#export").click(function(){ 
+$("#export").click(function(){
   loadCompliance("export")
 });
 
@@ -298,7 +299,7 @@ function loadCountries(countriesList){
   });
 }
 
-//load domain list in autocomplete text box  
+//load domain list in autocomplete text box
 $("#domainval").keyup(function(){
   var textval = $(this).val();
   $("#autocomplete_domain").show();
@@ -307,7 +308,7 @@ $("#domainval").keyup(function(){
   $('#ulist_domain').empty();
   if(textval.length>0){
     for(var i in domains){
-      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == true) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 
+      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == true) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -336,7 +337,7 @@ $("#actval").keyup(function(){
   $('#ulist_act').empty();
   if(textval.length>0){
     for(var i in acts){
-      if (~acts[i].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([acts[i],acts[i]]); 
+      if (~acts[i].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([acts[i],acts[i]]);
     }
     var str='';
     for(var i in suggestions){
@@ -364,7 +365,7 @@ $("#unitval").keyup(function(){
  $('#ulist_unit').empty();
   if(textval.length>0){
     for(var i in units){
-      if (~units[i]["unit_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],units[i]["unit_name"]]); 
+      if (~units[i]["unit_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],units[i]["unit_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -388,13 +389,13 @@ $("#compliancetaskval").keyup(function(){
 
   var textval = $(this).val();
   $("#autocomplete_compliancetask").show();
-  
+
   var compliancetasks = compliancesList;
   var suggestions = [];
  $('#ulist_compliancetask').empty();
   if(textval.length>0){
     for(var i in compliancetasks){
-      if (~compliancetasks[i]["compliance_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([compliancetasks[i]["compliance_id"],compliancetasks[i]["compliance_name"]]); 
+      if (~compliancetasks[i]["compliance_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([compliancetasks[i]["compliance_id"],compliancetasks[i]["compliance_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -419,18 +420,18 @@ $("#assigneeval").keyup(function(){
 
   var textval = $(this).val();
   $("#autocomplete_assignee").show();
-  
+
   var assignees = usersList;
   var suggestions = [];
  $('#ulist_assignee').empty();
   if(textval.length>0){
     for(var i in assignees){
-      if (~assignees[i]["employee_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["employee_id"],assignees[i]["employee_name"]]); 
+      if (~assignees[i]["employee_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["employee_id"],assignees[i]["employee_name"]]);
     }
     var str='';
     for(var i in suggestions){
               str += '<li id="'+suggestions[i][0]+'"onclick="activate_assignee(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-              
+
     }
     $('#ulist_assignee').append(str);
     $("#assignee").val('');

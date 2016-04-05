@@ -704,7 +704,7 @@ class KnowledgeDatabase(Database):
         if user_id > 0 :
             query = query + " INNER JOIN tbl_user_domains t2 ON \
                 t1.domain_id = t2.domain_id WHERE t2.user_id = %s \
-                AND t1.is_active=1 ORDER BY t1.domain_name " % (user_id)
+                AND t1.is_active=1 " % (user_id)
         query = query + " ORDER BY t1.domain_name"
         rows = self.select_all(query)
         result = []

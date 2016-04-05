@@ -305,7 +305,7 @@ class ConvertJsonToCSV(object):
                                 statutory_mapping = "%s >> %s" % (
                                     compliance["statutory_mapping"], compliance["statutory_provision"]
                                 )
-                                repeats = None
+                                repeats = ""
                                 trigger = "Trigger :"
                                 if compliance["frequency_id"] != 1 and compliance["frequency_id"] != 4: # checking not onetime and onoccrence
                                     if compliance["repeats_type_id"] == 1: # Days

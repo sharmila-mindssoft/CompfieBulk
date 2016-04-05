@@ -9,10 +9,10 @@ from email.MIMEText import MIMEText
 mysqlHost = "localhost"
 mysqlUser = "root"
 mysqlPassword = "123456"
-mysqlDatabase = "compfie_knowledge"
+mysqlDatabase = "compfie_knowledge_old"
 mysqlPort = 3306
 
-CLIENT_URL = "http://52.11.242.90:8082/"
+CLIENT_URL = "http://45.118.182.47:8082/"
 
 class EmailNotification(object):
     def __init__(self):
@@ -32,10 +32,11 @@ class EmailNotification(object):
             if type(cc) is list :
                 msg["Cc"] = ",".join(cc)
         msg.attach(MIMEText(message, "html"))
-        response = server.sendmail(
-            self.sender, receiver, msg.as_string()
-        )
-        print response
+        print msg.as_string()
+        # response = server.sendmail(
+        #     self.sender, receiver, msg.as_string()
+        # )
+        # print response
         server.close()
 
     def notify_to_assignee(
@@ -245,11 +246,11 @@ def save_in_notification(
 
 
 def get_inprogress_compliances(db):
-    query = "SELECT t1.compliance_history_id, t1.unit_id, t1.compliance_id, t1.start_date, \
+    query = "SELECT distinct t1.compliance_history_id, t1.unit_id, t1.compliance_id, t1.start_date, \
         t1.due_date, t3.document_name, t3.compliance_task, \
         t2.assignee, t2.concurrence_person, t2.approval_person, t4.unit_code, t4.unit_name, \
         t4.business_group_id, t4.legal_entity_id, t4.division_id, t2.country_id, \
-        t3.domain_id FROM \
+        t3.domain_id, t3.frequency_id FROM \
         tbl_compliance_history t1 INNER JOIN tbl_assigned_compliances t2 on \
         t1.compliance_id = t2.compliance_id \
         INNER JOIN tbl_compliances t3 on t1.compliance_id = t3.compliance_id \
@@ -263,7 +264,7 @@ def get_inprogress_compliances(db):
         "compliance_history_id", "unit_id", "compliance_id", "start_date", "due_date",
         "document_name", "compliance_task", "assignee", "concurrence_person", "approval_person",
         "unit_code", "unit_name", "business_group_id", "legal_entity_id", "division_id", "country_id",
-        "domain_id"
+        "domain_id", "frequency_id"
     ]
     result = convert_to_dict(rows, columns)
     print '*' * 10
@@ -293,16 +294,24 @@ def reminder_to_assignee(db, client_info, compliance_info):
             count = 0
             email = EmailNotification()
             for c in compliance_info:
+                if c["due_date"] is None :
+                    continue
+
+                if c["due_date"].date() < current_date.date() :
+                    continue
+                days_left = abs((c["due_date"].date() - current_date.date()).days) + 1
+
                 if c["document_name"] not in (None, "None", "") :
                     compliance_name = c["document_name"] + " - " + c["compliance_task"]
                 else :
                     compliance_name = c["compliance_task"]
-                date_diff = (current_date - c["start_date"]).days
-                if c["due_date"] is None :
+                date_diff = abs((current_date.date() - c["start_date"].date()).days)
+                if date_diff == 0:
                     continue
-                days_left = (c["due_date"] - current_date).days + 1
-                if days_left <= 0 :
-                    continue
+
+                print date_diff
+                print (date_diff % reminder_interval)
+
                 notification_text = "%s day(s) left to complete %s task" % (days_left, compliance_name)
                 extra_details = " %s - Reminder" % (c["compliance_history_id"])
                 if (date_diff % reminder_interval) == 0 :
@@ -330,16 +339,24 @@ def reminder_before_due_date(db, client_info, compliance_info):
     email = EmailNotification()
     reminder_interval = int(client_info[0]["escalation_reminder_in_advance"])
     for c in compliance_info:
+        if c["due_date"] is None :
+            continue
+
         if c["document_name"] not in (None, "None", "") :
             compliance_name = c["document_name"] + " - " + c["compliance_task"]
         else :
             compliance_name = c["compliance_task"]
+
+        if c["due_date"].date() < current_date.date() :
+            continue
+
         if c["due_date"] is None :
             continue
 
-        days_left = (c["due_date"] - current_date).days + 1
-        if days_left <= 0 :
+        days_left = abs((c["due_date"].date() - current_date.date()).days) + 1
+        if days_left == 0 :
             continue
+
         notification_text = "%s day(s) left to complete %s task" % (days_left, compliance_name)
         extra_details = " %s - Reminder" % (c["compliance_history_id"])
         if days_left == reminder_interval:
@@ -371,13 +388,20 @@ def notify_escalation_to_all(db, client_info, compliance_info):
     escalation_interval = int(client_info[0]["escalation_reminder"])
     email = EmailNotification()
     for c in compliance_info :
+        if c["due_date"] is None :
+            continue
+
+        if c["due_date"].date() > current_date.date() :
+            continue
+
         if c["document_name"] not in (None, "None", "") :
             compliance_name = c["document_name"] + " - " + c["compliance_task"]
         else :
             compliance_name = c["compliance_task"]
-        over_due_days = (current_date - c["due_date"]).days + 1
-        if over_due_days <= 0 :
+        over_due_days = abs((current_date.date() - c["due_date"].date()).days) + 1
+        if over_due_days == 0 :
             continue
+
         notification_text = "%s overdue by %s day(s)" % (compliance_name, over_due_days)
         extra_details = " %s - Escalation" % (c["compliance_history_id"])
         if (over_due_days % escalation_interval) == 0 :

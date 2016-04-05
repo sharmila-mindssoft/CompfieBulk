@@ -364,7 +364,7 @@ function submitcompliance(){
   var output = d.getFullYear() + '/' + month + '/' + day;
   var currentDate = new Date(output);
   var selectedStatus = false;
-  
+
   for(ucompliance in userCompliances){
     var userUnitwiseCompliance = userCompliances[ucompliance]["units"];
     for(var entity in userUnitwiseCompliance){
@@ -385,8 +385,11 @@ function submitcompliance(){
             var compliance_name = actList[actentity]["compliance_name"];
             var due_date = null;
             if(cfrequency != 'On Occurrence'){
-              if(due_date != '' && due_date != undefined){
-                due_date =  $('#duedate'+statutoriesCount).val();
+              due_date =  $('#duedate'+statutoriesCount).val();
+              if(due_date == '' || due_date == undefined){
+                displayMessage("Due date required for compliance '" + compliance_name + "'");
+                hideLoader();
+                return false;
                 /*var convertDueDate = convert_date(due_date);
                 if (convertDueDate < currentDate) {
                   displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
@@ -395,8 +398,8 @@ function submitcompliance(){
                 }*/
               }
             }
-            reassignComplianceData = client_mirror.reassingComplianceDet(uId,
-              compliance_id, compliance_history_id, due_date
+            reassignComplianceData = client_mirror.reassignComplianceDet(uId,
+              compliance_id, compliance_name, compliance_history_id, due_date
             );
             reassignCompliance.push(reassignComplianceData);
           }

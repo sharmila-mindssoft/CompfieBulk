@@ -83,11 +83,12 @@ function showSideBar(idval, data){
     $(".half-width-task-details").show();
     $(".full-width-list").attr("width", "60%");
     $(".half-width-task-details").attr("width", "40%");
+
     //SideView append ---------------------------------------------------------------------
     var tableRowSide = $('#templates .sideview-div');
     var cloneValSide = tableRowSide.clone();
     var complianceFrequency = data['compliance_frequency'];
-
+    $(".validityAndDueDate", cloneValSide).hide();  
     $('.sidebar-unit span', cloneValSide).html(data['unit_name']);
    // $('.sidebar-unit abbr', cloneValSide).attr("title", data['address']);
     $('.sidebar-compliance-task span', cloneValSide).html(data['compliance_name']);
@@ -130,6 +131,7 @@ function showSideBar(idval, data){
     if(complianceFrequency == "On Occurrence"){
         $(".validityAndDueDate", cloneValSide).hide();
     }
+
     
     if(data['delayedby'] != null){
         $(".sidebar-status", cloneValSide).html("Not Complied");    
@@ -270,11 +272,11 @@ function showSideBar(idval, data){
             displayMessage("Select Any Action");
             return false;
         }
-        else if(approval_status == "Reject"){
+        else if(approval_status == "Reject Concurrence"){
             remarks = $(".remarks-textarea", cloneValSide).val();
         }
         else if(approval_status == "Reject Approval"){
-            remarks = $(".remarks-textarea").val();
+            remarks = $(".remarks-textarea", cloneValSide).val();
         }
 
         validity_date = $('.validitydate1_label', cloneValSide).html();

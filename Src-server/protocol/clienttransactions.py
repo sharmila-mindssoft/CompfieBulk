@@ -1205,35 +1205,40 @@ class ASSINGED_COMPLIANCE(object):
 
 class REASSIGNED_COMPLIANCE(object):
     def __init__(
-        self, unit_id, compliance_id,
-        compliance_history_id, due_date
+        self, u_id, c_id,
+        c_name,
+        c_history_id, d_date
     ):
-        self.unit_id = unit_id
-        self.compliance_id = compliance_id
-        self.compliance_history_id = compliance_history_id
-        self.due_date = due_date
+        self.unit_id = u_id
+        self.compliance_id = c_id
+        self.complaince_name = c_name
+        self.compliance_history_id = c_history_id
+        self.due_date = d_date
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "compliance_id", "compliance_history_id", "due_date"])
-        unit_id = data.get("unit_id")
+        data = parse_dictionary(data, ["u_id", "c_id", "c_name",  "c_history_id", "d_date"])
+        unit_id = data.get("u_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
-        compliance_id = data.get("compliance_id")
+        compliance_id = data.get("c_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
-        compliance_history_id = data.get("compliance_history_id")
+        compliance_name = data.get("c_name")
+        compliance_name = parse_structure_CustomTextType_500(compliance_name)
+        compliance_history_id = data.get("c_history_id")
         compliance_history_id = parse_structure_OptionalType_UnsignedIntegerType_32(compliance_history_id)
-        due_date = data.get("due_date")
+        due_date = data.get("d_date")
         due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
         return REASSIGNED_COMPLIANCE(
-            unit_id, compliance_id, compliance_history_id, due_date
+            unit_id, compliance_id, compliance_name, compliance_history_id, due_date
         )
 
     def to_structure(self):
         return {
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
-            "compliance_history_id": to_structure_OptionalType_UnsignedIntegerType_32(self.compliance_history_id),
-            "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
+            "u_id": to_structure_SignedIntegerType_8(self.unit_id),
+            "c_id": to_structure_SignedIntegerType_8(self.compliance_id),
+            "c_name": to_structure_CustomTextType_500(self.complaince_name),
+            "c_history_id": to_structure_OptionalType_UnsignedIntegerType_32(self.compliance_history_id),
+            "d_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
         }
 
 #

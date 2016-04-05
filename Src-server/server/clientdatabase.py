@@ -327,7 +327,7 @@ class ClientDatabase(Database):
         aliases = ["tf",  "tft"]
         joinConditions = ["tf.form_type_id = tft.form_type_id"]
         whereCondition = " is_admin = 0 and tf.form_type_id not in (5) \
-        order by tf.form_order"
+        order by tf.form_order, tf.form_name ASC"
         joinType = "left join"
         rows = self.get_data_from_multiple_tables(
             columns, tables, aliases, joinType,
@@ -1852,14 +1852,18 @@ class ClientDatabase(Database):
             if frequency_id is not None:
                 condition = "c.frequency_id = %d" % int(frequency_id)
 
-        compliance_ids_query = "SELECT group_concat(distinct compliance_id) \
+        compliance_ids_query = "SELECT distinct compliance_id \
             FROM tbl_client_compliances \
             WHERE client_statutory_id IN (SELECT client_statutory_id \
             FROM tbl_client_statutories WHERE unit_id = %d AND domain_id = %d) \
             AND compliance_opted = 1 AND statutory_opted = 1" % (
                 unit_id, domain_id
             )
-        compliance_id_rows = self.select_all(compliance_ids_query)
+        result = self.select_all(compliance_ids_query)
+        compliance_id_rows = ()
+        if row in result:
+            compliance_id_rows += row
+
         statutory_wise_compliances = []
         level_1_statutory_wise_compliances = {}
         if level_1_statutory_name is not None:
@@ -1870,8 +1874,8 @@ class ClientDatabase(Database):
             condition = "frequency like '%s%s%s'" % (
                 "%", frequency_name, "%"
             )
-        if compliance_id_rows:
-            compliance_ids = compliance_id_rows[0][0]
+        if len(compliance_id_rows) > 0 :
+            compliance_ids = ",".join(str(x) for x in compliance_id_rows)
             if compliance_ids is not None:
                 add_condition = "1"
                 if not self.is_admin(session_user):
@@ -2934,8 +2938,9 @@ class ClientDatabase(Database):
         filter_type = request.filter_type
 
         # domain_ids = request.domain_ids
+        filter_ids = request.filter_ids
         year_range_qry = ""
-        filter_ids = country_ids
+
         if chart_type is None :
             from_date = request.from_date
             to_date = request.to_date
@@ -2956,10 +2961,11 @@ class ClientDatabase(Database):
         if filter_type == "Group" :
             group_by_name = "T3.country_id"
             filter_type_ids = ""
+            filter_ids = country_ids
 
         elif filter_type == "BusinessGroup" :
             filters = self.get_user_business_group_ids(user_id)
-            filter_ids = filters.split(',')
+            # filter_ids = filters.split(',')
             if len(filter_ids) == 1 :
                 filter_ids.append(0)
             group_by_name = "T3.business_group_id"
@@ -2967,7 +2973,7 @@ class ClientDatabase(Database):
 
         elif filter_type == "LegalEntity" :
             filters = self.get_user_legal_entity_ids(user_id)
-            filter_ids = filters.split(',')
+            # filter_ids = filters.split(',')
             if len(filter_ids) == 1 :
                 filter_ids.append(0)
             group_by_name = "T3.legal_entity_id"
@@ -2975,7 +2981,7 @@ class ClientDatabase(Database):
 
         elif filter_type == "Division" :
             filters = self.get_user_division_ids(user_id)
-            filter_ids = filters.split(',')
+            # filter_ids = filters.split(',')
             if len(filter_ids) == 1 :
                 filter_ids.append(0)
             group_by_name = "T3.division_id"
@@ -2983,7 +2989,7 @@ class ClientDatabase(Database):
 
         elif filter_type == "Unit":
             filters = self.get_user_unit_ids(user_id)
-            filter_ids = filters.split(',')
+            # filter_ids = filters.split(',')
             if len(filter_ids) == 1 :
                 filter_ids.append(0)
             group_by_name = "T3.unit_id"
@@ -2992,6 +2998,7 @@ class ClientDatabase(Database):
         elif filter_type == "Consolidated":
             group_by_name = "T3.country_id"
             filter_type_ids = ""
+            filter_ids = country_ids
 
         if user_id == 0 :
             user_qry = '1'
@@ -3176,6 +3183,7 @@ class ClientDatabase(Database):
                 years_range = y["years"]
 
                 year_wise = country.get(domain_id)
+
                 if year_wise is None :
                     year_wise = {}
 
@@ -3239,6 +3247,7 @@ class ClientDatabase(Database):
 
                     compliance_count_info["domain_id"] = domain_id
                     compliance_count_info["country_id"] = country_id
+
                     year_wise[i[0]] = compliance_count_info
 
                 country[domain_id] = year_wise
@@ -3387,7 +3396,25 @@ class ClientDatabase(Database):
 
     def get_compliance_status_chart(self, request, session_user, client_id):
         result = self.get_status_wise_compliances_count(request, session_user)
-        return dashboard.GetComplianceStatusChartSuccess(result)
+        final = []
+        filter_types = []
+        for r in result :
+            print r
+            data = r.data
+            for d in data :
+                if (
+                    d.inprogress_compliance_count == 0 and
+                    d.not_complied_count == 0 and
+                    d.delayed_compliance_count == 0 and
+                    d.complied_count == 0
+                ):
+                    pass
+                else :
+                    if r.filter_type_id not in filter_types :
+                        filter_types.append(r.filter_type_id)
+                        final.append(r)
+
+        return dashboard.GetComplianceStatusChartSuccess(final)
 
     def compliance_details_query(self, domain_ids, date_qry, status_qry, filter_type_qry, user_id) :
         if len(domain_ids) == 1 :
@@ -3562,7 +3589,7 @@ class ClientDatabase(Database):
 
             if compliance_status == "Inprogress" :
                 if r["frequency_id"] != 4 :
-                    ageing = abs((due_date - current_date).days) + 1
+                    ageing = abs((due_date.date() - current_date.date()).days) + 1
                 else :
                     diff = (due_date - current_date)
                     if r["duration_type_id"] == 2 :
@@ -3573,7 +3600,7 @@ class ClientDatabase(Database):
                 ageing = 0
             elif compliance_status == "Not Complied" :
                 if r["frequency_id"] != 4 :
-                    ageing = abs((current_date - due_date).days) + 1
+                    ageing = abs((current_date.date() - due_date.date()).days) + 1
                 else :
                     diff = (current_date - due_date)
                     if r["duration_type_id"] == 2 :
@@ -4320,11 +4347,11 @@ class ClientDatabase(Database):
             T4.statutory_dates, T4.repeats_every, T4.duration, T4.is_active \
             FROM tbl_client_compliances T1 \
             INNER JOIN tbl_client_statutories T2 \
-            ON T1.client_statutory_id = T2.client_statutory_id \
+            ON T2.client_statutory_id = T1.client_statutory_id \
             INNER JOIN tbl_units T3 \
-            ON T2.unit_id = T3.unit_id \
+            ON T3.unit_id = T2.unit_id \
             INNER JOIN tbl_compliances T4\
-            ON T1.compliance_id = T4.compliance_id\
+            ON T4.compliance_id = T1.compliance_id\
             WHERE T2.country_id IN %s \
             AND T2.domain_id IN %s \
             %s %s"
@@ -4478,17 +4505,28 @@ class ClientDatabase(Database):
         rows = self.get_data(
             self.tblComplianceHistory, get_columns, condition
         )
-        columns = []
-        if next_due_date is not None:
-            columns.append("due_date")
-            condition = " unit_id = '%d' and compliance_id = '%d'" % (
+
+        comp_columns = "frequency_id"
+        comp_condition = "compliance_id = '%d'" % (rows[0][1])
+        comp_rows = self.get_data(self.tblCompliances, comp_columns, comp_condition)
+        frequency_id = str(int(comp_rows[0][0]))
+
+        as_columns = []
+        as_values = []
+        as_condition = " unit_id = '%d' and compliance_id = '%d'" % (
                 rows[0][0], rows[0][1])
-            values = [self.string_to_datetime(next_due_date)]
+        if next_due_date is not None:
+            as_columns.append("due_date")
+            as_values.append(self.string_to_datetime(next_due_date))
         if validity_date is not None:
-            columns.append("validity_date")
-            values.append(self.string_to_datetime(validity_date))
-        if len(columns) > 0 and len(values) > 0 and len(columns) == len(values):
-            self.update(self.tblAssignedCompliances, columns, values, condition, client_id)
+            as_columns.append("validity_date")
+            as_values.append(self.string_to_datetime(validity_date))
+        if frequency_id in (1, "1"):
+            as_columns.append("is_active")
+            as_values.append(0)
+
+        if len(as_columns) > 0 and len(as_values) > 0 and len(as_columns) == len(as_values):
+            self.update(self.tblAssignedCompliances, as_columns, as_values, as_condition, client_id)
 
         get_columns = "unit_id, compliance_id, due_date, completion_date"
         condition = "compliance_history_id = '%d'" % compliance_history_id
@@ -4912,14 +4950,13 @@ class ClientDatabase(Database):
                     from tbl_compliances c,tbl_compliance_history ch, \
                     tbl_units ut where \
                     ch.unit_id = %s \
-                    AND ut.country_id = %s and ut.domain_ids like '%s' \
+                    AND ut.country_id = %s and c.domain_id = %s \
                     AND c.compliance_id = ch.compliance_id \
                     AND ch.completed_by like '%s'  AND c.statutory_mapping like '%s'  AND c.compliance_id like '%s' and ch.due_date BETWEEN '%s' AND '%s'" % (
-                    unit_id, country_id, str(domain_id)+"%",
+                    unit_id, country_id, domain_id,
                     assignee_id, str(statutory_id+"%"), compliance_id, start_date, end_date
                 )
             compliance_rows = self.select_all(query, client_id)
-            print query
             compliances_list = []
             for compliance in compliance_rows:
 
@@ -5719,8 +5756,8 @@ class ClientDatabase(Database):
             (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t2.repeats_type_id) repeat_type, t2.repeats_every,\
             tc.compliance_history_id \
             FROM tbl_compliance_history tc\
-            INNER JOIN tbl_assigned_compliances t1 on tc.compliance_id = t1.compliance_id \
-            INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id \
+            INNER JOIN tbl_assigned_compliances t1 on tc.compliance_id = t1.compliance_id AND t1.is_active = 1\
+            INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id AND t2.is_active = 1 \
             INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id \
             WHERE IFNULL(tc.approve_status, 0) != 1 \
             AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id like '%s') " % (user_id)
@@ -5851,11 +5888,11 @@ class ClientDatabase(Database):
         created_on = self.get_date_time()
         reassigned_date = created_on.strftime("%Y-%m-%d")
         created_by = int(session_user)
-        compliance_ids = []
+        compliance_names = []
         for c in compliances :
             unit_id = c.unit_id
             compliance_id = c.compliance_id
-            compliance_ids.append(compliance_id)
+            compliance_names.append(self.get_compliance_name(compliance_id))
             due_date = c.due_date
             if due_date is not None :
                 due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
@@ -5913,7 +5950,7 @@ class ClientDatabase(Database):
 #
 #   Manage Compliances / Compliances List / Upload Compliances
 #
-    def calculate_ageing(self, due_date, frequency_type=None, completion_date=None):
+    def calculate_ageing(self, due_date, frequency_type=None, completion_date=None, duration_type=None):
         current_time_stamp = self.get_date_time()
         # due_date = self.localize(due_date)
         if frequency_type =="On Occurrence":
@@ -5924,36 +5961,57 @@ class ClientDatabase(Database):
                     compliance_status = "On Time"
                 else:
                     if r.days == 0:
-                        compliance_status = "Delayed by %d.%d hour(s) " % (
-                            abs(r.hours), abs(r.minutes)
-                        )
+                        if duration_type in ["2", 2]:
+                            compliance_status = "Delayed by %d.%d hour(s) " % (
+                                abs(r.hours), abs(r.minutes)
+                            )
+                        else:
+                            compliance_status = "Delayed by 1 day "
                     else:
-                        compliance_status = "Delayed by %d day(s) and %d.%d hour(s)" % (
-                            abs(r.days), abs(r.hours), abs(r.minutes)
-                        )
-                    return r.days, compliance_status  
+                        if duration_type in ["2", 2]:
+                            compliance_status = "Delayed by %d.%d hour(s)" % (
+                               ( abs(r.days) * 4 + abs(r.hours)), abs(r.minutes)
+                            )
+                        else:
+                            compliance_status = "Delayed by %d day(s)" % (
+                                abs(r.days)
+                            )
+                    return r.days, compliance_status
             else:
                 if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
                     if r.days == 0:
-                        compliance_status = " %d.%d hour(s) left" % (
-                            abs(r.hours), abs(r.minutes)
-                        )
-                        
+                        if duration_type in ["2", 2]:
+                            compliance_status = " %d.%d hour(s) left" % (
+                                abs(r.hours), abs(r.minutes)
+                            )
+                        else:
+                            compliance_status = "1 Day left"
                     else:
-                        compliance_status = " %d day(s) and %d.%d hour(s) left" % (
-                            abs(r.days), abs(r.hours), abs(r.minutes)
-                        )
+                        if duration_type in ["2", 2]:
+                            compliance_status = "%d.%d hour(s) left" % (
+                               ( abs(r.days) * 4 + abs(r.hours)), abs(r.minutes)
+                            )
+                        else:
+                            compliance_status = " %d day(s) left" % (
+                                abs(r.days)
+                            )
                 else:
                     if r.days == 0:
-                        compliance_status = "Overdue by %d.%d hour(s) " % (
-                            abs(r.hours), abs(r.minutes)
-                        )
+                        if duration_type in ["2", 2]:
+                            compliance_status = "Overdue by %d.%d hour(s) " % (
+                                abs(r.hours), abs(r.minutes)
+                            )
+                        else:
+                            compliance_status = "Overdue by 1 day "
                     else:
-                        compliance_status = "Overdue by %d day(s) and %d.%d hours" % (
-                            abs(r.days), abs(r.hours), abs(r.minutes)
-                        )
+                        if duration_type in ["2", 2]:
+                            compliance_status = "Overdue by %d.%d hours" % (
+                               (abs(r.days) * 4 + abs(r.hours)), abs(r.minutes)
+                            )
+                        else:
+                            compliance_status = "Overdue by %d day(s)"
                 return r.days, compliance_status
-        else:            
+        else:
             if completion_date is not None:
                 compliance_status = "On Time"
                 r = relativedelta.relativedelta(due_date.date(), completion_date.date())
@@ -5975,7 +6033,7 @@ class ClientDatabase(Database):
             "compliance_description, format_file, unit_code, unit_name," + \
             "address, (select domain_name from %s d \
             where d.domain_id = c.domain_id) as domain_name, frequency, remarks,\
-            ch.compliance_id" % (
+            ch.compliance_id, duration_type_id" % (
                 self.tblDomains
             )
         tables = [
@@ -6014,7 +6072,9 @@ class ClientDatabase(Database):
             unit_name = "%s - %s" % (
                 unit_code, unit_name
             )
-            no_of_days, ageing = self.calculate_ageing(due_date=compliance[2], frequency_type=compliance[13])
+            no_of_days, ageing = self.calculate_ageing(
+                due_date=compliance[2], frequency_type=compliance[13], duration_type=compliance[16]
+            )
             compliance_status = core.COMPLIANCE_STATUS("Inprogress")
             if "Overdue" in ageing:
                 compliance_status = core.COMPLIANCE_STATUS("Not Complied")
@@ -6047,11 +6107,25 @@ class ClientDatabase(Database):
             )
         return current_compliances_list
 
+
+
+    def is_already_started(self, compliance_id, unit_id):
+        column = "count(*)"
+        condition = "compliance_id = '%d' and unit_id = '%d'" % (compliance_id, unit_id)
+        rows = self.get_data(self.tblComplianceHistory, column, condition)
+        count = rows[0][0]
+        if count > 0:
+            return True
+        else:
+            return False
+
+
     def get_upcoming_compliances_list(self, session_user, client_id):
         columns = "due_date, document_name, compliance_task," + \
             " compliance_description, format_file, unit_code, unit_name," + \
             "  address, ac.statutory_dates, repeats_every, (select domain_name \
-            from %s d where d.domain_id = c.domain_id) as domain_name" % (
+            from %s d where d.domain_id = c.domain_id) as domain_name, frequency_id, \
+            c.compliance_id, u.unit_id" % (
             self.tblDomains
         )
         tables = [
@@ -6072,6 +6146,10 @@ class ClientDatabase(Database):
         )
         upcoming_compliances_list = []
         for compliance in upcoming_compliances_rows:
+            if compliance[11] in [1, "1"]:
+                if self.is_already_started(compliance_id=compliance[12], unit_id=compliance[13]):
+                    continue
+
             document_name = compliance[1]
             compliance_task = compliance[2]
             compliance_name = compliance_task
@@ -6478,8 +6556,12 @@ class ClientDatabase(Database):
             validity_date = self.string_to_datetime(validity_date)
         if next_due_date is not None:
             next_due_date = self.string_to_datetime(next_due_date)
+        if self.is_onOccurrence_with_hours(compliance_history_id):
+            completion_date = self.string_to_datetime(completion_date)
+        else:
+            completion_date = self.string_to_datetime(completion_date).date()
         history_values = [
-            self.string_to_datetime(completion_date),
+            completion_date,
             ",".join(document_names),
             validity_date,
             next_due_date,
@@ -6543,6 +6625,22 @@ class ClientDatabase(Database):
             )
             notify_task_completed_thread.start()
         return True
+
+    def is_onOccurrence_with_hours(self, compliance_history_id):
+        columns = "compliance_id"
+        condition = "compliance_history_id = '%d'" % compliance_history_id
+        rows = self.get_data(self.tblComplianceHistory, columns, condition)
+        compliance_id = rows[0][0]
+
+        comp_columns = "frequency_id, duration_type_id"
+        comp_condition = "compliance_id = '%d'" % compliance_id
+        comp_rows = self.get_data(self.tblCompliances, comp_columns, comp_condition)
+        frequency_id = comp_rows[0][0]
+        duration_type_id = comp_rows[0][1]
+        if frequency_id == 4 and duration_type_id == 2:
+            return True
+        else:
+            return False
 
     def save_compliance_notification(
         self, compliance_history_id, notification_text, category, action
@@ -6861,11 +6959,13 @@ class ClientDatabase(Database):
                 )
                 if client_statutory_rows:
                     client_statutory_ids = client_statutory_rows[0][0]
-                    client_compliance_columns = "group_concat(compliance_id)"
-                    client_compliance_conditions = "client_statutory_id in (%s)" % client_statutory_ids
-                    client_compliance_rows = self.get_data(
-                        self.tblClientCompliances, client_compliance_columns, client_compliance_conditions
-                    )
+                    client_compliance_rows = None
+                    if client_statutory_ids:
+                        client_compliance_columns = "group_concat(compliance_id)"
+                        client_compliance_conditions = "client_statutory_id in (%s)" % client_statutory_ids
+                        client_compliance_rows = self.get_data(
+                            self.tblClientCompliances, client_compliance_columns, client_compliance_conditions
+                        )
                     if client_compliance_rows:
                         compliance_ids = client_compliance_rows[0][0]
                         compliance_ids_list = compliance_ids.split(",")
@@ -8436,7 +8536,7 @@ class ClientDatabase(Database):
 
     def have_compliances(self, user_id):
         column = "count(*)"
-        condition = "assignee = '%d' and is_active = 1" % user_id 
+        condition = "assignee = '%d' and is_active = 1" % user_id
         rows = self.get_data(self.tblAssignedCompliances, column, condition)
         no_of_compliances = rows[0][0]
         if no_of_compliances > 0:

@@ -624,7 +624,7 @@ function submitcompliance(){
                   return false;
               }
             }
-            
+
             var sort_elements = current_due_dates;
               if(current_due_dates.length > 1){
                 sort_elements.sort(function(a, b) {
@@ -644,6 +644,7 @@ function submitcompliance(){
             var statutory_day = null;
             var statutory_month = null;
             var trigger_before_days = null;
+            
             if(sort_elements[dDates][0] != '' && sort_elements[dDates][0] != undefined){
               var splitDueDates = sort_elements[dDates][0].split('-');
               var strMonth = splitDueDates[1];
