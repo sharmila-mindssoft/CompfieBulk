@@ -346,7 +346,7 @@ function submitcompliance(){
     hideLoader();
   }
   function onFailure(error){
-    displayMessage(error);
+    displayMessage(error[1]["error"]);
     hideLoader();
   }
   client_mirror.savePastRecords(compliance_list, 

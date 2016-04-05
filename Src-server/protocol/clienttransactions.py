@@ -1115,9 +1115,31 @@ class SavePastRecordsSuccess(Response):
         return {
         }
 
+class SavePastRecordsFailed(Response):
+    def __init__(self, error):
+        self.error = error
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["error"])
+        error = data.get("error")
+        error = parse_structure_Text(error)
+        return SavePastRecordsFailed(error)
+
+    def to_inner_structure(self):
+        return {
+            "error" : to_structure_Text(self.error)
+        }
 
 def _init_Response_class_map():
-    classes = [GetStatutorySettingsSuccess, GetSettingsCompliancesSuccess, UpdateStatutorySettingsSuccess, InvalidPassword, GetAssignCompliancesFormDataSuccess, GetComplianceForUnitsSuccess, SaveAssignedComplianceSuccess, AssigneeNotBelongToUnit, ConcurrenceNotBelongToUnit, ApprovalPersonNotBelongToUnit, GetUserwiseCompliancesSuccess, ReassignComplianceSuccess, GetComplianceApprovalListSuccess, ApproveComplianceSuccess, GetPastRecordsFormDataSuccess, GetStatutoriesByUnitSuccess, SavePastRecordsSuccess]
+    classes = [
+        GetStatutorySettingsSuccess, GetSettingsCompliancesSuccess, UpdateStatutorySettingsSuccess, 
+        InvalidPassword, GetAssignCompliancesFormDataSuccess, GetComplianceForUnitsSuccess, 
+        SaveAssignedComplianceSuccess, AssigneeNotBelongToUnit, ConcurrenceNotBelongToUnit, 
+        ApprovalPersonNotBelongToUnit, GetUserwiseCompliancesSuccess, ReassignComplianceSuccess,
+        GetComplianceApprovalListSuccess, ApproveComplianceSuccess, GetPastRecordsFormDataSuccess, 
+        GetStatutoriesByUnitSuccess, SavePastRecordsSuccess, SavePastRecordsFailed
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

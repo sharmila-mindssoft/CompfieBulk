@@ -149,7 +149,12 @@ function initClientMirror() {
                     redirect_login()
                 }
                 else {
-                    callback(status, null)
+                    if (status == "SavePastRecordsFailed"){
+                        callback(data, null)
+                    }else{
+                        callback(status, null)    
+                    }
+                    
                 }
 
             }
