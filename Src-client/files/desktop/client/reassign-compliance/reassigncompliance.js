@@ -430,8 +430,12 @@ function submitcompliance(){
       displayMessage(error);
       hideLoader();
     }
-    client_mirror.saveReassignCompliance(reassignUserId, assignComplianceAssigneeId,
-      assignComplianceConcurrenceId, assignComplianceApprovalId, reassignCompliance, reason,
+    console.log(assignComplianceAssigneeName)
+    client_mirror.saveReassignCompliance(
+      reassignUserId, assignComplianceAssigneeId,
+      assignComplianceAssigneeName,
+      assignComplianceConcurrenceId,
+      assignComplianceApprovalId, reassignCompliance, reason,
       function (error, response) {
       if (error == null){
         onSuccess(response);

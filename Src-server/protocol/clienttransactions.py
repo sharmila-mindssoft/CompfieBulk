@@ -471,39 +471,43 @@ class GetUserwiseCompliances(Request):
         }
 
 class ReassignCompliance(Request):
-    def __init__(self, reassigned_from, assignee, concurrence_person, approval_person, compliances, reassigned_reason):
-        self.reassigned_from = reassigned_from
+    def __init__(self, r_from, assignee, a_name, c_person, a_person, compliances, r_reason):
+        self.reassigned_from = r_from
         self.assignee = assignee
-        self.concurrence_person = concurrence_person
-        self.approval_person = approval_person
+        self.assignee_name = a_name
+        self.concurrence_person = c_person
+        self.approval_person = a_person
         self.compliances = compliances
-        self.reassigned_reason = reassigned_reason
+        self.reassigned_reason = r_reason
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["reassigned_from", "assignee", "concurrence_person", "approval_person", "compliances", "reassigned_reason"])
-        reassigned_from = data.get("reassigned_from")
+        data = parse_dictionary(data, ["r_from", "assignee", "a_name", "c_person", "a_person", "compliances", "r_reason"])
+        reassigned_from = data.get("r_from")
         reassigned_from = parse_structure_UnsignedIntegerType_32(reassigned_from)
         assignee = data.get("assignee")
         assignee = parse_structure_UnsignedIntegerType_32(assignee)
-        concurrence_person = data.get("concurrence_person")
+        assignee_name = data.get("a_name")
+        assignee_name = parse_structure_CustomTextType_250(assignee_name)
+        concurrence_person = data.get("c_person")
         concurrence_person = parse_structure_OptionalType_SignedIntegerType_8(concurrence_person)
-        approval_person = data.get("approval_person")
+        approval_person = data.get("a_person")
         approval_person = parse_structure_UnsignedIntegerType_32(approval_person)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_clienttransactions_REASSIGNED_COMPLIANCE(compliances)
-        reassigned_reason = data.get("reassigned_reason")
+        reassigned_reason = data.get("r_reason")
         reassigned_reason = parse_structure_CustomTextType_500(reassigned_reason)
-        return ReassignCompliance(reassigned_from, assignee, concurrence_person, approval_person, compliances, reassigned_reason)
+        return ReassignCompliance(reassigned_from, assignee, assignee_name, concurrence_person, approval_person, compliances, reassigned_reason)
 
     def to_inner_structure(self):
         return {
-            "reassigned_from": to_structure_SignedIntegerType_8(self.reassigned_from),
+            "r_from": to_structure_SignedIntegerType_8(self.reassigned_from),
             "assignee": to_structure_SignedIntegerType_8(self.assignee),
-            "concurrence_person": to_structure_OptionalType_SignedIntegerType_8(self.concurrence_person),
-            "approval_person": to_structure_SignedIntegerType_8(self.approval_person),
+            "a_name": to_structure_CustomTextType_250(self.assignee_name),
+            "c_person": to_structure_OptionalType_SignedIntegerType_8(self.concurrence_person),
+            "a_person": to_structure_SignedIntegerType_8(self.approval_person),
             "compliances": to_structure_VectorType_RecordType_clienttransactions_REASSIGNED_COMPLIANCE(self.compliances),
-            "reassigned_reason": to_structure_CustomTextType_500(self.reassigned_reason),
+            "r_reason": to_structure_CustomTextType_500(self.reassigned_reason),
         }
 
 class GetComplianceApprovalList(Request):
@@ -1211,7 +1215,7 @@ class REASSIGNED_COMPLIANCE(object):
     ):
         self.unit_id = u_id
         self.compliance_id = c_id
-        self.complaince_name = c_name
+        self.compliance_name = c_name
         self.compliance_history_id = c_history_id
         self.due_date = d_date
 
@@ -1236,7 +1240,7 @@ class REASSIGNED_COMPLIANCE(object):
         return {
             "u_id": to_structure_SignedIntegerType_8(self.unit_id),
             "c_id": to_structure_SignedIntegerType_8(self.compliance_id),
-            "c_name": to_structure_CustomTextType_500(self.complaince_name),
+            "c_name": to_structure_CustomTextType_500(self.compliance_name),
             "c_history_id": to_structure_OptionalType_UnsignedIntegerType_32(self.compliance_history_id),
             "d_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
         }

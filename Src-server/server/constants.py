@@ -370,8 +370,6 @@ TEMPLATE_PATHS = [
 IS_DEVELOPMENT = True
 VERSION = 1
 
-
-# # # aparajitha server
 KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"

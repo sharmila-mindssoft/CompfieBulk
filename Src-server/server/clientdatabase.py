@@ -2819,7 +2819,8 @@ class ClientDatabase(Database):
                 request.approval_person_name,
                 compliance_names
             )
-        self.save_activity(session_user, 7, json.dumps(action))
+        activity_text = action.replace("<br>", " ")
+        self.save_activity(session_user, 7, json.dumps(activity_text))
         receiver = self.get_email_id_for_users(assignee)[1]
         notify_assign_compliance = threading.Thread(
             target=email.notify_assign_compliance,
@@ -5892,7 +5893,7 @@ class ClientDatabase(Database):
         for c in compliances :
             unit_id = c.unit_id
             compliance_id = c.compliance_id
-            compliance_names.append(self.get_compliance_name(compliance_id))
+            compliance_names.append(c.compliance_name)
             due_date = c.due_date
             if due_date is not None :
                 due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
@@ -5943,7 +5944,7 @@ class ClientDatabase(Database):
                 )
                 self.execute(update_history)
 
-        action = "Compliances reassigned %s to assignee %s" % (str(compliance_ids), assignee)
+        action = "%s Compliances reassigned to assignee %s" % (",".join(compliance_names), request.assignee_name)
         self.save_activity(session_user, 8, action)
         return clienttransactions.ReassignComplianceSuccess()
 

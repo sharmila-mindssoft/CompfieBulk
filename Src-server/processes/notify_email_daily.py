@@ -8,11 +8,10 @@ from email.MIMEText import MIMEText
 
 mysqlHost = "localhost"
 mysqlUser = "root"
-mysqlPassword = "123456"
-mysqlDatabase = "compfie_knowledge_old"
+mysqlPassword = "mnd50ftadm1n"
+mysqlDatabase = "compfie_knowledge"
 mysqlPort = 3306
 
-CLIENT_URL = "http://45.118.182.47:8082/"
 
 class EmailNotification(object):
     def __init__(self):
@@ -32,11 +31,10 @@ class EmailNotification(object):
             if type(cc) is list :
                 msg["Cc"] = ",".join(cc)
         msg.attach(MIMEText(message, "html"))
-        print msg.as_string()
-        # response = server.sendmail(
-        #     self.sender, receiver, msg.as_string()
-        # )
-        # print response
+        response = server.sendmail(
+            self.sender, receiver, msg.as_string()
+        )
+        print response
         server.close()
 
     def notify_to_assignee(
