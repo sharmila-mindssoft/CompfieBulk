@@ -40,12 +40,15 @@ def process_get_compliance_detail(db, request, session_user, client_id):
 	return clientuser.GetComplianceDetailSuccess(compliance_details)
 
 def process_update_compliance_detail(db, request, session_user, client_id):
-	if db.update_compliances(request.compliance_history_id, request.documents,
+	result = db.update_compliances(request.compliance_history_id, request.documents,
 		request.completion_date, request.validity_date, request.next_due_date,
-		request.remarks, client_id, session_user):
+		request.remarks, client_id, session_user)
+	if result == True:
 		return clientuser.UpdateComplianceDetailSuccess()
-	else:
+	elif result == "InvalidUser":
 		return clientuser.InvalidUser()
+	else:
+		return clientuser.NextDueDateMustBeWithIn90DaysBeforeValidityDate()
 
 def process_get_on_occurrence_compliances(
 	db, request, session_user, client_id

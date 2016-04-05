@@ -1880,7 +1880,6 @@ class ClientDatabase(Database):
                 add_condition = "1"
                 if not self.is_admin(session_user):
                     add_condition += " AND ac.assignee = '%d'" % session_user
-                print condition
                 query = "SELECT ac.compliance_id, ac.statutory_dates, ac.due_date, assignee, employee_code, \
                     employee_name, statutory_mapping, document_name, compliance_task, \
                     compliance_description, c.repeats_type_id, repeat_type, repeats_every, frequency, \
@@ -5083,7 +5082,7 @@ class ClientDatabase(Database):
         if len(unit_rows) > 0:
             unit_ids = ",".join(str(int(x)) for x in unit_rows)
 
-        # Compliances related to the domain sharmi
+        # Compliances related to the domain 
         compliance_columns = "compliance_id"
         compliance_condition = "domain_id = '{}'".format(domain_id)
         compliance_result_rows = self.get_data(
@@ -6518,6 +6517,16 @@ class ClientDatabase(Database):
         self, compliance_history_id, documents, completion_date,
         validity_date, next_due_date, remarks, client_id, session_user
     ):
+        if validity_date is not None:
+            validity_date = self.string_to_datetime(validity_date)
+        if next_due_date is not None:
+            next_due_date = self.string_to_datetime(next_due_date)
+
+        if None not in [validity_date, next_due_date]:
+            r = relativedelta.relativedelta(validity_date, next_due_date)
+            if abs(r.months) > 3 or abs(r.years) > 0:
+                return False
+
         # Hanling upload
         document_names = []
         file_size = 0
@@ -6556,10 +6565,6 @@ class ClientDatabase(Database):
             "completion_date", "documents", "validity_date",
             "next_due_date", "remarks", "completed_on"
         ]
-        if validity_date is not None:
-            validity_date = self.string_to_datetime(validity_date)
-        if next_due_date is not None:
-            next_due_date = self.string_to_datetime(next_due_date)
         if self.is_onOccurrence_with_hours(compliance_history_id):
             completion_date = self.string_to_datetime(completion_date)
         else:
