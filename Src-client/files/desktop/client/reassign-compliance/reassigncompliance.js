@@ -398,8 +398,8 @@ function submitcompliance(){
                 }*/
               }
             }
-            reassignComplianceData = client_mirror.reassingComplianceDet(uId,
-              compliance_id, compliance_history_id, due_date
+            reassignComplianceData = client_mirror.reassignComplianceDet(uId,
+              compliance_id, compliance_name, compliance_history_id, due_date
             );
             reassignCompliance.push(reassignComplianceData);
           }
@@ -430,8 +430,12 @@ function submitcompliance(){
       displayMessage(error);
       hideLoader();
     }
-    client_mirror.saveReassignCompliance(reassignUserId, assignComplianceAssigneeId,
-      assignComplianceConcurrenceId, assignComplianceApprovalId, reassignCompliance, reason,
+    console.log(assignComplianceAssigneeName)
+    client_mirror.saveReassignCompliance(
+      reassignUserId, assignComplianceAssigneeId,
+      assignComplianceAssigneeName,
+      assignComplianceConcurrenceId,
+      assignComplianceApprovalId, reassignCompliance, reason,
       function (error, response) {
       if (error == null){
         onSuccess(response);
