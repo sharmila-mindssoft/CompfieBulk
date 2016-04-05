@@ -3236,7 +3236,6 @@ class ClientDatabase(Database):
                                 ):
                                     compliance_count += int(c["compliances"])
 
-
                     if status == "inprogress":
                         compliance_count_info["inprogress_count"] += compliance_count
                     elif status == "complied" :
@@ -3398,6 +3397,7 @@ class ClientDatabase(Database):
     def get_compliance_status_chart(self, request, session_user, client_id):
         result = self.get_status_wise_compliances_count(request, session_user)
         final = []
+        filter_types = []
         for r in result :
             print r
             data = r.data
@@ -3410,7 +3410,9 @@ class ClientDatabase(Database):
                 ):
                     pass
                 else :
-                    final.append(r)
+                    if r.filter_type_id not in filter_types :
+                        filter_types.append(r.filter_type_id)
+                        final.append(r)
 
         return dashboard.GetComplianceStatusChartSuccess(final)
 
@@ -4510,7 +4512,7 @@ class ClientDatabase(Database):
         frequency_id = str(int(comp_rows[0][0]))
 
         as_columns = []
-        as_values = [] 
+        as_values = []
         as_condition = " unit_id = '%d' and compliance_id = '%d'" % (
                 rows[0][0], rows[0][1])
         if next_due_date is not None:
@@ -5962,7 +5964,7 @@ class ClientDatabase(Database):
                             compliance_status = "Delayed by %d day(s)" % (
                                 abs(r.days)
                             )
-                    return r.days, compliance_status  
+                    return r.days, compliance_status
             else:
                 if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
                     if r.days == 0:
@@ -5995,9 +5997,9 @@ class ClientDatabase(Database):
                                (abs(r.days) * 4 + abs(r.hours)), abs(r.minutes)
                             )
                         else:
-                            compliance_status = "Overdue by %d day(s)" 
+                            compliance_status = "Overdue by %d day(s)"
                 return r.days, compliance_status
-        else:            
+        else:
             if completion_date is not None:
                 compliance_status = "On Time"
                 r = relativedelta.relativedelta(due_date.date(), completion_date.date())
@@ -6093,7 +6095,7 @@ class ClientDatabase(Database):
             )
         return current_compliances_list
 
-    
+
 
     def is_already_started(self, compliance_id, unit_id):
         column = "count(*)"
@@ -6545,7 +6547,7 @@ class ClientDatabase(Database):
         if self.is_onOccurrence_with_hours(compliance_history_id):
             completion_date = self.string_to_datetime(completion_date)
         else:
-            completion_date = self.string_to_datetime(completion_date).date()    
+            completion_date = self.string_to_datetime(completion_date).date()
         history_values = [
             completion_date,
             ",".join(document_names),
