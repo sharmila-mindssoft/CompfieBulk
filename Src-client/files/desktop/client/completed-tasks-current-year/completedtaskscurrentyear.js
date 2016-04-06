@@ -424,7 +424,7 @@ function getStatutories(){
   if($('.unitlist.active').attr('id') != undefined) assignComplianceUnitId = parseInt($('.unitlist.active').attr('id'));
   if($('.domainlist.active').attr('id') != undefined) assignComplianceDomainId = parseInt($('.domainlist.active').attr('id'));
   if($('.actlist.active').attr('id') != undefined) assignComplianceActId = $('.actlist.active').attr('id');
-  if($('.frequencylist.active').attr('id') != undefined) assignComplianceFrequencyId = parseInt($('.frequencylist.active').attr('id'));;
+  if($('.frequencylist.active').attr('id') != undefined) assignComplianceFrequencyId = $('.frequencylist.active').attr('id');
   
   if(assignComplianceUnitId != null && assignComplianceDomainId != null){
     function onSuccess(data){
