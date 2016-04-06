@@ -91,7 +91,7 @@ function showrecord(){
             else{
                 formname = "Logout"
             }
-            //console.log(datetonumber(fromdate) +"<="+ datetonumber(logintraceList[key]['created_on'])+" && "+ datetonumber(todate) +" >= "+datetonumber(logintraceList[key]['created_on'])+"--userid--"+userid);
+            
             if((datetonumber(fromdate) <= datetonumber(logintraceList[key]['created_on'])) && (datetonumber(todate) >= datetonumber(logintraceList[key]['created_on'])) && userid == ''){ 
                 var tableRow = $('#templates .table-logintrace-list .table-row');
                 var clone = tableRow.clone();

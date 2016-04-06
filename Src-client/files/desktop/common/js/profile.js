@@ -24,7 +24,7 @@ function initialize(){
 	$('.mobile').val(contactNo[2]);
 	$('.employee-id').text(userprofile['employee_code']);
 	$('.usergroup').text(userprofile['user_group']);
-	console.log(userprofile['address']);
+	
 	if(userprofile['address'] == null || userprofile['address'] == "None" ){
 		$('.textarea.address').val("");
 	}
