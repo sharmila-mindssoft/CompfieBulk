@@ -46,11 +46,11 @@ function convert_date (data){
   for(var j=0;j<months.length;j++){
       if(date[1]==months[j]){
            date[1]=months.indexOf(months[j])+1;
-       }                      
-  } 
+       }
+  }
   if(date[1]<10){
       date[1]='0'+date[1];
-  }       
+  }
   return new Date(date[2], date[1]-1, date[0]);
 }
 
@@ -73,10 +73,10 @@ function loadresult(filterList){
   var yyyy = today.getFullYear();
   if(dd<10){
       dd='0'+dd
-  } 
+  }
   if(mm<10){
       mm='0'+mm
-  } 
+  }
   var currentDate = new Date(yyyy, mm, dd);
 
   var compliance_count=0;
@@ -97,16 +97,16 @@ function loadresult(filterList){
     var unitdisplay = true;
 
     for(var compliancelist in compliancelists){
-        
+
 
         var vDate = '';
         if(compliancelists[compliancelist]["validity_date"] != null) vDate = compliancelists[compliancelist]["validity_date"];
-        
+
         var dueDate = compliancelists[compliancelist]["due_date"];
-        
+
         var completionDate = '';
         if(compliancelists[compliancelist]["completion_date"] != null) completionDate = compliancelists[compliancelist]["completion_date"];
-        
+
         var cDueDate = convert_date(compliancelists[compliancelist]["due_date"]);
         var cDate = currentDate;
         if(completionDate != ''){
@@ -119,18 +119,18 @@ function loadresult(filterList){
         if(completionDate != '' && dateDifference <=0){
           remark = 'On Time';
           compStatus = 'Complied';
-        } 
+        }
         else if (completionDate != '' && dateDifference > 0) {
           remark = 'Delayed by '+ dateDifference +' Days';
           compStatus = 'Delayed Compliance';
-          
+
         }
         else if (completionDate == '' && dateDifference > 0) {
           remark = 'Over due by '+ dateDifference +' Days';
           compStatus = 'Complied';
         }
         else if (completionDate == '' && dateDifference <= 0) {
-          remark =  Math.abs(dateDifference) +' Days left';
+          remark =  Math.abs(dateDifference) + 1 + ' Days left';
           compStatus = 'Inprogress';
         }
 
@@ -162,14 +162,14 @@ function loadresult(filterList){
           $('.tbody-unit').append(clone3);
           compliance_count++;
         }
-    }   
+    }
     /*if(compliancelists.length == 0){
         var tableRow4=$('#unit-content-templates .table-unit-content .table-row-unit-content');
         var clone4=tableRow4.clone();
         $('.tbl_duedate', clone4).text("No Compliance Found");
         $('.tbody-unit').append(clone4);
       }*/
-  }  
+  }
   $('.compliance_count').text("Total : "+ (compliance_count) +" records");
 }
 
@@ -195,10 +195,10 @@ function loadCompliance(reportType){
     displayMessage("Country Required");
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");  
+    displayMessage("Domain Required");
   }
   else if(act.length == 0){
-    displayMessage("Act Required");  
+    displayMessage("Act Required");
   }
   else{
       loadresult(unitWiseComplianceList);
@@ -219,9 +219,9 @@ function loadCompliance(reportType){
       if(reportType == "show"){
         csv = false
       }
-      client_mirror.getComplianceDetailsReport( 
-        parseInt(country), parseInt(domain), act, parseInt(unit), 
-        parseInt(compliances), parseInt(assignee), fromdate, todate, 
+      client_mirror.getComplianceDetailsReport(
+        parseInt(country), parseInt(domain), act, parseInt(unit),
+        parseInt(compliances), parseInt(assignee), fromdate, todate,
         status, csv,
         function (error, response) {
           if (error == null){
@@ -234,11 +234,11 @@ function loadCompliance(reportType){
   }
 }
 
-$("#submit").click(function(){ 
+$("#submit").click(function(){
   loadCompliance("show")
 });
 
-$("#export").click(function(){ 
+$("#export").click(function(){
   loadCompliance("export")
 });
 
@@ -262,7 +262,7 @@ function loadCountries(countriesList){
   });
 }
 
-//load domain list in autocomplete text box  
+//load domain list in autocomplete text box
 $("#domainval").keyup(function(){
   var textval = $(this).val();
   $("#autocomplete_domain").show();
@@ -271,7 +271,7 @@ $("#domainval").keyup(function(){
   $('#ulist_domain').empty();
   if(textval.length>0){
     for(var i in domains){
-      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == true) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 
+      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == true) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -300,7 +300,7 @@ $("#actval").keyup(function(){
   $('#ulist_act').empty();
   if(textval.length>0){
     for(var i in acts){
-      if (~acts[i].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([acts[i],acts[i]]); 
+      if (~acts[i].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([acts[i],acts[i]]);
     }
     var str='';
     for(var i in suggestions){
@@ -328,7 +328,7 @@ $("#unitval").keyup(function(){
  $('#ulist_unit').empty();
   if(textval.length>0){
     for(var i in units){
-      if (~units[i]["unit_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],units[i]["unit_name"]]); 
+      if (~units[i]["unit_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],units[i]["unit_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -352,13 +352,13 @@ $("#compliancetaskval").keyup(function(){
 
   var textval = $(this).val();
   $("#autocomplete_compliancetask").show();
-  
+
   var compliancetasks = compliancesList;
   var suggestions = [];
  $('#ulist_compliancetask').empty();
   if(textval.length>0){
     for(var i in compliancetasks){
-      if (~compliancetasks[i]["compliance_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([compliancetasks[i]["compliance_id"],compliancetasks[i]["compliance_name"]]); 
+      if (~compliancetasks[i]["compliance_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([compliancetasks[i]["compliance_id"],compliancetasks[i]["compliance_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -383,18 +383,18 @@ $("#assigneeval").keyup(function(){
 
   var textval = $(this).val();
   $("#autocomplete_assignee").show();
-  
+
   var assignees = usersList;
   var suggestions = [];
  $('#ulist_assignee').empty();
   if(textval.length>0){
     for(var i in assignees){
-      if (~assignees[i]["employee_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["employee_id"],assignees[i]["employee_name"]]); 
+      if (~assignees[i]["employee_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["employee_id"],assignees[i]["employee_name"]]);
     }
     var str='';
     for(var i in suggestions){
               str += '<li id="'+suggestions[i][0]+'"onclick="activate_assignee(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-              
+
     }
     $('#ulist_assignee').append(str);
     $("#assignee").val('');

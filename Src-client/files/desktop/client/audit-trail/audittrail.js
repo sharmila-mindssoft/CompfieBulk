@@ -125,7 +125,23 @@ function getFormName(formId){
     });
     return formName;
 }
-
+function datetonumber(datetime){
+    var date = datetime.substring(0,11);
+    var timeval = datetime.substring(12,18);
+    var date1 = date.split("-");
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    for(var j = 0; j < months.length; j++){
+        if(date1[1] == months[j]){
+             date1[1] = months.indexOf(months[j])+1;
+         }                      
+    } 
+    if(date1[1] < 10){
+        date1[1] = '0'+date1[1];
+    }                        
+    var formattedDate = date1[2]+"/"+date1[1]+"/"+date1[0];
+    var newdate = new Date(formattedDate+" "+timeval);
+    return Date.parse(newdate);
+}
 $("#show").click(function(){
     var fromDateValue = $("#from-date").val();
     var toDateValue = $("#to-date").val();
@@ -160,22 +176,22 @@ $("#show").click(function(){
             var formCheckval;
             var userCheckval;
             //userid empty, formid empty            
-            if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == '' && formIdValue == ''){ 
+            if((datetonumber(fromDateVal) <= datetonumber(auditDateVal)) && (datetonumber(toDateVal) >= datetonumber(auditDateVal)) && userIdValue == '' && formIdValue == ''){ 
                 sno++;
                 tempadlist.push(auditTrailList[key]);
             }
             //userid empty
-            else if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && (userIdValue == '') && (formIdValue == auditFormId)){   
+            else if((datetonumber(fromDateVal) <= datetonumber(auditDateVal)) && (datetonumber(toDateVal) >= datetonumber(auditDateVal)) && (userIdValue == '') && (formIdValue == auditFormId)){   
                 sno++;
                 tempadlist.push(auditTrailList[key]);
             }
             //formid empty
-            else if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == auditUser && formIdValue == ''){ 
+            else if((datetonumber(fromDateVal) <= datetonumber(auditDateVal)) && (datetonumber(toDateVal) >= datetonumber(auditDateVal)) && userIdValue == auditUser && formIdValue == ''){ 
                 sno++;
                 tempadlist.push(auditTrailList[key]);  
             }
             //all != empty
-             else if((fromDateVal <= auditDateVal) && (toDateVal >= auditDateVal) && userIdValue == auditUser && formIdValue == auditFormId){   
+             else if((datetonumber(fromDateVal) <= datetonumber(auditDateVal)) && (datetonumber(toDateVal) >= datetonumber(auditDateVal)) && userIdValue == auditUser && formIdValue == auditFormId){   
                 sno++;
                 tempadlist.push(auditTrailList[key]);
             }
