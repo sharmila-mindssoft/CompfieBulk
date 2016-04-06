@@ -11,6 +11,14 @@ var userval;
 var fromdate;
 var todate; 
 
+var finalList;
+var pageSize = 500;
+var startCount = 0;
+var endCount;
+var sno = 0;
+var fullArrayList = [];
+var acc_count = 1;
+
 function clearMessage() {
     $(".error-message").hide();
     $(".error-message").text("");
@@ -19,6 +27,14 @@ function clearMessage() {
 function displayMessage(message) {
     $(".error-message").text(message);
     $(".error-message").show();
+}
+
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
 }
 
 function initialize(){
@@ -113,9 +129,13 @@ function loadcomplianceactivityreport(buttontype){
     }
     else{
         function onSuccess(data){
+            fullArrayList = [];
+            hideLoader();
             clearMessage();
+            startCount = 0;
+            endCount = 0;
+
             if(buttontype == "show"){
-                console.log(data)
                 loadComplianceActivityReportList(data['activities']);     
             }
             if(buttontype == "export"){
@@ -129,12 +149,14 @@ function loadcomplianceactivityreport(buttontype){
             }
         }
         function onFailure(error){
+            hideLoader();
             console.log(error);
         }
         var csv = false
         if(buttontype == "export"){
             csv = true
         }
+        displayLoader();
         client_mirror.getComplianceActivityReportData(
            usertype, userid,  parseInt(countries), parseInt(domain), 
            level1id, unitid, complianceid, fromdate, todate, csv,
@@ -149,93 +171,201 @@ function loadcomplianceactivityreport(buttontype){
         );
     }
 }
+function compactivityfilterList(data){
+    var tableRowHeading = $('#templates .table-compliance-activity-list-temp .filter-heading-list');
+    var cloneHeading = tableRowHeading.clone();
+    $('.country-filter-name', cloneHeading).text(countriesNameVal);
+    $('.domain-filter-name', cloneHeading).text(domainNameVal);
+    $('.usertype-filter-name', cloneHeading).text(usertype);
+    $('.user-filter-name', cloneHeading).text(userval);
+    $('.fromdate-filter-name', cloneHeading).text(fromdate);
+    $('.todate-filter-name', cloneHeading).text(todate);
+
+    $('.table-compliance-activity-list').append(cloneHeading);
+
+    var tableRowHeadingth = $('#templates .table-compliance-activity-list-temp .table-heading-th');
+    var cloneHeadingth = tableRowHeadingth.clone();
+    $('.table-compliance-activity-list').append(cloneHeadingth);
+}
+
+function compactivityunitList(data){
+    var tableRowUnit = $('#templates .table-compliance-activity-list-temp .table-unit-heading');
+    var cloneUnit = tableRowUnit.clone();
+    $('.unit-heading', cloneUnit).text(data['unit_name']+" - "+data['address']);
+    $('.table-compliance-activity-list').append(cloneUnit);
+}
+
+function compactivitylevel1list(data){
+    var tableRow = $('#templates .table-compliance-activity-list-temp .table-level1-heading');
+    var clone = tableRow.clone();
+    $('.level1-heading', clone).text(data['level1_name']);
+    $('.table-compliance-activity-list').append(clone);
+}
+
+function compactivitycompliancetasklist(data, acc_count){
+    var tableRowvalues = $('#templates .table-compliance-activity-list-temp .tbody-activity-list');
+    var cloneval = tableRowvalues.clone();
+    sno = sno + 1;
+    $('.sno', cloneval).text(sno);
+    $.each(data, function(k, val){
+        $('.compliance-task', cloneval).html(k);
+        var clist = data[k];
+        var count = 0;
+        
+        $.each(clist, function(k1, val1){
+            if(count == 0){
+                $('.compliance-date', cloneval).html(clist[k1]['activity_date']);
+                $('.activity-status', cloneval).html(clist[k1]['activity_status']);
+                $('.compliance-task-status', cloneval).html(clist[k1]['compliance_status']);
+                $('.remarks', cloneval).html(clist[k1]['remarks']);                    
+                $('.compliance-activity-list .table-compliance-activity-list').append(cloneval);                        
+                $('.table-compliance-activity-list').append('<tbody class="accordion-content accordion-content'+acc_count+'"></tbody>');
+                if(acc_count == 1){
+                    $('.accordion-content'+acc_count).addClass("default");    
+                }
+                
+            }
+            else{
+                var tableRowvalues_ul = $('#templates .tree-tr');
+                var cloneval_ul = tableRowvalues_ul.clone();
+                $('.li-date', cloneval_ul).html(clist[k1]['activity_date']);
+                $('.li-activitystatus', cloneval_ul).html(clist[k1]['activity_status']);
+                $('.li-taskstatus', cloneval_ul).html(clist[k1]['compliance_status']);
+                $('.li-remarks', cloneval_ul).html(clist[k1]['remarks']);  
+                $('.accordion-content'+acc_count).append(cloneval_ul);   
+            }
+            count++;                    
+        });      
+        $('#accordion').find('.accordion-toggle').click(function(){
+            $(this).next().slideToggle('fast');
+            $(".accordion-content").not($(this).next()).slideUp('fast');
+        });
+       
+    });
+    
+}
+
+
+function get_sub_array(object, start, end){
+    if(!end){ end = -1;}
+    return object.slice(start, end);
+}
+
+$(function() {
+    $('#pagination').click(function(e){
+        $(".loading-indicator-spin").show();
+        if($('.loading-indicator-spin').css('display') != 'none')
+        {
+            setTimeout(function(){  
+                showloadrecord();
+            }, 500);
+            
+        }
+        setTimeout(function(){  
+            $(".loading-indicator-spin").hide();
+        }, 500);
+        
+    });
+});
+function showloadrecord() {
+    startCount = endCount;
+    endCount = startCount + pageSize;
+      
+    var list = get_sub_array(fullArrayList, startCount, endCount);
+    if(list.length < pageSize){
+        $('#pagination').hide();
+    }
+    
+    //e.preventDefault();
+    for(var y = 0;  y < pageSize; y++){
+        if(list[y] !=  undefined){
+
+           if(Object.keys(list[y])[0] == "unit_name"){
+               compactivityunitList(list[y]);
+            }    
+            else if(Object.keys(list[y])[0] == "level1_name"){
+               compactivitylevel1list(list[y]);
+            }    
+            else{
+               compactivitycompliancetasklist(list[y], acc_count);
+               acc_count++;
+            }
+        }        
+    }
+    //textchangeloadinghide();
+}
+
+function loadresult(finalList) {   
+    endCount = pageSize;
+    $.each(finalList, function(i, val){
+        var list = finalList[i];
+        var list_statu_wise = val["statutory_wise_compliances"]
+        delete list["statutory_wise_compliances"];         
+        fullArrayList.push(list);
+
+        $.each(list_statu_wise, function(i1, val1){
+            var level1_Object = new Object();
+            level1_Object.level1_name = i1;
+            var list_act = val1;
+            fullArrayList.push(level1_Object);
+            
+            $.each(list_statu_wise[i1], function(i2, val2){    
+                var olddata  = {};            
+                var newdata = {};
+                newdata[i2] = val1[i2];
+                $.extend(true, olddata, newdata);
+
+                fullArrayList.push(olddata);
+            }); 
+        });
+    });
+    var totallist = fullArrayList.length;
+
+    if(totallist > pageSize){
+        $('#pagination').show();
+    }
+    else{
+        $('#pagination').hide();
+    }
+    var sub_keys_list = get_sub_array(fullArrayList, startCount, endCount);
+    compactivityfilterList();
+    for(var y = 0;  y < pageSize; y++){
+        if(sub_keys_list[y] !=  undefined){
+            if(Object.keys(sub_keys_list[y])[0] == "unit_name"){
+               compactivityunitList(sub_keys_list[y]);
+            }    
+            else if(Object.keys(sub_keys_list[y])[0] == "level1_name"){
+               compactivitylevel1list(sub_keys_list[y]);
+            }    
+            else{
+               compactivitycompliancetasklist(sub_keys_list[y], acc_count);
+               acc_count++;
+            }
+        } 
+    }
+}
+
 
 function loadComplianceActivityReportList(data){
-    $('.tbody-compliance-activity-list tr').remove();
+    
     $(".grid-table-rpt").show();
+    $('.table-compliance-activity-list').empty();
     var sno = 0;
     
-    $.each(data, function(key, value) {
-        var tableRowHeading = $('#templates .table-compliance-activity-list .filter-heading-list');
-        var cloneHeading = tableRowHeading.clone();
-        $('.country-filter-name', cloneHeading).text(countriesNameVal);
-        $('.domain-filter-name', cloneHeading).text(domainNameVal);
-        $('.usertype-filter-name', cloneHeading).text(usertype);
-        $('.user-filter-name', cloneHeading).text(userval);
-        $('.fromdate-filter-name', cloneHeading).text(fromdate);
-        $('.todate-filter-name', cloneHeading).text(todate);
-
-        $('.compliance-activity-list .heading-list').append(cloneHeading);
-
-        var tableRowHeadingth = $('#templates .table-compliance-activity-list .table-heading-th');
-        var cloneHeadingth = tableRowHeadingth.clone();
-        $('.compliance-activity-list .heading-list').append(cloneHeadingth);
-
-        var tableRowUnit = $('#templates .table-compliance-activity-list .table-unit-heading');
-        var cloneUnit = tableRowUnit.clone();
-        $('.unit-heading', cloneUnit).text(data[key]['unit_name']);
-        $('.compliance-activity-list .heading-list').append(cloneUnit);
-
-        var level1list = data[key]['statutory_wise_compliances'];
-        var acc_count = 1;
+    $.each(data, function(key, value) {     
+        var level1list = data[key]['statutory_wise_compliances'];        
         $.each(level1list, function(ke, valu) { 
-            var tableRow = $('#templates .table-compliance-activity-list .table-level1-heading');
-            var clone = tableRow.clone();
-            $('.level1-heading', clone).text(ke);
-            $('.compliance-activity-list .heading-list').append(clone);
-
             var list = level1list[ke];
-            $.each(list, function(k, val){
-                var tableRowvalues = $('#templates .table-compliance-activity-list .tbody-activity-list');
-                var cloneval = tableRowvalues.clone();
-                sno = sno + 1;
-                $('.sno', cloneval).text(sno);
-                $('.compliance-task', cloneval).html(k);
-                var clist = list[k];
-                var count = 0;
-                
-                $.each(clist, function(k1, val1){
-                    if(count == 0){
-                        $('.compliance-date', cloneval).html(clist[k1]['activity_date']);
-                        $('.activity-status', cloneval).html(clist[k1]['activity_status']);
-                        $('.compliance-task-status', cloneval).html(clist[k1]['compliance_status']);
-                        $('.remarks', cloneval).html(clist[k1]['remarks']);                    
-                        $('.compliance-activity-list .table-compliance-activity-list').append(cloneval);                        
-                        $('.table-compliance-activity-list').append('<tbody class="accordion-content accordion-content'+acc_count+'"></tbody>');
-                        $('.accordion-content'+acc_count).addClass("default");
-                    }
-                    else{
-                        console.log('accordion-content'+acc_count);
-                        var tableRowvalues_ul = $('#templates .tree-tr');
-                        var cloneval_ul = tableRowvalues_ul.clone();
-                        $('.li-date', cloneval_ul).html(clist[k1]['activity_date']);
-                        $('.li-activitystatus', cloneval_ul).html(clist[k1]['activity_status']);
-                        $('.li-taskstatus', cloneval_ul).html(clist[k1]['compliance_status']);
-                        $('.li-remarks', cloneval_ul).html(clist[k1]['remarks']);  
-                        $('.accordion-content'+acc_count).append(cloneval_ul);   
-                    }
-                    count++;                    
-                });
-
-                acc_count++;
-                
-            });   
-            
-        }); 
-        $('#accordion').find('.accordion-toggle').click(function(){
-            //Expand or collapse this panel
-            $(this).next().slideToggle('fast');
-            //Hide the other panels
-            $(".accordion-content").not($(this).next()).slideUp('fast');
+            $.each(list, function(k, val){               
+                sno = sno + 1;                
+            });               
         });       
     });
+    loadresult(data);
     $(".total-records").html("Total : "+sno+" records")
 }
 
-$("#accordion-bgwhite").find(".accordion-toggle-bgwhite").click(function(){
-    $(this).next('tbody').slideToggle('fast');
-    $(".accordion-content-bgwhite").not($(this).next()).slideUp('fast');
-});
+
 
 
 
