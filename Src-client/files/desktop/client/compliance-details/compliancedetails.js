@@ -91,9 +91,11 @@ function unitList(data){
 
 function complianceListArray(data){
 
-  var vDate = '';
+  var vDate = '-';
   if(data["validity_date"] != null) vDate = data["validity_date"];
-  var dueDate = data["due_date"];
+  var dueDate = '-';
+  if(data["due_date"] != null) dueDate = data["due_date"];
+
   var completionDate = '';
   if(data["completion_date"] != null) completionDate = data["completion_date"];
   
@@ -365,7 +367,8 @@ $("#unitval").keyup(function(){
  $('#ulist_unit').empty();
   if(textval.length>0){
     for(var i in units){
-      if (~units[i]["unit_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],units[i]["unit_name"]]);
+      var combineUnitName = units[i]['unit_code']+"-"+units[i]['unit_name'];
+      if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],combineUnitName]);
     }
     var str='';
     for(var i in suggestions){

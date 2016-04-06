@@ -136,8 +136,11 @@ function loadresult(filterList){
           $('.tbl_frequency', clone3).text(compliances[i]["compliance_frequency"]);
           $('.tbl_statutorydate', clone3).text(statutorydate);
           $('.tbl_triggerbefore', clone3).text(triggerdate);
-          $('.tbl_duedate', clone3).text(compliances[i]["due_date"]);
-          var vDays = '';
+          var dDays = '-';
+          if(compliances[i]["due_date"] != null) dDays = compliances[i]["due_date"];
+          $('.tbl_duedate', clone3).text(dDays);
+
+          var vDays = '-';
           if(compliances[i]["validity_date"] != null) vDays = compliances[i]["validity_date"];
           $('.tbl_validitydate', clone3).text(vDays);
           $('.tbody-assignee').append(clone3);
@@ -252,7 +255,6 @@ function activate_domain (element,checkval,checkname) {
 
 //businessgroups-----------------------------------------
 $("#businessgroupval").keyup(function(){
-  alert("enter")
   var textval = $(this).val();
   $("#autocomplete_businessgroup").show();
   var bgroups = businessGroupsList;
@@ -269,7 +271,6 @@ $("#businessgroupval").keyup(function(){
     $('#ulist_businessgroup').append(str);
     $("#businessgroup").val('');
     }else{
-      alert("else")
       $("#businessgroup").val('');
       $("#autocomplete_businessgroup").hide();
     }
@@ -351,7 +352,8 @@ $("#unitval").keyup(function(){
  $('#ulist_unit').empty();
   if(textval.length>0){
     for(var i in units){
-      if (~units[i]["unit_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],units[i]["unit_name"]]); 
+      var combineUnitName = units[i]['unit_code']+"-"+units[i]['unit_name'];
+      if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],combineUnitName]); 
     }
     var str='';
     for(var i in suggestions){

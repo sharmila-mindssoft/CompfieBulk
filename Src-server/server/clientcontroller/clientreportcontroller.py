@@ -105,7 +105,7 @@ def get_unitwise_compliance(db, request, session_user):
     country_id = request.country_id
     domain_id = request.domain_id
     business_group_id = request.business_group_id
-    legal_entity_id = request.division_id
+    legal_entity_id = request.legal_entity_id
     division_id = request.division_id
     unit_id = request.unit_id
     user_id = request.user_id
@@ -128,7 +128,7 @@ def get_assigneewise_compliance(db, request, session_user):
     country_id = request.country_id
     domain_id = request.domain_id
     business_group_id = request.business_group_id
-    legal_entity_id = request.division_id
+    legal_entity_id = request.legal_entity_id
     division_id = request.division_id
     unit_id = request.unit_id
     user_id = request.user_id

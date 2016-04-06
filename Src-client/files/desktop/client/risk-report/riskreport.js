@@ -10,11 +10,11 @@ var divisionsList
 var unitsList;
 var actList;
 
-
 function clearMessage() {
   $(".error-message").hide();
   $(".error-message").text("");
 }
+
 function displayMessage(message) {
   $(".error-message").text(message);
   $(".error-message").show();
@@ -88,41 +88,31 @@ function loadresult(complianceList, heading){
         $('.tbl_unitheading', clone2).html('<abbr class="page-load tipso_style" title="'+ uAddress +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+uName);
         $('.tbody-unit').append(clone2);
 
-
-      var uCompliences = statutoryUnits[statutoryUnit][j]["compliances"];
-
-      for(i=0; i<uCompliences.length; i++){
-
-        var tableRow3=$('#unit-content-templates .table-unit-content .table-row-unit-content');
-        var clone3=tableRow3.clone();
-
-        $('.tbl_sno', clone3).text(compliance_count+1);
-        $('.tbl_statutoryprovision', clone3).text(uCompliences[i]["statutory_mapping"]);
-        $('.tbl_compliance', clone3).text(uCompliences[i]["compliance_name"]);
-        $('.tbl_description', clone3).text(uCompliences[i]["description"]);
-        $('.tbl_penalconsequences', clone3).text(uCompliences[i]["penal_consequences"]);
-        $('.tbl_frequency', clone3).text(uCompliences[i]["compliance_frequency"]);
-        $('.tbl_repeats', clone3).text(uCompliences[i]["repeats"]);
-
-        $('.tbody-unit').append(clone3);
-        compliance_count++;
+        var uCompliences = statutoryUnits[statutoryUnit][j]["compliances"];
+        for(i=0; i<uCompliences.length; i++){
+          var tableRow3=$('#unit-content-templates .table-unit-content .table-row-unit-content');
+          var clone3=tableRow3.clone();
+          $('.tbl_sno', clone3).text(compliance_count+1);
+          $('.tbl_statutoryprovision', clone3).text(uCompliences[i]["statutory_mapping"]);
+          $('.tbl_compliance', clone3).text(uCompliences[i]["compliance_name"]);
+          $('.tbl_description', clone3).text(uCompliences[i]["description"]);
+          $('.tbl_penalconsequences', clone3).text(uCompliences[i]["penal_consequences"]);
+          $('.tbl_frequency', clone3).text(uCompliences[i]["compliance_frequency"]);
+          $('.tbl_repeats', clone3).text(uCompliences[i]["repeats"]);
+          $('.tbody-unit').append(clone3);
+          compliance_count++;
+        }
       }
-    }
     }
   }
 
   if(compliance_count == 0){
-        var tableRow4=$('#nocompliance-templates .table-nocompliances-list .table-row');
-        var clone4=tableRow4.clone();
-        $('.tbody-compliance').append(clone4);
-        $('.tbl_norecords', clone4).text("No Records Found");
-        $('.tbody-unit').append(clone4);
-
-       /* var tableRow4=$('#nocompliance-templates .table-nocompliances-list .table-row');
-        var clone4=tableRow4.clone();
-        $('.tbl_description', clone4).text("No Compliance Found");
-        $('.tbody-unit').append(clone4);*/
-      }
+    var tableRow4=$('#nocompliance-templates .table-nocompliances-list .table-row');
+    var clone4=tableRow4.clone();
+    $('.tbody-compliance').append(clone4);
+    $('.tbl_norecords', clone4).text("No Records Found");
+    $('.tbody-unit').append(clone4);
+  }
 
   if(compliance_count >= 1){
     var tableRowCount=$('#compliance-count-templates .table-unit-name .table-row-unit-name');
@@ -376,7 +366,8 @@ $("#unitval").keyup(function(){
  $('#ulist_unit').empty();
   if(textval.length>0){
     for(var i in units){
-      if (~units[i]["unit_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],units[i]["unit_name"]]);
+      var combineUnitName = units[i]['unit_code']+"-"+units[i]['unit_name'];
+      if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],combineUnitName]);
     }
     var str='';
     for(var i in suggestions){
