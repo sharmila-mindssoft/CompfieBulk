@@ -3433,7 +3433,6 @@ class ClientDatabase(Database):
         final = []
         filter_types = []
         for r in result :
-            print r
             data = r.data
             for d in data :
                 if (
@@ -6747,23 +6746,23 @@ class ClientDatabase(Database):
         values = [
             notification_id, 0, current_time_stamp
         ]
-        if action == "Concur":
+        if action.lower() == "concur":
             values.append(int(history["concurred_by"]))
-        elif action == "Approve":
+        elif action.lower() == "approve":
             values.append(int(history["approved_by"]))
-        elif action == "Concurred":
+        elif action.lower() == "concurred":
             values.append(int(history["completed_by"]))
-        elif action == "ApprovedToAssignee":
+        elif action.lower() == "approvedtoassignee":
             values.append(int(history["completed_by"]))
-        elif action == "ApprovedToConcur":
+        elif action.lower() == "approvedtoocncur":
             values.append(int(history["concurred_by"]))
-        elif action == "ConcurRejected":
+        elif action.lower() == "concurrejected":
             values.append(int(history["completed_by"]))
-        elif action == "ApproveRejectedToAssignee":
+        elif action.lower() == "approverejectedtoassignee":
             values.append(int(history["completed_by"]))
-        elif action == "ApproveRejectedToConcur":
+        elif action.lower() == "approverejectedtoconcur":
             values.append(int(history["concurred_by"]))
-        elif action == "Started":
+        elif action.lower() == "started":
             values.append(int(history["completed_by"]))
         return self.insert(self.tblNotificationUserLog, columns, values)
 
@@ -7131,7 +7130,7 @@ class ClientDatabase(Database):
                 user_ids = str(assignee_id)
             else:
                 user_ids = self.get_unit_user_ids(unit_id)
-            user_ids_list = [] if user_ids is None else user_ids.split(",")
+            user_ids_list = [] if user_ids is None else [int(x) for x in user_ids.split(",")]
             assignee_wise_compliances_count = []
             for user_id in user_ids_list:
                 assigned_compliance_ids, reassigned_compliance_ids = self.get_user_assigned_reassigned_ids(
@@ -7151,7 +7150,7 @@ class ClientDatabase(Database):
                         reassigned_compliance_ids
                     )
                 if all_compliance_ids is not None:
-                    client_statutory_id_columns = "group_concat(client_statutory_id)"
+                    client_statutory_id_columns = "group_concat(distinct client_statutory_id)"
                     client_statutory_id_condition = "compliance_id in (%s)" % all_compliance_ids
                     client_statutory_id_rows = self.get_data(
                         self.tblClientCompliances,
@@ -7159,8 +7158,7 @@ class ClientDatabase(Database):
                         client_statutory_id_condition
                     )
 
-                    domain_columns = "group_concat(client_statutory_id), domain_id, \
-                    (select domain_name from %s d where d.domain_id = cs.domain_id)" % self.tblDomains
+                    domain_columns = "group_concat(client_statutory_id), domain_id"
                     domain_condition = "unit_id = '%d'" % unit_id
                     domain_condition += " and client_statutory_id in (%s)" % (
                         client_statutory_id_rows[0][0]
@@ -7172,7 +7170,9 @@ class ClientDatabase(Database):
                     for domain in domain_rows:
                         unit_users_column = "user_id, "
                         domain_id = domain[1]
-                        domain_name = domain[2]
+                        if domain_id is None:
+                            continue
+                        domain_name = self.get_data(self.tblDomains, "domain_name", "domain_id = '%d'" % domain_id)[0][0]
                         client_statutory_ids = domain[0]
                         complied = inprogress = not_complied = delayed_compliance = total = 0
                         if client_statutory_ids is not None:
@@ -7188,7 +7188,7 @@ class ClientDatabase(Database):
                             from_date = result[0][1][0][1][0]["start_date"]
                             to_date = result[0][1][0][1][0]["end_date"]
                             compliance_ids = client_compliance_rows[0][0]
-                            columns = "sum(case when (approve_status = 1 and (due_date < completion_date or \
+                            columns = "sum(case when (approve_status = 1 and (due_date > completion_date or \
                             due_date = completion_date)) then 1 else 0 end) as complied, \
                             sum(case when ((approve_status = 0 or approve_status is null) and \
                             due_date > now()) then 1 else 0 end) as Inprogress, \
@@ -7197,16 +7197,16 @@ class ClientDatabase(Database):
                             sum(case when (approve_status = 1 and completion_date > due_date) then 1 else 0 end)\
                             as DelayedCompliance"
                             condition = "compliance_id in (%s) and due_date \
-                            between '%s' and '%s'" % (
-                                compliance_ids, from_date, to_date
+                            between '%s' and '%s' and completed_by = '%d'" % (
+                                compliance_ids, from_date.date(), to_date.date(),  user_id
                             )
                             rows = self.get_data(
                                 self.tblComplianceHistory, columns, condition
                             )
-                            complied = int(rows[0][0])
-                            inprogress = int(rows[0][1])
-                            not_complied = int(rows[0][2])
-                            delayed_compliance = int(rows[0][3])
+                            complied = int(rows[0][0]) if rows[0][0] is not None else 0
+                            inprogress = int(rows[0][1]) if rows[0][1] is not None else 0
+                            not_complied = int(rows[0][2]) if rows[0][2] is not None else 0
+                            delayed_compliance = int(rows[0][3]) if rows[0][3] is not None else 0
                             total = complied + inprogress + not_complied + delayed_compliance
                         reassigned_compliances = []
                         delayed_reassigned_count = 0
@@ -7240,11 +7240,11 @@ class ClientDatabase(Database):
                                 reassigned_compliances.append(
                                     dashboard.RessignedCompliance(
                                         compliance_name=compliance_name,
-                                        reassigned_from=rh_rows[0][1],
-                                        start_date=start_date,
-                                        due_date=due_date,
-                                        reassigned_date=rh_rows[0][0],
-                                        completed_date=completed_on
+                                        reassigned_from=rh_rows[0][2],
+                                        start_date=self.datetime_to_string(start_date),
+                                        due_date=self.datetime_to_string(due_date),
+                                        reassigned_date=self.datetime_to_string(rh_rows[0][0]),
+                                        completed_date=self.datetime_to_string(completed_on)
                                     )
                                 )
                         delayed_compliances_obj = dashboard.DelayedCompliance(
@@ -7263,9 +7263,9 @@ class ClientDatabase(Database):
                                 not_complied_count=not_complied
                             )
                         )
-                    year_wise_compliance_count = self.get_year_wise_assignee_compliances(
-                        country_id, domain_id, client_id, compliance_ids
-                    )
+                        year_wise_compliance_count = self.get_year_wise_assignee_compliances(
+                            country_id, domain_id, client_id, compliance_ids
+                        )
                     assignee_wise_compliances_count.append(
                         dashboard.AssigneeWiseDetails(
                             user_id=int(user_id),
@@ -7375,7 +7375,7 @@ class ClientDatabase(Database):
                 join_condition = ["ch.compliance_id = c.compliance_id"]
                 where_condition = "completed_by = '{}' and unit_id = {} and \
                 due_date  between '{}' and '{}' and statutory_mapping like '{}{}'".format(
-                    assignee_id, unit_id, from_date, to_date, level_1_statutory, "%"
+                    assignee_id, unit_id, from_date.date(), to_date.date(), level_1_statutory, "%"
                 )
 
                 complied_condition = "%s and approve_status = 1 and completed_on <= due_date" % where_condition

@@ -18,11 +18,11 @@ from email.MIMEText import MIMEText
 
 mysqlHost = "localhost"
 mysqlUser = "root"
-mysqlPassword = "mnd50ftadm1n"
+mysqlPassword = "123456"
 mysqlDatabase = "compfie_knowledge"
 mysqlPort = 3306
 
-CLIENT_URL = "http://45.118.182.47:8082/"
+CLIENT_URL = "http://localhost:8080/"
 
 
 class EmailNotification(object):
