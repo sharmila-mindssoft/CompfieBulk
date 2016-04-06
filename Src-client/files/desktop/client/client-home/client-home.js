@@ -199,7 +199,7 @@ function ChartInput () {
         return this.filter_type;
     }
 
-    this.setBusinessGroups = function (v, isAdd) {
+    this.setBusinessGroups = function (v, isAdd, isSingle) {
         v = parseInt(v);
         index = this.business_groups.indexOf(v)
         if (index >= 0 && !isAdd) {
@@ -223,16 +223,21 @@ function ChartInput () {
         if (this.business_groups.length > 0)
             return copyArray(this.business_groups);
         else {
-            if (this.filter_type == "business_group")
-                return get_ids(
+            if (this.filter_type == "business_group"){
+                ids = get_ids(
                     CHART_FILTERS_DATA.business_groups, "business_group_id"
                 );
+                if (this.chart_type == "compliance_status")
+                    return ids;
+                else
+                    return [ids[0]];
+            }
             else
                 return [];
         }
     }
 
-    this.setLegalEntities = function (v, isAdd) {
+    this.setLegalEntities = function (v, isAdd, isSingle) {
         v = parseInt(v);
         index = this.legal_entities.indexOf(v)
         if (index >= 0 && !isAdd) {
@@ -256,16 +261,21 @@ function ChartInput () {
         if (this.legal_entities.length > 0)
             return copyArray(this.legal_entities);
         else {
-            if (this.filter_type == "legal_entity")
-                return get_ids(
+            if (this.filter_type == "legal_entity") {
+                ids = get_ids(
                     CHART_FILTERS_DATA.legal_entities, "legal_entity_id"
                 );
+                if (this.chart_type == "compliance_status")
+                    return ids;
+                else
+                    return [ids[0]]
+            }
             else
                 return [];
         }
     }
 
-    this.setDivisions = function (v, isAdd) {
+    this.setDivisions = function (v, isAdd, isSingle) {
         v = parseInt(v);
         index = this.divisions.indexOf(v)
         if (index >= 0 && !isAdd) {
@@ -290,10 +300,15 @@ function ChartInput () {
         if (this.divisions.length > 0)
             return copyArray(this.divisions);
         else {
-            if (this.filter_type == "division")
-                return get_ids(
+            if (this.filter_type == "division") {
+                ids = get_ids(
                     CHART_FILTERS_DATA.divisions, "division_id"
                 );
+                if (this.chart_type == "compliance_status")
+                    return ids;
+                else
+                    return [ids[0]]
+            }
             else
                 return [];
         }
@@ -321,6 +336,7 @@ function ChartInput () {
     }
 
     this.getUnits = function () {
+        console.log(this.units.length)
         if (this.units.length > 0)
             return copyArray(this.units);
         else {
@@ -328,8 +344,10 @@ function ChartInput () {
                 ids = get_ids(
                     CHART_FILTERS_DATA.units, "unit_id"
                 );
-                //console.log(ids)
-                return ids;
+                if (this.chart_type == "compliance_status")
+                    return ids;
+                else
+                    return [ids[0]]
             }
             else
                 return [];
@@ -386,7 +404,9 @@ function parseComplianceStatusApiInput () {
     var domainIds = chartInput.getDomains();
     // TODO: Validation of empty Country / Domain list.
     var filter_type = chartInput.getFilterType();
+    console.log(filter_type)
     var filterIds = getFilterIds(filter_type);
+    console.log(filterIds)
     var filterType = filter_type.replace("_", "-");
     filterType = hyphenatedToUpperCamelCase(filterType);
     var fromDate = chartInput.getFromDate();
@@ -670,7 +690,6 @@ function updateComplianceStatusStackBarChart(data) {
         chart: {
             renderTo: "status-container",
             type: 'bar',
-            width: '850'
         },
         title: {
             text: chartTitle
@@ -795,7 +814,6 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
         colors:['#A5D17A','#F58835', '#F0F468', '#F32D2B'],
         chart: {
             renderTo: "status-container",
-            width: '850'
         },
         title: {
             text: chartTitle
@@ -1402,12 +1420,12 @@ function unitWiseEscalationDrillDown(status, data){
 function escalationDrilldown(status, data){
     var sno = 1;
     var count = 1;
-    
+
     if(status == "not_complied"){
         $(".escalation-drilldown-list .td-escalation").append('<table class="inner-table-notcomplied-escalation-list js-filtertable_not_c"><thead class="thead-itncel"></thead></table>');
         var h2heading = $('#templates .escalation-status .tr-h2');
-        var cloneh2 = h2heading.clone();        
-        $(".escalation-status-value", cloneh2).html("Not Complied compliances");        
+        var cloneh2 = h2heading.clone();
+        $(".escalation-status-value", cloneh2).html("Not Complied compliances");
         $(".thead-itncel").append(cloneh2);
 
         var tableHeading = $('#templates .escalation-status .tr-heading');
@@ -1423,7 +1441,7 @@ function escalationDrilldown(status, data){
         $(".inner-table-notcomplied-escalation-list .division-row .filter-text-box").addClass("js-filter_not_c");
         $(".inner-table-notcomplied-escalation-list .type-row .filter-text-box").addClass("js-filter_not_c");
         $(".inner-table-notcomplied-escalation-list .compliance-row .filter-text-box").addClass("js-filter_not_c");
-        $(".inner-table-notcomplied-escalation-list .assigned-to-row .filter-text-box").addClass("js-filter_not_c");        
+        $(".inner-table-notcomplied-escalation-list .assigned-to-row .filter-text-box").addClass("js-filter_not_c");
         $(".inner-table-notcomplied-escalation-list .over-due-row .filter-text-box").addClass("js-filter_not_c");
 
         if(data[status].length > 0){
@@ -1485,8 +1503,8 @@ function escalationDrilldown(status, data){
     if(status == "delayed"){
         $(".escalation-drilldown-list .td-escalation").append('<table class="inner-table-delayed-escalation-list js-filtertable_delayed"><thead-itdel class="thead-itdel"></thead></table>');
         var h2heading = $('#templates .escalation-status .tr-h2');
-        var cloneh2 = h2heading.clone();        
-        $(".escalation-status-value", cloneh2).html("Delayed compliances");        
+        var cloneh2 = h2heading.clone();
+        $(".escalation-status-value", cloneh2).html("Delayed compliances");
         $(".thead-itdel").append(cloneh2);
 
         var tableHeading = $('#templates .escalation-status .tr-heading');
@@ -1502,7 +1520,7 @@ function escalationDrilldown(status, data){
         $(".inner-table-delayed-escalation-list .division-row .filter-text-box").addClass("js-filter_delayed");
         $(".inner-table-delayed-escalation-list .type-row .filter-text-box").addClass("js-filter_delayed");
         $(".inner-table-delayed-escalation-list .compliance-row .filter-text-box").addClass("js-filter_delayed");
-        $(".inner-table-delayed-escalation-list .assigned-to-row .filter-text-box").addClass("js-filter_delayed");        
+        $(".inner-table-delayed-escalation-list .assigned-to-row .filter-text-box").addClass("js-filter_delayed");
         $(".inner-table-delayed-escalation-list .delayed-by-row .filter-text-box").addClass("js-filter_delayed");
 
         if(data[status].length > 0){
@@ -2220,7 +2238,6 @@ function updateEscalationChart(data) {
         chart: {
             type: 'column',
             renderTo: "status-container",
-            width: '850'
         },
         title: {
             text: chartTitle
@@ -2875,7 +2892,7 @@ function showPopupCompDelayed(){
     //         $('.comp-delayed-startdate', cloneval).html(val['start_date']);
     //         $('.comp-delayed-duedate', cloneval).html(val['due_date']);
     //         $('.comp-delayed-reassigned-date', cloneval).html(val['reassigned_from']);
-    //         $('.comp-delayed-completed-date', cloneval).html(val['completion_date']);           
+    //         $('.comp-delayed-completed-date', cloneval).html(val['completion_date']);
     //         $('.tbody-popup-reassigned-list').append(cloneval);
     //     });
     // });
@@ -3340,7 +3357,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
         single: isSingleSelect,
         placeholder: "Select Business Group",
         onClick: function (business_group) {
-            chartInput.setBusinessGroups(business_group.value, business_group.checked);
+            chartInput.setBusinessGroups(business_group.value, business_group.checked, isSingleSelect);
         },
         onCheckAll: function () {
             business_groups = get_ids(
@@ -3359,7 +3376,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
         single: isSingleSelect,
         placeholder: "Select Legal Entity",
         onClick: function (legal_entity) {
-            chartInput.setLegalEntities(legal_entity.value, legal_entity.checked);
+            chartInput.setLegalEntities(legal_entity.value, legal_entity.checked, isSingleSelect);
         },
         onCheckAll: function () {
             legal_entities = get_ids(
@@ -3378,7 +3395,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
         single: isSingleSelect,
         placeholder: "Select Division",
         onClick: function (division) {
-            chartInput.setDivisions(division.value, division.checked);
+            chartInput.setDivisions(division.value, division.checked, isSingleSelect);
         },
         onCheckAll: function () {
             divisions = get_ids(CHART_FILTERS_DATA.divisions, "division_id");

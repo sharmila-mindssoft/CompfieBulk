@@ -6,26 +6,6 @@
 
 # # sudo chmod 777 daily_process.py
 
-# # client db details from server
-# # loop every client
-# # ## Task start
-# # check current date with due date, then start task
-# # insert record in history table
-# # update assigned compliance (due_date)
-# # insert record in notification
-# # Email to assignee, concurrance
-
-# # ##  Before due_date (from settings)
-# # save notification
-# # send mail (assignee, concurrence, approve)
-
-# #  ## After due_date till get approve
-# # save notifocation
-# # send mail (assignee, concurrence, approve)
-
-# ## before contract period expiration
-# # Validate datetime based on country
-
 import MySQLdb as mysql
 import datetime
 import json
@@ -38,11 +18,9 @@ from email.MIMEText import MIMEText
 
 mysqlHost = "localhost"
 mysqlUser = "root"
-mysqlPassword = "123456"
+mysqlPassword = "mnd50ftadm1n"
 mysqlDatabase = "compfie_knowledge"
 mysqlPort = 3306
-
-CLIENT_URL = "http://127.0.0.1:8082/"
 
 
 class EmailNotification(object):
