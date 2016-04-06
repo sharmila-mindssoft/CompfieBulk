@@ -46,7 +46,7 @@ function getComplianceDetailsReportFilters(){
   );
 }
 
-function convert_date (data){
+/*function convert_date (data){
   var date = data.split("-");
   var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   for(var j=0;j<months.length;j++){
@@ -62,7 +62,7 @@ function convert_date (data){
 
 function daydiff(first, second) {
     return (second-first)/(1000*60*60*24)
-}
+}*/
 
 
 function filterList(data){
@@ -118,6 +118,11 @@ function complianceListArray(data){
   sno++;
 }
 
+function get_sub_array(object, start, end){
+    if(!end){ end = -1;}
+    return object.slice(start, end);
+}
+
 function showloadrecord() {
   startCount = endCount;
   endCount = startCount + pageSize;
@@ -152,9 +157,16 @@ $(function() {
     });
 });
 
-function get_sub_array(object, start, end){
-    if(!end){ end = -1;}
-    return object.slice(start, end);
+function loadTotalCount(complianceList){
+  $("#pagination").hide();
+  var totalrecords = 0;
+  $(".tbody-unit").find("tbody").remove();
+  $.each(complianceList, function(i, val){
+    var complianceCount = val['compliances'].length;
+    totalrecords = totalrecords + complianceCount;    
+  });    
+  loadArray(complianceList);    
+  $('.compliance_count').text("Total : "+ totalrecords +" records");
 }
 
 function loadArray(complianceList) {   
@@ -190,18 +202,6 @@ function loadArray(complianceList) {
       }    
     } 
   }
-}
-
-function loadTotalCount(complianceList){
-    $("#pagination").hide();
-    var totalrecords = 0;
-    $(".tbody-unit").find("tbody").remove();
-    $.each(complianceList, function(i, val){
-      var complianceCount = val['compliances'].length;
-      totalrecords = totalrecords + complianceCount;    
-    });    
-    loadArray(complianceList);    
-    $('.compliance_count').text("Total : "+ totalrecords +" records");
 }
 
 function loadCompliance(reportType){
