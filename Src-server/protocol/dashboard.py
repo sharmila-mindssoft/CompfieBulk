@@ -67,7 +67,8 @@ from protocol.parse_structure import (
     parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_dashboard_Compliance,
     parse_structure_VectorType_CustomTextType_500,
     parse_structure_OptionalType_CustomTextType_100,
-    parse_structure_OptionalType_VectorType_CustomTextType_500
+    parse_structure_OptionalType_VectorType_CustomTextType_500,
+    parse_structure_MapType_CustomTextType_250_VectorType_RecordType_dashboard_Compliance
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -138,7 +139,8 @@ from protocol.to_structure import (
     to_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_dashboard_Compliance,
     to_structure_VectorType_CustomTextType_500,
     to_structure_OptionalType_CustomTextType_100,
-    to_structure_OptionalType_VectorType_CustomTextType_500
+    to_structure_OptionalType_VectorType_CustomTextType_500,
+    to_structure_MapType_CustomTextType_250_VectorType_RecordType_dashboard_Compliance
 )
 
 #
@@ -1167,13 +1169,13 @@ class ApplicableDrillDown(object):
         level1_statutory_name = data.get("level1_statutory_name")
         level1_statutory_name = parse_structure_Text(level1_statutory_name)
         compliances = data.get("compliances")
-        compliances = parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_dashboard_Compliance(compliances)
+        compliances = parse_structure_MapType_CustomTextType_250_VectorType_RecordType_dashboard_Compliance(compliances)
         return ApplicableDrillDown(level1_statutory_name, compliances)
 
     def to_structure(self):
         return {
             "level1_statutory_name": to_structure_Text(self.level1_statutory_name),
-            "compliances": to_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_dashboard_Compliance(self.compliances),
+            "compliances": to_structure_MapType_CustomTextType_250_VectorType_RecordType_dashboard_Compliance(self.compliances),
         }
 
 #

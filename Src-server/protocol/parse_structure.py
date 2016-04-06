@@ -1121,6 +1121,16 @@ def parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_dashboa
         dict[key] = value
     return dict
 
+def parse_structure_MapType_CustomTextType_250_VectorType_RecordType_dashboard_Compliance(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items():
+        key = parse_structure_CustomTextType_250(key)
+        value = parse_structure_VectorType_RecordType_dashboard_Compliance(value)
+        dict[key] = value
+    return dict
+
+
 def parse_structure_VectorType_RecordType_clientadminsettings_LICENCE_HOLDER(data):
     data = parse_list(data, 0)
     lst = []
@@ -3976,4 +3986,3 @@ def parse_structure_VectorType_RecordType_mobile_ComplianceHistory(data):
     for item in data :
         lst.append(parse_structure_RecordType_mobile_ComplianceHistory(item))
     return lst
-    
