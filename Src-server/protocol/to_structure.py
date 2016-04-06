@@ -1198,6 +1198,14 @@ def to_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_dashboard_
         dict[key] = value
     return dict
 
+def to_structure_MapType_CustomTextType_250_VectorType_RecordType_dashboard_Compliance(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items():
+        key = to_structure_CustomTextType_250(key)
+        value = to_structure_VectorType_RecordType_dashboard_Compliance(value)
+        dict[key] = value
+    return dict
 
 def to_structure_VectorType_RecordType_clientadminsettings_LICENCE_HOLDER(data):
     data = parse_list(data, 0)

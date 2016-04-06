@@ -4364,7 +4364,8 @@ class ClientDatabase(Database):
             T4.statutory_mapping, T4.statutory_provision,\
             T4.compliance_task, T4.compliance_description,  \
             T4.document_name, T4.format_file, T4.format_file_size, T4.penal_consequences, \
-            T4.statutory_dates, T4.repeats_every, T4.duration, T4.is_active \
+            T4.statutory_dates, T4.repeats_every, T4.duration, T4.is_active, \
+            (select group_concat(unit_code, ' - ', unit_name) from tbl_units where unit_id =  T3.unit_id)\
             FROM tbl_client_compliances T1 \
             INNER JOIN tbl_client_statutories T2 \
             ON T2.client_statutory_id = T1.client_statutory_id \
@@ -4428,14 +4429,14 @@ class ClientDatabase(Database):
             "statutory_mapping", "statutory_provision", "compliance_task",
             "compliance_description", "document_name", "format_file",
             "format_file_size", "penal_consequences", "statutory_dates",
-            "repeats_every", "duration", "is_active"
+            "repeats_every", "duration", "is_active", "unit_name"
         ]
         result = self.convert_to_dict(rows, columns)
 
         level_1_wise_compliance = {}
 
         for r in result :
-            unit_id = int(r["unit_id"])
+            unit_name = r["unit_name"]
             mappings = r["statutory_mapping"].split(">>")
             if len(mappings) >= 1 :
                 level_1 = mappings[0]
@@ -4492,18 +4493,18 @@ class ClientDatabase(Database):
             if level_1_wise_data is None :
                 compliance_dict = {}
                 compliance_list = [compliance]
-                compliance_dict[unit_id] = compliance_list
+                compliance_dict[unit_name] = compliance_list
                 level_1_wise_data = dashboard.ApplicableDrillDown(
                     level_1, compliance_dict
                 )
             else :
                 compliance_dict = level_1_wise_data.compliances
-                compliance_list = compliance_dict.get(unit_id)
+                compliance_list = compliance_dict.get(unit_name)
                 if compliance_list is None :
                     compliance_list = []
                 compliance_list.append(compliance)
 
-                compliance_dict[unit_id] = compliance_list
+                compliance_dict[unit_name] = compliance_list
                 level_1_wise_data.compliances = compliance_dict
 
             level_1_wise_compliance[level_1] = level_1_wise_data
