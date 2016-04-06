@@ -1870,10 +1870,7 @@ class ClientDatabase(Database):
             condition += " AND statutory_mapping like '%s%s'" % (
                 level_1_statutory_name, "%"
             )
-        # if frequency_name is not None:
-        #     condition = "frequency like '%s%s%s'" % (
-        #         "%", frequency_name, "%"
-        #     )
+
         if len(compliance_id_rows) > 0 :
             compliance_ids = ",".join(str(x) for x in compliance_id_rows)
             if compliance_ids is not None:
@@ -2093,7 +2090,7 @@ class ClientDatabase(Database):
                     if from_date <= iter_due_date <= to_date:
                         due_dates.append(iter_due_date)
             elif repeat_by == 3: # Years
-                previous_due_date = datetime.datetime(
+                previous_due_date = datetime.date(
                     due_date.year - repeat_every, due_date.month, due_date.day
                 )
                 if from_date <= previous_due_date  <= to_date:
@@ -7098,9 +7095,9 @@ class ClientDatabase(Database):
                 user_ids = str(assignee_id)
             else:
                 user_ids = self.get_unit_user_ids(unit_id)
-
+            user_ids_list = [] if user_ids is None else user_ids.split(",")
             assignee_wise_compliances_count = []
-            for user_id in user_ids.split(","):
+            for user_id in user_ids_list:
                 assigned_compliance_ids, reassigned_compliance_ids = self.get_user_assigned_reassigned_ids(
                     user_id
                 )
