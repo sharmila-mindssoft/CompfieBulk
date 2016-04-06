@@ -29,7 +29,7 @@ KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
 FORMAT_DOWNLOAD_URL = "compliance_format"
 CLIENT_LOGO_PATH = os.path.join(ROOT_PATH, "clientlogo")
 LOGO_URL = "knowledge/clientlogo"
-LOCAL_TIMEZONE = pytz.timezone ("Asia/Kolkata")
+LOCAL_TIMEZONE = pytz.timezone("Asia/Kolkata")
 
 class Database(object) :
     def __init__(
@@ -257,6 +257,8 @@ class Database(object) :
                 query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
+
+        # print query
         return self.execute(query)
 
     def delete(self, table, condition, client_id=None):
@@ -5052,15 +5054,17 @@ class KnowledgeDatabase(Database):
 
         submission_type = data.submission_type
         client_statutory_id = data.client_statutory_id
+        created_on = str(self.get_date_time())
         if submission_type == "Save" :
             if client_statutory_id is None:
                 self.save_client_statutories(data, user_id)
             else :
                 assigned_statutories = data.assigned_statutories
-                self.update_client_compliances(
-                    client_statutory_id,
-                    assigned_statutories, user_id
-                )
+                # self.update_client_compliances(
+                #     client_statutory_id,
+                #     assigned_statutories, user_id
+                # )
+                self.save_update_client_complainces(client_statutory_id, assigned_statutories, user_id, created_on)
         elif submission_type == "Submit" :
             assigned_statutories = data.assigned_statutories
             self.submit_client_statutories_compliances(client_statutory_id, assigned_statutories, user_id)
@@ -5078,6 +5082,7 @@ class KnowledgeDatabase(Database):
         field = "(client_statutory_id, client_id, geography_id,\
             country_id, domain_id, unit_id, submission_type,\
             created_by, created_on)"
+        value_list = []
         for unit_id in unit_ids :
             client_statutory_id = self.get_new_id("client_statutory_id", self.tblClientStatutories)
             created_on = str(self.get_date_time())
@@ -5087,17 +5092,34 @@ class KnowledgeDatabase(Database):
             )
             if (self.save_data(self.tblClientStatutories, field, values)) :
                 assigned_statutories = data.assigned_statutories
-                self.save_client_compliances(client_statutory_id, assigned_statutories, user_id, created_on)
+                # self.save_client_compliances(client_statutory_id, assigned_statutories, user_id, created_on)
+                print "unit_id ", unit_id
 
-    def save_client_compliances(self, client_statutory_id, data, user_id, created_on):
-        field = "(client_compliance_id, client_statutory_id, compliance_id, \
-            statutory_id, statutory_applicable, statutory_opted, \
-            not_applicable_remarks, \
-            compliance_applicable, compliance_opted, \
-            created_by, created_on)"
+                value_list.extend(self.save_update_client_complainces(client_statutory_id, assigned_statutories, user_id, created_on))
+        self.execute_bulk_insert(value_list)
+
+    def execute_bulk_insert(self, value_list) :
+        table = "tbl_client_compliances"
+        column = [
+            "client_compliance_id", "client_statutory_id",
+            "compliance_id", "statutory_id", "statutory_applicable",
+            "statutory_opted", "not_applicable_remarks",
+            "compliance_applicable", "compliance_opted",
+            "created_by", "created_on"
+        ]
+        update_column = [
+            "statutory_id", "statutory_applicable",
+            "statutory_opted", "not_applicable_remarks",
+            "compliance_applicable", "compliance_opted"
+        ]
+        self.on_duplicate_key_update(table, ",".join(column), value_list, update_column)
+
+    def save_update_client_complainces(self, client_statutory_id, data, user_id, created_on):
+
+        value_list = []
         for d in data :
-            client_compliance_id = self.get_new_id("client_compliance_id", self.tblClientCompliances)
             level_1_id = d.level_1_statutory_id
+            print level_1_id
             applicable_status = int(d.applicable_status)
             not_applicable_remarks = d.not_applicable_remarks
             if not_applicable_remarks is None :
@@ -5116,8 +5138,10 @@ class KnowledgeDatabase(Database):
                     compliance_applicable_status,  compliance_applicable_status,
                     int(user_id), created_on
                 )
-                self.save_data(self.tblClientCompliances, field, values)
-        return True
+                value_list.append(values)
+
+        # print "Execute insert"
+        return value_list
 
     def get_compliance_ids(self, client_statutory_id):
         query = "SELECT distinct compliance_id \
@@ -5130,53 +5154,15 @@ class KnowledgeDatabase(Database):
                 compliance_ids.append(int(r[0]))
         return compliance_ids
 
-    def update_client_compliances(self, client_statutory_id, data, user_id, submited_on=None):
-        saved_compliance_ids = self.get_compliance_ids(client_statutory_id)
-        # saved_compliance_ids = [int(x) for x in saved_compliance_ids.strip().split(',') if x != '']
-        for d in data :
-            level_1_id = d.level_1_statutory_id
-            applicable_status = int(d.applicable_status)
-            not_applicable_remarks = d.not_applicable_remarks
-            if not_applicable_remarks is None :
-                not_applicable_remarks = ""
-            for key, value in d.compliances.iteritems():
-                compliance_id = int(key)
-                if compliance_id not in saved_compliance_ids :
-                    created_on = str(self.get_date_time())
-                    new_data = d
-                    new_data.compliances = {key: value}
-                    self.save_client_compliances(client_statutory_id, [new_data], user_id, created_on)
-                    saved_compliance_ids.append(compliance_id)
-                else :
-                    compliance_applicable_status = int(value)
-
-                    field_with_data = "statutory_applicable = %s, \
-                        statutory_opted = %s,\
-                        not_applicable_remarks = '%s', \
-                        compliance_applicable = %s, \
-                        compliance_opted = %s, \
-                        updated_by = %s" % (
-                            applicable_status, applicable_status,
-                            not_applicable_remarks, compliance_applicable_status,
-                            compliance_applicable_status, int(user_id)
-                        )
-                    if submited_on is not None :
-                        field_with_data = field_with_data + " , submitted_on ='%s'" % (submited_on)
-                    where_condition = " client_statutory_id = %s \
-                        AND statutory_id = %s AND compliance_id = %s" % (
-                            client_statutory_id, level_1_id, compliance_id
-                        )
-                    self.update_data(self.tblClientCompliances, field_with_data, where_condition)
-        return True
-
     def submit_client_statutories_compliances(self, client_statutory_id, data, user_id) :
-        submited_on = self.get_date_time()
+        submited_on = str(self.get_date_time())
         query = "UPDATE tbl_client_statutories SET submission_type = 1, \
             updated_by=%s WHERE client_statutory_id = %s" % (
                 int(user_id), client_statutory_id
             )
         self.execute(query)
-        self.update_client_compliances(client_statutory_id, data, user_id, submited_on)
+        value_list = self.save_update_client_complainces(client_statutory_id, data, user_id, submited_on)
+        self.execute_bulk_insert(value_list)
 
     def get_assigned_statutories_list(
         self, user_id
