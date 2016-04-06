@@ -1850,7 +1850,7 @@ class ClientDatabase(Database):
         if frequency_name:
             frequency_id = self.get_frequecy_id_by_name(frequency_name)
             if frequency_id is not None:
-                condition = "c.frequency_id = %d" % int(frequency_id)
+                condition += " AND c.frequency_id = %d" % int(frequency_id)
 
         compliance_ids_query = "SELECT distinct compliance_id \
             FROM tbl_client_compliances \
@@ -1861,19 +1861,19 @@ class ClientDatabase(Database):
             )
         result = self.select_all(compliance_ids_query)
         compliance_id_rows = ()
-        if row in result:
+        for row in result:
             compliance_id_rows += row
 
         statutory_wise_compliances = []
         level_1_statutory_wise_compliances = {}
         if level_1_statutory_name is not None:
-            condition = "statutory_mapping like '%s%s'" % (
+            condition += " AND statutory_mapping like '%s%s'" % (
                 level_1_statutory_name, "%"
             )
-        if frequency_name is not None:
-            condition = "frequency like '%s%s%s'" % (
-                "%", frequency_name, "%"
-            )
+        # if frequency_name is not None:
+        #     condition = "frequency like '%s%s%s'" % (
+        #         "%", frequency_name, "%"
+        #     )
         if len(compliance_id_rows) > 0 :
             compliance_ids = ",".join(str(x) for x in compliance_id_rows)
             if compliance_ids is not None:
@@ -1922,26 +1922,26 @@ class ClientDatabase(Database):
                         if ((compliance["frequency_id"] == 2) or (compliance["frequency_id"] == 3)):
                             if compliance["repeats_type_id"] == 1:# Days
                                 due_dates, statutory_dates = self.calculate_due_date(
-                                    repeat_by = 1,
-                                    repeat_every = compliance["repeat_every"],
-                                    due_date = compliance["due_date"],
+                                    repeat_by=1,
+                                    repeat_every=compliance["repeat_every"],
+                                    due_date=compliance["due_date"],
                                     domain_id=domain_id,
                                     country_id=country_id
                                 )
                             elif compliance["repeats_type_id"] == 2:# Months
                                 due_dates, statutory_dates_list = self.calculate_due_date(
-                                    statutory_dates = compliance["statutory_dates"],
-                                    repeat_by = 2,
-                                    repeat_every = compliance["repeat_every"],
-                                    due_date = compliance["due_date"],
+                                    statutory_dates=compliance["statutory_dates"],
+                                    repeat_by=2,
+                                    repeat_every=compliance["repeat_every"],
+                                    due_date=compliance["due_date"],
                                     domain_id=domain_id,
                                     country_id=country_id
                                 )
                             elif compliance["repeats_type_id"] == 3:# years
                                 due_dates, statutory_dates = self.calculate_due_date(
-                                    repeat_by = 3,
-                                    repeat_every = compliance["repeat_every"],
-                                    due_date = compliance["due_date"],
+                                    repeat_by=3,
+                                    repeat_every=compliance["repeat_every"],
+                                    due_date=compliance["due_date"],
                                     domain_id=domain_id,
                                     country_id=country_id
                                 )
@@ -1951,12 +1951,23 @@ class ClientDatabase(Database):
                             if not self.is_already_completed_compliance(
                                 due_date, compliance["compliance_id"], unit_id
                             ):
+                                statutory_date_dict = json.loads(compliance["statutory_dates"])
+                                statutory_dates = []
+                                for statu_date in statutory_date_dict:
+                                    statutory_dates.append(
+                                        core.StatutoryDate(
+                                            statutory_date=statu_date["statutory_date"], 
+                                            statutory_month=statu_date["statutory_month"], 
+                                            trigger_before_days=statu_date["trigger_before_days"], 
+                                            repeat_by=statu_date["repeat_by"]
+                                        )
+                                    )
                                 level_1_statutory_wise_compliances[statutories[0].strip()].append(
                                     clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
                                         compliance["compliance_id"], compliance_name,
                                         compliance["compliance_description"],
                                         core.COMPLIANCE_FREQUENCY(compliance["frequency"]),
-                                        statutory_dates_list, self.datetime_to_string(due_date),
+                                        statutory_dates, self.datetime_to_string(due_date),
                                         assingee_name, compliance["assignee"]
                                     )
                                 )
@@ -1973,27 +1984,45 @@ class ClientDatabase(Database):
 
 
     def is_already_completed_compliance(
-            self, due_date, compliance_id, unit_id
-        ):
+        self, due_date, compliance_id, unit_id
+    ):
+        # Checking same due date already exists
         columns = "count(*)"
         condition = "unit_id = '{}' and due_date = '{}' and compliance_id = '{}'".format(
             unit_id, due_date, compliance_id
         )
         rows = self.get_data(self.tblComplianceHistory, columns, condition)
-        if rows[0][0] > 0:
-            return True
+        is_compliance_with_same_due_date_exists = True if rows[0][0] > 0 else False
+        if is_compliance_with_same_due_date_exists:
+            return is_compliance_with_same_due_date_exists
         else:
-            return False
+            # Checking validity of previous compliance exceeds the current compliance
+            columns = "count(*)"
+            condition = "unit_id = '{}' AND due_date < '{}' AND compliance_id = '{}' AND \
+            approve_status = 1 and validity_date > '{}'".format(
+                unit_id, due_date, compliance_id, due_date
+            )
+            rows = self.get_data(self.tblComplianceHistory, columns, condition)
+            if rows[0][0] > 0:
+                return True
+            else:
+                return False
 
     def calculate_from_and_to_date_for_domain(self, country_id, domain_id):
+        columns = "contract_from, contract_to"
+        rows = self.get_data(self.tblClientGroups, columns, "1")
+        contract_from = rows[0][0]
+        contract_to = rows[0][1]
+
         columns = "period_from, period_to"
         condition = "country_id = '%d' and domain_id = '%d'" % (
             country_id, domain_id
         )
         rows = self.get_data(self.tblClientConfigurations, columns, condition)
         period_from = rows[0][0]
-        period_to = rows[0][0]
-        to_date = self.get_date_time()
+        period_to = rows[0][1]
+
+        to_date = contract_from
         current_year = to_date.year
         previous_year = current_year-1
         from_date = datetime.datetime(previous_year, period_from, 1)
@@ -2001,7 +2030,7 @@ class ClientDatabase(Database):
         no_of_years = r.years
         no_of_months = r.months
         if no_of_years is not 0 or no_of_months >= 12:
-            from_date = datetime.datetime(current_year, period_from, 1)
+            from_date = datetime.date(current_year, period_from, 1)
         return from_date, to_date
 
     def calculate_due_date(
@@ -2010,7 +2039,9 @@ class ClientDatabase(Database):
     ):
         def is_future_date(test_date):
             result = False
-            current_date = datetime.datetime.today()
+            current_date = datetime.date.today()
+            if type(test_date) == datetime.datetime:
+                test_date = test_date.date()
             if ((current_date - test_date).days < 0):
                 result = True
             return result
@@ -2022,11 +2053,11 @@ class ClientDatabase(Database):
             for statutory_date in json.loads(statutory_dates):
                 date = statutory_date["statutory_date"]
                 month = statutory_date["statutory_month"]
-                current_date = datetime.datetime.today()
-                due_date_guess = datetime.datetime(current_date.year, month, date)
+                current_date = datetime.datetime.today().date()
+                due_date_guess = datetime.date(current_date.year, month, date)
                 real_due_date = None
                 if is_future_date(due_date_guess):
-                    real_due_date = datetime.datetime(current_date.year - 1, month, date)
+                    real_due_date = datetime.date(current_date.year - 1, month, date)
                 else:
                     real_due_date = due_date_guess
                 if from_date <= real_due_date <= to_date:
@@ -2044,8 +2075,8 @@ class ClientDatabase(Database):
                     continue
         elif repeat_by:
             # For Compliances Recurring in days
-            if repeat_by == 1:
-                previous_year_due_date = datetime.datetime(
+            if repeat_by == 1: # Days
+                previous_year_due_date = datetime.date(
                     due_date.year - 1, due_date.month, due_date.day
                 )
                 if from_date <= previous_year_due_date <= to_date:
@@ -2055,25 +2086,17 @@ class ClientDatabase(Database):
                     iter_due_date = iter_due_date + datetime.timedelta(days=repeat_every)
                     if from_date <= iter_due_date <= to_date:
                         due_dates.append(iter_due_date)
-            elif repeat_by == 2:
-                previous_year_due_date = datetime.datetime(
-                    due_date.year - 1, due_date.month, due_date.day
-                )
-                if from_date <= previous_year_due_date <= to_date:
-                    due_dates.append(previous_year_due_date)
-                iter_due_date = previous_year_due_date
-                while not is_future_date(iter_due_date):
-                    iter_due_date = iter_due_date + relativedelta.relativedelta(months=repeat_every)
+            elif repeat_by == 2: # Months
+                iter_due_date = due_date
+                while iter_due_date > from_date:
+                    iter_due_date = iter_due_date + relativedelta.relativedelta(months=-repeat_every)
                     if from_date <= iter_due_date <= to_date:
                         due_dates.append(iter_due_date)
-            elif repeat_by == 3:
+            elif repeat_by == 3: # Years
                 previous_due_date = datetime.datetime(
                     due_date.year - repeat_every, due_date.month, due_date.day
                 )
-                r = relativedelta.relativedelta(
-                    previous_due_date, due_date
-                )
-                if r.months < 12:
+                if from_date <= previous_due_date  <= to_date:
                     due_dates.append(previous_due_date)
         return due_dates, statutory_dates_list
 
@@ -2125,15 +2148,28 @@ class ClientDatabase(Database):
         db_con.commit()
         db_con.close()
 
+    def validate_before_save(
+        self, unit_id, compliance_id, due_date, completion_date, documents,
+        validity_date, completed_by, client_id
+    ):
+        # Checking whether compliance already completed
+        if self.is_already_completed_compliance(
+            self.string_to_datetime(due_date), compliance_id, unit_id
+        ):
+            return False
+        else:
+            return True
+
     def save_past_record(
             self, unit_id, compliance_id, due_date, completion_date, documents,
             validity_date, completed_by, client_id
         ):
         is_uploading_file = False
+
         # Checking whether compliance already completed
         if self.is_already_completed_compliance(
-                due_date, compliance_id, unit_id
-            ):
+            self.string_to_datetime(due_date), compliance_id, unit_id
+        ):
             return False
 
         # Hanling upload
@@ -2168,10 +2204,10 @@ class ClientDatabase(Database):
         # Checking Settings for two levels of approval
         is_two_level = self.is_two_levels_of_approval()
         compliance_history_id = self.get_new_id("compliance_history_id", self.tblComplianceHistory)
-        completion_date = self.string_to_datetime(completion_date)
+        completion_date = self.string_to_datetime(completion_date).date()
         next_due_date = None
         if validity_date:
-            next_due_date = self.string_to_datetime(validity_date)
+            next_due_date = self.string_to_datetime(validity_date).date()
 
         # Getting Approval and Concurrence Persons
         concur_approve_columns = "approval_person"
@@ -2190,14 +2226,14 @@ class ClientDatabase(Database):
             if is_two_level:
                 concurred_by = rows[0][1]
         if validity_date is not None:
-            validity_date = self.string_to_datetime(validity_date)
+            validity_date = self.string_to_datetime(validity_date).date()
         columns = [
             "compliance_history_id", "unit_id", "compliance_id", "due_date", "completion_date",
             "validity_date", "next_due_date", "completed_by", "completed_on",
             "approve_status", "approved_by", "approved_on"
         ]
         values = [
-            compliance_history_id, unit_id, compliance_id, self.string_to_datetime(due_date),
+            compliance_history_id, unit_id, compliance_id, self.string_to_datetime(due_date).date(),
             completion_date, validity_date,
             next_due_date, completed_by, completion_date, 1, approved_by, completion_date
         ]
@@ -2285,7 +2321,7 @@ class ClientDatabase(Database):
                 if row[4] is not None and len(row[4]) > 0:
                     for document in row[4].split(","):
                         if document is not None and document.strip(',') != '':
-                            dl_url = "%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, document)
+                            dl_url = "%s/%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document)
                             download_urls.append(dl_url)
                             file_name_part = document.split("-")[0]
                             file_extn_parts = document.split(".")
@@ -5082,7 +5118,7 @@ class ClientDatabase(Database):
         if len(unit_rows) > 0:
             unit_ids = ",".join(str(int(x)) for x in unit_rows)
 
-        # Compliances related to the domain sharmi
+        # Compliances related to the domain 
         compliance_columns = "compliance_id"
         compliance_condition = "domain_id = '{}'".format(domain_id)
         compliance_result_rows = self.get_data(
@@ -6010,7 +6046,9 @@ class ClientDatabase(Database):
                                (abs(r.days) * 4 + abs(r.hours)), abs(r.minutes)
                             )
                         else:
-                            compliance_status = "Overdue by %d day(s)"
+                            compliance_status = "Overdue by %d day(s)" %(
+                                abs(r.days)
+                            )
                 return r.days, compliance_status
         else:
             if completion_date is not None:
@@ -6515,6 +6553,16 @@ class ClientDatabase(Database):
         self, compliance_history_id, documents, completion_date,
         validity_date, next_due_date, remarks, client_id, session_user
     ):
+        if validity_date is not None:
+            validity_date = self.string_to_datetime(validity_date)
+        if next_due_date is not None:
+            next_due_date = self.string_to_datetime(next_due_date)
+
+        if None not in [validity_date, next_due_date]:
+            r = relativedelta.relativedelta(validity_date, next_due_date)
+            if abs(r.months) > 3 or abs(r.years) > 0:
+                return False
+
         # Hanling upload
         document_names = []
         file_size = 0
@@ -6553,10 +6601,6 @@ class ClientDatabase(Database):
             "completion_date", "documents", "validity_date",
             "next_due_date", "remarks", "completed_on"
         ]
-        if validity_date is not None:
-            validity_date = self.string_to_datetime(validity_date)
-        if next_due_date is not None:
-            next_due_date = self.string_to_datetime(next_due_date)
         if self.is_onOccurrence_with_hours(compliance_history_id):
             completion_date = self.string_to_datetime(completion_date)
         else:
@@ -6961,7 +7005,8 @@ class ClientDatabase(Database):
                 if client_statutory_rows:
                     client_statutory_ids = client_statutory_rows[0][0]
                     client_compliance_rows = None
-                    if client_statutory_ids:
+
+                    if client_statutory_ids is not None:
                         client_compliance_columns = "group_concat(compliance_id)"
                         client_compliance_conditions = "client_statutory_id in (%s)" % client_statutory_ids
                         client_compliance_rows = self.get_data(
@@ -8544,3 +8589,14 @@ class ClientDatabase(Database):
             return True
         else:
             return False
+
+    def get_compliance_name_by_id(self, compliance_id):
+        column = "document_name, compliance_task"
+        condition = "compliance_id = '%d'" % compliance_id
+        rows = self.get_data(self.tblCompliances, column, condition)
+        compliance_name = ""
+        if rows[0][0] is not None:
+            compliance_name += rows[0][0]+" - "+rows[0][1]
+        else:
+            compliance_name = rows[0][1]
+        return compliance_name
