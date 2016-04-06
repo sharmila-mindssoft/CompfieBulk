@@ -22,8 +22,6 @@ mysqlPassword = "123456"
 mysqlDatabase = "compfie_knowledge"
 mysqlPort = 3306
 
-CLIENT_URL = "http://localhost:8080/"
-
 
 class EmailNotification(object):
     def __init__(self):
