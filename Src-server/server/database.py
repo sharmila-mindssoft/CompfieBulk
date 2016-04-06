@@ -4073,7 +4073,7 @@ class KnowledgeDatabase(Database):
             cursor.execute(q)
 
     def _create_trigger(self, cursor):
-        q = "CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON `tbl_statutory_notifications_units` \
+        t1 = "CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON `tbl_statutory_notifications_units` \
             FOR EACH ROW BEGIN \
                 INSERT INTO tbl_statutory_notification_status ( \
                 statutory_notification_id, \
@@ -4088,8 +4088,48 @@ class KnowledgeDatabase(Database):
                 SELECT NEW.statutory_notification_id, t1.admin_id, 0 FROM \
                 tbl_admin t1 where t1.admin_id != 0; \
             END; "
+        cursor.execute(t1)
+        t2 = " CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units` \
+            FOR EACH ROW BEGIN \
+                CALL procedure_to_update_version('unit'); \
+            END; "
+        cursor.execute(t2)
+        t3 = "CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units` \
+            FOR EACH ROW BEGIN \
+                CALL procedure_to_update_version('unit'); \
+            END; "
+        cursor.execute(t3)
+        t4 = "CREATE TRIGGER `after_tbl_users_update` AFTER UPDATE ON `tbl_users` \
+            FOR EACH ROW BEGIN \
+                CALL procedure_to_update_version('user'); \
+            END; "
+        cursor.execute(t4)
+        t5 = "CREATE TRIGGER `after_tbl_users_insert` AFTER INSERT ON `tbl_users` \
+            FOR EACH ROW BEGIN \
+                CALL procedure_to_update_version('user'); \
+            END; "
+        cursor.execute(t5)
+        t6 = "CREATE TIGGER `after_tbl_compliance_history_insert` AFTER INSERT ON `tbl_compliance_history` \
+            FOR EACH ROW BEGIN \
+                CALL procedure_to_update_version('history'); \
+            END; "
+        cursor.execute(t6)
+        t7 = "CREATE TRIGGER `after_tbl_compliance_history_update` AFTER UPDATE ON `tbl_compliance_history` \
+            FOR EACH ROW BEGIN \
+                CALL procedure_to_update_version('history'); \
+            END; "
+        cursor.execute(t7)
+        t8 = "CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client_compliances` \
+            FOR EACH ROW BEGIN \
+                CALL procedure_to_update_version('compliance') \
+            END; "
+        cursor.execute(t8)
+        t9 = "CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER INSERT ON `tbl_client_compliances` \
+            FOR EACH ROW BEGIN \
+                CALL procedure_to_update_version('compliance'); \
+            END; "
+        cursor.execute(t9)
 
-        cursor.execute(q)
 
     def _get_server_details(self):
         columns = "ip, server_username,server_password, port"
