@@ -1916,9 +1916,10 @@ class ClientDatabase(Database):
                         )
                         due_dates = []
                         statutory_dates_list = []
+                        summary = ""
                         if ((compliance["frequency_id"] == 2) or (compliance["frequency_id"] == 3)):
                             if compliance["repeats_type_id"] == 1:# Days
-                                due_dates, statutory_dates = self.calculate_due_date(
+                                due_dates, summary = self.calculate_due_date(
                                     repeat_by=1,
                                     repeat_every=compliance["repeat_every"],
                                     due_date=compliance["due_date"],
@@ -1926,7 +1927,7 @@ class ClientDatabase(Database):
                                     country_id=country_id
                                 )
                             elif compliance["repeats_type_id"] == 2:# Months
-                                due_dates, statutory_dates_list = self.calculate_due_date(
+                                due_dates, summary = self.calculate_due_date(
                                     statutory_dates=compliance["statutory_dates"],
                                     repeat_by=2,
                                     repeat_every=compliance["repeat_every"],
@@ -1935,8 +1936,9 @@ class ClientDatabase(Database):
                                     country_id=country_id
                                 )
                             elif compliance["repeats_type_id"] == 3:# years
-                                due_dates, statutory_dates = self.calculate_due_date(
+                                due_dates, summary = self.calculate_due_date(
                                     repeat_by=3,
+                                    statutory_dates=compliance["statutory_dates"],
                                     repeat_every=compliance["repeat_every"],
                                     due_date=compliance["due_date"],
                                     domain_id=domain_id,
@@ -1948,23 +1950,23 @@ class ClientDatabase(Database):
                             if not self.is_already_completed_compliance(
                                 due_date, compliance["compliance_id"], unit_id
                             ):
-                                statutory_date_dict = json.loads(compliance["statutory_dates"])
-                                statutory_dates = []
-                                for statu_date in statutory_date_dict:
-                                    statutory_dates.append(
-                                        core.StatutoryDate(
-                                            statutory_date=statu_date["statutory_date"], 
-                                            statutory_month=statu_date["statutory_month"], 
-                                            trigger_before_days=statu_date["trigger_before_days"], 
-                                            repeat_by=statu_date["repeat_by"]
-                                        )
-                                    )
+                                # statutory_date_dict = json.loads(compliance["statutory_dates"])
+                                # statutory_dates = []
+                                # for statu_date in statutory_date_dict:
+                                #     statutory_dates.append(
+                                #         core.StatutoryDate(
+                                #             statutory_date=statu_date["statutory_date"], 
+                                #             statutory_month=statu_date["statutory_month"], 
+                                #             trigger_before_days=statu_date["trigger_before_days"], 
+                                #             repeat_by=statu_date["repeat_by"]
+                                #         )
+                                #     )
                                 level_1_statutory_wise_compliances[statutories[0].strip()].append(
                                     clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
                                         compliance["compliance_id"], compliance_name,
                                         compliance["compliance_description"],
                                         core.COMPLIANCE_FREQUENCY(compliance["frequency"]),
-                                        statutory_dates, self.datetime_to_string(due_date),
+                                        summary, self.datetime_to_string(due_date),
                                         assingee_name, compliance["assignee"]
                                     )
                                 )
@@ -2044,12 +2046,14 @@ class ClientDatabase(Database):
             return result
         from_date, to_date = self.calculate_from_and_to_date_for_domain(country_id, domain_id)
         due_dates = []
-        statutory_dates_list = []
+        summary = ""
         # For Monthly Recurring compliances
         if statutory_dates and len(json.loads(statutory_dates)) > 1:
+            summary += "Every {} month(s) (".format(repeat_every)
             for statutory_date in json.loads(statutory_dates):
                 date = statutory_date["statutory_date"]
                 month = statutory_date["statutory_month"]
+                summary += "{} {} ".format(self.string_months[month], date)
                 current_date = datetime.datetime.today().date()
                 due_date_guess = datetime.date(current_date.year, month, date)
                 real_due_date = None
@@ -2061,18 +2065,18 @@ class ClientDatabase(Database):
                     due_dates.append(
                         real_due_date
                     )
-                    statutory_dates_list.append(
-                        core.StatutoryDate(
-                            date, month,
-                            statutory_date["trigger_before_days"],
-                            statutory_date.get("repeat_by")
-                        )
-                    )
                 else:
                     continue
+            summary += ")"
         elif repeat_by:
+            date_details = ""
+            if statutory_dates not in  ["None", None, ""]:
+                statutory_date_json = json.loads(statutory_dates)
+                if len(statutory_date_json) > 0:
+                    date_details += "({})".format(statutory_date_json[0]["statutory_date"])
             # For Compliances Recurring in days
             if repeat_by == 1: # Days
+                summary = "Every {} day(s)".format(repeat_every)
                 previous_year_due_date = datetime.date(
                     due_date.year - 1, due_date.month, due_date.day
                 )
@@ -2084,18 +2088,20 @@ class ClientDatabase(Database):
                     if from_date <= iter_due_date <= to_date:
                         due_dates.append(iter_due_date)
             elif repeat_by == 2: # Months
+                summary = "Every {} month(s) {}".format(repeat_every, date_details)
                 iter_due_date = due_date
                 while iter_due_date > from_date:
                     iter_due_date = iter_due_date + relativedelta.relativedelta(months=-repeat_every)
                     if from_date <= iter_due_date <= to_date:
                         due_dates.append(iter_due_date)
             elif repeat_by == 3: # Years
+                summary = "Every {} year(s) {}".format(repeat_every, date_details)
                 previous_due_date = datetime.date(
                     due_date.year - repeat_every, due_date.month, due_date.day
                 )
                 if from_date <= previous_due_date  <= to_date:
                     due_dates.append(previous_due_date)
-        return due_dates, statutory_dates_list
+        return due_dates, summary
 
     def convert_base64_to_file(self, file_name, file_content, client_id):
         client_directory = "%s/%d" % (CLIENT_DOCS_BASE_PATH, client_id)
@@ -5155,14 +5161,17 @@ class ClientDatabase(Database):
         # Getting compliance history ids for selected country, domain
         compliance_history_ids = None
         if compliance_ids is not None and unit_ids is not None:
-            columns = "group_concat(compliance_history_id)"
+            columns = "compliance_history_id"
             condition = "compliance_id in (%s) and unit_id in (%s)" % (
                 compliance_ids, unit_ids
             )
-            result = self.get_data(
+            rows = self.get_data(
                 self.tblComplianceHistory, columns, condition
             )
-            compliance_history_ids = result[0][0]
+            result = ()
+            for row in rows:
+                result += row
+            compliance_history_ids = ",".join(str(x) for x in result)
         return compliance_history_ids, client_statutory_ids, unit_ids
 
     def get_trend_chart(self, country_ids, domain_ids, client_id):
@@ -5181,7 +5190,7 @@ class ClientDatabase(Database):
                 compliance_history_ids, client_statutory_ids, unit_ids = self.get_compliance_history_ids_for_trend_chart(
                     country_id, domain_id, client_id
                 )
-                if compliance_history_ids is not None:
+                if compliance_history_ids not in [None, "None", ""]:
                     for index, dates in enumerate(start_end_dates):
                         columns = "count(*) as total, sum(case when approve_status = 1 then 1 " + \
                             "else 0 end) as complied"
