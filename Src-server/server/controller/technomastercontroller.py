@@ -2,8 +2,9 @@ import threading
 import re
 import Queue
 
-from protocol import core, technomasters
+from protocol import technomasters
 from server.emailcontroller import EmailHandler as email
+from server import logger
 
 __all__ = [
     "get_client_groups",
@@ -50,17 +51,19 @@ def create_database(
         return True, password
     except Exception, ex:
         print "Error :{}".format(ex)
+        logger.logKnowledge("error", "technomastercontroller.py-create_database", ex)
         return False, None
 
 
 def send_client_credentials(
-        short_name, email_id, password
-    ):
-        try:
-            email().send_client_credentials(short_name, email_id, password)
-        except Exception, e:
-            print "Error while sending email : {}".format(e)
-        return True
+    short_name, email_id, password
+):
+    try:
+        email().send_client_credentials(short_name, email_id, password)
+    except Exception, e:
+        print "Error while sending email : {}".format(e)
+        logger.logKnowledge("error", "technomastercontroller.py-send_client_credentials", e)
+    return True
 
 
 def is_logo_in_image_format(logo):
@@ -114,8 +117,10 @@ def save_client_group(db, request, session_user):
             result = result_q.get()
 
             db.save_client_group(client_id, request, session_user)
-            db.save_date_configurations(client_id, request.date_configurations,
-                session_user)
+            db.save_date_configurations(
+                client_id, request.date_configurations,
+                session_user
+            )
             db.save_client_countries(client_id, request.country_ids)
             db.save_client_domains(client_id, request.domain_ids)
             db.save_incharge_persons(request, client_id)
@@ -136,13 +141,17 @@ def save_client_group(db, request, session_user):
                 send_client_credentials_thread.start()
                 return technomasters.SaveClientGroupSuccess()
             else:
+                logger.logKnowledge("error", "technomastercontroller.py-save_client_group", "error in creating database")
                 raise Exception('Error in Creating database')
         except Exception, e:
+            logger.logKnowledge("error", "technomastercontroller.py-save_client_group", e)
+
             print "Error in save client group: {}".format(e)
             try:
                 db.delete_database(host, database_name, username, password)
             except Exception, ex:
                 print "Error in deleting database : {}".format(ex)
+                logger.logKnowledge("error", "technomastercontroller.py-save_client_group", ex)
             return technomasters.ClientCreationFailed(error="Failed to create client")
 
 def update_client_group(db, request, session_user):
@@ -453,4 +462,3 @@ def create_new_admin(db, request, session_user):
         return technomasters.ReassignFirst()
     else:
         return technomasters.CreateNewAdminSuccess()
-
