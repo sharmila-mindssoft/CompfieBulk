@@ -212,9 +212,10 @@ function load_thirdwizard(){
   });
 
   if(count <= 1){
-    var norecordtableRow=$('#no-record-templates .font1');
-    var noclone=norecordtableRow.clone();
-    $('.tbody-assignstatutory').append(noclone);
+    var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4=tableRow4.clone();
+    $('.no_records', clone4).text('No Compliance Found');
+    $('.tbody-assignstatutory').append(clone4);
     $('#activate-step-finish').hide();
   }
 }

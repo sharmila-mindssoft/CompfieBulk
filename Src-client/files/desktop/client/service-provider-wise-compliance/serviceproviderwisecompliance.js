@@ -155,14 +155,14 @@ function loadresult(filterList){
         $('.tbody-serviceprovider').append(clone3);
         compliance_count++;
       }
-
-      if(compliancelists[compliancelist].length == 0){
-        var tableRow4=$('#unit-content-templates .table-unit-content .table-row-unit-content');
-        var clone4=tableRow4.clone();
-        $('.tbl_description', clone4).text("No Compliance Found");
-        $('.tbody-serviceprovider').append(clone4);
-      }
     } 
+
+    if(Object.keys(compliancelists).length === 0 && JSON.stringify(compliancelists) === JSON.stringify({})){
+        var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
+        var clone4=tableRow4.clone();
+        $('.no_records', clone4).text('No Compliance Found');
+        $('.tbody-serviceprovider').append(clone4);
+      } 
   }
   sp_count++;
     

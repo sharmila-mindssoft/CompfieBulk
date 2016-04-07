@@ -4182,15 +4182,16 @@ class ClientDatabase(Database):
         q = "SELECT u.business_group_id, u.legal_entity_id, u.division_id,  \
             (SELECT bg.business_group_name FROM tbl_business_groups bg WHERE  bg.business_group_id = u.business_group_id) AS business_group_name, \
             (SELECT le.legal_entity_name FROM tbl_legal_entities le WHERE  u.legal_entity_id = le.legal_entity_id) AS legal_entity_name, \
-            (SELECT d.division_name FROM tbl_divisions d WHERE  u.division_id = d.division_id) AS division_name \
+            (SELECT d.division_name FROM tbl_divisions d WHERE  u.division_id = d.division_id) AS division_name, group_concat(u.unit_id) \
             FROM tbl_units u \
             WHERE u.business_group_id like '%s' \
             and u.legal_entity_id like '%s' \
-            and u.division_id like '%s' \
+            and u.division_id like '%s' and u.unit_id in (%s) \
             GROUP BY u.business_group_id, u.legal_entity_id, u.division_id" % (
                 str(business_group_id),
                 str(legal_entity_id),
-                str(division_id)
+                str(division_id),
+                unit_ids
             )
         rows = self.select_all(q)
 
@@ -4202,9 +4203,11 @@ class ClientDatabase(Database):
             q = "SELECT ac.assignee, \
             (SELECT concat( u.employee_code, '-' ,u.employee_name ) FROM tbl_users u WHERE u.user_id = ac.assignee) AS assigneename, \
             (SELECT concat( u.employee_code, '-', u.employee_name )FROM tbl_users u WHERE u.user_id = ac.concurrence_person) AS concurrencename,\
-            (SELECT concat( u.employee_code, '-', u.employee_name )FROM tbl_users u WHERE u.user_id = ac.approval_person) AS approvalname \
+            (SELECT concat( u.employee_code, '-', u.employee_name )FROM tbl_users u WHERE u.user_id = ac.approval_person) AS approvalname, \
+            ac.concurrence_person, ac.approval_person \
             FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_assigned_compliances ac, tbl_units ut \
-            WHERE cs.country_id = %s  and ut.unit_id = (SELECT u.seating_unit_id from tbl_users u WHERE u.user_id = ac.assignee) \
+            WHERE cs.country_id = %s  and ( cs.unit_id = (SELECT u.seating_unit_id from tbl_users u WHERE u.user_id = ac.assignee) OR \
+                cs.unit_id in (select group_concat(uu.unit_id) from tbl_user_units uu where uu.user_id = ac.assignee) )\
             AND ut.business_group_id = %s and ut.legal_entity_id = %s and ut.division_id = %s \
             AND cs.domain_id = %s \
             AND cs.client_statutory_id = cc.client_statutory_id  AND ac.assignee like '%s'\
@@ -4229,10 +4232,11 @@ class ClientDatabase(Database):
                         tbl_assigned_compliances ac, tbl_compliance_frequency cf where \
                         cs.country_id = %s and cs.domain_id = %s and cs.unit_id in (%s) and cc.statutory_opted = 1 and ac.is_active = 1 \
                         and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
-                        and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee = '%s' " % (
+                        and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee = '%s' and ac.concurrence_person = '%s' and ac.approval_person = '%s' " % (
                         country_id, domain_id,
-                        unit_ids, assignee_id
+                        row[6], assignee_id, assignee[4], assignee[5]
                     )
+
                 compliance_rows = self.select_all(query)
                 compliances_list = []
                 for compliance in compliance_rows:

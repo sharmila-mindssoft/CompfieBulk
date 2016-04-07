@@ -169,6 +169,13 @@ function loadTotalCount(complianceList){
   });    
   loadArray(complianceList);    
   $('.compliance_count').text("Total : "+ totalrecords +" records");
+
+  if(totalrecords == 0){
+    var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4=tableRow4.clone();
+    $('.no_records', clone4).text('No Compliance Found');
+    $('.tbody-unit').append(clone4);
+  }
 }
 
 function loadArray(complianceList) {   
@@ -260,7 +267,7 @@ function loadCompliance(reportType){
     }
     client_mirror.getComplianceDetailsReport( 
       parseInt(country), parseInt(domain), act, parseInt(unit), 
-      parseInt(compliances), parseInt(assignee), fromdate, todate, 
+      parseInt(compliances), parseInt(user), fromdate, todate, 
       status, csv,
       function (error, response) {
         if (error == null){
@@ -429,7 +436,8 @@ $("#assigneeval").keyup(function(){
  $('#ulist_assignee').empty();
   if(textval.length>0){
     for(var i in assignees){
-      if (~assignees[i]["employee_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["employee_id"],assignees[i]["employee_name"]]);
+      var combineUserName = assignees[i]['employee_code']+"-"+assignees[i]['employee_name'];
+      if (~combineUserName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["employee_id"],combineUserName]);
     }
     var str='';
     for(var i in suggestions){

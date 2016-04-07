@@ -107,10 +107,9 @@ function loadresult(complianceList, heading){
   }
 
   if(compliance_count == 0){
-    var tableRow4=$('#nocompliance-templates .table-nocompliances-list .table-row');
+    var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
     var clone4=tableRow4.clone();
-    $('.tbody-compliance').append(clone4);
-    $('.tbl_norecords', clone4).text("No Records Found");
+    $('.no_records', clone4).text('No Compliance Found');
     $('.tbody-unit').append(clone4);
   }
 
