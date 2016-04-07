@@ -5668,69 +5668,87 @@ class ClientDatabase(Database):
                 compliance_history_id = int(extra_details_with_history_id[0])
                 extra_details = extra_details_with_history_id[1]
 
-                due_date_rows = self.get_data(
-                    self.tblComplianceHistory,
-                    "due_date, completion_date, approve_status",
-                    "compliance_history_id = '%d'" % int(compliance_history_id)
-                )
-                due_date_as_date = due_date_rows[0][0]
-                # due_date_as_datetime = datetime.datetime(
-                #     due_date_as_date.year,
-                #     due_date_as_date.month,
-                #     due_date_as_date.day
-                # )
-                due_date = self.datetime_to_string_time(due_date_rows[0][0])
-                completion_date = due_date_rows[0][1]
-                approve_status = due_date_rows[0][2]
-                delayed_days = "-"
-                if completion_date is None or approve_status == 0:
-                    no_of_days, delayed_days = self.calculate_ageing(due_date_as_date)
-                else:
-                    r = relativedelta.relativedelta(due_date_as_date, completion_date)
-                    delayed_days = "-"
-                    if r.days < 0 and r.hours < 0 and r.minutes < 0:
-                        delayed_days = "Overdue by %d days" % abs(r.days)
-                if "Overdue" not in delayed_days:
-                    delayed_days = "-"
-                # diff = self.get_date_time() - due_date_as_datetime
-                statutory_provision = notification_detail[4].split(">>")
-                level_1_statutory = statutory_provision[0]
-
-                notification_id = notification_detail[0]
-                notification_text = notification_detail[1]
-                updated_on = self.datetime_to_string(notification_detail[2])
-                unit_name = "%s - %s" % (
-                    notification_detail[5],
-                    notification_detail[6]
-                )
-                unit_address = notification_detail[7]
-                assignee = self.get_user_contact_details_by_id(
-                    notification_detail[8], client_id
-                )
-                if notification_detail[9] is not None:
-                    concurrence_person = self.get_user_contact_details_by_id(
-                        notification_detail[9], client_id
+                if compliance_history_id not in [0, "0", None, "None", ""]:
+                    due_date_rows = self.get_data(
+                        self.tblComplianceHistory,
+                        "due_date, completion_date, approve_status",
+                        "compliance_history_id = '%d'" % int(compliance_history_id)
                     )
+                    due_date_as_date = due_date_rows[0][0]
+                    # due_date_as_datetime = datetime.datetime(
+                    #     due_date_as_date.year,
+                    #     due_date_as_date.month,
+                    #     due_date_as_date.day
+                    # )
+                    due_date = self.datetime_to_string_time(due_date_rows[0][0])
+                    completion_date = due_date_rows[0][1]
+                    approve_status = due_date_rows[0][2]
+                    delayed_days = "-"
+                    if completion_date is None or approve_status == 0:
+                        no_of_days, delayed_days = self.calculate_ageing(due_date_as_date)
+                    else:
+                        r = relativedelta.relativedelta(due_date_as_date, completion_date)
+                        delayed_days = "-"
+                        if r.days < 0 and r.hours < 0 and r.minutes < 0:
+                            delayed_days = "Overdue by %d days" % abs(r.days)
+                    if "Overdue" not in delayed_days:
+                        delayed_days = "-"
+                    # diff = self.get_date_time() - due_date_as_datetime
+                    statutory_provision = notification_detail[4].split(">>")
+                    level_1_statutory = statutory_provision[0]
+
+                    notification_id = notification_detail[0]
+                    notification_text = notification_detail[1]
+                    updated_on = self.datetime_to_string(notification_detail[2])
+                    unit_name = "%s - %s" % (
+                        notification_detail[5],
+                        notification_detail[6]
+                    )
+                    unit_address = notification_detail[7]
+                    assignee = self.get_user_contact_details_by_id(
+                        notification_detail[8], client_id
+                    )
+                    if notification_detail[9] is not None:
+                        concurrence_person = self.get_user_contact_details_by_id(
+                            notification_detail[9], client_id
+                        )
+                    else:
+                        concurrence_person = None
+                    approval_person = self.get_user_contact_details_by_id(
+                        notification_detail[10], client_id
+                    )
+                    compliance_name = notification_detail[12]
+                    if notification_detail[13] is not None and notification_detail[13].replace(" ","") != "None":
+                        compliance_name = "%s - %s" % (
+                            notification_detail[13], notification_detail[12]
+                        )
+
+                    compliance_description = notification_detail[14]
+                    penal_consequences = notification_detail[15]
+                    due_date = self.datetime_to_string_time(due_date_rows[0][0])
                 else:
+                    penal_consequences = None
+                    delayed_days = None
+                    due_date = None
+                    compliance_description = None
+                    approval_person = None
+                    compliance_name = None
                     concurrence_person = None
-                approval_person = self.get_user_contact_details_by_id(
-                    notification_detail[10], client_id
-                )
-                compliance_name = notification_detail[12]
-                if notification_detail[13] is not None and notification_detail[13].replace(" ","") != "None":
-                    compliance_name = "%s - %s" % (
-                        notification_detail[13], notification_detail[12]
-                    )
-
-                compliance_description = notification_detail[14]
-                penal_consequences = notification_detail[15]
+                    assignee = None
+                    unit_name = None
+                    unit_address = None
+                    level_1_statutory = None
+                    extra_details =None
+                    read_status = bool(0)
+                    updated_on = self.datetime_to_string(self.get_date_time())
+                    notification_text = notification_detail_row[0][1]
                 notifications.append(
                     dashboard.Notification(
                         notification_id, read_status, notification_text, extra_details,
                         updated_on, level_1_statutory, unit_name, unit_address, assignee,
                         concurrence_person, approval_person, compliance_name,
                         compliance_description,
-                        self.datetime_to_string_time(due_date_rows[0][0]),
+                        due_date,
                         delayed_days, penal_consequences
                     )
                 )

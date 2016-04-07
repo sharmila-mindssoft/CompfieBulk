@@ -1777,31 +1777,31 @@ class Notification(object):
         notification_text = data.get("notification_text")
         notification_text = parse_structure_CustomTextType_500(notification_text)
         extra_details = data.get("extra_details")
-        extra_details = parse_structure_CustomTextType_500(extra_details)
+        extra_details = parse_structure_OptionalType_CustomTextType_500(extra_details)
         updated_on = data.get("updated_on")
         updated_on = parse_structure_CustomTextType_20(updated_on)
         level_1_statutory = data.get("level_1_statutory")
-        level_1_statutory = parse_structure_CustomTextType_500(level_1_statutory)
+        level_1_statutory = parse_structure_OptionalType_CustomTextType_500(level_1_statutory)
         unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_50(unit_name)
+        unit_name = parse_structure_OptionalType_CustomTextType_50(unit_name)
         unit_address = data.get("unit_address")
-        unit_address = parse_structure_CustomTextType_50(unit_address)
+        unit_address = parse_structure_OptionalType_CustomTextType_50(unit_address)
         assignee = data.get("assignee")
-        assignee = parse_structure_CustomTextType_100(assignee)
+        assignee = parse_structure_OptionalType_CustomTextType_100(assignee)
         concurrence_person = data.get("concurrence_person")
         concurrence_person = parse_structure_OptionalType_CustomTextType_100(concurrence_person)
         approval_person = data.get("approval_person")
-        approval_person = parse_structure_CustomTextType_100(approval_person)
+        approval_person = parse_structure_OptionalType_CustomTextType_100(approval_person)
         compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_500(compliance_name)
+        compliance_name = parse_structure_OptionalType_CustomTextType_500(compliance_name)
         compliance_description = data.get("compliance_description")
-        compliance_description = parse_structure_CustomTextType_500(compliance_description)
+        compliance_description = parse_structure_OptionalType_CustomTextType_500(compliance_description)
         due_date = data.get("due_date")
-        due_date = parse_structure_CustomTextType_20(due_date)
+        due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
         delayed_days = data.get("delayed_days")
-        delayed_days = parse_structure_CustomTextType_20(delayed_days)
+        delayed_days = parse_structure_OptionalType_CustomTextType_20(delayed_days)
         penal_consequences = data.get("penal_consequences")
-        penal_consequences = parse_structure_CustomTextType_500(penal_consequences)
+        penal_consequences = parse_structure_OptionalType_CustomTextType_500(penal_consequences)
         return Notification(
             notification_id, read_status, notification_text, extra_details,
             updated_on, level_1_statutory, unit_name, unit_address, assignee,
@@ -1814,19 +1814,19 @@ class Notification(object):
             "notification_id" : to_structure_UnsignedIntegerType_32(self.notification_id),
             "read_status" : to_structure_Bool(self.read_status),
             "notification_text" : to_structure_CustomTextType_500(self.notification_text),
-            "extra_details" : to_structure_CustomTextType_500(self.extra_details),
+            "extra_details" : to_structure_OptionalType_CustomTextType_500(self.extra_details),
             "updated_on" : to_structure_CustomTextType_20(self.updated_on),
-            "level_1_statutory" : to_structure_CustomTextType_500(self.level_1_statutory),
-            "unit_name" : to_structure_CustomTextType_50(self.unit_name),
-            "unit_address" : to_structure_CustomTextType_50(self.unit_address),
-            "assignee" : to_structure_CustomTextType_100(self.assignee),
+            "level_1_statutory" : to_structure_OptionalType_CustomTextType_500(self.level_1_statutory),
+            "unit_name" : to_structure_OptionalType_CustomTextType_50(self.unit_name),
+            "unit_address" : to_structure_OptionalType_CustomTextType_50(self.unit_address),
+            "assignee" : to_structure_OptionalType_CustomTextType_100(self.assignee),
             "concurrence_person" : to_structure_OptionalType_CustomTextType_100(self.concurrence_person),
-            "approval_person" : to_structure_CustomTextType_100(self.approval_person),
-            "compliance_name" : to_structure_CustomTextType_500(self.compliance_name),
-            "compliance_description" : to_structure_CustomTextType_500(self.compliance_description),
-            "due_date" : to_structure_CustomTextType_20(self.due_date),
-            "delayed_days" : to_structure_CustomTextType_20(self.delayed_days),
-            "penal_consequences" : to_structure_CustomTextType_500(self.penal_consequences)
+            "approval_person" : to_structure_OptionalType_CustomTextType_100(self.approval_person),
+            "compliance_name" : to_structure_OptionalType_CustomTextType_500(self.compliance_name),
+            "compliance_description" : to_structure_OptionalType_CustomTextType_500(self.compliance_description),
+            "due_date" : to_structure_OptionalType_CustomTextType_20(self.due_date),
+            "delayed_days" : to_structure_OptionalType_CustomTextType_20(self.delayed_days),
+            "penal_consequences" : to_structure_OptionalType_CustomTextType_500(self.penal_consequences)
         }
 
 #
