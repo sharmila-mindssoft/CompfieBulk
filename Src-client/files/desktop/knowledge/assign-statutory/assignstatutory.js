@@ -873,6 +873,7 @@ $('#activate-step-submit').on('click', function(e) {
 
 
 function displayEdit(client_statutory_id, country_id, group_id, location_id, domain_id, unit_id, submit_type){
+  displayLoader();
    function onSuccess(data){
       clearValues('all');
       $('ul.setup-panel li:eq(0)').removeClass('active');
@@ -916,9 +917,11 @@ function displayEdit(client_statutory_id, country_id, group_id, location_id, dom
       $("#clientstatutoryid").val(client_statutory_id);
 
       load_secondwizard();
+      hideLoader();
       }
       function onFailure(error){
         displayMessage(error)
+        hideLoader();
       }
       mirror.getAssignedStatutoryById(parseInt(client_statutory_id),
         function (error, response) {

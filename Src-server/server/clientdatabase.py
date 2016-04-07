@@ -4137,7 +4137,6 @@ class ClientDatabase(Database):
                         unit_id, user_id
                     )
 
-                print query
                 compliance_rows = self.select_all(query)
                 compliances_list = []
                 for compliance in compliance_rows:
@@ -4184,9 +4183,10 @@ class ClientDatabase(Database):
                         )
                 if len(compliances_list) > 0 :
                     unit_wise_compliances[unit_name] = compliances_list
-            unit_wise_compliances_list.append(clientreport.UnitCompliance(
-                business_group_name, legal_entity_name, division_name,
-                unit_wise_compliances))
+            if len(compliances_list) > 0 :
+                unit_wise_compliances_list.append(clientreport.UnitCompliance(
+                    business_group_name, legal_entity_name, division_name,
+                    unit_wise_compliances))
         return unit_wise_compliances_list
 
     # assigneewise compliance report
