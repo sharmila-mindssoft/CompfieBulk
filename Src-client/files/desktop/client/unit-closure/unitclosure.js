@@ -131,7 +131,7 @@ function loadUnitClosureList(unitsListData){
 		var address = value["unit_address"];		
 		var isClosed = value["is_closed"];
 		var isActive = value["is_active"];
-		console.log("unitName :"+unitName+", isClosed : "+isClosed)
+		
 		if(isClosed == false){
 			imageName = "deletebold.png";
 			title = "close"

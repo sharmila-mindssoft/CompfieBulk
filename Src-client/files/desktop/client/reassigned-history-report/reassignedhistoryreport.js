@@ -162,7 +162,6 @@ function loadReassignedHistoryList(data){
                 var count = 0;
                 $.each(rhistory, function(k1, val1) {                      
                     if(count == 0){
-                        console.log("count=="+rhistory[k1]['reassigned_to']);
                         $('.assignee', clone).html(rhistory[k1]['reassigned_to']);
                         $('.reassign-date', clone).html(rhistory[k1]['reassigned_date']);
                         $('.reassigned-from', clone).html(rhistory[k1]['reassigned_from']);

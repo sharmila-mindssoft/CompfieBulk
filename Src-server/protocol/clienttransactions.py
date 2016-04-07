@@ -1413,7 +1413,7 @@ class UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(object):
         frequency = data.get("frequency")
         frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(frequency)
         statutory_date = data.get("statutory_date")
-        statutory_date = parse_structure_VectorType_RecordType_core_StatutoryDate(statutory_date)
+        statutory_date = parse_structure_Text(statutory_date)
         due_date = data.get("due_date")
         due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
         assignee_name = data.get("assignee_name")
@@ -1429,7 +1429,7 @@ class UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(object):
             "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
             "description": to_structure_Text(self.description),
             "frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.frequency),
-            "statutory_date": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_date),
+            "statutory_date": to_structure_Text(self.statutory_date),
             "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
             "assignee_name" : to_structure_CustomTextType_50(self.assignee_name),
             "assignee_id": to_structure_UnsignedIntegerType_32(self.assignee_id)

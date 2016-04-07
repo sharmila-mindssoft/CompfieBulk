@@ -1735,22 +1735,19 @@ function loaddomain(classval){
 
             var ccdd =checkclientdomain(domainId, countval);
             var cdd = checkdomain(domainId, countval);
-            console.log("Checkingdomain--"+ccdd+"--"+cdd);
-            if(ccdd == 1 && cdd == 1){
-                console.log("enter 1")
+            
+            if(ccdd == 1 && cdd == 1){                
                 if(selectdomainstatus == 'checked'){
                     str += '<li id = "'+domainId+'" class="active_selectbox'+countval+' active" onclick="activate(this, \''+countval+'\')" >'+domainName+'</li> ';
                 }else{
                    str += '<li id="'+domainId+'" onclick="activate(this, \''+countval+'\')" >'+domainName+'</li> ';
                 }    
             }
-            else if(ccdd != 1 && cdd == 1){
-                console.log("enter 2")
+            else if(ccdd != 1 && cdd == 1){                
                 str += '<li id="'+domainId+'" onclick="activate(this, \''+countval+'\')" >'+domainName+'</li> ';
                 
             }
             else if(ccdd == 1 && cdd != 1){
-                console.log("enter 3")
                 if(selectdomainstatus == 'checked'){
                     str += '<li id="'+domainId+'" class="active_selectbox'+countval+' active deactivate" >'+domainName+'</li> ';
                 }

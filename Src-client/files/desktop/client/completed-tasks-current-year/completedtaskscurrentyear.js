@@ -89,31 +89,31 @@ function load_thirdwizard(){
         var frequency =  actCompliances[ac]["frequency"];
         var statutory_date =  actCompliances[ac]["statutory_date"];
         var due_date =  actCompliances[ac]["due_date"];
-        var statutorydate = '';
+        var statutorydate = actCompliances[ac]["statutory_date"];
 
-      if(frequency == 'Periodical' || frequency == 'Review') sdateDesc = 'Every';
-        for(j = 0; j < statutory_date.length; j++){
-          var sDay = '';
-          if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
+      // if(frequency == 'Periodical' || frequency == 'Review') sdateDesc = 'Every';
+      //   for(j = 0; j < statutory_date.length; j++){
+      //     var sDay = '';
+      //     if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
           
-          var sMonth = '';
-          if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
+      //     var sMonth = '';
+      //     if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
 
-          if(sMonth == 1) sMonth = "January"
-          else if(sMonth == 2) sMonth = "February"
-          else if(sMonth == 3) sMonth = "March"
-          else if(sMonth == 4) sMonth = "April"  
-          else if(sMonth == 5) sMonth = "May"
-          else if(sMonth == 6) sMonth = "June"
-          else if(sMonth == 7) sMonth = "July"
-          else if(sMonth == 8) sMonth = "Auguest"
-          else if(sMonth == 9) sMonth = "September"
-          else if(sMonth == 10) sMonth = "October"
-          else if(sMonth == 11) sMonth = "November"
-          else if(sMonth == 12) sMonth = "December"
+      //     if(sMonth == 1) sMonth = "January"
+      //     else if(sMonth == 2) sMonth = "February"
+      //     else if(sMonth == 3) sMonth = "March"
+      //     else if(sMonth == 4) sMonth = "April"  
+      //     else if(sMonth == 5) sMonth = "May"
+      //     else if(sMonth == 6) sMonth = "June"
+      //     else if(sMonth == 7) sMonth = "July"
+      //     else if(sMonth == 8) sMonth = "Auguest"
+      //     else if(sMonth == 9) sMonth = "September"
+      //     else if(sMonth == 10) sMonth = "October"
+      //     else if(sMonth == 11) sMonth = "November"
+      //     else if(sMonth == 12) sMonth = "December"
           
-          statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
-        }
+      //     statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
+      //   }
 
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();

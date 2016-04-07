@@ -209,7 +209,7 @@ function user_edit(userId){
         loadUserUpdate(userId);
     }
     function onFailure(error){
-        console.log(status);
+        console.log(error);
     }
     client_mirror.getClientUsers(
         function(error, response){
@@ -252,7 +252,7 @@ function loadUserUpdate(userId){
             });
             var contactno = userList[user]['contact_no'].split("-");
             $("#user-id").val(userId);
-            console.log(userList[user]['is_service_provider']+"=="+getServiceProviderName(userList[user]['service_provider_id']));
+
             if(userList[user]['is_service_provider'] == true){
                 //$("#usertype  option[$("div.id_100 select").val("val2");value='Service Provider']").attr("selected", "selected");
                 $("#usertype").val("Service Provider");
@@ -365,7 +365,7 @@ $("#submit").click(function(){
             return;
 		}
 	}
-    console.log(seatingunit);
+    
     if(usertype == ""){
         displayMessage("Select User Type");
         return;
@@ -995,7 +995,6 @@ function unitview(){
     }    
 }
 function activateUnit(element){
-    console.log(element);
     var chkstatus = $(element).attr('class');
     if(chkstatus == "active"){
         $(element).removeClass("active");
@@ -1005,7 +1004,7 @@ function activateUnit(element){
     }
     var selids='';
     var totalcount =  $("#unitList li.active").length;
-    console.log(totalcount);
+
     $("#unitList li.active").each( function( index, el ) {
         if (index === totalcount - 1) {
             selids = selids+el.id;
@@ -1172,7 +1171,6 @@ $("#search-units").keyup(function() {
     var count = 0;
     var value = this.value.toLowerCase();
     $("#unitList ul").find("li").each(function(index) {
-        console.log($(this).text());
         if (index === 0) return;
         var id = $(this).text().toLowerCase();
         $(this).toggle(id.indexOf(value) !== -1);;

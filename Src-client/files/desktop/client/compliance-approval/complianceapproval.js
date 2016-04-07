@@ -100,8 +100,12 @@ function showSideBar(idval, data){
         for (var i = 0; i < fileslist.length; i++){
             if(fileslist[i] != ""){
                 $('.sidebar-uploaded-documents', cloneValSide).append("<span><abbr class='sidebardocview'>"+fileslist[i]+"</abbr><a href='' download='"+documentslist[i]+"' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' title='Download' /></a><a href='"+ documentslist[i] +"' target='_new' class='view-file'> <img src='/images/view.png' style='width:16px;height:16px;' title='View' /></a></span>");        
+                $(".tr-sidebar-uploaded-date", cloneValSide).show();
             }     
         }    
+    }    
+    if( fileslist == null){
+        $('.sidebar-uploaded-documents', cloneValSide).val("-");
     }
     // $(".view-file", cloneValSide).on("click", function(e){
     //     $(".view-file", cloneValSide).attr("target", "_new");
@@ -266,7 +270,7 @@ function showSideBar(idval, data){
         if(action  ==  "Reject Approval"){
             approval_status = $(".approval-action option:selected").val();        
         }
-        console.log(approval_status);
+        //console.log(approval_status);
         
         if(approval_status == ''){
             displayMessage("Select Any Action");

@@ -42,6 +42,7 @@
   font-weight:bold;
   position:relative;
 
+
 }
 
 .tree li:before {
@@ -62,7 +63,13 @@
   top:1em; /* (line-height/2) */
   bottom:0;
 }
+.tree li table td {
+    font-size:1em; 
+}
 </style>
+<div class='loading-indicator-spin'>
+  <span><img src='/files/desktop/common/images/loading-img.gif' alt="">   </span>
+</div>
 <div class="content-container width100">
   <div class="content-area">
     <div class="add-container">
@@ -175,89 +182,12 @@
       <div class="grid-table-rpt default-display-none">
         <h1>Compliance Activity Report</h1>
           <div class="compliance-activity-list">
-          <table class="table-compliance-activity-list" id="accordion">
+            <table class="table-compliance-activity-list" id="accordion">
             <tbody class="heading-list"></tbody>
-         
-            </tbody>
-          <!--  <tr>
-          <td colspan="5">
-            <span class="heading">
-              Industrial Law
-              <img src="/images/right_arrow.png">Batteries Act</span>
-          </td>
-        </tr>
-        <tr style="border-bottom:1px solid #ccc;">
-          <td>1</td>
-          <td>FORM I - Half yearly returns Submission</td>
-          <td>10-Aug-2015</td>
-          <td>Approved</td>
-          <td>Complied</td>
-          <td>On Time</td>
-        </tr>
-      </table>
-      <ul class="tree">
-        <li>
-          <table>
-            <tr class="smallfont" style="background-color:#eae8e8; color:#000000;">
-              <td width="19%">24-Jul-2015</td>
-              <td  width="26%">Submitted</td>
-              <td  width="20%">Inprogress</td>
-              <td align="right" >Delayed By 7 Days</td>
-            </tr>
-          </table>
-        </li>
-        <li>
-          <table>
-            <tr class="smallfont" style="background-color:#eae8e8; color:#000000;">
-
-              <td  width="19.5%">17-Jul-2015</td>
-              <td  width="25.5%">Rejected</td>
-              <td  width="20%">Not Complied</td>
-              <td align="right">Over due by 3 Days</td>
-            </tr>
-
-          </table>
-        </li>
-      </ul>
-      <br>
-
-      <table>
-        <tr>
-          <td>2</td>
-          <td width="38%">FORM II - Registration</td>
-          <td width="12%">10-Aug-2015</td>
-          <td width="15%">Approved</td>
-          <td width="20%">Delayed Compliance</td>
-          <td align="right">Delayed by 5 days</td>
-        </tr>
-
-        <tr>
-          <td colspan="5">
-            <span class="heading">
-              Industrial Law
-              <img src="/images/right_arrow.png">The Tamilnadu Gratuity Act</span>
-          </td>
-        </tr>
-        <tr>
-          <td>3</td>
-
-          <td>Notice of Opening</td>
-          <td>07-Aug-2015</td>
-          <td>Approved</td>
-          <td width="22%">Complied</td>
-          <td >On Time</td>
-        </tr>
-        <tr>
-          <td>4</td>
-
-          <td>Opening And Closing Hours</td>
-          <td>06-Aug-2015</td>
-          <td>Rejected</td>
-          <td width="22%">Inprogress</td>
-          <td>5 Days left</td>
-        </tr>
-        -->
-      </table>
+        </table>
+        <div align="center" style="padding-top:10px;">
+          <input type="button" value="Show more records" class="btn-submit" id="pagination">
+        </div>
       </div>
       <p style="border-top:1px dashed #ccc;" class="total-records"></p>
     </div>
@@ -265,8 +195,9 @@
 </div>
 </div>
 <div id="templates">
-<table class="table-compliance-activity-list">
-<tr class="filter-heading-list">
+<table class="table-compliance-activity-list-temp">
+<tbody class="filter-heading-list">
+<tr class="">
   <td colspan="6">
   <div style="margin-left:15%;">
       <div style="float:left; padding-bottom:0.5em; margin-left:1%;">
@@ -300,6 +231,7 @@
     </div>
   </td>
 </tr>
+</tbody>
   <tr class="table-unit-heading">
     <td colspan="6">
        <h2 style="background:#f1e9f6; text-align:left;" class="unit-heading"> <abbr class="page-load tipso_style" title=""></abbr></h2>
