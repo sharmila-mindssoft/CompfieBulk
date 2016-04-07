@@ -114,7 +114,7 @@ def mobile_user_login_respone(db, data, login_type, client_id, ip):
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
     employee = "%s - %s" % (employee_code, employee_name)
-    session_token = db.add_session(user_id, session_type, ip, employee)
+    session_token = db.add_session(user_id, session_type, ip, employee, client_id)
     client_info = db.get_client_group()
     group_name = client_info["group_name"]
     group_id = client_info["client_id"]

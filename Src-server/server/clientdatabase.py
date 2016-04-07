@@ -3436,7 +3436,6 @@ class ClientDatabase(Database):
         final = []
         filter_types = []
         for r in result :
-            print r
             data = r.data
             for d in data :
                 if (
@@ -3848,33 +3847,30 @@ class ClientDatabase(Database):
         if len(domain_ids) == 1:
             domain_ids.append(0)
         filter_type = request.filter_type
-        filter_ids = request.filter_ids
-        if len(filter_ids) == 1 :
-            filter_ids.append(0)
+        _filter_ids = request.filter_ids
+        if len(_filter_ids) == 1 :
+            _filter_ids.append(0)
 
         filter_type_ids = ""
 
         if filter_type == "Group" :
-            group_by_name = "T4.country_id"
+            pass
 
         elif filter_type == "BusinessGroup" :
-            group_by_name = "T4.business_group_id"
-            filter_type_ids = "AND T4.business_group_id IN %s" % str(tuple(filter_ids))
+            filter_type_ids = "AND T4.business_group_id IN %s" % str(tuple(_filter_ids))
 
         elif filter_type == "LegalEntity" :
-            group_by_name = "T4.legal_entity_id"
-            filter_type_ids = "AND T4.legal_entity_id IN %s" % str(tuple(filter_ids))
+            filter_type_ids = "AND T4.legal_entity_id IN %s" % str(tuple(_filter_ids))
 
         elif filter_type == "Division" :
-            group_by_name = "T4.division_id"
-            filter_type_ids = "AND T4.division_id IN %s" % str(tuple(filter_ids))
+            filter_type_ids = "AND T4.division_id IN %s" % str(tuple(_filter_ids))
 
         elif filter_type == "Unit":
-            group_by_name = "T4.unit_id"
-            filter_type_ids = "AND T4.unit_id IN %s" % str(tuple(filter_ids))
+            filter_type_ids = "AND T4.unit_id IN %s" % str(tuple(_filter_ids))
 
         query = "SELECT T1.compliance_history_id, T1.unit_id, \
-            T1.compliance_id, T1.start_date, T1.due_date \
+            T1.compliance_id, T1.start_date, T1.due_date, \
+            T4.business_group_id, T4.legal_entity_id, T4.division_id \
             FROM tbl_compliance_history T1 \
             INNER JOIN tbl_client_compliances T2 \
             ON T1.compliance_id = T2.compliance_id \
@@ -3897,7 +3893,8 @@ class ClientDatabase(Database):
         rows = self.select_all(query)
         columns = [
             "compliance_history_id", "unit_id", "compliance_id",
-            "start_date", "due_date"
+            "start_date", "due_date", "business_group_id",
+            "legal_entity_id", "division_id"
         ]
         not_complied = self.convert_to_dict(rows, columns)
         current_date = datetime.datetime.today()
@@ -3905,7 +3902,29 @@ class ClientDatabase(Database):
         below_60 = 0
         below_90 = 0
         above_90 = 0
+
         for i in not_complied :
+            if filter_type == "BusinessGroup" :
+                if i["business_group_id"] == 0 :
+                    continue
+                if i["business_group_id"] not in request.filter_ids :
+                    continue
+            elif filter_type == "LegalEntity" :
+                if i["legal_entity_id"] == 0 :
+                    continue
+                if i["legal_entity_id"] not in request.filter_ids :
+                    continue
+            elif filter_type == "Division" :
+                if i["division_id"] == 0 :
+                    continue
+                if i["division_id"] not in request.filter_ids :
+                    continue
+            elif filter_type == "Unit" :
+                if i["unit_id"] == 0 :
+                    continue
+                if i["unit_id"] not in request.filter_ids :
+                    continue
+
             due_date = i["due_date"]
             if due_date is None :
                 continue
@@ -4389,7 +4408,8 @@ class ClientDatabase(Database):
             T4.statutory_mapping, T4.statutory_provision,\
             T4.compliance_task, T4.compliance_description,  \
             T4.document_name, T4.format_file, T4.format_file_size, T4.penal_consequences, \
-            T4.statutory_dates, T4.repeats_every, T4.duration, T4.is_active \
+            T4.statutory_dates, T4.repeats_every, T4.duration, T4.is_active, \
+            (select group_concat(unit_code, ' - ', unit_name) from tbl_units where unit_id =  T3.unit_id)\
             FROM tbl_client_compliances T1 \
             INNER JOIN tbl_client_statutories T2 \
             ON T2.client_statutory_id = T1.client_statutory_id \
@@ -4453,14 +4473,14 @@ class ClientDatabase(Database):
             "statutory_mapping", "statutory_provision", "compliance_task",
             "compliance_description", "document_name", "format_file",
             "format_file_size", "penal_consequences", "statutory_dates",
-            "repeats_every", "duration", "is_active"
+            "repeats_every", "duration", "is_active", "unit_name"
         ]
         result = self.convert_to_dict(rows, columns)
 
         level_1_wise_compliance = {}
 
         for r in result :
-            unit_id = int(r["unit_id"])
+            unit_name = r["unit_name"]
             mappings = r["statutory_mapping"].split(">>")
             if len(mappings) >= 1 :
                 level_1 = mappings[0]
@@ -4517,18 +4537,18 @@ class ClientDatabase(Database):
             if level_1_wise_data is None :
                 compliance_dict = {}
                 compliance_list = [compliance]
-                compliance_dict[unit_id] = compliance_list
+                compliance_dict[unit_name] = compliance_list
                 level_1_wise_data = dashboard.ApplicableDrillDown(
                     level_1, compliance_dict
                 )
             else :
                 compliance_dict = level_1_wise_data.compliances
-                compliance_list = compliance_dict.get(unit_id)
+                compliance_list = compliance_dict.get(unit_name)
                 if compliance_list is None :
                     compliance_list = []
                 compliance_list.append(compliance)
 
-                compliance_dict[unit_id] = compliance_list
+                compliance_dict[unit_name] = compliance_list
                 level_1_wise_data.compliances = compliance_dict
 
             level_1_wise_compliance[level_1] = level_1_wise_data

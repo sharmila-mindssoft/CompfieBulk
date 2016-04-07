@@ -199,7 +199,7 @@ function ChartInput () {
         return this.filter_type;
     }
 
-    this.setBusinessGroups = function (v, isAdd) {
+    this.setBusinessGroups = function (v, isAdd, isSingle) {
         v = parseInt(v);
         index = this.business_groups.indexOf(v)
         if (index >= 0 && !isAdd) {
@@ -223,16 +223,21 @@ function ChartInput () {
         if (this.business_groups.length > 0)
             return copyArray(this.business_groups);
         else {
-            if (this.filter_type == "business_group")
-                return get_ids(
+            if (this.filter_type == "business_group"){
+                ids = get_ids(
                     CHART_FILTERS_DATA.business_groups, "business_group_id"
                 );
+                if (this.chart_type == "compliance_status")
+                    return ids;
+                else
+                    return [ids[0]];
+            }
             else
                 return [];
         }
     }
 
-    this.setLegalEntities = function (v, isAdd) {
+    this.setLegalEntities = function (v, isAdd, isSingle) {
         v = parseInt(v);
         index = this.legal_entities.indexOf(v)
         if (index >= 0 && !isAdd) {
@@ -256,16 +261,21 @@ function ChartInput () {
         if (this.legal_entities.length > 0)
             return copyArray(this.legal_entities);
         else {
-            if (this.filter_type == "legal_entity")
-                return get_ids(
+            if (this.filter_type == "legal_entity") {
+                ids = get_ids(
                     CHART_FILTERS_DATA.legal_entities, "legal_entity_id"
                 );
+                if (this.chart_type == "compliance_status")
+                    return ids;
+                else
+                    return [ids[0]]
+            }
             else
                 return [];
         }
     }
 
-    this.setDivisions = function (v, isAdd) {
+    this.setDivisions = function (v, isAdd, isSingle) {
         v = parseInt(v);
         index = this.divisions.indexOf(v)
         if (index >= 0 && !isAdd) {
@@ -290,10 +300,15 @@ function ChartInput () {
         if (this.divisions.length > 0)
             return copyArray(this.divisions);
         else {
-            if (this.filter_type == "division")
-                return get_ids(
+            if (this.filter_type == "division") {
+                ids = get_ids(
                     CHART_FILTERS_DATA.divisions, "division_id"
                 );
+                if (this.chart_type == "compliance_status")
+                    return ids;
+                else
+                    return [ids[0]]
+            }
             else
                 return [];
         }
@@ -321,6 +336,7 @@ function ChartInput () {
     }
 
     this.getUnits = function () {
+        console.log(this.units.length)
         if (this.units.length > 0)
             return copyArray(this.units);
         else {
@@ -328,8 +344,10 @@ function ChartInput () {
                 ids = get_ids(
                     CHART_FILTERS_DATA.units, "unit_id"
                 );
-                //console.log(ids)
-                return ids;
+                if (this.chart_type == "compliance_status")
+                    return ids;
+                else
+                    return [ids[0]]
             }
             else
                 return [];
@@ -672,7 +690,6 @@ function updateComplianceStatusStackBarChart(data) {
         chart: {
             renderTo: "status-container",
             type: 'bar',
-            width: '850'
         },
         title: {
             text: chartTitle
@@ -797,7 +814,6 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
         colors:['#A5D17A','#F58835', '#F0F468', '#F32D2B'],
         chart: {
             renderTo: "status-container",
-            width: '850'
         },
         title: {
             text: chartTitle
@@ -2222,7 +2238,6 @@ function updateEscalationChart(data) {
         chart: {
             type: 'column',
             renderTo: "status-container",
-            width: '850'
         },
         title: {
             text: chartTitle
@@ -3342,7 +3357,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
         single: isSingleSelect,
         placeholder: "Select Business Group",
         onClick: function (business_group) {
-            chartInput.setBusinessGroups(business_group.value, business_group.checked);
+            chartInput.setBusinessGroups(business_group.value, business_group.checked, isSingleSelect);
         },
         onCheckAll: function () {
             business_groups = get_ids(
@@ -3361,7 +3376,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
         single: isSingleSelect,
         placeholder: "Select Legal Entity",
         onClick: function (legal_entity) {
-            chartInput.setLegalEntities(legal_entity.value, legal_entity.checked);
+            chartInput.setLegalEntities(legal_entity.value, legal_entity.checked, isSingleSelect);
         },
         onCheckAll: function () {
             legal_entities = get_ids(
@@ -3380,7 +3395,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
         single: isSingleSelect,
         placeholder: "Select Division",
         onClick: function (division) {
-            chartInput.setDivisions(division.value, division.checked);
+            chartInput.setDivisions(division.value, division.checked, isSingleSelect);
         },
         onCheckAll: function () {
             divisions = get_ids(CHART_FILTERS_DATA.divisions, "division_id");
