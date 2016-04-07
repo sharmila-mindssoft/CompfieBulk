@@ -4075,14 +4075,10 @@ class ClientDatabase(Database):
             unit_ids = unit_id
 
         q = "SELECT u.business_group_id, u.legal_entity_id, u.division_id,  \
-            bg.business_group_name, le.legal_entity_name, d.division_name \
+            (SELECT bg.business_group_name FROM tbl_business_groups bg WHERE  bg.business_group_id = u.business_group_id) AS business_group_name, \
+            (SELECT le.legal_entity_name FROM tbl_legal_entities le WHERE  u.legal_entity_id = le.legal_entity_id) AS legal_entity_name, \
+            (SELECT d.division_name FROM tbl_divisions d WHERE  u.division_id = d.division_id) AS division_name \
             FROM tbl_units u \
-            INNER JOIN tbl_business_groups bg \
-            ON u.business_group_id = bg.business_group_id \
-            INNER JOIN tbl_legal_entities le \
-            ON u.legal_entity_id = le.legal_entity_id \
-            INNER JOIN tbl_divisions d \
-            ON u.division_id = d.division_id \
             WHERE u.business_group_id like '%s' \
             and u.legal_entity_id like '%s' \
             and u.division_id like '%s' \
@@ -4100,14 +4096,22 @@ class ClientDatabase(Database):
             division_name = row[5]
             unit_columns = "unit_id, unit_code, unit_name, address"
             detail_condition = "legal_entity_id = '%d' " % row[1]
-            if row[0] == None:
-                detail_condition += " And business_group_id is NULL"
+            if row[0] in [None, 0, 'None', '0']:
+                if row[0] in [0, '0']:
+                    detail_condition += " And business_group_id = 0"
+                else:
+                    detail_condition += " And business_group_id is NULL"
             else:
                 detail_condition += " And business_group_id = '%d'" % row[0]
-            if row[2] == None:
-                detail_condition += " And division_id is NULL"
+
+            if row[2] in [None, 0, 'None', '0']:
+                if row[2] in [0, '0']:
+                    detail_condition += " And division_id = 0"
+                else:
+                    detail_condition += " And division_id is NULL"
             else:
                 detail_condition += " And division_id = '%d'" % row[2]
+
             unit_condition = detail_condition + " and country_id = '%d' and unit_id in (%s)" % (
                 country_id, unit_ids
             )
@@ -4120,21 +4124,21 @@ class ClientDatabase(Database):
                 unit_name = "%s - %s " % (unit[1], unit[2])
                 unit_address = unit[3]
 
-                query = "select c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
+                query = "select c.compliance_task, c.compliance_description, ac.statutory_dates, ac.validity_date, ac.due_date, \
                         ac.assignee, cf.frequency, c.frequency_id, c.duration, c.repeats_every, \
                         (select duration_type from tbl_compliance_duration_type where duration_type_id = c.duration_type_id) AS duration_type, \
                         (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = c.repeats_type_id) AS repeat_type \
                         from tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
-                        tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
-                        ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
-                        cs.country_id = %s and cs.domain_id = %s and cs.unit_id like '%s' \
+                        tbl_assigned_compliances ac, tbl_compliance_frequency cf where \
+                        cs.country_id = %s and cs.domain_id = %s and cs.unit_id = %s and cc.statutory_opted = 1 and ac.is_active = 1 \
                         and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
-                        and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee like '%s' " % (
+                        and cc.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.country_id = cs.country_id and ac.assignee like '%s' " % (
                         country_id, domain_id,
                         unit_id, user_id
                     )
-                compliance_rows = self.select_all(query)
 
+                print query
+                compliance_rows = self.select_all(query)
                 compliances_list = []
                 for compliance in compliance_rows:
                     statutory_dates = compliance[2]
@@ -4155,10 +4159,13 @@ class ClientDatabase(Database):
                     compliance_frequency = core.COMPLIANCE_FREQUENCY(
                         compliance[6]
                     )
-                    due_date = self.datetime_to_string(compliance[4])
+
+                    due_date = None
+                    if(compliance[4] is not None):
+                        due_date = self.datetime_to_string(compliance[4])
 
                     validity_date = None
-                    if(validity_date is not None):
+                    if(compliance[3] is not None):
                         validity_date = self.datetime_to_string(compliance[3])
 
                     if compliance[7] in (2, 3) :
@@ -4195,21 +4202,18 @@ class ClientDatabase(Database):
             unit_ids = unit_id
 
         q = "SELECT u.business_group_id, u.legal_entity_id, u.division_id,  \
-            bg.business_group_name, le.legal_entity_name, d.division_name \
+            (SELECT bg.business_group_name FROM tbl_business_groups bg WHERE  bg.business_group_id = u.business_group_id) AS business_group_name, \
+            (SELECT le.legal_entity_name FROM tbl_legal_entities le WHERE  u.legal_entity_id = le.legal_entity_id) AS legal_entity_name, \
+            (SELECT d.division_name FROM tbl_divisions d WHERE  u.division_id = d.division_id) AS division_name, group_concat(u.unit_id) \
             FROM tbl_units u \
-            INNER JOIN tbl_business_groups bg \
-            ON u.business_group_id = bg.business_group_id \
-            INNER JOIN tbl_legal_entities le \
-            ON u.legal_entity_id = le.legal_entity_id \
-            INNER JOIN tbl_divisions d \
-            ON u.division_id = d.division_id \
             WHERE u.business_group_id like '%s' \
             and u.legal_entity_id like '%s' \
-            and u.division_id like '%s' \
+            and u.division_id like '%s' and u.unit_id in (%s) \
             GROUP BY u.business_group_id, u.legal_entity_id, u.division_id" % (
                 str(business_group_id),
                 str(legal_entity_id),
-                str(division_id)
+                str(division_id),
+                unit_ids
             )
         rows = self.select_all(q)
 
@@ -4221,9 +4225,11 @@ class ClientDatabase(Database):
             q = "SELECT ac.assignee, \
             (SELECT concat( u.employee_code, '-' ,u.employee_name ) FROM tbl_users u WHERE u.user_id = ac.assignee) AS assigneename, \
             (SELECT concat( u.employee_code, '-', u.employee_name )FROM tbl_users u WHERE u.user_id = ac.concurrence_person) AS concurrencename,\
-            (SELECT concat( u.employee_code, '-', u.employee_name )FROM tbl_users u WHERE u.user_id = ac.approval_person) AS approvalname \
+            (SELECT concat( u.employee_code, '-', u.employee_name )FROM tbl_users u WHERE u.user_id = ac.approval_person) AS approvalname, \
+            ac.concurrence_person, ac.approval_person \
             FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_assigned_compliances ac, tbl_units ut \
-            WHERE cs.country_id = %s  and ut.unit_id = (SELECT u.seating_unit_id from tbl_users u WHERE u.user_id = ac.assignee) \
+            WHERE cs.country_id = %s  and ( cs.unit_id = (SELECT u.seating_unit_id from tbl_users u WHERE u.user_id = ac.assignee) OR \
+                cs.unit_id in (select group_concat(uu.unit_id) from tbl_user_units uu where uu.user_id = ac.assignee) )\
             AND ut.business_group_id = %s and ut.legal_entity_id = %s and ut.division_id = %s \
             AND cs.domain_id = %s \
             AND cs.client_statutory_id = cc.client_statutory_id  AND ac.assignee like '%s'\
@@ -4239,22 +4245,21 @@ class ClientDatabase(Database):
                 assingee_name = assignee[1]
                 concurrence_person = assignee[2]
                 approval_person = assignee[3]
-                query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
+                query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ac.validity_date, ac.due_date, \
                         ac.assignee, cf.frequency, c.frequency_id, c.duration, c.repeats_every, \
                         (select duration_type from tbl_compliance_duration_type where duration_type_id = c.duration_type_id) AS duration_type, \
                         (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = c.repeats_type_id) AS repeat_type, \
                         (select concat(unit_code,' - ',unit_name) from tbl_units where unit_id = ac.unit_id) AS unit_name \
                         FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
-                        tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
-                        ch.compliance_id = ac.compliance_id and ch.next_due_date = ac.due_date and \
-                        cs.country_id = %s and cs.domain_id = %s and cs.unit_id in (%s) \
+                        tbl_assigned_compliances ac, tbl_compliance_frequency cf where \
+                        cs.country_id = %s and cs.domain_id = %s and cs.unit_id in (%s) and cc.statutory_opted = 1 and ac.is_active = 1 \
                         and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
-                        and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee = '%s' " % (
+                        and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee = '%s' and ac.concurrence_person = '%s' and ac.approval_person = '%s' " % (
                         country_id, domain_id,
-                        unit_ids, assignee_id
+                        row[6], assignee_id, assignee[4], assignee[5]
                     )
-                compliance_rows = self.select_all(query)
 
+                compliance_rows = self.select_all(query)
                 compliances_list = []
                 for compliance in compliance_rows:
                     statutory_dates = compliance[2]
@@ -4275,10 +4280,13 @@ class ClientDatabase(Database):
                     compliance_frequency = core.COMPLIANCE_FREQUENCY(
                         compliance[6]
                     )
-                    due_date = self.datetime_to_string(compliance[4])
+
+                    due_date = None
+                    if(compliance[4] is not None):
+                        due_date = self.datetime_to_string(compliance[4])
 
                     validity_date = None
-                    if(validity_date is not None):
+                    if(compliance[3] is not None):
                         validity_date = self.datetime_to_string(compliance[3])
 
                     if compliance[7] in (2, 3) :
@@ -4892,17 +4900,16 @@ class ClientDatabase(Database):
                 unit_name = "%s - %s " % (unit[1], unit[2])
                 unit_address = unit[3]
 
-                query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
+                query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ac.validity_date, ac.due_date, \
                         ac.assignee, cf.frequency, c.frequency_id, c.duration, c.repeats_every, \
                         (select duration_type from tbl_compliance_duration_type where duration_type_id = c.duration_type_id) AS duration_type, \
                         (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = c.repeats_type_id) AS repeat_type \
                         FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
-                        tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
-                        ch.next_due_date = ac.due_date and \
-                        cs.country_id = %s and cs.domain_id = %s and cs.unit_id like '%s' \
-                        and cs.client_statutory_id = cc.client_statutory_id \
+                        tbl_assigned_compliances ac, tbl_compliance_frequency cf where \
+                        cs.country_id = %s and cs.domain_id = %s and cs.unit_id = %s and cc.statutory_opted = 1 and ac.is_active = 1 \
+                        and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
                         and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee in (%s) and \
-                        c.statutory_mapping like '%s' group by ac.compliance_id" % (
+                        c.statutory_mapping like '%s'" % (
                         country_id, domain_id,
                         unit_id, user_ids, str(statutory_id+"%")
                     )
@@ -4926,10 +4933,13 @@ class ClientDatabase(Database):
                     description = compliance[1]
                     statutory_date = date_list
                     compliance_frequency = core.COMPLIANCE_FREQUENCY(compliance[6])
-                    due_date = self.datetime_to_string(compliance[4])
+
+                    due_date = None
+                    if(compliance[4] is not None):
+                        due_date = self.datetime_to_string(compliance[4])
 
                     validity_date = None
-                    if(validity_date is not None):
+                    if(compliance[3] is not None):
                         validity_date = self.datetime_to_string(compliance[3])
 
                     if compliance[7] in (2, 3) :
@@ -5004,19 +5014,20 @@ class ClientDatabase(Database):
             unit_name = "%s - %s " % (unit[1], unit[2])
             unit_address = unit[3]
 
-            query = "SELECT distinct ch.compliance_history_id, c.document_name, c.compliance_description, ch.validity_date, ch.due_date, \
+            query = "SELECT ch.compliance_history_id, c.document_name, c.compliance_description, ch.validity_date, ch.due_date, \
                     (SELECT concat( u.employee_code, '-' ,u.employee_name ) FROM tbl_users u WHERE u.user_id = ch.completed_by) AS assigneename, \
                     ch.documents, ch.completion_date, c.compliance_task, c.frequency_id \
                     from tbl_compliances c,tbl_compliance_history ch, \
                     tbl_units ut where \
                     ch.unit_id = %s \
-                    AND ut.country_id = %s and c.domain_id = %s \
+                    AND ut.country_id = %s and c.domain_id = %s and ch.unit_id = ut.unit_id\
                     AND c.compliance_id = ch.compliance_id \
                     AND ch.completed_by like '%s'  AND c.statutory_mapping like '%s'  AND c.compliance_id like '%s' and ch.due_date BETWEEN '%s' AND '%s'" % (
                     unit_id, country_id, domain_id,
                     assignee_id, str(statutory_id+"%"), compliance_id, start_date, end_date
                 )
             compliance_rows = self.select_all(query, client_id)
+            
             compliances_list = []
             for compliance in compliance_rows:
 
@@ -5030,7 +5041,9 @@ class ClientDatabase(Database):
                 else :
                     assignee = compliance[5]
 
-                due_date = self.datetime_to_string(compliance[4])
+                due_date = None
+                if(compliance[4] != None):
+                    due_date = self.datetime_to_string(compliance[4])
 
                 validity_date = None
                 if(compliance[3] != None):

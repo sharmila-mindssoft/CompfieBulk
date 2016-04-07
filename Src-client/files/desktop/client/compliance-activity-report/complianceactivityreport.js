@@ -235,12 +235,7 @@ function compactivitycompliancetasklist(data, acc_count){
                 $('.accordion-content'+acc_count).append(cloneval_ul);   
             }
             count++;                    
-        });      
-        $('#accordion').find('.accordion-toggle').click(function(){
-            $(this).next().slideToggle('fast');
-            $(".accordion-content").not($(this).next()).slideUp('fast');
-        });
-       
+        });          
     });
     
 }
@@ -343,6 +338,10 @@ function loadresult(finalList) {
             }
         } 
     }
+    $('#accordion').find('.accordion-toggle').click(function(){
+        $(this).next().slideToggle('fast');
+        $(".accordion-content").not($(this).next()).slideUp('fast');
+    });
 }
 
 

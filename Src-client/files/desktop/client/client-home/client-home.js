@@ -29,6 +29,15 @@ var USERLIST = null;
 var UNITLIST = null;
 var DOMAINLIST = null;
 
+var PAGESIZE = 500;
+var STARTCOUNT = 0;
+var ENDCOUNT;
+var SNO = 1;
+var FULLARRAYLIST = [];
+var ACCORDIONCOUNT = 0;
+
+
+
 function clearMessage() {
     $(".chart-error-message").text("");
 }
@@ -942,125 +951,214 @@ function updateComplianceApplicabilityDrillDown(status, data, type) {
 }
 
 
+function get_sub_array(object, start, end){
+    if(!end){ end = -1;}
+    return object.slice(start, end);
+}
 
-function showComplianceApplicabilityDrillDownRecord(data, type){
-    $(".drilldown-title").text(GROUP_NAME+" - "+type+" Compliances");
+$('#pagination').click(function(e){
+    displayLoader();
+    if($('.loading-indicator-spin').css('display') != 'none')
+    {
+        setTimeout(function(){  
+            paginationrecord_showComplianceApplicabilityDrillDownRecord();
+        }, 500);
+        
+    }
+    setTimeout(function(){  
+        hideLoader();
+    }, 500);
+    
+});
+function paginationrecord_showComplianceApplicabilityDrillDownRecord(data){
+    STARTCOUNT = ENDCOUNT;
+    ENDCOUNT = STARTCOUNT + PAGESIZE;
+      
+    var list = get_sub_array(fullArrayList, STARTCOUNT, ENDCOUNT);
+    if(list.length < PAGESIZE){
+        $('#pagination').hide();
+    }
+    
+    //e.preventDefault();
+    for(var y = 0;  y < PAGESIZE; y++){
+        if(list[y] !=  undefined){
+            if(Object.keys(list[y])[0] == "level1_name"){
+                ACCORDIONCOUNT++;
+                showComplianceApplicabilityDrillDownRecord_level1List(list[y]);
+            }    
+            else if(Object.keys(list[y])[0] == "unit_name"){
+                showComplianceApplicabilityDrillDownRecord_unitList(list[y]);
+            }    
+            else if(Object.keys(list[y])[0] == "description"){
+                showComplianceApplicabilityDrillDownRecord_complianceList(list[y]);
+            }
+        }        
+    }
+}
 
-    $(".table-thead-drilldown-list").empty();
-    $(".table-drilldown-list tbody").remove();
-    $(".escalation-drilldown-list .td-escalation").empty();
-    var data =  data['drill_down_data'];
-    var sno = 1;
-    var count = 1;
+function showComplianceApplicabilityDrillDownRecord_headingList(){
     var tableHeading = $('#templates .compliance-applicable-status .tr-heading');
     var cloneHeading = tableHeading.clone();
     $(".table-thead-drilldown-list").append(cloneHeading);
-    $.each(data, function(key, value){
-        var tableUnit = $('#templates .compliance-applicable-status .tr-unit');
-        var cloneUnit = tableUnit.clone();
-        $(".unit-heading", cloneUnit).html(value["level1_statutory_name"]);
-        $(".table-drilldown-list").append(cloneUnit);
-        $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
-        if(count==1){
-            $('.accordion-content'+count).addClass("default");
+}
+function showComplianceApplicabilityDrillDownRecord_level1List(data){
+    var tableLevel1 = $('#templates .compliance-applicable-status .tr-level1');
+    var cloneLevel1 = tableLevel1.clone(); 
+    $(".level-heading", cloneLevel1).html(data["level1_name"]);
+    $(".table-drilldown-list").append(cloneLevel1);
+
+    $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+ACCORDIONCOUNT+'"></tbody>');
+    if(ACCORDIONCOUNT == 1){
+        $('.accordion-content'+ACCORDIONCOUNT).addClass("default");
+    }
+}
+function showComplianceApplicabilityDrillDownRecord_unitList(data){
+    var tableUnit = $('#templates .compliance-applicable-status .tr-unit');
+    var cloneUnit = tableUnit.clone();
+    var disp_unitname = '';    
+    $(".heading", cloneUnit).html(data['unit_name']);
+    $('.accordion-content'+ACCORDIONCOUNT).append(cloneUnit);
+    
+}
+function showComplianceApplicabilityDrillDownRecord_complianceList(val){
+    var frequency =  val["frequency"];
+    var statutory_date =  val["statutory_dates"];
+    var statutorydate = '';
+    var triggerbefore = '';
+    var summary = val["summary"];
+
+    for(j = 0; j < statutory_date.length; j++){
+        var sDay = '';
+        if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
+
+        var sMonth = '';
+        if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
+
+        var tBefore = '';
+        if(statutory_date[j]["trigger_before_days"] != null) tBefore = statutory_date[j]["trigger_before_days"] + " Days";
+
+        if(sMonth == 1) sMonth = "Jan"
+        else if(sMonth == 2) sMonth = "Feb"
+        else if(sMonth == 3) sMonth = "Mar"
+        else if(sMonth == 4) sMonth = "Apr"
+        else if(sMonth == 5) sMonth = "May"
+        else if(sMonth == 6) sMonth = "Jun"
+        else if(sMonth == 7) sMonth = "Jul"
+        else if(sMonth == 8) sMonth = "Aug"
+        else if(sMonth == 9) sMonth = "Sep"
+        else if(sMonth == 10) sMonth = "Oct"
+        else if(sMonth == 11) sMonth = "Nov"
+        else if(sMonth == 12) sMonth = "Dec"
+
+        statutorydate +=  sDay +' - '+ sMonth + ', ';
+        triggerbefore +=  tBefore + ', ';
+    }
+
+    if(summary != null){
+        if(statutorydate.trim() != ''){
+            statutorydate = statutorydate.replace(/,\s*$/, "");
+            statutorydate = summary + ' ('+statutorydate+')';
+        }else{
+            statutorydate = summary;
         }
-        var unitList = value["compliances"];
-        $.each(unitList, function(ke, valu){
-            var tableLevel1 = $('#templates .compliance-applicable-status .tr-level1');
-            var cloneLevel1 = tableLevel1.clone();
-            var disp_unitname = '';
-            for(unit in units){
-                if(units[unit]["unit_id"] == ke){
-                    disp_unitname = units[unit]["unit_name"]
-                }
-            }
-            $(".heading", cloneLevel1).html(disp_unitname);
-            $('.accordion-content'+count).append(cloneLevel1);
-            $.each(valu, function(k, val){
-                var frequency =  val["frequency"];
-                var statutory_date =  val["statutory_dates"];
-                var statutorydate = '';
-                var triggerbefore = '';
-                var summary = val["summary"];
+    }
 
-                for(j = 0; j < statutory_date.length; j++){
-                  var sDay = '';
-                  if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
+    if(triggerbefore != ''){
+        triggerbefore = triggerbefore.replace(/,\s*$/, "");
+    }
+    var tableRow = $('#templates .compliance-applicable-status .table-row-list');
+    var clone = tableRow.clone();
 
-                  var sMonth = '';
-                  if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
+    var cDescription = val["description"];
+    var partDescription = cDescription;
+    if (cDescription != null && cDescription.length > 50){
+        partDescription = cDescription.substring(0,49)+'...';
+    }
 
-                  var tBefore = '';
-                  if(statutory_date[j]["trigger_before_days"] != null) tBefore = statutory_date[j]["trigger_before_days"] + " Days";
+    var cPenalConsequences = val["penal_consequences"];
+    var partPenalConsequences = cPenalConsequences;
+    if (cPenalConsequences != null && cPenalConsequences.length > 50){
+        partPenalConsequences = cPenalConsequences.substring(0,49)+'...';
+    }
 
-                  if(sMonth == 1) sMonth = "Jan"
-                  else if(sMonth == 2) sMonth = "Feb"
-                  else if(sMonth == 3) sMonth = "Mar"
-                  else if(sMonth == 4) sMonth = "Apr"
-                  else if(sMonth == 5) sMonth = "May"
-                  else if(sMonth == 6) sMonth = "Jun"
-                  else if(sMonth == 7) sMonth = "Jul"
-                  else if(sMonth == 8) sMonth = "Aug"
-                  else if(sMonth == 9) sMonth = "Sep"
-                  else if(sMonth == 10) sMonth = "Oct"
-                  else if(sMonth == 11) sMonth = "Nov"
-                  else if(sMonth == 12) sMonth = "Dec"
+    $(".sno", clone).html(SNO);
+    $(".statutory-name", clone).html(val["statutory_provision"]);
+    var download_url = val["download_url"];
+    if(download_url == null){
+        $(".compliance-task-name", clone).html(val["compliance_task"])
+    }else{
+        $('.compliance-task-name', clone).html('<a href= "'+ download_url +'" target="_new">'+val["compliance_task"]+'</a>');
+    }
 
-                  statutorydate +=  sDay +' - '+ sMonth + ', ';
-                  triggerbefore +=  tBefore + ', ';
-                }
+    $(".compliance-description-name", clone).html('<abbr class="page-load" title="'+cDescription+'">'+partDescription+'</abbr>');
+    $(".penal-consequences-name", clone).html('<abbr class="page-load" title="'+cPenalConsequences+'">'+partPenalConsequences+'</abbr>');
+    $(".compliance-frequency-name", clone).html(frequency);
+    $(".repeats", clone).html(statutorydate);
+    //$(".statutory-date", clone).html(statutorydate);
+    $(".trigger-before", clone).html(triggerbefore);
+    $('.accordion-content'+ACCORDIONCOUNT).append(clone);
+    SNO = SNO + 1;
+}
 
-                if(summary != null){
-                  if(statutorydate.trim() != ''){
-                    statutorydate = statutorydate.replace(/,\s*$/, "");
-                    statutorydate = summary + ' ('+statutorydate+')';
-                  }else{
-                    statutorydate = summary;
-                  }
-                }
+function showComplianceApplicabilityDrillDownRecord(data, type){
+    $(".drilldown-title").text(GROUP_NAME+" - "+type+" Compliances");    
+    $(".table-thead-drilldown-list").empty();
+    $(".table-drilldown-list tbody").remove();
+    $(".escalation-drilldown-list .td-escalation").empty();
+    FULLARRAYLIST = [];        
+    SNO = 1;
+    STARTCOUNT = 0;
+    ENDCOUNT = 0;
 
-                if(triggerbefore != ''){
-                    triggerbefore = triggerbefore.replace(/,\s*$/, "");
-                }
-                var tableRow = $('#templates .compliance-applicable-status .table-row-list');
-                var clone = tableRow.clone();
+    var data =  data['drill_down_data'];
 
-                var cDescription = val["description"];
-                var partDescription = cDescription;
-                if (cDescription != null && cDescription.length > 50){
-                  partDescription = cDescription.substring(0,49)+'...';
-                }
+    ENDCOUNT = PAGESIZE;
 
-                var cPenalConsequences = val["penal_consequences"];
-                var partPenalConsequences = cPenalConsequences;
-                if (cPenalConsequences != null && cPenalConsequences.length > 50){
-                  partPenalConsequences = cPenalConsequences.substring(0,49)+'...';
-                }
+    $.each(data, function(i, val){
+        var level1_Object = new Object();
+        level1_Object.level1_name = val['level1_statutory_name'];
+        var list_comp = val["compliances"]        
+        FULLARRAYLIST.push(level1_Object);
 
-                $(".sno", clone).html(sno);
-                $(".statutory-name", clone).html(val["statutory_provision"]);
-                var download_url = val["download_url"];
-                if(download_url == null){
-                    $(".compliance-task-name", clone).html(val["compliance_task"])
-                }else{
-                    $('.compliance-task-name', clone).html('<a href= "'+ download_url +'" target="_new">'+val["compliance_task"]+'</a>');
-                }
+        $.each(list_comp, function(i1, val1){            
+            var unit_Object = new Object();
+            unit_Object.unit_name = i1;
 
-                $(".compliance-description-name", clone).html('<abbr class="page-load" title="'+
-          cDescription+'">'+partDescription+'</abbr>');
-                $(".penal-consequences-name", clone).html('<abbr class="page-load" title="'+
-          cPenalConsequences+'">'+partPenalConsequences+'</abbr>');
-                $(".compliance-frequency-name", clone).html(frequency);
-                $(".repeats", clone).html(statutorydate);
-                //$(".statutory-date", clone).html(statutorydate);
-                $(".trigger-before", clone).html(triggerbefore);
-                $('.accordion-content'+count).append(clone);
-                sno = sno + 1;
-            });
+            var list_compliancesDetails = val1;
+            delete val1;  
+            FULLARRAYLIST.push(unit_Object);
+       
+            $.each(list_compliancesDetails, function(i2, val2){
+                FULLARRAYLIST.push(val2);
+            }); 
         });
-        count = count + 1;
     });
-    accordianType('accordion', 'accordion-toggle', 'accordion-content');
+
+    var totallist = FULLARRAYLIST.length;
+
+    if(totallist > PAGESIZE){
+        $('#pagination').show();
+    }
+    else{
+        $('#pagination').hide();
+    }
+    var sub_array_list = get_sub_array(FULLARRAYLIST, STARTCOUNT, ENDCOUNT);
+    showComplianceApplicabilityDrillDownRecord_headingList();
+    for(var y = 0;  y < PAGESIZE; y++){
+        if(sub_array_list[y] !=  undefined){
+            if(Object.keys(sub_array_list[y])[0] == "level1_name"){
+                ACCORDIONCOUNT++;
+                showComplianceApplicabilityDrillDownRecord_level1List(sub_array_list[y]);
+            }    
+            else if(Object.keys(sub_array_list[y])[0] == "unit_name"){
+                showComplianceApplicabilityDrillDownRecord_unitList(sub_array_list[y]);
+            }    
+            else if(Object.keys(sub_array_list[y])[0] == "description"){
+                showComplianceApplicabilityDrillDownRecord_complianceList(sub_array_list[y]);
+            }
+        }        
+    }
+    accordianType('accordion', 'accordion-toggle', 'accordion-content'); 
 }
 
 function accordianType(idtype, toggleClass, contentClass){

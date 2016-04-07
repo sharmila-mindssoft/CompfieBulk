@@ -91,9 +91,11 @@ function unitList(data){
 
 function complianceListArray(data){
 
-  var vDate = '';
+  var vDate = '-';
   if(data["validity_date"] != null) vDate = data["validity_date"];
-  var dueDate = data["due_date"];
+  var dueDate = '-';
+  if(data["due_date"] != null) dueDate = data["due_date"];
+
   var completionDate = '';
   if(data["completion_date"] != null) completionDate = data["completion_date"];
   
@@ -167,6 +169,13 @@ function loadTotalCount(complianceList){
   });    
   loadArray(complianceList);    
   $('.compliance_count').text("Total : "+ totalrecords +" records");
+
+  if(totalrecords == 0){
+    var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4=tableRow4.clone();
+    $('.no_records', clone4).text('No Compliance Found');
+    $('.tbody-unit').append(clone4);
+  }
 }
 
 function loadArray(complianceList) {   
@@ -258,7 +267,7 @@ function loadCompliance(reportType){
     }
     client_mirror.getComplianceDetailsReport( 
       parseInt(country), parseInt(domain), act, parseInt(unit), 
-      parseInt(compliances), parseInt(assignee), fromdate, todate, 
+      parseInt(compliances), parseInt(user), fromdate, todate, 
       status, csv,
       function (error, response) {
         if (error == null){
@@ -365,7 +374,8 @@ $("#unitval").keyup(function(){
  $('#ulist_unit').empty();
   if(textval.length>0){
     for(var i in units){
-      if (~units[i]["unit_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],units[i]["unit_name"]]);
+      var combineUnitName = units[i]['unit_code']+"-"+units[i]['unit_name'];
+      if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],combineUnitName]);
     }
     var str='';
     for(var i in suggestions){
@@ -426,7 +436,8 @@ $("#assigneeval").keyup(function(){
  $('#ulist_assignee').empty();
   if(textval.length>0){
     for(var i in assignees){
-      if (~assignees[i]["employee_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["employee_id"],assignees[i]["employee_name"]]);
+      var combineUserName = assignees[i]['employee_code']+"-"+assignees[i]['employee_name'];
+      if (~combineUserName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["employee_id"],combineUserName]);
     }
     var str='';
     for(var i in suggestions){

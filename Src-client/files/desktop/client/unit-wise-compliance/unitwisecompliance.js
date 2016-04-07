@@ -57,9 +57,17 @@ function loadresult(filterList){
     var clone=tableRow.clone();
     $('.tbl_country', clone).text(country);
     $('.tbl_domain', clone).text(domain);
-    $('.tbl_businessgroup', clone).text(filterList[entity]["business_group_name"]);
-    $('.tbl_division', clone).text(filterList[entity]["division_name"]);
+
+    var bg = '-';
+    if(filterList[entity]["business_group_name"] != null) bg = filterList[entity]["business_group_name"];
+    $('.tbl_businessgroup', clone).text(bg);
+
+    var dv = '-';
+    if( filterList[entity]["division_name"] != null) dv = filterList[entity]["division_name"];
+    $('.tbl_division', clone).text(dv);
+
     $('.tbl_legalentity', clone).text(filterList[entity]["legal_entity_name"]);
+
     $('.tbody-unit').append(clone);
 
     var tableRow1=$('#unit-head-templates .table-unit-head .table-row-unit-head');
@@ -129,21 +137,22 @@ function loadresult(filterList){
         $('.tbl_frequency', clone3).text(compliancelists[compliancelist][i]["compliance_frequency"]);
         $('.tbl_statutorydate', clone3).text(statutorydate);
         $('.tbl_triggerbefore', clone3).text(triggerdate);
-        $('.tbl_duedate', clone3).text(compliancelists[compliancelist][i]["due_date"]);
-        var vDate = '';
+        var dDate = '-';
+        if(compliancelists[compliancelist][i]["due_date"] != null) dDate = compliancelists[compliancelist][i]["due_date"];
+        $('.tbl_duedate', clone3).text(dDate);
+        var vDate = '-';
         if(compliancelists[compliancelist][i]["validity_date"] != null) vDate = compliancelists[compliancelist][i]["validity_date"];
         $('.tbl_validitydate', clone3).text(vDate);
         $('.tbody-unit').append(clone3);
         compliance_count++;
       }
-
-      if(compliancelists[compliancelist].length == 0){
-        var tableRow4=$('#unit-content-templates .table-unit-content .table-row-unit-content');
+    }  
+    if(Object.keys(compliancelists).length === 0 && JSON.stringify(compliancelists) === JSON.stringify({})){
+        var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
         var clone4=tableRow4.clone();
-        $('.tbl_statutorydate', clone4).text("No Compliance Found");
+        $('.no_records', clone4).text('No Compliance Found');
         $('.tbody-unit').append(clone4);
-      }
-    }   
+      } 
   }  
   $('.compliance_count').text("Total : "+ (compliance_count) +" records");
  
@@ -349,7 +358,8 @@ $("#unitval").keyup(function(){
  $('#ulist_unit').empty();
   if(textval.length>0){
     for(var i in units){
-      if (~units[i]["unit_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],units[i]["unit_name"]]); 
+      var combineUnitName = units[i]['unit_code']+"-"+units[i]['unit_name'];
+      if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],combineUnitName]); 
     }
     var str='';
     for(var i in suggestions){
@@ -380,7 +390,8 @@ $("#assigneeval").keyup(function(){
  $('#ulist_assignee').empty();
   if(textval.length>0){
     for(var i in assignees){
-      if (~assignees[i]["employee_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["employee_id"],assignees[i]["employee_name"]]); 
+      var combineUserName = assignees[i]['employee_code']+"-"+assignees[i]['employee_name'];
+      if (~combineUserName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["employee_id"],combineUserName]); 
     }
     var str='';
     for(var i in suggestions){
