@@ -4111,7 +4111,7 @@ class KnowledgeDatabase(Database):
                 CALL procedure_to_update_version('user'); \
             END; "
         cursor.execute(t5)
-        t6 = "CREATE TIGGER `after_tbl_compliance_history_insert` AFTER INSERT ON `tbl_compliance_history` \
+        t6 = "CREATE TRIGGER `after_tbl_compliance_history_insert` AFTER INSERT ON `tbl_compliance_history` \
             FOR EACH ROW BEGIN \
                 CALL procedure_to_update_version('history'); \
             END; "
@@ -4123,7 +4123,7 @@ class KnowledgeDatabase(Database):
         cursor.execute(t7)
         t8 = "CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client_compliances` \
             FOR EACH ROW BEGIN \
-                CALL procedure_to_update_version('compliance') \
+                CALL procedure_to_update_version('compliance'); \
             END; "
         cursor.execute(t8)
         t9 = "CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER INSERT ON `tbl_client_compliances` \
