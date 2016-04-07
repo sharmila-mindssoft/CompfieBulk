@@ -132,3 +132,92 @@
 	display: inline-block;
 	color: red;
 }
+
+
+@media screen and (max-width: 600px) {
+	.login-box-inner {
+		width: 450px;
+	}
+	.login-field-lists {
+		padding-left: 1em;
+	}
+	.login-icon {
+		width: 24%;
+		margin-left: 1em;
+	}
+	.text-forgot-password {
+		font-size: 0.8em;
+		text-align: right;
+	}
+}
+
+@media screen and (max-width: 533px) {
+	.login-box-inner {
+		width: 450px;
+	}
+	.login-field-lists {
+		padding-left: 1em;
+	}
+	.login-icon {
+		width: 24%;
+		margin-left: 1em;
+	}
+	.text-forgot-password {
+		font-size: 0.8em;
+		text-align: right;
+	}
+}
+
+@media screen and (max-width: 414px) {
+	.login-box-inner {
+		width: 350px;
+	}
+	.login-field-lists {
+		padding-left: 1em;
+	}
+	.login-icon {
+		width: 24%;
+		margin-left: 1em;
+	}
+	.text-forgot-password {
+		font-size: 0.8em;
+		text-align: right;
+		width: 100%;
+	}
+}
+
+@media screen and (max-width: 375px) {
+	.login-box-inner {
+		width: 330px;
+	}
+	.login-field-lists {
+		padding-left: 1em;
+	}
+	.login-icon {
+		width: 24%;
+		margin-left: 1em;
+	}
+	.text-forgot-password {
+		font-size: 0.8em;
+		text-align: right;
+		width: 100%;
+	}
+}
+
+@media screen and (max-width: 360px) {
+	.login-box-inner {
+		width: 300px;
+	}
+	.login-field-lists {
+		padding-left: 1em;
+	}
+	.login-icon {
+		width: 24%;
+		margin-left: 1em;
+	}
+	.text-forgot-password {
+		font-size: 0.8em;
+		text-align: right;
+		width: 100%;
+	}
+}

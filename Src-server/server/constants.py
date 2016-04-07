@@ -374,10 +374,10 @@ KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
 KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_old"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge"
 
-CLIENT_URL = "http://52.11.242.90:8082/"
-KNOWLEDGE_URL = "http://52.11.242.90:8080/knowledge"
+CLIENT_URL = "http://127.0.0.1:8080/"
+KNOWLEDGE_URL = "http://127.0.0.1:8082/knowledge"
 
 
 # # Aws Server

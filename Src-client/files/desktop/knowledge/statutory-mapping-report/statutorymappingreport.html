@@ -16,39 +16,39 @@
               <div id="autocompleteview" class="ac-textbox default-display-none">
               <ul id="ulist_text" style="width:215px;" class="hidemenu"></ul>
             </div>
+            </div>
+          </div>
+            <div class="input-row">
+              <div class="field-label">Domain:<span class="mandatory">*</span></div>
+              <div class="field-input">
+                <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" value="" >
+                <input type="hidden" id="domain" value="">
+                <div id="autocomplete_domain" class="ac-textbox default-display-none">
+                <ul id="ulist_domain" style="width:215px;" class="hidemenu"></ul>
+              </div>
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="field-label">Industry:</div>
+            <div class="field-input">
+              <input type="text" class="input-box icon-autocomplete" id="industryval" placeholder="Enter Industry">
+              <input type="hidden" id="industry">
+              <div id="autocomplete_industry" class="ac-textbox default-display-none">
+              <ul id="ulist_industry" style="width:215px;" class="hidemenu"></ul>
+            </div>
           </div>
         </div>
         <div class="input-row">
-          <div class="field-label">Domain:<span class="mandatory">*</span></div>
+          <div class="field-label">Statutory Nature:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" value="" >
-            <input type="hidden" id="domain" value="">
-            <div id="autocomplete_domain" class="ac-textbox default-display-none">
-            <ul id="ulist_domain" style="width:215px;" class="hidemenu"></ul>
+            <input type="text" class="input-box icon-autocomplete" id="statutorynatureval" placeholder="Enter Statutory Nature">
+            <input type="hidden" id="statutorynature">
+            <div id="autocomplete_statutorynature" class="ac-textbox default-display-none" >
+            <ul id="ulist_statutorynature" style="width:215px;" class="hidemenu"></ul>
           </div>
         </div>
       </div>
-      <div class="input-row">
-        <div class="field-label">Industry:</div>
-        <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" id="industryval" placeholder="Enter Industry">
-          <input type="hidden" id="industry">
-          <div id="autocomplete_industry" class="ac-textbox default-display-none">
-          <ul id="ulist_industry" style="width:215px;" class="hidemenu"></ul>
-        </div>
-      </div>
     </div>
-    <div class="input-row">
-      <div class="field-label">Statutory Nature:</div>
-      <div class="field-input">
-        <input type="text" class="input-box icon-autocomplete" id="statutorynatureval" placeholder="Enter Statutory Nature">
-        <input type="hidden" id="statutorynature">
-        <div id="autocomplete_statutorynature" class="ac-textbox default-display-none" >
-        <ul id="ulist_statutorynature" style="width:215px;" class="hidemenu"></ul>
-      </div>
-    </div>
-  </div>
-</div>
 <div class="input-row-right">
   <div class="input-row">
     <div class="field-label">Geography:</div>
@@ -79,9 +79,11 @@
 </div>
 </div>
 </div>
+
 <div class="submit-button-container">
 <input type="submit" value="Show" class="btn-submit" id="submit">
 </div>
+
 <div class="clearfix"></div>
 <div class="grid-table-rpt" style="padding-bottom:0em;">
 <h1>Statutory Mappings</h1>
@@ -104,6 +106,7 @@
 
 
 <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
+</div>
 </div>
 </div>
 <div id="act-templates" class="default-display-none">
