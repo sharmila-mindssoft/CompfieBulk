@@ -17,14 +17,22 @@ function loadReminders(reminders){
       var notificationId = reminders[reminder]["notification_id"];
       var notificationText = reminders[reminder]["notification_text"];
 
-      var assignee = reminders[reminder]["assignee"];
-      var assigneesplit = assignee.split(',');
+      if (reminders[reminder]["assignee"] != null){
+        var assignee = reminders[reminder]["assignee"];
+        var assigneesplit = assignee.split(',');  
+      }
+      
 
       if(reminders[reminder]["read_status"]){
         readStatus = '';
       }
 
-      str += '<a href="#popup1" style="text-decoration: none;"> <li class="'+readStatus+'" id="notification'+notificationId+'" onclick="changeStatus('+notificationId+','+reminders[reminder]["read_status"]+')">'+notificationText+"<span style='font-weight:bold'>"+assigneesplit[0]+"</span> </li></a>"
+
+      str += '<a href="#popup1" style="text-decoration: none;"> <li class="'+readStatus+'" id="notification'+notificationId+'" onclick="changeStatus('+notificationId+','+reminders[reminder]["read_status"]+')">'+notificationText
+
+      if (reminders[reminder]["assignee"] != null){
+        str += "<span style='font-weight:bold'>"+assigneesplit[0]+"</span> </li></a>"
+      }
     }
     if(str == ''){
       str += '<li style="text-align:center">'+"No Reminders Found"+"</li>"

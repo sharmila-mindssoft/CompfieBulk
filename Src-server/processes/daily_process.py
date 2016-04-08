@@ -8,12 +8,14 @@
 
 import MySQLdb as mysql
 import datetime
+import os
 import json
 import traceback
 
 from smtplib import SMTP_SSL as SMTP
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
+from expiry_report_generator import ExpiryReportGenerator as exp
 
 
 mysqlHost = "localhost"
@@ -22,6 +24,8 @@ mysqlPassword = "123456"
 mysqlDatabase = "compfie_knowledge"
 mysqlPort = 3306
 
+expired_download_path = "/expired/download/"
+expired_folder_path = "./expired/"
 
 class EmailNotification(object):
     def __init__(self):
@@ -115,6 +119,23 @@ class EmailNotification(object):
             print e
             print "Email Failed for escalations", message
 
+    def notify_contract_expiration(
+        self, receiver, content
+    ):
+        subject = "Contract expiration reminder"
+
+        message = '''Dear Client, <br> <p>%s </p> \
+                    <p> Thanks & Regards, <br>\
+                    Compfie Support Team''' % content
+        cc_person = None
+        try :
+            self.send_email(receiver, subject, message, cc_person)
+            pass
+        except Exception, e :
+            print e
+            print "Email Failed for compliance start ", message
+
+
 
 def convert_to_dict(data_list, columns) :
     assert type(data_list) in (list, tuple)
@@ -195,6 +216,21 @@ def get_client_database():
     client_list = get_client_db_list()
     client_db = create_client_db_connection(client_list)
     return client_db
+
+def get_contract_expiring_clients():
+    con = db_connection(mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase, mysqlPort)
+    cursor = con.cursor()
+    query = "SELECT client_id FROM tbl_client_groups \
+    WHERE DATEDIFF(contract_to, now()) < 30 and contract_to > now();"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    cursor.close()
+    con.close()
+    client_ids = []
+    for row in rows:
+        client_ids.append(row[0])
+    return client_ids
+
 
 def get_current_date():
     date = datetime.datetime.today()
@@ -555,45 +591,44 @@ def get_client_settings(db):
     return result
 
 def notify_before_contract_period(db, client_id):
-    query = "SELECT contract_to, group_name FROM tbl_client_groups"
+    download_link = exp(client_id, db).generate_report()
+    
+    notification_text = '''Your contract with Compfie is about to expire. \
+    Kindly renew your contract to avail the services continuosuly. Before contract expiration \
+    You can download your documents <a href="%s">here </a> ''' % (
+        download_link
+    )
+    extra_details = "0 - Reminder : Contract Expiration"
+
+    notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
+    created_on = datetime.datetime.now()
+    query = "INSERT INTO tbl_notifications_log \
+        (notification_id, notification_type_id,\
+        notification_text, extra_details, created_on\
+        ) VALUES (%s, %s, '%s', '%s', '%s')" % (
+            notification_id, 2,
+            notification_text, extra_details, created_on
+        )
     cursor = db.cursor()
     cursor.execute(query)
-    rows = cursor.fetchall()
-    contract_to_str = str(rows[0][0])
-    group_name = str(rows[0][1])
-    contract_to_parts = [int(x) for x in contract_to_str.split("-")]
-    contract_to = datetime.date(
-        contract_to_parts[0], contract_to_parts[1], contract_to_parts[2]
+    cursor.close()
+
+    q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
+        VALUES (%s, %s)" % (notification_id, 0)
+    cur = db.cursor()
+    cur.execute(q)
+
+    q = "SELECT username from tbl_admin"
+    cur.execute(q)
+    rows = cur.fetchall()
+    admin_mail_id = rows[0][0]
+    cur.close()
+    email = EmailNotification()
+    email.notify_contract_expiration(
+        admin_mail_id, notification_text
     )
-    delta = contract_to - datetime.datetime.now().date()
-    if delta.days <= 30:
-        notification_text = "Your contract with Compfie will expire in %d \
-        days. Kindly renew your contract to avail the services continuosuly" % (
-            delta.days
-        )
-        extra_details = "Reminder : Contract Expiration"
 
-        notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
-        created_on = datetime.datetime.now()
-        query = "INSERT INTO tbl_notifications_log \
-            (notification_id, notification_type_id,\
-            notification_text, extra_details, created_on\
-            ) VALUES (%s, %s, '%s', '%s', '%s')" % (
-                notification_id, 2,
-                notification_text, extra_details, created_on
-            )
-        cursor = db.cursor()
-        cursor.execute(query)
-        cursor.close()
-
-        q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
-            VALUES (%s, %s)" % (notification_id, 0)
-        cur = db.cursor()
-        cur.execute(q)
-        cur.close()
-        print '*' * 10
-        print "contract period expire notification sent ot %s" % (group_name)
-        print '*' * 10
+    
 
 def check_service_provider_contract_period(
     db, client_id
@@ -602,23 +637,27 @@ def check_service_provider_contract_period(
     now() not between contract_from and contract_to"
     cursor = db.cursor()
     cursor.execute(query)
-    # print '*' * 10
-    # print "Deactivated inactive service providers of client :{}".format(client_id)
-    # print '*' * 10
+
+def is_already_notified(
+    client_id
+):
+    client_folder_path = "%s%s" % (expired_folder_path, str(client_id) )
+    return os.path.isdir(client_folder_path)
 
 def main():
     print '--' * 20
     print "begin daily_process"
     current_date = get_current_date()
-    print "current_date datetime ", datetime.datetime.now()
     client_info = get_client_database()
+    client_ids = get_contract_expiring_clients()
     if client_info is not None :
         for client_id, db in client_info.iteritems() :
             try :
                 start_new_task(db, client_id, current_date)
                 db.commit()
                 check_service_provider_contract_period(db, client_id)
-                # notify_before_contract_period(db, client_id)
+                if client_id in client_ids and not is_already_notified(client_id):
+                    notify_before_contract_period(db, client_id)
                 db.commit()
             except Exception, e :
                 print e
