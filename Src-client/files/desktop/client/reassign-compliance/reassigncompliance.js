@@ -449,7 +449,6 @@ function submitcompliance(){
     hideLoader();
     displayMessage("No compliance selected for reassign");
   }
-
 }
 
 function getReassignCompliances () {

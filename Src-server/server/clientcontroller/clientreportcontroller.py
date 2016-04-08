@@ -105,7 +105,7 @@ def get_unitwise_compliance(db, request, session_user):
     country_id = request.country_id
     domain_id = request.domain_id
     business_group_id = request.business_group_id
-    legal_entity_id = request.division_id
+    legal_entity_id = request.legal_entity_id
     division_id = request.division_id
     unit_id = request.unit_id
     user_id = request.user_id
@@ -128,7 +128,7 @@ def get_assigneewise_compliance(db, request, session_user):
     country_id = request.country_id
     domain_id = request.domain_id
     business_group_id = request.business_group_id
-    legal_entity_id = request.division_id
+    legal_entity_id = request.legal_entity_id
     division_id = request.division_id
     unit_id = request.unit_id
     user_id = request.user_id
@@ -248,15 +248,14 @@ def get_compliancedetails_report(db, request, session_user, client_id):
         assignee_id = request.assignee_id
         from_date = request.from_date
         to_date = request.to_date
+        compliance_status = request.compliance_status
 
         if compliance_id is None :
             compliance_id = '%'
         if assignee_id is None :
             assignee_id = '%'
-        if request.compliance_status is None :
+        if compliance_status is None :
             compliance_status = '%'
-        else :
-            compliance_status = core.COMPLIANCE_STATUS(request.compliance_status)
 
         compliance_details_list = db.get_compliance_details_report(
             country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date, compliance_status, client_id, session_user

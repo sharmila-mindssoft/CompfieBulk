@@ -27,11 +27,13 @@ function initialize(){
         var curr_date = d.getDate();
         var curr_month = d.getMonth();
         var curr_year = d.getFullYear();
+        if(curr_date < 10){ curr_date ='0'+curr_date; }
         var todaydate = curr_date + "-" + m_names[curr_month] + "-" + curr_year;
         var currentDate = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 7);
         var day = currentDate.getDate()
         var month = currentDate.getMonth()
         var year = currentDate.getFullYear()
+        if(day < 10){ day ='0'+day; }
         var lastdate = day + "-" + m_names[month] + "-" + year;
 
 

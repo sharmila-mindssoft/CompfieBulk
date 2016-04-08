@@ -89,31 +89,31 @@ function load_thirdwizard(){
         var frequency =  actCompliances[ac]["frequency"];
         var statutory_date =  actCompliances[ac]["statutory_date"];
         var due_date =  actCompliances[ac]["due_date"];
-        var statutorydate = '';
+        var statutorydate = actCompliances[ac]["statutory_date"];
 
-      if(frequency == 'Periodical' || frequency == 'Review') sdateDesc = 'Every';
-        for(j = 0; j < statutory_date.length; j++){
-          var sDay = '';
-          if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
+      // if(frequency == 'Periodical' || frequency == 'Review') sdateDesc = 'Every';
+      //   for(j = 0; j < statutory_date.length; j++){
+      //     var sDay = '';
+      //     if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
           
-          var sMonth = '';
-          if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
+      //     var sMonth = '';
+      //     if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
 
-          if(sMonth == 1) sMonth = "January"
-          else if(sMonth == 2) sMonth = "February"
-          else if(sMonth == 3) sMonth = "March"
-          else if(sMonth == 4) sMonth = "April"  
-          else if(sMonth == 5) sMonth = "May"
-          else if(sMonth == 6) sMonth = "June"
-          else if(sMonth == 7) sMonth = "July"
-          else if(sMonth == 8) sMonth = "Auguest"
-          else if(sMonth == 9) sMonth = "September"
-          else if(sMonth == 10) sMonth = "October"
-          else if(sMonth == 11) sMonth = "November"
-          else if(sMonth == 12) sMonth = "December"
+      //     if(sMonth == 1) sMonth = "January"
+      //     else if(sMonth == 2) sMonth = "February"
+      //     else if(sMonth == 3) sMonth = "March"
+      //     else if(sMonth == 4) sMonth = "April"  
+      //     else if(sMonth == 5) sMonth = "May"
+      //     else if(sMonth == 6) sMonth = "June"
+      //     else if(sMonth == 7) sMonth = "July"
+      //     else if(sMonth == 8) sMonth = "Auguest"
+      //     else if(sMonth == 9) sMonth = "September"
+      //     else if(sMonth == 10) sMonth = "October"
+      //     else if(sMonth == 11) sMonth = "November"
+      //     else if(sMonth == 12) sMonth = "December"
           
-          statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
-        }
+      //     statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
+      //   }
 
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
@@ -212,9 +212,10 @@ function load_thirdwizard(){
   });
 
   if(count <= 1){
-    var norecordtableRow=$('#no-record-templates .font1');
-    var noclone=norecordtableRow.clone();
-    $('.tbody-assignstatutory').append(noclone);
+    var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4=tableRow4.clone();
+    $('.no_records', clone4).text('No Compliance Found');
+    $('.tbody-assignstatutory').append(clone4);
     $('#activate-step-finish').hide();
   }
 }
@@ -346,7 +347,7 @@ function submitcompliance(){
     hideLoader();
   }
   function onFailure(error){
-    displayMessage(error);
+    displayMessage(error[1]["error"]);
     hideLoader();
   }
   client_mirror.savePastRecords(compliance_list, 
@@ -424,7 +425,7 @@ function getStatutories(){
   if($('.unitlist.active').attr('id') != undefined) assignComplianceUnitId = parseInt($('.unitlist.active').attr('id'));
   if($('.domainlist.active').attr('id') != undefined) assignComplianceDomainId = parseInt($('.domainlist.active').attr('id'));
   if($('.actlist.active').attr('id') != undefined) assignComplianceActId = $('.actlist.active').attr('id');
-  if($('.frequencylist.active').attr('id') != undefined) assignComplianceFrequencyId = parseInt($('.frequencylist.active').attr('id'));;
+  if($('.frequencylist.active').attr('id') != undefined) assignComplianceFrequencyId = $('.frequencylist.active').attr('id');
   
   if(assignComplianceUnitId != null && assignComplianceDomainId != null){
     function onSuccess(data){

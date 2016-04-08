@@ -374,29 +374,7 @@ KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
 KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_old"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge"
 
-CLIENT_URL = "http://52.11.242.90:8082/"
-KNOWLEDGE_URL = "http://52.11.242.90:8080/knowledge"
-
-
-# # Aws Server
-# KNOWLEDGE_DB_HOST = "localhost"
-# KNOWLEDGE_DB_PORT = 3306
-# KNOWLEDGE_DB_USERNAME = "root"
-# KNOWLEDGE_DB_PASSWORD = "Msft!@#$%^"
-# KNOWLEDGE_DATABASE_NAME = "compfie_knowledge"
-
-# CLIENT_URL = "http://52.11.242.90:8082/"
-# KNOWLEDGE_URL = "http://52.11.242.90:8080/knowledge"
-
-
-# # # aparajitha server
-# KNOWLEDGE_DB_HOST = "localhost"
-# KNOWLEDGE_DB_PORT = 3306
-# KNOWLEDGE_DB_USERNAME = "root"
-# KNOWLEDGE_DB_PASSWORD = "mnd50ftadm1n"
-# KNOWLEDGE_DATABASE_NAME = "compfie_knowledge"
-
-# CLIENT_URL = "http://45.118.182.47:8082/"
-# KNOWLEDGE_URL = "http://45.118.182.47:8080/knowledge"
+CLIENT_URL = "http://45.118.182.47:8082/"
+KNOWLEDGE_URL = "http://45.118.182.47:8080/knowledge"

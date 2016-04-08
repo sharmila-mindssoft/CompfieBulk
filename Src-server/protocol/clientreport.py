@@ -251,7 +251,7 @@ class GetComplianceDetailsReport(Request):
         to_date = data.get("to_date")
         to_date = parse_structure_OptionalType_CustomTextType_20(to_date)
         compliance_status = data.get("compliance_status")
-        compliance_status = parse_structure_OptionalType_EnumType_core_COMPLIANCE_STATUS(compliance_status)
+        compliance_status = parse_structure_OptionalType_CustomTextType_50(compliance_status)
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
         return GetComplianceDetailsReport(
@@ -269,7 +269,7 @@ class GetComplianceDetailsReport(Request):
             "assignee_id": to_structure_OptionalType_SignedIntegerType_8(self.assignee_id),
             "from_date": to_structure_OptionalType_CustomTextType_20(self.from_date),
             "to_date": to_structure_OptionalType_CustomTextType_20(self.to_date),
-            "compliance_status": to_structure_OptionalType_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
+            "compliance_status": to_structure_OptionalType_CustomTextType_50(self.compliance_status),
             "csv": to_structure_Bool(sef.csv)
         }
 
@@ -2161,11 +2161,11 @@ class AssigneeCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["business_group_name", "legal_entity_name", "division_name", "user_wise_compliance"])
         business_group_name = data.get("business_group_name")
-        business_group_name = parse_structure_CustomTextType_100(business_group_name)
+        business_group_name = parse_structure_OptionalType_CustomTextType_100(business_group_name)
         legal_entity_name = data.get("legal_entity_name")
         legal_entity_name = parse_structure_CustomTextType_100(legal_entity_name)
         division_name = data.get("division_name")
-        division_name = parse_structure_CustomTextType_100(division_name)
+        division_name = parse_structure_OptionalType_CustomTextType_100(division_name)
 
         user_wise_compliance = data.get("user_wise_compliance")
         user_wise_compliance = parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance(user_wise_compliance)
@@ -2173,9 +2173,9 @@ class AssigneeCompliance(object):
 
     def to_structure(self):
         return {
-            "business_group_name": to_structure_CustomTextType_100(self.business_group_name),
+            "business_group_name": to_structure_OptionalType_CustomTextType_100(self.business_group_name),
             "legal_entity_name": to_structure_CustomTextType_100(self.legal_entity_name),
-            "division_name": to_structure_CustomTextType_100(self.division_name),
+            "division_name": to_structure_OptionalType_CustomTextType_100(self.division_name),
             "user_wise_compliance": to_structure_VectorType_RecordType_clientreport_UserWiseCompliance(self.user_wise_compliance),
         }
 
@@ -2284,7 +2284,7 @@ class ComplianceUnit(object):
         statutory_dates = data.get("statutory_dates")
         statutory_dates = parse_structure_VectorType_RecordType_core_StatutoryDate(statutory_dates)
         due_date = data.get("due_date")
-        due_date = parse_structure_CustomTextType_20(due_date)
+        due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
         validity_date = data.get("validity_date")
         validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         summary = data.get("summary")
@@ -2298,7 +2298,7 @@ class ComplianceUnit(object):
             "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
             "description": to_structure_Text(self.description),
             "statutory_dates": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
-            "due_date": to_structure_CustomTextType_20(self.due_date),
+            "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
             "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
             "summary": to_structure_OptionalType_CustomTextType_50(self.summary),
         }
@@ -2505,20 +2505,20 @@ class UnitCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["business_group_name", "legal_entity_name", "division_name", "unit_wise_compliances"])
         business_group_name = data.get("business_group_name")
-        business_group_name = parse_structure_CustomTextType_50(business_group_name)
+        business_group_name = parse_structure_OptionalType_CustomTextType_100(business_group_name)
         legal_entity_name = data.get("legal_entity_name")
         legal_entity_name = parse_structure_CustomTextType_50(legal_entity_name)
         division_name = data.get("division_name")
-        division_name = parse_structure_CustomTextType_50(division_name)
+        division_name = parse_structure_OptionalType_CustomTextType_100(division_name)
         unit_wise_compliances = data.get("unit_wise_compliances")
         unit_wise_compliances = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ComplianceUnit(unit_wise_compliances)
         return UnitCompliance(business_group_name, legal_entity_name, division_name, unit_wise_compliances)
 
     def to_structure(self):
         return {
-            "business_group_name": to_structure_CustomTextType_50(self.business_group_name),
+            "business_group_name": to_structure_OptionalType_CustomTextType_100(self.business_group_name),
             "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
-            "division_name": to_structure_CustomTextType_50(self.division_name),
+            "division_name": to_structure_OptionalType_CustomTextType_100(self.division_name),
             "unit_wise_compliances": to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ComplianceUnit(self.unit_wise_compliances),
         }
 

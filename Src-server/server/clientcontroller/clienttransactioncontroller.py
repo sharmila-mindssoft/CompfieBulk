@@ -171,12 +171,33 @@ def process_save_past_records(
         db, request, session_user, client_id
     ):
     compliance_list = request.compliances
+    error = ""
     for compliance in compliance_list:
-        db.save_past_record(
+        if db.validate_before_save(
             compliance.unit_id, compliance.compliance_id, compliance.due_date,
             compliance.completion_date, compliance.documents, compliance.validity_date,
             compliance.completed_by, client_id
-        )
+        ):
+            continue
+        else:
+            compliance_name = db.get_compliance_name_by_id(compliance.compliance_id)
+            error ="Cannot Submit compliance task {}, Because a compliance has already submited \
+                for the entered due date {}, or previous compliance has validity greater than the \
+                entered due date".format(compliance_name, compliance.due_date)
+            return clienttransactions.SavePastRecordsFailed(error=error)
+    for compliance in compliance_list:
+        if db.save_past_record(
+                compliance.unit_id, compliance.compliance_id, compliance.due_date,
+                compliance.completion_date, compliance.documents, compliance.validity_date,
+                compliance.completed_by, client_id
+            ):
+            continue
+        else:   
+            compliance_name = db.get_compliance_name_by_id(compliance.compliance_id)
+            error = "Cannot Submit compliance task {}, Because a compliance has already submited \
+                for the entered due date {}, or previous compliance has validity greater than the \
+                entered due date".format(compliance_name, compliance.due_date)
+            return clienttransactions.SavePastRecordsFailed(error=error)
     return clienttransactions.SavePastRecordsSuccess()
 
 def process_get_compliance_approval_list(db, request, session_user, client_id):

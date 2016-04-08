@@ -257,6 +257,20 @@ class UpdateComplianceDetailSuccess(Response):
         return {
         }
 
+class NextDueDateMustBeWithIn90DaysBeforeValidityDate(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return NextDueDateMustBeWithIn90DaysBeforeValidityDate()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 class InvalidUser(Response):
     def __init__(self):
         pass
@@ -314,7 +328,11 @@ class StartOnOccurrenceComplianceSuccess(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetComplianceDetailSuccess, CheckDiskSpaceSuccess, UpdateComplianceDetailSuccess, NotEnoughDiskSpaceAvailable, GetOnOccurrenceCompliancesSuccess, StartOnOccurrenceComplianceSuccess]
+    classes = [
+        GetComplianceDetailSuccess, CheckDiskSpaceSuccess, UpdateComplianceDetailSuccess, 
+        NotEnoughDiskSpaceAvailable, GetOnOccurrenceCompliancesSuccess, 
+        StartOnOccurrenceComplianceSuccess, NextDueDateMustBeWithIn90DaysBeforeValidityDate
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

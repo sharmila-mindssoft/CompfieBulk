@@ -440,16 +440,16 @@ class ConvertJsonToCSV(object):
             unit_name = "%s - %s " % (unit[1], unit[2])
             unit_address = unit[3]
 
-            query = "SELECT distinct ch.compliance_history_id, c.document_name, c.compliance_description, ch.validity_date, ch.due_date, \
+            query = "SELECT ch.compliance_history_id, c.document_name, c.compliance_description, ch.validity_date, ch.due_date, \
                     (SELECT concat( u.employee_code, '-' ,u.employee_name ) FROM tbl_users u WHERE u.user_id = ch.completed_by) AS assigneename, \
-                    ch.documents, ch.completion_date, c.compliance_task \
+                    ch.documents, ch.completion_date, c.compliance_task, c.frequency_id \
                     from tbl_compliances c,tbl_compliance_history ch, \
                     tbl_units ut where \
                     ch.unit_id = %s \
-                    AND ut.country_id = %s and ut.domain_ids like '%s' \
+                    AND ut.country_id = %s and c.domain_id = %s and ch.unit_id = ut.unit_id\
                     AND c.compliance_id = ch.compliance_id \
                     AND ch.completed_by like '%s'  AND c.statutory_mapping like '%s'  AND c.compliance_id like '%s' and ch.due_date BETWEEN '%s' AND '%s'" % (
-                    unit_id, country_id, str(domain_id)+"%",
+                    unit_id, country_id, domain_id,
                     assignee_id, str(statutory_id+"%"), compliance_id, start_date, end_date
                 )
             compliance_rows = db.select_all(query, client_id)
@@ -467,7 +467,9 @@ class ConvertJsonToCSV(object):
                 else :
                     assignee = compliance[5]
 
-                due_date = db.datetime_to_string(compliance[4])
+                due_date = None
+                if(compliance[4] != None):
+                    due_date = self.datetime_to_string(compliance[4])
 
                 validity_date = None
                 if(compliance[3] != None):
@@ -1019,18 +1021,20 @@ class ConvertJsonToCSV(object):
                 unit_name = "%s - %s " % (unit[1], unit[2])
                 unit_address = unit[3]
 
-                query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
-                        ac.assignee, cf.frequency FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
-                        tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
-                        ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
-                        cs.country_id = %s and cs.domain_id = %s and cs.unit_id like '%s' \
+                query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ac.validity_date, ac.due_date, \
+                        ac.assignee, cf.frequency, c.frequency_id, c.duration, c.repeats_every, \
+                        (select duration_type from tbl_compliance_duration_type where duration_type_id = c.duration_type_id) AS duration_type, \
+                        (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = c.repeats_type_id) AS repeat_type \
+                        FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
+                        tbl_assigned_compliances ac, tbl_compliance_frequency cf where \
+                        cs.country_id = %s and cs.domain_id = %s and cs.unit_id = %s and cc.statutory_opted = 1 and ac.is_active = 1 \
                         and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
                         and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee in (%s) and \
-                        c.statutory_mapping like '%s' " % (
+                        c.statutory_mapping like '%s'" % (
                         country_id, domain_id,
                         unit_id, user_ids, str(statutory_id+"%")
                     )
-                compliance_rows = db.select_all(query)
+                compliance_rows = self.select_all(query)
 
                 compliances_list = []
                 for compliance in compliance_rows:
@@ -1050,12 +1054,22 @@ class ConvertJsonToCSV(object):
                     description = compliance[1]
                     statutory_date = date_list
                     compliance_frequency = core.COMPLIANCE_FREQUENCY(compliance[6])
-                    due_date = db.datetime_to_string(compliance[4])
+
+                    due_date = None
+                    if(compliance[4] is not None):
+                        due_date = self.datetime_to_string(compliance[4])
 
                     validity_date = None
                     if(validity_date is not None):
                         validity_date = self.datetime_to_string(compliance[3])
 
+                    if compliance[7] in (2, 3) :
+                        summary = "Repeats every %s - %s" % (compliance[9], compliance[11])
+                    elif compliance[7] == 4 :
+                        summary = "To complete within %s - %s" % (compliance[8], compliance[10])
+                    else :
+                        summary = None
+                        
                     if not is_header:
                         csv_headers =[ 
                             "Service provider name", "Address", "Contract From", "Contract To",
