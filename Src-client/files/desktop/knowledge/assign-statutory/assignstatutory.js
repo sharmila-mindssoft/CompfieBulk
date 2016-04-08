@@ -711,8 +711,8 @@ function validate_firsttab(){
       function onFailure(error){
         hideLoader();
       }
-      mirror.getAssignStatutoryWizardTwo(parseInt($('.countrylist.active').attr('id')), 
-        parseInt($('.domainlist.active').attr('id')), parseInt($('.industrylist.active').attr('id')), 
+      mirror.getAssignStatutoryWizardTwo(parseInt($('.countrylist.active').attr('id')),
+        parseInt($('.domainlist.active').attr('id')), parseInt($('.industrylist.active').attr('id')),
         parseInt($('.locationlist.active').attr('id')), unitIdTab2,
         function (error, response) {
               if (error == null){
