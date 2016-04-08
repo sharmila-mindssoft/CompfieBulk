@@ -3801,11 +3801,11 @@ def parse_structure_RecordType_technomasters_UnitDetails(data):
     from protocol import technomasters
     return technomasters.UnitDetails.parse_structure(data)
 
-def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
+def parse_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
     data = parse_list(data)
     d = {}
     for key, value in data:
-        key = parse_structure_CustomTextType_50(key)
+        key = parse_structure_CustomTextType_500(key)
         value = parse_structure_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(value)
         d[key] = value
     return d

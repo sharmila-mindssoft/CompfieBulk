@@ -591,12 +591,19 @@ def get_client_settings(db):
     return result
 
 def notify_before_contract_period(db, client_id):
+    cursor = db.cursor()
+    
     download_link = exp(client_id, db).generate_report()
+
+    query = "SELECT group_name FROM tbl_client_groups"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    group_name = rows[0][0]
     
     notification_text = '''Your contract with Compfie is about to expire. \
     Kindly renew your contract to avail the services continuosuly. Before contract expiration \
-    You can download your documents <a href="%s">here </a> ''' % (
-        download_link
+    You can download documents of %s <a href="%s">here </a> ''' % (
+        group_name, download_link
     )
     extra_details = "0 - Reminder : Contract Expiration"
 
@@ -609,7 +616,7 @@ def notify_before_contract_period(db, client_id):
             notification_id, 2,
             notification_text, extra_details, created_on
         )
-    cursor = db.cursor()
+    
     cursor.execute(query)
     cursor.close()
 
