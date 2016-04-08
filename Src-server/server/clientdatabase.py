@@ -4311,13 +4311,14 @@ class ClientDatabase(Database):
                                 compliances_list
                                 )
                             )
-            assignee_wise_compliances_list.append(
-                clientreport.AssigneeCompliance(
-                    business_group_name, legal_entity_name,
-                    division_name,
-                    assignee_wise_compliances
+            if len(assignee_wise_compliances) > 0 :
+                assignee_wise_compliances_list.append(
+                    clientreport.AssigneeCompliance(
+                        business_group_name, legal_entity_name,
+                        division_name,
+                        assignee_wise_compliances
+                        )
                     )
-                )
         return assignee_wise_compliances_list
 
 #
