@@ -1,43 +1,31 @@
-2016-04-05 12:10:41,536 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
-2016-04-05 12:10:42,346 - knowledge_logger - main.py-handle-api- : 
-2016-04-05 12:10:42,346 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 130, in handle_api_request
+2016-04-08 09:48:01,828 - knowledge_logger - main.py-handle-api- : (1317, 'Query execution was interrupted')
+2016-04-08 09:48:01,829 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 158, in handle_replication
+    actual_count = db.get_trail_id()
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 620, in get_trail_id
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 156, in select_one
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+OperationalError: (1317, 'Query execution was interrupted')
+
+2016-04-08 09:48:02,036 - knowledge_logger - main.py-handle-api- : 
+2016-04-08 09:48:02,037 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 130, in handle_api_request
     self._db.begin()
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 128, in begin
-    assert self._connection is not None
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 129, in begin
+    assert self._cursor is None
 AssertionError
 
-2016-04-05 12:10:43,430 - knowledge_logger - main.py-handle-api- : 
-2016-04-05 12:10:43,431 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 130, in handle_api_request
+2016-04-08 09:48:02,582 - knowledge_logger - main.py-handle-api- : 
+2016-04-08 09:48:02,582 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 130, in handle_api_request
     self._db.begin()
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 128, in begin
-    assert self._connection is not None
-AssertionError
-
-2016-04-05 12:11:42,736 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
-2016-04-05 12:11:43,445 - knowledge_logger - main.py-handle-api- : 
-2016-04-05 12:11:43,445 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 130, in handle_api_request
-    self._db.begin()
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 128, in begin
-    assert self._connection is not None
-AssertionError
-
-2016-04-05 12:11:57,605 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
-2016-04-05 12:12:42,390 - knowledge_logger - main.py-handle-api- : 
-2016-04-05 12:12:42,391 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 130, in handle_api_request
-    self._db.begin()
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 128, in begin
-    assert self._connection is not None
-AssertionError
-
-2016-04-05 12:12:43,509 - knowledge_logger - main.py-handle-api- : 
-2016-04-05 12:12:43,509 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 130, in handle_api_request
-    self._db.begin()
-  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database.py", line 128, in begin
-    assert self._connection is not None
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 129, in begin
+    assert self._cursor is None
 AssertionError
 

@@ -5083,10 +5083,6 @@ class KnowledgeDatabase(Database):
                 self.save_client_statutories(data, user_id)
             else :
                 assigned_statutories = data.assigned_statutories
-                # self.update_client_compliances(
-                #     client_statutory_id,
-                #     assigned_statutories, user_id
-                # )
                 value_list = self.save_update_client_complainces(client_statutory_id, assigned_statutories, user_id, created_on)
                 self.execute_bulk_insert(value_list)
         elif submission_type == "Submit" :
@@ -5116,7 +5112,6 @@ class KnowledgeDatabase(Database):
             )
             if (self.save_data(self.tblClientStatutories, field, values)) :
                 assigned_statutories = data.assigned_statutories
-                # self.save_client_compliances(client_statutory_id, assigned_statutories, user_id, created_on)
                 print "unit_id ", unit_id
 
                 value_list.extend(self.save_update_client_complainces(client_statutory_id, assigned_statutories, user_id, created_on))
@@ -5131,16 +5126,18 @@ class KnowledgeDatabase(Database):
             "compliance_applicable", "compliance_opted",
             "created_by",
         ]
-        if submitted_on is None :
-            column.append("created_on")
-        else :
-            column.append("submitted_on")
         update_column = [
             "client_statutory_id", "compliance_id",
             "statutory_id", "statutory_applicable",
             "statutory_opted", "not_applicable_remarks",
             "compliance_applicable", "compliance_opted",
         ]
+        if submitted_on is None :
+            column.append("created_on")
+            update_column.append("created_on")
+        else :
+            column.append("submitted_on")
+            update_column.append("submitted_on")
         self.on_duplicate_key_update(table, ",".join(column), value_list, update_column)
 
     def save_update_client_complainces(self, client_statutory_id,  data, user_id, created_on):
@@ -5155,9 +5152,6 @@ class KnowledgeDatabase(Database):
             for key, value in d.compliances.iteritems():
                 compliance_id = int(key)
                 compliance_applicable_status = int(value)
-                # client_compliance_id = self.get_new_id(
-                #     "client_compliance_id", self.tblClientCompliances
-                # )
                 values = (
                     'null', client_statutory_id, compliance_id,
                     level_1_id, applicable_status, applicable_status,

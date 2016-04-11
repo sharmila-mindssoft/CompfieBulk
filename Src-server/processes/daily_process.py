@@ -1,13 +1,8 @@
 #!/usr/bin/python
 
-# # run every 5 mins
-# # PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
-# # */5 * * * * cd ~/Python/workspace/Compliance-Mirror/Src-server/processes && ./daily_process.py >> daily_process.log 2>&1
-
-# # sudo chmod 777 daily_process.py
-
 import MySQLdb as mysql
 import datetime
+import pytz
 import os
 import json
 import traceback
@@ -17,12 +12,17 @@ from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from expiry_report_generator import ExpiryReportGenerator as exp
 
+from server.constants import (
+    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+)
+from server.countrytimestamp import countries
 
-mysqlHost = "localhost"
-mysqlUser = "root"
-mysqlPassword = "123456"
-mysqlDatabase = "compfie_knowledge"
-mysqlPort = 3306
+mysqlHost = KNOWLEDGE_DB_HOST
+mysqlUser = KNOWLEDGE_DB_USERNAME
+mysqlPassword = KNOWLEDGE_DB_PASSWORD
+mysqlDatabase = KNOWLEDGE_DATABASE_NAME
+mysqlPort = KNOWLEDGE_DB_PORT
 
 expired_download_path = "/expired/download/"
 expired_folder_path = "./expired/"
@@ -68,57 +68,6 @@ class EmailNotification(object):
             print e
             print "Email Failed for compliance start ", message
 
-    def notify_to_assignee(
-        self, assignee, days_left, compliance_name, unit_name,
-        receiver
-    ):
-        subject = "Compliance Task Reminder"
-        message = "Dear %s, \
-            Only %s days left to complete %s task for unit %s" % (
-                assignee, days_left, compliance_name,
-                unit_name
-            )
-        try :
-            print
-            # self.send_email(receiver, subject, message)
-            pass
-        except Exception, e :
-            print e
-            print "Email Failed for notify to assignee %s ", message
-
-    def notify_before_due_date(
-        self, assignee, days_left, compliance_name, unit_name,
-        receiver, cc_person
-    ):
-        subject = "Compliance Task Reminder"
-        message = "Dear %s, \
-            Only %s days left to complete %s task for unit %s" % (
-                assignee, days_left, compliance_name,
-                unit_name
-            )
-        try :
-            # self.send_email(receiver, subject, message, cc_person)
-            pass
-        except Exception, e :
-            print e
-            print "Email Failed for before due_date  ", message
-
-    def notify_escalation(
-        self, assignee, compliance_name, unit_name,
-        over_due_days, receiver, cc_person
-    ):
-        subject = "Compliance Escalation Notification"
-        message = "Dear %s, \
-            Compliance %s for unit %s has overdue by %s days." % (
-                assignee, compliance_name, unit_name, over_due_days
-            )
-        try :
-            # self.send_email(receiver, subject, message, cc_person)
-            pass
-        except Exception, e :
-            print e
-            print "Email Failed for escalations", message
-
     def notify_contract_expiration(
         self, receiver, content
     ):
@@ -134,8 +83,6 @@ class EmailNotification(object):
         except Exception, e :
             print e
             print "Email Failed for compliance start ", message
-
-
 
 def convert_to_dict(data_list, columns) :
     assert type(data_list) in (list, tuple)
@@ -166,11 +113,22 @@ def db_connection(host, user, password, db, port):
     connection.autocommit(False)
     return connection
 
+def knowledge_db_connect():
+    con = db_connection(mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase, mysqlPort)
+    return con
+
+def get_countries():
+    con = knowledge_db_connect()
+    cursor = con.cursor()
+    q = "SELECT country_id, country_name FROM tbl_countries"
+    cursor.execute(q)
+    rows = cursor.fetchall()
+    cursor.close()
+    return convert_to_dict(rows, ["country_id", "country_name"])
 
 def get_client_db_list():
     print "begin fetching client info"
-    print "{},{},{},{},{}".format(mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase, mysqlPort)
-    con = db_connection(mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase, mysqlPort)
+    con = knowledge_db_connect()
     cursor = con.cursor()
     query = "SELECT T1.client_id, T1.database_ip, T1.database_port, \
         T1.database_username, T1.database_password, T1.database_name \
@@ -203,11 +161,11 @@ def create_client_db_connection(data):
                 d["database_password"], d["database_name"],
                 d["database_port"]
             )
+            client_connection[d["client_id"]] = db_conn
         except Exception, e :
             print "unable to connect database %s", d
             print e
             continue
-        client_connection[d["client_id"]] = db_conn
 
     return client_connection
 
@@ -218,7 +176,7 @@ def get_client_database():
     return client_db
 
 def get_contract_expiring_clients():
-    con = db_connection(mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase, mysqlPort)
+    con = knowledge_db_connect()
     cursor = con.cursor()
     query = "SELECT client_id FROM tbl_client_groups \
     WHERE DATEDIFF(contract_to, now()) < 30 and contract_to > now();"
@@ -244,7 +202,7 @@ def get_country_wise_timestamp():
     pass
     #  yyyy-mm-dd
 
-def get_compliance_to_start(db, client_id, current_date):
+def get_compliance_to_start(db, client_id, current_date, country_id):
     print "fetching task details to start compliance for client id - %s, %s" % (client_id, current_date)
     query = "SELECT t1.country_id, t1.unit_id, t1.compliance_id, t1.statutory_dates, \
         t1.trigger_before_days, t1.due_date, t1.validity_date,\
@@ -258,7 +216,12 @@ def get_compliance_to_start(db, client_id, current_date):
         INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id\
         WHERE\
         t1.is_active = 1 AND t2.is_active = 1 AND \
-        (t1.due_date - INTERVAL t1.trigger_before_days DAY) <= '%s'" % (current_date)
+        t1.compliance_id not in (select t.compliance_id from tbl_compliance_history t \
+        inner join tbl_compliances t1 on t1.compliance_id = t.compliance_id  where \
+        t1.frequency_id = 1 and unit_id = t1.unit_id)\
+        AND\
+        (t1.due_date - INTERVAL t1.trigger_before_days DAY) <= '%s' \
+        AND t1.country_id = %s" % (current_date, country_id)
 
     cursor = db.cursor()
     cursor.execute(query)
@@ -484,9 +447,9 @@ def save_in_notification(
         if concurrence_person is not None or concurrence_person is not "NULL" :
             save_notification_users(notification_id, concurrence_person)
 
-def start_new_task(db, client_id, current_date):
+def start_new_task(db, client_id, current_date, country_id):
     print "begin process to start new task  - %s" % (current_date)
-    data = get_compliance_to_start(db, client_id, current_date)
+    data = get_compliance_to_start(db, client_id, current_date, country_id)
     count = 0
     email = EmailNotification()
     for d in data :
@@ -504,12 +467,6 @@ def start_new_task(db, client_id, current_date):
                 d["concurrence_person"], int(approval_person)
             )
 
-            query = "UPDATE tbl_assigned_compliances set is_active = 0 WHERE \
-            unit_id = '%d' and compliance_id = '%d'" % (
-                int(d["unit_id"]), int(d["compliance_id"])
-            )
-            cursor = db.cursor()
-            cursor.execute(query)
         else:
             print "entering into else"
             print d["repeats_every"]
@@ -552,51 +509,20 @@ def start_new_task(db, client_id, current_date):
 
     print " %s compliances started for - %s" % (count, current_date)
 
-def get_inprogress_compliances(db):
-    query = "SELECT t1.compliance_history_id, t1.unit_id, t1.compliance_id, t1.start_date, \
-        t1.due_date, t3.document_name, t3.compliance_task, \
-        t2.assignee, t2.concurrence_person, t2.approval_person, t4.unit_code, t4.unit_name, \
-        t4.business_group_id, t4.legal_entity_id, t4.division_id, t2.country_id, \
-        t3.domain_id FROM \
-        tbl_compliance_history t1 INNER JOIN tbl_assigned_compliances t2 on \
-        t1.compliance_id = t2.compliance_id \
-        INNER JOIN tbl_compliances t3 on t1.compliance_id = t3.compliance_id \
-        INNER JOIN tbl_units t4 on t1.unit_id = t4.unit_id WHERE \
-        IFNULL(t1.approve_status, 0) != 1"
-    # print query
-    cursor = db.cursor()
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    columns = [
-        "compliance_history_id", "unit_id", "compliance_id", "start_date", "due_date",
-        "document_name", "compliance_task", "assignee", "concurrence_person", "approval_person",
-        "unit_code", "unit_name", "business_group_id", "legal_entity_id", "division_id", "country_id",
-        "domain_id"
-    ]
-    result = convert_to_dict(rows, columns)
-    print '*' * 10
-    # print result
-    print '*' * 10
-
-    return result
-
-def get_client_settings(db):
-    query = "SELECT assignee_reminder, escalation_reminder_in_advance, escalation_reminder \
-        FROM tbl_client_groups"
-    cursor = db.cursor()
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    columns = ["assignee_reminder", "escalation_reminder_in_advance", "escalation_reminder"]
-    result = convert_to_dict(rows, columns)
-    return result
-
 def notify_before_contract_period(db, client_id):
+    cursor = db.cursor()
+
     download_link = exp(client_id, db).generate_report()
-    
+
+    query = "SELECT group_name FROM tbl_client_groups"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    group_name = rows[0][0]
+
     notification_text = '''Your contract with Compfie is about to expire. \
     Kindly renew your contract to avail the services continuosuly. Before contract expiration \
-    You can download your documents <a href="%s">here </a> ''' % (
-        download_link
+    You can download documents of %s <a href="%s">here </a> ''' % (
+        group_name, download_link
     )
     extra_details = "0 - Reminder : Contract Expiration"
 
@@ -609,7 +535,7 @@ def notify_before_contract_period(db, client_id):
             notification_id, 2,
             notification_text, extra_details, created_on
         )
-    cursor = db.cursor()
+
     cursor.execute(query)
     cursor.close()
 
@@ -628,8 +554,6 @@ def notify_before_contract_period(db, client_id):
         admin_mail_id, notification_text
     )
 
-    
-
 def check_service_provider_contract_period(
     db, client_id
 ):
@@ -641,19 +565,18 @@ def check_service_provider_contract_period(
 def is_already_notified(
     client_id
 ):
-    client_folder_path = "%s%s" % (expired_folder_path, str(client_id) )
+    client_folder_path = "%s%s" % (expired_folder_path, str(client_id))
     return os.path.isdir(client_folder_path)
 
-def main():
+def run_daily_process(country_id, current_date):
     print '--' * 20
     print "begin daily_process"
-    current_date = get_current_date()
     client_info = get_client_database()
     client_ids = get_contract_expiring_clients()
     if client_info is not None :
         for client_id, db in client_info.iteritems() :
             try :
-                start_new_task(db, client_id, current_date)
+                start_new_task(db, client_id, current_date, country_id)
                 db.commit()
                 check_service_provider_contract_period(db, client_id)
                 if client_id in client_ids and not is_already_notified(client_id):
@@ -666,5 +589,42 @@ def main():
     print "end daily_process"
     print '--' * 20
 
-if __name__ == "__main__" :
-    main()
+
+def time_convertion(time_zone):
+    current_time = datetime.datetime.utcnow()
+    print "current_time"
+    print current_time
+    CT_TIMEZONE = pytz.timezone(str(time_zone))
+    print CT_TIMEZONE
+    dt = CT_TIMEZONE.localize(current_time)
+    tzoffset = dt.utcoffset()
+    dt = dt.replace(tzinfo=None)
+    dt = dt+tzoffset
+    return dt
+
+def current_date_time_by_country_id(time_zone, country_id):
+    print time_zone
+    current_country_time = time_convertion(time_zone)
+    print "current_country_time"
+    print current_country_time
+    print type(current_country_time)
+    print current_country_time.date()
+    return current_country_time.date()
+
+
+def run_daily_process_country_wise():
+    country_time_zones = sorted(countries)
+    country_list = get_countries()
+    for c in country_list :
+        name = c["country_name"]
+        info = None
+        for ct in country_time_zones :
+            if name.lower() == ct.lower() :
+                info = countries.get(ct)
+                print info
+                break
+        if info :
+            current_date = current_date_time_by_country_id(info.get("timezones")[0], c["country_id"])
+            print "country -- ", c["country_name"]
+            print
+            run_daily_process(c["country_id"], current_date)

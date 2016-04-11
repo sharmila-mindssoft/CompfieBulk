@@ -453,41 +453,41 @@ function displayEdit(unit_id, dispBusinessGroup, dispLegalEntity, dispDivision, 
   s_endCount = 0;
   client_mirror.getStatutorySettingsCompliance(unit_id, parseInt(s_endCount),
     function (error, response) {
-        if (error == null){
-          sList = response["statutories"];
-          totalRecord = response["total_count"];
-          $(".tbl_businessgroup_disp").text(dispBusinessGroup);
-          $(".tbl_legalentity_disp").text(dispLegalEntity);
-          $(".tbl_division_disp").text(dispDivision);
-          $(".tbl_unit_disp").text(dispUnit);
-          $("#unit").val(unit_id);
-          $("#unitval").val(dispUnit);
- 
-          count=1;
-          statutoriesCount= 1;
-          actCount = 1;
-          lastActName = '';
-          lastDomainName = '';
-          displayMessage("");
-          $("#statutorysettings-view").hide();
-          $("#statutorysettings-add").show();
+      if (error == null){
+        sList = response["statutories"];
+        totalRecord = response["total_count"];
+        $(".tbl_businessgroup_disp").text(dispBusinessGroup);
+        $(".tbl_legalentity_disp").text(dispLegalEntity);
+        $(".tbl_division_disp").text(dispDivision);
+        $(".tbl_unit_disp").text(dispUnit);
+        $("#unit").val(unit_id);
+        $("#unitval").val(dispUnit);
 
-          if(parseInt(totalRecord) > s_endCount){
-            $('#pagination').show();
-            $('#submit').hide();
-            $('#cancel').hide();
-          }else{
-            $('#pagination').hide();
-            $('#submit').show();
-            $('#cancel').show();
-          }
-          load_statutory(sList);
-          hideLoader();
+        count=1;
+        statutoriesCount= 1;
+        actCount = 1;
+        lastActName = '';
+        lastDomainName = '';
+        displayMessage("");
+        $("#statutorysettings-view").hide();
+        $("#statutorysettings-add").show();
+
+        if(parseInt(totalRecord) > s_endCount){
+          $('#pagination').show();
+          $('#submit').hide();
+          $('#cancel').hide();
+        }else{
+          $('#pagination').hide();
+          $('#submit').show();
+          $('#cancel').show();
         }
-        else {
-          displayMessage(error);
-          hideLoader();
-        }
+        load_statutory(sList);
+        hideLoader();
+      }
+      else {
+        displayMessage(error);
+        hideLoader();
+      }
     }
   )
 }
