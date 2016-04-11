@@ -6,7 +6,12 @@ var legalEntitiesList;
 var divisionsList
 var unitsList;
 var assigneesList;
-
+var finalList;
+var pageSize = 500;
+var startCount = 0;
+var endCount;
+var sno = 0;
+var fullArrayList = [];
 
 function clearMessage() {
   $(".error-message").hide();
@@ -43,128 +48,213 @@ function getClientReportFilters(){
   );
 }
 
-function loadresult(filterList){
+
+function bgList(data){
   var country = $("#country").find('option:selected').text();
   var domain = $("#domainval").val();
   $(".country").text(country);
   $(".domain").text(domain);
+  var tableRow=$('#assignee-list-templates .table-assignee-list .table-row-assignee-list');
+  var clone=tableRow.clone();
+  $('.tbl_country', clone).text(country);
+  $('.tbl_domain', clone).text(domain);
+  var bg = '-';
+  if(data["business_group_name"] != null) bg = data["business_group_name"];
+  $('.tbl_businessgroup', clone).text(bg);
+  var dv = '-';
+  if( data["division_name"] != null) dv = data["division_name"];
+  $('.tbl_division', clone).text(dv);
+  $('.tbl_businessgroup', clone).text(bg);
+  $('.tbl_division', clone).text(dv);
+  $('.tbl_legalentity', clone).text(data["legal_entity_name"]);
+  $('.tbody-assignee').append(clone);
+  var tableRow1=$('#assignee-head-templates .table-assignee-head .table-row-assignee-head');
+  var clone1=tableRow1.clone();
+  $('.tbody-assignee').append(clone1);
+}
 
-  $(".tbody-assignee").find("tbody").remove();
-  var compliance_count=0;
-  for(var entity in filterList){
+function assigneeList(data){
+  var assignee_ = data["assignee"];
+  var concurrence = data["concurrence_person"];
+  var approval_ = data["approval_person"];
+  if(assignee_ == null) assignee_ = 'Client Admin';
+  if(concurrence == null) concurrence = 'Nil';
+  if(approval_ == null) approval_ = 'Client Admin';
+  var tableRow2=$('#assignee-name-templates .table-assignee-name .table-row-assignee-name');
+  var clone2=tableRow2.clone();
+  $('.tbl_assigneeheading', clone2).html('Assignee: ' + assignee_);
+  $('.tbl_concurrenceheading', clone2).html('concurrence: ' + concurrence);
+  $('.tbl_approvalheading', clone2).html('Approval: ' + approval_);
+  $('.tbody-assignee').append(clone2);
+}
 
-      var tableRow=$('#assignee-list-templates .table-assignee-list .table-row-assignee-list');
-      var clone=tableRow.clone();
-      $('.tbl_country', clone).text(country);
-      $('.tbl_domain', clone).text(domain);
+function complianceListArray(data){
 
-      var bg = '-';
-      if(filterList[entity]["business_group_name"] != null) bg = filterList[entity]["business_group_name"];
-      $('.tbl_businessgroup', clone).text(bg);
+  var triggerdate = '';
+  var statutorydate = '';
+  for(j=0; j<data["statutory_dates"].length; j++){
+    var sDay = '';
+    if(data["statutory_dates"][j]["statutory_date"] != null) sDay = data["statutory_dates"][j]["statutory_date"];
+    var sMonth = '';
+    if(data["statutory_dates"][j]["statutory_month"] != null) sMonth = data["statutory_dates"][j]["statutory_month"];
+    var tDays = '';
+    if(data["statutory_dates"][j]["trigger_before_days"] != null) tDays = data["statutory_dates"][j]["trigger_before_days"];
+    if(sMonth == 1) sMonth = "January"
+    else if(sMonth == 2) sMonth = "February"
+    else if(sMonth == 3) sMonth = "March"
+    else if(sMonth == 4) sMonth = "April"  
+    else if(sMonth == 5) sMonth = "May"
+    else if(sMonth == 6) sMonth = "June"
+    else if(sMonth == 7) sMonth = "July"
+    else if(sMonth == 8) sMonth = "Auguest"
+    else if(sMonth == 9) sMonth = "September"
+    else if(sMonth == 10) sMonth = "October"
+    else if(sMonth == 11) sMonth = "November"
+    else if(sMonth == 12) sMonth = "December"
+    triggerdate +=  tDays + " Days" + ', ';
+    statutorydate +=  sDay + ' - ' + sMonth +', ';
+  }
 
-      var dv = '-';
-      if( filterList[entity]["division_name"] != null) dv = filterList[entity]["division_name"];
-      $('.tbl_division', clone).text(dv);
+  if(statutorydate.trim() != '') statutorydate = statutorydate.replace(/,\s*$/, "");
+  if(triggerdate.trim() != '') triggerdate = triggerdate.replace(/,\s*$/, "");
+  var summary = data["summary"];
+  if(summary != null){
+    if(statutorydate.trim() != ''){
+      statutorydate = summary + ' ( '+statutorydate+' )';
+    }else{
+      statutorydate = summary;
+    }
+  }
 
-      $('.tbl_businessgroup', clone).text(bg);
-      $('.tbl_division', clone).text(dv);
-      $('.tbl_legalentity', clone).text(filterList[entity]["legal_entity_name"]);
-      $('.tbody-assignee').append(clone);
+  var tableRow3=$('#assignee-content-templates .table-assignee-content .table-row-assignee-content');
+  var clone3=tableRow3.clone();
+  var cDescription = data["description"];
+  $('.tbl_sno', clone3).text(sno+1);
+  $('.tbl_compliance', clone3).html('<abbr class="page-load tipso_style" title="'+ cDescription +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+data["compliance_name"]);
+  $('.tbl_unit', clone3).text(data["unit_address"]);
+  $('.tbl_frequency', clone3).text(data["compliance_frequency"]);
+  $('.tbl_statutorydate', clone3).text(statutorydate);
+  $('.tbl_triggerbefore', clone3).text(triggerdate);
+  var dDays = '-';
+  if(data["due_date"] != null) dDays = data["due_date"];
+  $('.tbl_duedate', clone3).text(dDays);
+  var vDays = '-';
+  if(data["validity_date"] != null) vDays = data["validity_date"];
+  $('.tbl_validitydate', clone3).text(vDays);
+  $('.tbody-assignee').append(clone3);
+  sno++;
+}
 
-      var tableRow1=$('#assignee-head-templates .table-assignee-head .table-row-assignee-head');
-      var clone1=tableRow1.clone();
-      $('.tbody-assignee').append(clone1);
+function get_sub_array(object, start, end){
+  if(!end){ end = -1;}
+  return object.slice(start, end);
+}
 
-      var compliancelists = filterList[entity]["user_wise_compliance"];
-      if(compliancelists.length > 0){
-        for(var compliancelist in compliancelists){
-          var assignee_ = compliancelists[compliancelist]["assignee"];
-          var concurrence = compliancelists[compliancelist]["concurrence_person"];
-          var approval_ = compliancelists[compliancelist]["approval_person"];
-
-          if(assignee_ == null) assignee_ = 'Client Admin';
-          if(concurrence == null) concurrence = 'Nil';
-          if(approval_ == null) approval_ = 'Client Admin';
-
-          var tableRow2=$('#assignee-name-templates .table-assignee-name .table-row-assignee-name');
-          var clone2=tableRow2.clone();
-          $('.tbl_assigneeheading', clone2).html('Assignee: ' + assignee_);
-          $('.tbl_concurrenceheading', clone2).html('concurrence: ' + concurrence);
-          $('.tbl_approvalheading', clone2).html('Approval: ' + approval_);
-
-          $('.tbody-assignee').append(clone2);
-          var compliances = compliancelists[compliancelist]["compliances"];
-          for(i=0; i<compliances.length; i++){
-            var triggerdate = '';
-            var statutorydate = '';
-            for(j=0; j<compliances[i]["statutory_dates"].length; j++){
-              var sDay = '';
-              if(compliances[i]["statutory_dates"][j]["statutory_date"] != null) sDay = compliances[i]["statutory_dates"][j]["statutory_date"];
-
-              var sMonth = '';
-              if(compliances[i]["statutory_dates"][j]["statutory_month"] != null) sMonth = compliances[i]["statutory_dates"][j]["statutory_month"];
-
-              var tDays = '';
-              if(compliances[i]["statutory_dates"][j]["trigger_before_days"] != null) tDays = compliances[i]["statutory_dates"][j]["trigger_before_days"];
-
-              if(sMonth == 1) sMonth = "January"
-              else if(sMonth == 2) sMonth = "February"
-              else if(sMonth == 3) sMonth = "March"
-              else if(sMonth == 4) sMonth = "April"  
-              else if(sMonth == 5) sMonth = "May"
-              else if(sMonth == 6) sMonth = "June"
-              else if(sMonth == 7) sMonth = "July"
-              else if(sMonth == 8) sMonth = "Auguest"
-              else if(sMonth == 9) sMonth = "September"
-              else if(sMonth == 10) sMonth = "October"
-              else if(sMonth == 11) sMonth = "November"
-              else if(sMonth == 12) sMonth = "December"
-                
-              triggerdate +=  tDays + " Days" + ', ';
-              statutorydate +=  sDay + ' - ' + sMonth +', ';
-            }
-
-            if(statutorydate.trim() != '') statutorydate = statutorydate.replace(/,\s*$/, "");
-            if(triggerdate.trim() != '') triggerdate = triggerdate.replace(/,\s*$/, "");
-
-            var summary = compliances[i]["summary"];
-            if(summary != null){
-              if(statutorydate.trim() != ''){
-                statutorydate = summary + ' ( '+statutorydate+' )';
-              }else{
-                statutorydate = summary;
-              }
-            }
-
-            var tableRow3=$('#assignee-content-templates .table-assignee-content .table-row-assignee-content');
-            var clone3=tableRow3.clone();
-            var cDescription = compliances[i]["description"];
-            $('.tbl_sno', clone3).text(compliance_count+1);
-            $('.tbl_compliance', clone3).html('<abbr class="page-load tipso_style" title="'+ cDescription +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliances[i]["compliance_name"]);
-            $('.tbl_unit', clone3).text(compliances[i]["unit_address"]);
-            $('.tbl_frequency', clone3).text(compliances[i]["compliance_frequency"]);
-            $('.tbl_statutorydate', clone3).text(statutorydate);
-            $('.tbl_triggerbefore', clone3).text(triggerdate);
-            var dDays = '-';
-            if(compliances[i]["due_date"] != null) dDays = compliances[i]["due_date"];
-            $('.tbl_duedate', clone3).text(dDays);
-
-            var vDays = '-';
-            if(compliances[i]["validity_date"] != null) vDays = compliances[i]["validity_date"];
-            $('.tbl_validitydate', clone3).text(vDays);
-            $('.tbody-assignee').append(clone3);
-            compliance_count++;
-          }
-        }   
-      }else{
-        var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
-        var clone4=tableRow4.clone();
-        $('.no_records', clone4).text('No Compliance Found');
-        $('.tbody-assignee').append(clone4);
+function showloadrecord() {
+  startCount = endCount;
+  endCount = startCount + pageSize;
+  var sub_keys_list = get_sub_array(fullArrayList, startCount, endCount);
+  if(sub_keys_list.length < pageSize){
+      $('#pagination').hide();
+  }
+  for(var y = 0;  y < pageSize; y++){
+    if(sub_keys_list[y] !=  undefined){
+      if(Object.keys(sub_keys_list[y])[0] == "division_name"){
+        bgList(sub_keys_list[y]);
+      }    
+      else if(Object.keys(sub_keys_list[y])[0] == "assignee"){
+        assigneeList(sub_keys_list[y]);
       }
-  }  
-  $('.compliance_count').text("Total : "+ (compliance_count) +" records");
-  $(".grid-table-rpt").show();
+      else if(Object.keys(sub_keys_list[y])[0] == "due_date"){
+        complianceListArray(sub_keys_list[y]);
+      } 
+    } 
+  }
+}
+
+$(function() {
+    $('#pagination').click(function(e){
+        $(".loading-indicator-spin").show();
+        if($('.loading-indicator-spin').css('display') != 'none')
+        {
+          setTimeout(function(){  
+              showloadrecord();
+          }, 500);
+        }
+        setTimeout(function(){  
+            $(".loading-indicator-spin").hide();
+        }, 500);
+    });
+});
+
+function loadArray(complianceList) {   
+  endCount = pageSize;
+  $.each(complianceList, function(i, val){
+      var list = complianceList[i];
+      var list_unit = val["user_wise_compliance"]
+      delete val["unit_wise_compliances"];         
+      fullArrayList.push(list);
+
+      $.each(list_unit, function(i1, val1){
+        var list_c = list_unit[i1];
+        var list_compliances = val1['compliances'];
+        delete list_c["compliances"];  
+        fullArrayList.push(list_c);
+   
+        $.each(list_compliances, function(i2, val2){
+            var list_comp = list_compliances[i2]; 
+            fullArrayList.push(list_comp);
+        }); 
+    });
+  });
+
+  var totallist = fullArrayList.length;
+  if(totallist > pageSize){
+    $('#pagination').show();
+  }
+  else{
+    $('#pagination').hide();
+  }
+  var sub_keys_list = get_sub_array(fullArrayList, startCount, endCount);
+  //filterList();
+  for(var y = 0;  y < pageSize; y++){
+    if(sub_keys_list[y] !=  undefined){
+      if(Object.keys(sub_keys_list[y])[0] == "division_name"){
+        bgList(sub_keys_list[y]);
+      }    
+      else if(Object.keys(sub_keys_list[y])[0] == "assignee"){
+        assigneeList(sub_keys_list[y]);
+      }
+      else if(Object.keys(sub_keys_list[y])[0] == "due_date"){
+        complianceListArray(sub_keys_list[y]);
+      } 
+    } 
+  }
+}
+
+
+function loadTotalCount(complianceList){
+  $("#pagination").hide();
+  var totalrecords = 0;
+  $(".tbody-assignee").find("tbody").remove();
+
+  $.each(complianceList, function(i, val){
+    var ucList = val['user_wise_compliance'];
+    $.each(ucList, function(i1, val1){
+        var complianceCount =val1['compliances'].length;
+        totalrecords = totalrecords + complianceCount;    
+    });       
+  }); 
+
+  loadArray(complianceList);    
+  $('.compliance_count').text("Total : "+ totalrecords +" records");
+
+  if(totalrecords == 0){
+    var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4=tableRow4.clone();
+    $('.no_records', clone4).text('No Compliance Found');
+    $('.tbody-assignee').append(clone4);
+  }
 }
 
 
@@ -190,18 +280,16 @@ $("#submit").click(function(){
     displayMessage("Domain Required");  
   }
   else{
-      var filterdata={};
-      filterdata["country_id"]=parseInt(country);
-      filterdata["domain_id"]=parseInt(domain);
-      filterdata["businessgroup_id"]=parseInt(businessgroup);
-      filterdata["legalentity_id"]=parseInt(legalentity);
-      filterdata["division_id"]=parseInt(division);
-      filterdata["unit_id"]=parseInt(unit);
-      filterdata["user_id"]=parseInt(assignee);
-
       function onSuccess(data){
         assigneeWiseComplianceList = data["compliance_list"];
-        loadresult(assigneeWiseComplianceList);
+
+        fullArrayList = [];
+        clearMessage();
+        sno = 0;
+        startCount = 0;
+        endCount = 0;
+        $(".grid-table-rpt").show();
+        loadTotalCount(assigneeWiseComplianceList);
       }
       function onFailure(error){
         onFailure(error);

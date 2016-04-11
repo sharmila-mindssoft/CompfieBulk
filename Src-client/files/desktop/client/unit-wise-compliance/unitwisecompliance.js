@@ -207,7 +207,6 @@ function loadArray(complianceList) {
   });
 
   var totallist = fullArrayList.length;
-  console.log(fullArrayList)
   if(totallist > pageSize){
     $('#pagination').show();
   }
