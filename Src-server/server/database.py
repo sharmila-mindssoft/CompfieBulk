@@ -2379,6 +2379,7 @@ class KnowledgeDatabase(Database):
     #
     # compliance
     #
+
     def get_compliance_by_id(self, compliance_id, is_active=None):
         q = ""
         if is_active is None :
@@ -2408,7 +2409,10 @@ class KnowledgeDatabase(Database):
             t1.penal_consequences, t1.frequency_id, \
             t1.statutory_dates, t1.repeats_every, \
             t1.repeats_type_id, \
-            t1.duration, t1.duration_type_id, t1.is_active \
+            t1.duration, t1.duration_type_id, t1.is_active, \
+            (select frequency from tbl_compliance_frequency where frequency_id = t1.frequency_id), \
+            (select duration_type from tbl_compliance_duration_type where duration_type_id = t1.duration_type_id) duration_type,\
+            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t1.repeats_type_id) repeat_type \
             FROM tbl_compliances t1 %s ORDER BY t1.frequency_id" % q
         rows = self.select_all(qry)
         columns = [
@@ -2418,7 +2422,8 @@ class KnowledgeDatabase(Database):
             "format_file_size", "penal_consequences",
             "frequency_id", "statutory_dates", "repeats_every",
             "repeats_type_id", "duration", "duration_type_id",
-            "is_active"
+            "is_active", "frequency",
+            "duration_type", "repeat_type"
         ]
         result = []
         if rows :
@@ -2471,6 +2476,13 @@ class KnowledgeDatabase(Database):
 
             compliance_names.append(core.Compliance_Download(name, file_download))
 
+            if d["frequency_id"] in (2, 3) :
+                summary = "Repeats every %s - %s" % (d["repeats_every"], d["repeat_type"])
+            elif d["frequency_id"] == 4 :
+                summary = "To complete within %s - %s" % (d["duration"], d["duration_type"])
+            else :
+                summary = None
+
             # compliance_names.append(name)
             compliance = core.Compliance(
                 d["compliance_id"], d["statutory_provision"],
@@ -2479,7 +2491,8 @@ class KnowledgeDatabase(Database):
                 d["penal_consequences"], d["frequency_id"],
                 date_list, d["repeats_type_id"],
                 d["repeats_every"], d["duration_type_id"],
-                d["duration"], bool(d["is_active"])
+                d["duration"], bool(d["is_active"]),
+                d["frequency"], summary
             )
             compalinaces.append(compliance)
         return [compliance_names, compalinaces]
