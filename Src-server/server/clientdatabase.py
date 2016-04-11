@@ -3082,6 +3082,7 @@ class ClientDatabase(Database):
                 group_by_name,
                 group_by_name
             )
+        print query
         rows = self.select_all(query)
         columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
         return filter_ids, self.convert_to_dict(rows, columns)
@@ -3274,6 +3275,9 @@ class ClientDatabase(Database):
                                 ):
                                     compliance_count += int(c["compliances"])
 
+                        compliance_count_info["domain_id"] = c["domain_id"]
+                        compliance_count_info["country_id"] = c["country_id"]
+
                     if status == "inprogress":
                         compliance_count_info["inprogress_count"] += compliance_count
                     elif status == "complied" :
@@ -3282,9 +3286,6 @@ class ClientDatabase(Database):
                         compliance_count_info["delayed_count"] += compliance_count
                     elif status == "not_complied":
                         compliance_count_info["not_complied_count"] += compliance_count
-
-                    compliance_count_info["domain_id"] = domain_id
-                    compliance_count_info["country_id"] = country_id
 
                     year_wise[i[0]] = compliance_count_info
 
