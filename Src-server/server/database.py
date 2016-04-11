@@ -176,7 +176,6 @@ class Database(object) :
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        #print query
         return self.select_all(query)
 
     def get_data_from_multiple_tables(
@@ -328,11 +327,15 @@ class Database(object) :
         return m.hexdigest()
 
     def string_to_datetime(self, string):
-        string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y")
+        string_in_date = string
+        if string is not None:
+            string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y")
         return self.localize(string_in_date)
 
     def string_to_datetime_with_time(self, string):
-        string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y %H:%M")
+        string_in_date = string
+        if string is not None:
+            string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y %H:%M")
         return string_in_date
 
     def toUTC(self, time_stamp):
@@ -352,12 +355,16 @@ class Database(object) :
         return local_dt
 
     def datetime_to_string(self, datetime_val):
-        date_in_string = datetime_val.strftime("%d-%b-%Y")
+        date_in_string = datetime_val
+        if datetime_val is not None:
+            date_in_string = datetime_val.strftime("%d-%b-%Y")            
         return date_in_string
 
     def datetime_to_string_time(self, datetime_val):
         # local_dt = self.localize(datetime_val)
-        datetime_in_string = datetime_val.strftime("%d-%b-%Y %H:%M")
+        datetime_in_string = datetime_val
+        if datetime_val is not None:
+            datetime_in_string = datetime_val.strftime("%d-%b-%Y %H:%M")
         return datetime_in_string
 
     def get_client_db_info(self, client_id=None):

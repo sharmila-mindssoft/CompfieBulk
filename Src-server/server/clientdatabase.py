@@ -7197,20 +7197,16 @@ class ClientDatabase(Database):
                 assigned_compliance_ids, reassigned_compliance_ids = self.get_user_assigned_reassigned_ids(
                     user_id
                 )
-                all_compliance_ids = None
+                all_compliance_ids = ""
                 if assigned_compliance_ids is not None:
                     all_compliance_ids = "%s" % (
                         assigned_compliance_ids
                     )
                 if reassigned_compliance_ids is not None:
-                    if all_compliance_ids is not None:
-                        all_compliance_ids = "%s, %s" % (
-                            all_compliance_ids, reassigned_compliance_ids
-                        )
-                    all_compliance_ids = "%s" % (
-                        reassigned_compliance_ids
+                    all_compliance_ids = "%s,%s" % (
+                        all_compliance_ids, reassigned_compliance_ids
                     )
-                if all_compliance_ids is not None:
+                if all_compliance_ids not in [None, "None", ""]:
                     client_statutory_id_columns = "group_concat(distinct client_statutory_id)"
                     client_statutory_id_condition = "compliance_id in (%s)" % all_compliance_ids
                     client_statutory_id_rows = self.get_data(
@@ -7219,20 +7215,18 @@ class ClientDatabase(Database):
                         client_statutory_id_condition
                     )
 
-                    domain_columns = "group_concat(client_statutory_id), domain_id"
-                    domain_condition = "unit_id = '%d'" % unit_id
-                    domain_condition += " and client_statutory_id in (%s)" % (
-                        client_statutory_id_rows[0][0]
+                    query = '''select a.client_statutory_ids, a.domain_id FROM (
+                    SELECT group_concat(client_statutory_id) as client_statutory_ids, domain_id 
+                    FROM tbl_client_statutories cs  
+                    WHERE unit_id = '%d' and client_statutory_id in (%s) ) a
+                    where client_statutory_ids is not Null and domain_id is not Null''' % (
+                        unit_id, client_statutory_id_rows[0][0]
                     )
-                    domain_rows = self.get_data(
-                        self.tblClientStatutories+" cs", domain_columns, domain_condition
-                    )
+                    domain_rows = self.select_all(query)
                     domain_wise_compliance_count = []
                     for domain in domain_rows:
                         unit_users_column = "user_id, "
                         domain_id = domain[1]
-                        if domain_id is None:
-                            continue
                         domain_name = self.get_data(self.tblDomains, "domain_name", "domain_id = '%d'" % domain_id)[0][0]
                         client_statutory_ids = domain[0]
                         complied = inprogress = not_complied = delayed_compliance = total = 0
@@ -7259,7 +7253,8 @@ class ClientDatabase(Database):
                             as DelayedCompliance"
                             condition = "compliance_id in (%s) and due_date \
                             between '%s' and '%s' and completed_by = '%d'" % (
-                                compliance_ids, from_date.date(), to_date.date(),  user_id
+                                compliance_ids, from_date.date(), to_date.date(),  
+                                user_id
                             )
                             rows = self.get_data(
                                 self.tblComplianceHistory, columns, condition
@@ -7335,13 +7330,14 @@ class ClientDatabase(Database):
                             year_wise_details= year_wise_compliance_count
                         )
                     )
-            chart_data.append(
-                dashboard.AssigneeChartData(
-                    unit_name=unit_name,
-                    address=address,
-                    assignee_wise_details=assignee_wise_compliances_count
+            if len(assignee_wise_compliances_count) > 0:
+                chart_data.append(
+                    dashboard.AssigneeChartData(
+                        unit_name=unit_name,
+                        address=address,
+                        assignee_wise_details=assignee_wise_compliances_count
+                    )
                 )
-            )
         return chart_data
 
     def get_year_wise_assignee_compliances(
