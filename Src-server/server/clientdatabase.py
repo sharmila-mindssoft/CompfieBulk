@@ -3124,7 +3124,7 @@ class ClientDatabase(Database):
 
         filter_ids = []
 
-        inprogress_qry = " AND T1.due_date >= CURDATE() \
+        inprogress_qry = " AND T1.due_date >= now() \
                 AND IFNULL(T1.approve_status,0) <> 1"
 
         complied_qry = " AND T1.due_date >= T1.completion_date \
@@ -3133,7 +3133,7 @@ class ClientDatabase(Database):
         delayed_qry = " AND T1.due_date < T1.completion_date \
                 AND IFNULL(T1.approve_status,0) = 1"
 
-        not_complied_qry = " AND T1.due_date < CURDATE() \
+        not_complied_qry = " AND T1.due_date < now() \
                 AND IFNULL(T1.approve_status,0) <> 1"
 
         filter_ids, inprogress = self.get_compliance_status(
@@ -3163,8 +3163,6 @@ class ClientDatabase(Database):
         self, current_year=None
     ):
         where_qry = ""
-        # if country_id is not None and domain_id is not None :
-        #     where_qry = " WHERE country_id = %s AND domain_id = %s" % (country_id, domain_id)
 
         query = "SELECT country_id, domain_id, \
             period_from, period_to \
@@ -3527,7 +3525,7 @@ class ClientDatabase(Database):
 
         status_qry = ""
         if compliance_status == "Inprogress" :
-            status_qry = " AND T1.due_date >= CURDATE() \
+            status_qry = " AND T1.due_date >= now() \
                     AND IFNULL(T1.approve_status, 0) != 1"
 
         elif compliance_status == "Complied" :
@@ -3539,7 +3537,7 @@ class ClientDatabase(Database):
                 AND T1.approve_status = 1"
 
         elif compliance_status == "Not Complied" :
-            status_qry = " AND T1.due_date < CURDATE() \
+            status_qry = " AND T1.due_date < now() \
                 AND IFNULL(T1.approve_status, 0) != 1 "
 
         if filter_type == "Group" :
