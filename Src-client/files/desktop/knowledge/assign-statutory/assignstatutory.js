@@ -540,7 +540,7 @@ function load_firstwizard(){
   var str1='';
   $('#geographylevel').empty();
   for(var geographylevel in geographyLevelsList[c_id]){
-    str1 += '<li id="'+geographyLevelsList[c_id][geographylevel]["level_id"]+'" class="geographylevellist">'+geographyLevelsList[c_id][geographylevel]["level_name"]+'</li>';
+    str1 += '<li id="'+geographyLevelsList[c_id][geographylevel]["l_id"]+'" class="geographylevellist">'+geographyLevelsList[c_id][geographylevel]["l_name"]+'</li>';
   }
   $('#geographylevel').append(str1);
 

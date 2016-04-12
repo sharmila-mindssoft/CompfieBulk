@@ -1316,32 +1316,32 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function assignedStatutories(level1ID, compliances, applicableStatus, remarks) {
+    function assignedStatutories(l1ID, compliances, aStatus, remarks) {
         var statutories = {
-            "level_1_statutory_id": level1ID,
+            "level_1_s_id": l1ID,
             "compliances": compliances,
-            "applicable_status": applicableStatus,
-            "not_applicable_remarks": remarks
+            "a_status": aStatus,
+            "n_a_remarks": remarks
         };
         return statutories;
     }
 
     function saveOrSubmitAssignStatutory(
-        countryId, clientId, geographyId, unitIds,
-        domainId, submissionType, clientStatutoryId,
-        assignStatutories, callback
+        cId, clientId, geoId, uIds,
+        dId, subType, cSId,
+        asStatutories, callback
     ){
         var request = [
             "SaveAssignedStatutory",
             {
-                "country_id": countryId,
+                "c_id": cId,
                 "client_id": clientId,
-                "geography_id": geographyId,
-                "unit_ids": unitIds,
-                "domain_id": domainId,
-                "submission_type": submissionType,
-                "client_statutory_id": clientStatutoryId,
-                "assigned_statutories": assignStatutories
+                "g_id": geoId,
+                "u_ids": uIds,
+                "d_id": dId,
+                "sub_type": subType,
+                "c_s_id": cSId,
+                "a_statutories": asStatutories
             }
         ];
         callerName = "techno_transaction";
@@ -1368,22 +1368,22 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getAssignedStatutoryReport(countryId, domainId,
-        clientId, businessGroupId, legalEntityId, divisionId,
-        unitId, level1StatutoryId, applicableStatus, callback
+    function getAssignedStatutoryReport(cId, dId,
+        clientId, bGroupId, lEntityId, divId,
+        uId, level1SId, aStatus, callback
     ){
         var request = [
             "GetAssignedStatutoryReport",
             {
-                "country_id": countryId,
-                "domain_id": domainId,
-                "group_id": clientId,
-                "business_group_id": businessGroupId,
-                "legal_entity_id": legalEntityId,
-                "division_id": divisionId,
-                "unit_id": unitId,
-                "level_1_statutory_id" : level1StatutoryId,
-                "applicability_status" : applicableStatus
+                "c_id": cId,
+                "d_id": dId,
+                "g_id": clientId,
+                "b_group_id": bGroupId,
+                "l_entity_id": lEntityId,
+                "div_id": divId,
+                "u_id": uId,
+                "level_1_s_id" : level1SId,
+                "a_status" : aStatus
             }
         ];
         callerName = "techno_report";
