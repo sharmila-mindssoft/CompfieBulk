@@ -297,18 +297,18 @@ function saverecord(j,e){
         });
     }
     if(map_gm_id==0 && levelstage>1 ){
-      displayMessage("Level Selection Should not be Empty");
+      displayMessage(getMessage('levelselection-required'));
     }else if(datavalue.length == 0){
      displayMessage("Level-"+levelstage+" Value Should not be Empty");
     }else{
       function onSuccess(response){
-        displayMessage("Record Added Successfully");
+        displayMessage(getMessage('record-added'));
         $('#datavalue'+j).val('');
         reload(last_geography_id,last_level,$('#country').val());
       }
       function onFailure(error){
         if(error == 'GeographyNameAlreadyExists'){
-            displayMessage("Geography Name Already Exists");
+            displayMessage(getMessage('geographyname-exists'));
         }
       }
       countryId = parseInt($("#country").val());
@@ -437,22 +437,22 @@ function updaterecord(j,e){
         });
     }
     if(map_gm_id==0 && levelstage>1 ){
-      displayMessage("Level Selection Should not be Empty");
+      displayMessage(getMessage('levelselection-required'));
     }else if(datavalue.length == 0){
       displayMessage("Level-"+levelstage+" Value Should not be Empty");
     }else{
      function onSuccess(response){
-          displayMessage("Record Update Successfully");
+          displayMessage(getMessage('record-updated'));
           GetGeographies();
           $("#geography-view").show();
           $("#geography-add").hide();
       }
       function onFailure(error) {
         if(error == 'GeographyNameAlreadyExists'){
-            displayMessage("Geography Name Already Exists");
+            displayMessage(getMessage('geographyname-exists'));
         }
         if(error == 'InvalidGeographyId'){
-            displayMessage("Invalid Geography Id");
+            displayMessage(getMessage('invalid-geographyid'));
         }
 
       }

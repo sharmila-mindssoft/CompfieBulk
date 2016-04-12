@@ -570,9 +570,11 @@ function initMirror() {
         var file = files[0];
         file_name = file.name
         file_size = file.size
-        console.log(file_size)
+        var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
         if (file_size > max_limit) {
             callback("File max limit exceeded");
+        }else if(file_extension == 'exe'){
+            callback("Invalid file format");
         }else{
             file_content = null
             if (files && file) {
@@ -585,8 +587,7 @@ function initMirror() {
                 )
                 callback(result)
             });
-        }
-
+            }
         }
         // file_extension = file_name.substr(
         //     file_name.lastIndexOf('.') + 1

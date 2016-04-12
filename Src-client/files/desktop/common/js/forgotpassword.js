@@ -8,22 +8,22 @@ function displayMessage(message) {
 }
 
 function getShortName(){
-    var pathArray = window.location.pathname.split( '/' );
-    console.log(pathArray)
-    short_name = null;
-    if(typeof pathArray[2] === 'undefined'){
-        short_name = null;
-    }
-    if (pathArray[1] == "knowledge") {
+  var pathArray = window.location.pathname.split( '/' );
+  console.log(pathArray)
+  short_name = null;
+  if(typeof pathArray[2] === 'undefined'){
       short_name = null;
-    }
-    else if (pathArray[2] === "login") {
-      short_name = null
-    }
-    else{
-      short_name = pathArray[2]
-    }
-    return short_name
+  }
+  if (pathArray[1] == "knowledge") {
+    short_name = null;
+  }
+  else if (pathArray[2] === "login") {
+    short_name = null
+  }
+  else{
+    short_name = pathArray[2]
+  }
+  return short_name
 }
 
 $(".btn-forgotpassword-cancel").click(function(){
@@ -37,8 +37,8 @@ $(".btn-forgotpassword-cancel").click(function(){
 });
 
 function validateEmail($email) {
-    var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-    return emailReg.test( $email );
+  var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+  return emailReg.test( $email );
 }
 
 function processForgotpassword(username, shortName, callback) {
@@ -78,51 +78,48 @@ function processForgotpassword(username, shortName, callback) {
 }
 
 $("#submit").click(function(){
-  console.log("submit called");
   displayMessage("");
   var username = $("#username").val().trim();
   if(username.length == 0) {
-    displayMessage("Username required");
+    displayMessage(getMessage('username-required'));
   }else if(validateEmail(username) == ''){
-    displayMessage("Invalid email id");
+    displayMessage(getMessage('invalid-emailid'));
   }else {
 
-      function onSuccess(data){
-        displayMessage("Password reset link has been sent to your email Id");
-        $("#username").val("");
+    function onSuccess(data){
+      displayMessage(getMessage('forgotpassword-success'));
+      $("#username").val("");
+    }
+    function onFailure(error){
+      if(error == "InvalidUserName"){
+        displayMessage(getMessage('nouser-exists'));
       }
-      function onFailure(error){
-        if(error == "InvalidUserName"){
-          displayMessage("No such user exists");
-        }
-      }
+    }
 
-      if(getShortName() == null  || getShortName() == "forgot-password"){
-          processForgotpassword(username,
-            null,
-            function (error, response) {
-              if (error == null){
-                onSuccess(response);
-              }
-              else {
-                onFailure(error);
-              }
+    if(getShortName() == null  || getShortName() == "forgot-password"){
+        mirror.forgotPassword(username,
+          function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
+        }
+      );
+    }else{
+        client_mirror.forgotPassword(username,
+          function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
           }
         );
-      }else{
-          processForgotpassword(username,
-              getShortName(),
-              function (error, response) {
-                if (error == null){
-                  onSuccess(response);
-                }
-                else {
-                  onFailure(error);
-                }
-            }
-          );
       }
-  }
+    }
 });
 
 $(document).ready(function () {

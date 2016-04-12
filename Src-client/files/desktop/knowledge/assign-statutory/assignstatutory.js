@@ -655,28 +655,28 @@ mirror.getCountriesForGroup(
 
 function validate_firsttab(){
   if($('.countrylist.active').text() == ''){
-    displayMessage("Country Required");
+    displayMessage(getMessage('country-required'));
     return false;
   }else if ($('.grouplist.active').text() == ''){
-    displayMessage("Group Required");
+    displayMessage(getMessage('group-required'));
     return false;
   }else if ($('.legalentitylist.active').text() == ''){
-    displayMessage("Legal Entity Required");
+    displayMessage(getMessage('legalentity-required'));
     return false;
   }else if ($('.geographylevellist.active').text() == ''){
-    displayMessage("Geography Level Required");
+    displayMessage(getMessage('geographylevel-required'));
     return false;
   }else if ($('.locationlist.active').text() == ''){
-    displayMessage("Location Required");
+    displayMessage(getMessage('location-required'));
     return false;
   }else if ($('.industrylist.active').text() == ''){
-    displayMessage("Industry Required");
+    displayMessage(getMessage('industry-required'));
     return false;
   }else if (assignStatutoryUnitIds.length == 0){
-    displayMessage("Unit Required");
+    displayMessage(getMessage('unit-required'));
     return false;
   }else if ($('.domainlist.active').text() == ''){
-    displayMessage("Domain Required");
+    displayMessage(getMessage('domain-required'));
     return false;
   }else{
     var checkDuplicateAssignStauttory = true;
@@ -804,7 +804,7 @@ function saveorsubmit(submissionType){
         applicableStatus = false;
         notApplicableRemarks = $('#remarkvalue'+actCount).val();
         if(notApplicableRemarks.length==0){
-          displayMessage("Remarks required for not applicable act");
+          displayMessage(getMessage('act-remarks-required'));
           return false;
         }
       }
@@ -865,7 +865,7 @@ function saveorsubmit(submissionType){
     }
     );
   }else{
-    displayMessage("Atleast one statutory should be select");
+    displayMessage(getMessage('statutory-selection-required'));
   }
   }
 }
