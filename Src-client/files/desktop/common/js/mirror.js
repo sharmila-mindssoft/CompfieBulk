@@ -264,26 +264,26 @@ function initMirror() {
     }
     //Domain Master
 
-    function saveDomain(domainName, callback) {
+    function saveDomain(dName, callback) {
         var request = [
             "SaveDomain",
-            { "d_name" : domainName }
+            { "d_name" : dName }
         ];
         apiRequest("general", request, callback);
     }
 
-    function updateDomain(domainId, domainName, callback) {
+    function updateDomain(dId, dName, callback) {
         var request = [
             "UpdateDomain",
-            { "d_id" : domainId, "d_name" : domainName }
+            { "d_id" : dId, "d_name" : dName }
         ];
         apiRequest("general", request, callback);
     }
 
-    function changeDomainStatus(domainId, isActive, callback) {
+    function changeDomainStatus(dId, isActive, callback) {
         var request = [
             "ChangeDomainStatus",
-            {"d_id" : domainId, "is_active" : isActive}
+            {"d_id" : dId, "is_active" : isActive}
         ];
         apiRequest("general", request, callback);
     }
@@ -300,26 +300,26 @@ function initMirror() {
 
     //Country Master
 
-    function saveCountry(countryName, callback) {
+    function saveCountry(cName, callback) {
         var request = [
             "SaveCountry",
-            { "c_name" : countryName }
+            { "c_name" : cName }
         ];
         apiRequest("general", request, callback);
     }
 
-    function updateCountry(countryId, countryName, callback) {
+    function updateCountry(cId, cName, callback) {
         var request = [
             "UpdateCountry",
-            { "c_id" : countryId, "c_name" : countryName }
+            { "c_id" : cId, "c_name" : cName }
         ];
         apiRequest("general", request, callback);
     }
 
-    function changeCountryStatus(countryId, isActive, callback) {
+    function changeCountryStatus(cId, isActive, callback) {
         var request = [
             "ChangeCountryStatus",
-            {"c_id" : countryId, "is_active" : isActive}
+            {"c_id" : cId, "is_active" : isActive}
         ];
         apiRequest("general", request, callback);
     }
@@ -345,26 +345,26 @@ function initMirror() {
     }
 
     //Industry Master
-    function saveIndustry(industryName, callback) {
+    function saveIndustry(iName, callback) {
         var request = [
             "SaveIndustry",
-            { "i_name" : industryName }
+            { "i_name" : iName }
         ];
         apiRequest("knowledge_master", request, callback);
     }
 
-    function updateIndustry(industryId, industryName, callback) {
+    function updateIndustry(iId, iName, callback) {
         var request = [
             "UpdateIndustry",
-            { "i_id" : industryId, "i_name" : industryName }
+            { "i_id" : iId, "i_name" : iName }
         ];
         apiRequest("knowledge_master", request, callback);
     }
 
-    function changeIndustryStatus(industryId, isActive, callback) {
+    function changeIndustryStatus(iId, isActive, callback) {
         var request = [
             "ChangeIndustryStatus",
-            {"i_id" : industryId, "is_active" : isActive}
+            {"i_id" : iId, "is_active" : isActive}
         ];
         apiRequest("knowledge_master", request, callback);
     }
@@ -376,28 +376,28 @@ function initMirror() {
 
     //Statutory Nature Master
 
-    function saveStatutoryNature(statutoryNatureName, callback) {
+    function saveStatutoryNature(sNName, callback) {
         var request = [
             "SaveStatutoryNature",
-            { "s_n_name" : statutoryNatureName }
+            { "s_n_name" : sNName }
         ];
         apiRequest("knowledge_master", request, callback);
     }
 
-    function updateStatutoryNature(statutoryNatureId, statutoryNatureName,
+    function updateStatutoryNature(sNId, sNName,
         callback) {
         var request = [
             "UpdateStatutoryNature",
-            { "s_n_id" : statutoryNatureId, "s_n_name" : statutoryNatureName }
+            { "s_n_id" : sNId, "s_n_name" : sNName }
         ];
         apiRequest("knowledge_master", request, callback);
     }
 
-    function changeStatutoryNatureStatus(statutoryNatureId, isActive,
+    function changeStatutoryNatureStatus(sNId, isActive,
         callback) {
         var request = [
             "ChangeStatutoryNatureStatus",
-            {"s_n_id" : statutoryNatureId, "is_active" : isActive}
+            {"s_n_id" : sNId, "is_active" : isActive}
         ];
         apiRequest("knowledge_master", request, callback);
     }
@@ -413,11 +413,11 @@ function initMirror() {
         apiRequest("knowledge_master", request, callback);
     }
 
-    function levelDetails(levelId, levelPosition, levelName) {
+    function levelDetails(lId, lPosition, lName) {
         var level = {};
-        level["level_id"] = levelId;
-        level["level_position"] = levelPosition;
-        level["level_name"] = levelName;
+        level["l_id"] = lId;
+        level["l_position"] = lPosition;
+        level["l_name"] = lName;
         return level;
     }
 
@@ -439,13 +439,13 @@ function initMirror() {
         apiRequest("knowledge_master", request, callback);
     }
 
-    function saveAndUpdateStatutoryLevels(countryId, domainId, levels,
+    function saveAndUpdateStatutoryLevels(cId, dId, levels,
         callback) {
         var request = [
             "SaveStatutoryLevel",
             {
-                "c_id" : countryId,
-                "d_id" : domainId,
+                "c_id" : cId,
+                "d_id" : dId,
                 "levels" : levels
             }
         ];
@@ -458,42 +458,42 @@ function initMirror() {
         apiRequest("knowledge_master", request, callback);
     }
 
-    function saveGeography(levelId, name, parentIds, parentNames, countryId, callback) {
+    function saveGeography(lId, name, pIds, pNames, cId, callback) {
         var request = [
             "SaveGeography",
             {
-                "g_l_id": levelId,
+                "g_l_id": lId,
                 "g_name": name,
-                "p_ids": parentIds,
-                "p_names": parentNames,
-                "c_id": countryId
+                "p_ids": pIds,
+                "p_names": pNames,
+                "c_id": cId
             }
         ];
         apiRequest("knowledge_master", request, callback);
     }
 
     function updateGeography(
-        geographyId, levelId, name, parentIds, parentNames, countryId, callback
+        gId, lId, name, pIds, pNames, cId, callback
     ) {
         var request = [
             "UpdateGeography",
             {
-                "g_id": geographyId,
-                "g_l_id": levelId,
+                "g_id": gId,
+                "g_l_id": lId,
                 "g_name": name,
-                "p_ids": parentIds,
-                "p_names": parentNames,
-                "c_id": countryId
+                "p_ids": pIds,
+                "p_names": pNames,
+                "c_id": cId
             }
         ];
         apiRequest("knowledge_master", request, callback);
     }
 
-    function changeGeographyStatus(geographyId, isActive, callback) {
+    function changeGeographyStatus(gId, isActive, callback) {
         var request = [
             "ChangeGeographyStatus",
             {
-                "g_id": geographyId,
+                "g_id": gId,
                 "is_active": isActive
             }
         ];
@@ -507,29 +507,29 @@ function initMirror() {
 
     // statutory Mapping
 
-    function saveStatutory(domainId, levelId, name, parentIds, parentNames, callback) {
+    function saveStatutory(dId, lId, name, pIds, pNames, callback) {
         var request = [
             "SaveStatutory",
             {
-                "d_id": domainId,
-                "s_l_id": levelId,
+                "d_id": dId,
+                "s_l_id": lId,
                 "s_name": name,
-                "p_ids": parentIds,
-                "p_names": parentNames
+                "p_ids": pIds,
+                "p_names": pNames
             }
         ]
         apiRequest("knowledge_master", request, callback);
     }
 
-    function updateStatutory(statutoryId, levelId, name, parentIds, parentNames, callback) {
+    function updateStatutory(sId, lId, name, pIds, pNames, callback) {
         var request = [
             "UpdateStatutory",
             {
-                "s_id": statutoryId,
-                "s_l_id": levelId,
+                "s_id": sId,
+                "s_l_id": lId,
                 "s_name": name,
-                "p_ids": parentIds,
-                "p_names": parentNames
+                "p_ids": pIds,
+                "p_names": pNames
             }
         ]
         apiRequest("knowledge_master", request, callback);
@@ -594,69 +594,69 @@ function initMirror() {
     }
 
     function complianceDetails (
-        statutoryProvision, complianceTask,
-        description, documentName, fileFormat, penalConsequence,
-        complianceFrequency, statutoryDates, repeatsTypeId, repeatsEvery,
-        durationTypeId, duration, isActive, complianceId
+        sProvision, cTask,
+        description, docName, fFormat, pConsequence,
+        cFrequency, statuDates, rTypeId, rEvery,
+        dTypeId, duration, isActive, cId
     ) {
         var compliance = {};
-        compliance["statutory_provision"] = statutoryProvision;
-        compliance["compliance_task"] = complianceTask;
+        compliance["s_provision"] = sProvision;
+        compliance["c_task"] = cTask;
         compliance["description"] = description;
-        compliance["document_name"] = documentName;
-        compliance["format_file_list"] = fileFormat;
-        compliance["penal_consequences"] = penalConsequence;
-        compliance["frequency_id"] = complianceFrequency;
-        compliance["statutory_dates"] = statutoryDates;
-        compliance["repeats_type_id"] = repeatsTypeId;
-        compliance["repeats_every"] = repeatsEvery;
-        compliance["duration_type_id"] = durationTypeId;
+        compliance["doc_name"] = docName;
+        compliance["f_f_list"] = fFormat;
+        compliance["p_consequences"] = pConsequence;
+        compliance["f_id"] = cFrequency;
+        compliance["statu_dates"] = statuDates;
+        compliance["r_type_id"] = rTypeId;
+        compliance["r_every"] = rEvery;
+        compliance["d_type_id"] = dTypeId;
         compliance["duration"] = duration;
         compliance["is_active"] = isActive;
         compliance["frequency"] = null;
         compliance["summary"] = null;
         if ((complianceId !== null) && (complianceId !== '')) {
-            compliance["compliance_id"] = complianceId;
+            compliance["c_id"] = complianceId;
         }
         else {
-            compliance["compliance_id"] = null
+            compliance["c_id"] = null
         }
 
         return compliance;
     }
 
     function checkDuplicateStatutoryMapping(
-        countryId, domainId, industryIds, statutoryNatureId,
-        statutoryIds, callback
+        cId, dId, iIds, sNId,
+        sIds, callback
     ) {
         var request = [
             "CheckDuplicateStatutoryMapping",
             {
-                "c_id": countryId,
-                "d_id": domainId,
-                "i_ids": industryIds,
-                "s_n_id": statutoryNatureId,
-                "s_ids": statutoryIds
+                "c_id": cId,
+                "d_id": dId,
+                "i_ids": iIds,
+                "s_n_id": sNId,
+                "s_ids": sIds
             }
         ];
         apiRequest("knowledge_transaction", request, callback);
     }
 
     function statutoryMapping(
-        countryId, domainId, industryIds, statutoryNatureId,
-        statutoryIds, compliances, geographyIds, mappings, mappingId
+        cId, dId, iIds, sNId,
+        sIds, compliances, gIds, mappings, mId
     ) {
         var mappingData = {};
-        mappingData["c_id"] = countryId;
-        mappingData["d_id"] = domainId;
-        mappingData["i_ids"] = industryIds;
-        mappingData["s_n_id"] = statutoryNatureId;
-        mappingData["s_ids"] = statutoryIds;
+        mappingData["c_id"] = cId;
+        mappingData["d_id"] = dId;
+        mappingData["i_ids"] = iIds;
+        mappingData["s_n_id"] = sNId;
+        mappingData["s_ids"] = sIds;
         mappingData["compliances"] = compliances;
-        mappingData["g_ids"] = geographyIds;
+        mappingData["g_ids"] = gIds;
         mappingData["mappings"] = mappings;
         if (mappingId !== null) {
-            mappingData["s_m_id"] = mappingId
+            mappingData["s_m_id"] = mId
         }
 
         return mappingData;
@@ -671,20 +671,20 @@ function initMirror() {
     }
 
     function UpdateStatutoryMappingData(
-        countryId, domainId, industryIds, statutoryNatureId,
-        statutoryIds, compliances, geographyIds, mappings, mappingId
+        cId, dId, iIds, sNId,
+        sIds, compliances, gIds, mappings, mId
     ) {
         var mappingData = {};
-        mappingData["c_id"] = countryId;
-        mappingData["d_id"] = domainId;
-        mappingData["i_ids"] = industryIds;
-        mappingData["s_n_id"] = statutoryNatureId;
-        mappingData["s_ids"] = statutoryIds;
+        mappingData["c_id"] = cId;
+        mappingData["d_id"] = dId;
+        mappingData["i_ids"] = iIds;
+        mappingData["s_n_id"] = sNId;
+        mappingData["s_ids"] = sIds;
         mappingData["compliances"] = compliances;
-        mappingData["g_ids"] = geographyIds;
+        mappingData["g_ids"] = gIds;
         mappingData["mappings"] = mappings;
         if (mappingId !== null) {
-            mappingData["s_m_id"] = mappingId
+            mappingData["s_m_id"] = mId
         }
 
         return mappingData;
@@ -709,11 +709,11 @@ function initMirror() {
         apiRequest("knowledge_transaction", request, callback);
     }
 
-    function changeStatutoryMappingStatus(mappingId, isActive, callback) {
+    function changeStatutoryMappingStatus(mId, isActive, callback) {
         var request = [
             "ChangeStatutoryMappingStatus",
             {
-                "s_m_id":mappingId,
+                "s_m_id":mId,
                 "is_active" : isActive
             }
         ]
@@ -725,8 +725,8 @@ function initMirror() {
         apiRequest("knowledge_transaction", request, callback);
     }
 
-    function approveStatutoryList(statutoryMappingId, statutoryProvision,
-        approvalStatus, reason, notificationText) {
+    function approveStatutoryList(sMId, sProvision,
+        aStatus, reason, nText) {
         var dict = {}
         if (reason == ""){
             reason = null
@@ -734,11 +734,11 @@ function initMirror() {
         if (notificationText == ""){
             notificationText = null
         }
-        dict["s_m_id"] = statutoryMappingId;
-        dict["s_provision"] = statutoryProvision;
-        dict["a_status"] = approvalStatus;
+        dict["s_m_id"] = sMId;
+        dict["s_provision"] = sProvision;
+        dict["a_status"] = aStatus;
         dict["r_reason"] = reason;
-        dict["n_text"] = notificationText;
+        dict["n_text"] = nText;
         return dict;
     }
 
@@ -757,14 +757,14 @@ function initMirror() {
         apiRequest("knowledge_report", request, callback);
     }
 
-    function filterData(countryId, domainId, industryId, statutoryNatureId, geographyId, level1StatutoryId) {
+    function filterData(cId, dId, iId, sNId, gId, level1SId) {
         var filter = {};
-        filter["country_id"] = countryId;
-        filter["domain_id"] = domainId;
-        filter["industry_id"] = industryId;
-        filter["statutory_nature_id"] = statutoryNatureId;
-        filter["geography_id"] = geographyId;
-        filter["level_1_statutory_id"] = level1StatutoryId;
+        filter["c_id"] = cId;
+        filter["d_id"] = dId;
+        filter["i_id"] = iId;
+        filter["s_n_id"] = sNId;
+        filter["g_id"] = gId;
+        filter["level_1_s_id"] = level1SId;
         return filter;
     }
 
