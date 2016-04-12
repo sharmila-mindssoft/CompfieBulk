@@ -188,28 +188,25 @@ function validate(){
 	var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 
 	if(employeeName.length == 0) {
-		displayMessage("Employee Name Required");
+		displayMessage(getMessage('employeename-required'));
 		$("#employeename").focus();
 	} else if(employeeId.length == 0) {
-		displayMessage("Employee Id Required");
+		displayMessage(getMessage('employeeid-required'));
 		$("#employeeid").focus();
 	} else if(emailId.length == 0) {
-		displayMessage("Email Id Required");
+		displayMessage(getMessage('emailid-required'));
 		$("#emailid").focus();
-	/*} else if(contactNo.length == 0) {
-		displayMessage("Contact Number Required");
-		$("#contactno").focus();*/
 	} else if(userGroup.length == 0) {
-		displayMessage("User Group Required");
+		displayMessage(getMessage('usergroup-required'));
 		$("#usergroupval").focus();
 	} else if(reg.test(emailId) == false) {
-		displayMessage("Invalid Email ID");
+		displayMessage(getMessage('invalid-emailid'));
 		$("#emailid").focus();
 	} else if(countryIds.length == 0) {
-		displayMessage("Country Required");
+		displayMessage(getMessage('country-required'));
 		$("#countryselected").focus().click();
 	} else if(domainIds.length == 0) {
-		displayMessage("Domain Required");
+		displayMessage(getMessage('domain-required'));
 		$("#domainselected").focus().click();
   	}else{
     	displayMessage('');
@@ -237,13 +234,13 @@ $("#submit").click(function(){
 			}
 			function onFailure(error){
 				if(error == "EmailIDAlreadyExists"){
-            	displayMessage("Email ID Already Exists");
+            	displayMessage(getMessage('emailid-exists'));
         }
         if(error == "ContactNumberAlreadyExists"){
-            displayMessage("Contact Number Already Exists");
+            displayMessage(getMessage('contactno-exists'));
         }
         if(error == "EmployeeCodeAlreadyExists"){
-            displayMessage("Employee ID Already Exists");
+            displayMessage(getMessage('employeeid-exists'));
         }
 			}
 			userDetail = [emailId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,countryIds,domainIds];
@@ -265,16 +262,16 @@ $("#submit").click(function(){
  			}
 			function failure(data) {
 				if(error == "EmailIDAlreadyExists"){
-            	displayMessage("Email ID Already Exists");
+            	displayMessage(getMessage('emailid-exists'));
         }
         if(error == "ContactNumberAlreadyExists"){
-            displayMessage("Contact Number Already Exists");
+            displayMessage(getMessage('contactno-exists'));
         }
         if(error == "EmployeeCodeAlreadyExists"){
-            displayMessage("Employee ID Already Exists");
+            displayMessage(getMessage('employeeid-exists'));
         }
         if(error == "InvalidUserId"){
-            displayMessage("Invalid User Id");
+            displayMessage(getMessage('invalid-userid'));
         }
 			}
 			console.log("address:"+address);

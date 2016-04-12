@@ -13,23 +13,23 @@ $("#submit").click(function(){
   var newpassword = $("#newpassword").val().trim();
   var confirmpassword = $("#confirmpassword").val().trim();
   if(currentpassword.length == 0) {
-    displayMessage("Current Password Required");
+    displayMessage(getMessage('cpassword-required'));
   } else if(newpassword.length == 0) {
-    displayMessage("New Password Required");
+    displayMessage(getMessage('npassword-required'));
   } else if(confirmpassword.length == 0) {
-    displayMessage("Confirm Password Required");
+    displayMessage(getMessage('conpassword-required'));
   } else if(confirmpassword != newpassword) {
-    displayMessage("New Password & Confirm Password Do Not Match");
+    displayMessage(getMessage('password-notmatch'));
   } else {
       function onSuccess(data){
-          displayMessage("Password Changed Successfully");
+          displayMessage(getMessage('password-changed-success'));
           $("#currentpassword").val("");
           $("#newpassword").val("");
           $("#confirmpassword").val("");
       }
       function onFailure(error){
         if(error == "InvalidCurrentPassword"){
-          displayMessage("Invalid Current Password");
+          displayMessage(getMessage('invalid-cpassword'));
         }
       }
       mirror.changePassword(currentpassword, newpassword, 
@@ -51,26 +51,23 @@ $("#submit-client").click(function(){
   var newpassword = $("#newpassword").val().trim();
   var confirmpassword = $("#confirmpassword").val().trim();
   if(currentpassword.length == 0) {
-    displayMessage("Current Password Required");
+    displayMessage(getMessage('cpassword-required'));
   } else if(newpassword.length == 0) {
-    displayMessage("New Password Required");
+    displayMessage(getMessage('npassword-required'));
   } else if(confirmpassword.length == 0) {
-    displayMessage("Confirm Password Required");
+    displayMessage(getMessage('conpassword-required'));
   } else if(confirmpassword != newpassword) {
-    displayMessage("New Password & Confirm Password Do Not Match");
+    displayMessage(getMessage('password-notmatch'));
   } else {
-      console.log("Else ")
       function onSuccess(data){
-          console.log("inside onsucces in change password")
-          displayMessage("Password Changed Successfully");
+          displayMessage(getMessage('password-changed-success'));
           $("#currentpassword").val("");
           $("#newpassword").val("");
           $("#confirmpassword").val("");
       }
       function onFailure(error){
-        console.log("inside onFailure in change password")
         if(error == "InvalidCurrentPassword"){
-          displayMessage("Invalid Current Password");
+          displayMessage(getMessage('invalid-cpassword'));
         }
       }
 
@@ -86,9 +83,9 @@ $("#submit-client").click(function(){
     );
     }
 });
+
 $(document).ready(function(){
   $("#currentpassword").focus();
-
   $('#currentpassword').keyup('input', function (event) {
       this.value = this.value.replace(/\s/g, '');
   });

@@ -318,10 +318,10 @@ $("#submit").click(function(){
   if($("#statutory").val() != '') act = $("#statutory").val();
 
   if(country.length == 0){
-    displayMessage("Country Required");
+    displayMessage(getMessage('country-required'));
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");
+    displayMessage(getMessage('domain-required'));
   }
   else{
     displayLoader();

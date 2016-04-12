@@ -130,11 +130,11 @@ function loadstatutoryLevelsList() {
 
 function validate(){
     if($("#country").val().trim().length==0){
-      displayMessage("Country Required");
+      displayMessage(getMessage('country-required'));
     } else if($("#domain").val().trim().length==0) {
-      displayMessage("Domain Required");
+      displayMessage(getMessage('domain-required'));
     } else if($("#level1").val().trim().length==0){
-      displayMessage("Level one title required");
+      displayMessage(getMessage('levelone-title-required'));
     }
     else {
       displayMessage('');
@@ -177,16 +177,16 @@ $("#submit").click(function(){
          }
         function onSuccess(response) {
           if(isAdd){
-            displayMessage("Record Added Successfully");
+            displayMessage(getMessage('record-added'));
           }else{
-            displayMessage("Record Updated Successfully");
+            displayMessage(getMessage('record-updated'));
           }
           GetStatutoryLevels();
           jQuery('.btn-statutorylevel-cancel').focus().click();
         }
         function onFailure(error){             
           if(error == "DuplicateStatutoryLevelsExists"){
-            displayMessage("Statutory Level Already Exists");
+            displayMessage(getMessage('statutorylevel-exists'));
           }
         }
         mirror.saveAndUpdateStatutoryLevels(parseInt(country), parseInt(domain), passlevellist, 
@@ -199,7 +199,7 @@ $("#submit").click(function(){
             }
           });
          }else{
-          displayMessage("Intermediate Level(s) should not be Empty");
+          displayMessage(getMessage('intermediatelevel-required'));
          }
       }
   });

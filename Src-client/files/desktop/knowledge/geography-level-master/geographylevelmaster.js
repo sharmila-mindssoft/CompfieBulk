@@ -111,9 +111,9 @@ function loadGeographyLevelsList(countryval) {
 }
 function validate(){
     if($("#country").val().trim().length==0){
-      displayMessage("Country Required");
+      displayMessage(getMessage('country-required'));
     }else if($("#level1").val().trim().length==0){
-      displayMessage("Level one title required");
+      displayMessage(getMessage('levelone-title-required'));
     }
     else {
       displayMessage('');
@@ -154,9 +154,9 @@ $("#submit").click(function(){
 	   }
 		function onSuccess(response) {
 			if(isAdd){
-				displayMessage("Record Added Successfully");
+				displayMessage(getMessage('record-added'));
 			}else{
-				displayMessage("Record Updated Successfully");
+				displayMessage(getMessage('record-updated'));
 			}
 			
 			jQuery('.btn-geographylevel-cancel').focus().click();
@@ -164,7 +164,7 @@ $("#submit").click(function(){
 		}
 		function onFailure(error){             
           if(error == "DuplicateGeographyLevelsExists"){
-            displayMessage("Geography Level Already Exists");
+            displayMessage(getMessage('geographylevel-exists'));
           }
         }
 		mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist, 
@@ -177,7 +177,7 @@ $("#submit").click(function(){
             }
           });
 	   }else{
-	   		displayMessage("Intermediate Level(s) should not be Empty");
+	   		displayMessage(getMessage('intermediatelevel-required'));
 	   }
 		}
 });
@@ -203,7 +203,7 @@ $("#insert-record").click(function(){
 	  	$("#add").show();
 	  	displayMessage("");
 	}else{
-		displayMessage("Title should not be Empty");
+		displayMessage(getMessage('title-required'));
 		$("#add").hide();
 		inserlevelstatus = false;
 	}
