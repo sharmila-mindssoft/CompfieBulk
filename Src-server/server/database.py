@@ -201,6 +201,8 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
+        print
+        print query
         return self.select_all(query)
 
     def insert(self, table, columns, values, client_id=None) :
@@ -5980,18 +5982,41 @@ class KnowledgeDatabase(Database):
 #
 #   Notifications
 #
+    
+    def get_user_type(self, user_id):
+        columns = "user_group_id"
+        condition = "user_id = '%d'" % user_id
+        result = self.get_data(self.tblUsers, columns, condition)
+        user_group_id = result[0][0]
+
+        columns = "form_category_id"
+        condition = "user_group_id = '%d'" % user_group_id
+        result = self.get_data(self.tblUserGroups, columns, condition)
+        if result[0][0] in [2, "2"]:
+            return "Knowledge"
+        else:
+            return "Techno"
+
+
     def get_notifications(
         self, notification_type, session_user, client_id=None
     ):
+        user_type = self.get_user_type(session_user)
+
         columns = "tn.notification_id, notification_text, link, "+\
         "created_on, read_status"
         join_type = "left join"
         tables = [self.tblNotifications, self.tblNotificationsStatus]
         aliases = ["tn", "tns"]
         join_conditions = ["tn.notification_id = tns.notification_id"]
-        where_condition = " tns.user_id ='%d' order by created_on DESC limit 30" % (
+        where_condition = " tns.user_id ='%d' " % (
             session_user
         )
+        if user_type == "Techno":
+            where_condition += " AND link not like '%sstatutory%s' " % ("%" , "%")
+        else:
+            where_condition += " AND link not like '%sclient%s'" % ("%" , "%")
+        where_condition += "order by created_on DESC limit 30"
         rows = self.get_data_from_multiple_tables(
             columns, tables,
             aliases, join_type, join_conditions, where_condition
