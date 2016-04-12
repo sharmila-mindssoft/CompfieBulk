@@ -262,17 +262,17 @@
 #noti_Container {
     position:relative;    
     border:0px;
-    width:24px;
-    height:24px;
+    width:16px;
+    height:16px;
     cursor:pointer;
 
 }
 .noti_bubble {
     position:absolute;    /* This breaks the div from the normal HTML document. */
-    top: 13px;
-    right:-3px;
+    top: -6px;
+    right:-6px;
     padding:1px 2px 1px 2px;
-    background-color: #0024FF; /* you could use a background image if you'd like as well */
+    background-color:red; /* you could use a background image if you'd like as well */
     color:white;
     font-weight:bold;
     font-size:0.55em;
@@ -393,8 +393,8 @@
     position: absolute;
     height: 3px;
     width: 22px;
-    border-top: 2px solid #7a8189;
-    border-bottom: 2px solid #7a8189;
+    border-top: 2px solid #333;
+    border-bottom: 2px solid #333;
     right: 20px;
     top: 15px;
   }
@@ -404,7 +404,7 @@
     position: absolute;
     height: 3px;
     width: 22px;
-    border-top: 2px solid #7a8189;
+    border-top: 2px solid #333;
     right: 20px;
     top: 25px;
   }

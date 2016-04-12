@@ -242,16 +242,20 @@ $("#btn-clientunit-add").click(function(){
 
 //Cancel Button ----------------------------------------------------------------------------------------------
 $("#btn-clientunit-cancel").click(function(){
-    $("#clientunit-add").hide();
-    $("#clientunit-view").show();
-    isUpdate = false;
-    countryByCount = 1;
-    countc = 0;
-    usercountrycount = 0;
-    $('#group-select  option:gt(0)').empty();
-    $('#businessgroup-select  option:gt(0)').empty();
-    $('#entity-select  option:gt(0)').empty();
-    $('#division-select  option:gt(0)').empty();
+    var answer = confirm('Are you sure, you want to cancel the operation?');
+    if (answer)
+    {
+        $("#clientunit-add").hide();
+        $("#clientunit-view").show();
+        isUpdate = false;
+        countryByCount = 1;
+        countc = 0;
+        usercountrycount = 0;
+        $('#group-select  option:gt(0)').empty();
+        $('#businessgroup-select  option:gt(0)').empty();
+        $('#entity-select  option:gt(0)').empty();
+        $('#division-select  option:gt(0)').empty();
+    }
 });
 
 //Load All Groups---------------------------------------------------------------------------------------------

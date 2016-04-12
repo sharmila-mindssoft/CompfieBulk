@@ -381,6 +381,23 @@ table.filtertable-1 tr td table tr td {
   opacity: 1;
 
 }
+.popupoverlay1{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 1000;
+}
+.popupoverlay1:target {
+  visibility: visible;
+  opacity: 1;
+
+}
 
 .popup-year {
   margin: 70px auto;
