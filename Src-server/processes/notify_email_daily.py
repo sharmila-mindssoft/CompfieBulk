@@ -1,17 +1,25 @@
 import MySQLdb as mysql
 import datetime
+import pytz
 import traceback
 
 from smtplib import SMTP_SSL as SMTP
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 
-mysqlHost = "localhost"
-mysqlUser = "root"
-mysqlPassword = "mnd50ftadm1n"
-mysqlDatabase = "compfie_knowledge"
-mysqlPort = 3306
+from server.constants import (
+    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+)
+from server.countrytimestamp import countries
 
+mysqlHost = KNOWLEDGE_DB_HOST
+mysqlUser = KNOWLEDGE_DB_USERNAME
+mysqlPassword = KNOWLEDGE_DB_PASSWORD
+mysqlDatabase = KNOWLEDGE_DATABASE_NAME
+mysqlPort = KNOWLEDGE_DB_PORT
+
+NOTIFY_TIME = "00:00"  # 12 AM
 
 class EmailNotification(object):
     def __init__(self):
@@ -31,6 +39,7 @@ class EmailNotification(object):
             if type(cc) is list :
                 msg["Cc"] = ",".join(cc)
         msg.attach(MIMEText(message, "html"))
+        print msg.as_string()
         response = server.sendmail(
             self.sender, receiver, msg.as_string()
         )
@@ -117,10 +126,22 @@ def db_connection(host, user, password, db, port):
     connection.autocommit(False)
     return connection
 
+def knowledge_db_connect():
+    con = db_connection(mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase, mysqlPort)
+    return con
+
+def get_countries():
+    con = knowledge_db_connect()
+    cursor = con.cursor()
+    q = "SELECT country_id, country_name FROM tbl_countries"
+    cursor.execute(q)
+    rows = cursor.fetchall()
+    cursor.close()
+    return convert_to_dict(rows, ["country_id", "country_name"])
 
 def get_client_db_list():
     print "begin fetching client info"
-    con = db_connection(mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase, mysqlPort)
+    con = knowledge_db_connect()
     cursor = con.cursor()
     query = "SELECT T1.client_id, T1.database_ip, T1.database_port, \
         T1.database_username, T1.database_password, T1.database_name \
@@ -243,7 +264,7 @@ def save_in_notification(
             save_notification_users(notification_id, concurrence_person)
 
 
-def get_inprogress_compliances(db):
+def get_inprogress_compliances(db, country_id):
     query = "SELECT distinct t1.compliance_history_id, t1.unit_id, t1.compliance_id, t1.start_date, \
         t1.due_date, t3.document_name, t3.compliance_task, \
         t2.assignee, t2.concurrence_person, t2.approval_person, t4.unit_code, t4.unit_name, \
@@ -253,7 +274,8 @@ def get_inprogress_compliances(db):
         t1.compliance_id = t2.compliance_id \
         INNER JOIN tbl_compliances t3 on t1.compliance_id = t3.compliance_id \
         INNER JOIN tbl_units t4 on t1.unit_id = t4.unit_id WHERE \
-        IFNULL(t1.approve_status, 0) != 1"
+        IFNULL(t1.approve_status, 0) != 1 \
+        AND t2.country_id = %s" % (country_id)
     # print query
     cursor = db.cursor()
     cursor.execute(query)
@@ -425,56 +447,15 @@ def notify_escalation_to_all(db, client_info, compliance_info):
                 assignee_email, cc_person
             )
 
-def notify_task_details(db, client_id):
+def notify_task_details(db, client_id, country_id):
     client_info = get_client_settings(db)
-    compliance_info = get_inprogress_compliances(db)
+    compliance_info = get_inprogress_compliances(db, country_id)
     if compliance_info :
         reminder_to_assignee(db, client_info, compliance_info)
         reminder_before_due_date(db, client_info, compliance_info)
         notify_escalation_to_all(db, client_info, compliance_info)
 
-def notify_before_contract_period(db, client_id):
-    query = "SELECT contract_to, group_name FROM tbl_client_groups"
-    cursor = db.cursor()
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    contract_to_str = str(rows[0][0])
-    group_name = str(rows[0][1])
-    contract_to_parts = [int(x) for x in contract_to_str.split("-")]
-    contract_to = datetime.date(
-        contract_to_parts[0], contract_to_parts[1], contract_to_parts[2]
-    )
-    delta = contract_to - datetime.datetime.now().date()
-    if delta.days <= 30:
-        notification_text = "Your contract with Compfie will expire in %d \
-        days. Kindly renew your contract to avail the services continuosuly" % (
-            delta.days
-        )
-        extra_details = "Reminder : Contract Expiration"
-
-        notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
-        created_on = datetime.datetime.now()
-        query = "INSERT INTO tbl_notifications_log \
-            (notification_id, notification_type_id,\
-            notification_text, extra_details, created_on\
-            ) VALUES (%s, %s, '%s', '%s', '%s')" % (
-                notification_id, 2,
-                notification_text, extra_details, created_on
-            )
-        cursor = db.cursor()
-        cursor.execute(query)
-        cursor.close()
-
-        q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
-            VALUES (%s, %s)" % (notification_id, 0)
-        cur = db.cursor()
-        cur.execute(q)
-        cur.close()
-        print '*' * 10
-        print "contract period expire notification sent ot %s" % (group_name)
-        print '*' * 10
-
-def main():
+def run_notify_email_process(country_id):
     print '--' * 20
     print "begin email_notification"
     print "current_date datetime ", datetime.datetime.now()
@@ -485,8 +466,7 @@ def main():
             print client_id
             try :
                 db.commit()
-                notify_task_details(db, client_id)
-                # notify_before_contract_period(db, client_id)
+                notify_task_details(db, client_id, country_id)
                 db.commit()
             except Exception, e :
                 print e
@@ -495,5 +475,40 @@ def main():
     print "end email_notifications"
     print '--' * 20
 
-if __name__ == "__main__" :
-    main()
+def time_convertion(time_zone):
+    current_time = datetime.datetime.utcnow()
+    print "current_time"
+    print current_time
+    CT_TIMEZONE = pytz.timezone(str(time_zone))
+    print CT_TIMEZONE
+    dt = CT_TIMEZONE.localize(current_time)
+    tzoffset = dt.utcoffset()
+    dt = dt.replace(tzinfo=None)
+    dt = dt+tzoffset
+    return dt
+
+def is_notify_time_reached(time_zone, country_id):
+    print time_zone
+    current_country_time = time_convertion(time_zone)
+    print "current_country_time"
+    print current_country_time
+    print type(current_country_time)
+    now = current_country_time.strftime("%H:%M")
+    print now
+    if now == NOTIFY_TIME :
+        run_notify_email_process(country_id)
+        pass
+
+def run_email_process():
+    country_time_zones = sorted(countries)
+    country_list = get_countries()
+    for c in country_list :
+        name = c["country_name"]
+        info = None
+        for ct in country_time_zones :
+            if name.lower() == ct.lower() :
+                info = countries.get(ct)
+                print info
+                break
+        if info :
+            is_notify_time_reached(info.get("timezones")[0], c["country_id"])

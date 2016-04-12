@@ -1028,7 +1028,8 @@ class Compliance(object):
         format_file_list, penal_consequences,
         frequency_id, statutory_dates, repeats_type_id,
         repeats_every, duration_type_id,
-        duration, is_active
+        duration, is_active,
+        frequency, summary
     ):
         self.compliance_id = compliance_id
         self.statutory_provision = statutory_provision
@@ -1044,6 +1045,8 @@ class Compliance(object):
         self.duration_type_id = duration_type_id
         self.duration = duration
         self.is_active = is_active
+        self.frequency = frequency
+        self.summary = summary
 
     @staticmethod
     def parse_structure(data):
@@ -1054,7 +1057,8 @@ class Compliance(object):
             "penal_consequences", "frequency_id",
             "statutory_dates", "repeats_type_id",
             "repeats_every", "duration_type_id",
-            "duration", "is_active"
+            "duration", "is_active",
+            "frequency", "summary"
         ])
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_OptionalType_UnsignedIntegerType_32(compliance_id)
@@ -1084,6 +1088,10 @@ class Compliance(object):
         duration = parse_structure_OptionalType_UnsignedIntegerType_32(duration)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
+        frequency = data.get("frequency")
+        frequency = parse_structure_OptionalType_CustomTextType_50(frequency)
+        summary = data.get("summary")
+        summary = parse_structure_OptionalType_CustomTextType_500(summary)
         return Compliance(
             compliance_id, statutory_provision,
             compliance_task, description,
@@ -1091,7 +1099,8 @@ class Compliance(object):
             penal_consequences, frequency_id,
             statutory_dates, repeats_type_id,
             repeats_every, duration_type_id,
-            duration, is_active
+            duration, is_active,
+            frequency, summary
         )
 
     def to_structure(self):
@@ -1110,6 +1119,8 @@ class Compliance(object):
             "duration_type_id": to_structure_OptionalType_UnsignedIntegerType_32(self.duration_type_id),
             "duration": to_structure_OptionalType_UnsignedIntegerType_32(self.duration),
             "is_active": to_structure_Bool(self.is_active),
+            "frequency": to_structure_OptionalType_CustomTextType_50(self.frequency),
+            "summary": to_structure_OptionalType_CustomTextType_500(self.summary)
         }
 
 #
@@ -1123,7 +1134,8 @@ class StatutoryMapping(object):
         statutory_nature_id, statutory_nature_name,
         statutory_ids, statutory_mappings, compliances,
         compliance_names, geography_ids, geography_mappings,
-        approval_status, is_active, approval_status_text):
+        approval_status, is_active, approval_status_text
+    ):
         self.country_id = country_id
         self.country_name = country_name
         self.domain_id = domain_id

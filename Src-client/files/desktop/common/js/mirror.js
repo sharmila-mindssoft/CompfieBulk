@@ -174,9 +174,9 @@ function initMirror() {
                 if (status.toLowerCase().indexOf(matchString) != -1){
                     callback(null, response);
                 }else{
-                    callback(status, null)    
+                    callback(status, null)
                 }
-                
+
             }
         )
         .fail(
@@ -614,6 +614,8 @@ function initMirror() {
         compliance["duration_type_id"] = durationTypeId;
         compliance["duration"] = duration;
         compliance["is_active"] = isActive;
+        compliance["frequency"] = null;
+        compliance["summary"] = null;
         if ((complianceId !== null) && (complianceId !== '')) {
             compliance["compliance_id"] = complianceId;
         }

@@ -53,7 +53,7 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_dashboard_Notification,
     parse_structure_Bool,
     parse_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance,
-    parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance,
+    parse_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance,
     parse_structure_VectorType_RecordType_dashboard_YearWise,
     parse_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWiseCompliance,
     parse_structure_OptionalType_CustomTextType_20,
@@ -125,7 +125,7 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_ClientUnit,
     to_structure_VectorType_RecordType_clientreport_User,
     to_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance,
-    to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance,
+    to_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance,
     to_structure_VectorType_RecordType_dashboard_YearWise,
     to_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWiseCompliance,
     to_structure_OptionalType_CustomTextType_20,
@@ -1657,14 +1657,14 @@ class UnitCompliance(object):
         address = data.get("address")
         address = parse_structure_CustomTextType_250(address)
         compliances = data.get("compliances")
-        compliances = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(compliances)
+        compliances = parse_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(compliances)
         return UnitCompliance(unit_name, address, compliances)
 
     def to_structure(self):
         return {
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_250(self.address),
-            "compliances": to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(self.compliances),
+            "compliances": to_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(self.compliances),
         }
 
 class TrendCompliance(object):

@@ -2379,6 +2379,7 @@ class KnowledgeDatabase(Database):
     #
     # compliance
     #
+
     def get_compliance_by_id(self, compliance_id, is_active=None):
         q = ""
         if is_active is None :
@@ -2408,7 +2409,10 @@ class KnowledgeDatabase(Database):
             t1.penal_consequences, t1.frequency_id, \
             t1.statutory_dates, t1.repeats_every, \
             t1.repeats_type_id, \
-            t1.duration, t1.duration_type_id, t1.is_active \
+            t1.duration, t1.duration_type_id, t1.is_active, \
+            (select frequency from tbl_compliance_frequency where frequency_id = t1.frequency_id), \
+            (select duration_type from tbl_compliance_duration_type where duration_type_id = t1.duration_type_id) duration_type,\
+            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t1.repeats_type_id) repeat_type \
             FROM tbl_compliances t1 %s ORDER BY t1.frequency_id" % q
         rows = self.select_all(qry)
         columns = [
@@ -2418,7 +2422,8 @@ class KnowledgeDatabase(Database):
             "format_file_size", "penal_consequences",
             "frequency_id", "statutory_dates", "repeats_every",
             "repeats_type_id", "duration", "duration_type_id",
-            "is_active"
+            "is_active", "frequency",
+            "duration_type", "repeat_type"
         ]
         result = []
         if rows :
@@ -2471,6 +2476,13 @@ class KnowledgeDatabase(Database):
 
             compliance_names.append(core.Compliance_Download(name, file_download))
 
+            if d["frequency_id"] in (2, 3) :
+                summary = "Repeats every %s - %s" % (d["repeats_every"], d["repeat_type"])
+            elif d["frequency_id"] == 4 :
+                summary = "To complete within %s - %s" % (d["duration"], d["duration_type"])
+            else :
+                summary = None
+
             # compliance_names.append(name)
             compliance = core.Compliance(
                 d["compliance_id"], d["statutory_provision"],
@@ -2479,7 +2491,8 @@ class KnowledgeDatabase(Database):
                 d["penal_consequences"], d["frequency_id"],
                 date_list, d["repeats_type_id"],
                 d["repeats_every"], d["duration_type_id"],
-                d["duration"], bool(d["is_active"])
+                d["duration"], bool(d["is_active"]),
+                d["frequency"], summary
             )
             compalinaces.append(compliance)
         return [compliance_names, compalinaces]
@@ -2629,8 +2642,8 @@ class KnowledgeDatabase(Database):
             link = "/knowledge/approve-statutory-mapping"
             self.save_notifications(
                 notification_log_text, link,
-                domain_id, country_id,
-                user_id=None, form_id=11
+                domain_id, country_id, created_by,
+                user_id=None
             )
             action = "New statutory mappings added"
             self.save_activity(created_by, 10, action)
@@ -2883,8 +2896,8 @@ class KnowledgeDatabase(Database):
         link = "/knowledge/approve-statutory-mapping"
         self.save_notifications(
             notification_log_text, link,
-            domain_id, country_id,
-            user_id=None, form_id=11
+            domain_id, country_id, updated_by,
+            user_id=None
         )
         return True
 
@@ -3175,15 +3188,15 @@ class KnowledgeDatabase(Database):
             user_id = int(users["updated_by"])
         self.save_notifications(
             notification_log_text, link,
-            users["domain_id"], users["country_id"],
-            user_id, form_id=11
+            users["domain_id"], users["country_id"], updated_by,
+            user_id
         )
         self.save_activity(updated_by, 11, notification_log_text)
         return True
 
     def save_notifications(
         self, notification_text, link,
-        domain_id, country_id, user_id, form_id
+        domain_id, country_id, current_user, user_id
     ):
         # internal notification
         notification_id = self.get_new_id(
@@ -3196,38 +3209,41 @@ class KnowledgeDatabase(Database):
             )
         self.execute(query)
         self.save_notifications_status(
-            notification_id, domain_id, country_id, user_id, form_id
+            notification_id, domain_id, country_id, current_user, user_id
         )
 
     def save_notifications_status(
         self, notification_id, domain_id, country_id,
-        user_id=None, form_id=None
+        current_user=None,
+        user_id=None
     ):
         user_ids = []
         q = "INSERT INTO tbl_notifications_status \
                 (notification_id, user_id, read_status) VALUES \
                 (%s, %s, 0)"
-        if form_id is not None :
-            query = "SELECT distinct user_id from tbl_users WHERE \
-                    user_group_id in \
-                    (select user_group_id from tbl_user_groups \
-                    where form_ids like '%s') AND \
-                    user_id in (select user_id from \
-                        tbl_user_domains where domain_id = %s \
-                    )  \
-                    AND user_id in (select user_id from \
-                        tbl_user_countries where country_id = %s)" % (
-                        str('%' + str(form_id) + ',%'),
-                        domain_id,
-                        country_id
-                    )
-            rows = self.select_all(query)
-            if rows :
-                for r in rows :
-                    notify_user_id = r[0]
-                    user_ids.append(notify_user_id)
-                    self.execute(q % (notification_id, notify_user_id))
-        if user_id is not None :
+
+        query = "SELECT distinct user_id from tbl_users WHERE \
+            user_group_id in \
+            (select user_group_id from tbl_user_groups \
+            where form_ids like '%s') AND \
+            user_id in (select user_id from \
+                tbl_user_domains where domain_id = %s \
+            )  \
+            AND user_id in (select distinct user_id from \
+                tbl_user_countries where country_id = %s)" % (
+                str('%11,%'),
+                domain_id,
+                country_id
+            )
+        rows = self.select_all(query)
+        if rows :
+            for r in rows :
+                notify_user_id = r[0]
+                if current_user == notify_user_id :
+                    continue
+                user_ids.append(notify_user_id)
+                self.execute(q % (notification_id, notify_user_id))
+        if user_id is not None and user_id != current_user:
             if user_ids:
                 if user_id not in user_ids:
                     self.execute(q % (notification_id, user_id))
@@ -5083,10 +5099,6 @@ class KnowledgeDatabase(Database):
                 self.save_client_statutories(data, user_id)
             else :
                 assigned_statutories = data.assigned_statutories
-                # self.update_client_compliances(
-                #     client_statutory_id,
-                #     assigned_statutories, user_id
-                # )
                 value_list = self.save_update_client_complainces(client_statutory_id, assigned_statutories, user_id, created_on)
                 self.execute_bulk_insert(value_list)
         elif submission_type == "Submit" :
@@ -5116,7 +5128,6 @@ class KnowledgeDatabase(Database):
             )
             if (self.save_data(self.tblClientStatutories, field, values)) :
                 assigned_statutories = data.assigned_statutories
-                # self.save_client_compliances(client_statutory_id, assigned_statutories, user_id, created_on)
                 print "unit_id ", unit_id
 
                 value_list.extend(self.save_update_client_complainces(client_statutory_id, assigned_statutories, user_id, created_on))
@@ -5131,16 +5142,18 @@ class KnowledgeDatabase(Database):
             "compliance_applicable", "compliance_opted",
             "created_by",
         ]
-        if submitted_on is None :
-            column.append("created_on")
-        else :
-            column.append("submitted_on")
         update_column = [
             "client_statutory_id", "compliance_id",
             "statutory_id", "statutory_applicable",
             "statutory_opted", "not_applicable_remarks",
             "compliance_applicable", "compliance_opted",
         ]
+        if submitted_on is None :
+            column.append("created_on")
+            update_column.append("created_on")
+        else :
+            column.append("submitted_on")
+            update_column.append("submitted_on")
         self.on_duplicate_key_update(table, ",".join(column), value_list, update_column)
 
     def save_update_client_complainces(self, client_statutory_id,  data, user_id, created_on):
@@ -5155,9 +5168,6 @@ class KnowledgeDatabase(Database):
             for key, value in d.compliances.iteritems():
                 compliance_id = int(key)
                 compliance_applicable_status = int(value)
-                # client_compliance_id = self.get_new_id(
-                #     "client_compliance_id", self.tblClientCompliances
-                # )
                 values = (
                     'null', client_statutory_id, compliance_id,
                     level_1_id, applicable_status, applicable_status,

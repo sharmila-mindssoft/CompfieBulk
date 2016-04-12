@@ -41,6 +41,42 @@ function validateEmail($email) {
   return emailReg.test( $email );
 }
 
+function processForgotpassword(username, shortName, callback) {
+  var request = [
+      "ForgotPassword", {
+          "username": username,
+          "short_name": null
+      }
+  ];
+  if (shortName == null) {
+      var requestFrame = request;
+      BASE_URL = "/knowledge/api/"
+  }
+  else {
+      var requestFrame = [
+          shortName,
+          request
+      ];
+      BASE_URL = "/api/"
+  }
+  jQuery.post(
+      BASE_URL + "login",
+      JSON.stringify(requestFrame, null, " "),
+      function (data) {
+          var data = JSON.parse(data);
+          var status = data[0];
+          var response = data[1];
+          matchString = 'success';
+          if (status.toLowerCase().indexOf(matchString) != -1){
+              callback(null, response);
+          }
+          else {
+              callback(status, null);
+          }
+      }
+  );
+}
+
 $("#submit").click(function(){
   displayMessage("");
   var username = $("#username").val().trim();
@@ -84,7 +120,7 @@ $("#submit").click(function(){
         );
       }
     }
-  });
+});
 
 $(document).ready(function () {
   $("#username").focus();

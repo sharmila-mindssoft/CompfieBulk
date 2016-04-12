@@ -1955,9 +1955,9 @@ class ClientDatabase(Database):
                                 # for statu_date in statutory_date_dict:
                                 #     statutory_dates.append(
                                 #         core.StatutoryDate(
-                                #             statutory_date=statu_date["statutory_date"], 
-                                #             statutory_month=statu_date["statutory_month"], 
-                                #             trigger_before_days=statu_date["trigger_before_days"], 
+                                #             statutory_date=statu_date["statutory_date"],
+                                #             statutory_month=statu_date["statutory_month"],
+                                #             trigger_before_days=statu_date["trigger_before_days"],
                                 #             repeat_by=statu_date["repeat_by"]
                                 #         )
                                 #     )
@@ -3082,6 +3082,7 @@ class ClientDatabase(Database):
                 group_by_name,
                 group_by_name
             )
+        print query
         rows = self.select_all(query)
         columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
         return filter_ids, self.convert_to_dict(rows, columns)
@@ -3124,7 +3125,7 @@ class ClientDatabase(Database):
 
         filter_ids = []
 
-        inprogress_qry = " AND T1.due_date >= CURDATE() \
+        inprogress_qry = " AND T1.due_date >= now() \
                 AND IFNULL(T1.approve_status,0) <> 1"
 
         complied_qry = " AND T1.due_date >= T1.completion_date \
@@ -3133,7 +3134,7 @@ class ClientDatabase(Database):
         delayed_qry = " AND T1.due_date < T1.completion_date \
                 AND IFNULL(T1.approve_status,0) = 1"
 
-        not_complied_qry = " AND T1.due_date < CURDATE() \
+        not_complied_qry = " AND T1.due_date < now() \
                 AND IFNULL(T1.approve_status,0) <> 1"
 
         filter_ids, inprogress = self.get_compliance_status(
@@ -3163,8 +3164,6 @@ class ClientDatabase(Database):
         self, current_year=None
     ):
         where_qry = ""
-        # if country_id is not None and domain_id is not None :
-        #     where_qry = " WHERE country_id = %s AND domain_id = %s" % (country_id, domain_id)
 
         query = "SELECT country_id, domain_id, \
             period_from, period_to \
@@ -3276,6 +3275,9 @@ class ClientDatabase(Database):
                                 ):
                                     compliance_count += int(c["compliances"])
 
+                        compliance_count_info["domain_id"] = c["domain_id"]
+                        compliance_count_info["country_id"] = c["country_id"]
+
                     if status == "inprogress":
                         compliance_count_info["inprogress_count"] += compliance_count
                     elif status == "complied" :
@@ -3284,9 +3286,6 @@ class ClientDatabase(Database):
                         compliance_count_info["delayed_count"] += compliance_count
                     elif status == "not_complied":
                         compliance_count_info["not_complied_count"] += compliance_count
-
-                    compliance_count_info["domain_id"] = domain_id
-                    compliance_count_info["country_id"] = country_id
 
                     year_wise[i[0]] = compliance_count_info
 
@@ -3527,7 +3526,7 @@ class ClientDatabase(Database):
 
         status_qry = ""
         if compliance_status == "Inprogress" :
-            status_qry = " AND T1.due_date >= CURDATE() \
+            status_qry = " AND T1.due_date >= now() \
                     AND IFNULL(T1.approve_status, 0) != 1"
 
         elif compliance_status == "Complied" :
@@ -3539,7 +3538,7 @@ class ClientDatabase(Database):
                 AND T1.approve_status = 1"
 
         elif compliance_status == "Not Complied" :
-            status_qry = " AND T1.due_date < CURDATE() \
+            status_qry = " AND T1.due_date < now() \
                 AND IFNULL(T1.approve_status, 0) != 1 "
 
         if filter_type == "Group" :
@@ -5028,7 +5027,7 @@ class ClientDatabase(Database):
                     assignee_id, str(statutory_id+"%"), compliance_id, start_date, end_date
                 )
             compliance_rows = self.select_all(query, client_id)
-            
+
             compliances_list = []
             for compliance in compliance_rows:
 
@@ -5155,7 +5154,7 @@ class ClientDatabase(Database):
         if len(unit_rows) > 0:
             unit_ids = ",".join(str(int(x)) for x in unit_rows)
 
-        # Compliances related to the domain 
+        # Compliances related to the domain
         compliance_columns = "compliance_id"
         compliance_condition = "domain_id = '{}'".format(domain_id)
         compliance_result_rows = self.get_data(
@@ -5851,12 +5850,11 @@ class ClientDatabase(Database):
             (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t2.repeats_type_id) repeat_type, t2.repeats_every,\
             tc.compliance_history_id \
             FROM tbl_compliance_history tc\
-            INNER JOIN tbl_assigned_compliances t1 on tc.compliance_id = t1.compliance_id AND t1.is_active = 1\
-            INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id AND t2.is_active = 1 \
-            INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id \
+            INNER JOIN tbl_assigned_compliances t1 on tc.compliance_id = t1.compliance_id AND tc.unit_id = t1.unit_id AND t1.is_active = 1\
+            INNER JOIN tbl_compliances t2 on tc.compliance_id = t2.compliance_id AND t2.is_active = 1 \
+            INNER JOIN tbl_units t3 on t3.unit_id = tc.unit_id \
             WHERE IFNULL(tc.approve_status, 0) != 1 \
             AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id like '%s') " % (user_id)
-
         rows = self.select_all(ongoing)
         result.extend(self.convert_to_dict(rows, columns))
         return self.return_compliance_to_reassign(result)

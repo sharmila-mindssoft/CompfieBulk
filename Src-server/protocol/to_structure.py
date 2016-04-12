@@ -3889,11 +3889,11 @@ def to_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500(data):
         dict[key] = value
     return dict
 
-def to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
+def to_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
     data = parse_dictionary(data)
     dict = {}
     for key, value in data.items():
-        key = to_structure_CustomTextType_50(key)
+        key = to_structure_CustomTextType_500(key)
         value = to_structure_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(value)
         dict[key] = value
     return dict
