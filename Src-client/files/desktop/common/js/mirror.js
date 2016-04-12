@@ -632,11 +632,11 @@ function initMirror() {
         var request = [
             "CheckDuplicateStatutoryMapping",
             {
-                "country_id": countryId,
-                "domain_id": domainId,
-                "industry_ids": industryIds,
-                "statutory_nature_id": statutoryNatureId,
-                "statutory_ids": statutoryIds
+                "c_id": countryId,
+                "d_id": domainId,
+                "i_ids": industryIds,
+                "s_n_id": statutoryNatureId,
+                "s_ids": statutoryIds
             }
         ];
         apiRequest("knowledge_transaction", request, callback);
@@ -647,16 +647,16 @@ function initMirror() {
         statutoryIds, compliances, geographyIds, mappings, mappingId
     ) {
         var mappingData = {};
-        mappingData["country_id"] = countryId;
-        mappingData["domain_id"] = domainId;
-        mappingData["industry_ids"] = industryIds;
-        mappingData["statutory_nature_id"] = statutoryNatureId;
-        mappingData["statutory_ids"] = statutoryIds;
+        mappingData["c_id"] = countryId;
+        mappingData["d_id"] = domainId;
+        mappingData["i_ids"] = industryIds;
+        mappingData["s_n_id"] = statutoryNatureId;
+        mappingData["s_ids"] = statutoryIds;
         mappingData["compliances"] = compliances;
-        mappingData["geography_ids"] = geographyIds;
+        mappingData["g_ids"] = geographyIds;
         mappingData["mappings"] = mappings;
         if (mappingId !== null) {
-            mappingData["statutory_mapping_id"] = mappingId
+            mappingData["s_m_id"] = mappingId
         }
 
         return mappingData;
@@ -675,16 +675,16 @@ function initMirror() {
         statutoryIds, compliances, geographyIds, mappings, mappingId
     ) {
         var mappingData = {};
-        mappingData["country_id"] = countryId;
-        mappingData["domain_id"] = domainId;
-        mappingData["industry_ids"] = industryIds;
-        mappingData["statutory_nature_id"] = statutoryNatureId;
-        mappingData["statutory_ids"] = statutoryIds;
+        mappingData["c_id"] = countryId;
+        mappingData["d_id"] = domainId;
+        mappingData["i_ids"] = industryIds;
+        mappingData["s_n_id"] = statutoryNatureId;
+        mappingData["s_ids"] = statutoryIds;
         mappingData["compliances"] = compliances;
-        mappingData["geography_ids"] = geographyIds;
+        mappingData["g_ids"] = geographyIds;
         mappingData["mappings"] = mappings;
         if (mappingId !== null) {
-            mappingData["statutory_mapping_id"] = mappingId
+            mappingData["s_m_id"] = mappingId
         }
 
         return mappingData;
@@ -713,7 +713,7 @@ function initMirror() {
         var request = [
             "ChangeStatutoryMappingStatus",
             {
-                "statutory_mapping_id":mappingId,
+                "s_m_id":mappingId,
                 "is_active" : isActive
             }
         ]
@@ -734,11 +734,11 @@ function initMirror() {
         if (notificationText == ""){
             notificationText = null
         }
-        dict["statutory_mapping_id"] = statutoryMappingId;
-        dict["statutory_provision"] = statutoryProvision;
-        dict["approval_status"] = approvalStatus;
-        dict["rejected_reason"] = reason;
-        dict["notification_text"] = notificationText;
+        dict["s_m_id"] = statutoryMappingId;
+        dict["s_provision"] = statutoryProvision;
+        dict["a_status"] = approvalStatus;
+        dict["r_reason"] = reason;
+        dict["n_text"] = notificationText;
         return dict;
     }
 
@@ -746,7 +746,7 @@ function initMirror() {
         var request = [
             "ApproveStatutoryMapping",
             {
-                "statutory_mappings": approvalList
+                "s_mappings": approvalList
             }
         ]
         apiRequest("knowledge_transaction", request, callback);
