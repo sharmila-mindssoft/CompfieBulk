@@ -2642,8 +2642,8 @@ class KnowledgeDatabase(Database):
             link = "/knowledge/approve-statutory-mapping"
             self.save_notifications(
                 notification_log_text, link,
-                domain_id, country_id,
-                user_id=None, form_id=11
+                domain_id, country_id, created_by,
+                user_id=None
             )
             action = "New statutory mappings added"
             self.save_activity(created_by, 10, action)
@@ -2896,8 +2896,8 @@ class KnowledgeDatabase(Database):
         link = "/knowledge/approve-statutory-mapping"
         self.save_notifications(
             notification_log_text, link,
-            domain_id, country_id,
-            user_id=None, form_id=11
+            domain_id, country_id, updated_by,
+            user_id=None
         )
         return True
 
@@ -3188,15 +3188,15 @@ class KnowledgeDatabase(Database):
             user_id = int(users["updated_by"])
         self.save_notifications(
             notification_log_text, link,
-            users["domain_id"], users["country_id"],
-            user_id, form_id=11
+            users["domain_id"], users["country_id"], updated_by,
+            user_id
         )
         self.save_activity(updated_by, 11, notification_log_text)
         return True
 
     def save_notifications(
         self, notification_text, link,
-        domain_id, country_id, user_id, form_id
+        domain_id, country_id, current_user, user_id
     ):
         # internal notification
         notification_id = self.get_new_id(
@@ -3209,38 +3209,41 @@ class KnowledgeDatabase(Database):
             )
         self.execute(query)
         self.save_notifications_status(
-            notification_id, domain_id, country_id, user_id, form_id
+            notification_id, domain_id, country_id, current_user, user_id
         )
 
     def save_notifications_status(
         self, notification_id, domain_id, country_id,
-        user_id=None, form_id=None
+        current_user=None,
+        user_id=None
     ):
         user_ids = []
         q = "INSERT INTO tbl_notifications_status \
                 (notification_id, user_id, read_status) VALUES \
                 (%s, %s, 0)"
-        if form_id is not None :
-            query = "SELECT distinct user_id from tbl_users WHERE \
-                    user_group_id in \
-                    (select user_group_id from tbl_user_groups \
-                    where form_ids like '%s') AND \
-                    user_id in (select user_id from \
-                        tbl_user_domains where domain_id = %s \
-                    )  \
-                    AND user_id in (select user_id from \
-                        tbl_user_countries where country_id = %s)" % (
-                        str('%' + str(form_id) + ',%'),
-                        domain_id,
-                        country_id
-                    )
-            rows = self.select_all(query)
-            if rows :
-                for r in rows :
-                    notify_user_id = r[0]
-                    user_ids.append(notify_user_id)
-                    self.execute(q % (notification_id, notify_user_id))
-        if user_id is not None :
+
+        query = "SELECT distinct user_id from tbl_users WHERE \
+            user_group_id in \
+            (select user_group_id from tbl_user_groups \
+            where form_ids like '%s') AND \
+            user_id in (select user_id from \
+                tbl_user_domains where domain_id = %s \
+            )  \
+            AND user_id in (select distinct user_id from \
+                tbl_user_countries where country_id = %s)" % (
+                str('%11,%'),
+                domain_id,
+                country_id
+            )
+        rows = self.select_all(query)
+        if rows :
+            for r in rows :
+                notify_user_id = r[0]
+                if current_user == notify_user_id :
+                    continue
+                user_ids.append(notify_user_id)
+                self.execute(q % (notification_id, notify_user_id))
+        if user_id is not None and user_id != current_user:
             if user_ids:
                 if user_id not in user_ids:
                     self.execute(q % (notification_id, user_id))
