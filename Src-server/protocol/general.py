@@ -94,14 +94,14 @@ class SaveDomain(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["domain_name"])
-        domain_name = data.get("domain_name")
+        data = parse_dictionary(data, ["d_name"])
+        domain_name = data.get("d_name")
         domain_name = parse_structure_CustomTextType_50(domain_name)
         return SaveDomain(domain_name)
 
     def to_inner_structure(self):
         return {
-            "domain_name": to_structure_CustomTextType_50(self.domain_name),
+            "d_name": to_structure_CustomTextType_50(self.domain_name),
         }
 
 class UpdateDomain(Request):
@@ -111,17 +111,17 @@ class UpdateDomain(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["domain_id", "domain_name"])
-        domain_id = data.get("domain_id")
+        data = parse_dictionary(data, ["d_id", "d_name"])
+        domain_id = data.get("d_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
-        domain_name = data.get("domain_name")
+        domain_name = data.get("d_name")
         domain_name = parse_structure_CustomTextType_50(domain_name)
         return UpdateDomain(domain_id, domain_name)
 
     def to_inner_structure(self):
         return {
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "domain_name": to_structure_CustomTextType_50(self.domain_name),
+            "d_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "d_name": to_structure_CustomTextType_50(self.domain_name),
         }
 
 class ChangeDomainStatus(Request):
@@ -131,8 +131,8 @@ class ChangeDomainStatus(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["domain_id", "is_active"])
-        domain_id = data.get("domain_id")
+        data = parse_dictionary(data, ["d_id", "is_active"])
+        domain_id = data.get("d_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
@@ -140,7 +140,7 @@ class ChangeDomainStatus(Request):
 
     def to_inner_structure(self):
         return {
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "d_id": to_structure_SignedIntegerType_8(self.domain_id),
             "is_active": to_structure_Bool(self.is_active),
         }
 
@@ -176,14 +176,14 @@ class SaveCountry(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_name"])
-        country_name = data.get("country_name")
+        data = parse_dictionary(data, ["c_name"])
+        country_name = data.get("c_name")
         country_name = parse_structure_CustomTextType_50(country_name)
         return SaveCountry(country_name)
 
     def to_inner_structure(self):
         return {
-            "country_name": to_structure_CustomTextType_50(self.country_name),
+            "c_name": to_structure_CustomTextType_50(self.country_name),
         }
 
 class UpdateCountry(Request):
@@ -193,17 +193,17 @@ class UpdateCountry(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "country_name"])
-        country_id = data.get("country_id")
+        data = parse_dictionary(data, ["c_id", "c_name"])
+        country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
-        country_name = data.get("country_name")
+        country_name = data.get("c_name")
         country_name = parse_structure_CustomTextType_50(country_name)
         return UpdateCountry(country_id, country_name)
 
     def to_inner_structure(self):
         return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "country_name": to_structure_CustomTextType_50(self.country_name),
+            "c_id": to_structure_SignedIntegerType_8(self.country_id),
+            "c_name": to_structure_CustomTextType_50(self.country_name),
         }
 
 class ChangeCountryStatus(Request):
@@ -213,8 +213,8 @@ class ChangeCountryStatus(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "is_active"])
-        country_id = data.get("country_id")
+        data = parse_dictionary(data, ["c_id", "is_active"])
+        country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
@@ -222,7 +222,7 @@ class ChangeCountryStatus(Request):
 
     def to_inner_structure(self):
         return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
+            "c_id": to_structure_SignedIntegerType_8(self.country_id),
             "is_active": to_structure_Bool(self.is_active),
         }
 
