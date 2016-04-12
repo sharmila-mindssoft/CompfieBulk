@@ -2892,7 +2892,14 @@ cursor: pointer;
 		td:nth-of-type(5):before { content: "Status"; }
 	}*/
 }
-
+.custom-file-input{
+	color: transparent;
+}
+.sidebardocview{
+	display: inline-block;
+    overflow: hidden;
+    width: 162px;
+}
 ul.pagination {
 	font-size:0.8em;
     display: inline-block;
@@ -2914,5 +2921,4 @@ ul.pagination li.active {
     background-color: #4CAF50;
     color: white;
 }
-
 ul.pagination li:hover:not(.active) {background-color: #ddd;}
