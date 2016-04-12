@@ -141,10 +141,10 @@ function loadCompliance(reportType){
   statutory_status = $("#statutory_status").val();
 
   if(country.length == 0){
-    displayMessage("Country Required");
+    displayMessage(message.country_required);
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");
+    displayMessage(message.domain_required);
   }
   else{
     var filterdata={};

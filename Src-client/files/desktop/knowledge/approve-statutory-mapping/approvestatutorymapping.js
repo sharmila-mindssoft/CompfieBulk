@@ -197,10 +197,10 @@ function loadApproveStatutory(){
   var industry = $("#industry").val();
   var statutorynature = $("#statutorynature").val();
   if(country.length == 0){
-    displayMessage(getMessage('country-required'));
+    displayMessage(message.country_required);
   }
   else if(domain.length == 0){
-    displayMessage(getMessage('domain-required'));
+    displayMessage(message.domain_required);
   }
   else{
     j = 1;
@@ -448,12 +448,12 @@ $("#saverecord").click(function(){
   }
 
   if(approvelist.length == 0){
-    displayMessage(getMessage('action-selection-required'));
+    displayMessage(message.action_selection_required);
     return false;
   }
   function onSuccess(response) {
     $(".grid-table").hide();
-    displayMessage(getMessage('action-selection-success'));
+    displayMessage(message.action_selection_success);
     reloadStatutoryMapping();
   }
   function onFailure(error){
