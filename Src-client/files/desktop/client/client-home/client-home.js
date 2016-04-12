@@ -688,13 +688,6 @@ function updateComplianceStatusStackBarChart(data) {
     var yAxisname = ["Complied", "Delayed Compliance", "Inprogress", "Not Complied"];
 
     var highchart;
-    // function setChart(name) {
-    //     data_series = drilldownSeries[name];
-    //     var title = chartTitle + " - " + name;
-    //     updateComplianceStatusPieChart(data_series, title, "pie");
-    //     complianceDrillDown(data_series, title);
-    // }
-    // $(".graph-container.compliance-status").highcharts({
     highchart = new Highcharts.Chart({
         chart: {
             renderTo: "status-container",
@@ -960,39 +953,39 @@ $('#pagination').click(function(e){
     displayLoader();
     if($('.loading-indicator-spin').css('display') != 'none')
     {
-        setTimeout(function(){  
+        setTimeout(function(){
             paginationrecord_showComplianceApplicabilityDrillDownRecord();
         }, 500);
-        
+
     }
-    setTimeout(function(){  
+    setTimeout(function(){
         hideLoader();
     }, 500);
-    
+
 });
 function paginationrecord_showComplianceApplicabilityDrillDownRecord(data){
     STARTCOUNT = ENDCOUNT;
     ENDCOUNT = STARTCOUNT + PAGESIZE;
-      
+
     var list = get_sub_array(fullArrayList, STARTCOUNT, ENDCOUNT);
     if(list.length < PAGESIZE){
         $('#pagination').hide();
     }
-    
+
     //e.preventDefault();
     for(var y = 0;  y < PAGESIZE; y++){
         if(list[y] !=  undefined){
             if(Object.keys(list[y])[0] == "level1_name"){
                 ACCORDIONCOUNT++;
                 showComplianceApplicabilityDrillDownRecord_level1List(list[y]);
-            }    
+            }
             else if(Object.keys(list[y])[0] == "unit_name"){
                 showComplianceApplicabilityDrillDownRecord_unitList(list[y]);
-            }    
+            }
             else if(Object.keys(list[y])[0] == "description"){
                 showComplianceApplicabilityDrillDownRecord_complianceList(list[y]);
             }
-        }        
+        }
     }
 }
 
@@ -1003,7 +996,7 @@ function showComplianceApplicabilityDrillDownRecord_headingList(){
 }
 function showComplianceApplicabilityDrillDownRecord_level1List(data){
     var tableLevel1 = $('#templates .compliance-applicable-status .tr-level1');
-    var cloneLevel1 = tableLevel1.clone(); 
+    var cloneLevel1 = tableLevel1.clone();
     $(".level-heading", cloneLevel1).html(data["level1_name"]);
     $(".table-drilldown-list").append(cloneLevel1);
 
@@ -1015,10 +1008,10 @@ function showComplianceApplicabilityDrillDownRecord_level1List(data){
 function showComplianceApplicabilityDrillDownRecord_unitList(data){
     var tableUnit = $('#templates .compliance-applicable-status .tr-unit');
     var cloneUnit = tableUnit.clone();
-    var disp_unitname = '';    
+    var disp_unitname = '';
     $(".heading", cloneUnit).html(data['unit_name']);
     $('.accordion-content'+ACCORDIONCOUNT).append(cloneUnit);
-    
+
 }
 function showComplianceApplicabilityDrillDownRecord_complianceList(val){
     var frequency =  val["frequency"];
@@ -1101,11 +1094,11 @@ function showComplianceApplicabilityDrillDownRecord_complianceList(val){
 }
 
 function showComplianceApplicabilityDrillDownRecord(data, type){
-    $(".drilldown-title").text(GROUP_NAME+" - "+type+" Compliances");    
+    $(".drilldown-title").text(GROUP_NAME+" - "+type+" Compliances");
     $(".table-thead-drilldown-list").empty();
     $(".table-drilldown-list tbody").remove();
     $(".escalation-drilldown-list .td-escalation").empty();
-    FULLARRAYLIST = [];        
+    FULLARRAYLIST = [];
     SNO = 1;
     STARTCOUNT = 0;
     ENDCOUNT = 0;
@@ -1117,20 +1110,20 @@ function showComplianceApplicabilityDrillDownRecord(data, type){
     $.each(data, function(i, val){
         var level1_Object = new Object();
         level1_Object.level1_name = val['level1_statutory_name'];
-        var list_comp = val["compliances"]        
+        var list_comp = val["compliances"]
         FULLARRAYLIST.push(level1_Object);
 
-        $.each(list_comp, function(i1, val1){            
+        $.each(list_comp, function(i1, val1){
             var unit_Object = new Object();
             unit_Object.unit_name = i1;
 
             var list_compliancesDetails = val1;
-            delete val1;  
+            delete val1;
             FULLARRAYLIST.push(unit_Object);
-       
+
             $.each(list_compliancesDetails, function(i2, val2){
                 FULLARRAYLIST.push(val2);
-            }); 
+            });
         });
     });
 
@@ -1149,16 +1142,16 @@ function showComplianceApplicabilityDrillDownRecord(data, type){
             if(Object.keys(sub_array_list[y])[0] == "level1_name"){
                 ACCORDIONCOUNT++;
                 showComplianceApplicabilityDrillDownRecord_level1List(sub_array_list[y]);
-            }    
+            }
             else if(Object.keys(sub_array_list[y])[0] == "unit_name"){
                 showComplianceApplicabilityDrillDownRecord_unitList(sub_array_list[y]);
-            }    
+            }
             else if(Object.keys(sub_array_list[y])[0] == "description"){
                 showComplianceApplicabilityDrillDownRecord_complianceList(sub_array_list[y]);
             }
-        }        
+        }
     }
-    accordianType('accordion', 'accordion-toggle', 'accordion-content'); 
+    accordianType('accordion', 'accordion-toggle', 'accordion-content');
 }
 
 function accordianType(idtype, toggleClass, contentClass){

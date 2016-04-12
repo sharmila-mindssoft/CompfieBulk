@@ -13,6 +13,12 @@ function displayLoginMessage(message) {
 function displayLoginLoader() {
     $(".loading-indicator-spin").show();
 }
+function initSession(userProfile, shortName) {
+    window.localStorage["userInfo"] = JSON.stringify(userProfile, null, " ");
+    if (shortName !== null) {
+        window.localStorage["shortName"] = shortName;
+    }
+}
 
 function getShortName(){
     var pathArray = window.location.pathname.split( '/' );
@@ -55,7 +61,57 @@ function resetLoginUI(e_button, e_email, e_password) {
     e_password.removeAttr("disabled", "disabled");
     e_email.focus();
 }
+function get_ip(callback){
+    $.getJSON("http://jsonip.com?callback=?", function (data) {
+        callback(data.ip);
+    });
+}
+function processLogin(username, password, shortName, callback) {
+    my_ip = null ;
+    get_ip(function (ip) {
+        my_ip = ip;
+    });
+    if (my_ip == null)
+        my_ip = "unknown"
 
+    var request = [
+        "Login", {
+            "login_type": "Web",
+            "username": username,
+            "password": password,
+            "short_name": short_name,
+            "ip" : my_ip
+        }
+    ];
+    if (shortName == null) {
+        var requestFrame = request;
+        BASE_URL = "/knowledge/api/"
+    }
+    else {
+        var requestFrame = [
+            shortName,
+            request
+        ];
+        BASE_URL = "/api/"
+    }
+    jQuery.post(
+        BASE_URL + "login",
+        JSON.stringify(requestFrame, null, " "),
+        function (data) {
+            var data = JSON.parse(data);
+            var status = data[0];
+            var response = data[1];
+            matchString = 'success';
+            if (status.toLowerCase().indexOf(matchString) != -1){
+                initSession(response, shortName)
+                callback(null, response);
+            }
+            else {
+                callback(status, null);
+            }
+        }
+    )
+}
 function performLogin(e_button, e_email, e_password) {
     if (!isLoginValidated(e_email, e_password))
         return;
@@ -78,12 +134,8 @@ function performLogin(e_button, e_email, e_password) {
         resetLoginUI(e_button, e_email, e_password);
     }
 
-    // function onSuccess (response) {
-    //     // mirror.initSession(response);
-    //     window.location.href = "/home";
-    // }
     if (getShortName() === null){
-        mirror.login(
+        processLogin(
             e_email.val(),
             e_password.val(),
             null,
@@ -99,7 +151,7 @@ function performLogin(e_button, e_email, e_password) {
             }
         );
     }else{
-        client_mirror.login(
+        processLogin(
             e_email.val(),
             e_password.val(),
             getShortName(),
@@ -145,15 +197,6 @@ function initializeLogin () {
     });
 }
 
-function navigateToHome(){
-    client_name = client_mirror.getClientShortName()
-    if ((client_name === null) || (client_name === undefined)) {
-        window.location.href = "/knowledge/home";
-    } else {
-        window.location.href = "/home";
-    }
-}
-
 $(document).ready(function () {
     console.log("inside document ready");
     $("#txt-username").focus();
@@ -161,10 +204,6 @@ $(document).ready(function () {
     console.log("short name"+short_name);
     if (short_name === null) {
         console.log("short name null");
-        // if (mirror.verifyLoggedIn()) {
-        //     navigateToHome()
-        //     return;
-        // }
         var url = "/knowledge/forgot-password";
         $('.text-forgot-password a').attr('href', url);
     }
@@ -172,12 +211,6 @@ $(document).ready(function () {
         console.log("short name not null");
         var url = "/forgot_password/"+short_name;
         $('.text-forgot-password a').attr('href', url);
-        // if (short_name == client_mirror.getClientShortName()) {
-        //     navigateToHome();
-        // }
-        // else  {
-        //     client_mirror.clearSession();
-        // }
     }
 
 

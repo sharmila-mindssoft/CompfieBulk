@@ -37,31 +37,8 @@ img, object {
 	background: url(../images/inner-page-bg.png) no-repeat center bottom;
 	background-size: cover;
 }*/
-.header-section {
-	width: 100%;
-	background: #fc9b01;
-	float: left;
-	position: relative;
-	z-index: 2;
-}
-.header-content {
-	width: 62.500em;
-	margin: auto;
-}
-.header-content-inner {
-	width: 100%;
-	float: left;
-	background: #fc9b01;
-	padding: 0;
-}
-.site-logo {
-	float: left;
-	padding: 0.3em 0;
-}
-.site-logo img {
-	width: 8em;
-}
-.top-nav-section {
+
+/*.top-nav-section {
 	float: right;
 	width: 22.500em;
 }
@@ -123,19 +100,11 @@ img, object {
 .top-nav ul li ul li a:hover {
 	text-decoration: none;
 	color: #fc9b01;
-}
+}*/
 .navigation-container {
 	width: 100%;
 	float: left;
 	background: #fc9b01;
-}
-.navigation {
-	width: 62.500em;
-	margin: auto;
-}
-.content-container {
-	width: 62.500em;
-	margin: auto;
 }
 .content-container.width50 {
 	width: 50%;
@@ -155,12 +124,12 @@ img, object {
 .content-container.width90 {
 	width: 90%;
 }
-.content-area {
+/*.content-area {
 	width: 100%;
 	float: left;
 	padding-top: 2em;
 	margin-bottom: 2em;
-}
+}*/
 
 /* Dashboard page styles */
 .dashboard-content-contaner {
@@ -317,7 +286,7 @@ img, object {
 	color: #ffae00;
 	font-size: 0.813em;
 }
-.graph-box {
+/*.graph-box {
 	width: 100%;
 	float: left;
 	margin-top: 1em;
@@ -327,7 +296,7 @@ img, object {
 	-webkit-border-radius: 0.5em;
 	-moz-border-radius: 0.5em;
 	border-radius: 0.5em;
-}
+}*/
 .graph-box-heading {
 	width: 100%;
 	float: left;

@@ -37,7 +37,7 @@ $('#cssmenu').prepend('<div id="indicatorContainer"><div id="pIndicator"><div id
     	$('#cssmenu #pIndicator').css('left', posLeft);
     });
 
-	$('#cssmenu>ul').prepend('<li id="menu-button"><a>Menu</a></li>');
+	$('#cssmenu>ul').prepend('<li id="menu-button"></li>');
 	$( "#menu-button" ).click(function(){
     		if ($(this).parent().hasClass('open')) {
     			$(this).parent().removeClass('open');

@@ -159,25 +159,6 @@ $(function() {
     });
 });
 
-function loadTotalCount(complianceList){
-  $("#pagination").hide();
-  var totalrecords = 0;
-  $(".tbody-unit").find("tbody").remove();
-  $.each(complianceList, function(i, val){
-    var complianceCount = val['compliances'].length;
-    totalrecords = totalrecords + complianceCount;    
-  });    
-  loadArray(complianceList);    
-  $('.compliance_count').text("Total : "+ totalrecords +" records");
-
-  if(totalrecords == 0){
-    var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
-    var clone4=tableRow4.clone();
-    $('.no_records', clone4).text('No Compliance Found');
-    $('.tbody-unit').append(clone4);
-  }
-}
-
 function loadArray(complianceList) {   
   endCount = pageSize;
   $.each(complianceList, function(i, val){
@@ -210,6 +191,25 @@ function loadArray(complianceList) {
         complianceListArray(sub_keys_list[y]);
       }    
     } 
+  }
+}
+
+function loadTotalCount(complianceList){
+  $("#pagination").hide();
+  var totalrecords = 0;
+  $(".tbody-unit").find("tbody").remove();
+  $.each(complianceList, function(i, val){
+    var complianceCount = val['compliances'].length;
+    totalrecords = totalrecords + complianceCount;    
+  });    
+  loadArray(complianceList);    
+  $('.compliance_count').text("Total : "+ totalrecords +" records");
+
+  if(totalrecords == 0){
+    var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4=tableRow4.clone();
+    $('.no_records', clone4).text('No Compliance Found');
+    $('.tbody-unit').append(clone4);
   }
 }
 

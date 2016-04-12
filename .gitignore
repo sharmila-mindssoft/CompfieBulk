@@ -4,6 +4,8 @@
 *.txt
 *.csv
 *.log
+*.xlsx
+*.zip
 /Src-server/logs
 /Src-server/server/knowledgeformat
 /Src-server/server/knowledgeformat
@@ -11,4 +13,3 @@
 /Src-server/server/clientlogo
 /exported_reports
 /Src-server/processes/expired
-

@@ -152,9 +152,9 @@ function initClientMirror() {
                     if (status == "SavePastRecordsFailed"){
                         callback(data, null)
                     }else{
-                        callback(status, null)    
+                        callback(status, null)
                     }
-                    
+
                 }
 
             }
