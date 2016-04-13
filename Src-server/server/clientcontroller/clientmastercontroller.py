@@ -5,6 +5,10 @@ __all__ = [
     "process_client_master_requests"
 ]
 
+########################################################
+# To Redirect the requests to the corresponding 
+# functions
+########################################################
 def process_client_master_requests(request, db) :
     session_token = request.session_token
     client_info = session_token.split("-")
@@ -66,11 +70,17 @@ def process_client_master_requests(request, db) :
     if type(request) is clientmasters.GetAuditTrails:
         return get_audit_trails(db, request, session_user, client_id)
 
+########################################################
+# To get the list of all service providers
+########################################################
 def get_service_providers(db, request, session_user, client_id):
     service_provider_list = db.get_service_provider_details_list(client_id)
     return clientmasters.GetServiceProvidersSuccess(
         service_providers=service_provider_list)
 
+########################################################
+# To validate and Save service provider 
+########################################################
 def save_service_provider(db, request, session_user, client_id):
     service_provider_id = db.generate_new_service_provider_id(client_id)
     if db.is_duplicate_service_provider(
@@ -78,16 +88,15 @@ def save_service_provider(db, request, session_user, client_id):
         request.service_provider_name, client_id
     ) :
         return clientmasters.ServiceProviderNameAlreadyExists()
-    # elif db.is_duplicate_service_provider_contact_no(
-    #     service_provider_id,
-    #     request.contact_no, client_id
-    # ) :
-    #     return clientmasters.ContactNumberAlreadyExists()
     elif db.save_service_provider(
         service_provider_id, request, session_user, client_id
     ) :
         return clientmasters.SaveServiceProviderSuccess()
 
+
+########################################################
+# To validate and Update service provider
+########################################################
 def update_service_provider(db, request, session_user, client_id):
     if db.is_invalid_id(
         db.tblServiceProviders,
@@ -100,14 +109,12 @@ def update_service_provider(db, request, session_user, client_id):
         request.service_provider_name, client_id
     ) :
         return clientmasters.ServiceProviderNameAlreadyExists()
-    # elif db.is_duplicate_service_provider_contact_no(
-    #     request.service_provider_id,
-    #     request.contact_no, client_id
-    # ) :
-    #     return clientmasters.ContactNumberAlreadyExists()
     elif db.update_service_provider(request, session_user, client_id) :
         return clientmasters.UpdateServiceProviderSuccess()
 
+########################################################
+# To validate and change the status of service provider
+########################################################
 def change_service_provider_status(db, request, session_user, client_id):
     is_active = 0 if request.is_active is False else 1
     if db.is_invalid_id(
@@ -126,6 +133,9 @@ def change_service_provider_status(db, request, session_user, client_id):
     ):
         return clientmasters.ChangeServiceProviderStatusSuccess()
 
+########################################################
+# To get all client forms to load in User privilege form
+########################################################
 def get_forms(db, client_id) :
     result_rows = db.get_forms(client_id)
     forms = []
@@ -141,6 +151,9 @@ def get_forms(db, client_id) :
         forms.append(form)
     return process_user_menus(forms)
 
+########################################################
+# To get all user groups with details
+########################################################
 def get_user_privilege_details_list(db, client_id):
     user_group_list = []
     rows = db.get_user_privilege_details_list(client_id)
@@ -157,6 +170,9 @@ def get_user_privilege_details_list(db, client_id):
         )
     return user_group_list
 
+########################################################
+# To get all user groups list
+########################################################
 def get_user_privileges(db, request, session_user, client_id):
     forms = get_forms(db, client_id)
     user_group_list = get_user_privilege_details_list(db, client_id)
@@ -165,6 +181,9 @@ def get_user_privileges(db, request, session_user, client_id):
         user_groups=user_group_list
     )
 
+########################################################
+# To save User privileges
+########################################################
 def save_user_privileges(db, request, session_user, client_id):
     user_group_id = db.generate_new_user_privilege_id(client_id)
     if db.is_duplicate_user_privilege(
@@ -177,6 +196,9 @@ def save_user_privileges(db, request, session_user, client_id):
     ) :
         return clientmasters.SaveUserPrivilegesSuccess()
 
+########################################################
+# To update user privileges
+########################################################
 def update_user_privileges(db, request, session_user, client_id):
     if db.is_invalid_id(
         db.tblUserGroups, "user_group_id",
@@ -191,6 +213,9 @@ def update_user_privileges(db, request, session_user, client_id):
     elif db.update_user_privilege(request, session_user, client_id) :
         return clientmasters.UpdateUserPrivilegesSuccess()
 
+########################################################
+# To change the status of user privilege
+########################################################
 def change_user_privilege_status(db, request, session_user, client_id):
     if db.is_invalid_id(
         db.tblUserGroups, "user_group_id",
@@ -207,6 +232,9 @@ def change_user_privilege_status(db, request, session_user, client_id):
     ):
         return clientmasters.ChangeUserPrivilegeStatusSuccess()
 
+########################################################
+# To get the list of all users with details
+########################################################
 def get_client_users(db, request, session_user, client_id):
     user_company_info = db.get_user_company_details(
         session_user, client_id
@@ -252,6 +280,9 @@ def get_client_users(db, request, session_user, client_id):
         is_primary_admin=is_primary_admin
     )
 
+########################################################
+# To validate and save a user
+########################################################
 def save_client_user(db, request, session_user, client_id):
     user_id = db.generate_new_user_id(client_id)
     if (db.get_no_of_remaining_licence() <= 0):
@@ -263,13 +294,12 @@ def save_client_user(db, request, session_user, client_id):
         request.employee_code.replace(" ",""), client_id
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
-    # elif db.is_duplicate_user_contact_no(
-    #     user_id, request.contact_no, client_id
-    # ):
-    #     return clientmasters.ContactNumberAlreadyExists()
     elif db.save_user(user_id, request, session_user, client_id) :
         return clientmasters.SaveClientUserSuccess()
 
+########################################################
+# To validate and update user
+########################################################
 def update_client_user(db, request, session_user, client_id):
     if db.is_invalid_id(db.tblUsers, "user_id", request.user_id, client_id) :
         return clientmasters.InvalidUserId()
@@ -281,6 +311,9 @@ def update_client_user(db, request, session_user, client_id):
     elif db.update_user(request, session_user, client_id) :
         return clientmasters.UpdateClientUserSuccess()
 
+########################################################
+# To change the status of a user
+########################################################
 def change_client_user_status(db, request, session_user, client_id):
     if db.is_invalid_id(db.tblUsers, "user_id", request.user_id, client_id) :
         return clientmasters.InvalidUserId()
@@ -294,6 +327,9 @@ def change_client_user_status(db, request, session_user, client_id):
     ):
         return clientmasters.ChangeClientUserStatusSuccess()
 
+########################################################
+# To promote or demote a user from promoted admin status
+########################################################
 def change_admin_status(db, request, session_user, client_id):
     if db.is_invalid_id(db.tblUsers, "user_id", request.user_id, client_id) :
         return clientmasters.InvalidUserId()
@@ -307,6 +343,9 @@ def change_admin_status(db, request, session_user, client_id):
     ):
         return clientmasters.ChangeAdminStatusSuccess()
 
+########################################################
+# To get all the units under the given client
+########################################################
 def get_units(db, request, session_user, client_id):
     user_company_info = db.get_user_company_details(
         session_user, client_id
@@ -332,6 +371,9 @@ def get_units(db, request, session_user, client_id):
         units=unit_list
     )
 
+########################################################
+# To close a unit
+########################################################
 def close_unit(db, request, session_user, client_id):
     session_user = session_user
     password = request.password
@@ -342,6 +384,10 @@ def close_unit(db, request, session_user, client_id):
     else:
         return clientmasters.InvalidPassword()
 
+########################################################
+# To get audit trails related to the given user
+########################################################
 def get_audit_trails(db, request, session_user, client_id):
     audit_trails = db.get_audit_trails(session_user, client_id)
     return audit_trails
+             

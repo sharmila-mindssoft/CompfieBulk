@@ -3082,7 +3082,6 @@ class ClientDatabase(Database):
                 group_by_name,
                 group_by_name
             )
-        print query
         rows = self.select_all(query)
         columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
         return filter_ids, self.convert_to_dict(rows, columns)
@@ -5670,7 +5669,7 @@ class ClientDatabase(Database):
             ]
             join_type = " left join"
             where_condition = "notification_id = '%d'" % notification_id
-            where_condition += " and notification_type_id = '%d' order by notification_id DESC limit 30" % notification_type_id
+            where_condition += " and notification_type_id = '%d' order by notification_id DESC" % notification_type_id
             notification_detail_row = self.get_data_from_multiple_tables(
                 columns, tables, aliases, join_type,
                 join_conditions, where_condition
@@ -8196,9 +8195,12 @@ class ClientDatabase(Database):
         start_date = current_date - relativedelta.relativedelta(days = 10)
 
         column = "notification_id"
-        notification_condition = "notification_type_id = 1 and created_on > '{}' ORDER BY notification_id DESC".format(start_date)
-        reminder_condition = "notification_type_id = 2 and created_on > '{}' ORDER BY notification_id DESC".format(start_date)
-        escalation_condition = "notification_type_id = 3 and created_on > '{}' ORDER BY notification_id DESC".format(start_date)
+        # notification_condition = "notification_type_id = 1 and created_on > '{}' ORDER BY notification_id DESC".format(start_date)
+        # reminder_condition = "notification_type_id = 2 and created_on > '{}' ORDER BY notification_id DESC".format(start_date)
+        # escalation_condition = "notification_type_id = 3 and created_on > '{}' ORDER BY notification_id DESC".format(start_date)
+        notification_condition = "notification_type_id = 1  ORDER BY notification_id DESC"
+        reminder_condition = "notification_type_id = 2  ORDER BY notification_id DESC"
+        escalation_condition = "notification_type_id = 3  ORDER BY notification_id DESC"
 
         notification_result = self.get_data(
             self.tblNotificationsLog, column, notification_condition

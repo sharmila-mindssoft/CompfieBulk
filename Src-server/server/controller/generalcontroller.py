@@ -61,13 +61,6 @@ def validate_user_session(db, session_token, client_id=None):
         return db.validate_session_token(session_token)
 
 def validate_user_forms(db, user_id, form_ids, requet):
-    # if user_id == 0 and type(requet) in [
-    #     general.GetCountries,
-    #     general.GetCountriesForUser,
-    #     general.GetDomains,
-    # ] :
-    #     return True
-
     if user_id == 0 and type(requet) in [
         general.UpdateNotificationStatus,
         general.UpdateUserProfile,
@@ -95,6 +88,9 @@ def validate_user_forms(db, user_id, form_ids, requet):
     else :
         return True
 
+########################################################
+# To Handle save domain request
+########################################################
 def process_save_domain(db, request, user_id):
     domain_name = request.domain_name
     isDuplicate = db.check_duplicate_domain(domain_name, domain_id=None)
@@ -105,6 +101,9 @@ def process_save_domain(db, request, user_id):
     if (db.save_domain(domain_name, user_id)) :
         return general.SaveDomainSuccess()
 
+########################################################
+# To Handle domain update request
+########################################################
 def process_update_domain(db, request, user_id):
     domain_name = request.domain_name
     domain_id = request.domain_id
@@ -118,6 +117,9 @@ def process_update_domain(db, request, user_id):
     else :
         return general.InvalidDomainId()
 
+########################################################
+# To get list of all domains
+########################################################
 def process_change_domain_status(db, request, user_id):
     is_active = request.is_active
     domain_id = int(request.domain_id)
@@ -135,15 +137,24 @@ def process_change_domain_status(db, request, user_id):
         else :
             return general.InvalidDomainId()
 
+########################################################
+# To get list of all domains
+########################################################
 def process_get_domains(db, user_id):
     results = db.get_domains_for_user(0)
     success = general.GetDomainsSuccess(domains=results)
     return success
 
+########################################################
+# To update the profile of the given user
+########################################################
 def procees_update_user_profile(db, request, session_user):
     db.update_profile(request.contact_no, request.address, session_user)
     return general.UpdateUserProfileSuccess(request.contact_no, request.address)
 
+########################################################
+# To Handle the save country request
+########################################################
 def process_save_country(db, request, user_id):
     country_name = request.country_name
     isDuplicate = db.check_duplicate_country(country_name, country_id = None)
@@ -154,6 +165,9 @@ def process_save_country(db, request, user_id):
     if (db.save_country(country_name, user_id)) :
         return general.SaveCountrySuccess()
 
+########################################################
+# To Handle the country update request
+########################################################
 def process_update_country(db, request, user_id):
     country_name = request.country_name
     country_id = request.country_id
@@ -167,6 +181,10 @@ def process_update_country(db, request, user_id):
     else :
         return general.InvalidCountryId()
 
+########################################################
+# To change the status of the country received in the 
+# request as given in the request
+########################################################
 def process_change_country_status(db, request, user_id):
     is_active = request.is_active
     country_id = int(request.country_id)
@@ -184,25 +202,42 @@ def process_change_country_status(db, request, user_id):
         else :
             return general.InvalidCountryId()
 
+########################################################
+# To get the list of countries under the given user
+########################################################
 def process_get_countries_for_user(db, user_id):
     results = db.get_countries_for_user(user_id)
     success = general.GetCountriesSuccess(countries=results)
     return success
 
+########################################################
+# To get the list of all countries 
+########################################################
 def process_get_countries(db, user_id):
     results = db.get_countries_for_user(0)
     success = general.GetCountriesSuccess(countries=results)
     return success
 
+########################################################
+# To retrieve all the audit trails of the given User
+########################################################
 def process_get_audit_trails(db, request_frame, user_id):
     audit_trails = db.get_audit_trails(user_id)
     return audit_trails
 
+########################################################
+# To get the last 30 notifications of the current user
+########################################################
 def process_get_notifications(db, request, session_user):
     notifications = None
     notifications = db.get_notifications(request.notification_type, session_user)
     return general.GetNotificationsSuccess(notifications = notifications)
 
+
+########################################################
+# To mark the notification as 'Read' once the user read 
+# a notification
+########################################################
 def process_update_notification_status(db, request, session_user):
     notifications = None
     db.update_notification_status(request.notification_id, request.has_read,

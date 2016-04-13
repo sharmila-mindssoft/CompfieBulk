@@ -45,6 +45,7 @@ class Database(object) :
         self._connection = None
         self._cursor = None
 
+    # Used to get the integer value of a month by first 3 letters
     integer_months = {
         "Jan": 1,
         "Feb": 2,
@@ -60,6 +61,7 @@ class Database(object) :
         "Dec": 12,
     }
 
+    # Used to get first three letters of month by the month's integer value
     string_months = {
         1 : "Jan",
         2 : "Feb",
@@ -74,6 +76,8 @@ class Database(object) :
         11 : "Nov",
         12 : "Dec",
     }
+    
+    # Used to get month in string by the month's integer value
     string_full_months = {
         1 : "January",
         2 : "February",
@@ -88,6 +92,8 @@ class Database(object) :
         11 : "November",
         12 : "December",
     }
+    
+    # Used to get the end day of a month
     end_day_of_month = {
          1 : 31,
          2 : 28,
@@ -103,9 +109,15 @@ class Database(object) :
          12 : 31,
     }
 
+    ########################################################
+    # To Redirect Requests to Functions
+    ########################################################
     def cursor(self):
         return self._cursor
 
+    ########################################################
+    # To Establish database connection
+    ########################################################
     def connect(self):
         assert self._connection is None
         try :
@@ -119,17 +131,26 @@ class Database(object) :
         except Exception, e :
             logger.logKnowledge("error", "database.py-connect", e)
 
+    ########################################################
+    # To Close database connection
+    ########################################################
     def close(self):
         assert self._connection is not None
         self._connection.close()
         self._connection = None
 
+    ########################################################
+    # To begin a database transaction
+    ########################################################
     def begin(self):
         assert self._connection is not None
         assert self._cursor is None
         self._cursor = self._connection.cursor()
         return self._cursor
 
+    ########################################################
+    # To commit a database transaction
+    ########################################################
     def commit(self):
         assert self._connection is not None
         assert self._cursor is not None
@@ -137,6 +158,9 @@ class Database(object) :
         self._connection.commit()
         self._cursor = None
 
+    ########################################################
+    # To rollback a connection
+    ########################################################
     def rollback(self):
         assert self._connection is not None
         assert self._cursor is not None
@@ -144,12 +168,20 @@ class Database(object) :
         self._connection.rollback()
         self._cursor = None
 
+    ########################################################
+    # To execute select query 
+    # Used to fetch multiple rows
+    ########################################################
     def select_all(self, query) :
         cursor = self.cursor()
         assert cursor is not None
         cursor.execute(query)
         return cursor.fetchall()
 
+    ########################################################
+    # To execute select query 
+    # Used to fetch One row
+    ########################################################
     def select_one(self, query) :
         cursor = self.cursor()
         assert cursor is not None
@@ -157,11 +189,17 @@ class Database(object) :
         result = cursor.fetchone()
         return result
 
+    ########################################################
+    # To execute a query 
+    ########################################################
     def execute(self, query) :
         cursor = self.cursor()
         assert cursor is not None
         return cursor.execute(query)
 
+    ########################################################
+    # To execute a procedure 
+    ########################################################
     def call_proc(self, procedure_name, args):
         # args is tuple e.g, (parm1, parm2)
         cursor = self.cursor()
@@ -170,6 +208,9 @@ class Database(object) :
         result = cursor.fetchall()
         return result
 
+    ########################################################
+    # To form a select query
+    ########################################################
     def get_data(
         self, table, columns, condition
     ):
@@ -178,6 +219,9 @@ class Database(object) :
             query += " WHERE %s" % (condition)
         return self.select_all(query)
 
+    ########################################################
+    # To form a join query
+    ########################################################
     def get_data_from_multiple_tables(
         self, columns, tables, aliases, join_type,
         join_conditions, where_condition
@@ -201,10 +245,11 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
-        print
-        print query
         return self.select_all(query)
 
+    ########################################################
+    # To form a insert query
+    ########################################################
     def insert(self, table, columns, values, client_id=None) :
         columns = ",".join(columns)
         stringValue = ""
@@ -218,6 +263,9 @@ class Database(object) :
         )
         return self.execute(query)
 
+    ########################################################
+    # To form a bulk insert query
+    ########################################################
     def bulk_insert(self, table, columns, valueList, client_id=None) :
         query = "INSERT INTO %s (%s)  VALUES" % (
             table, ",".join(str(x) for x in columns)
@@ -229,6 +277,9 @@ class Database(object) :
                 query += str(value)
         return self.execute(query)
 
+    ########################################################
+    # To form a update query
+    ########################################################
     def update(self, table, columns, values, condition, client_id=None) :
         query = "UPDATE "+table+" set "
         for index, column in enumerate(columns):
@@ -239,6 +290,11 @@ class Database(object) :
         query += " WHERE "+condition
         return self.execute(query)
 
+    ########################################################
+    # Insert a row If already key exists
+    # else update the columns specified in the 
+    # updateColumns list
+    ########################################################
     def on_duplicate_key_update(
         self, table, columns, valueList,
         updateColumnsList, client_id=None
@@ -260,15 +316,19 @@ class Database(object) :
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
 
-        # print query
         return self.execute(query)
 
+    ########################################################
+    # To form a delete query
+    ########################################################
     def delete(self, table, condition, client_id=None):
         query = "DELETE from "+table+" WHERE "+condition
-        # if client_id is not None:
-        #     return self.execute(query, client_id)
         return self.execute(query)
 
+    ########################################################
+    # To concate the value with the existing value in the 
+    # specified column
+    ########################################################
     def append(self, table, column, value, condition):
         rows = self.get_data(table, column, condition)
         currentValue = rows[0][0]
@@ -280,6 +340,11 @@ class Database(object) :
         values = [newValue]
         return self.update(table, columns, values, condition)
 
+    ########################################################
+    # To increment value in the specified column by the 
+    # passed value. This function can be used only for int,
+    # float, double values
+    ########################################################
     def increment(self, table, column, condition, value = 1):
         rows = self.get_data(table, column, condition)
         currentValue = rows[0][0]
@@ -291,55 +356,88 @@ class Database(object) :
         values = [newValue]
         return self.update(table, columns, values, condition)
 
+    ########################################################
+    # To check whether a row exists with the condition in the 
+    # given table. if a row exists this function will return
+    # True otherwise returns false
+    ########################################################
     def is_already_exists(self, table, condition, client_id=None) :
         query = "SELECT count(*) FROM "+table+" WHERE "+condition
         rows = None
-        # if client_id is not None:
-        #     rows = self.select_all(query, client_id)
-        # else:
         rows = self.select_all(query)
         if rows[0][0] > 0:
             return True
         else :
             return False
 
+    ########################################################
+    # To check whether a row exists with the "value"
+    # for the column "field". if a row exists this function
+    # will return True otherwise return false
+    ########################################################
     def is_invalid_id(self, table, field, value, client_id=None):
         condition = "%s = '%d'" % (field, value)
         return not self.is_already_exists(table, condition)
 
+    ########################################################
+    # To check generate a random string with alpahbets
+    # and numbers
+    ########################################################
     def generate_random(self):
         characters = string.ascii_uppercase + string.digits
         return ''.join(
             random.SystemRandom().choice(characters) for _ in range(7)
         )
 
+    ########################################################
+    # To generate random password encrypted with md5 
+    # algorithm. This function return encrypted password
+    ########################################################
     def generate_password(self) :
         password = self.generate_random()
-        # password = "123456"
         return self.encrypt(password)
 
+    ########################################################
+    # To generate random password encrypted with md5 
+    # algorithm. This function return encrypted password and
+    # Original password
+    ########################################################
     def generate_and_return_password(self):
         password = self.generate_random()
-        # password = "123456"
         return self.encrypt(password), password
 
+    ########################################################
+    # Encrypts the passed argument with md5 algorithm and
+    # returns the encrypted value
+    ########################################################
     def encrypt(self, value):
         m = hashlib.md5()
         m.update(value)
         return m.hexdigest()
 
+    ########################################################
+    # Converts the passed date in string format to localized
+    # datetime format (Time zone is India)
+    ########################################################
     def string_to_datetime(self, string):
         string_in_date = string
         if string is not None:
             string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y")
         return self.localize(string_in_date)
 
+    ########################################################
+    # Coverts datetime passed in string format to datetime
+    # format
+    ########################################################
     def string_to_datetime_with_time(self, string):
         string_in_date = string
         if string is not None:
             string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y %H:%M")
         return string_in_date
 
+    ########################################################
+    # Converts the given timestamp to UTC
+    ########################################################
     def toUTC(self, time_stamp):
         tz = pytz.timezone('UTC')
         utc_time_stamp = tz.normalize(
@@ -347,6 +445,9 @@ class Database(object) :
         ).astimezone(pytz.utc)
         return utc_time_stamp
 
+    ########################################################
+    # Localizes the given timestamp (Local Timezone is India)
+    ########################################################
     def localize(self, time_stamp):
         local_dt = LOCAL_TIMEZONE.localize(
             time_stamp
@@ -356,19 +457,30 @@ class Database(object) :
         local_dt = local_dt+tzoffseet
         return local_dt
 
+    ########################################################
+    # Converts given datetime value to string (DATE format)
+    ########################################################
     def datetime_to_string(self, datetime_val):
         date_in_string = datetime_val
         if datetime_val is not None:
             date_in_string = datetime_val.strftime("%d-%b-%Y")            
         return date_in_string
 
+    ########################################################
+    # converts given datetime val to string (DATETIME format)
+    ########################################################
     def datetime_to_string_time(self, datetime_val):
-        # local_dt = self.localize(datetime_val)
         datetime_in_string = datetime_val
         if datetime_val is not None:
             datetime_in_string = datetime_val.strftime("%d-%b-%Y %H:%M")
         return datetime_in_string
 
+    ########################################################
+    # Returns the database information of clients
+    # If client id is given, client specific info will be 
+    # returned
+    # Other wise Info of all clients will be returned
+    ########################################################
     def get_client_db_info(self, client_id=None):
         columns = "database_ip, client_id, "
         columns += " database_username, database_password, database_name"
@@ -377,23 +489,29 @@ class Database(object) :
             condition = "client_id = '%d'" % client_id
         return self.get_data("tbl_client_database", columns, condition)
 
+    ########################################################
+    # To generate a new Id for the given table and given
+    # field 
+    ########################################################
     def get_new_id(self, field , table_name, client_id=None) :
         newId = 1
         query = "SELECT max(%s) from %s " % (field, table_name)
-
         row = None
-        # if client_id is not None:
-        #     row = self.select_one(query, client_id)
-        # else:
         row = self.select_one(query)
         if row[0] is not None :
             newId = int(row[0]) + 1
         return newId
 
+    ########################################################
+    # Returns current date and time localized to Indian time
+    ########################################################
     def get_date_time(self) :
         time_stamp = datetime.datetime.utcnow()
         return self.localize(time_stamp)
 
+    ########################################################
+    # To Check Login credentials 
+    ########################################################
     def verify_login(self, username, password):
         tblAdminCondition = "password='%s' and username='%s'" % (
             password, username
@@ -424,6 +542,10 @@ class Database(object) :
         else :
             return True
 
+    ########################################################
+    # Convert the given data to a dictionary format with
+    # columns as keys
+    ########################################################
     def convert_to_dict(self, data_list, columns) :
         assert type(data_list) in (list, tuple)
         if len(data_list) > 0:
@@ -445,6 +567,9 @@ class Database(object) :
         else:
             return []
 
+    ########################################################
+    # Adds User session
+    ########################################################
     def add_session(
         self, user_id, session_type_id, ip,
         employee, client_id=None
@@ -468,6 +593,9 @@ class Database(object) :
 
         return session_id
 
+    ########################################################
+    # To save User login history
+    ########################################################
     def save_user_login_history(self, user_id):
         updated_on = self.get_date_time()
         query = "INSERT INTO tbl_user_login_history \
@@ -476,6 +604,9 @@ class Database(object) :
         query = query % (user_id, updated_on)
         self.execute(query)
 
+    ########################################################
+    # To clear user session
+    ########################################################
     def clear_old_session(self, user_id, session_type_id, client_id=None) :
         query = "DELETE FROM tbl_user_sessions \
             WHERE user_id=%s and session_type_id=%s" % (
@@ -484,10 +615,16 @@ class Database(object) :
 
         self.execute(query)
 
+    ########################################################
+    # Creates and returns random key with (32 characters)
+    ########################################################
     def new_uuid(self) :
         s = str(uuid.uuid4())
         return s.replace("-", "")
 
+    ########################################################
+    # Check whether the given reset token is valid
+    ########################################################
     def validate_reset_token(self, reset_token):
         column = "count(*), user_id"
         condition = " verification_code='%s'" % reset_token
@@ -505,6 +642,9 @@ class Database(object) :
         else:
             return None
 
+    ########################################################
+    # Deletes a reset token, once it is used
+    ########################################################
     def delete_used_token(self, reset_token):
         condition = " verification_code='%s'" % reset_token
         if self.delete(self.tblEmailVerification, condition):
