@@ -1,3 +1,9 @@
+########################################################
+# This Controller will handle Knowledge User, Usergroup
+# related requests
+#
+# In this module "db" is an object of "KnowledgeDatabase" 
+########################################################
 from protocol import (admin, core, login)
 from corecontroller import process_user_menus
 from generalcontroller import validate_user_session, validate_user_forms
@@ -8,6 +14,9 @@ __all__ = [
 
 forms = [3, 4]
 
+########################################################
+# To Redirect Requests to Functions
+########################################################
 def process_admin_request(request, db) :
     session_token = request.session_token
     request_frame = request.request
@@ -44,6 +53,10 @@ def process_admin_request(request, db) :
     if type(request_frame) is admin.ChangeUserStatus:
         return change_user_status(db, request_frame, session_user)
 
+
+########################################################
+# To Retrieve category wise forms from database
+########################################################
 def get_forms(db) :
     result_rows = db.get_forms()
     knowledge_forms = []
@@ -85,6 +98,10 @@ def get_forms(db) :
     result[3] = process_user_menus(techno_forms)
     return result
 
+########################################################
+# To get list of user groups with it's details such as 
+# forms, form categories
+########################################################
 def get_user_group_detailed_list(db):
     user_group_list = []
     rows = db.get_user_group_detailed_list()
@@ -104,6 +121,9 @@ def get_user_group_detailed_list(db):
         ))
     return user_group_list
 
+########################################################
+# To get form categories list
+########################################################
 def get_form_categories(db):
     formCategoryList = []
     rows = db.get_form_categories()
@@ -111,6 +131,9 @@ def get_form_categories(db):
         formCategoryList.append(core.FormCategory(row[0], row[1]))
     return formCategoryList
 
+########################################################
+# To handle get user group list request
+########################################################
 def get_user_groups(db, request_frame, session_user):
     forms = get_forms(db)
     form_categories = get_form_categories(db)
@@ -122,6 +145,9 @@ def get_user_groups(db, request_frame, session_user):
     )
     return result
 
+########################################################
+# To Handle Save user group request
+########################################################
 def save_user_group(db, request, session_user):
     user_group_name = request.user_group_name
     form_category_id = request.form_category_id
@@ -135,6 +161,9 @@ def save_user_group(db, request, session_user):
     ):
         return admin.SaveUserGroupSuccess()
 
+########################################################
+# To Handle Update user group request
+########################################################
 def update_user_group(db, request, session_user):
     user_group_id = request.user_group_id
     user_group_name = request.user_group_name
@@ -150,6 +179,9 @@ def update_user_group(db, request, session_user):
     ) :
         return admin.UpdateUserGroupSuccess()
 
+########################################################
+# To Change the status of user group
+########################################################
 def change_user_group_status(db, request, session_user):
     user_group_id = request.user_group_id
     is_active = 0 if request.is_active is False else 1
@@ -162,6 +194,9 @@ def change_user_group_status(db, request, session_user):
     elif db.update_user_group_status(user_group_id, is_active):
         return admin.ChangeUserGroupStatusSuccess()
 
+########################################################
+# To get Users List with user details
+########################################################
 def get_users(db, request_frame, session_user):
     domain_list = db.get_domains_for_user(0)
     country_list = db.get_countries_for_user(0)
@@ -197,6 +232,9 @@ def get_users(db, request_frame, session_user):
     return admin.GetUsersSuccess(user_groups = user_group_list,
         countries = country_list, domains=domain_list, users=user_list)
 
+########################################################
+# To Handle Save user request
+########################################################
 def save_user(db, request, session_user):
     user_id = db.generate_new_user_id()
     email_id = request.email_id
@@ -212,13 +250,13 @@ def save_user(db, request, session_user):
         return admin.EmailIDAlreadyExists()
     elif db.is_duplicate_employee_code(employee_code, user_id) :
         return admin.EmployeeCodeAlreadyExists()
-    # elif db.is_duplicate_contact_no(contact_no, user_id) :
-    #     return admin.ContactNumberAlreadyExists()
     elif db.save_user(user_id, email_id, user_group_id, employee_name,
      employee_code, contact_no, address, designation, country_ids, domain_ids) :
         return admin.SaveUserSuccess()
 
-
+########################################################
+# To Handle Update user request
+########################################################
 def update_user(db, request, session_user):
     user_id = request.user_id
     user_group_id = request.user_group_id
@@ -233,12 +271,13 @@ def update_user(db, request, session_user):
         return admin.InvalidUserId()
     elif db.is_duplicate_employee_code(employee_code, user_id) :
         return admin.EmployeeCodeAlreadyExists()
-    # elif db.is_duplicate_contact_no(contact_no, user_id) :
-    #     return admin.ContactNumberAlreadyExists()
     elif db.update_user(user_id, user_group_id, employee_name, employee_code,
         contact_no, address, designation, country_ids, domain_ids) :
         return admin.UpdateUserSuccess()
 
+########################################################
+# To Change the status of user
+########################################################
 def change_user_status(db, request, session_user):
     user_id = request.user_id
     is_active = 0 if request.is_active == False else 1

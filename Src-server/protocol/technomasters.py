@@ -167,50 +167,58 @@ class SaveClientGroup(Request):
     @staticmethod
     def parse_inner_structure(data):
         print "inside save client group  parse structure"
-        data = parse_dictionary(data, ["group_name", "country_ids", "domain_ids", "logo", "contract_from", "contract_to", "incharge_persons", "no_of_user_licence", "file_space", "is_sms_subscribed", "email_id", "date_configurations", "short_name"])
-        group_name = data.get("group_name")
+        data = parse_dictionary(data, [
+            "g_name", "c_ids", "d_ids", "logo", "c_from", "c_to", 
+            "incharge", "licence", "f_space", "sms", "email", "config", 
+            "s_name"
+        ])
+        group_name = data.get("g_name")
         group_name = parse_structure_CustomTextType_50(group_name)
-        country_ids = data.get("country_ids")
+        country_ids = data.get("c_ids")
         country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
-        domain_ids = data.get("domain_ids")
+        domain_ids = data.get("d_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         logo = data.get("logo")
         logo = parse_structure_RecordType_core_FileList(logo)
-        contract_from = data.get("contract_from")
+        contract_from = data.get("c_from")
         contract_from = parse_structure_CustomTextType_20(contract_from)
-        contract_to = data.get("contract_to")
+        contract_to = data.get("c_to")
         contract_to = parse_structure_CustomTextType_20(contract_to)
-        incharge_persons = data.get("incharge_persons")
+        incharge_persons = data.get("incharge")
         incharge_persons = parse_structure_VectorType_UnsignedIntegerType_32(incharge_persons)
-        no_of_user_licence = data.get("no_of_user_licence")
+        no_of_user_licence = data.get("licence")
         no_of_user_licence = parse_structure_UnsignedIntegerType_32(no_of_user_licence)
-        file_space = data.get("file_space")
+        file_space = data.get("f_space")
         file_space = parse_structure_Float(file_space)
-        is_sms_subscribed = data.get("is_sms_subscribed")
+        is_sms_subscribed = data.get("sms")
         is_sms_subscribed = parse_structure_Bool(is_sms_subscribed)
-        email_id = data.get("email_id")
+        email_id = data.get("email")
         email_id = parse_structure_CustomTextType_100(email_id)
-        date_configurations = data.get("date_configurations")
+        date_configurations = data.get("config")
         date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
-        short_name = data.get("short_name")
+        short_name = data.get("s_name")
         short_name = parse_structure_CustomTextType_20(short_name)
-        return SaveClientGroup(group_name, country_ids, domain_ids, logo, contract_from, contract_to, incharge_persons, no_of_user_licence, file_space, is_sms_subscribed, email_id, date_configurations, short_name)
+        return SaveClientGroup(
+            group_name, country_ids, domain_ids, logo, contract_from, contract_to, 
+            incharge_persons, no_of_user_licence, file_space, is_sms_subscribed, 
+            email_id, date_configurations, short_name
+        )
 
     def to_inner_structure(self):
         return {
-            "group_name": to_structure_CustomTextType_50(self.group_name),
-            "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
-            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
+            "g_name": to_structure_CustomTextType_50(self.group_name),
+            "c_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
+            "d_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "logo": to_structure_RecordType_core_FileList(self.logo),
-            "contract_from": to_structure_CustomTextType_20(self.contract_from),
-            "contract_to": to_structure_CustomTextType_20(self.contract_to),
-            "incharge_persons": to_structure_VectorType_UnsignedIntegerType_32(self.incharge_persons),
-            "no_of_user_licence": to_structure_UnsignedIntegerType_32(self.no_of_user_licence),
-            "file_space": to_structure_Float(self.file_space),
-            "is_sms_subscribed": to_structure_Bool(self.is_sms_subscribed),
-            "email_id": to_structure_CustomTextType_100(self.email_id),
-            "date_configurations": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations),
-            "short_name" : to_structure_CustomTextType_20(self.short_name)
+            "c_from": to_structure_CustomTextType_20(self.contract_from),
+            "c_to": to_structure_CustomTextType_20(self.contract_to),
+            "incharge": to_structure_VectorType_UnsignedIntegerType_32(self.incharge_persons),
+            "licence": to_structure_UnsignedIntegerType_32(self.no_of_user_licence),
+            "f_space": to_structure_Float(self.file_space),
+            "sms": to_structure_Bool(self.is_sms_subscribed),
+            "email": to_structure_CustomTextType_100(self.email_id),
+            "config": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations),
+            "s_name" : to_structure_CustomTextType_20(self.short_name)
         }
 
 class UpdateClientGroup(Request):
@@ -230,47 +238,57 @@ class UpdateClientGroup(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["client_id", "group_name", "country_ids", "domain_ids", "logo", "contract_from", "contract_to", "incharge_persons", "no_of_user_licence", "file_space", "is_sms_subscribed", "date_configurations"])
-        client_id = data.get("client_id")
+        data = parse_dictionary(data, [
+                "c_id", "g_name", "c_ids", "d_ids", "logo", 
+                "c_from", "c_to", "incharge", 
+                "licence", "f_space", "sms", 
+                "config"
+            ]
+        )
+        client_id = data.get("c_id")
         client_id = parse_structure_UnsignedIntegerType_32(client_id)
-        group_name = data.get("group_name")
+        group_name = data.get("g_name")
         group_name = parse_structure_CustomTextType_50(group_name)
-        country_ids = data.get("country_ids")
+        country_ids = data.get("c_ids")
         country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
-        domain_ids = data.get("domain_ids")
+        domain_ids = data.get("d_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         logo = data.get("logo")
         logo = parse_structure_OptionalType_RecordType_core_FileList(logo)
-        contract_from = data.get("contract_from")
+        contract_from = data.get("c_from")
         contract_from = parse_structure_CustomTextType_20(contract_from)
-        contract_to = data.get("contract_to")
+        contract_to = data.get("c_to")
         contract_to = parse_structure_CustomTextType_20(contract_to)
-        incharge_persons = data.get("incharge_persons")
+        incharge_persons = data.get("incharge")
         incharge_persons = parse_structure_VectorType_UnsignedIntegerType_32(incharge_persons)
-        no_of_user_licence = data.get("no_of_user_licence")
+        no_of_user_licence = data.get("licence")
         no_of_user_licence = parse_structure_UnsignedIntegerType_32(no_of_user_licence)
-        file_space = data.get("file_space")
+        file_space = data.get("f_space")
         file_space = parse_structure_Float(file_space)
-        is_sms_subscribed = data.get("is_sms_subscribed")
+        is_sms_subscribed = data.get("sms")
         is_sms_subscribed = parse_structure_Bool(is_sms_subscribed)
-        date_configurations = data.get("date_configurations")
+        date_configurations = data.get("config")
         date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
-        return UpdateClientGroup(client_id, group_name, country_ids, domain_ids, logo, contract_from, contract_to, incharge_persons, no_of_user_licence, file_space, is_sms_subscribed, date_configurations)
+        return UpdateClientGroup(
+            client_id, group_name, country_ids, domain_ids, logo, contract_from, 
+            contract_to, incharge_persons, no_of_user_licence, file_space, 
+            is_sms_subscribed, date_configurations
+        )
 
     def to_inner_structure(self):
         return {
-            "client_id": to_structure_SignedIntegerType_8(self.client_id),
-            "group_name": to_structure_CustomTextType_50(self.group_name),
-            "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
-            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
+            "c_id": to_structure_SignedIntegerType_8(self.client_id),
+            "g_name": to_structure_CustomTextType_50(self.group_name),
+            "c_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
+            "d_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "logo": to_structure_OptionalType_RecordType_core_FileList(self.logo),
-            "contract_from": to_structure_CustomTextType_20(self.contract_from),
-            "contract_to": to_structure_CustomTextType_20(self.contract_to),
-            "incharge_persons": to_structure_VectorType_UnsignedIntegerType_32(self.incharge_persons),
-            "no_of_user_licence": to_structure_UnsignedIntegerType_32(self.no_of_user_licence),
-            "file_space": to_structure_Float(self.file_space),
-            "is_sms_subscribed": to_structure_Bool(self.is_sms_subscribed),
-            "date_configurations": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations),
+            "c_from": to_structure_CustomTextType_20(self.contract_from),
+            "c_to": to_structure_CustomTextType_20(self.contract_to),
+            "incharge": to_structure_VectorType_UnsignedIntegerType_32(self.incharge_persons),
+            "licence": to_structure_UnsignedIntegerType_32(self.no_of_user_licence),
+            "f_space": to_structure_Float(self.file_space),
+            "sms": to_structure_Bool(self.is_sms_subscribed),
+            "config": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations),
         }
 
 class ChangeClientGroupStatus(Request):
@@ -313,10 +331,13 @@ class BUSINESS_GROUP(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["business_group_id", "business_group_name"])
-        business_group_id = data.get("business_group_id")
+        data = parse_dictionary(data, [
+                "bg_id", "bg_name"
+            ]
+        )
+        business_group_id = data.get("bg_id")
         business_group_id = parse_structure_OptionalType_UnsignedIntegerType_32(business_group_id)
-        business_group_name = data.get("business_group_name")
+        business_group_name = data.get("bg_name")
         business_group_name = parse_structure_CustomTextType_50(business_group_name)
         return BUSINESS_GROUP(business_group_id, business_group_name)
 
@@ -333,10 +354,10 @@ class LEGAL_ENTITY(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["legal_entity_id", "legal_entity_name"])
-        legal_entity_id = data.get("legal_entity_id")
+        data = parse_dictionary(data, ["le_id", "le_name"])
+        legal_entity_id = data.get("le_id")
         legal_entity_id = parse_structure_OptionalType_UnsignedIntegerType_32(legal_entity_id)
-        legal_entity_name = data.get("legal_entity_name")
+        legal_entity_name = data.get("le_name")
         legal_entity_name = parse_structure_CustomTextType_50(legal_entity_name)
         return LEGAL_ENTITY(legal_entity_id, legal_entity_name)
 
@@ -353,10 +374,10 @@ class DIVISION(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["division_id", "division_name"])
-        division_id = data.get("division_id")
+        data = parse_dictionary(data, ["d_id", "d_name"])
+        division_id = data.get("d_id")
         division_id = parse_structure_OptionalType_UnsignedIntegerType_32(division_id)
-        division_name = data.get("division_name")
+        division_name = data.get("d_name")
         division_name = parse_structure_CustomTextType_50(division_name)
         return DIVISION(division_id, division_name)
 
@@ -387,26 +408,31 @@ class UNIT(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "geography_id", "unit_code", "unit_name", "industry_id", "industry_name", "unit_address", "unit_location", "postal_code", "domain_ids"])
-        unit_id = data.get("unit_id")
+        data = parse_dictionary(data, [
+                "u_id", "geo_id", "u_code", "u_name", "i_id", 
+                "i_name", "u_add", "u_loc", "p_code", 
+                "d_ids"
+            ]
+        )
+        unit_id = data.get("u_id")
         unit_id = parse_structure_OptionalType_UnsignedIntegerType_32(unit_id)
-        geography_id = data.get("geography_id")
+        geography_id = data.get("geo_id")
         geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
-        unit_code = data.get("unit_code")
+        unit_code = data.get("u_code")
         unit_code = parse_structure_CustomTextType_20(unit_code)
-        unit_name = data.get("unit_name")
+        unit_name = data.get("u_name")
         unit_name = parse_structure_CustomTextType_50(unit_name)
-        industry_id = data.get("industry_id")
+        industry_id = data.get("i_id")
         industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
-        industry_name = data.get("industry_name")
+        industry_name = data.get("i_name")
         industry_name = parse_structure_CustomTextType_50(industry_name)
-        unit_address = data.get("unit_address")
+        unit_address = data.get("u_add")
         unit_address = parse_structure_CustomTextType_250(unit_address)
-        unit_location = data.get("unit_location")
+        unit_location = data.get("u_loc")
         unit_location = parse_structure_CustomTextType_250(unit_location)
-        postal_code = data.get("postal_code")
+        postal_code = data.get("p_code")
         postal_code = parse_structure_UnsignedIntegerType_32(postal_code)
-        domain_ids = data.get("domain_ids")
+        domain_ids = data.get("d_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         return UNIT(
             unit_id, geography_id, unit_code, unit_name, industry_id,
@@ -434,8 +460,8 @@ class COUNTRYWISEUNITS(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["country_id", "units"])
-        country_id = data.get("country_id")
+        data = parse_dictionary(data, ["c_id", "units"])
+        country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_techno_master_UNIT(units)
@@ -457,18 +483,23 @@ class SaveClient(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["client_id", "business_group", "legal_entity", "division", "country_wise_units"])
-        client_id = data.get("client_id")
+        data = parse_dictionary(data, [
+                "c_id", "bg", "le", "d", "cw_units"
+            ]
+        )
+        client_id = data.get("c_id")
         client_id = parse_structure_UnsignedIntegerType_32(client_id)
-        business_group = data.get("business_group")
+        business_group = data.get("bg")
         business_group = parse_structure_OptionalType_RecordType_techno_master_BUSINESSGROUP(business_group)
-        legal_entity = data.get("legal_entity")
+        legal_entity = data.get("le")
         legal_entity = parse_structure_OptionalType_RecordType_techno_master_LEGALENTITY(legal_entity)
-        division = data.get("division")
+        division = data.get("d")
         division = parse_structure_OptionalType_RecordType_techno_master_DIVISION(division)
-        country_wise_units = data.get("country_wise_units")
+        country_wise_units = data.get("cw_units")
         country_wise_units = parse_structure_VectorType_RecordType_techno_master_COUNTRYWISEUNITS(country_wise_units)
-        return SaveClient(client_id, business_group, legal_entity, division, country_wise_units)
+        return SaveClient(
+            client_id, business_group, legal_entity, division, country_wise_units
+        )
 
     def to_inner_structure(self):
         return {
@@ -489,16 +520,19 @@ class UpdateClient(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["client_id", "business_group", "legal_entity", "division", "country_wise_units"])
-        client_id = data.get("client_id")
+        data = parse_dictionary(data, [
+                "c_id", "bg", "le", "d", "cw_units"
+            ]
+        )
+        client_id = data.get("c_id")
         client_id = parse_structure_UnsignedIntegerType_32(client_id)
-        business_group = data.get("business_group")
+        business_group = data.get("bg")
         business_group = parse_structure_OptionalType_RecordType_techno_master_BUSINESSGROUP(business_group)
-        legal_entity = data.get("legal_entity")
+        legal_entity = data.get("le")
         legal_entity = parse_structure_OptionalType_RecordType_techno_master_LEGALENTITY(legal_entity)
-        division = data.get("division")
+        division = data.get("d")
         division = parse_structure_OptionalType_RecordType_techno_master_DIVISION(division)
-        country_wise_units = data.get("country_wise_units")
+        country_wise_units = data.get("cw_units")
         country_wise_units = parse_structure_VectorType_RecordType_techno_master_COUNTRYWISEUNITS(country_wise_units)
         return UpdateClient(client_id, business_group, legal_entity, division, country_wise_units)
 

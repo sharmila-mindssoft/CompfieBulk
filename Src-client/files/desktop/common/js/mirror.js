@@ -796,11 +796,11 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getSaveAdminUserGroupDict(userGroupName, formCategoryId, formIds){
+    function getSaveAdminUserGroupDict(ugName, fcId, fIds){
         userGroup = {};
-        userGroup["user_group_name"] = userGroupName;
-        userGroup["form_category_id"] = formCategoryId;
-        userGroup["form_ids"] = formIds;
+        userGroup["ug_name"] = ugName;
+        userGroup["fc_id"] = fcId;
+        userGroup["f_ids"] = fIds;
         return userGroup;
     }
 
@@ -813,12 +813,12 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getUpdateAdminUserGroupDict(userGroupId, userGroupName, formCategoryId, formIds){
+    function getUpdateAdminUserGroupDict(ugId, ugName, fcId, fIds){
         userGroup = {};
-        userGroup["user_group_id"] = userGroupId;
-        userGroup["user_group_name"] = userGroupName;
-        userGroup["form_category_id"] = formCategoryId;
-        userGroup["form_ids"] = formIds;
+        userGroup["ug_id"] = ugId;
+        userGroup["ug_name"] = ugName;
+        userGroup["fc_id"] = fcId;
+        userGroup["f_ids"] = fIds;
         return userGroup;
     }
 
@@ -831,13 +831,13 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function changeAdminUserGroupStatus(userGroupId, isActive, callback) {
+    function changeAdminUserGroupStatus(ugId, active, callback) {
         callerName = "admin"
         var request = [
             "ChangeUserGroupStatus",
             {
-                "user_group_id" : userGroupId,
-                "is_active" : isActive
+                "ug_id" : ugId,
+                "active" : active
             }
         ];
         apiRequest(callerName, request, callback);
@@ -856,31 +856,31 @@ function initMirror() {
     }
 
     function getSaveAdminUserDict(userDetail){
-        var emailId = userDetail[0];
-        var userGroupId = userDetail[1];
-        var employeeName = userDetail[2];
-        var employeeCode = userDetail[3];
-        var contactNo = userDetail[4];
-        var address = userDetail[5];
+        var email = userDetail[0];
+        var ugId = userDetail[1];
+        var empN = userDetail[2];
+        var empC = userDetail[3];
+        var cNo = userDetail[4];
+        var add = userDetail[5];
         if (userDetail[5] == ""){
-            address = null;
+            add = null;
         }
-        var designation = userDetail[6];
+        var desig = userDetail[6];
         if (userDetail[6] == ""){
-            designation = null;
+            desig = null;
         }
-        var countryIds= userDetail[7] ;
-        var domainIds= userDetail[8];
+        var cIds= userDetail[7] ;
+        var dIds= userDetail[8];
         return {
-                "email_id": emailId,
-                "user_group_id": userGroupId,
-                "employee_name": employeeName,
-                "employee_code": employeeCode,
-                "contact_no": contactNo,
-                "address": address,
-                "designation": designation,
-                "country_ids": countryIds,
-                "domain_ids": domainIds
+                "email": email,
+                "ug_id": ugId,
+                "emp_n": empN,
+                "emp_c": empC,
+                "c_n": cNo,
+                "add": add,
+                "desig": desig,
+                "c_ids": cIds,
+                "d_ids": dIds
             }
     }
 
@@ -894,31 +894,31 @@ function initMirror() {
     }
 
     function getUpdateAdminUserDict(userDetail){
-        var userId = userDetail[0];
-        var userGroupId = userDetail[1];
-        var employeeName = userDetail[2];
-        var employeeCode = userDetail[3];
-        var contactNo = userDetail[4];
-        var address = userDetail[5];
+        var uId = userDetail[0];
+        var ugId = userDetail[1];
+        var empN = userDetail[2];
+        var empC = userDetail[3];
+        var cn = userDetail[4];
+        var add = userDetail[5];
         if (userDetail[5] == ""){
-            address = null;
+            add = null;
         }
-        var designation = userDetail[6];
+        var desig = userDetail[6];
         if (userDetail[6] ==""){
-            designation = null;
+            desig = null;
         }
-        var countryIds= userDetail[7] ;
-        var domainIds= userDetail[8] ;
+        var cIds= userDetail[7] ;
+        var dIds= userDetail[8] ;
         return {
-                "user_id": userId,
-                "user_group_id": userGroupId,
-                "employee_name": employeeName,
-                "employee_code": employeeCode,
-                "contact_no": contactNo,
-                "address": address,
-                "designation": designation,
-                "country_ids": countryIds,
-                "domain_ids": domainIds
+                "u_id": uId,
+                "ug_id": ugId,
+                "emp_n": empN,
+                "emp_c": empC,
+                "c_n": cn,
+                "add": add,
+                "desig": desig,
+                "c_ids": cIds,
+                "d_ids": dIds
             }
     }
 
@@ -931,14 +931,14 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function changeAdminUserStatus(userId, isActive,
+    function changeAdminUserStatus(uId, active,
      callback) {
         callerName = "admin"
         var request = [
             "ChangeUserStatus",
             {
-                "user_id": userId,
-                "is_active" : isActive
+                "u_id": uId,
+                "active" : active
             }
         ];
         apiRequest(callerName, request, callback);
@@ -946,33 +946,32 @@ function initMirror() {
 
     // Client Group Master
 
-    function getDateConfigurations(countryId, domainId, periodFrom,
-        periodTo){
+    function getDateConfigurations(cId, dId, pFrom,
+        pTo){
         return {
-            "country_id": countryId,
-            "domain_id": domainId,
-            "period_from": periodFrom,
-            "period_to": periodTo
+            "c_id": cId,
+            "d_id": dId,
+            "p_from": pFrom,
+            "p_to": pTo
         }
     }
 
-    function getSaveClientGroupDict(groupName, countryIds, domainIds, logo,
-        contractFrom, contractTo, inchargePersons, noOfUserLicence, fileSpace,
-        isSmsSubscribed, emailId, dateConfigurations, shortName){
+    function getSaveClientGroupDict(g_name, c_ids, d_ids, logo,
+        cFrom, cTo, incharge, licence, f_space, sms, email, config, s_name){
         return {
-            "group_name": groupName,
-            "country_ids": countryIds,
-            "domain_ids": domainIds,
+            "g_name": g_name,
+            "c_ids": c_ids,
+            "d_ids": d_ids,
             "logo" : logo,
-            "contract_from": contractFrom,
-            "contract_to": contractTo,
-            "incharge_persons": inchargePersons,
-            "no_of_user_licence": noOfUserLicence,
-            "file_space": fileSpace,
-            "is_sms_subscribed": isSmsSubscribed,
-            "email_id": emailId,
-            "date_configurations":dateConfigurations,
-            "short_name": shortName
+            "c_from": cFrom,
+            "c_to": cTo,
+            "incharge": incharge,
+            "licence": licence,
+            "f_space": f_space,
+            "sms": sms,
+            "email": email,
+            "config":config,
+            "s_name": s_name
         }
     }
 
@@ -987,22 +986,24 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getUpdateClientGroupDict(clientId, groupName, countryIds, domainIds, logo,
-        contractFrom, contractTo, inchargePersons, noOfUserLicence, fileSpace,
-        isSmsSubscribed, dateConfigurations){
+    function getUpdateClientGroupDict(
+        cId, gName, cIds, dIds, logo,
+        cFrom, cTo, incharge, licence, fSpace,
+        sms, config
+    ){
         return {
-            "client_id": clientId,
-            "group_name": groupName,
-            "country_ids": countryIds,
-            "domain_ids": domainIds,
+            "c_id": cId,
+            "g_name": gName,
+            "c_ids": cIds,
+            "d_ids": dIds,
             "logo" : logo,
-            "contract_from": contractFrom,
-            "contract_to": contractTo,
-            "incharge_persons": inchargePersons,
-            "no_of_user_licence": noOfUserLicence,
-            "file_space": fileSpace,
-            "is_sms_subscribed": isSmsSubscribed,
-            "date_configurations":dateConfigurations
+            "c_from": cFrom,
+            "c_to": cTo,
+            "incharge": incharge,
+            "licence": licence,
+            "f_space": fSpace,
+            "sms": sms,
+            "config": config
         }
     }
 
@@ -1105,88 +1106,85 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getBusinessGroupDict(businessGroupId, busienssGroupName){
-        if (busienssGroupName == null || busienssGroupName == '' ){
+    function getBusinessGroupDict(bgId, bgName){
+        if (bgName == null || bgName == '' ){
             return null
         }else{
             return {
-                "business_group_id" : businessGroupId,
-                "business_group_name" : busienssGroupName
+                "bg_id" : bgId,
+                "bg_name" : bgName
             }
         }
     }
 
-    function getLegalEntityDict(legalEntityId, legalEntityName){
+    function getLegalEntityDict(leId, leName){
         return {
-            "legal_entity_id" : legalEntityId,
-            "legal_entity_name" : legalEntityName
+            "le_id" : leId,
+            "le_name" : leName
         }
     }
 
-    function getDivisionDict(divisionId, divisionName){
-        if (divisionName == null  || divisionName == ''){
+    function getDivisionDict(dId, dName){
+        if (dName == null  || dName == ''){
             return null
         }else{
             return {
-                "division_id" : divisionId,
-                "division_name" : divisionName
+                "d_id" : dId,
+                "d_name" : dName
             }
         }
 
     }
 
-    function getUnitDict(unitId, unitName, unitCode, unitAddress,
-        postalCode, geographyId, unitLocation, industryId, industryName,
-        domainIds){
+    function getUnitDict(uId, uName, uCode, uAdd,
+        pCode, geoId, uLoc, iId, iName, dIds){
         return {
-            "unit_id" : unitId,
-            "unit_name" : unitName,
-            "unit_code" : unitCode,
-            "unit_address" : unitAddress,
-            "postal_code" : postalCode,
-            "geography_id" : geographyId,
-            "unit_location" : unitLocation,
-            "industry_id" : industryId,
-            "industry_name" : industryName,
-            "domain_ids" : domainIds
+            "u_id" : uId,
+            "u_name" : uName,
+            "u_code" : uCode,
+            "u_add" : uAdd,
+            "p_code" : pCode,
+            "geo_id" : geoId,
+            "u_loc" : uLoc,
+            "i_id" : iId,
+            "i_name" : iName,
+            "d_ids" : dIds
         }
     }
 
-    function mapUnitsToCountry(countryId, units){
+    function mapUnitsToCountry(cId, units){
         return {
-            "country_id" : countryId,
+            "c_id" : cId,
             "units" : units
         }
     }
 
-    function saveClient(clientId, businessGroup, legalEntity,
-        division, countryWiseUnits, callback) {
+    function saveClient(cId, bg, le, d, cw_units, callback) {
         callerName = "techno"
         var request = [
             "SaveClient",
             {
-                "client_id": clientId,
-                "business_group": businessGroup,
-                "legal_entity": legalEntity,
-                "division": division,
-                "country_wise_units": countryWiseUnits
+                "c_id": cId,
+                "bg": bg,
+                "le": le,
+                "d": d,
+                "cw_units": cw_units
             }
         ];
         apiRequest(callerName, request, callback);
     }
 
 
-    function updateClient(clientId, businessGroup, legalEntity,
-        division, countryWiseUnits, callback) {
+    function updateClient(cId, bg, le, d, cwUnits, callback) {
         callerName = "techno"
         var request = [
             "UpdateClient",
             {
-                "client_id": clientId,
-                "business_group": businessGroup,
-                "legal_entity": legalEntity,
-                "division": division,
-                "country_wise_units": countryWiseUnits
+                "c_id": cId,
+                "bg": bg,
+                "le": le,
+                "d": d,
+                "cw_units": cwUnits
             }
         ];
         apiRequest(callerName, request, callback);

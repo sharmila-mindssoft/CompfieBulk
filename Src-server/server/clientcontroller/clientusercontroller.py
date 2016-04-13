@@ -5,6 +5,10 @@ __all__ = [
 	"process_client_user_request"
 ]
 
+########################################################
+# To Redirect the requests to the corresponding 
+# functions
+########################################################
 def process_client_user_request(request, db) :
 	session_token = request.session_token
 	client_info = session_token.split("-")
@@ -27,6 +31,10 @@ def process_client_user_request(request, db) :
 		    db, request, session_user, client_id
 		)
 
+########################################################
+# To get the ongoing and upcoming compliances of the 
+# given user
+########################################################
 def process_get_compliance_detail(db, request, session_user, client_id):
 	current_compliances_list = db.get_current_compliances_list(session_user, client_id)
 	upcoming_compliances_list = db.get_upcoming_compliances_list(session_user, client_id)
@@ -39,6 +47,9 @@ def process_get_compliance_detail(db, request, session_user, client_id):
 	)
 	return clientuser.GetComplianceDetailSuccess(compliance_details)
 
+########################################################
+# To validate and update the compliance details
+########################################################
 def process_update_compliance_detail(db, request, session_user, client_id):
 	result = db.update_compliances(request.compliance_history_id, request.documents,
 		request.completion_date, request.validity_date, request.next_due_date,
@@ -50,6 +61,10 @@ def process_update_compliance_detail(db, request, session_user, client_id):
 	else:
 		return clientuser.NextDueDateMustBeWithIn90DaysBeforeValidityDate()
 
+########################################################
+# To get the list of all on occurrence compliances
+# under the given user
+########################################################
 def process_get_on_occurrence_compliances(
 	db, request, session_user, client_id
 ):
@@ -58,6 +73,9 @@ def process_get_on_occurrence_compliances(
 		compliances=compliances
 	)
 
+########################################################
+# To start an on occurrence compliance
+########################################################
 def process_start_on_occurrence_compliance(
 	db, request, session_user, client_id
 ):

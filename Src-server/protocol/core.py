@@ -1413,16 +1413,22 @@ class ClientConfiguration(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "period_from", "period_to"])
-        country_id = data.get("country_id")
+        data = parse_dictionary(
+            data, [
+                "c_id", "d_id", "p_from", "p_to"
+            ]
+        )
+        country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
-        domain_id = data.get("domain_id")
+        domain_id = data.get("d_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
-        period_from = data.get("period_from")
+        period_from = data.get("p_from")
         period_from = parse_structure_UnsignedIntegerType_32(period_from)
-        period_to = data.get("period_to")
+        period_to = data.get("p_to")
         period_to = parse_structure_UnsignedIntegerType_32(period_to)
-        return ClientConfiguration(country_id, domain_id, period_from, period_to)
+        return ClientConfiguration(
+            country_id, domain_id, period_from, period_to
+        )
 
     def to_structure(self):
         return {
