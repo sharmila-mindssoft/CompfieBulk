@@ -1,11 +1,3 @@
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
 
 $("#submit").click(function(){
   displayMessage("");
@@ -13,23 +5,23 @@ $("#submit").click(function(){
   var newpassword = $("#newpassword").val().trim();
   var confirmpassword = $("#confirmpassword").val().trim();
   if(currentpassword.length == 0) {
-    displayMessage(getMessage('cpassword-required'));
+    displayMessage(message.cpassword_required);
   } else if(newpassword.length == 0) {
-    displayMessage(getMessage('npassword-required'));
+    displayMessage(message.npassword_required);
   } else if(confirmpassword.length == 0) {
-    displayMessage(getMessage('conpassword-required'));
+    displayMessage(message.conpassword_required);
   } else if(confirmpassword != newpassword) {
-    displayMessage(getMessage('password-notmatch'));
+    displayMessage(message.password_notmatch);
   } else {
       function onSuccess(data){
-          displayMessage(getMessage('password-changed-success'));
+          displayMessage(message.password_changed_success);
           $("#currentpassword").val("");
           $("#newpassword").val("");
           $("#confirmpassword").val("");
       }
       function onFailure(error){
         if(error == "InvalidCurrentPassword"){
-          displayMessage(getMessage('invalid-cpassword'));
+          displayMessage(message.invalid_cpassword);
         }
       }
       mirror.changePassword(currentpassword, newpassword, 
@@ -51,23 +43,23 @@ $("#submit-client").click(function(){
   var newpassword = $("#newpassword").val().trim();
   var confirmpassword = $("#confirmpassword").val().trim();
   if(currentpassword.length == 0) {
-    displayMessage(getMessage('cpassword-required'));
+    displayMessage(message.cpassword_required);
   } else if(newpassword.length == 0) {
-    displayMessage(getMessage('npassword-required'));
+    displayMessage(message.npassword_required);
   } else if(confirmpassword.length == 0) {
-    displayMessage(getMessage('conpassword-required'));
+    displayMessage(message.conpassword_require);
   } else if(confirmpassword != newpassword) {
-    displayMessage(getMessage('password-notmatch'));
+    displayMessage(message.password_notmatch);
   } else {
       function onSuccess(data){
-          displayMessage(getMessage('password-changed-success'));
+          displayMessage(message.password_changed_success);
           $("#currentpassword").val("");
           $("#newpassword").val("");
           $("#confirmpassword").val("");
       }
       function onFailure(error){
         if(error == "InvalidCurrentPassword"){
-          displayMessage(getMessage('invalid-cpassword'));
+          displayMessage(message.invalid_cpassword);
         }
       }
 

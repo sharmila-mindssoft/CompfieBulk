@@ -31,14 +31,6 @@ var pageSize = 50;
 var startCount;
 var endCount;
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
@@ -521,17 +513,17 @@ function remove_temp_file(){
 $("#upload_file").on("change", function(e) {
   mirror.uploadFile(e, function result_data(data) {
     if (data == "File max limit exceeded") {
-      displayMessage(getMessage('file-maxlimit-exceed'))
+      displayMessage(message.file_maxlimit_exceed)
       $("#uploaded_fileview").hide();
       $("#uploaded_filename").html('');
       $("#upload_file").val('');
     }else if(data == "File content is empty"){
-      displayMessage(getMessage('file-content-empty'))
+      displayMessage(message.file_content_empty)
       $("#uploaded_fileview").hide();
       $("#uploaded_filename").html('');
       $("#upload_file").val('');
     }else if(data == "Invalid file format"){
-      displayMessage(getMessage('invalid-file-format'))
+      displayMessage(message.invalid_file_format)
       $("#uploaded_fileview").hide();
       $("#uploaded_filename").html('');
       $("#upload_file").val('');
@@ -566,18 +558,18 @@ function saverecord(j,e){
         });
     }
     if(map_statutory_id==0 && levelstage>1 ){
-      displayMessage(getMessage('levelselection-required'));
+      displayMessage(message.levelselection_required);
     }else if(datavalue==""){
       displayMessage("Level-"+levelstage+" Value Should not be Empty");
     }else{
       if($("#statutoryid").val() == ''){
         function onSuccess(data){
-          displayMessage(getMessage('record-added'));
+          displayMessage(message.record_added);
           reload(last_statutory_id,last_level,sm_countryid,sm_domainid);
         }
         function onFailure(error){
           if(error == "StatutoryNameAlreadyExists"){
-            displayMessage(getMessage('statutoryname-exists'));
+            displayMessage(message.statutoryname_exists);
           }else{
             displayMessage(error);
           }
@@ -598,13 +590,13 @@ function saverecord(j,e){
         );
       }else{
         function onSuccessUpdate(data){
-          displayMessage(getMessage('record-updated'));
+          displayMessage(message.record_updated);
           reload(last_statutory_id,last_level,sm_countryid,sm_domainid);
         }
         function onFailureUpdate(error){
 
           if(error == "StatutoryNameAlreadyExists"){
-            displayMessage(getMessage('statutoryname-exists'));
+            displayMessage(message.statutoryname_exists);
           }else{
             displayMessage(error);
           }
@@ -699,9 +691,9 @@ $("#temp_addstatutories").click(function() {
       });
   }
   if(last_statutory_id==0){
-    displayMessage(getMessage('nostatutory-selected'));
+    displayMessage(message.nostatutory_selected);
   }else if($.inArray(last_statutory_id, sm_statutoryids) >= 0){
-    displayMessage(getMessage('statutory-already-added'));
+    displayMessage(message.statutory_already_added);
   }else{
     if(sm_statutoryids.length > 0){
       var parentSelection = $(".slist1.active").text();
@@ -837,21 +829,21 @@ $("#temp_addcompliance").click(function() {
   statutory_dates = [];
 
   if(statutory_provision.length == 0){
-    displayMessage(getMessage('statutoryprovision-required'));
+    displayMessage(message.statutoryprovision_required);
   }else if (compliance_task.length == 0){
-    displayMessage(getMessage('compliancetask-required'));
+    displayMessage(message.compliancetask_required);
   }else if (description.length == 0){
-    displayMessage(getMessage('compliancedescription-required'));
+    displayMessage(message.compliancedescription_required);
   }else if (compliance_frequency.length == 0){
-    displayMessage(getMessage('compliancefrequency-required'));
+    displayMessage(message.compliancefrequency_required);
   }else if ((compliance_frequency == "2" || compliance_frequency == "3") && $('#repeats_type').val() == ''){
-    displayMessage(getMessage('repeatstype-required'));
+    displayMessage(message.repeatstype_required);
   }else if ((compliance_frequency == "2" || compliance_frequency == "3") && $('#repeats_every').val().trim() == ''){
-    displayMessage(getMessage('repeatsevery-required'));
+    displayMessage(message.repeatsevery_required);
   }else if (compliance_frequency == "4" && $('#duration').val().trim() == ''){
-    displayMessage(getMessage('duration-required'));
+    displayMessage(message.duration_required);
   }else if (compliance_frequency == "4" && $('#duration_type').val() == ''){
-    displayMessage(getMessage('durationtype-required'));
+    displayMessage(message.durationtype_required);
   }else{
     displayMessage("");
     var repeatBy = $('input[name="repeatby"]:checked').val();
@@ -863,11 +855,11 @@ $("#temp_addcompliance").click(function() {
       if($('#triggerbefore').val().trim().length > 0){
         trigger_before_days = parseInt($('#triggerbefore').val());
         if(trigger_before_days > 100){
-          displayMessage(getMessage('triggerbefore-exceed'));
+          displayMessage(message.triggerbefore_exceed);
           return false;
         }
         if(trigger_before_days == 0){
-          displayMessage(getMessage('triggerbefore-iszero'));
+          displayMessage(message.triggerbefore_iszero);
           return false;
         }
       }
@@ -879,17 +871,17 @@ $("#temp_addcompliance").click(function() {
         repeats_every_length = $('#repeats_every').val().trim().length;
 
         if(repeats_every == 0){
-          displayMessage(getMessage('invalid-repeatsevery'));
+          displayMessage(message.invalid_repeatsevery);
           return false;
         }
         else if(repeats_type == '1' && repeats_every_length > 3){
-          displayMessage(getMessage('days-maximum'));
+          displayMessage(message.days_maximum);
           return false;
         }else if(repeats_type == '2' && repeats_every_length > 2){
-          displayMessage(getMessage('months-maximum'));
+          displayMessage(message.months_maximum);
           return false;
         }else if(repeats_type == '3'  && repeats_every_length > 1){
-          displayMessage(getMessage('years-maximum'));
+          displayMessage(message.years_maximum);
           return false;
         }
         else{
@@ -914,18 +906,18 @@ $("#temp_addcompliance").click(function() {
               statutory_month = null;
               trigger_before_days = null;
               if($('#multiple_statutory_date'+i).val() == '' || $('#multiple_statutory_month'+i).val() == '' || $('#multiple_triggerbefore'+i).val().trim().length == 0){
-                displayMessage(getMessage('statutorydate-triggerdte-mandatory-multipleinputs'));
+                displayMessage(message.statutorydate_triggerdte_mandatory_multipleinputs);
                 return false;
               }else{
                 statutory_day = parseInt($('#multiple_statutory_date'+i).val());
                 statutory_month = parseInt($('#multiple_statutory_month'+i).val());
                 trigger_before_days = parseInt($('#multiple_triggerbefore'+i).val());
                 if(trigger_before_days > 100){
-                  displayMessage(getMessage('triggerbefore-exceed'));
+                  displayMessage(message.triggerbefore_exceed);
                   return false;
                 }
                 if(trigger_before_days == 0){
-                  displayMessage(getMessage('triggerbefore-iszero'));
+                  displayMessage(message.triggerbefore_iszero);
                   return false;
                 }
                 statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
@@ -941,11 +933,11 @@ $("#temp_addcompliance").click(function() {
               if($('#single_triggerbefore').val().trim().length > 0)
                 trigger_before_days = parseInt($('#single_triggerbefore').val());
               if(trigger_before_days > 100){
-                displayMessage(getMessage('triggerbefore-exceed'));
+                displayMessage(message.triggerbefore_exceed);
                 return false;
               }
               if(trigger_before_days == 0){
-                displayMessage(getMessage('triggerbefore-iszero'));
+                displayMessage(message.triggerbefore_iszero);
                 return false;
               }
             statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
@@ -965,10 +957,10 @@ $("#temp_addcompliance").click(function() {
     (value.compliance_task == compliance_task) &&
     (comp_id == '' || comp_id != ccount )) {
     if(value.statutory_provision == statutory_provision){
-      displayMessage(getMessage('statutoryprovision-duplicate'));
+      displayMessage(message.statutoryprovision_duplicate);
     }
     if(value.compliance_task == compliance_task){
-      displayMessage(getMessage('compliancetask-duplicate'));
+      displayMessage(message.compliancetask_duplicate);
     }
     check_duplicate_status = false;
   }
@@ -1307,7 +1299,7 @@ function load_geography(level,country,combineids,status,displaytext){
         }
         else{
           if($('#'+combineid).attr('class') == 'list'+setlevelstage+' active'){
-            displayMessage(getMessage('removechild-first'));
+            displayMessage(message.removechild_first);
             $('#'+combineids).addClass( "active" );
           }else{
             $('#'+combineid).remove();
@@ -1471,13 +1463,13 @@ function savestatutorymapping(){
 
 function validate_firsttab(){
   if(sm_countryid == ''){
-    displayMessage(getMessage('country-required'));
+    displayMessage(message.country_required);
   }else if (sm_domainid == ''){
-    displayMessage(getMessage('domain-required'));
+    displayMessage(message.domain_required);
   }else if (sm_industryids.length == 0){
-    displayMessage(getMessage('industry-required'));
+    displayMessage(message.industry_required);
   }else if (sm_statutorynatureid == ''){
-    displayMessage(getMessage('statutorynature-required'));
+    displayMessage(message.statutorynature_required);
   }else{
     displayMessage("");
     return true;
@@ -1485,7 +1477,7 @@ function validate_firsttab(){
 }
 function validate_secondtab(){
   if (sm_statutoryids.length == 0){
-    displayMessage(getMessage('statutory-selection-required'));
+    displayMessage(message.statutory_selection_required);
   }else{
     displayMessage("");
     return true;
@@ -1493,9 +1485,9 @@ function validate_secondtab(){
 }
 function validate_thirdtab(){
   if (compliances.length == 0){
-    displayMessage(getMessage('compliance-selection-required'));
+    displayMessage(message.compliance_selection_required);
   }else if(isAllComplianceActive == false) {
-    displayMessage(getMessage('active-compliance-required'));
+    displayMessage(message.active_compliance_required);
   }else{
     displayMessage("");
     return true;
@@ -1503,7 +1495,7 @@ function validate_thirdtab(){
 }
 function validate_fourthtab(){
   if (sm_geographyids.length == 0){
-    displayMessage(getMessage('location-selection-required'));
+    displayMessage(message.location_selection_required);
   }else{
     displayMessage("");
     return true;

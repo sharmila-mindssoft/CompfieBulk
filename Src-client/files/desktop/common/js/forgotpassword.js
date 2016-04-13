@@ -81,18 +81,18 @@ $("#submit").click(function(){
   displayMessage("");
   var username = $("#username").val().trim();
   if(username.length == 0) {
-    displayMessage(getMessage('username-required'));
+    displayMessage('Username Required');
   }else if(validateEmail(username) == ''){
-    displayMessage(getMessage('invalid-emailid'));
+    displayMessage('Invalid Email ID');
   }else {
 
     function onSuccess(data){
-      displayMessage(getMessage('forgotpassword-success'));
+      displayMessage('Password reset link has been sent to your email Id');
       $("#username").val("");
     }
     function onFailure(error){
       if(error == "InvalidUserName"){
-        displayMessage(getMessage('nouser-exists'));
+        displayMessage('No such user exists');
       }
     }
 

@@ -232,13 +232,13 @@ function loadCompliance(reportType){
   if($("#status").val() != '') status = $("#status").val();
 
   if(country.length == 0){
-    displayMessage("Country Required");
+    displayMessage(message.country_required);
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");
+    displayMessage(message.domain_required);
   }
   else if(act.length == 0){
-    displayMessage("Act Required");
+    displayMessage(message.act_required);
   }
   else{
     function onSuccess(data){

@@ -19,15 +19,6 @@ var pageSize = 100;
 var startCount;
 var endCount;
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
-
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
@@ -655,28 +646,28 @@ mirror.getCountriesForGroup(
 
 function validate_firsttab(){
   if($('.countrylist.active').text() == ''){
-    displayMessage(getMessage('country-required'));
+    displayMessage(message.country_required);
     return false;
   }else if ($('.grouplist.active').text() == ''){
-    displayMessage(getMessage('group-required'));
+    displayMessage(message.group_required);
     return false;
   }else if ($('.legalentitylist.active').text() == ''){
-    displayMessage(getMessage('legalentity-required'));
+    displayMessage(message.legalentity_required);
     return false;
   }else if ($('.geographylevellist.active').text() == ''){
-    displayMessage(getMessage('geographylevel-required'));
+    displayMessage(message.geographylevel_required);
     return false;
   }else if ($('.locationlist.active').text() == ''){
-    displayMessage(getMessage('location-required'));
+    displayMessage(message.location_required);
     return false;
   }else if ($('.industrylist.active').text() == ''){
-    displayMessage(getMessage('industry-required'));
+    displayMessage(message.industry_required);
     return false;
   }else if (assignStatutoryUnitIds.length == 0){
-    displayMessage(getMessage('unit-required'));
+    displayMessage(message.unit_required);
     return false;
   }else if ($('.domainlist.active').text() == ''){
-    displayMessage(getMessage('domain-required'));
+    displayMessage(message.domain_required);
     return false;
   }else{
     var checkDuplicateAssignStauttory = true;
@@ -804,7 +795,7 @@ function saveorsubmit(submissionType){
         applicableStatus = false;
         notApplicableRemarks = $('#remarkvalue'+actCount).val();
         if(notApplicableRemarks.length==0){
-          displayMessage(getMessage('act-remarks-required'));
+          displayMessage(message.act_remarks_required);
           return false;
         }
       }
@@ -865,7 +856,7 @@ function saveorsubmit(submissionType){
     }
     );
   }else{
-    displayMessage(getMessage('statutory-selection-required'));
+    displayMessage(message.statutory_selection_required);
   }
   }
 }

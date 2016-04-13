@@ -268,10 +268,10 @@ $("#submit").click(function(){
   if($("#assignee").val() != '') assignee = $("#assignee").val();
 
   if(country.length == 0){
-    displayMessage("Country Required");
+    displayMessage(message.country_required);
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");  
+    displayMessage(message.domain_required);  
   }
   else{
       function onSuccess(data){

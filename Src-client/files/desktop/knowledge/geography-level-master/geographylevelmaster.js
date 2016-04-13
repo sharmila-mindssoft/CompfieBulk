@@ -1,15 +1,6 @@
 var countriesList;
 var geographyLevelsList;
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
-
 $(".btn-geographylevel-cancel").click(function(){
 	$(".fieldvalue").val("");
     $(".hiddenvalue").val("");
@@ -111,9 +102,9 @@ function loadGeographyLevelsList(countryval) {
 }
 function validate(){
     if($("#country").val().trim().length==0){
-      displayMessage(getMessage('country-required'));
+      displayMessage(country_required);
     }else if($("#level1").val().trim().length==0){
-      displayMessage(getMessage('levelone-title-required'));
+      displayMessage(message.levelone_title_required);
     }
     else {
       displayMessage('');
@@ -154,9 +145,9 @@ $("#submit").click(function(){
 	   }
 		function onSuccess(response) {
 			if(isAdd){
-				displayMessage(getMessage('record-added'));
+				displayMessage(message.record_added);
 			}else{
-				displayMessage(getMessage('record-updated'));
+				displayMessage(message.record_updated);
 			}
 			
 			jQuery('.btn-geographylevel-cancel').focus().click();
@@ -164,7 +155,7 @@ $("#submit").click(function(){
 		}
 		function onFailure(error){             
           if(error == "DuplicateGeographyLevelsExists"){
-            displayMessage(getMessage('geographylevel-exists'));
+            displayMessage(message.geographylevel_exists);
           }
         }
 		mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist, 
@@ -177,7 +168,7 @@ $("#submit").click(function(){
             }
           });
 	   }else{
-	   		displayMessage(getMessage('intermediatelevel-required'));
+	   		displayMessage(message.intermediatelevel_required);
 	   }
 		}
 });
@@ -203,7 +194,7 @@ $("#insert-record").click(function(){
 	  	$("#add").show();
 	  	displayMessage("");
 	}else{
-		displayMessage(getMessage('title-required'));
+		displayMessage(message.title_required);
 		$("#add").hide();
 		inserlevelstatus = false;
 	}

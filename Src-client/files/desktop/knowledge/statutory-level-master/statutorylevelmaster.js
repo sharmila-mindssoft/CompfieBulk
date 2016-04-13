@@ -2,15 +2,6 @@ var countriesList;
 var domainsList;
 var statutoryLevelsList;
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
-
 $(".btn-statutorylevel-cancel").click(function(){
   $(".fieldvalue").val("");
   $(".hiddenvalue").val("");
@@ -130,11 +121,11 @@ function loadstatutoryLevelsList() {
 
 function validate(){
     if($("#country").val().trim().length==0){
-      displayMessage(getMessage('country-required'));
+      displayMessage(message.country_required);
     } else if($("#domain").val().trim().length==0) {
-      displayMessage(getMessage('domain-required'));
+      displayMessage(message.domain_required);
     } else if($("#level1").val().trim().length==0){
-      displayMessage(getMessage('levelone-title-required'));
+      displayMessage(message.levelone_title_required);
     }
     else {
       displayMessage('');
@@ -177,16 +168,16 @@ $("#submit").click(function(){
          }
         function onSuccess(response) {
           if(isAdd){
-            displayMessage(getMessage('record-added'));
+            displayMessage(message.record_added);
           }else{
-            displayMessage(getMessage('record-updated'));
+            displayMessage(message.record_updated);
           }
           GetStatutoryLevels();
           jQuery('.btn-statutorylevel-cancel').focus().click();
         }
         function onFailure(error){             
           if(error == "DuplicateStatutoryLevelsExists"){
-            displayMessage(getMessage('statutorylevel-exists'));
+            displayMessage(message.statutorylevel_exists);
           }
         }
         mirror.saveAndUpdateStatutoryLevels(parseInt(country), parseInt(domain), passlevellist, 
@@ -199,7 +190,7 @@ $("#submit").click(function(){
             }
           });
          }else{
-          displayMessage(getMessage('intermediatelevel-required'));
+          displayMessage(message.intermediatelevel_required);
          }
       }
   });
