@@ -185,7 +185,7 @@ function loadCountwiseResult(filterList){
           statutorydate = statutorydate;
         }else{
           statutorydate = sdateDesc + ' ( '+statutorydate+' )';
-        } 
+        }
       }else{
         statutorydate = sdateDesc;
       }
@@ -209,7 +209,7 @@ function loadCountwiseResult(filterList){
   }else{
     $('.compliance_count').text('');
   }
-  
+
   if(endCount >= finalList.length){
     $(document).ready(function($) {
     $('#accordion').find('.accordion-toggle').click(function(){
@@ -253,12 +253,12 @@ $(function() {
     $(".loading-indicator-spin").show();
     if($('.loading-indicator-spin').css('display') != 'none')
     {
-        setTimeout(function(){  
+        setTimeout(function(){
             showloadrecord();
         }, 500);
-        
+
     }
-    setTimeout(function(){  
+    setTimeout(function(){
         $(".loading-indicator-spin").hide();
     }, 500);
     //hideLoader();
@@ -316,12 +316,12 @@ $("#submit").click(function(){
   else{
     displayLoader();
       var filterdata={};
-      filterdata["country_id"]=parseInt(country);
-      filterdata["domain_id"]=parseInt(domain);
-      filterdata["industry_id"]=parseInt(industry);
-      filterdata["statutory_nature_id"]=parseInt(statutorynature);
-      filterdata["geography_id"]=parseInt(geography);
-      filterdata["level_1_statutory_id"]=parseInt(act);
+      filterdata["c_id"]=parseInt(country);
+      filterdata["d_id"]=parseInt(domain);
+      filterdata["i_id"]=parseInt(industry);
+      filterdata["s_n_id"]=parseInt(statutorynature);
+      filterdata["g_id"]=parseInt(geography);
+      filterdata["level_1_s_id"]=parseInt(act);
 
       function onSuccess(data){
         statutoryMappingDataList = data["statutory_mappings"];
