@@ -51,10 +51,10 @@ $("#show-button").click(function(){
 	}
 	var level1NameVal = $("#level1idval").val();
 	if(countries == ""){
-		displayMessage("Enter Country");
+		displayMessage(message.country_required);
 	}
 	else if(domain == ""){
-		displayMessage("Enter Domain");
+		displayMessage(message.domain_required);
 	}
 	else{
 		function onSuccess(data){

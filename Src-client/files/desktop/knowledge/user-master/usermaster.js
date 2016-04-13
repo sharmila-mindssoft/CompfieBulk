@@ -5,14 +5,6 @@ var countriesList;
 var domainIds = [];
 var countryIds = [];
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
 
 $(".btn-user-cancel").click(function(){
   $("#user-add").hide();

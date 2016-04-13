@@ -220,62 +220,62 @@ $("#btn-clientgroup-submit").click(function(){
     var shortname = $("#short-name").val().trim();
 
     if(clientGroupNameVal == ''){
-        displayMessage('Group Required');
+        displayMessage(message.group_required);
     }
     else if(clientGroupNameVal.length > 50){
-        displayMessage('Group :  Not Allowed More than 50 Characters.');
+        displayMessage(message.group_50);
     }
     else if(countryList == ''){
-        displayMessage('Country Required');
+        displayMessage(message.country_required);
     }
     else if(domainsList == ''){
-        displayMessage('Domain Required');
+        displayMessage(message.domain_required);
     }
     else if(contractFromVal == ''){
-        displayMessage('Contract From Required');
+        displayMessage(message.contractfrom_required);
     }
     else if(contractToVal == ''){
-        displayMessage('Contract To Required');
+        displayMessage(message.contractto_required);
     }
     else if(usernameVal == '' && clientGroupIdVal == ''){
-        displayMessage('Username Required');    
+        displayMessage(message.username_required);    
     }
     else if(validateEmail(usernameVal) == ''){
-        displayMessage('Username Format is Invalid');
+        displayMessage(message.username_invalid);
     }
     else if(licenceVal == ''){
-        displayMessage('No. Of User Licence Required');
+        displayMessage(message.licence_required);
     } 
     else if(licenceVal == "0"){
-        displayMessage('Invalid No. Of User Licence');
+        displayMessage(message.licence_invalid);
     }    
     else if(isNaN(licenceVal)){
-        displayMessage('Invalid No. Of User Licence');
+        displayMessage(message.licence_invalid);
     }
     else if(licenceVal.length > 3){
-        displayMessage('No. of User License : Max 3 Digits are allowed');
+        displayMessage(message.licence_max3);
     }
     else if(fileSpaceVal == ''){
-        displayMessage('File Space Required');
+        displayMessage(message.filespace_required);
     }
     else if(fileSpaceVal == '0'){
-        displayMessage('Invalid File Space Value');
+        displayMessage(message.filespace_invalid);
     }
     else if(!$.isNumeric(fileSpaceVal)){
-        displayMessage('Invalid File Space Value');
+        displayMessage(message.filespace_invalid);
     }
     else if(fileSpaceVal.length > 3){
-        displayMessage('File Space : Max 3 Digits are allowed');
+        displayMessage(message.filespace_max3);
     }
     else if(inchargePersonVal == ''){
-        displayMessage('Incharge Person Required');
+        displayMessage(message.inchargeperson_required);
     }
     else if(shortname == ''){
-        displayMessage('Short Name Required');
+        displayMessage(message.shortname_required);
         gototop();
     }
     else if(dataconfigurationvalidate() == 1){
-        displayMessage('Select Date Configurations From & To');
+        displayMessage(message.dateconfig_required);
     }
     else if(clientGroupIdVal == ''){
         var arrayinchargePersonVal = inchargePersonVal.split(",");
@@ -283,12 +283,12 @@ $("#btn-clientgroup-submit").click(function(){
         for(var k = 0; k < arrayinchargePersonVal.length; k++) { arrayinchargePerson[k] = parseInt(arrayinchargePersonVal[k]); }
         inchargePersonVal = arrayinchargePerson;
         if($("#upload-logo").val() == ''){
-            displayMessage('Logo Required');
+            displayMessage(message.logo_required);
             return false;
         }
         var ext = $('#upload-logo').val().split('.').pop().toLowerCase();
         if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
-            displayMessage('Logo is invalid');
+            displayMessage(message.logo_invalid);
         }
         
         function onSuccess(data){
@@ -300,16 +300,16 @@ $("#btn-clientgroup-submit").click(function(){
         function onFailure(error){
             hideLoader();
             if(error == 'GroupNameAlreadyExists'){
-                displayMessage('Group Name Already Exists');
+                displayMessage(message.groupname_exists);
             }
             else if(error == 'UsernameAlreadyExists'){
-                displayMessage('Username Already Exists');
+                displayMessage(message.username_exists);
             }
             else if(error == 'ClientCreationFailed'){
-                displayMessage('Client Creation Failed. Check your server connection details');
+                displayMessage(message.client_creation_failed);
             }
             else if(error == "NotAnImageFile"){
-                displayMessage("Logo is Invalid");
+                displayMessage(message.logo_invalid);
             }
             else{
                 displayMessage(error);
@@ -345,7 +345,7 @@ $("#btn-clientgroup-submit").click(function(){
         if($("#upload-logo").val() != ''){
             var ext = $('#upload-logo').val().split('.').pop().toLowerCase();
             if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
-                displayMessage('Invalid Logo');
+                displayMessage(message.logo_invalid);
                 return false;
             }
         }
@@ -356,16 +356,16 @@ $("#btn-clientgroup-submit").click(function(){
         }
         function onFailure(error){
             if(error == 'GroupNameAlreadyExists'){
-                displayMessage('Group Name Already Exists');
+                displayMessage(message.groupname_exists);
             }
             else if(error == 'UsernameAlreadyExists'){
-                displayMessage('Username Already Exists');
+                displayMessage(message.username_exists);
             }
             else if(error == 'CannotDeactivateCountry'){
-                displayMessage("Cannot unselect country. One or more units exists")
+                displayMessage(message.cannot_unselect_country);
             }
             else if(error == 'CannotDeactivateDomain'){
-                displayMessage("Cannot unselect Domain. One or more units exists")   
+                displayMessage(message.cannot_unselect_domain); 
             }
             else{
                 displayMessage(error);   
@@ -410,7 +410,7 @@ function clientgroup_active(clientId, isActive){
         }
         function onFailure(error){
             if(error == "CannotDeactivateClient"){
-                alert("Cannot deactivate client, since client has one or more active units")
+                alert(message.cannot_deactivate_client);
             }
             else{
                 displayMessage(error);

@@ -2749,7 +2749,7 @@ function showFiltersResults() {
     var country = $("#country").val().trim();
     var countryval = $("#countryval").val().trim();
     if(countryval == ""){
-        displayMessage("Country Required");
+        displayMessage(message.country_required);
     }
     var businessgroupid = parseInt($("#businessgroupid").val());
     var businessgroupsval = $("#businessgroupsval").val().trim();
@@ -2961,6 +2961,7 @@ function listingCompliance(data, userid, year){
 
 }
 function showPopup(assigneewiselist){
+    $(".tbody-popup-list tr").remove();
     $.each(assigneewiselist, function(ke, valu) {
         $('.popupoverlay').css("visibility","visible");
         $('.popupoverlay').css("opacity","1");

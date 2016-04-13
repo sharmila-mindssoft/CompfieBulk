@@ -338,6 +338,28 @@
     padding: 12px 20px;
     width: 100%;
   }
+  .noti_bubble {
+    position: relative;
+    top: -4em;
+    left: 3.5em;
+    padding: 0.5em;
+    background-color: red;
+    color: white;
+    font-weight: normal;
+    font-size: 0.55em;
+    border-radius: 2em;
+    box-shadow: 1px 1px 1px gray;
+    cursor: hand;
+    float: left;
+    height: 2em;
+    width: 2em;
+    text-align: center;
+  }
+  #cssmenu ul li a img {
+    max-width: 1.4em;
+    margin-bottom: 0.5em;
+    float: left;
+  }
   #cssmenu ul ul li a {
     border: 0;
     background: none;

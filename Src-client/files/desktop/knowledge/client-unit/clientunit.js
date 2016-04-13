@@ -22,15 +22,6 @@ var checkunitscount = null;
 var usercountrycount = null;
 var clientdomainList = null; 
 
-function clearMessage() {
-    $(".error-message").hide();
-    $(".error-message").text("");
-}
-function displayMessage(message) {
-    $(".error-message").text(message);
-    $(".error-message").show();
-}
-
 function initialize(){
     function onSuccess(data){
         $("#clientunit-add").hide();
@@ -466,16 +457,16 @@ function addcountryrownew(){
     var usercountrycount = countryFulList.length;
 
     if(groupId == '' && isUpdate == false){
-        displayMessage("Select Group");
+        displayMessage(message.group_required);
     }
     else if(legalEntityValue == '' && isUpdate == false){
-        displayMessage('Select Existing Legal Entity or Create New');
+        displayMessage(message.legalentity_new);
     }
     // else if( countc >= countryCount ){
     //     displayMessage("Exceeds Maximum Number of Countries");
     // }
     else if(countc >= usercountrycount){
-        displayMessage("Exceeds Maximum Countries for this User");
+        displayMessage(message.exceeds_max_countries_user);
     }
     else{
         
@@ -662,7 +653,7 @@ function autoGenerateUnitCode(){
 
 function loadglevelsupdate(countryid, lastClass){
     if(countryid == ''){
-        displayMessage('Enter Country');
+        displayMessage(message.country_required);
     }
     else{
         $('.'+lastClass).find('option').not(':first').remove();
@@ -681,7 +672,7 @@ function loadglevels(classval){
     var countryid = $('.country-'+checkval[1]).val();
 
     if(countryvalue == ''){
-        displayMessage('Enter Country');
+        displayMessage(message.country_required);
     }
 
     else{
@@ -993,22 +984,22 @@ $("#btn-clientunit-submit").click(function(){
 
     if(clientunitIdValue == ''){
         if(groupNameValue.length == 0){
-            displayMessage("Select Group");
+            displayMessage(message.group_required);
             return false;
         }
         if(lentitytextValue.length == 0){
             if(legalEntityValue.length == 0){
-                displayMessage("Select Existing Legal Entity or Create New");
+                displayMessage(message.legalentity_new);
                 return false;
             }
         }
 
         if(unitCountValue.length == 0){
-            displayMessage("Add atleast one unit in a Group");
+            displayMessage(message.add_one_unit);
             return false;
         }
         if(countryVal.length == 0){
-            displayMessage("Enter Country");
+            displayMessage(message.country_required);
             return false;
         }
         function onSuccess(data) {
@@ -1018,16 +1009,16 @@ $("#btn-clientunit-submit").click(function(){
         }
         function onFailure(error) {
             if(error == "BusinessGroupNameAlreadyExists"){
-                displayMessage("Business Group Name Already Exists!");
+                displayMessage(message.bgroup_exists);
             }
             else if(error == "LegalEntityNameAlreadyExists"){
-                displayMessage("Legal Entity Name Already Exists!");
+                displayMessage(message.lentity_exists);
             }
             else if(error == "DivisionNameAlreadyExists"){
-                displayMessage("DivisionName Already Exists!");
+                displayMessage(message.division_exists);
             }
             else if(error == "UnitCodeAlreadyExists"){
-                displayMessage("Unit Code Already Exists!");
+                displayMessage(message.unitcode_exists);
             }
             else{
                 displayMessage(error);
@@ -1124,45 +1115,45 @@ $("#btn-clientunit-submit").click(function(){
                         unitdomain = $('.domain-'+i+'-'+j).val();
                         if(unitLocation == "" && unitGeographyId == "" &&  unitCode == "" &&  unitName == "" &&  (unitIndustryName == "" || unitIndustryName == "Select") && unitAddress == "" && unitPostalCode == "" && unitdomain == ""){
                             if(unitcount == 1){
-                                displayMessage("Enter atleast one unit in a country");
+                                displayMessage(message.add_one_unit);
                                 return;
                             }
                             continue;
                         }                          
                         if(unitLocation == '' ){
-                            $(".unit-error-msg-"+i).html("Unit Location Required");
+                            $(".unit-error-msg-"+i).html(message.unitlocation_required);
                             return;
                         }
                         else if(unitGeographyId == ''){
-                            $(".unit-error-msg-"+i).html("Unit Location Name is Invalid");
+                            $(".unit-error-msg-"+i).html(message.unitlocation_invalid);
                             return;
                         }
                         else if(unitCode == ''){
-                            $(".unit-error-msg-"+i).html("Unit Code Required");
+                            $(".unit-error-msg-"+i).html(message.unitcode_required);
                             return;
                         }
                         else if(unitName == ''){
-                            $(".unit-error-msg-"+i).html("Unit Name Required");
+                            $(".unit-error-msg-"+i).html(message.unitname_required);
                             return;
                         }
                         else if(unitIndustryName == ""){
-                            $(".unit-error-msg-"+i).html("Select Industry Type");
+                            $(".unit-error-msg-"+i).html(message.industryname_required);
                             return;
                         }
                         else if(unitIndustryId == 0){
-                            $(".unit-error-msg-"+i).html("Select Industry Type");
+                            $(".unit-error-msg-"+i).html(message.industryname_required);
                             return;
                         }
                         else if(unitAddress == ''){
-                            $(".unit-error-msg-"+i).html("Unit Address Required");
+                            $(".unit-error-msg-"+i).html(message.unitaddress_required);
                             return;
                         }
                         else if(unitPostalCode == ''){
-                            $(".unit-error-msg-"+i).html("Unit Postal Code Required");
+                            $(".unit-error-msg-"+i).html(message.unitpostal_required);
                             return;
                         }
                         else if(unitdomain == ''){
-                            $(".unit-error-msg-"+i).html("Domain Required");
+                            $(".unit-error-msg-"+i).html(message.domain_required);
                             return;
                         }
                         else{
@@ -1203,7 +1194,7 @@ $("#btn-clientunit-submit").click(function(){
                     countryWiseUnits.push(mirror.mapUnitsToCountry(countryUnits, units));    
                 }
                 else{
-                    displayMessage("Enter atleast one unit in a country");
+                    displayMessage(message.add_one_unit);
                     return;
                 }
             }
@@ -1222,11 +1213,11 @@ $("#btn-clientunit-submit").click(function(){
     else if(clientunitIdValue != ''){
         clearMessage();
         if(unitCountValue.length == 0){
-            displayMessage("Add atleast one unit in a Group");
+            displayMessage(message.add_one_unit);
             return false;
         }
         if(countryVal.length == 0){
-            displayMessage("Enter Country");
+            displayMessage(message.country_required);
             return false;
         }
 
@@ -1237,16 +1228,16 @@ $("#btn-clientunit-submit").click(function(){
         }
         function onFailure(error) {
             if(error == "BusinessGroupNameAlreadyExists"){
-                displayMessage("Business Group Name Already Exists!");
+                displayMessage(message.bgroup_exists);
             }
             else if(error == "LegalEntityNameAlreadyExists"){
-                displayMessage("Legal Entity Name Already Exists!");
+                displayMessage(message.lentity_exists);
             }
             else if(error == "DivisionNameAlreadyExists"){
-                displayMessage("DivisionName Already Exists!");
+                displayMessage(message.division_exists);
             }
             else if(error == "UnitCodeAlreadyExists"){
-                displayMessage("Unit Code Already Exists!");
+                displayMessage(message.unitcode_exists);
             }
             else{
                 displayMessage(error);
@@ -1321,45 +1312,45 @@ $("#btn-clientunit-submit").click(function(){
                     
                     if(unitLocation == "" && unitGeographyId == "" &&  unitCode == "" &&  unitName == "" &&  (unitIndustryName == "" || unitIndustryName == "Select") && unitAddress == "" && unitPostalCode == "" && unitdomain == ""){
                         if(unitcount == 1){
-                            displayMessage("Enter atleast one unit in a country");
+                            displayMessage(message.add_one_unit);
                             return;
                         }
                         continue;
                     }
                     else if(unitLocation == ''){
-                        $(".unit-error-msg-"+i).html("Unit location Required");
+                        $(".unit-error-msg-"+i).html(message.unitlocation_required);
                         return;
                     }
                     else if(unitGeographyId == ''){
-                        $(".unit-error-msg-"+i).html("Unit location Name is Invalid");
+                        $(".unit-error-msg-"+i).html(message.unitlocation_invalid);
                         return;
                     }
                     else if(unitCode == ''){
-                        $(".unit-error-msg-"+i).html("Unit Code Required");
+                        $(".unit-error-msg-"+i).html(message.unitcode_required);
                         return;
                     }
                     else if(unitName == ''){
-                        $(".unit-error-msg-"+i).html("Unit Name Required");
+                        $(".unit-error-msg-"+i).html(message.unitname_required);
                         return;
                     }
                     else if(unitIndustryName == ""){
-                        $(".unit-error-msg-"+i).html("Select Industry");
+                        $(".unit-error-msg-"+i).html(message.industryname_required);
                         return;
                     }
                     else if(unitIndustryId == 0){
-                        $(".unit-error-msg-"+i).html("Select Industry");
+                        $(".unit-error-msg-"+i).html(message.industryname_required);
                         return;
                     }
                     else if(unitAddress == ''){
-                        $(".unit-error-msg-"+i).html("Unit Address Required");
+                        $(".unit-error-msg-"+i).html(message.unitaddress_required);
                         return;
                     }
                     else if(unitPostalCode == ''){
-                        $(".unit-error-msg-"+i).html("Unit Postal Code Required");
+                        $(".unit-error-msg-"+i).html(message.unitpostal_required);
                         return;
                     }
                     else if(unitdomain == ''){
-                        $(".unit-error-msg-"+i).html("Domain Required");
+                        $(".unit-error-msg-"+i).html(message.domain_required);
                         return;
                     }
                     else{
@@ -1531,7 +1522,7 @@ function loadauto_countrytext (textval, classval) {
     }
 
     if(groupId == ''){
-        displayMessage("Select Group First");
+        displayMessage(message.group_required);
     }
     else{
         var arrayCountry = [];
