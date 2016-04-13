@@ -7,12 +7,10 @@ var statutoryNaturesList;
 var statutoriesList;
 var complianceFrequencyList;
 var temp_act = null;
-
 var finalList;
 var pageSize = 500;
 var startCount;
 var endCount;
-
 var count=1;
 var compliance_count=0;
 var lastActName = '';
