@@ -81,7 +81,6 @@ function loadCountwiseResult(filterList){
     var statutory_provision = filterList[entity]["statutory_provision"];
     var compliance_name = filterList[entity]["compliance_task"];
     var download_url = filterList[entity]["url"];
-    console.log(frequency_id)
 
     if(actname != lastActName){
       var tableRow=$('#act-templates .table-act-list .table-row-act-list');

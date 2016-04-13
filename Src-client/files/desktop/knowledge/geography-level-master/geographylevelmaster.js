@@ -88,9 +88,9 @@ function loadGeographyLevelsList(countryval) {
 	if( geographyLevelsList[countryval] != undefined ){
 		levellist = geographyLevelsList[countryval]
 		for(var entity in levellist) {
-		   var levelPosition = levellist[entity]["level_position"];
-		   var levelName = levellist[entity]["level_name"];
-		   var levelId = levellist[entity]["level_id"];
+		   var levelPosition = levellist[entity]["l_position"];
+		   var levelName = levellist[entity]["l_name"];
+		   var levelId = levellist[entity]["l_id"];
 		   $("#level"+levelPosition).val(levelName);
 		   $("#levelid"+levelPosition).val(levelId);
 		}
@@ -102,7 +102,7 @@ function loadGeographyLevelsList(countryval) {
 }
 function validate(){
     if($("#country").val().trim().length==0){
-      displayMessage(country_required);
+      displayMessage(message.country_required);
     }else if($("#level1").val().trim().length==0){
       displayMessage(message.levelone_title_required);
     }
@@ -136,10 +136,10 @@ $("#submit").click(function(){
 				return false;
 			}else if($("#level"+k).val().trim() != ''){
 				if($("#levelid"+k).val() != ''){
-					passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val().trim(), "level_id" : parseInt($("#levelid"+k).val())});
+					passlevellist.push({"l_position" : k, "l_name" : $("#level"+k).val().trim(), "l_id" : parseInt($("#levelid"+k).val())});
 					isAdd = false;
 				}else{
-					passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val().trim(), "level_id" : null });
+					passlevellist.push({"l_position" : k, "l_name" : $("#level"+k).val().trim(), "l_id" : null });
 				}
 			}
 	   }

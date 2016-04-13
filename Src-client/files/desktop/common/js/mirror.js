@@ -616,8 +616,8 @@ function initMirror() {
         compliance["is_active"] = isActive;
         compliance["frequency"] = null;
         compliance["summary"] = null;
-        if ((complianceId !== null) && (complianceId !== '')) {
-            compliance["c_id"] = complianceId;
+        if ((cId !== null) && (cId !== '')) {
+            compliance["c_id"] = cId;
         }
         else {
             compliance["c_id"] = null
@@ -656,7 +656,7 @@ function initMirror() {
         mappingData["compliances"] = compliances;
         mappingData["g_ids"] = gIds;
         mappingData["mappings"] = mappings;
-        if (mappingId !== null) {
+        if (mId !== null) {
             mappingData["s_m_id"] = mId
         }
 
@@ -684,7 +684,7 @@ function initMirror() {
         mappingData["compliances"] = compliances;
         mappingData["g_ids"] = gIds;
         mappingData["mappings"] = mappings;
-        if (mappingId !== null) {
+        if (mId !== null) {
             mappingData["s_m_id"] = mId
         }
 
@@ -732,8 +732,8 @@ function initMirror() {
         if (reason == ""){
             reason = null
         }
-        if (notificationText == ""){
-            notificationText = null
+        if (nText == ""){
+            nText = null
         }
         dict["s_m_id"] = sMId;
         dict["s_provision"] = sProvision;

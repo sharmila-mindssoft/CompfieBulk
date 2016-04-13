@@ -347,11 +347,11 @@ function loadStatutoryLevels(countryval,domainval){
       var statutoryLevelList = statutoryLevelsList[countryval][domainval];
       var levelposition;
         for(var j in statutoryLevelList){
-          levelposition = statutoryLevelList[j]["level_position"];
+          levelposition = statutoryLevelList[j]["l_position"];
           var tableRow=$('#statutory-level-templates');
           var clone=tableRow.clone();
-          $('.statutory_title', clone).text(statutoryLevelList[j]["level_name"]);
-          $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="statutoryfilter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" maxlength="100" class="input-box addleft" placeholder="" style="width:90%" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+          $('.statutory_title', clone).text(statutoryLevelList[j]["l_name"]);
+          $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="statutoryfilter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" maxlength="100" class="input-box addleft" placeholder="" style="width:90%" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["l_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
           $('.tbody-statutory-level').append(clone);
         }
         var setlevelstage= 1;
@@ -747,22 +747,22 @@ function load_compliance(){
   complianceid = 0;
   for(var entity in compliances) {
     var display_repeats = 'Nil';
-    var edit_compliance_id = compliances[entity]["compliance_id"];
+    var edit_compliance_id = compliances[entity]["c_id"];
     var passStatus = '';
     var isActive = compliances[entity]["is_active"];
     var display_image = '';
     var complianceFrequency=null;
     var repeatsval = null;
-    if(compliances[entity]["repeats_every"] != null && compliances[entity]["repeats_type_id"] != null){
+    if(compliances[entity]["r_every"] != null && compliances[entity]["r_type_id"] != null){
       for (var rtype in complianceRepeatTypeList) {
-        if(complianceRepeatTypeList[rtype]["repeat_type_id"] == compliances[entity]["repeats_type_id"]){
+        if(complianceRepeatTypeList[rtype]["repeat_type_id"] == compliances[entity]["r_type_id"]){
           repeatsval = complianceRepeatTypeList[rtype]["repeat_type"];
         }
       }
-      display_repeats = compliances[entity]["repeats_every"] + " " + repeatsval;
+      display_repeats = compliances[entity]["r_every"] + " " + repeatsval;
     }
     for (var compliancefrequency in complianceFrequencyList) {
-      if(complianceFrequencyList[compliancefrequency]["frequency_id"] == compliances[entity]["frequency_id"]){
+      if(complianceFrequencyList[compliancefrequency]["frequency_id"] == compliances[entity]["f_id"]){
         complianceFrequency = complianceFrequencyList[compliancefrequency]["frequency"];
       }
     }
@@ -774,8 +774,8 @@ function load_compliance(){
     var tableRow=$('#compliance-templates .table-compliance .table-row');
     var clone=tableRow.clone();
     $('.sno', clone).text(complianceid+1);
-    $('.statutory-provision', clone).text(compliances[entity]["statutory_provision"]);
-    $('.task', clone).text(compliances[entity]["compliance_task"]);
+    $('.statutory-provision', clone).text(compliances[entity]["s_provision"]);
+    $('.task', clone).text(compliances[entity]["c_task"]);
     $('.description', clone).html('<abbr class="page-load" title="'+
           cDescription+'">'+partDescription+'</abbr>');
     $('.frequency', clone).text(complianceFrequency);
@@ -973,17 +973,17 @@ $("#temp_addcompliance").click(function() {
       statutory_dates, repeats_type, repeats_every, duration_type, duration, is_active, comp_id);
     compliances.push(compliance);
   }else{
-    compliances[comp_id]["statutory_provision"] = statutory_provision;
-    compliances[comp_id]["compliance_task"] = compliance_task;
+    compliances[comp_id]["s_provision"] = statutory_provision;
+    compliances[comp_id]["c_task"] = compliance_task;
     compliances[comp_id]["description"] = description;
-    compliances[comp_id]["document_name"] = compliance_document;
-    compliances[comp_id]["format_file_list"] = file_format;
-    compliances[comp_id]["penal_consequences"] = penal_consequences;
-    compliances[comp_id]["frequency_id"] = parseInt(compliance_frequency);
-    compliances[comp_id]["statutory_dates"] = statutory_dates;
-    compliances[comp_id]["repeats_type_id"] = repeats_type;
-    compliances[comp_id]["repeats_every"] = repeats_every;
-    compliances[comp_id]["duration_type_id"] = duration_type;
+    compliances[comp_id]["doc_name"] = compliance_document;
+    compliances[comp_id]["f_f_list"] = file_format;
+    compliances[comp_id]["p_consequences"] = penal_consequences;
+    compliances[comp_id]["f_id"] = parseInt(compliance_frequency);
+    compliances[comp_id]["statu_dates"] = statutory_dates;
+    compliances[comp_id]["r_type_id"] = repeats_type;
+    compliances[comp_id]["r_every"] = repeats_every;
+    compliances[comp_id]["d_type_id"] = duration_type;
     compliances[comp_id]["duration"] = duration;
     compliances[comp_id]["is_active"] = true;
     compliances[comp_id]["download_file_list"] = null;
@@ -1031,23 +1031,23 @@ $("#temp_addcompliance").click(function() {
 function temp_editcompliance(edit_id){
   $('#dayofmonth').prop("checked", true);
   $('#single_statutory_date').val('');
-  $('#statutory_provision').val(compliances[edit_id]["statutory_provision"]);
-  $('#compliance_task').val(compliances[edit_id]["compliance_task"]);
+  $('#statutory_provision').val(compliances[edit_id]["s_provision"]);
+  $('#compliance_task').val(compliances[edit_id]["c_task"]);
   $('#compliance_description').val(compliances[edit_id]["description"]);
-  $('#compliance_frequency').val(compliances[edit_id]["frequency_id"]);
-  $('#compliance_document').val(compliances[edit_id]["document_name"]);
-  $('#penal_consequences').val(compliances[edit_id]["penal_consequences"]);
-  $('#duration_type').val(compliances[edit_id]["duration_type_id"]);
+  $('#compliance_frequency').val(compliances[edit_id]["f_id"]);
+  $('#compliance_document').val(compliances[edit_id]["doc_name"]);
+  $('#penal_consequences').val(compliances[edit_id]["p_consequences"]);
+  $('#duration_type').val(compliances[edit_id]["d_type_id"]);
   $('#duration').val(compliances[edit_id]["duration"]);
-  $('#repeats_type').val(compliances[edit_id]["repeats_type_id"]);
-  $('#repeats_every').val(compliances[edit_id]["repeats_every"]);
+  $('#repeats_type').val(compliances[edit_id]["r_type_id"]);
+  $('#repeats_every').val(compliances[edit_id]["r_every"]);
 
-  if(compliances[edit_id]["format_file_list"] != null){
-    uploadFile = compliances[edit_id]["format_file_list"];
+  if(compliances[edit_id]["f_f_list"] != null){
+    uploadFile = compliances[edit_id]["f_f_list"];
     if(uploadFile != null && uploadFile.length > 0){
       uploadFile = uploadFile[0]
     }
-    var fullname = compliances[edit_id]["format_file_list"][0]["file_name"];
+    var fullname = compliances[edit_id]["f_f_list"][0]["file_name"];
     var concatfilename = '';
     if(fullname.indexOf('-') != -1){
       var fname= fullname.substr(0, fullname.indexOf('-'));
@@ -1060,8 +1060,8 @@ function temp_editcompliance(edit_id){
     $("#uploaded_filename").html( concatfilename + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' />")
   }
 
-  var compliance_frequency = compliances[edit_id]["frequency_id"];
-  statutory_dates = compliances[edit_id]["statutory_dates"];
+  var compliance_frequency = compliances[edit_id]["f_id"];
+  statutory_dates = compliances[edit_id]["statu_dates"];
   if(compliance_frequency == "1"){
     $('#statutory_date').val(statutory_dates[0]["statutory_date"]);
     $('#statutory_month').val(statutory_dates[0]["statutory_month"]);
@@ -1171,8 +1171,8 @@ function make_breadcrumbs2(){
 function make_breadcrumbs3(){
   var compliance_name = '';
   for(var entity in compliances) {
-    var doc_name = compliances[entity]["document_name"];
-    var statu_provision = compliances[entity]["statutory_provision"];
+    var doc_name = compliances[entity]["doc_name"];
+    var statu_provision = compliances[entity]["s_provision"];
     var breadcrumbs_text = '';
     if(doc_name != null){
       breadcrumbs_text = doc_name + ' - ' + statu_provision;
@@ -1191,11 +1191,11 @@ function loadGeographyLevels(sm_countryid){
   var geographyLevelList = geographyLevelsList[sm_countryid];
   var levelposition;
   for(var j in geographyLevelList){
-    levelposition = geographyLevelList[j]["level_position"];
+    levelposition = geographyLevelList[j]["l_position"];
     var tableRow=$('#geography-level-templates');
     var clone=tableRow.clone();
-    $('.title', clone).text(geographyLevelList[j]["level_name"]);
-    $('.levelvalue', clone).html('<input type="text" class="filter-text-box" id="filter_geography'+levelposition+'" onkeyup="filter_geography('+levelposition+')"> <ul id="ulist'+levelposition+'"></ul><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+    $('.title', clone).text(geographyLevelList[j]["l_name"]);
+    $('.levelvalue', clone).html('<input type="text" class="filter-text-box" id="filter_geography'+levelposition+'" onkeyup="filter_geography('+levelposition+')"> <ul id="ulist'+levelposition+'"></ul><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["l_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
     $('.tbody-geography-level').append(clone);
   }
   var setlevelstage= 1;
@@ -1640,8 +1640,8 @@ function edit_geography(country,geographyids_edit){
     var displaytext = displaytext;
     var geographyLevelList = geographyLevelsList[country];
     for(glevel in geographyLevelList){
-      if(level_id == geographyLevelList[glevel]["level_id"]){
-        var levelposition = geographyLevelList[glevel]["level_position"];
+      if(level_id == geographyLevelList[glevel]["l_id"]){
+        var levelposition = geographyLevelList[glevel]["l_position"];
       }
     }
     $('#'+combineid).addClass( "active" );

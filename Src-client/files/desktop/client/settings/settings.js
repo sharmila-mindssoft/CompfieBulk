@@ -92,16 +92,16 @@ function loadClientProfileList(profiles){
 
 function validate(){
   if($("input[name=2levels]:checked").val() == ''){
-    displayMessage('Level of Approval is Required');
+    displayMessage(message.approval_level);
   }
   else if($("#assigneeval").val().trim().length==0){
-    displayMessage('Reminder to Assignee is Required');
+    displayMessage(message.reminder_assignee_required);
   }
   else if($("#concurrenceapprovalval").val().trim().length==0){
-    displayMessage('Escalation Reminders to Concurrence & Approval Person is Required');
+    displayMessage(message.escalationreminder_concurrence_approval_required);
   }
   else if($("#allval").val().trim().length==0){
-    displayMessage('Escalation Reminders to Assignee, Concurrence & Approval is person');
+    displayMessage(message.escalationreminder_all);
   }
   else{
     displayMessage('');
@@ -120,7 +120,7 @@ $("#submit").click(function(){
 
 if(validate()){
     function onSuccess(response){
-        displayMessage('Record Updated Successfully');
+        displayMessage(message.record_updated);
       }
     function onFailure(error) {
         displayMessage = error

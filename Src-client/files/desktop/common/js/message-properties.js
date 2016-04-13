@@ -15,6 +15,7 @@ var message = {
 	'invalid_userid' : 'Invalid User Id',
 	'cpassword_required' : 'Current Password Required',
 	'npassword_required' : 'New Password Required',
+	'conpassword_required' : 'Confirm Password Required',
 	'password_notmatch' : 'New Password & Confirm Password Do Not Match',
 	'password_changed_success' : 'Password Changed Successfully',
 	'invalid_cpassword' : 'Invalid Current Password',
@@ -88,9 +89,13 @@ var message = {
 	'duedate_required' : 'Due Date Required',
 	'compliancedate_required' : 'Compliance Date Required',
 	'validity_required' : 'Validity Date Required',
-	'act_required' : 'Act Required'
-};
+	'act_required' : 'Act Required',
+	'approval_level' : 'Level of Approval is Required',
+	'reminder_assignee_required' : 'Reminder to Assignee is Required',
+	'escalationreminder_concurrence_approval_required' : 'Escalation Reminders to Concurrence & Approval Person is Required',
+	'escalationreminder_all' : 'Escalation Reminders to Assignee, Concurrence & Approval is Required'
 
+};
 
 function clearMessage() {
   $(".error-message").hide();
