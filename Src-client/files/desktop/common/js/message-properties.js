@@ -94,7 +94,6 @@ var message = {
 	'reminder_assignee_required' : 'Reminder to Assignee is Required',
 	'escalationreminder_concurrence_approval_required' : 'Escalation Reminders to Concurrence & Approval Person is Required',
 	'escalationreminder_all' : 'Escalation Reminders to Assignee, Concurrence & Approval is Required'
-
 };
 
 function clearMessage() {

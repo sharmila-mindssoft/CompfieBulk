@@ -73,7 +73,11 @@ function loadClientProfileList(profiles){
         var clone = tableRow.clone();
         sno = sno + 1;
         var seating_unit = '-';
-        if(lists[key]['seating_unit_name'] != null) seating_unit = lists[key]['seating_unit_name'];
+        var address = '';
+        if(lists[key]['seating_unit_name'] != null){
+          seating_unit = lists[key]['seating_unit_name'];
+          address = lists[key]['address'];
+        } 
         $('.sno', clone).text(sno);
         $('.employee', clone).text(lists[key]['user_name']);
         $('.email', clone).text(lists[key]['email_id']);
@@ -82,9 +86,14 @@ function loadClientProfileList(profiles){
         }
         else{
           $('.mobile-number', clone).text(lists[key]['contact_no']);
-        }     
-        $('.seating-unit', clone).text(seating_unit);
-        $('.unit-address', clone).text(lists[key]['address']);      
+        }
+        $('.seating-unit span', clone).html(seating_unit);
+        if(seating_unit != '-'){
+          $('.seating-unit abbr', clone).attr("title", lists[key]['address']);   
+        }else{
+          $('.seating-unit abbr', clone).text(''); 
+        }  
+        $('.unit-address', clone).text(address);      
         $('.tbody-clientprofile-list').append(clone);
     });
         
@@ -192,4 +201,19 @@ $(function() {
       this.value = this.value.replace(/[^0-9]/g, '');
   });
 
+});
+
+$( document ).tooltip({
+    position: {
+        my: "center bottom-20",
+        at: "center top",
+        using: function( position, feedback ) {
+            $( this ).css( position );
+            $( "<div>" )
+                .addClass( "arrow" )
+                .addClass( feedback.vertical )
+                .addClass( feedback.horizontal )
+                .appendTo( this );
+        }
+    }
 });

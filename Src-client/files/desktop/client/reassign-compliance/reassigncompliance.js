@@ -218,7 +218,6 @@ function load_allcompliances(userId, userName){
   });
 }
 
-
 function load_UserCompliances(uCompliances, uId){
   for( compliance in uCompliances){
     var userName = "";

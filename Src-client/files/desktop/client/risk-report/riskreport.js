@@ -215,7 +215,6 @@ $("#export").click(function(){
   loadCompliance("export")
 });
 
-
 //Autocomplete Script Starts
 //Hide list items after select
 $(".hidemenu").click(function(){
