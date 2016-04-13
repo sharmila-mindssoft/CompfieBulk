@@ -4,6 +4,11 @@ __all__ = [
     "process_client_dashboard_requests"
 ]
 
+
+########################################################
+# To Redirect the requests to the corresponding 
+# functions
+########################################################
 def process_client_dashboard_requests(request, db) :
     session_token = request.session_token
     client_info = session_token.split("-")
@@ -155,6 +160,11 @@ def process_update_notification_status(db, request, session_user, client_id):
         session_user, client_id)
     return dashboard.UpdateNotificationStatusSuccess()
 
+
+########################################################
+# To get data to populate in assignee wise compliance
+# chart filters
+########################################################
 def process_assigneewise_compliances_filters(db, request, session_user, client_id):
     user_company_info = db.get_user_company_details( session_user, client_id)
     unit_ids = user_company_info[0]
@@ -174,6 +184,11 @@ def process_assigneewise_compliances_filters(db, request, session_user, client_i
         units=unit_list, users=users_list, domains=domain_list
     )
 
+
+########################################################
+# To retrieve data for assignee wise compliances chart
+# based on the received filters
+########################################################
 def process_assigneewise_compliances(db, request, session_user, client_id):
     country_id = request.country_id
     business_group_id = request.business_group_id
@@ -189,6 +204,10 @@ def process_assigneewise_compliances(db, request, session_user, client_id):
         chart_data=chart_data
     )
 
+########################################################
+# To get the detailed info of the selected domain in the
+# assignee wise compliances chart
+########################################################
 def process_assigneewise_compliances_drilldown(
     db, request, session_user, client_id
 ):
@@ -214,6 +233,11 @@ def process_assigneewise_compliances_drilldown(
         drill_down_data=drill_down_data
     )
 
+########################################################
+# To check whether the contract of the given client 
+# expired or not and to get the notification, reminder
+# and escalation count
+########################################################
 def check_contract_expiration(
     db, request, session_user, client_id
 ):
