@@ -93,7 +93,7 @@ function ChartInput () {
     this.units = [];
     this.chart_year = 0; // previous_year = 1, current_year = 0, next_year = -1
     this.current_year = (new Date()).getFullYear();
-    this.range_index = 1;
+    this.range_index = 7;
 
 
     this.setChartType = function (v) {
@@ -385,7 +385,7 @@ function ChartInput () {
         return this.range_index;
     }
     this.resetRangeIndex = function() {
-        this.range_index = 2;
+        this.range_index = 7;
     }
 }
 
@@ -1096,7 +1096,7 @@ function showComplianceApplicabilityDrillDownRecord(data, type){
     $(".table-drilldown-list tbody").remove();
     $(".escalation-drilldown-list .td-escalation").empty();
 
-    FULLARRAYLIST = [];        
+    FULLARRAYLIST = [];
     SNO = 1;
     STARTCOUNT = 0;
     ENDCOUNT = 0;
@@ -2887,7 +2887,7 @@ function fullnamestatus(val){
     }
     else if(val == "inprogress"){
         fullname = "Inprogress"
-    }       
+    }
     else if(val == "delayed"){
         fullname = "Delayed"
     }
@@ -3681,12 +3681,12 @@ function initializeFilters () {
     $(".btn-next").on("click", function() {
         range = chartInput.getRangeIndex();
         var data = [];
-        for (i = range; i < range + 2; i++ ) {
+        for (i = range; i < range + 7; i++ ) {
             if (COMPLIANCE_STATUS_DATA[i] !== undefined)
                 data.push(COMPLIANCE_STATUS_DATA[i])
         }
 
-        chartInput.setRangeIndex(2);
+        chartInput.setRangeIndex(7);
         updateComplianceStatusChart(data);
         $(".btn-previous").show();
         if (range >= COMPLIANCE_STATUS_DATA.length) {
@@ -3695,14 +3695,14 @@ function initializeFilters () {
     });
     $(".btn-previous").on("click", function() {
         $(".btn-next").show();
-        chartInput.setRangeIndex(-2);
+        chartInput.setRangeIndex(-7);
         range = chartInput.getRangeIndex();
         var data = [];
-        for (i = range -2 ; i < range; i++ ) {
+        for (i = range -7; i < range; i++ ) {
             if (COMPLIANCE_STATUS_DATA[i] !== undefined)
                 data.push(COMPLIANCE_STATUS_DATA[i])
         }
-        if (range == 2) {
+        if (range == 7) {
             $(".btn-previous").hide();
         }
         updateComplianceStatusChart(data);
