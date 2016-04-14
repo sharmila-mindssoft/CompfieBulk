@@ -520,7 +520,7 @@ def notify_before_contract_period(db, client_id):
     group_name = rows[0][0]
 
     notification_text = '''Your contract with Compfie is about to expire. \
-    Kindly renew your contract to avail the services continuosuly. Before contract expiration \
+    Kindly renew your contract to avail the services continuously. Before contract expiration \
     You can download documents of %s <a href="%s">here </a> ''' % (
         group_name, download_link
     )

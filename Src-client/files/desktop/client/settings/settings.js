@@ -73,7 +73,11 @@ function loadClientProfileList(profiles){
         var clone = tableRow.clone();
         sno = sno + 1;
         var seating_unit = '-';
-        if(lists[key]['seating_unit_name'] != null) seating_unit = lists[key]['seating_unit_name'];
+        var address = '';
+        if(lists[key]['seating_unit_name'] != null){
+          seating_unit = lists[key]['seating_unit_name'];
+          address = lists[key]['address'];
+        } 
         $('.sno', clone).text(sno);
         $('.employee', clone).text(lists[key]['user_name']);
         $('.email', clone).text(lists[key]['email_id']);
@@ -82,9 +86,14 @@ function loadClientProfileList(profiles){
         }
         else{
           $('.mobile-number', clone).text(lists[key]['contact_no']);
-        }     
-        $('.seating-unit', clone).text(seating_unit);
-        $('.unit-address', clone).text(lists[key]['address']);      
+        }
+        $('.seating-unit span', clone).html(seating_unit);
+        if(seating_unit != '-'){
+          $('.seating-unit abbr', clone).attr("title", lists[key]['address']);   
+        }else{
+          $('.seating-unit abbr', clone).text(''); 
+        }  
+        $('.unit-address', clone).text(address);      
         $('.tbody-clientprofile-list').append(clone);
     });
         
@@ -92,16 +101,16 @@ function loadClientProfileList(profiles){
 
 function validate(){
   if($("input[name=2levels]:checked").val() == ''){
-    displayMessage('Level of Approval is Required');
+    displayMessage(message.approval_level);
   }
   else if($("#assigneeval").val().trim().length==0){
-    displayMessage('Reminder to Assignee is Required');
+    displayMessage(message.reminder_assignee_required);
   }
   else if($("#concurrenceapprovalval").val().trim().length==0){
-    displayMessage('Escalation Reminders to Concurrence & Approval Person is Required');
+    displayMessage(message.escalationreminder_concurrence_approval_required);
   }
   else if($("#allval").val().trim().length==0){
-    displayMessage('Escalation Reminders to Assignee, Concurrence & Approval is person');
+    displayMessage(message.escalationreminder_all);
   }
   else{
     displayMessage('');
@@ -120,7 +129,7 @@ $("#submit").click(function(){
 
 if(validate()){
     function onSuccess(response){
-        displayMessage('Record Updated Successfully');
+        displayMessage(message.record_updated);
       }
     function onFailure(error) {
         displayMessage = error
@@ -192,4 +201,19 @@ $(function() {
       this.value = this.value.replace(/[^0-9]/g, '');
   });
 
+});
+
+$( document ).tooltip({
+    position: {
+        my: "center bottom-20",
+        at: "center top",
+        using: function( position, feedback ) {
+            $( this ).css( position );
+            $( "<div>" )
+                .addClass( "arrow" )
+                .addClass( feedback.vertical )
+                .addClass( feedback.horizontal )
+                .appendTo( this );
+        }
+    }
 });

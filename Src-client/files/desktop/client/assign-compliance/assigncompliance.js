@@ -324,7 +324,7 @@ function load_secondwizard(){
     $('.compliance_count').text('');
   }
 
-  if(totalRecord <= statutoriesCount){
+  if(totalRecord <= statutoriesCount && statutoriesCount > 1){
     $('#pagination').hide();
     $('#activate-step-3').show();
     $(document).ready(function($) {
@@ -343,8 +343,7 @@ function load_secondwizard(){
   }else{
     $('#activate-step-3').hide();
   }
-
-  if(statutoriesNameList.length ==0){
+  /*if(statutoriesNameList.length ==0){
     $('#pagination').hide();
     $('#activate-step-3').show();
     $('#accordion').find('.accordion-toggle').click(function(){
@@ -357,7 +356,7 @@ function load_secondwizard(){
         accordionstatus = true;
       }
     });
-  }
+  }*/
 }
 
 $('#pagination').click(function(){

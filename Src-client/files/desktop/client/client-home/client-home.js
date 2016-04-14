@@ -345,7 +345,6 @@ function ChartInput () {
     }
 
     this.getUnits = function () {
-        console.log(this.units.length)
         if (this.units.length > 0)
             return copyArray(this.units);
         else {
@@ -385,6 +384,9 @@ function ChartInput () {
     this.getRangeIndex = function () {
         return this.range_index;
     }
+    this.resetRangeIndex = function() {
+        this.range_index = 7;
+    }
 }
 
 var chartInput = new ChartInput();
@@ -413,9 +415,7 @@ function parseComplianceStatusApiInput () {
     var domainIds = chartInput.getDomains();
     // TODO: Validation of empty Country / Domain list.
     var filter_type = chartInput.getFilterType();
-    console.log(filter_type)
     var filterIds = getFilterIds(filter_type);
-    console.log(filterIds)
     var filterType = filter_type.replace("_", "-");
     filterType = hyphenatedToUpperCamelCase(filterType);
     var fromDate = chartInput.getFromDate();
@@ -545,6 +545,7 @@ function prepareComplianceStatusChartData (chart_data) {
     var yAxisDelayed = [];
     var yAxisInprogress = [];
     var yAxisNotComplied = [];
+    console.log(chart_data)
     for (var i = 0; i < chart_data.length; i++) {
         var chartData = chart_data[i];
         var filter_type_id = chartData["filter_type_id"];
@@ -903,14 +904,6 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
     }
 }
 
-function updateCharts () {
-    var chartType = chartInput.getChartType();
-    if (chartType == "compliance_status") {
-        updateComplianceStatusChart(COMPLIANCE_STATUS_DATA);
-        hideLoader();
-    }
-}
-
 function updateDrillDown(status, data, filterTypeName) {
     $(".graph-container.compliance-status").hide();
     $(".graph-selections-bottom").hide();
@@ -1103,7 +1096,7 @@ function showComplianceApplicabilityDrillDownRecord(data, type){
     $(".table-drilldown-list tbody").remove();
     $(".escalation-drilldown-list .td-escalation").empty();
 
-    FULLARRAYLIST = [];        
+    FULLARRAYLIST = [];
     SNO = 1;
     STARTCOUNT = 0;
     ENDCOUNT = 0;
@@ -2894,7 +2887,7 @@ function fullnamestatus(val){
     }
     else if(val == "inprogress"){
         fullname = "Inprogress"
-    }       
+    }
     else if(val == "delayed"){
         fullname = "Delayed"
     }
@@ -3028,11 +3021,24 @@ function loadComplianceStatusChart () {
         function (status, data) {
             // TODO: API Error Validation
             COMPLIANCE_STATUS_DATA = data["chart_data"];
-            data = data["chart_data"];
-            //console.log(COMPLIANCE_STATUS_DATA)
-            updateComplianceStatusChart(data.splice(0, 7));
-
+            data1 = [];
+            for (i=0; i<2; i++) {
+                if (COMPLIANCE_STATUS_DATA.length > i)
+                    data1.push(COMPLIANCE_STATUS_DATA[i]);
+            }
+            updateComplianceStatusChart(data1);
+            console.log(COMPLIANCE_STATUS_DATA.length)
+            chartInput.resetRangeIndex()
             hideLoader();
+            range = chartInput.getRangeIndex();
+            console.log(range)
+            if (COMPLIANCE_STATUS_DATA.length <= range ){
+                hidePreviousNext();
+            }
+            else {
+                showPreviousNext();
+            }
+            $(".btn-previous").hide();
         }
     );
 }
@@ -3646,12 +3652,6 @@ function initializeFilters () {
     $(".common-filter .btn-go input").on("click", function () {
         var chart_type = chartInput.getChartType();
         loadCharts()
-        // if (chart_type == "compliance_status") {
-        //     updateCharts();
-        // }
-        // else {
-        //     loadCharts();
-        // }
     });
 
     $(".specific-filter .btn-go input").on("click", function () {
@@ -3681,28 +3681,29 @@ function initializeFilters () {
     $(".btn-next").on("click", function() {
         range = chartInput.getRangeIndex();
         var data = [];
-        if (range == 7) {
-            data1 = COMPLIANCE_STATUS_DATA;
-            data = data1.splice(0, range);
+        for (i = range; i < range + 7; i++ ) {
+            if (COMPLIANCE_STATUS_DATA[i] !== undefined)
+                data.push(COMPLIANCE_STATUS_DATA[i])
         }
-        else {
-            chartInput.setRangeIndex(7);
-            data1 = COMPLIANCE_STATUS_DATA;
-            data = data1.splice(range, range+7);
-        }
+
+        chartInput.setRangeIndex(7);
         updateComplianceStatusChart(data);
+        $(".btn-previous").show();
+        if (range >= COMPLIANCE_STATUS_DATA.length) {
+            $(".btn-next").hide();
+        }
     });
     $(".btn-previous").on("click", function() {
+        $(".btn-next").show();
+        chartInput.setRangeIndex(-7);
         range = chartInput.getRangeIndex();
         var data = [];
-        if (range == 7) {
-            data1 = COMPLIANCE_STATUS_DATA;
-            data = data1.splice(0, range);
+        for (i = range -7; i < range; i++ ) {
+            if (COMPLIANCE_STATUS_DATA[i] !== undefined)
+                data.push(COMPLIANCE_STATUS_DATA[i])
         }
-        else {
-            chartInput.setRangeIndex(range - 7);
-            data1 = COMPLIANCE_STATUS_DATA;
-            data = data1.splice(range-7, range);
+        if (range == 7) {
+            $(".btn-previous").hide();
         }
         updateComplianceStatusChart(data);
     });

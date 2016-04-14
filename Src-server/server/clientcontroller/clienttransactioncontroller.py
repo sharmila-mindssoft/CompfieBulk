@@ -4,6 +4,10 @@ __all__ = [
     "process_client_transaction_requests"
 ]
 
+########################################################
+# To Redirect the requests to the corresponding 
+# functions
+########################################################
 def process_client_transaction_requests(request, db) :
     client_info = request.session_token.split("-")
     session_token = request.session_token
@@ -126,6 +130,10 @@ def process_save_assigned_compliance(db, request, session_user, client_id):
         request, session_user, client_id
     )
 
+########################################################
+# To get data to populate the completed task -
+# current year form wizards
+########################################################
 def process_get_past_records_form_data(db, request, session_user, client_id):
     countries = db.get_countries_for_user(session_user, client_id)
     row = db.get_user_company_details(session_user, client_id)
@@ -147,6 +155,10 @@ def process_get_past_records_form_data(db, request, session_user, client_id):
         compliance_frequency=compliance_frequency
     )
 
+
+########################################################
+# To get the compliances under the selected filters
+########################################################
 def process_get_statutories_by_unit(
         db, request, session_user, client_id
 ):
@@ -167,6 +179,9 @@ def process_get_statutories_by_unit(
         users=users
     )
 
+########################################################
+# To validate and save a past record entry
+########################################################
 def process_save_past_records(
         db, request, session_user, client_id
     ):
@@ -200,6 +215,10 @@ def process_save_past_records(
             return clienttransactions.SavePastRecordsFailed(error=error)
     return clienttransactions.SavePastRecordsSuccess()
 
+########################################################
+# To get the list of compliances to be approved by the
+# given user
+########################################################
 def process_get_compliance_approval_list(db, request, session_user, client_id):
     compliance_approval_list = db.get_compliance_approval_list(
         session_user, client_id
@@ -216,6 +235,10 @@ def process_get_compliance_approval_list(db, request, session_user, client_id):
     )
 
 
+########################################################
+# To handle approve, concur, or reject request of a 
+# compliance
+########################################################
 def process_approve_compliance(db, request, session_user, client_id):
     compliance_history_id = request.compliance_history_id
     status = request.approval_status

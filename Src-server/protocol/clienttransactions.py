@@ -1,33 +1,21 @@
-import json
-from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
-    parse_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
-    parse_structure_UnsignedIntegerType_32,
-    parse_structure_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE,
     parse_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
     parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
     parse_structure_VectorType_RecordType_core_ClientBusinessGroup,
-    parse_structure_VectorType_RecordType_core_BusinessGroup,
-    parse_structure_VectorType_RecordType_core_Statutory,
     parse_structure_VectorType_RecordType_clienttransactions_REASSIGNED_COMPLIANCE,
     parse_structure_VectorType_RecordType_clienttransactions_USER_WISE_UNITS,
-    parse_structure_VectorType_RecordType_clienttransactions_USERWISESTATUTORIES,
     parse_structure_CustomTextType_500,
     parse_structure_VectorType_RecordType_clienttransactions_PAST_RECORD_COMPLIANCE,
     parse_structure_VectorType_RecordType_core_Country,
     parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
-    parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     parse_structure_VectorType_RecordType_clienttransactions_APPROVALCOMPLIANCE,
     parse_structure_CustomTextType_50,
-    parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit,
     parse_structure_VariantType_clienttransactions_Request,
-    parse_structure_VectorType_RecordType_core_AssignedStatutory,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_CustomTextType_50,
     parse_structure_VectorType_RecordType_core_ClientDivision,
     parse_structure_VectorType_RecordType_core_StatutoryDate,
-    parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     parse_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE,
     parse_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST,
     parse_structure_CustomTextType_250,
@@ -37,17 +25,14 @@ from protocol.parse_structure import (
     parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     parse_structure_CustomIntegerType_1_10,
     parse_structure_CustomTextType_20,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_AssignedStatutory,
     parse_structure_VectorType_RecordType_clienttransactions_ComplianceApplicability,
     parse_structure_VectorType_RecordType_clienttransactions_UnitStatutoryCompliances,
     parse_structure_Bool,
     parse_structure_OptionalType_Bool,
     parse_structure_OptionalType_CustomTextType_500,
-    parse_structure_VectorType_RecordType_clienttransactions_ApplicableCompliance,
     parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance,
     parse_structure_VectorType_RecordType_core_ComplianceFrequency,
     parse_structure_CustomTextType_100,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
@@ -55,19 +40,14 @@ from protocol.parse_structure import (
     parse_structure_VectorType_CustomTextType_100,
     parse_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE,
-    parse_structure_SignedIntegerType_8,
     parse_structure_OptionalType_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS,
     parse_structure_OptionalType_CustomTextType_100,
     parse_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY,
     parse_structure_UnsignedIntegerType_32,
     parse_structure_VectorType_RecordType_core_User,
-    parse_structure_OptionalType_VectorType_RecordType_core_FileList,
-    parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory,
     parse_structure_OptionalType_VectorType_CustomTextType_20,
-    parse_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES,
     parse_structure_VectorType_RecordType_core_COMPLIANCE_APPROVAL_STATUS,
-    parse_structure_VectorType_CustomTextType_500,
     parse_structure_OptionalType_VectorType_CustomTextType_500,
     parse_structure_VectorType_RecordType_clienttransactions_PastRecordUnits,
     parse_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500,
@@ -78,33 +58,22 @@ from protocol.parse_structure import (
     parse_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES
 )
 from protocol.to_structure import (
-    to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
     to_structure_SignedIntegerType_8,
-    to_structure_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE,
     to_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES,
     to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
     to_structure_VectorType_RecordType_core_ClientBusinessGroup,
-    to_structure_VectorType_RecordType_core_BusinessGroup,
-    to_structure_VectorType_RecordType_core_Statutory,
     to_structure_VectorType_RecordType_clienttransactions_REASSIGNED_COMPLIANCE,
     to_structure_VectorType_RecordType_clienttransactions_USER_WISE_UNITS,
-    to_structure_VectorType_RecordType_clienttransactions_USERWISESTATUTORIES,
     to_structure_CustomTextType_500,
     to_structure_VectorType_RecordType_clienttransactions_PAST_RECORD_COMPLIANCE,
     to_structure_VectorType_RecordType_core_Country,
-    to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
-    to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     to_structure_VectorType_RecordType_clienttransactions_APPROVALCOMPLIANCE,
     to_structure_CustomTextType_50,
-    to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit,
     to_structure_VariantType_clienttransactions_Request,
-    to_structure_VectorType_RecordType_core_AssignedStatutory,
     to_structure_VectorType_SignedIntegerType_8,
     to_structure_VectorType_CustomTextType_50,
     to_structure_VectorType_RecordType_core_ClientDivision,
     to_structure_VectorType_RecordType_core_StatutoryDate,
-    to_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     to_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE,
     to_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST,
     to_structure_CustomTextType_250,
@@ -113,45 +82,31 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Domain,
     to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     to_structure_CustomIntegerType_1_10, to_structure_CustomTextType_20,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_AssignedStatutory,
     to_structure_VectorType_RecordType_clienttransactions_ComplianceApplicability,
     to_structure_VectorType_RecordType_clienttransactions_UnitStatutoryCompliances,
     to_structure_Bool,
     to_structure_OptionalType_Bool,
     to_structure_OptionalType_CustomTextType_500,
-    to_structure_VectorType_RecordType_clienttransactions_ApplicableCompliance,
     to_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance,
     to_structure_UnsignedIntegerType_32,
     to_structure_CustomTextType_100,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     to_structure_OptionalType_CustomTextType_20,
-    to_structure_VectorType_RecordType_core_Unit,
-    to_structure_VectorType_RecordType_core_Level1Statutory,
-    to_structure_VectorType_RecordType_core_ClientUnit,
-    to_structure_RecordType_client_transactions_IndustryWiseUnits,
     to_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits,
     to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_OptionalType_CustomTextType_50,
-    to_structure_VectorType_RecordType_core_ComplianceApprovalStatus,
     to_structure_VectorType_RecordType_core_ComplianceFrequency,
     to_structure_OptionalType_SignedIntegerType_8,
     to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
-    to_structure_OptionalType_VectorType_RecordType_core_FileList,
     to_structure_VectorType_CustomTextType_100,
     to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE,
-    to_structure_SignedIntegerType_8,
     to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS,
     to_structure_OptionalType_CustomTextType_100,
     to_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY,
-    to_structure_UnsignedIntegerType_32,
     to_structure_VectorType_RecordType_core_User,
     to_structure_OptionalType_VectorType_RecordType_core_FileList,
-    to_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory,
     to_structure_OptionalType_VectorType_CustomTextType_20,
-    to_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES,
     to_structure_VectorType_RecordType_core_COMPLIANCE_APPROVAL_STATUS,
-    to_structure_VectorType_CustomTextType_500,
     to_structure_OptionalType_VectorType_CustomTextType_500,
     to_structure_VectorType_RecordType_clienttransactions_PastRecordUnits,
     to_structure_VectorType_UnsignedIntegerType_32,
@@ -159,7 +114,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_UnsignedIntegerType_32,
     to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings,
     to_structure_Text,
-    to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES
+    to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
+    to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS
 )
 
 #
@@ -264,20 +220,20 @@ class UpdateStatutoryCompliance(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "client_statutory_id", "applicable_status", "not_applicable_remarks",
-            "compliance_id", "compliance_opted_status", "compliance_remarks"
+            "c_s_id", "a_status", "n_a_remarks",
+            "comp_id", "c_o_status", "c_remarks"
         ])
-        client_statutory_id = data.get("client_statutory_id")
+        client_statutory_id = data.get("c_s_id")
         client_statutory_id = parse_structure_UnsignedIntegerType_32(client_statutory_id)
-        applicable_status = data.get("applicable_status")
+        applicable_status = data.get("a_status")
         applicable_status = parse_structure_Bool(applicable_status)
-        not_applicable_remarks = data.get("not_applicable_remarks")
+        not_applicable_remarks = data.get("n_a_remarks")
         not_applicable_remarks = parse_structure_OptionalType_CustomTextType_500(not_applicable_remarks)
-        compliance_id = data.get("compliance_id")
+        compliance_id = data.get("comp_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
-        compliance_opted_status = data.get("compliance_opted_status")
+        compliance_opted_status = data.get("c_o_status")
         compliance_opted_status = parse_structure_Bool(compliance_opted_status)
-        compliance_remarks = data.get('compliance_remarks')
+        compliance_remarks = data.get('c_remarks')
         compliance_remarks = parse_structure_OptionalType_CustomTextType_500(compliance_remarks)
         return UpdateStatutoryCompliance(
             client_statutory_id, applicable_status, not_applicable_remarks,
@@ -286,12 +242,12 @@ class UpdateStatutoryCompliance(object):
 
     def to_structure(self):
         return {
-            "client_statutory_id": to_structure_UnsignedIntegerType_32(self.client_statutory_id),
-            "applicable_status": to_structure_Bool(self.applicable_status),
-            "not_applicable_remarks": to_structure_OptionalType_CustomTextType_500(self.not_applicable_remarks),
-            "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
-            "compliance_opted_status": to_structure_Bool(self.compliance_opted_status),
-            "compliance_remarks": to_structure_OptionalType_CustomTextType_500(self.compliance_remarks)
+            "c_s_id": to_structure_UnsignedIntegerType_32(self.client_statutory_id),
+            "a_status": to_structure_Bool(self.applicable_status),
+            "n_a_remarks": to_structure_OptionalType_CustomTextType_500(self.not_applicable_remarks),
+            "comp_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
+            "c_o_status": to_structure_Bool(self.compliance_opted_status),
+            "c_remarks": to_structure_OptionalType_CustomTextType_500(self.compliance_remarks)
         }
 
 class UpdateStatutorySettings(Request):
@@ -303,12 +259,12 @@ class UpdateStatutorySettings(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["password", "unit_name", "unit_id", "statutories"])
+        data = parse_dictionary(data, ["password", "u_name", "u_id", "statutories"])
         password = data.get("password")
         password = parse_structure_CustomTextType_50(password)
-        unit_name = data.get("unit_name")
+        unit_name = data.get("u_name")
         unit_name = parse_structure_CustomTextType_250(unit_name)
-        unit_id = data.get("unit_id")
+        unit_id = data.get("u_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         statutories = data.get("statutories")
         statutories = parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance(statutories)
@@ -317,8 +273,8 @@ class UpdateStatutorySettings(Request):
     def to_inner_structure(self):
         return {
             "password": to_structure_VectorType_CustomTextType_50(self.password),
-            "unit_name": to_structure_CustomTextType_250(self.unit_name),
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
+            "u_name": to_structure_CustomTextType_250(self.unit_name),
+            "u_id": to_structure_SignedIntegerType_8(self.unit_id),
             "statutories": to_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance(self.statutories)
         }
 
@@ -346,10 +302,10 @@ class GetComplianceForUnits(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["unit_ids", "domain_id"])
-        unit_ids = data.get("unit_ids")
+        data = parse_dictionary(data, ["u_ids", "d_id"])
+        unit_ids = data.get("u_ids")
         unit_ids = parse_structure_VectorType_UnsignedIntegerType_32(unit_ids)
-        domain_id = data.get("domain_id")
+        domain_id = data.get("d_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         record_count = data.get("record_count")
         record_count = parse_structure_UnsignedIntegerType_32(record_count)
@@ -357,10 +313,10 @@ class GetComplianceForUnits(Request):
 
     def to_inner_structure(self):
         return {
-            "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(
+            "u_ids": to_structure_VectorType_UnsignedIntegerType_32(
                 self.unit_ids
             ),
-            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
+            "d_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
@@ -374,24 +330,24 @@ class NewUnitSettings(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "user_id", "unit_ids", "domain_id", "country_id"
+            "user_id", "u_ids", "d_id", "c_id"
         ])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
-        unit_ids = data.get("unit_ids")
+        unit_ids = data.get("u_ids")
         unit_ids = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(unit_ids)
-        domain_id = data.get("domain_id")
+        domain_id = data.get("d_id")
         domain_id = parse_structure_OptionalType_UnsignedIntegerType_32(domain_id)
-        country_id = data.get("country_id")
+        country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         return NewUnitSettings(user_id, unit_ids, domain_id, country_id)
 
     def to_structure(self):
         return {
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "unit_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.unit_ids),
-            "domain_id": to_structure_OptionalType_UnsignedIntegerType_32(self.domain_id),
-            "country_id": to_structure_UnsignedIntegerType_32(self.country_id)
+            "u_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.unit_ids),
+            "d_id": to_structure_OptionalType_UnsignedIntegerType_32(self.domain_id),
+            "c_id": to_structure_UnsignedIntegerType_32(self.country_id)
         }
 
 class SaveAssignedCompliance(Request):
@@ -414,28 +370,28 @@ class SaveAssignedCompliance(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "country_id", "assignee", "assignee_name",
-            "concurrence_person", "concurrence_person_name",
-            "approval_person", "approval_person_name", "compliances",
-            "new_units"
+            "c_id", "assignee", "a_name",
+            "con_person", "con_person_name",
+            "a_person", "a_person_name", "compliances",
+            "n_units"
         ])
-        country_id = data.get("country_id")
+        country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         assignee = data.get("assignee")
         assignee = parse_structure_UnsignedIntegerType_32(assignee)
-        assignee_name = data.get("assignee_name")
+        assignee_name = data.get("a_name")
         assignee_name = parse_structure_CustomTextType_100(assignee_name)
-        concurrence_person = data.get("concurrence_person")
+        concurrence_person = data.get("con_person")
         concurrence_person = parse_structure_OptionalType_UnsignedIntegerType_32(concurrence_person)
-        concurrence_person_name = data.get("concurrence_person_name")
+        concurrence_person_name = data.get("con_person_name")
         concurrence_person_name = parse_structure_OptionalType_CustomTextType_100(concurrence_person_name)
-        approval_person = data.get("approval_person")
+        approval_person = data.get("a_person")
         approval_person = parse_structure_OptionalType_UnsignedIntegerType_32(approval_person)
-        approval_person_name = data.get("approval_person_name")
+        approval_person_name = data.get("a_person_name")
         approval_person_name = parse_structure_OptionalType_CustomTextType_100(approval_person_name)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(compliances)
-        new_units = data.get("new_units")
+        new_units = data.get("n_units")
         new_units = parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(new_units)
         return SaveAssignedCompliance(
             country_id, assignee, assignee_name,
@@ -446,15 +402,15 @@ class SaveAssignedCompliance(Request):
 
     def to_inner_structure(self):
         return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
+            "c_id": to_structure_SignedIntegerType_8(self.country_id),
             "assignee": to_structure_SignedIntegerType_8(self.assignee),
-            "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
-            "concurrence_person": to_structure_OptionalType_UnsignedIntegerType_32(self.concurrence_person),
-            "concurrence_person_name": to_structure_OptionalType_CustomTextType_100(self.concurrence_person_name),
-            "approval_person": to_structure_OptionalType_UnsignedIntegerType_32(self.approval_person),
-            "approval_person_name": to_structure_OptionalType_CustomTextType_100(self.approval_person_name),
+            "a_name": to_structure_CustomTextType_100(self.assignee_name),
+            "con_person": to_structure_OptionalType_UnsignedIntegerType_32(self.concurrence_person),
+            "con_person_name": to_structure_OptionalType_CustomTextType_100(self.concurrence_person_name),
+            "a_person": to_structure_OptionalType_UnsignedIntegerType_32(self.approval_person),
+            "a_person_name": to_structure_OptionalType_CustomTextType_100(self.approval_person_name),
             "compliances": to_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(self.compliances),
-            "new_units": to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(self.new_units)
+            "n_units": to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(self.new_units)
         }
 
 class GetUserwiseCompliances(Request):
@@ -1137,11 +1093,11 @@ class SavePastRecordsFailed(Response):
 
 def _init_Response_class_map():
     classes = [
-        GetStatutorySettingsSuccess, GetSettingsCompliancesSuccess, UpdateStatutorySettingsSuccess, 
-        InvalidPassword, GetAssignCompliancesFormDataSuccess, GetComplianceForUnitsSuccess, 
-        SaveAssignedComplianceSuccess, AssigneeNotBelongToUnit, ConcurrenceNotBelongToUnit, 
+        GetStatutorySettingsSuccess, GetSettingsCompliancesSuccess, UpdateStatutorySettingsSuccess,
+        InvalidPassword, GetAssignCompliancesFormDataSuccess, GetComplianceForUnitsSuccess,
+        SaveAssignedComplianceSuccess, AssigneeNotBelongToUnit, ConcurrenceNotBelongToUnit,
         ApprovalPersonNotBelongToUnit, GetUserwiseCompliancesSuccess, ReassignComplianceSuccess,
-        GetComplianceApprovalListSuccess, ApproveComplianceSuccess, GetPastRecordsFormDataSuccess, 
+        GetComplianceApprovalListSuccess, ApproveComplianceSuccess, GetPastRecordsFormDataSuccess,
         GetStatutoriesByUnitSuccess, SavePastRecordsSuccess, SavePastRecordsFailed
     ]
     class_map = {}
@@ -1195,34 +1151,34 @@ class ASSINGED_COMPLIANCE(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "compliance_name", "compliance_id", "statutory_dates",
-            "due_date", "validity_date", "trigger_before", "unit_ids"
+            "comp_id", "comp_name", "statu_dates",
+            "d_date", "v_date", "trig_before", "u_ids"
         ])
-        compliance_id = data.get("compliance_id")
+        compliance_id = data.get("comp_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
-        compliance_name = data.get("compliance_name")
+        compliance_name = data.get("comp_name")
         compliance_name = parse_structure_CustomTextType_250(compliance_name)
-        statutory_dates = data.get("statutory_dates")
+        statutory_dates = data.get("statu_dates")
         statutory_dates = parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(statutory_dates)
-        due_date = data.get("due_date")
+        due_date = data.get("d_date")
         due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
-        validity_date = data.get("validity_date")
+        validity_date = data.get("v_date")
         validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
-        trigger_before = data.get("trigger_before")
+        trigger_before = data.get("trig_before")
         trigger_before = parse_structure_OptionalType_SignedIntegerType_8(trigger_before)
-        unit_ids = data.get("unit_ids")
+        unit_ids = data.get("u_ids")
         unit_ids = parse_structure_VectorType_SignedIntegerType_8(unit_ids)
         return ASSINGED_COMPLIANCE(compliance_id, compliance_name, statutory_dates, due_date, validity_date, trigger_before, unit_ids)
 
     def to_structure(self):
         return {
-            "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
-            "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
-            "statutory_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
-            "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
-            "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
-            "trigger_before": to_structure_OptionalType_SignedIntegerType_8(self.trigger_before),
-            "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
+            "comp_id": to_structure_SignedIntegerType_8(self.compliance_id),
+            "comp_name": to_structure_CustomTextType_250(self.compliance_name),
+            "statu_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
+            "d_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
+            "v_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
+            "trig_before": to_structure_OptionalType_SignedIntegerType_8(self.trigger_before),
+            "u_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
         }
 
 #

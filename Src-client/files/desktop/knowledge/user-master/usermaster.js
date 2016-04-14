@@ -183,22 +183,22 @@ function validate(){
 		displayMessage(message.employeename_required);
 		$("#employeename").focus();
 	} else if(employeeId.length == 0) {
-		displayMessage(message.employeeid_requiredmessage);
+		displayMessage(message.employeeid_required);
 		$("#employeeid").focus();
 	} else if(emailId.length == 0) {
-		displayMessage(message.emailid_requiredmessage);
+		displayMessage(message.emailid_required);
 		$("#emailid").focus();
 	} else if(userGroup.length == 0) {
-		displayMessage(message.usergroup_requiredmessage);
+		displayMessage(message.usergroup_required);
 		$("#usergroupval").focus();
 	} else if(reg.test(emailId) == false) {
-		displayMessage(message.invalid_emailidmessage);
+		displayMessage(message.invalid_emailid);
 		$("#emailid").focus();
 	} else if(countryIds.length == 0) {
-		displayMessage(message.country_requiredmessage);
+		displayMessage(message.country_required);
 		$("#countryselected").focus().click();
 	} else if(domainIds.length == 0) {
-		displayMessage(message.domain_requiredmessage);
+		displayMessage(message.domain_required);
 		$("#domainselected").focus().click();
   	}else{
     	displayMessage('');
@@ -226,13 +226,13 @@ $("#submit").click(function(){
 			}
 			function onFailure(error){
 				if(error == "EmailIDAlreadyExists"){
-            	displayMessage(message.emailid_existsmessage);
+            	displayMessage(message.emailid_exists);
         }
         if(error == "ContactNumberAlreadyExists"){
-            displayMessage(message.contactno_existsmessage);
+            displayMessage(message.contactno_exists);
         }
         if(error == "EmployeeCodeAlreadyExists"){
-            displayMessage(message.employeeid_existsmessage);
+            displayMessage(message.employeeid_exists);
         }
 			}
 			userDetail = [emailId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,countryIds,domainIds];
@@ -254,16 +254,16 @@ $("#submit").click(function(){
  			}
 			function failure(data) {
 				if(error == "EmailIDAlreadyExists"){
-            	displayMessage(message.emailid_existsmessage);
+            	displayMessage(message.emailid_exists);
         }
         if(error == "ContactNumberAlreadyExists"){
-            displayMessage(message.contactno_existsmessage);
+            displayMessage(message.contactno_exists);
         }
         if(error == "EmployeeCodeAlreadyExists"){
-            displayMessage(message.employeeid_existsmessage);
+            displayMessage(message.employeeid_exists);
         }
         if(error == "InvalidUserId"){
-            displayMessage(message.invalid_useridmessage);
+            displayMessage(message.invalid_userid);
         }
 			}
 			console.log("address:"+address);

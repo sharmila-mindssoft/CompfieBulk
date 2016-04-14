@@ -110,9 +110,9 @@ function loadstatutoryLevelsList() {
   if((countryval in statutoryLevelsList) && (domainval in statutoryLevelsList[countryval])){
   levellist = statutoryLevelsList[countryval][domainval];
    for(var entity in levellist) {
-       var levelPosition = levellist[entity]["level_position"];
-       var levelName = levellist[entity]["level_name"];
-       var levelId = levellist[entity]["level_id"];
+       var levelPosition = levellist[entity]["l_position"];
+       var levelName = levellist[entity]["l_name"];
+       var levelId = levellist[entity]["l_id"];
        $("#level"+levelPosition).val(levelName);
        $("#levelid"+levelPosition).val(levelId);
    }
@@ -159,10 +159,10 @@ $("#submit").click(function(){
             return false;
           }else if($("#level"+k).val().trim().length > 0){
             if($("#levelid"+k).val().trim().length > 0){
-              passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val().trim(), "level_id" : parseInt($("#levelid"+k).val())});
+              passlevellist.push({"l_position" : k, "l_name" : $("#level"+k).val().trim(), "l_id" : parseInt($("#levelid"+k).val())});
               isAdd = false;
             }else{
-              passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val().trim(), "level_id" : null});
+              passlevellist.push({"l_position" : k, "l_name" : $("#level"+k).val().trim(), "l_id" : null});
             }
           }
          }

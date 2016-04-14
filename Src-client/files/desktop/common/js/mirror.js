@@ -264,26 +264,26 @@ function initMirror() {
     }
     //Domain Master
 
-    function saveDomain(domainName, callback) {
+    function saveDomain(dName, callback) {
         var request = [
             "SaveDomain",
-            { "domain_name" : domainName }
+            { "d_name" : dName }
         ];
         apiRequest("general", request, callback);
     }
 
-    function updateDomain(domainId, domainName, callback) {
+    function updateDomain(dId, dName, callback) {
         var request = [
             "UpdateDomain",
-            { "domain_id" : domainId, "domain_name" : domainName }
+            { "d_id" : dId, "d_name" : dName }
         ];
         apiRequest("general", request, callback);
     }
 
-    function changeDomainStatus(domainId, isActive, callback) {
+    function changeDomainStatus(dId, isActive, callback) {
         var request = [
             "ChangeDomainStatus",
-            {"domain_id" : domainId, "is_active" : isActive}
+            {"d_id" : dId, "is_active" : isActive}
         ];
         apiRequest("general", request, callback);
     }
@@ -300,26 +300,26 @@ function initMirror() {
 
     //Country Master
 
-    function saveCountry(countryName, callback) {
+    function saveCountry(cName, callback) {
         var request = [
             "SaveCountry",
-            { "country_name" : countryName }
+            { "c_name" : cName }
         ];
         apiRequest("general", request, callback);
     }
 
-    function updateCountry(countryId, countryName, callback) {
+    function updateCountry(cId, cName, callback) {
         var request = [
             "UpdateCountry",
-            { "country_id" : countryId, "country_name" : countryName }
+            { "c_id" : cId, "c_name" : cName }
         ];
         apiRequest("general", request, callback);
     }
 
-    function changeCountryStatus(countryId, isActive, callback) {
+    function changeCountryStatus(cId, isActive, callback) {
         var request = [
             "ChangeCountryStatus",
-            {"country_id" : countryId, "is_active" : isActive}
+            {"c_id" : cId, "is_active" : isActive}
         ];
         apiRequest("general", request, callback);
     }
@@ -345,26 +345,26 @@ function initMirror() {
     }
 
     //Industry Master
-    function saveIndustry(industryName, callback) {
+    function saveIndustry(iName, callback) {
         var request = [
             "SaveIndustry",
-            { "industry_name" : industryName }
+            { "i_name" : iName }
         ];
         apiRequest("knowledge_master", request, callback);
     }
 
-    function updateIndustry(industryId, industryName, callback) {
+    function updateIndustry(iId, iName, callback) {
         var request = [
             "UpdateIndustry",
-            { "industry_id" : industryId, "industry_name" : industryName }
+            { "i_id" : iId, "i_name" : iName }
         ];
         apiRequest("knowledge_master", request, callback);
     }
 
-    function changeIndustryStatus(industryId, isActive, callback) {
+    function changeIndustryStatus(iId, isActive, callback) {
         var request = [
             "ChangeIndustryStatus",
-            {"industry_id" : industryId, "is_active" : isActive}
+            {"i_id" : iId, "is_active" : isActive}
         ];
         apiRequest("knowledge_master", request, callback);
     }
@@ -376,28 +376,28 @@ function initMirror() {
 
     //Statutory Nature Master
 
-    function saveStatutoryNature(statutoryNatureName, callback) {
+    function saveStatutoryNature(sNName, callback) {
         var request = [
             "SaveStatutoryNature",
-            { "statutory_nature_name" : statutoryNatureName }
+            { "s_n_name" : sNName }
         ];
         apiRequest("knowledge_master", request, callback);
     }
 
-    function updateStatutoryNature(statutoryNatureId, statutoryNatureName,
+    function updateStatutoryNature(sNId, sNName,
         callback) {
         var request = [
             "UpdateStatutoryNature",
-            { "statutory_nature_id" : statutoryNatureId, "statutory_nature_name" : statutoryNatureName }
+            { "s_n_id" : sNId, "s_n_name" : sNName }
         ];
         apiRequest("knowledge_master", request, callback);
     }
 
-    function changeStatutoryNatureStatus(statutoryNatureId, isActive,
+    function changeStatutoryNatureStatus(sNId, isActive,
         callback) {
         var request = [
             "ChangeStatutoryNatureStatus",
-            {"statutory_nature_id" : statutoryNatureId, "is_active" : isActive}
+            {"s_n_id" : sNId, "is_active" : isActive}
         ];
         apiRequest("knowledge_master", request, callback);
     }
@@ -413,20 +413,20 @@ function initMirror() {
         apiRequest("knowledge_master", request, callback);
     }
 
-    function levelDetails(levelId, levelPosition, levelName) {
+    function levelDetails(lId, lPosition, lName) {
         var level = {};
-        level["level_id"] = levelId;
-        level["level_position"] = levelPosition;
-        level["level_name"] = levelName;
+        level["l_id"] = lId;
+        level["l_position"] = lPosition;
+        level["l_name"] = lName;
         return level;
     }
 
-    function saveAndUpdateGeographyLevels(countryId, levels,
+    function saveAndUpdateGeographyLevels(cId, levels,
         callback) {
         var request = [
             "SaveGeographyLevel",
             {
-                "country_id" : countryId,
+                "c_id" : cId,
                 "levels" : levels
             }
         ];
@@ -439,13 +439,13 @@ function initMirror() {
         apiRequest("knowledge_master", request, callback);
     }
 
-    function saveAndUpdateStatutoryLevels(countryId, domainId, levels,
+    function saveAndUpdateStatutoryLevels(cId, dId, levels,
         callback) {
         var request = [
             "SaveStatutoryLevel",
             {
-                "country_id" : countryId,
-                "domain_id" : domainId,
+                "c_id" : cId,
+                "d_id" : dId,
                 "levels" : levels
             }
         ];
@@ -458,42 +458,42 @@ function initMirror() {
         apiRequest("knowledge_master", request, callback);
     }
 
-    function saveGeography(levelId, name, parentIds, parentNames, countryId, callback) {
+    function saveGeography(lId, name, pIds, pNames, cId, callback) {
         var request = [
             "SaveGeography",
             {
-                "geography_level_id": levelId,
-                "geography_name": name,
-                "parent_ids": parentIds,
-                "parent_names": parentNames,
-                "country_id": countryId
+                "g_l_id": lId,
+                "g_name": name,
+                "p_ids": pIds,
+                "p_names": pNames,
+                "c_id": cId
             }
         ];
         apiRequest("knowledge_master", request, callback);
     }
 
     function updateGeography(
-        geographyId, levelId, name, parentIds, parentNames, countryId, callback
+        gId, lId, name, pIds, pNames, cId, callback
     ) {
         var request = [
             "UpdateGeography",
             {
-                "geography_id": geographyId,
-                "geography_level_id": levelId,
-                "geography_name": name,
-                "parent_ids": parentIds,
-                "parent_names": parentNames,
-                "country_id": countryId
+                "g_id": gId,
+                "g_l_id": lId,
+                "g_name": name,
+                "p_ids": pIds,
+                "p_names": pNames,
+                "c_id": cId
             }
         ];
         apiRequest("knowledge_master", request, callback);
     }
 
-    function changeGeographyStatus(geographyId, isActive, callback) {
+    function changeGeographyStatus(gId, isActive, callback) {
         var request = [
             "ChangeGeographyStatus",
             {
-                "geography_id": geographyId,
+                "g_id": gId,
                 "is_active": isActive
             }
         ];
@@ -507,29 +507,29 @@ function initMirror() {
 
     // statutory Mapping
 
-    function saveStatutory(domainId, levelId, name, parentIds, parentNames, callback) {
+    function saveStatutory(dId, lId, name, pIds, pNames, callback) {
         var request = [
             "SaveStatutory",
             {
-                "domain_id": domainId,
-                "statutory_level_id": levelId,
-                "statutory_name": name,
-                "parent_ids": parentIds,
-                "parent_names": parentNames
+                "d_id": dId,
+                "s_l_id": lId,
+                "s_name": name,
+                "p_ids": pIds,
+                "p_names": pNames
             }
         ]
         apiRequest("knowledge_master", request, callback);
     }
 
-    function updateStatutory(statutoryId, levelId, name, parentIds, parentNames, callback) {
+    function updateStatutory(sId, lId, name, pIds, pNames, callback) {
         var request = [
             "UpdateStatutory",
             {
-                "statutory_id": statutoryId,
-                "statutory_level_id": levelId,
-                "statutory_name": name,
-                "parent_ids": parentIds,
-                "parent_names": parentNames
+                "s_id": sId,
+                "s_l_id": lId,
+                "s_name": name,
+                "p_ids": pIds,
+                "p_names": pNames
             }
         ]
         apiRequest("knowledge_master", request, callback);
@@ -595,69 +595,69 @@ function initMirror() {
     }
 
     function complianceDetails (
-        statutoryProvision, complianceTask,
-        description, documentName, fileFormat, penalConsequence,
-        complianceFrequency, statutoryDates, repeatsTypeId, repeatsEvery,
-        durationTypeId, duration, isActive, complianceId
+        sProvision, cTask,
+        description, docName, fFormat, pConsequence,
+        cFrequency, statuDates, rTypeId, rEvery,
+        dTypeId, duration, isActive, cId
     ) {
         var compliance = {};
-        compliance["statutory_provision"] = statutoryProvision;
-        compliance["compliance_task"] = complianceTask;
+        compliance["s_provision"] = sProvision;
+        compliance["c_task"] = cTask;
         compliance["description"] = description;
-        compliance["document_name"] = documentName;
-        compliance["format_file_list"] = fileFormat;
-        compliance["penal_consequences"] = penalConsequence;
-        compliance["frequency_id"] = complianceFrequency;
-        compliance["statutory_dates"] = statutoryDates;
-        compliance["repeats_type_id"] = repeatsTypeId;
-        compliance["repeats_every"] = repeatsEvery;
-        compliance["duration_type_id"] = durationTypeId;
+        compliance["doc_name"] = docName;
+        compliance["f_f_list"] = fFormat;
+        compliance["p_consequences"] = pConsequence;
+        compliance["f_id"] = cFrequency;
+        compliance["statu_dates"] = statuDates;
+        compliance["r_type_id"] = rTypeId;
+        compliance["r_every"] = rEvery;
+        compliance["d_type_id"] = dTypeId;
         compliance["duration"] = duration;
         compliance["is_active"] = isActive;
         compliance["frequency"] = null;
         compliance["summary"] = null;
-        if ((complianceId !== null) && (complianceId !== '')) {
-            compliance["compliance_id"] = complianceId;
+        if ((cId !== null) && (cId !== '')) {
+            compliance["c_id"] = cId;
         }
         else {
-            compliance["compliance_id"] = null
+            compliance["c_id"] = null
         }
 
         return compliance;
     }
 
     function checkDuplicateStatutoryMapping(
-        countryId, domainId, industryIds, statutoryNatureId,
-        statutoryIds, callback
+        cId, dId, iIds, sNId,
+        sIds, callback
     ) {
         var request = [
             "CheckDuplicateStatutoryMapping",
             {
-                "country_id": countryId,
-                "domain_id": domainId,
-                "industry_ids": industryIds,
-                "statutory_nature_id": statutoryNatureId,
-                "statutory_ids": statutoryIds
+                "c_id": cId,
+                "d_id": dId,
+                "i_ids": iIds,
+                "s_n_id": sNId,
+                "s_ids": sIds
             }
         ];
         apiRequest("knowledge_transaction", request, callback);
     }
 
     function statutoryMapping(
-        countryId, domainId, industryIds, statutoryNatureId,
-        statutoryIds, compliances, geographyIds, mappings, mappingId
+        cId, dId, iIds, sNId,
+        sIds, compliances, gIds, mappings, mId
     ) {
         var mappingData = {};
-        mappingData["country_id"] = countryId;
-        mappingData["domain_id"] = domainId;
-        mappingData["industry_ids"] = industryIds;
-        mappingData["statutory_nature_id"] = statutoryNatureId;
-        mappingData["statutory_ids"] = statutoryIds;
+        mappingData["c_id"] = cId;
+        mappingData["d_id"] = dId;
+        mappingData["i_ids"] = iIds;
+        mappingData["s_n_id"] = sNId;
+        mappingData["s_ids"] = sIds;
         mappingData["compliances"] = compliances;
-        mappingData["geography_ids"] = geographyIds;
+        mappingData["g_ids"] = gIds;
         mappingData["mappings"] = mappings;
-        if (mappingId !== null) {
-            mappingData["statutory_mapping_id"] = mappingId
+        if (mId !== null) {
+            mappingData["s_m_id"] = mId
         }
 
         return mappingData;
@@ -672,20 +672,20 @@ function initMirror() {
     }
 
     function UpdateStatutoryMappingData(
-        countryId, domainId, industryIds, statutoryNatureId,
-        statutoryIds, compliances, geographyIds, mappings, mappingId
+        cId, dId, iIds, sNId,
+        sIds, compliances, gIds, mappings, mId
     ) {
         var mappingData = {};
-        mappingData["country_id"] = countryId;
-        mappingData["domain_id"] = domainId;
-        mappingData["industry_ids"] = industryIds;
-        mappingData["statutory_nature_id"] = statutoryNatureId;
-        mappingData["statutory_ids"] = statutoryIds;
+        mappingData["c_id"] = cId;
+        mappingData["d_id"] = dId;
+        mappingData["i_ids"] = iIds;
+        mappingData["s_n_id"] = sNId;
+        mappingData["s_ids"] = sIds;
         mappingData["compliances"] = compliances;
-        mappingData["geography_ids"] = geographyIds;
+        mappingData["g_ids"] = gIds;
         mappingData["mappings"] = mappings;
-        if (mappingId !== null) {
-            mappingData["statutory_mapping_id"] = mappingId
+        if (mId !== null) {
+            mappingData["s_m_id"] = mId
         }
 
         return mappingData;
@@ -710,11 +710,11 @@ function initMirror() {
         apiRequest("knowledge_transaction", request, callback);
     }
 
-    function changeStatutoryMappingStatus(mappingId, isActive, callback) {
+    function changeStatutoryMappingStatus(mId, isActive, callback) {
         var request = [
             "ChangeStatutoryMappingStatus",
             {
-                "statutory_mapping_id":mappingId,
+                "s_m_id":mId,
                 "is_active" : isActive
             }
         ]
@@ -726,20 +726,20 @@ function initMirror() {
         apiRequest("knowledge_transaction", request, callback);
     }
 
-    function approveStatutoryList(statutoryMappingId, statutoryProvision,
-        approvalStatus, reason, notificationText) {
+    function approveStatutoryList(sMId, sProvision,
+        aStatus, reason, nText) {
         var dict = {}
         if (reason == ""){
             reason = null
         }
-        if (notificationText == ""){
-            notificationText = null
+        if (nText == ""){
+            nText = null
         }
-        dict["statutory_mapping_id"] = statutoryMappingId;
-        dict["statutory_provision"] = statutoryProvision;
-        dict["approval_status"] = approvalStatus;
-        dict["rejected_reason"] = reason;
-        dict["notification_text"] = notificationText;
+        dict["s_m_id"] = sMId;
+        dict["s_provision"] = sProvision;
+        dict["a_status"] = aStatus;
+        dict["r_reason"] = reason;
+        dict["n_text"] = nText;
         return dict;
     }
 
@@ -747,7 +747,7 @@ function initMirror() {
         var request = [
             "ApproveStatutoryMapping",
             {
-                "statutory_mappings": approvalList
+                "s_mappings": approvalList
             }
         ]
         apiRequest("knowledge_transaction", request, callback);
@@ -758,14 +758,14 @@ function initMirror() {
         apiRequest("knowledge_report", request, callback);
     }
 
-    function filterData(countryId, domainId, industryId, statutoryNatureId, geographyId, level1StatutoryId) {
+    function filterData(cId, dId, iId, sNId, gId, level1SId) {
         var filter = {};
-        filter["country_id"] = countryId;
-        filter["domain_id"] = domainId;
-        filter["industry_id"] = industryId;
-        filter["statutory_nature_id"] = statutoryNatureId;
-        filter["geography_id"] = geographyId;
-        filter["level_1_statutory_id"] = level1StatutoryId;
+        filter["c_id"] = cId;
+        filter["d_id"] = dId;
+        filter["i_id"] = iId;
+        filter["s_n_id"] = sNId;
+        filter["g_id"] = gId;
+        filter["level_1_s_id"] = level1SId;
         return filter;
     }
 
@@ -796,11 +796,11 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getSaveAdminUserGroupDict(userGroupName, formCategoryId, formIds){
+    function getSaveAdminUserGroupDict(ugName, fcId, fIds){
         userGroup = {};
-        userGroup["user_group_name"] = userGroupName;
-        userGroup["form_category_id"] = formCategoryId;
-        userGroup["form_ids"] = formIds;
+        userGroup["ug_name"] = ugName;
+        userGroup["fc_id"] = fcId;
+        userGroup["f_ids"] = fIds;
         return userGroup;
     }
 
@@ -813,12 +813,12 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getUpdateAdminUserGroupDict(userGroupId, userGroupName, formCategoryId, formIds){
+    function getUpdateAdminUserGroupDict(ugId, ugName, fcId, fIds){
         userGroup = {};
-        userGroup["user_group_id"] = userGroupId;
-        userGroup["user_group_name"] = userGroupName;
-        userGroup["form_category_id"] = formCategoryId;
-        userGroup["form_ids"] = formIds;
+        userGroup["ug_id"] = ugId;
+        userGroup["ug_name"] = ugName;
+        userGroup["fc_id"] = fcId;
+        userGroup["f_ids"] = fIds;
         return userGroup;
     }
 
@@ -831,13 +831,13 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function changeAdminUserGroupStatus(userGroupId, isActive, callback) {
+    function changeAdminUserGroupStatus(ugId, active, callback) {
         callerName = "admin"
         var request = [
             "ChangeUserGroupStatus",
             {
-                "user_group_id" : userGroupId,
-                "is_active" : isActive
+                "ug_id" : ugId,
+                "active" : active
             }
         ];
         apiRequest(callerName, request, callback);
@@ -856,31 +856,31 @@ function initMirror() {
     }
 
     function getSaveAdminUserDict(userDetail){
-        var emailId = userDetail[0];
-        var userGroupId = userDetail[1];
-        var employeeName = userDetail[2];
-        var employeeCode = userDetail[3];
-        var contactNo = userDetail[4];
-        var address = userDetail[5];
+        var email = userDetail[0];
+        var ugId = userDetail[1];
+        var empN = userDetail[2];
+        var empC = userDetail[3];
+        var cNo = userDetail[4];
+        var add = userDetail[5];
         if (userDetail[5] == ""){
-            address = null;
+            add = null;
         }
-        var designation = userDetail[6];
+        var desig = userDetail[6];
         if (userDetail[6] == ""){
-            designation = null;
+            desig = null;
         }
-        var countryIds= userDetail[7] ;
-        var domainIds= userDetail[8];
+        var cIds= userDetail[7] ;
+        var dIds= userDetail[8];
         return {
-                "email_id": emailId,
-                "user_group_id": userGroupId,
-                "employee_name": employeeName,
-                "employee_code": employeeCode,
-                "contact_no": contactNo,
-                "address": address,
-                "designation": designation,
-                "country_ids": countryIds,
-                "domain_ids": domainIds
+                "email": email,
+                "ug_id": ugId,
+                "emp_n": empN,
+                "emp_c": empC,
+                "c_n": cNo,
+                "add": add,
+                "desig": desig,
+                "c_ids": cIds,
+                "d_ids": dIds
             }
     }
 
@@ -894,31 +894,31 @@ function initMirror() {
     }
 
     function getUpdateAdminUserDict(userDetail){
-        var userId = userDetail[0];
-        var userGroupId = userDetail[1];
-        var employeeName = userDetail[2];
-        var employeeCode = userDetail[3];
-        var contactNo = userDetail[4];
-        var address = userDetail[5];
+        var uId = userDetail[0];
+        var ugId = userDetail[1];
+        var empN = userDetail[2];
+        var empC = userDetail[3];
+        var cn = userDetail[4];
+        var add = userDetail[5];
         if (userDetail[5] == ""){
-            address = null;
+            add = null;
         }
-        var designation = userDetail[6];
+        var desig = userDetail[6];
         if (userDetail[6] ==""){
-            designation = null;
+            desig = null;
         }
-        var countryIds= userDetail[7] ;
-        var domainIds= userDetail[8] ;
+        var cIds= userDetail[7] ;
+        var dIds= userDetail[8] ;
         return {
-                "user_id": userId,
-                "user_group_id": userGroupId,
-                "employee_name": employeeName,
-                "employee_code": employeeCode,
-                "contact_no": contactNo,
-                "address": address,
-                "designation": designation,
-                "country_ids": countryIds,
-                "domain_ids": domainIds
+                "u_id": uId,
+                "ug_id": ugId,
+                "emp_n": empN,
+                "emp_c": empC,
+                "c_n": cn,
+                "add": add,
+                "desig": desig,
+                "c_ids": cIds,
+                "d_ids": dIds
             }
     }
 
@@ -931,14 +931,14 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function changeAdminUserStatus(userId, isActive,
+    function changeAdminUserStatus(uId, active,
      callback) {
         callerName = "admin"
         var request = [
             "ChangeUserStatus",
             {
-                "user_id": userId,
-                "is_active" : isActive
+                "u_id": uId,
+                "active" : active
             }
         ];
         apiRequest(callerName, request, callback);
@@ -946,33 +946,32 @@ function initMirror() {
 
     // Client Group Master
 
-    function getDateConfigurations(countryId, domainId, periodFrom,
-        periodTo){
+    function getDateConfigurations(cId, dId, pFrom,
+        pTo){
         return {
-            "country_id": countryId,
-            "domain_id": domainId,
-            "period_from": periodFrom,
-            "period_to": periodTo
+            "c_id": cId,
+            "d_id": dId,
+            "p_from": pFrom,
+            "p_to": pTo
         }
     }
 
-    function getSaveClientGroupDict(groupName, countryIds, domainIds, logo,
-        contractFrom, contractTo, inchargePersons, noOfUserLicence, fileSpace,
-        isSmsSubscribed, emailId, dateConfigurations, shortName){
+    function getSaveClientGroupDict(g_name, c_ids, d_ids, logo,
+        cFrom, cTo, incharge, licence, f_space, sms, email, config, s_name){
         return {
-            "group_name": groupName,
-            "country_ids": countryIds,
-            "domain_ids": domainIds,
+            "g_name": g_name,
+            "c_ids": c_ids,
+            "d_ids": d_ids,
             "logo" : logo,
-            "contract_from": contractFrom,
-            "contract_to": contractTo,
-            "incharge_persons": inchargePersons,
-            "no_of_user_licence": noOfUserLicence,
-            "file_space": fileSpace,
-            "is_sms_subscribed": isSmsSubscribed,
-            "email_id": emailId,
-            "date_configurations":dateConfigurations,
-            "short_name": shortName
+            "c_from": cFrom,
+            "c_to": cTo,
+            "incharge": incharge,
+            "licence": licence,
+            "f_space": f_space,
+            "sms": sms,
+            "email": email,
+            "config":config,
+            "s_name": s_name
         }
     }
 
@@ -987,22 +986,24 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getUpdateClientGroupDict(clientId, groupName, countryIds, domainIds, logo,
-        contractFrom, contractTo, inchargePersons, noOfUserLicence, fileSpace,
-        isSmsSubscribed, dateConfigurations){
+    function getUpdateClientGroupDict(
+        cId, gName, cIds, dIds, logo,
+        cFrom, cTo, incharge, licence, fSpace,
+        sms, config
+    ){
         return {
-            "client_id": clientId,
-            "group_name": groupName,
-            "country_ids": countryIds,
-            "domain_ids": domainIds,
+            "c_id": cId,
+            "g_name": gName,
+            "c_ids": cIds,
+            "d_ids": dIds,
             "logo" : logo,
-            "contract_from": contractFrom,
-            "contract_to": contractTo,
-            "incharge_persons": inchargePersons,
-            "no_of_user_licence": noOfUserLicence,
-            "file_space": fileSpace,
-            "is_sms_subscribed": isSmsSubscribed,
-            "date_configurations":dateConfigurations
+            "c_from": cFrom,
+            "c_to": cTo,
+            "incharge": incharge,
+            "licence": licence,
+            "f_space": fSpace,
+            "sms": sms,
+            "config": config
         }
     }
 
@@ -1105,88 +1106,85 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getBusinessGroupDict(businessGroupId, busienssGroupName){
-        if (busienssGroupName == null || busienssGroupName == '' ){
+    function getBusinessGroupDict(bgId, bgName){
+        if (bgName == null || bgName == '' ){
             return null
         }else{
             return {
-                "business_group_id" : businessGroupId,
-                "business_group_name" : busienssGroupName
+                "bg_id" : bgId,
+                "bg_name" : bgName
             }
         }
     }
 
-    function getLegalEntityDict(legalEntityId, legalEntityName){
+    function getLegalEntityDict(leId, leName){
         return {
-            "legal_entity_id" : legalEntityId,
-            "legal_entity_name" : legalEntityName
+            "le_id" : leId,
+            "le_name" : leName
         }
     }
 
-    function getDivisionDict(divisionId, divisionName){
-        if (divisionName == null  || divisionName == ''){
+    function getDivisionDict(dId, dName){
+        if (dName == null  || dName == ''){
             return null
         }else{
             return {
-                "division_id" : divisionId,
-                "division_name" : divisionName
+                "d_id" : dId,
+                "d_name" : dName
             }
         }
 
     }
 
-    function getUnitDict(unitId, unitName, unitCode, unitAddress,
-        postalCode, geographyId, unitLocation, industryId, industryName,
-        domainIds){
+    function getUnitDict(uId, uName, uCode, uAdd,
+        pCode, geoId, uLoc, iId, iName, dIds){
         return {
-            "unit_id" : unitId,
-            "unit_name" : unitName,
-            "unit_code" : unitCode,
-            "unit_address" : unitAddress,
-            "postal_code" : postalCode,
-            "geography_id" : geographyId,
-            "unit_location" : unitLocation,
-            "industry_id" : industryId,
-            "industry_name" : industryName,
-            "domain_ids" : domainIds
+            "u_id" : uId,
+            "u_name" : uName,
+            "u_code" : uCode,
+            "u_add" : uAdd,
+            "p_code" : pCode,
+            "geo_id" : geoId,
+            "u_loc" : uLoc,
+            "i_id" : iId,
+            "i_name" : iName,
+            "d_ids" : dIds
         }
     }
 
-    function mapUnitsToCountry(countryId, units){
+    function mapUnitsToCountry(cId, units){
         return {
-            "country_id" : countryId,
+            "c_id" : cId,
             "units" : units
         }
     }
 
-    function saveClient(clientId, businessGroup, legalEntity,
-        division, countryWiseUnits, callback) {
+    function saveClient(cId, bg, le, d, cw_units, callback) {
         callerName = "techno"
         var request = [
             "SaveClient",
             {
-                "client_id": clientId,
-                "business_group": businessGroup,
-                "legal_entity": legalEntity,
-                "division": division,
-                "country_wise_units": countryWiseUnits
+                "c_id": cId,
+                "bg": bg,
+                "le": le,
+                "d": d,
+                "cw_units": cw_units
             }
         ];
         apiRequest(callerName, request, callback);
     }
 
 
-    function updateClient(clientId, businessGroup, legalEntity,
-        division, countryWiseUnits, callback) {
+    function updateClient(cId, bg, le, d, cwUnits, callback) {
         callerName = "techno"
         var request = [
             "UpdateClient",
             {
-                "client_id": clientId,
-                "business_group": businessGroup,
-                "legal_entity": legalEntity,
-                "division": division,
-                "country_wise_units": countryWiseUnits
+                "c_id": cId,
+                "bg": bg,
+                "le": le,
+                "d": d,
+                "cw_units": cwUnits
             }
         ];
         apiRequest(callerName, request, callback);
@@ -1317,32 +1315,32 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function assignedStatutories(level1ID, compliances, applicableStatus, remarks) {
+    function assignedStatutories(l1ID, compliances, aStatus, remarks) {
         var statutories = {
-            "level_1_statutory_id": level1ID,
+            "level_1_s_id": l1ID,
             "compliances": compliances,
-            "applicable_status": applicableStatus,
-            "not_applicable_remarks": remarks
+            "a_status": aStatus,
+            "n_a_remarks": remarks
         };
         return statutories;
     }
 
     function saveOrSubmitAssignStatutory(
-        countryId, clientId, geographyId, unitIds,
-        domainId, submissionType, clientStatutoryId,
-        assignStatutories, callback
+        cId, clientId, geoId, uIds,
+        dId, subType, cSId,
+        asStatutories, callback
     ){
         var request = [
             "SaveAssignedStatutory",
             {
-                "country_id": countryId,
+                "c_id": cId,
                 "client_id": clientId,
-                "geography_id": geographyId,
-                "unit_ids": unitIds,
-                "domain_id": domainId,
-                "submission_type": submissionType,
-                "client_statutory_id": clientStatutoryId,
-                "assigned_statutories": assignStatutories
+                "g_id": geoId,
+                "u_ids": uIds,
+                "d_id": dId,
+                "sub_type": subType,
+                "c_s_id": cSId,
+                "a_statutories": asStatutories
             }
         ];
         callerName = "techno_transaction";
@@ -1369,22 +1367,22 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getAssignedStatutoryReport(countryId, domainId,
-        clientId, businessGroupId, legalEntityId, divisionId,
-        unitId, level1StatutoryId, applicableStatus, callback
+    function getAssignedStatutoryReport(cId, dId,
+        clientId, bGroupId, lEntityId, divId,
+        uId, level1SId, aStatus, callback
     ){
         var request = [
             "GetAssignedStatutoryReport",
             {
-                "country_id": countryId,
-                "domain_id": domainId,
-                "group_id": clientId,
-                "business_group_id": businessGroupId,
-                "legal_entity_id": legalEntityId,
-                "division_id": divisionId,
-                "unit_id": unitId,
-                "level_1_statutory_id" : level1StatutoryId,
-                "applicability_status" : applicableStatus
+                "c_id": cId,
+                "d_id": dId,
+                "g_id": clientId,
+                "b_group_id": bGroupId,
+                "l_entity_id": lEntityId,
+                "div_id": divId,
+                "u_id": uId,
+                "level_1_s_id" : level1SId,
+                "a_status" : aStatus
             }
         ];
         callerName = "techno_report";

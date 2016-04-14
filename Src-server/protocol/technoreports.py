@@ -209,38 +209,38 @@ class GetAssignedStatutoryReport(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "group_id", "business_group_id", "legal_entity_id", "division_id", "unit_id", "level_1_statutory_id", "applicability_status"])
-        country_id = data.get("country_id")
+        data = parse_dictionary(data, ["c_id", "d_id", "g_id", "b_group_id", "l_entity_id", "div_id", "u_id", "level_1_s_id", "a_status"])
+        country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
-        domain_id = data.get("domain_id")
+        domain_id = data.get("d_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
-        group_id = data.get("group_id")
+        group_id = data.get("g_id")
         group_id = parse_structure_OptionalType_SignedIntegerType_8(group_id)
-        business_group_id = data.get("business_group_id")
+        business_group_id = data.get("b_group_id")
         business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
-        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_id = data.get("l_entity_id")
         legal_entity_id = parse_structure_OptionalType_SignedIntegerType_8(legal_entity_id)
-        division_id = data.get("division_id")
+        division_id = data.get("div_id")
         division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
-        unit_id = data.get("unit_id")
+        unit_id = data.get("u_id")
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
-        level_1_statutory_id = data.get("level_1_statutory_id")
+        level_1_statutory_id = data.get("level_1_s_id")
         level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
-        applicability_status = data.get("applicability_status")
+        applicability_status = data.get("a_status")
         applicability_status = parse_structure_OptionalType_Bool(applicability_status)
         return GetAssignedStatutoryReport(country_id, domain_id, group_id, business_group_id, legal_entity_id, division_id, unit_id, level_1_statutory_id, applicability_status)
 
     def to_inner_structure(self):
         return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "group_id": to_structure_OptionalType_SignedIntegerType_8(self.group_id),
-            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
-            "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
-            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
-            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
-            "level_1_statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_id),
-            "applicability_status": to_structure_OptionalType_Bool(self.applicability_status),
+            "c_id": to_structure_SignedIntegerType_8(self.country_id),
+            "d_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "g_id": to_structure_OptionalType_SignedIntegerType_8(self.group_id),
+            "b_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
+            "l_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
+            "div_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
+            "u_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
+            "level_1_s_id": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_id),
+            "a_status": to_structure_OptionalType_Bool(self.applicability_status),
         }
 
 

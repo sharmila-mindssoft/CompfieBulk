@@ -4,6 +4,10 @@ __all__ = [
     "process_client_admin_settings_requests"
 ]
 
+########################################################
+# To Redirect the requests to the corresponding 
+# functions
+########################################################
 def process_client_admin_settings_requests(request, db) :
 	session_token = request.session_token
 	client_info = session_token.split("-")
@@ -18,6 +22,10 @@ def process_client_admin_settings_requests(request, db) :
 	elif type(request) is clientadminsettings.UpdateSettings :
 		return process_update_settings(db, request, session_user, client_id)
 
+########################################################
+# To retrieve the settings and profile of the given 
+# client
+########################################################
 def process_get_settings(db, request, session_user, client_id):
 	settings = db.get_settings(client_id)
 	contract_from = settings[4]
@@ -35,6 +43,10 @@ def process_get_settings(db, request, session_user, client_id):
 		profile_detail = profile_detail
 	)
 
+
+########################################################
+# To update the client settings
+########################################################
 def process_update_settings(db, request, session_user, client_id):
 	is_two_levels_of_approval = request.is_two_levels_of_approval 
 	assignee_reminder_days = request.assignee_reminder_days 

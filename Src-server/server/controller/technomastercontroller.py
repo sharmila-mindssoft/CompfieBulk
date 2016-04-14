@@ -1,3 +1,9 @@
+########################################################
+# This Controller will handle Client and Client Unit 
+# related requests
+#
+# In this module "db" is an object of "KnowledgeDatabase" 
+########################################################
 import threading
 import re
 import Queue
@@ -24,6 +30,9 @@ __all__ = [
 # Client Group Master
 #
 
+########################################################
+# To Get list of all clients with details
+########################################################
 def get_client_groups(db, request, session_user):
     domain_list = db.get_domains_for_user(session_user)
     country_list = db.get_countries_for_user(session_user)
@@ -37,6 +46,9 @@ def get_client_groups(db, request, session_user):
         client_domains=user_client_domains
     )
 
+########################################################
+# To Create the database of the client
+########################################################
 def create_database(
     host, username, password, database_name, db_username,
     db_password, email_id, client_id, short_name, db,
@@ -55,6 +67,10 @@ def create_database(
         return False, None
 
 
+########################################################
+# To send the credentials of the created client to 
+# the same
+########################################################
 def send_client_credentials(
     short_name, email_id, password
 ):
@@ -65,7 +81,9 @@ def send_client_credentials(
         logger.logKnowledge("error", "technomastercontroller.py-send_client_credentials", e)
     return True
 
-
+########################################################
+# To Check whether uploaded logo is in image formats
+########################################################
 def is_logo_in_image_format(logo):
     name = logo.file_name.split('.')[0]
     exten = logo.file_name.split('.')[1]
@@ -74,6 +92,9 @@ def is_logo_in_image_format(logo):
     else:
         return False
 
+########################################################
+# To Validate and Save Client Group
+########################################################
 def save_client_group(db, request, session_user):
     session_user = int(session_user)
     client_id = db.generate_new_client_id()
@@ -154,6 +175,9 @@ def save_client_group(db, request, session_user):
                 logger.logKnowledge("error", "technomastercontroller.py-save_client_group", ex)
             return technomasters.ClientCreationFailed(error="Failed to create client")
 
+########################################################
+# To Validate and Update Client Group
+########################################################
 def update_client_group(db, request, session_user):
     session_user = int(session_user)
     if db.is_invalid_id(db.tblClientGroups, "client_id", request.client_id) :
@@ -178,7 +202,9 @@ def update_client_group(db, request, session_user):
         )
         return technomasters.UpdateClientSuccess()
 
-
+########################################################
+# To Validate and Change the Client status
+########################################################
 def change_client_group_status(db, request, session_user):
     session_user = int(session_user)
     client_id = request.client_id
@@ -195,6 +221,10 @@ def change_client_group_status(db, request, session_user):
 # Client Unit Creation
 #
 
+########################################################
+# To Validate and Save Business group, Legal Entity, 
+# Division and Units received in the request
+########################################################
 def save_client(db, request, session_user):
     session_user = int(session_user)
     client_id = request.client_id
@@ -286,6 +316,10 @@ def save_client(db, request, session_user):
     if result1 and result2 and result3 and result4:
         return technomasters.SaveClientSuccess()
 
+########################################################
+# To Validate and Update Business group, Legal Entity, 
+# Division and Units received in the request
+########################################################
 def update_client(db, request, session_user):
     session_user = int(session_user)
     client_id = request.client_id
@@ -377,7 +411,10 @@ def update_client(db, request, session_user):
     if result1 and result2 and result3 and result4 and result5:
         return technomasters.UpdateClientSuccess()
 
-
+########################################################
+# To Get List of Business groups, Legal Entities, 
+# Divisions and Units with details of all clients
+########################################################
 def get_clients(db, request, session_user):
     group_company_list = db.get_group_companies_for_user_with_max_unit_count(session_user)
     if len(group_company_list) > 0:
@@ -400,6 +437,10 @@ def get_clients(db, request, session_user):
     else:
         return technomasters.UserIsNotResponsibleForAnyClient()
 
+########################################################
+# To Change the status of Units under a particular 
+# division or Legal entity
+########################################################
 def change_client_status(db, request, session_user):
     session_user = int(session_user)
 
@@ -424,7 +465,9 @@ def change_client_status(db, request, session_user):
         is_active, session_user):
         return technomasters.ChangeClientStatusSuccess()
 
-
+########################################################
+# To Reactivate a closed Unit
+########################################################
 def reactivate_unit(db, request, session_user):
     session_user = int(session_user)
     client_id = request.client_id
@@ -441,6 +484,9 @@ def reactivate_unit(db, request, session_user):
         else:
             return technomasters.InvalidPassword()
 
+########################################################
+# To Get the Profile of all clients
+########################################################
 def get_client_profile(db, request, session_user):
     client_ids = db.get_user_clients(session_user)
     if client_ids ==  None:
@@ -452,6 +498,9 @@ def get_client_profile(db, request, session_user):
             group_companies = group_companies,
             profiles = profiles)
 
+########################################################
+# To promote a user as Primary admin
+########################################################
 def create_new_admin(db, request, session_user):
     new_admin_id = request.new_admin_id
     client_id = request.client_id
