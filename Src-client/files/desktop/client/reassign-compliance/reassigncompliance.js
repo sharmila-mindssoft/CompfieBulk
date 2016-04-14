@@ -8,16 +8,6 @@ var client_admin;
 var accordionstatus = true;
 //var currentUser;
 
-
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
-
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
@@ -227,7 +217,6 @@ function load_allcompliances(userId, userName){
     });
   });
 }
-
 
 function load_UserCompliances(uCompliances, uId){
   for( compliance in uCompliances){
@@ -447,7 +436,7 @@ function submitcompliance(){
     );
   }else{
     hideLoader();
-    displayMessage("No compliance selected for reassign");
+    displayMessage(message.nocompliance_selected_forassign);
   }
 }
 
@@ -805,16 +794,16 @@ function validate_firsttab(){
 
 function validate_secondtab(){
   if($('.assigneelist.active').text() == ''){
-    displayMessage("Assignee Required");
+    displayMessage(message.assignee_required);
     return false;
   }else if ($('.concurrencelist.active').text() == '' && two_level_approve){
-    displayMessage("Concurrence Required");
+    displayMessage(message.concurrence_required);
     return false;
   }else if ($('.approvallist.active').text() == ''){
-    displayMessage("Approval Required");
+    displayMessage(message.approval_required);
     return false;
   }else if ($('#reason').val().trim() == ''){
-    displayMessage("Reason Required");
+    displayMessage(message.reason_required);
     return false;
   }else{
     displayMessage("");

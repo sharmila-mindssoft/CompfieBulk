@@ -19,15 +19,6 @@ var pageSize = 100;
 var startCount;
 var endCount;
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
-
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
@@ -655,28 +646,28 @@ mirror.getCountriesForGroup(
 
 function validate_firsttab(){
   if($('.countrylist.active').text() == ''){
-    displayMessage("Country Required");
+    displayMessage(message.country_required);
     return false;
   }else if ($('.grouplist.active').text() == ''){
-    displayMessage("Group Required");
+    displayMessage(message.group_required);
     return false;
   }else if ($('.legalentitylist.active').text() == ''){
-    displayMessage("Legal Entity Required");
+    displayMessage(message.legalentity_required);
     return false;
   }else if ($('.geographylevellist.active').text() == ''){
-    displayMessage("Geography Level Required");
+    displayMessage(message.geographylevel_required);
     return false;
   }else if ($('.locationlist.active').text() == ''){
-    displayMessage("Location Required");
+    displayMessage(message.location_required);
     return false;
   }else if ($('.industrylist.active').text() == ''){
-    displayMessage("Industry Required");
+    displayMessage(message.industry_required);
     return false;
   }else if (assignStatutoryUnitIds.length == 0){
-    displayMessage("Unit Required");
+    displayMessage(message.unit_required);
     return false;
   }else if ($('.domainlist.active').text() == ''){
-    displayMessage("Domain Required");
+    displayMessage(message.domain_required);
     return false;
   }else{
     var checkDuplicateAssignStauttory = true;
@@ -804,7 +795,7 @@ function saveorsubmit(submissionType){
         applicableStatus = false;
         notApplicableRemarks = $('#remarkvalue'+actCount).val();
         if(notApplicableRemarks.length==0){
-          displayMessage("Remarks required for not applicable act");
+          displayMessage(message.act_remarks_required);
           return false;
         }
       }
@@ -865,7 +856,7 @@ function saveorsubmit(submissionType){
     }
     );
   }else{
-    displayMessage("Atleast one statutory should be select");
+    displayMessage(message.statutory_selection_required);
   }
   }
 }

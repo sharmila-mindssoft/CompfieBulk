@@ -5,14 +5,6 @@ var countriesList;
 var domainIds = [];
 var countryIds = [];
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
 
 $(".btn-user-cancel").click(function(){
   $("#user-add").hide();
@@ -188,28 +180,25 @@ function validate(){
 	var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 
 	if(employeeName.length == 0) {
-		displayMessage("Employee Name Required");
+		displayMessage(message.employeename_required);
 		$("#employeename").focus();
 	} else if(employeeId.length == 0) {
-		displayMessage("Employee Id Required");
+		displayMessage(message.employeeid_required);
 		$("#employeeid").focus();
 	} else if(emailId.length == 0) {
-		displayMessage("Email Id Required");
+		displayMessage(message.emailid_required);
 		$("#emailid").focus();
-	/*} else if(contactNo.length == 0) {
-		displayMessage("Contact Number Required");
-		$("#contactno").focus();*/
 	} else if(userGroup.length == 0) {
-		displayMessage("User Group Required");
+		displayMessage(message.usergroup_required);
 		$("#usergroupval").focus();
 	} else if(reg.test(emailId) == false) {
-		displayMessage("Invalid Email ID");
+		displayMessage(message.invalid_emailid);
 		$("#emailid").focus();
 	} else if(countryIds.length == 0) {
-		displayMessage("Country Required");
+		displayMessage(message.country_required);
 		$("#countryselected").focus().click();
 	} else if(domainIds.length == 0) {
-		displayMessage("Domain Required");
+		displayMessage(message.domain_required);
 		$("#domainselected").focus().click();
   	}else{
     	displayMessage('');
@@ -237,13 +226,13 @@ $("#submit").click(function(){
 			}
 			function onFailure(error){
 				if(error == "EmailIDAlreadyExists"){
-            	displayMessage("Email ID Already Exists");
+            	displayMessage(message.emailid_exists);
         }
         if(error == "ContactNumberAlreadyExists"){
-            displayMessage("Contact Number Already Exists");
+            displayMessage(message.contactno_exists);
         }
         if(error == "EmployeeCodeAlreadyExists"){
-            displayMessage("Employee ID Already Exists");
+            displayMessage(message.employeeid_exists);
         }
 			}
 			userDetail = [emailId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,countryIds,domainIds];
@@ -265,16 +254,16 @@ $("#submit").click(function(){
  			}
 			function failure(data) {
 				if(error == "EmailIDAlreadyExists"){
-            	displayMessage("Email ID Already Exists");
+            	displayMessage(message.emailid_exists);
         }
         if(error == "ContactNumberAlreadyExists"){
-            displayMessage("Contact Number Already Exists");
+            displayMessage(message.contactno_exists);
         }
         if(error == "EmployeeCodeAlreadyExists"){
-            displayMessage("Employee ID Already Exists");
+            displayMessage(message.employeeid_exists);
         }
         if(error == "InvalidUserId"){
-            displayMessage("Invalid User Id");
+            displayMessage(message.invalid_userid);
         }
 			}
 			console.log("address:"+address);

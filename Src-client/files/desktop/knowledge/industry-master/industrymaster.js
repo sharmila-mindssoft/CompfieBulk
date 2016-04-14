@@ -75,7 +75,7 @@ function loadIndustryList (industriesList) {
 
 function validate(){
   if($("#industryname").val().trim().length==0){
-    displayMessage('Industry Name Required');
+    displayMessage(message.industryname_required);
   }else{
     displayMessage('');
     return true
@@ -103,10 +103,10 @@ if(validate()){
     }
     function onFailure(error){
         if(error == "InvalidIndustryId"){
-            displayMessage("Invalid Industry Id");
+            displayMessage(message.invalid_industryid);
         }                
         if(error == "IndustryNameAlreadyExists"){
-            displayMessage("Industry Name Already Exists");
+            displayMessage(message.industryname_exists);
         }
     }
     mirror.saveIndustry(industryName,
@@ -127,7 +127,7 @@ if(validate()){
     }
     function onFailure(error){            
         if(error == "IndustryNameAlreadyExists"){
-            displayMessage("Industry Name Already Exists");
+            displayMessage(message.industryname_exists);
         }
     }
     mirror.updateIndustry(parseInt(industryId), industryName,

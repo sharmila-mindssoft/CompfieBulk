@@ -1,13 +1,5 @@
 var compliancesList;
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -15,7 +7,6 @@ function displayLoader() {
 function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
-
 
 function load_compliances (compliancesList) {
   var j = 1;
@@ -85,12 +76,12 @@ function submitOnOccurence(complianceId, count, unitId, complete_within_days){
   if(startdate != ''){
     var convertDueDate = convert_date(startdate);
     if (convertDueDate > currentDate) {
-        displayMessage("Start date is greater than today's date");
+        displayMessage(message.startdate_greater_today);
         return false;
     }
     displayLoader();
     function onSuccess(data){
-      displayMessage("Action taken successfully");
+      displayMessage(message.action_success);
       //getOnOccuranceCompliances ();
       $('#startdate'+count).val('');
       hideLoader();
@@ -111,7 +102,7 @@ function submitOnOccurence(complianceId, count, unitId, complete_within_days){
     }
     );
   }else{
-    displayMessage("Start date is required");
+    displayMessage(message.startdate_required);
     return false;
   }
   

@@ -6,15 +6,6 @@ var unitsList;
 var serviceProvidersList;
 
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
-
 function getServiceProviderReportFilters(){
   function onSuccess(data){
     countriesList = data["countries"];
@@ -181,13 +172,13 @@ function loadCompliance(reportType){
   if($("#serviceprovider").val() != '') serviceprovider = $("#serviceprovider").val();
 
   if(country.length == 0){
-    displayMessage("Country Required");
+    displayMessage(message.country_required);
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");  
+    displayMessage(message.domain_required);  
   }
   else if(act.length == 0){
-    displayMessage("Act Required");  
+    displayMessage(message.act_required);  
   }
   else{
       var filterdata={};

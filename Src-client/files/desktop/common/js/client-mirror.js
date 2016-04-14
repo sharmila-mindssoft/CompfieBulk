@@ -402,10 +402,10 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getSaveClientUserGroupDict(userGroupName, formIds) {
+    function getSaveClientUserGroupDict(ugName, fIds) {
         return {
-            "user_group_name": userGroupName,
-            "form_ids": formIds
+            "ug_name": ugName,
+            "f_ids": fIds
         }
     }
 
@@ -418,11 +418,11 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getUpdateClientUserGroupDict(userGroupId, userGroupName, formIds) {
+    function getUpdateClientUserGroupDict(ugId, ugName, fIds) {
         return {
-            "user_group_id": userGroupId,
-            "user_group_name": userGroupName,
-            "form_ids": formIds
+            "ug_id": ugId,
+            "ug_name": ugName,
+            "f_ids": fIds
         }
     }
 
@@ -435,13 +435,13 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeClientUserGroupStatus(userGroupId, isActive,
+    function changeClientUserGroupStatus(ugId, active,
         callback) {
         callerName = "client_masters"
         var request = [
             "ChangeUserPrivilegeStatus", {
-                "user_group_id": userGroupId,
-                "is_active": isActive
+                "ug_id": ugId,
+                "active": active
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -458,19 +458,21 @@ function initClientMirror() {
     }
 
     function getSaveServiceProviderDict(serviceProviderDetail) {
-        address = serviceProviderDetail[1]
-        if (address  == ""){
-            address = null;
+        add = serviceProviderDetail[1]
+        if (add  == ""){
+            add = null;
         }
-        console.log("address"+address)
-        return {
-            "service_provider_name": serviceProviderDetail[0],
-            "address": address,
-            "contract_from": serviceProviderDetail[2],
-            "contract_to": serviceProviderDetail[3],
-            "contact_person": serviceProviderDetail[4],
-            "contact_no": serviceProviderDetail[5]
+        console.log(add)
+        result = {
+            "s_name": serviceProviderDetail[0],
+            "add": add,
+            "c_from": serviceProviderDetail[2],
+            "c_to": serviceProviderDetail[3],
+            "c_person": serviceProviderDetail[4],
+            "c_no": serviceProviderDetail[5]
         }
+        console.log(result)
+        return result
     }
 
     function saveServiceProvider(serviceProviderDetail, callback) {
@@ -483,18 +485,18 @@ function initClientMirror() {
     }
 
     function getUpdateServiceProviderDict(serviceProviderDetail) {
-        address = serviceProviderDetail[2]
-        if (address  == ""){
-            address = null;
+        add = serviceProviderDetail[2]
+        if (add  == ""){
+            add = null;
         }
         return {
-            "service_provider_id": serviceProviderDetail[0],
-            "service_provider_name": serviceProviderDetail[1],
-            "address": address,
-            "contract_from": serviceProviderDetail[3],
-            "contract_to": serviceProviderDetail[4],
-            "contact_person": serviceProviderDetail[5],
-            "contact_no": serviceProviderDetail[6]
+            "s_id": serviceProviderDetail[0],
+            "s_name": serviceProviderDetail[1],
+            "add": add,
+            "c_from": serviceProviderDetail[3],
+            "c_to": serviceProviderDetail[4],
+            "c_person": serviceProviderDetail[5],
+            "c_no": serviceProviderDetail[6]
         }
     }
 
@@ -508,13 +510,13 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeServiceProviderStatus(serviceProviderId,
-        isActive, callback) {
+    function changeServiceProviderStatus(sId,
+        active, callback) {
         callerName = "client_masters"
         var request = [
             "ChangeServiceProviderStatus", {
-                "service_provider_id": serviceProviderId,
-                "is_active": isActive
+                "s_id": sId,
+                "active": active
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -531,19 +533,19 @@ function initClientMirror() {
 
     function getSaveClientUserDict(clientUserDetail) {
         return {
-            "email_id": clientUserDetail[0],
-            "user_group_id": clientUserDetail[1],
-            "employee_name": clientUserDetail[2],
-            "employee_code": clientUserDetail[3],
-            "contact_no": clientUserDetail[4],
-            "seating_unit_id": clientUserDetail[5],
-            "user_level": clientUserDetail[6],
-            "country_ids": clientUserDetail[7],
-            "domain_ids": clientUserDetail[8],
-            "unit_ids": clientUserDetail[9],
-            "is_admin": clientUserDetail[10],
-            "is_service_provider": clientUserDetail[11],
-            "service_provider_id": clientUserDetail[12]
+            "email": clientUserDetail[0],
+            "ug_id": clientUserDetail[1],
+            "emp_n": clientUserDetail[2],
+            "emp_c": clientUserDetail[3],
+            "cn": clientUserDetail[4],
+            "s_u_id": clientUserDetail[5],
+            "ul": clientUserDetail[6],
+            "c_ids": clientUserDetail[7],
+            "d_ids": clientUserDetail[8],
+            "u_ids": clientUserDetail[9],
+            "admin": clientUserDetail[10],
+            "sp": clientUserDetail[11],
+            "sp_id": clientUserDetail[12]
         }
     }
 
@@ -559,21 +561,20 @@ function initClientMirror() {
     function getUpdateClientUserDict(clientUserDetail) {
         console.log("clientUserDetail[0]"+clientUserDetail[0]);
         result =  {
-            "user_id": clientUserDetail[0],
-            "user_group_id": clientUserDetail[1],
-            "employee_name": clientUserDetail[2],
-            "employee_code": clientUserDetail[3],
-            "contact_no": clientUserDetail[4],
-            "seating_unit_id": clientUserDetail[5],
-            "user_level": clientUserDetail[6],
-            "country_ids": clientUserDetail[7],
-            "domain_ids": clientUserDetail[8],
-            "unit_ids": clientUserDetail[9],
-            "is_admin": clientUserDetail[10],
-            "is_service_provider": clientUserDetail[11],
-            "service_provider_id": clientUserDetail[12]
+            "u_id": clientUserDetail[0],
+            "ug_id": clientUserDetail[1],
+            "emp_n": clientUserDetail[2],
+            "emp_c": clientUserDetail[3],
+            "cn": clientUserDetail[4],
+            "s_u_id": clientUserDetail[5],
+            "ul": clientUserDetail[6],
+            "c_ids": clientUserDetail[7],
+            "d_ids": clientUserDetail[8],
+            "u_ids": clientUserDetail[9],
+            "admin": clientUserDetail[10],
+            "sp": clientUserDetail[11],
+            "sp_id": clientUserDetail[12]
         }
-        console.log("result:"+result);
         return result
     }
 
@@ -586,23 +587,23 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeClientUserStatus(userId, isActive, callback) {
+    function changeClientUserStatus(uId, active, callback) {
         callerName = "client_masters"
         var request = [
             "ChangeClientUserStatus", {
-                "user_id": userId,
-                "is_active": isActive
+                "u_id": uId,
+                "active": active
             }
         ];
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeAdminStatus(userId, isAdmin, callback) {
+    function changeAdminStatus(uId, admin, callback) {
         callerName = "client_masters"
         var request = [
             "ChangeAdminStatus", {
-                "user_id": userId,
-                "is_admin": isAdmin
+                "u_id": uId,
+                "admin": admin
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -617,13 +618,13 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function closeUnit(unitId, password, callback,
+    function closeUnit(uId, pwd, callback,
         failure_callback) {
         callerName = "client_masters"
         var request = [
             "CloseUnit", {
-                "unit_id": unitId,
-                "password": password
+                "u_id": uId,
+                "pwd": pwd
             }
         ];
         clientApiRequest(callerName, request, callback);

@@ -197,6 +197,33 @@ function showSideBar(idval, data){
                 $('.duedate1_label abbr', cloneValSide).html(data[k]['next_due_date']);
                 $('.validity1-textbox-input', cloneValSide).val(data[k]['validity_date']);
                 $('.duedate1-textbox-input', cloneValSide).val(data[k]['next_due_date']);
+                $(function(){
+                    $(".datepick").datepicker({
+                        changeMonth: true,
+                        changeYear: true,
+                        numberOfMonths: 1,
+                        dateFormat: "dd-M-yy",
+                        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                    });
+                    $(".duedate1-textbox-input").datepicker({
+                        changeMonth: true,
+                        changeYear: true,
+                        numberOfMonths: 1,
+                        dateFormat: "dd-M-yy",
+                        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                    });
+                    $(".validity1-textbox-input").datepicker({ 
+                        changeMonth: true,
+                        changeYear: true,
+                        numberOfMonths: 1,
+                        dateFormat: "dd-M-yy",
+                        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                    });    
+                });
+                
             }
             $('.btn-submit', cloneValSide).on("click", function(e){
                 var completion_date;
@@ -308,30 +335,7 @@ function showSideBar(idval, data){
             $('.half-width-task-details').append(cloneValSide);
         }
     });
-    $(".datepick").datepicker({
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        dateFormat: "dd-M-yy",
-        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    });
-    $(".duedate1-textbox-input").datepicker({
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        dateFormat: "dd-M-yy",
-        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    });
-    $(".validity1-textbox-input").datepicker({ //input-box validity1-textbox-input hasDatepicker
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        dateFormat: "dd-M-yy",
-        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    });
+    
 }
 
 function showTextbox(complianceStatus){
@@ -339,6 +343,32 @@ function showTextbox(complianceStatus){
     $('.duedate1_label').hide();
     $('.validity1_textbox').show();
     $('.validity1_label').hide();
+    $(function(){
+        $(".datepick").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        });
+        $(".duedate1-textbox-input").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        });
+        $(".validity1-textbox-input").datepicker({ 
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        });
+    });
 }
 function closeicon(){
     $('.uploaded-filename').html('');

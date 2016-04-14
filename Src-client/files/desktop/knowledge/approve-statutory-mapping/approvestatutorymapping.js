@@ -197,10 +197,10 @@ function loadApproveStatutory(){
   var industry = $("#industry").val();
   var statutorynature = $("#statutorynature").val();
   if(country.length == 0){
-    displayMessage("Country Required");
+    displayMessage(message.country_required);
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");
+    displayMessage(message.domain_required);
   }
   else{
     j = 1;
@@ -288,7 +288,6 @@ function loadApproveStatutory(){
     }
 
     if(j <= 1){
-      //displayMessage("");
       var norecordtableRow=$('#norecord-templates');
       var noclone=norecordtableRow.clone();
       $('.tbody-statutorymapping-list').append(noclone);
@@ -313,17 +312,17 @@ function disppopup(sm_id,compliance_id,element){
   }
   var frequency = '';
   $.each(complianceFrequencyList, function(index, value) {
-  if (value.frequency_id == compliances[compliance_id]["frequency_id"]) {
+  if (value.frequency_id == compliances[compliance_id]["f_id"]) {
       frequency = value.frequency;
   }
   });
 
   var sdateDesc = '';
   var duration = compliances[compliance_id]["duration"];
-  var duration_type_id = compliances[compliance_id]["duration_type_id"];
-  var repeats_every = compliances[compliance_id]["repeats_every"];
-  var repeats_type_id = compliances[compliance_id]["repeats_type_id"];
-  var statutory_date =  compliances[compliance_id]["statutory_dates"];
+  var duration_type_id = compliances[compliance_id]["d_type_id"];
+  var repeats_every = compliances[compliance_id]["r_every"];
+  var repeats_type_id = compliances[compliance_id]["r_type_id"];
+  var statutory_date =  compliances[compliance_id]["statu_dates"];
   var statutorydate = '';
   var duration_type = '';
   var repeats_type = '';
@@ -383,11 +382,11 @@ function disppopup(sm_id,compliance_id,element){
     statutorydate = sdateDesc;
   }
 
-  $(".popup_statutory").html(compliances[compliance_id]["statutory_provision"]);
+  $(".popup_statutory").html(compliances[compliance_id]["s_provision"]);
   $(".popup_statutorynature").text(sm["statutory_nature_name"]);
   $(".popup_compliancetask").html(sm["compliance_names"][compliance_id]["compliance_name"]);
   $(".popup_compliancedescription").text(compliances[compliance_id]["description"]);
-  $(".popup_penalconsequences").text(compliances[compliance_id]["penal_consequences"]);
+  $(".popup_penalconsequences").text(compliances[compliance_id]["p_consequences"]);
   $(".popup_compliancefrequency").text(frequency);
   $(".popup_complianceoccurance").text(statutorydate);
   $(".popup_applicablelocation").text(sm["geography_mappings"]);
@@ -449,12 +448,12 @@ $("#saverecord").click(function(){
   }
 
   if(approvelist.length == 0){
-    displayMessage("Atleast one action should be selected");
+    displayMessage(message.action_selection_required);
     return false;
   }
   function onSuccess(response) {
     $(".grid-table").hide();
-    displayMessage("Selected action has been saved successfully");
+    displayMessage(message.action_selection_success);
     reloadStatutoryMapping();
   }
   function onFailure(error){

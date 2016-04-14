@@ -59,9 +59,9 @@ function loadGeographiesList(geographiesList) {
       var parentid = geographyList[list]["parent_id"];
       var geographyLevelList = geographyLevelsList[entity];
       for(var i in geographyLevelList){
-        if(geographyLevelList[i]["level_id"] == geographyList[list]["level_id"]){
-          level = geographyLevelList[i]["level_name"];
-          lposition = geographyLevelList[i]["level_position"];
+        if(geographyLevelList[i]["l_id"] == geographyList[list]["level_id"]){
+          level = geographyLevelList[i]["l_name"];
+          lposition = geographyLevelList[i]["l_position"];
           break;
         }
       }
@@ -157,11 +157,11 @@ function loadGeographyFirstLevels(saverecord){
   var geographyLevelList = geographyLevelsList[saverecord];
   var levelposition;
   for(var j in geographyLevelList){
-    levelposition = geographyLevelList[j]["level_position"];
+    levelposition = geographyLevelList[j]["l_position"];
     var tableRow=$('#geography-level-templates');
     var clone=tableRow.clone();
-    $('.title', clone).text(geographyLevelList[j]["level_name"]);
-    $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" maxlength="50" class="input-box addleft" placeholder=""  style="width:90%;" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+    $('.title', clone).text(geographyLevelList[j]["l_name"]);
+    $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" maxlength="50" class="input-box addleft" placeholder=""  style="width:90%;" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["l_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
     $('.tbody-geography-level').append(clone);
   }
   var setlevelstage= 1;
@@ -253,10 +253,10 @@ function load(id,level,country){
         for(level in geographyLevelsList){
           var cGeography = geographyLevelsList[level];
           for( g in cGeography){
-            var lId = cGeography[g]["level_id"];
+            var lId = cGeography[g]["l_id"];
             if(lId == countryGeographyList[geography]["level_id"]){
 
-              lName = cGeography[g]["level_name"];
+              lName = cGeography[g]["l_name"];
             }
           }
         }
@@ -297,18 +297,18 @@ function saverecord(j,e){
         });
     }
     if(map_gm_id==0 && levelstage>1 ){
-      displayMessage("Level Selection Should not be Empty");
+      displayMessage(message.levelselection_required);
     }else if(datavalue.length == 0){
      displayMessage("Level-"+levelstage+" Value Should not be Empty");
     }else{
       function onSuccess(response){
-        displayMessage("Record Added Successfully");
+        displayMessage(message.record_added);
         $('#datavalue'+j).val('');
         reload(last_geography_id,last_level,$('#country').val());
       }
       function onFailure(error){
         if(error == 'GeographyNameAlreadyExists'){
-            displayMessage("Geography Name Already Exists");
+            displayMessage(message.geographyname_exists);
         }
       }
       countryId = parseInt($("#country").val());
@@ -361,14 +361,14 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
   var geographyLevelList = geographyLevelsList[countryid];
   var levelposition;
   for(var j in geographyLevelList){
-    levelposition = geographyLevelList[j]["level_position"];
+    levelposition = geographyLevelList[j]["l_position"];
     var tableRow=$('#geography-level-templates');
     var clone=tableRow.clone();
-    $('.title', clone).text(geographyLevelList[j]["level_name"]);
+    $('.title', clone).text(geographyLevelList[j]["l_name"]);
     if(levelposition == lposition){
-      $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" maxlength="50" class="input-box addleft" placeholder=""  style="width:80%;" name="datavalue'+levelposition+'" id="datavalue'+levelposition+'" onkeypress="updaterecord('+levelposition+',event)"/><span> <a href="#" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="updaterecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/> <input type="hidden" id="visible'+levelposition+'" value=""/> <input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+      $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" maxlength="50" class="input-box addleft" placeholder=""  style="width:80%;" name="datavalue'+levelposition+'" id="datavalue'+levelposition+'" onkeypress="updaterecord('+levelposition+',event)"/><span> <a href="#" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="updaterecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["l_id"]+'"/> <input type="hidden" id="visible'+levelposition+'" value=""/> <input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
     }else{
-      $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" readonly="readonly" class="input-box addleft" placeholder=""  style="width:80%;" name="datavalue'+levelposition+'" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <img src="/images/icon-plus.png" formtarget="_self"/></span></div><input type="hidden" name="glmid'+levelposition+'" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/> <input type="hidden" name="visible'+levelposition+'" id="visible'+levelposition+'" value=""/> <input type="hidden" name="level'+levelposition+'" id="level'+levelposition+'" value="'+levelposition+'" />');
+      $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" readonly="readonly" class="input-box addleft" placeholder=""  style="width:80%;" name="datavalue'+levelposition+'" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <img src="/images/icon-plus.png" formtarget="_self"/></span></div><input type="hidden" name="glmid'+levelposition+'" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["l_id"]+'"/> <input type="hidden" name="visible'+levelposition+'" id="visible'+levelposition+'" value=""/> <input type="hidden" name="level'+levelposition+'" id="level'+levelposition+'" value="'+levelposition+'" />');
     }
     $('.tbody-geography-level').append(clone);
   }
@@ -437,22 +437,22 @@ function updaterecord(j,e){
         });
     }
     if(map_gm_id==0 && levelstage>1 ){
-      displayMessage("Level Selection Should not be Empty");
+      displayMessage(message.levelselection_required);
     }else if(datavalue.length == 0){
       displayMessage("Level-"+levelstage+" Value Should not be Empty");
     }else{
      function onSuccess(response){
-          displayMessage("Record Update Successfully");
+          displayMessage(message.record_updated);
           GetGeographies();
           $("#geography-view").show();
           $("#geography-add").hide();
       }
       function onFailure(error) {
         if(error == 'GeographyNameAlreadyExists'){
-            displayMessage("Geography Name Already Exists");
+            displayMessage(message.geographyname_exists);
         }
         if(error == 'InvalidGeographyId'){
-            displayMessage("Invalid Geography Id");
+            displayMessage(message.invalid_geographyid);
         }
 
       }

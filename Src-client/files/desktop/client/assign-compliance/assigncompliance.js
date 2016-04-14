@@ -20,15 +20,6 @@ var statutoriesCount = 1;
 var actCount = 1;
 var s_endCount = 0;
 
-
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
@@ -333,7 +324,7 @@ function load_secondwizard(){
     $('.compliance_count').text('');
   }
 
-  if(totalRecord <= statutoriesCount){
+  if(totalRecord <= statutoriesCount && statutoriesCount > 1){
     $('#pagination').hide();
     $('#activate-step-3').show();
     $(document).ready(function($) {
@@ -352,8 +343,7 @@ function load_secondwizard(){
   }else{
     $('#activate-step-3').hide();
   }
-
-  if(statutoriesNameList.length ==0){
+  /*if(statutoriesNameList.length ==0){
     $('#pagination').hide();
     $('#activate-step-3').show();
     $('#accordion').find('.accordion-toggle').click(function(){
@@ -366,7 +356,7 @@ function load_secondwizard(){
         accordionstatus = true;
       }
     });
-  }
+  }*/
 }
 
 $('#pagination').click(function(){
@@ -401,16 +391,16 @@ $('#pagination').click(function(){
 
 function validate_firsttab(){
   if($('.countrylist.active').text() == ''){
-    displayMessage("Country Required");
+    displayMessage(message.country_required);
     return false;
   }else if ($('.legalentitylist.active').text() == ''){
-    displayMessage("Legal Entity Required");
+    displayMessage(message.legalentity_required);
     return false;
   }else if (assignStatutoryUnitIds.length == 0){
-    displayMessage("Unit Required");
+    displayMessage(message.unit_required);
     return false;
   }else if ($('.domainlist.active').text() == ''){
-    displayMessage("Domain Required");
+    displayMessage(message.domain_required);
     return false;
   }else{
     s_endCount = 0;
@@ -460,16 +450,16 @@ function validate_secondtab(){
 
 function validate_thirdtab(){
   if($('.assigneelist.active').text() == ''){
-    displayMessage("Assignee Required");
+    displayMessage(message.assignee_required);
     return false;
   }else if ($(".assigneelist.active").text().trim() == 'Client Admin'){
     displayMessage("");
     return true;
   }else if ($('.concurrencelist.active').text() == '' && two_level_approve){
-    displayMessage("Concurrence Required");
+    displayMessage(message.concurrence_required);
     return false;
   }else if ($('.approvallist.active').text() == ''){
-    displayMessage("Approval Required");
+    displayMessage(message.approval_required);
     return false;
   }else{
     displayMessage("");
@@ -599,7 +589,7 @@ function submitcompliance(){
                   tDay = $('#triggerdate'+totalCompliance+'-'+k).val();
                   current_due_dates.push([dDate,tDay]);
                 }else{
-                  displayMessage("Due date Required in Select Compliance Task Wizard");
+                  displayMessage(message.compliance_duedate_required);
                   hideLoader();
                   return false;
                 }
@@ -610,7 +600,7 @@ function submitcompliance(){
                 tDay = $('#triggerdate'+totalCompliance).val();
                 current_due_dates.push([dDate,tDay]);
               }else{
-                displayMessage("Due date Required in Select Compliance Task Wizard");
+                displayMessage(message.compliance_duedate_required);
                 hideLoader();
                 return false;
               }
@@ -655,17 +645,17 @@ function submitcompliance(){
               if(trigger_before_days != '') {
                 trigger_before_days = parseInt(trigger_before_days);
                 if(trigger_before_days > 100){
-                  displayMessage("Trigger days should not be exceed 100");
+                  displayMessage(message.triggerbefore_exceed);
                   hideLoader();
                   return false;
                 }
                 if(trigger_before_days == 0){
-                  displayMessage("Trigger days should be 1 to 100");
+                  displayMessage(message.triggerbefore_iszero);
                   hideLoader();
                   return false;
                 }
               }else{
-                displayMessage("Trigger date Required in Select Compliance Task Wizard");
+                displayMessage(message.compliance_triggerdate_required);
                 hideLoader();
                 return false;
               }
@@ -893,7 +883,7 @@ function submitcompliance(){
       }
     }else{
       hideLoader();
-      displayMessage("No compliance selected for assign");
+      displayMessage(message.nocompliance_selected_forassign);
     }
 }
 

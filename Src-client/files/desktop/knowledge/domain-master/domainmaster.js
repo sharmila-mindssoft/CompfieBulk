@@ -1,12 +1,5 @@
 var domainsList;
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
+
 $(".btn-domain-add").click(function(){
   $("#domain-view").hide();
   $("#domain-add").show();
@@ -75,7 +68,7 @@ function loadDomainList (domainsList) {
 
 function validate(){
   if($("#domainname").val().trim().length==0){
-    displayMessage('Domain Name Required');
+    displayMessage(message.domainname_required);
   }else{
     displayMessage('');
     return true
@@ -96,7 +89,7 @@ if(validate()){
     }    function onFailure(error){
 
         if(error == "DomainNameAlreadyExists"){
-            displayMessage("Domain Name Already Exists");
+            displayMessage(message.domainname_exists);
         }
     }
     mirror.saveDomain(domainName,
@@ -118,11 +111,11 @@ if(validate()){
       }
     function onFailure(error) {
         if(error == "InvalidDomainId"){
-            displayMessage("Invalid Domain Id");
+            displayMessage(message.invalid_domainid);
         }
 
         if(error == 'DomainNameAlreadyExists'){
-            displayMessage("Domain Name Already Exists");
+            displayMessage(message.domainname_exists);
         }
     }
     mirror.updateDomain(parseInt(domainId), domainName,

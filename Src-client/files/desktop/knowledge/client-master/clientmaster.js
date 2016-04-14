@@ -8,6 +8,8 @@ var countriesListequal = null;
 var clientcountriesList = null;
 var clientdomainList = null;
 var clientdata = null;
+var usercountryids = null;
+var userdomainids = null;
 
 function clearMessage() {
     $(".error-message").hide();
@@ -1119,7 +1121,7 @@ function dateconfig(){
 }
 
 function checkuser(userid, usercountryids, userdomainids){
-    var returnval;
+    var returnval = 0;
     var arrc = [];
     var arrd = [];
     var countryids = $("#country").val();
@@ -1156,17 +1158,20 @@ function loadAutoUsers () {
     $('#selectboxview-users ul').empty();
     var str = '';
     for(var i in users){
-        var selectUserStatus = '';
-        for(var j = 0; j<editusersval.length; j++){
-            if(editusersval[j] == users[i]["user_id"]){
-                selectUserStatus = 'checked';
+        if(checkuser(users[i]["user_id"], users[i]["countries"], users[i]["domains"]) == 1){
+            var selectUserStatus = '';
+            for(var j = 0; j<editusersval.length; j++){
+                if(editusersval[j] == users[i]["user_id"]){
+                    selectUserStatus = 'checked';
+                }
             }
+            if(selectUserStatus == 'checked'){
+                str += '<li id="'+users[i]["user_id"]+'" class="active_selectbox_users" onclick="activateUsers(this)" >'+users[i]["employee_name"]+'</li> ';
+            }else{
+                str += '<li id="'+users[i]["user_id"]+'" onclick="activateUsers(this)" >'+users[i]["employee_name"]+'</li> ';
+            }    
         }
-        if(selectUserStatus == 'checked'){
-            str += '<li id="'+users[i]["user_id"]+'" class="active_selectbox_users" onclick="activateUsers(this)" >'+users[i]["employee_name"]+'</li> ';
-        }else{
-            str += '<li id="'+users[i]["user_id"]+'" onclick="activateUsers(this)" >'+users[i]["employee_name"]+'</li> ';
-        }
+        
     }
   $('#selectboxview-users ul').append(str);
   $("#usersSelected").val(editusersval.length+" Selected")

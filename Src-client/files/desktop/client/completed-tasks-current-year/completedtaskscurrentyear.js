@@ -10,14 +10,6 @@ var actList;
 var file_list = [];
 var usersList;
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
@@ -223,13 +215,13 @@ function load_thirdwizard(){
 
 function validate_firsttab(){
   if($('.countrylist.active').text() == ''){
-    displayMessage("Country Required");
+    displayMessage(message.country_required);
     return false;
   }else if ($('.legalentitylist.active').text() == ''){
-    displayMessage("Legal Entity Required");
+    displayMessage(message.legalentity_required);
     return false;
   }else if ($('.unitlist.active').text() == ''){
-    displayMessage("Unit Required");
+    displayMessage(message.unit_required);
     return false;
   }else{
     displayMessage("");
@@ -239,7 +231,7 @@ function validate_firsttab(){
 
 function validate_secondtab(){
   if($('.domainlist.active').text() == ''){
-    displayMessage("Domain Required");
+    displayMessage(message.domain_required);
     return false;
   }else{
     return true;
@@ -295,20 +287,20 @@ function submitcompliance(){
           if(completed_by != '') completed_by = parseInt(completed_by);
 
           if(due_date == ''){
-            displayMessage("Due Date Required");
+            displayMessage(message.duedate_required);
             hideLoader();
             return false;
           }
           else if(completion_date == ''){
-            displayMessage("Compliance Date Required");
+            displayMessage(message.compliancedate_required);
             hideLoader();
             return false;
           }else if(validity_date == '' && frequency_ == 'Periodical'){
-            displayMessage("Validity Date Required");
+            displayMessage(message.validitydate_required);
             hideLoader();
             return false;
           }else if(completed_by == ''){
-            displayMessage("Assignee Required");
+            displayMessage(message.assignee_required);
             hideLoader();
             return false;
           }else if(validity_date != '' && frequency_ == 'Periodical'){

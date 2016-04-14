@@ -16,15 +16,6 @@ var statutoriesCount = 1;
 var actCount = 1;
 var s_endCount = 0;
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
-
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
@@ -319,7 +310,7 @@ $('#pagination').click(function(){
 function submit_statutory(){
   var password = $('#password').val();
   if(password == ''){
-    $('.popup-error-msg').html("Please Enter password");
+    $('.popup-error-msg').html(message.enter_password);
     $('#password').focus();
   }else{
     displayLoader();
@@ -336,7 +327,7 @@ function submit_statutory(){
     }
     function onFailure(error){
       if(error == 'InvalidPassword'){
-        $('.popup-error-msg').html("Enter Correct password");
+        $('.popup-error-msg').html(message.enter_correct_password);
         $('#password').focus();
         $('#password').val("");
       }
@@ -382,7 +373,7 @@ $("#submit").click(function() {
       applicableStatus = false;
       notApplicableRemarks = $('#remarkvalue'+i).val().trim();
       if(notApplicableRemarks.length==0){
-        displayMessage("Remarks required for not opted act");
+        displayMessage(message.act_remarks_opted_required);
         saveflag = false;
         hideLoader();
         return false;
@@ -421,7 +412,7 @@ $("#submit").click(function() {
           compliancenotApplicableRemarks = compliance_remarks;
         }
         if(compliancenotApplicableRemarks == '' && compliance_remarks == '' && applicableStatus == true){
-          displayMessage("Remarks required for not opted compliance");
+          displayMessage(message.compliance_remarks_opted_required);
           saveflag = false;
           hideLoader();
           return false;

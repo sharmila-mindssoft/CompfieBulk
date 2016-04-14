@@ -327,10 +327,10 @@ $("#submit").click(function(){
   if($("#statutory").val() != '') act = $("#statutory").val();
 
   if(country.length == 0){
-    displayMessage("Country Required");
+    displayMessage(message.country_required);
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");
+    displayMessage(message.domain_required);
   }
   else{
       displayLoader();

@@ -7,6 +7,13 @@ function displayMessage(message) {
   $(".error-message").show();
 }
 
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
+
 function getShortName(){
     var pathArray = window.location.pathname.split( '/' );
     console.log(pathArray)
@@ -86,15 +93,17 @@ $("#submit").click(function(){
   }else if(validateEmail(username) == ''){
     displayMessage("Invalid email id");
   }else {
-
+      displayLoader();
       function onSuccess(data){
         displayMessage("Password reset link has been sent to your email Id");
         $("#username").val("");
+        hideLoader();
       }
       function onFailure(error){
         if(error == "InvalidUserName"){
           displayMessage("No such user exists");
         }
+        hideLoader();
       }
 
       if(getShortName() == null  || getShortName() == "forgot-password"){
@@ -127,4 +136,5 @@ $("#submit").click(function(){
 
 $(document).ready(function () {
   $("#username").focus();
+  
 });

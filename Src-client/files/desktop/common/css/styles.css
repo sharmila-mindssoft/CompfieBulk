@@ -1415,11 +1415,11 @@ textarea.heightsmall{ height: 40px; }
 }
 .countrycode
 {
-	width: 18% !important;
+	width: 24% !important;
 }
 .areacode
 {
-	width: 18% !important;
+	width: 24% !important;
 }
 .mobile
 {
@@ -2892,7 +2892,14 @@ cursor: pointer;
 		td:nth-of-type(5):before { content: "Status"; }
 	}*/
 }
-
+.custom-file-input{
+	color: transparent;
+}
+.sidebardocview{
+	display: inline-block;
+    overflow: hidden;
+    width: 162px;
+}
 ul.pagination {
 	font-size:0.8em;
     display: inline-block;
@@ -2914,5 +2921,45 @@ ul.pagination li.active {
     background-color: #4CAF50;
     color: white;
 }
-
 ul.pagination li:hover:not(.active) {background-color: #ddd;}
+
+#loading-indicator {
+	font-family: "Lato", sans-serif;
+	position: fixed;
+	top: 8.625em;
+	left: 50%;
+	width: 100px;
+	height: 1.875em;
+	margin-left: -50px;
+	z-index: 1;
+	background-color: #363233;
+	border-radius: 5px;
+	color: #fff;
+	font-size: 14px;
+	font-weight: 300;
+	line-height: 1.875em;
+	text-align: center;
+}
+.loading-indicator-spin {
+	background: url("/files/desktop/common/images/transparent-bg-light.png") repeat scroll 0 0 rgba(0, 0, 0, 0);
+    display: none;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    vertical-align: middle;
+    width: 100%;
+    z-index: 4;
+}
+.loading-indicator-spin span {
+	width: 100%;
+	position: fixed;
+	top: 40%;
+	left: 0;
+	text-align: center;
+}
+.loading-indicator-spin img {
+	width: 4em;
+	opacity: 100%;
+}
