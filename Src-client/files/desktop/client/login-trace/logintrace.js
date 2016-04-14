@@ -72,10 +72,10 @@ function showrecord(){
     var fromdate = $("#from-date").val();
     var todate = $("#to-date").val();
     if(fromdate == ''){
-        displayMessage(" Select from Date");
+        displayMessage(message.fromdate_required);
     }
     else if(todate ==''){
-        displayMessage(" Select to Date");
+        displayMessage(message.todate_required);
     }
     else{
         fromdate = fromdate+" 00:00:00";

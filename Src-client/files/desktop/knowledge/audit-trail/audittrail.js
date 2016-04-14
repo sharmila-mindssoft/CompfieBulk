@@ -1,22 +1,12 @@
 var auditTrailList;
 var formList;
 var userList;
-
 var finalList;
 var pageSize;
 var startCount;
 var endCount;
-
 var tempadlist;
 
-function clearMessage() {
-    $(".error-message").hide();
-    $(".error-message").text("");
-}
-function displayMessage(message) {
-    $(".error-message").text(message);
-    $(".error-message").show();
-}
 function initialize(){
 	function onSuccess(data){
 		auditTrailList = data['audit_trail_details'];
@@ -156,10 +146,10 @@ $("#show").click(function(){
 		$('#formid').val("");
 	}
 	if(fromDateValue == ''){
-		displayMessage('Enter From Date');
+		displayMessage(message.fromdate_required);
 	}
 	else if(toDateValue == ''){
-		displayMessage('Enter To Date');
+		displayMessage(message.todate_required);
 	}
 	else{
 	 	$(".tbody-audittrail-list").find("tr").remove();

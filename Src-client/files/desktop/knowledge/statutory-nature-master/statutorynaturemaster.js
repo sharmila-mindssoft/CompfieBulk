@@ -1,12 +1,3 @@
-function clearMessage() {
-    $(".error-message").hide();
-    $(".error-message").text("");
-}
-
-function displayMessage(message) {
-    $(".error-message").text(message);
-    $(".error-message").show();
-}
 $("#btn-statutory-nature-add").click(function(){
     $("#statutory-nature-view").hide();
     $("#statutory-nature-add").show();
@@ -70,7 +61,7 @@ $('#statutory-nature-name').keypress(function (e) {
     var statutoryNatureNameVal = $("#statutory-nature-name").val().trim();
     if (e.which == 13) {
         if(statutoryNatureNameVal == ''){
-            displayMessage('Statutory Nature Name Required');
+            displayMessage(message.statutorynature_required);
         }
         else{
             jQuery('#btn-statutory-nature-submit').focus().click();
@@ -82,11 +73,9 @@ $("#btn-statutory-nature-submit").click(function(){
     var statutoryNatureIdVal = $("#statutory-nature-id").val();
     var statutoryNatureNameVal = $("#statutory-nature-name").val().trim();
     if(statutoryNatureNameVal == ""){
-        displayMessage('Statutory Nature Name Required');
+        displayMessage(message.statutorynature_required);
     }
-    else if (statutoryNatureNameVal.length > 50) {
-        displayMessage('Not Extended 50 Characters');
-    }
+    
     else if(statutoryNatureIdVal == ''){
         function onSuccess(data){
             $("#statutory-nature-add").hide();
@@ -95,7 +84,7 @@ $("#btn-statutory-nature-submit").click(function(){
         }
         function onFailure(error){
             if(error == 'StatutoryNatureNameAlreadyExists'){
-                displayMessage('Statutory Nature Name Already Exists');
+                displayMessage(message.statutoryname_exists);
             }
         }
         mirror.saveStatutoryNature(statutoryNatureNameVal, function (error, response){
@@ -116,10 +105,10 @@ $("#btn-statutory-nature-submit").click(function(){
         }
         function onFailure(error){
             if(error == 'InvalidStatutoryNatureId'){
-                displayMessage('Invalid Statutory Nature Name');
+                displayMessage(message.stat_nature_invalid);
             }
             if(error == 'StatutoryNatureNameAlreadyExists'){
-                displayMessage('Statutory Nature Name Already Exists');
+                displayMessage(message.statutoryname_exists);
             }
         }
         mirror.updateStatutoryNature(parseInt(statutoryNatureIdVal), statutoryNatureNameVal,

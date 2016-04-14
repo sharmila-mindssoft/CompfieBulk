@@ -109,10 +109,10 @@ $("#btnUserGroupShow").click(function(){
 	var groupNameVal = $("#groupName").val().trim();
 	var categoryNameVal = $("#categoryName").val().trim();
 	if(groupNameVal == ''){
-		displayMessage('Group Name Required');
+		displayMessage(message.group_required);
 	}
 	else if(categoryNameVal == ''){
-		displayMessage('Select Category Name');
+		displayMessage(message.catgname_required);
 	}
 	else{
 		clearMessage();
@@ -122,7 +122,7 @@ $("#btnUserGroupShow").click(function(){
 		}
 		function onFailure(error){
 			if(error == "GroupNameAlreadyExists"){
-				displayMessage("Group Name Already Exists")
+				displayMessage(message.groupname_exists)
 			}
 		}
 		mirror.getAdminUserGroupList(
@@ -204,20 +204,20 @@ $("#btnUserGroupSubmit").click(function(){
 	var chkArray = [];
 	var chkArrayInt = [];
 	if(groupNameVal == ''){
-		displayMessage("Group Name Required");
+		displayMessage(message.group_required);
 	}
 	else if(categoryNameVal == ''){
-		displayMessage("Select Category Name");
+		displayMessage(message.catgname_required);
 	}
 	else if(categoryNameVal.length > 50){
-		displayMessage("Category Name is not exceeded 50 Characters");
+		displayMessage(message.category_max50);
 	}
 	else if(groupIdVal == ''){
 		$(".checkedFormId:checked").each(function() {
 			chkArray.push($(this).val());
 		});
 		if(chkArray.length == 0){
-			displayMessage("Select Atleast one Form to create user group");
+			displayMessage(message.add_one_form);
 
 		}
 		else{
@@ -232,7 +232,7 @@ $("#btnUserGroupSubmit").click(function(){
 			}
 			function onFailure(error){
 				if(error == "GroupNameAlreadyExists"){
-					displayMessage("Group Name Already Exists");
+					displayMessage(message.groupname_exists);
 				}
 			}
 
@@ -266,7 +266,7 @@ $("#btnUserGroupSubmit").click(function(){
 		}
 		function onFailure(error){
 			if(error == "GroupNameAlreadyExists"){
-				displayMessage("Group Name Already Exists");
+				displayMessage(message.groupname_exists);
 			}
 		}
 		var userGroupInsertDetails = mirror.getUpdateAdminUserGroupDict(parseInt(groupIdVal), groupNameVal, 
@@ -317,7 +317,7 @@ function userGroupActive(userGroupId, isActive){
 	}
 	function onFailure(error){
 		if(error == "CannotDeactivateUserExists"){
-			displayMessage("Cannot deactivate.. One or more User Exists")
+			displayMessage(message.cannot_deactivate_usergroup);
 		}
 	}
 	mirror.changeAdminUserGroupStatus(userGroupId, isActive,

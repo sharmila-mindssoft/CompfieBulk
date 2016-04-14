@@ -100,7 +100,7 @@ function loadunitdetailsreport(buttontype){
 	}	
 
 	if(countries == ""){
-		displayMessage("Select Country");
+		displayMessage(message.country_required);
 	}
 	else{
 		function onSuccess(data){

@@ -98,10 +98,10 @@ $("#show-button").click(function(){
     }   
 
     if(countries == ""){
-        displayMessage("Select Country");
+        displayMessage(message.country_required);
     }
     else if(groupid == ""){
-        displayMessage("Enter Group");  
+        displayMessage(message.group_required);  
     }
     else{
         function onSuccess(data){

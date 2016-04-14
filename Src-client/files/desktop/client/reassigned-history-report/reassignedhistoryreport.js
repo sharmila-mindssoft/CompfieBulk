@@ -90,10 +90,10 @@ function loadreassignedhistory(buttontype){
  
    
     if(countriesNameVal == ""){
-        displayMessage("Enter Country");
+        displayMessage(message.country_required);
     }
     else if(domainNameVal == ""){
-        displayMessage("Enter Domain");  
+        displayMessage(message.domain_required);  
     }
     else{
         function onSuccess(data){

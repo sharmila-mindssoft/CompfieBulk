@@ -1,12 +1,5 @@
 var splist;
-function clearMessage() {
-    $(".error-message").hide();
-    $(".error-message").text("");
-}
-function displayMessage(message) {
-    $(".error-message").text(message);
-    $(".error-message").show();
-}
+
 $("#btn-service-provider-add").click(function(){
     $("#service-provider-view").hide();
     $("#service-provider-add").show();  
@@ -154,43 +147,43 @@ $("#submit").click(function(){
     var todaydate = new Date();
 
     if(serviceProviderNameValue == ''){
-        displayMessage('Enter Service Provider Name ');
+        displayMessage(message.spname_required);
     }
     else if(serviceProviderNameValue.length > 50){
-        displayMessage('Service Provider Name is maximum 50 characters Allowed');
+        displayMessage(message.spname_max50);
     }
     else if(contactPersonValue == ''){
-        displayMessage('Enter Contact Person Name ');
+        displayMessage(message.contactpersonname_required);
     }
     else if(contactPersonValue.length > 50){
-        displayMessage('Contact Person Name is maximum 50 characters Allowed');
+        displayMessage(message.contactpersonname_max50);
     }
     // else if(countryCodeValue == ''){
     //     displayMessage('Enter Contact No. Country Code');
     // }
     else if(countryCodeValue.length > 4){
-        displayMessage('Contact No. Country Code is maximum 4 characters Allowed');
+        displayMessage(message.countrycode_max4);
     }
     else if(areaCodeValue.length > 4){
-        displayMessage('Contact No. Area Code is maximum 4 characters');
+        displayMessage(message.areacode_max4);
     }
     // else if(mobileNumberValue == ''){
     //     displayMessage('Enter Contact No.');
     // }
-    else if(mobileNumberValue.length > 12){
-        displayMessage('Contact No. is maximum 12 characters Allowed');
+    else if(mobileNumberValue.length > 10){
+        displayMessage(message.contactno_max10);
     }
     else if(addressValue.length > 250){
-        displayMessage('Address is maximum 250 characters Allowed');
+        displayMessage(message.address_max250);
     }
     else if(contractFromValue == ''){
-        displayMessage('Enter Contract From ');
+        displayMessage(message.contractfrom_required);
     }
     else if(contractToValue == ''){
-        displayMessage('Enter Contract To');
+        displayMessage(message.contractto_required);
     }
     else if (todaydate > parseMyDate(contractToValue)){
-        displayMessage('Select Contract To Date is maximum of Today Date');
+        displayMessage(message.contractto_maxi_today);
     }
     else if(serviceProviderIdValue == ''){
         function onSuccess(data){
@@ -200,10 +193,10 @@ $("#submit").click(function(){
         }
         function onFailure(error){
             if(error == 'ServiceProviderNameAlreadyExists') {
-                displayMessage('Service Provider Name Already Exists');
+                displayMessage(message.spname_exists);
             }   
             if(error == 'ContactNumberAlreadyExists') {
-                displayMessage('Contact Number Already Exists');
+                displayMessage(message.contactno_exists);
             }   
      
         }
@@ -233,10 +226,10 @@ $("#submit").click(function(){
             
         function onFailure(error){
             if(error == 'ServiceProviderNameAlreadyExists') {
-                displayMessage('Service Provider Name Already Exists');
+                displayMessage(message.spname_exists);
             }   
             if(error == 'ContactNumberAlreadyExists') {
-                displayMessage('Contact Number Already Exists');
+                displayMessage(message.contactno_exists);
             }
         }
         var serviceProviderDetail;
@@ -321,7 +314,7 @@ function serviceprovider_active(serviceProviderId, isActive){
         }
         function onFailure(error){
             if(error == "CannotDeactivateUserExists"){
-                displayMessage("Cannot Deactivate Service Provider, One or More User Exists");
+                displayMessage(message.cannot_deactivate_sp);
             }
             else{
                 displayMessage(error);
