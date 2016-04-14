@@ -93,7 +93,7 @@ var message = {
 	'approval_level' : 'Level of Approval is Required',
 	'reminder_assignee_required' : 'Reminder to Assignee is Required',
 	'escalationreminder_concurrence_approval_required' : 'Escalation Reminders to Concurrence & Approval Person is Required',
-	'escalationreminder_all' : 'Escalation Reminders to Assignee, Concurrence & Approval is Required'
+	'escalationreminder_all' : 'Escalation Reminders to Assignee, Concurrence & Approval is Required',
 	'act_remarks_required' : 'Remarks required for not Applicable Act',
 	'countryname_exists' : 'Country Name Already Exists',
 	'countryname_invalid' : 'Country Name Invalid',
@@ -157,7 +157,7 @@ var message = {
 	'cannot_deactivate_usergroup' : 'Cannot Deactivate User group, One or More User Exists',
 	'todate_required' : 'To Date Required',
 	'fromdate_required' : 'From Date Required',
-	'catgname_required' : 'Category Name Required'
+	'catgname_required' : 'Category Name Required',
 	'action_required' : 'Action Required',
 	'validitydate_required' : 'Validity Date Required',
 	'nextduedate_required' : 'Next Due Date Required',
@@ -173,7 +173,7 @@ var message = {
 	'completion_lt_current' : 'Completion Date must be less than or equal to Current Date',
 	'nextduedate_gt_current' : 'Next Due Date must be Greater than Current Date',
 	'validity_gt_nextduedate' : 'Validity Date must be Greater than or equal to Next Due Date',
-	'category_max50' : 'Category Name is not exceeded 50 Characters'
+	'category_max50' : 'Category Name is not exceeded 50 Characters',
 };
 
 function clearMessage() {
