@@ -3125,7 +3125,7 @@ class ClientDatabase(Database):
 
         filter_ids = []
 
-        inprogress_qry = " AND T1.due_date >= now() \
+        inprogress_qry = " AND ((T2.duration_type_id =2 AND T1.due_date >= now()) or (T1.due_date >= CURDATE())) \
                 AND IFNULL(T1.approve_status,0) <> 1"
 
         complied_qry = " AND T1.due_date >= T1.completion_date \
@@ -3134,7 +3134,7 @@ class ClientDatabase(Database):
         delayed_qry = " AND T1.due_date < T1.completion_date \
                 AND IFNULL(T1.approve_status,0) = 1"
 
-        not_complied_qry = " AND T1.due_date < now() \
+        not_complied_qry = " AND ((T2.duration_type_id =2 AND T1.due_date < now()) or (T1.due_date < CURDATE())) \
                 AND IFNULL(T1.approve_status,0) <> 1"
 
         filter_ids, inprogress = self.get_compliance_status(
@@ -3229,6 +3229,7 @@ class ClientDatabase(Database):
                 period_from = int(y["period_from"])
                 period_to = int(y["period_to"])
                 for index, i in enumerate(years_range) :
+                    print i
 
                     compliance_count_info = year_wise.get(i[0])
                     if compliance_count_info is None :
@@ -3237,6 +3238,8 @@ class ClientDatabase(Database):
                             "complied_count": 0,
                             "delayed_count": 0,
                             "not_complied_count": 0,
+                            "country_id": country_id,
+                            "domain_id": domain_id
                         }
                     compliance_count = 0
                     for c in compliances :
@@ -3275,8 +3278,8 @@ class ClientDatabase(Database):
                                 ):
                                     compliance_count += int(c["compliances"])
 
-                        compliance_count_info["domain_id"] = c["domain_id"]
-                        compliance_count_info["country_id"] = c["country_id"]
+                            compliance_count_info["domain_id"] = c["domain_id"]
+                            compliance_count_info["country_id"] = c["country_id"]
 
                     if status == "inprogress":
                         compliance_count_info["inprogress_count"] += compliance_count
@@ -3404,6 +3407,7 @@ class ClientDatabase(Database):
             for key, val in value.iteritems():
                 compliance_list = []
                 for k , v in val.iteritems():
+                    print v
                     year = k
                     inprogress = v["inprogress_count"]
                     complied = v["complied_count"]
@@ -3526,7 +3530,7 @@ class ClientDatabase(Database):
 
         status_qry = ""
         if compliance_status == "Inprogress" :
-            status_qry = " AND T1.due_date >= now() \
+            status_qry = " AND ((T4.duration_type_id =2 AND T1.due_date >= now()) or (T1.due_date >= CURDATE())) \
                     AND IFNULL(T1.approve_status, 0) != 1"
 
         elif compliance_status == "Complied" :
@@ -3538,7 +3542,7 @@ class ClientDatabase(Database):
                 AND T1.approve_status = 1"
 
         elif compliance_status == "Not Complied" :
-            status_qry = " AND T1.due_date < now() \
+            status_qry = " AND ((T4.duration_type_id =2 AND T1.due_date < now()) or (T1.due_date < CURDATE())) \
                 AND IFNULL(T1.approve_status, 0) != 1 "
 
         if filter_type == "Group" :
@@ -5811,7 +5815,7 @@ class ClientDatabase(Database):
             t1.due_date, t1.validity_date, t2.compliance_task, t2.document_name, t2.compliance_description, \
             t2.statutory_mapping, t3.unit_name, t3.unit_code, t3.address, t3.postal_code, \
             (select frequency from tbl_compliance_frequency where frequency_id = t2.frequency_id) frequency, t2.frequency_id,\
-            (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) duration_type, t2.duration, \
+            (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) duration_type, t2.duration, t2.duration_type_id, \
             (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t2.repeats_type_id) repeat_type, t2.repeats_every,\
             NULL \
             FROM tbl_assigned_compliances t1 \
@@ -5835,7 +5839,7 @@ class ClientDatabase(Database):
             "compliance_task", "document_name",
             "compliance_description", "statutory_mapping",
             "unit_name", "unit_code", "address", "postal_code",
-            "frequency", "frequency_id", "duration_type", "duration",
+            "frequency", "frequency_id", "duration_type", "duration", "duration_type_id",
             "repeat_type", "repeats_every",
             "compliance_history_id"
         ]
@@ -5843,10 +5847,10 @@ class ClientDatabase(Database):
         result = self.convert_to_dict(rows, columns)
 
         ongoing = "SELECT distinct t1.compliance_id, t1.unit_id, t1.statutory_dates, t1.assignee, \
-            tc.due_date, tc.validity_date, t2.compliance_task, t2.document_name, t2.compliance_description, \
+            tc.due_date, t1.validity_date, t2.compliance_task, t2.document_name, t2.compliance_description, \
             t2.statutory_mapping, t3.unit_name, t3.unit_code, t3.address, t3.postal_code, \
             (select frequency from tbl_compliance_frequency where frequency_id = t2.frequency_id) frequency, t2.frequency_id,\
-            (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) duration_type, t2.duration, \
+            (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) duration_type, t2.duration, t2.duration_type_id, \
             (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t2.repeats_type_id) repeat_type, t2.repeats_every,\
             tc.compliance_history_id \
             FROM tbl_compliance_history tc\
@@ -5909,6 +5913,12 @@ class ClientDatabase(Database):
                 summary = "Repeats every %s - %s" % (d["repeats_every"], d["repeat_type"])
             elif d["frequency_id"] == 4 :
                 summary = "To complete within %s - %s" % (d["duration"], d["duration_type"])
+                if d["duration_type_id"] == 2 :
+                    due_date = d["due_date"]
+                    if due_date is not None :
+                        due_date = due_date.strftime("%d-%b-%Y %H:%M")
+                    else :
+                        due_date = ''
             else :
                 summary = None
 
@@ -6013,13 +6023,6 @@ class ClientDatabase(Database):
             update_assign = qry % (
                 assignee, approval, unit_id, compliance_id
             )
-
-            # update_assign = "UPDATE tbl_assigned_compliances SET assignee=%s, \
-            #     is_reassigned=1, concurrence_person=%s, approval_person=%s \
-            #     WHERE unit_id = %s AND compliance_id = %s " % (
-            #         assignee, concurrence, approval,
-            #         unit_id, compliance_id
-            #     )
             self.execute(update_assign)
 
             if history_id is not None :
