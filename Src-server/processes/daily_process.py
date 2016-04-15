@@ -616,9 +616,12 @@ def run_daily_process_country_wise():
     country_time_zones = sorted(countries)
     country_list = get_countries()
     for c in country_list :
-        name = c["country_name"]
+        name = c["country_name"].replace(" ", "")
+        name = name.replace("_", "")
+        name = name.replace("-", "")
         info = None
         for ct in country_time_zones :
+            ct = ct.replace(" ", "")
             if name.lower() == ct.lower() :
                 info = countries.get(ct)
                 print info

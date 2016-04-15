@@ -651,8 +651,8 @@ a:hover {
 	width: 50%;
 	margin-right: 3%;
 	float: left;
-	line-height:1.3em;
-	padding-top: auto;
+	line-height: 2em;
+    padding-top: 0.5em;
 
 }
 .input-box {
@@ -691,6 +691,7 @@ textarea.input-box{
 	width: 50%;
 	float: left;
 	position: relative;
+	padding-top: 0.5em;
 }
 .auto-box {
 	background: #dadada url(../images/icon-search.png) no-repeat right 0.5em center;
@@ -1481,6 +1482,7 @@ list-style-type:none; line-height:25px;
   background: #ffffff;
   max-height: 200px;
   overflow-y: scroll;
+  width: 200px;
 }
 .ac-textbox ul li {
   font-size: 0.8em;
@@ -1506,6 +1508,7 @@ list-style-type:none; line-height:25px;
   max-height: 200px;
   overflow-y: scroll;
   z-index: 100;
+  width:213px;
 }
 .ac-selectbox ul li {
   font-size: 0.8em;
@@ -2906,6 +2909,9 @@ cursor: pointer;
 		width: 90%;
 		margin-left: 5%;
 		margin-right: 5%;
+	}
+	.menu-items-ul .has-sub span {
+		font-weight: bold;
 	}
 	/*table, thead, tbody, th, td, tr {
 		display: block;

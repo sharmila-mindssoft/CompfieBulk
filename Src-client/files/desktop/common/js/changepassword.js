@@ -1,4 +1,3 @@
-
 $("#submit").click(function(){
   displayMessage("");
   var currentpassword = $("#currentpassword").val().trim();
@@ -14,10 +13,14 @@ $("#submit").click(function(){
     displayMessage(message.password_notmatch);
   } else {
       function onSuccess(data){
-          displayMessage(message.password_changed_success);
-          $("#currentpassword").val("");
-          $("#newpassword").val("");
-          $("#confirmpassword").val("");
+        alert("Password Changed Successfully.");
+        client_name = client_mirror.getClientShortName()
+        if ((client_name === null) || (client_name === undefined)) {
+            mirror.logout();
+        }
+        else {
+            client_mirror.logout();
+        }     
       }
       function onFailure(error){
         if(error == "InvalidCurrentPassword"){
@@ -52,10 +55,14 @@ $("#submit-client").click(function(){
     displayMessage(message.password_notmatch);
   } else {
       function onSuccess(data){
-          displayMessage(message.password_changed_success);
-          $("#currentpassword").val("");
-          $("#newpassword").val("");
-          $("#confirmpassword").val("");
+        alert("Password Changed Successfully.");
+        client_name = client_mirror.getClientShortName()
+        if ((client_name === null) || (client_name === undefined)) {
+            mirror.logout();
+        }
+        else {
+            client_mirror.logout();
+        }     
       }
       function onFailure(error){
         if(error == "InvalidCurrentPassword"){
@@ -75,6 +82,13 @@ $("#submit-client").click(function(){
     );
     }
 });
+function getItemObject (form_url, form_name) {
+  var itemObject = $("#nav-bar-templates .sub-menu-item li").clone();
+  if (form_url !== null)
+      $(".menu-url", itemObject).attr("href", form_url);
+  $(".menu-item", itemObject).text(form_name);
+  return itemObject;
+}
 
 $(document).ready(function(){
   $("#currentpassword").focus();

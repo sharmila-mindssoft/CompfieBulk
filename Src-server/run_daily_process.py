@@ -4,7 +4,7 @@
 # # PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 # # */5 * * * * cd ~/Python/workspace/Compliance-Mirror/Src-server && python run_daily_process.py >> /processes/daily_process.log 2>&1
 
-# # sudo chmod 777 daily_process.py
+# # sudo chmod 777 run_daily_process.py
 
 
 from processes.daily_process import run_daily_process_country_wise
