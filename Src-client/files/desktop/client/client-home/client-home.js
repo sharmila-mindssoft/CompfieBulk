@@ -821,6 +821,9 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
         title: {
             text: chartTitle
         },
+        credits: {
+            enabled: false
+        },
         xAxis: {
             categories: true,
             title: {
@@ -2587,7 +2590,7 @@ function updateNotCompliedChart(data) {
         },
         tooltip: {
             headerFormat: '',
-            pointFormat: '<span>{point.name} days</span>: <b>{point.y:.0f}</b>out of total' + total
+            pointFormat: '<span>{point.name} days</span>: <b>{point.y:.0f}</b> out of ' + total
         },
         legend: {
             enabled: true
@@ -2626,6 +2629,7 @@ function prepareComplianceApplicability(source_data) {
     applicable = source_data["applicable_count"];
     not_applicable = source_data["not_applicable_count"];
     not_opted = source_data["not_opted_count"];
+    total = parseInt(applicable) + parseInt(not_applicable) + parseInt(not_opted);
     if (
         (applicable == 0) &&
         (not_applicable == 0) &&
@@ -2662,7 +2666,7 @@ function prepareComplianceApplicability(source_data) {
         }
         chartTitle = "Compliance Applicability Status of " + chartTitle + " " + filter_names;
     }
-    return [chartDataSeries, chartTitle]
+    return [chartDataSeries, chartTitle, total]
 
 }
 
@@ -2670,6 +2674,7 @@ function updateComplianceApplicabilityChart(data) {
     data = prepareComplianceApplicability(data);
     chartTitle = data[1];
     chartDataSeries = data[0];
+    total = data[2];
     highchart = new Highcharts.Chart({
         colors: ['#66FF66','#FFDC52','#CE253C'],
         chart: {
@@ -2691,7 +2696,7 @@ function updateComplianceApplicabilityChart(data) {
         },
         tooltip: {
             headerFormat: '',
-            pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b>out of total'
+            pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
         },
         legend: {
             enabled: true
@@ -3022,7 +3027,7 @@ function loadComplianceStatusChart () {
             // TODO: API Error Validation
             COMPLIANCE_STATUS_DATA = data["chart_data"];
             data1 = [];
-            for (i=0; i<2; i++) {
+            for (i=0; i<7; i++) {
                 if (COMPLIANCE_STATUS_DATA.length > i)
                     data1.push(COMPLIANCE_STATUS_DATA[i]);
             }
