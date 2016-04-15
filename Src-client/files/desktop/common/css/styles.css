@@ -2963,3 +2963,6 @@ ul.pagination li:hover:not(.active) {background-color: #ddd;}
 	width: 4em;
 	opacity: 100%;
 }
+.auto-selected {
+    background: #EAE8E8;
+}

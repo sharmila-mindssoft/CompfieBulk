@@ -43,35 +43,61 @@ function GetGeographyLevels(){
 }
 
 //Autocomplete Script Starts
-//Hide list items after select
-$(".hidemenu").click(function(){
-  $("#autocompleteview").hide(); 
-});
 
 //load country list in autocomplete text box  
-$("#countryval").keyup(function(){
-  var textval = $(this).val();
-  $("#autocompleteview").show();
-  var countries = countriesList;
-  var suggestions = [];
-  $('#ulist_text').empty();
-  if(textval.length>0){
-    for(var i in countries){
-      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
+var chosen = "";
+$("#countryval").keyup(function(e){
+	/*if (e.keyCode == 40) { 
+        if(chosen === "") {
+            chosen = 0;
+        } else if((chosen+1) < $('#ulist_text li').length) {
+            chosen++; 
+        }
+        $('#ulist_text li').removeClass('auto-selected');
+        $('#ulist_text li:eq('+chosen+')').addClass('auto-selected');
+        return false;
     }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+    if (e.keyCode == 38) { 
+        if(chosen === "") {
+            chosen = 0;
+        } else if(chosen > 0) {
+            chosen--;            
+        }
+        $('#ulist_text li').removeClass('auto-selected');
+        $('#ulist_text li:eq('+chosen+')').addClass('auto-selected');
+        return false;
     }
-    $('#ulist_text').append(str);
-    $("#country").val('');
+    if (e.keyCode == 13) { 
+    	var id = $('.country_auto.auto-selected').attr('id');
+    	var id_val = $('.country_auto.auto-selected').text().trim();
+        activate_text(id,id_val);
+        return false;
+    }*/
+
+  	var textval = $(this).val();
+  	$("#autocompleteview").show();
+  	var countries = countriesList;
+  	var suggestions = [];
+  	$('#ulist_text').empty();
+  	if(textval.length>0){
+	    for(var i in countries){
+	      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
+	    }
+	    var str='';
+	    for(var i in suggestions){
+	              str += '<li class="country_auto" id="'+suggestions[i][0]+'"onclick="activate_text(\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+	    }
+	    $('#ulist_text').append(str);
+	    $("#country").val('');
     }else{
     	$("#country").val('');
     	$("#autocompleteview").hide();
     }
 });
+
 //set selected autocomplte value to textbox
-function activate_text (element,checkval,checkname) {
+function activate_text (checkval,checkname) {
+  $("#autocompleteview").hide();
   $("#countryval").val(checkname);
   $("#country").val(checkval);
   $("#view-insert-level").hide();
