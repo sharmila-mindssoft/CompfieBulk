@@ -183,5 +183,4 @@ function clearMessage() {
 function displayMessage(message) {
     $(".error-message").text(message);
     $(".error-message").show();
-    hideLoader();
 }
