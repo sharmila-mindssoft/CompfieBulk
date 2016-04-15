@@ -8,23 +8,25 @@
     </div>
     <div class="clearfix"></div>
     <div class="grid-table">
-      <table>
-        <tr>
-          <th width="3%" align="center">#</th>
-          <th align="left">Service Provider</th>
-          <th align="left">Contact Person</th>
-          <th align="left">Contact No.</th>
-          <th width="3%" align="center">Edit</th>
-          <th width="5%" align="center">Status</th>
-        </tr>
-        <tr>
-          <td align="center"></td>
-          <td><input type="text"  class="filter-text-box" id="search-service-provider"></td>
-          <td><input type="text"  class="filter-text-box" id="search-contact-person"></td>
-          <td><input type="text"  class="filter-text-box" id="search-contact-no"></td>
-          <td align="center"></a></td>
-          <td align="center"></td>
-        </tr>
+      <table class="js-filtertable">
+        <thead>
+          <tr>
+            <th width="3%" align="center">#</th>
+            <th align="left">Service Provider</th>
+            <th align="left">Contact Person</th>
+            <th align="left">Contact No.</th>
+            <th width="3%" align="center">Edit</th>
+            <th width="5%" align="center">Status</th>
+          </tr>
+          <tr>
+            <td align="center"></td>
+            <td><input type="text"  class="filter-text-box js-filter" id="search-service-provider"></td>
+            <td><input type="text"  class="filter-text-box js-filter" id="search-contact-person"></td>
+            <td><input type="text"  class="filter-text-box js-filter" id="search-contact-no"></td>
+            <td align="center"></a></td>
+            <td align="center"></td>
+          </tr>
+        </thead>
         <tbody class="tbody-service-provider-list">
         </tbody>
       </table>

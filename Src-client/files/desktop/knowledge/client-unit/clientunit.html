@@ -64,11 +64,11 @@
   <div class="content-container default-display-none" id="clientunit-add">
     <div class="content-area">
       <div class="add-container">
-        <div class="add-container-heading">Client Unit<span class="error-message"></span></div>
+        <div class="add-container-heading">Client Unit<span class=""></span></div>
         <div class="input-row">
           <div class="input-row-left">
             <div class="input-row">
-              <div class="single-column-field-label">Group:<span class="mandatory">*</span></div>
+              <div class="single-column-field-label">Group<span class="mandatory">*</span>:</div>
               <div class="single-column-field-input">
                 <input type="hidden" id="client-unit-id" value=""><span class="labelgroup"></span>
                 <Select id="group-select" class="input-box" onchange="loadBusinessGroups();loadLegalEntity();" >
@@ -78,7 +78,7 @@
             </div>
             <div class="input-row">
               <input type="hidden" id="businessgroup-update-id" value="">
-              <div class="single-column-field-label">Business Group</div>
+              <div class="single-column-field-label">Business Group :</div>
               <div class="single-column-field-input"><span class="labelbusinessgroup"></span>
                 <Select id="businessgroup-select" class="input-box" onchange="loadLegalEntity();">
                   <option value="">Select</option>
@@ -90,7 +90,7 @@
             <div class="input-row-right">
               <div class="input-row">
                <input type="hidden" id="legalentity-update-id" value="">
-                <div class="single-column-field-label">Legal Entity:<span class="mandatory">*</span></div>
+                <div class="single-column-field-label">Legal Entity <span class="mandatory">*</span>:</div>
                 <div class="single-column-field-input"><span class="labelentity"></span>
                   <Select id="entity-select" class="input-box" onchange="loadDivision(this.value);">
                     <option value="">Select</option>
@@ -100,7 +100,7 @@
                 </div>
                 <div class="input-row">
                  <input type="hidden" id="division-update-id" value="">
-                  <div class="single-column-field-label">Division</div>
+                  <div class="single-column-field-label">Division :</div>
                   <div class="single-column-field-input"><span class="labeldivision"></span>
                     <Select id="division-select" class="input-box">
                       <option value="">Select</option>
@@ -118,6 +118,7 @@
                 </div>
               </div>
               <div class="submit-button-container">
+                <span style="color:red; float:left; font-size:0.813em; " class="error-message"></span>
                 <input type="submit" name="cancel" value="Cancel" class="btn-cancel" id="btn-clientunit-cancel" >
                 &nbsp;&nbsp;
                 <input type="submit" name="submit" value="Submit" class="btn-submit" id="btn-clientunit-submit" >

@@ -1121,39 +1121,39 @@ $("#btn-clientunit-submit").click(function(){
                             continue;
                         }
                         if(unitLocation == '' ){
-                            $(".unit-error-msg-"+i).html(message.unitlocation_required);
+                            $('.error-message').html(message.unitlocation_required);
                             return;
                         }
                         else if(unitGeographyId == ''){
-                            $(".unit-error-msg-"+i).html(message.unitlocation_invalid);
+                            $('.error-message').html(message.unitlocation_invalid);
                             return;
                         }
                         else if(unitCode == ''){
-                            $(".unit-error-msg-"+i).html(message.unitcode_required);
+                            $('.error-message').html(message.unitcode_required);
                             return;
                         }
                         else if(unitName == ''){
-                            $(".unit-error-msg-"+i).html(message.unitname_required);
+                            $('.error-message').html(message.unitname_required);
                             return;
                         }
                         else if(unitIndustryName == ""){
-                            $(".unit-error-msg-"+i).html(message.industryname_required);
+                            $('.error-message').html(message.industryname_required);
                             return;
                         }
                         else if(unitIndustryId == 0){
-                            $(".unit-error-msg-"+i).html(message.industryname_required);
+                            $('.error-message').html(message.industryname_required);
                             return;
                         }
                         else if(unitAddress == ''){
-                            $(".unit-error-msg-"+i).html(message.unitaddress_required);
+                            $('.error-message').html(message.unitaddress_required);
                             return;
                         }
                         else if(unitPostalCode == ''){
-                            $(".unit-error-msg-"+i).html(message.unitpostal_required);
+                            $('.error-message').html(message.unitpostal_required);
                             return;
                         }
                         else if(unitdomain == ''){
-                            $(".unit-error-msg-"+i).html(message.domain_required);
+                            $('.error-message').html(message.domain_required);
                             return;
                         }
                         else{
@@ -1318,39 +1318,39 @@ $("#btn-clientunit-submit").click(function(){
                         continue;
                     }
                     else if(unitLocation == ''){
-                        $(".unit-error-msg-"+i).html(message.unitlocation_required);
+                        $('.error-message').html(message.unitlocation_required);
                         return;
                     }
                     else if(unitGeographyId == ''){
-                        $(".unit-error-msg-"+i).html(message.unitlocation_invalid);
+                        $('.error-message').html(message.unitlocation_invalid);
                         return;
                     }
                     else if(unitCode == ''){
-                        $(".unit-error-msg-"+i).html(message.unitcode_required);
+                        $('.error-message').html(message.unitcode_required);
                         return;
                     }
                     else if(unitName == ''){
-                        $(".unit-error-msg-"+i).html(message.unitname_required);
+                        $('.error-message').html(message.unitname_required);
                         return;
                     }
                     else if(unitIndustryName == ""){
-                        $(".unit-error-msg-"+i).html(message.industryname_required);
+                        $('.error-message').html(message.industryname_required);
                         return;
                     }
                     else if(unitIndustryId == 0){
-                        $(".unit-error-msg-"+i).html(message.industryname_required);
+                        $('.error-message').html(message.industryname_required);
                         return;
                     }
                     else if(unitAddress == ''){
-                        $(".unit-error-msg-"+i).html(message.unitaddress_required);
+                        $('.error-message').html(message.unitaddress_required);
                         return;
                     }
                     else if(unitPostalCode == ''){
-                        $(".unit-error-msg-"+i).html(message.unitpostal_required);
+                        $('.error-message').html(message.unitpostal_required);
                         return;
                     }
                     else if(unitdomain == ''){
-                        $(".unit-error-msg-"+i).html(message.domain_required);
+                        $('.error-message').html(message.domain_required);
                         return;
                     }
                     else{
