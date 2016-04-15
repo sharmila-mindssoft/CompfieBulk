@@ -1,13 +1,5 @@
 var counList;
 
-function clearMessage() {
-    $(".error-message").hide();
-    $(".error-message").text("");
-}
-function displayMessage(message) {
-    $(".error-message").text(message);
-    $(".error-message").show();
-}
 $(".btn-country-add").click(function(){
     $("#country-add").show();
     $("#country-view").hide();
@@ -86,7 +78,7 @@ $("#submit").click(function(){
     var countryIdValue = $("#country-id").val();
     var countryNameValue = $("#country-name").val().trim();
     if(countryNameValue.length == 0){
-        displayMessage('Country Name Required');
+        displayMessage(message.country_required);
     }
     else{
         if(countryIdValue == ''){
@@ -98,7 +90,7 @@ $("#submit").click(function(){
             }
             function onFailure(error){
                 if(error == 'CountryNameAlreadyExists'){
-                    displayMessage("Country Name Already Exists");
+                    displayMessage(message.countryname_exists);
                 }
             }
             mirror.saveCountry(countryNameValue,
@@ -120,10 +112,10 @@ $("#submit").click(function(){
             }
             function onFailure(error){
                 if(error == 'InvalidCountryId') {
-                    displayMessage("Invalid Country Name");
+                    displayMessage(message.countryname_invalid);
                 }
                 if(error == 'CountryNameAlreadyExists'){
-                    displayMessage("Country Name Already Exists");
+                    displayMessage(message.countryname_exists);
                 }
             }
             mirror.updateCountry(parseInt(countryIdValue), countryNameValue,

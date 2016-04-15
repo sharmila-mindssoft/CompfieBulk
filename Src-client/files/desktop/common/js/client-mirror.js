@@ -697,23 +697,23 @@ function initClientMirror() {
     }
 
 
-    function updateStatutory(clientStatutoryId, applicableStatus, applicableRemarks, complianceId, optedStatus, remarks) {
+    function updateStatutory(clientSId, aStatus, aRemarks, compId, oStatus, remarks) {
         return {
-            "client_statutory_id": clientStatutoryId,
-            "applicable_status": applicableStatus,
-            "not_applicable_remarks": applicableRemarks,
-            "compliance_id": complianceId,
-            "compliance_opted_status": optedStatus,
-            "compliance_remarks": remarks
+            "c_s_id": clientSId,
+            "a_status": aStatus,
+            "n_a_remarks": aRemarks,
+            "comp_id": compId,
+            "c_o_status": oStatus,
+            "c_remarks": remarks
         };
     }
 
-    function updateStatutorySettings(password, unitName, unitId, statutories, callback) {
+    function updateStatutorySettings(password, uName, uId, statutories, callback) {
         var request = [
             "UpdateStatutorySettings", {
                 "password": password,
-                "unit_name": unitName,
-                "unit_id": unitId,
+                "u_name": uName,
+                "u_id": uId,
                 "statutories": statutories
             }
         ];
@@ -736,8 +736,8 @@ function initClientMirror() {
     function getAssignComplianceForUnits(unitIds, domainId, recordCount, callback) {
         var request = [
             "GetComplianceForUnits", {
-                "unit_ids": unitIds,
-                "domain_id": domainId,
+                "u_ids": unitIds,
+                "d_id": domainId,
                 "record_count": recordCount
             }
         ];
@@ -754,44 +754,44 @@ function initClientMirror() {
         return statutoryDate;
     }
 
-    function assignCompliances(complianceId, complianceName, statutoryDateList, dueDate, validityDate, triggerBefore, unitIds) {
+    function assignCompliances(compId, compName, sDateList, dDate, vDate, trigBefore, uIds) {
         return {
-            "compliance_id": complianceId,
-            "compliance_name": complianceName,
-            "statutory_dates": statutoryDateList,
-            "due_date": dueDate,
-            "validity_date": validityDate,
-            "trigger_before": triggerBefore,
-            "unit_ids": unitIds
+            "comp_id": compId,
+            "comp_name": compName,
+            "statu_dates": sDateList,
+            "d_date": dDate,
+            "v_date": vDate,
+            "trig_before": trigBefore,
+            "u_ids": uIds
         }
     }
 
-    function newUnitSettings(userId, unitIds, domainId, countryId) {
+    function newUnitSettings(userId, uIds, dId, cId) {
         return {
             "user_id": userId,
-            "unit_ids": unitIds,
-            "domain_id": domainId,
-            "country_id": countryId
+            "u_ids": uIds,
+            "d_id": dId,
+            "c_id": cId
         }
     }
 
     function saveAssignedComplianceFormData(
-        countryId, assignee, assigneeName,
-        concurrence, concurrenceName,
-        approval, approvalName,
+        cId, assignee, aName,
+        concurrence, conName,
+        approval, appName,
         compliances, newUnits, callback
     ) {
         var request = [
             "SaveAssignedCompliance", {
-                "country_id": countryId,
+                "c_id": cId,
                 "assignee": assignee,
-                "assignee_name": assigneeName,
-                "concurrence_person": concurrence,
-                "concurrence_person_name": concurrenceName,
-                "approval_person": approval,
-                "approval_person_name": approvalName,
+                "a_name": aName,
+                "con_person": concurrence,
+                "con_person_name": conName,
+                "a_person": approval,
+                "a_person_name": appName,
                 "compliances": compliances,
-                "new_units" : newUnits
+                "n_units" : newUnits
             }
         ];
         var callerName = "client_transaction";
@@ -1093,20 +1093,6 @@ function initClientMirror() {
 
     /* Trend Chart */
 
-    // function getTrendChart(country_ids, domain_ids, filter_type,
-    //     filter_id, callback) {
-    //     var request = [
-    //         "GetTrendChart", {
-    //             "country_ids": country_ids,
-    //             "domain_ids": domain_ids,
-    //             "filter_type": filter_type,
-    //             "filter_ids": filter_id
-    //         }
-    //     ];
-    //     var callerName = "client_dashboard"
-    //     clientApiRequest(callerName, request, callback)
-    // }
-
     function getTrendChart(requestData, callback) {
         var request = [
             "GetTrendChart",
@@ -1115,21 +1101,6 @@ function initClientMirror() {
         var callerName = "client_dashboard"
         clientApiRequest(callerName, request, callback)
     }
-
-    // function getTrendChartDrillDown(country_ids, domain_ids, filter_type,
-    //     filter_ids, year, callback) {
-    //     var request = [
-    //         "GetTrendChartDrillDownData", {
-    //             "country_ids": country_ids,
-    //             "domain_ids": domain_ids,
-    //             "filter_type": filter_type,
-    //             "filter_ids": filter_ids,
-    //             "year": year
-    //         }
-    //     ];
-    //     var callerName = "client_dashboard"
-    //     clientApiRequest(callerName, request, callback)
-    // }
 
     function getTrendChartDrillDown(requestData, callback) {
         var request = [

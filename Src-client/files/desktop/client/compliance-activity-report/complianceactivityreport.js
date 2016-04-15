@@ -113,19 +113,19 @@ function loadcomplianceactivityreport(buttontype){
         todate = null;
     }
     if(countries == ""){
-        displayMessage("Enter Country");
+        displayMessage(message.country_required);
     }
     else if(domain == ""){
-        displayMessage("Enter Domain");  
+        displayMessage(message.domain_required);  
     }
     else if(usertype  == null){
-        displayMessage("Select Usertype");     
+        displayMessage(message.usertype_required);     
     }
     else if(fromdate != '' && todate ==''){
-        displayMessage("Select To Date");
+        displayMessage(message.todate_required);
     }
     else if(fromdate == '' && todate !=''){
-        displayMessage("Select From Date");
+        displayMessage(message.fromdate_required);
     }
     else{
         function onSuccess(data){

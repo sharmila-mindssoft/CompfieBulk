@@ -51,7 +51,7 @@ var message = {
 	'durationtype_required' : 'Duration Type Required',
 	'triggerbefore_exceed' : 'Trigger before days should not exceed 100',
 	'triggerbefore_iszero' : 'Trigger before days should be 1 to 100',
-	'invalid_repeatsevery' : 'Repeats every is invalid',
+	'invalid_repeatsevery' : 'Repeats every is Invalid',
 	'days_maximum' : 'Days maximum 3 digits',
 	'months_maximum' : 'Months maximum 2 digits',
 	'years_maximum' : 'Years maximum 1 digit',
@@ -93,18 +93,95 @@ var message = {
 	'approval_level' : 'Level of Approval is Required',
 	'reminder_assignee_required' : 'Reminder to Assignee is Required',
 	'escalationreminder_concurrence_approval_required' : 'Escalation Reminders to Concurrence & Approval Person is Required',
-	'escalationreminder_all' : 'Escalation Reminders to Assignee, Concurrence & Approval is Required'
+	'escalationreminder_all' : 'Escalation Reminders to Assignee, Concurrence & Approval is Required',
+	'act_remarks_required' : 'Remarks required for not Applicable Act',
+	'countryname_exists' : 'Country Name Already Exists',
+	'countryname_invalid' : 'Country Name Invalid',
+	'stat_nature_invalid' : 'Statutory Nature Name Invalid',
+	'address_required' : 'Address Required',
+	'updated_success' : 'Updated Successfully',
+	'group_required' : 'Group Required',
+	'group_50' : 'Group : Not Allowed More than 50 Characters.',
+	'contractfrom_required' : 'Contract From Required',
+	'contractto_required' : 'Contract To Required',
+	'username_invalid' : 'Username Format is Invalid',
+	'licence_required' : 'No. Of User Licence Required',
+	'licence_invalid' : 'Invalid No. Of User Licence',
+	'licence_max3' : 'No. of User Licence : Max 3 Digits are allowed',
+	'filespace_required' : 'File Space Required',
+	'filespace_invalid' : 'File Space Invalid',
+	'filespace_max3' : 'File Space : Max 3 Digits are allowed',
+	'inchargeperson_required' : 'Incharge Person Required',
+	'shortname_required' : 'Short Name Required',
+	'dateconfig_required' : 'Select Date Configurations From & To',
+	'logo_required' : 'Logo Required',
+	'logo_invalid' : 'Logo Invalid',
+	'groupname_exists' : 'Group Name Already Exists',
+	'username_exists' : 'Username Already Exists',
+	'client_creation_failed' : 'Client Creation Failed. Check your server connection details',
+	'cannot_unselect_country' : 'Cannot unselect country. One or more units exists',
+	'cannot_unselect_domain' : 'Cannot unselect Domain. One or more units exists',
+	'cannot_deactivate_client' : 'Cannot deactivate client, since client has one or more active units',
+	'legalentity_new' : 'Select Existing Legal Entity or Create New',
+	'exceeds_max_countries_user' : 'Exceeds Maximum Countries for this User',
+	'add_one_unit' : 'Add atleast one unit in a Group',
+	'bgroup_exists' : 'Business Group Name Already Exists',
+	'lentity_exists' : 'Legal Entity Name Already Exists',
+	'division_exists' : 'Division Name Already Exists',
+	'unitcode_exists' : 'Unit Code Already Exists',
+	'unitlocation_required' : 'Unit Location Required',
+	'unitlocation_invalid' : 'Unit Location Name Invalid',
+	'unitcode_required' : 'Unit Code Required',
+	'unitname_required' : 'Unit Name Required',
+	'unitaddress_required' : 'Unit Address Required',
+	'unitpostal_required' : 'Unit Postal Code Required',
+	'spname_required' : 'Enter Service Provider Name ',
+	'spname_max50' : 'Service Provider Name is maximum 50 characters Allowed',
+	'contactpersonname_required' : 'Enter Contact Person Name',
+	'contactpersonname_max50' : 'Contact Person Name is maximum 50 characters Allowed',
+	'countrycode_max4' : 'Contact No. Country Code is maximum 4 characters Allowed',
+	'areacode_max4' : 'Contact No. Area Code is maximum 4 characters',
+	'contactno_max10' : 'Contact No. is maximum 10 characters Allowed',
+	'address_max250' : 'Address is maximum 250 characters Allowed',
+	'contractto_maxi_today' : 'Select Contract To Date is maximum of Today Date',
+	'spname_exists' : 'Service Provider Name Already Exists',
+	'contactno_exists' : 'Contact Number Already Exists',
+	'cannot_deactivate_sp' : 'Cannot Deactivate Service Provider, One or More User Exists',
+	'seatingunit_required' : 'Seating Unit Required',
+	'employeecode_required' : 'Employee Code Required',
+	'usergroup_required' : 'User Group Required',
+	'userlevel_required' : 'User Level Required',
+	'usertype_required' : 'User Type Required',
+	'add_one_form' : 'Select atleast one form from list',
+	'usergroupname_exists' : 'User Group Name Already Exists',
+	'cannot_deactivate_usergroup' : 'Cannot Deactivate User group, One or More User Exists',
+	'todate_required' : 'To Date Required',
+	'fromdate_required' : 'From Date Required',
+	'catgname_required' : 'Category Name Required',
+	'action_required' : 'Action Required',
+	'validitydate_required' : 'Validity Date Required',
+	'nextduedate_required' : 'Next Due Date Required',
+	'validitydate_gt_duedate' : 'Validity Date is Greater than or equal to Due Date',
+	'compliance_app_reject' : 'Compliance Approval Rejected',
+	'compliance_approval' : 'Compliance Approved',
+	'compliance_concurred' : 'Compliance Concurred',
+	'compliance_concur_reject' : 'Compliance Concurrence Rejected',
+	'completiondate_required' : 'Completion Date required',
+	'complietion_gt_start' : 'Completion Date must be Greater than or equal to Start Date',
+	'validity_gt_start' : 'Validity Date must be Greater than or equal to Start Date',
+	'duedate_gt_start' : 'Due Date must be Greater than or equal to Start Date',
+	'completion_lt_current' : 'Completion Date must be less than or equal to Current Date',
+	'nextduedate_gt_current' : 'Next Due Date must be Greater than Current Date',
+	'validity_gt_nextduedate' : 'Validity Date must be Greater than or equal to Next Due Date',
+	'category_max50' : 'Category Name is not exceeded 50 Characters',
 };
 
 function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
+    $(".error-message").hide();
+    $(".error-message").text("");
 }
 function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
+    $(".error-message").text(message);
+    $(".error-message").show();
+    hideLoader();
 }
-	
-
-
-

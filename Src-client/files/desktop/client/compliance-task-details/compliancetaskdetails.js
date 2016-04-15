@@ -264,48 +264,48 @@ function showSideBar(idval, data){
                     remarks = null;
                 }
                 if(completion_date == ''){
-                    displayMessage("Select Completion Date");
+                    displayMessage(message.completiondate_required);
                     return;
                 }
                 if(validity_date == ''){
-                    displayMessage("Select Validity Date");
+                    displayMessage(message.validitydate_required);
                     return;
                 }
                 if(data[k]['compliance_frequency'] == "Periodical"){
                     if(validity_date == '' || validity_date == null){
-                        displayMessage("Select Validity Date");
+                        displayMessage(message.validitydate_required);
                         return;
                     }
                 }
                 if(parseMyDate(start_date) > parseMyDate(completion_date)){
-                    displayMessage("Completion Date must be Greater than or equal to Start Date");
+                    displayMessage(message.complietion_gt_start);
                     return;
                 }
                 if(validity_date != null){
                     if(parseMyDate(start_date) > parseMyDate(validity_date)){
-                        displayMessage("Validity Date must be Greater than or equal to Start Date");
+                        displayMessage(message.validity_gt_start);
                         return;
                     }
                 }
                 if(next_due_date != null){
                     if(parseMyDate(start_date) > parseMyDate(next_due_date)){
-                        displayMessage("Due Date must be Greater than or equal to Start Date");
+                        displayMessage(message.duedate_gt_start);
                         return;
                     }
                 }
                 if(parseMyDate(completion_date) > parseMyDate(currentDate)){
-                    displayMessage("Completion Date must be less than or equal to Current Date");
+                    displayMessage(message.completion_lt_current);
                     return;
                 }
                 if(currentDate != null && next_due_date != null){
                     if(parseMyDate(currentDate) > parseMyDate(next_due_date)){
-                        displayMessage("Next Due Date must be Greater than Current Date");
+                        displayMessage(message.nextduedate_gt_current);
                         return;
                     }
                 }
                 if(validity_date != null  && next_due_date != null){
                     if(parseMyDate(next_due_date) > parseMyDate(validity_date)){
-                        displayMessage("Validity Date must be Greater than or equal to Next Due Date");
+                        displayMessage(message.validity_gt_nextduedate);
                         return;
                     }
                 }
@@ -380,7 +380,7 @@ function closeicon(){
 function uploadedfile(e){
     client_mirror.uploadFile(e, function result_data(data) {
         if(data == "File max limit exceeded"){
-            displayMessage("File max limit exceeded");
+            displayMessage(message.file_maxlimit_exceed);
             $(".uploaded_filename").html('');
             $("#upload_file").val("");
             return;
