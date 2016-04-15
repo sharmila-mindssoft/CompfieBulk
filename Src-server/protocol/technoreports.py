@@ -653,7 +653,7 @@ class NOTIFICATIONS(object):
         statutory_provision = data.get("statutory_provision")
         statutory_provision = parse_structure_Text(statutory_provision)
         notification_text = data.get("notification_text")
-        notification_text = parse_structure_CustomTextType_500(notification_text)
+        notification_text = parse_structure_Text(notification_text)
         date_and_time = data.get("date_and_time")
         date_and_time = parse_structure_CustomTextType_20(date_and_time)
         return NOTIFICATIONS(statutory_provision, notification_text, date_and_time)
@@ -661,7 +661,7 @@ class NOTIFICATIONS(object):
     def to_structure(self):
         return {
             "statutory_provision": to_structure_Text(self.statutory_provision),
-            "notification_text": to_structure_CustomTextType_500(self.notification_text),
+            "notification_text": to_structure_Text(self.notification_text),
             "date_and_time": to_structure_CustomTextType_20(self.date_and_time)
         }
 
