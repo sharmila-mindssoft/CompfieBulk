@@ -11,6 +11,7 @@ $("#btn-statutory-nature-cancel").click(function(){
 });
 function initialize(){
     clearMessage();
+    $('.filter-text-box').val();
     function onSuccess(data){
         loadStatNatureData(data);
     }

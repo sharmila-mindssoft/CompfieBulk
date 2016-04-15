@@ -68,6 +68,7 @@ $("#btn-service-provider-cancel").click(function(){
 });
 function initialize(){
     function onSuccess(data){
+        $('.js-filter').val("");
         splist = data;
         loadServiceProviderList(data);
     }
@@ -333,32 +334,10 @@ function serviceprovider_active(serviceProviderId, isActive){
     }
 }
 
-$("#search-service-provider").keyup(function() { 
-  var value = this.value.toLowerCase();
-  $("table").find("tr:not(:first)").each(function(index) {
-    if (index === 0) return;
-    var id = $(this).find(".service-provider-name").text().toLowerCase();       
-    $(this).toggle(id.indexOf(value) !== -1);
-  });
-});
-$("#search-contact-person").keyup(function() { 
-  var value = this.value.toLowerCase();
-  $("table").find("tr:not(:first)").each(function(index) {
-    if (index === 0) return;
-    var id = $(this).find(".contact-person").text().toLowerCase();       
-    $(this).toggle(id.indexOf(value) !== -1);;
-  });
-});
-
-$("#search-contact-no").keyup(function() { 
-  var value = this.value.toLowerCase();
-  $("table").find("tr:not(:first)").each(function(index) {
-    if (index === 0) return;
-    var id = $(this).find(".contact-number").text().toLowerCase();       
-    $(this).toggle(id.indexOf(value) !== -1);;
-  });
-});
 $(function() {
     initialize();
 });
 
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
+});

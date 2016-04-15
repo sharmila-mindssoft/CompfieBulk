@@ -40,6 +40,7 @@ function loadFormCategories(){
 
 function initialize(){
 	clearMessage();
+	$(".js-filter").val("");
 	function onSuccess(data){
 		categoryList = data['form_categories'];
 		uglist = data['user_groups'];
