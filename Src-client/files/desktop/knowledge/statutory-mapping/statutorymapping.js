@@ -560,7 +560,7 @@ function saverecord(j,e){
     if(map_statutory_id==0 && levelstage>1 ){
       displayMessage(message.levelselection_required);
     }else if(datavalue==""){
-      displayMessage("Level-"+levelstage+" Value Should not be Empty");
+      displayMessage("Level-" + levelstage + message.shouldnot_empty);
     }else{
       if($("#statutoryid").val() == ''){
         function onSuccess(data){
@@ -700,7 +700,7 @@ $("#temp_addstatutories").click(function() {
       if(disp_statutories.length > 0){
         var parentAct = disp_statutories[0].split('>>');
         if(parentSelection != parentAct[0]){
-          displayMessage("Invalid level one selection. you should select ' "+parentAct[0]+" ' in first level.");
+          displayMessage(message.invalid_levelone + parentAct[0] + message.selectin_firstlevel);
           return false;
         }else{
           sm_statutoryids.push(parseInt(last_statutory_id));
@@ -1413,7 +1413,7 @@ function savestatutorymapping(){
   function onFailure(error, response){
     if(error == "ComplianceNameAlreadyExists"){
       var duplicateComplianceList = response['compliance_name'];
-      displayMessage("Compliance name already exists - " + duplicateComplianceList);
+      displayMessage(message.compliancename_exists + duplicateComplianceList);
     }else{
       displayMessage(error);
     }
@@ -2175,22 +2175,6 @@ $('.tasktype').on('keyup change', function() {
   }
 });
 
-function getMonthVal(sMonth){
-  if(sMonth == 1) sMonth = "Jan"
-  else if(sMonth == 2) sMonth = "Feb"
-  else if(sMonth == 3) sMonth = "Mar"
-  else if(sMonth == 4) sMonth = "Apr"
-  else if(sMonth == 5) sMonth = "May"
-  else if(sMonth == 6) sMonth = "Jun"
-  else if(sMonth == 7) sMonth = "Jul"
-  else if(sMonth == 8) sMonth = "Aug"
-  else if(sMonth == 9) sMonth = "Sep"
-  else if(sMonth == 10) sMonth = "Oct"
-  else if(sMonth == 11) sMonth = "Nov"
-  else if(sMonth == 12) sMonth = "Dec"
-  return sMonth;
-}
-
 $("#statutory_date").empty();
 var defaultoption = $("<option></option>");
 defaultoption.val("");
@@ -2210,7 +2194,8 @@ defaultoption1.text("Select");
 $("#statutory_month").append(defaultoption1);
 for (var i=1; i<=12; i++) {
   var option = $("<option></option>");
-  var sMonth = getMonthVal(i);
+  var sMonth = getMonth_IntegettoString(i);
+
   option.val(i);
   option.text(sMonth)
   $("#statutory_month").append(option);
@@ -2234,7 +2219,7 @@ defaultoption1.text("Select");
 $("#single_statutory_month").append(defaultoption1);
 for (var i=1; i<=12; i++) {
   var option = $("<option></option>");
-  var sMonth = getMonthVal(i);
+  var sMonth = getMonth_IntegettoString(i);
   option.val(i);
   option.text(sMonth)
   $("#single_statutory_month").append(option);
@@ -2259,7 +2244,7 @@ for(var j=1; j<=12; j++){
   $("#multiple_statutory_month"+j).append(defaultoption1);
   for (var i=1; i<=12; i++) {
     var option = $("<option></option>");
-    var sMonth = getMonthVal(i);
+    var sMonth = getMonth_IntegettoString(i);
     option.val(i);
     option.text(sMonth)
     $("#multiple_statutory_month"+j).append(option);

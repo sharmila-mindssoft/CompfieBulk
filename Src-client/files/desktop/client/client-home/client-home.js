@@ -1020,25 +1020,12 @@ function showComplianceApplicabilityDrillDownRecord_complianceList(val){
     for(j = 0; j < statutory_date.length; j++){
         var sDay = '';
         if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
-
         var sMonth = '';
         if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
-
         var tBefore = '';
         if(statutory_date[j]["trigger_before_days"] != null) tBefore = statutory_date[j]["trigger_before_days"] + " Days";
 
-        if(sMonth == 1) sMonth = "Jan"
-        else if(sMonth == 2) sMonth = "Feb"
-        else if(sMonth == 3) sMonth = "Mar"
-        else if(sMonth == 4) sMonth = "Apr"
-        else if(sMonth == 5) sMonth = "May"
-        else if(sMonth == 6) sMonth = "Jun"
-        else if(sMonth == 7) sMonth = "Jul"
-        else if(sMonth == 8) sMonth = "Aug"
-        else if(sMonth == 9) sMonth = "Sep"
-        else if(sMonth == 10) sMonth = "Oct"
-        else if(sMonth == 11) sMonth = "Nov"
-        else if(sMonth == 12) sMonth = "Dec"
+        if(sMonth != '') sMonth = getMonth_IntegettoString(sMonth);
 
         statutorydate +=  sDay +' - '+ sMonth + ', ';
         triggerbefore +=  tBefore + ', ';
@@ -1058,19 +1045,16 @@ function showComplianceApplicabilityDrillDownRecord_complianceList(val){
     }
     var tableRow = $('#templates .compliance-applicable-status .table-row-list');
     var clone = tableRow.clone();
-
     var cDescription = val["description"];
     var partDescription = cDescription;
     if (cDescription != null && cDescription.length > 50){
         partDescription = cDescription.substring(0,49)+'...';
     }
-
     var cPenalConsequences = val["penal_consequences"];
     var partPenalConsequences = cPenalConsequences;
     if (cPenalConsequences != null && cPenalConsequences.length > 50){
         partPenalConsequences = cPenalConsequences.substring(0,49)+'...';
     }
-
     $(".sno", clone).html(SNO);
     $(".statutory-name", clone).html(val["statutory_provision"]);
     var download_url = val["download_url"];
@@ -1079,7 +1063,6 @@ function showComplianceApplicabilityDrillDownRecord_complianceList(val){
     }else{
         $('.compliance-task-name', clone).html('<a href= "'+ download_url +'" target="_new">'+val["compliance_task"]+'</a>');
     }
-
     $(".compliance-description-name", clone).html('<abbr class="page-load" title="'+cDescription+'">'+partDescription+'</abbr>');
     $(".penal-consequences-name", clone).html('<abbr class="page-load" title="'+cPenalConsequences+'">'+partPenalConsequences+'</abbr>');
     $(".compliance-frequency-name", clone).html(frequency);

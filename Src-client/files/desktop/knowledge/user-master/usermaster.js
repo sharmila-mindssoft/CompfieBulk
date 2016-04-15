@@ -23,6 +23,7 @@ countryIds = []
 displayMessage('');
 });
 
+// Edit process
 function displayEdit (userId) {
 	displayMessage("");
 	$("#user-view").hide();
@@ -70,6 +71,7 @@ function displayEdit (userId) {
 	}
 }
 
+// activate/deactivate process
 function changeStatus (userId,isActive) {
 	var msgstatus='deactivate';
     if(isActive){
@@ -97,7 +99,7 @@ function changeStatus (userId,isActive) {
 	}
 }
 
-
+// display user list in view page
 function loadUserList(usersList) {
 	var j = 1;
 	var imgName = '';
@@ -146,6 +148,7 @@ function loadUserList(usersList) {
   }
 }
 
+// get users list from api
 function getUsers(){
 	function onSuccess(data){
 		usersList = data["users"];
@@ -168,6 +171,7 @@ function getUsers(){
   );
 }
 
+//validation
 function validate(){
 	var employeeName = $("#employeename").val().trim();
 	var employeeId = $("#employeeid").val().trim();
@@ -206,6 +210,7 @@ function validate(){
   }
 }
 
+// save or update user details
 $("#submit").click(function(){
 	var userId = parseInt($("#userid").val());
 	var employeeName = $("#employeename").val().trim();
@@ -416,6 +421,7 @@ function activate_text (element,checkval,checkname) {
   $("#usergroup").val(checkval);
 }
 
+//initialize
 $(document).ready(function(){
 	getUsers();
 	$("#employeename").focus();

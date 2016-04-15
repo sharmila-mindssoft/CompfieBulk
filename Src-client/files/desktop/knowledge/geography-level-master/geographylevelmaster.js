@@ -158,7 +158,7 @@ $("#submit").click(function(){
 	   	var isAdd = true;
 		for(var k=1; k<=10; k++) {
 			if($("#levelid"+k).val() != '' && $("#level"+k).val().trim() == ''){
-				displayMessage("Geography Level "+ k + " Should not be Empty")
+				displayMessage("Level "+ k + message.shouldnot_empty)
 				return false;
 			}else if($("#level"+k).val().trim() != ''){
 				if($("#levelid"+k).val() != ''){

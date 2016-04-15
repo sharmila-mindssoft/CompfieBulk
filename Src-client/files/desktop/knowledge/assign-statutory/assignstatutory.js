@@ -676,13 +676,13 @@ function validate_firsttab(){
       if($('.industrylist.active').text() == assignedStatutoriesList[entity]["industry_name"] && $('.domainlist.active').attr('id') == assignedStatutoriesList[entity]["domain_id"]){
         for(var j=0;j<assignStatutoryUnitIds.length;j++){
           if(assignStatutoryUnitIds[j] == assignedStatutoriesList[entity]["unit_id"] && assignedStatutoriesList[entity]["submission_status"] == 0){
-            displayMessage("Statutes already assigned for '"+assignStatutoryUnitValues[j]+"' unit");
+            displayMessage(message.statutory_already_assigned_unit + assignStatutoryUnitValues[j]);
             checkDuplicateAssignStauttory = false;
             break;
             return false;
           }
           if(assignStatutoryUnitIds[j] == assignedStatutoriesList[entity]["unit_id"] && assignedStatutoriesList[entity]["submission_status"] == 1 && assignStatutoryUnitIds.length > 1){
-            displayMessage("Please select individual unit, Statutes already submitted for '"+assignStatutoryUnitValues[j] + "' unit");
+            displayMessage(message.statutory_already_submitted_unit + assignStatutoryUnitValues[j]);
             checkDuplicateAssignStauttory = false;
             break;
             return false;

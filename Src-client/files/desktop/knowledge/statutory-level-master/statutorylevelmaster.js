@@ -155,7 +155,7 @@ $("#submit").click(function(){
           var passlevellist = [];
          for(var k=1; k<=10; k++) {
           if($("#levelid"+k).val().trim().length > 0 && $("#level"+k).val().trim().length == 0){
-            displayMessage("Level "+ k + " Should not be Empty")
+            displayMessage("Level "+ k + message.shouldnot_empty)
             return false;
           }else if($("#level"+k).val().trim().length > 0){
             if($("#levelid"+k).val().trim().length > 0){

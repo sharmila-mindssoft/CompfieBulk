@@ -353,22 +353,11 @@ function disppopup(sm_id,compliance_id,element){
     for(z = 0; z < statutory_date.length; z++){
     var sDay = '';
     if(statutory_date[z]["statutory_date"] != null) sDay = statutory_date[z]["statutory_date"];
-
     var sMonth = '';
     if(statutory_date[z]["statutory_month"] != null) sMonth = statutory_date[z]["statutory_month"];
 
-    if(sMonth == 1) sMonth = "January"
-    else if(sMonth == 2) sMonth = "February"
-    else if(sMonth == 3) sMonth = "March"
-    else if(sMonth == 4) sMonth = "April"
-    else if(sMonth == 5) sMonth = "May"
-    else if(sMonth == 6) sMonth = "June"
-    else if(sMonth == 7) sMonth = "July"
-    else if(sMonth == 8) sMonth = "Auguest"
-    else if(sMonth == 9) sMonth = "September"
-    else if(sMonth == 10) sMonth = "October"
-    else if(sMonth == 11) sMonth = "November"
-    else if(sMonth == 12) sMonth = "December"
+    if(sMonth != '') sMonth = getMonth_IntegettoString(sMonth);
+    
     statutorydate +=  sMonth +' '+ sDay +' ';
     }
     if(sdateDesc != ''){

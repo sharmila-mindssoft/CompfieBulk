@@ -174,6 +174,16 @@ var message = {
 	'nextduedate_gt_current' : 'Next Due Date must be Greater than Current Date',
 	'validity_gt_nextduedate' : 'Validity Date must be Greater than or equal to Next Due Date',
 	'category_max50' : 'Category Name is not exceeded 50 Characters',
+	'shouldnot_empty' : ' Should not be Empty',
+	'invalid_levelone' : 'Invalid level one selection. ',
+	'selectin_firstlevel' : ' should select in first level.',
+	'compliancename_exists' : 'Compliance name already exists - ',
+	'statutory_already_assigned_unit' : 'Statutes already assigned for unit - ',
+	'statutory_already_submitted_unit' : 'Please select individual unit, Statutes already submitted for unit - ',
+	'duedatelessthantoday_compliance' : 'Due date is less than today\'s date for compliance - ',
+	'duedate_required_compliance' : 'Due date required for compliance - ',
+	'duedatelessthanvaliditydate_compliance' : 'Due date must be less than validity date for - ',
+	'invalid_duedate' : 'Invalid due date for - ',
 };
 
 function clearMessage() {
@@ -183,5 +193,4 @@ function clearMessage() {
 function displayMessage(message) {
     $(".error-message").text(message);
     $(".error-message").show();
-    hideLoader();
 }
