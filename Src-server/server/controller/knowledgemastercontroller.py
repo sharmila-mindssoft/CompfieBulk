@@ -10,6 +10,15 @@ forms = [5, 6, 7, 8, 9, 10]
 #
 # knowledge - master - request
 #
+"""
+    process_knowledge_master_request will process below mentioned request.
+    parameter :
+        request type is object of request class from knowledgemaster protocol.
+        db is database connection object.
+    return :
+        return type is object of response class from knowledgemaster protocol.
+"""
+
 def process_knowledge_master_request(request, db) :
     session_token = request.session_token
     request_frame = request.request
@@ -238,7 +247,6 @@ def process_save_statutory_level(db, request_frame, user_id):
         country_id, domain_id, levels, user_id
     )
     return knowledgemaster.SaveStatutoryLevelSuccess()
-
 
 # geography level
 def process_get_geography_level(db, user_id):
