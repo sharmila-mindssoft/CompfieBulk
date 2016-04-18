@@ -6816,7 +6816,7 @@ class ClientDatabase(Database):
             values.append(int(history["completed_by"]))
         elif action.lower() == "approvedtoassignee":
             values.append(int(history["completed_by"]))
-        elif action.lower() == "approvedtoocncur":
+        elif action.lower() == "approvedtoconcur":
             values.append(int(history["concurred_by"]))
         elif action.lower() == "concurrejected":
             values.append(int(history["completed_by"]))
@@ -7217,8 +7217,8 @@ class ClientDatabase(Database):
                     )
 
                     query = '''select a.client_statutory_ids, a.domain_id FROM (
-                    SELECT group_concat(client_statutory_id) as client_statutory_ids, domain_id 
-                    FROM tbl_client_statutories cs  
+                    SELECT group_concat(client_statutory_id) as client_statutory_ids, domain_id
+                    FROM tbl_client_statutories cs
                     WHERE unit_id = '%d' and client_statutory_id in (%s) ) a
                     where client_statutory_ids is not Null and domain_id is not Null''' % (
                         unit_id, client_statutory_id_rows[0][0]
@@ -7254,7 +7254,7 @@ class ClientDatabase(Database):
                             as DelayedCompliance"
                             condition = "compliance_id in (%s) and due_date \
                             between '%s' and '%s' and completed_by = '%d'" % (
-                                compliance_ids, from_date.date(), to_date.date(),  
+                                compliance_ids, from_date.date(), to_date.date(),
                                 user_id
                             )
                             rows = self.get_data(
