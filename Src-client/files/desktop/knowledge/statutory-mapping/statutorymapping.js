@@ -37,7 +37,6 @@ function displayLoader() {
 function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
-
 function resetvalues(){
   $('.sdate').val('');
 }
@@ -152,6 +151,7 @@ $(".btn-statutorymapping-add").click(function(){
   $(".tbody-geography-level").find("div").remove();
 });
 
+//activate/deactivate statutory mapping
 function changeStatus (statutorymappingId,isActive) {
   var msgstatus='deactivate';
   if(isActive){
@@ -179,6 +179,7 @@ function changeStatus (statutorymappingId,isActive) {
   }
 }
 
+//load statutory mapping list in view page
 function loadCountwiseStatutoryMapping(keysList, statutoryMappingsList){
   $('#activate-step-finish').prop('disabled', false);
   $('#activate-step-finish').text('Submit');
@@ -251,11 +252,13 @@ function loadCountwiseStatutoryMapping(keysList, statutoryMappingsList){
     }
 }
 
+//get statutory mapping list for selected page
 function get_sub_array(object, start, end){
     if(!end){ end=-1;}
     return object.slice(start, end);
 }
 
+//get list when click pagination button
 $(".pagination").click(function(event){
   var text = $(event.target).attr('id');
   var pageId = text.substring(text.lastIndexOf('w') + 1);
@@ -274,6 +277,7 @@ $(".pagination").click(function(event){
   loadCountwiseStatutoryMapping(sub_keys_list, finalList);
 });
 
+//create pagination according to statutory mapping list
 function loadStatutoryMappingList(statutoryMappingsList) {
   var listSize = Math.ceil(Object.keys(statutoryMappingsList).length / pageSize);
   startCount = 0;
@@ -303,6 +307,7 @@ function loadStatutoryMappingList(statutoryMappingsList) {
   loadCountwiseStatutoryMapping(sub_keys_list, finalList);
 }
 
+//get statutory mapping master date from api
 function getStatutoryMappingsMastersList() {
   mirror.getStatutoryMappingsMaster(function (error, data) {
     if (error == null) {
@@ -324,6 +329,8 @@ function getStatutoryMappingsMastersList() {
     }
   });
 }
+
+//get statitroy mapping lists from api
 function getStatutoryMappings(){
   displayLoader();
   mirror.getStatutoryMappings(
@@ -503,6 +510,7 @@ function load(id,level,country,domain){
   }
 }
 
+//remove uploaded file
 function remove_temp_file(){
   uploadFile = null;
   $("#uploaded_fileview").hide();
@@ -510,6 +518,7 @@ function remove_temp_file(){
   $("#upload_file").val('');
 }
 
+//convert file to object on upload file 
 $("#upload_file").on("change", function(e) {
   mirror.uploadFile(e, function result_data(data) {
     if (data == "File max limit exceeded") {
@@ -560,7 +569,7 @@ function saverecord(j,e){
     if(map_statutory_id==0 && levelstage>1 ){
       displayMessage(message.levelselection_required);
     }else if(datavalue==""){
-      displayMessage("Level-"+levelstage+" Value Should not be Empty");
+      displayMessage("Level-" + levelstage + message.shouldnot_empty);
     }else{
       if($("#statutoryid").val() == ''){
         function onSuccess(data){
@@ -622,6 +631,7 @@ function saverecord(j,e){
   }
 }
 
+// reload statutory master after save/update
 function reload(last_statutory_id,last_level,country,domain){
   function success(status,data){
     statutoriesList = data["statutories"];
@@ -653,6 +663,7 @@ function editstaturoty(statu_id, statu_name, position){
   $('#datavalue'+position).val(statu_name)
 }
 
+//load selected statutories in second wizard
 function load_statories(){
   disp_statutories = [];
   $(".tbody-statutory-list").find("tr").remove();
@@ -683,6 +694,7 @@ $('.slist1').each( function( index, el ) {
 });
 }
 
+//add statutories in second wizard
 $("#temp_addstatutories").click(function() {
   var last_statutory_id=0;
   for(k=1;k<=10;k++){
@@ -700,7 +712,7 @@ $("#temp_addstatutories").click(function() {
       if(disp_statutories.length > 0){
         var parentAct = disp_statutories[0].split('>>');
         if(parentSelection != parentAct[0]){
-          displayMessage("Invalid level one selection. you should select ' "+parentAct[0]+" ' in first level.");
+          displayMessage(message.invalid_levelone + parentAct[0] + message.selectin_firstlevel);
           return false;
         }else{
           sm_statutoryids.push(parseInt(last_statutory_id));
@@ -714,12 +726,14 @@ $("#temp_addstatutories").click(function() {
   load_statories();
 });
 
+//remove statutories from list 
 function temp_removestatutories(remove_id){
   remove = sm_statutoryids.indexOf(parseInt(remove_id));
   sm_statutoryids.splice(remove,1);
   load_statories();
 }
 
+//load compliances in third wizard
 function load_compliance(){
   $('#statutory_provision').val('');
   $('#compliance_task').val('');
@@ -803,6 +817,7 @@ function load_compliance(){
 make_breadcrumbs3();
 }
 
+//add compliances in third wizard
 $("#temp_addcompliance").click(function() {
   var comp_id=$('#complianceid').val();
   var statutory_provision = $('#statutory_provision').val().trim();
@@ -1028,6 +1043,7 @@ $("#temp_addcompliance").click(function() {
   }
 });
 
+//edit compliances in third wizard
 function temp_editcompliance(edit_id){
   $('#dayofmonth').prop("checked", true);
   $('#single_statutory_date').val('');
@@ -1109,55 +1125,57 @@ function temp_editcompliance(edit_id){
         $('#single_statutory_date').show();
       }
       load_data();
-      //siva
+    }else{
+      $('.multipleinput').prop("checked",false);
+      $('.multipleselectnone').show();
+      $('.multipleselect').hide();
+      if(statutory_dates.length > 0){
+      $('#single_statutory_date').val(statutory_dates[0]["statutory_date"]);
+      $('#single_statutory_month').val(statutory_dates[0]["statutory_month"]);
+      $('#single_triggerbefore').val(statutory_dates[0]["trigger_before_days"]);
+      if(statutory_dates[0]["repeat_by"] == 'enddayofmonth'){
+        $('#enddayofmonth').prop("checked", true);
+        $('#single_statutory_date').hide();
+      }else{
+        $('#dayofmonth').prop("checked", true);
+        $('#single_statutory_date').show();
+      }
+      }
+      load_data();
+      if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
+       $('#single_statutory_date').hide();
+       $('#sdate').hide();
+      }else{
+        $('#single_statutory_date').show();
+      }
+      if($('#repeats_type').val() == 1){
+        $('#single_statutory_date').hide();
+      }
+      if($('#repeats_type').val() == 3){
+         $('#sdate').show();
+      }
+    }
   }else{
-    $('.multipleinput').prop("checked",false);
-    $('.multipleselectnone').show();
-    $('.multipleselect').hide();
-    if(statutory_dates.length > 0){
-    $('#single_statutory_date').val(statutory_dates[0]["statutory_date"]);
-    $('#single_statutory_month').val(statutory_dates[0]["statutory_month"]);
-    $('#single_triggerbefore').val(statutory_dates[0]["trigger_before_days"]);
-    if(statutory_dates[0]["repeat_by"] == 'enddayofmonth'){
-      $('#enddayofmonth').prop("checked", true);
-      $('#single_statutory_date').hide();
-    }else{
-      $('#dayofmonth').prop("checked", true);
-      $('#single_statutory_date').show();
-    }
-    }
-    load_data();
-    if($('input[name="repeatby"]:checked').val() == 'enddayofmonth'){
-     $('#single_statutory_date').hide();
-     $('#sdate').hide();
-    }else{
-      $('#single_statutory_date').show();
-    }
-    if($('#repeats_type').val() == 1){
-      $('#single_statutory_date').hide();
-    }
-    if($('#repeats_type').val() == 3){
-       $('#sdate').show();
-    }
-//siva
-  }
-}else{
-  $('#Recurring').hide();
-  $('#Occasional').show();
-  $('#One_Time').hide();
+    $('#Recurring').hide();
+    $('#Occasional').show();
+    $('#One_Time').hide();
   }
   $('#complianceid').val(edit_id);
 }
 
+//remove compliance in third wizard
 function temp_removecompliance(remove_id){
   compliances.splice(parseInt(remove_id),1);
   load_compliance();
 }
 
+//activate/deactivate compliance in third wizard
 function temp_change_status_compliance(edit_id, passStatus){
    compliances[edit_id]["is_active"] = passStatus;
    load_compliance();
 }
+
+//create breadcrumb & display
 function make_breadcrumbs2(){
   var arrowimage = " <img src=\'/images/right_arrow.png\'/> ";
   var statutories_name = '';
@@ -1185,43 +1203,44 @@ function make_breadcrumbs3(){
   $(".breadcrumbs_3").html(compliance_name);
 }
 
+//load geography level date in last wizard
 function loadGeographyLevels(sm_countryid){
   $(".tbody-geography-level").find("div").remove();
   if(sm_countryid in geographyLevelsList){
-  var geographyLevelList = geographyLevelsList[sm_countryid];
-  var levelposition;
-  for(var j in geographyLevelList){
-    levelposition = geographyLevelList[j]["l_position"];
-    var tableRow=$('#geography-level-templates');
-    var clone=tableRow.clone();
-    $('.title', clone).text(geographyLevelList[j]["l_name"]);
-    $('.levelvalue', clone).html('<input type="text" class="filter-text-box" id="filter_geography'+levelposition+'" onkeyup="filter_geography('+levelposition+')"> <ul id="ulist'+levelposition+'"></ul><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["l_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
-    $('.tbody-geography-level').append(clone);
-  }
-  var setlevelstage= 1;
-  $('#datavalue'+setlevelstage).val('');
-  $('#ulist'+setlevelstage).empty();
-  var firstlevelid= $('#glmid'+setlevelstage).val();
-  var idval='';
-  var clsval='.list'+setlevelstage;
-  var clsval1='list'+setlevelstage;
-  var str = '';
-  var geographyList = geographiesList[sm_countryid];
-  for(var i in geographyList){
-    if((geographyList[i]["level_id"] == firstlevelid) && (geographyList[i]["is_active"] == true)){
-      str='<li id="select'+setlevelstage+'" class="'+clsval1+'" onclick="activate_geography_all(this,'+sm_countryid+','+setlevelstage+')" > Select All</li>';
+    var geographyLevelList = geographyLevelsList[sm_countryid];
+    var levelposition;
+    for(var j in geographyLevelList){
+      levelposition = geographyLevelList[j]["l_position"];
+      var tableRow=$('#geography-level-templates');
+      var clone=tableRow.clone();
+      $('.title', clone).text(geographyLevelList[j]["l_name"]);
+      $('.levelvalue', clone).html('<input type="text" class="filter-text-box" id="filter_geography'+levelposition+'" onkeyup="filter_geography('+levelposition+')"> <ul id="ulist'+levelposition+'"></ul><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["l_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+      $('.tbody-geography-level').append(clone);
     }
-  }
-  for(var i in geographyList){
-    var setgeographyid = geographyList[i]["geography_id"];
-    var setparentid = geographyList[i]["parent_id"];
-    var combineid = setgeographyid + "-" + setparentid;
-    if((geographyList[i]["level_id"] == firstlevelid) && (geographyList[i]["is_active"] == true)){
-      str += '<li id="'+combineid+'" value="'+setparentid+'" class="'+clsval1+'" onclick="activate_geography(this,'+sm_countryid+','+setlevelstage+',\''+combineid+'\')" >'+geographyList[i]["geography_name"]+'</li>';
+    var setlevelstage= 1;
+    $('#datavalue'+setlevelstage).val('');
+    $('#ulist'+setlevelstage).empty();
+    var firstlevelid= $('#glmid'+setlevelstage).val();
+    var idval='';
+    var clsval='.list'+setlevelstage;
+    var clsval1='list'+setlevelstage;
+    var str = '';
+    var geographyList = geographiesList[sm_countryid];
+    for(var i in geographyList){
+      if((geographyList[i]["level_id"] == firstlevelid) && (geographyList[i]["is_active"] == true)){
+        str='<li id="select'+setlevelstage+'" class="'+clsval1+'" onclick="activate_geography_all(this,'+sm_countryid+','+setlevelstage+')" > Select All</li>';
+      }
     }
+    for(var i in geographyList){
+      var setgeographyid = geographyList[i]["geography_id"];
+      var setparentid = geographyList[i]["parent_id"];
+      var combineid = setgeographyid + "-" + setparentid;
+      if((geographyList[i]["level_id"] == firstlevelid) && (geographyList[i]["is_active"] == true)){
+        str += '<li id="'+combineid+'" value="'+setparentid+'" class="'+clsval1+'" onclick="activate_geography(this,'+sm_countryid+','+setlevelstage+',\''+combineid+'\')" >'+geographyList[i]["geography_name"]+'</li>';
+      }
+    }
+    $('#ulist'+setlevelstage).append(str);
   }
-  $('#ulist'+setlevelstage).append(str);
-}
 }
 //check & uncheck list data
 function activate_geography(element,country,level,combineid){
@@ -1363,6 +1382,7 @@ function load_geography_all(level,country){
   }
 }
 
+//save selected applicable location in variable
 function getGeographyResult(){
   sm_geographyids=[];
   for(k=1;k<=10;k++){
@@ -1382,6 +1402,7 @@ function getGeographyResult(){
   }
 }
 
+//filter location
 function filter_geography(position){
   var glist_filter = document.getElementsByClassName('list'+position);
   var filter = $('#filter_geography'+position).val().toLowerCase();
@@ -1395,6 +1416,7 @@ function filter_geography(position){
   }
 }
 
+//save/update statutory mapping
 function savestatutorymapping(){
   function onSuccess(data){
       getStatutoryMappings();
@@ -1413,7 +1435,7 @@ function savestatutorymapping(){
   function onFailure(error, response){
     if(error == "ComplianceNameAlreadyExists"){
       var duplicateComplianceList = response['compliance_name'];
-      displayMessage("Compliance name already exists - " + duplicateComplianceList);
+      displayMessage(message.compliancename_exists + duplicateComplianceList);
     }else{
       displayMessage(error);
     }
@@ -1461,6 +1483,7 @@ function savestatutorymapping(){
   }
 }
 
+//first wizard validation
 function validate_firsttab(){
   if(sm_countryid == ''){
     displayMessage(message.country_required);
@@ -1475,6 +1498,7 @@ function validate_firsttab(){
     return true;
   }
 }
+//second wizard validation
 function validate_secondtab(){
   if (sm_statutoryids.length == 0){
     displayMessage(message.statutory_selection_required);
@@ -1483,6 +1507,7 @@ function validate_secondtab(){
     return true;
   }
 }
+//third wizard validation
 function validate_thirdtab(){
   if (compliances.length == 0){
     displayMessage(message.compliance_selection_required);
@@ -1493,6 +1518,7 @@ function validate_thirdtab(){
     return true;
   }
 }
+//fourth wizard validation
 function validate_fourthtab(){
   if (sm_geographyids.length == 0){
     displayMessage(message.location_selection_required);
@@ -1654,6 +1680,8 @@ function edit_geography(country,geographyids_edit){
   $('#'+finalcombineid).addClass( "active" );
   }
 }
+
+//edit statutory mapping
 function displayEdit (sm_Id) {
   displayMessage("");
   $("#statutorymapping-view").hide();
@@ -1676,6 +1704,7 @@ function displayEdit (sm_Id) {
   edit_geography(sm_countryid,sm_geographyids);
 }
 
+//load statutories date according to repeats every selection
 function load_stautorydates(){
   var rep_every = parseInt($('#repeats_every').val());
   var modResult = 12 % rep_every;
@@ -1763,6 +1792,7 @@ function load_stautorydates(){
   }
 }
 
+//display summary
 $(function()
 {
   $('#compliance_description').keyup(function(e)
@@ -1908,7 +1938,7 @@ for (var i = 0; i < lis.length; i++) {
 }
 });
 
-
+//create wizard  
 var navListItems = $('ul.setup-panel li a'),
 allWells = $('.setup-content');
 allWells.hide();
@@ -2175,22 +2205,6 @@ $('.tasktype').on('keyup change', function() {
   }
 });
 
-function getMonthVal(sMonth){
-  if(sMonth == 1) sMonth = "Jan"
-  else if(sMonth == 2) sMonth = "Feb"
-  else if(sMonth == 3) sMonth = "Mar"
-  else if(sMonth == 4) sMonth = "Apr"
-  else if(sMonth == 5) sMonth = "May"
-  else if(sMonth == 6) sMonth = "Jun"
-  else if(sMonth == 7) sMonth = "Jul"
-  else if(sMonth == 8) sMonth = "Aug"
-  else if(sMonth == 9) sMonth = "Sep"
-  else if(sMonth == 10) sMonth = "Oct"
-  else if(sMonth == 11) sMonth = "Nov"
-  else if(sMonth == 12) sMonth = "Dec"
-  return sMonth;
-}
-
 $("#statutory_date").empty();
 var defaultoption = $("<option></option>");
 defaultoption.val("");
@@ -2210,7 +2224,8 @@ defaultoption1.text("Select");
 $("#statutory_month").append(defaultoption1);
 for (var i=1; i<=12; i++) {
   var option = $("<option></option>");
-  var sMonth = getMonthVal(i);
+  var sMonth = getMonth_IntegettoString(i);
+
   option.val(i);
   option.text(sMonth)
   $("#statutory_month").append(option);
@@ -2234,7 +2249,7 @@ defaultoption1.text("Select");
 $("#single_statutory_month").append(defaultoption1);
 for (var i=1; i<=12; i++) {
   var option = $("<option></option>");
-  var sMonth = getMonthVal(i);
+  var sMonth = getMonth_IntegettoString(i);
   option.val(i);
   option.text(sMonth)
   $("#single_statutory_month").append(option);
@@ -2259,7 +2274,7 @@ for(var j=1; j<=12; j++){
   $("#multiple_statutory_month"+j).append(defaultoption1);
   for (var i=1; i<=12; i++) {
     var option = $("<option></option>");
-    var sMonth = getMonthVal(i);
+    var sMonth = getMonth_IntegettoString(i);
     option.val(i);
     option.text(sMonth)
     $("#multiple_statutory_month"+j).append(option);
@@ -2281,6 +2296,7 @@ $('#days').hide();
 $('#hours').show();
 $("#trigger_every").show();
 
+//initialization & load date,month dynamically in statutory date selectbox
 $(document).ready(function(){
   for(var j=1; j<=12; j++){
     $('#multiple_statutory_month'+j).change(function() {
@@ -2312,6 +2328,7 @@ $(document).ready(function(){
   getStatutoryMappingsMastersList();
 });
 
+//create tool tip
 $( document ).tooltip({
   position: {
     my: "center bottom-20",

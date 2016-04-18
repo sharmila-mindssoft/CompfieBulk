@@ -308,11 +308,11 @@ function submitcompliance(){
             var convertValidityDate = convert_date(validity_date);
             var dateDifference = daydiff(convertDueDate, convertValidityDate);
             if (convertDueDate > convertValidityDate) {
-              displayMessage("Due date must be less than validity date for '" + compliance_name + "'");
+              displayMessage(message.duedatelessthanvaliditydate_compliance + compliance_name);
               hideLoader();
               return false;
             }else if(dateDifference > 90){
-              displayMessage("Invalid due date for '" + compliance_name + "'");
+              displayMessage(message.invalid_duedate + compliance_name);
               hideLoader();
               return false;
             }else{

@@ -350,7 +350,7 @@ $("#actval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_acts(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+      str += '<li id="'+suggestions[i][0]+'"onclick="activate_acts(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_act').append(str);
     $("#act").val('');

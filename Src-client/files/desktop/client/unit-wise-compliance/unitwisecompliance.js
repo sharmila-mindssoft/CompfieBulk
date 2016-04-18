@@ -97,18 +97,8 @@ function complianceListArray(data){
     var tDays = '';
     if(data["statutory_dates"][j]["trigger_before_days"] != null) tDays = data["statutory_dates"][j]["trigger_before_days"];
 
-    if(sMonth == 1) sMonth = "January"
-    else if(sMonth == 2) sMonth = "February"
-    else if(sMonth == 3) sMonth = "March"
-    else if(sMonth == 4) sMonth = "April"  
-    else if(sMonth == 5) sMonth = "May"
-    else if(sMonth == 6) sMonth = "June"
-    else if(sMonth == 7) sMonth = "July"
-    else if(sMonth == 8) sMonth = "Auguest"
-    else if(sMonth == 9) sMonth = "September"
-    else if(sMonth == 10) sMonth = "October"
-    else if(sMonth == 11) sMonth = "November"
-    else if(sMonth == 12) sMonth = "December"
+    if(sMonth != '') sMonth = getMonth_IntegettoString(sMonth);
+    
     triggerdate +=  tDays + " Day(s), ";
     statutorydate +=  sMonth +' '+ sDay + ', ';
   }

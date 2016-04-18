@@ -123,25 +123,12 @@ function load_allcompliances(userId, userName){
         for(j = 0; j < statutory_date.length; j++){
           var sDay = '';
           if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
-
           var sMonth = '';
           if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
-
           var tDays = '';
           if(statutory_date[j]["trigger_before_days"] != null) tDays = statutory_date[j]["trigger_before_days"];
 
-          if(sMonth == 1) sMonth = "January"
-          else if(sMonth == 2) sMonth = "February"
-          else if(sMonth == 3) sMonth = "March"
-          else if(sMonth == 4) sMonth = "April"
-          else if(sMonth == 5) sMonth = "May"
-          else if(sMonth == 6) sMonth = "June"
-          else if(sMonth == 7) sMonth = "July"
-          else if(sMonth == 8) sMonth = "Auguest"
-          else if(sMonth == 9) sMonth = "September"
-          else if(sMonth == 10) sMonth = "October"
-          else if(sMonth == 11) sMonth = "November"
-          else if(sMonth == 12) sMonth = "December"
+          if(sMonth != '') sMonth = getMonth_IntegettoString(sMonth);
 
           triggerdate +=  tDays + " Day(s) ";
           statutorydate +=  sMonth +' '+ sDay + ' ';
@@ -376,7 +363,7 @@ function submitcompliance(){
             if(cfrequency != 'On Occurrence'){
               due_date =  $('#duedate'+statutoriesCount).val();
               if(due_date == '' || due_date == undefined){
-                displayMessage("Due date required for compliance '" + compliance_name + "'");
+                displayMessage(message.duedate_required_compliance + compliance_name);
                 hideLoader();
                 return false;
                 /*var convertDueDate = convert_date(due_date);
@@ -419,7 +406,6 @@ function submitcompliance(){
       displayMessage(error);
       hideLoader();
     }
-    console.log(assignComplianceAssigneeName)
     client_mirror.saveReassignCompliance(
       reassignUserId, assignComplianceAssigneeId,
       assignComplianceAssigneeName,
