@@ -1143,7 +1143,9 @@ function loadauto_serviceprovider (textval) {
   $('#serviceproviderview ul').empty();
   if(textval.length>0){
     for(var i in serviceprovider){
-      if (~serviceprovider[i]["service_provider_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([serviceprovider[i]["service_provider_id"],serviceprovider[i]["service_provider_name"]]);
+        if(serviceprovider[i]["is_active"] == true){
+            if (~serviceprovider[i]["service_provider_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([serviceprovider[i]["service_provider_id"],serviceprovider[i]["service_provider_name"]]);
+        }
     }
     var str='';
     for(var i in suggestions){

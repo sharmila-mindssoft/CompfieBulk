@@ -1678,13 +1678,19 @@ function loaddomain(classval){
     var ccount = lastClass.split('-');
     var countval = '-'+ccount[1]+'-'+ccount[2];
     $('.domain-selectbox-view'+countval).css("display", "block");
-    var getClientid = $('#group-select').val();
+    var getClientid;
+    if($("#client-unit-id").val() == ""){
+        getClientid= $('#group-select').val();
+    }else{  
+        getClientid= $('#client-unit-id').val();
+    }
     var clientdomainsid;
     $.each(groupList, function(key, val){
         if(val['client_id'] == getClientid){
             clientdomainsid = val['domain_ids'];
         }
     });
+
     var editdomainval=[];
     if($('.domain'+countval).val() != ''){
         editdomainval = $('.domain'+countval).val().split(",");
@@ -1730,26 +1736,29 @@ function loaddomain(classval){
 
             var ccdd =checkclientdomain(domainId, countval);
             var cdd = checkdomain(domainId, countval);
+            
+            if(checkdomainforadd(clientdomainsid, domainId) == 1){
+                if(ccdd == 1 && cdd == 1){
+                    if(selectdomainstatus == 'checked'){
+                        str += '<li id = "'+domainId+'" class="active_selectbox'+countval+' active" onclick="activate(this, \''+countval+'\')" >'+domainName+'</li> ';
+                    }else{
+                       str += '<li id="'+domainId+'" onclick="activate(this, \''+countval+'\')" >'+domainName+'</li> ';
+                    }
+                }
+                else if(ccdd != 1 && cdd == 1){
+                    str += '<li id="'+domainId+'" onclick="activate(this, \''+countval+'\')" >'+domainName+'</li> ';
 
-            if(ccdd == 1 && cdd == 1){
-                if(selectdomainstatus == 'checked'){
-                    str += '<li id = "'+domainId+'" class="active_selectbox'+countval+' active" onclick="activate(this, \''+countval+'\')" >'+domainName+'</li> ';
-                }else{
-                   str += '<li id="'+domainId+'" onclick="activate(this, \''+countval+'\')" >'+domainName+'</li> ';
+                }
+                else if(ccdd == 1 && cdd != 1){
+                    if(selectdomainstatus == 'checked'){
+                        str += '<li id="'+domainId+'" class="active_selectbox'+countval+' active deactivate" >'+domainName+'</li> ';
+                    }
+                    else{
+                        str += '<li id="'+domainId+'" class="deactivate" >'+domainName+'</li> ';
+                    }
                 }
             }
-            else if(ccdd != 1 && cdd == 1){
-                str += '<li id="'+domainId+'" onclick="activate(this, \''+countval+'\')" >'+domainName+'</li> ';
-
-            }
-            else if(ccdd == 1 && cdd != 1){
-                if(selectdomainstatus == 'checked'){
-                    str += '<li id="'+domainId+'" class="active_selectbox'+countval+' active deactivate" >'+domainName+'</li> ';
-                }
-                else{
-                    str += '<li id="'+domainId+'" class="deactivate" >'+domainName+'</li> ';
-                }
-            }
+            
             // if(selectdomainstatus == 'checked'){
             //     str += '<li id="'+domainId+'" class="active_selectbox'+countval+' active" onclick="activate(this,\''+countval+'\' )" >'+domainName+'</li> ';
             // }else{

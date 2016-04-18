@@ -838,6 +838,7 @@ function saveorsubmit(submissionType){
     function onSuccess(data){
       getAssignedStatutories ();
       hideLoader();
+      $(".listfilter").val('');
       $("#assignstatutory-add").hide();
       $("#assignstatutory-view").show();
       $('ul.setup-panel li:eq(0)').addClass('active');

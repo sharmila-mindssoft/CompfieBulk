@@ -323,6 +323,7 @@ function submit_statutory(){
       getStatutorySettings ();
       $("#statutorysettings-add").hide();
       $("#statutorysettings-view").show();
+      $(".listfilter").val('');
       hideLoader();
     }
     function onFailure(error){
