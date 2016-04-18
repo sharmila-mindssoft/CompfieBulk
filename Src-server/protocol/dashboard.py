@@ -1341,7 +1341,7 @@ class RessignedCompliance(object):
         return {
             "compliance_name": to_structure_CustomTextType_500(self.compliance_name),
             "reassigned_from": to_structure_CustomTextType_50(self.reassigned_from),
-            "start_date": to_structure_CustomTextType_20(self.start_date),
+            "start_date": to_structure_OptionalType_CustomTextType_20(self.start_date),
             "due_date": to_structure_CustomTextType_20(self.due_date),
             "reassigned_date": to_structure_CustomTextType_20(self.reassigned_date),
             "completed_date": to_structure_CustomTextType_20(self.completed_date),

@@ -1,3 +1,4 @@
+//save change password process for knowledge
 $("#submit").click(function(){
   displayMessage("");
   var currentpassword = $("#currentpassword").val().trim();
@@ -40,6 +41,7 @@ $("#submit").click(function(){
     }
 });
 
+//save change password process for client
 $("#submit-client").click(function(){
   displayMessage("");
   var currentpassword = $("#currentpassword").val().trim();
@@ -82,6 +84,7 @@ $("#submit-client").click(function(){
     );
     }
 });
+
 function getItemObject (form_url, form_name) {
   var itemObject = $("#nav-bar-templates .sub-menu-item li").clone();
   if (form_url !== null)

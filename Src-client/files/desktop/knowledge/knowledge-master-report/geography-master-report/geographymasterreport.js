@@ -1,6 +1,7 @@
 var countriesList;
 var geographiesList;
 
+//get geography master data from api
 function getGeography(){
   function onSuccess(data){
     geographiesList = data["geographies"];
@@ -20,7 +21,7 @@ function getGeography(){
   );
 }
 
-
+//display geography master details in view page
 function loadGeographyList(geographyList){
   var sno=0;
   var geography = '';
@@ -88,7 +89,6 @@ function activate_text (element,checkval,checkname) {
 //Autocomplete Script ends
 
 //filter process
-
 $("#search-geography-name").keyup(function(){
   var filterkey = $("#search-geography-name").val().toLowerCase();
   var filteredList=[];
@@ -106,6 +106,7 @@ $("#search-geography-name").keyup(function(){
   loadGeographyList(filteredList);
 });
 
+//initialization
 $(function() {
   getGeography();
 });
