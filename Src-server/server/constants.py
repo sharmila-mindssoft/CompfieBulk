@@ -1,3 +1,4 @@
+import os
 CLIENT_TEMPLATE_PATHS = [
     (
         r"/login/([a-zA-Z-0-9]+)",
@@ -366,7 +367,7 @@ TEMPLATE_PATHS = [
     ),
 
 ]
-
+ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 IS_DEVELOPMENT = True
 VERSION = 1
 

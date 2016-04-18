@@ -453,9 +453,9 @@ INSERT INTO tbl_forms VALUES(11, 3, 'Compliance Task Details', '/compliance-task
 INSERT INTO tbl_forms VALUES(12, 3, 'On Occurrence Compliances', '/on-occurrence-compliances', 12, null, 0);
 INSERT INTO tbl_forms VALUES(13, 4, 'Compliance Details', '/compliance-details', 13, null, 0);
 INSERT INTO tbl_forms VALUES(14, 4, 'Risk Report', '/risk-report', 14, null, 0);
-INSERT INTO tbl_forms VALUES(15, 4, 'Service Provider wise Compliance', '/service-provider-wise-compliance', 15, "Compliance List", 0);
-INSERT INTO tbl_forms VALUES(16, 4, 'Assignee wise Compliance', '/assignee-wise-compliance', 16, "Compliance List", 0);
-INSERT INTO tbl_forms VALUES(17, 4, 'Unit wise Compliance', '/unit-wise-compliance', 17, "Compliance List", 0);
+INSERT INTO tbl_forms VALUES(15, 4, 'Service Provider Wise Compliance', '/service-provider-wise-compliance', 15, "Compliance List", 0);
+INSERT INTO tbl_forms VALUES(16, 4, 'Assignee Wise Compliance', '/assignee-wise-compliance', 16, "Compliance List", 0);
+INSERT INTO tbl_forms VALUES(17, 4, 'Unit Wise Compliance', '/unit-wise-compliance', 17, "Compliance List", 0);
 INSERT INTO tbl_forms VALUES(18, 4, 'Compliance Task Applicability Status', '/compliance-task-applicability-status', 18, null, 0);
 INSERT INTO tbl_forms VALUES(19, 4, 'Unit Details', '/unit-details', 19, null, 0);
 INSERT INTO tbl_forms VALUES(20, 4, 'Compliance Activity Report', '/compliance-activity-report', 20, null, 0);
