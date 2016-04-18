@@ -35,7 +35,7 @@ function initialize(){
         legalEntityList = data['legal_entities'];
         divisionsList = data['divisions'];
         unitList = data['units'];
-        level1List = data['users'];
+        level1List = data['level_1_statutories'];
     }
     function onFailure(error){
         console.log(error);
@@ -209,16 +209,14 @@ function loadresult(finalList) {
     endCount = pageSize;
     $.each(finalList, function(i, val){
         var list = finalList[i];
-        var list_level1 = val;
+        var list_level1 = list["level_1_statutory_wise_notifications"];
         delete list["level_1_statutory_wise_notifications"];         
         fullArrayList.push(list);
-
         $.each(list_level1, function(i1, val1){
             var list_val = i1;
             var list_text = val1;
             delete val1;  
             fullArrayList.push(list_val);
-       
             $.each(list_text, function(i2, val2){
                 var list_c = list_text[i2]; 
                 fullArrayList.push(list_c);
@@ -297,6 +295,7 @@ function loadStatutoryNotificationsList(data){
             });
         });
     });
+
     loadresult(data);
     $(".total-records").html( sno+" records")
 }
@@ -515,14 +514,14 @@ function loadauto_level1 (textval) {
   $('#autocompleteview-level1 ul').empty();
   if(textval.length>0){
     $.each(level1, function(i, value){
-        if (~level1[i]['statutory'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([level1[i]["statutory"],level1[i]["statutory"]]);
+        if (~level1[i].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([level1[i],level1[i]]);
     });
     var str='';
     for(var i in suggestions){
       str += '<li id="'+suggestions[i][0]+'" onclick="activate_level1(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
     }
     $('#autocompleteview-level1 ul').append(str);
-    $("#legalentityid").val('');
+    $("#level1id").val('');
     }
 }
 function activate_level1 (element,checkval,checkname) {

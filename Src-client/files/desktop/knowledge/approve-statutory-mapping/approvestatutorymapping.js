@@ -12,15 +12,8 @@ var approvalStatusList;
 var approvelist = [];
 var j;
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
 
+//get statutory mapping data from api
 function getStatutoryMappings(){
   function onSuccessMaster(data){
     industriesList = data["industries"];
@@ -191,6 +184,7 @@ function activate_statutorynature (element,checkval,checkname) {
 
 //Autocomplete Script ends
 
+//load statutories for approval
 function loadApproveStatutory(){
   var country = $("#country").val().trim();
   var domain = $("#domain").val().trim();
@@ -300,6 +294,7 @@ $("#submit").click(function(){
   loadApproveStatutory();
 });
 
+//display popup with details
 function disppopup(sm_id,compliance_id,element){
   $("#popup1").show();
   $(element).removeClass("new-link");
@@ -381,6 +376,7 @@ function disppopup(sm_id,compliance_id,element){
   $(".popup_applicablelocation").text(sm["geography_mappings"]);
 }
 
+//display reason select box according to action selection
 function dispreason(j){
   if($("#action"+j).val() == '2'){
     $("#notifyreason"+j).hide();
@@ -403,6 +399,7 @@ function dispreason(j){
   }
 }
 
+//reload statutories for approval after save process
 function reloadStatutoryMapping(){
   function onSuccess(data){
       statutoryMappingsList = data["statutory_mappings"];
@@ -422,6 +419,7 @@ function reloadStatutoryMapping(){
     );
 }
 
+//save statutory mapping approval
 $("#saverecord").click(function(){
   approvelist = [];
   for(var i=1; i<j; i++){
@@ -459,6 +457,7 @@ $("#saverecord").click(function(){
       });
 });
 
+//initialization
 $(function() {
   getStatutoryMappings();
 });

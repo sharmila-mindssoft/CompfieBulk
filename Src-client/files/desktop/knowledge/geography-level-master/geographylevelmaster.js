@@ -22,6 +22,7 @@ $(".insert-level-cancel").click(function(){
 });
 
 
+//get geography level master from api
 function GetGeographyLevels(){
 	function onSuccess(data){
 		geographyLevelsList = data["geography_levels"];
@@ -45,7 +46,7 @@ function GetGeographyLevels(){
 //Autocomplete Script Starts
 
 //load country list in autocomplete text box  
-var chosen = "";
+//var chosen = "";
 $("#countryval").keyup(function(e){
 	/*if (e.keyCode == 40) { 
         if(chosen === "") {
@@ -106,6 +107,7 @@ function activate_text (checkval,checkname) {
 }
 //Autocomplete Script ends
 
+//display geography level master for selected country
 function loadGeographyLevelsList(countryval) {
 	$(".error-message").html('');
 	$(".fieldvalue").val("");
@@ -126,6 +128,8 @@ function loadGeographyLevelsList(countryval) {
 	   	$("#add").hide();
 	}
 }
+
+//validation
 function validate(){
     if($("#country").val().trim().length==0){
       displayMessage(message.country_required);
@@ -138,6 +142,7 @@ function validate(){
     }
 }
 
+//save or update geography level master
 $("#submit").click(function(){  
 	var country = $("#country").val();
 	if(validate()){
@@ -199,6 +204,7 @@ $("#submit").click(function(){
 		}
 });
 
+//insert a new level in between levels
 $("#insert-record").click(function(){
 	var insertlevel = parseInt($("#insertlevel").val());
 	var insertvalue = $("#insertvalue").val().trim();
@@ -236,10 +242,12 @@ $("#insert-record").click(function(){
 	if(inserlevelstatus == false) $("#add").hide();
 });
 
+//initialization
 $(document).ready(function(){
 	GetGeographyLevels()
 	$("#countryval").focus();
 });
+
 
 $(".fieldvalue").keyup(function (evt) {
  var element = $(evt.target);

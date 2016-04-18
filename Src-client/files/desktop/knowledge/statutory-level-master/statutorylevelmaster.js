@@ -11,8 +11,8 @@ $(".btn-statutorylevel-cancel").click(function(){
   $("#domain").val("");
 });
 
+//get statutory level master data from api
 function GetStatutoryLevels(){
-
   function onSuccess(data){
     statutoryLevelsList = data["statutory_levels"];
     countriesList = data["countries"];
@@ -100,6 +100,7 @@ function activate_text_domain (element,checkval,checkname) {
 }
 //Autocomplete Script ends
 
+//load statutory level according to country & domain
 function loadstatutoryLevelsList() {
   $(".error-message").html('');
   $(".fieldvalue").val("");
@@ -110,15 +111,16 @@ function loadstatutoryLevelsList() {
   if((countryval in statutoryLevelsList) && (domainval in statutoryLevelsList[countryval])){
   levellist = statutoryLevelsList[countryval][domainval];
    for(var entity in levellist) {
-       var levelPosition = levellist[entity]["l_position"];
-       var levelName = levellist[entity]["l_name"];
-       var levelId = levellist[entity]["l_id"];
-       $("#level"+levelPosition).val(levelName);
-       $("#levelid"+levelPosition).val(levelId);
+      var levelPosition = levellist[entity]["l_position"];
+      var levelName = levellist[entity]["l_name"];
+      var levelId = levellist[entity]["l_id"];
+      $("#level"+levelPosition).val(levelName);
+      $("#levelid"+levelPosition).val(levelId);
    }
  }
 }
 
+//validation
 function validate(){
     if($("#country").val().trim().length==0){
       displayMessage(message.country_required);
@@ -133,6 +135,7 @@ function validate(){
     }
 }
 
+//save/update statutory level master
 $("#submit").click(function(){ 
     displayMessage('');
     var country = $("#country").val();
@@ -213,6 +216,7 @@ $(".fieldvalue").keyup(function (evt) {
  }
 });
 
+//initialization
 $(document).ready(function(){
   GetStatutoryLevels();
   $("#countryval").focus();
