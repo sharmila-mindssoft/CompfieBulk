@@ -82,6 +82,7 @@ function changeStatus (userId,isActive) {
     {
 		function onSuccess(response){
 			getUsers();
+			$(".filter-text-box").val('');
 		}
 		function onFailure(error){
 			displayMessage(error);
@@ -225,9 +226,10 @@ $("#submit").click(function(){
 	if(validate()){
 		if($("#userid").val() == '') {
 			function onSuccess(response) {
-					getUsers();
-					$("#user-view").show();
+				getUsers();
+				$("#user-view").show();
    				$("#user-add").hide();
+   				$(".filter-text-box").val('');
 			}
 			function onFailure(error){
 				if(error == "EmailIDAlreadyExists"){
@@ -256,6 +258,7 @@ $("#submit").click(function(){
 				getUsers();
 				$("#user-add").hide();
 				$("#user-view").show();
+				$(".filter-text-box").val('');
  			}
 			function failure(data) {
 				if(error == "EmailIDAlreadyExists"){

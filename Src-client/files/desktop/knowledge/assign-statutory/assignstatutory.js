@@ -13,7 +13,6 @@ var statutoriesList;
 var assignStatutoryUnitIds = [];
 var assignStatutoryUnitValues = [];
 var accordionstatus = true;
-
 var finalList;
 var pageSize = 100;
 var startCount;
@@ -26,6 +25,7 @@ function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
 
+//clear old list values
 function clearValues(levelvalue) {
   if(levelvalue == 'all'){
     assignStatutoryUnitIds = [];
@@ -122,6 +122,7 @@ function clearValues(levelvalue) {
   }
 }
 
+
 function actstatus(element){
   var remarkbox = '.remark'+$(element).val();
   var changestatusStatutories = '.statutoryclass'+$(element).val();
@@ -160,6 +161,7 @@ function compliancestatus(element){
   }
 }
 
+//display breadcrumbs
 function make_breadcrumbs(){
 
   var bc_businessgroup = $('.businessgrouplist.active').text();
@@ -169,11 +171,12 @@ function make_breadcrumbs(){
   if(bc_businessgroup != '') bc_businessgroup = arrowimage + bc_businessgroup;
   if(bc_divisionname != '') bc_divisionname = arrowimage + bc_divisionname;
 
-$(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + $('.grouplist.active').text()
-+ bc_businessgroup + arrowimage + $('.legalentitylist.active').text() + bc_divisionname + arrowimage + $('.locationlist.active').text()
-  + arrowimage + $('.industrylist.active').text() + arrowimage + assignStatutoryUnitValues + arrowimage + $('.domainlist.active').text());
+  $(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + $('.grouplist.active').text()
+  + bc_businessgroup + arrowimage + $('.legalentitylist.active').text() + bc_divisionname + arrowimage + $('.locationlist.active').text()
+    + arrowimage + $('.industrylist.active').text() + arrowimage + assignStatutoryUnitValues + arrowimage + $('.domainlist.active').text());
 }
 
+//load compliances in second wizard
 function load_secondwizard(){
   displayMessage("");
   var count=1;
@@ -297,6 +300,7 @@ function load_secondwizard(){
   });
 }
 
+//load unit according to filter selection
 function loadunit(){
 
   var assignStatutoryGroupId = null;
@@ -1223,4 +1227,20 @@ $(document).ready(function () {
         lis[i].style.display = 'none';
     }
   });
+});
+
+//create tool tip
+$( document ).tooltip({
+  position: {
+    my: "center bottom-20",
+    at: "center top",
+    using: function( position, feedback ) {
+      $( this ).css( position );
+      $( "<div>" )
+          .addClass( "arrow" )
+          .addClass( feedback.vertical )
+          .addClass( feedback.horizontal )
+          .appendTo( this );
+    }
+  }
 });
