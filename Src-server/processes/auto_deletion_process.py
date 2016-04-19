@@ -98,10 +98,29 @@ def get_client_database():
     client_db = create_client_db_connection(client_list)
     return client_db
 
+def get_countries():
+    con = knowledge_db_connect()
+    cursor = con.cursor()
+    q = "SELECT country_id, country_name FROM tbl_countries"
+    cursor.execute(q)
+    rows = cursor.fetchall()
+    cursor.close()
+    return convert_to_dict(rows, ["country_id", "country_name"])
+
+
 def get_records_more_then_7year(db):
     q = "select compliance_history_id, unit_id, documents, document_size from \
-    tbl_compliance_history where DATE(completion_date) < '%s'"
-    pass
+    tbl_compliance_history where DATE(completion_date) < '%s' \
+    AND ifnull(validity_date, 0) < '%s' "
+    cursor = db.cursor()
+    cursor.execute(q)
+    rows = cursor.fetchall()
+    result = convert_to_dict(rows, [
+        "compliance_history_id", "unit_id", "documents",
+        "document_size"
+    ])
+    print q
+    return result
 
 def delete_compliance_more_then_7year(db, cleint_id):
     pass
@@ -111,7 +130,8 @@ def run_delete_process():
     if client_info is not None :
         for client_id, db in client_info.iteritems() :
             try :
-                db.commit()
+                get_records_more_then_7year(db)
+                # db.commit()
             except Exception, e :
                 print e
                 db.rollback()
