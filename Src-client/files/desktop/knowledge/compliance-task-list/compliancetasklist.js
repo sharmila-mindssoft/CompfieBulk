@@ -6,26 +6,16 @@ var industriesList;
 var statutoryNaturesList;
 var statutoriesList;
 var complianceFrequencyList;
-
 var finalList;
 var pageSize = 500;
 var startCount;
 var endCount;
-
 var count=1;
 var compliance_count=0;
 var lastActName = '';
 var lastOccuranceid = 0;
 var lastIndustryName = '';
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -34,6 +24,7 @@ function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
 
+//get compliance list report filters
 function getStatutoryMappings(){
   function onSuccess(data){
     industriesList = data["industries"];
@@ -67,8 +58,8 @@ function getStatutoryMappings(){
   );
 }
 
+//display compliance list report data
 function loadCountwiseResult(filterList){
-
   if(startCount <= 0){
     $(".grid-table-rpt").show();
     var country = $("#countryval").val();
@@ -238,12 +229,13 @@ function loadCountwiseResult(filterList){
   }
 }
 
-
+//get part of required data from whole list
 function get_sub_array(object, start, end){
     if(!end){ end=-1;}
     return object.slice(start, end);
 }
 
+//show more record process
 function showloadrecord(){
   startCount = endCount;
   endCount = startCount + pageSize;
@@ -254,6 +246,7 @@ function showloadrecord(){
   }
   loadCountwiseResult(sub_keys_list);
 }
+
 
 $(function() {
   $('#pagination').click(function(){
@@ -275,7 +268,6 @@ $(function() {
 function loadresult() {
   startCount = 0;
   endCount = pageSize;
-
   var c_frequency = $("#compliance_frequency").val();
   if(c_frequency == 'All'){
     finalList = statutoryMappingDataList;
@@ -299,7 +291,7 @@ function loadresult() {
   loadCountwiseResult(sub_keys_list);
 }
 
-
+//get compliance list report data based on filter selection from api
 $("#submit").click(function(){
   var country = $("#country").val();
   var domain = $("#domain").val();
@@ -534,6 +526,7 @@ function activate_statutory (element,checkval,checkname) {
 }
 //Autocomplete Script ends
 
+//initialization
 $(function() {
   $(".grid-table-rpt").hide();
   getStatutoryMappings();

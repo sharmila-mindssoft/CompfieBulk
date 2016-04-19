@@ -8,6 +8,7 @@ function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
 
+//load compliances in view page
 function load_compliances (compliancesList) {
   var j = 1;
   $(".tbody-complainces-list").find("tr").remove();
@@ -50,6 +51,7 @@ function load_compliances (compliancesList) {
     }
 }
 
+//convert string to date format
 function convert_date (data){
   var datetime = data.split(" ");
   var date = datetime[0].split("-");
@@ -65,6 +67,7 @@ function convert_date (data){
   return new Date(date[2], date[1]-1, date[0]);
 }
 
+//start on occurance compliance
 function submitOnOccurence(complianceId, count, unitId, complete_within_days){
   var startdate = $('#startdate'+count).val();
   var d = new Date();
@@ -108,6 +111,7 @@ function submitOnOccurence(complianceId, count, unitId, complete_within_days){
   
 }
 
+//get on occurance compliance list from api
 function getOnOccuranceCompliances () {
   function onSuccess(data){
     compliancesList = data["compliances"];
@@ -127,6 +131,7 @@ function getOnOccuranceCompliances () {
   );
 }
 
+//initialization
 $(document).ready(function () {
   getOnOccuranceCompliances ();
 });

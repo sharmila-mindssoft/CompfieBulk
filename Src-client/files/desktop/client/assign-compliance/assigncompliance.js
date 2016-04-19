@@ -27,6 +27,7 @@ function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
 
+//clear list values
 function clearValues(levelvalue) {
   if(levelvalue == 'country'){
     assignStatutoryUnitIds = [];
@@ -100,6 +101,7 @@ function compliancestatus(element){
   }
 }
 
+//display applicable unit details in popup
 function disppopup(units_string){
   $("#popup1").show();
   $(".popup-list").find("tr").remove();
@@ -118,6 +120,7 @@ function disppopup(units_string){
   }
 }
 
+//load available compliance based on first wizard 
 function load_secondwizard(){
   if(statutoriesCount <= 1){
     $(".tbody-assignstatutory").find("tbody").remove();
@@ -346,6 +349,7 @@ function load_secondwizard(){
   }*/
 }
 
+//pagination process
 $('#pagination').click(function(){
   var domainID = $('.domainlist.active').attr('id');
   unit_id =  parseInt($("#unit").val());
@@ -375,7 +379,7 @@ $('#pagination').click(function(){
   )
 });
 
-
+//validation on first wizard
 function validate_firsttab(){
   if($('.countrylist.active').text() == ''){
     displayMessage(message.country_required);
@@ -435,6 +439,7 @@ function validate_secondtab(){
   return true;
 }
 
+//validation on third wizard
 function validate_thirdtab(){
   if($('.assigneelist.active').text() == ''){
     displayMessage(message.assignee_required);
@@ -480,7 +485,7 @@ function convert_date (data){
   return new Date(date[2], date[1]-1, date[0]);
 }
 
-
+//save and assign compliances for selectd unit
 function submitcompliance(){
 
     displayLoader();
@@ -874,6 +879,7 @@ function submitcompliance(){
     }
 }
 
+//create wizard
 var navListItems = $('ul.setup-panel li a'),
 allWells = $('.setup-content');
 allWells.hide();
@@ -923,6 +929,7 @@ $('#activate-step-finish').on('click', function(e) {
 })
 
 
+//load available units for selected filter
 function loadunit(){
 
   var assignStatutoryLegalEntityId = null;
@@ -1105,6 +1112,7 @@ function getUserLevel(selectedUserId){
   return getuserLevel;
 }
 
+//load available user in third wizard
 function loadUser(userType){
   var selectedUnit = null;
   var userClass;
@@ -1301,8 +1309,8 @@ $('#approval_unit').change(function() {
     loadUser('approval');
 });
 
+//load master data in first wizard
 function load_firstwizard(){
-
   $('#businessgroup').empty();
   $('#legalentity').empty();
   $('#division').empty();
@@ -1355,6 +1363,7 @@ function load_firstwizard(){
   }
 }
 
+//get assign compliance master data from api
 function getAssignCompliances () {
   function onSuccess(data){
     countriesList = data["countries"];
@@ -1382,6 +1391,7 @@ function getAssignCompliances () {
   );
 }
 
+//initialization and UL filter process
 $(document).ready(function () {
   getAssignCompliances ();
   $("#filter_assignee").keyup( function() {
@@ -1503,8 +1513,6 @@ $('.edittrigger').click(function(){
         lis[i].style.display = 'none';
     }
   });
-
-
 });
 
 $( document ).tooltip({

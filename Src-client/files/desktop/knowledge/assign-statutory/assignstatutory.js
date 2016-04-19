@@ -122,7 +122,7 @@ function clearValues(levelvalue) {
   }
 }
 
-
+//show/hide remark textbox based on act applicable selection
 function actstatus(element){
   var remarkbox = '.remark'+$(element).val();
   var changestatusStatutories = '.statutoryclass'+$(element).val();
@@ -140,6 +140,7 @@ function actstatus(element){
   }
   accordionstatus = false;
 }
+
 
 function compliancestatus(element){
   var sClass = $(element).attr('class');
@@ -388,7 +389,6 @@ $("#group").click(function(event){
   }
 });
 
-
 $("#businessgroup").click(function(event){
   if($(event.target).attr('class') == 'businessgrouplist'){
     clearValues('businessgroup');
@@ -520,6 +520,7 @@ $("#domain").click(function(event){
   }
 });
 
+//load lists on first wizard
 function load_firstwizard(){
 
   var c_id = parseInt($('.countrylist.active').attr('id'));
@@ -549,6 +550,7 @@ function load_firstwizard(){
   $('#industry').append(str2);
 }
 
+//get master data based on country selection
 $("#country").click(function(event){
   if($(event.target).attr('class') == 'countrylist'){
       clearValues('country');
@@ -584,6 +586,7 @@ mirror.getAssignStatutoryWizardOne(parseInt($('.countrylist.active').attr('id'))
   }
 });
 
+//load country list
 function loadCountriesList(data){
   var countriesList = data["countries"];
   var str='';
@@ -648,6 +651,7 @@ mirror.getCountriesForGroup(
 );
 });
 
+//first wizard validation
 function validate_firsttab(){
   if($('.countrylist.active').text() == ''){
     displayMessage(message.country_required);
@@ -698,6 +702,7 @@ function validate_firsttab(){
       }
     }
 
+    //get compliances list for selected unit from api
     if(checkDuplicateAssignStauttory){
       displayLoader();
       function onSuccess(data){
@@ -733,6 +738,7 @@ function validate_secondtab(){
   return true;
 }
 
+//create wizard
 var navListItems = $('ul.setup-panel li a'),
 allWells = $('.setup-content');
 allWells.hide();
@@ -761,6 +767,7 @@ $('ul.setup-panel li a[href="#step-1"]').trigger('click');
 
 })
 
+//save or submit assign statutory
 function saveorsubmit(submissionType){
   displayMessage("");
   if (validate_secondtab()){
@@ -872,7 +879,7 @@ $('#activate-step-submit').on('click', function(e) {
   saveorsubmit("Submit")
 })
 
-
+//edit assign statutory
 function displayEdit(client_statutory_id, country_id, group_id, location_id, domain_id, unit_id, submit_type){
   displayLoader();
  function onSuccess(data){
@@ -936,6 +943,7 @@ function displayEdit(client_statutory_id, country_id, group_id, location_id, dom
   );
 }
 
+//display assigned statutories list in view page
 function loadCountwiseAssignedStatutoriesList(assignedStatutoriesList){
   var j = startCount + 1;
   var client_statutory_id = 0;
@@ -999,6 +1007,7 @@ function get_sub_array(object, start, end){
   return object.slice(start, end);
 }
 
+//create pagination based on total records
 function loadAssignedStatutoriesList(assignedStatutoriesList){
   var listSize = Math.ceil(assignedStatutoriesList.length / pageSize);
   startCount = 0;
@@ -1026,7 +1035,7 @@ function loadAssignedStatutoriesList(assignedStatutoriesList){
   loadCountwiseAssignedStatutoriesList(sub_list);
 }
 
-
+//pagination process
 $(".pagination").click(function(event){
   var text = $(event.target).attr('id');
   var pageId = text.substring(text.lastIndexOf('w') + 1);
@@ -1044,7 +1053,7 @@ $(".pagination").click(function(event){
   loadCountwiseAssignedStatutoriesList(sub_list);
 });
 
-
+//get assigned statutories list from api
 function getAssignedStatutories () {
   function onSuccess(data){
     assignedStatutoriesList = data["assigned_statutories"];
@@ -1065,6 +1074,7 @@ function getAssignedStatutories () {
   );
 }
 
+//filter process
 $(".listfilter").keyup(function() {
   var filter1 = $("#filter1").val().toLowerCase();
   var filter2 = $("#filter2").val().toLowerCase();
@@ -1106,6 +1116,7 @@ $(".listfilter").keyup(function() {
   loadAssignedStatutoriesList(filteredList);
 });
 
+//initialization and UL filter process
 $(document).ready(function () {
   hideLoader();
   getAssignedStatutories ();

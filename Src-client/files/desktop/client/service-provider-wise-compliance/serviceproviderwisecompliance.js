@@ -5,7 +5,7 @@ var levelOneStatutoriesList;
 var unitsList;
 var serviceProvidersList;
 
-
+//get report filter data
 function getServiceProviderReportFilters(){
   function onSuccess(data){
     countriesList = data["countries"];
@@ -30,17 +30,15 @@ function getServiceProviderReportFilters(){
   );
 }
 
+//display compliance details in view page
 function loadresult(filterList){
   $(".grid-table-rpt").show();
   var country = $("#country").find('option:selected').text();
   var domain = $("#domainval").val();
   var act = $("#actval").val();
-
-
   $(".tbody-serviceprovider").find("tbody").remove();
   var compliance_count=0;
   var sp_count=0;
-
   var tableRow=$('#serviceprovider-list-templates .table-serviceprovider-list .table-row-serviceprovider-list');
   var clone=tableRow.clone();
   $('.tbl_country', clone).text(country);
@@ -147,6 +145,7 @@ function loadresult(filterList){
   $('.compliance_count').text("Total : "+ (compliance_count) +" records");
 }
 
+//get report data from api
 function loadCompliance(reportType){ 
   var country = $("#country").val();
   var domain = $("#domain").val();
@@ -357,6 +356,7 @@ function activate_serviceprovider (element,checkval,checkname) {
 }
 //Autocomplete Script ends
 
+//initialization
 $(function() {
   $(".grid-table-rpt").hide();
   getServiceProviderReportFilters();

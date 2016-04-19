@@ -38,6 +38,7 @@ function loadFormCategories(){
 	});
 }
 
+//get user group master details from api
 function initialize(){
 	clearMessage();
 	$(".js-filter").val("");
@@ -61,6 +62,7 @@ function initialize(){
 	);
 }
 
+//load user group details
 function loadUserGroupdata(userGroupList){
 	$(".tbody-usergroups-list").find("tr").remove();
  	var sno = 0;

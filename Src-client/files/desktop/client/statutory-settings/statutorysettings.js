@@ -23,7 +23,7 @@ function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
 
-
+//view/hide act remark textbox based on act applicable selection
 function actstatus(element){
   var remarkbox = '.remark'+$(element).val();
   var changestatusStatutories = '.statutoryclass'+$(element).val();
@@ -52,6 +52,7 @@ function actstatus(element){
   accordionstatus = false;
 }
 
+//view/hide compliance remark textbox based on compliance opted selection
 function compliancestatus(element, viewremarks){
   var remarkadd = '.cremarkadd'+$(element).val();
   var remarkview = '.cremarkview'+$(element).val();
@@ -132,6 +133,7 @@ function part_compliance (remark) {
     }
 }
 
+//load compliance list
 function load_statutory(sList){
   if(statutoriesCount <= 1){
     $(".tbody-statutorysettings").find("tbody").remove();
@@ -279,6 +281,7 @@ function load_statutory(sList){
   }
 }
 
+//pagination process
 $('#pagination').click(function(){
   unit_id =  parseInt($("#unit").val());
   s_endCount = statutoriesCount - 1;
@@ -307,6 +310,7 @@ $('#pagination').click(function(){
     })
 });
 
+//update statutory setting 
 function submit_statutory(){
   var password = $('#password').val();
   if(password == ''){
@@ -355,7 +359,7 @@ $('.close').click(function(){
 });
 
 
-
+//save assigned statutories data in assignedStatutories variable
 $("#submit").click(function() {
   displayLoader();
   displayMessage("");
@@ -440,6 +444,7 @@ $("#cancel").click(function() {
   $("#statutorysettings-view").show();
 });
 
+//edit statutiry settings for already assigned unit
 function displayEdit(unit_id, dispBusinessGroup, dispLegalEntity, dispDivision, dispUnit){
   displayLoader();
   s_endCount = 0;
@@ -484,6 +489,7 @@ function displayEdit(unit_id, dispBusinessGroup, dispLegalEntity, dispDivision, 
   )
 }
 
+//diaplay statutory settings details in view page
 function loadCountwiseStatutorySettings(assignedStatutoriesList){
   var j = startCount + 1;
   var unit_id = 0;
@@ -526,6 +532,7 @@ function get_sub_array(object, start, end){
     return object.slice(start, end);
 }
 
+//pagination process
 $(".pagination").click(function(event){
   var text = $(event.target).attr('id');
   var pageId = text.substring(text.lastIndexOf('w') + 1);
@@ -543,6 +550,7 @@ $(".pagination").click(function(event){
   loadCountwiseStatutorySettings(sub_list);
 });
 
+//create pagination according to statutory setting list size
 function loadStatutorySettingsList(assignedStatutoriesList) {
   var listSize = Math.ceil(assignedStatutoriesList.length / pageSize);
   startCount = 0;
@@ -572,6 +580,7 @@ function loadStatutorySettingsList(assignedStatutoriesList) {
   loadCountwiseStatutorySettings(sub_list);
 }
 
+//get statutory setting from api
 function getStatutorySettings () {
   displayLoader();
   function onSuccess(data){
@@ -595,6 +604,7 @@ function getStatutorySettings () {
   );
 }
 
+//filter process
 $(".listfilter").keyup(function() {
   var filter1 = $("#filter1").val().toLowerCase();
   var filter2 = $("#filter2").val().toLowerCase();
@@ -631,7 +641,7 @@ $(".listfilter").keyup(function() {
   loadStatutorySettingsList(filteredList);
   });
 
-
+//initialization
 $(document).ready(function () {
   getStatutorySettings ();
 
