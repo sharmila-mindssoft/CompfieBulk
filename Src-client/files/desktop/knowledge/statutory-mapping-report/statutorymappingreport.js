@@ -24,6 +24,7 @@ function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
 
+//get statutory mapping filter details from api
 function getStatutoryMappings(){
   function onSuccess(data){
     industriesList = data["industries"];
@@ -57,8 +58,8 @@ function getStatutoryMappings(){
   );
 }
 
+//display statutory mapping details accoring to count
 function loadCountwiseResult(filterList){
-
   if(startCount <= 0){
     $(".grid-table-rpt").show();
     var country = $("#countryval").val();
@@ -223,6 +224,7 @@ function get_sub_array(object, start, end){
     return object.slice(start, end);
 }
 
+//get part of data from full list according to pagination  
 function showloadrecord(){
   startCount = endCount;
   endCount = startCount + pageSize;
@@ -235,6 +237,7 @@ function showloadrecord(){
   loadCountwiseResult(sub_keys_list);
 }
 
+//pagination process
 $(function() {
   $('#pagination').click(function(){
     //displayLoader();
@@ -280,7 +283,7 @@ function loadresult() {
   loadCountwiseResult(sub_keys_list);
 }
 
-
+// get statutory mapping report data from api
 $("#submit").click(function(){
   var country = $("#country").val();
   var domain = $("#domain").val();
@@ -521,6 +524,7 @@ function activate_statutory (element,checkval,checkname) {
 }
 //Autocomplete Script ends
 
+//initialization
 $(function() {
   $(".grid-table-rpt").hide();
   getStatutoryMappings();

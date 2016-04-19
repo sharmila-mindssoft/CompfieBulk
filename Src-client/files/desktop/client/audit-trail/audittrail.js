@@ -87,7 +87,11 @@ function loadaudittrail(tempadlist){
         $('.sno', clone).text(sno++);
         $('.username', clone).text(getUserName(value['user_id']));
         $('.datetime', clone).text(value['date']);
-        $('.formname', clone).text(getFormName(value['form_id']));
+        var dispFormname = 'Login';
+        if(value['form_id'] != 0){
+            dispFormname = getFormName(value['form_id']);
+        }
+        $('.formname', clone).text(dispFormname);
         $('.action', clone).text(value['action']);
         $('.tbody-audittrail-list').append(clone);
     });
@@ -234,7 +238,7 @@ $("#formname").keypress(function(){
         for(var i in forms){
             if (~forms[i]["form_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([forms[i]["form_id"],forms[i]["form_name"]]); 
         }
-        var str='';
+        var str='<li id="0" onclick="activate_text1(this,\'0\',\'Login\')">Login</li>';
         for(var i in suggestions){
             str += '<li id="'+suggestions[i][0]+'"onclick="activate_text1(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
         }

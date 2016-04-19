@@ -89,6 +89,7 @@ function changeStatus (geographyId,isActive) {
   {
     function onSuccess(response){
     GetGeographies();
+    $(".listfilter").val('');
   }
   function onFailure(error){
   }
@@ -311,6 +312,7 @@ function saverecord(j,e){
         function (error, response) {
           if (error == null){
             onSuccess(response);
+            $(".listfilter").val('');
           }
           else {
             onFailure(error);
@@ -334,6 +336,7 @@ function reload(last_geography_id,last_level,cny){
     function (error, response) {
           if (error == null){
             onSuccess(response);
+            $(".listfilter").val('');
           }
           else {
             onFailure(error);
@@ -457,6 +460,7 @@ function updaterecord(j,e){
         function (error, response) {
           if (error == null){
             onSuccess(response);
+            $(".listfilter").val('');
           }
           else {
             onFailure(error);
@@ -516,6 +520,7 @@ function GetGeographies(){
     function (error, response) {
           if (error == null){
             onSuccess(response);
+            $(".listfilter").val('');
           }
           else {
             onFailure(error);

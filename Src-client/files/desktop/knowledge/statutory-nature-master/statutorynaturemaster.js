@@ -81,6 +81,7 @@ $("#btn-statutory-nature-submit").click(function(){
         function onSuccess(data){
             $("#statutory-nature-add").hide();
             $("#statutory-nature-view").show();
+            $("#search-statutory-nature-name").val('');
             initialize();
         }
         function onFailure(error){
@@ -101,6 +102,7 @@ $("#btn-statutory-nature-submit").click(function(){
         function onSuccess(data){
             $("#statutory-nature-add").hide();
             $("#statutory-nature-view").show();
+            $("#search-statutory-nature-name").val('');
             initialize();
             clearMessage();
         }
@@ -140,6 +142,7 @@ function statNature_active(statNatureId, isActive){
     if (answer)
     {
         function success(status, data){
+            $("#search-statutory-nature-name").val('');
             initialize();
         }
         function failure(status, data){

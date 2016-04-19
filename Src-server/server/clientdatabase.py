@@ -3228,8 +3228,6 @@ class ClientDatabase(Database):
                 period_from = int(y["period_from"])
                 period_to = int(y["period_to"])
                 for index, i in enumerate(years_range) :
-                    print i
-
                     compliance_count_info = year_wise.get(i[0])
                     if compliance_count_info is None :
                         compliance_count_info = {
@@ -3406,7 +3404,6 @@ class ClientDatabase(Database):
             for key, val in value.iteritems():
                 compliance_list = []
                 for k , v in val.iteritems():
-                    print v
                     year = k
                     inprogress = v["inprogress_count"]
                     complied = v["complied_count"]
@@ -5684,13 +5681,20 @@ class ClientDatabase(Database):
                 extra_details_with_history_id = notification_detail[3].split("-")
                 compliance_history_id = int(extra_details_with_history_id[0])
                 extra_details = extra_details_with_history_id[1]
-
+                due_date_rows = None
                 if compliance_history_id not in [0, "0", None, "None", ""]:
                     due_date_rows = self.get_data(
                         self.tblComplianceHistory,
                         "due_date, completion_date, approve_status",
                         "compliance_history_id = '%d'" % int(compliance_history_id)
                     )
+
+                if compliance_history_id not in [0, "0", None, "None", ""] and len(due_date_rows) > 0:
+                    # due_date_rows = self.get_data(
+                    #     self.tblComplianceHistory,
+                    #     "due_date, completion_date, approve_status",
+                    #     "compliance_history_id = '%d'" % int(compliance_history_id)
+                    # )
                     due_date_as_date = due_date_rows[0][0]
                     # due_date_as_datetime = datetime.datetime(
                     #     due_date_as_date.year,
@@ -6333,7 +6337,6 @@ class ClientDatabase(Database):
         rows = self.get_data(self.tblStatutoryNotificationsUnits, columns, where_condition)
         columns = ["business_group_id", "legal_entity_id", "division_id", "unit_id"]
         rows = self.convert_to_dict(rows, columns)
-        print "rows: {}".format(rows)
         notifications = []
         conditiondate = None
         for row in rows:
@@ -7322,9 +7325,9 @@ class ClientDatabase(Database):
                                 not_complied_count=not_complied
                             )
                         )
-                        year_wise_compliance_count = self.get_year_wise_assignee_compliances(
-                            country_id, domain_id, client_id, compliance_ids
-                        )
+                    year_wise_compliance_count = self.get_year_wise_assignee_compliances(
+                        country_id, domain_id, client_id, compliance_ids
+                    )
                     assignee_wise_compliances_count.append(
                         dashboard.AssigneeWiseDetails(
                             user_id=int(user_id),

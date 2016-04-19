@@ -10,16 +10,8 @@ var divisionsList
 var unitsList;
 var actList;
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
 
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
-
+//get risk report filters from api
 function getRiskReportFilters(){
   function onSuccess(data){
     countriesList = data["countries"];
@@ -46,8 +38,8 @@ function getRiskReportFilters(){
   );
 }
 
+//load report data
 function loadresult(complianceList, heading){
-
   var country = $("#country").find('option:selected').text();
   var domain = $("#domainval").val();
   var compliance_count=0;
@@ -123,6 +115,7 @@ function loadresult(complianceList, heading){
 
 }
 
+//get risk report data from api
 function loadCompliance(reportType){
   var country = $("#country").val();
   var domain = $("#domain").val();
@@ -412,6 +405,7 @@ function activate_acts (element,checkval,checkname) {
 }
 //Autocomplete Script ends
 
+//initialization
 $(function() {
   $(".grid-table-rpt").hide();
   getRiskReportFilters();

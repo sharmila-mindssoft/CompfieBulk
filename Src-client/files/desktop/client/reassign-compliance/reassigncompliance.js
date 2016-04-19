@@ -51,6 +51,7 @@ function compliancestatus(element){
   }
 }
 
+//convert string to date format
 function convert_date (data){
   var date = data.split("-");
   var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -65,6 +66,7 @@ function convert_date (data){
   return new Date(date[2], date[1]-1, date[0]);
 }
 
+//load all compliances for selected user
 function load_allcompliances(userId, userName){
   //currentUser = userId;
   $("#reassign-view").hide();
@@ -205,6 +207,7 @@ function load_allcompliances(userId, userName){
   });
 }
 
+//load list in view page
 function load_UserCompliances(uCompliances, uId){
   for( compliance in uCompliances){
     var userName = "";
@@ -306,6 +309,7 @@ function load_compliances () {
 
 }
 
+//save reassign compliances 
 function submitcompliance(){
   displayLoader();
   var assignComplianceAssigneeId = null;
@@ -426,6 +430,7 @@ function submitcompliance(){
   }
 }
 
+//get reassign compliance details from api
 function getReassignCompliances () {
   function onSuccess(data){
     compliancesList = data["user_wise_compliances"];
@@ -448,7 +453,6 @@ function getReassignCompliances () {
           }
       }
   );
-
 }
 
 //Autocomplete Script Starts
@@ -533,6 +537,7 @@ function getUserLevel(selectedUserId){
   return getuserLevel;
 }
 
+//load avaliable users list in assignee,concurrence and approval list
 function loadUser(userType){
   var selectedUnit = null;
   var userClass;
@@ -778,6 +783,7 @@ function validate_firsttab(){
   return true;
 }
 
+//validation in second tab
 function validate_secondtab(){
   if($('.assigneelist.active').text() == ''){
     displayMessage(message.assignee_required);
@@ -797,6 +803,7 @@ function validate_secondtab(){
   }
 }
 
+//create wizard
 var navListItems = $('ul.setup-panel li a'),
 allWells = $('.setup-content');
 allWells.hide();
@@ -831,6 +838,7 @@ $('#activate-step-finish').on('click', function(e) {
   }
 })
 
+//initialization
 $(document).ready(function () {
   getReassignCompliances ();
 });
