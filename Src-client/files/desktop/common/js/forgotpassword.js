@@ -14,7 +14,7 @@ function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
 
-//check the url is client or knowledge 
+//check the url is client or knowledge
 function getShortName(){
     var pathArray = window.location.pathname.split( '/' );
     console.log(pathArray)
@@ -51,17 +51,23 @@ function validateEmail($email) {
 }
 
 function processForgotpassword(username, shortName, callback) {
-  var request = [
-      "ForgotPassword", {
-          "username": username,
-          "short_name": null
-      }
-  ];
   if (shortName == null) {
+      var request = [
+        "ForgotPassword", {
+            "username": username,
+            "short_name": null
+        }
+      ];
       var requestFrame = request;
       BASE_URL = "/knowledge/api/"
   }
   else {
+      var request = [
+        "ForgotPassword", {
+            "username": username,
+            "short_name": shortName
+        }
+      ];
       var requestFrame = [
           shortName,
           request
@@ -140,5 +146,5 @@ $("#submit").click(function(){
 //initialization
 $(document).ready(function () {
   $("#username").focus();
-  
+
 });

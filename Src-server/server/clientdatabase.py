@@ -2489,7 +2489,7 @@ class ClientDatabase(Database):
         #     WHERE t.user_id = %s)" % (
         #         session_user
         #     )
-        where_condition = "WHERE t2.unit_id \
+        where_condition = "WHERE t1.is_primary_admin = 0 AND t1.is_active = 1 AND t2.unit_id \
             IN \
             (select distinct unit_id from tbl_user_units where user_id = %s)" % (session_user)
         query = "SELECT distinct t1.user_id, t1.employee_name, \
@@ -2506,6 +2506,8 @@ class ClientDatabase(Database):
 
         if session_user > 0 :
             query = query + where_condition
+        else :
+            query = query + " AND t1.is_primary_admin = 0 AND t1.is_active = 1 "
         rows = self.select_all(query)
         columns = [
             "user_id", "employee_name", "employee_code",
