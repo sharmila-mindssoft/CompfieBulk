@@ -198,9 +198,9 @@ class EmailHandler(Email):
         self.send_email(receiver, subject, message)
 
     def notify_task(
-        self, assignee_email, assignee_name, 
+        self, assignee_email, assignee_name,
         concurrence_email, concurrence_name,
-        approver_email, approver_name, compliance_name, 
+        approver_email, approver_name, compliance_name,
         due_date, when
     ):
         receiver = "%s, %s, %s" % (assignee_email, concurrence_email, approver_email)
@@ -258,14 +258,14 @@ class EmailHandler(Email):
         message = "Dear %s, Compliance %s has been rejected. The reason is %s." % (
             assignee_name, compliance_name, remarks
         )
-        receiver = assignee_email 
+        receiver = assignee_email
         cc = None
         if concurrence_email is not None and reject_status == "RejectApproval":
             cc = concurrence_email
         self.send_email(receiver, subject, message, cc)
 
     def notify_task_completed(
-        self, assignee_email, assignee_name, concurrence_email, 
+        self, assignee_email, assignee_name, concurrence_email,
         concurrence_name, approver_email, approver_name, action,
         is_two_levels_of_approval, compliance_name
     ):
@@ -288,7 +288,7 @@ class EmailHandler(Email):
         self.send_email(approval_or_concurrence_email, subject, message, cc)
 
     def notify_task_approved(
-        self, approval_status, assignee_name, assignee_email, 
+        self, approval_status, assignee_name, assignee_email,
         concurrence_name, concurrence_email, approver_name, approver_email,
         compliance_name, is_two_levels_of_approval
     ):
@@ -318,3 +318,89 @@ class EmailHandler(Email):
                 concurrence_name
             )
             self.send_email(approver_email, subject, message, cc)
+
+    # for auto process
+    def notify_compliance_start(
+        self, assignee, compliance_name, unit_name,
+        due_date, receiver, cc_person=None
+    ):
+        subject = "Compliance Task Started"
+        message = "Dear %s, \
+            Compliance task %s has been started for unit %s. \
+            Due date of this compliance is %s" % (
+                assignee, compliance_name,
+                unit_name, due_date
+            )
+        try :
+            self.send_email(receiver, subject, message, cc_person)
+            pass
+        except Exception, e :
+            print e
+            print "Email Failed for compliance start ", message
+
+    def notify_contract_expiration(
+        self, receiver, content
+    ):
+        subject = "Contract expiration reminder"
+
+        message = '''Dear Client, <br> <p>%s </p> \
+                    <p> Thanks & Regards, <br>\
+                    Compfie Support Team''' % content
+        cc_person = None
+        try :
+            self.send_email(receiver, subject, message, cc_person)
+            pass
+        except Exception, e :
+            print e
+            print "Email Failed for compliance start ", message
+
+    def notify_to_assignee(
+        self, assignee, days_left, compliance_name, unit_name,
+        receiver
+    ):
+        subject = "Compliance Task Reminder"
+        message = "Dear %s, \
+            Only %s day(s) left to complete %s task for unit %s" % (
+                assignee, days_left, compliance_name,
+                unit_name
+            )
+        try :
+            print
+            self.send_email(receiver, subject, message)
+            pass
+        except Exception, e :
+            print e
+            print "Email Failed for notify to assignee %s ", message
+
+    def notify_before_due_date(
+        self, assignee, days_left, compliance_name, unit_name,
+        receiver, cc_person
+    ):
+        subject = "Compliance Task Reminder"
+        message = "Dear %s, \
+            Only %s day(s) left to complete %s task for unit %s" % (
+                assignee, days_left, compliance_name,
+                unit_name
+            )
+        try :
+            self.send_email(receiver, subject, message, cc_person)
+            pass
+        except Exception, e :
+            print e
+            print "Email Failed for before due_date  ", message
+
+    def notify_escalation(
+        self, assignee, compliance_name, unit_name,
+        over_due_days, receiver, cc_person
+    ):
+        subject = "Compliance Escalation Notification"
+        message = "Dear %s, \
+            Compliance %s for unit %s has overdue by %s day(s)." % (
+                assignee, compliance_name, unit_name, over_due_days
+            )
+        try :
+            self.send_email(receiver, subject, message, cc_person)
+            pass
+        except Exception, e :
+            print e
+            print "Email Failed for escalations", message

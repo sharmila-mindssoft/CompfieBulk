@@ -1,17 +1,17 @@
 import MySQLdb as mysql
 import datetime
-import pytz
 import traceback
-
-from smtplib import SMTP_SSL as SMTP
-from email.MIMEMultipart import MIMEMultipart
-from email.MIMEText import MIMEText
 
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
 from server.countrytimestamp import countries
+from server.emailcontroller import EmailHandler as email
+from server.common import (
+    convert_to_dict, time_convertion,
+    return_hour_minute
+)
 
 mysqlHost = KNOWLEDGE_DB_HOST
 mysqlUser = KNOWLEDGE_DB_USERNAME
@@ -20,104 +20,6 @@ mysqlDatabase = KNOWLEDGE_DATABASE_NAME
 mysqlPort = KNOWLEDGE_DB_PORT
 
 NOTIFY_TIME = "00:00"  # 12 AM
-
-class EmailNotification(object):
-    def __init__(self):
-        self.sender = "compfie.test@aparajitha.com"
-        self.password = "Ctt@123"
-
-    def send_email(self, receiver, subject, message, cc=None):
-        server = SMTP("mail.aparajitha.com", 465)
-        server.set_debuglevel(False)
-        server.login(self.sender, self.password)
-
-        msg = MIMEMultipart()
-        msg["From"] = self.sender
-        msg["To"] = receiver
-        msg["subject"] = subject
-        if cc is not None :
-            if type(cc) is list :
-                msg["Cc"] = ",".join(cc)
-        msg.attach(MIMEText(message, "html"))
-        print msg.as_string()
-        response = server.sendmail(
-            self.sender, receiver, msg.as_string()
-        )
-        print response
-        server.close()
-
-    def notify_to_assignee(
-        self, assignee, days_left, compliance_name, unit_name,
-        receiver
-    ):
-        subject = "Compliance Task Reminder"
-        message = "Dear %s, \
-            Only %s day(s) left to complete %s task for unit %s" % (
-                assignee, days_left, compliance_name,
-                unit_name
-            )
-        try :
-            print
-            self.send_email(receiver, subject, message)
-            pass
-        except Exception, e :
-            print e
-            print "Email Failed for notify to assignee %s ", message
-
-    def notify_before_due_date(
-        self, assignee, days_left, compliance_name, unit_name,
-        receiver, cc_person
-    ):
-        subject = "Compliance Task Reminder"
-        message = "Dear %s, \
-            Only %s day(s) left to complete %s task for unit %s" % (
-                assignee, days_left, compliance_name,
-                unit_name
-            )
-        try :
-            self.send_email(receiver, subject, message, cc_person)
-            pass
-        except Exception, e :
-            print e
-            print "Email Failed for before due_date  ", message
-
-    def notify_escalation(
-        self, assignee, compliance_name, unit_name,
-        over_due_days, receiver, cc_person
-    ):
-        subject = "Compliance Escalation Notification"
-        message = "Dear %s, \
-            Compliance %s for unit %s has overdue by %s day(s)." % (
-                assignee, compliance_name, unit_name, over_due_days
-            )
-        try :
-            self.send_email(receiver, subject, message, cc_person)
-            pass
-        except Exception, e :
-            print e
-            print "Email Failed for escalations", message
-
-def convert_to_dict(data_list, columns) :
-    assert type(data_list) in (list, tuple)
-    if len(data_list) > 0:
-        if type(data_list[0]) is tuple :
-            result_list = []
-            if len(data_list[0]) == len(columns) :
-                for data in data_list:
-                    result = {}
-                    for i, d in enumerate(data):
-                        result[columns[i]] = d
-                    result_list.append(result)
-            return result_list
-        else :
-            result = {}
-            if len(data_list) == len(columns) :
-                for i, d in enumerate(data_list):
-                    result[columns[i]] = d
-            return result
-    else:
-        return []
-
 
 def db_connection(host, user, password, db, port):
     connection = mysql.connect(
@@ -312,7 +214,6 @@ def reminder_to_assignee(db, client_info, compliance_info):
             reminder_interval = int(client_info[0]["assignee_reminder"])
             # compliance_info = get_inprogress_compliances(db)
             count = 0
-            email = EmailNotification()
             for c in compliance_info:
                 if c["due_date"] is None :
                     continue
@@ -356,7 +257,6 @@ def reminder_before_due_date(db, client_info, compliance_info):
     current_date = get_current_date()
     print "begin process to remind inprogress compliance task to all %s " % (current_date)
     # client_info = get_client_settings(db)
-    email = EmailNotification()
     reminder_interval = int(client_info[0]["escalation_reminder_in_advance"])
     for c in compliance_info:
         if c["due_date"] is None :
@@ -406,7 +306,6 @@ def notify_escalation_to_all(db, client_info, compliance_info):
     current_date = get_current_date()
     print "begin process to notify escalations to all %s" % (current_date)
     escalation_interval = int(client_info[0]["escalation_reminder"])
-    email = EmailNotification()
     for c in compliance_info :
         if c["due_date"] is None :
             continue
@@ -475,25 +374,14 @@ def run_notify_email_process(country_id):
     print "end email_notifications"
     print '--' * 20
 
-def time_convertion(time_zone):
-    current_time = datetime.datetime.utcnow()
-    print "current_time"
-    print current_time
-    CT_TIMEZONE = pytz.timezone(str(time_zone))
-    print CT_TIMEZONE
-    dt = CT_TIMEZONE.localize(current_time)
-    tzoffset = dt.utcoffset()
-    dt = dt.replace(tzinfo=None)
-    dt = dt+tzoffset
-    return dt
 
 def is_notify_time_reached(time_zone, country_id):
-    print time_zone
-    current_country_time = time_convertion(time_zone)
-    print "current_country_time"
-    print current_country_time
-    print type(current_country_time)
-    now = current_country_time.strftime("%H:%M")
+    # print time_zone
+    # current_country_time = time_convertion(time_zone)
+    # print "current_country_time"
+    # print current_country_time
+    # print type(current_country_time)
+    now = return_hour_minute(time_convertion(time_zone))
     print now
     if now == NOTIFY_TIME :
         run_notify_email_process(country_id)
