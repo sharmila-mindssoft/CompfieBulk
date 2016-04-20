@@ -476,7 +476,7 @@ $("#seatingunitval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_units(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_units(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_seatingunit').append(str);
     $("#seatingunit").val('');
@@ -486,7 +486,9 @@ $("#seatingunitval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_units (element,checkval,checkname) {
+function activate_units (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#seatingunitval").val(checkname);
   $("#seatingunit").val(checkval);
 }
@@ -510,7 +512,7 @@ $("#userval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'"onclick="activate_user(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+      str += '<li id="'+suggestions[i][0]+'"onclick="activate_user(this)">'+suggestions[i][1]+'</li>';
 
     }
     $('#ulist_user').append(str);
@@ -521,7 +523,9 @@ $("#userval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_user (element,checkval,checkname) {
+function activate_user (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#userval").val(checkname);
   $("#user").val(checkval);
 }
@@ -788,10 +792,10 @@ function validate_secondtab(){
   if($('.assigneelist.active').text() == ''){
     displayMessage(message.assignee_required);
     return false;
-  }else if ($('.concurrencelist.active').text() == '' && two_level_approve){
+  }else if ($('.concurrencelist.active').text() == '' && two_level_approve && $(".assigneelist.active").text().trim() != 'Client Admin'){
     displayMessage(message.concurrence_required);
     return false;
-  }else if ($('.approvallist.active').text() == ''){
+  }else if ($('.approvallist.active').text() == '' && $(".assigneelist.active").text().trim() != 'Client Admin'){
     displayMessage(message.approval_required);
     return false;
   }else if ($('#reason').val().trim() == ''){

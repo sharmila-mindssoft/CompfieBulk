@@ -320,7 +320,7 @@ $("#domainval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_domain(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_domain(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_domain').append(str);
     $("#domain").val('');
@@ -330,7 +330,9 @@ $("#domainval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_domain (element,checkval,checkname) {
+function activate_domain (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#domainval").val(checkname);
   $("#domain").val(checkval);
 }
@@ -349,7 +351,7 @@ $("#actval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'"onclick="activate_acts(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+      str += '<li id="'+suggestions[i][0]+'"onclick="activate_acts(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_act').append(str);
     $("#act").val('');
@@ -358,7 +360,9 @@ $("#actval").keyup(function(){
       $("#autocomplete_act").hide();
     }
 });
-function activate_acts (element,checkval,checkname) {
+function activate_acts (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#actval").val(checkname);
   $("#act").val(checkval);
 }
@@ -378,7 +382,7 @@ $("#unitval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_units(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_units(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_unit').append(str);
     $("#unit").val('');
@@ -388,7 +392,9 @@ $("#unitval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_units (element,checkval,checkname) {
+function activate_units (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#unitval").val(checkname);
   $("#unit").val(checkval);
 }
@@ -408,7 +414,7 @@ $("#compliancetaskval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_compliancetask(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_compliancetask(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_compliancetask').append(str);
     $("#compliancetask").val('');
@@ -418,7 +424,9 @@ $("#compliancetaskval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_compliancetask (element,checkval,checkname) {
+function activate_compliancetask (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#compliancetaskval").val(checkname);
   $("#compliancetask").val(checkval);
 }
@@ -440,7 +448,7 @@ $("#assigneeval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_assignee(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_assignee(this)">'+suggestions[i][1]+'</li>';
 
     }
     $('#ulist_assignee').append(str);
@@ -451,7 +459,9 @@ $("#assigneeval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_assignee (element,checkval,checkname) {
+function activate_assignee (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#assigneeval").val(checkname);
   $("#assignee").val(checkval);
 }

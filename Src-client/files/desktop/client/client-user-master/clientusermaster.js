@@ -1088,14 +1088,16 @@ function loadauto_text (textval) {
         }
         var str='';
         for(var i in suggestions){
-            str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+            str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
         }
         $('#autocompleteview ul').append(str);
         $("#seatingunit").val('');
     }
 }
 //set selected autocomplte value to textbox
-function activate_text (element,checkval,checkname) {
+function activate_text (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#seatingunitval").val(checkname);
   $("#seatingunit").val(checkval);
   clearMessage();
@@ -1119,14 +1121,16 @@ function loadauto_usergroup (textval) {
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text1(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text1(this)">'+suggestions[i][1]+'</li>';
     }
     $('#usergroupview ul').append(str);
     $("#usergroup").val('');
     }
 }
 //set selected autocomplte value to textbox
-function activate_text1 (element,checkval,checkname) {
+function activate_text1 (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#usergroupval").val(checkname);
   $("#usergroup").val(checkval);
 }

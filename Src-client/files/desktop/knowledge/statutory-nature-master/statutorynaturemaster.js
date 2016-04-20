@@ -51,7 +51,7 @@ function loadStatNatureData(statNatureList){
             sno = sno + 1;
             $('.sno', clone).text(sno);
             $('.statutory-nature-name', clone).text(statNatureName);
-            $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="statNature_edit('+statNatureId+',\''+statNatureName+'\')"/>');
+            $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="statNature_edit('+statNatureId+',\''+statNatureName.replace(/"/gi,'##')+'\')"/>');
             $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="statNature_active('+statNatureId+', '+statusVal+')"/>');
             $('.tbody-statutory-nature-list').append(clone);
         }
@@ -130,7 +130,7 @@ function statNature_edit(statNatureId, statNatureName){
     clearMessage();
     $("#statutory-nature-add").show();
     $("#statutory-nature-view").hide();
-    $("#statutory-nature-name").val(statNatureName);
+    $("#statutory-nature-name").val(statNatureName.replace(/##/gi,'"'));
     $("#statutory-nature-id").val(statNatureId);
 }
 function statNature_active(statNatureId, isActive){

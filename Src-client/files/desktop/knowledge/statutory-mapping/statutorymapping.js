@@ -51,7 +51,7 @@ function load_selectdomain_master(){
       var countryid = countriesList[country]["country_id"];
       var dispcountryname = countriesList[country]["country_name"];
       if(countriesList[country]["is_active"] == true){
-      str += '<li id="'+countryid+'" class="'+clsval1+'" onclick="activate(this,'+countryid+',\''+dispcountryname+'\',\''+clsval+'\')" ><span class="filter1_name">'+dispcountryname+'</span></li>';
+      str += '<li id="'+countryid+'" class="'+clsval1+'" onclick="activate(this,'+'\''+clsval+'\')" ><span class="filter1_name">'+dispcountryname+'</span></li>';
     }
   }
   $('#country').append(str);
@@ -65,7 +65,7 @@ function load_selectdomain_master(){
     var domainid = domainsList[domain]["domain_id"];
     var dispdomainname = domainsList[domain]["domain_name"];
     if(domainsList[domain]["is_active"] == true){
-    str += '<li id="'+domainid+'" class="'+clsval1+'" onclick="activate(this,'+domainid+',\''+dispdomainname+'\',\''+clsval+'\')" ><span class="filter2_name">'+dispdomainname+'</span></li>';
+    str += '<li id="'+domainid+'" class="'+clsval1+'" onclick="activate(this,'+'\''+clsval+'\')" ><span class="filter2_name">'+dispdomainname+'</span></li>';
   }
   }
   $('#domain').append(str);
@@ -79,7 +79,7 @@ function load_selectdomain_master(){
     var industryid = industriesList[industry]["industry_id"];
     var dispindustryname = industriesList[industry]["industry_name"];
     if(industriesList[industry]["is_active"] == true){
-    str += '<li id="'+industryid+'" class="'+clsval1+'" onclick="multiactivate(this,'+industryid+',\''+dispindustryname+'\',\''+clsval+'\')" ><span class="filter3_name">'+dispindustryname+'</span></li>';
+    str += '<li id="'+industryid+'" class="'+clsval1+'" onclick="multiactivate(this,'+'\''+clsval+'\')" ><span class="filter3_name">'+dispindustryname+'</span></li>';
   }
   }
   $('#industry').append(str);
@@ -93,7 +93,7 @@ function load_selectdomain_master(){
     var statutorynatureid = statutoryNaturesList[statutorynature]["statutory_nature_id"];
         var dispstatutoryname = statutoryNaturesList[statutorynature]["statutory_nature_name"];
     if(statutoryNaturesList[statutorynature]["is_active"] == true){
-    str += '<li id="'+statutorynatureid+'" class="'+clsval1+'" onclick="activate(this,'+statutorynatureid+',\''+dispstatutoryname+'\',\''+clsval+'\')" ><span class="filter4_name">'+dispstatutoryname+'</span></li>';
+    str += '<li id="'+statutorynatureid+'" class="'+clsval1+'" onclick="activate(this,'+'\''+clsval+'\')" ><span class="filter4_name">'+dispstatutoryname+'</span></li>';
   }
   }
   $('#statutorynature').append(str);
@@ -376,7 +376,7 @@ function loadStatutoryLevels(countryval,domainval){
           for(var i in statutoryList){
             var setstatutoryid = statutoryList[i]["statutory_id"];
             if(statutoryList[i]["level_id"] == firstlevelid){
-            str += '<span class="eslist-filter'+setlevelstage+'" style="float:left;margin-right:5px;margin-left:5px;margin-top:3px;cursor:pointer;" onclick="editstaturoty('+setstatutoryid+',\''+statutoryList[i]["statutory_name"]+'\','+setlevelstage+')"><img src="/images/icon-edit.png" style="width:11px;height:11px"/> </span> <li id="'+setstatutoryid+'" class="'+clsval1+'" onclick="activate_statutorylist(this,'+setstatutoryid+',\''+clsval+'\','+countryval+','+domainval+','+setlevelstage+')" >'+statutoryList[i]["statutory_name"]+'</li> ';
+            str += '<span class="eslist-filter'+setlevelstage+'" style="float:left;margin-right:5px;margin-left:5px;margin-top:3px;cursor:pointer;" onclick="editstaturoty('+setstatutoryid+',\''+statutoryList[i]["statutory_name"].replace(/"/gi,'##')+'\','+setlevelstage+')"><img src="/images/icon-edit.png" style="width:11px;height:11px"/> </span> <li id="'+setstatutoryid+'" class="'+clsval1+'" onclick="activate_statutorylist(this,'+setstatutoryid+',\''+clsval+'\','+countryval+','+domainval+','+setlevelstage+')" >'+statutoryList[i]["statutory_name"]+'</li> ';
             }
           }
         }
@@ -422,7 +422,10 @@ $(".listfilter").keyup(function() {
 });
 
 //check & uncheck list data for single selection
-function activate(element, id, dispname, type){
+function activate(element, type){
+
+  var dispname = $(element).text();
+  var id = $(element).attr('id');
   $(type).each( function( index, el ) {
     $(el).removeClass( "active" );
   });
@@ -455,19 +458,22 @@ function activate(element, id, dispname, type){
     make_breadcrumbs();
 }
 //check & uncheck list data for multi selection
-function multiactivate(element, id, dispname, type){
-var chkstatus = $(element).attr('class');
-if(chkstatus == 'industrylist active'){
-  $(element).removeClass("active");
-      var removeid = sm_industryids.indexOf(id);
-      sm_industryids.splice(removeid,1);
-      var removename = sm_industryvals.indexOf(dispname);
-      sm_industryvals.splice(removename,1);
-}else{
-  $(element).addClass("active");
-      sm_industryids.push(id);
-      sm_industryvals.push(dispname);
-}
+function multiactivate(element, type){
+  var dispname = $(element).text();
+  var id = $(element).attr('id');
+
+  var chkstatus = $(element).attr('class');
+  if(chkstatus == 'industrylist active'){
+    $(element).removeClass("active");
+        var removeid = sm_industryids.indexOf(id);
+        sm_industryids.splice(removeid,1);
+        var removename = sm_industryvals.indexOf(dispname);
+        sm_industryvals.splice(removename,1);
+  }else{
+    $(element).addClass("active");
+        sm_industryids.push(id);
+        sm_industryvals.push(dispname);
+  }
   make_breadcrumbs();
 }
 
@@ -503,7 +509,7 @@ function load(id,level,country,domain){
   for(var i in statutoryList){
     var setstatutoryid = statutoryList[i]["statutory_id"];
     if( id == statutoryList[i]["parent_id"] && statutoryList[i]["level_id"] == levelid) {
-      str += '<span class="eslist-filter'+setlevelstage+'" style="float:left;margin-right:5px;margin-left:5px;margin-top:3px;cursor:pointer;" onclick="editstaturoty('+setstatutoryid+',\''+statutoryList[i]["statutory_name"]+'\','+setlevelstage+')"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></span> <li id="'+setstatutoryid+'" class="'+clsval1+'" onclick="activate_statutorylist(this,'+setstatutoryid+',\''+clsval+'\','+country+','+domain+','+setlevelstage+')" >'+statutoryList[i]["statutory_name"]+'</li> ';
+      str += '<span class="eslist-filter'+setlevelstage+'" style="float:left;margin-right:5px;margin-left:5px;margin-top:3px;cursor:pointer;" onclick="editstaturoty('+setstatutoryid+',\''+statutoryList[i]["statutory_name"].replace(/"/gi,'##')+'\','+setlevelstage+')"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></span> <li id="'+setstatutoryid+'" class="'+clsval1+'" onclick="activate_statutorylist(this,'+setstatutoryid+',\''+clsval+'\','+country+','+domain+','+setlevelstage+')" >'+statutoryList[i]["statutory_name"]+'</li> ';
     }
   }
   $('#statutorylist'+setlevelstage).append(str);
@@ -660,7 +666,7 @@ function filter_statutory(position){
 
 function editstaturoty(statu_id, statu_name, position){
   $("#statutoryid").val(statu_id);
-  $('#datavalue'+position).val(statu_name)
+  $('#datavalue'+position).val(statu_name.replace(/##/gi,'"'))
 }
 
 //load selected statutories in second wizard
@@ -1574,11 +1580,12 @@ function load_edit_selectdomain_master(sm_countryid,sm_domainid,sm_industryids,s
         var dispindustryname = industriesList[industry]["industry_name"];
         if(industriesList[industry]["is_active"] == true){
           if($.inArray(industryid, sm_industryids) >= 0){
-              str += '<li id="'+industryid+'" class="'+clsval1+' active" onclick="multiactivate(this,'+industryid+',\''+dispindustryname+'\',\''+clsval+'\')" ><span class="filter3_name">'+dispindustryname+'</span></li>';
+              str += '<li id="'+industryid+'" class="'+clsval1+' active" onclick="multiactivate(this,'+'\''+clsval+'\')" ><span class="filter3_name">'+dispindustryname+'</span></li>';
             }else{
-              str += '<li id="'+industryid+'" class="'+clsval1+'" onclick="multiactivate(this,'+industryid+',\''+dispindustryname+'\',\''+clsval+'\')" ><span class="filter3_name">'+dispindustryname+'</span></li>';
+              str += '<li id="'+industryid+'" class="'+clsval1+'" onclick="multiactivate(this,'+'\''+clsval+'\')" ><span class="filter3_name">'+dispindustryname+'</span></li>';
             }
           }
+         
         }
         $('#industry').append(str);
         //load statutorynature details
@@ -1591,9 +1598,9 @@ function load_edit_selectdomain_master(sm_countryid,sm_domainid,sm_industryids,s
           var dispstatutoryname = statutoryNaturesList[statutorynature]["statutory_nature_name"];
           if(statutoryNaturesList[statutorynature]["is_active"] == true){
             if(statutorynatureid == sm_statutorynatureid){
-                str += '<li id="'+statutorynatureid+'" class="'+clsval1+' active" onclick="activate(this,'+statutorynatureid+',\''+dispstatutoryname+'\',\''+clsval+'\')" ><span class="filter4_name">'+dispstatutoryname+'</span></li>';
+                str += '<li id="'+statutorynatureid+'" class="'+clsval1+' active" onclick="activate(this,'+'\''+clsval+'\')" ><span class="filter4_name">'+dispstatutoryname+'</span></li>';
               }else{
-                str += '<li id="'+statutorynatureid+'" class="'+clsval1+'" onclick="activate(this,'+statutorynatureid+',\''+dispstatutoryname+'\',\''+clsval+'\')" ><span class="filter4_name">'+dispstatutoryname+'</span></li>';
+                str += '<li id="'+statutorynatureid+'" class="'+clsval1+'" onclick="activate(this,'+'\''+clsval+'\')" ><span class="filter4_name">'+dispstatutoryname+'</span></li>';
               }
             }
           }

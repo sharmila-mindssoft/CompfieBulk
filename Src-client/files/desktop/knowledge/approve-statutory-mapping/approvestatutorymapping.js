@@ -82,7 +82,7 @@ $("#countryval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_text').append(str);
     $("#country").val('');
@@ -92,9 +92,9 @@ $("#countryval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_text (element,checkval,checkname) {
-  $("#countryval").val(checkname);
-  $("#country").val(checkval);
+function activate_text (element) {
+  $("#countryval").val($(element).text());
+  $("#country").val($(element).attr('id'));
 }
 
 //load domain list in autocomplete text box
@@ -110,7 +110,7 @@ $("#domainval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_domain(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_domain(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_domain').append(str);
     $("#domain").val('');
@@ -120,9 +120,9 @@ $("#domainval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_domain (element,checkval,checkname) {
-  $("#domainval").val(checkname);
-  $("#domain").val(checkval);
+function activate_domain (element) {
+  $("#domainval").val($(element).text());
+  $("#domain").val($(element).attr('id'));
 }
 
 //load domain list in autocomplete text box
@@ -138,7 +138,7 @@ $("#industryval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_industry(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_industry(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_industry').append(str);
     $("#industry").val('');
@@ -148,9 +148,9 @@ $("#industryval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_industry (element,checkval,checkname) {
-  $("#industryval").val(checkname);
-  $("#industry").val(checkval);
+function activate_industry (element) {
+  $("#industryval").val($(element).text());
+  $("#industry").val($(element).attr('id'));
 }
 
 
@@ -167,7 +167,7 @@ $("#statutorynatureval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_statutorynature(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_statutorynature(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_statutorynature').append(str);
     $("#statutorynature").val('');
@@ -177,9 +177,9 @@ $("#statutorynatureval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_statutorynature (element,checkval,checkname) {
-  $("#statutorynatureval").val(checkname);
-  $("#statutorynature").val(checkval);
+function activate_statutorynature (element) {
+  $("#statutorynatureval").val($(element).text());
+  $("#statutorynature").val($(element).attr('id'));
 }
 
 //Autocomplete Script ends
@@ -255,7 +255,7 @@ function loadApproveStatutory(){
         }
         $('.compliancetask', clone).html(complianceNames);
         $('.applicablelocation', clone).html(applicableLocation);
-        $('.action', clone).html('<input type="hidden" id="mapping_id'+j+'" value="'+statutorymappingId+'" /> <input type="hidden" id="statutoryprovision'+j+'" value="'+statutoryprovision+'" /> <select class="input-box" id="action'+j+'" onchange="dispreason('+j+')"></select>');
+        $('.action', clone).html('<input type="hidden" id="mapping_id'+j+'" value="'+statutorymappingId+'" /> <input type="hidden" id="statutoryprovision'+j+'" value="'+statutoryprovision.replace(/"/gi,'##')+'" /> <select class="input-box" id="action'+j+'" onchange="dispreason('+j+')"></select>');
         $('.reason', clone).html('<textarea class="input-box" maxlength="500" id="notifyreason'+j+'" placeholder="Enter notification text" style="height:50px;display:none;"></textarea><span style="font-size:0.75em;display:none;" id="notifynote'+j+'"> <br> (max 500 characters)</span> <input type="text" maxlength="500" style="display:none;" id="reason'+j+'" class="input-box" placeholder="Enter reason" />');
         $('.tbody-statutorymapping-list').append(clone);
 
@@ -424,7 +424,7 @@ $("#saverecord").click(function(){
   approvelist = [];
   for(var i=1; i<j; i++){
     var statutory_mapping_id = parseInt($("#mapping_id"+i).val());
-    var statutory_provision = $("#statutoryprovision"+i).val();
+    var statutory_provision = $("#statutoryprovision"+i).val().replace(/##/gi,'"');
     var approval_status = parseInt($("#action"+i).val());
     var rejected_reason = $("#reason"+i).val();
     var notification_text = $("#notifyreason"+i).val();

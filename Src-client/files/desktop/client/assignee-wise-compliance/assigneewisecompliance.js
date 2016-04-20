@@ -326,7 +326,7 @@ $("#domainval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_domain(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_domain(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_domain').append(str);
     $("#domain").val('');
@@ -336,7 +336,9 @@ $("#domainval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_domain (element,checkval,checkname) {
+function activate_domain (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#domainval").val(checkname);
   $("#domain").val(checkval);
 }
@@ -354,7 +356,7 @@ $("#businessgroupval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_businessgroups(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_businessgroups(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_businessgroup').append(str);
     $("#businessgroup").val('');
@@ -363,7 +365,9 @@ $("#businessgroupval").keyup(function(){
       $("#autocomplete_businessgroup").hide();
     }
 });
-function activate_businessgroups (element,checkval,checkname) {
+function activate_businessgroups (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#businessgroupval").val(checkname);
   $("#businessgroup").val(checkval);
 }
@@ -383,7 +387,7 @@ $("#legalentityval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_lentity(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_lentity(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_legalentity').append(str);
     $("#legalentity").val('');
@@ -393,7 +397,9 @@ $("#legalentityval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_lentity (element,checkval,checkname) {
+function activate_lentity (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#legalentityval").val(checkname);
   $("#legalentity").val(checkval);
 }
@@ -413,7 +419,7 @@ $("#divisionval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_division(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_division(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_division').append(str);
     $("#division").val('');
@@ -423,7 +429,9 @@ $("#divisionval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_division (element,checkval,checkname) {
+function activate_division (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#divisionval").val(checkname);
   $("#division").val(checkval);
 }
@@ -445,7 +453,7 @@ $("#unitval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_unit(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_unit(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_unit').append(str);
     $("#unit").val('');
@@ -455,7 +463,9 @@ $("#unitval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_unit (element,checkval,checkname) {
+function activate_unit (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#unitval").val(checkname);
   $("#unit").val(checkval);
 }
@@ -477,7 +487,7 @@ $("#assigneeval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_assignee(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_assignee(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_assignee').append(str);
     $("#assignee").val('');
@@ -487,7 +497,9 @@ $("#assigneeval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_assignee (element,checkval,checkname) {
+function activate_assignee (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#assigneeval").val(checkname);
   $("#assignee").val(checkval);
 }
