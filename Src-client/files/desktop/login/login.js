@@ -1,4 +1,4 @@
-
+var landingPage = null;
 function clearLoginMessage() {
     $(".login-error-message").hide();
     $(".login-error-message span").text("");
@@ -14,12 +14,21 @@ function displayLoginLoader() {
     $(".loading-indicator-spin").show();
 }
 function initSession(userProfile, shortName) {
+    setLandingPage(userProfile);
     window.localStorage["userInfo"] = JSON.stringify(userProfile, null, " ");
     if (shortName !== null) {
         window.localStorage["shortName"] = shortName;
     }
 }
-
+function setLandingPage(userProfile) {
+    menus = userProfile["menu"]["menus"];
+    if ("Home" in menus) {
+        landingPage = "/dashboard";
+    }
+    else {
+        landingPage = "/home";
+    }
+}
 function getShortName(){
     var pathArray = window.location.pathname.split( '/' );
     short_name = null;
@@ -159,7 +168,7 @@ function performLogin(e_button, e_email, e_password) {
                 console.log(error);
                 if (error == null){
                     // onSuccess(response)
-                    window.location.href = "/home";
+                    window.location.href = landingPage;
                 }
                 else {
                     console.log("login failed")

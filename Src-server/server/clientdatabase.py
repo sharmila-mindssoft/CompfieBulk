@@ -1464,6 +1464,7 @@ class ClientDatabase(Database):
             )
 
         rows = self.select_all(query)
+        print rows
         columns = [
             "client_compliance_id", "client_statutory_id", "compliance_id",
             "statutory_applicable", "statutory_opted",
@@ -8041,10 +8042,9 @@ class ClientDatabase(Database):
             print "Error sending email :{}".format(e)
         return True
 
-
     def get_form_ids_for_admin(self):
         columns = "group_concat(form_id)"
-        condition = "is_admin = 1 OR form_type_id in (4,5) OR form_id in (9,11,10,12)"
+        condition = "is_admin = 1 OR form_type_id in (4,5) OR form_id in (1, 9,11,10,12)"
         rows = self.get_data(
             self.tblForms, columns, condition
         )

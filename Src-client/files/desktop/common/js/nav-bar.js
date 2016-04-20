@@ -36,10 +36,18 @@ function initializeNavBar () {
         return;
     var menus = null
     if (window.localStorage["shortName"] != null){
-        menus = ["Home", "Master", "Transaction", "Report"];
+        menus = ["Master", "Transaction", "Report"];
     }else{
-        menus = ["Home", "Master", "Transaction", "Report"];
+        menus = ["Master", "Transaction", "Report"];
     }
+    var homeMenu = $("#cssmenu .menu-ul .home-menu");
+    if ("Home" in navBarItems) {
+        homeMenu.attr("href", "/dashboard")
+    }
+    else {
+        homeMenu.attr("href", "/home")
+    }
+
     for (var i = 0; i < menus.length; i++) {
         var key = menus[i];
         if (!(key in navBarItems))
