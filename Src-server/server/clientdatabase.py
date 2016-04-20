@@ -4876,7 +4876,6 @@ class ClientDatabase(Database):
 
         service_provider_wise_compliances_list = []
         for row in rows:
-
             service_provider_name = row[1]
             address = row[2]
             contract_from = self.datetime_to_string(row[3])
@@ -4965,7 +4964,12 @@ class ClientDatabase(Database):
                 unit_wise_compliances))
         return service_provider_wise_compliances_list
 
-    def get_compliance_details_report(self, country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date, compliance_status, client_id, session_user) :
+    def get_compliance_details_report(
+        self, country_id, domain_id, statutory_id, 
+        unit_id, compliance_id, assignee_id, 
+        from_date, to_date, compliance_status, 
+        client_id, session_user
+    ) :
 
         if unit_id is None :
             unit_ids = self.get_user_unit_ids(session_user, client_id)
