@@ -1434,7 +1434,7 @@ class ClientDatabase(Database):
     def return_compliance_for_statutory_settings(
         self, unit_id,  from_count, to_count
     ):
-        query = "SELECT t1.client_statutory_id, t1.compliance_id, \
+        query = "SELECT t1.client_compliance_id, t1.client_statutory_id, t1.compliance_id, \
             t1.statutory_applicable, t1.statutory_opted,\
             t1.not_applicable_remarks, \
             t1.compliance_applicable, t1.compliance_opted, \
@@ -1465,7 +1465,7 @@ class ClientDatabase(Database):
 
         rows = self.select_all(query)
         columns = [
-            "client_statutory_id", "compliance_id",
+            "client_compliance_id", "client_statutory_id", "compliance_id",
             "statutory_applicable", "statutory_opted",
             "not_applicable_remarks", "compliance_applicable",
             "compliance_opted", "compliance_remarks",
@@ -1521,6 +1521,7 @@ class ClientDatabase(Database):
                 statutory_opted,
                 r["not_applicable_remarks"],
                 r["client_statutory_id"],
+                r["client_compliance_id"],
                 r["compliance_id"],
                 name,
                 r["compliance_description"],
@@ -1546,16 +1547,6 @@ class ClientDatabase(Database):
                 d["geography"],
                 d["postal_code"]
             )
-            # domain_id = d["domain_id"]
-            # client_statutory_id = d["client_statutory_id"]
-            # statutories = self.return_compliance_for_statutory_settings(
-            #     domain_id, unit_id
-            # )
-            # statutory_val = []
-            # for key in sorted(statutories):
-            #     statutory_val.append(
-            #         statutories[key]
-            #     )
 
             unit_statutories = unit_wise_statutories.get(unit_id)
             if unit_statutories is None :
@@ -1575,15 +1566,6 @@ class ClientDatabase(Database):
                 domain_list = unit_statutories.domain_names
                 domain_list.append(domain_name)
                 domain_list = list(set(domain_list))
-                # statutory_dict = unit_statutories.statutories
-                # domain_statutories = statutory_dict.get(domain_name)
-                # if domain_statutories is None :
-                #     domain_statutories = statutories.values()
-                # else :
-                #     domain_statutories.extend(statutories.values())
-                # statutory_dict[domain_name] = domain_statutories
-
-                # set values
                 unit_statutories.domain_names = domain_list
                 # unit_statutories.statutories = statutory_dict
             unit_wise_statutories[unit_id] = unit_statutories
@@ -1592,12 +1574,32 @@ class ClientDatabase(Database):
             unit_wise_statutories.values()
         )
 
+    def execute_bulk_insert(self, value_list) :
+        table = "tbl_client_compliances"
+        column = [
+            "client_compliance_id", "client_statutory_id",
+            "compliance_id",
+            "statutory_opted", "not_applicable_remarks",
+            "compliance_opted", "compliance_remarks",
+            "updated_by", "updated_on"
+        ]
+        update_column = [
+            "client_statutory_id", "compliance_id",
+            "statutory_opted", "not_applicable_remarks",
+            "compliance_opted", "compliance_remarks",
+            "updated_by", "updated_on"
+        ]
+
+        self.on_duplicate_key_update(table, ",".join(column), value_list, update_column)
+
     def update_statutory_settings(self, data, session_user, client_id):
         unit_id = data.unit_id
         unit_name = data.unit_name
         statutories = data.statutories
         updated_on = self.get_date_time()
+        value_list = []
         for s in statutories :
+            client_compliance_id = s.client_compliance_id
             client_statutory_id = s.client_statutory_id
             statutory_opted_status = int(s.applicable_status)
             not_applicable_remarks = s.not_applicable_remarks
@@ -1608,26 +1610,15 @@ class ClientDatabase(Database):
             remarks = s.compliance_remarks
             if remarks is None :
                 remarks = ""
+            value = (
+                client_compliance_id, client_statutory_id, compliance_id,
+                statutory_opted_status, not_applicable_remarks,
+                opted_status, remarks,
+                int(session_user), str(updated_on)
+            )
+            value_list.append(value)
 
-            query = "UPDATE tbl_client_compliances t1 \
-                INNER JOIN tbl_client_statutories t2 \
-                ON t2.client_statutory_id = t1.client_statutory_id \
-                SET \
-                t1.statutory_opted=%s, \
-                t1.not_applicable_remarks='%s', \
-                t1.compliance_opted=%s, \
-                t1.compliance_remarks='%s',\
-                t1.updated_by=%s, \
-                t1.updated_on='%s', t2.is_new = 1 \
-                WHERE t2.unit_id = %s \
-                AND t1.client_statutory_id = %s \
-                AND t1.compliance_id = %s" % (
-                    statutory_opted_status, not_applicable_remarks,
-                    opted_status, remarks, session_user, updated_on,
-                    unit_id, client_statutory_id, compliance_id
-                )
-            self.execute(query)
-
+        self.execute_bulk_insert(value_list)
         action = "Statutory settings updated for unit - %s " % (unit_name)
         self.save_activity(session_user, 6, action)
         self.update_opted_status_in_knowledge(data)

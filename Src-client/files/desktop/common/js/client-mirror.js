@@ -697,9 +697,10 @@ function initClientMirror() {
     }
 
 
-    function updateStatutory(clientSId, aStatus, aRemarks, compId, oStatus, remarks) {
+    function updateStatutory(clientSId, clientCId, aStatus, aRemarks, compId, oStatus, remarks) {
         return {
             "c_s_id": clientSId,
+            "c_c_id": clientCId,
             "a_status": aStatus,
             "n_a_remarks": aRemarks,
             "comp_id": compId,

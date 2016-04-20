@@ -138,7 +138,7 @@ function load_statutory(sList){
   if(statutoriesCount <= 1){
     $(".tbody-statutorysettings").find("tbody").remove();
   }
-  
+
   for(var statutory in sList){
     var domainName = sList[statutory]["domain_name"];
     if(domainName != lastDomainName){
@@ -147,7 +147,7 @@ function load_statutory(sList){
       $('.heading', clone3).html(domainName);
       $('.tbody-statutorysettings').append(clone3);
     }
-    
+
     var actname = sList[statutory]["level_1_statutory_name"];
     var applicable_status = sList[statutory]["opted_status"];
     var not_applicable_remarks = sList[statutory]["not_applicable_remarks"];
@@ -167,7 +167,7 @@ function load_statutory(sList){
       var complianceHeadingtableRow=$('#statutory-templates .compliance-heading');
       var clone1=complianceHeadingtableRow.clone();
       $('.accordion-content'+count).append(clone1);
-    
+
       actCount = actCount + 1;
       count++;
     }
@@ -181,6 +181,7 @@ function load_statutory(sList){
 
     var statutoryprovision = '';
     var compliance_id = sList[statutory]["compliance_id"];
+    var client_compliance_id = sList[statutory]["client_compliance_id"];
     var client_statutory_id = sList[statutory]["client_statutory_id"];
     var compliance_applicable_status = sList[statutory]["compliance_applicable_status"];
     var compliance_opted_status = sList[statutory]["compliance_opted_status"];
@@ -205,11 +206,11 @@ function load_statutory(sList){
     if(compliance_opted_status){
       optedTitle = 'Opted';
     }
-    var combineId = compliance_id + '-' + client_statutory_id;
+    var combineId = compliance_id + '-' + client_statutory_id + '-' + client_compliance_id;
 
     var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
     var clone2=complianceDetailtableRow.clone();
-    $('.sno', clone2).html(openTag + statutoriesCount + closeTag + 
+    $('.sno', clone2).html(openTag + statutoriesCount + closeTag +
       '<input type="hidden" id="combineid'+statutoriesCount+'" value="'+combineId+'"/>' +
       '<input type="hidden" id="oldremark'+statutoriesCount+'" value="'+compliance_remarks+'"/>' );
 
@@ -246,7 +247,7 @@ function load_statutory(sList){
         this.checked = false;
       });
     }
-    
+
     statutoriesCount = statutoriesCount + 1;
     lastDomainName = domainName;
     lastActName = actname;
@@ -310,7 +311,7 @@ $('#pagination').click(function(){
     })
 });
 
-//update statutory setting 
+//update statutory setting
 function submit_statutory(){
   var password = $('#password').val();
   if(password == ''){
@@ -364,7 +365,7 @@ $("#submit").click(function() {
   displayLoader();
   displayMessage("");
   assignedStatutories = [];
-  
+
   var saveflag = true;
   var totalCompliance = 1;
 
@@ -389,10 +390,11 @@ $("#submit").click(function() {
       var combineidVal = $('#combineid'+totalCompliance).val().split('-');
       var client_statutory_id = parseInt(combineidVal[1]);
       var complianceId = parseInt(combineidVal[0]);
+      var clientComplianceId = parseInt(combineidVal[2]);
       var compliance_remarks = $('#oldremark'+totalCompliance).val();
       var complianceApplicableStatus = false;
       var compliancenotApplicableRemarks = null;
-      
+
       var optedval = $('#statutory'+totalCompliance).is(":checked");
       var applicableval = $('#applicable'+totalCompliance).val();
       var addStatus = true;
@@ -423,7 +425,7 @@ $("#submit").click(function() {
           return false;
         }
       }
-      assignedstatutoriesData = client_mirror.updateStatutory(client_statutory_id, applicableStatus, notApplicableRemarks, complianceId, complianceApplicableStatus, compliancenotApplicableRemarks);
+      assignedstatutoriesData = client_mirror.updateStatutory(client_statutory_id, clientComplianceId, applicableStatus, notApplicableRemarks, complianceId, complianceApplicableStatus, compliancenotApplicableRemarks);
       assignedStatutories.push(assignedstatutoriesData);
       totalCompliance++;
     }
