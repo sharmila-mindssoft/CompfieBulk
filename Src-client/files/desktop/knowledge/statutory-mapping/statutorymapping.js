@@ -357,7 +357,7 @@ function loadStatutoryLevels(countryval,domainval){
           levelposition = statutoryLevelList[j]["l_position"];
           var tableRow=$('#statutory-level-templates');
           var clone=tableRow.clone();
-          $('.statutory_title', clone).text(statutoryLevelList[j]["l_name"]);
+          $('.statutory_title', clone).html('<div class="scrollable">'+statutoryLevelList[j]["l_name"]+'</div>');
           $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="statutoryfilter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" maxlength="100" class="input-box addleft" placeholder="" style="width:90%" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["l_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
           $('.tbody-statutory-level').append(clone);
         }
