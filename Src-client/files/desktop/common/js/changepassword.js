@@ -1,35 +1,31 @@
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
-
+//save change password process for knowledge
 $("#submit").click(function(){
   displayMessage("");
   var currentpassword = $("#currentpassword").val().trim();
   var newpassword = $("#newpassword").val().trim();
   var confirmpassword = $("#confirmpassword").val().trim();
   if(currentpassword.length == 0) {
-    displayMessage("Current Password Required");
+    displayMessage(message.cpassword_required);
   } else if(newpassword.length == 0) {
-    displayMessage("New Password Required");
+    displayMessage(message.npassword_required);
   } else if(confirmpassword.length == 0) {
-    displayMessage("Confirm Password Required");
+    displayMessage(message.conpassword_required);
   } else if(confirmpassword != newpassword) {
-    displayMessage("New Password & Confirm Password Do Not Match");
+    displayMessage(message.password_notmatch);
   } else {
       function onSuccess(data){
-          displayMessage("Password Changed Successfully");
-          $("#currentpassword").val("");
-          $("#newpassword").val("");
-          $("#confirmpassword").val("");
+        alert("Password Changed Successfully.");
+        client_name = client_mirror.getClientShortName()
+        if ((client_name === null) || (client_name === undefined)) {
+            mirror.logout();
+        }
+        else {
+            client_mirror.logout();
+        }     
       }
       function onFailure(error){
         if(error == "InvalidCurrentPassword"){
-          displayMessage("Invalid Current Password");
+          displayMessage(message.invalid_cpassword);
         }
       }
       mirror.changePassword(currentpassword, newpassword, 
@@ -45,32 +41,34 @@ $("#submit").click(function(){
     }
 });
 
+//save change password process for client
 $("#submit-client").click(function(){
   displayMessage("");
   var currentpassword = $("#currentpassword").val().trim();
   var newpassword = $("#newpassword").val().trim();
   var confirmpassword = $("#confirmpassword").val().trim();
   if(currentpassword.length == 0) {
-    displayMessage("Current Password Required");
+    displayMessage(message.cpassword_required);
   } else if(newpassword.length == 0) {
-    displayMessage("New Password Required");
+    displayMessage(message.npassword_required);
   } else if(confirmpassword.length == 0) {
-    displayMessage("Confirm Password Required");
+    displayMessage(message.conpassword_require);
   } else if(confirmpassword != newpassword) {
-    displayMessage("New Password & Confirm Password Do Not Match");
+    displayMessage(message.password_notmatch);
   } else {
-      console.log("Else ")
       function onSuccess(data){
-          console.log("inside onsucces in change password")
-          displayMessage("Password Changed Successfully");
-          $("#currentpassword").val("");
-          $("#newpassword").val("");
-          $("#confirmpassword").val("");
+        alert("Password Changed Successfully.");
+        client_name = client_mirror.getClientShortName()
+        if ((client_name === null) || (client_name === undefined)) {
+            mirror.logout();
+        }
+        else {
+            client_mirror.logout();
+        }     
       }
       function onFailure(error){
-        console.log("inside onFailure in change password")
         if(error == "InvalidCurrentPassword"){
-          displayMessage("Invalid Current Password");
+          displayMessage(message.invalid_cpassword);
         }
       }
 
@@ -86,9 +84,17 @@ $("#submit-client").click(function(){
     );
     }
 });
+
+function getItemObject (form_url, form_name) {
+  var itemObject = $("#nav-bar-templates .sub-menu-item li").clone();
+  if (form_url !== null)
+      $(".menu-url", itemObject).attr("href", form_url);
+  $(".menu-item", itemObject).text(form_name);
+  return itemObject;
+}
+
 $(document).ready(function(){
   $("#currentpassword").focus();
-
   $('#currentpassword').keyup('input', function (event) {
       this.value = this.value.replace(/\s/g, '');
   });

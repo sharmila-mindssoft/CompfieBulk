@@ -7,6 +7,14 @@ function displayMessage(message) {
   $(".error-message").show();
 }
 
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
+
+//check the url is client or knowledge
 function getShortName(){
     var pathArray = window.location.pathname.split( '/' );
     console.log(pathArray)
@@ -36,23 +44,30 @@ $(".btn-forgotpassword-cancel").click(function(){
 
 });
 
+//validation email
 function validateEmail($email) {
     var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
     return emailReg.test( $email );
 }
 
 function processForgotpassword(username, shortName, callback) {
-  var request = [
-      "ForgotPassword", {
-          "username": username,
-          "short_name": null
-      }
-  ];
   if (shortName == null) {
+      var request = [
+        "ForgotPassword", {
+            "username": username,
+            "short_name": null
+        }
+      ];
       var requestFrame = request;
       BASE_URL = "/knowledge/api/"
   }
   else {
+      var request = [
+        "ForgotPassword", {
+            "username": username,
+            "short_name": shortName
+        }
+      ];
       var requestFrame = [
           shortName,
           request
@@ -77,6 +92,7 @@ function processForgotpassword(username, shortName, callback) {
   );
 }
 
+//submit forgot password process
 $("#submit").click(function(){
   console.log("submit called");
   displayMessage("");
@@ -86,15 +102,17 @@ $("#submit").click(function(){
   }else if(validateEmail(username) == ''){
     displayMessage("Invalid email id");
   }else {
-
+      displayLoader();
       function onSuccess(data){
         displayMessage("Password reset link has been sent to your email Id");
         $("#username").val("");
+        hideLoader();
       }
       function onFailure(error){
         if(error == "InvalidUserName"){
           displayMessage("No such user exists");
         }
+        hideLoader();
       }
 
       if(getShortName() == null  || getShortName() == "forgot-password"){
@@ -125,6 +143,8 @@ $("#submit").click(function(){
   }
 });
 
+//initialization
 $(document).ready(function () {
   $("#username").focus();
+
 });

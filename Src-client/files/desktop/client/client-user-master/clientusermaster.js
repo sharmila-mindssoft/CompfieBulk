@@ -9,14 +9,6 @@ var serviceProviderList;
 var userList;
 var is_session_user_primary_admin;
 
-function clearMessage() {
-    $(".error-message").hide();
-    $(".error-message").text("");
-}
-function displayMessage(message) {
-    $(".error-message").text(message);
-    $(".error-message").show();
-}
 $(function() {
     $('.service_provider').hide();
     $('#usertype').change(function () {
@@ -345,15 +337,15 @@ $("#submit").click(function(){
 		var seatingunit = $('#seatingunit').val().trim();	
 		var seatingunitname = $('#seatingunitval').val().trim();		
 		if(seatingunit == ""){
-			displayMessage("Enter Seating Unit");
+			displayMessage(message.seatingunit_required);
             return;	
 		}
         if(seatingunitname == ""){
-            displayMessage("Enter Seating Unit");   
+            displayMessage(message.seatingunit_required);   
             return;
         }
 		if(employeeid == ""){
-			displayMessage("Enter Employee Code");
+			displayMessage(message.employeecode_required);
             return;
 		}	
 	}
@@ -361,38 +353,38 @@ $("#submit").click(function(){
 		isserviceprovider = true;
 		serviceprovider = parseInt($('#serviceprovider').val());
 		if(serviceprovider.length == 0){
-			displayMessage("Enter Service Provider");
+			displayMessage(message.spname_required);
             return;
 		}
 	}
     
     if(usertype == ""){
-        displayMessage("Select User Type");
+        displayMessage(message.usertype_required);
         return;
     }	
 	else if(employeename == ''){
-		displayMessage("Enter Employee Name");
+		displayMessage(message.employeename_required);
 	}
 	else if(usergroup == ''){
-		displayMessage("Enter User Group");
+		displayMessage(message.usergroup_required);
 	}
 	else if(userlevel == ''){
-		displayMessage("Select User Level");
+		displayMessage(message.userlevel_required);
 	}
 	else if(emailid == ''){
-		displayMessage("Enter Email Id");
+		displayMessage(message.emailid_required);
 	}
 	else if(country == ''){
-		displayMessage("Select Country");
+		displayMessage(message.country_required);
 	}
 	else if(legalentities == ''){
-		displayMessage("Select Legal Entity");
+		displayMessage(message.legalentity_required);
 	}
 	else if(domains == ''){
-		displayMessage("Select Domains");
+		displayMessage(message.domain_required);
 	}
 	else if(units == ''){
-		displayMessage("Select Units")
+		displayMessage(message.unit_required)
 	}
 	else if($('#client-user-id').val() == ''){
 		var isAdmin = false;
@@ -435,7 +427,7 @@ $("#submit").click(function(){
   	    }
 		function onFailure(error){
             if(error == "EmailIdAlreadyExists"){
-                displayMessage("Email Id Already Exists");    
+                displayMessage(message.emailid_exists);    
             }
             else{
                 displayMessage(error);
@@ -1083,7 +1075,7 @@ function hidemenuseatingunit(){
 }
 function loadauto_text (textval) {
     if($("#usertype option:selected").val() == ""){
-        displayMessage("Select Usertype");
+        displayMessage(message.usertype_required);
         return false;
     }
     document.getElementById('autocompleteview').style.display = 'block';
@@ -1151,7 +1143,9 @@ function loadauto_serviceprovider (textval) {
   $('#serviceproviderview ul').empty();
   if(textval.length>0){
     for(var i in serviceprovider){
-      if (~serviceprovider[i]["service_provider_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([serviceprovider[i]["service_provider_id"],serviceprovider[i]["service_provider_name"]]);
+        if(serviceprovider[i]["is_active"] == true){
+            if (~serviceprovider[i]["service_provider_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([serviceprovider[i]["service_provider_id"],serviceprovider[i]["service_provider_name"]]);
+        }
     }
     var str='';
     for(var i in suggestions){

@@ -185,18 +185,20 @@ function showSideBar(idval, data){
                 if (e.originalEvent.defaultPrevented) return;
                 uploadedfile(e);
             });
+        
             if(data[k]['compliance_frequency'] == 'One Time' ||  data[k]['compliance_frequency'] == 'On Occurrence') {
                 $('.validityAndDueDate', cloneValSide).hide();
             }
             else if(data[k]['compliance_frequency'] != 'One Time'){
-                $('.validityAndDueDate').show();
+                $('.validityAndDueDate', cloneValSide).show();
                 $('.validity1_icon', cloneValSide).on("click", function(e, complianceStatus){
                     showTextbox(complianceStatus);
                 });
                 $('.validity1_label abbr', cloneValSide).html(data[k]['validity_date']);
                 $('.duedate1_label abbr', cloneValSide).html(data[k]['next_due_date']);
                 $('.validity1-textbox-input', cloneValSide).val(data[k]['validity_date']);
-                $('.duedate1-textbox-input', cloneValSide).val(data[k]['next_due_date']);
+                $('.duedate1-textbox-input', cloneValSide).val(data[k]['next_due_date']);            
+                
             }
             $('.btn-submit', cloneValSide).on("click", function(e){
                 var completion_date;
@@ -237,48 +239,48 @@ function showSideBar(idval, data){
                     remarks = null;
                 }
                 if(completion_date == ''){
-                    displayMessage("Select Completion Date");
+                    displayMessage(message.completiondate_required);
                     return;
                 }
                 if(validity_date == ''){
-                    displayMessage("Select Validity Date");
+                    displayMessage(message.validitydate_required);
                     return;
                 }
                 if(data[k]['compliance_frequency'] == "Periodical"){
                     if(validity_date == '' || validity_date == null){
-                        displayMessage("Select Validity Date");
+                        displayMessage(message.validitydate_required);
                         return;
                     }
                 }
                 if(parseMyDate(start_date) > parseMyDate(completion_date)){
-                    displayMessage("Completion Date must be Greater than or equal to Start Date");
+                    displayMessage(message.complietion_gt_start);
                     return;
                 }
                 if(validity_date != null){
                     if(parseMyDate(start_date) > parseMyDate(validity_date)){
-                        displayMessage("Validity Date must be Greater than or equal to Start Date");
+                        displayMessage(message.validity_gt_start);
                         return;
                     }
                 }
                 if(next_due_date != null){
                     if(parseMyDate(start_date) > parseMyDate(next_due_date)){
-                        displayMessage("Due Date must be Greater than or equal to Start Date");
+                        displayMessage(message.duedate_gt_start);
                         return;
                     }
                 }
                 if(parseMyDate(completion_date) > parseMyDate(currentDate)){
-                    displayMessage("Completion Date must be less than or equal to Current Date");
+                    displayMessage(message.completion_lt_current);
                     return;
                 }
                 if(currentDate != null && next_due_date != null){
                     if(parseMyDate(currentDate) > parseMyDate(next_due_date)){
-                        displayMessage("Next Due Date must be Greater than Current Date");
+                        displayMessage(message.nextduedate_gt_current);
                         return;
                     }
                 }
                 if(validity_date != null  && next_due_date != null){
                     if(parseMyDate(next_due_date) > parseMyDate(validity_date)){
-                        displayMessage("Validity Date must be Greater than or equal to Next Due Date");
+                        displayMessage(message.validity_gt_nextduedate);
                         return;
                     }
                 }
@@ -305,52 +307,58 @@ function showSideBar(idval, data){
                 );
 
             });
+      
             $('.half-width-task-details').append(cloneValSide);
+            $(".datepick").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                numberOfMonths: 1,
+                dateFormat: "dd-M-yy",
+                monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            });
+            $(".validity1-textbox-input", cloneValSide).datepicker({ 
+                changeMonth: true,
+                changeYear: true,
+                numberOfMonths: 1,
+                dateFormat: "dd-M-yy",
+                monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            });    
+            $(".duedate1-textbox-input", cloneValSide).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                numberOfMonths: 1,
+                dateFormat: "dd-M-yy",
+                monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            });
+           
+            
         }
     });
-    $(".datepick").datepicker({
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        dateFormat: "dd-M-yy",
-        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    });
-    $(".duedate1-textbox-input").datepicker({
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        dateFormat: "dd-M-yy",
-        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    });
-    $(".validity1-textbox-input").datepicker({ //input-box validity1-textbox-input hasDatepicker
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        dateFormat: "dd-M-yy",
-        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    });
+    
 }
 
 function showTextbox(complianceStatus){
     $('.duedate1_textbox').show();
     $('.duedate1_label').hide();
     $('.validity1_textbox').show();
-    $('.validity1_label').hide();
+    $('.validity1_label').hide();      
 }
 function closeicon(){
     $('.uploaded-filename').html('');
     $('.half-width-task-details').hide();
     $('.full-width-list').attr("width", "100%");
     $('.half-width-task-details').attr("width", "0%");
+    $('input.validity1-textbox-input').datepicker("destroy");
+    $('input.duedate1-textbox-input').datepicker("destroy");
 }
 
 function uploadedfile(e){
     client_mirror.uploadFile(e, function result_data(data) {
         if(data == "File max limit exceeded"){
-            displayMessage("File max limit exceeded");
+            displayMessage(message.file_maxlimit_exceed);
             $(".uploaded_filename").html('');
             $("#upload_file").val("");
             return;

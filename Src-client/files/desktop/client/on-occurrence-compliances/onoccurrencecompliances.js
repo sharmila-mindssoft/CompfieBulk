@@ -1,13 +1,5 @@
 var compliancesList;
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -16,7 +8,7 @@ function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
 
-
+//load compliances in view page
 function load_compliances (compliancesList) {
   var j = 1;
   $(".tbody-complainces-list").find("tr").remove();
@@ -59,6 +51,7 @@ function load_compliances (compliancesList) {
     }
 }
 
+//convert string to date format
 function convert_date (data){
   var datetime = data.split(" ");
   var date = datetime[0].split("-");
@@ -74,6 +67,7 @@ function convert_date (data){
   return new Date(date[2], date[1]-1, date[0]);
 }
 
+//start on occurance compliance
 function submitOnOccurence(complianceId, count, unitId, complete_within_days){
   var startdate = $('#startdate'+count).val();
   var d = new Date();
@@ -85,12 +79,12 @@ function submitOnOccurence(complianceId, count, unitId, complete_within_days){
   if(startdate != ''){
     var convertDueDate = convert_date(startdate);
     if (convertDueDate > currentDate) {
-        displayMessage("Start date is greater than today's date");
+        displayMessage(message.startdate_greater_today);
         return false;
     }
     displayLoader();
     function onSuccess(data){
-      displayMessage("Action taken successfully");
+      displayMessage(message.action_success);
       //getOnOccuranceCompliances ();
       $('#startdate'+count).val('');
       hideLoader();
@@ -111,12 +105,13 @@ function submitOnOccurence(complianceId, count, unitId, complete_within_days){
     }
     );
   }else{
-    displayMessage("Start date is required");
+    displayMessage(message.startdate_required);
     return false;
   }
   
 }
 
+//get on occurance compliance list from api
 function getOnOccuranceCompliances () {
   function onSuccess(data){
     compliancesList = data["compliances"];
@@ -136,6 +131,7 @@ function getOnOccuranceCompliances () {
   );
 }
 
+//initialization
 $(document).ready(function () {
   getOnOccuranceCompliances ();
 });

@@ -178,15 +178,15 @@ $("#show-button").click(function(){
         applicableStatus = false;
     }
     if(countries == ""){
-        displayMessage("Please Select Country");
+        displayMessage(message.country_required);
         $(".grid-table-rpt").hide();
     }
     else if(domain == ""){
-        displayMessage("Please Enter Domain");
+        displayMessage(message.domain_required);
         $(".grid-table-rpt").hide();
     }
     else if(domainName == ""){
-        displayMessage("Please Enter Domain");
+        displayMessage(message.domain_required);
         $(".grid-table-rpt").hide();
     }
     else{

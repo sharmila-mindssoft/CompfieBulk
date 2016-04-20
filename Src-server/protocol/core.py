@@ -697,20 +697,20 @@ class Level(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["level_id", "level_position", "level_name"])
-        level_id = data.get("level_id")
+        data = parse_dictionary(data, ["l_id", "l_position", "l_name"])
+        level_id = data.get("l_id")
         level_id = parse_structure_OptionalType_UnsignedIntegerType_32(level_id)
-        level_position = data.get("level_position")
+        level_position = data.get("l_position")
         level_position = parse_structure_CustomIntegerType_1_10(level_position)
-        level_name = data.get("level_name")
+        level_name = data.get("l_name")
         level_name = parse_structure_CustomTextType_50(level_name)
         return Level(level_id, level_position, level_name)
 
     def to_structure(self):
         return {
-            "level_id": to_structure_OptionalType_UnsignedIntegerType_32(self.level_id),
-            "level_position": to_structure_CustomIntegerType_1_10(self.level_position),
-            "level_name": to_structure_CustomTextType_50(self.level_name),
+            "l_id": to_structure_OptionalType_UnsignedIntegerType_32(self.level_id),
+            "l_position": to_structure_CustomIntegerType_1_10(self.level_position),
+            "l_name": to_structure_CustomTextType_50(self.level_name),
         }
 
 #
@@ -1051,38 +1051,38 @@ class Compliance(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "compliance_id", "statutory_provision",
-            "compliance_task", "description",
-            "document_name", "format_file_list",
-            "penal_consequences", "frequency_id",
-            "statutory_dates", "repeats_type_id",
-            "repeats_every", "duration_type_id",
+            "c_id", "s_provision",
+            "c_task", "description",
+            "doc_name", "f_f_list",
+            "p_consequences", "f_id",
+            "statu_dates", "r_type_id",
+            "r_every", "d_type_id",
             "duration", "is_active",
             "frequency", "summary"
         ])
-        compliance_id = data.get("compliance_id")
+        compliance_id = data.get("c_id")
         compliance_id = parse_structure_OptionalType_UnsignedIntegerType_32(compliance_id)
-        statutory_provision = data.get("statutory_provision")
+        statutory_provision = data.get("s_provision")
         statutory_provision = parse_structure_CustomTextType_500(statutory_provision)
-        compliance_task = data.get("compliance_task")
+        compliance_task = data.get("c_task")
         compliance_task = parse_structure_CustomTextType_100(compliance_task)
         description = data.get("description")
         description = parse_structure_CustomTextType_500(description)
-        document_name = data.get("document_name")
+        document_name = data.get("doc_name")
         document_name = parse_structure_OptionalType_CustomTextType_50(document_name)
-        format_file_list = data.get("format_file_list")
+        format_file_list = data.get("f_f_list")
         format_file_list = parse_structure_OptionalType_VectorType_RecordType_core_FileList(format_file_list)
-        penal_consequences = data.get("penal_consequences")
+        penal_consequences = data.get("p_consequences")
         penal_consequences = parse_structure_OptionalType_CustomTextType_500(penal_consequences)
-        frequency_id = data.get("frequency_id")
+        frequency_id = data.get("f_id")
         frequency_id = parse_structure_OptionalType_SignedIntegerType_8(frequency_id)
-        statutory_dates = data.get("statutory_dates")
+        statutory_dates = data.get("statu_dates")
         statutory_dates = parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(statutory_dates)
-        repeats_type_id = data.get("repeats_type_id")
+        repeats_type_id = data.get("r_type_id")
         repeats_type_id = parse_structure_OptionalType_UnsignedIntegerType_32(repeats_type_id)
-        repeats_every = data.get("repeats_every")
+        repeats_every = data.get("r_every")
         repeats_every = parse_structure_OptionalType_UnsignedIntegerType_32(repeats_every)
-        duration_type_id = data.get("duration_type_id")
+        duration_type_id = data.get("d_type_id")
         duration_type_id = parse_structure_OptionalType_UnsignedIntegerType_32(duration_type_id)
         duration = data.get("duration")
         duration = parse_structure_OptionalType_UnsignedIntegerType_32(duration)
@@ -1105,18 +1105,18 @@ class Compliance(object):
 
     def to_structure(self):
         return {
-            "compliance_id": to_structure_OptionalType_UnsignedIntegerType_32(self.compliance_id),
-            "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
-            "compliance_task": to_structure_CustomTextType_100(self.compliance_task),
+            "c_id": to_structure_OptionalType_UnsignedIntegerType_32(self.compliance_id),
+            "s_provision": to_structure_CustomTextType_500(self.statutory_provision),
+            "c_task": to_structure_CustomTextType_100(self.compliance_task),
             "description": to_structure_CustomTextType_500(self.description),
-            "document_name": to_structure_OptionalType_CustomTextType_50(self.document_name),
-            "format_file_list": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.format_file_list),
-            "penal_consequences": to_structure_OptionalType_CustomTextType_500(self.penal_consequences),
-            "frequency_id": to_structure_OptionalType_SignedIntegerType_8(self.frequency_id),
-            "statutory_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
-            "repeats_type_id": to_structure_OptionalType_UnsignedIntegerType_32(self.repeats_type_id),
-            "repeats_every": to_structure_OptionalType_UnsignedIntegerType_32(self.repeats_every),
-            "duration_type_id": to_structure_OptionalType_UnsignedIntegerType_32(self.duration_type_id),
+            "doc_name": to_structure_OptionalType_CustomTextType_50(self.document_name),
+            "f_f_list": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.format_file_list),
+            "p_consequences": to_structure_OptionalType_CustomTextType_500(self.penal_consequences),
+            "f_id": to_structure_OptionalType_SignedIntegerType_8(self.frequency_id),
+            "statu_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
+            "r_type_id": to_structure_OptionalType_UnsignedIntegerType_32(self.repeats_type_id),
+            "r_every": to_structure_OptionalType_UnsignedIntegerType_32(self.repeats_every),
+            "d_type_id": to_structure_OptionalType_UnsignedIntegerType_32(self.duration_type_id),
             "duration": to_structure_OptionalType_UnsignedIntegerType_32(self.duration),
             "is_active": to_structure_Bool(self.is_active),
             "frequency": to_structure_OptionalType_CustomTextType_50(self.frequency),

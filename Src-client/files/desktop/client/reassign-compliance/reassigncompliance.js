@@ -8,16 +8,6 @@ var client_admin;
 var accordionstatus = true;
 //var currentUser;
 
-
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
-
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
@@ -61,6 +51,7 @@ function compliancestatus(element){
   }
 }
 
+//convert string to date format
 function convert_date (data){
   var date = data.split("-");
   var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -75,6 +66,7 @@ function convert_date (data){
   return new Date(date[2], date[1]-1, date[0]);
 }
 
+//load all compliances for selected user
 function load_allcompliances(userId, userName){
   //currentUser = userId;
   $("#reassign-view").hide();
@@ -133,25 +125,12 @@ function load_allcompliances(userId, userName){
         for(j = 0; j < statutory_date.length; j++){
           var sDay = '';
           if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
-
           var sMonth = '';
           if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
-
           var tDays = '';
           if(statutory_date[j]["trigger_before_days"] != null) tDays = statutory_date[j]["trigger_before_days"];
 
-          if(sMonth == 1) sMonth = "January"
-          else if(sMonth == 2) sMonth = "February"
-          else if(sMonth == 3) sMonth = "March"
-          else if(sMonth == 4) sMonth = "April"
-          else if(sMonth == 5) sMonth = "May"
-          else if(sMonth == 6) sMonth = "June"
-          else if(sMonth == 7) sMonth = "July"
-          else if(sMonth == 8) sMonth = "Auguest"
-          else if(sMonth == 9) sMonth = "September"
-          else if(sMonth == 10) sMonth = "October"
-          else if(sMonth == 11) sMonth = "November"
-          else if(sMonth == 12) sMonth = "December"
+          if(sMonth != '') sMonth = getMonth_IntegettoString(sMonth);
 
           triggerdate +=  tDays + " Day(s) ";
           statutorydate +=  sMonth +' '+ sDay + ' ';
@@ -228,7 +207,7 @@ function load_allcompliances(userId, userName){
   });
 }
 
-
+//load list in view page
 function load_UserCompliances(uCompliances, uId){
   for( compliance in uCompliances){
     var userName = "";
@@ -330,6 +309,7 @@ function load_compliances () {
 
 }
 
+//save reassign compliances 
 function submitcompliance(){
   displayLoader();
   var assignComplianceAssigneeId = null;
@@ -387,7 +367,7 @@ function submitcompliance(){
             if(cfrequency != 'On Occurrence'){
               due_date =  $('#duedate'+statutoriesCount).val();
               if(due_date == '' || due_date == undefined){
-                displayMessage("Due date required for compliance '" + compliance_name + "'");
+                displayMessage(message.duedate_required_compliance + compliance_name);
                 hideLoader();
                 return false;
                 /*var convertDueDate = convert_date(due_date);
@@ -430,7 +410,6 @@ function submitcompliance(){
       displayMessage(error);
       hideLoader();
     }
-    console.log(assignComplianceAssigneeName)
     client_mirror.saveReassignCompliance(
       reassignUserId, assignComplianceAssigneeId,
       assignComplianceAssigneeName,
@@ -447,10 +426,11 @@ function submitcompliance(){
     );
   }else{
     hideLoader();
-    displayMessage("No compliance selected for reassign");
+    displayMessage(message.nocompliance_selected_forassign);
   }
 }
 
+//get reassign compliance details from api
 function getReassignCompliances () {
   function onSuccess(data){
     compliancesList = data["user_wise_compliances"];
@@ -473,7 +453,6 @@ function getReassignCompliances () {
           }
       }
   );
-
 }
 
 //Autocomplete Script Starts
@@ -558,6 +537,7 @@ function getUserLevel(selectedUserId){
   return getuserLevel;
 }
 
+//load avaliable users list in assignee,concurrence and approval list
 function loadUser(userType){
   var selectedUnit = null;
   var userClass;
@@ -803,18 +783,19 @@ function validate_firsttab(){
   return true;
 }
 
+//validation in second tab
 function validate_secondtab(){
   if($('.assigneelist.active').text() == ''){
-    displayMessage("Assignee Required");
+    displayMessage(message.assignee_required);
     return false;
   }else if ($('.concurrencelist.active').text() == '' && two_level_approve){
-    displayMessage("Concurrence Required");
+    displayMessage(message.concurrence_required);
     return false;
   }else if ($('.approvallist.active').text() == ''){
-    displayMessage("Approval Required");
+    displayMessage(message.approval_required);
     return false;
   }else if ($('#reason').val().trim() == ''){
-    displayMessage("Reason Required");
+    displayMessage(message.reason_required);
     return false;
   }else{
     displayMessage("");
@@ -822,6 +803,7 @@ function validate_secondtab(){
   }
 }
 
+//create wizard
 var navListItems = $('ul.setup-panel li a'),
 allWells = $('.setup-content');
 allWells.hide();
@@ -856,6 +838,7 @@ $('#activate-step-finish').on('click', function(e) {
   }
 })
 
+//initialization
 $(document).ready(function () {
   getReassignCompliances ();
 });

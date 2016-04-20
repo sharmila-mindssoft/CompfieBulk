@@ -8,6 +8,7 @@ import datetime
 import uuid
 import json
 import pytz
+import logger
 from types import *
 from protocol import (
     core, knowledgereport, technomasters,
@@ -18,7 +19,7 @@ from distribution.protocol import (
 )
 from replication.protocol import Change
 from server.emailcontroller import EmailHandler as email
-import logger
+
 
 __all__ = [
     "KnowledgeDatabase", "Database"
@@ -76,7 +77,7 @@ class Database(object) :
         11 : "Nov",
         12 : "Dec",
     }
-    
+
     # Used to get month in string by the month's integer value
     string_full_months = {
         1 : "January",
@@ -92,7 +93,7 @@ class Database(object) :
         11 : "November",
         12 : "December",
     }
-    
+
     # Used to get the end day of a month
     end_day_of_month = {
          1 : 31,
@@ -169,7 +170,7 @@ class Database(object) :
         self._cursor = None
 
     ########################################################
-    # To execute select query 
+    # To execute select query
     # Used to fetch multiple rows
     ########################################################
     def select_all(self, query) :
@@ -179,7 +180,7 @@ class Database(object) :
         return cursor.fetchall()
 
     ########################################################
-    # To execute select query 
+    # To execute select query
     # Used to fetch One row
     ########################################################
     def select_one(self, query) :
@@ -190,7 +191,7 @@ class Database(object) :
         return result
 
     ########################################################
-    # To execute a query 
+    # To execute a query
     ########################################################
     def execute(self, query) :
         cursor = self.cursor()
@@ -198,7 +199,7 @@ class Database(object) :
         return cursor.execute(query)
 
     ########################################################
-    # To execute a procedure 
+    # To execute a procedure
     ########################################################
     def call_proc(self, procedure_name, args):
         # args is tuple e.g, (parm1, parm2)
@@ -292,7 +293,7 @@ class Database(object) :
 
     ########################################################
     # Insert a row If already key exists
-    # else update the columns specified in the 
+    # else update the columns specified in the
     # updateColumns list
     ########################################################
     def on_duplicate_key_update(
@@ -326,7 +327,7 @@ class Database(object) :
         return self.execute(query)
 
     ########################################################
-    # To concate the value with the existing value in the 
+    # To concate the value with the existing value in the
     # specified column
     ########################################################
     def append(self, table, column, value, condition):
@@ -341,7 +342,7 @@ class Database(object) :
         return self.update(table, columns, values, condition)
 
     ########################################################
-    # To increment value in the specified column by the 
+    # To increment value in the specified column by the
     # passed value. This function can be used only for int,
     # float, double values
     ########################################################
@@ -357,7 +358,7 @@ class Database(object) :
         return self.update(table, columns, values, condition)
 
     ########################################################
-    # To check whether a row exists with the condition in the 
+    # To check whether a row exists with the condition in the
     # given table. if a row exists this function will return
     # True otherwise returns false
     ########################################################
@@ -390,7 +391,7 @@ class Database(object) :
         )
 
     ########################################################
-    # To generate random password encrypted with md5 
+    # To generate random password encrypted with md5
     # algorithm. This function return encrypted password
     ########################################################
     def generate_password(self) :
@@ -398,7 +399,7 @@ class Database(object) :
         return self.encrypt(password)
 
     ########################################################
-    # To generate random password encrypted with md5 
+    # To generate random password encrypted with md5
     # algorithm. This function return encrypted password and
     # Original password
     ########################################################
@@ -463,7 +464,7 @@ class Database(object) :
     def datetime_to_string(self, datetime_val):
         date_in_string = datetime_val
         if datetime_val is not None:
-            date_in_string = datetime_val.strftime("%d-%b-%Y")            
+            date_in_string = datetime_val.strftime("%d-%b-%Y")
         return date_in_string
 
     ########################################################
@@ -477,7 +478,7 @@ class Database(object) :
 
     ########################################################
     # Returns the database information of clients
-    # If client id is given, client specific info will be 
+    # If client id is given, client specific info will be
     # returned
     # Other wise Info of all clients will be returned
     ########################################################
@@ -491,7 +492,7 @@ class Database(object) :
 
     ########################################################
     # To generate a new Id for the given table and given
-    # field 
+    # field
     ########################################################
     def get_new_id(self, field , table_name, client_id=None) :
         newId = 1
@@ -510,7 +511,7 @@ class Database(object) :
         return self.localize(time_stamp)
 
     ########################################################
-    # To Check Login credentials 
+    # To Check Login credentials
     ########################################################
     def verify_login(self, username, password):
         tblAdminCondition = "password='%s' and username='%s'" % (
@@ -1748,7 +1749,7 @@ class KnowledgeDatabase(Database):
             parent_ids, parent_names, int(user_id), str(created_on)
         )
         if (self.save_data(table_name, field, data)) :
-            action = "New Geography %s added" % (geography_id)
+            action = "New Geography %s added" % (geography_name)
             self.save_activity(user_id, 6, action)
             is_saved = True
         return is_saved
@@ -1771,10 +1772,6 @@ class KnowledgeDatabase(Database):
         action = "Geography - %s updated" % name
         self.save_activity(updated_by, 6, action)
 
-
-        # if oldparent_ids != parent_ids :
-            # oldPId = str(oldparent_ids) + str(geography_id)
-            # newPId = str(parent_ids) + str(geography_id)
         qry = "SELECT geography_id, geography_name, parent_ids, level_id \
           from tbl_geographies \
             WHERE parent_ids like '%s'" % str("%" + str(geography_id) + ",%")
@@ -1787,15 +1784,6 @@ class KnowledgeDatabase(Database):
                 row["parent_ids"] = geography_id
             else :
                 row["parent_ids"] = row["parent_ids"][:-1]
-            # newParentId = str(row[2]).replace(oldPId, newPId)
-            # q = "UPDATE tbl_geographies \
-            #   set parent_names = (select group_concat(a.geography_name, '>>') \
-            #     from tbl_geographies a where a.geography_id in (%s)), \
-            #   updated_by=%s \
-            #   where geography_id=%s" % (
-            #     row[2], updated_by, row[0]
-            # )
-            #  updating child parent-names
             q = "UPDATE tbl_geographies as A inner join ( \
                 select p.geography_id, (select group_concat(p1.geography_name SEPARATOR '>>') \
                     from tbl_geographies as p1 where geography_id in (%s)) as names \
@@ -1810,8 +1798,8 @@ class KnowledgeDatabase(Database):
                     row["parent_ids"], row["geography_id"], row["geography_id"], row["level_id"]
                 )
             self.execute(q)
-        action = "Geography name  %s updated in child parent_names" % (name)
-        self.save_activity(updated_by, 6, action)
+        # action = "Geography name  %s updated in child parent_names" % (name)
+        # self.save_activity(updated_by, 6, action)
         # self.getAllGeographies()
         return True
 
@@ -6158,7 +6146,7 @@ class KnowledgeDatabase(Database):
 #
 #   Notifications
 #
-    
+
     def get_user_type(self, user_id):
         columns = "user_group_id"
         condition = "user_id = '%d'" % user_id

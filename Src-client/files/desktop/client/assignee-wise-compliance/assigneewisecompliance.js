@@ -13,15 +13,7 @@ var endCount;
 var sno = 0;
 var fullArrayList = [];
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
-
+//get reports filter data from api
 function getClientReportFilters(){
   function onSuccess(data){
     countriesList = data["countries"];
@@ -48,7 +40,7 @@ function getClientReportFilters(){
   );
 }
 
-
+//display businessgroup details
 function bgList(data){
   var country = $("#country").find('option:selected').text();
   var domain = $("#domainval").val();
@@ -73,6 +65,7 @@ function bgList(data){
   $('.tbody-assignee').append(clone1);
 }
 
+//display assignee details
 function assigneeList(data){
   var assignee_ = data["assignee"];
   var concurrence = data["concurrence_person"];
@@ -88,8 +81,8 @@ function assigneeList(data){
   $('.tbody-assignee').append(clone2);
 }
 
+//display compliance details
 function complianceListArray(data){
-
   var triggerdate = '';
   var statutorydate = '';
   for(j=0; j<data["statutory_dates"].length; j++){
@@ -99,18 +92,9 @@ function complianceListArray(data){
     if(data["statutory_dates"][j]["statutory_month"] != null) sMonth = data["statutory_dates"][j]["statutory_month"];
     var tDays = '';
     if(data["statutory_dates"][j]["trigger_before_days"] != null) tDays = data["statutory_dates"][j]["trigger_before_days"];
-    if(sMonth == 1) sMonth = "January"
-    else if(sMonth == 2) sMonth = "February"
-    else if(sMonth == 3) sMonth = "March"
-    else if(sMonth == 4) sMonth = "April"  
-    else if(sMonth == 5) sMonth = "May"
-    else if(sMonth == 6) sMonth = "June"
-    else if(sMonth == 7) sMonth = "July"
-    else if(sMonth == 8) sMonth = "Auguest"
-    else if(sMonth == 9) sMonth = "September"
-    else if(sMonth == 10) sMonth = "October"
-    else if(sMonth == 11) sMonth = "November"
-    else if(sMonth == 12) sMonth = "December"
+    
+    if(sMonth != '') sMonth = getMonth_IntegettoString(sMonth);
+    
     triggerdate +=  tDays + " Days" + ', ';
     statutorydate +=  sDay + ' - ' + sMonth +', ';
   }
@@ -150,6 +134,7 @@ function get_sub_array(object, start, end){
   return object.slice(start, end);
 }
 
+//display report data based on array
 function showloadrecord() {
   startCount = endCount;
   endCount = startCount + pageSize;
@@ -172,6 +157,7 @@ function showloadrecord() {
   }
 }
 
+//pagination process
 $(function() {
     $('#pagination').click(function(e){
         $(".loading-indicator-spin").show();
@@ -232,7 +218,7 @@ function loadArray(complianceList) {
   }
 }
 
-
+//get total compliance count from list
 function loadTotalCount(complianceList){
   $("#pagination").hide();
   var totalrecords = 0;
@@ -257,7 +243,7 @@ function loadTotalCount(complianceList){
   }
 }
 
-
+//get report data from api
 $("#submit").click(function(){ 
   var country = $("#country").val();
   var domain = $("#domain").val();
@@ -274,10 +260,10 @@ $("#submit").click(function(){
   if($("#assignee").val() != '') assignee = $("#assignee").val();
 
   if(country.length == 0){
-    displayMessage("Country Required");
+    displayMessage(message.country_required);
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");  
+    displayMessage(message.domain_required);  
   }
   else{
       function onSuccess(data){
@@ -507,6 +493,7 @@ function activate_assignee (element,checkval,checkname) {
 }
 //Autocomplete Script ends
 
+//initialization
 $(function() {
   $(".grid-table-rpt").hide();
   getClientReportFilters();

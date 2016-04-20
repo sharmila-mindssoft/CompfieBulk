@@ -12,15 +12,8 @@ var approvalStatusList;
 var approvelist = [];
 var j;
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
 
+//get statutory mapping data from api
 function getStatutoryMappings(){
   function onSuccessMaster(data){
     industriesList = data["industries"];
@@ -191,16 +184,17 @@ function activate_statutorynature (element,checkval,checkname) {
 
 //Autocomplete Script ends
 
+//load statutories for approval
 function loadApproveStatutory(){
   var country = $("#country").val().trim();
   var domain = $("#domain").val().trim();
   var industry = $("#industry").val();
   var statutorynature = $("#statutorynature").val();
   if(country.length == 0){
-    displayMessage("Country Required");
+    displayMessage(message.country_required);
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");
+    displayMessage(message.domain_required);
   }
   else{
     j = 1;
@@ -288,7 +282,6 @@ function loadApproveStatutory(){
     }
 
     if(j <= 1){
-      //displayMessage("");
       var norecordtableRow=$('#norecord-templates');
       var noclone=norecordtableRow.clone();
       $('.tbody-statutorymapping-list').append(noclone);
@@ -301,6 +294,7 @@ $("#submit").click(function(){
   loadApproveStatutory();
 });
 
+//display popup with details
 function disppopup(sm_id,compliance_id,element){
   $("#popup1").show();
   $(element).removeClass("new-link");
@@ -313,17 +307,17 @@ function disppopup(sm_id,compliance_id,element){
   }
   var frequency = '';
   $.each(complianceFrequencyList, function(index, value) {
-  if (value.frequency_id == compliances[compliance_id]["frequency_id"]) {
+  if (value.frequency_id == compliances[compliance_id]["f_id"]) {
       frequency = value.frequency;
   }
   });
 
   var sdateDesc = '';
   var duration = compliances[compliance_id]["duration"];
-  var duration_type_id = compliances[compliance_id]["duration_type_id"];
-  var repeats_every = compliances[compliance_id]["repeats_every"];
-  var repeats_type_id = compliances[compliance_id]["repeats_type_id"];
-  var statutory_date =  compliances[compliance_id]["statutory_dates"];
+  var duration_type_id = compliances[compliance_id]["d_type_id"];
+  var repeats_every = compliances[compliance_id]["r_every"];
+  var repeats_type_id = compliances[compliance_id]["r_type_id"];
+  var statutory_date =  compliances[compliance_id]["statu_dates"];
   var statutorydate = '';
   var duration_type = '';
   var repeats_type = '';
@@ -354,22 +348,11 @@ function disppopup(sm_id,compliance_id,element){
     for(z = 0; z < statutory_date.length; z++){
     var sDay = '';
     if(statutory_date[z]["statutory_date"] != null) sDay = statutory_date[z]["statutory_date"];
-
     var sMonth = '';
     if(statutory_date[z]["statutory_month"] != null) sMonth = statutory_date[z]["statutory_month"];
 
-    if(sMonth == 1) sMonth = "January"
-    else if(sMonth == 2) sMonth = "February"
-    else if(sMonth == 3) sMonth = "March"
-    else if(sMonth == 4) sMonth = "April"
-    else if(sMonth == 5) sMonth = "May"
-    else if(sMonth == 6) sMonth = "June"
-    else if(sMonth == 7) sMonth = "July"
-    else if(sMonth == 8) sMonth = "Auguest"
-    else if(sMonth == 9) sMonth = "September"
-    else if(sMonth == 10) sMonth = "October"
-    else if(sMonth == 11) sMonth = "November"
-    else if(sMonth == 12) sMonth = "December"
+    if(sMonth != '') sMonth = getMonth_IntegettoString(sMonth);
+    
     statutorydate +=  sMonth +' '+ sDay +' ';
     }
     if(sdateDesc != ''){
@@ -383,16 +366,17 @@ function disppopup(sm_id,compliance_id,element){
     statutorydate = sdateDesc;
   }
 
-  $(".popup_statutory").html(compliances[compliance_id]["statutory_provision"]);
+  $(".popup_statutory").html(compliances[compliance_id]["s_provision"]);
   $(".popup_statutorynature").text(sm["statutory_nature_name"]);
   $(".popup_compliancetask").html(sm["compliance_names"][compliance_id]["compliance_name"]);
   $(".popup_compliancedescription").text(compliances[compliance_id]["description"]);
-  $(".popup_penalconsequences").text(compliances[compliance_id]["penal_consequences"]);
+  $(".popup_penalconsequences").text(compliances[compliance_id]["p_consequences"]);
   $(".popup_compliancefrequency").text(frequency);
   $(".popup_complianceoccurance").text(statutorydate);
   $(".popup_applicablelocation").text(sm["geography_mappings"]);
 }
 
+//display reason select box according to action selection
 function dispreason(j){
   if($("#action"+j).val() == '2'){
     $("#notifyreason"+j).hide();
@@ -415,6 +399,7 @@ function dispreason(j){
   }
 }
 
+//reload statutories for approval after save process
 function reloadStatutoryMapping(){
   function onSuccess(data){
       statutoryMappingsList = data["statutory_mappings"];
@@ -434,6 +419,7 @@ function reloadStatutoryMapping(){
     );
 }
 
+//save statutory mapping approval
 $("#saverecord").click(function(){
   approvelist = [];
   for(var i=1; i<j; i++){
@@ -449,12 +435,12 @@ $("#saverecord").click(function(){
   }
 
   if(approvelist.length == 0){
-    displayMessage("Atleast one action should be selected");
+    displayMessage(message.action_selection_required);
     return false;
   }
   function onSuccess(response) {
     $(".grid-table").hide();
-    displayMessage("Selected action has been saved successfully");
+    displayMessage(message.action_selection_success);
     reloadStatutoryMapping();
   }
   function onFailure(error){
@@ -471,6 +457,7 @@ $("#saverecord").click(function(){
       });
 });
 
+//initialization
 $(function() {
   getStatutoryMappings();
 });

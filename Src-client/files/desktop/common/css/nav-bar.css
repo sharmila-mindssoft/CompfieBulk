@@ -262,14 +262,14 @@
 #noti_Container {
     position:relative;    
     border:0px;
-    width:24px;
-    height:24px;
+    width:20px;
+    height:20px;
     cursor:pointer;
 
 }
 .noti_bubble {
     position:absolute;    /* This breaks the div from the normal HTML document. */
-    top: 13px;
+    top: 9px;
     right:-3px;
     padding:1px 2px 1px 2px;
     background-color: #0024FF; /* you could use a background image if you'd like as well */
@@ -338,6 +338,28 @@
     padding: 12px 20px;
     width: 100%;
   }
+  .noti_bubble {
+    position: relative;
+    top: -2em;
+    left: 1.7em;
+    padding: 0.5em;
+    background-color: #0024FF;
+    color: white;
+    font-weight: normal;
+    font-size: 0.55em;
+    border-radius: 2em;
+    box-shadow: 1px 1px 1px gray;
+    cursor: hand;
+    float: left;
+    height: 2em;
+    width: 2em;
+    text-align: center;
+  }
+  #cssmenu ul li a img {
+    max-width: 1.4em;
+    margin-bottom: 0.5em;
+    float: left;
+  }
   #cssmenu ul ul li a {
     border: 0;
     background: none;
@@ -393,8 +415,8 @@
     position: absolute;
     height: 3px;
     width: 22px;
-    border-top: 2px solid #7a8189;
-    border-bottom: 2px solid #7a8189;
+    border-top: 2px solid #333;
+    border-bottom: 2px solid #333;
     right: 20px;
     top: 15px;
   }
@@ -404,7 +426,7 @@
     position: absolute;
     height: 3px;
     width: 22px;
-    border-top: 2px solid #7a8189;
+    border-top: 2px solid #333;
     right: 20px;
     top: 25px;
   }

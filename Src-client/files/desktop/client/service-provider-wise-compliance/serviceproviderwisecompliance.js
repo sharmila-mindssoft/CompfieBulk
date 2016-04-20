@@ -5,16 +5,7 @@ var levelOneStatutoriesList;
 var unitsList;
 var serviceProvidersList;
 
-
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
-
+//get report filter data
 function getServiceProviderReportFilters(){
   function onSuccess(data){
     countriesList = data["countries"];
@@ -39,17 +30,15 @@ function getServiceProviderReportFilters(){
   );
 }
 
+//display compliance details in view page
 function loadresult(filterList){
   $(".grid-table-rpt").show();
   var country = $("#country").find('option:selected').text();
   var domain = $("#domainval").val();
   var act = $("#actval").val();
-
-
   $(".tbody-serviceprovider").find("tbody").remove();
   var compliance_count=0;
   var sp_count=0;
-
   var tableRow=$('#serviceprovider-list-templates .table-serviceprovider-list .table-row-serviceprovider-list');
   var clone=tableRow.clone();
   $('.tbl_country', clone).text(country);
@@ -100,27 +89,13 @@ function loadresult(filterList){
 
           var sDay = '';
           if(compliancelists[compliancelist][i]["statutory_dates"][j]["statutory_date"] != null) sDay = compliancelists[compliancelist][i]["statutory_dates"][j]["statutory_date"];
-
           var sMonth = '';
           if(compliancelists[compliancelist][i]["statutory_dates"][j]["statutory_month"] != null) sMonth = compliancelists[compliancelist][i]["statutory_dates"][j]["statutory_month"];
-
           var tDays = '';
           if(compliancelists[compliancelist][i]["statutory_dates"][j]["trigger_before_days"] != null) tDays = compliancelists[compliancelist][i]["statutory_dates"][j]["trigger_before_days"];
 
+          if(sMonth != '') sMonth = getMonth_IntegettoString(sMonth);
 
-          if(sMonth == 1) sMonth = "January"
-          else if(sMonth == 2) sMonth = "February"
-          else if(sMonth == 3) sMonth = "March"
-          else if(sMonth == 4) sMonth = "April"  
-          else if(sMonth == 5) sMonth = "May"
-          else if(sMonth == 6) sMonth = "June"
-          else if(sMonth == 7) sMonth = "July"
-          else if(sMonth == 8) sMonth = "Auguest"
-          else if(sMonth == 9) sMonth = "September"
-          else if(sMonth == 10) sMonth = "October"
-          else if(sMonth == 11) sMonth = "November"
-          else if(sMonth == 12) sMonth = "December"
-            
           triggerdate +=  tDays + " Days" + ', ';
           statutorydate +=  sDay + ' - ' + sMonth +', ';
         }
@@ -170,6 +145,7 @@ function loadresult(filterList){
   $('.compliance_count').text("Total : "+ (compliance_count) +" records");
 }
 
+//get report data from api
 function loadCompliance(reportType){ 
   var country = $("#country").val();
   var domain = $("#domain").val();
@@ -181,13 +157,13 @@ function loadCompliance(reportType){
   if($("#serviceprovider").val() != '') serviceprovider = $("#serviceprovider").val();
 
   if(country.length == 0){
-    displayMessage("Country Required");
+    displayMessage(message.country_required);
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");  
+    displayMessage(message.domain_required);  
   }
   else if(act.length == 0){
-    displayMessage("Act Required");  
+    displayMessage(message.act_required);  
   }
   else{
       var filterdata={};
@@ -380,6 +356,7 @@ function activate_serviceprovider (element,checkval,checkname) {
 }
 //Autocomplete Script ends
 
+//initialization
 $(function() {
   $(".grid-table-rpt").hide();
   getServiceProviderReportFilters();

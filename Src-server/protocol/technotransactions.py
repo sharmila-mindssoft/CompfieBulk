@@ -173,23 +173,23 @@ class AssignedStatutoryCompliance(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["level_1_statutory_id", "compliances", "applicable_status", "not_applicable_remarks"])
-        level_1_statutory_id = data.get("level_1_statutory_id")
+        data = parse_dictionary(data, ["level_1_s_id", "compliances", "a_status", "n_a_remarks"])
+        level_1_statutory_id = data.get("level_1_s_id")
         level_1_statutory_id = parse_structure_UnsignedIntegerType_32(level_1_statutory_id)
         compliances = data.get("compliances")
         compliances = parse_structure_MapType_UnsignedIntegerType_32_Bool(compliances)
-        applicable_status = data.get("applicable_status")
+        applicable_status = data.get("a_status")
         applicable_status = parse_structure_Bool(applicable_status)
-        not_applicable_remarks = data.get("not_applicable_remarks")
+        not_applicable_remarks = data.get("n_a_remarks")
         not_applicable_remarks = parse_structure_OptionalType_CustomTextType_500(not_applicable_remarks)
         return AssignedStatutoryCompliance(level_1_statutory_id, compliances, applicable_status, not_applicable_remarks)
 
     def to_structure(self):
         return {
-            "level_1_statutory_id": to_structure_UnsignedIntegerType_32(self.level_1_statutory_id),
+            "level_1_s_id": to_structure_UnsignedIntegerType_32(self.level_1_statutory_id),
             "compliances": to_structure_MapType_UnsignedIntegerType_32_Bool(self.compliances),
-            "applicable_status": to_structure_Bool(self.applicable_status),
-            "not_applicable_remarks": to_structure_OptionalType_CustomTextType_500(self.not_applicable_remarks)
+            "a_status": to_structure_Bool(self.applicable_status),
+            "n_a_remarks": to_structure_OptionalType_CustomTextType_500(self.not_applicable_remarks)
         }
 
 class SaveAssignedStatutory(Request):
@@ -210,35 +210,35 @@ class SaveAssignedStatutory(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "client_id", "geography_id", "unit_ids", "domain_id",  "submission_type", "client_statutory_id", "assigned_statutories"])
-        country_id = data.get("country_id")
+        data = parse_dictionary(data, ["c_id", "client_id", "g_id", "u_ids", "d_id",  "sub_type", "c_s_id", "a_statutories"])
+        country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         client_id = data.get("client_id")
         client_id = parse_structure_UnsignedIntegerType_32(client_id)
-        geography_id = data.get("geography_id")
+        geography_id = data.get("g_id")
         geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
-        unit_ids = data.get("unit_ids")
+        unit_ids = data.get("u_ids")
         unit_ids = parse_structure_VectorType_UnsignedIntegerType_32(unit_ids)
-        domain_id = data.get("domain_id")
+        domain_id = data.get("d_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
-        submission_type = data.get("submission_type")
+        submission_type = data.get("sub_type")
         submission_type = parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE(submission_type)
-        client_statutory_id = data.get("client_statutory_id")
+        client_statutory_id = data.get("c_s_id")
         client_statutory_id = parse_structure_OptionalType_UnsignedIntegerType_32(client_statutory_id)
-        assigned_statutories = data.get("assigned_statutories")
+        assigned_statutories = data.get("a_statutories")
         assigned_statutories = parse_structure_VectorType_RecordType_technotransactions_AssignedStatutoryCompliance(assigned_statutories)
         return SaveAssignedStatutory(country_id, client_id, geography_id, unit_ids, domain_id, submission_type, client_statutory_id, assigned_statutories)
 
     def to_inner_structure(self):
         return {
-            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
+            "c_id": to_structure_UnsignedIntegerType_32(self.country_id),
             "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
-            "geography_id": to_structure_UnsignedIntegerType_32(self.geography_id),
-            "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
-            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
-            "submission_type": to_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE(self.submission_type),
-            "client_statutory_id": to_structure_OptionalType_UnsignedIntegerType_32(self.client_statutory_id),
-            "assigned_statutories": to_structure_VectorType_RecordType_technotransactions_AssignedStatutoryCompliance(self.assigned_statutories),
+            "g_id": to_structure_UnsignedIntegerType_32(self.geography_id),
+            "u_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
+            "d_id": to_structure_UnsignedIntegerType_32(self.domain_id),
+            "sub_type": to_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE(self.submission_type),
+            "c_s_id": to_structure_OptionalType_UnsignedIntegerType_32(self.client_statutory_id),
+            "a_statutories": to_structure_VectorType_RecordType_technotransactions_AssignedStatutoryCompliance(self.assigned_statutories),
         }
 
 class GetCountriesForGroup(Request):

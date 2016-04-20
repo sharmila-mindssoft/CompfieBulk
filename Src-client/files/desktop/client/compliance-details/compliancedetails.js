@@ -12,15 +12,7 @@ var endCount;
 var sno = 0;
 var fullArrayList = [];
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
-
+//get compliance details filter from api
 function getComplianceDetailsReportFilters(){
   function onSuccess(data){
     countriesList = data["countries"];
@@ -65,6 +57,7 @@ function daydiff(first, second) {
 }*/
 
 
+//clone & display unit heading
 function filterList(data){
   var country = $("#country").find('option:selected').text();
   var domain = $("#domainval").val();
@@ -82,6 +75,7 @@ function filterList(data){
   $('.tbody-unit').append(clone1);
 }
 
+//clone & display unit name
 function unitList(data){
   var tableRow2=$('#unit-name-templates .table-unit-name .table-row-unit-name');
   var clone2=tableRow2.clone();
@@ -89,8 +83,8 @@ function unitList(data){
   $('.tbody-unit').append(clone2);
 }
 
+//clone & display compliance details
 function complianceListArray(data){
-
   var vDate = '-';
   if(data["validity_date"] != null) vDate = data["validity_date"];
   var dueDate = '-';
@@ -125,6 +119,7 @@ function get_sub_array(object, start, end){
     return object.slice(start, end);
 }
 
+//call display function on show more record process
 function showloadrecord() {
   startCount = endCount;
   endCount = startCount + pageSize;
@@ -144,6 +139,7 @@ function showloadrecord() {
   }
 }
 
+//pagination process
 $(function() {
     $('#pagination').click(function(e){
         $(".loading-indicator-spin").show();
@@ -159,6 +155,7 @@ $(function() {
     });
 });
 
+//create array for pagination and call display function 
 function loadArray(complianceList) {   
   endCount = pageSize;
   $.each(complianceList, function(i, val){
@@ -194,6 +191,7 @@ function loadArray(complianceList) {
   }
 }
 
+//count total records of result
 function loadTotalCount(complianceList){
   $("#pagination").hide();
   var totalrecords = 0;
@@ -213,6 +211,7 @@ function loadTotalCount(complianceList){
   }
 }
 
+//get compliance details report data from api
 function loadCompliance(reportType){
   var country = $("#country").val();
   var domain = $("#domain").val();
@@ -232,13 +231,13 @@ function loadCompliance(reportType){
   if($("#status").val() != '') status = $("#status").val();
 
   if(country.length == 0){
-    displayMessage("Country Required");
+    displayMessage(message.country_required);
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");
+    displayMessage(message.domain_required);
   }
   else if(act.length == 0){
-    displayMessage("Act Required");
+    displayMessage(message.act_required);
   }
   else{
     function onSuccess(data){
@@ -350,7 +349,7 @@ $("#actval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_acts(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+      str += '<li id="'+suggestions[i][0]+'"onclick="activate_acts(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_act').append(str);
     $("#act").val('');
@@ -458,6 +457,7 @@ function activate_assignee (element,checkval,checkname) {
 }
 //Autocomplete Script ends
 
+//initialization
 $(function() {
   $(".grid-table-rpt").hide();
   getComplianceDetailsReportFilters();

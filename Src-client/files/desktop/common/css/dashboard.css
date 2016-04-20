@@ -7,10 +7,6 @@ html, body {
 	font-size: 100%; /* make the browser font size 10px */
 	height: 100%;
 }
-img, object {
-	max-width: 100%;
-	height: auto; 
-}
 .clearfix:after {
   content: "";
   display: table;

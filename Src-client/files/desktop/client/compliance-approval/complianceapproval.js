@@ -273,7 +273,7 @@ function showSideBar(idval, data){
         //console.log(approval_status);
         
         if(approval_status == ''){
-            displayMessage("Select Any Action");
+            displayMessage(message.action_required);
             return false;
         }
         else if(approval_status == "Reject Concurrence"){
@@ -307,16 +307,16 @@ function showSideBar(idval, data){
             remarks = null;
         }      
         else if(validity_date == ''){
-            displayMessage("Select Validity Date");
+            displayMessage(message.validitydate_required);
             return;
         }
         else if(next_due_date == ''){
-            displayMessage("Select Next Due Date");
+            displayMessage(message.nextduedate_required);
             return;
         }
         if(validity_date != null  && next_due_date != null){
             if(parseMyDate(validity_date) > parseMyDate(next_due_date)){
-                displayMessage("Validity Date is Greater than or equal to Due Date");
+                displayMessage(message.validitydate_gt_duedate);
                 return;
             }
         }
@@ -329,16 +329,16 @@ function showSideBar(idval, data){
         function onSuccess(data){
             clearMessage();
             if(approval_status == "Reject Concurrence"){
-                displayMessage("Compliance Concurrence Rejected");    
+                displayMessage(message.compliance_concur_reject);    
             }
             else if(approval_status == "Reject Approval"){
-                displayMessage("Compliance Approval Rejected");    
+                displayMessage(message.compliance_app_reject);    
             }
             else if(approval_status == "Approve"){
-                displayMessage("Compliance Approved");    
+                displayMessage(message.compliance_approval);    
             }
             else if(approval_status == "Concur"){
-                displayMessage("Compliance Concurred");    
+                displayMessage(message.compliance_concurred);    
             }            
             initialize();
         }

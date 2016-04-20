@@ -20,15 +20,6 @@ var statutoriesCount = 1;
 var actCount = 1;
 var s_endCount = 0;
 
-
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
@@ -36,6 +27,7 @@ function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
 
+//clear list values
 function clearValues(levelvalue) {
   if(levelvalue == 'country'){
     assignStatutoryUnitIds = [];
@@ -109,6 +101,7 @@ function compliancestatus(element){
   }
 }
 
+//display applicable unit details in popup
 function disppopup(units_string){
   $("#popup1").show();
   $(".popup-list").find("tr").remove();
@@ -127,6 +120,7 @@ function disppopup(units_string){
   }
 }
 
+//load available compliance based on first wizard 
 function load_secondwizard(){
   if(statutoriesCount <= 1){
     $(".tbody-assignstatutory").find("tbody").remove();
@@ -184,25 +178,12 @@ function load_secondwizard(){
       for(j = 0; j < statutory_date.length; j++){
         var sDay = '';
         if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
-
         var sMonth = '';
         if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
-
         var tDays = '';
         if(statutory_date[j]["trigger_before_days"] != null) tDays = statutory_date[j]["trigger_before_days"];
 
-        if(sMonth == 1) sMonth = "January"
-        else if(sMonth == 2) sMonth = "February"
-        else if(sMonth == 3) sMonth = "March"
-        else if(sMonth == 4) sMonth = "April"
-        else if(sMonth == 5) sMonth = "May"
-        else if(sMonth == 6) sMonth = "June"
-        else if(sMonth == 7) sMonth = "July"
-        else if(sMonth == 8) sMonth = "Auguest"
-        else if(sMonth == 9) sMonth = "September"
-        else if(sMonth == 10) sMonth = "October"
-        else if(sMonth == 11) sMonth = "November"
-        else if(sMonth == 12) sMonth = "December"
+        if(sMonth != '') sMonth = getMonth_IntegettoString(sMonth);
 
         if(tDays != ''){
           triggerdate +=  tDays + " Day(s) ";
@@ -333,7 +314,7 @@ function load_secondwizard(){
     $('.compliance_count').text('');
   }
 
-  if(totalRecord <= statutoriesCount){
+  if(totalRecord <= statutoriesCount && statutoriesCount > 1){
     $('#pagination').hide();
     $('#activate-step-3').show();
     $(document).ready(function($) {
@@ -352,8 +333,7 @@ function load_secondwizard(){
   }else{
     $('#activate-step-3').hide();
   }
-
-  if(statutoriesNameList.length ==0){
+  /*if(statutoriesNameList.length ==0){
     $('#pagination').hide();
     $('#activate-step-3').show();
     $('#accordion').find('.accordion-toggle').click(function(){
@@ -366,9 +346,10 @@ function load_secondwizard(){
         accordionstatus = true;
       }
     });
-  }
+  }*/
 }
 
+//pagination process
 $('#pagination').click(function(){
   var domainID = $('.domainlist.active').attr('id');
   unit_id =  parseInt($("#unit").val());
@@ -398,19 +379,19 @@ $('#pagination').click(function(){
   )
 });
 
-
+//validation on first wizard
 function validate_firsttab(){
   if($('.countrylist.active').text() == ''){
-    displayMessage("Country Required");
+    displayMessage(message.country_required);
     return false;
   }else if ($('.legalentitylist.active').text() == ''){
-    displayMessage("Legal Entity Required");
+    displayMessage(message.legalentity_required);
     return false;
   }else if (assignStatutoryUnitIds.length == 0){
-    displayMessage("Unit Required");
+    displayMessage(message.unit_required);
     return false;
   }else if ($('.domainlist.active').text() == ''){
-    displayMessage("Domain Required");
+    displayMessage(message.domain_required);
     return false;
   }else{
     s_endCount = 0;
@@ -458,18 +439,19 @@ function validate_secondtab(){
   return true;
 }
 
+//validation on third wizard
 function validate_thirdtab(){
   if($('.assigneelist.active').text() == ''){
-    displayMessage("Assignee Required");
+    displayMessage(message.assignee_required);
     return false;
   }else if ($(".assigneelist.active").text().trim() == 'Client Admin'){
     displayMessage("");
     return true;
   }else if ($('.concurrencelist.active').text() == '' && two_level_approve){
-    displayMessage("Concurrence Required");
+    displayMessage(message.concurrence_required);
     return false;
   }else if ($('.approvallist.active').text() == ''){
-    displayMessage("Approval Required");
+    displayMessage(message.approval_required);
     return false;
   }else{
     displayMessage("");
@@ -503,7 +485,7 @@ function convert_date (data){
   return new Date(date[2], date[1]-1, date[0]);
 }
 
-
+//save and assign compliances for selectd unit
 function submitcompliance(){
 
     displayLoader();
@@ -599,7 +581,7 @@ function submitcompliance(){
                   tDay = $('#triggerdate'+totalCompliance+'-'+k).val();
                   current_due_dates.push([dDate,tDay]);
                 }else{
-                  displayMessage("Due date Required in Select Compliance Task Wizard");
+                  displayMessage(message.compliance_duedate_required);
                   hideLoader();
                   return false;
                 }
@@ -610,7 +592,7 @@ function submitcompliance(){
                 tDay = $('#triggerdate'+totalCompliance).val();
                 current_due_dates.push([dDate,tDay]);
               }else{
-                displayMessage("Due date Required in Select Compliance Task Wizard");
+                displayMessage(message.compliance_duedate_required);
                 hideLoader();
                 return false;
               }
@@ -619,7 +601,7 @@ function submitcompliance(){
             if(dDate != undefined && dDate !=''){
               var convertDueDate = convert_date(dDate);
               if (convertDueDate < currentDate) {
-                  displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
+                  displayMessage(message.duedatelessthantoday_compliance + compliance_name );
                   hideLoader();
                   return false;
               }
@@ -655,17 +637,17 @@ function submitcompliance(){
               if(trigger_before_days != '') {
                 trigger_before_days = parseInt(trigger_before_days);
                 if(trigger_before_days > 100){
-                  displayMessage("Trigger days should not be exceed 100");
+                  displayMessage(message.triggerbefore_exceed);
                   hideLoader();
                   return false;
                 }
                 if(trigger_before_days == 0){
-                  displayMessage("Trigger days should be 1 to 100");
+                  displayMessage(message.triggerbefore_iszero);
                   hideLoader();
                   return false;
                 }
               }else{
-                displayMessage("Trigger date Required in Select Compliance Task Wizard");
+                displayMessage(message.compliance_triggerdate_required);
                 hideLoader();
                 return false;
               }
@@ -893,10 +875,11 @@ function submitcompliance(){
       }
     }else{
       hideLoader();
-      displayMessage("No compliance selected for assign");
+      displayMessage(message.nocompliance_selected_forassign);
     }
 }
 
+//create wizard
 var navListItems = $('ul.setup-panel li a'),
 allWells = $('.setup-content');
 allWells.hide();
@@ -946,6 +929,7 @@ $('#activate-step-finish').on('click', function(e) {
 })
 
 
+//load available units for selected filter
 function loadunit(){
 
   var assignStatutoryLegalEntityId = null;
@@ -1128,6 +1112,7 @@ function getUserLevel(selectedUserId){
   return getuserLevel;
 }
 
+//load available user in third wizard
 function loadUser(userType){
   var selectedUnit = null;
   var userClass;
@@ -1324,8 +1309,8 @@ $('#approval_unit').change(function() {
     loadUser('approval');
 });
 
+//load master data in first wizard
 function load_firstwizard(){
-
   $('#businessgroup').empty();
   $('#legalentity').empty();
   $('#division').empty();
@@ -1378,6 +1363,7 @@ function load_firstwizard(){
   }
 }
 
+//get assign compliance master data from api
 function getAssignCompliances () {
   function onSuccess(data){
     countriesList = data["countries"];
@@ -1405,6 +1391,7 @@ function getAssignCompliances () {
   );
 }
 
+//initialization and UL filter process
 $(document).ready(function () {
   getAssignCompliances ();
   $("#filter_assignee").keyup( function() {
@@ -1526,8 +1513,6 @@ $('.edittrigger').click(function(){
         lis[i].style.display = 'none';
     }
   });
-
-
 });
 
 $( document ).tooltip({

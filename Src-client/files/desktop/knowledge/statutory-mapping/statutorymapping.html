@@ -74,7 +74,7 @@
       <div class="content-area">
         <h1>Statutory Mapping</h1>
         <input type="hidden" id="edit_sm_id" value="">
-        <div class="add-container">
+        <div class="add-container completed-container">
           <div class="form-container-outer">
             <ul class="nav  nav-pills nav-justified setup-panel">
               <li class="active"><a href="#step-1">
@@ -215,27 +215,27 @@
                 <section id="section-flip-1">
                   <div class="input-row-left">
                     <div class="input-row">
-                      <div class="field-label">Statutory Provision<span class="mandatory">*</span></div>
+                      <div class="field-label">Statutory Provision: <span class="mandatory">*</span></div>
                       <div class="field-input">
                         <textarea class="input-box heightsmall" id="statutory_provision"></textarea>
                         <p id="counter1" style="font-size:0.65em;" maxlength="500"></p>
                       </div>
                     </div>
                     <div class="input-row">
-                      <div class="field-label">Compliance Task<span class="mandatory">*</span></div>
+                      <div class="field-label">Compliance Task: <span class="mandatory">*</span></div>
                       <div class="field-input">
                         <input type="text" maxlength="100" class="input-box" value="" id="compliance_task"/>
                       </div>
                     </div>
                     <div class="input-row">
-                      <div class="field-label">Compliance Description<span class="mandatory">*</span></div>
+                      <div class="field-label">Compliance Description: <span class="mandatory">*</span></div>
                       <div class="field-input">
                         <textarea class="input-box heightsmall" id="compliance_description" ></textarea>
                         <p id="counter" style="font-size:0.65em;" maxlength="500"></p>
                       </div>
                     </div>
                     <div class="input-row">
-                      <div class="field-label">Compliance Frequency<span class="mandatory">*</span></div>
+                      <div class="field-label">Compliance Frequency: <span class="mandatory">*</span></div>
                       <div class="field-input">
                         <select class="input-box tasktype" id="compliance_frequency">
                           <!-- <option value="">Select</option> -->
@@ -250,13 +250,13 @@
                   </div>
                   <div class="input-row-right">
                     <div class="input-row">
-                      <div class="field-label">Compliance Document</div>
+                      <div class="field-label">Compliance Document: </div>
                       <div class="field-input">
                         <input type="text" maxlength="50" class="input-box"  value="" id="compliance_document">
                       </div>
                     </div>
                     <div class="input-row">
-                      <div class="field-label">Format</div>
+                      <div class="field-label">Format: </div>
                       <div class="field-input">
                         <input type="file" class="input-box" id="upload_file">
                       </div>
@@ -267,7 +267,7 @@
                     </div>
 
                     <div class="input-row">
-                      <div class="field-label">Penal Consequences</div>
+                      <div class="field-label">Penal Consequences: </div>
                       <div class="field-input">
                         <textarea class="input-box heightsmall" id="penal_consequences"></textarea>
                         <p id="counter2" style="font-size:0.65em;" maxlength="500"></p>
@@ -281,22 +281,9 @@
                     <legend>One Time</legend>
                     <div class="input-row-left">
                       <div class="input-row">
-                        <div class="field-label">Statutory Date</div>
+                        <div class="field-label">Statutory Date: </div>
                         <div class="field-input">
-                        <select class="input-box sdate" style="width:80px;" id="statutory_month">
-                            <option value="">Select</option>
-                            <option value="1">Jan</option>
-                            <option value="2">Feb</option>
-                            <option value="3">Mar</option>
-                            <option value="4">Apr</option>
-                            <option value="5">May</option>
-                            <option value="6">Jun</option>
-                            <option value="7">Jul</option>
-                            <option value="8">Aug</option>
-                            <option value="9">Sep</option>
-                            <option value="10">Oct</option>
-                            <option value="11">Nov</option>
-                            <option value="12">Dec</option>
+                          <select class="input-box sdate" style="width:80px;" id="statutory_month">
                           </select>
                           <select class="input-box sdate" style="width:60px;" id="statutory_date">
                           </select>
@@ -306,7 +293,7 @@
                     </div>
                     <div class="input-row-right">
                       <div class="input-row">
-                        <div class="field-label">Trigger Before</div>
+                        <div class="field-label">Trigger Before: </div>
                         <div class="field-input">
                           <input type="text" maxlength="3" class="input-box trigger sdate" value="" style="width:50px; float:left;" id="triggerbefore">
                           <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span>
@@ -322,17 +309,15 @@
                     <legend>On Occurrence</legend>
                     <div class="input-row-left">
                       <div class="input-row">
-                        <div class="field-label">To Complete Within<span class="mandatory">*</span></div>
+                        <div class="field-label">To Complete Within: <span class="mandatory">*</span></div>
                         <div class="field-input">
                           <input class="input-box" maxlength="3" value="" style="width:55px; float:left;" id="duration">
                           <select class="input-box dayhour" style="width:100px; margin-left:10px; float:left;" id="duration_type">
-                            <!-- <option value="day">Days</option>
-                            <option value="hour">Hours</option> -->
                           </select>
                         </div>
                       </div>
                       <div class="input-row">
-                        <div class="field-label">Summary</div>
+                        <div class="field-label">Summary: </div>
                         <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;" class="occasional_summary" id="summary"></span> </div>
                       </div>
                     </div>
@@ -345,21 +330,17 @@
                     <legend class="frequency_type"></legend>
                     <div class="input-row-left">
                       <div class="input-row">
-                        <div class="field-label">Repeats Every<span class="mandatory">*</span></div>
+                        <div class="field-label">Repeats Every: <span class="mandatory">*</span></div>
                         <div class="field-input">
-
                            <input type="text" maxlength="3" class="input-box" value="" style="width:50px; float:left;" id="repeats_every">
-
-
                           <select class="input-box" style="width:100px; margin-left:10px; float:left;" id="repeats_type">
-
                           </select>
                           <div class="clearfix"></div>
                           <label style="font-size:0.8em; padding-top:5px;"></label>
                         </div>
                       </div>
                       <div class="input-row repeatby-view">
-                        <div class="field-label">Repeat by<span class="mandatory">*</span></div>
+                        <div class="field-label">Repeat by: <span class="mandatory">*</span></div>
                         <div class="field-input">
                           <label style="padding:3px 0px 5px 0px; vertical-align:middle;" class="repeatlabelday" >
                             <input type="radio" name="repeatby" id="dayofmonth" style="width:20px;float:left;" value="dayofmonth" checked="checked">
@@ -379,24 +360,10 @@
                       </div>
                       <div class="multipleselect" style="display:none">
                         <div class="input-row">
-                          <div class="field-label">Statutory Date 1</div>
+                          <div class="field-label">Statutory Date 1: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
-
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month1">
-                                <option value="">Select</option>
-                                <option value="1">Jan</option>
-                                <option value="2">Feb</option>
-                                <option value="3">Mar</option>
-                                <option value="4">Apr</option>
-                                <option value="5">May</option>
-                                <option value="6">Jun</option>
-                                <option value="7">Jul</option>
-                                <option value="8">Aug</option>
-                                <option value="9">Sep</option>
-                                <option value="10">Oct</option>
-                                <option value="11">Nov</option>
-                                <option value="12">Dec</option>
                               </select>
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_date1">
                               </select>
@@ -408,24 +375,10 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row2" style="display:none">
-                          <div class="field-label">Statutory Date 2</div>
+                          <div class="field-label">Statutory Date 2: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
-
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month2">
-                                <option value="">Select</option>
-                                <option value="1">Jan</option>
-                                <option value="2">Feb</option>
-                                <option value="3">Mar</option>
-                                <option value="4">Apr</option>
-                                <option value="5">May</option>
-                                <option value="6">Jun</option>
-                                <option value="7">Jul</option>
-                                <option value="8">Aug</option>
-                                <option value="9">Sep</option>
-                                <option value="10">Oct</option>
-                                <option value="11">Nov</option>
-                                <option value="12">Dec</option>
                               </select>
                                <select class="input-box sdate" style="width:70px;" id="multiple_statutory_date2">
                               </select>
@@ -437,24 +390,10 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row3" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 3</div>
+                          <div class="field-label">Statutory Date 3: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
-
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month3">
-                                <option value="">Select</option>
-                                <option value="1">Jan</option>
-                                <option value="2">Feb</option>
-                                <option value="3">Mar</option>
-                                <option value="4">Apr</option>
-                                <option value="5">May</option>
-                                <option value="6">Jun</option>
-                                <option value="7">Jul</option>
-                                <option value="8">Aug</option>
-                                <option value="9">Sep</option>
-                                <option value="10">Oct</option>
-                                <option value="11">Nov</option>
-                                <option value="12">Dec</option>
                               </select>
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_date3">
                               </select>
@@ -467,24 +406,10 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row4" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 4</div>
+                          <div class="field-label">Statutory Date 4: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
-
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month4">
-                                <option value="">Select</option>
-                                <option value="1">Jan</option>
-                                <option value="2">Feb</option>
-                                <option value="3">Mar</option>
-                                <option value="4">Apr</option>
-                                <option value="5">May</option>
-                                <option value="6">Jun</option>
-                                <option value="7">Jul</option>
-                                <option value="8">Aug</option>
-                                <option value="9">Sep</option>
-                                <option value="10">Oct</option>
-                                <option value="11">Nov</option>
-                                <option value="12">Dec</option>
                               </select>
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_date4">
                               </select>
@@ -497,26 +422,11 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row5" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 5</div>
+                          <div class="field-label">Statutory Date 5: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
-
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month5">
-                                <option value="">Select</option>
-                                <option value="1">Jan</option>
-                                <option value="2">Feb</option>
-                                <option value="3">Mar</option>
-                                <option value="4">Apr</option>
-                                <option value="5">May</option>
-                                <option value="6">Jun</option>
-                                <option value="7">Jul</option>
-                                <option value="8">Aug</option>
-                                <option value="9">Sep</option>
-                                <option value="10">Oct</option>
-                                <option value="11">Nov</option>
-                                <option value="12">Dec</option>
                               </select>
-
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_date5">
                               </select>
                             </span>
@@ -528,24 +438,10 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row6" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 6</div>
+                          <div class="field-label">Statutory Date 6: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
-
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month6">
-                                <option value="">Select</option>
-                                <option value="1">Jan</option>
-                                <option value="2">Feb</option>
-                                <option value="3">Mar</option>
-                                <option value="4">Apr</option>
-                                <option value="5">May</option>
-                                <option value="6">Jun</option>
-                                <option value="7">Jul</option>
-                                <option value="8">Aug</option>
-                                <option value="9">Sep</option>
-                                <option value="10">Oct</option>
-                                <option value="11">Nov</option>
-                                <option value="12">Dec</option>
                               </select>
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_date6">
                               </select>
@@ -558,24 +454,10 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row7" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 7</div>
+                          <div class="field-label">Statutory Date 7: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
-
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month7">
-                                <option value="">Select</option>
-                                <option value="1">Jan</option>
-                                <option value="2">Feb</option>
-                                <option value="3">Mar</option>
-                                <option value="4">Apr</option>
-                                <option value="5">May</option>
-                                <option value="6">Jun</option>
-                                <option value="7">Jul</option>
-                                <option value="8">Aug</option>
-                                <option value="9">Sep</option>
-                                <option value="10">Oct</option>
-                                <option value="11">Nov</option>
-                                <option value="12">Dec</option>
                               </select>
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_date7">
                               </select>
@@ -588,24 +470,10 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row8" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 8</div>
+                          <div class="field-label">Statutory Date 8: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
-
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month8">
-                                <option value="">Select</option>
-                                <option value="1">Jan</option>
-                                <option value="2">Feb</option>
-                                <option value="3">Mar</option>
-                                <option value="4">Apr</option>
-                                <option value="5">May</option>
-                                <option value="6">Jun</option>
-                                <option value="7">Jul</option>
-                                <option value="8">Aug</option>
-                                <option value="9">Sep</option>
-                                <option value="10">Oct</option>
-                                <option value="11">Nov</option>
-                                <option value="12">Dec</option>
                               </select>
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_date8">
                               </select>
@@ -618,24 +486,10 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row9" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 9</div>
+                          <div class="field-label">Statutory Date 9: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
-
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month9">
-                                <option value="">Select</option>
-                                <option value="1">Jan</option>
-                                <option value="2">Feb</option>
-                                <option value="3">Mar</option>
-                                <option value="4">Apr</option>
-                                <option value="5">May</option>
-                                <option value="6">Jun</option>
-                                <option value="7">Jul</option>
-                                <option value="8">Aug</option>
-                                <option value="9">Sep</option>
-                                <option value="10">Oct</option>
-                                <option value="11">Nov</option>
-                                <option value="12">Dec</option>
                               </select>
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_date9">
                               </select>
@@ -648,24 +502,10 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row10" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 10</div>
+                          <div class="field-label">Statutory Date 10: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
-
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month10">
-                                <option value="">Select</option>
-                                <option value="1">Jan</option>
-                                <option value="2">Feb</option>
-                                <option value="3">Mar</option>
-                                <option value="4">Apr</option>
-                                <option value="5">May</option>
-                                <option value="6">Jun</option>
-                                <option value="7">Jul</option>
-                                <option value="8">Aug</option>
-                                <option value="9">Sep</option>
-                                <option value="10">Oct</option>
-                                <option value="11">Nov</option>
-                                <option value="12">Dec</option>
                               </select>
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_date10">
                               </select>
@@ -678,24 +518,10 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row11" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 11</div>
+                          <div class="field-label">Statutory Date 11: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
-
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month11">
-                                <option value="">Select</option>
-                                <option value="1">Jan</option>
-                                <option value="2">Feb</option>
-                                <option value="3">Mar</option>
-                                <option value="4">Apr</option>
-                                <option value="5">May</option>
-                                <option value="6">Jun</option>
-                                <option value="7">Jul</option>
-                                <option value="8">Aug</option>
-                                <option value="9">Sep</option>
-                                <option value="10">Oct</option>
-                                <option value="11">Nov</option>
-                                <option value="12">Dec</option>
                               </select>
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_date11">
                               </select>
@@ -708,24 +534,10 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row12" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 12</div>
+                          <div class="field-label">Statutory Date 12: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
-
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month12">
-                                <option value="">Select</option>
-                                <option value="1">Jan</option>
-                                <option value="2">Feb</option>
-                                <option value="3">Mar</option>
-                                <option value="4">Apr</option>
-                                <option value="5">May</option>
-                                <option value="6">Jun</option>
-                                <option value="7">Jul</option>
-                                <option value="8">Aug</option>
-                                <option value="9">Sep</option>
-                                <option value="10">Oct</option>
-                                <option value="11">Nov</option>
-                                <option value="12">Dec</option>
                               </select>
                                <select class="input-box sdate" style="width:70px;" id="multiple_statutory_date12">
                               </select>
@@ -736,9 +548,8 @@
                           </div>
                           <br/>
                         </div>
-
                         <div>
-                          <div class="field-label">Summary</div>
+                          <div class="field-label">Summary: </div>
                           <div class="field-input">
                             <span style="font-size:0.8em; float:left; padding-top:5px;" class="summary_repeat"></span>
                           </div>
@@ -746,24 +557,10 @@
                       </div>
                       <div class="multipleselectnone">
                         <div class="input-row">
-                          <div class="field-label" id="sdate">Statutory Date </div>
+                          <div class="field-label" id="sdate">Statutory Date: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
-
-                              <select class="input-box sdate" style="width:80px;" id="single_statutory_month">
-                                <option value="">Select</option>
-                                <option value="1">Jan</option>
-                                <option value="2">Feb</option>
-                                <option value="3">Mar</option>
-                                <option value="4">Apr</option>
-                                <option value="5">May</option>
-                                <option value="6">Jun</option>
-                                <option value="7">Jul</option>
-                                <option value="8">Aug</option>
-                                <option value="9">Sep</option>
-                                <option value="10">Oct</option>
-                                <option value="11">Nov</option>
-                                <option value="12">Dec</option>
+                              <select class="input-box sdate" style="width:80px;" id="single_statutory_month">   
                               </select>
                               <select class="input-box sdate" style="width:60px;" id="single_statutory_date" >
                               </select>
@@ -771,13 +568,13 @@
                           </div>
                         </div>
                         <div class="input-row">
-                          <div class="field-label">Trigger Before</div>
+                          <div class="field-label">Trigger Before: </div>
                           <div class="field-input">
                             <input type="text" maxlength="3" class="input-box trigger sdate" value="" style="width:50px; float:left;" id="single_triggerbefore">
                             <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span> </div>
                           </div>
                           <div class="input-row">
-                            <div class="field-label">Summary</div>
+                            <div class="field-label">Summary: </div>
                             <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;" class="summary_repeat"> </span> </div>
                           </div>
                         </div>
@@ -818,8 +615,7 @@
                   <button id="backward-step-2" class="btn-right">Previous</button>
                 </td>
               </tr>
-               </table>
-
+              </table>
 
             </div>
             <div id="compliance-templates">

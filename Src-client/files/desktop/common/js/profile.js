@@ -1,11 +1,3 @@
-function clearMessage() {
-    $(".error-message").hide();
-    $(".error-message").text("");
-}
-function displayMessage(message) {
-    $(".error-message").text(message);
-    $(".error-message").show();
-}
 function initialize(){
 	var userprofile = mirror.getUserProfile();
 	clearMessage();
@@ -47,22 +39,14 @@ $("#submit").click(function(){
 	var areacode = $(".areacode").val().trim();
 	var mobile = $(".mobile").val().trim();
 	var address = $(".address").val().trim();
-	// if(countrycode == ''){
-	// 	displayMessage("Enter country code");
-	// }
-	// else if(mobile == ''){
-	// 	displayMessage("Enter Contact Number");
-	// }
-	// else if(isNaN(mobile)){
-	// 	displayMessage("Contact Number Invalid");
-	// }
+	
 	if(address == ''){
-		displayMessage("Enter address")
+		displayMessage(message.address_required);
 	}
 	else{
 		function onSuccess(data){
 			initialize();
-			displayMessage("Updated Successfully");
+			displayMessage(message.updated_success);
 		}
 		function onFailure(error){
 			console.log(error);

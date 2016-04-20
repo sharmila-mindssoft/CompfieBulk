@@ -7,25 +7,15 @@ var statutoryNaturesList;
 var statutoriesList;
 var complianceFrequencyList;
 var temp_act = null;
-
 var finalList;
 var pageSize = 500;
 var startCount;
 var endCount;
-
 var count=1;
 var compliance_count=0;
 var lastActName = '';
 var lastOccuranceid = 0;
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -34,6 +24,7 @@ function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
 
+//get statutory mapping filter details from api
 function getStatutoryMappings(){
   function onSuccess(data){
     industriesList = data["industries"];
@@ -67,8 +58,8 @@ function getStatutoryMappings(){
   );
 }
 
+//display statutory mapping details accoring to count
 function loadCountwiseResult(filterList){
-
   if(startCount <= 0){
     $(".grid-table-rpt").show();
     var country = $("#countryval").val();
@@ -91,7 +82,6 @@ function loadCountwiseResult(filterList){
     var statutory_provision = filterList[entity]["statutory_provision"];
     var compliance_name = filterList[entity]["compliance_task"];
     var download_url = filterList[entity]["url"];
-    console.log(frequency_id)
 
     if(actname != lastActName){
       var tableRow=$('#act-templates .table-act-list .table-row-act-list');
@@ -169,22 +159,11 @@ function loadCountwiseResult(filterList){
       for(z = 0; z < statutory_date.length; z++){
       var sDay = '';
       if(statutory_date[z]["statutory_date"] != null) sDay = statutory_date[z]["statutory_date"];
-
       var sMonth = '';
       if(statutory_date[z]["statutory_month"] != null) sMonth = statutory_date[z]["statutory_month"];
 
-      if(sMonth == 1) sMonth = "January"
-      else if(sMonth == 2) sMonth = "February"
-      else if(sMonth == 3) sMonth = "March"
-      else if(sMonth == 4) sMonth = "April"
-      else if(sMonth == 5) sMonth = "May"
-      else if(sMonth == 6) sMonth = "June"
-      else if(sMonth == 7) sMonth = "July"
-      else if(sMonth == 8) sMonth = "Auguest"
-      else if(sMonth == 9) sMonth = "September"
-      else if(sMonth == 10) sMonth = "October"
-      else if(sMonth == 11) sMonth = "November"
-      else if(sMonth == 12) sMonth = "December"
+      if(sMonth != '') sMonth = getMonth_IntegettoString(sMonth);
+      
       statutorydate +=  sMonth +' '+ sDay +' ';
       if(statutorydate.trim() != '') statutorydate += ', ';
       }
@@ -195,7 +174,7 @@ function loadCountwiseResult(filterList){
           statutorydate = statutorydate;
         }else{
           statutorydate = sdateDesc + ' ( '+statutorydate+' )';
-        } 
+        }
       }else{
         statutorydate = sdateDesc;
       }
@@ -219,7 +198,7 @@ function loadCountwiseResult(filterList){
   }else{
     $('.compliance_count').text('');
   }
-  
+
   if(endCount >= finalList.length){
     $(document).ready(function($) {
     $('#accordion').find('.accordion-toggle').click(function(){
@@ -245,6 +224,7 @@ function get_sub_array(object, start, end){
     return object.slice(start, end);
 }
 
+//get part of data from full list according to pagination  
 function showloadrecord(){
   startCount = endCount;
   endCount = startCount + pageSize;
@@ -257,18 +237,19 @@ function showloadrecord(){
   loadCountwiseResult(sub_keys_list);
 }
 
+//pagination process
 $(function() {
   $('#pagination').click(function(){
     //displayLoader();
     $(".loading-indicator-spin").show();
     if($('.loading-indicator-spin').css('display') != 'none')
     {
-        setTimeout(function(){  
+        setTimeout(function(){
             showloadrecord();
         }, 500);
-        
+
     }
-    setTimeout(function(){  
+    setTimeout(function(){
         $(".loading-indicator-spin").hide();
     }, 500);
     //hideLoader();
@@ -302,7 +283,7 @@ function loadresult() {
   loadCountwiseResult(sub_keys_list);
 }
 
-
+// get statutory mapping report data from api
 $("#submit").click(function(){
   var country = $("#country").val();
   var domain = $("#domain").val();
@@ -318,20 +299,20 @@ $("#submit").click(function(){
   if($("#statutory").val() != '') act = $("#statutory").val();
 
   if(country.length == 0){
-    displayMessage("Country Required");
+    displayMessage(message.country_required);
   }
   else if(domain.length == 0){
-    displayMessage("Domain Required");
+    displayMessage(message.domain_required);
   }
   else{
     displayLoader();
       var filterdata={};
-      filterdata["country_id"]=parseInt(country);
-      filterdata["domain_id"]=parseInt(domain);
-      filterdata["industry_id"]=parseInt(industry);
-      filterdata["statutory_nature_id"]=parseInt(statutorynature);
-      filterdata["geography_id"]=parseInt(geography);
-      filterdata["level_1_statutory_id"]=parseInt(act);
+      filterdata["c_id"]=parseInt(country);
+      filterdata["d_id"]=parseInt(domain);
+      filterdata["i_id"]=parseInt(industry);
+      filterdata["s_n_id"]=parseInt(statutorynature);
+      filterdata["g_id"]=parseInt(geography);
+      filterdata["level_1_s_id"]=parseInt(act);
 
       function onSuccess(data){
         statutoryMappingDataList = data["statutory_mappings"];
@@ -543,6 +524,7 @@ function activate_statutory (element,checkval,checkname) {
 }
 //Autocomplete Script ends
 
+//initialization
 $(function() {
   $(".grid-table-rpt").hide();
   getStatutoryMappings();

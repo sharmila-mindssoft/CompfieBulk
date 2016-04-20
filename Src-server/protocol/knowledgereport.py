@@ -1,4 +1,4 @@
-from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_knowledgereport_GeographyMapping,
     parse_structure_Text,
@@ -11,17 +11,12 @@ from protocol.parse_structure import (
     parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_core_Geography,
     parse_structure_Bool, parse_structure_CustomTextType_50,
     parse_structure_OptionalType_SignedIntegerType_8,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping,
     parse_structure_VectorType_RecordType_core_StatutoryNature,
     parse_structure_VectorType_RecordType_core_ComplianceFrequency,
     parse_structure_VectorType_Text,
-    parse_structure_VectorType_RecordType_core_Compliance,
-    parse_structure_VectorType_RecordType_core_Compliance_Download,
     parse_structure_SignedIntegerType_8,
     parse_structure_CustomTextType_100,
-    parse_structure_VectorType_RecordType_knowledgereport_StatutoryMapping,
     parse_structure_OptionalType_UnsignedIntegerType_32,
-    parse_structure_CustomTextType_500,
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
     parse_structure_OptionalType_Text
@@ -38,19 +33,15 @@ from protocol.to_structure import (
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
     to_structure_Bool, to_structure_CustomTextType_50,
     to_structure_OptionalType_SignedIntegerType_8,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping,
     to_structure_VectorType_RecordType_core_StatutoryNature,
     to_structure_VectorType_RecordType_core_ComplianceFrequency,
     to_structure_VectorType_Text,
-    to_structure_VectorType_RecordType_core_Compliance,
-    to_structure_VectorType_RecordType_core_Compliance_Download,
     to_structure_CustomTextType_100,
-    to_structure_VectorType_RecordType_knowledgereport_StatutoryMapping,
     to_structure_OptionalType_UnsignedIntegerType_32,
-    to_structure_CustomTextType_500,
     to_structure_OptionalType_CustomTextType_500,
     to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
-    to_structure_OptionalType_Text
+    to_structure_OptionalType_Text,
+    to_structure_VectorType_RecordType_knowledgereport_StatutoryMapping
 )
 
 #
@@ -103,29 +94,29 @@ class GetStatutoryMappingReportData(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "industry_id", "statutory_nature_id", "geography_id", "level_1_statutory_id"])
-        country_id = data.get("country_id")
+        data = parse_dictionary(data, ["c_id", "d_id", "i_id", "s_n_id", "g_id", "level_1_s_id"])
+        country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
-        domain_id = data.get("domain_id")
+        domain_id = data.get("d_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
-        industry_id = data.get("industry_id")
+        industry_id = data.get("i_id")
         industry_id = parse_structure_OptionalType_SignedIntegerType_8(industry_id)
-        statutory_nature_id = data.get("statutory_nature_id")
+        statutory_nature_id = data.get("s_n_id")
         statutory_nature_id = parse_structure_OptionalType_SignedIntegerType_8(statutory_nature_id)
-        geography_id = data.get("geography_id")
+        geography_id = data.get("g_id")
         geography_id = parse_structure_OptionalType_SignedIntegerType_8(geography_id)
-        level_1_statutory_id = data.get("level_1_statutory_id")
+        level_1_statutory_id = data.get("level_1_s_id")
         level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
         return GetStatutoryMappingReportData(country_id, domain_id, industry_id, statutory_nature_id, geography_id, level_1_statutory_id)
 
     def to_inner_structure(self):
         return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "industry_id": to_structure_OptionalType_SignedIntegerType_8(self.industry_id),
-            "statutory_nature_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_nature_id),
-            "geography_id": to_structure_OptionalType_SignedIntegerType_8(self.geography_id),
-            "level_1_statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_id),
+            "c_id": to_structure_SignedIntegerType_8(self.country_id),
+            "d_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "i_id": to_structure_OptionalType_SignedIntegerType_8(self.industry_id),
+            "s_n_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_nature_id),
+            "g_id": to_structure_OptionalType_SignedIntegerType_8(self.geography_id),
+            "level_1_s_id": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_id),
         }
 
 class GetGeographyReport(Request):

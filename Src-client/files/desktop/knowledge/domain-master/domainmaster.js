@@ -1,12 +1,5 @@
 var domainsList;
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
+
 $(".btn-domain-add").click(function(){
   $("#domain-view").hide();
   $("#domain-add").show();
@@ -19,6 +12,7 @@ $(".btn-domain-cancel").click(function(){
   $("#domain-view").show();
 });
 
+//get domains list from api
 function getDomains () {
   function onSuccess(data){
     domainsList = data["domains"];
@@ -39,6 +33,7 @@ function getDomains () {
   );
 }
 
+//display domains list in view page
 function loadDomainList (domainsList) {
   var j = 1;
   var imgName = null;
@@ -73,15 +68,17 @@ function loadDomainList (domainsList) {
     }
 }
 
+//validation
 function validate(){
   if($("#domainname").val().trim().length==0){
-    displayMessage('Domain Name Required');
+    displayMessage(message.domainname_required);
   }else{
     displayMessage('');
     return true
   }
 }
 
+//save or update domain master
 $("#submit").click(function(){
   var domainId = $("#domainid").val();
   var domainName = $("#domainname").val().trim();
@@ -96,7 +93,7 @@ if(validate()){
     }    function onFailure(error){
 
         if(error == "DomainNameAlreadyExists"){
-            displayMessage("Domain Name Already Exists");
+            displayMessage(message.domainname_exists);
         }
     }
     mirror.saveDomain(domainName,
@@ -118,11 +115,11 @@ if(validate()){
       }
     function onFailure(error) {
         if(error == "InvalidDomainId"){
-            displayMessage("Invalid Domain Id");
+            displayMessage(message.invalid_domainid);
         }
 
         if(error == 'DomainNameAlreadyExists'){
-            displayMessage("Domain Name Already Exists");
+            displayMessage(message.domainname_exists);
         }
     }
     mirror.updateDomain(parseInt(domainId), domainName,
@@ -138,6 +135,7 @@ if(validate()){
 }
 });
 
+//save or update domain master when press enter key
 $('#domainname').keypress(function (e) {
   if (e.which == 13) {
     if(validate()){
@@ -146,6 +144,7 @@ $('#domainname').keypress(function (e) {
   }
 });
 
+//edit domain master
 function displayEdit (domainId,domainName) {
   $(".error-message").text("");
   $("#domain-view").hide();
@@ -154,8 +153,9 @@ function displayEdit (domainId,domainName) {
   $("#domainid").val(domainId);
 }
 
-function changeStatus (domainId,isActive) {
 
+//activate/deactivate domain master
+function changeStatus (domainId,isActive) {
   var msgstatus='deactivate';
   if(isActive){
     msgstatus='activate';
@@ -182,6 +182,7 @@ function changeStatus (domainId,isActive) {
     }
 }
 
+//filter process
 $("#search-domain-name").keyup(function() {
   var filterkey = this.value.toLowerCase();
   var filteredList=[];
@@ -192,6 +193,7 @@ $("#search-domain-name").keyup(function() {
   loadDomainList(filteredList);
 });
 
+//initialization
 $(document).ready(function () {
   getDomains ();
   $("#domainname").focus();

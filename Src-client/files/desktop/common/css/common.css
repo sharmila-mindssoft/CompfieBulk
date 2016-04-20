@@ -7,10 +7,10 @@ html, body {
 	font-size: 100%;
 	height: 100%;
 }
-img, object {
+/*img, object {
 	max-width: 100%;
 	height: auto;
-}
+}*/
 #wrapper {
 	height: auto;
 	margin: 0 auto -60px;
@@ -102,7 +102,7 @@ img, object {
 }
 .loading-indicator-spin span {
 	width: 100%;
-	position: fixed;
+	position: absolute;
 	top: 40%;
 	left: 0;
 	text-align: center;
@@ -122,12 +122,4 @@ img, object {
 .required-mark {
 	color: #ff0000;
 	font-weight: 100;
-}
-.custom-file-input{
-	color: transparent;
-}
-.sidebardocview{
-	display: inline-block;
-    overflow: hidden;
-    width: 162px;
 }
