@@ -1,15 +1,10 @@
 #!/usr/bin/python
 
-import MySQLdb as mysql
-import datetime
-import pytz
 import os
+import datetime
 import json
 import traceback
-
-from smtplib import SMTP_SSL as SMTP
-from email.MIMEMultipart import MIMEMultipart
-from email.MIMEText import MIMEText
+import MySQLdb as mysql
 from expiry_report_generator import ExpiryReportGenerator as exp
 
 from server.constants import (
@@ -17,6 +12,12 @@ from server.constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
 from server.countrytimestamp import countries
+from server.emailcontroller import EmailHandler as email
+from server.common import (
+    convert_to_dict, time_convertion, return_date,
+    addMonth, addDays, addYears,
+    create_new_date, convert_string_to_date
+)
 
 mysqlHost = KNOWLEDGE_DB_HOST
 mysqlUser = KNOWLEDGE_DB_USERNAME
@@ -26,85 +27,6 @@ mysqlPort = KNOWLEDGE_DB_PORT
 
 expired_download_path = "/expired/download/"
 expired_folder_path = "./expired/"
-
-class EmailNotification(object):
-    def __init__(self):
-        self.sender = "compfie.test@aparajitha.com"
-        self.password = "Ctt@123"
-
-    def send_email(self, receiver, subject, message, cc=None):
-        server = SMTP("mail.aparajitha.com", 465)
-        server.set_debuglevel(False)
-        server.login(self.sender, self.password)
-
-        msg = MIMEMultipart()
-        msg["From"] = self.sender
-        msg["To"] = receiver
-        msg["subject"] = subject
-        if cc is not None :
-            if type(cc) is list :
-                msg["Cc"] = ",".join(cc)
-        msg.attach(MIMEText(message, "html"))
-        response = server.sendmail(
-            self.sender, receiver, msg.as_string()
-        )
-        server.close()
-
-    def notify_compliance_start(
-        self, assignee, compliance_name, unit_name,
-        due_date, receiver, cc_person=None
-    ):
-        subject = "Compliance Task Started"
-        message = "Dear %s, \
-            Compliance task %s has been started for unit %s. \
-            Due date of this compliance is %s" % (
-                assignee, compliance_name,
-                unit_name, due_date
-            )
-        try :
-            self.send_email(receiver, subject, message, cc_person)
-            pass
-        except Exception, e :
-            print e
-            print "Email Failed for compliance start ", message
-
-    def notify_contract_expiration(
-        self, receiver, content
-    ):
-        subject = "Contract expiration reminder"
-
-        message = '''Dear Client, <br> <p>%s </p> \
-                    <p> Thanks & Regards, <br>\
-                    Compfie Support Team''' % content
-        cc_person = None
-        try :
-            self.send_email(receiver, subject, message, cc_person)
-            pass
-        except Exception, e :
-            print e
-            print "Email Failed for compliance start ", message
-
-def convert_to_dict(data_list, columns) :
-    assert type(data_list) in (list, tuple)
-    if len(data_list) > 0:
-        if type(data_list[0]) is tuple :
-            result_list = []
-            if len(data_list[0]) == len(columns) :
-                for data in data_list:
-                    result = {}
-                    for i, d in enumerate(data):
-                        result[columns[i]] = d
-                    result_list.append(result)
-            return result_list
-        else :
-            result = {}
-            if len(data_list) == len(columns) :
-                for i, d in enumerate(data_list):
-                    result[columns[i]] = d
-            return result
-    else:
-        return []
-
 
 def db_connection(host, user, password, db, port):
     connection = mysql.connect(
@@ -147,7 +69,6 @@ def get_client_db_list():
     else :
         return None
 
-
 def create_client_db_connection(data):
     if data is None :
         return None
@@ -169,7 +90,6 @@ def create_client_db_connection(data):
 
     return client_connection
 
-
 def get_client_database():
     client_list = get_client_db_list()
     client_db = create_client_db_connection(client_list)
@@ -188,19 +108,6 @@ def get_contract_expiring_clients():
     for row in rows:
         client_ids.append(row[0])
     return client_ids
-
-
-def get_current_date():
-    date = datetime.datetime.today()
-    return date
-
-def get_current_month():
-    month = get_current_date().month
-    return month
-
-def get_country_wise_timestamp():
-    pass
-    #  yyyy-mm-dd
 
 def get_compliance_to_start(db, client_id, current_date, country_id):
     print "fetching task details to start compliance for client id - %s, %s" % (client_id, current_date)
@@ -260,37 +167,6 @@ def get_email_id_for_users(db, user_id):
     else :
         return None
 
-def addMonth(value, due_date):
-    new_date = (due_date + datetime.timedelta(days=value*366 / 12))
-    return new_date
-
-def addDays(value, due_date):
-    new_date = (due_date + datetime.timedelta(days=value))
-    return new_date
-
-def addYears(value, due_date):
-    new_date = (due_date + datetime.timedelta(days=value * 366))
-    return new_date
-
-def convert_string_to_date(due_date):
-    due_date = datetime.datetime.strptime(due_date, "%Y-%m-%d")
-    return due_date
-
-def create_new_date(date, days, month):
-    current_date = date
-    try :
-        date = date.replace(day=int(days), month=int(month))
-    except ValueError :
-        if date.month == 12 :
-            days = 31
-        else :
-            days = (date.replace(month=date.month+1, day=1) - datetime.timedelta(days=1)).day
-        date = date.replace(day=days)
-
-    if date < current_date :
-        date = date.replace(year=date.year+1)
-    return date
-
 def calculate_next_due_date(
     frequency, statutory_dates, repeat_type,
     repeat_every, old_due_date
@@ -300,8 +176,6 @@ def calculate_next_due_date(
     #  repeat_type 1 : Days, 2 : Months, 3 : years
     repeat_every = int(repeat_every)
     repeat_type = int(repeat_type)
-    # current_month = get_current_month()
-    # current_date = convert_string_to_date(get_current_date())
     statutory_dates = json.loads(statutory_dates)
     trigger_before_days = None
     print
@@ -451,7 +325,6 @@ def start_new_task(db, client_id, current_date, country_id):
     print "begin process to start new task  - %s" % (current_date)
     data = get_compliance_to_start(db, client_id, current_date, country_id)
     count = 0
-    email = EmailNotification()
     for d in data :
         if d["division_id"] == 0 :
             d["division_id"] = "NULL"
@@ -549,7 +422,6 @@ def notify_before_contract_period(db, client_id):
     rows = cur.fetchall()
     admin_mail_id = rows[0][0]
     cur.close()
-    email = EmailNotification()
     email.notify_contract_expiration(
         admin_mail_id, notification_text
     )
@@ -589,29 +461,6 @@ def run_daily_process(country_id, current_date):
     print "end daily_process"
     print '--' * 20
 
-
-def time_convertion(time_zone):
-    current_time = datetime.datetime.utcnow()
-    print "current_time"
-    print current_time
-    CT_TIMEZONE = pytz.timezone(str(time_zone))
-    print CT_TIMEZONE
-    dt = CT_TIMEZONE.localize(current_time)
-    tzoffset = dt.utcoffset()
-    dt = dt.replace(tzinfo=None)
-    dt = dt+tzoffset
-    return dt
-
-def current_date_time_by_country_id(time_zone, country_id):
-    print time_zone
-    current_country_time = time_convertion(time_zone)
-    print "current_country_time"
-    print current_country_time
-    print type(current_country_time)
-    print current_country_time.date()
-    return current_country_time.date()
-
-
 def run_daily_process_country_wise():
     country_time_zones = sorted(countries)
     country_list = get_countries()
@@ -627,7 +476,7 @@ def run_daily_process_country_wise():
                 print info
                 break
         if info :
-            current_date = current_date_time_by_country_id(info.get("timezones")[0], c["country_id"])
+            current_date = return_date(time_convertion(info.get("timezones")[0]))
             print "country -- ", c["country_name"]
             print
             run_daily_process(c["country_id"], current_date)

@@ -1749,7 +1749,7 @@ class KnowledgeDatabase(Database):
             parent_ids, parent_names, int(user_id), str(created_on)
         )
         if (self.save_data(table_name, field, data)) :
-            action = "New Geography %s added" % (geography_id)
+            action = "New Geography %s added" % (geography_name)
             self.save_activity(user_id, 6, action)
             is_saved = True
         return is_saved
@@ -1772,10 +1772,6 @@ class KnowledgeDatabase(Database):
         action = "Geography - %s updated" % name
         self.save_activity(updated_by, 6, action)
 
-
-        # if oldparent_ids != parent_ids :
-            # oldPId = str(oldparent_ids) + str(geography_id)
-            # newPId = str(parent_ids) + str(geography_id)
         qry = "SELECT geography_id, geography_name, parent_ids, level_id \
           from tbl_geographies \
             WHERE parent_ids like '%s'" % str("%" + str(geography_id) + ",%")
@@ -1788,15 +1784,6 @@ class KnowledgeDatabase(Database):
                 row["parent_ids"] = geography_id
             else :
                 row["parent_ids"] = row["parent_ids"][:-1]
-            # newParentId = str(row[2]).replace(oldPId, newPId)
-            # q = "UPDATE tbl_geographies \
-            #   set parent_names = (select group_concat(a.geography_name, '>>') \
-            #     from tbl_geographies a where a.geography_id in (%s)), \
-            #   updated_by=%s \
-            #   where geography_id=%s" % (
-            #     row[2], updated_by, row[0]
-            # )
-            #  updating child parent-names
             q = "UPDATE tbl_geographies as A inner join ( \
                 select p.geography_id, (select group_concat(p1.geography_name SEPARATOR '>>') \
                     from tbl_geographies as p1 where geography_id in (%s)) as names \
@@ -1811,8 +1798,8 @@ class KnowledgeDatabase(Database):
                     row["parent_ids"], row["geography_id"], row["geography_id"], row["level_id"]
                 )
             self.execute(q)
-        action = "Geography name  %s updated in child parent_names" % (name)
-        self.save_activity(updated_by, 6, action)
+        # action = "Geography name  %s updated in child parent_names" % (name)
+        # self.save_activity(updated_by, 6, action)
         # self.getAllGeographies()
         return True
 

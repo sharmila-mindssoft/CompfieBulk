@@ -5,7 +5,7 @@ __all__ = [
 ]
 
 ########################################################
-# To Redirect the requests to the corresponding 
+# To Redirect the requests to the corresponding
 # functions
 ########################################################
 def process_client_transaction_requests(request, db) :
@@ -207,7 +207,7 @@ def process_save_past_records(
                 compliance.completed_by, client_id
             ):
             continue
-        else:   
+        else:
             compliance_name = db.get_compliance_name_by_id(compliance.compliance_id)
             error = "Cannot Submit compliance task {}, Because a compliance has already submited \
                 for the entered due date {}, or previous compliance has validity greater than the \
@@ -236,7 +236,7 @@ def process_get_compliance_approval_list(db, request, session_user, client_id):
 
 
 ########################################################
-# To handle approve, concur, or reject request of a 
+# To handle approve, concur, or reject request of a
 # compliance
 ########################################################
 def process_approve_compliance(db, request, session_user, client_id):
