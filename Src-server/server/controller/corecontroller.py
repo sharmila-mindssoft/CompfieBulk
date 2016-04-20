@@ -39,6 +39,8 @@ def process_user_menus(form_list):
 
 def reorder_menu(menus):
     new_menu = collections.OrderedDict()
+    if "Home" in menus :
+        new_menu["Home"] = menus["Home"]
     if "Master" in menus:
         new_menu["Master"] = menus["Master"]
     if "Transaction" in menus:

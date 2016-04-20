@@ -7,7 +7,7 @@ from server.constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
 from server.countrytimestamp import countries
-from server.emailcontroller import EmailHandler as email
+from server.emailcontroller import EmailHandler
 from server.common import (
     convert_to_dict, time_convertion,
     return_hour_minute
@@ -20,6 +20,8 @@ mysqlDatabase = KNOWLEDGE_DATABASE_NAME
 mysqlPort = KNOWLEDGE_DB_PORT
 
 NOTIFY_TIME = "00:00"  # 12 AM
+
+email = EmailHandler()
 
 def db_connection(host, user, password, db, port):
     connection = mysql.connect(

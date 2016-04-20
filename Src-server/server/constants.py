@@ -34,6 +34,11 @@ CLIENT_TEMPLATE_PATHS = [
     # ),
     (
         "/home",
+        "files/desktop/client/home/home.html",
+        None, {}
+    ),
+    (
+        "/dashboard",
         "files/desktop/client/client-home/client-home.html",
         None, {}
     ),
@@ -377,5 +382,6 @@ KNOWLEDGE_DB_USERNAME = "root"
 KNOWLEDGE_DB_PASSWORD = "123456"
 KNOWLEDGE_DATABASE_NAME = "compfie_knowledge"
 
-CLIENT_URL = "http://localhost:8082/"
-KNOWLEDGE_URL = "http://localhost:8080/knowledge"
+CLIENT_URL = "http://52.11.242.90:8082/"
+KNOWLEDGE_URL = "http://52.11.242.90:8080/knowledge"
+
