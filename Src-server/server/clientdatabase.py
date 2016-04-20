@@ -7317,9 +7317,9 @@ class ClientDatabase(Database):
                                 not_complied_count=not_complied
                             )
                         )
-                        year_wise_compliance_count = self.get_year_wise_assignee_compliances(
-                            country_id, domain_id, client_id, compliance_ids
-                        )
+                    year_wise_compliance_count = self.get_year_wise_assignee_compliances(
+                        country_id, domain_id, client_id, compliance_ids
+                    )
                     assignee_wise_compliances_count.append(
                         dashboard.AssigneeWiseDetails(
                             user_id=int(user_id),
