@@ -1050,6 +1050,7 @@ body .markdown-body
 <li><a href="#get-unit-details">Get Unit Details</a></li>
 <li><a href="#get-compliance-applicability-details">Get Compliance Applicability Details</a></li>
 <li><a href="#check-disk-space">Check Disk Space</a></li>
+<li><a href="#compliance-details">Compliance Details</a></li>
 <li><a href="#save-compliance-details">Save compliance Details</a></li>
 <li><a href="#approve-concur-compliance">Approve/ Concur Compliance</a></li>
 </ul>
@@ -1528,6 +1529,62 @@ On Success
 
 Note : 
     * To check whether space available or not before uploading documents
+</code></pre>
+<h2 id="compliance-details"><a name="user-content-compliance-details" href="#compliance-details" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Compliance Details</h2>
+<pre><code>    [ 
+        "6-4582e0411de54bd58fd24c408bf58968", 
+        { 
+            "session_token": "6-4582e0411de54bd58fd24c408bf58968", 
+            "request": 
+            [ 
+                "GetComplianceDetail", {} 
+            ] 
+        } 
+    ]
+
+    On Success
+
+    [
+        "GetComplianceDetailSuccess",
+        {
+            "compliance_detail":{
+                "current_compliances":[
+                    {
+                        "due_date":"11-Apr-2016",
+                        "compliance_frequency":"On Occurrence",
+                        "format_file_name":null,
+                        "ageing":"Overdue by 43.11 hours",
+                        "compliance_name":"On Cuurance Task",
+                        "compliance_status":"Not Complied",
+                        "validity_date":null,
+                        "domain_name":"Labour Law",
+                        "next_due_date":null,
+                        "unit_name":"HO00002 - Hon Unit Two",
+                        "address":"address",
+                        "remarks":null,
+                        "compliance_history_id":29,
+                        "compliance_description":"fsdfdsf",
+                        "start_date":"11-Apr-2016",
+                        "compliance_id":9
+                    },
+                ],
+                "current_date":"21-Apr-2016 15:11",
+                "upcoming_compliances":[
+                    {
+                        "due_date":"09-Jun-2016",
+                        "unit_name":"HO00002 - Hon Unit Two",
+                        "compliance_description":"FDSFDS",
+                        "compliance_name":"Monthly Task",
+                        "address":"address",
+                        "format_file_name":null,
+                        "domain_name":"Labour Law",
+                        "start_date":"15-May-2016"
+                    },
+                ]
+            }
+        }
+
+    ]
 </code></pre>
 <h2 id="save-compliance-details"><a name="user-content-save-compliance-details" href="#save-compliance-details" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save compliance Details</h2>
 <pre><code>[
