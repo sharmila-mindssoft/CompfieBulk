@@ -1464,7 +1464,6 @@ class ClientDatabase(Database):
             )
 
         rows = self.select_all(query)
-        print rows
         columns = [
             "client_compliance_id", "client_statutory_id", "compliance_id",
             "statutory_applicable", "statutory_opted",
@@ -8155,11 +8154,6 @@ class ClientDatabase(Database):
         no_of_licence = rows[0][0]
 
         remaining_licence = int(no_of_licence) - int(no_of_licence_holders)
-
-        columns = "admin_id"
-        rows = self.get_data(self.tblAdmin, columns, condition)
-        if rows[0][0] == 0:
-            remaining_licence -= 1
         return remaining_licence
 
     def get_no_of_days_left_for_contract_expiration(self):

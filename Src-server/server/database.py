@@ -4198,6 +4198,11 @@ class KnowledgeDatabase(Database):
         query = "insert into tbl_admin (username, password) values ('%s', '%s')" % (
             email_id, encrypted_password)
         client_db_cursor.execute(query)
+        query = "insert into tbl_users (user_id, employee_name, email_id, password, user_level,\
+        is_primary_admin, is_service_provider, is_admin)\
+        values (0, 'Administrator', '%s', '%s', 1 , 1, 0, 0 )" % (
+            email_id, encrypted_password)
+        client_db_cursor.execute(query)
         self._save_client_countries(country_ids, client_db_cursor)
         self._save_client_domains(domain_ids, client_db_cursor)
         self._create_procedure(client_db_cursor)

@@ -179,10 +179,12 @@ function loadClientUserList(){
             if(userList[i]["is_service_provider"] == true){
                 $('.seating-unit', clone).html("-");
             }
-            else{
+            else if (seatingUnitId != null){
              $('.seating-unit', clone).html('<abbr class="page-load" title="'+getUnitNameAndAddress(seatingUnitId)['unitAddress']+'"><img src="/images/icon-info.png" style="margin-right:10px"/>'+getUnitNameAndAddress(seatingUnitId)['unitName']);   
             }
-            $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
+            if (userId != 0){
+                $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
+            }
             if (isPrimaryAdmin == false){
                 $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+')"/>');
                 if (is_session_user_primary_admin == true){
