@@ -218,74 +218,87 @@ All are int
 	On Success
 
 		[
-			"GetStatutoryMappingsSuccess",
-			  
-			{
+		  	"GetStatutoryMappingsSuccess", 
+		  	{
 			    "statutory_mappings": {
-				    "3": {
+			      "1": {
 				        "geography_ids": [
-				          2,
-				          1
-				        ],
-				        "approval_status": 0,
-				        "approval_status_text": "Pending",
+				          1, 
+				          4, 
+				          3, 
+				          2
+				        ], 
+				        "approval_status": 0, 
+				        "approval_status_text": "Pending", 
 				        "compliance_names": [
 				          {
-				            "url": null,
-				            "compliance_name": "One Time Task TN1g"
-				          }
-				        ],
-				        "statutory_nature_name": "Central",
-				        "country_id": 1,
-				        "domain_name": "Labour Law",
-				        "industry_names": "Factory",
-				        "is_active": true,
-				        "statutory_nature_id": 2,
+				            "url": "compliance_format/payment_of_bonus_act_1965-682fa616823e4730982e06c2405cf204.pdf", 
+				            "compliance_name": "COMPLIANCE DOCUMENT 2403161605 - COMPLIANCE TASK 2403161605"
+				          }, 
+				          
+				        ], 
+				        "statutory_nature_name": "\"Central\"", 
+				        "country_id": 1, 
+				        "domain_name": "FINANCE LAW", 
+				        "industry_names": "Factory, Office", 
+				        "is_active": true, 
+				        "statutory_nature_id": 2, 
 				        "statutory_ids": [
-				          1,
 				          2
-				        ],
-				        "country_name": "iNDIA",
+				        ], 
+				        "country_name": "India", 
 				        "industry_ids": [
-				          1
-				        ],
+				          1, 
+				          3
+				        ], 
 				        "geography_mappings": [
-				          "iNDIA >> North Region",
-				          "iNDIA >> South Region"
-				        ],
+				          "India >> East", 
+				          "India >> North", 
+				          "India >> South", 
+				          "India >> West"
+				        ], 
 				        "compliances": [
 				          {
-				            "description": "dfdsfds",
-				            "is_active": true,
-				            "repeats_type_id": null,
-				            "statutory_provision": "TN State Rule",
-				            "compliance_task": "One Time Task TN1g",
-				            "format_file_list": null,
-				            "duration": null,
-				            "document_name": null,
-				            "penal_consequences": "",
-				            "duration_type_id": null,
-				            "frequency_id": 1,
-				            "repeats_every": null,
-				            "statutory_dates": [
+				            "c_id": 1, 
+				            "c_task": "COMPLIANCE TASK 2403161605", 
+				            "d_type_id": null, 
+				            "description": "COMPLIANCE DESCRIPTION 2403161605", 
+				            "is_active": true, 
+				            "f_id": 1, 
+				            "f_f_list": [
 				              {
-				                "statutory_month": 4,
-				                "statutory_date": 10,
-				                "trigger_before_days": 25,
+				                "file_content": "compliance_format/payment_of_bonus_act_1965-682fa616823e4730982e06c2405cf204.pdf", 
+				                "file_name": "payment_of_bonus_act_1965-682fa616823e4730982e06c2405cf204.pdf", 
+				                "file_size": 88156
+				              }
+				            ], 
+				            "r_every": null, 
+				            "summary": null, 
+				            "doc_name": "COMPLIANCE DOCUMENT 2403161605", 
+				            "statu_dates": [
+				              {
+				                "statutory_month": 3, 
+				                "statutory_date": 30, 
+				                "trigger_before_days": 10, 
 				                "repeat_by": "dayofmonth"
 				              }
-				            ],
-				            "compliance_id": 10
-				          }
-				        ],
+				            ], 
+				            "frequency": "One Time", 
+				            "duration": null, 
+				            "r_type_id": null, 
+				            "s_provision": "STATUTORY PROVISION 2403161605", 
+				            "p_consequences": "PENAL CONSEQUENCES 2403161605"
+				          }, 
+				         
+				        ], 
 				        "statutory_mappings": [
-				          "POG Act",
-				          "POG Act>>State Rule All"
-				        ],
+				          "PRIMARY LEGISLATION 2403161605>>SECONDARY LEGISLATION 2403161605"
+				        ], 
 				        "domain_id": 2
-				    },
+			      	}
 			    }
-			}
+		  	}
+
 		]
 
 ## Approve Statutory mapping
@@ -539,39 +552,6 @@ All are int
 		"ApproveComplianceSuccess", 
 		{}
 	]
-
-## Past 4 year escalations
-
-		[
-			"GetPastFourYearEscalations",
-			{
-				"user_id" : USER_ID
-			}
-		]
-
-	On Success
-
-		[
-			"GetPastFourYearEscalationsSuccess",
-			[
-				{
-					"unit_id" : UNIT_ID,
-					"unit_name" : String,
-					"data" :[
-						{
-							"year" : int,
-							"delayed_compliance_count" : int,
-							"not_complied_count" : int
-						},
-					]
-				},
-			]
-		]
-
-	Note : 
-			*	Above data will be used for past 4 year Escalations Chart
-			* For current year data will be from 
-			compliance history api
 
 
 # Client Dashboard
