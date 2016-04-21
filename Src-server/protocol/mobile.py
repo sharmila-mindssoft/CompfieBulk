@@ -8,27 +8,24 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_50,
     parse_structure_CustomTextType_20,
     parse_structure_CustomTextType_100,
-    parse_structure_VectorType_SignedIntegerType_8,
-    parse_structure_VectorType_CustomTextType_50,
-    parse_structure_OptionalType_SignedIntegerType_8,
     parse_structure_CustomTextType_500,
     parse_structure_VectorType_RecordType_core_ClientConfiguration,
     parse_structure_RecordType_core_Menu,
     parse_structure_VectorType_RecordType_mobile_GetUsersList,
     parse_structure_VectorType_RecordType_core_Country,
     parse_structure_VectorType_RecordType_core_Domain,
-    parse_structure_VectorType_RecordType_core_Industry,
     parse_structure_VectorType_RecordType_core_ClientBusinessGroup,
     parse_structure_VectorType_RecordType_core_ClientLegalEntity,
     parse_structure_VectorType_RecordType_core_ClientDivision,
-    parse_structure_VectorType_RecordType_technotransactions_UNIT,
     parse_structure_VectorType_RecordType_mobile_ComplianceApplicability,
     parse_structure_VectorType_RecordType_mobile_UnitWiseCount,
     parse_structure_VectorType_RecordType_mobile_DomainWiseCount,
     parse_structure_VariantType_mobile_Request,
     parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
     parse_structure_VectorType_RecordType_mobile_ComplianceHistory,
-    parse_structure_OptionalType_UnsignedIntegerType_32
+    parse_structure_OptionalType_UnsignedIntegerType_32,
+    parse_structure_Text,
+    parse_structure_EnumType_core_SESSION_TYPE
 )
 from protocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
@@ -39,27 +36,24 @@ from protocol.to_structure import (
     to_structure_CustomTextType_50,
     to_structure_CustomTextType_20,
     to_structure_CustomTextType_100,
-    to_structure_VectorType_SignedIntegerType_8,
-    to_structure_VectorType_CustomTextType_50,
-    to_structure_OptionalType_SignedIntegerType_8,
     to_structure_CustomTextType_500,
     to_structure_VectorType_RecordType_core_ClientConfiguration,
     to_structure_RecordType_core_Menu,
     to_structure_VectorType_RecordType_mobile_GetUsersList,
     to_structure_VectorType_RecordType_core_Country,
     to_structure_VectorType_RecordType_core_Domain,
-    to_structure_VectorType_RecordType_core_Industry,
     to_structure_VectorType_RecordType_core_ClientBusinessGroup,
     to_structure_VectorType_RecordType_core_ClientLegalEntity,
     to_structure_VectorType_RecordType_core_ClientDivision,
-    to_structure_VectorType_RecordType_technotransactions_UNIT,
     to_structure_VectorType_RecordType_mobile_ComplianceApplicability,
     to_structure_VectorType_RecordType_mobile_UnitWiseCount,
     to_structure_VectorType_RecordType_mobile_DomainWiseCount,
     to_structure_VariantType_mobile_Request,
     to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
     to_structure_VectorType_RecordType_mobile_ComplianceHistory,
-    to_structure_OptionalType_UnsignedIntegerType_32
+    to_structure_OptionalType_UnsignedIntegerType_32,
+    to_structure_Text,
+    to_structure_EnumType_core_SESSION_TYPE
 )
 
 
@@ -373,6 +367,27 @@ class GetTrendChartData(Request):
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id)
         }
 
+class SaveRegistrationKey(Request):
+    def __init__(self, session_type, reg_key):
+        self.session_type = session_type
+        self.reg_key = reg_key
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["session_type", "reg_key"])
+        session_type = data.get("session_type")
+        session_type = parse_structure_EnumType_core_SESSION_TYPE(session_type)
+        reg_key = data.get("reg_key")
+        reg_key = parse_structure_Text(reg_key)
+        return SaveRegistrationKey(session_type, reg_key)
+
+    def to_inner_structure(self):
+        return {
+            "session_type": to_structure_EnumType_core_SESSION_TYPE(self.session_type),
+            "reg_key": to_structure_Text(self.reg_key)
+        }
+
+
 def _init_Request_class_map():
     classes = [
         GetVersions,
@@ -381,7 +396,8 @@ def _init_Request_class_map():
         GetComplianceApplicabilityStatus,
         GetComplianceHistory,
         CheckDiskSpace,
-        GetTrendChartData
+        GetTrendChartData,
+        SaveRegistrationKey
     ]
     class_map = {}
     for c in classes:
@@ -1014,6 +1030,32 @@ class GetTrendChartDataSuccess(Response):
             "unit_wise_count": to_structure_VectorType_RecordType_mobile_UnitWiseCount(self.unit_wise_count)
         }
 
+class SaveRegistrationKeySuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveRegistrationKeySuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+
+class InvalidRegistrationKey(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidRegistrationKey()
+
+    def to_inner_structure(self):
+        return {}
+
+
 def _init_Response_class_map():
     classes = [
         UserLoginResponseSuccess,
@@ -1022,7 +1064,9 @@ def _init_Response_class_map():
         GetUsersSuccess,
         GetUnitDetailsSuccess,
         GetComplianceHistorySuccess,
-        GetTrendChartDataSuccess
+        GetTrendChartDataSuccess,
+        SaveRegistrationKeySuccess,
+        InvalidRegistrationKey
 
     ]
     class_map = {}
