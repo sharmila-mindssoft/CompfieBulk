@@ -171,11 +171,8 @@ function initClientMirror() {
 
     // Login function
     function login(username, password, short_name, callback) {
-        if (window.localStorage["my_ip"] == null){
-            my_ip = "unknown"
-        }else{
-            my_ip = window.localStorage["my_ip"]
-        }
+        if (window.localStorage["my_ip"] == null)
+            get_ip();
         var request = [
             short_name, [
                 "Login", {
@@ -183,7 +180,7 @@ function initClientMirror() {
                     "username": username,
                     "password": password,
                     "short_name": short_name,
-                    "ip": my_ip
+                    "ip": window.localStorage["my_ip"]
                 }
             ]
         ]

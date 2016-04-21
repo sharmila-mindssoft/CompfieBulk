@@ -1943,10 +1943,10 @@ class ClientUser(object):
         return {
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
             "email_id": to_structure_CustomTextType_100(self.email_id),
-            "user_group_id": to_structure_UnsignedIntegerType_32(self.user_group_id),
+            "user_group_id": to_structure_OptionalType_UnsignedIntegerType_32(self.user_group_id),
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
-            "employee_code": to_structure_CustomTextType_50(self.employee_code),
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
+            "employee_code": to_structure_OptionalType_CustomTextType_50(self.employee_code),
+            "contact_no": to_structure_OptionalType_CustomTextType_20(self.contact_no),
             "seating_unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.seating_unit_id),
             "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),

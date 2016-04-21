@@ -1546,14 +1546,16 @@ function loadauto_countrytext (textval, classval) {
         }
         var str='';
         for(var i in suggestions){
-            str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\', '+ccount+')">'+suggestions[i][1]+'</li>';
+            str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this,'+ccount+')">'+suggestions[i][1]+'</li>';
         }
         $('.ulist-text-'+ccount).append(str);
         $(".country-"+ccount).val('');
     }
 }
 //set selected autocomplte value to textbox and geographylevel list ---------------------------------------------------
-function activate_text (element,checkval,checkname, ccount) {
+function activate_text (element, ccount) {
+    var checkname = $(element).text();
+    var checkval = $(element).attr('id');
     $(".countryval-"+ccount).val(checkname);
     $(".country-"+ccount).val(checkval);
     $('.glevel-'+checkval).empty();
@@ -1583,16 +1585,18 @@ function loadlocation(textval, classval){
         }
         var str='';
         for(var i in suggestions){
-            str += '<li id="'+suggestions[i][0]+'" onclick="activate_unitlocaion(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\', \''+countval+'\', \''+suggestions[i][2]+'\')">'+suggestions[i][1]+'</li>';
+            str += '<li id="'+suggestions[i][0]+'" onclick="activate_unitlocaion(this,\''+countval+'\', \''+suggestions[i][2].replace(/"/gi,'##')+'\')">'+suggestions[i][1]+'</li>';
         }
         $('.unitlocationlist-text'+countval).append(str);
         $('.unitlocation-ids'+countval).val('');
     }
 }
-function activate_unitlocaion (element,checkval,checkname, ccount, mappingname) {
+function activate_unitlocaion (element, ccount, mappingname) {
+    var checkname = $(element).text();
+    var checkval = $(element).attr('id');
     $('.unitlocation'+ccount).val(checkname);
     $('.unitlocation-ids'+ccount).val(checkval);
-    $('.full-location-list'+ccount).html(mappingname);
+    $('.full-location-list'+ccount).html(mappingname.replace(/##/gi,'"'));
 }
 function domainunionclientdomainList(classval){
     console.log(classval);

@@ -371,7 +371,8 @@ class ConvertJsonToCSV(object):
                                 ]
                                 self.write_csv(None, csv_values)
 
-    def generate_compliance_details_report(self, db, request, session_user, client_id):
+    def generate_compliance_details_report(
+        self, db, request, session_user, client_id):
         country_id = request.country_id
         domain_id = request.domain_id
         statutory_id = request.statutory_id
@@ -380,6 +381,7 @@ class ConvertJsonToCSV(object):
         assignee_id = request.assignee_id
         from_date = request.from_date
         to_date = request.to_date
+        compliance_status = request.compliance_status
         is_header = False
 
         if compliance_id is None :
@@ -388,8 +390,8 @@ class ConvertJsonToCSV(object):
             assignee_id = '%'
         if request.compliance_status is None :
             compliance_status = '%'
-        else :
-            compliance_status = core.COMPLIANCE_STATUS(request.compliance_status)
+        # else :
+        #     compliance_status = core.COMPLIANCE_STATUS(request.compliance_status)
 
         if unit_id is None :
             unit_ids = db.get_user_unit_ids(session_user, client_id)
@@ -469,17 +471,30 @@ class ConvertJsonToCSV(object):
 
                 due_date = None
                 if(compliance[4] != None):
-                    due_date = self.datetime_to_string(compliance[4])
+                    due_date = db.datetime_to_string(compliance[4])
 
                 validity_date = None
                 if(compliance[3] != None):
                     validity_date = db.datetime_to_string(compliance[3])
 
                 documents = compliance[6]
-                no_of_days, compliance_status = db.calculate_ageing(due_date=compliance[4], completion_date=compliance[7])
+                # no_of_days, compliance_status = db.calculate_ageing(due_date=compliance[4], completion_date=compliance[7])
                 completion_date = None
                 if(compliance[7] != None):
                     completion_date = db.datetime_to_string(compliance[7])
+
+                remarks = db.calculate_ageing(compliance[4], compliance[8], compliance[7])
+
+                if(compliance_status == 'Complied'):
+                    c_status = 'On Time'
+                elif(compliance_status == 'Delayed Compliance'):
+                    c_status = 'Delayed'
+                elif(compliance_status == 'Inprogress'):
+                    c_status = 'days left'
+                elif(compliance_status == 'Not Complied'):
+                    c_status = 'Overdue'
+                else:
+                    c_status = ''
 
                 if not is_header:
                     csv_headers = [
@@ -488,11 +503,12 @@ class ConvertJsonToCSV(object):
                     ]
                     self.write_csv(csv_headers, None)
                     is_header = True
-                csv_values = [
-                    unit_name, unit_address, compliance_name, assignee, due_date, completion_date,
-                    validity_date, documents, compliance_status
-                ]
-                self.write_csv(None, csv_values)
+                if (c_status in remarks[1] or c_status == '') :
+                    csv_values = [
+                        unit_name, unit_address, compliance_name, assignee, due_date, completion_date,
+                        validity_date, documents, remarks[1]
+                    ]
+                    self.write_csv(None, csv_values)
 
     def generate_task_applicability_report(self, db, request, session_user, client_id):
         is_header = False
@@ -987,8 +1003,17 @@ class ConvertJsonToCSV(object):
                     ]
                     self.write_csv(None, csv_values)
 
-    def generate_service_provider_wise_report(db, request, session_user, client_id):
+    def generate_service_provider_wise_report(self, db, request, session_user, client_id):
         is_header = False
+        country_id = request.country_id
+        domain_id = request.domain_id
+        statutory_id = request.statutory_id
+        unit_id = request.unit_id
+        service_provider_id = request.service_provider_id
+
+        if service_provider_id is None :
+            service_provider_id = '%'
+
         query = "SELECT service_provider_id, service_provider_name, address, contract_from, contract_to, contact_person, contact_no  \
                 FROM tbl_service_providers \
                 WHERE service_provider_id like '%s' and is_active = 1" % (service_provider_id)
@@ -1034,7 +1059,7 @@ class ConvertJsonToCSV(object):
                         country_id, domain_id,
                         unit_id, user_ids, str(statutory_id+"%")
                     )
-                compliance_rows = self.select_all(query)
+                compliance_rows = db.select_all(query)
 
                 compliances_list = []
                 for compliance in compliance_rows:
@@ -1057,18 +1082,23 @@ class ConvertJsonToCSV(object):
 
                     due_date = None
                     if(compliance[4] is not None):
-                        due_date = self.datetime_to_string(compliance[4])
+                        due_date = db.datetime_to_string(compliance[4])
 
                     validity_date = None
-                    if(validity_date is not None):
-                        validity_date = self.datetime_to_string(compliance[3])
+                    if(compliance[3] is not None):
+                        validity_date = db.datetime_to_string(compliance[3])
 
                     if compliance[7] in (2, 3) :
                         summary = "Repeats every %s - %s" % (compliance[9], compliance[11])
+                        for statutory_date in statutory_dates:
+                            summary += " (%s %s)" % (
+                                statutory_date["statutory_date"], db.string_months[statutory_date["statutory_month"]]
+                            )
                     elif compliance[7] == 4 :
                         summary = "To complete within %s - %s" % (compliance[8], compliance[10])
                     else :
                         summary = None
+
                         
                     if not is_header:
                         csv_headers =[ 
@@ -1076,13 +1106,13 @@ class ConvertJsonToCSV(object):
                             "Contact Person", "Contact No", "Compliance name","Unit Name", "Unit Address",
                             "Frequency", "Description", "Statutory Date", "Due date", "Validity Date"
                         ]
-                        db.write_csv(csv_headers, None)
+                        self.write_csv(csv_headers, None)
                         is_header = True
-
+                    frequence_json = compliance_frequency.to_structure()
                     csv_values = [
                         service_provider_name, address, contract_from, contract_to, contact_person, 
                         contact_no, compliance_name, unit_name, unit_address,
-                        compliance_frequency, description, statutory_date,
+                        frequence_json, description, summary,
                         due_date, validity_date
                     ]
                     self.write_csv(None, csv_values)

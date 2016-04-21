@@ -27,7 +27,6 @@ def process_user_forms(
 
 def process_user_menus(form_list):
     menus = {}
-
     for form in form_list:
         form_type = form.form_type
         _forms = menus.get(form_type)

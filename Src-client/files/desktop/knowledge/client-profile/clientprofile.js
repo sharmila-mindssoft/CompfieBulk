@@ -210,14 +210,16 @@ function loadauto_text (textval) {
     }
     var str='';
     for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+      str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
     }
     $('#autocompleteview ul').append(str);
     $("#group-id").val('');
     }
 }
 //set selected autocomplte value to textbox
-function activate_text (element,checkval,checkname) {
+function activate_text (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#groupsval").val(checkname);
   $("#group-id").val(checkval);
   $('.list-container').show();

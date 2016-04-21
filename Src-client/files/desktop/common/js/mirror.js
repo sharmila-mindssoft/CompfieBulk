@@ -199,11 +199,10 @@ function initMirror() {
 
     // Login function
     function login(username, password, short_name, callback) {
-        if (window.localStorage["my_ip"] == null){
-            my_ip = "unknown"
-        }else{
-            my_ip = window.localStorage["my_ip"]
-        }
+        if (window.localStorage["my_ip"] == null)
+            get_ip();
+        my_ip = window.localStorage["my_ip"]
+        
         var request = [
             "Login", {
                 "login_type": "Web",

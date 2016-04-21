@@ -69,8 +69,8 @@ function loadGeographiesList(geographiesList) {
       $('.country', clone).text(countryName);
       $('.level', clone).text(level);
       $('.name', clone).text(geographyName);
-      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+geographyId+',\''+geographyName+'\',\''+
-        countryName+'\','+entity+','+lposition+','+parentid+')"/>');
+      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+geographyId+',\''+geographyName.replace(/"/gi,'##')+'\',\''+
+        countryName.replace(/"/gi,'##')+'\','+entity+','+lposition+','+parentid+')"/>');
       $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+geographyId+','+passStatus+')"/>');
       $('.tbody-geography-list').append(clone);
       j = j + 1;
@@ -126,7 +126,7 @@ $("#countryval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1].replace(/"/gi,'##')+'\')">'+
               suggestions[i][1]+'</li>';
     }
     $('#ulist_text').append(str);
@@ -138,7 +138,7 @@ $("#countryval").keyup(function(){
 });
 //set selected autocomplte value to textbox
 function activate_text (element,saverecord,checkname) {
-  $("#countryval").val(checkname);
+  $("#countryval").val(checkname.replace(/##/gi,'"'));
   $("#country").val(saverecord);
   loadGeographyFirstLevels(saverecord);
 }
@@ -351,7 +351,7 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
   $("#geography-view").hide();
   $("#geography-add").show();
   $("#geographyid").val(geographyId);
-  $("#countryval").val(country);
+  $("#countryval").val(country.replace(/##/gi,'"'));
   $("#country").val(countryid);
   $(".tbody-geography-level").find("div").remove();
   var geographyLevelList = geographyLevelsList[countryid];
@@ -368,7 +368,7 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
     }
     $('.tbody-geography-level').append(clone);
   }
-  $('#datavalue'+lposition).val(geographyName);
+  $('#datavalue'+lposition).val(geographyName.replace(/##/gi,'"'));
   var levelstages= lposition-1;
   var parentid=parentidval;
   var parentid1=parentidval;

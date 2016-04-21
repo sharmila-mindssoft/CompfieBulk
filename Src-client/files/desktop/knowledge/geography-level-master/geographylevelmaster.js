@@ -86,7 +86,7 @@ $("#countryval").keyup(function(e){
 	    }
 	    var str='';
 	    for(var i in suggestions){
-	              str += '<li class="country_auto" id="'+suggestions[i][0]+'"onclick="activate_text(\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+	        str += '<li class="country_auto" id="'+suggestions[i][0]+'"onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
 	    }
 	    $('#ulist_text').append(str);
 	    $("#country").val('');
@@ -97,13 +97,13 @@ $("#countryval").keyup(function(e){
 });
 
 //set selected autocomplte value to textbox
-function activate_text (checkval,checkname) {
+function activate_text (element) {
   $("#autocompleteview").hide();
-  $("#countryval").val(checkname);
-  $("#country").val(checkval);
+  $("#countryval").val($(element).text());
+  $("#country").val($(element).attr('id'));
   $("#view-insert-level").hide();
   $("#add").show();
-  loadGeographyLevelsList(checkval);
+  loadGeographyLevelsList($(element).attr('id'));
 }
 //Autocomplete Script ends
 

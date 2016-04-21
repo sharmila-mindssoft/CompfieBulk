@@ -179,10 +179,12 @@ function loadClientUserList(){
             if(userList[i]["is_service_provider"] == true){
                 $('.seating-unit', clone).html("-");
             }
-            else{
+            else if (seatingUnitId != null){
              $('.seating-unit', clone).html('<abbr class="page-load" title="'+getUnitNameAndAddress(seatingUnitId)['unitAddress']+'"><img src="/images/icon-info.png" style="margin-right:10px"/>'+getUnitNameAndAddress(seatingUnitId)['unitName']);   
             }
-            $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
+            if (userId != 0){
+                $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
+            }
             if (isPrimaryAdmin == false){
                 $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+')"/>');
                 if (is_session_user_primary_admin == true){
@@ -1088,14 +1090,16 @@ function loadauto_text (textval) {
         }
         var str='';
         for(var i in suggestions){
-            str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+            str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
         }
         $('#autocompleteview ul').append(str);
         $("#seatingunit").val('');
     }
 }
 //set selected autocomplte value to textbox
-function activate_text (element,checkval,checkname) {
+function activate_text (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#seatingunitval").val(checkname);
   $("#seatingunit").val(checkval);
   clearMessage();
@@ -1119,14 +1123,16 @@ function loadauto_usergroup (textval) {
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text1(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text1(this)">'+suggestions[i][1]+'</li>';
     }
     $('#usergroupview ul').append(str);
     $("#usergroup").val('');
     }
 }
 //set selected autocomplte value to textbox
-function activate_text1 (element,checkval,checkname) {
+function activate_text1 (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#usergroupval").val(checkname);
   $("#usergroup").val(checkval);
 }
