@@ -103,9 +103,9 @@ class SaveServiceProvider(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-                "s_name", "add", "c_from", "c_to", 
+                "s_name", "add", "c_from", "c_to",
                 "c_person", "c_no"
-            ]   
+            ]
         )
         service_provider_name = data.get("s_name")
         service_provider_name = parse_structure_CustomTextType_50(service_provider_name)
@@ -117,10 +117,10 @@ class SaveServiceProvider(Request):
         contract_to = parse_structure_CustomTextType_20(contract_to)
         contact_person = data.get("c_person")
         contact_person = parse_structure_CustomTextType_50(contact_person)
-        contact_no = data.get("c_to")
+        contact_no = data.get("c_no")
         contact_no = parse_structure_CustomTextType_20(contact_no)
         return SaveServiceProvider(
-            service_provider_name, address, contract_from, contract_to, contact_person, 
+            service_provider_name, address, contract_from, contract_to, contact_person,
             contact_no
         )
 
@@ -307,7 +307,7 @@ class SaveClientUser(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["email", "ug_id", "emp_n", "emp_c", "cn", 
+        data = parse_dictionary(data, ["email", "ug_id", "emp_n", "emp_c", "cn",
             "s_u_id", "ul", "c_ids", "d_ids", "u_ids", "sp", "sp_id"])
         email_id = data.get("email")
         email_id = parse_structure_CustomTextType_100(email_id)
@@ -759,8 +759,8 @@ class ChangeAdminStatusSuccess(Response):
 
 class GetClientUsersSuccess(Response):
     def __init__(
-        self, user_countries, user_domains, countries, domains, business_groups, 
-        legal_entities, divisions, units, session_user_units, user_groups, users, 
+        self, user_countries, user_domains, countries, domains, business_groups,
+        legal_entities, divisions, units, session_user_units, user_groups, users,
         service_providers, remaining_licence, is_primary_admin
     ):
         self.user_countries = user_countries
@@ -781,9 +781,9 @@ class GetClientUsersSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-                "user_countries", "user_domains", "countries","domains", "business_groups", 
+                "user_countries", "user_domains", "countries","domains", "business_groups",
 	        	"legal_entities", "divisions", "units", "session_user_units"
-                "user_groups", "users", "service_providers", 
+                "user_groups", "users", "service_providers",
                 "remaining_licence", "is_primary_admin"
         	]
        	)
@@ -816,8 +816,8 @@ class GetClientUsersSuccess(Response):
         is_primary_admin = data.get("is_primary_admin")
         is_primary_admin = parse_structure_Bool(is_primary_admin)
         return GetClientUsersSuccess(
-        	user_countries, user_domains, countries,domains, business_groups, 
-            legal_entities, divisions, units, session_user_units, user_groups, 
+        	user_countries, user_domains, countries,domains, business_groups,
+            legal_entities, divisions, units, session_user_units, user_groups,
             users, service_providers, remaining_licence, is_primary_admin
         )
 
@@ -1048,7 +1048,7 @@ class CannotDeactivateUserExists(Response):
 
     def to_inner_structure(self):
         return {
-        } 
+        }
 
 class GetAuditTrailSuccess(Response):
     def __init__(self, audit_trails):
@@ -1077,7 +1077,7 @@ class UserLimitExceeds(Response):
 
     def to_inner_structure(self):
         return {
-        } 
+        }
 
 def _init_Response_class_map():
     classes = [
