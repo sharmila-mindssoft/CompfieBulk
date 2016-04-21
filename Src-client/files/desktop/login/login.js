@@ -72,6 +72,9 @@ function resetLoginUI(e_button, e_email, e_password) {
 }
 function get_ip(callback){
     $.getJSON("http://jsonip.com?callback=?", function (data) {
+        if (data.ip != null){
+            window.localStorage["my_ip"] = data.ip    
+        }
         callback(data.ip);
     });
 }
@@ -80,8 +83,6 @@ function processLogin(username, password, shortName, callback) {
     get_ip(function (ip) {
         my_ip = ip;
     });
-    if (my_ip == null)
-        my_ip = "unknown"
 
     var request = [
         "Login", {
@@ -89,7 +90,7 @@ function processLogin(username, password, shortName, callback) {
             "username": username,
             "password": password,
             "short_name": short_name,
-            "ip" : my_ip
+            "ip" : window.localStorage["my_ip"]
         }
     ];
     if (shortName == null) {
