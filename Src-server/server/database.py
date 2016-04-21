@@ -5441,11 +5441,13 @@ class KnowledgeDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return self.return_assigned_statutories_by_id(result)
 
-    def return_assigned_compliances_by_id(self, client_statutory_id, statutory_id=None):
+    def return_assigned_compliances_by_id(self, client_statutory_id, statutory_id=None, applicable_status=None):
         if bool(self.statutory_parent_mapping) is False:
             self.get_statutory_master()
         if statutory_id is None :
             statutory_id = '%'
+        if applicable_status is None :
+            applicable_status = '%'
         query = "SELECT t1.client_statutory_id, t1.compliance_id, \
             t1.statutory_id, t1.statutory_applicable, \
             t1.statutory_opted, \
@@ -5467,9 +5469,13 @@ class KnowledgeDatabase(Database):
             ON t3.compliance_id = t1.compliance_id \
             WHERE \
             t1.client_statutory_id = %s \
-            AND t1.statutory_id like '%s' ORDER BY level, statutory_name, compliance_id" % (
-                client_statutory_id, statutory_id
+            AND t1.statutory_id like '%s' \
+            AND  t1.compliance_applicable like '%s' \
+            ORDER BY level, statutory_name, compliance_id" % (
+                client_statutory_id, statutory_id,
+                applicable_status
             )
+        print query
         rows = self.select_all(query)
         columns = [
             "client_statutory_id", "compliance_id", "statutory_id",
@@ -5722,8 +5728,8 @@ class KnowledgeDatabase(Database):
             qry += " AND t4.statutory_id = %s " % (level_1_statutory_id)
         applicable_status = request_data.applicability_status
         if applicable_status is not None :
-            qry += " AND t4.statutory_applicable = %s " % (applicable_status)
-            qry += " AND t4.compliance_applicable = %s " % (applicable_status)
+            applicable_status = int(applicable_status)
+            qry += " AND t4.compliance_applicable = %s " % applicable_status
 
         query = "SELECT distinct t1.client_statutory_id, t1.client_id, \
             t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, \
@@ -5746,6 +5752,7 @@ class KnowledgeDatabase(Database):
             )
 
         query = query + qry
+        print query
         rows = self.select_all(query)
         columns = [
             "client_statutory_id", "client_id", "geography_id",
@@ -5755,9 +5762,9 @@ class KnowledgeDatabase(Database):
             "division_name", "address", "postal_code", "unit_code"
         ]
         result = self.convert_to_dict(rows, columns)
-        return self.return_assigned_statutory_report(result, level_1_statutory_id)
+        return self.return_assigned_statutory_report(result, level_1_statutory_id, applicable_status)
 
-    def return_assigned_statutory_report(self, report_data, level_1_statutory_id):
+    def return_assigned_statutory_report(self, report_data, level_1_statutory_id, applicable_status):
         if bool(self.geography_parent_mapping) is False:
             self.get_geographies()
 
@@ -5775,7 +5782,7 @@ class KnowledgeDatabase(Database):
                 unit_address = "%s, %s, %s" % (
                     data["address"], ', '.join(ordered), data["postal_code"]
                 )
-                statutories = self.return_assigned_compliances_by_id(client_statutory_id, level_1_statutory_id)
+                statutories = self.return_assigned_compliances_by_id(client_statutory_id, level_1_statutory_id, applicable_status)
                 unit_statutories = technoreports.UNIT_WISE_ASSIGNED_STATUTORIES(
                     data["unit_id"],
                     unit_name,
@@ -5788,7 +5795,7 @@ class KnowledgeDatabase(Database):
                 )
             else :
                 statutories = unit_statutories.assigned_statutories
-                new_stautory = self.return_assigned_compliances_by_id(client_statutory_id)
+                new_stautory = self.return_assigned_compliances_by_id(client_statutory_id, None, applicable_status)
                 for new_s in new_stautory :
                     new_id = new_s.level_1_statutory_id
                     is_exists = False
