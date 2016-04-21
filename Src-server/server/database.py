@@ -6170,7 +6170,9 @@ class KnowledgeDatabase(Database):
     def get_notifications(
         self, notification_type, session_user, client_id=None
     ):
-        user_type = self.get_user_type(session_user)
+        user_type = None
+        if session_user != 0 :
+            user_type = self.get_user_type(session_user)
 
         columns = "tn.notification_id, notification_text, link, "+\
         "created_on, read_status"
@@ -6183,7 +6185,7 @@ class KnowledgeDatabase(Database):
         )
         if user_type == "Techno":
             where_condition += " AND link not like '%sstatutory%s' " % ("%" , "%")
-        else:
+        elif user_type == "Knowledge":
             where_condition += " AND link not like '%sclient%s'" % ("%" , "%")
         where_condition += "order by created_on DESC limit 30"
         rows = self.get_data_from_multiple_tables(
@@ -6411,6 +6413,9 @@ class KnowledgeDatabase(Database):
                 where user_id = '%d' and client_id = '%d'" % (
                     old_admin_id, client_id
                 )
+                self.execute(query)
+
+                query = "update tbl_client_groups set email_id = '%s'" % (admin_email)
                 self.execute(query)
                 return True
         else:
