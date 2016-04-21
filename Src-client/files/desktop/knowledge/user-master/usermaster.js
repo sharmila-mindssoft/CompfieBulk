@@ -142,7 +142,7 @@ function loadUserList(usersList) {
     $('.employee-name', clone).html(employeeId + ' - ' + employeeName);
     $('.user-group', clone).text(usergroup);
     $('.designation', clone).text(designation);
-    $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+userId+',\''+employeeName+'\')"/>');
+    $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+userId+')"/>');
     $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+userId+','+passStatus+')"/>');
     $('.tbody-user-list').append(clone);
     j = j + 1;
@@ -409,7 +409,7 @@ $("#usergroupval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_text').append(str);
     $("#usergroup").val('');
@@ -419,7 +419,9 @@ $("#usergroupval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_text (element,checkval,checkname) {
+function activate_text (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#usergroupval").val(checkname);
   $("#usergroup").val(checkval);
 }

@@ -12,15 +12,6 @@ var legalentityval;
 var divisionval;
 var unitval;
 
-function clearMessage() {
-    $(".error-message").hide();
-    $(".error-message").text("");
-}
-function displayMessage(message) {
-    $(".error-message").text(message);
-    $(".error-message").show();
-}
-
 function initialize(){
     function onSuccess(data){
         countriesList = data['countries'];
@@ -245,7 +236,7 @@ function loadauto_text (textval) {
     }
     var str='';
     for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+      str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
     }
     $('#autocompleteview ul').append(str);
     $("#group-id").val('');
@@ -255,7 +246,9 @@ function loadauto_text (textval) {
     }
 }
 //set selected autocomplte value to textbox
-function activate_text (element,checkval,checkname) {
+function activate_text (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#groupsval").val(checkname);
   $("#group-id").val(checkval);  
 }
@@ -277,7 +270,7 @@ function loadauto_businessgroups (textval) {
         }
         var str='';
         for(var i in suggestions){
-          str += '<li id="'+suggestions[i][0]+'" onclick="activate_businessgroups(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+          str += '<li id="'+suggestions[i][0]+'" onclick="activate_businessgroups(this)">'+suggestions[i][1]+'</li>';
         }
         $('#autocompleteview-bgroups ul').append(str);
         $("#businessgroupid").val('');
@@ -287,7 +280,9 @@ function loadauto_businessgroups (textval) {
       $("#autocompleteview-bgroups").hide();
     }
 }
-function activate_businessgroups (element,checkval,checkname) {
+function activate_businessgroups (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#businessgroupsval").val(checkname);
   $("#businessgroupid").val(checkval);
 }
@@ -316,7 +311,7 @@ function loadauto_lentity (textval) {
     }
     var str='';
     for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_lentity(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+      str += '<li id="'+suggestions[i][0]+'" onclick="activate_lentity(this)">'+suggestions[i][1]+'</li>';
     }
     $('#autocompleteview-lentity ul').append(str);
     $("#legalentityid").val('');
@@ -326,7 +321,9 @@ function loadauto_lentity (textval) {
     }
 }
 //set selected autocomplte value to textbox
-function activate_lentity (element,checkval,checkname) {
+function activate_lentity (element) {
+var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#legalentityval").val(checkname);
   $("#legalentityid").val(checkval);
 }
@@ -355,7 +352,7 @@ function loadauto_division (textval) {
     }
     var str='';
     for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_division(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+      str += '<li id="'+suggestions[i][0]+'" onclick="activate_division(this)">'+suggestions[i][1]+'</li>';
     }
     $('#autocompleteview-division ul').append(str);
     $("#divisionid").val('');
@@ -364,7 +361,9 @@ function loadauto_division (textval) {
       $("#autocompleteview-division").hide();
     }
 }
-function activate_division (element,checkval,checkname) {
+function activate_division (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#divisionval").val(checkname);
   $("#divisionid").val(checkval);
 }

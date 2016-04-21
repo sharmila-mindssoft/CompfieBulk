@@ -61,7 +61,8 @@ function loadDomainList (domainsList) {
       var clone=tableRow.clone();
       $('.sno', clone).text(j);
       $('.domain-name', clone).text(domainName);
-      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+domainId+',\''+domainName+'\')"/>');
+
+      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+domainId+',\''+domainName.replace(/"/gi,'##')+'\')"/>');
       $('.status', clone).html('<img src=\'/images/'+imgName+'\' title="'+title+'" onclick="changeStatus('+domainId+','+passStatus+')"/>');
       $('.tbody-domain-list1').append(clone);
       j = j + 1;
@@ -149,7 +150,7 @@ function displayEdit (domainId,domainName) {
   $(".error-message").text("");
   $("#domain-view").hide();
   $("#domain-add").show();
-  $("#domainname").val(domainName);
+  $("#domainname").val(domainName.replace(/##/gi,'"'));
   $("#domainid").val(domainId);
 }
 

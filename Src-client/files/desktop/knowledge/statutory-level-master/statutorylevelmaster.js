@@ -53,7 +53,7 @@ $("#countryval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_text').append(str);
     $("#country").val('');
@@ -64,9 +64,9 @@ $("#countryval").keyup(function(){
 });
 
 //set selected autocomplte value to textbox
-function activate_text (element,checkval,checkname) {
-  $("#countryval").val(checkname);
-  $("#country").val(checkval);
+function activate_text (element) {
+  $("#countryval").val($(element).text());
+  $("#country").val($(element).attr('id'));
   loadstatutoryLevelsList();
 }
 
@@ -83,7 +83,7 @@ $("#domainval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text_domain(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text_domain(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_text_domain').append(str);
     $("#domain").val('');
@@ -93,9 +93,9 @@ $("#domainval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_text_domain (element,checkval,checkname) {
-  $("#domainval").val(checkname);
-  $("#domain").val(checkval);
+function activate_text_domain (element) {
+  $("#domainval").val($(element).text());
+  $("#domain").val($(element).attr('id'));
   loadstatutoryLevelsList();
 }
 //Autocomplete Script ends

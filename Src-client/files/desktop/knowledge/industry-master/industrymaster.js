@@ -1,12 +1,4 @@
 var industriesList;
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
 
 $(".btn-industry-add").click(function(){
   $("#industry-view").hide();
@@ -68,7 +60,7 @@ function loadIndustryList (industriesList) {
       var clone=tableRow.clone();
       $('.sno', clone).text(j);
       $('.industry-name', clone).text(industryName);
-      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+industryId+',\''+industryName+'\')"/>');
+      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+industryId+',\''+industryName.replace(/"/gi,'##')+'\')"/>');
       $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+industryId+','+passStatus+')"/>');
       $('.tbody-industry-list-view').append(clone);
       j = j + 1;
@@ -153,7 +145,7 @@ function displayEdit (industryId,industryName) {
   $(".error-message").text("");
   $("#industry-view").hide();
   $("#industry-add").show();
-  $("#industryname").val(industryName);
+  $("#industryname").val(industryName.replace(/##/gi,'"'));
   $("#industryid").val(industryId);
 }
 
