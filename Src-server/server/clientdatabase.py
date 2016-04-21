@@ -4174,7 +4174,7 @@ class ClientDatabase(Database):
                         )
                 if len(compliances_list) > 0 :
                     unit_wise_compliances[unit_name] = compliances_list
-            
+
             unit_wise_compliances_list.append(clientreport.UnitCompliance(
                 business_group_name, legal_entity_name, division_name,
                 unit_wise_compliances))
@@ -4956,9 +4956,9 @@ class ClientDatabase(Database):
         return service_provider_wise_compliances_list
 
     def get_compliance_details_report(
-        self, country_id, domain_id, statutory_id, 
-        unit_id, compliance_id, assignee_id, 
-        from_date, to_date, compliance_status, 
+        self, country_id, domain_id, statutory_id,
+        unit_id, compliance_id, assignee_id,
+        from_date, to_date, compliance_status,
         client_id, session_user
     ) :
 
@@ -8653,3 +8653,6 @@ class ClientDatabase(Database):
         else:
             compliance_name = rows[0][1]
         return compliance_name
+
+    def save_registration_key(self, session_user, request):
+        pass
