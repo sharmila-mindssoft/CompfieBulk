@@ -425,7 +425,7 @@ $(".listfilter").keyup(function() {
 function activate(element, type){
 
   var dispname = $(element).text();
-  var id = $(element).attr('id');
+  var id = parseInt($(element).attr('id'));
   $(type).each( function( index, el ) {
     $(el).removeClass( "active" );
   });
@@ -460,7 +460,7 @@ function activate(element, type){
 //check & uncheck list data for multi selection
 function multiactivate(element, type){
   var dispname = $(element).text();
-  var id = $(element).attr('id');
+  var id = parseInt($(element).attr('id'));
 
   var chkstatus = $(element).attr('class');
   if(chkstatus == 'industrylist active'){
@@ -524,7 +524,7 @@ function remove_temp_file(){
   $("#upload_file").val('');
 }
 
-//convert file to object on upload file 
+//convert file to object on upload file
 $("#upload_file").on("change", function(e) {
   mirror.uploadFile(e, function result_data(data) {
     if (data == "File max limit exceeded") {
@@ -732,7 +732,7 @@ $("#temp_addstatutories").click(function() {
   load_statories();
 });
 
-//remove statutories from list 
+//remove statutories from list
 function temp_removestatutories(remove_id){
   remove = sm_statutoryids.indexOf(parseInt(remove_id));
   sm_statutoryids.splice(remove,1);
@@ -1585,7 +1585,7 @@ function load_edit_selectdomain_master(sm_countryid,sm_domainid,sm_industryids,s
               str += '<li id="'+industryid+'" class="'+clsval1+'" onclick="multiactivate(this,'+'\''+clsval+'\')" ><span class="filter3_name">'+dispindustryname+'</span></li>';
             }
           }
-         
+
         }
         $('#industry').append(str);
         //load statutorynature details
@@ -1945,7 +1945,7 @@ for (var i = 0; i < lis.length; i++) {
 }
 });
 
-//create wizard  
+//create wizard
 var navListItems = $('ul.setup-panel li a'),
 allWells = $('.setup-content');
 allWells.hide();
