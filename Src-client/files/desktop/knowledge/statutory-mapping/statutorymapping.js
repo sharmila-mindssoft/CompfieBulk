@@ -666,7 +666,10 @@ function filter_statutory(position){
 
 function editstaturoty(statu_id, statu_name, position){
   $("#statutoryid").val(statu_id);
-  $('#datavalue'+position).val(statu_name.replace(/##/gi,'"'))
+  for(var z=1; z<=10; z++){
+    $('#datavalue'+z).val('');
+  }
+  $('#datavalue'+position).val(statu_name.replace(/##/gi,'"'));
 }
 
 //load selected statutories in second wizard
