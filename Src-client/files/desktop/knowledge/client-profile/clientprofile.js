@@ -180,7 +180,27 @@ function alertUserToPromoteAnotherAdmin(isActive){
 function clientprofile_isadmin(userId, clientId){
     function onSuccess(data){
         // initialize();
-        loadClientProfileList(clientId)
+        //$('#groupsval').val('');
+        function onSuccess(data){
+            groupList = data['group_companies'];
+            profiles = data['profiles'];
+            $("#group-id").val(clientId);
+            loadClientProfileList(clientId)
+        }
+        function onFailure(error){
+            console.log(error);
+        }
+        mirror.getClientProfile(
+            function(error, response){
+                if(error == null){
+                    onSuccess(response);
+                }
+                else{
+                    onFailure(error);
+                }
+            }
+
+        );
     }
     function failure(error){
         if(error == "ReassignFirst"){
