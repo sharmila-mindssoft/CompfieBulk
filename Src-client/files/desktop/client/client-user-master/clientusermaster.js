@@ -1070,70 +1070,41 @@ function activatedomains(element){
     $("#domains").val(selids);
     unitview();
 }
-function hidemenuseatingunit(){
-    document.getElementById('autocompleteview').style.display = 'none';
+
+//retrive unit with condition form autocomplete value
+function onUnitSuccess(val){
+  $("#seatingunitval").val(val[1]);
+  $("#seatingunit").val(val[0]);
+  clearMessage();
 }
-function loadauto_text (textval) {
-    if($("#usertype option:selected").val() == ""){
+
+//load unit with conditionform list in autocomplete text box  
+$("#seatingunitval").keyup(function(){
+    var textval = $(this).val();
+    if($("#usertype option:selected").val() == "")
+    {
         displayMessage(message.usertype_required);
         return false;
     }
-    document.getElementById('autocompleteview').style.display = 'block';
-    var units = unitList;
-    var suggestions = [];
-    $('#autocompleteview ul').empty();
-    if(textval.length>0){
-        for(var i in units){
-            if (~units[i]["unit_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],units[i]["unit_name"]]);
-        }
-        var str='';
-        for(var i in suggestions){
-            str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
-        }
-        $('#autocompleteview ul').append(str);
-        $("#seatingunit").val('');
-    }
-}
-//set selected autocomplte value to textbox
-function activate_text (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#seatingunitval").val(checkname);
-  $("#seatingunit").val(checkval);
-  clearMessage();
-}
-//USergroup====================================================================================
+    getUnitAutocomplete(textval, unitList, function(val){
+        onUnitSuccess(val)
+    })
+});
 
-function hidemenuusergroup(){
-    document.getElementById('usergroupview').style.display = 'none';
+//retrive usergroup autocomplete value
+function onUserGroupSuccess(val){
+  $("#usergroupval").val(val[1]);
+  $("#usergroup").val(val[0]);
 }
-//load usergroup list in autocomplete text box
-function loadauto_usergroup (textval) {
-  document.getElementById('usergroupview').style.display = 'block';
-  var usergroups = userGroupsList;
-  var suggestions = [];
-  $('#usergroupview ul').empty();
-  if(textval.length>0){
-    for(var i in usergroups){
-        if(usergroups[i]["is_active"] == true){
-            if (~usergroups[i]["user_group_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([usergroups[i]["user_group_id"],usergroups[i]["user_group_name"]]);
-        }
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text1(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#usergroupview ul').append(str);
-    $("#usergroup").val('');
-    }
-}
-//set selected autocomplte value to textbox
-function activate_text1 (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#usergroupval").val(checkname);
-  $("#usergroup").val(checkval);
-}
+
+//load usergroup list in autocomplete text box  
+$("#usergroupval").keyup(function(){
+  var textval = $(this).val();
+  getUserGroupAutocomplete(textval, userGroupsList, function(val){
+    onUserGroupSuccess(val)
+  })
+});
+
 //service provider====================================================================================
 
 function hidemenuserviceprovider(){

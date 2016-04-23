@@ -107,41 +107,22 @@ function changeStatus (geographyId,isActive) {
 }
 
 //Autocomplete Script Starts
-//Hide list items after select
-$(".hidemenu").click(function(){
-  $("#autocompleteview").hide();
-});
 
-//load country list in autocomplete text box
+//retrive country autocomplete value
+function onCountrySuccess(val){
+  $("#countryval").val(val[1]);
+  $("#country").val(val[0]);
+  loadGeographyFirstLevels(val[0]);
+}
+
+//load country list in autocomplete text box  
 $("#countryval").keyup(function(){
   var textval = $(this).val();
-  $("#autocompleteview").show();
-  var countries = countriesList;
-  var suggestions = [];
-  $('#ulist_text').empty();
-  if(textval.length>0){
-    for(var i in countries){
-      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true)
-        suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]);
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1].replace(/"/gi,'##')+'\')">'+
-              suggestions[i][1]+'</li>';
-    }
-    $('#ulist_text').append(str);
-    $("#country").val('');
-    }else{
-      $("#country").val('');
-      $("#autocompleteview").hide();
-    }
+  getCountryAutocomplete(textval, countriesList, function(val){
+    onCountrySuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_text (element,saverecord,checkname) {
-  $("#countryval").val(checkname.replace(/##/gi,'"'));
-  $("#country").val(saverecord);
-  loadGeographyFirstLevels(saverecord);
-}
+
 //Autocomplete Script ends
 
 // dynamically load geograph first levels data according to geography level

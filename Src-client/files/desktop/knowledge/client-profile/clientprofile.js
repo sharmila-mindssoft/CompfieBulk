@@ -193,38 +193,21 @@ function clientprofile_isadmin(userId, clientId){
     );
 }
 
-
-function hidelist(){
-	document.getElementById('autocompleteview').style.display = 'none';
-}
-function loadauto_text (textval) {
-  document.getElementById('autocompleteview').style.display = 'block';
-  var groups = groupList;
-  var suggestions = [];
-  $('#autocompleteview ul').empty();
-  if(textval.length>0){
-    for(var i in groups){
-        if(groups[i]['is_active'] == true){
-            if (~groups[i]['group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([groups[i]["client_id"],groups[i]["group_name"]]);
-        }
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview ul').append(str);
-    $("#group-id").val('');
-    }
-}
-//set selected autocomplte value to textbox
-function activate_text (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#groupsval").val(checkname);
-  $("#group-id").val(checkval);
+//retrive form autocomplete value
+function onGroupSuccess(val){
+  $("#groupsval").val(val[1]);
+  $("#group-id").val(val[0]);
   $('.list-container').show();
-  loadClientProfileList(checkval);
+  loadClientProfileList(val[0]);
 }
+
+//load form list in autocomplete text box  
+$("#groupsval").keyup(function(){
+  var textval = $(this).val();
+  getGroupAutocomplete(textval, groupList, function(val){
+    onGroupSuccess(val)
+  })
+});
 
 $(function() {
   initialize();

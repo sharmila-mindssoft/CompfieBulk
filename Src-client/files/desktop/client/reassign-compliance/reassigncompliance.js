@@ -456,79 +456,35 @@ function getReassignCompliances () {
 }
 
 //Autocomplete Script Starts
-//Hide list items after select
-$(".hidemenu").click(function(){
-  $("#autocomplete_seatingunit").hide();
-  $("#autocomplete_user").hide();
-});
 
+//retrive unit with condition form autocomplete value
+function onUnitSuccess(val){
+  $("#seatingunitval").val(val[1]);
+  $("#seatingunit").val(val[0]);
+}
 
-//Units-------------------------------------------------------------------------------------------
+//load unit with conditionform list in autocomplete text box  
 $("#seatingunitval").keyup(function(){
-  var textval = $(this).val();
-  $("#autocomplete_seatingunit").show();
-  var units = unitsList;
-  var suggestions = [];
- $('#ulist_seatingunit').empty();
-  if(textval.length>0){
-    for(var i in units){
-      if (~units[i]["unit_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],units[i]["unit_name"]]);
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_units(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_seatingunit').append(str);
-    $("#seatingunit").val('');
-    }else{
-      $("#seatingunit").val('');
-      $("#autocomplete_seatingunit").hide();
-    }
+    var textval = $(this).val();
+    getUnitAutocomplete(textval, unitsList, function(val){
+        onUnitSuccess(val)
+    })
 });
-//set selected autocomplte value to textbox
-function activate_units (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#seatingunitval").val(checkname);
-  $("#seatingunit").val(checkval);
+
+//retrive user autocomplete value
+function onUserSuccess(val){
+  $("#userval").val(val[1]);
+  $("#user").val(val[0]);
 }
 
-//Assignee----------------------------------------------
+//load user list in autocomplete text box  
 $("#userval").keyup(function(){
-
   var textval = $(this).val();
-  $("#autocomplete_user").show();
-
-  var sUnit = $("#seatingunit").val();
-  var assignees = usersList;
-
-  var suggestions = [];
-  $('#ulist_user').empty();
-  if(textval.length>0){
-    for(var i in assignees){
-    if(sUnit == '' || sUnit == assignees[i]["seating_unit_id"]){
-      if (~assignees[i]["user_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["user_id"],assignees[i]["user_name"]]);
-    }
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'"onclick="activate_user(this)">'+suggestions[i][1]+'</li>';
-
-    }
-    $('#ulist_user').append(str);
-    $("#user").val('');
-    }else{
-      $("#user").val('');
-      $("#autocomplete_user").hide();
-    }
+  getReassignUserAutocomplete(textval, usersList, function(val){
+    onUserSuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_user (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#userval").val(checkname);
-  $("#user").val(checkval);
-}
+
 
 function getUserLevel(selectedUserId){
   var getuserLevel = null;

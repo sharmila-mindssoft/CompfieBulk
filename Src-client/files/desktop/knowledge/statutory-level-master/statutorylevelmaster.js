@@ -34,70 +34,36 @@ function GetStatutoryLevels(){
 }
 
 //Autocomplete Script Starts
-//Hide list items after select
-$(".hidemenu").click(function(){
-  $("#autocompleteview").hide(); 
-  $("#autocompleteview-domain").hide(); 
-});
+
+//retrive country autocomplete value
+function onCountrySuccess(val){
+  $("#countryval").val(val[1]);
+  $("#country").val(val[0]);
+  loadstatutoryLevelsList();
+}
 
 //load country list in autocomplete text box  
 $("#countryval").keyup(function(){
   var textval = $(this).val();
-  $("#autocompleteview").show(); 
-  var countries = countriesList;
-  var suggestions = [];
-  $('#ulist_text').empty();
-  if(textval.length>0){
-    for(var i in countries){
-      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_text').append(str);
-    $("#country").val('');
-    }else{
-      $("#country").val('');
-      $("#autocompleteview").hide();
-    }
+  getCountryAutocomplete(textval, countriesList, function(val){
+    onCountrySuccess(val)
+  })
 });
 
-//set selected autocomplte value to textbox
-function activate_text (element) {
-  $("#countryval").val($(element).text());
-  $("#country").val($(element).attr('id'));
+//retrive domain autocomplete value
+function onDomainSuccess(val){
+  $("#domainval").val(val[1]);
+  $("#domain").val(val[0]);
   loadstatutoryLevelsList();
 }
-
 //load domain list in autocomplete textbox  
 $("#domainval").keyup(function(){
   var textval = $(this).val();
-  $("#autocompleteview-domain").show(); 
-  var domains = domainsList;
-  var suggestions = [];
-  $('#ulist_text_domain').empty();
-  if(textval.length>0){
-    for(var i in domains){
-      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == true) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text_domain(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_text_domain').append(str);
-    $("#domain").val('');
-    }else{
-      $("#domain").val('');
-      $("#autocompleteview-domain").hide();
-    }
+  getDomainAutocomplete(textval, domainsList, function(val){
+    onDomainSuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_text_domain (element) {
-  $("#domainval").val($(element).text());
-  $("#domain").val($(element).attr('id'));
-  loadstatutoryLevelsList();
-}
+
 //Autocomplete Script ends
 
 //load statutory level according to country & domain

@@ -109,122 +109,46 @@ function loadStatutoryNotificationsList(data){
 }
 
 
-//Country----------------------------------------------------------------------------------------------------------------------
-function hidecountrylist(){
-	document.getElementById('selectboxview-country').style.display = 'none';
-}
-function loadauto_country (textval) {
-  document.getElementById('selectboxview-country').style.display = 'block';
-  var countries = countriesList;
-  var suggestions = [];
-  $('#selectboxview-country ul').empty();
-  if(textval.length>0){
-    for(var i in countries){
-      if (~countries[i]['country_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]);
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#selectboxview-country ul').append(str);
-    $("#country").val('');
-    }
-}
-//set selected autocomplte value to textbox
-function activate_text (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#countryval").val(checkname);
-  $("#country").val(checkval);
+//retrive country autocomplete value
+function onCountrySuccess(val){
+  $("#countryval").val(val[1]);
+  $("#country").val(val[0]);
 }
 
-//Domains---------------------------------------------------------------------------------------------------------------
-function hidedomainslist(){
-	document.getElementById('selectboxview-domains').style.display = 'none';
-}
-function loadauto_domains (textval) {
-  document.getElementById('selectboxview-domains').style.display = 'block';
-  var domains = domainsList;
-  var suggestions = [];
-  $('#autocompleteview-domains ul').empty();
-  if(textval.length>0){
-    for(var i in domains){
-    	if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_domains(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#selectboxview-domains ul').append(str);
-    $("#domain").val('');
-    }
-}
-function activate_domains (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#domainval").val(checkname);
-  $("#domain").val(checkval);
-}
-//Level1 Statutory---------------------------------------------------------------------------------------------------------------
-function hidedomainslist(){
-	document.getElementById('selectboxview-domains').style.display = 'none';
-}
-function loadauto_domains (textval) {
-  document.getElementById('selectboxview-domains').style.display = 'block';
-  var domains = domainsList;
-  var suggestions = [];
-  $('#selectboxview-domains ul').empty();
-  if(textval.length>0){
-    for(var i in domains){
-    	if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_domains(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#selectboxview-domains ul').append(str);
-    $("#domain").val('');
-    }
-}
-function activate_domains (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#domainval").val(checkname);
-  $("#domain").val(checkval);
-}
+//load country list in autocomplete text box  
+$("#countryval").keyup(function(){
+  var textval = $(this).val();
+  getCountryAutocomplete(textval, countriesList, function(val){
+    onCountrySuccess(val)
+  })
+});
 
-//Level 1 Statutory---------------------------------------------------------------------------------------------------------------
-function hidelevel1list(){
-	document.getElementById('autocompleteview-level1').style.display = 'none';
+//retrive domain autocomplete value
+function onDomainSuccess(val){
+  $("#domainval").val(val[1]);
+  $("#domain").val(val[0]);
 }
-function loadauto_level1 (textval) {
-	if($("#level1val").val() == ''){
-		$("#level1id").val('');
-	}
-  document.getElementById('autocompleteview-level1').style.display = 'block';
-  var countryId = $("#country").val();
-  var domainId = $("#domain").val();
-  var level1 = level1List[countryId][domainId];
-  var suggestions = [];
-  $('#autocompleteview-level1 ul').empty();
-  if(textval.length>0){
-    $.each(level1, function(i, value){
-    	if (~level1[i]['statutory_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([level1[i]["statutory_id"],level1[i]["statutory_name"]]);
-    });
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_level1(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview-level1 ul').append(str);
-    $("#legalentityid").val('');
-    }
+//load domain list in autocomplete textbox  
+$("#domainval").keyup(function(){
+  var textval = $(this).val();
+  getDomainAutocomplete(textval, domainsList, function(val){
+    onDomainSuccess(val)
+  })
+});
+
+//retrive statutory autocomplete value
+function onStatutorySuccess(val){
+  $("#level1val").val(val[1]);
+  $("#level1id").val(val[0]);
 }
-function activate_level1 (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#level1val").val(checkname);
-  $("#level1id").val(checkval);
-}
+//load statutory list in autocomplete textbox  
+$("#level1val").keyup(function(){
+  var textval = $(this).val();
+  getStatutoryAutocomplete(textval, level1List[$("#country").val()][$("#domain").val()], function(val){
+    onStatutorySuccess(val)
+  })
+});
+
 $(function() {
 	initialize();
 });

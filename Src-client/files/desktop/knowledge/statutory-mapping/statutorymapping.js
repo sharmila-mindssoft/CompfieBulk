@@ -425,7 +425,7 @@ $(".listfilter").keyup(function() {
 function activate(element, type){
 
   var dispname = $(element).text();
-  var id = $(element).attr('id');
+  var id = parseInt($(element).attr('id'));
   $(type).each( function( index, el ) {
     $(el).removeClass( "active" );
   });
@@ -460,7 +460,7 @@ function activate(element, type){
 //check & uncheck list data for multi selection
 function multiactivate(element, type){
   var dispname = $(element).text();
-  var id = $(element).attr('id');
+  var id = parseInt($(element).attr('id'));
 
   var chkstatus = $(element).attr('class');
   if(chkstatus == 'industrylist active'){

@@ -221,199 +221,79 @@ function loadCountries(countriesList){
         $('#countries').append($('<option value="'+countryId+'">'+countryName+'</option>'));
     });
 }
-//Groups----------------------------------------------------------------------------------------------------------------------
-function hidegroupslist(){
-    document.getElementById('autocompleteview').style.display = 'none';
-}
-function loadauto_text (textval) {
-  document.getElementById('autocompleteview').style.display = 'block';
-  var groups = groupList;
-  var suggestions = [];
-  $('#autocompleteview ul').empty();
-  if(textval.length>0){
-    for(var i in groups){
-      if (~groups[i]['group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([groups[i]["client_id"],groups[i]["group_name"]]); 
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview ul').append(str);
-    $("#group-id").val('');
-    }else{
-      $("#group-id").val('');
-      $("#autocompleteview").hide();
-    }
-}
-//set selected autocomplte value to textbox
-function activate_text (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#groupsval").val(checkname);
-  $("#group-id").val(checkval);  
+
+//retrive group form autocomplete value
+function onGroupSuccess(val){
+  $("#groupsval").val(val[1]);
+  $("#group-id").val(val[0]);
 }
 
-//businessgroups---------------------------------------------------------------------------------------------------------------
-function hidebgroupslist(){
-    document.getElementById('autocompleteview-bgroups').style.display = 'none';
-}
-function loadauto_businessgroups (textval) {
-    document.getElementById('autocompleteview-bgroups').style.display = 'block';
-    var bgroups = businessgroupsList;
-    var suggestions = [];
-    $('#autocompleteview-bgroups ul').empty();
-    if(textval.length>0){
-        for(var i in bgroups){
-            if(bgroups[i]['client_id']==$("#group-id").val()){
-                if (~bgroups[i]['business_group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([bgroups[i]["business_group_id"],bgroups[i]["business_group_name"]]);     
-            }      
-        }
-        var str='';
-        for(var i in suggestions){
-          str += '<li id="'+suggestions[i][0]+'" onclick="activate_businessgroups(this)">'+suggestions[i][1]+'</li>';
-        }
-        $('#autocompleteview-bgroups ul').append(str);
-        $("#businessgroupid").val('');
-    }
-    else{
-      $("#businessgroupid").val('');
-      $("#autocompleteview-bgroups").hide();
-    }
-}
-function activate_businessgroups (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#businessgroupsval").val(checkname);
-  $("#businessgroupid").val(checkval);
-}
-//Legal Entity---------------------------------------------------------------------------------------------------------------
-function hidelentitylist(){
-    document.getElementById('autocompleteview-lentity').style.display = 'none';
-}
-function loadauto_lentity (textval) {
-  document.getElementById('autocompleteview-lentity').style.display = 'block';
-  var lentity = legalEntityList;
-  var suggestions = [];
-  $('#autocompleteview-lentity ul').empty();
-  if(textval.length>0){
-    for(var i in lentity){
-        if($("#businessgroupid").val()!=''){
-            if(lentity[i]['business_group_id']==$("#businessgroupid").val()){
-                if (~lentity[i]['legal_entity_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([lentity[i]["legal_entity_id"],lentity[i]["legal_entity_name"]]);   
-            }      
-        }
-        else{
-            if(lentity[i]['client_id']==$("#group-id").val()){
-                if (~lentity[i]['legal_entity_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([lentity[i]["legal_entity_id"],lentity[i]["legal_entity_name"]]);   
-            }     
-        }
-        
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_lentity(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview-lentity ul').append(str);
-    $("#legalentityid").val('');
-    }else{
-      $("#legalentityid").val('');
-      $("#autocompleteview-lentity").hide();
-    }
-}
-//set selected autocomplte value to textbox
-function activate_lentity (element) {
-var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#legalentityval").val(checkname);
-  $("#legalentityid").val(checkval);
-}
-//Division---------------------------------------------------------------------------------------------------------------
-function hidedivisionlist(){
-    document.getElementById('autocompleteview-division').style.display = 'none';
-}
-function loadauto_division (textval) {
-  document.getElementById('autocompleteview-division').style.display = 'block';
-  var division = divisionsList;
-  var suggestions = [];
-  $('#autocompleteview-division ul').empty();
-  if(textval.length>0){
-    for(var i in division){
-        if($("#legalentityid").val() != ''){
-            if(division[i]['legal_entity_id']==$("#legalentityid").val()){
-                if (~division[i]['division_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([division[i]["division_id"],division[i]["division_name"]]);    
-            }
-        }
-        else{
-            if(division[i]['client_id']==$("#group-id").val()){
-               if (~division[i]['division_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([division[i]["division_id"],division[i]["division_name"]]);    
-            }
-        }   
-               
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_division(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview-division ul').append(str);
-    $("#divisionid").val('');
-    }else{
-      $("#divisionid").val('');
-      $("#autocompleteview-division").hide();
-    }
-}
-function activate_division (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#divisionval").val(checkname);
-  $("#divisionid").val(checkval);
+//load group form list in autocomplete text box  
+$("#groupsval").keyup(function(){
+  var textval = $(this).val();
+  getGroupAutocomplete(textval, groupList, function(val){
+    onGroupSuccess(val)
+  })
+});
+
+//retrive businessgroup form autocomplete value
+function onBusinessGroupSuccess(val){
+  $("#businessgroupsval").val(val[1]);
+  $("#businessgroupid").val(val[0]);
 }
 
-//Units---------------------------------------------------------------------------------------------------------------
-function hideunitlist(){
-    document.getElementById('autocompleteview-unit').style.display = 'none';
+//load businessgroup form list in autocomplete text box  
+$("#businessgroupsval").keyup(function(){
+  var textval = $(this).val();
+  getBusinessGroupAutocomplete(textval, businessgroupsList, function(val){
+    onBusinessGroupSuccess(val)
+  })
+});
+
+//retrive legelentity form autocomplete value
+function onLegalEntitySuccess(val){
+  $("#legalentityval").val(val[1]);
+  $("#legalentityid").val(val[0]);
 }
-function loadauto_unit (textval) {
-    document.getElementById('autocompleteview-unit').style.display = 'block';
-    var unit = unitList;
-    var suggestions = [];
-    $('#autocompleteview-unit ul').empty();
-    if(textval.length>0){
-        for(var i in unit){
-            if($("#legalentityid").val() != ''){
-                if(unit[i]['legal_entity_id'] == $("#legalentityid").val()){
-                    if (~unit[i]['unit_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"] ]);    
-                }       
-            }
-            else if($("#divisionid").val() != ''){
-                if(unit[i]['division_id']==$("#divisionid").val()){
-                    if (~unit[i]['unit_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]);    
-                }       
-            }
-            else{
-                if(unit[i]['client_id'] == $("#group-id").val()){
-                    if (~unit[i]['unit_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]);    
-                } 
-            }        
-        }
-        var str='';
-        for(var i in suggestions){
-            str += '<li id="'+suggestions[i][0]+'" onclick="activate_unit(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\', \''+suggestions[i][2]+'\')">'+suggestions[i][2]+'-'+suggestions[i][1]+'</li>';
-        }
-        $('#autocompleteview-unit ul').append(str);
-        $("#unitid").val('');
-    }
-    else{
-      $("#unitid").val('');
-      $("#autocompleteview-unit").hide();
-    }
+
+//load legalentity form list in autocomplete text box  
+$("#legalentityval").keyup(function(){
+  var textval = $(this).val();
+  getLegalEntityAutocomplete(textval, legalEntityList, function(val){
+    onLegalEntitySuccess(val)
+  })
+});
+
+//retrive division form autocomplete value
+function onDivisionSuccess(val){
+  $("#divisionval").val(val[1]);
+  $("#divisionid").val(val[0]);
 }
-function activate_unit (element,checkval,checkname, unitcode) {
-  $("#unitval").val(unitcode+"-"+checkname);
-  $("#unitid").val(checkval);
+
+//load division form list in autocomplete text box  
+$("#divisionval").keyup(function(){
+  var textval = $(this).val();
+  getDivisionAutocomplete(textval, divisionsList, function(val){
+    onDivisionSuccess(val)
+  })
+});
+
+//retrive unit with condition form autocomplete value
+function onUnitSuccess(val){
+  $("#unitval").val(val[1]);
+  $("#unitid").val(val[0]);
 }
+
+//load unit wwith condition form list in autocomplete text box  
+$("#unitval").keyup(function(){
+  var textval = $(this).val();
+  getUnitConditionAutocomplete(textval, unitList, function(val){
+    onUnitSuccess(val)
+  })
+});
+
+
 //Domains------------------------------------------------------------------------------------------------
-
-
 function hidedomainmenu() {
     document.getElementById('selectboxview-domains').style.display = 'none';
 }
