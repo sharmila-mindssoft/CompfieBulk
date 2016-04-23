@@ -153,7 +153,7 @@ function clientprofile_active(userId, clientId, status){
         }
         function onFailure(error){
             if(error == "ReassignFirst"){
-                alert("Cannot Promote this user as Primary admin. \nSince the old admin has compliances under him. \nFirst inform the client to reassign those compliances to another user.");
+                alert("Cannot Promote this user as Client admin. \nSince the old admin has compliances under him. \nFirst inform the client to reassign those compliances to another user.");
             }
         }
         mirror.changeClientUserStatus(userId, status,
@@ -171,7 +171,7 @@ function clientprofile_active(userId, clientId, status){
 
 function alertUserToPromoteAnotherAdmin(isActive){
     if (isActive == true){
-        alert("Try Promote another person as admin. \nCurrent admin will be deactivated automatically");
+        alert("Try Promote another person as Client admin. \nCurrent admin will be deactivated automatically");
     }else{
         alert("Cannot Change status of inactive administrator");
     }
@@ -204,7 +204,7 @@ function clientprofile_isadmin(userId, clientId){
     }
     function failure(error){
         if(error == "ReassignFirst"){
-            alert("Cannot Promote this user as Primary admin. \nSince the old admin has compliances under him. \nFirst inform the client to reassign those compliances to another user.");
+            alert("Cannot Promote this user as Client admin. \nSince the old admin has compliances under him. \nFirst inform admin to reassign those compliances to another user.");
         }
     }
     mirror.createNewAdmin(userId, clientId,
@@ -227,7 +227,7 @@ function onGroupSuccess(val){
   loadClientProfileList(val[0]);
 }
 
-//load form list in autocomplete text box  
+//load form list in autocomplete text box
 $("#groupsval").keyup(function(){
   var textval = $(this).val();
   getGroupAutocomplete(textval, groupList, function(val){
