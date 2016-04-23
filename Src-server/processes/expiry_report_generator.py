@@ -4,6 +4,10 @@ import zipfile
 import datetime
 import shutil
 
+from server.constants import (
+    CLIENT_URL
+)
+
 __all__ =[
 
     "ExpiryReportGenerator"
@@ -12,7 +16,7 @@ __all__ =[
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 CLIENT_DOCS_BASE_PATH = os.path.join(ROOT_PATH, "clientdocuments")
 # CLIENT_URL = "http://45.118.182.47:8082/"
-CLIENT_URL = "http://localhost:8080/"
+# CLIENT_URL = "http://localhost:8080/"
 docment_path = "documents/"
 
 class ExpiryReportGenerator(object):

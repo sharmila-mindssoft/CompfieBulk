@@ -41,7 +41,8 @@ def process_login(db, request, client_id):
     password = request.password
     encrypt_password = db.encrypt(password)
     if db.is_contract_not_started():
-        return login.InvalidCredentials()
+        print "inside contract not startd"
+        return login.ContractNotYetStarted()
     elif not db.is_configured():
         return login.NotConfigured()
     elif not db.is_in_contract():

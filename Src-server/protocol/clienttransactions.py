@@ -1794,7 +1794,7 @@ class APPROVALCOMPLIANCE(object):
             "description": to_structure_Text(self.description),
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "start_date": to_structure_CustomTextType_20(self.start_date),
-            "due_date": to_structure_CustomTextType_20(self.due_date),
+            "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
             "delayed_by": to_structure_OptionalType_UnsignedIntegerType_32(self.delayed_by),
             "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
             "documents": to_structure_OptionalType_VectorType_CustomTextType_500(self.documents),

@@ -447,6 +447,7 @@ def run_daily_process(country_id, current_date):
     print "begin daily_process"
     client_info = get_client_database()
     client_ids = get_contract_expiring_clients()
+    print "client_ids = {}".format(client_ids)
     if client_info is not None :
         for client_id, db in client_info.iteritems() :
             try :

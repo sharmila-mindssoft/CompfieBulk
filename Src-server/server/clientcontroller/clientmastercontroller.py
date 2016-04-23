@@ -123,6 +123,8 @@ def change_service_provider_status(db, request, session_user, client_id):
         request.service_provider_id, client_id
     ):
         return clientmasters.InvalidServiceProviderId()
+    elif not db.is_service_provider_in_contract(request.service_provider_id):
+        return clientmasters.CannotChangeStatusOfContractExpiredSP()
     elif db.is_user_exists_under_service_provider(
         request.service_provider_id
     ):
