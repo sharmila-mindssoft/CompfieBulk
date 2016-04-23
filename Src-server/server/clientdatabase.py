@@ -6085,7 +6085,7 @@ class ClientDatabase(Database):
                     else:
                         if duration_type in ["2", 2]:
                             compliance_status = "%d.%d hour(s) left" % (
-                               ( abs(r.days) * 4 + abs(r.hours)), abs(r.minutes)
+                               ( abs(r.days) * 24 + abs(r.hours)), abs(r.minutes)
                             )
                         else:
                             compliance_status = " %d day(s) left" % (
@@ -6100,9 +6100,10 @@ class ClientDatabase(Database):
                         else:
                             compliance_status = "Overdue by 1 day "
                     else:
+                        print "relative delta : {}".format(r)
                         if duration_type in ["2", 2]:
                             compliance_status = "Overdue by %d.%d hours" % (
-                               (abs(r.days) * 4 + abs(r.hours)), abs(r.minutes)
+                               (abs(r.days) * 24 + abs(r.hours)), abs(r.minutes)
                             )
                         else:
                             compliance_status = "Overdue by %d day(s)" %(
@@ -7930,8 +7931,9 @@ class ClientDatabase(Database):
         unit_wise_compliances = {}
         if user_domain_ids is not None and user_unit_ids is not None:
             for unit in [int(x) for x in user_unit_ids.split(",")]:
-                columns = "ac.compliance_id, c.statutory_provision, concat(document_name,'-',\
-                compliance_task), compliance_description, duration_type, duration"
+                columns = "ac.compliance_id, c.statutory_provision,\
+                compliance_task, compliance_description, duration_type, duration,\
+                document_name"
                 tables = [
                     self.tblAssignedCompliances, self.tblCompliances,
                     self.tblComplianceDurationType
@@ -7954,16 +7956,21 @@ class ClientDatabase(Database):
                 )
                 columns = [
                     "compliance_id", "statutory_provision", "compliance_name",
-                    "description", "duration_type", "duration"
+                    "description", "duration_type", "duration", "document_name"
                 ]
                 result = self.convert_to_dict(rows, columns)
                 compliances = []
                 for row in result:
                     duration = "%s %s" % (row["duration"], row["duration_type"])
+                    compliance_name = row["compliance_name"]
+                    if row["document_name"] not in ["None", "", None]:
+                        compliance_name = "%s - %s" % (
+                            row["document_name"], row["compliance_name"]
+                        )
                     compliances.append(
                         clientuser.ComplianceOnOccurrence(
                             row["compliance_id"], row["statutory_provision"],
-                            row["compliance_name"], row["description"],
+                            compliance_name, row["description"],
                             duration, unit
                         )
                     )
