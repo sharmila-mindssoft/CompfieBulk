@@ -92,7 +92,7 @@ function complianceListArray(data){
 
   var completionDate = '';
   if(data["completion_date"] != null) completionDate = data["completion_date"];
-  
+
   var tableRow3=$('#unit-content-templates .table-unit-content .table-row-unit-content');
   var clone3=tableRow3.clone();
   $('.tbl_sno', clone3).text(sno+1);
@@ -131,11 +131,11 @@ function showloadrecord() {
     if(list[y] !=  undefined){
       if(Object.keys(list[y])[0] == "unit_name"){
          unitList(list[y]);
-      }    
+      }
       else if(Object.keys(list[y])[0] == "due_date"){
          complianceListArray(list[y]);
-      }    
-    }        
+      }
+    }
   }
 }
 
@@ -145,28 +145,28 @@ $(function() {
         $(".loading-indicator-spin").show();
         if($('.loading-indicator-spin').css('display') != 'none')
         {
-          setTimeout(function(){  
+          setTimeout(function(){
               showloadrecord();
           }, 500);
         }
-        setTimeout(function(){  
+        setTimeout(function(){
             $(".loading-indicator-spin").hide();
         }, 500);
     });
 });
 
-//create array for pagination and call display function 
-function loadArray(complianceList) {   
+//create array for pagination and call display function
+function loadArray(complianceList) {
   endCount = pageSize;
   $.each(complianceList, function(i, val){
       var list = complianceList[i];
       var list_comp = val["compliances"]
-      delete val["compliances"];         
+      delete val["compliances"];
       fullArrayList.push(list);
 
       $.each(list_comp, function(i1, val1){
-        var list_c = list_comp[i1];         
-        fullArrayList.push(list_c);     
+        var list_c = list_comp[i1];
+        fullArrayList.push(list_c);
       });
   });
   var totallist = fullArrayList.length;
@@ -183,11 +183,11 @@ function loadArray(complianceList) {
     if(sub_keys_list[y] !=  undefined){
       if(Object.keys(sub_keys_list[y])[0] == "unit_name"){
         unitList(sub_keys_list[y]);
-      }    
+      }
       else if(Object.keys(sub_keys_list[y])[0] == "due_date"){
         complianceListArray(sub_keys_list[y]);
-      }    
-    } 
+      }
+    }
   }
 }
 
@@ -198,9 +198,9 @@ function loadTotalCount(complianceList){
   $(".tbody-unit").find("tbody").remove();
   $.each(complianceList, function(i, val){
     var complianceCount = val['compliances'].length;
-    totalrecords = totalrecords + complianceCount;    
-  });    
-  loadArray(complianceList);    
+    totalrecords = totalrecords + complianceCount;
+  });
+  loadArray(complianceList);
   $('.compliance_count').text("Total : "+ totalrecords +" records");
 
   if(totalrecords == 0){
@@ -264,9 +264,9 @@ function loadCompliance(reportType){
     if(reportType == "show"){
       csv = false
     }
-    client_mirror.getComplianceDetailsReport( 
-      parseInt(country), parseInt(domain), act, parseInt(unit), 
-      parseInt(compliances), parseInt(user), fromdate, todate, 
+    client_mirror.getComplianceDetailsReport(
+      parseInt(country), parseInt(domain), act, parseInt(unit),
+      parseInt(compliances), parseInt(user), fromdate, todate,
       status, csv,
       function (error, response) {
         if (error == null){
@@ -305,7 +305,7 @@ function onDomainSuccess(val){
   $("#domainval").val(val[1]);
   $("#domain").val(val[0]);
 }
-//load domain list in autocomplete textbox  
+//load domain list in autocomplete textbox
 $("#domainval").keyup(function(){
   var textval = $(this).val();
   getDomainAutocomplete(textval, domainsList, function(val){
@@ -318,7 +318,7 @@ function onStatutorySuccess(val){
   $("#actval").val(val[1]);
   $("#act").val(val[0].replace(/##/gi,'"'));
 }
-//load statutory list in autocomplete textbox  
+//load statutory list in autocomplete textbox
 $("#actval").keyup(function(){
   var textval = $(this).val();
   getClientStatutoryAutocomplete(textval, actList, function(val){
@@ -332,7 +332,7 @@ function onUnitSuccess(val){
   $("#unit").val(val[0]);
 }
 
-//load unit  form list in autocomplete text box  
+//load unit  form list in autocomplete text box
 $("#unitval").keyup(function(){
   var textval = $(this).val();
   getUnitAutocomplete(textval, unitsList, function(val){
@@ -346,7 +346,7 @@ function onComplianceTaskSuccess(val){
   $("#compliancetask").val(val[0]);
 }
 
-//load compliancetask form list in autocomplete text box  
+//load compliancetask form list in autocomplete text box
 $("#compliancetaskval").keyup(function(){
   var textval = $(this).val();
   getComplianceTaskAutocomplete(textval, compliancesList, function(val){
@@ -360,7 +360,7 @@ function onUserSuccess(val){
   $("#assignee").val(val[0]);
 }
 
-//load user list in autocomplete text box  
+//load user list in autocomplete text box
 $("#assigneeval").keyup(function(){
   var textval = $(this).val();
   getUserAutocomplete(textval, usersList, function(val){

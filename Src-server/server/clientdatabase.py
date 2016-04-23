@@ -7942,17 +7942,19 @@ class ClientDatabase(Database):
                 compliance_task), compliance_description, duration_type, duration"
                 tables = [
                     self.tblAssignedCompliances, self.tblCompliances,
-                    self.tblComplianceDurationType
+                    self.tblComplianceDurationType,
+                    self.tblUnits
                 ]
                 aliases = [
-                    "ac", "c", "cd"
+                    "ac", "c", "cd", "u"
                 ]
                 join_type = "inner join"
                 join_condition = [
                     "ac.compliance_id = c. compliance_id",
-                    "c.duration_type_id = cd.duration_type_id"
+                    "c.duration_type_id = cd.duration_type_id",
+                    "ac.unit_id = u.unit_id"
                 ]
-                where_condition = "ac.unit_id = (%d) and c.domain_id in (%s) and \
+                where_condition = "u.is_closed = 0 and ac.unit_id = (%d) and c.domain_id in (%s) and \
                 c.frequency_id = 4 and ac.assignee='%d'" % (
                     unit, user_domain_ids, session_user
                 )
