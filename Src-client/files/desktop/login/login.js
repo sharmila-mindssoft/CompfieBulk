@@ -138,6 +138,8 @@ function performLogin(e_button, e_email, e_password) {
             message = "Contract Expired"
         }else if (status == "NotConfigured"){
             message = "Please Wait...Your account configuration is under progress.."
+        }else if (status == "ContractNotYetStarted"){
+            message = "Contract not yet started"
         }
         displayLoginMessage(message);
         $("input").val("");
