@@ -26,7 +26,6 @@ function initialize(){
     function onSuccess(data){
         $("#clientunit-add").hide();
         $("#clientunit-view").show();
-
         isUpdate = false;
         countryByCount = 1;
         countc = 0;
@@ -1121,39 +1120,39 @@ $("#btn-clientunit-submit").click(function(){
                             continue;
                         }
                         if(unitLocation == '' ){
-                            $('.error-message').html(message.unitlocation_required);
+                            displayMessage(message.unitlocation_required);
                             return;
                         }
                         else if(unitGeographyId == ''){
-                            $('.error-message').html(message.unitlocation_invalid);
+                            displayMessage(message.unitlocation_invalid);
                             return;
                         }
                         else if(unitCode == ''){
-                            $('.error-message').html(message.unitcode_required);
+                            displayMessage(message.unitcode_required);
                             return;
                         }
                         else if(unitName == ''){
-                            $('.error-message').html(message.unitname_required);
+                            displayMessage(message.unitname_required);
                             return;
                         }
                         else if(unitIndustryName == ""){
-                            $('.error-message').html(message.industryname_required);
+                            displayMessage(message.industryname_required);
                             return;
                         }
                         else if(unitIndustryId == 0){
-                            $('.error-message').html(message.industryname_required);
+                            displayMessage(message.industryname_required);
                             return;
                         }
                         else if(unitAddress == ''){
-                            $('.error-message').html(message.unitaddress_required);
+                            displayMessage(message.unitaddress_required);
                             return;
                         }
                         else if(unitPostalCode == ''){
-                            $('.error-message').html(message.unitpostal_required);
+                            displayMessage(message.unitpostal_required);
                             return;
                         }
                         else if(unitdomain == ''){
-                            $('.error-message').html(message.domain_required);
+                            displayMessage(message.domain_required);
                             return;
                         }
                         else{
@@ -1309,7 +1308,6 @@ $("#btn-clientunit-submit").click(function(){
                     unitIndustryName = $('.industry-'+i+'-'+j+' option:selected').text();
                     unitdomain = $('.domain-'+i+'-'+j).val();
                     // if(unitLocation == '' && unitGeographyId == '' &&  unitCode == '' &&  unitName == '' &&  unitIndustryId == 'NaN' && unitAddress == '' && unitPostalCode == '' && unitdomain == ''){
-
                     if(unitLocation == "" && unitGeographyId == "" &&  unitCode == "" &&  unitName == "" &&  (unitIndustryName == "" || unitIndustryName == "Select") && unitAddress == "" && unitPostalCode == "" && unitdomain == ""){
                         if(unitcount == 1){
                             displayMessage(message.add_one_unit);
@@ -1318,39 +1316,40 @@ $("#btn-clientunit-submit").click(function(){
                         continue;
                     }
                     else if(unitLocation == ''){
-                        $('.error-message').html(message.unitlocation_required);
+                        $(".error-message").show();
+                        displayMessage(message.unitlocation_required);
                         return;
                     }
                     else if(unitGeographyId == ''){
-                        $('.error-message').html(message.unitlocation_invalid);
+                        displayMessage(message.unitlocation_invalid);
                         return;
                     }
                     else if(unitCode == ''){
-                        $('.error-message').html(message.unitcode_required);
+                        displayMessage(message.unitcode_required);
                         return;
                     }
                     else if(unitName == ''){
-                        $('.error-message').html(message.unitname_required);
+                        displayMessage(message.unitname_required);
                         return;
                     }
                     else if(unitIndustryName == ""){
-                        $('.error-message').html(message.industryname_required);
+                        displayMessage(message.industryname_required);
                         return;
                     }
                     else if(unitIndustryId == 0){
-                        $('.error-message').html(message.industryname_required);
+                        displayMessage(message.industryname_required);
                         return;
                     }
                     else if(unitAddress == ''){
-                        $('.error-message').html(message.unitaddress_required);
+                        displayMessage(message.unitaddress_required);
                         return;
                     }
                     else if(unitPostalCode == ''){
-                        $('.error-message').html(message.unitpostal_required);
+                        displayMessage(message.unitpostal_required);
                         return;
                     }
                     else if(unitdomain == ''){
-                        $('.error-message').html(message.domain_required);
+                        displayMessage(message.domain_required);
                         return;
                     }
                     else{
@@ -1685,7 +1684,7 @@ function loaddomain(classval){
     var getClientid;
     if($("#client-unit-id").val() == ""){
         getClientid= $('#group-select').val();
-    }else{  
+    }else{
         getClientid= $('#client-unit-id').val();
     }
     var clientdomainsid;
@@ -1740,7 +1739,7 @@ function loaddomain(classval){
 
             var ccdd =checkclientdomain(domainId, countval);
             var cdd = checkdomain(domainId, countval);
-            
+
             if(checkdomainforadd(clientdomainsid, domainId) == 1){
                 if(ccdd == 1 && cdd == 1){
                     if(selectdomainstatus == 'checked'){
@@ -1762,7 +1761,7 @@ function loaddomain(classval){
                     }
                 }
             }
-            
+
             // if(selectdomainstatus == 'checked'){
             //     str += '<li id="'+domainId+'" class="active_selectbox'+countval+' active" onclick="activate(this,\''+countval+'\' )" >'+domainName+'</li> ';
             // }else{
