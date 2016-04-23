@@ -170,6 +170,20 @@ function dataconfigurationvalidate(){
     return flag;
 }
 
+function convert_date (data){
+  var date = data.split("-");
+  var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  for(var j=0;j<months.length;j++){
+      if(date[1]==months[j]){
+           date[1]=months.indexOf(months[j])+1;
+       }
+  }
+  if(date[1]<10){
+      date[1]='0'+date[1];
+  }
+  return new Date(date[2], date[1]-1, date[0]);
+}
+
 $("#btn-clientgroup-submit").click(function(){
     var dateConfigurations = [];
     var countryList = $('#country').val();
@@ -219,6 +233,17 @@ $("#btn-clientgroup-submit").click(function(){
     }
     var shortname = $("#short-name").val().trim();
 
+    var d = new Date();
+    var month = d.getMonth()+1;
+    var day = d.getDate();
+    var output = d.getFullYear() + '/' + month + '/' + day;
+    var currentDate = new Date(output);
+    var convertDate = null;
+
+    if(contractToVal != ''){
+      convertDate = convert_date(contractToVal);
+    }
+
     if(clientGroupNameVal == ''){
         displayMessage(message.group_required);
     }
@@ -237,6 +262,9 @@ $("#btn-clientgroup-submit").click(function(){
     else if(contractToVal == ''){
         displayMessage(message.contractto_required);
     }
+    else if (convertDate != null && convertDate < currentDate) {
+        displayMessage(message.invalid_contractto);
+    }
     else if(usernameVal == '' && clientGroupIdVal == ''){
         displayMessage(message.username_required);    
     }
@@ -246,7 +274,7 @@ $("#btn-clientgroup-submit").click(function(){
     else if(licenceVal == ''){
         displayMessage(message.licence_required);
     } 
-    else if(licenceVal == "0"){
+    else if(licenceVal == "0" || licenceVal == "1"){
         displayMessage(message.licence_invalid);
     }    
     else if(isNaN(licenceVal)){

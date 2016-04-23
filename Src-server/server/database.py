@@ -5441,11 +5441,13 @@ class KnowledgeDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return self.return_assigned_statutories_by_id(result)
 
-    def return_assigned_compliances_by_id(self, client_statutory_id, statutory_id=None):
+    def return_assigned_compliances_by_id(self, client_statutory_id, statutory_id=None, applicable_status=None):
         if bool(self.statutory_parent_mapping) is False:
             self.get_statutory_master()
         if statutory_id is None :
             statutory_id = '%'
+        if applicable_status is None :
+            applicable_status = '%'
         query = "SELECT t1.client_statutory_id, t1.compliance_id, \
             t1.statutory_id, t1.statutory_applicable, \
             t1.statutory_opted, \
@@ -5467,8 +5469,11 @@ class KnowledgeDatabase(Database):
             ON t3.compliance_id = t1.compliance_id \
             WHERE \
             t1.client_statutory_id = %s \
-            AND t1.statutory_id like '%s' ORDER BY level, statutory_name, compliance_id" % (
-                client_statutory_id, statutory_id
+            AND t1.statutory_id like '%s' \
+            AND  t1.compliance_applicable like '%s' \
+            ORDER BY level, statutory_name, compliance_id" % (
+                client_statutory_id, statutory_id,
+                applicable_status
             )
         rows = self.select_all(query)
         columns = [
@@ -5722,8 +5727,8 @@ class KnowledgeDatabase(Database):
             qry += " AND t4.statutory_id = %s " % (level_1_statutory_id)
         applicable_status = request_data.applicability_status
         if applicable_status is not None :
-            qry += " AND t4.statutory_applicable = %s " % (applicable_status)
-            qry += " AND t4.compliance_applicable = %s " % (applicable_status)
+            applicable_status = int(applicable_status)
+            qry += " AND t4.compliance_applicable = %s " % applicable_status
 
         query = "SELECT distinct t1.client_statutory_id, t1.client_id, \
             t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, \
@@ -5755,9 +5760,9 @@ class KnowledgeDatabase(Database):
             "division_name", "address", "postal_code", "unit_code"
         ]
         result = self.convert_to_dict(rows, columns)
-        return self.return_assigned_statutory_report(result, level_1_statutory_id)
+        return self.return_assigned_statutory_report(result, level_1_statutory_id, applicable_status)
 
-    def return_assigned_statutory_report(self, report_data, level_1_statutory_id):
+    def return_assigned_statutory_report(self, report_data, level_1_statutory_id, applicable_status):
         if bool(self.geography_parent_mapping) is False:
             self.get_geographies()
 
@@ -5775,7 +5780,7 @@ class KnowledgeDatabase(Database):
                 unit_address = "%s, %s, %s" % (
                     data["address"], ', '.join(ordered), data["postal_code"]
                 )
-                statutories = self.return_assigned_compliances_by_id(client_statutory_id, level_1_statutory_id)
+                statutories = self.return_assigned_compliances_by_id(client_statutory_id, level_1_statutory_id, applicable_status)
                 unit_statutories = technoreports.UNIT_WISE_ASSIGNED_STATUTORIES(
                     data["unit_id"],
                     unit_name,
@@ -5788,7 +5793,7 @@ class KnowledgeDatabase(Database):
                 )
             else :
                 statutories = unit_statutories.assigned_statutories
-                new_stautory = self.return_assigned_compliances_by_id(client_statutory_id)
+                new_stautory = self.return_assigned_compliances_by_id(client_statutory_id, None, applicable_status)
                 for new_s in new_stautory :
                     new_id = new_s.level_1_statutory_id
                     is_exists = False
@@ -6031,10 +6036,12 @@ class KnowledgeDatabase(Database):
 #   Get Details Report
 #
 
-    def get_client_details_report(self, country_id, client_id, business_group_id,
-            legal_entity_id, division_id, unit_id, domain_ids):
+    def get_client_details_report(
+        self, country_id, client_id, business_group_id,
+        legal_entity_id, division_id, unit_id, domain_ids
+    ):
 
-        condition = "country_id = '%d' AND client_id = '%d' "%(
+        condition = "country_id = '%d' AND client_id = '%d' " % (
             country_id, client_id
         )
         if business_group_id is not None:
@@ -6046,24 +6053,30 @@ class KnowledgeDatabase(Database):
         if unit_id is not None:
             condition += " AND unit_id = '%d'" % unit_id
         if domain_ids is not None:
-            for domain_id in domain_ids:
-                condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
-                            "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
-                            "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
-                            " or domain_ids LIKE '"+str(domain_id)+"') "
+            domain_con = ""
+            for i, domain_id in enumerate(domain_ids):
+                # condition += " AND  ( domain_ids LIKE  '%," + str(domain_id) + ",%' " +\
+                #             "or domain_ids LIKE  '%," + str(domain_id) + "' " +\
+                #             "or domain_ids LIKE  '" + str(domain_id) + ",%'" +\
+                #             " or domain_ids LIKE '" + str(domain_id) + "') "
+                if i == 0 :
+                    domain_con += " FIND_IN_SET('%s', domain_ids)" % (domain_id)
+                elif i > 0 :
+                    domain_con += " OR FIND_IN_SET('%s', domain_ids)" % (domain_id)
+            condition += " AND(%s)" % (domain_con)
 
         group_by_columns = "business_group_id, legal_entity_id, division_id"
         group_by_condition = condition+" group by business_group_id, legal_entity_id, division_id"
         group_by_rows = self.get_data(self.tblUnits, group_by_columns, group_by_condition)
         GroupedUnits = []
         for row in group_by_rows:
-            columns = "tu.unit_id, tu.unit_code, tu.unit_name, tg.geography_name, "\
-            "tu.address, tu.domain_ids, tu.postal_code"
+            columns = "tu.unit_id, tu.unit_code, tu.unit_name, tg.geography_name, \
+                tu.address, tu.domain_ids, tu.postal_code"
             tables = [self.tblUnits, self.tblGeographies]
             aliases = ["tu", "tg"]
             join_type = " left join "
             join_conditions = ["tu.geography_id = tg.geography_id"]
-            where_condition = "tu.legal_entity_id = '%d' "% row[1]
+            where_condition = "tu.legal_entity_id = '%d' " % row[1]
             if row[0] == None:
                 where_condition += " And tu.business_group_id is NULL"
             else:
@@ -6075,16 +6088,26 @@ class KnowledgeDatabase(Database):
             if unit_id is not None:
                 where_condition += " AND tu.unit_id = '%d'" % unit_id
             if domain_ids is not None:
-                for domain_id in domain_ids:
-                    where_condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
-                                "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
-                                "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
-                                " or domain_ids LIKE '"+str(domain_id)+"') "
-            result_rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type,
-            join_conditions, where_condition)
+                domain_con = ""
+                for i, domain_id in enumerate(domain_ids):
+                    # where_condition += " AND  ( domain_ids LIKE  '%," + str(domain_id)+",%' " +\
+                    #             "or domain_ids LIKE  '%," + str(domain_id) + "' " +\
+                    #             "or domain_ids LIKE  '" + str(domain_id) + ",%'" +\
+                    #             " or domain_ids LIKE '" + str(domain_id) + "') "
+                    if i == 0 :
+                        domain_con += "FIND_IN_SET('%s', domain_ids)" % (domain_id)
+                    elif i > 0 :
+                        domain_con += " OR FIND_IN_SET('%s', domain_ids)" % (domain_id)
+            where_condition += " AND(%s)" % (domain_con)
+
+            result_rows = self.get_data_from_multiple_tables(
+                columns, tables, aliases, join_type,
+                join_conditions, where_condition
+            )
             units = []
             for result_row in result_rows:
-                units.append(technoreports.UnitDetails(result_row[0], result_row[3], result_row[1],
+                units.append(technoreports.UnitDetails(
+                    result_row[0], result_row[3], result_row[1],
                     result_row[2], result_row[4], result_row[6],
                     [int(x) for x in result_row[5].split(",")]))
             GroupedUnits.append(technoreports.GroupedUnits(row[2], row[1], row[0], units))

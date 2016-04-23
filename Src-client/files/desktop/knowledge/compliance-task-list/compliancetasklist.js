@@ -346,196 +346,84 @@ $("#submit").click(function(){
 });
 
 //Autocomplete Script Starts
-//Hide list items after select
-$(".hidemenu").click(function(){
-  $("#autocompleteview").hide();
-  $("#autocomplete_domain").hide();
-  $("#autocomplete_industry").hide();
-  $("#autocomplete_statutorynature").hide();
-  $("#autocomplete_geography").hide();
-  $("#autocomplete_statutory").hide();
-});
+//retrive country autocomplete value
+function onCountrySuccess(val){
+  $("#countryval").val(val[1]);
+  $("#country").val(val[0]);
+}
 
-//load country list in autocomplete text box
+//load country list in autocomplete text box  
 $("#countryval").keyup(function(){
   var textval = $(this).val();
-  $("#autocompleteview").show();
-  var countries = countriesList;
-  var suggestions = [];
-  $('#ulist_text').empty();
-  if(textval.length>0){
-    for(var i in countries){
-      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]);
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_text').append(str);
-    $("#country").val('');
-    }else{
-      $("#country").val('');
-      $("#autocompleteview").hide();
-    }
+  getCountryAutocomplete(textval, countriesList, function(val){
+    onCountrySuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_text (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#countryval").val(checkname);
-  $("#country").val(checkval);
-}
 
-//load domain list in autocomplete text box
+//retrive domain autocomplete value
+function onDomainSuccess(val){
+  $("#domainval").val(val[1]);
+  $("#domain").val(val[0]);
+}
+//load domain list in autocomplete textbox  
 $("#domainval").keyup(function(){
   var textval = $(this).val();
-  $("#autocomplete_domain").show();
-  var domains = domainsList;
-  var suggestions = [];
-  $('#ulist_domain').empty();
-  if(textval.length>0){
-    for(var i in domains){
-      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == true) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_domain(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_domain').append(str);
-    $("#domain").val('');
-    }else{
-      $("#domain").val('');
-      $("#autocomplete_domain").hide();
-    }
+  getDomainAutocomplete(textval, domainsList, function(val){
+    onDomainSuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_domain (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#domainval").val(checkname);
-  $("#domain").val(checkval);
-}
 
-//load domain list in autocomplete text box
+//retrive industry autocomplete value
+function onIndustrySuccess(val){
+  $("#industryval").val(val[1]);
+  $("#industry").val(val[0]);
+}
+//load industry list in autocomplete textbox  
 $("#industryval").keyup(function(){
   var textval = $(this).val();
-  $("#autocomplete_industry").show();
-  var industries = industriesList;
-  var suggestions = [];
-  $('#ulist_industry').empty();
-  if(textval.length>0){
-    for(var i in industries){
-      if (~industries[i]["industry_name"].toLowerCase().indexOf(textval.toLowerCase()) && industries[i]["is_active"] == true) suggestions.push([industries[i]["industry_id"],industries[i]["industry_name"]]);
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_industry(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_industry').append(str);
-    $("#industry").val('');
-    }else{
-      $("#industry").val('');
-      $("#autocomplete_industry").hide();
-    }
+  getIndustryAutocomplete(textval, industriesList, function(val){
+    onIndustrySuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_industry (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#industryval").val(checkname);
-  $("#industry").val(checkval);
+
+//retrive statutorynature autocomplete value
+function onStatutoryNatureSuccess(val){
+  $("#statutorynatureval").val(val[1]);
+  $("#statutorynature").val(val[0]);
 }
-
-
-//load statutorynature list in autocomplete text box
+//load statutorynature list in autocomplete textbox  
 $("#statutorynatureval").keyup(function(){
   var textval = $(this).val();
-  $("#autocomplete_statutorynature").show();
-  var statutorynatures = statutoryNaturesList;
-  var suggestions = [];
-  $('#ulist_statutorynature').empty();
-  if(textval.length>0){
-    for(var i in statutorynatures){
-      if (~statutorynatures[i]["statutory_nature_name"].toLowerCase().indexOf(textval.toLowerCase()) && statutorynatures[i]["is_active"] == true) suggestions.push([statutorynatures[i]["statutory_nature_id"],statutorynatures[i]["statutory_nature_name"]]);
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_statutorynature(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_statutorynature').append(str);
-    $("#statutorynature").val('');
-    }else{
-      $("#statutorynature").val('');
-      $("#autocomplete_statutorynature").hide();
-    }
+  getStatutoryNatureAutocomplete(textval, statutoryNaturesList, function(val){
+    onStatutoryNatureSuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_statutorynature (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#statutorynatureval").val(checkname);
-  $("#statutorynature").val(checkval);
-}
 
-//load statutorynature list in autocomplete text box
+//retrive geography autocomplete value
+function onGeogaphySuccess(val){
+  $("#geographyval").val(val[1]);
+  $("#geography").val(val[0]);
+}
+//load geography list in autocomplete textbox  
 $("#geographyval").keyup(function(){
   var textval = $(this).val();
-  $("#autocomplete_geography").show();
-  var geographies = geographiesList[$("#country").val()];
-  var suggestions = [];
-  $('#ulist_geography').empty();
-  if(textval.length>0){
-    for(var i in geographies){
-      if (~geographies[i]["geography_name"].toLowerCase().indexOf(textval.toLowerCase()) && geographies[i]["is_active"] == true) suggestions.push([geographies[i]["geography_id"],geographies[i]["geography_name"]]);
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_geography(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_geography').append(str);
-    $("#geography").val('');
-    }else{
-      $("#geography").val('');
-       $("#autocomplete_geography").hide();
-    }
+  getGeographyAutocomplete(textval, geographiesList[$("#country").val()], function(val){
+    onGeogaphySuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_geography (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#geographyval").val(checkname);
-  $("#geography").val(checkval);
-}
 
-//load statutorynature list in autocomplete text box
+//retrive statutory autocomplete value
+function onStatutorySuccess(val){
+  $("#statutoryval").val(val[1]);
+  $("#statutory").val(val[0]);
+}
+//load statutory list in autocomplete textbox  
 $("#statutoryval").keyup(function(){
   var textval = $(this).val();
-  $("#autocomplete_statutory").show();
-  var statutories = statutoriesList[$("#country").val()][$("#domain").val()];
-  var suggestions = [];
-  $('#ulist_statutory').empty();
-  if(textval.length>0){
-    for(var i in statutories){
-      if (~statutories[i]["statutory_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([statutories[i]["statutory_id"],statutories[i]["statutory_name"]]);
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_statutory(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_statutory').append(str);
-    $("#statutory").val('');
-    }else{
-      $("#statutory").val('');
-      $("#autocomplete_statutory").hide();
-    }
+  getStatutoryAutocomplete(textval, statutoriesList[$("#country").val()][$("#domain").val()], function(val){
+    onStatutorySuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_statutory (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#statutoryval").val(checkname);
-  $("#statutory").val(checkval);
-}
 //Autocomplete Script ends
 
 //initialization

@@ -1797,7 +1797,7 @@ class User(object):
         employee_id = data.get("employee_id")
         employee_id = parse_structure_UnsignedIntegerType_32(employee_id)
         employee_code = data.get("employee_code")
-        employee_code = parse_structure_CustomTextType_50(employee_code)
+        employee_code = parse_structure_OptionalType_CustomTextType_50(employee_code)
         employee_name = data.get("employee_name")
         employee_name = parse_structure_CustomTextType_50(employee_name)
         return User(employee_id, employee_code, employee_name)
@@ -1805,7 +1805,7 @@ class User(object):
     def to_structure(self):
         return {
             "employee_id": to_structure_SignedIntegerType_8(self.employee_id),
-            "employee_code": to_structure_CustomTextType_50(self.employee_code),
+            "employee_code": to_structure_OptionalType_CustomTextType_50(self.employee_code),
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
         }
 

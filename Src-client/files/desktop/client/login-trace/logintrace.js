@@ -115,36 +115,20 @@ function showrecord(){
     }
 }
 
-//User---------------------------------------------------------------------------------------------------------------
+//retrive user autocomplete value
+function onUserSuccess(val){
+  $("#userval").val(val[1]);
+  $("#userid").val(val[0]);
+}
 
-function hideuserlist(){
-    document.getElementById('autocompleteview-user').style.display = 'none';
-}
-function loadauto_user (textval) {
-    if($("#userval").val() == ''){
-        $("#userid").val('');
-    }
-  document.getElementById('autocompleteview-user').style.display = 'block';
-  var user = userList;
-  var suggestions = [];
-  $('#autocompleteview-user ul').empty();
-  if(textval.length>0){
-    for(var i in user){
-        var getemployeeidname = user[i]['employee_code']+"-"+user[i]['employee_name'];
-        if (~getemployeeidname.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([user[i]["employee_code"],user[i]["employee_name"],user[i]["employee_code"]]);  
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_user(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\', \''+suggestions[i][2]+'\')">'+suggestions[i][2]+'-'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview-user ul').append(str);
-    $("#userid").val('');
-    }
-}
-function activate_user (element,checkval,checkname, concatunit) {
-  $("#userval").val(concatunit+'-'+checkname);
-  $("#userid").val(checkval);
-}
+//load user list in autocomplete text box  
+$("#userval").keyup(function(){
+  var textval = $(this).val();
+  getUserAutocomplete(textval, userList, function(val){
+    onUserSuccess(val)
+  })
+});
+
 $(function() {
     initialize();
 });

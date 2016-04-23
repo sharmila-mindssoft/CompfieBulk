@@ -113,6 +113,14 @@ function initMirror() {
             return null;
     }
 
+    function getUserId() {
+        var info = getUserInfo();
+        if (info !== null)
+            return info["user_id"];
+        else
+            return null;
+    }
+
     function get_ip(){
         $.getJSON("http://jsonip.com?callback=?", function (data) {
             window.localStorage["my_ip"]  = data.ip;
@@ -1461,6 +1469,7 @@ function initMirror() {
         logout: logout,
 
         getEmployeeName: getEmployeeName,
+        getUserId: getUserId,
         getUserInfo: getUserInfo,
         updateUserInfo: updateUserInfo,
         getUserProfile: getUserProfile,

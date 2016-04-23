@@ -6,7 +6,7 @@ __all__ = [
 ]
 
 ########################################################
-# To Redirect the requests to the corresponding 
+# To Redirect the requests to the corresponding
 # functions
 ########################################################
 def process_client_master_requests(request, db) :
@@ -79,7 +79,7 @@ def get_service_providers(db, request, session_user, client_id):
         service_providers=service_provider_list)
 
 ########################################################
-# To validate and Save service provider 
+# To validate and Save service provider
 ########################################################
 def save_service_provider(db, request, session_user, client_id):
     service_provider_id = db.generate_new_service_provider_id(client_id)
@@ -392,4 +392,3 @@ def close_unit(db, request, session_user, client_id):
 def get_audit_trails(db, request, session_user, client_id):
     audit_trails = db.get_audit_trails(session_user, client_id)
     return audit_trails
-             

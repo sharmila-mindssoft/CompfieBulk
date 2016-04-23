@@ -224,9 +224,6 @@ $("#export").click(function(){
 //Autocomplete Script Starts
 //Hide list items after select
 $(".hidemenu").click(function(){
-  $("#autocomplete_domain").hide();
-  $("#autocomplete_act").hide();
-  $("#autocomplete_unit").hide();
   $("#autocomplete_serviceprovider").hide();
 });
 
@@ -240,97 +237,45 @@ function loadCountries(countriesList){
   });
 }
 
-//load domain list in autocomplete text box  
+//retrive domain autocomplete value
+function onDomainSuccess(val){
+  $("#domainval").val(val[1]);
+  $("#domain").val(val[0]);
+}
+//load domain list in autocomplete textbox  
 $("#domainval").keyup(function(){
   var textval = $(this).val();
-  $("#autocomplete_domain").show();
-  var domains = domainsList;
-  var suggestions = [];
-  $('#ulist_domain').empty();
-  if(textval.length>0){
-    for(var i in domains){
-      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == true) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_domain(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_domain').append(str);
-    $("#domain").val('');
-    }else{
-      $("#domain").val('');
-      $("#autocomplete_domain").hide();
-    }
+  getDomainAutocomplete(textval, domainsList, function(val){
+    onDomainSuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_domain (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#domainval").val(checkname);
-  $("#domain").val(checkval);
-}
 
-//acts-----------------------------------------
+//retrive statutory autocomplete value
+function onStatutorySuccess(val){
+  $("#actval").val(val[1]);
+  $("#act").val(val[0].replace(/##/gi,'"'));
+}
+//load statutory list in autocomplete textbox  
 $("#actval").keyup(function(){
   var textval = $(this).val();
-  $("#autocomplete_act").show();
-  var acts = levelOneStatutoriesList;
-  var suggestions = [];
-  $('#ulist_act').empty();
-  if(textval.length>0){
-    for(var i in acts){
-      if (~acts[i].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([acts[i],acts[i]]); 
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_acts(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_act').append(str);
-    $("#act").val('');
-    }else{
-      $("#act").val('');
-      $("#autocomplete_act").hide();
-    }
+  getClientStatutoryAutocomplete(textval, levelOneStatutoriesList, function(val){
+    onStatutorySuccess(val)
+  })
 });
-function activate_acts (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#actval").val(checkname);
-  $("#act").val(checkval);
+
+//retrive unit form autocomplete value
+function onUnitSuccess(val){
+  $("#unitval").val(val[1]);
+  $("#unit").val(val[0]);
 }
 
-
+//load unit  form list in autocomplete text box  
 $("#unitval").keyup(function(){
-
   var textval = $(this).val();
-  $("#autocomplete_unit").show();
-  
-  var units = unitsList;
-  var suggestions = [];
- $('#ulist_unit').empty();
-  if(textval.length>0){
-    for(var i in units){
-      var combineUnitName = units[i]['unit_code']+"-"+units[i]['unit_name'];
-      if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],combineUnitName]); 
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_unit(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_unit').append(str);
-    $("#unit").val('');
-    }else{
-      $("#unit").val('');
-      $("#autocomplete_unit").hide();
-    }
+  getUnitAutocomplete(textval, unitsList, function(val){
+    onUnitSuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_unit (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#unitval").val(checkname);
-  $("#unit").val(checkval);
-}
 
 
 //Assignee---------------------------------------------------

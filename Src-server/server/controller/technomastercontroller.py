@@ -1,8 +1,8 @@
 ########################################################
-# This Controller will handle Client and Client Unit 
+# This Controller will handle Client and Client Unit
 # related requests
 #
-# In this module "db" is an object of "KnowledgeDatabase" 
+# In this module "db" is an object of "KnowledgeDatabase"
 ########################################################
 import threading
 import re
@@ -68,7 +68,7 @@ def create_database(
 
 
 ########################################################
-# To send the credentials of the created client to 
+# To send the credentials of the created client to
 # the same
 ########################################################
 def send_client_credentials(
@@ -222,7 +222,7 @@ def change_client_group_status(db, request, session_user):
 #
 
 ########################################################
-# To Validate and Save Business group, Legal Entity, 
+# To Validate and Save Business group, Legal Entity,
 # Division and Units received in the request
 ########################################################
 def save_client(db, request, session_user):
@@ -317,7 +317,7 @@ def save_client(db, request, session_user):
         return technomasters.SaveClientSuccess()
 
 ########################################################
-# To Validate and Update Business group, Legal Entity, 
+# To Validate and Update Business group, Legal Entity,
 # Division and Units received in the request
 ########################################################
 def update_client(db, request, session_user):
@@ -412,7 +412,7 @@ def update_client(db, request, session_user):
         return technomasters.UpdateClientSuccess()
 
 ########################################################
-# To Get List of Business groups, Legal Entities, 
+# To Get List of Business groups, Legal Entities,
 # Divisions and Units with details of all clients
 ########################################################
 def get_clients(db, request, session_user):
@@ -438,7 +438,7 @@ def get_clients(db, request, session_user):
         return technomasters.UserIsNotResponsibleForAnyClient()
 
 ########################################################
-# To Change the status of Units under a particular 
+# To Change the status of Units under a particular
 # division or Legal entity
 ########################################################
 def change_client_status(db, request, session_user):

@@ -1,0 +1,951 @@
+<h1> MIRROR - Mobile API Document </h1>
+
+[TOC]
+
+# Background Info
+
+### STATUTORY_ID, STATUTORY_MAPPING_ID, GROUP_ID, BUSINESS_GROUP_ID, LEGAL_ENTITY_ID, DIVISION_ID, UNIT_ID, COMPLIANCE_HISTORY_ID,  COMPLIANCE_ID, STATUTORYNATURE_ID, COUNTRY_ID, DOMAIN_ID, INDUSTRY_ID,USER_ID ,  GEOGRAPHY_ID,  INDUSTRY_TYPE_ID,NOTIFICATION_ID,SESSION_TOKEN
+
+All are int
+
+### DOCUMENT_NAME, USER_NAME, COMPLIANCE_TASK_NAME, UNIT_CODE
+
+	All are String
+
+### NOTIFICATION_TYPE
+
+    - Notification
+    - Reminder
+    - Escalation
+
+### COMPLIANCE_FREQUENCY
+
+	- OneTime
+	- Periodical
+	- Review
+	- OnOccurrence 
+
+### REPEATS_TYPE
+	
+	- Year
+	- Month
+	- Day
+
+### DURATION_TYPE
+	
+	- Day
+	- Hour
+
+### APPROVAL_STATUS
+  
+    - Approve
+    - Reject
+    - ApproveAndNotify
+
+# Login API
+
+##  Login
+	
+		[
+			"Login",
+		 	{
+			  	"login_type": "Android",
+			  	"username": "siva@mindssoft.com",
+			  	"password": "123456",
+			 	 "short_name": null,
+			  	"ip": "122.164.164.35"
+		 	}
+		]
+
+	On Success
+
+		[
+			"UserLoginResponseSuccess",
+			{
+			    "user_id": 1,
+			    "name": "SIVA",
+			    "session_token": "290a0b2d8d3f495abcb7dbc8eda79bf9"
+			}
+		]
+
+		Possible Errors
+      
+	    [
+	        "InvalidCredentials",
+	        {}
+	    ] 
+
+		Note : 
+			* Knowledge users (who are having privilege to approve statutory mapping), 
+			* All Client users and Service providers can login to the mobile app
+			* Can differentiate knowledge and client user using configuration field. If configuration is empty then it is knowledge user else it is client user
+
+## Forgot Password
+
+		[
+			"ForgotPassword",
+			{
+				"username": "siva@mindssoft.com",
+				"short_name": null
+			}
+		]
+
+		On Success
+
+		[
+			"ForgotPasswordSuccess",
+			{}
+		]
+
+		Possible Errors
+      
+	    [
+	        "InvalidUsername",
+	        {}
+	    ]		
+
+	Note :
+
+		* On Success, an email with password reset link will be sent to the user's email
+
+
+# Common API
+
+## Request Format
+
+		{
+			"session_token" : SESSION_TOKEN,
+			"request": will be any of the following requests except Login
+		}
+
+	Note :
+		* All request will be in above format (Except login)
+
+## Logout
+
+		[
+			"Logout",
+			{
+				"user_id" : USER_ID
+			}
+		]
+
+		On Success
+
+		[
+			"LogoutSuccess",
+			{}
+		]
+
+## GCM Notifications (Common for Client, Knowledge and Service Provider)  
+
+    [
+        "GetNotificationsSuccess",
+        {
+            "notifications" :[
+            	{
+            		notification_id" :  NOTIFICATION_ID,
+            		"notification_type" : NOTIFICATION_TYPE,
+            		"notification_text" : String,
+            		"extra_details" : String
+          		},
+          	]
+        }
+    ]
+
+## Get Versions
+
+		[
+			"GetVersions",
+			{
+				
+			}
+		]
+
+	On Success
+
+		[
+			"GetVersionsSuccess",
+			{
+				"unit_details_version" : int,
+				"user_details_version" : int,
+				"compliance_applicability_version" : int,
+				"compliance_history_version" : int,
+				"reassign_history_version" :  int
+			}
+		]
+
+	Note : 
+		* To check and sync updates from server
+
+## Get Users
+		
+		[
+			"GetUsers",
+			{
+				"user_id" : USER_ID,
+				"version" : int
+			}
+		]
+
+	On Success
+	
+		[
+			"GetUsersSuccess",
+			[
+				{
+					"user_id" : USER_ID,
+					"user_name" : EMPLOYEE_CODE - USER_NAME
+				},
+			]
+		]
+
+	Note : 
+		*	To get all the users of the units which are configured to the mobile user
+
+# Knowledge API
+
+## Get Statutory Mapping approval list
+		
+		{
+			"session_token": "f3bb3e20d38d4624930636de074a0df0",
+			"request": [
+			"GetApproveStatutoryMappings",
+			{}
+			]
+		}
+
+	On Success
+
+		[
+		  	"GetStatutoryMappingsSuccess", 
+		  	{
+			    "statutory_mappings": {
+			      "1": {
+				        "geography_ids": [
+				          1, 
+				          4, 
+				          3, 
+				          2
+				        ], 
+				        "approval_status": 0, 
+				        "approval_status_text": "Pending", 
+				        "compliance_names": [
+				          {
+				            "url": "compliance_format/payment_of_bonus_act_1965-682fa616823e4730982e06c2405cf204.pdf", 
+				            "compliance_name": "COMPLIANCE DOCUMENT 2403161605 - COMPLIANCE TASK 2403161605"
+				          }, 
+				          
+				        ], 
+				        "statutory_nature_name": "\"Central\"", 
+				        "country_id": 1, 
+				        "domain_name": "FINANCE LAW", 
+				        "industry_names": "Factory, Office", 
+				        "is_active": true, 
+				        "statutory_nature_id": 2, 
+				        "statutory_ids": [
+				          2
+				        ], 
+				        "country_name": "India", 
+				        "industry_ids": [
+				          1, 
+				          3
+				        ], 
+				        "geography_mappings": [
+				          "India >> East", 
+				          "India >> North", 
+				          "India >> South", 
+				          "India >> West"
+				        ], 
+				        "compliances": [
+				          {
+				            "c_id": 1, 
+				            "c_task": "COMPLIANCE TASK 2403161605", 
+				            "d_type_id": null, 
+				            "description": "COMPLIANCE DESCRIPTION 2403161605", 
+				            "is_active": true, 
+				            "f_id": 1, 
+				            "f_f_list": [
+				              {
+				                "file_content": "compliance_format/payment_of_bonus_act_1965-682fa616823e4730982e06c2405cf204.pdf", 
+				                "file_name": "payment_of_bonus_act_1965-682fa616823e4730982e06c2405cf204.pdf", 
+				                "file_size": 88156
+				              }
+				            ], 
+				            "r_every": null, 
+				            "summary": null, 
+				            "doc_name": "COMPLIANCE DOCUMENT 2403161605", 
+				            "statu_dates": [
+				              {
+				                "statutory_month": 3, 
+				                "statutory_date": 30, 
+				                "trigger_before_days": 10, 
+				                "repeat_by": "dayofmonth"
+				              }
+				            ], 
+				            "frequency": "One Time", 
+				            "duration": null, 
+				            "r_type_id": null, 
+				            "s_provision": "STATUTORY PROVISION 2403161605", 
+				            "p_consequences": "PENAL CONSEQUENCES 2403161605"
+				          }, 
+				         
+				        ], 
+				        "statutory_mappings": [
+				          "PRIMARY LEGISLATION 2403161605>>SECONDARY LEGISLATION 2403161605"
+				        ], 
+				        "domain_id": 2
+			      	}
+			    }
+		  	}
+
+		]
+
+## Approve Statutory mapping
+
+		{
+			"session_token": "f3bb3e20d38d4624930636de074a0df0",
+			"request": [
+				"ApproveStatutoryMapping",
+				{
+					"statutory_mappings": [
+					    {
+						    "statutory_mapping_id": 3,
+						    "statutory_provision": "POG ActPOG Act>>State Rule All",
+						    "approval_status": 1,
+						    "rejected_reason": null,
+						    "notification_text": null
+						}
+					]
+				}
+			]
+		}
+
+	On Success
+
+		[
+			"ApproveStatutoryMappingSuccess",
+			{}
+		]	
+
+# Client API
+
+## Get Unit Details
+
+	[
+		"1-336d4da0018249b7a09715613e98c101",
+		{
+		  "session_token": "1-336d4da0018249b7a09715613e98c101",
+		  "request": [
+		  	"GetUnitDetails",
+		   	{}
+		  ]
+		}
+	]
+
+	On Success
+
+		[
+		  	"GetUnitDetailsSuccess",
+		  	{
+		    	"divisions": [
+			      	{
+			        	"division_id": 1,
+			        	"division_name": "ABC DIVISION A",
+			        	"legal_entity_id": 1,
+			        	"business_group_id": 1
+			      	}
+		    	],
+			    "countries": [
+				    {
+				        "country_name": "India",
+				        "is_active": true,
+				        "country_id": 1
+				    }
+			    ],
+			    "legal_entities": [
+			      	{
+				        "legal_entity_id": 2,
+				        "business_group_id": 0,
+				        "legal_entity_name": "ABC LEGAL ENTITY 2"
+			      	}
+			    ],
+		    	"business_groups": [],
+			    "units": [
+				     {
+				        "division_id": 1,
+				        "unit_name": "AB00001 - MADURAI CITY UNIT 1",
+				        "business_group_id": 1,
+				        "domain_ids": [
+				          2,
+				          3
+				        ],
+				        "address": "125, KK Nagar",
+				        "legal_entity_id": 1,
+				        "country_id": 1,
+				        "unit_id": 1
+				     }
+			    ],
+			    "domains": [
+			      	{
+				        "is_active": true,
+				        "domain_id": 2,
+				        "domain_name": "FINANCE LAW"
+			      	}
+		    	]
+		    }
+		]
+
+	Note : 
+		*	Above data will be used to populate chart filters
+
+## Get Compliance Applicability Details
+
+	To get the assigned statutory of all the units under the user
+
+		[
+			"1-336d4da0018249b7a09715613e98c101",
+			{
+				"session_token": "1-336d4da0018249b7a09715613e98c101",
+				"request": [
+				"GetComplianceApplicabilityStatus",
+				   {}
+				]
+			}
+		]
+
+	On Success
+
+		[
+			"GetComplianceApplicabilityStatusSuccess",
+			[
+			    {
+				    "compliance_frequency": "One Time",
+				    "compliance_opted": true,
+				    "compliance_applicable": true,
+				    "compliance_name": "COMPLIANCE DOCUMENT 2403161605 - COMPLIANCE TASK 2403161605",
+				    "country_id": 1,
+				    "domain_id": 2,
+				    "compliance_id": 1,
+				    "unit_id": 1
+			    },
+			    {
+				    "compliance_frequency": "Periodical",
+				    "compliance_opted": true,
+				    "compliance_applicable": true,
+				    "compliance_name": "COMPLIANCE TASK 2403161632",
+				    "country_id": 1,
+				    "domain_id": 2,
+				    "compliance_id": 2,
+				    "unit_id": 1
+			    },
+			    {
+				    "compliance_frequency": "Review",
+				    "compliance_opted": true,
+				    "compliance_applicable": true,
+				    "compliance_name": "COMPLIANCE TASK 2403161633",
+				    "country_id": 1,
+				    "domain_id": 2,
+				    "compliance_id": 3,
+				    "unit_id": 1
+			    },
+			    {
+				    "compliance_frequency": "On Occurrence",
+				    "compliance_opted": true,
+				    "compliance_applicable": true,
+				    "compliance_name": "COMPLIANCE TASK 2403161634",
+				    "country_id": 1,
+				    "domain_id": 2,
+				    "compliance_id": 4,
+				    "unit_id": 1
+			    },
+			]
+		]
+
+	Note:
+		*	Above data will be used for Compliance Applicability status chart
+		*	To display freqeuncy of compliance in compliance details form
+
+
+## Check Disk Space
+
+	[
+		"1-336d4da0018249b7a09715613e98c101",
+		{
+			"session_token": "1-336d4da0018249b7a09715613e98c101",
+			"request": [
+			"CheckDiskSpace",
+			   {}
+			]
+		}
+	]
+
+	On Success
+
+	[
+	 	"CheckDiskSpaceSuccess",
+	 	{
+		    "available_space": 1976120,
+		    "total_space": 1000000000
+	  	}
+	]
+
+	Note : 
+		* To check whether space available or not before uploading documents
+
+## Compliance Details
+
+		[ 
+			"6-4582e0411de54bd58fd24c408bf58968", 
+			{ 
+				"session_token": "6-4582e0411de54bd58fd24c408bf58968", 
+				"request": 
+				[ 
+					"GetComplianceDetail", {} 
+				] 
+			} 
+		]
+
+		On Success
+
+		[
+			"GetComplianceDetailSuccess",
+		    {
+		        "compliance_detail":{
+		            "current_compliances":[
+		                {
+		                    "due_date":"11-Apr-2016",
+		                    "compliance_frequency":"On Occurrence",
+		                    "format_file_name":null,
+		                    "ageing":"Overdue by 43.11 hours",
+		                    "compliance_name":"On Cuurance Task",
+		                    "compliance_status":"Not Complied",
+		                    "validity_date":null,
+		                    "domain_name":"Labour Law",
+		                    "next_due_date":null,
+		                    "unit_name":"HO00002 - Hon Unit Two",
+		                    "address":"address",
+		                    "remarks":null,
+		                    "compliance_history_id":29,
+		                    "compliance_description":"fsdfdsf",
+		                    "start_date":"11-Apr-2016",
+		                    "compliance_id":9
+		                },
+		            ],
+		            "current_date":"21-Apr-2016 15:11",
+		            "upcoming_compliances":[
+		                {
+		                    "due_date":"09-Jun-2016",
+		                    "unit_name":"HO00002 - Hon Unit Two",
+		                    "compliance_description":"FDSFDS",
+		                    "compliance_name":"Monthly Task",
+		                    "address":"address",
+		                    "format_file_name":null,
+		                    "domain_name":"Labour Law",
+		                    "start_date":"15-May-2016"
+		                },
+		            ]
+		        }
+		    }
+
+		]
+
+## Save compliance Details
+
+    [
+		"1-4a1f685ee52244f2b22907d6ba6e1f4b",
+		{
+			"session_token": "1-4a1f685ee52244f2b22907d6ba6e1f4b",
+			"request": [
+				"UpdateComplianceDetail",
+				{
+					"compliance_history_id": 23,
+					"documents": null,
+					"completion_date": "31-Mar-2016",
+					"validity_date": null,
+					"next_due_date": "01-Apr-2017",
+					"remarks": "Sorry for delay"
+				}
+			]
+		}
+	]
+
+    On Success
+
+    [
+		"UpdateComplianceDetailSuccess", 
+		{}
+	]
+
+    Possible Errors
+
+    [
+    	"NotEnoughDiskSpaceAvailable",
+    	{}
+    ]
+
+## Approve/ Concur Compliance
+
+    [
+		"1-4a1f685ee52244f2b22907d6ba6e1f4b",
+		{
+			"session_token": "1-4a1f685ee52244f2b22907d6ba6e1f4b",
+			"request": [
+				"ApproveCompliance",
+				{
+				    "compliance_history_id": 44,
+				    "approval_status": "Concur",
+				    "remarks": null,
+				    "next_due_date": null,
+				    "validity_date": null
+				}
+			]
+		}
+	]
+
+   	On Success
+
+   	[
+		"ApproveComplianceSuccess", 
+		{}
+	]
+
+
+# Client Dashboard
+
+## Compliance Status Chart
+
+		[ 
+			"1-40903131088f4aa69e9158d79db9b5f7", 
+			{ 
+				"session_token": "1-40903131088f4aa69e9158d79db9b5f7", 
+				"request": [ 
+					"GetComplianceStatusChart", 
+					{ 
+						"country_ids": [ 1, 2, 3 ], 
+						"domain_ids": [ 2, 3, 4 ], 
+						"filter_type": "Group", 
+						"filter_ids": null, 
+						"from_date": null, 
+						"to_date": null, 
+						"chart_year": 2016 
+					} 
+				] 
+			} 
+		]
+
+		On Success
+
+			[
+				"GetComplianceStatusChartSuccess",
+			  	{
+				    "chart_data": [
+				    	{
+					        "filter_type_id": 1,
+					        "data": [
+					          	{
+						            "inprogress_compliance_count": 10,
+						            "country_id": 3,
+						            "not_complied_count": 88,
+						            "delayed_compliance_count": 7,
+						            "domain_id": 2,
+						            "year": "2016",
+						            "complied_count": 13
+					          	}
+					        ]
+					    },
+					    {
+					        "filter_type_id": 2,
+					        "data": [
+					        	{
+						            "inprogress_compliance_count": 0,
+						            "country_id": 3,
+						            "not_complied_count": 1,
+						            "delayed_compliance_count": 0,
+						            "domain_id": 2,
+						            "year": "2016",
+						            "complied_count": 4
+					          	}
+					        ]
+				      	}
+				    ]
+			  	}
+			]
+
+## Escalation
+
+		[ 
+			"1-40903131088f4aa69e9158d79db9b5f7", 
+			{ 
+				"session_token": "1-40903131088f4aa69e9158d79db9b5f7", 
+				"request": 
+				[ 
+					"GetEscalationsChart", 
+					{ 
+						"country_ids": [ 1, 2, 3 ], 
+						"domain_ids": [ 2, 3, 4 ], 
+						"filter_type": "Group", 
+						"filter_ids": [ 1, 2, 3 ] 
+					} 
+				] 
+			} 
+		]
+
+		On Success
+
+		[
+			"GetEscalationsChartSuccess",
+		  	{
+			    "chart_data": [
+				    {
+				        "not_complied_count": 0,
+				        "delayed_compliance_count": 0,
+				        "year": 2009
+				    },
+				    {
+				        "not_complied_count": 0,
+				        "delayed_compliance_count": 0,
+				        "year": 2010
+				    },
+				    {
+				        "not_complied_count": 0,
+				        "delayed_compliance_count": 0,
+				        "year": 2011
+				    },
+				    {
+				        "not_complied_count": 0,
+				        "delayed_compliance_count": 0,
+				        "year": 2012
+				    },
+				    {
+				        "not_complied_count": 0,
+				        "delayed_compliance_count": 0,
+				        "year": 2013
+				    },
+				    {
+				        "not_complied_count": 0,
+				        "delayed_compliance_count": 0,
+				        "year": 2014
+				    },
+				    {
+				        "not_complied_count": 0,
+				        "delayed_compliance_count": 0,
+				        "year": 2015
+				    },
+				    {
+				        "not_complied_count": 89,
+				        "delayed_compliance_count": 7,
+				        "year": 2016
+				    }
+				],
+
+				"years": [
+				    2009,
+				    2010,
+				    2011,
+				    2012,
+				    2013,
+				    2014,
+				    2015,
+				    2016
+				]
+		  	}
+		]
+
+## Not Complied
+
+		[ 
+			"1-40903131088f4aa69e9158d79db9b5f7", 
+			{ 
+				"session_token": "1-40903131088f4aa69e9158d79db9b5f7", 
+				"request": [ "GetNotCompliedChart", 
+				{ 
+					"country_ids": [ 1, 2, 3 ], 
+					"domain_ids": [ 2, 3, 4 ], 
+					"filter_type": "Group", 
+					"filter_ids": [ 1, 2, 3 ] 
+				} 
+				] 
+			} 
+		]
+
+		On Success
+
+		[
+			"GetNotCompliedChartSuccess",
+			{
+			    "T_31_to_60_days_count": 0,
+			    "T_0_to_30_days_count": 90,
+			    "T_61_to_90_days_count": 0,
+			    "Above_90_days_count": 0
+		  	}
+		]
+
+## Assignee wise compliance
+
+		[ 
+			"1-40903131088f4aa69e9158d79db9b5f7", 
+			{ 
+				"session_token": "1-40903131088f4aa69e9158d79db9b5f7", 
+				"request": 
+				[ 
+					"GetAssigneeWiseCompliancesChart", 
+					{ 
+						"country_id": 1, 
+						"business_group_id": null, 
+						"legal_entity_id": null, 
+						"division_id": null, 
+						"unit_id": null, 
+						"user_id": null 
+					} 
+				] 
+			} 
+		]
+
+
+		On Success
+
+		[
+			"GetAssigneeWiseCompliancesChartSuccess",
+			{
+			    "chart_data": [
+				    {
+				        "unit_name": "AB00001 - MADURAI CITY UNIT 1",
+				        "assignee_wise_details": [
+					        {
+					            "assignee_name": "R001 - Ramesh",
+					            "year_wise_details": [
+						            {
+						                "inprogress_compliance_count": 0,
+						                "delayed_compliance": 0,
+						                "not_complied_count": 0,
+						                "total_compliances": 0,
+						                "year": "2011",
+						                "complied_count": 0
+						            },
+					            ],
+					            "domain_wise_details": [
+						            {
+						                "inprogress_compliance_count": 3,
+						                "delayed_compliance": {
+						                  "reassigned_compliances": null,
+						                  "assigned_count": 0,
+						                  "reassigned_count": 0
+						                },
+						                "not_complied_count": 56,
+						                "domain_name": "FINANCE LAW",
+						                "domain_id": 2,
+						                "total_compliances": 60,
+						                "complied_count": 1
+						            }
+					            ],
+					            "user_id": 3
+					        },
+				        ],
+				        "address": "125, KK Nagar"
+				    },
+			    ]
+			}
+		]
+
+## Trend Chart
+
+		[ 
+			"1-40903131088f4aa69e9158d79db9b5f7", 
+			{ 
+				"session_token": "1-40903131088f4aa69e9158d79db9b5f7", 
+				"request": 
+				[ 
+					"GetTrendChart", 
+					{ 
+						"country_ids": [ 1, 2, 3 ], 
+						"domain_ids": [ 2, 3, 4 ], 
+						"filter_type": "Group", 
+						"filter_ids": [ 1 ] 
+					} 
+				] 
+			} 
+		]
+
+	On Success
+
+		[
+		  	"GetTrendChartSuccess",
+		  	{
+			    "data": [
+				    {
+				        "complied_compliance": [
+				        	{
+					            "complied_compliances_count": 0,
+					            "total_compliances": 0,
+					            "year": 2010
+					        },
+				          	{
+					            "complied_compliances_count": 0,
+					            "total_compliances": 0,
+					            "year": 2011
+				          	},
+				          	{
+					            "complied_compliances_count": 0,
+					            "total_compliances": 0,
+					            "year": 2012
+				          	},
+				          	{
+					            "complied_compliances_count": 0,
+					            "total_compliances": 0,
+					            "year": 2013
+				          	},
+				          	{
+					            "complied_compliances_count": 0,
+					            "total_compliances": 0,
+					            "year": 2014
+				          	},
+				          	{
+					            "complied_compliances_count": 2,
+					            "total_compliances": 2,
+					            "year": 2015
+				          	}
+				        ],
+				        "filter_id": 1
+				    },
+			    ],
+			    "years": [
+				    2010,
+				    2011,
+				    2012,
+				    2013,
+				    2014,
+				    2015
+			    ]
+			}
+		]
+
+## Compliance Applicability Chart
+
+		[ 
+			"1-40903131088f4aa69e9158d79db9b5f7", 
+			{ 
+				"session_token": "1-40903131088f4aa69e9158d79db9b5f7", 
+				"request": 
+				[ 
+					"GetComplianceApplicabilityStatusChart", 
+					{ 
+						"country_ids": [ 1, 2, 3 ], 
+						"domain_ids": [ 2, 3, 4 ], 
+						"filter_type": "Group", 
+						"filter_ids": [ 1 ] 
+					} 
+				] 
+			} 
+		]
+
+		On Success
+
+		[
+			"GetComplianceApplicabilityStatusChartSuccess", 
+			{
+			    "not_applicable_count": 13, 
+			    "not_opted_count": 0, 
+			    "applicable_count": 61
+			}
+		]

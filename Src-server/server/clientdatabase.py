@@ -1462,7 +1462,6 @@ class ClientDatabase(Database):
                 from_count,
                 to_count
             )
-
         rows = self.select_all(query)
         columns = [
             "client_compliance_id", "client_statutory_id", "compliance_id",
@@ -1592,6 +1591,12 @@ class ClientDatabase(Database):
 
         self.on_duplicate_key_update(table, ",".join(column), value_list, update_column)
 
+    def update_new_statutory_settings(self, unit_id):
+        q = "Update tbl_client_statutories set is_new=1 where unit_id = %s" % (
+             unit_id,
+        )
+        self.execute(q)
+
     def update_statutory_settings(self, data, session_user, client_id):
         unit_id = data.unit_id
         unit_name = data.unit_name
@@ -1619,6 +1624,7 @@ class ClientDatabase(Database):
             value_list.append(value)
 
         self.execute_bulk_insert(value_list)
+        self.update_new_statutory_settings(unit_id)
         action = "Statutory settings updated for unit - %s " % (unit_name)
         self.save_activity(session_user, 6, action)
         self.update_opted_status_in_knowledge(data)
@@ -4174,7 +4180,7 @@ class ClientDatabase(Database):
                         )
                 if len(compliances_list) > 0 :
                     unit_wise_compliances[unit_name] = compliances_list
-            
+
             unit_wise_compliances_list.append(clientreport.UnitCompliance(
                 business_group_name, legal_entity_name, division_name,
                 unit_wise_compliances))
@@ -4956,9 +4962,9 @@ class ClientDatabase(Database):
         return service_provider_wise_compliances_list
 
     def get_compliance_details_report(
-        self, country_id, domain_id, statutory_id, 
-        unit_id, compliance_id, assignee_id, 
-        from_date, to_date, compliance_status, 
+        self, country_id, domain_id, statutory_id,
+        unit_id, compliance_id, assignee_id,
+        from_date, to_date, compliance_status,
         client_id, session_user
     ) :
 
@@ -8660,3 +8666,6 @@ class ClientDatabase(Database):
         else:
             compliance_name = rows[0][1]
         return compliance_name
+
+    def save_registration_key(self, session_user, request):
+        pass
