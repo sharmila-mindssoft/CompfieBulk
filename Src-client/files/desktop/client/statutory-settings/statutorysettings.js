@@ -280,6 +280,9 @@ function load_statutory(sList){
     });
   });
   }
+  if($("#is_closed").val() == 'true'){
+    $('#submit').hide();
+  }
 }
 
 //pagination process
@@ -447,7 +450,7 @@ $("#cancel").click(function() {
 });
 
 //edit statutiry settings for already assigned unit
-function displayEdit(unit_id, dispBusinessGroup, dispLegalEntity, dispDivision, dispUnit){
+function displayEdit(unit_id, dispBusinessGroup, dispLegalEntity, dispDivision, dispUnit, isClosed){
   displayLoader();
   s_endCount = 0;
   client_mirror.getStatutorySettingsCompliance(unit_id, parseInt(s_endCount),
@@ -461,6 +464,7 @@ function displayEdit(unit_id, dispBusinessGroup, dispLegalEntity, dispDivision, 
         $(".tbl_unit_disp").text(dispUnit);
         $("#unit").val(unit_id);
         $("#unitval").val(dispUnit);
+        $("#is_closed").val(isClosed);
 
         count=1;
         statutoriesCount= 1;
@@ -511,6 +515,7 @@ function loadCountwiseStatutorySettings(assignedStatutoriesList){
       }
       var lEntity = assignedStatutoriesList[entity]["legal_entity_name"];
       var uName = assignedStatutoriesList[entity]["unit_name"];
+      var isClosed = assignedStatutoriesList[entity]["is_closed"];
 
       var tableRow=$('#templates .table-statutorysettings .table-row');
       var clone=tableRow.clone();
@@ -522,7 +527,7 @@ function loadCountwiseStatutorySettings(assignedStatutoriesList){
       $('.tbl_unit', clone).text(uName);
       $('.tbl_domain', clone).text(assignedStatutoriesList[entity]["domain_names"]);
       $('.tbl_edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+unit_id+',\''+
-        bGroup+'\',\''+lEntity+'\',\''+dName+'\',\''+uName+'\')"/>');
+        bGroup+'\',\''+lEntity+'\',\''+dName+'\',\''+uName+'\','+isClosed+')"/>');
 
       $('.tbody-statutorysettings-list').append(clone);
       j = j + 1;
