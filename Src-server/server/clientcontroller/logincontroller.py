@@ -54,7 +54,7 @@ def process_login(db, request, client_id):
         if response is True:
             return admin_login_response(db, client_id, request.ip)
         else :
-            if bool(response):
+            if type(response) is not bool:
                 return user_login_response(db, response, client_id, request.ip)
             else :
                 return login.InvalidCredentials()
@@ -62,7 +62,10 @@ def process_login(db, request, client_id):
         if response is True :
             return mobile_user_admin_response(db, login_type, client_id, request.ip)
         else :
-            return mobile_user_login_respone(db, response, login_type, client_id, request.ip)
+            if type(response) is not bool:
+                return mobile_user_login_respone(db, response, login_type, client_id, request.ip)
+            else :
+                return login.InvalidCredentials()
 
 def mobile_user_admin_response(db, login_type, client_id, ip):
     if login_type.lower() == "web" :
