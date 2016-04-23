@@ -618,6 +618,19 @@ class UpdateServiceProviderSuccess(Response):
         return {
         }
 
+class CannotChangeStatusOfContractExpiredSP(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CannotChangeStatusOfContractExpiredSP()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class ChangeServiceProviderStatusSuccess(Response):
     def __init__(self):
         pass
@@ -1091,7 +1104,8 @@ def _init_Response_class_map():
         ChangeAdminStatusSuccess, GetAuditTrailSuccess, CannotDeactivateUserExists,
         GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExists,
         InvalidServiceProviderId, EmailIdAlreadyExists, CannotChangePrimaryAdminStatus ,
-        CannotPromoteServiceProvider, ReassignCompliancesBeforeDeactivate
+        CannotPromoteServiceProvider, ReassignCompliancesBeforeDeactivate,
+        CannotChangeStatusOfContractExpiredSP
     ]
     class_map = {}
     for c in classes:
