@@ -427,6 +427,7 @@ $("#submit").click(function(){
 		function onSuccess(data){
 	    	$("#user-add").hide();
   			$("#user-view").show();
+            $(".filter-text-box").val('');
   			initialize();
   	    }
 		function onFailure(error){
@@ -475,6 +476,7 @@ $("#submit").click(function(){
 		function onSuccess(data){
 			$("#user-add").hide();
 			$("#user-view").show();
+            $(".filter-text-box").val('');
 			initialize();
     	}
 		function onFailure(status, data){

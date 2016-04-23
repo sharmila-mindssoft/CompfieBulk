@@ -119,6 +119,9 @@ function loadcompliancetaskapplicabilityreport(buttontype){
     else{
         function onSuccess(data){
             $(".grid-table-rpt").show();
+            sno = 0;
+            fullArrayList = [];
+
                  
             if(buttontype == "export"){
                 var download_url = data["link"];
@@ -250,6 +253,15 @@ function filterheading(){
     var clonefilterHeading = tableFilterHeading.clone();
     $('.filter-country', clonefilterHeading).text(countriesText);
     $('.filter-domain', clonefilterHeading).text(domainText);
+    if(businessgroupText == ''){
+        businessgroupText = 'Nil';
+    }
+    if(legalentityText == ''){
+        legalentityText = 'Nil';
+    }
+    if(divisionText == ''){
+        divisionText = 'Nil';
+    }
     $('.filter-businessgroup', clonefilterHeading).text(businessgroupText);
     $('.filter-legalentity', clonefilterHeading).text(legalentityText);
     $('.filter-division', clonefilterHeading).text(divisionText);
