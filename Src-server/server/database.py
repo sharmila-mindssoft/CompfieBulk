@@ -5270,8 +5270,6 @@ class KnowledgeDatabase(Database):
             )
             if (self.save_data(self.tblClientStatutories, field, values)) :
                 assigned_statutories = data.assigned_statutories
-                print "unit_id ", unit_id
-
                 value_list.extend(self.save_update_client_complainces(client_statutory_id, assigned_statutories, user_id, created_on))
         self.execute_bulk_insert(value_list)
 

@@ -2273,10 +2273,13 @@ class ClientDatabase(Database):
         tables = [self.tblComplianceHistory, self.tblUsers]
         aliases = ["tch", "tu"]
         join_condition = ["tch.completed_by = tu.user_id"]
+        approval_user_ids = str(session_user)
+        if self.is_primary_admin(session_user):
+            approval_user_ids += ",0"
         assignee_condition = "(completion_date is not Null and completion_date != 0 \
         ) and (completed_on is not Null and completed_on != 0 ) and "+\
-        "(approve_status is Null or approve_status = 0) and (approved_by = '%d' or concurred_by = '%d')\
-        group by completed_by" % (session_user, session_user)
+        "(approve_status is Null or approve_status = 0) and (approved_by in (%s) or concurred_by = '%d')\
+        group by completed_by" % (approval_user_ids, session_user)
         assignee_rows = self.get_data_from_multiple_tables(
             assignee_columns, tables,
             aliases, join_type,  join_condition,
@@ -2356,9 +2359,9 @@ class ClientDatabase(Database):
                 frequency_id = int(row[13])
                 frequency = core.COMPLIANCE_FREQUENCY(row[14])
                 description = row[12]
-                concurrence_status = None if row[16] is None else bool(int(row[16]))
-                statutory_dates = [] if row[17] is None else json.loads(row[17])
-                validity_date = None if row[18] is None else self.datetime_to_string(row[18])
+                concurrence_status = None if row[16] in [None, "None", ""] else bool(int(row[16]))
+                statutory_dates = [] if row[17] is [None, "None", ""] else json.loads(row[17])
+                validity_date = None if row[18] is [None, "None", ""] else self.datetime_to_string(row[18])
                 unit_name = row[20]
                 date_list = []
                 for date in statutory_dates :
@@ -2386,13 +2389,13 @@ class ClientDatabase(Database):
                             continue
                         else:
                             action = "Concur"
-                    elif concurrence_status is True and session_user == approved_by_id:
+                    elif concurrence_status is True and session_user in [int(x) for x in approval_user_ids.split(",")]:
                         action = "Approve"
-                    elif concurred_by_id is None and session_user == approved_by_id:
+                    elif concurred_by_id is None and session_user in [int(x) for x in approval_user_ids.split(",")]:
                         action = "Approve"
                     else:
                         continue
-                elif concurred_by_id != session_user and session_user == approved_by_id:
+                elif concurred_by_id != session_user and session_user in [int(x) for x in approval_user_ids.split(",")]:
                     action = "Approve"
                 else:
                     continue
@@ -4696,9 +4699,10 @@ class ClientDatabase(Database):
             remarks
         )
 
-        columns = ["approve_status", "remarks", "completion_date", "completed_on", "concurred_on"]
+        columns = ["approve_status", "remarks", "completion_date", "completed_on", 
+        "concurred_on", "concurrence_status"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
-        values = [0, remarks, None, None, None]
+        values = [0, remarks, None, None, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
         self.notify_compliance_rejected(compliance_history_id, remarks, "RejectApproval")
         return True
@@ -6106,7 +6110,6 @@ class ClientDatabase(Database):
                         else:
                             compliance_status = "Overdue by 1 day "
                     else:
-                        print "relative delta : {}".format(r)
                         if duration_type in ["2", 2]:
                             compliance_status = "Overdue by %d.%d hours" % (
                                (abs(r.days) * 24 + abs(r.hours)), abs(r.minutes)
