@@ -351,7 +351,6 @@ function getUnitConditionAutocomplete(textval, listval, callback){
     $('#ac-unit ul').empty();
     if(textval.length>0){
         for(var i in unit){
-          alert(unit[i]['unit_code'])
           var combineUnitName = unit[i]['unit_code']+"-"+unit[i]['unit_name'];
           if($("#legalentityid").val() != ''){
               if(unit[i]['legal_entity_id'] == $("#legalentityid").val()){
