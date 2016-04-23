@@ -392,39 +392,23 @@ function activatecountry(element){
     $(element).addClass("active_selectbox_country");
      countryIds.push(parseInt(element.id))
    }  
-   
    $("#countryselected").val(countryIds.length+" Selected");
   }
+
+
+//retrive usergroup autocomplete value
+function onUserGroupSuccess(val){
+  $("#usergroupval").val(val[1]);
+  $("#usergroup").val(val[0]);
+}
 
 //load usergroup list in autocomplete text box  
 $("#usergroupval").keyup(function(){
   var textval = $(this).val();
-  $("#autocompleteview").show();
-  var usergroups = userGroupsList;
-  var suggestions = [];
-  $('#ulist_text').empty();
-  if(textval.length>0){
-    for(var i in usergroups){
-      if (~usergroups[i]["user_group_name"].toLowerCase().indexOf(textval.toLowerCase()) && usergroups[i]["is_active"] == true) suggestions.push([usergroups[i]["user_group_id"],usergroups[i]["user_group_name"]]); 
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_text').append(str);
-    $("#usergroup").val('');
-    }else{
-      $("#usergroup").val('');
-      $("#autocompleteview").hide();
-    }
+  getUserGroupAutocomplete(textval, userGroupsList, function(val){
+    onUserGroupSuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_text (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#usergroupval").val(checkname);
-  $("#usergroup").val(checkval);
-}
 
 //initialize
 $(document).ready(function(){

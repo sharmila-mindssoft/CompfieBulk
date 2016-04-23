@@ -87,8 +87,8 @@
           </div>
           <div class="field-input">
             <input type="hidden" id="country" value="">
-            <input type="text" class="input-box icon-autocomplete" id="countryval" value=""  onkeyup="loadauto_country(this.value)">
-            <div id="selectboxview-country" class="ac-textbox" style="display:none;" onclick="hidecountrylist();">
+            <input type="text" class="input-box icon-autocomplete" id="countryval" value="">
+            <div id="ac-country" class="ac-textbox default-display-none">
               <ul style="width:195px;"></ul>
             </div>
           </div>
@@ -100,8 +100,8 @@
           </div>
           <div class="field-input">
             <input type="hidden" id="domain" value="">
-            <input type="text" class="input-box icon-autocomplete" id="domainval" value=""  onkeyup="loadauto_domains(this.value)">
-            <div id="selectboxview-domains" class="ac-textbox" style="display:none;" onclick="hidedomainslist();">
+            <input type="text" class="input-box icon-autocomplete" id="domainval" value="">
+            <div id="ac-domain" class="ac-textbox default-display-none">
               <ul style="width:195px;"></ul>
             </div>
           </div>
@@ -122,9 +122,9 @@
         <div class="input-row">
           <div class="field-label">Assignee:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="userval" autofocus onkeyup="loadauto_user(this.value)">
+            <input type="text" class="input-box icon-autocomplete" id="userval" autofocus>
             <input type="hidden" id="userid">
-            <div id="autocompleteview-user" class="ac-textbox default-display-none"  onchange="hideuserlist();" onclick="hideuserlist();">
+            <div id="ac-user" class="ac-textbox default-display-none">
               <ul style="width:195px;"></ul>
             </div>
           </div>
@@ -133,9 +133,9 @@
         <div class="input-row">
           <div class="field-label">Act:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="level1val" value=""   onkeyup="loadauto_level1(this.value)" >
+            <input type="text" class="input-box icon-autocomplete" id="level1val" value="" >
             <input type="hidden" id="level1id">
-            <div id="autocompleteview-level1" class="ac-textbox" style="display:none;"  onclick="hidelevel1list();">
+            <div id="ac-statutory" class="ac-textbox default-display-none">
               <ul style="width:195px;"></ul>
             </div>
           </div>
@@ -145,9 +145,9 @@
         <div class="input-row">
           <div class="field-label">Unit:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="unitval" value=""     onkeyup="loadauto_unit(this.value)">
+            <input type="text" class="input-box icon-autocomplete" id="unitval" value="" >
             <input type="hidden" id="unitid">
-            <div id="autocompleteview-unit" class="ac-textbox" style="display:none;"  onclick="hideunitlist();">
+            <div id="ac-unit" class="ac-textbox default-display-none">
               <ul style="width:195px;"></ul>
             </div>
           </div>
@@ -156,9 +156,9 @@
         <div class="input-row">
           <div class="field-label">Compliance Task:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="complianceval" value=""   onkeyup="loadauto_compliance(this.value)">
+            <input type="text" class="input-box icon-autocomplete" id="complianceval" value="">
             <input type="hidden" id="complianceid">
-            <div id="autocompleteview-compliance" class="ac-textbox" style="display:none;"  onclick="hidecompliancelist();">
+            <div id="ac-compliancetask" class="ac-textbox default-display-none">
               <ul></ul>
             </div>
           </div>

@@ -103,6 +103,8 @@ function loadcomplianceactivityreport(buttontype){
     var complianceid = $("#complianceid").val();
     if(complianceid == ''){
         complianceid = null;
+    }else{
+        complianceid = parseInt(complianceid)
     }
     fromdate = $("#from-date").val();
     if(fromdate == ''){
@@ -365,188 +367,88 @@ function loadComplianceActivityReportList(data){
 }
 
 
-
-
-
-//Country----------------------------------------------------------------------------------------------------------------------
-function hidecountrylist(){
-    document.getElementById('selectboxview-country').style.display = 'none';
-}
-function loadauto_country (textval) {
-  document.getElementById('selectboxview-country').style.display = 'block';
-  var countries = countriesList;
-  var suggestions = [];
-  $('#selectboxview-country ul').empty();
-  if(textval.length>0){
-    for(var i in countries){
-      if (~countries[i]['country_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#selectboxview-country ul').append(str);
-    $("#country").val('');
-    }
-}
-//set selected autocomplte value to textbox
-function activate_text (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#countryval").val(checkname);
-  $("#country").val(checkval);  
+//retrive country autocomplete value
+function onCountrySuccess(val){
+  $("#countryval").val(val[1]);
+  $("#country").val(val[0]);
 }
 
-//Domains---------------------------------------------------------------------------------------------------------------
-function hidedomainslist(){
-    document.getElementById('selectboxview-domains').style.display = 'none';
+//load country list in autocomplete text box  
+$("#countryval").keyup(function(){
+  var textval = $(this).val();
+  getCountryAutocomplete(textval, countriesList, function(val){
+    onCountrySuccess(val)
+  })
+});
+
+//retrive domain autocomplete value
+function onDomainSuccess(val){
+  $("#domainval").val(val[1]);
+  $("#domain").val(val[0]);
 }
-function loadauto_domains (textval) {
-  document.getElementById('selectboxview-domains').style.display = 'block';
-  var domains = domainsList;
-  var suggestions = [];
-  $('#selectboxview-domains ul').empty();
-  if(textval.length>0){
-    for(var i in domains){
-        if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);     
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_domains(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#selectboxview-domains ul').append(str);
-    $("#domain").val('');
-    }
-}
-function activate_domains (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#domainval").val(checkname);
-  $("#domain").val(checkval);
+//load domain list in autocomplete textbox  
+$("#domainval").keyup(function(){
+  var textval = $(this).val();
+  getDomainAutocomplete(textval, domainsList, function(val){
+    onDomainSuccess(val)
+  })
+});
+
+//retrive unit form autocomplete value
+function onUnitSuccess(val){
+  $("#unitval").val(val[1]);
+  $("#unitid").val(val[0]);
 }
 
-//Units---------------------------------------------------------------------------------------------------------------
-function hideunitlist(){
-    document.getElementById('autocompleteview-unit').style.display = 'none';
+//load unit  form list in autocomplete text box  
+$("#unitval").keyup(function(){
+  var textval = $(this).val();
+  getUnitAutocomplete(textval, unitList, function(val){
+    onUnitSuccess(val)
+  })
+});
+
+//retrive statutory autocomplete value
+function onStatutorySuccess(val){
+  $("#level1val").val(val[1]);
+  $("#level1id").val(val[0].replace(/##/gi,'"'));
 }
-function loadauto_unit (textval) {
-    if($("#unitval").val() == ''){
-        $("#unitid").val('');
-    }
-    document.getElementById('autocompleteview-unit').style.display = 'block';
-    var unit = unitList;
-    var suggestions = [];
-    $('#autocompleteview-unit ul').empty();
-    if(textval.length>0){
-        for(var i in unit){
-            var getunitidname = unit[i]['unit_code']+"-"+unit[i]['unit_name'];
-            if (~getunitidname.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]);  
-        }
-        var str='';
-        for(var i in suggestions){
-          str += '<li id="'+suggestions[i][0]+'" onclick="activate_unit(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\', \''+suggestions[i][2]+'\')">'+suggestions[i][2]+'-'+suggestions[i][1]+'</li>';
-        }
-        $('#autocompleteview-unit ul').append(str);
-        $("#unitid").val('');
-    }
-}
-function activate_unit (element,checkval,checkname, concatunit) {
-  $("#unitval").val(concatunit+'-'+checkname);
-  $("#unitid").val(checkval);
+//load statutory list in autocomplete textbox  
+$("#level1val").keyup(function(){
+  var textval = $(this).val();
+  getClientStatutoryAutocomplete(textval, level1List, function(val){
+    onStatutorySuccess(val)
+  })
+});
+
+//retrive user autocomplete value
+function onUserSuccess(val){
+  $("#userval").val(val[1]);
+  $("#userid").val(val[0]);
 }
 
-//Level 1 Statutory---------------------------------------------------------------------------------------------------------------
-function hidelevel1list(){
-    document.getElementById('autocompleteview-level1').style.display = 'none';
-}
-function loadauto_level1 (textval) {
-    if($("#level1val").val() == ''){
-        $("#level1id").val('');
-    }
-  document.getElementById('autocompleteview-level1').style.display = 'block';
-  
-  var level1 = level1List;
-  var suggestions = [];
-  $('#autocompleteview-level1 ul').empty();
-  if(textval.length>0){  
-    for(var j = 0; j<level1.length; j++)
-        if (~level1[j].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([level1[j],level1[j]]);   
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_level1(this)">'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview-level1 ul').append(str);
-    $("#level1id").val('');
-    }
-}
-function activate_level1 (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#level1val").val(checkname);
-  $("#level1id").val(checkval);
+//load user list in autocomplete text box  
+$("#userval").keyup(function(){
+  var textval = $(this).val();
+  getUserAutocomplete(textval, userList, function(val){
+    onUserSuccess(val)
+  })
+});
+
+//retrive compliance task form autocomplete value
+function onComplianceTaskSuccess(val){
+  $("#complianceval").val(val[1]);
+  $("#complianceid").val(val[0]);
 }
 
-//User---------------------------------------------------------------------------------------------------------------
-function hideuserlist(){
-    document.getElementById('autocompleteview-user').style.display = 'none';
-}
-function loadauto_user (textval) {
-    if($("#userval").val() == ''){
-        $("#userid").val('');
-    }
-    document.getElementById('autocompleteview-user').style.display = 'block';
-    var user = userList;
-    var suggestions = [];
-    $('#autocompleteview-user ul').empty();
-    if(textval.length>0){
-        for(var i in user){
-            if (~user[i]['employee_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([user[i]["employee_id"],user[i]["employee_name"]]);    
-        }
-        var str='';
-        for(var i in suggestions){
-          str += '<li id="'+suggestions[i][0]+'" onclick="activate_user(this)">'+suggestions[i][1]+'</li>';
-        }
-        $('#autocompleteview-user ul').append(str);
-        $("#userid").val('');
-    }
-}
-function activate_user (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#userval").val(checkname);
-  $("#userid").val(checkval);
-}
+//load compliancetask form list in autocomplete text box  
+$("#complianceval").keyup(function(){
+  var textval = $(this).val();
+  getComplianceTaskAutocomplete(textval, complianceList, function(val){
+    onComplianceTaskSuccess(val)
+  })
+});
 
-//Compliances---------------------------------------------------------------------------------------------------------------
-function hidecompliancelist(){
-    document.getElementById('autocompleteview-compliance').style.display = 'none';
-}
-function loadauto_compliance (textval) {
-    if($("#complianceval").val() == ''){
-        $("#complianceid").val('');
-    }
-    document.getElementById('autocompleteview-compliance').style.display = 'block';
-    var compliance = complianceList;
-    var suggestions = [];
-    $('#autocompleteview-compliance ul').empty();
-    if(textval.length>0){
-        for(var i in compliance){
-            if (~compliance[i]['compliance_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([compliance[i]["compliance_id"],compliance[i]["compliance_name"]]);    
-        }
-        var str='';
-        for(var i in suggestions){
-          str += '<li id="'+suggestions[i][0]+'" onclick="activate_compliance(this)">'+suggestions[i][1]+'</li>';
-        }
-        $('#autocompleteview-compliance ul').append(str);
-        $("#complianceid").val('');
-    }
-}
-function activate_compliance (element) {
-  var checkname = $(element).text();
-  var checkval = $(element).attr('id');
-  $("#complianceval").val(checkname);
-  $("#complianceid").val(checkval);
-}
 $(function() {
     initialize();
 });
