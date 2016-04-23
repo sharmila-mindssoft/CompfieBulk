@@ -103,13 +103,13 @@ function validate(){
   if($("input[name=2levels]:checked").val() == ''){
     displayMessage(message.approval_level);
   }
-  else if($("#assigneeval").val().trim().length==0){
+  else if($("#assigneeval").val().trim().length==0 || $("#assigneeval").val().trim() == 0){
     displayMessage(message.reminder_assignee_required);
   }
-  else if($("#concurrenceapprovalval").val().trim().length==0){
+  else if($("#concurrenceapprovalval").val().trim().length==0 || $("#concurrenceapprovalval").val().trim() == 0){
     displayMessage(message.escalationreminder_concurrence_approval_required);
   }
-  else if($("#allval").val().trim().length==0){
+  else if($("#allval").val().trim().length==0 || $("#allval").val().trim() == 0){
     displayMessage(message.escalationreminder_all);
   }
   else{
