@@ -1416,7 +1416,8 @@ class ClientDatabase(Database):
                 where division_id = t2.division_id)division_name, \
             t2.address, t2.postal_code, t2.unit_code, \
             (select country_name from tbl_countries where country_id = t1.country_id )country_name, \
-            (select domain_name from tbl_domains where domain_id = t1.domain_id)domain_name \
+            (select domain_name from tbl_domains where domain_id = t1.domain_id)domain_name, \
+            t2.is_closed \
             FROM tbl_client_statutories t1 \
             INNER JOIN tbl_units t2 \
             ON t1.unit_id = t2.unit_id %s " % (where_qry)
@@ -1426,7 +1427,7 @@ class ClientDatabase(Database):
             "country_id", "domain_id", "unit_id", "unit_name",
             "business_group_name", "legal_entity_name",
             "division_name", "address", "postal_code", "unit_code",
-            "country_name", 'domain_name'
+            "country_name", 'domain_name', 'is_closed'
         ]
         result = self.convert_to_dict(rows, columns)
         return self.return_statutory_settings(result, client_id)
@@ -1560,6 +1561,7 @@ class ClientDatabase(Database):
                     d["business_group_name"],
                     d["legal_entity_name"],
                     d["division_name"],
+                    bool(d["is_closed"])
                 )
             else :
                 domain_list = unit_statutories.domain_names
