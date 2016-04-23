@@ -184,6 +184,7 @@ var message = {
 	'duedate_required_compliance' : 'Due date required for compliance - ',
 	'duedatelessthanvaliditydate_compliance' : 'Due date must be less than validity date for - ',
 	'invalid_duedate' : 'Invalid due date for - ',
+	'invalid_contractto' : 'Invalid Contract To date'
 };
 
 function clearMessage() {

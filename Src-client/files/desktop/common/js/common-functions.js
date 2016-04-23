@@ -390,8 +390,13 @@ function getUnitAutocomplete(textval, listval, callback){
     $('#ac-unit ul').empty();
     if(textval.length>0){
         for(var i in units){
-          var combineUnitName = units[i]['unit_code']+"-"+units[i]['unit_name'];
-          if (~units[i]["unit_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],combineUnitName]);
+          var combineUnitName = '';
+          if(units[i]['unit_code'] != undefined){
+            combineUnitName = units[i]['unit_code']+"-"+units[i]['unit_name'];
+          }else{
+            combineUnitName =units[i]['unit_name'];
+          }
+          if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],combineUnitName]);
         }
         var str='';
         for(var i in suggestions){

@@ -244,7 +244,7 @@ function onBusinessGroupSuccess(val){
 //load businessgroup form list in autocomplete text box  
 $("#businessgroupval").keyup(function(){
   var textval = $(this).val();
-  getClientBusinessGroupAutocomplete(textval, businessgroupsList, function(val){
+  getClientBusinessGroupAutocomplete(textval, businessGroupsList, function(val){
     onBusinessGroupSuccess(val)
   })
 });

@@ -87,7 +87,7 @@ function loadClientProfileList(groupId){
                 var isAdmin = lists[key]["is_admin"];
                 var isActive = lists[key]["is_active"];
                 var isServiceProvider = lists[key]["is_service_provider"];
-                if(isActive == true){
+                /*if(isActive == true){
                     imageName = "icon-active.png";
                     title = "Click here to deactivate"
                     statusVal = false;
@@ -96,16 +96,22 @@ function loadClientProfileList(groupId){
                   imageName = "icon-inactive.png";
                   title = "Click here to Activate"
                   statusVal = true;
-                }
+                }*/
                 if(isAdmin == true){
                     adminstatus = false;
                     imageadminName = "promote-active.png";
                     admintitle = "Click here to deactivate Promote Admin";
+                    if(isActive == false){
+                        imageadminName = "icon-inactive.png";
+                    }
                 }
                 else{
                     adminstatus = true;
                     imageadminName = "promote-inactive.png";
                     admintitle = "Click here to Promote Admin";
+                    if(isActive == false){
+                        imageadminName = "icon-inactive.png";
+                    }
                 }
                 // $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientprofile_active('+userId+','+groupId+', '+statusVal+')"/>');
                 if(isActive == true){
