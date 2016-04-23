@@ -1,12 +1,10 @@
-import json
-from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list, parse_bool)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list, parse_bool)
 from protocol.parse_structure import (
     parse_structure_CustomTextType_100,
     parse_structure_RecordType_core_Menu,
-    parse_structure_CustomTextType_250,
     parse_structure_UnsignedIntegerType_32,
     parse_structure_EnumType_core_SESSION_TYPE,
-    parse_structure_CustomTextType_20, 
+    parse_structure_CustomTextType_20,
     parse_structure_CustomTextType_50,
     parse_structure_OptionalType_CustomTextType_50,
     parse_structure_OptionalType_CustomTextType_100,
@@ -15,7 +13,7 @@ from protocol.parse_structure import (
 )
 from protocol.to_structure import (
     to_structure_CustomTextType_100,
-    to_structure_RecordType_core_Menu, to_structure_CustomTextType_250,
+    to_structure_RecordType_core_Menu,
     to_structure_SignedIntegerType_8,
     to_structure_EnumType_core_SESSION_TYPE,
     to_structure_OptionalType_CustomTextType_50,
@@ -225,7 +223,7 @@ class Response(object):
         raise NotImplementedError
 
 class UserLoginSuccess(Response):
-    def __init__(self, user_id, session_token, email_id, user_group_name, menu, 
+    def __init__(self, user_id, session_token, email_id, user_group_name, menu,
         employee_name, employee_code, contact_no, address, designation, client_id,
         is_admin
     ):
@@ -244,8 +242,8 @@ class UserLoginSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_id", "session_token", "email_id", 
-            "user_group_name", "menu", "employee_name", "employee_code", 
+        data = parse_dictionary(data, ["user_id", "session_token", "email_id",
+            "user_group_name", "menu", "employee_name", "employee_code",
             "contact_no", "address", "designation", "client_id", "is_admin"])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
@@ -511,10 +509,10 @@ class EnterDifferentPassword(Response):
 
 def _init_Response_class_map():
     classes = [
-        UserLoginSuccess, AdminLoginSuccess, InvalidCredentials, 
-        ForgotPasswordSuccess, InvalidUserName, ResetSessionTokenValidationSuccess, 
-        InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess, 
-        InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken, 
+        UserLoginSuccess, AdminLoginSuccess, InvalidCredentials,
+        ForgotPasswordSuccess, InvalidUserName, ResetSessionTokenValidationSuccess,
+        InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess,
+        InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken,
         ClientDatabaseNotExists, ContractExpired, EnterDifferentPassword,
         NotConfigured
     ]

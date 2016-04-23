@@ -178,16 +178,18 @@ function loadCompliance(reportType){
         loadresult(serviceProviderWiseComplianceList);
 
         if(reportType == "export"){
-          client_mirror.exportToCSV(data, 
-          function (error, response) {
-            if (error == null){
-              var download_url = response["link"];
-              window.open(download_url, '_blank');
-            }
-            else {
-              displayMessage(error);
-            }
-          });
+          var download_url = data["link"];
+          window.open(download_url, '_blank');
+          // client_mirror.exportToCSV(data, 
+          // function (error, response) {
+          //   if (error == null){
+          //     var download_url = response["link"];
+          //     window.open(download_url, '_blank');
+          //   }
+          //   else {
+          //     displayMessage(error);
+          //   }
+          // });
         }
       }
       function onFailure(error){

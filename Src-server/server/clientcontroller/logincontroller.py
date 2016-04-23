@@ -50,7 +50,6 @@ def process_login(db, request, client_id):
         return login.InvalidCredentials()
     else:
         response = db.verify_login(username, encrypt_password)
-    print response
     if login_type.lower() == "web":
         if response is True:
             return admin_login_response(db, client_id, request.ip)

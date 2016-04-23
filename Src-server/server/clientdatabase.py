@@ -4174,7 +4174,7 @@ class ClientDatabase(Database):
                         )
                 if len(compliances_list) > 0 :
                     unit_wise_compliances[unit_name] = compliances_list
-            
+
             unit_wise_compliances_list.append(clientreport.UnitCompliance(
                 business_group_name, legal_entity_name, division_name,
                 unit_wise_compliances))
@@ -4955,7 +4955,12 @@ class ClientDatabase(Database):
                     unit_wise_compliances))
         return service_provider_wise_compliances_list
 
-    def get_compliance_details_report(self, country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date, compliance_status, client_id, session_user) :
+    def get_compliance_details_report(
+        self, country_id, domain_id, statutory_id,
+        unit_id, compliance_id, assignee_id,
+        from_date, to_date, compliance_status,
+        client_id, session_user
+    ) :
 
         if unit_id is None :
             unit_ids = self.get_user_unit_ids(session_user, client_id)
@@ -8040,10 +8045,9 @@ class ClientDatabase(Database):
             print "Error sending email :{}".format(e)
         return True
 
-
     def get_form_ids_for_admin(self):
         columns = "group_concat(form_id)"
-        condition = "is_admin = 1 OR form_type_id in (4,5) OR form_id in (9,11,10,12)"
+        condition = "is_admin = 1 OR form_type_id in (4,5) OR form_id in (1, 9,11,10,12)"
         rows = self.get_data(
             self.tblForms, columns, condition
         )
@@ -8150,11 +8154,6 @@ class ClientDatabase(Database):
         no_of_licence = rows[0][0]
 
         remaining_licence = int(no_of_licence) - int(no_of_licence_holders)
-
-        columns = "admin_id"
-        rows = self.get_data(self.tblAdmin, columns, condition)
-        if rows[0][0] == 0:
-            remaining_licence -= 1
         return remaining_licence
 
     def get_no_of_days_left_for_contract_expiration(self):
@@ -8654,3 +8653,6 @@ class ClientDatabase(Database):
         else:
             compliance_name = rows[0][1]
         return compliance_name
+
+    def save_registration_key(self, session_user, request):
+        pass

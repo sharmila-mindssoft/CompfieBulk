@@ -252,7 +252,7 @@ function loadCompliance(reportType){
       if(reportType == "show"){
         loadTotalCount(unitWiseComplianceList);
       }else{
-        loadTotalCount(unitWiseComplianceList);
+        // loadTotalCount(unitWiseComplianceList);
         var download_url = data["link"];
         window.open(download_url, '_blank');
       }

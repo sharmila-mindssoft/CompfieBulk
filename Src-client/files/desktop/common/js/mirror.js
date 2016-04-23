@@ -113,6 +113,14 @@ function initMirror() {
             return null;
     }
 
+    function getUserId() {
+        var info = getUserInfo();
+        if (info !== null)
+            return info["user_id"];
+        else
+            return null;
+    }
+
     function get_ip(){
         $.getJSON("http://jsonip.com?callback=?", function (data) {
             window.localStorage["my_ip"]  = data.ip;
@@ -191,11 +199,10 @@ function initMirror() {
 
     // Login function
     function login(username, password, short_name, callback) {
-        if (window.localStorage["my_ip"] == null){
-            my_ip = "unknown"
-        }else{
-            my_ip = window.localStorage["my_ip"]
-        }
+        if (window.localStorage["my_ip"] == null)
+            get_ip();
+        my_ip = window.localStorage["my_ip"]
+        
         var request = [
             "Login", {
                 "login_type": "Web",
@@ -1462,6 +1469,7 @@ function initMirror() {
         logout: logout,
 
         getEmployeeName: getEmployeeName,
+        getUserId: getUserId,
         getUserInfo: getUserInfo,
         updateUserInfo: updateUserInfo,
         getUserProfile: getUserProfile,
