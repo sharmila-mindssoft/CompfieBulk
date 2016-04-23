@@ -627,7 +627,7 @@ class Response(object):
         raise NotImplementedError
 
 class UnitStatutoryCompliances(object):
-    def __init__(self, unit_id, unit_name, address, country_name, domain_names, business_group_name, legal_entity_name, division_name):
+    def __init__(self, unit_id, unit_name, address, country_name, domain_names, business_group_name, legal_entity_name, division_name, is_closed):
         self.unit_id = unit_id
         self.unit_name = unit_name
         self.address = address
@@ -636,10 +636,11 @@ class UnitStatutoryCompliances(object):
         self.business_group_name = business_group_name
         self.legal_entity_name = legal_entity_name
         self.division_name = division_name
+        self.is_closed = is_closed
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "unit_name", "address", "country_name", "domain_names", "business_group_name", "legal_entity_name", "division_name"])
+        data = parse_dictionary(data, ["unit_id", "unit_name", "address", "country_name", "domain_names", "business_group_name", "legal_entity_name", "division_name", "is_closed"])
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
@@ -656,7 +657,9 @@ class UnitStatutoryCompliances(object):
         legal_entity_name = parse_structure_CustomTextType_50(legal_entity_name)
         division_name = data.get("division_name")
         division_name = parse_structure_OptionalType_CustomTextType_100(division_name)
-        return UnitStatutoryCompliances(unit_id, unit_name, address, country_name, domain_names, business_group_name, legal_entity_name, division_name)
+        is_closed = data.get("is_closed")
+        is_closed = parse_structure_Bool(is_closed)
+        return UnitStatutoryCompliances(unit_id, unit_name, address, country_name, domain_names, business_group_name, legal_entity_name, division_name, is_closed)
 
     def to_structure(self):
         return {
@@ -668,6 +671,7 @@ class UnitStatutoryCompliances(object):
             "business_group_name": to_structure_OptionalType_CustomTextType_100(self.business_group_name),
             "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
             "division_name": to_structure_OptionalType_CustomTextType_100(self.division_name),
+            "is_closed": to_structure_Bool(self.is_closed)
         }
 
 class GetStatutorySettingsSuccess(Response):
