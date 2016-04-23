@@ -246,7 +246,6 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
-        print query
         return self.select_all(query)
 
     ########################################################
@@ -5476,7 +5475,6 @@ class KnowledgeDatabase(Database):
                 client_statutory_id, statutory_id,
                 applicable_status
             )
-        print query
         rows = self.select_all(query)
         columns = [
             "client_statutory_id", "compliance_id", "statutory_id",
@@ -5753,7 +5751,6 @@ class KnowledgeDatabase(Database):
             )
 
         query = query + qry
-        print query
         rows = self.select_all(query)
         columns = [
             "client_statutory_id", "client_id", "geography_id",
