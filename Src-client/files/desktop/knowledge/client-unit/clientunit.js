@@ -1434,6 +1434,7 @@ function unit_close(){
     }
     else{
         function onSuccess(data){
+            alert("Unit '"+data["unit_name"]+"'' has been reactivated successfully.\n New Unit code for the unit is '"+data["unit_code"]+"' \n You need to Assign statutory for this unit, \n for the client to access")
             $('#unitidval').val("");
             $('#clientidval').val("");
             $('.overlay').css("visibility","hidden");

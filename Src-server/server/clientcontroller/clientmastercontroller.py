@@ -379,8 +379,9 @@ def get_units(db, request, session_user, client_id):
 def close_unit(db, request, session_user, client_id):
     session_user = session_user
     password = request.password
-
-    if db.verify_password(password, session_user, client_id):
+    if db.is_seating_unit(request.unit_id):
+        return clientmasters.CannotCloseUnit()
+    elif db.verify_password(password, session_user, client_id):
         db.close_unit(request.unit_id, session_user)
         return clientmasters.CloseUnitSuccess()
     else:

@@ -21,7 +21,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_Country,
     parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_OptionalType_CustomTextType_250,
-    parse_structure_UnsignedIntegerType_32
+    parse_structure_UnsignedIntegerType_32,
+    parse_structure_OptionalType_CustomTextType_50
 )
 from protocol.to_structure import (
     to_structure_CustomTextType_100,
@@ -49,7 +50,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_ClientDivision,
     to_structure_VectorType_RecordType_core_ClientUnit,
     to_structure_OptionalType_CustomTextType_250,
-    to_structure_UnsignedIntegerType_32
+    to_structure_UnsignedIntegerType_32,
+    to_structure_OptionalType_CustomTextType_50
 )
 
 #
@@ -316,7 +318,7 @@ class SaveClientUser(Request):
         employee_name = data.get("emp_n")
         employee_name = parse_structure_CustomTextType_50(employee_name)
         employee_code = data.get("emp_c")
-        employee_code = parse_structure_CustomTextType_50(employee_code)
+        employee_code = parse_structure_OptionalType_CustomTextType_50(employee_code)
         contact_no = data.get("cn")
         contact_no = parse_structure_CustomTextType_20(contact_no)
         seating_unit_id = data.get("s_u_id")
@@ -340,7 +342,7 @@ class SaveClientUser(Request):
             "email_id": to_structure_CustomTextType_100(self.email_id),
             "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
-            "employee_code": to_structure_CustomTextType_50(self.employee_code),
+            "employee_code": to_structure_OptionalType_CustomTextType_50(self.employee_code),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
             "seating_unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.seating_unit_id),
             "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
@@ -381,7 +383,7 @@ class UpdateClientUser(Request):
         employee_name = data.get("emp_n")
         employee_name = parse_structure_CustomTextType_50(employee_name)
         employee_code = data.get("emp_c")
-        employee_code = parse_structure_CustomTextType_50(employee_code)
+        employee_code = parse_structure_OptionalType_CustomTextType_50(employee_code)
         contact_no = data.get("cn")
         contact_no = parse_structure_CustomTextType_20(contact_no)
         seating_unit_id = data.get("s_u_id")
@@ -405,7 +407,7 @@ class UpdateClientUser(Request):
             "user_id": to_structure_SignedIntegerType_8(self.user_id),
             "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
-            "employee_code": to_structure_CustomTextType_50(self.employee_code),
+            "employee_code": to_structure_OptionalType_CustomTextType_50(self.employee_code),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
             "seating_unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.seating_unit_id),
             "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
@@ -1092,6 +1094,19 @@ class UserLimitExceeds(Response):
         return {
         }
 
+class CannotCloseUnit(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CannotCloseUnit()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 def _init_Response_class_map():
     classes = [
         GetServiceProvidersSuccess, SaveServiceProviderSuccess,
@@ -1105,7 +1120,7 @@ def _init_Response_class_map():
         GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExists,
         InvalidServiceProviderId, EmailIdAlreadyExists, CannotChangePrimaryAdminStatus ,
         CannotPromoteServiceProvider, ReassignCompliancesBeforeDeactivate,
-        CannotChangeStatusOfContractExpiredSP
+        CannotChangeStatusOfContractExpiredSP, CannotCloseUnit
     ]
     class_map = {}
     for c in classes:
