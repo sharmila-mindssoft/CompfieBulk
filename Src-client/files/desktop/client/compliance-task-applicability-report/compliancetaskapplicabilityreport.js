@@ -54,16 +54,16 @@ function initialize(){
         }
     );
 }
-$("#show-button").click(function(){ 
+$("#show-button").click(function(){
     loadcompliancetaskapplicabilityreport("show");
 });
-$("#export-button").click(function(){ 
+$("#export-button").click(function(){
     loadcompliancetaskapplicabilityreport("export");
 });
 function loadcompliancetaskapplicabilityreport(buttontype){
     var countries = $("#country").val();
     countriesText = $("#countryval").val();
-    //Domain    
+    //Domain
     var domain = $("#domain").val();
     domainText = $("#domainval").val();
     //business_groups
@@ -114,15 +114,18 @@ function loadcompliancetaskapplicabilityreport(buttontype){
         displayMessage(message.country_required);
     }
     else if(domain == ""){
-        displayMessage(message.domain_required);  
+        displayMessage(message.domain_required);
     }
     else{
         function onSuccess(data){
             $(".grid-table-rpt").show();
-                 
+            sno = 0;
+            fullArrayList = [];
+
+
             if(buttontype == "export"){
                 var download_url = data["link"];
-                window.open(download_url, '_blank');     
+                window.open(download_url, '_blank');
             }else{
                 loadTaskApplicabilityStatusList(data);
             }
@@ -159,15 +162,15 @@ $(function() {
         $(".loading-indicator-spin").show();
         if($('.loading-indicator-spin').css('display') != 'none')
         {
-            setTimeout(function(){  
+            setTimeout(function(){
                 showloadrecord();
             }, 500);
-            
+
         }
-        setTimeout(function(){  
+        setTimeout(function(){
             $(".loading-indicator-spin").hide();
         }, 500);
-        
+
     });
 });
 
@@ -175,7 +178,7 @@ function showloadrecord() {
 
     startCount = endCount;
     endCount = startCount + pageSize;
-      
+
     var list = get_sub_array(fullArrayList, startCount, endCount);
     if(list.length < pageSize){
         $('#pagination').hide();
@@ -184,43 +187,43 @@ function showloadrecord() {
         if(list[y] !=  undefined){
             if(Object.keys(list[y])[0] == "compliance_frequency"){
                compliancelist(list[y]);
-            }    
+            }
             else if(list[y] == "applicable" ||  list[y] == "not_applicable" || list[y] == "not_opted" ){
                applicablestatus(list[y]);
-            }    
+            }
             else{
                level1heading(list[y]);
-            }                
-        }        
+            }
+        }
     }
 }
 
-function loadresult(finalList) {   
+function loadresult(finalList) {
     endCount = pageSize;
-    $.each(finalList, function(i, val){        
+    $.each(finalList, function(i, val){
         var list = i;
         var list_act = val;
 
         if(Object.keys(val).length != 0){
-            delete val;  
+            delete val;
             fullArrayList.push(list);
             $.each(list_act, function (i_act, val_act){
                 var actval = i_act;
                 var list_unit = val_act;
-                delete val_act;  
+                delete val_act;
                 fullArrayList.push(actval);
                 $.each(list_unit, function(i_unit, val_unit){
                     var list_comp = val_unit['compliances'];
-                    $.each(list_comp, function(i_com, val_com){  
+                    $.each(list_comp, function(i_com, val_com){
                         jQuery.extend(val_com, {'unit_name': val_unit['unit_name'], 'address': val_unit['address']});
                         fullArrayList.push(val_com);
                     });
                 });
-            });    
+            });
         }
 
     });
-    
+
     var totallist = fullArrayList.length;
 
     if(totallist > pageSize){
@@ -235,14 +238,14 @@ function loadresult(finalList) {
         if(sub_keys_list[y] !=  undefined){
             if(Object.keys(sub_keys_list[y])[0] == "compliance_frequency"){
                compliancelist(sub_keys_list[y]);
-            }    
+            }
             else if(sub_keys_list[y] == "applicable" ||  sub_keys_list[y] == "not_applicable" || sub_keys_list[y] == "not_opted" ){
                applicablestatus(sub_keys_list[y]);
-            }    
+            }
             else{
                level1heading(sub_keys_list[y]);
             }
-        } 
+        }
     }
 }
 function filterheading(){
@@ -250,6 +253,15 @@ function filterheading(){
     var clonefilterHeading = tableFilterHeading.clone();
     $('.filter-country', clonefilterHeading).text(countriesText);
     $('.filter-domain', clonefilterHeading).text(domainText);
+    if(businessgroupText == ''){
+        businessgroupText = 'Nil';
+    }
+    if(legalentityText == ''){
+        legalentityText = 'Nil';
+    }
+    if(divisionText == ''){
+        divisionText = 'Nil';
+    }
     $('.filter-businessgroup', clonefilterHeading).text(businessgroupText);
     $('.filter-legalentity', clonefilterHeading).text(legalentityText);
     $('.filter-division', clonefilterHeading).text(divisionText);
@@ -270,7 +282,7 @@ function applicablestatus(key){
     }
     $('.applicable-status-heading', cloneHeading).text(keyvalue);
 
-    $('.tbody-task-applicability-list').append(cloneHeading);    
+    $('.tbody-task-applicability-list').append(cloneHeading);
 }
 function level1heading(ke){
     var arr = [];
@@ -280,7 +292,7 @@ function level1heading(ke){
     $('.tbody-task-applicability-list').append(cloneLevel1);
     var tableRowList = $('#templates .table-task-applicability-list .list-heading');
     var cloneList = tableRowList.clone();
-    $('.tbody-task-applicability-list').append(cloneList);   
+    $('.tbody-task-applicability-list').append(cloneList);
 }
 function compliancelist(data){
     var valcomp = data;
@@ -300,23 +312,36 @@ function compliancelist(data){
     $('.tbody-task-applicability-list').append(clone);
 }
 
-function loadTaskApplicabilityStatusList(data){
+function loadTaskApplicabilityStatusList(data1){
     $("#pagination").hide();
     var totalrecords = 0;
     $('.tbody-task-applicability-list tr').remove();
 
-    $.each(data, function(key, value) {   
+    applicable = $("#applicable-status").val();
+    console.log(applicable);
+    var data = {}
+    if (applicable == "Applicable")
+        data["Applicable"] = data1["applicable"];
+    else if (applicable == "Not Applicable")
+        data["Not Applicable"] = data1["not_applicable"];
+    else if (applicable == "Not Opted")
+        data["Not Opted"] = data1["not_opted"];
+
+    $.each(data, function(key, value) {
+        console.log(key)
         var actwiselist = data[key];
-        $.each(actwiselist, function(ke, valu) {                      
-            var list = actwiselist[ke];
-            $.each(list, function(i, val) { 
-                var listval = list[i]["compliances"];                                               
-                var reccount = listval.length;
-                totalrecords = totalrecords + reccount;                   
+        $.each(data, function(ke, valu) {
+            var list = data[ke];
+            $.each(list, function(i, val) {
+                if (list.length > 0) {
+                    var listval = list[i]["compliances"];
+                    var reccount = listval.length;
+                    totalrecords = totalrecords + reccount;
+                }
             });
         });
     });
-    loadresult(data);    
+    loadresult(data);
     $(".total-records").html("Total : "+totalrecords+" records");
 }
 
@@ -327,7 +352,7 @@ function onCountrySuccess(val){
   $("#country").val(val[0]);
 }
 
-//load country list in autocomplete text box  
+//load country list in autocomplete text box
 $("#countryval").keyup(function(){
   var textval = $(this).val();
   getCountryAutocomplete(textval, countriesList, function(val){
@@ -340,7 +365,7 @@ function onDomainSuccess(val){
   $("#domainval").val(val[1]);
   $("#domain").val(val[0]);
 }
-//load domain list in autocomplete textbox  
+//load domain list in autocomplete textbox
 $("#domainval").keyup(function(){
   var textval = $(this).val();
   getDomainAutocomplete(textval, domainsList, function(val){
@@ -354,7 +379,7 @@ function onBusinessGroupSuccess(val){
   $("#businessgroupid").val(val[0]);
 }
 
-//load businessgroup form list in autocomplete text box  
+//load businessgroup form list in autocomplete text box
 $("#businessgroupsval").keyup(function(){
   var textval = $(this).val();
   getClientBusinessGroupAutocomplete(textval, businessgroupsList, function(val){
@@ -368,7 +393,7 @@ function onLegalEntitySuccess(val){
   $("#legalentityid").val(val[0]);
 }
 
-//load legalentity form list in autocomplete text box  
+//load legalentity form list in autocomplete text box
 $("#legalentityval").keyup(function(){
   var textval = $(this).val();
   getClientLegalEntityAutocomplete(textval, legalEntityList, function(val){
@@ -382,7 +407,7 @@ function onDivisionSuccess(val){
   $("#divisionid").val(val[0]);
 }
 
-//load division form list in autocomplete text box  
+//load division form list in autocomplete text box
 $("#divisionval").keyup(function(){
   var textval = $(this).val();
   getClientDivisionAutocomplete(textval, divisionsList, function(val){
@@ -396,7 +421,7 @@ function onUnitSuccess(val){
   $("#unitid").val(val[0]);
 }
 
-//load unit  form list in autocomplete text box  
+//load unit  form list in autocomplete text box
 $("#unitval").keyup(function(){
   var textval = $(this).val();
   getUnitAutocomplete(textval, unitList, function(val){
@@ -409,7 +434,7 @@ function onStatutorySuccess(val){
   $("#level1val").val(val[1]);
   $("#level1id").val(val[0].replace(/##/gi,'"'));
 }
-//load statutory list in autocomplete textbox  
+//load statutory list in autocomplete textbox
 $("#level1val").keyup(function(){
   var textval = $(this).val();
   getClientStatutoryAutocomplete(textval, level1List, function(val){

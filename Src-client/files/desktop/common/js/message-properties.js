@@ -185,7 +185,8 @@ var message = {
 	'duedatelessthanvaliditydate_compliance' : 'Due date must be less than validity date for - ',
 	'invalid_duedate' : 'Invalid due date for - ',
 	'cannot_change_status' : 'Cannot change the status of Service provider - Contract of Service Provider expired',
-	'invalid_contractto' : 'Invalid Contract To date'
+	'invalid_contractto' : 'Invalid Contract To date',
+	'InvalidDueDate': 'Due date should not greater then statutory date'
 };
 
 function clearMessage() {

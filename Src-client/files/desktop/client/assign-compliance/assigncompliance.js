@@ -120,7 +120,7 @@ function disppopup(units_string){
   }
 }
 
-//load available compliance based on first wizard 
+//load available compliance based on first wizard
 function load_secondwizard(){
   if(statutoriesCount <= 1){
     $(".tbody-assignstatutory").find("tbody").remove();
@@ -626,7 +626,7 @@ function submitcompliance(){
             var statutory_day = null;
             var statutory_month = null;
             var trigger_before_days = null;
-            
+
             if(sort_elements[dDates][0] != '' && sort_elements[dDates][0] != undefined){
               var splitDueDates = sort_elements[dDates][0].split('-');
               var strMonth = splitDueDates[1];
@@ -822,7 +822,11 @@ function submitcompliance(){
           hideLoader();
         }
         function onFailure(error){
-          displayMessage(error);
+          err_message = message.error;
+          if (err_message == "undefined")
+            displayMessage(error);
+          else
+            displayMessage(err_message);
           hideLoader();
         }
         client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,
@@ -857,7 +861,11 @@ function submitcompliance(){
           hideLoader();
         }
         function onFailure(error){
-          displayMessage(error);
+          err_message = message.error;
+          if (err_message == "undefined")
+            displayMessage(error);
+          else
+            displayMessage(err_message);
           hideLoader();
         }
         client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,

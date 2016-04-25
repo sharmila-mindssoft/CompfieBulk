@@ -9,7 +9,7 @@ var domainNameVal;
 var usertype;
 var userval;
 var fromdate;
-var todate; 
+var todate;
 
 var finalList;
 var pageSize = 500;
@@ -60,16 +60,16 @@ function initialize(){
         }
     );
 }
-$("#show-button").click(function(){     
+$("#show-button").click(function(){
     loadcomplianceactivityreport("show");
 });
-$("#export-button").click(function(){ 
+$("#export-button").click(function(){
     loadcomplianceactivityreport("export");
 });
 function loadcomplianceactivityreport(buttontype){
     var countries = $("#country").val();
     countriesNameVal = $("#countryval").val();
-    //Domain    
+    //Domain
     var domain = $("#domain").val();
     domainNameVal = $("#domainval").val();
     //Usertype
@@ -118,10 +118,10 @@ function loadcomplianceactivityreport(buttontype){
         displayMessage(message.country_required);
     }
     else if(domain == ""){
-        displayMessage(message.domain_required);  
+        displayMessage(message.domain_required);
     }
     else if(usertype  == null){
-        displayMessage(message.usertype_required);     
+        displayMessage(message.usertype_required);
     }
     else if(fromdate != '' && todate ==''){
         displayMessage(message.todate_required);
@@ -138,7 +138,7 @@ function loadcomplianceactivityreport(buttontype){
             endCount = 0;
 
             if(buttontype == "show"){
-                loadComplianceActivityReportList(data['activities']);     
+                loadComplianceActivityReportList(data['activities']);
             }
             if(buttontype == "export"){
                 if (error == null){
@@ -160,7 +160,7 @@ function loadcomplianceactivityreport(buttontype){
         }
         displayLoader();
         client_mirror.getComplianceActivityReportData(
-           usertype, userid,  parseInt(countries), parseInt(domain), 
+           usertype, userid,  parseInt(countries), parseInt(domain),
            level1id, unitid, complianceid, fromdate, todate, csv,
             function (error, response){
                 if(error == null){
@@ -179,8 +179,14 @@ function compactivityfilterList(data){
     $('.country-filter-name', cloneHeading).text(countriesNameVal);
     $('.domain-filter-name', cloneHeading).text(domainNameVal);
     $('.usertype-filter-name', cloneHeading).text(usertype);
+    if ((userval == '') || (userval === null))
+        userval = "Nil";
     $('.user-filter-name', cloneHeading).text(userval);
+    if (fromdate === null )
+        fromdate = "Nil";
     $('.fromdate-filter-name', cloneHeading).text(fromdate);
+    if (todate === null)
+        todate = "Nil";
     $('.todate-filter-name', cloneHeading).text(todate);
 
     $('.table-compliance-activity-list').append(cloneHeading);
@@ -213,19 +219,19 @@ function compactivitycompliancetasklist(data, acc_count){
         $('.compliance-task', cloneval).html(k);
         var clist = data[k];
         var count = 0;
-        
+
         $.each(clist, function(k1, val1){
             if(count == 0){
                 $('.compliance-date', cloneval).html(clist[k1]['activity_date']);
                 $('.activity-status', cloneval).html(clist[k1]['activity_status']);
                 $('.compliance-task-status', cloneval).html(clist[k1]['compliance_status']);
-                $('.remarks', cloneval).html(clist[k1]['remarks']);                    
-                $('.compliance-activity-list .table-compliance-activity-list').append(cloneval);                        
+                $('.remarks', cloneval).html(clist[k1]['remarks']);
+                $('.compliance-activity-list .table-compliance-activity-list').append(cloneval);
                 $('.table-compliance-activity-list').append('<tbody class="accordion-content accordion-content'+acc_count+'"></tbody>');
                 if(acc_count == 1){
-                    $('.accordion-content'+acc_count).addClass("default");    
+                    $('.accordion-content'+acc_count).addClass("default");
                 }
-                
+
             }
             else{
                 var tableRowvalues_ul = $('#templates .tree-tr');
@@ -233,13 +239,13 @@ function compactivitycompliancetasklist(data, acc_count){
                 $('.li-date', cloneval_ul).html(clist[k1]['activity_date']);
                 $('.li-activitystatus', cloneval_ul).html(clist[k1]['activity_status']);
                 $('.li-taskstatus', cloneval_ul).html(clist[k1]['compliance_status']);
-                $('.li-remarks', cloneval_ul).html(clist[k1]['remarks']);  
-                $('.accordion-content'+acc_count).append(cloneval_ul);   
+                $('.li-remarks', cloneval_ul).html(clist[k1]['remarks']);
+                $('.accordion-content'+acc_count).append(cloneval_ul);
             }
-            count++;                    
-        });          
+            count++;
+        });
     });
-    
+
 }
 
 
@@ -253,51 +259,51 @@ $(function() {
         $(".loading-indicator-spin").show();
         if($('.loading-indicator-spin').css('display') != 'none')
         {
-            setTimeout(function(){  
+            setTimeout(function(){
                 showloadrecord();
             }, 500);
-            
+
         }
-        setTimeout(function(){  
+        setTimeout(function(){
             $(".loading-indicator-spin").hide();
         }, 500);
-        
+
     });
 });
 function showloadrecord() {
     startCount = endCount;
     endCount = startCount + pageSize;
-      
+
     var list = get_sub_array(fullArrayList, startCount, endCount);
     if(list.length < pageSize){
         $('#pagination').hide();
     }
-    
+
     //e.preventDefault();
     for(var y = 0;  y < pageSize; y++){
         if(list[y] !=  undefined){
 
            if(Object.keys(list[y])[0] == "unit_name"){
                compactivityunitList(list[y]);
-            }    
+            }
             else if(Object.keys(list[y])[0] == "level1_name"){
                compactivitylevel1list(list[y]);
-            }    
+            }
             else{
                compactivitycompliancetasklist(list[y], acc_count);
                acc_count++;
             }
-        }        
+        }
     }
     //textchangeloadinghide();
 }
 
-function loadresult(finalList) {   
+function loadresult(finalList) {
     endCount = pageSize;
     $.each(finalList, function(i, val){
         var list = finalList[i];
         var list_statu_wise = val["statutory_wise_compliances"]
-        delete list["statutory_wise_compliances"];         
+        delete list["statutory_wise_compliances"];
         fullArrayList.push(list);
 
         $.each(list_statu_wise, function(i1, val1){
@@ -305,15 +311,15 @@ function loadresult(finalList) {
             level1_Object.level1_name = i1;
             var list_act = val1;
             fullArrayList.push(level1_Object);
-            
-            $.each(list_statu_wise[i1], function(i2, val2){    
-                var olddata  = {};            
+
+            $.each(list_statu_wise[i1], function(i2, val2){
+                var olddata  = {};
                 var newdata = {};
                 newdata[i2] = val1[i2];
                 $.extend(true, olddata, newdata);
 
                 fullArrayList.push(olddata);
-            }); 
+            });
         });
     });
     var totallist = fullArrayList.length;
@@ -330,15 +336,15 @@ function loadresult(finalList) {
         if(sub_keys_list[y] !=  undefined){
             if(Object.keys(sub_keys_list[y])[0] == "unit_name"){
                compactivityunitList(sub_keys_list[y]);
-            }    
+            }
             else if(Object.keys(sub_keys_list[y])[0] == "level1_name"){
                compactivitylevel1list(sub_keys_list[y]);
-            }    
+            }
             else{
                compactivitycompliancetasklist(sub_keys_list[y], acc_count);
                acc_count++;
             }
-        } 
+        }
     }
     $('#accordion').find('.accordion-toggle').click(function(){
         $(this).next().slideToggle('fast');
@@ -348,19 +354,19 @@ function loadresult(finalList) {
 
 
 function loadComplianceActivityReportList(data){
-    
+
     $(".grid-table-rpt").show();
     $('.table-compliance-activity-list').empty();
     var sno = 0;
-    
-    $.each(data, function(key, value) {     
-        var level1list = data[key]['statutory_wise_compliances'];        
-        $.each(level1list, function(ke, valu) { 
+
+    $.each(data, function(key, value) {
+        var level1list = data[key]['statutory_wise_compliances'];
+        $.each(level1list, function(ke, valu) {
             var list = level1list[ke];
-            $.each(list, function(k, val){               
-                sno = sno + 1;                
-            });               
-        });       
+            $.each(list, function(k, val){
+                sno = sno + 1;
+            });
+        });
     });
     loadresult(data);
     $(".total-records").html("Total : "+sno+" records")
@@ -373,7 +379,7 @@ function onCountrySuccess(val){
   $("#country").val(val[0]);
 }
 
-//load country list in autocomplete text box  
+//load country list in autocomplete text box
 $("#countryval").keyup(function(){
   var textval = $(this).val();
   getCountryAutocomplete(textval, countriesList, function(val){
@@ -386,7 +392,7 @@ function onDomainSuccess(val){
   $("#domainval").val(val[1]);
   $("#domain").val(val[0]);
 }
-//load domain list in autocomplete textbox  
+//load domain list in autocomplete textbox
 $("#domainval").keyup(function(){
   var textval = $(this).val();
   getDomainAutocomplete(textval, domainsList, function(val){
@@ -400,7 +406,7 @@ function onUnitSuccess(val){
   $("#unitid").val(val[0]);
 }
 
-//load unit  form list in autocomplete text box  
+//load unit  form list in autocomplete text box
 $("#unitval").keyup(function(){
   var textval = $(this).val();
   getUnitAutocomplete(textval, unitList, function(val){
@@ -413,7 +419,7 @@ function onStatutorySuccess(val){
   $("#level1val").val(val[1]);
   $("#level1id").val(val[0].replace(/##/gi,'"'));
 }
-//load statutory list in autocomplete textbox  
+//load statutory list in autocomplete textbox
 $("#level1val").keyup(function(){
   var textval = $(this).val();
   getClientStatutoryAutocomplete(textval, level1List, function(val){
@@ -427,7 +433,7 @@ function onUserSuccess(val){
   $("#userid").val(val[0]);
 }
 
-//load user list in autocomplete text box  
+//load user list in autocomplete text box
 $("#userval").keyup(function(){
   var textval = $(this).val();
   getUserAutocomplete(textval, userList, function(val){
@@ -441,7 +447,7 @@ function onComplianceTaskSuccess(val){
   $("#complianceid").val(val[0]);
 }
 
-//load compliancetask form list in autocomplete text box  
+//load compliancetask form list in autocomplete text box
 $("#complianceval").keyup(function(){
   var textval = $(this).val();
   getComplianceTaskAutocomplete(textval, complianceList, function(val){
