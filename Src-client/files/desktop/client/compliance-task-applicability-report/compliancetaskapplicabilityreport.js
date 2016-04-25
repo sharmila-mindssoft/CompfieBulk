@@ -332,15 +332,15 @@ function loadTaskApplicabilityStatusList(data1){
         data["Not Opted"] = data1["not_opted"];
 
     $.each(data, function(key, value) {
-        var actwiselist = data[key];
-        $.each(data, function(ke, valu) {
-            var list = data[ke];            
-            $.each(list, function(j, val) {
-                for(var i=0; i<val.length; i++){
-                    totalrecords += val[i]["compliances"].length; 
-                }
+        var grouplist = data[key];
+        for(var k=0; k<value.length; k++){
+            var actwiselist = value[k]["actwise_units"];
+            $.each(actwiselist, function(k1, v1) {
+                $.each(v1, function(ke, valu) {
+                totalrecords += valu["compliances"].length;
+                });
             });
-        });
+        } 
     });
     loadresult(data);
     $(".total-records").html("Total : "+totalrecords+" records");
