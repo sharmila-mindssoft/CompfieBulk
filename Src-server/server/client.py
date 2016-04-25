@@ -57,7 +57,8 @@ class ReplicationManager(object) :
             "tbl_client_compliances": "client_compliance_id",
             "tbl_statutory_notifications_log": "statutory_notification_id",
             "tbl_statutory_notifications_units": "statutory_notification_unit_id",
-            "tbl_countries": "country_id"
+            "tbl_countries": "country_id",
+            "tbl_domains": "domain_id"
         }
 
     def _load_columns_count(self):
@@ -73,7 +74,8 @@ class ReplicationManager(object) :
             "tbl_client_compliances": 10,
             "tbl_statutory_notifications_log": 8,
             "tbl_statutory_notifications_units": 6,
-            "tbl_countries": 2
+            "tbl_countries": 2,
+            "tbl_domains": 2
         }
 
     def _get_received_count(self):
