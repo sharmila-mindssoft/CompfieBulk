@@ -4859,18 +4859,21 @@ class ClientDatabase(Database):
         return results
 
     def get_client_compliances(self, user_id, client_id=None) :
-        query = "SELECT compliance_id, concat(document_name, '-' ,compliance_task) AS compliance_name  \
+        query = "SELECT compliance_id, document_name ,compliance_task \
                 FROM tbl_compliances"
         rows = self.select_all(query, client_id)
-        columns = ["compliance_id", "compliance_name"]
+        columns = ["compliance_id", "document_name", "compliance_name"]
         result = self.convert_to_dict(rows, columns)
         return self.return_client_compliances(result)
 
     def return_client_compliances(self, data) :
         results = []
         for d in data :
+            compliance_name = d["compliance_name"]
+            if d["document_name"] not in ["None", None, ""]:
+                compliance_name = "%s - %s" % (d["document_name"], compliance_name)
             results.append(core.ComplianceFilter(
-                d["compliance_id"], d["compliance_name"]
+                d["compliance_id"], compliance_name
             ))
         return results
 
