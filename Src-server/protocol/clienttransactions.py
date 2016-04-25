@@ -831,6 +831,19 @@ class SaveAssignedComplianceSuccess(Response):
         return {
         }
 
+class InvalidDueDate(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidDueDate()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class AssigneeNotBelongToUnit(Response):
     def __init__(self):
         pass
@@ -1103,7 +1116,7 @@ def _init_Response_class_map():
     classes = [
         GetStatutorySettingsSuccess, GetSettingsCompliancesSuccess, UpdateStatutorySettingsSuccess,
         InvalidPassword, GetAssignCompliancesFormDataSuccess, GetComplianceForUnitsSuccess,
-        SaveAssignedComplianceSuccess, AssigneeNotBelongToUnit, ConcurrenceNotBelongToUnit,
+        SaveAssignedComplianceSuccess, InvalidDueDate, AssigneeNotBelongToUnit, ConcurrenceNotBelongToUnit,
         ApprovalPersonNotBelongToUnit, GetUserwiseCompliancesSuccess, ReassignComplianceSuccess,
         GetComplianceApprovalListSuccess, ApproveComplianceSuccess, GetPastRecordsFormDataSuccess,
         GetStatutoriesByUnitSuccess, SavePastRecordsSuccess, SavePastRecordsFailed

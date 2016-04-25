@@ -2666,36 +2666,13 @@ class ClientDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return self.return_assign_compliance_data(result, total)
 
-    def return_assign_compliance_data(self, result, total):
+    def set_new_due_date(self, statutory_dates):
+        due_date = None
+        due_date_list = []
+        date_list = []
         now = datetime.datetime.now()
-
         current_year = now.year
-        level_1_wise = {}
-        level_1_name = []
-        for r in result:
-            maipping = r["statutory_mapping"].split(">>")
-            level_1 = maipping[0].strip()
-            unit_ids = [
-                int(x) for x in r["units"].split(',')
-            ]
-            # level_1_wise = domain_wise_compliance.get(domain_id)
-            # if level_1_wise is None :
-            #     level_1_wise = {}
-
-            compliance_list = level_1_wise.get(level_1)
-            if compliance_list is None :
-                compliance_list = []
-            if r["document_name"] not in ("", "None", None):
-                name = "%s - %s" % (r["document_name"], r["compliance_task"])
-            else :
-                name = r["compliance_task"]
-            statutory_dates = r["statutory_dates"]
-            statutory_dates = json.loads(statutory_dates)
-            date_list = []
-            due_date = None
-            due_date_list = []
-
-            for date in statutory_dates:
+        for date in statutory_dates:
                 s_date = core.StatutoryDate(
                     date["statutory_date"],
                     date["statutory_month"],
@@ -2745,6 +2722,32 @@ class ClientDatabase(Database):
                 else :
                     due_date = n_date.strftime("%d-%b-%Y")
                 due_date_list.append(due_date)
+        return due_date, due_date_list, date_list
+
+    def return_assign_compliance_data(self, result, total):
+        level_1_wise = {}
+        level_1_name = []
+        for r in result:
+            maipping = r["statutory_mapping"].split(">>")
+            level_1 = maipping[0].strip()
+            unit_ids = [
+                int(x) for x in r["units"].split(',')
+            ]
+            # level_1_wise = domain_wise_compliance.get(domain_id)
+            # if level_1_wise is None :
+            #     level_1_wise = {}
+
+            compliance_list = level_1_wise.get(level_1)
+            if compliance_list is None :
+                compliance_list = []
+            if r["document_name"] not in ("", "None", None):
+                name = "%s - %s" % (r["document_name"], r["compliance_task"])
+            else :
+                name = r["compliance_task"]
+            statutory_dates = r["statutory_dates"]
+            statutory_dates = json.loads(statutory_dates)
+
+            due_date, due_date_list, date_list = self.set_new_due_date(statutory_dates)
 
             if r["frequency_id"] in (2, 3) :
                 summary = "Repeats every %s - %s" % (r["repeats_every"], r["repeat_type"])
@@ -2783,6 +2786,23 @@ class ClientDatabase(Database):
             return row[0], row[1]
         else :
             return None
+
+    def validate_compliance_due_date(self, request):
+        c_ids = []
+        for c in request.compliances :
+            c_ids.append(c.compliance_id)
+            q = "SELECT compliance_id, statutory_dates from tbl_compliances \
+                where compliance_id = %s" % int(c.compliance_id)
+            row = self.select_one(q)
+            s_dates = json.loads(row[1])
+            due_date, due_date_list, date_list = self.set_new_due_date(s_dates)
+            if c.due_date is not None :
+                t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+                n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
+                if (n_due_date < t_due_date) :
+                    # Due date should be lessthen statutory date
+                    return False
+        return True
 
     def save_assigned_compliance(self, request, session_user, client_id):
         new_unit_settings = request.new_units
