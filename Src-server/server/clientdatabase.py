@@ -7233,14 +7233,17 @@ class ClientDatabase(Database):
                     user_id
                 )
                 all_compliance_ids = ""
-                if assigned_compliance_ids is not None:
+                if assigned_compliance_ids not in [None, "None", ""]:
                     all_compliance_ids = "%s" % (
                         assigned_compliance_ids
                     )
-                if reassigned_compliance_ids is not None:
-                    all_compliance_ids = "%s,%s" % (
-                        all_compliance_ids, reassigned_compliance_ids
-                    )
+                if reassigned_compliance_ids not in [None, "None", ""]:
+                    if all_compliance_ids not in [None, "None", ""]:
+                        all_compliance_ids = "%s,%s" % (
+                            all_compliance_ids, reassigned_compliance_ids
+                        )
+                    else:
+                        all_compliance_ids = reassigned_compliance_ids
                 if all_compliance_ids not in [None, "None", ""]:
                     client_statutory_id_columns = "group_concat(distinct client_statutory_id)"
                     client_statutory_id_condition = "compliance_id in (%s)" % all_compliance_ids
@@ -7338,8 +7341,9 @@ class ClientDatabase(Database):
                                         completed_date=self.datetime_to_string(completed_on)
                                     )
                                 )
+                        assigned_count = delayed_compliance - delayed_reassigned_count
                         delayed_compliances_obj = dashboard.DelayedCompliance(
-                            assigned_count=delayed_compliance - delayed_reassigned_count,
+                            assigned_count= 0 if assigned_count < 0 else assigned_count,
                             reassigned_count=delayed_reassigned_count,
                             reassigned_compliances=None if len(reassigned_compliances) == 0 else  reassigned_compliances
                         )
