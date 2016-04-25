@@ -4701,7 +4701,7 @@ class ClientDatabase(Database):
             remarks
         )
 
-        columns = ["approve_status", "remarks", "completion_date", "completed_on", 
+        columns = ["approve_status", "remarks", "completion_date", "completed_on",
         "concurred_on", "concurrence_status"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0, remarks, None, None, None, None]
@@ -6142,7 +6142,7 @@ class ClientDatabase(Database):
             "ch.validity_date, ch.next_due_date, document_name, compliance_task, " + \
             "compliance_description, format_file, unit_code, unit_name," + \
             "address, (select domain_name from %s d \
-            where d.domain_id = c.domain_id) as domain_name, frequency, remarks,\
+            where d.domain_id = c.domain_id) as domain_name, frequency, ch.remarks,\
             ch.compliance_id, duration_type_id" % (
                 self.tblDomains
             )
