@@ -323,7 +323,6 @@ function loadTaskApplicabilityStatusList(data1){
     $('.tbody-task-applicability-list tr').remove();
 
     applicable = $("#applicable-status").val();
-    console.log(applicable);
     var data = {}
     if (applicable == "Applicable")
         data["Applicable"] = data1["applicable"];
@@ -333,15 +332,12 @@ function loadTaskApplicabilityStatusList(data1){
         data["Not Opted"] = data1["not_opted"];
 
     $.each(data, function(key, value) {
-        console.log(key)
         var actwiselist = data[key];
         $.each(data, function(ke, valu) {
-            var list = data[ke];
-            $.each(list, function(i, val) {
-                if (list.length > 0) {
-                    var listval = list[i]["compliances"];
-                    var reccount = listval.length;
-                    totalrecords = totalrecords + reccount;
+            var list = data[ke];            
+            $.each(list, function(j, val) {
+                for(var i=0; i<val.length; i++){
+                    totalrecords += val[i]["compliances"].length; 
                 }
             });
         });
