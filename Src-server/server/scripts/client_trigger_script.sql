@@ -10,10 +10,15 @@ CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON 
     SET @unitid = NEW.unit_id;
 
     INSERT INTO tbl_statutory_notification_status (
-        statutory_notification_id,
-        user_id, read_status)
-    SELECT @notificationid, t1.user_id, 0
-    FROM tbl_user_units t1 where t1.unit_id = @unitid;
+    	statutory_notification_id, user_id, read_status)
+    	SELECT NEW.statutory_notification_id, t1.user_id, 0
+     	FROM tbl_user_units t1 where t1.unit_id = NEW.unit_id;
+    INSERT INTO tbl_statutory_notification_status (
+    	statutory_notification_id,
+    	user_id, read_status)
+        SELECT NEW.statutory_notification_id, t1.admin_id, 0 FROM
+        tbl_admin t1 where t1.admin_id != 0;
+        END
 END
 //
 DELIMITER ;
@@ -86,6 +91,29 @@ DELIMITER //
 CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client_compliances`
 FOR EACH ROW BEGIN
 	CALL procedure_to_update_version("compliance");
+END
+//
+DELIMITER ;
+
+DELIMITER ;
+CREATE PROCEDURE `procedure_to_update_version`(IN update_type VARCHAR(100))
+BEGIN
+	SET SQL_SAFE_UPDATES=0;
+	case
+	when update_type = 'unit' then
+		SET @count = (SELECT unit_details_version+1 FROM tbl_mobile_sync_versions );
+		update tbl_mobile_sync_versions set unit_details_version = @count;
+	when update_type = 'user' then
+		SET @count = (SELECT user_details_version+1 FROM tbl_mobile_sync_versions );
+		update tbl_mobile_sync_versions set user_details_version = @count;
+	when update_type = 'compliance' then
+		SET @count = (SELECT compliance_applicability_version+1 FROM tbl_mobile_sync_versions );
+		update tbl_mobile_sync_versions set compliance_applicability_version = @count;
+	when update_type = 'history' then
+		SET @count = (SELECT compliance_history_version+1 FROM tbl_mobile_sync_versions );
+		update tbl_mobile_sync_versions set compliance_history_version = @count;
+    end case;
+    SET SQL_SAFE_UPDATES=1;
 END
 //
 DELIMITER ;
