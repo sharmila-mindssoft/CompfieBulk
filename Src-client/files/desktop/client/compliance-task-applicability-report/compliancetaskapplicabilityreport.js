@@ -303,8 +303,13 @@ function compliancelist(data){
     $('.statutory-provision', clone).html(valcomp['statutory_provision']);
     $('.unit span', clone).html(valcomp["unit_name"]);
     $('.unit abbr', clone).attr("title", valcomp["address"]);
-    $('.compliance-task a', clone).html(valcomp['compliance_name'][0]);
-    $('.compliance-task a', clone).attr("href",valcomp['compliance_name'][1]);
+    if(valcomp['compliance_name'][1] != undefined){
+        $('.compliance-task a', clone).html(valcomp['compliance_name'][0]);
+        $('.compliance-task a', clone).attr("href",valcomp['compliance_name'][1]);
+        $('.compliance-task a', clone).attr('target','_blank');
+    }else{
+        $('.compliance-task', clone).html(valcomp['compliance_name'][0]);
+    }
     $('.compliance-description', clone).html(valcomp['description']);
     $('.penal-consequences', clone).html(valcomp['penal_consequences']);
     $('.compliance-frequency', clone).html(valcomp['compliance_frequency']);
