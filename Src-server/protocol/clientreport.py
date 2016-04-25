@@ -82,7 +82,8 @@ from protocol.parse_structure import (
     parse_structure_Text,
     parse_structure_VectorType_Text,
     parse_structure_Bool,
-    parse_structure_OptionalType_VectorType_CustomTextType_500
+    parse_structure_OptionalType_VectorType_CustomTextType_500,
+    parse_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
@@ -169,7 +170,8 @@ from protocol.to_structure import (
     to_structure_VectorType_Text,
     to_structure_Bool,
     to_structure_OptionalType_VectorType_CustomTextType_500,
-    to_structure_MapType_CustomTextType_500_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ActivityData
+    to_structure_MapType_CustomTextType_500_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ActivityData,
+    to_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData
 )
 
 #
@@ -1385,6 +1387,45 @@ class GetTaskApplicabilityStatusFiltersSuccess(Response):
             "applicable_status": to_structure_VectorType_CustomTextType_100(self.applicable_status),
         }
 
+class GetComplianceTaskApplicabilityStatusReportData(object):
+    def __init__(
+        self, business_group_name, legal_entity_name, division_name, actwise_units
+    ):
+        self.business_group_name = business_group_name
+        self.legal_entity_name = legal_entity_name
+        self.division_name = division_name
+        self.actwise_units = actwise_units
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, [
+                "business_group_name", "legal_entity_name", "division_name",
+                "actwise_units"
+            ]
+        )
+        business_group_name = data.get("business_group_name")
+        business_group_name = parse_structure_OptionalType_CustomTextType_50(business_group_name)
+        legal_entity_name = data.get("legal_entity_name")
+        legal_entity_name = parse_structure_CustomTextType_50(legal_entity_name)
+        division_name = data.get("division_name")
+        division_name = parse_structure_OptionalType_CustomTextType_50(division_name)
+        division_name = data.get("division_name")
+        division_name = parse_structure_OptionalType_CustomTextType_50(division_name)
+        actwise_units = data.get("actwise_units")
+        actwise_units = parse_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ApplicabilityCompliance(actwise_units)
+        return GetComplianceTaskApplicabilityStatusReportSuccess(
+            business_group_name, legal_entity_name, division_name, actwise_units
+        )
+
+    def to_structure(self):
+        return {
+            "business_group_name": to_structure_OptionalType_CustomTextType_50(self.business_group_name),
+            "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
+            "division_name": to_structure_OptionalType_CustomTextType_50(self.division_name),
+            "actwise_units": to_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ApplicabilityCompliance(self.actwise_units),
+        }
+
 class GetComplianceTaskApplicabilityStatusReportSuccess(Response):
     def __init__(self, applicable, not_applicable, not_opted):
         self.applicable = applicable
@@ -1395,18 +1436,18 @@ class GetComplianceTaskApplicabilityStatusReportSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["applicable", "not_applicable", "not_opted"])
         applicable = data.get("applicable")
-        applicable = parse_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ApplicabilityCompliance(applicable)
+        applicable = parse_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(applicable)
         not_applicable = data.get("not_applicable")
-        not_applicable = parse_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ApplicabilityCompliance(not_applicable)
+        not_applicable = parse_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(not_applicable)
         not_opted = data.get("not_opted")
-        not_opted = parse_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ApplicabilityCompliance(not_opted)
+        not_opted = parse_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(not_opted)
         return GetComplianceTaskApplicabilityStatusReportSuccess(applicable, not_applicable, not_opted)
 
     def to_inner_structure(self):
         return {
-            "applicable": to_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ApplicabilityCompliance(self.applicable),
-            "not_applicable": to_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ApplicabilityCompliance(self.not_applicable),
-            "not_opted": to_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ApplicabilityCompliance(self.not_opted),
+            "applicable": to_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(self.applicable),
+            "not_applicable": to_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(self.not_applicable),
+            "not_opted": to_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(self.not_opted)
         }
 
 class GetComplianceActivityReportFiltersSuccess(Response):

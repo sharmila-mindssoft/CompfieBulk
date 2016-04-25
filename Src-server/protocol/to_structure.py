@@ -4075,3 +4075,14 @@ def to_structure_VectorType_RecordType_mobile_ComplianceHistory(data):
     for item in data :
         lst.append(to_structure_RecordType_mobile_ComplianceHistory(item))
     return lst
+
+def to_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(item))
+    return lst
+
+def to_structure_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(data):
+    from protocol import clientreport
+    return clientreport.GetComplianceTaskApplicabilityStatusReportData.to_structure(data)

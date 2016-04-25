@@ -2082,7 +2082,7 @@ class ActiveCompliance(object):
             "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "start_date": to_structure_CustomTextType_20(self.start_date),
-            "due_date": to_structure_CustomTextType_20(self.due_date),
+            "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
             "compliance_status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
             "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
             "next_due_date": to_structure_OptionalType_CustomTextType_20(self.next_due_date),
