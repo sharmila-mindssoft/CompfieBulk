@@ -58,6 +58,11 @@ function unit_close(){
 				$('.popup-error-msg').html("Enter Correct password");
 				$('#password').val("");
 				$('#password').focus();
+			}else if (error == 'CannotCloseUnit'){
+				// $('#unitidval').val("");
+				// $('.overlay').css("visibility","hidden");
+				// $('.overlay').css("opacity","0");
+				$('.popup-error-msg').html("Cannot close unit. One or more users have this unit as seating unit. Change the seating unit of those users to close the unit");
 			}
 		}
 		client_mirror.closeUnit(parseInt(unitidval), password,

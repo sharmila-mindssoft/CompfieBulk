@@ -8676,3 +8676,13 @@ class ClientDatabase(Database):
 
     def save_registration_key(self, session_user, request):
         pass
+
+    def is_seating_unit(self, unit_id):
+        column = "count(*)"
+        condition = "seating_unit_id ='%d'" % unit_id
+        rows = self.get_data(self.tblUsers, column, condition)
+        user_count = rows[0][0]
+        if user_count > 0:
+            return True
+        else:
+            return False

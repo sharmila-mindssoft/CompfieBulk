@@ -1226,16 +1226,25 @@ class ChangeClientStatusSuccess(Response):
         }
 
 class ReactivateUnitSuccess(Response):
-    def __init__(self):
-        pass
+    def __init__(self, unit_code, unit_name):
+        self.unit_code = unit_code
+        self.unit_name = unit_name
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return ReactivateUnitSuccess()
+        data = parse_dictionary(data, ["unit_code"])
+        unit_code = data.get("unit_code")
+        unit_code = parse_structure_CustomTextType_50(unit_code)
+        unit_name = data.get("unit_name")
+        unit_name = parse_structure_CustomTextType_100(unit_name)
+        return ReactivateUnitSuccess(
+            unit_code=unit_code, unit_name=unit_name
+        )
 
     def to_inner_structure(self):
         return {
+            "unit_code": to_structure_CustomTextType_50(self.unit_code),
+            "unit_name": to_structure_CustomTextType_50(self.unit_name)
         }
 
 class UserIsNotResponsibleForAnyClient(Response):

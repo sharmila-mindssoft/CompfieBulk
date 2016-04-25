@@ -479,8 +479,10 @@ def reactivate_unit(db, request, session_user):
         return technomasters.InvalidUnitId()
     else:
         if db.verify_password(password, session_user):
-            if db.reactivate_unit(client_id, unit_id, session_user):
-                return technomasters.ReactivateUnitSuccess()
+            unit_code, unit_name = db.reactivate_unit(client_id, unit_id, session_user)
+            return technomasters.ReactivateUnitSuccess(
+                unit_code=unit_code, unit_name=unit_name
+            )
         else:
             return technomasters.InvalidPassword()
 

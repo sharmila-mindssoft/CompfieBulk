@@ -14,3 +14,257 @@
     user_group_id = result[0][0]
 IndexError: tuple index out of range
 
+2016-04-23 16:38:34,809 - knowledge_logger - main.py-handle-api- : global name 'condition' is not defined
+2016-04-23 16:38:34,810 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 482, in reactivate_unit
+    unit_code = db.reactivate_unit(client_id, unit_id, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4766, in reactivate_unit
+    rows = self.get_data(self.tblUnits, action_column, condition)
+NameError: global name 'condition' is not defined
+
+2016-04-23 16:40:28,115 - knowledge_logger - main.py-handle-api- : (1054, "Unknown column 'geography' in 'field list'")
+2016-04-23 16:40:28,116 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 482, in reactivate_unit
+    unit_code = db.reactivate_unit(client_id, unit_id, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4767, in reactivate_unit
+    rows = self.get_data(self.tblUnits, action_column, condition)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 221, in get_data
+    return self.select_all(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 179, in select_all
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+OperationalError: (1054, "Unknown column 'geography' in 'field list'")
+
+2016-04-23 16:47:28,409 - knowledge_logger - main.py-handle-api- : (1054, "Unknown column 'industry_name' in 'field list'")
+2016-04-23 16:47:28,409 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 482, in reactivate_unit
+    unit_code = db.reactivate_unit(client_id, unit_id, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4767, in reactivate_unit
+    rows = self.get_data(self.tblUnits, action_column, condition)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 221, in get_data
+    return self.select_all(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 179, in select_all
+    cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+OperationalError: (1054, "Unknown column 'industry_name' in 'field list'")
+
+2016-04-23 16:50:03,477 - knowledge_logger - main.py-handle-api- : global name 'group_company' is not defined
+2016-04-23 16:50:03,477 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 482, in reactivate_unit
+    unit_code = db.reactivate_unit(client_id, unit_id, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4776, in reactivate_unit
+    unit_code = self.get_next_unit_auto_gen_no()
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4007, in get_next_unit_auto_gen_no
+    condition = "client_id = '%d'" % group_company["client_id"]
+NameError: global name 'group_company' is not defined
+
+2016-04-23 16:51:02,972 - knowledge_logger - main.py-handle-api- : global name 'group_company' is not defined
+2016-04-23 16:51:02,973 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 482, in reactivate_unit
+    unit_code = db.reactivate_unit(client_id, unit_id, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4776, in reactivate_unit
+    unit_code = self.get_next_unit_auto_gen_no(client_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4010, in get_next_unit_auto_gen_no
+    group_name = group_company["group_name"].replace(" ", "")
+NameError: global name 'group_company' is not defined
+
+2016-04-23 16:53:26,448 - knowledge_logger - main.py-handle-api- : 'legal_entity_id'
+2016-04-23 16:53:26,448 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 482, in reactivate_unit
+    unit_code = db.reactivate_unit(client_id, unit_id, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4783, in reactivate_unit
+    new_unit_id, result["business_group_id"], result["legal_entity_id"],
+KeyError: 'legal_entity_id'
+
+2016-04-23 16:54:23,567 - knowledge_logger - main.py-handle-api- : 'legal_entity_id'
+2016-04-23 16:54:23,567 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 482, in reactivate_unit
+    unit_code = db.reactivate_unit(client_id, unit_id, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4784, in reactivate_unit
+    new_unit_id, result["business_group_id"], result["legal_entity_id"],
+KeyError: 'legal_entity_id'
+
+2016-04-23 16:55:16,501 - knowledge_logger - main.py-handle-api- : 'legal_entity_id'
+2016-04-23 16:55:16,502 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 482, in reactivate_unit
+    unit_code = db.reactivate_unit(client_id, unit_id, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4784, in reactivate_unit
+    new_unit_id, result["business_group_id"], result["legal_entity_id"],
+KeyError: 'legal_entity_id'
+
+2016-04-23 16:56:14,762 - knowledge_logger - main.py-handle-api- : 'country_id'
+2016-04-23 16:56:14,762 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 482, in reactivate_unit
+    unit_code = db.reactivate_unit(client_id, unit_id, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4785, in reactivate_unit
+    result["division_id"], result["country_id"], result["geography"],
+KeyError: 'country_id'
+
+2016-04-23 16:56:49,634 - knowledge_logger - main.py-handle-api- : 'geography'
+2016-04-23 16:56:49,634 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 482, in reactivate_unit
+    unit_code = db.reactivate_unit(client_id, unit_id, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4783, in reactivate_unit
+    result["division_id"], result["country_id"], result["geography"],
+KeyError: 'geography'
+
+2016-04-23 16:58:41,382 - knowledge_logger - main.py-handle-api- : (1054, "Unknown column 'is_closed' in 'field list'")
+2016-04-23 16:58:41,382 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 482, in reactivate_unit
+    unit_code = db.reactivate_unit(client_id, unit_id, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4787, in reactivate_unit
+    self.insert(self.tblUnits, columns, values)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 265, in insert
+    return self.execute(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 199, in execute
+    return cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+OperationalError: (1054, "Unknown column 'is_closed' in 'field list'")
+
+2016-04-23 16:59:18,150 - knowledge_logger - main.py-handle-api- : (1452, 'Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge`.`tbl_units`, CONSTRAINT `fk_units_client` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`))')
+2016-04-23 16:59:18,150 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 482, in reactivate_unit
+    unit_code = db.reactivate_unit(client_id, unit_id, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4787, in reactivate_unit
+    self.insert(self.tblUnits, columns, values)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 265, in insert
+    return self.execute(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 199, in execute
+    return cursor.execute(query)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 174, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+IntegrityError: (1452, 'Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge`.`tbl_units`, CONSTRAINT `fk_units_client` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`))')
+
+2016-04-23 17:00:25,499 - knowledge_logger - main.py-handle-api- : expected a string, but received: 10
+2016-04-23 17:00:25,499 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 136, in handle_api_request
+    respond(response_data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 126, in respond
+    response_data, response
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 88, in _send_response
+    data = response_data.to_structure()
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 634, in to_structure
+    inner = self.to_inner_structure()
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technomasters.py", line 1241, in to_inner_structure
+    "unit_code": to_structure_CustomTextType_50(self.unit_code),
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/to_structure.py", line 745, in to_structure_CustomTextType_50
+    return parse_custom_string(data, 50)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 88, in parse_custom_string
+    raise expectation_error("a string", x)
+ValueError: expected a string, but received: 10
+
+2016-04-23 17:03:07,582 - knowledge_logger - main.py-handle-api- : not enough arguments for format string
+2016-04-23 17:03:07,582 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 482, in reactivate_unit
+    unit_code = db.reactivate_unit(client_id, unit_id, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4780, in reactivate_unit
+    unit_code = self.get_next_unit_auto_gen_no(client_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4036, in get_next_unit_auto_gen_no
+    unit_code = "%s%s" % unit_code_start_letters, str(next_auto_gen_no)
+TypeError: not enough arguments for format string
+
+2016-04-23 17:03:08,849 - knowledge_logger - main.py-handle-api- : not enough arguments for format string
+2016-04-23 17:03:08,849 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 131, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 185, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 60, in process_techno_request
+    return reactivate_unit(db, request_frame, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 482, in reactivate_unit
+    unit_code = db.reactivate_unit(client_id, unit_id, session_user)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4780, in reactivate_unit
+    unit_code = self.get_next_unit_auto_gen_no(client_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 4036, in get_next_unit_auto_gen_no
+    unit_code = "%s%s" % unit_code_start_letters, str(next_auto_gen_no)
+TypeError: not enough arguments for format string
+

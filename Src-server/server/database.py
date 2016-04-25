@@ -4002,6 +4002,50 @@ class KnowledgeDatabase(Database):
             ))
         return results
 
+    def get_next_unit_auto_gen_no(self, client_id):
+        columns = "count(*)"
+        condition = "client_id = '%d'" % client_id
+        rows = self.get_data(self.tblUnits, columns, condition)
+        no_of_units = rows[0][0]
+
+        group_columns = "group_name"
+        group_condition = "client_id = '%d'" % client_id
+        group_company = self.get_data(self.tblClientGroups, group_columns, group_condition)
+
+        group_name = group_company[0][0].replace(" ", "")
+        unit_code_start_letters = group_name[:2].upper()
+
+        columns = "TRIM(LEADING '%s' FROM unit_code)" % unit_code_start_letters
+        condition = "unit_code like binary '%s%s' and CHAR_LENGTH(unit_code) = 7 and client_id='%d'" % (
+            unit_code_start_letters, "%", client_id
+        )
+        rows = self.get_data(self.tblUnits, columns, condition)
+        auto_generated_unit_codes = []
+        for row in rows:
+            try:
+                auto_generated_unit_codes.append(int(row[0]))
+            except Exception, ex:
+                print ex
+                continue
+        next_auto_gen_no = 1
+        if len(auto_generated_unit_codes) > 0:
+            existing_max_unit_code = max(auto_generated_unit_codes)
+            if existing_max_unit_code == no_of_units:
+                next_auto_gen_no = no_of_units + 1
+            else:
+                next_auto_gen_no = existing_max_unit_code + 1
+        unit_code = group_name[:2].upper()
+        if len(str(next_auto_gen_no)) == 1:
+            unit_code += "0000"
+        elif len(str(next_auto_gen_no)) == 2:
+            unit_code += "000"
+        elif len(str(next_auto_gen_no)) == 3:
+            unit_code += "00"
+        elif len(str(next_auto_gen_no)) == 4:
+            unit_code += "0"
+        unit_code += "%d" % (next_auto_gen_no)
+        return unit_code
+
     def get_client_countries(self, client_id):
         columns = "group_concat(country_id)"
         condition = "client_id ='%d'" % client_id
@@ -4732,32 +4776,26 @@ class KnowledgeDatabase(Database):
         return True
 
     def reactivate_unit(self, client_id, unit_id, session_user):
-        current_time_stamp = str(self.get_date_time())
-        columns = ["is_active", "updated_on" , "updated_by"]
-        values = [1, current_time_stamp, session_user]
-        condition = "unit_id = '%d' and client_id = '%d' "% (unit_id, client_id)
-        result = self.update(self.tblUnits, columns, values, condition)
-
-        rows = self.get_client_db_info(client_id)
-
-        ip = rows[0][0]
-        username = rows[0][2]
-        password = rows[0][3]
-        dbname = rows[0][4]
-        conn = self._db_connect(ip, username, password, dbname)
-        cursor = conn.cursor()
-
-        query = "update tbl_units set is_closed = 0 where unit_id = '%d'" % unit_id
-        cursor.execute(query)
-        conn.commit()
-        conn.close()
-
-        action_column = "unit_code, unit_name"
+        action_column = "business_group_id,legal_entity_id,division_id,country_id,geography_id,industry_id,unit_code,unit_name,address,postal_code,domain_ids"
+        condition = "unit_id = '%d'" % (unit_id)
         rows = self.get_data(self.tblUnits, action_column, condition)
+        result = self.convert_to_dict(rows, action_column.split(","))
+        
         action = "Reactivated Unit \"%s-%s\"" % (rows[0][0], rows[0][1])
         self.save_activity(session_user, 19, action)
 
-        return result
+        columns = ["client_id", "unit_id", "is_active"] + action_column.split(",")
+        new_unit_id = self.get_new_id("unit_id", self.tblUnits)
+        result = result[0]
+        unit_code = self.get_next_unit_auto_gen_no(client_id)
+        values = [
+            client_id, new_unit_id,1, result["business_group_id"], result["legal_entity_id"],
+            result["division_id"], result["country_id"], result["geography_id"],
+            result["industry_id"],unit_code, result["unit_name"], result["address"], 
+            result["postal_code"], result["domain_ids"]
+        ]
+        self.insert(self.tblUnits, columns, values)
+        return unit_code, result["unit_name"]
 
     def verify_username(self, username):
         columns = "count(*), user_id"
@@ -6343,7 +6381,8 @@ class KnowledgeDatabase(Database):
             old_admin_password = rows[0][2]
 
             query = "select count(*) from tbl_assigned_compliances \
-            where assignee = '%d'" % old_admin_id
+            where assignee = '%d' or concurrence_person = '%d' or \
+            approval_person = '%d'" % (old_admin_id, old_admin_id, old_admin_id)
             cursor.execute(query)
             rows = cursor.fetchall()
             compliance_count = rows[0][0]
@@ -6420,6 +6459,23 @@ class KnowledgeDatabase(Database):
                     for row in rows:
                         q = "%s (%s, %s) " % ( query, row[0], new_admin_id)
                         cursor.execute(q)
+                
+
+                query = "update tbl_assigned_compliances set concurrence_person = null,\
+                approval_person = '%d' where assignee = '%d'" % (new_admin_id, new_admin_id)
+                cursor.execute(query)
+
+                query = "update tbl_compliance_history set concurred_by = null,\
+                approved_by = '%d' where completed_by = '%d' and completed_on is null\
+                or completed_on = 0 " % (new_admin_id, new_admin_id) 
+                cursor.execute(query)
+
+                query = "update tbl_compliance_history set approve_status = 1, \
+                approved_on=now(), approved_by='%d' where completed_by = '%d' and \
+                completed_on is not null and completed_on != 0 and approve_status \
+                is null or approve_status = 0" % (new_admin_id, new_admin_id)
+                cursor.execute(query)
+
                 conn.commit()
 
                 # Promoting to new admin in Knowledge db
