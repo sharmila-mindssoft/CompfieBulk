@@ -2600,8 +2600,12 @@ class ClientDatabase(Database):
             str(tuple(unit_ids)),
             str(tuple(unit_ids))
         )
+        print q
         row = self.select_one(q)
-        return row[0]
+        if row :
+            return row[0]
+        else :
+            return 0
 
     def get_assign_compliance_statutories_for_units(
         self, unit_ids, domain_id, session_user, from_count, to_count
@@ -2639,6 +2643,8 @@ class ClientDatabase(Database):
             (SELECT A.unit_id, A.client_statutory_id, B.compliance_id FROM tbl_client_statutories A \
             INNER JOIN tbl_client_compliances B \
             ON A.client_statutory_id = B.client_statutory_id \
+            AND B.compliance_id not in (select AC.compliance_id from tbl_assigned_compliances AC \
+            WHERE AC.unit_id IN %s ) \
             AND B.compliance_opted = 1 \
             AND A.unit_id IN %s) U \
             group by U.compliance_id )UC \
@@ -2655,6 +2661,7 @@ class ClientDatabase(Database):
             ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), '>>', -1),\
             t3.frequency_id \
             limit %s, %s" % (
+                str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
                 domain_id,
