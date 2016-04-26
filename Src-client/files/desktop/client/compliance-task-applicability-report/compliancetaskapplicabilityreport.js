@@ -200,13 +200,13 @@ function showloadrecord() {
 
 function loadresult(finalList) {
     endCount = pageSize;
-    $.each(finalList, function(i, val){
-        var list = i;
-        var list_act = val;
-
-        if(Object.keys(val).length != 0){
-            delete val;
-            fullArrayList.push(list);
+     $.each(finalList, function(i, val){
+        fullArrayList.push(i);
+        $.each(val, function(i1, val1){
+            var grouplist = val[i1];
+            var list_act = val1["actwise_units"]
+            delete val1["actwise_units"];         
+            fullArrayList.push(grouplist);
             $.each(list_act, function (i_act, val_act){
                 var actval = i_act;
                 var list_unit = val_act;
@@ -220,10 +220,10 @@ function loadresult(finalList) {
                     });
                 });
             });
-        }
+        });
 
-    });
-
+     });
+    //console.log(fullArrayList)
     var totallist = fullArrayList.length;
 
     if(totallist > pageSize){
@@ -233,55 +233,40 @@ function loadresult(finalList) {
         $('#pagination').hide();
     }
     var sub_keys_list = get_sub_array(fullArrayList, startCount, endCount);
-    filterheading();
+    
     for(var y = 0;  y < pageSize; y++){
         if(sub_keys_list[y] !=  undefined){
             if(Object.keys(sub_keys_list[y])[0] == "compliance_frequency"){
                compliancelist(sub_keys_list[y]);
             }
-            else if(sub_keys_list[y] == "applicable" ||  sub_keys_list[y] == "not_applicable" || sub_keys_list[y] == "not_opted" ){
+            else if(sub_keys_list[y] == "Applicable" ||  sub_keys_list[y] == "Not Applicable" || sub_keys_list[y] == "Not Opted" ){
                applicablestatus(sub_keys_list[y]);
             }
-            else{
+            else if(Object.keys(sub_keys_list[y])[0] == "division_name"){
+               filterheading(sub_keys_list[y]);
+            }
+            else{ 
                level1heading(sub_keys_list[y]);
             }
         }
     }
 }
-function filterheading(){
+function filterheading(data){
     var tableFilterHeading = $('#templates .table-task-applicability-list .filter-task-applicability-list');
     var clonefilterHeading = tableFilterHeading.clone();
     $('.filter-country', clonefilterHeading).text(countriesText);
     $('.filter-domain', clonefilterHeading).text(domainText);
-    if(businessgroupText == ''){
-        businessgroupText = 'Nil';
-    }
-    if(legalentityText == ''){
-        legalentityText = 'Nil';
-    }
-    if(divisionText == ''){
-        divisionText = 'Nil';
-    }
-    $('.filter-businessgroup', clonefilterHeading).text(businessgroupText);
-    $('.filter-legalentity', clonefilterHeading).text(legalentityText);
-    $('.filter-division', clonefilterHeading).text(divisionText);
+
+    $('.filter-businessgroup', clonefilterHeading).text(data["business_group_name"]);
+    $('.filter-legalentity', clonefilterHeading).text(data["legal_entity_name"]);
+    $('.filter-division', clonefilterHeading).text(data["division_name"]);
     $('.tbody-task-applicability-list').append(clonefilterHeading);
 }
 function applicablestatus(key){
     count = 0;
     var tableRowHeading = $('#templates .table-task-applicability-list .applicable-status-list');
     var cloneHeading = tableRowHeading.clone();
-    if(key == "applicable"){
-        keyvalue = "Applicable"
-    }
-    if(key == "not_opted"){
-        keyvalue = "Not Opted"
-    }
-    if(key == "not_applicable"){
-        keyvalue = "Not Applicable"
-    }
-    $('.applicable-status-heading', cloneHeading).text(keyvalue);
-
+    $('.applicable-status-heading', cloneHeading).text(key);
     $('.tbody-task-applicability-list').append(cloneHeading);
 }
 function level1heading(ke){
@@ -303,8 +288,13 @@ function compliancelist(data){
     $('.statutory-provision', clone).html(valcomp['statutory_provision']);
     $('.unit span', clone).html(valcomp["unit_name"]);
     $('.unit abbr', clone).attr("title", valcomp["address"]);
-    $('.compliance-task a', clone).html(valcomp['compliance_name'][0]);
-    $('.compliance-task a', clone).attr("href",valcomp['compliance_name'][1]);
+    if(valcomp['compliance_name'][1] != undefined){
+        $('.compliance-task a', clone).html(valcomp['compliance_name'][0]);
+        $('.compliance-task a', clone).attr("href",valcomp['compliance_name'][1]);
+        $('.compliance-task a', clone).attr('target','_blank');
+    }else{
+        $('.compliance-task', clone).html(valcomp['compliance_name'][0]);
+    }
     $('.compliance-description', clone).html(valcomp['description']);
     $('.penal-consequences', clone).html(valcomp['penal_consequences']);
     $('.compliance-frequency', clone).html(valcomp['compliance_frequency']);
@@ -318,7 +308,6 @@ function loadTaskApplicabilityStatusList(data1){
     $('.tbody-task-applicability-list tr').remove();
 
     applicable = $("#applicable-status").val();
-    console.log(applicable);
     var data = {}
     if (applicable == "Applicable")
         data["Applicable"] = data1["applicable"];
@@ -328,18 +317,15 @@ function loadTaskApplicabilityStatusList(data1){
         data["Not Opted"] = data1["not_opted"];
 
     $.each(data, function(key, value) {
-        console.log(key)
-        var actwiselist = data[key];
-        $.each(data, function(ke, valu) {
-            var list = data[ke];
-            $.each(list, function(i, val) {
-                if (list.length > 0) {
-                    var listval = list[i]["compliances"];
-                    var reccount = listval.length;
-                    totalrecords = totalrecords + reccount;
-                }
+        var grouplist = data[key];
+        for(var k=0; k<value.length; k++){
+            var actwiselist = value[k]["actwise_units"];
+            $.each(actwiselist, function(k1, v1) {
+                $.each(v1, function(ke, valu) {
+                totalrecords += valu["compliances"].length;
+                });
             });
-        });
+        } 
     });
     loadresult(data);
     $(".total-records").html("Total : "+totalrecords+" records");

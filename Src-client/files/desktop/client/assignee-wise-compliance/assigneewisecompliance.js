@@ -70,9 +70,7 @@ function assigneeList(data){
   var assignee_ = data["assignee"];
   var concurrence = data["concurrence_person"];
   var approval_ = data["approval_person"];
-  if(assignee_ == null) assignee_ = 'Client Admin';
   if(concurrence == null) concurrence = 'Nil';
-  if(approval_ == null) approval_ = 'Client Admin';
   var tableRow2=$('#assignee-name-templates .table-assignee-name .table-row-assignee-name');
   var clone2=tableRow2.clone();
   $('.tbl_assigneeheading', clone2).html('Assignee: ' + assignee_);

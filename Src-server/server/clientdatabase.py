@@ -4250,8 +4250,7 @@ class ClientDatabase(Database):
             (SELECT concat( u.employee_code, '-', u.employee_name )FROM tbl_users u WHERE u.user_id = ac.approval_person) AS approvalname, \
             ac.concurrence_person, ac.approval_person \
             FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_assigned_compliances ac, tbl_units ut \
-            WHERE cs.country_id = %s  and ( cs.unit_id = (SELECT u.seating_unit_id from tbl_users u WHERE u.user_id = ac.assignee) OR \
-                cs.unit_id in (select group_concat(uu.unit_id) from tbl_user_units uu where uu.user_id = ac.assignee) )\
+            WHERE cs.country_id = %s  and (( cs.unit_id = (SELECT u.seating_unit_id from tbl_users u WHERE u.user_id = ac.assignee) OR cs.unit_id in (select group_concat(uu.unit_id) from tbl_user_units uu where uu.user_id = ac.assignee) ) or ac.assignee = 0)\
             AND ut.business_group_id = %s and ut.legal_entity_id = %s and ut.division_id = %s \
             AND cs.domain_id = %s \
             AND cs.client_statutory_id = cc.client_statutory_id  AND ac.assignee like '%s'\
@@ -4267,6 +4266,13 @@ class ClientDatabase(Database):
                 assingee_name = assignee[1]
                 concurrence_person = assignee[2]
                 approval_person = assignee[3]
+
+                if(approval_person is None):
+                    approval_person = 'Client Admin'
+
+                if(assingee_name is None):
+                    assingee_name = 'Client Admin'
+                    
                 query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ac.validity_date, ac.due_date, \
                         ac.assignee, cf.frequency, c.frequency_id, c.duration, c.repeats_every, \
                         (select duration_type from tbl_compliance_duration_type where duration_type_id = c.duration_type_id) AS duration_type, \
