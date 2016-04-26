@@ -200,13 +200,13 @@ function showloadrecord() {
 
 function loadresult(finalList) {
     endCount = pageSize;
-    $.each(finalList, function(i, val){
-        var list = i;
-        var list_act = val;
-
-        if(Object.keys(val).length != 0){
-            delete val;
-            fullArrayList.push(list);
+     $.each(finalList, function(i, val){
+        fullArrayList.push(i);
+        $.each(val, function(i1, val1){
+            var grouplist = val[i1];
+            var list_act = val1["actwise_units"]
+            delete val1["actwise_units"];         
+            fullArrayList.push(grouplist);
             $.each(list_act, function (i_act, val_act){
                 var actval = i_act;
                 var list_unit = val_act;
@@ -220,10 +220,10 @@ function loadresult(finalList) {
                     });
                 });
             });
-        }
+        });
 
-    });
-
+     });
+    console.log(fullArrayList)
     var totallist = fullArrayList.length;
 
     if(totallist > pageSize){
@@ -233,55 +233,40 @@ function loadresult(finalList) {
         $('#pagination').hide();
     }
     var sub_keys_list = get_sub_array(fullArrayList, startCount, endCount);
-    filterheading();
+    
     for(var y = 0;  y < pageSize; y++){
         if(sub_keys_list[y] !=  undefined){
             if(Object.keys(sub_keys_list[y])[0] == "compliance_frequency"){
                compliancelist(sub_keys_list[y]);
             }
-            else if(sub_keys_list[y] == "applicable" ||  sub_keys_list[y] == "not_applicable" || sub_keys_list[y] == "not_opted" ){
+            else if(sub_keys_list[y] == "Applicable" ||  sub_keys_list[y] == "Not Applicable" || sub_keys_list[y] == "Not Opted" ){
                applicablestatus(sub_keys_list[y]);
             }
-            else{
+            else if(Object.keys(sub_keys_list[y])[0] == "division_name"){
+               filterheading(sub_keys_list[y]);
+            }
+            else{ 
                level1heading(sub_keys_list[y]);
             }
         }
     }
 }
-function filterheading(){
+function filterheading(data){
     var tableFilterHeading = $('#templates .table-task-applicability-list .filter-task-applicability-list');
     var clonefilterHeading = tableFilterHeading.clone();
     $('.filter-country', clonefilterHeading).text(countriesText);
     $('.filter-domain', clonefilterHeading).text(domainText);
-    if(businessgroupText == ''){
-        businessgroupText = 'Nil';
-    }
-    if(legalentityText == ''){
-        legalentityText = 'Nil';
-    }
-    if(divisionText == ''){
-        divisionText = 'Nil';
-    }
-    $('.filter-businessgroup', clonefilterHeading).text(businessgroupText);
-    $('.filter-legalentity', clonefilterHeading).text(legalentityText);
-    $('.filter-division', clonefilterHeading).text(divisionText);
+
+    $('.filter-businessgroup', clonefilterHeading).text(data["business_group_name"]);
+    $('.filter-legalentity', clonefilterHeading).text(data["legal_entity_name"]);
+    $('.filter-division', clonefilterHeading).text(data["division_name"]);
     $('.tbody-task-applicability-list').append(clonefilterHeading);
 }
 function applicablestatus(key){
     count = 0;
     var tableRowHeading = $('#templates .table-task-applicability-list .applicable-status-list');
     var cloneHeading = tableRowHeading.clone();
-    if(key == "applicable"){
-        keyvalue = "Applicable"
-    }
-    if(key == "not_opted"){
-        keyvalue = "Not Opted"
-    }
-    if(key == "not_applicable"){
-        keyvalue = "Not Applicable"
-    }
-    $('.applicable-status-heading', cloneHeading).text(keyvalue);
-
+    $('.applicable-status-heading', cloneHeading).text(key);
     $('.tbody-task-applicability-list').append(cloneHeading);
 }
 function level1heading(ke){
