@@ -161,7 +161,7 @@ var message = {
 	'action_required' : 'Action Required',
 	'validitydate_required' : 'Validity Date Required',
 	'nextduedate_required' : 'Next Due Date Required',
-	'validitydate_gt_duedate' : 'Validity Date is Greater than or equal to Due Date',
+	'validitydate_gt_duedate' : 'Validity Date must be Greater than or equal to Due Date',
 	'compliance_app_reject' : 'Compliance Approval Rejected',
 	'compliance_approval' : 'Compliance Approved',
 	'compliance_concurred' : 'Compliance Concurred',
