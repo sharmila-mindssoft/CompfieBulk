@@ -2796,7 +2796,7 @@ class ClientDatabase(Database):
             row = self.select_one(q)
             s_dates = json.loads(row[1])
             due_date, due_date_list, date_list = self.set_new_due_date(s_dates)
-            if c.due_date is not None :
+            if c.due_date not in [None, "None", ""] and due_date not in [None, "None", ""]:
                 t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
                 n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
                 if (n_due_date < t_due_date) :
@@ -6275,7 +6275,7 @@ class ClientDatabase(Database):
         ]
         join_type = "inner join"
         where_condition = " assignee = '%d' and is_closed = 0" % session_user
-        where_condition += " and due_Date > DATE_SUB(now(), INTERVAL 6 MONTH) and ac.is_active = 1"
+        where_condition += " and due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) and ac.is_active = 1"
         upcoming_compliances_rows = self.get_data_from_multiple_tables(
             columns,
             tables, aliases, join_type, join_conditions,
@@ -7112,7 +7112,8 @@ class ClientDatabase(Database):
                         )
                     if client_compliance_rows:
                         compliance_ids = client_compliance_rows[0][0]
-                        compliance_ids_list = compliance_ids.split(",")
+                        if compliance_ids is not None:
+                            compliance_ids_list = compliance_ids.split(",")
             level_1_statutory_wise_activities = {}
             for level_1_statutory in level_1_statutories_list:
                 compliance_wise_activities = {}
@@ -7821,16 +7822,16 @@ class ClientDatabase(Database):
         grouped_columns = "business_group_id, legal_entity_id, division_id"
         where_qry = "1"
         if business_group is not None :
-            where_qry = " AND T4.business_group_id = %s" % (business_group)
+            where_qry = " AND business_group_id = %s" % (business_group)
 
         if legal_entity is not None :
-            where_qry += " AND T4.legal_entity_id = %s" % (legal_entity)
+            where_qry += " AND legal_entity_id = %s" % (legal_entity)
 
         if division_id is not None :
-            where_qry += " AND T4.division_id = %s" % (division_id)
+            where_qry += " AND division_id = %s" % (division_id)
 
         if unit is not None :
-            where_qry += " AND T3.unit_id = %s" % (unit)
+            where_qry += " AND unit_id = %s" % (unit)
 
         grouped_condition = "%s group by business_group_id, legal_entity_id, \
         division_id" % where_qry
