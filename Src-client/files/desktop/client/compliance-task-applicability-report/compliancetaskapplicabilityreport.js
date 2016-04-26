@@ -223,7 +223,7 @@ function loadresult(finalList) {
         });
 
      });
-    console.log(fullArrayList)
+    //console.log(fullArrayList)
     var totallist = fullArrayList.length;
 
     if(totallist > pageSize){
