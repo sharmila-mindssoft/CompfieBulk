@@ -2578,7 +2578,7 @@ class ClientDatabase(Database):
 
     def total_compliance_for_units(self, unit_ids, domain_id):
         q = "select \
-            count(distinct t1.client_compliance_id) \
+            count(distinct t1.client_compliance_id) cs \
         from \
             tbl_client_compliances t1 \
                 inner join \
@@ -2595,12 +2595,12 @@ class ClientDatabase(Database):
         WHERE \
             C.unit_id IN %s \
         ) \
-        group by t2.unit_id limit 1" % (
+        group by t2.unit_id  \
+        order by cs desc limit 1 " % (
             domain_id,
             str(tuple(unit_ids)),
             str(tuple(unit_ids))
         )
-        print q
         row = self.select_one(q)
         if row :
             return row[0]
