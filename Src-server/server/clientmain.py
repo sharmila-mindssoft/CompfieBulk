@@ -74,6 +74,7 @@ class API(object):
         )
         self._databases = {}
         self._replication_managers = {}
+        self._ip_address = None
 
     def close_connection(self, db):
         try:
@@ -201,6 +202,8 @@ class API(object):
         self, unbound_method, request, response,
         request_data_type, need_client_id
     ):
+        ip_address = str(request.remote_ip())
+        self._ip_address = ip_address
         response.set_default_header("Access-Control-Allow-Origin", "*")
         request_data = self._parse_request(
             request_data_type, request, response
@@ -235,7 +238,8 @@ class API(object):
 
     @api_request(login.Request, need_client_id=True)
     def handle_login(self, request, db, client_id):
-        return controller.process_login_request(request, db, client_id)
+        print self._ip_address
+        return controller.process_login_request(request, db, client_id, self._ip_address)
 
     @api_request(clientmasters.RequestFormat)
     def handle_client_masters(self, request, db):

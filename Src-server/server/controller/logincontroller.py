@@ -41,11 +41,11 @@ def process_login(db, request, session_user_ip):
     encrypt_password = db.encrypt(password)
     response = db.verify_login(username, encrypt_password)
     if response is True:
-        return admin_login_response(db, request.ip)
+        return admin_login_response(db, session_user_ip)
     else :
         if bool(response):
             if login_type.lower() == "web" :
-                return user_login_response(db, response, request.ip)
+                return user_login_response(db, response, session_user_ip)
             else :
                 return mobile_user_login_respone(db, response, request, session_user_ip)
         else :

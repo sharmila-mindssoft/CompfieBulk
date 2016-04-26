@@ -5,9 +5,9 @@ var my_ip = null;
 function initClientMirror() {
     var DEBUG = true;
 
-    if (window.localStorage["my_ip"] == null){
-        get_ip();
-    }
+    // if (window.localStorage["my_ip"] == null){
+    //     get_ip();
+    // }
 
     function log() {
         if (window.console) {

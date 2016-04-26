@@ -15,9 +15,9 @@ __all__ = [
     "process_logout"
 ]
 
-def process_login_request(request, db, company_id) :
+def process_login_request(request, db, company_id, session_user_ip) :
     if type(request) is login.Login:
-        return process_login(db, request, company_id)
+        return process_login(db, request, company_id, session_user_ip)
 
     if type(request) is login.ForgotPassword :
         return process_forgot_password(db, request)
@@ -35,11 +35,12 @@ def process_login_request(request, db, company_id) :
         return process_logout(db, request)
 
 
-def process_login(db, request, client_id):
+def process_login(db, request, client_id, session_user_ip):
     login_type = request.login_type
     username = request.username
     password = request.password
     encrypt_password = db.encrypt(password)
+    user_ip = session_user_ip
     if db.is_contract_not_started():
         print "inside contract not startd"
         return login.ContractNotYetStarted()
@@ -53,18 +54,18 @@ def process_login(db, request, client_id):
         response = db.verify_login(username, encrypt_password)
     if login_type.lower() == "web":
         if response is True:
-            return admin_login_response(db, client_id, request.ip)
+            return admin_login_response(db, client_id, user_ip)
         else :
             if type(response) is not bool:
-                return user_login_response(db, response, client_id, request.ip)
+                return user_login_response(db, response, client_id, user_ip)
             else :
                 return login.InvalidCredentials()
     else :
         if response is True :
-            return mobile_user_admin_response(db, login_type, client_id, request.ip)
+            return mobile_user_admin_response(db, login_type, client_id, user_ip)
         else :
             if type(response) is not bool:
-                return mobile_user_login_respone(db, response, login_type, client_id, request.ip)
+                return mobile_user_login_respone(db, response, login_type, client_id, user_ip)
             else :
                 return login.InvalidCredentials()
 
