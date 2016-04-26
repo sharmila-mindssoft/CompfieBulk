@@ -2335,3 +2335,62 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
 END
 //
 DELIMITER ;
+
+
+--
+-- Trigger after_tbl_countries_update
+--
+
+DROP TRIGGER IF EXISTS `after_tbl_countries_update`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_countries_update` AFTER UPDATE ON `tbl_countries`
+ FOR EACH ROW BEGIN
+   SET @action = 1;
+
+   IF OLD.country_name <> NEW.country_name THEN
+   INSERT INTO tbl_audit_log(action,
+                            client_id,
+                            tbl_auto_id,
+                            column_name,
+                            value,
+                            tbl_name)
+        VALUES (@action,
+                0,
+                NEW.country_id,
+                'country_name',
+                NEW.country_name,
+                "tbl_countries"
+                );
+    END IF;
+END
+//
+DELIMITER ;
+
+--
+-- Trigger after_tbl_domains_update
+--
+
+DROP TRIGGER IF EXISTS `after_tbl_domains_update`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_domains_update` AFTER UPDATE ON `tbl_domains`
+ FOR EACH ROW BEGIN
+   SET @action = 1;
+
+   IF OLD.domain_name <> NEW.domain_name THEN
+   INSERT INTO tbl_audit_log(action,
+                            client_id,
+                            tbl_auto_id,
+                            column_name,
+                            value,
+                            tbl_name)
+        VALUES (@action,
+                0,
+                NEW.domain_id,
+                'domain_name',
+                NEW.domain_name,
+                "tbl_domains"
+                );
+    END IF;
+END
+//
+DELIMITER ;

@@ -6,7 +6,7 @@ __all__ = [
 
 
 ########################################################
-# To Redirect the requests to the corresponding 
+# To Redirect the requests to the corresponding
 # functions
 ########################################################
 def process_client_dashboard_requests(request, db) :
@@ -76,7 +76,7 @@ def process_get_chart_filters(db, session_user, client_id):
     legal_entities = db.get_legal_entities_for_user(legal_entity_ids)
     division_ids = None
     divisions = db.get_divisions_for_user(division_ids)
-    units = db.get_units_for_assign_compliance(session_user)
+    units = db.get_units_for_dashboard_filters(session_user)
     domain_info = db.get_country_wise_domain_month_range()
     group_name = db.get_group_name()
     return dashboard.GetChartFiltersSuccess(
@@ -234,7 +234,7 @@ def process_assigneewise_compliances_drilldown(
     )
 
 ########################################################
-# To check whether the contract of the given client 
+# To check whether the contract of the given client
 # expired or not and to get the notification, reminder
 # and escalation count
 ########################################################

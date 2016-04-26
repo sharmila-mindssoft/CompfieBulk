@@ -12,9 +12,9 @@ function initMirror() {
         }
     }
 
-    if (window.localStorage["my_ip"] == null){
-        get_ip();
-    }
+    // if (window.localStorage["my_ip"] == null){
+    //     get_ip();
+    // }
 
     function toJSON(data) {
         return JSON.stringify(data, null, " ");
@@ -202,7 +202,7 @@ function initMirror() {
         if (window.localStorage["my_ip"] == null)
             get_ip();
         my_ip = window.localStorage["my_ip"]
-        
+
         var request = [
             "Login", {
                 "login_type": "Web",

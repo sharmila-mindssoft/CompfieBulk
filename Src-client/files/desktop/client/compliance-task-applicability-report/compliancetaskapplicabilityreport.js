@@ -185,13 +185,17 @@ function showloadrecord() {
     }
     for(var y = 0;  y < pageSize; y++){
         if(list[y] !=  undefined){
-            if(Object.keys(list[y])[0] == "compliance_frequency"){
-               compliancelist(list[y]);
-            }
-            else if(list[y] == "applicable" ||  list[y] == "not_applicable" || list[y] == "not_opted" ){
+            console.log(Object)
+            if(list[y] == "Applicable" ||  list[y] == "Not Applicable" || list[y] == "Not Opted" ){
                applicablestatus(list[y]);
             }
-            else{
+            else if(Object.keys(list[y])[0] == "compliance_frequency"){
+               compliancelist(list[y]);
+            } 
+            else if(Object.keys(list[y])[0] == "division_name"){
+               filterheading(list[y]);
+            }
+            else{ 
                level1heading(list[y]);
             }
         }
@@ -234,7 +238,7 @@ function loadresult(finalList) {
     }
     var sub_keys_list = get_sub_array(fullArrayList, startCount, endCount);
     console.log(sub_keys_list)
-    
+
     for(var y = 0;  y < pageSize; y++){
         if(sub_keys_list[y] !=  undefined){
             console.log(Object)

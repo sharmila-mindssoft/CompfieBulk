@@ -25,19 +25,19 @@ function load_compliances (compliancesList) {
         var tableRow1=$('#templates .table-compliances .table-row');
         var clone1=tableRow1.clone();
         $('.sno', clone1).text(j);
-        $('.statutory', clone1).text(compliances[compliance]["compliance_name"]);
-        $('.compliance-task', clone1).text(compliances[compliance]["statutory_provision"]);
+        $('.statutory', clone1).text(compliances[compliance]["statutory_provision"]);
+        $('.compliance-task', clone1).text(compliances[compliance]["compliance_name"]);
         $('.description', clone1).text(compliances[compliance]["description"]);
         $('.duration', clone1).text(completeDays);
         $('.startdate', clone1).html('<input type="text" class="input-box" width="200px" readonly="readonly" id="startdate'+j+'"/>');
         $('.action', clone1).html('<input type="button" class="btn-submit" value="Start" onclick="submitOnOccurence('+complianceId+','+j+','+unitId+',\''+completeDays+'\')"/>');
 
-        /*$(clone1, '.action').on("click", function(e){   
+        /*$(clone1, '.action').on("click", function(e){
             submitOnOccurence(complianceId, j, unitId, completeDays);
         });*/
 
         $('.tbody-compliances-list').append(clone1);
-        
+
         $("#startdate"+j).datetimepicker({
             changeMonth: true,
             changeYear: true,
@@ -47,7 +47,7 @@ function load_compliances (compliancesList) {
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         });
         j = j + 1;
-      } 
+      }
     }
 }
 
@@ -59,11 +59,11 @@ function convert_date (data){
   for(var j=0;j<months.length;j++){
       if(date[1]==months[j]){
            date[1]=months.indexOf(months[j])+1;
-       }                      
-  } 
+       }
+  }
   if(date[1]<10){
       date[1]='0'+date[1];
-  } 
+  }
   return new Date(date[2], date[1]-1, date[0]);
 }
 
@@ -94,7 +94,7 @@ function submitOnOccurence(complianceId, count, unitId, complete_within_days){
       displayMessage(error);
       hideLoader();
     }
-    client_mirror.startOnOccurrenceCompliance(complianceId, startdate, unitId, complete_within_days, 
+    client_mirror.startOnOccurrenceCompliance(complianceId, startdate, unitId, complete_within_days,
       function (error, response) {
       if (error == null){
         onSuccess(response);
@@ -108,7 +108,7 @@ function submitOnOccurence(complianceId, count, unitId, complete_within_days){
     displayMessage(message.startdate_required);
     return false;
   }
-  
+
 }
 
 //get on occurance compliance list from api
