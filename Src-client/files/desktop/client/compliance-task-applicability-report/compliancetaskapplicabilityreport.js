@@ -233,15 +233,17 @@ function loadresult(finalList) {
         $('#pagination').hide();
     }
     var sub_keys_list = get_sub_array(fullArrayList, startCount, endCount);
+    console.log(sub_keys_list)
     
     for(var y = 0;  y < pageSize; y++){
         if(sub_keys_list[y] !=  undefined){
-            if(Object.keys(sub_keys_list[y])[0] == "compliance_frequency"){
-               compliancelist(sub_keys_list[y]);
-            }
-            else if(sub_keys_list[y] == "Applicable" ||  sub_keys_list[y] == "Not Applicable" || sub_keys_list[y] == "Not Opted" ){
+            console.log(Object)
+            if(sub_keys_list[y] == "Applicable" ||  sub_keys_list[y] == "Not Applicable" || sub_keys_list[y] == "Not Opted" ){
                applicablestatus(sub_keys_list[y]);
             }
+            else if(Object.keys(sub_keys_list[y])[0] == "compliance_frequency"){
+               compliancelist(sub_keys_list[y]);
+            } 
             else if(Object.keys(sub_keys_list[y])[0] == "division_name"){
                filterheading(sub_keys_list[y]);
             }
