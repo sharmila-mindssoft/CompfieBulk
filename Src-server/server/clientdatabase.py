@@ -6280,13 +6280,15 @@ class ClientDatabase(Database):
             "ac.compliance_id = c.compliance_id"
         ]
         join_type = "inner join"
-        where_condition = " assignee = '%d' and is_closed = 0" % session_user
-        where_condition += " and due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) and ac.is_active = 1"
+        where_condition = " assignee = '%d' and frequency_id != 4  and is_closed = 0" % session_user
+        where_condition += " and due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) "
+        where_condition += " and ac.is_active = 1"
         upcoming_compliances_rows = self.get_data_from_multiple_tables(
             columns,
             tables, aliases, join_type, join_conditions,
             where_condition
         )
+
         upcoming_compliances_list = []
         for compliance in upcoming_compliances_rows:
             if compliance[11] in [1, "1"]:
@@ -6338,9 +6340,12 @@ class ClientDatabase(Database):
                 else:
                     continue
         else:
+            print "statutory_dates : {}".format(statutory_dates)
             trigger_before = 0
-            if len(statutory_dates) != 0:
+            if len(statutory_dates) > 0:
                 trigger_before = int(statutory_dates[0]["trigger_before_days"])
+            print "due_date : {}".format(due_date)
+            print "trigger_before : {}".format(trigger_before)
             next_start_date = due_date - timedelta(days=trigger_before)
         return next_start_date
 
@@ -7335,7 +7340,11 @@ class ClientDatabase(Database):
                                 start_date = delayed[1]
                                 due_date = delayed[2]
                                 completed_on = delayed[3]
-                                compliance_name = delayed[4]
+                                if "None" not in delayed[4]:
+                                    compliance_name = delayed[4]
+                                else:
+                                    compliance_name =  delayed[4].split("-")[1]
+
                                 rh_columns = "reassigned_date, reassigned_from, (select concat(\
                                 employee_code, '-', employee_name) from %s u where u.user_id = rh.reassigned_from\
                                 )" % self.tblUsers
@@ -7509,9 +7518,13 @@ class ClientDatabase(Database):
                 )
 
                 for compliance in complied_rows:
+                    if "None" not in compliance[4]:
+                        compliance_name = compliance[4]
+                    else:
+                        compliance_name = compliance[4].split("-")[1]
                     complied_level_1_statutory_wise_compliances.append(
                         dashboard.AssigneeWiseLevel1Compliance(
-                            compliance_name=compliance[4], description=compliance[5],
+                            compliance_name=compliance_name, description=compliance[5],
                             assignee_name=self.get_user_name_by_id(assignee_id),
                             assigned_date=self.datetime_to_string(compliance[1]) if compliance[1] is not None else None ,
                             due_date=self.datetime_to_string(compliance[2]),
@@ -7522,9 +7535,13 @@ class ClientDatabase(Database):
                     complied_compliances[level_1_statutory] = complied_level_1_statutory_wise_compliances
 
                 for compliance in delayed_rows:
+                    if "None" not in compliance[4]:
+                        compliance_name = compliance[4]
+                    else:
+                        compliance_name = compliance[4].split("-")[1]
                     delayed_level_1_statutory_wise_compliances.append(
                         dashboard.AssigneeWiseLevel1Compliance(
-                            compliance_name=compliance[4], description=compliance[5],
+                            compliance_name=compliance_name, description=compliance[5],
                             assignee_name=self.get_user_name_by_id(assignee_id),
                             assigned_date=self.datetime_to_string(compliance[1]) if  compliance[1] is not None else None,
                             due_date=self.datetime_to_string(compliance[2]),
@@ -7535,9 +7552,13 @@ class ClientDatabase(Database):
                     delayed_compliances[level_1_statutory] = delayed_level_1_statutory_wise_compliances
 
                 for compliance in inprogress_rows:
+                    if "None" not in compliance[4]:
+                        compliance_name = compliance[4]
+                    else:
+                        compliance_name = compliance[4].split("-")[1]
                     inprogress_level_1_statutory_wise_compliances.append(
                         dashboard.AssigneeWiseLevel1Compliance(
-                            compliance_name=compliance[4], description=compliance[5],
+                            compliance_name=compliance_name, description=compliance[5],
                             assignee_name=self.get_user_name_by_id(assignee_id),
                             assigned_date=self.datetime_to_string(compliance[1]),
                             due_date=self.datetime_to_string(compliance[2]),
@@ -7548,9 +7569,13 @@ class ClientDatabase(Database):
                     inprogress_compliances[level_1_statutory] = inprogress_level_1_statutory_wise_compliances
 
                 for compliance in not_complied_rows:
+                    if "None" not in compliance[4]:
+                        compliance_name = compliance[4]
+                    else:
+                        compliance_name = compliance[4].split("-")[1]
                     not_complied_level_1_statutory_wise_compliances.append(
                         dashboard.AssigneeWiseLevel1Compliance(
-                            compliance_name=compliance[4], description=compliance[5],
+                            compliance_name=compliance_name, description=compliance[5],
                             assignee_name=self.get_user_name_by_id(assignee_id),
                             assigned_date=self.datetime_to_string(compliance[1]),
                             due_date=self.datetime_to_string(compliance[2]),
