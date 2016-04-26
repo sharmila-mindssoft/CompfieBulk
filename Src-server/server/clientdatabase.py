@@ -2594,7 +2594,8 @@ class ClientDatabase(Database):
             tbl_assigned_compliances C \
         WHERE \
             C.unit_id IN %s \
-        ) " % (
+        ) \
+        group by t2.unit_id limit 1" % (
             domain_id,
             str(tuple(unit_ids)),
             str(tuple(unit_ids))
@@ -2661,7 +2662,6 @@ class ClientDatabase(Database):
                 from_count,
                 to_count
             )
-
         rows = self.select_all(query)
         columns = [
             "compliance_id", "domain_id", "units",
