@@ -2443,7 +2443,14 @@ class ClientDatabase(Database):
 # Assign Compliance
 #
 
-    def get_units_for_assign_compliance(self, session_user, client_id=None):
+    def get_units_for_dashboard_filters(self, session_user, is_closed=True):
+        return self.get_units_for_assign_compliance(session_user, is_closed)
+
+    def get_units_for_assign_compliance(self, session_user, is_closed=None):
+        if is_closed is None :
+            is_close = 0
+        else:
+            is_close = '%'
         if session_user > 0 :
             qry = ' AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id = %s) ' % (int(session_user))
         else :
@@ -2452,7 +2459,7 @@ class ClientDatabase(Database):
         query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, \
             t1.division_id, t1.legal_entity_id, t1.business_group_id, \
             t1.address, t1.country_id, domain_ids\
-            FROM tbl_units t1 WHERE t1.is_closed = 0  "
+            FROM tbl_units t1 WHERE t1.is_closed like '%s'" % is_close
         query += qry
         rows = self.select_all(query)
         columns = [
@@ -2461,6 +2468,10 @@ class ClientDatabase(Database):
             "business_group_id", "address", "country_id", "domain_ids"
         ]
         result = self.convert_to_dict(rows, columns)
+        return self.return_units_for_assign_compliance(result)
+
+    def return_units_for_assign_compliance(self, result):
+
         unit_list = []
         for r in result :
             name = "%s - %s" % (r["unit_code"], r["unit_name"])
@@ -2796,7 +2807,7 @@ class ClientDatabase(Database):
             row = self.select_one(q)
             s_dates = json.loads(row[1])
             due_date, due_date_list, date_list = self.set_new_due_date(s_dates)
-            if c.due_date is not None :
+            if c.due_date not in [None, ""] and due_date not in [None, ""]:
                 t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
                 n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
                 if (n_due_date < t_due_date) :
