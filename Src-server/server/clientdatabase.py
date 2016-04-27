@@ -8713,7 +8713,19 @@ class ClientDatabase(Database):
         return compliance_name
 
     def save_registration_key(self, session_user, request):
-        pass
+        columns = ["registration_key", "device_type_id", "user_id"]
+        if request.session_type.lower() is "android" :
+            device = 2
+        elif request.session_type.lower() is "ios" :
+            device = 3
+        elif request.session_type.lower() is "blackberry" :
+            device = 4
+
+        value_list = [
+            request.reg_key, device, session_user
+        ]
+
+        self.insert(self.tblMobileRegistration, columns, value_list)
 
     def is_seating_unit(self, unit_id):
         column = "count(*)"
