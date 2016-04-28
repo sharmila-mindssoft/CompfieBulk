@@ -2600,6 +2600,7 @@ class ClientDatabase(Database):
             domain_id,
             str(tuple(unit_ids))
         )
+        print q
         row = self.select_one(q)
         if row :
             return row[0]
@@ -2663,7 +2664,8 @@ class ClientDatabase(Database):
                 from_count,
                 to_count
             )
-
+        print
+        print query
         rows = self.select_all(query)
         columns = [
             "compliance_id", "domain_id", "units",

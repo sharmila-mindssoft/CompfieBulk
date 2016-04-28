@@ -959,7 +959,13 @@ function addUnitRowUpdate(clientunitId, businessgroupId, legalEntityId, division
     var domainsListArray = firstlist['domain_ids'];
     $('.domain-'+countval+'-'+lastClassval).val(domainsListArray);
     $('.domainselected-'+countval+'-'+lastClassval).val(domainsListArray.length+" Selected");
-    $('.activedclass-'+countval+'-'+lastClassval).text("Active");
+    if(firstlist['is_active'] == true){
+        $('.activedclass-'+countval+'-'+lastClassval).text("Active");
+    }
+    else{
+        var classnamec =  'imgactivedclass-'+countryByCount+'-'+1;
+        $('.activedclass-'+countval+'-'+lastClassval).html('<img src="/images/icon-inactive.png" onclick="reactiviteunit(this, \''+firstlist['unit_id']+'\', \''+clientunitId+'\');">');
+    }
 }
 
 
