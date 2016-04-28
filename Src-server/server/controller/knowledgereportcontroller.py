@@ -3,6 +3,7 @@ from generalcontroller import (
     validate_user_session, validate_user_forms,
     process_get_domains, process_get_countries
 )
+from server import logger
 
 __all__ = [
     "process_knowledge_report_request"
@@ -23,19 +24,31 @@ def process_knowledge_report_request(request, db) :
         return login.InvalidSessionToken()
 
     if type(request_frame) is knowledgereport.GetStatutoryMappingReportFilters :
-        return process_get_statutory_mapping_filters(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetStatutoryMappingReportFilters", "process begin")
+        result = process_get_statutory_mapping_filters(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetStatutoryMappingReportFilters", "process end")
 
     elif type(request_frame) is knowledgereport.GetStatutoryMappingReportData :
-        return process_get_statutory_mapping_report_data(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetStatutoryMappingReportData", "process begin")
+        result = process_get_statutory_mapping_report_data(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetStatutoryMappingReportData", "process end")
 
     elif type(request_frame) is knowledgereport.GetGeographyReport:
-        return process_get_geography_report(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetGeographyReport", "process begin")
+        result = process_get_geography_report(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetGeographyReport", "process end")
 
     elif type(request_frame) is knowledgereport.GetDomainsReport:
-        return process_get_domain_report(db, user_id)
+        logger.logKnowledgeApi("GetDomainsReport", "process begin")
+        result = process_get_domain_report(db, user_id)
+        logger.logKnowledgeApi("GetDomainsReport", "process end")
 
     elif type(request_frame) is knowledgereport.GetCountriesReport:
-        return process_get_country_report(db, user_id)
+        logger.logKnowledgeApi("GetCountriesReport", "process begin")
+        result = process_get_country_report(db, user_id)
+        logger.logKnowledgeApi("GetCountriesReport", "process end")
+
+    return result
 
 def process_get_statutory_mapping_filters(db, request_frame, user_id):
     countries = db.get_countries_for_user(user_id)

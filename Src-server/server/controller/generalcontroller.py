@@ -28,69 +28,69 @@ def process_general_request(request, db) :
         return login.InvalidSessionToken()
 
     if type(request_frame) is general.UpdateUserProfile :
-        logger.logClientApi("UpdateUserProfile", "process begin")
+        logger.logKnowledgeApi("UpdateUserProfile", "process begin")
         result = procees_update_user_profile(db, request_frame, user_id)
-        logger.logClientApi("UpdateUserProfile", "process end")
+        logger.logKnowledgeApi("UpdateUserProfile", "process end")
 
     elif type(request_frame) is general.GetDomains :
-        logger.logClientApi("GetDomains", "process begin")
+        logger.logKnowledgeApi("GetDomains", "process begin")
         result = process_get_domains(db, user_id)
-        logger.logClientApi("GetDomains", "process end")
+        logger.logKnowledgeApi("GetDomains", "process end")
 
     elif type(request_frame) is general.SaveDomain :
-        logger.logClientApi("SaveDomain", "process begin")
+        logger.logKnowledgeApi("SaveDomain", "process begin")
         result = process_save_domain(db, request_frame, user_id)
-        logger.logClientApi("SaveDomain", "process end")
+        logger.logKnowledgeApi("SaveDomain", "process end")
 
     elif type(request_frame) is general.UpdateDomain :
-        logger.logClientApi("UpdateDomain", "process begin")
+        logger.logKnowledgeApi("UpdateDomain", "process begin")
         result = process_update_domain(db, request_frame, user_id)
-        logger.logClientApi("UpdateDomain", "process end")
+        logger.logKnowledgeApi("UpdateDomain", "process end")
 
     elif type(request_frame) is general.ChangeDomainStatus :
-        logger.logClientApi("ChangeDomainStatus", "process begin")
+        logger.logKnowledgeApi("ChangeDomainStatus", "process begin")
         result = process_change_domain_status(db, request_frame, user_id)
-        logger.logClientApi("ChangeDomainStatus", "process end")
+        logger.logKnowledgeApi("ChangeDomainStatus", "process end")
 
     elif type(request_frame) is general.GetCountriesForUser :
-        logger.logClientApi("GetCountriesForUser", "process begin")
+        logger.logKnowledgeApi("GetCountriesForUser", "process begin")
         result = process_get_countries_for_user(db, user_id)
-        logger.logClientApi("GetCountriesForUser", "process end")
+        logger.logKnowledgeApi("GetCountriesForUser", "process end")
 
     elif type(request_frame) is general.GetCountries :
-        logger.logClientApi("GetCountries", "process begin")
+        logger.logKnowledgeApi("GetCountries", "process begin")
         result = process_get_countries(db, user_id)
-        logger.logClientApi("GetCountries", "process end")
+        logger.logKnowledgeApi("GetCountries", "process end")
 
     elif type(request_frame) is general.SaveCountry :
-        logger.logClientApi("SaveCountry", "process begin")
+        logger.logKnowledgeApi("SaveCountry", "process begin")
         result = process_save_country(db, request_frame, user_id)
-        logger.logClientApi("SaveCountry", "process end")
+        logger.logKnowledgeApi("SaveCountry", "process end")
 
     elif type(request_frame) is general.UpdateCountry :
-        logger.logClientApi("UpdateCountry", "process begin")
+        logger.logKnowledgeApi("UpdateCountry", "process begin")
         result = process_update_country(db, request_frame, user_id)
-        logger.logClientApi("UpdateCountry", "process end")
+        logger.logKnowledgeApi("UpdateCountry", "process end")
 
     elif type(request_frame) is general.ChangeCountryStatus :
-        logger.logClientApi("ChangeCountryStatus", "process begin")
+        logger.logKnowledgeApi("ChangeCountryStatus", "process begin")
         result = process_change_country_status(db, request_frame, user_id)
-        logger.logClientApi("ChangeCountryStatus", "process end")
+        logger.logKnowledgeApi("ChangeCountryStatus", "process end")
 
     elif type(request_frame) is general.GetAuditTrails :
-        logger.logClientApi("GetAuditTrails", "process begin")
+        logger.logKnowledgeApi("GetAuditTrails", "process begin")
         result = process_get_audit_trails(db, request_frame, user_id)
-        logger.logClientApi("GetAuditTrails", "process end")
+        logger.logKnowledgeApi("GetAuditTrails", "process end")
 
     elif type(request_frame) is general.UpdateNotificationStatus :
-        logger.logClientApi("UpdateNotificationStatus", "process begin")
+        logger.logKnowledgeApi("UpdateNotificationStatus", "process begin")
         result = process_update_notification_status(db, request_frame, user_id)
-        logger.logClientApi("UpdateNotificationStatus", "process end")
+        logger.logKnowledgeApi("UpdateNotificationStatus", "process end")
 
     elif type(request_frame) is general.GetNotifications :
-        logger.logClientApi("GetNotifications", "process begin")
+        logger.logKnowledgeApi("GetNotifications", "process begin")
         result = process_get_notifications(db, request_frame, user_id)
-        logger.logClientApi("GetNotifications", "process end")
+        logger.logKnowledgeApi("GetNotifications", "process end")
 
     return result
 
