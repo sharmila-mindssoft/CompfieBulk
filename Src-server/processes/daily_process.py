@@ -2,6 +2,8 @@
 
 import os
 import datetime
+from datetime import timedelta
+from dateutil import relativedelta
 import json
 import traceback
 import MySQLdb as mysql
@@ -442,74 +444,18 @@ def is_already_notified(
     client_folder_path = "%s%s" % (expired_folder_path, str(client_id))
     return os.path.isdir(client_folder_path)
 
-def get_configuration_for_client_country(db, country_id):
-    query = "SELECT domain_id, period_fromFROM tbl_client_configuraion\
-    WHERE country_id = '%d'" % country_id
-    cursor = db.cursor()
-    cursor.execute(query)
-    result = cursor.fetchall()
-    columns = ["domain_id","period_from"]
-    return convert_to_dict(result, columns)
-
-def is_new_year_starting_within_30_days(month, current_date):
-    def get_diff_months(year_start_date, current_date):
-        r = relativedelta.relativedelta(year_start_date, current_date)
-        return r.months
-    year_start_date =  datetime.datetime(current_date.year, month, 1)
-    no_of_months = get_diff_months(year_start_date, current_date)
-    if no_of_months == 1:
-        return True
-    elif no_of_months < 0:
-        year_start_date =  datetime.datetime(current_date.year+1, month, 1)
-        no_of_months = get_diff_months(year_start_date, current_date)
-        if no_of_months == 1:
-            return True
-        else:
-            return False
-    else:
-        return False
-
-def is_seven_years_before_data_available(domain_id, country_id):
-    query = "SELECT count(*) FROM tbl_compliance_history WHERE  compliance_id in (\
-    SELECT compliance_id FROM tbl_client_compliances WHERE client_statutory_id in(\
-    SELECT client_statutory_id FROM tbl_client_statutories WHERE country_id = '%d'\
-    AND domain_id = '%d')) AND valid" % (country_id, domain_id)
-    cursor = db.cursor()
-    cursor.execute(query)
-    result = cursor.fetchall()
-    columns = ["domain_id","period_from"]
-    return convert_to_dict(result, columns)
-
-
-def delete_seven_years_before_data(db, client_id, current_date, country_id):
-    domain_wise_config = get_configuration_for_client_country(db, country_id)
-    domains_to_be_notified = []
-    for config in domain_wise_config:
-        domain_id = config["domain_id"]
-        period_from = config["period_from"]
-        if is_new_year_starting_within_30_days(
-            period_from, current_date
-        ):
-            if is_seven_years_before_data_available(
-                domain_id, country_id
-            ):
-                domains_to_be_notified.append(domain_id)
-
-
 
 def run_daily_process(country_id, current_date):
     print '--' * 20
     print "begin daily_process"
     client_info = get_client_database()
     client_ids = get_contract_expiring_clients()
-    print "client_ids = {}".format(client_ids)
     if client_info is not None :
         for client_id, db in client_info.iteritems() :
             try :
                 start_new_task(db, client_id, current_date, country_id)
                 db.commit()
                 check_service_provider_contract_period(db, client_id)
-                # delete_seven_years_before_data(db, client_id, current_date, country_id)
                 if client_id in client_ids and not is_already_notified(client_id):
                     notify_before_contract_period(db, client_id)
                 db.commit()

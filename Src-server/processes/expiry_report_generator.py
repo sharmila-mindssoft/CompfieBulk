@@ -80,12 +80,67 @@ class ExpiryReportGenerator(object):
         self.folder_path = "./expired/%s/" % str(self.client_id)
         self.excel_file_path = "%s/ComplianceDetails.xlsx" % (self.folder_path) 
 
-        # Create Directory
-        os.makedirs(self.folder_path)
-        os.chmod(self.folder_path, 0777)
+        documents = self.generateExcelFile(results, self.folder_path, self.excel_file_path)
+        zip_file_path = "./expired/%s/documents" % str(self.client_id)
+        zip_file_name = self.generateZipFile(
+            zip_file_path, "expired", documents
+        )
+        download_link = "%sdownload/bkup/%s/%s" % (
+            CLIENT_URL, self.client_id, zip_file_name
+        )
+        return download_link
 
+    def generate_seven_years_before_report(self, domain_id, country_id):
+        query_columns = "c.compliance_task, c.document_name, c.compliance_description, ch.start_date, ch.due_date,\
+        ch.completion_date, ch.validity_date, ch.remarks, ch.completed_on, ch.concurred_on, ch.approved_on,\
+        (SELECT concat(unit_code, '-', unit_name) FROM tbl_units un WHERE un.unit_id = ch.unit_id),\
+        (SELECT concat(employee_code, '-', employee_name) FROM tbl_users us WHERE us.user_id = ch.completed_by), \
+        (SELECT concat(employee_code, '-', employee_name) FROM tbl_users us WHERE us.user_id = ch.concurred_by), \
+        (SELECT concat(employee_code, '-', employee_name) FROM tbl_users us WHERE us.user_id = ch.approved_by), \
+        ch.documents"
+        query = "SELECT %s FROM tbl_compliance_history ch INNER JOIN tbl_compliances c ON \
+        (c.compliance_id = ch.compliance_id) WHERE  c.compliance_id in (\
+        SELECT compliance_id FROM tbl_client_compliances WHERE client_statutory_id in(\
+        SELECT client_statutory_id FROM tbl_client_statutories WHERE country_id = '%d'\
+        AND domain_id = '%d')) AND (validity_date < DATE_SUB(now(), INTERVAL 7 YEAR)\
+        or validity_date = 0 or validity_date is null) AND due_date < \
+        DATE_SUB(now(), INTERVAL 7 YEAR)" % (query_columns, country_id, domain_id)
+        cursor = self.db.cursor()
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+        columns = [
+            "compliance_name", "document_name", "description", "start_date", "due_date", 
+            "completion_date", "validity_date", "remarks", "completed_on", "concurred_on", 
+            "approved_on", "unit_name", "assignee", "concurrence_person", "approval_person",
+            "documents"
+        ]
+        results = self.convert_to_dict(rows, columns)
+        # Paths
+        self.folder_path = "./seven_years_before_data/%s/" % str(self.client_id)
+        self.excel_file_path = "%sComplianceDetails.xlsx" % (self.folder_path) 
+        print "self.excel_file_path:{}".format(self.excel_file_path)
+        documents = self.generateExcelFile(
+            results, self.folder_path, self.excel_file_path
+        )
+        zip_file_path = "./seven_years_before_data/%s/documents" % str(self.client_id)
+        zip_file_name = self.generateZipFile(
+            zip_file_path, "seven_years_before_data", documents
+        )
+        download_link = "%sdownload_7_year_data/bkup/%s/%s" % (
+            CLIENT_URL, self.client_id, zip_file_name
+        )
+        return download_link
+        
+
+    def generateExcelFile(self, results, folder_path, excel_file_path):
+        # Create Directory
+        if not os.path.isdir(folder_path):
+            os.makedirs(folder_path)
+            os.chmod(folder_path, 0777)
+        print "excel_file_path : {}".format(excel_file_path)
         # Creating Work Sheet
-        workbook = xlsxwriter.Workbook(self.excel_file_path )
+        workbook = xlsxwriter.Workbook(excel_file_path)
         worksheet = workbook.add_worksheet('ComplianceDetails')
         worksheet.set_column('A:A', 30)
 
@@ -117,6 +172,7 @@ class ExpiryReportGenerator(object):
         # Starting from the row below header
         row = 1
         col = 0
+        documents = []
         for index, result in enumerate(results):
             compliance_name = result["compliance_name"]
             if result["document_name"] not in [None, "None"]:
@@ -144,6 +200,7 @@ class ExpiryReportGenerator(object):
             if len(docs) > 0:
                 col_index = 14
                 for doc in docs:
+                    documents.append(doc)
                     if doc in [None, "None", ""]:
                         continue
                     file_name_parts = doc.split("-")
@@ -153,33 +210,35 @@ class ExpiryReportGenerator(object):
                     extention = unique_id_parts[1]
                     file_name_with_extention = "%s.%s" % (file_name, extention)
                     original_path = "%s%s" % (docment_path, doc)
+
                     worksheet.write_url(row, col+col_index, original_path, url_format, file_name_with_extention)
                     col_index += 1
             row += 1        
         workbook.close()
-        zip_file_name = self.generateZipFile()
-        download_link = "%sdownload/bkup/%s/%s" % (
-            CLIENT_URL, self.client_id, zip_file_name
-        )
-        return download_link
+        return documents
 
-    def generateZipFile(self):
-        temp_path = "./expired/%s/documents" % str(self.client_id)
-        os.makedirs(temp_path)
-        os.chmod(temp_path, 0777)
+    def generateZipFile(self, temp_path, type_of_report, documents):
+        if os.path.isdir(temp_path):
+            os.makedirs(temp_path)
+            os.chmod(temp_path, 0777)
 
         abs_src = "%s/%s" % (CLIENT_DOCS_BASE_PATH, self.client_id)
         for dirname, subdirs, files in os.walk(abs_src):
             for filename in files:
-                shutil.copy(abs_src+"/"+filename, temp_path)
+                if filename in documents:
+                    shutil.copy(abs_src+"/"+filename, temp_path)
 
         timestamp = datetime.datetime.utcnow()
         report_generated_date = self.datetime_to_string(timestamp)
-        zip_file_name = "ComplianceDetails-%s.zip" % (report_generated_date)
-        zip_file_path = "./expired/%s/%s" % (str(self.client_id), zip_file_name)
+        zip_file_name = "ComplianceDetails.zip"
+        zip_file_path = "./%s/%s/%s" % (
+            type_of_report, str(self.client_id), zip_file_name
+        )
         zf = zipfile.ZipFile( zip_file_path, "w", zipfile.ZIP_DEFLATED)
 
-        abs_src = "./expired/%s" % str(self.client_id)
+        abs_src = "./%s/%s" % (
+            type_of_report, str(self.client_id)
+        )
         for dirname, subdirs, files in os.walk(abs_src):
             for filename in files:
                 if filename == zip_file_name:

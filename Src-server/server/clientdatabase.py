@@ -5798,7 +5798,7 @@ class ClientDatabase(Database):
                     unit_name = None
                     unit_address = None
                     level_1_statutory = None
-                    extra_details =None
+                    extra_details = notification_detail_row[0][3].split("-")[1]
                     read_status = bool(0)
                     updated_on = self.datetime_to_string(self.get_date_time())
                     notification_text = notification_detail_row[0][1]
@@ -6340,12 +6340,9 @@ class ClientDatabase(Database):
                 else:
                     continue
         else:
-            print "statutory_dates : {}".format(statutory_dates)
             trigger_before = 0
             if len(statutory_dates) > 0:
                 trigger_before = int(statutory_dates[0]["trigger_before_days"])
-            print "due_date : {}".format(due_date)
-            print "trigger_before : {}".format(trigger_before)
             next_start_date = due_date - timedelta(days=trigger_before)
         return next_start_date
 
@@ -8811,3 +8808,29 @@ class ClientDatabase(Database):
             return True
         else:
             return False
+
+    def need_to_display_deletion_popup(self):
+        current_date = self.get_date_time()
+        column = "notification_id, created_on, notification_text"
+        condition = "extra_details like '%s%s%s' AND \
+        created_on > DATE_SUB(now(), INTERVAL 30 DAY )" % ("%", "Auto Deletion", "%")
+        notification_rows = self.get_data(self.tblNotificationsLog, column, condition)
+        if len(notification_rows) > 0:
+            notification_id = notification_rows[0][0]
+            created_on = notification_rows[0][1]
+            r = relativedelta.relativedelta(current_date.date(), created_on)
+            if ((abs(r.days) % 6) == 0 and r.years == 0 and r.months == 0 and r.days != 0):
+                columns = "updated_on"
+                condition = "notification_id = '%d' and date(updated_on) !=  CURDATE()" % notification_id
+                rows = self.get_data(self.tblNotificationUserLog, columns, condition)
+                if len(rows) > 0:
+                    columns = ["updated_on"]
+                    values = [current_date]
+                    condition = "notification_id = '%d'" % notification_id
+                    self.update(self.tblNotificationUserLog, columns, values, condition)
+                    return True, notification_rows[0][2]
+                else:
+                    return False, ""
+            else:
+                return False, ""
+
