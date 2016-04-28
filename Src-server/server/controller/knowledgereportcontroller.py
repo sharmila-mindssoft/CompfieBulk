@@ -57,14 +57,16 @@ def process_get_statutory_mapping_report_data(db, request_frame, user_id):
     nature_id = request_frame.statutory_nature_id
     geography_id = request_frame.geography_id
     level_1_id = request_frame.level_1_statutory_id
-
-    report_data = db.get_statutory_mapping_report(
+    from_count = request_frame.record_count
+    to_count = 500
+    report_data, total_record = db.get_statutory_mapping_report(
         country_id, domain_id, industry_id,
-        nature_id, geography_id, level_1_id, user_id
+        nature_id, geography_id, level_1_id, user_id,
+        from_count, to_count
     )
 
     return knowledgereport.GetStatutoryMappingReportDataSuccess(
-        country_id, domain_id, report_data
+        country_id, domain_id, report_data, total_record
     )
 
 def process_get_geography_report(db, request_frame, user_id):

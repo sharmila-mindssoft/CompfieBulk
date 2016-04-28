@@ -70,25 +70,7 @@ function resetLoginUI(e_button, e_email, e_password) {
     e_password.removeAttr("disabled", "disabled");
     e_email.focus();
 }
-function get_ip(callback){
-    $.getJSON("http://jsonip.com?callback=?", function (data) {
-        if (data.ip != null){
-            window.localStorage["my_ip"] = data.ip
-        }
-        callback(data.ip);
-    });
-}
 function processLogin(username, password, shortName, callback) {
-    my_ip = null ;
-    // get_ip(function (ip) {
-    //     my_ip = ip;
-    // });
-    // alert(my_ip);
-
-    // ip = window.localStorage["my_ip"];
-    var ip ;
-    if (ip == null)
-        ip = ""
 
     var request = [
         "Login", {
@@ -96,7 +78,7 @@ function processLogin(username, password, shortName, callback) {
             "username": username,
             "password": password,
             "short_name": short_name,
-            "ip" : ip
+            "ip" : ''
         }
     ];
     if (shortName == null) {
@@ -127,6 +109,11 @@ function processLogin(username, password, shortName, callback) {
             }
         }
     )
+    .fail(
+        function (jqXHR, textStatus, errorThrown) {
+            callback(jqXHR["responseText"], errorThrown)
+        }
+    );
 }
 function performLogin(e_button, e_email, e_password) {
     if (!isLoginValidated(e_email, e_password))
@@ -147,6 +134,9 @@ function performLogin(e_button, e_email, e_password) {
         }else if (status == "ContractNotYetStarted"){
             message = "Contract not yet started"
         }
+        else if (status.indexOf("timeout") >= 0) {
+            message = "Connection Timeout"
+        }
         displayLoginMessage(message);
         $("input").val("");
         resetLoginUI(e_button, e_email, e_password);
@@ -158,6 +148,7 @@ function performLogin(e_button, e_email, e_password) {
             e_password.val(),
             null,
             function (error, response) {
+                console.log(response)
                 console.log(error)
                 if (error == null){
                     // onSuccess(response)
@@ -174,6 +165,7 @@ function performLogin(e_button, e_email, e_password) {
             e_password.val(),
             getShortName(),
             function (error, response) {
+                console.log(response)
                 console.log(error);
                 if (error == null){
                     // onSuccess(response)

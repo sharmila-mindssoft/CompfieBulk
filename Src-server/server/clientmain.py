@@ -177,19 +177,12 @@ class API(object):
             if db is None:
                 response.set_status(404)
                 response.send("Company not found")
-                # data = login.ClientDatabaseNotExists().to_structure()
-                # s = json.dumps(data, indent=2)
-                # response.send(s)
-                # response.send()
-                # self._send_response(login.ClientDatabaseNotExists(), response)
                 return None
             actual_data = data[1]
             request_data = request_data_type.parse_structure(
                 actual_data
             )
         except Exception, e:
-            # print e
-            # print(traceback.format_exc())
             logger.logClient("error", "clientmain.py-parse-request", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
@@ -239,6 +232,7 @@ class API(object):
     @api_request(login.Request, need_client_id=True)
     def handle_login(self, request, db, client_id):
         print self._ip_address
+        logger.logLogin("info", self._ip_address, "login-user", "Login process end")
         return controller.process_login_request(request, db, client_id, self._ip_address)
 
     @api_request(clientmasters.RequestFormat)

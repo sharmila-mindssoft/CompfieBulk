@@ -15,6 +15,7 @@ from basics.ioloop import IOLoop
 from webfrontend.handlerequest import HandleRequest
 from webfrontend.client import CompanyManager
 from server.constants import CLIENT_TEMPLATE_PATHS, IS_DEVELOPMENT, VERSION
+from server import logger
 
 if IS_DEVELOPMENT :
     FILE_VERSION = time.time()
@@ -43,9 +44,12 @@ def expectation_error(expected, received) :
 
 def send_bad_request(response, custom_text=None):
     response.set_status(400)
+    logger.logWebfront(400)
     if custom_text is None:
+        logger.logWebfront("invalid json format")
         response.send("invalid json format")
     else:
+        logger.logWebfront(custom_text)
         response.send(custom_text)
 
 def send_invalid_json_format(response):
@@ -86,6 +90,8 @@ class Controller(object):
                 )
                 return
         except Exception:
+            logger.logWebfront(request.body())
+            logger.logWebfront(traceback.format_exc())
             send_invalid_json_format(response)
             return
 
@@ -241,7 +247,7 @@ def run_web_front_end(port, knowledge_server_address):
         )
 
         web_server.low_level_url(
-            r"/download/bkup/(.*)", 
+            r"/download/bkup/(.*)",
             StaticFileHandler,
             dict(path=expiry_download)
         )

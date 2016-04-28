@@ -5,6 +5,7 @@ from server.constants import (
     KNOWLEDGE_URL
 )
 
+from server import logger
 
 __all__ = [
     "process_login_request",
@@ -17,22 +18,24 @@ __all__ = [
 
 def process_login_request(request, db, session_user_ip) :
     if type(request) is login.Login:
-        return process_login(db, request, session_user_ip)
+        result = process_login(db, request, session_user_ip)
 
     if type(request) is login.ForgotPassword :
-        return process_forgot_password(db, request)
+        result = process_forgot_password(db, request)
 
     if type(request) is login.ResetTokenValidation :
-        return process_reset_token(db, request)
+        result = process_reset_token(db, request)
 
     if type(request) is login.ResetPassword :
-        return process_reset_password(db, request)
+        result = process_reset_password(db, request)
 
     if type(request) is login.ChangePassword :
-        return process_change_password(db, request)
+        result = process_change_password(db, request)
 
     if type(request) is login.Logout:
-        return process_logout(db, request)
+        result = process_logout(db, request)
+
+    return result
 
 def process_login(db, request, session_user_ip):
     login_type = request.login_type
