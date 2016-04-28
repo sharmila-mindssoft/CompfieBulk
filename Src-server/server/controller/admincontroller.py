@@ -2,12 +2,12 @@
 # This Controller will handle Knowledge User, Usergroup
 # related requests
 #
-# In this module "db" is an object of "KnowledgeDatabase" 
+# In this module "db" is an object of "KnowledgeDatabase"
 ########################################################
 from protocol import (admin, core, login)
 from corecontroller import process_user_menus
 from generalcontroller import validate_user_session, validate_user_forms
-
+from server import logger
 __all__ = [
     "process_admin_request", "get_user_groups"
 ]
@@ -30,28 +30,45 @@ def process_admin_request(request, db) :
         return login.InvalidSessionToken()
 
     if type(request_frame) is admin.GetUserGroups:
-        return get_user_groups(db, request_frame, session_user)
+        logger.logClientApi("GetUserGroups", " process begin")
+        result = get_user_groups(db, request_frame, session_user)
+        logger.logClientApi("GetUserGroups", "process end")
 
     if type(request_frame) is admin.SaveUserGroup:
-        return save_user_group(db, request_frame, session_user)
+        logger.logClientApi("SaveUserGroup", "process begin")
+        result = save_user_group(db, request_frame, session_user)
+        logger.logClientApi("SaveUserGroup", "process end")
 
     if type(request_frame) is admin.UpdateUserGroup:
-        return update_user_group(db, request_frame, session_user)
+        logger.logClientApi("UpdateUserGroup", "process begin")
+        result = update_user_group(db, request_frame, session_user)
+        logger.logClientApi("UpdateUserGroup", "process end")
 
     if type(request_frame) is admin.ChangeUserGroupStatus:
-        return change_user_group_status(db, request_frame, session_user)
+        logger.loginClientApi("ChangeUserGroupStatus", "process begin")
+        result = change_user_group_status(db, request_frame, session_user)
+        logger.loginClientApi("ChangeUserGroupStatus", "process end")
 
     if type(request_frame) is admin.GetUsers:
-        return get_users(db, request_frame, session_user)
+        logger.loginClientApi("GetUsers", "process begin")
+        result = get_users(db, request_frame, session_user)
+        logger.loginClientApi("ChangeUserGroupStatus", "process end")
 
     if type(request_frame) is admin.SaveUser:
-        return save_user(db, request_frame, session_user)
+        logger.loginClientApi("SaveUser", "process begin")
+        result = save_user(db, request_frame, session_user)
+        logger.loginClientApi("SaveUser", "process end")
 
     if type(request_frame) is admin.UpdateUser:
-        return update_user(db, request_frame, session_user)
+        logger.loginClientApi("UpdateUser", "process begin")
+        result = update_user(db, request_frame, session_user)
+        logger.loginClientApi("UpdateUser", "process end")
 
     if type(request_frame) is admin.ChangeUserStatus:
-        return change_user_status(db, request_frame, session_user)
+        logger.loginClientApi("ChangeUserStatus", "process begin")
+        result = change_user_status(db, request_frame, session_user)
+        logger.loginClientApi("ChangeUserStatus", "process begin")
+    return result
 
 
 ########################################################
@@ -99,7 +116,7 @@ def get_forms(db) :
     return result
 
 ########################################################
-# To get list of user groups with it's details such as 
+# To get list of user groups with it's details such as
 # forms, form categories
 ########################################################
 def get_user_group_detailed_list(db):

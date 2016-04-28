@@ -17,22 +17,36 @@ __all__ = [
 
 def process_login_request(request, db, company_id, session_user_ip) :
     if type(request) is login.Login:
-        return process_login(db, request, company_id, session_user_ip)
+        logger.logClientApi("Login", "begin")
+        result = process_login(db, request, company_id, session_user_ip)
+        logger.logClientApi("Login", "end")
 
-    if type(request) is login.ForgotPassword :
-        return process_forgot_password(db, request)
+    elif type(request) is login.ForgotPassword :
+        logger.logClientApi("ForgotPassword", "begin")
+        result = process_forgot_password(db, request)
+        logger.logClientApi("ForgotPassword", "end")
 
-    if type(request) is login.ResetTokenValidation :
-        return process_reset_token(db, request)
+    elif type(request) is login.ResetTokenValidation :
+        logger.logClientApi("ResetTokenValidation", "begin")
+        result = process_reset_token(db, request)
+        logger.logClientApi("ResetTokenValidation", "end")
 
-    if type(request) is login.ResetPassword :
-        return process_reset_password(db, request)
+    elif type(request) is login.ResetPassword :
+        logger.logClientApi("ResetPassword", "begin")
+        result = process_reset_password(db, request)
+        logger.logClientApi("ResetPassword", "end")
 
-    if type(request) is login.ChangePassword :
-        return process_change_password(db, request)
+    elif type(request) is login.ChangePassword :
+        logger.logClientApi("ResetPassword", "begin")
+        result = process_change_password(db, request)
+        logger.logClientApi("ResetPassword", "end")
 
-    if type(request) is login.Logout:
-        return process_logout(db, request)
+    elif type(request) is login.Logout:
+        logger.logClientApi("Logout", "begin")
+        result = process_logout(db, request)
+        logger.logClientApi("Logout", "end")
+
+    return result
 
 def process_login(db, request, client_id, session_user_ip):
     login_type = request.login_type

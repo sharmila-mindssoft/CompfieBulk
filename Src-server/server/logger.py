@@ -5,6 +5,7 @@ knowledge_log_path = "logs/knowledge/knowledge-log"
 client_log_path = "logs/client/client-log"
 client_login_log_path = "logs/client/login-log"
 webfront_log_path = "logs/webfront_log"
+trace_log_path = "logs/client/trace_log"
 
 knowledge_log_format = logging.Formatter("%(asctime)s - %(name)s - %(message)s")
 rotateFileHandler = logging.handlers.TimedRotatingFileHandler(
@@ -94,3 +95,21 @@ webfrontLogger.addHandler(wrotateFileHandler)
 def logWebfront(message):
     log_message = "%s" % (message)
     webfrontLogger.info(log_message)
+
+trace_log_format = logging.Formatter("%(asctime)s - %(name)s - %(message)s")
+trotateFileHandler = logging.handlers.RotatingFileHandler(
+    trace_log_path,
+    maxBytes=102400,
+    backupCount=10
+)
+trotateFileHandler.suffix = "%Y-%m-%d"
+trotateFileHandler.setFormatter(trace_log_format)
+trotateFileHandler.setLevel(logging.INFO)
+
+traceLogger = logging.getLogger("trace_log")
+traceLogger.setLevel(logging.INFO)
+traceLogger.addHandler(trotateFileHandler)
+
+def logClientApi(callername, message):
+    log_message = "%s: %s" % (callername, message)
+    traceLogger.info(log_message)

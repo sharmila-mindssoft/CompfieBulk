@@ -1,4 +1,5 @@
 from protocol import login, general, core
+from server import logger
 
 __all__ = [
     "process_general_request",
@@ -27,32 +28,71 @@ def process_general_request(request, db) :
         return login.InvalidSessionToken()
 
     if type(request_frame) is general.UpdateUserProfile :
-        return procees_update_user_profile(db, request_frame, user_id)
-    if type(request_frame) is general.GetDomains :
-        return process_get_domains(db, user_id)
-    if type(request_frame) is general.SaveDomain :
-        return process_save_domain(db, request_frame, user_id)
-    if type(request_frame) is general.UpdateDomain :
-        return process_update_domain(db, request_frame, user_id)
-    if type(request_frame) is general.ChangeDomainStatus :
-        return process_change_domain_status(db, request_frame, user_id)
-    if type(request_frame) is general.GetCountriesForUser :
-        return process_get_countries_for_user(db, user_id)
-    if type(request_frame) is general.GetCountries :
-        return process_get_countries(db, user_id)
-    if type(request_frame) is general.SaveCountry :
-        return process_save_country(db, request_frame, user_id)
-    if type(request_frame) is general.UpdateCountry :
-        return process_update_country(db, request_frame, user_id)
-    if type(request_frame) is general.ChangeCountryStatus :
-        return process_change_country_status(db, request_frame, user_id)
-    if type(request_frame) is general.GetAuditTrails :
-        return process_get_audit_trails(db, request_frame, user_id)
-    if type(request_frame) is general.UpdateNotificationStatus :
-        return process_update_notification_status(db, request_frame, user_id)
-    if type(request_frame) is general.GetNotifications :
-        return process_get_notifications(db, request_frame, user_id)
+        logger.logClientApi("UpdateUserProfile", "process begin")
+        result = procees_update_user_profile(db, request_frame, user_id)
+        logger.logClientApi("UpdateUserProfile", "process end")
 
+    elif type(request_frame) is general.GetDomains :
+        logger.logClientApi("GetDomains", "process begin")
+        result = process_get_domains(db, user_id)
+        logger.logClientApi("GetDomains", "process end")
+
+    elif type(request_frame) is general.SaveDomain :
+        logger.logClientApi("SaveDomain", "process begin")
+        result = process_save_domain(db, request_frame, user_id)
+        logger.logClientApi("SaveDomain", "process end")
+
+    elif type(request_frame) is general.UpdateDomain :
+        logger.logClientApi("UpdateDomain", "process begin")
+        result = process_update_domain(db, request_frame, user_id)
+        logger.logClientApi("UpdateDomain", "process end")
+
+    elif type(request_frame) is general.ChangeDomainStatus :
+        logger.logClientApi("ChangeDomainStatus", "process begin")
+        result = process_change_domain_status(db, request_frame, user_id)
+        logger.logClientApi("ChangeDomainStatus", "process end")
+
+    elif type(request_frame) is general.GetCountriesForUser :
+        logger.logClientApi("GetCountriesForUser", "process begin")
+        result = process_get_countries_for_user(db, user_id)
+        logger.logClientApi("GetCountriesForUser", "process end")
+
+    elif type(request_frame) is general.GetCountries :
+        logger.logClientApi("GetCountries", "process begin")
+        result = process_get_countries(db, user_id)
+        logger.logClientApi("GetCountries", "process end")
+
+    elif type(request_frame) is general.SaveCountry :
+        logger.logClientApi("SaveCountry", "process begin")
+        result = process_save_country(db, request_frame, user_id)
+        logger.logClientApi("SaveCountry", "process end")
+
+    elif type(request_frame) is general.UpdateCountry :
+        logger.logClientApi("UpdateCountry", "process begin")
+        result = process_update_country(db, request_frame, user_id)
+        logger.logClientApi("UpdateCountry", "process end")
+
+    elif type(request_frame) is general.ChangeCountryStatus :
+        logger.logClientApi("ChangeCountryStatus", "process begin")
+        result = process_change_country_status(db, request_frame, user_id)
+        logger.logClientApi("ChangeCountryStatus", "process end")
+
+    elif type(request_frame) is general.GetAuditTrails :
+        logger.logClientApi("GetAuditTrails", "process begin")
+        result = process_get_audit_trails(db, request_frame, user_id)
+        logger.logClientApi("GetAuditTrails", "process end")
+
+    elif type(request_frame) is general.UpdateNotificationStatus :
+        logger.logClientApi("UpdateNotificationStatus", "process begin")
+        result = process_update_notification_status(db, request_frame, user_id)
+        logger.logClientApi("UpdateNotificationStatus", "process end")
+
+    elif type(request_frame) is general.GetNotifications :
+        logger.logClientApi("GetNotifications", "process begin")
+        result = process_get_notifications(db, request_frame, user_id)
+        logger.logClientApi("GetNotifications", "process end")
+
+    return result
 
 def validate_user_session(db, session_token, client_id=None):
     if client_id:
@@ -182,7 +222,7 @@ def process_update_country(db, request, user_id):
         return general.InvalidCountryId()
 
 ########################################################
-# To change the status of the country received in the 
+# To change the status of the country received in the
 # request as given in the request
 ########################################################
 def process_change_country_status(db, request, user_id):
@@ -211,7 +251,7 @@ def process_get_countries_for_user(db, user_id):
     return success
 
 ########################################################
-# To get the list of all countries 
+# To get the list of all countries
 ########################################################
 def process_get_countries(db, user_id):
     results = db.get_countries_for_user(0)
@@ -235,7 +275,7 @@ def process_get_notifications(db, request, session_user):
 
 
 ########################################################
-# To mark the notification as 'Read' once the user read 
+# To mark the notification as 'Read' once the user read
 # a notification
 ########################################################
 def process_update_notification_status(db, request, session_user):
