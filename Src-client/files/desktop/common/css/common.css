@@ -11,22 +11,21 @@ html, body {
 	max-width: 100%;
 	height: auto;
 }*/
-#wrapper {
+/*#wrapper {
 	height: auto;
 	margin: 0 auto -60px;
 	width: 100%;
 	min-height: 100%;
 	min-width: 100%;
-	display: flex;
 	background: url(/files/desktop/common/images/inner-page-bg.gif) no-repeat center bottom;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
-}
-#wrapper:after {
+}*/
+/*#wrapper:after {
   height: 60px;
-}
+}*/
 .content-area {
 	width: 100%;
 	float: left;
@@ -38,7 +37,7 @@ html, body {
 	font-size: 1.3em;
 	padding-bottom: 1.5em;
 }
-.footer {
+/*.footer {
 	width: 100%;
 	float: left;
 	background: #000;
@@ -48,7 +47,7 @@ html, body {
 	font-size: 0.9em;
 	position: relative;
 	z-index: 2;
-}
+}*/
 .clearfix:after {
 	content: "";
 	display: table;
