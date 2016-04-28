@@ -4780,7 +4780,7 @@ class KnowledgeDatabase(Database):
         condition = "unit_id = '%d'" % (unit_id)
         rows = self.get_data(self.tblUnits, action_column, condition)
         result = self.convert_to_dict(rows, action_column.split(","))
-        
+
         action = "Reactivated Unit \"%s-%s\"" % (rows[0][0], rows[0][1])
         self.save_activity(session_user, 19, action)
 
@@ -4791,7 +4791,7 @@ class KnowledgeDatabase(Database):
         values = [
             client_id, new_unit_id,1, result["business_group_id"], result["legal_entity_id"],
             result["division_id"], result["country_id"], result["geography_id"],
-            result["industry_id"],unit_code, result["unit_name"], result["address"], 
+            result["industry_id"],unit_code, result["unit_name"], result["address"],
             result["postal_code"], result["domain_ids"]
         ]
         self.insert(self.tblUnits, columns, values)
@@ -6459,7 +6459,7 @@ class KnowledgeDatabase(Database):
                     for row in rows:
                         q = "%s (%s, %s) " % ( query, row[0], new_admin_id)
                         cursor.execute(q)
-                
+
 
                 query = "update tbl_assigned_compliances set concurrence_person = null,\
                 approval_person = '%d' where assignee = '%d'" % (new_admin_id, new_admin_id)
@@ -6467,7 +6467,7 @@ class KnowledgeDatabase(Database):
 
                 query = "update tbl_compliance_history set concurred_by = null,\
                 approved_by = '%d' where completed_by = '%d' and completed_on is null\
-                or completed_on = 0 " % (new_admin_id, new_admin_id) 
+                or completed_on = 0 " % (new_admin_id, new_admin_id)
                 cursor.execute(query)
 
                 query = "update tbl_compliance_history set approve_status = 1, \

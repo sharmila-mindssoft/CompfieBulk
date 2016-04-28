@@ -102,7 +102,7 @@ def process_get_assign_compliance_form_data(db, session_user, client_id):
     )
     division_ids = row[1]
     divisions = db.get_divisions_for_user(division_ids)
-    units = db.get_units_for_assign_compliance(session_user, client_id)
+    units = db.get_units_for_assign_compliance(session_user)
     users = db.get_users_for_seating_units(session_user, client_id)
     two_level_approve = db.get_client_settings()
     client_admin = db.get_admin_info()
@@ -270,7 +270,7 @@ def process_get_user_wise_compliances(db, session_user, client_id):
     users = db.get_users_for_seating_units(
         session_user, client_id
     )
-    units = db.get_units_for_assign_compliance(session_user, client_id)
+    units = db.get_units_for_assign_compliance(session_user)
     result = db.get_user_wise_compliance(session_user, client_id)
     assignee_wise_compliance = result[0]
     assignee_compliance_count = result[1]

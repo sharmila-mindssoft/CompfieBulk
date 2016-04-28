@@ -2443,7 +2443,14 @@ class ClientDatabase(Database):
 # Assign Compliance
 #
 
-    def get_units_for_assign_compliance(self, session_user, client_id=None):
+    def get_units_for_dashboard_filters(self, session_user, is_closed=True):
+        return self.get_units_for_assign_compliance(session_user, is_closed)
+
+    def get_units_for_assign_compliance(self, session_user, is_closed=None):
+        if is_closed is None :
+            is_close = 0
+        else:
+            is_close = '%'
         if session_user > 0 :
             qry = ' AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id = %s) ' % (int(session_user))
         else :
@@ -2452,7 +2459,7 @@ class ClientDatabase(Database):
         query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, \
             t1.division_id, t1.legal_entity_id, t1.business_group_id, \
             t1.address, t1.country_id, domain_ids\
-            FROM tbl_units t1 WHERE t1.is_closed = 0  "
+            FROM tbl_units t1 WHERE t1.is_closed like '%s'" % is_close
         query += qry
         rows = self.select_all(query)
         columns = [
@@ -2461,6 +2468,10 @@ class ClientDatabase(Database):
             "business_group_id", "address", "country_id", "domain_ids"
         ]
         result = self.convert_to_dict(rows, columns)
+        return self.return_units_for_assign_compliance(result)
+
+    def return_units_for_assign_compliance(self, result):
+
         unit_list = []
         for r in result :
             name = "%s - %s" % (r["unit_code"], r["unit_name"])
@@ -2566,30 +2577,34 @@ class ClientDatabase(Database):
         return user_list
 
     def total_compliance_for_units(self, unit_ids, domain_id):
-        q = "select \
-            count(distinct t1.client_compliance_id) \
-        from \
-            tbl_client_compliances t1 \
-                inner join \
-            tbl_client_statutories t2 ON t2.client_statutory_id = t1.client_statutory_id \
-        where \
-        t2.domain_id = %s \
-        AND t1.statutory_opted = 1 \
-        AND t1.compliance_opted = 1 \
-        AND t2.is_new = 1 \
-                and t2.unit_id in %s \
-        and t1.compliance_id not in ( \
-        SELECT C.compliance_id FROM \
-            tbl_assigned_compliances C \
-        WHERE \
-            C.unit_id IN %s \
-        ) " % (
+        q = "select count(distinct t1.compliance_id) \
+            from \
+            (SELECT \
+                    A.unit_id, B.compliance_id \
+                FROM tbl_client_statutories A \
+                INNER JOIN tbl_client_compliances B \
+                ON A.client_statutory_id = B.client_statutory_id \
+                INNEr JOIN tbl_compliances C \
+                ON B.compliance_id = C.compliance_id \
+                AND C.is_active = 1 \
+                where A.domain_id = %s \
+                AND B.compliance_id not in (select  \
+                        AC.compliance_id \
+                    from \
+                        tbl_assigned_compliances AC \
+                    WHERE \
+                        AC.unit_id = A.unit_id) \
+                AND B.compliance_opted = 1 \
+                AND A.unit_id IN %s ) t1 " % (
+
             domain_id,
-            str(tuple(unit_ids)),
             str(tuple(unit_ids))
         )
         row = self.select_one(q)
-        return row[0]
+        if row :
+            return row[0]
+        else :
+            return 0
 
     def get_assign_compliance_statutories_for_units(
         self, unit_ids, domain_id, session_user, from_count, to_count
@@ -2627,15 +2642,14 @@ class ClientDatabase(Database):
             (SELECT A.unit_id, A.client_statutory_id, B.compliance_id FROM tbl_client_statutories A \
             INNER JOIN tbl_client_compliances B \
             ON A.client_statutory_id = B.client_statutory_id \
+            AND B.compliance_id not in (select AC.compliance_id from tbl_assigned_compliances AC \
+            WHERE AC.unit_id = A.unit_id ) \
             AND B.compliance_opted = 1 \
             AND A.unit_id IN %s) U \
             group by U.compliance_id )UC \
             ON t2.compliance_id = UC.compliance_id \
             WHERE \
-            t2.compliance_id NOT IN (SELECT C.compliance_id \
-            FROM tbl_assigned_compliances C WHERE \
-            C.unit_id IN %s ) \
-            AND t1.domain_id = %s\
+            t1.domain_id = %s\
             AND t1.unit_id IN %s \
             AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
@@ -2643,7 +2657,6 @@ class ClientDatabase(Database):
             ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), '>>', -1),\
             t3.frequency_id \
             limit %s, %s" % (
-                str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
                 domain_id,
                 str(tuple(unit_ids)),
@@ -2796,7 +2809,8 @@ class ClientDatabase(Database):
             row = self.select_one(q)
             s_dates = json.loads(row[1])
             due_date, due_date_list, date_list = self.set_new_due_date(s_dates)
-            if c.due_date not in [None, "None", ""] and due_date not in [None, "None", ""]:
+
+            if c.due_date not in [None, ""] and due_date not in [None, ""]:
                 t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
                 n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
                 if (n_due_date < t_due_date) :
@@ -8797,7 +8811,19 @@ class ClientDatabase(Database):
         return compliance_name
 
     def save_registration_key(self, session_user, request):
-        pass
+        columns = ["registration_key", "device_type_id", "user_id"]
+        if request.session_type.lower() is "android" :
+            device = 2
+        elif request.session_type.lower() is "ios" :
+            device = 3
+        elif request.session_type.lower() is "blackberry" :
+            device = 4
+
+        value_list = [
+            request.reg_key, device, session_user
+        ]
+
+        self.insert(self.tblMobileRegistration, columns, value_list)
 
     def is_seating_unit(self, unit_id):
         column = "count(*)"
