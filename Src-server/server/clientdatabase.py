@@ -2577,28 +2577,27 @@ class ClientDatabase(Database):
         return user_list
 
     def total_compliance_for_units(self, unit_ids, domain_id):
-        q = "select \
-            count(distinct t1.client_compliance_id) cs \
-        from \
-            tbl_client_compliances t1 \
-                inner join \
-            tbl_client_statutories t2 ON t2.client_statutory_id = t1.client_statutory_id \
-        where \
-        t2.domain_id = %s \
-        AND t1.statutory_opted = 1 \
-        AND t1.compliance_opted = 1 \
-        AND t2.is_new = 1 \
-                and t2.unit_id in %s \
-        and t1.compliance_id not in ( \
-        SELECT C.compliance_id FROM \
-            tbl_assigned_compliances C \
-        WHERE \
-            C.unit_id IN %s \
-        ) \
-        group by t2.unit_id  \
-        order by cs desc limit 1 " % (
+        q = "select count(distinct t1.compliance_id) \
+            from \
+            (SELECT \
+                    A.unit_id, B.compliance_id \
+                FROM tbl_client_statutories A \
+                INNER JOIN tbl_client_compliances B \
+                ON A.client_statutory_id = B.client_statutory_id \
+                INNEr JOIN tbl_compliances C \
+                ON B.compliance_id = C.compliance_id \
+                AND C.is_active = 1 \
+                where A.domain_id = %s \
+                AND B.compliance_id not in (select  \
+                        AC.compliance_id \
+                    from \
+                        tbl_assigned_compliances AC \
+                    WHERE \
+                        AC.unit_id = A.unit_id) \
+                AND B.compliance_opted = 1 \
+                AND A.unit_id IN %s ) t1 " % (
+
             domain_id,
-            str(tuple(unit_ids)),
             str(tuple(unit_ids))
         )
         row = self.select_one(q)
@@ -2644,16 +2643,13 @@ class ClientDatabase(Database):
             INNER JOIN tbl_client_compliances B \
             ON A.client_statutory_id = B.client_statutory_id \
             AND B.compliance_id not in (select AC.compliance_id from tbl_assigned_compliances AC \
-            WHERE AC.unit_id IN %s ) \
+            WHERE AC.unit_id = A.unit_id ) \
             AND B.compliance_opted = 1 \
             AND A.unit_id IN %s) U \
             group by U.compliance_id )UC \
             ON t2.compliance_id = UC.compliance_id \
             WHERE \
-            t2.compliance_id NOT IN (SELECT C.compliance_id \
-            FROM tbl_assigned_compliances C WHERE \
-            C.unit_id IN %s ) \
-            AND t1.domain_id = %s\
+            t1.domain_id = %s\
             AND t1.unit_id IN %s \
             AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
@@ -2662,13 +2658,12 @@ class ClientDatabase(Database):
             t3.frequency_id \
             limit %s, %s" % (
                 str(tuple(unit_ids)),
-                str(tuple(unit_ids)),
-                str(tuple(unit_ids)),
                 domain_id,
                 str(tuple(unit_ids)),
                 from_count,
                 to_count
             )
+
         rows = self.select_all(query)
         columns = [
             "compliance_id", "domain_id", "units",
