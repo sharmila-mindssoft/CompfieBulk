@@ -1602,7 +1602,7 @@ function activate_unitlocaion (element, ccount, mappingname) {
     var checkval = $(element).attr('id');
     $('.unitlocation'+ccount).val(checkname);
     $('.unitlocation-ids'+ccount).val(checkval);
-    $('.full-location-list'+ccount).html(mappingname.replace(/##/gi,'"'));
+    $('.full-location-list'+ccount).html('<br>'+mappingname.replace(/##/gi,'"'));
 }
 function domainunionclientdomainList(classval){
     console.log(classval);

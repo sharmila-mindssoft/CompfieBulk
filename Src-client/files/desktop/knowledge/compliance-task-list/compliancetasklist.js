@@ -8,13 +8,16 @@ var statutoriesList;
 var complianceFrequencyList;
 var finalList;
 var pageSize = 500;
-var startCount;
-var endCount;
+
+
 var count=1;
 var compliance_count=0;
 var lastActName = '';
 var lastOccuranceid = 0;
 var lastIndustryName = '';
+var s_endCount = 0;
+var totalRecord;
+var filterdata={};
 
 
 function displayLoader() {
@@ -60,7 +63,7 @@ function getStatutoryMappings(){
 
 //display compliance list report data
 function loadCountwiseResult(filterList){
-  if(startCount <= 0){
+  if(compliance_count <= 0){
     $(".grid-table-rpt").show();
     var country = $("#countryval").val();
     var domain = $("#domainval").val();
@@ -202,22 +205,22 @@ function loadCountwiseResult(filterList){
     lastIndustryName = industry_names;
   }
 
-  if(finalList.length > 0){
-    if(endCount > finalList.length) endCount = finalList.length
-    $('.compliance_count').text("Showing " + 1 + " to " + endCount + " of " + finalList.length);
+  if((compliance_count-1) > 0){
+    $('.compliance_count').text("Showing " + 1 + " to " + (compliance_count-1) + " of " + totalRecord);
   }else{
     $('.compliance_count').text('');
   }
 
-  if(endCount >= finalList.length){
+  if((compliance_count-1) >= totalRecord){
     $(document).ready(function($) {
-    $('#accordion').find('.accordion-toggle').click(function(){
-      //Expand or collapse this panel
-      $(this).next().slideToggle('fast');
-      //Hide the other panels
-      $(".accordion-content").not($(this).next()).slideUp('fast');
+      $('#accordion').find('.accordion-toggle').click(function(){
+        //Expand or collapse this panel
+        $(this).next().slideToggle('fast');
+        //Hide the other panels
+        $(".accordion-content").not($(this).next()).slideUp('fast');
+      });
     });
-  });
+    $('#pagination').show();
   }
 
   if(count == 1){
@@ -226,10 +229,11 @@ function loadCountwiseResult(filterList){
     $('.tbody-compliance').append(clone1);
     $('.tbl_norecords', clone1).text("No Records");
     $('.accordion-content'+count).append(clone1);
+    $('#pagination').hide();
   }
 }
 
-//get part of required data from whole list
+/*//get part of required data from whole list
 function get_sub_array(object, start, end){
     if(!end){ end=-1;}
     return object.slice(start, end);
@@ -245,10 +249,10 @@ function showloadrecord(){
     $('#pagination').hide();
   }
   loadCountwiseResult(sub_keys_list);
-}
+}*/
 
 
-$(function() {
+/*$(function() {
   $('#pagination').click(function(){
     $(".loading-indicator-spin").show();
     if($('.loading-indicator-spin').css('display') != 'none')
@@ -263,11 +267,35 @@ $(function() {
     }, 500);
   });
 });
+*/
 
+$('#pagination').click(function(){
+  s_endCount = compliance_count - 1;
+  filterdata["record_count"]=parseInt(s_endCount);
+  displayLoader();
+  function onSuccess(data){
+    statutoryMappingDataList = data["statutory_mappings"];
+    loadresult();
+    hideLoader();
+  }
+  function onFailure(error){
+    onFailure(error);
+    hideLoader();
+  }
+  mirror.getComplianceTaskReport(filterdata,
+  //mirror.getStatutoryMappingsReportData(filterdata,
+    function (error, response) {
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+    });
+});
 
 function loadresult() {
-  startCount = 0;
-  endCount = pageSize;
+  
   var c_frequency = $("#compliance_frequency").val();
   if(c_frequency == 'All'){
     finalList = statutoryMappingDataList;
@@ -279,16 +307,9 @@ function loadresult() {
     }
     finalList = filteredList;
   }
-
-  if(finalList.length > pageSize){
-    $('#pagination').show();
-  }else{
-    $('#pagination').hide();
-  }
-
-  var sub_act_list =  finalList;
-  var sub_keys_list = get_sub_array(sub_act_list, startCount, endCount);
-  loadCountwiseResult(sub_keys_list);
+  /*var sub_act_list =  finalList;
+  var sub_keys_list = get_sub_array(sub_act_list, startCount, endCount);*/
+  loadCountwiseResult(finalList);
 }
 
 //get compliance list report data based on filter selection from api
@@ -315,13 +336,15 @@ $("#submit").click(function(){
   else{
       displayLoader();
       displayMessage("");
-      var filterdata={};
+      s_endCount = 0;
+      filterdata={};
       filterdata["country_id"]=parseInt(country);
       filterdata["domain_id"]=parseInt(domain);
       filterdata["industry_id"]=parseInt(industry);
       filterdata["statutory_nature_id"]=parseInt(statutorynature);
       filterdata["geography_id"]=parseInt(geography);
       filterdata["level_1_statutory_id"]=parseInt(act);
+      filterdata["record_count"]=parseInt(s_endCount);
 
       function onSuccess(data){
         statutoryMappingDataList = data["statutory_mappings"];
