@@ -7,8 +7,6 @@ var statutoryNaturesList;
 var statutoriesList;
 var complianceFrequencyList;
 var finalList;
-var pageSize = 500;
-
 
 var count=1;
 var compliance_count=0;
@@ -86,7 +84,6 @@ function loadCountwiseResult(filterList){
     var statutory_provision = filterList[entity]["statutory_provision"];
     var compliance_name = filterList[entity]["compliance_task"];
     var download_url = filterList[entity]["url"];
-    console.log(frequency_id)
 
     if(actname != lastActName){
       var tableRow=$('#act-templates .table-act-list .table-row-act-list');
@@ -94,9 +91,6 @@ function loadCountwiseResult(filterList){
       $('.actname', clone).html(actname +'<span><img src="/images/chevron_black_down.png"></span>');
       $('.tbody-compliance').append(clone);
       $('.tbody-compliance').append('<tbody class="accordion-content accordion-content'+count+' default"></tbody>');
-      /*if(count==1){
-        $('.accordion-content'+count).addClass("default");
-      }*/
       lastOccuranceid = 0;
       lastIndustryName = '';
       count++;
@@ -233,42 +227,6 @@ function loadCountwiseResult(filterList){
   }
 }
 
-/*//get part of required data from whole list
-function get_sub_array(object, start, end){
-    if(!end){ end=-1;}
-    return object.slice(start, end);
-}
-
-//show more record process
-function showloadrecord(){
-  startCount = endCount;
-  endCount = startCount + pageSize;
-  var sub_act_list =  finalList;
-  var sub_keys_list = get_sub_array(sub_act_list, startCount, endCount);
-  if(sub_keys_list.length < pageSize){
-    $('#pagination').hide();
-  }
-  loadCountwiseResult(sub_keys_list);
-}*/
-
-
-/*$(function() {
-  $('#pagination').click(function(){
-    $(".loading-indicator-spin").show();
-    if($('.loading-indicator-spin').css('display') != 'none')
-    {
-        setTimeout(function(){  
-            showloadrecord();
-        }, 500);
-        
-    }
-    setTimeout(function(){  
-        $(".loading-indicator-spin").hide();
-    }, 500);
-  });
-});
-*/
-
 $('#pagination').click(function(){
   s_endCount = compliance_count - 1;
   filterdata["record_count"]=parseInt(s_endCount);
@@ -283,7 +241,6 @@ $('#pagination').click(function(){
     hideLoader();
   }
   mirror.getComplianceTaskReport(filterdata,
-  //mirror.getStatutoryMappingsReportData(filterdata,
     function (error, response) {
       if (error == null){
         onSuccess(response);
@@ -307,8 +264,6 @@ function loadresult() {
     }
     finalList = filteredList;
   }
-  /*var sub_act_list =  finalList;
-  var sub_keys_list = get_sub_array(sub_act_list, startCount, endCount);*/
   loadCountwiseResult(finalList);
 }
 
@@ -356,7 +311,6 @@ $("#submit").click(function(){
         hideLoader();
       }
       mirror.getComplianceTaskReport(filterdata,
-      //mirror.getStatutoryMappingsReportData(filterdata,
         function (error, response) {
           if (error == null){
             onSuccess(response);
