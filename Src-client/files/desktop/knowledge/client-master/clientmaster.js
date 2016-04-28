@@ -395,6 +395,9 @@ $("#btn-clientgroup-submit").click(function(){
             else if(error == 'CannotDeactivateDomain'){
                 displayMessage(message.cannot_unselect_domain); 
             }
+            else if(error == 'InvalidNoOfLicence'){
+                displayMessage(message.invalid_no_of_licence); 
+            }
             else{
                 displayMessage(error);   
             }

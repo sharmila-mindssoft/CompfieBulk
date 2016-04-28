@@ -6506,3 +6506,15 @@ class KnowledgeDatabase(Database):
             return True
         else:
             return False
+
+    def validate_no_of_user_licence(self, no_of_user_licence, client_id):
+        column = "count(*)"
+        condition = "client_id = '%d'" % client_id
+        rows = self.get_data(self.tblClientUsers, column, condition)
+        current_no_of_users = int(rows[0][0])
+        print current_no_of_users, type(current_no_of_users)
+        print no_of_user_licence, type(no_of_user_licence)
+        if no_of_user_licence < current_no_of_users:
+            return True
+        else:
+            return False

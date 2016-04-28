@@ -188,6 +188,8 @@ def update_client_group(db, request, session_user):
         return technomasters.CannotDeactivateCountry()
     elif db.is_deactivated_existing_domain(request.client_id, request.domain_ids):
         return technomasters.CannotDeactivateDomain()
+    elif db.validate_no_of_user_licence(request.no_of_user_licence, request.client_id):
+        return technomasters.InvalidNoOfLicence()
     else:
         db.update_client_group(request, session_user)
         db.save_client_countries(request.client_id, request.country_ids)

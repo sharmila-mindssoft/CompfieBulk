@@ -1306,6 +1306,18 @@ class GetClientProfileSuccess(Response):
             "profiles": to_structure_VectorType_RecordType_technomasters_PROFILES(self.profiles),
         }
 
+class InvalidNoOfLicence(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidNoOfLicence()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 def _init_Response_class_map():
     classes = [
@@ -1318,7 +1330,8 @@ def _init_Response_class_map():
         InvalidBusinessGroupId, InvalidLegalEntityId, InvalidDivisionId, 
         InvalidUnitId, UserIsNotResponsibleForAnyClient, ClientCreationFailed,
         CannotDeactivateCountry, CannotDeactivateDomain, CreateNewAdminSuccess,
-        ClientDatabaseNotExists, CannotDeactivateClient, ReassignFirst
+        ClientDatabaseNotExists, CannotDeactivateClient, ReassignFirst,
+        InvalidNoOfLicence
     ]
     class_map = {}
     for c in classes:

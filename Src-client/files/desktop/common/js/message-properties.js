@@ -121,6 +121,7 @@ var message = {
 	'client_creation_failed' : 'Client Creation Failed. Check your server connection details',
 	'cannot_unselect_country' : 'Cannot unselect country. One or more units exists',
 	'cannot_unselect_domain' : 'Cannot unselect Domain. One or more units exists',
+	"invalid_no_of_licence" : 'Entered no of licence is less than active no of licences',
 	'cannot_deactivate_client' : 'Cannot deactivate client, since client has one or more active units',
 	'legalentity_new' : 'Select Existing Legal Entity or Create New',
 	'exceeds_max_countries_user' : 'Exceeds Maximum Countries for this User',

@@ -271,15 +271,14 @@ class ClientDatabase(Database):
         values = [self.encrypt(password)]
         condition = "1"
         result = False
-        if user_id != 0:
-            condition = " user_id='%d'" % user_id
+        condition = " user_id='%d'" % user_id
+        result = self.update(
+            self.tblUsers, columns, values, condition, client_id
+        )
+        if self.is_primary_admin(user_id) or user_id == 0:
             result = self.update(
-                self.tblUsers, columns, values, condition, client_id
-            )
-        else:
-            result = self.update(
-                self.tblAdmin, columns, values, condition, client_id
-            )
+                self.tblAdmin, columns, values, "1", client_id
+            )  
         if result:
             return True
         else:
@@ -729,11 +728,12 @@ class ClientDatabase(Database):
         results = []
         for user in users :
             if len(unit_ids_list) > 0:
-                user_unit_ids = [int(x) for x in user["unit_ids"].split(",")]
-                if set(user_unit_ids) & set(unit_ids_list):
-                    pass
-                else:
-                    continue
+                if user["unit_ids"] is not None:
+                    user_unit_ids = [int(x) for x in user["unit_ids"].split(",")]
+                    if set(user_unit_ids) & set(unit_ids_list):
+                        pass
+                    else:
+                        continue
             countries = self.get_user_countries(user["user_id"], client_id)
             domains = self.get_user_domains(user["user_id"], client_id)
             units = self.get_user_unit_ids(user["user_id"], client_id)
