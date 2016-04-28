@@ -227,12 +227,28 @@ function loadCountwiseResult(filterList){
   }
 }
 
+function loadresult() {
+  var c_frequency = $("#compliance_frequency").val();
+  if(c_frequency == 'All'){
+    finalList = statutoryMappingDataList;
+  }else{
+    var filteredList=[];
+    for(var entity in statutoryMappingDataList) {
+      var filter_frequency = statutoryMappingDataList[entity]["frequency_id"];
+      if (c_frequency == filter_frequency) filteredList.push(statutoryMappingDataList[entity]);
+    }
+    finalList = filteredList;
+  }
+  loadCountwiseResult(finalList);
+}
+
 $('#pagination').click(function(){
   s_endCount = compliance_count - 1;
   filterdata["record_count"]=parseInt(s_endCount);
   displayLoader();
   function onSuccess(data){
     statutoryMappingDataList = data["statutory_mappings"];
+    totalRecord = data["total_count"];
     loadresult();
     hideLoader();
   }
@@ -250,22 +266,6 @@ $('#pagination').click(function(){
       }
     });
 });
-
-function loadresult() {
-  
-  var c_frequency = $("#compliance_frequency").val();
-  if(c_frequency == 'All'){
-    finalList = statutoryMappingDataList;
-  }else{
-    var filteredList=[];
-    for(var entity in statutoryMappingDataList) {
-      var filter_frequency = statutoryMappingDataList[entity]["frequency_id"];
-      if (c_frequency == filter_frequency) filteredList.push(statutoryMappingDataList[entity]);
-    }
-    finalList = filteredList;
-  }
-  loadCountwiseResult(finalList);
-}
 
 //get compliance list report data based on filter selection from api
 $("#submit").click(function(){
@@ -289,37 +289,38 @@ $("#submit").click(function(){
     displayMessage(message.domain_required);
   }
   else{
-      displayLoader();
-      displayMessage("");
-      s_endCount = 0;
-      filterdata={};
-      filterdata["country_id"]=parseInt(country);
-      filterdata["domain_id"]=parseInt(domain);
-      filterdata["industry_id"]=parseInt(industry);
-      filterdata["statutory_nature_id"]=parseInt(statutorynature);
-      filterdata["geography_id"]=parseInt(geography);
-      filterdata["level_1_statutory_id"]=parseInt(act);
-      filterdata["record_count"]=parseInt(s_endCount);
+    displayLoader();
+    displayMessage("");
+    s_endCount = 0;
+    filterdata={};
+    filterdata["country_id"]=parseInt(country);
+    filterdata["domain_id"]=parseInt(domain);
+    filterdata["industry_id"]=parseInt(industry);
+    filterdata["statutory_nature_id"]=parseInt(statutorynature);
+    filterdata["geography_id"]=parseInt(geography);
+    filterdata["level_1_statutory_id"]=parseInt(act);
+    filterdata["record_count"]=parseInt(s_endCount);
 
-      function onSuccess(data){
-        statutoryMappingDataList = data["statutory_mappings"];
-        loadresult();
-        hideLoader();
-      }
-      function onFailure(error){
-        onFailure(error);
-        hideLoader();
-      }
-      mirror.getComplianceTaskReport(filterdata,
-        function (error, response) {
-          if (error == null){
-            onSuccess(response);
-          }
-          else {
-            onFailure(error);
-          }
-        });
-  }
+    function onSuccess(data){
+      statutoryMappingDataList = data["statutory_mappings"];
+      totalRecord = data["total_count"];
+      loadresult();
+      hideLoader();
+    }
+    function onFailure(error){
+      onFailure(error);
+      hideLoader();
+    }
+    mirror.getComplianceTaskReport(filterdata,
+      function (error, response) {
+        if (error == null){
+          onSuccess(response);
+        }
+        else {
+          onFailure(error);
+        }
+      });
+    }
 });
 
 //Autocomplete Script Starts
