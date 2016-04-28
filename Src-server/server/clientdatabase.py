@@ -486,7 +486,7 @@ class ClientDatabase(Database):
     def get_units_for_user(self, unit_ids, client_id=None):
         columns = "unit_id, unit_code, unit_name, address, division_id, domain_ids, country_id,"
         columns += " legal_entity_id, business_group_id, is_active, is_closed"
-        condition = "1"
+        condition = "is_closed = 0"
         if unit_ids is not None:
             condition = "unit_id in (%s) ORDER BY unit_name" % unit_ids
         rows = self.get_data(
