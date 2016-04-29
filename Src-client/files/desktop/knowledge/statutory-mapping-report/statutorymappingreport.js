@@ -327,8 +327,6 @@ $("#submit").click(function(){
     }
 });
 
-
-
 //Autocomplete Script Starts
 
 //retrive country autocomplete value
