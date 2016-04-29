@@ -176,18 +176,13 @@ def get_assigneewise_compliance(db, request, session_user):
     division_id = request.division_id
     unit_id = request.unit_id
     user_id = request.user_id
-    if business_group_id is None :
-        business_group_id = '%'
-    if legal_entity_id is None :
-        legal_entity_id = '%'
-    if division_id is None :
-        division_id = '%'
-    if user_id is None :
-        user_id = '%'
+    from_count = request.record_count
+    to_count = request.to_count
 
-    assignee_wise_compliances_list = db.get_assigneewise_compliance_report(
+    assignee_wise_compliances_list = db.report_assigneewise_compliance(
         country_id, domain_id, business_group_id,
-        legal_entity_id, division_id, unit_id, user_id, session_user
+        legal_entity_id, division_id, unit_id, user_id, session_user,
+        from_count, to_count
     )
     return clientreport.GetAssigneewisecomplianceReportSuccess(assignee_wise_compliances_list)
 
