@@ -4756,6 +4756,7 @@ class KnowledgeDatabase(Database):
         if division_id is not None:
             columns.append("division_id")
         values_list = []
+        unit_names = []
         for unit in units:
             domain_ids = ",".join(str(x) for x in unit.domain_ids)
             if business_group_id != None and division_id is not None:
@@ -4778,9 +4779,10 @@ class KnowledgeDatabase(Database):
                         str(unit.industry_id), domain_ids, str(unit.unit_code).upper(), str(unit.unit_name), str(unit.unit_address),
                         str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp)
             values_list.append(values_tuple)
+            unit_names.append("\"%s - %s\"" % (str(unit.unit_code).upper(), unit.unit_name))
         result = self.bulk_insert(self.tblUnits, columns, values_list)
 
-        action = "Created Unit \"%s - %s\"" % (str(unit.unit_code).upper(), unit.unit_name)
+        action = "Created following Units %s" % (",".join(unit_names))
         self.save_activity(session_user, 19, action)
 
         return result
@@ -4904,6 +4906,20 @@ class KnowledgeDatabase(Database):
             result = self.update(self.tblUsers, columns, values, condition)
         else:
             result = self.update(self.tblAdmin, columns, values, condition)
+
+        if user_id != 0:
+            columns = "employee_code, employee_name"
+            condition = "user_id = '%d'" % user_id
+            rows = self.get_data(self.tblUsers, columns, condition)
+            employee_name = rows[0][1]
+            if rows[0][0] is not None:
+                employee_name = "%s - %s" % (rows[0][0], rows[0][1])
+        else:
+            employee_name = "Administrator"
+
+        action = "\"%s\" has updated his/her password" % ( employee_name)
+        self.save_activity(user_id, 0, action)
+
         if result:
             return True
         else:
@@ -6447,9 +6463,11 @@ class KnowledgeDatabase(Database):
             query = "select count(*) from tbl_assigned_compliances \
             where assignee = '%d' or concurrence_person = '%d' or \
             approval_person = '%d'" % (old_admin_id, old_admin_id, old_admin_id)
+            print query
             cursor.execute(query)
             rows = cursor.fetchall()
             compliance_count = rows[0][0]
+            print compliance_count
             if compliance_count > 0:
                 return "Reassign"
             else:
@@ -6540,6 +6558,15 @@ class KnowledgeDatabase(Database):
                 is null or approve_status = 0" % (new_admin_id, new_admin_id)
                 cursor.execute(query)
 
+                query = "SELECT employee_name, employee_code FROM tbl_users \
+                WHERE user_id='%d'" % new_admin_id
+                cursor.execute(query)
+                rows = cursor.fetchall()
+                if rows[0][1] is not None:
+                    employee_name = "%s - %s" % (rows[0][1], rows[0][0])
+                else:
+                    employee_name = rows[0][0]
+
                 conn.commit()
 
                 # Promoting to new admin in Knowledge db
@@ -6558,6 +6585,10 @@ class KnowledgeDatabase(Database):
 
                 query = "update tbl_client_groups set email_id = '%s'" % (admin_email)
                 self.execute(query)
+
+                action = None
+                action = "User \"%s\" was promoted to Primary Admin status" % (employee_name)
+                self.save_activity(session_user, 20, action)
                 return True
         else:
             return "ClientDatabaseNotExists"
@@ -6567,6 +6598,26 @@ class KnowledgeDatabase(Database):
         condition = "client_id = '%d' and is_active = 1" % client_id
         rows = self.get_data(self.tblUnits, column, condition)
         if rows[0][0] > 0:
+            return True
+        else:
+            return False
+
+    def validate_no_of_user_licence(self, no_of_user_licence, client_id):
+        column = "count(*)"
+        condition = "client_id = '%d'" % client_id
+        rows = self.get_data(self.tblClientUsers, column, condition)
+        current_no_of_users = int(rows[0][0])
+        if no_of_user_licence < current_no_of_users:
+            return True
+        else:
+            return False
+
+    def validate_total_disk_space(self, file_space, client_id):
+        settings_columns = "total_disk_space_used"
+        condition = "client_id = '%d'" % client_id
+        rows = self.get_data(self.tblClientGroups, settings_columns, condition)
+        used_space = int(rows[0][0])
+        if file_space < used_space:
             return True
         else:
             return False
