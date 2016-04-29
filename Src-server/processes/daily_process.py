@@ -254,22 +254,26 @@ def save_in_compliance_history(
     db, unit_id, compliance_id, start_date, due_date, next_due_date,
     assignee, concurrence, approve
 ):
-    if concurrence is None:
-        concurrence = "NULL"
+    compliance_history_id = get_new_id(db, "tbl_compliance_history", "compliance_history_id")
+    if concurrence is not None:
+        columns = "compliance_history_id, unit_id, compliance_id, \
+                start_date, due_date, next_due_date, completed_by, approved_by, concurred_by"
+        values = (
+            columns, compliance_history_id, unit_id, compliance_id,
+            start_date, due_date, next_due_date, assignee,  approve, concurrence
+        )
+    else :
+        columns = "compliance_history_id, unit_id, compliance_id, \
+                start_date, due_date, next_due_date, completed_by, approved_by"
+        values = (
+            columns, compliance_history_id, unit_id, compliance_id,
+            start_date, due_date, next_due_date, assignee,  approve
+        )
 
     print "new task saved in history (unit_id, compliance_id, start_date) %s, %s, %s" % (unit_id, compliance_id, start_date)
-    compliance_history_id = get_new_id(db, "tbl_compliance_history", "compliance_history_id")
-    columns = "compliance_history_id, unit_id, compliance_id, \
-            start_date, due_date, next_due_date, completed_by, approved_by, concurred_by"
-    values = (
-        columns, compliance_history_id, unit_id, compliance_id,
-        start_date, due_date, next_due_date, assignee,  approve, concurrence
-    )
     query = "INSERT INTO tbl_compliance_history (%s) \
         VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s) " % values
 
-    print
-    print query
     cursor = db.cursor()
     cursor.execute(query)
     cursor.close()
