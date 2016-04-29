@@ -100,6 +100,9 @@ class API(object):
             )
         except Exception, e:
             print e
+            logger.logKnowledgeApi(e, "_parse_request")
+            logger.logKnowledgeApi(traceback.format_exc(), "")
+
             logger.logKnowledge("error", "main.py-parse-request", e)
             print(traceback.format_exc())
             logger.logKnowledge("error", "main.py", traceback.format_exc())
@@ -138,6 +141,10 @@ class API(object):
             print e
             print(traceback.format_exc())
             print ip_address
+            logger.logKnowledgeApi(e, "handle_api_request")
+            logger.logKnowledgeApi(traceback.format_exc(), "")
+            logger.logKnowledgeApi(ip_address, "")
+
             logger.logKnowledge("error", "main.py-handle-api-", e)
             logger.logKnowledge("error", "main.py", traceback.format_exc())
 

@@ -3001,14 +3001,10 @@ class ClientDatabase(Database):
         self, status_type_qry,
         request, user_id, chart_type=None
     ):
-        # countries = self.get_user_countries(user_id)
-        # country_ids = countries.split(',')
         country_ids = request.country_ids
 
         if len(country_ids) == 1 :
             country_ids.append(0)
-        # domains = self.get_user_domains(user_id)
-        # domain_ids = domains.split(',')
         domain_ids = request.domain_ids
 
         if len(domain_ids) == 1 :
@@ -3120,6 +3116,7 @@ class ClientDatabase(Database):
                 group_by_name,
                 group_by_name
             )
+        print query
         rows = self.select_all(query)
         columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
         return filter_ids, self.convert_to_dict(rows, columns)
@@ -3162,7 +3159,7 @@ class ClientDatabase(Database):
 
         filter_ids = []
 
-        inprogress_qry = " AND ((T2.duration_type_id =2 AND T1.due_date >= now()) or (T1.due_date >= CURDATE())) \
+        inprogress_qry = " AND ((T2.duration_type_id =2 AND T1.due_date >= now()) or (T2.duration_type_id != 2 and T1.due_date >= CURDATE())) \
                 AND IFNULL(T1.approve_status,0) <> 1"
 
         complied_qry = " AND T1.due_date >= T1.completion_date \
@@ -3171,7 +3168,7 @@ class ClientDatabase(Database):
         delayed_qry = " AND T1.due_date < T1.completion_date \
                 AND IFNULL(T1.approve_status,0) = 1"
 
-        not_complied_qry = " AND ((T2.duration_type_id =2 AND T1.due_date < now()) or (T1.due_date < CURDATE())) \
+        not_complied_qry = " AND ((T2.duration_type_id =2 AND T1.due_date < now()) or (T2.duration_type_id != 2 and T1.due_date < CURDATE())) \
                 AND IFNULL(T1.approve_status,0) <> 1"
 
         filter_ids, inprogress = self.get_compliance_status(
@@ -3564,7 +3561,7 @@ class ClientDatabase(Database):
 
         status_qry = ""
         if compliance_status == "Inprogress" :
-            status_qry = " AND ((T4.duration_type_id =2 AND T1.due_date >= now()) or (T1.due_date >= CURDATE())) \
+            status_qry = " AND ((T4.duration_type_id =2 AND T1.due_date >= now()) or (T4.duration_type_id != 2 AND T1.due_date >= CURDATE())) \
                     AND IFNULL(T1.approve_status, 0) != 1"
 
         elif compliance_status == "Complied" :
@@ -3576,7 +3573,7 @@ class ClientDatabase(Database):
                 AND T1.approve_status = 1"
 
         elif compliance_status == "Not Complied" :
-            status_qry = " AND ((T4.duration_type_id =2 AND T1.due_date < now()) or (T1.due_date < CURDATE())) \
+            status_qry = " AND ((T4.duration_type_id =2 AND T1.due_date < now()) or (T4.duration_type_id != 2 AND T1.due_date < CURDATE())) \
                 AND IFNULL(T1.approve_status, 0) != 1 "
 
         if filter_type == "Group" :
@@ -3616,7 +3613,6 @@ class ClientDatabase(Database):
 
     def return_compliance_details_drill_down(self, year_info, compliance_status, request_year, result, client_id) :
         current_date = datetime.datetime.today()
-
         unit_wise_data = {}
         for r in result :
             country_id = int(r["country_id"])
@@ -3671,6 +3667,7 @@ class ClientDatabase(Database):
                     if r["duration_type_id"] == 2 :
                         ageing = self.calculate_ageing_in_hours(diff)
                     else :
+
                         ageing = diff
             elif compliance_status == "Complied" :
                 ageing = 0
@@ -3754,9 +3751,8 @@ class ClientDatabase(Database):
         delayed_qry = " AND T1.due_date < T1.completion_date \
                 AND T1.approve_status = 1"
 
-        not_complied_qry = " AND T1.due_date < CURDATE() \
-                AND T1.approve_status is NULL "
-
+        not_complied_qry = " AND ((T2.duration_type_id =2 AND T1.due_date < now()) or (T2.duration_type_id != 2 and T1.due_date < CURDATE())) \
+                AND IFNULL(T1.approve_status,0) <> 1"
 
         chart_type = "Escalation"
         filter_ids, delayed = self.get_compliance_status(
@@ -4286,7 +4282,7 @@ class ClientDatabase(Database):
 
                 if(assingee_name is None):
                     assingee_name = 'Client Admin'
-                    
+
                 query = "SELECT c.compliance_task, c.compliance_description, ac.statutory_dates, ac.validity_date, ac.due_date, \
                         ac.assignee, cf.frequency, c.frequency_id, c.duration, c.repeats_every, \
                         (select duration_type from tbl_compliance_duration_type where duration_type_id = c.duration_type_id) AS duration_type, \
@@ -7866,19 +7862,19 @@ class ClientDatabase(Database):
             business_group_name = "-"
             if business_group_id not in ["None", None, 0]:
                 business_group_name = self.get_data(
-                    self.tblBusinessGroups, "business_group_name", 
+                    self.tblBusinessGroups, "business_group_name",
                     "business_group_id = '%d'" % business_group_id
                 )[0][0]
 
             legal_entity_name = self.get_data(
-                self.tblLegalEntities, "legal_entity_name", 
+                self.tblLegalEntities, "legal_entity_name",
                 "legal_entity_id = '%d'" % legal_entity_id
             )[0][0]
 
             division_name = "-"
             if division_id not in ["None", None, 0]:
                 division_name = self.get_data(
-                    self.tblDivisions, "division_name", 
+                    self.tblDivisions, "division_name",
                     "division_id = '%d'" % division_id
                 )[0][0]
 
@@ -7892,7 +7888,7 @@ class ClientDatabase(Database):
             else:
                 where_qry += " AND T4.legal_entity_id = %s" % (legal_entity_id)
                 if business_group_id not in [None, 0, "None"]:
-                    where_qry = " AND T4.business_group_id = %s" % (business_group_id)               
+                    where_qry = " AND T4.business_group_id = %s" % (business_group_id)
                 if division_id not in [None, 0, "None"]:
                     where_qry += " AND T4.division_id = %s" % (division_id)
             query = "SELECT T2.statutory_provision, T2.statutory_mapping, \
@@ -8031,7 +8027,7 @@ class ClientDatabase(Database):
                         applicable_list
                     )
                 )
-            if len(not_applicable_list) > 0: 
+            if len(not_applicable_list) > 0:
                 not_applicable_compliances.append(
                     clientreport.GetComplianceTaskApplicabilityStatusReportData(
                         business_group_name, legal_entity_name, division_name,
@@ -8046,7 +8042,7 @@ class ClientDatabase(Database):
                     )
                 )
         return clientreport.GetComplianceTaskApplicabilityStatusReportSuccess(
-            applicable_compliances, not_applicable_compliances, 
+            applicable_compliances, not_applicable_compliances,
             not_opted_compliances
         )
 

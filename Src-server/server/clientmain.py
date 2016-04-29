@@ -124,11 +124,16 @@ class API(object):
                             self._replication_managers[company_id] = rep_man
                     except Exception, e:
                         print e
+                        logger.logClientApi(ip, port)
+                        logger.logClientApi(e, "Server added")
+                        logger.logClientApi(traceback.format_exc(), "")
                         logger.logClient("error", "clientmain.py-server-added", e)
-                        # print "Client database not available to connect ", company_id, company.to_structure()
+                        logger.logClientApi("Client database not available to connect ", company_id + "-" + company.to_structure())
                         continue
 
         except Exception, e :
+            logger.logClientApi(e, "Server added")
+            logger.logClientApi(traceback.format_exc(), "")
             logger.logClient("error", "clientmain.py-server-added", e)
             logger.logClient("error", "clientmain.py-server-added", traceback.format_exc())
 
@@ -183,6 +188,9 @@ class API(object):
                 actual_data
             )
         except Exception, e:
+            logger.logClientApi(e, "_parse_request")
+            logger.logClientApi(traceback.format_exc(), "")
+
             logger.logClient("error", "clientmain.py-parse-request", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
@@ -224,6 +232,9 @@ class API(object):
         except Exception, e:
             # print(traceback.format_exc())
             # print e
+            logger.logClientApi(e, "handle_api_request")
+            logger.logClientApi(traceback.format_exc(), "")
+
             logger.logClient("error", "clientmain.py-handle-api", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 

@@ -1,4 +1,5 @@
 from protocol import (dashboard, login, general)
+from server import logger
 
 __all__ = [
     "process_client_dashboard_requests"
@@ -21,51 +22,96 @@ def process_client_dashboard_requests(request, db) :
         return login.InvalidSessionToken()
 
     if db.get_client_compliance_count() == 0:
-        return general.MasterDataNotAvailableForClient()
+        logger.logClientApi("CheckMasterDataDashboard", "process begin")
+        result = general.MasterDataNotAvailableForClient()
+        logger.logClientApi("CheckMasterDataDashboard", "process end")
 
     elif type(request) is dashboard.GetChartFilters :
-        return process_get_chart_filters(db, session_user, client_id)
+        logger.logClientApi("GetChartFilters", "process begin")
+        result = process_get_chart_filters(db, session_user, client_id)
+        logger.logClientApi("GetChartFilters", "process end")
 
     elif type(request) is dashboard.GetComplianceStatusChart :
-        return process_compliance_status_chart(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceStatusChart", "process begin")
+        result = process_compliance_status_chart(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceStatusChart", "process end")
+
     elif type(request) is dashboard.GetComplianceStatusDrillDownData:
-        return process_compliance_status_chart_drilldown(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceStatusDrillDownData", "process begin")
+        result = process_compliance_status_chart_drilldown(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceStatusDrillDownData", "process end")
 
     elif type(request) is dashboard.GetEscalationsChart :
-        return process_escalation_chart(db, request, session_user, client_id)
+        logger.logClientApi("GetEscalationsChart", "process begin")
+        result = process_escalation_chart(db, request, session_user, client_id)
+        logger.logClientApi("GetEscalationsChart", "process end")
+
     elif type(request) is dashboard.GetEscalationsDrillDownData :
-        return process_escalation_chart_drilldown(db, request, session_user, client_id)
+        logger.logClientApi("GetEscalationsDrillDownData", "process begin")
+        result = process_escalation_chart_drilldown(db, request, session_user, client_id)
+        logger.logClientApi("GetEscalationsDrillDownData", "process end")
 
     elif type(request) is dashboard.GetNotCompliedChart :
-        return process_not_complied_chart(db, request, session_user, client_id)
+        logger.logClientApi("GetNotCompliedChart", "process begin")
+        result = process_not_complied_chart(db, request, session_user, client_id)
+        logger.logClientApi("GetNotCompliedChart", "process end")
+
     elif type(request) is dashboard.GetNotCompliedDrillDown :
-        return process_not_complied_drill_down(db, request, session_user, client_id)
+        logger.logClientApi("GetNotCompliedDrillDown", "process begin")
+        result = process_not_complied_drill_down(db, request, session_user, client_id)
+        logger.logClientApi("GetNotCompliedDrillDown", "process end")
 
     elif type(request) is dashboard.GetTrendChart :
-        return process_trend_chart(db, request, session_user, client_id)
+        logger.logClientApi("GetTrendChart", "process begin")
+        result = process_trend_chart(db, request, session_user, client_id)
+        logger.logClientApi("GetTrendChart", "process end")
+
     elif type(request) is dashboard.GetTrendChartDrillDownData :
-        return process_get_trend_chart_drilldown(db, request, session_user, client_id)
+        logger.logClientApi("GetTrendChartDrillDownData", "process begin")
+        result = process_get_trend_chart_drilldown(db, request, session_user, client_id)
+        logger.logClientApi("GetTrendChartDrillDownData", "process end")
 
     elif type(request) is dashboard.GetComplianceApplicabilityStatusChart :
-        return process_compliance_applicability_chat(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceApplicabilityStatusChart", "process begin")
+        result = process_compliance_applicability_chat(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceApplicabilityStatusChart", "process end")
+
     elif type(request) is dashboard.GetComplianceApplicabilityStatusDrillDown :
-        return process_compliance_applicability_drill_down(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceApplicabilityStatusDrillDown", "process begin")
+        result = process_compliance_applicability_drill_down(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceApplicabilityStatusDrillDown", "process end")
 
     elif type(request) is dashboard.GetNotifications :
-        return process_get_notifications(db, request, session_user, client_id)
+        logger.logClientApi("GetNotifications", "process begin")
+        result = process_get_notifications(db, request, session_user, client_id)
+        logger.logClientApi("GetNotifications", "process end")
+
     elif type(request) is dashboard.UpdateNotificationStatus :
-        return process_update_notification_status(db, request, session_user, client_id)
+        logger.logClientApi("UpdateNotificationStatus", "process begin")
+        result = process_update_notification_status(db, request, session_user, client_id)
+        logger.logClientApi("UpdateNotificationStatus", "process end")
 
     elif type(request) is dashboard.GetAssigneewiseComplianesFilters :
-        return process_assigneewise_compliances_filters(db, request, session_user, client_id)
+        logger.logClientApi("GetAssigneewiseComplianesFilters", "process begin")
+        result = process_assigneewise_compliances_filters(db, request, session_user, client_id)
+        logger.logClientApi("GetAssigneewiseComplianesFilters", "process end")
+
     elif type(request) is dashboard.GetAssigneeWiseCompliancesChart :
-        return process_assigneewise_compliances(db, request, session_user, client_id)
+        logger.logClientApi("GetAssigneeWiseCompliancesChart", "process begin")
+        result = process_assigneewise_compliances(db, request, session_user, client_id)
+        logger.logClientApi("GetAssigneeWiseCompliancesChart", "process end")
+
     elif type(request) is dashboard.GetAssigneeWiseComplianceDrillDown :
-        return process_assigneewise_compliances_drilldown(db, request, session_user, client_id)
+        logger.logClientApi("GetAssigneeWiseComplianceDrillDown", "process begin")
+        result = process_assigneewise_compliances_drilldown(db, request, session_user, client_id)
+        logger.logClientApi("GetAssigneeWiseComplianceDrillDown", "process end")
 
     elif type(request) is dashboard.CheckContractExpiration:
-        return check_contract_expiration(db, request, session_user, client_id)
+        logger.logClientApi("CheckContractExpiration", "process begin")
+        result = check_contract_expiration(db, request, session_user, client_id)
+        logger.logClientApi("CheckContractExpiration", "process end")
 
+    return result
 
 def process_get_chart_filters(db, session_user, client_id):
     countries = db.get_countries_for_user(session_user, client_id)

@@ -1,6 +1,6 @@
 from server.jsontocsvconverter import ConvertJsonToCSV
 from protocol import (core, clientreport, login)
-
+from server import logger
 __all__ = [
     "process_client_report_requests"
 ]
@@ -15,67 +15,111 @@ def process_client_report_requests(request, db) :
         return login.InvalidSessionToken()
 
     if type(request) is clientreport.GetClientReportFilters:
-        return get_client_report_filters(db, request, session_user)
+        logger.logClientApi("GetClientReportFilters", "process begin")
+        result = get_client_report_filters(db, request, session_user)
+        logger.logClientApi("GetClientReportFilters", "process end")
 
     elif type(request) is clientreport.GetUnitwisecomplianceReport:
-        return get_unitwise_compliance(db, request, session_user)
+        logger.logClientApi("GetUnitwisecomplianceReport", "process begin")
+        result = get_unitwise_compliance(db, request, session_user)
+        logger.logClientApi("GetUnitwisecomplianceReport", "process end")
 
     elif type(request) is clientreport.GetAssigneewisecomplianceReport:
-        return get_assigneewise_compliance(db, request, session_user)
+        logger.logClientApi("GetAssigneewisecomplianceReport", "process begin")
+        result = get_assigneewise_compliance(db, request, session_user)
+        logger.logClientApi("GetAssigneewisecomplianceReport", "process end")
 
     elif type(request) is clientreport.GetServiceProviderReportFilters:
-        return get_serviceprovider_report_filters(db, request, session_user)
+        logger.logClientApi("GetServiceProviderReportFilters", "process begin")
+        result = get_serviceprovider_report_filters(db, request, session_user)
+        logger.logClientApi("GetServiceProviderReportFilters", "process end")
 
     elif type(request) is clientreport.GetServiceProviderWiseCompliance:
-        return get_serviceproviderwise_compliance(db, request, session_user, client_id)
+        logger.logClientApi("GetServiceProviderWiseCompliance", "process begin")
+        result = get_serviceproviderwise_compliance(db, request, session_user, client_id)
+        logger.logClientApi("GetServiceProviderWiseCompliance", "process end")
 
     elif type(request) is clientreport.GetComplianceDetailsReportFilters:
-        return get_compliancedetails_report_filters(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceDetailsReportFilters", "process begin")
+        result = get_compliancedetails_report_filters(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceDetailsReportFilters", "process end")
 
     elif type(request) is clientreport.GetComplianceDetailsReport:
-        return get_compliancedetails_report(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceDetailsReport", "process begin")
+        result = get_compliancedetails_report(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceDetailsReport", "process end")
 
     elif type(request) is clientreport.GetStatutoryNotificationsListFilters:
-        return get_statutory_notifications_list_filters(db, request, session_user, client_id)
+        logger.logClientApi("GetStatutoryNotificationsListFilters", "process begin")
+        result = get_statutory_notifications_list_filters(db, request, session_user, client_id)
+        logger.logClientApi("GetStatutoryNotificationsListFilters", "process end")
 
     elif type(request) is clientreport.GetStatutoryNotificationsListReport:
-        return get_statutory_notifications_list_report(db, request, session_user, client_id)
+        logger.logClientApi("GetStatutoryNotificationsListReport", "process begin")
+        result = get_statutory_notifications_list_report(db, request, session_user, client_id)
+        logger.logClientApi("GetStatutoryNotificationsListReport", "process end")
 
     elif type(request) is clientreport.GetRiskReportFilters:
-        return get_risk_report_filters(db, request, session_user, client_id)
+        logger.logClientApi("GetRiskReportFilters", "process begin")
+        result = get_risk_report_filters(db, request, session_user, client_id)
+        logger.logClientApi("GetRiskReportFilters", "process end")
 
     elif type(request) is clientreport.GetRiskReport:
-        return get_risk_report(db, request, session_user, client_id)
+        logger.logClientApi("GetRiskReport", "process begin")
+        result = get_risk_report(db, request, session_user, client_id)
+        logger.logClientApi("GetRiskReport", "process end")
 
     elif type(request) is clientreport.GetReassignedHistoryReportFilters:
-        return get_reassignedhistory_report_filters(db, request, session_user, client_id)
+        logger.logClientApi("GetReassignedHistoryReportFilters", "process begin")
+        result = get_reassignedhistory_report_filters(db, request, session_user, client_id)
+        logger.logClientApi("GetReassignedHistoryReportFilters", "process end")
 
     elif type(request) is clientreport.GetReassignedHistoryReport:
-        return get_reassignedhistory_report(db, request, session_user, client_id)
+        logger.logClientApi("GetReassignedHistoryReport", "process begin")
+        result = get_reassignedhistory_report(db, request, session_user, client_id)
+        logger.logClientApi("GetReassignedHistoryReport", "process end")
 
     elif type(request) is clientreport.GetLoginTrace:
-        return get_login_trace(db, request, session_user, client_id)
+        logger.logClientApi("GetLoginTrace", "process begin")
+        result = get_login_trace(db, request, session_user, client_id)
+        logger.logClientApi("GetLoginTrace", "process end")
 
     elif type(request) is clientreport.GetComplianceActivityReportFilters:
-        return get_compliance_activity_report_filters(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceActivityReportFilters", "process begin")
+        result = get_compliance_activity_report_filters(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceActivityReportFilters", "process end")
 
     elif type(request) is clientreport.GetComplianceActivityReport:
-        return get_compliance_activity_report(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceActivityReport", "process begin")
+        result = get_compliance_activity_report(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceActivityReport", "process end")
 
     elif type(request) is clientreport.GetTaskApplicabilityStatusFilters:
-        return process_get_task_applicability_status_filters(db, request, session_user)
+        logger.logClientApi("GetTaskApplicabilityStatusFilters", "process begin")
+        result = process_get_task_applicability_status_filters(db, request, session_user)
+        logger.logClientApi("GetTaskApplicabilityStatusFilters", "process end")
 
     elif type(request) is clientreport.GetComplianceTaskApplicabilityStatusReport:
-        return process_get_task_applicability_report_data(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceTaskApplicabilityStatusReport", "process begin")
+        result = process_get_task_applicability_report_data(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceTaskApplicabilityStatusReport", "process end")
 
     elif type(request) is clientreport.GetClientDetailsReportFilters:
-        return get_client_details_report_filters(db, request, session_user, client_id)
+        logger.logClientApi("GetClientDetailsReportFilters", "process begin")
+        result = get_client_details_report_filters(db, request, session_user, client_id)
+        logger.logClientApi("GetClientDetailsReportFilters", "process end")
 
     elif type(request) is clientreport.GetClientDetailsReportData:
-        return get_client_details_report_data(db, request, session_user, client_id)
+        logger.logClientApi("GetClientDetailsReportData", "process begin")
+        result = get_client_details_report_data(db, request, session_user, client_id)
+        logger.logClientApi("GetClientDetailsReportData", "process end")
 
     elif type(request) is clientreport.ExportToCSV:
-        return export_to_csv(db, request, session_user, client_id)
+        logger.logClientApi("ExportToCSV", "process begin")
+        result = export_to_csv(db, request, session_user, client_id)
+        logger.logClientApi("ExportToCSV", "process end")
+
+    return result
 
 
 def get_client_report_filters(db, request, session_user):
@@ -363,7 +407,7 @@ def get_risk_report(db, request, session_user, client_id):
                 legal_entity_id, division_id, unit_id, level_1_statutory_name, 4,
                 client_id, session_user
             )
-    
+
         return clientreport.GetRiskReportSuccess(
             delayed_compliance = delayed_compliance,
             not_complied = not_complied,
@@ -477,11 +521,11 @@ def get_client_details_report_filters(db, request, session_user, client_id):
 def get_client_details_report_data(db, request, session_user, client_id):
     if request.csv:
         converter = ConvertJsonToCSV(db, request, session_user, client_id, "ClientDetails")
-        return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH) 
+        return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
     else:
         units = db.get_client_details_report(
             request.country_id, request.business_group_id,
-            request.legal_entity_id, request.division_id, request.unit_id, 
+            request.legal_entity_id, request.division_id, request.unit_id,
             request.domain_ids, session_user
         )
         return clientreport.GetClientDetailsReportDataSuccess(units=units)

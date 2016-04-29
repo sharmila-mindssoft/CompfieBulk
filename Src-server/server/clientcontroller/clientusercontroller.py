@@ -1,5 +1,5 @@
-from protocol import (clientuser, core, login)
-from server.controller.corecontroller import process_user_menus
+from protocol import (clientuser, login)
+from server import logger
 
 __all__ = [
     "process_client_user_request"
@@ -19,17 +19,31 @@ def process_client_user_request(request, db) :
         return login.InvalidSessionToken()
 
     if type(request) is clientuser.GetComplianceDetail:
-        return process_get_compliance_detail(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceDetail", "process begin")
+        result = process_get_compliance_detail(db, request, session_user, client_id)
+        logger.logClientApi("GetComplianceDetail", "process end")
+
     if type(request) is clientuser.UpdateComplianceDetail:
-        return process_update_compliance_detail(db, request, session_user, client_id)
+        logger.logClientApi("UpdateComplianceDetail", "process begin")
+        result = process_update_compliance_detail(db, request, session_user, client_id)
+        logger.logClientApi("UpdateComplianceDetail", "process end")
+
     elif type(request) is clientuser.GetOnOccurrenceCompliances:
-        return process_get_on_occurrence_compliances(
+        logger.logClientApi("GetOnOccurrenceCompliances", "process begin")
+        result = process_get_on_occurrence_compliances(
             db, request, session_user, client_id
         )
+        logger.logClientApi("GetOnOccurrenceCompliances", "process end")
+
     elif type(request) is clientuser.StartOnOccurrenceCompliance:
-        return process_start_on_occurrence_compliance(
+        logger.logClientApi("StartOnOccurrenceCompliance", "process begin")
+        result = process_start_on_occurrence_compliance(
             db, request, session_user, client_id
         )
+        logger.logClientApi("StartOnOccurrenceCompliance", "process end")
+
+    return result
+
 
 ########################################################
 # To get the ongoing and upcoming compliances of the
@@ -42,8 +56,8 @@ def process_get_compliance_detail(db, request, session_user, client_id):
     str_current_date_time = db.datetime_to_string_time(current_date_time)
     compliance_details = clientuser.ComplianceDetail(
         current_date=str_current_date_time,
-        current_compliances = current_compliances_list,
-        upcoming_compliances = upcoming_compliances_list
+        current_compliances=current_compliances_list,
+        upcoming_compliances=upcoming_compliances_list
     )
     return clientuser.GetComplianceDetailSuccess(compliance_details)
 
@@ -51,10 +65,12 @@ def process_get_compliance_detail(db, request, session_user, client_id):
 # To validate and update the compliance details
 ########################################################
 def process_update_compliance_detail(db, request, session_user, client_id):
-    result = db.update_compliances(request.compliance_history_id, request.documents,
+    result = db.update_compliances(
+        request.compliance_history_id, request.documents,
         request.completion_date, request.validity_date, request.next_due_date,
-        request.remarks, client_id, session_user)
-    if result == True:
+        request.remarks, client_id, session_user
+    )
+    if result is True:
         return clientuser.UpdateComplianceDetailSuccess()
     elif result == "InvalidUser":
         return clientuser.InvalidUser()
