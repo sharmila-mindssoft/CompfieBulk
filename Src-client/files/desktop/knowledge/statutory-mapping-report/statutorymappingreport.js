@@ -221,9 +221,6 @@ function loadCountwiseResult(filterList){
   }
 }
 
-
-
-
 function loadresult() {
   /*var c_frequency = $("#compliance_frequency").val();
   if(c_frequency == 'All'){
