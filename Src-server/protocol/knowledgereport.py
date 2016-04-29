@@ -114,7 +114,7 @@ class GetStatutoryMappingReportData(Request):
         level_1_statutory_id = data.get("level_1_s_id")
         level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
         record_count = data.get("r_count")
-        record_count = self.parse_structure_UnsignedIntegerType_32(record_count)
+        record_count = parse_structure_UnsignedIntegerType_32(record_count)
         return GetStatutoryMappingReportData(country_id, domain_id, industry_id, statutory_nature_id, geography_id, level_1_statutory_id, record_count)
 
     def to_inner_structure(self):

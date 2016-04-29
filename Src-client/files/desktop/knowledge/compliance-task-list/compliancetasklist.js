@@ -199,13 +199,13 @@ function loadCountwiseResult(filterList){
     lastIndustryName = industry_names;
   }
 
-  if((compliance_count-1) > 0){
-    $('.compliance_count').text("Showing " + 1 + " to " + (compliance_count-1) + " of " + totalRecord);
+  if(compliance_count > 0){
+    $('.compliance_count').text("Showing " + 1 + " to " + compliance_count + " of " + totalRecord);
   }else{
     $('.compliance_count').text('');
   }
 
-  if((compliance_count-1) >= totalRecord){
+  if(compliance_count >= totalRecord){
     $(document).ready(function($) {
       $('#accordion').find('.accordion-toggle').click(function(){
         //Expand or collapse this panel
@@ -214,7 +214,7 @@ function loadCountwiseResult(filterList){
         $(".accordion-content").not($(this).next()).slideUp('fast');
       });
     });
-    $('#pagination').show();
+    $('#pagination').hide();
   }
 
   if(count == 1){
@@ -228,7 +228,7 @@ function loadCountwiseResult(filterList){
 }
 
 function loadresult() {
-  var c_frequency = $("#compliance_frequency").val();
+ /* var c_frequency = $("#compliance_frequency").val();
   if(c_frequency == 'All'){
     finalList = statutoryMappingDataList;
   }else{
@@ -238,12 +238,12 @@ function loadresult() {
       if (c_frequency == filter_frequency) filteredList.push(statutoryMappingDataList[entity]);
     }
     finalList = filteredList;
-  }
-  loadCountwiseResult(finalList);
+  }*/
+  loadCountwiseResult(statutoryMappingDataList);
 }
 
 $('#pagination').click(function(){
-  s_endCount = compliance_count - 1;
+  s_endCount = compliance_count;
   filterdata["record_count"]=parseInt(s_endCount);
   displayLoader();
   function onSuccess(data){
@@ -275,12 +275,14 @@ $("#submit").click(function(){
   var statutorynature = null;
   var geography = null;
   var act = null;
-  var compliance_frequency = $("#compliance_frequency").val();
+  var c_frequency = null;
 
   if($("#industry").val() != '') industry = $("#industry").val();
   if($("#statutorynature").val() != '') statutorynature = $("#statutorynature").val();
   if($("#geography").val() != '') geography = $("#geography").val();
   if($("#statutory").val() != '') act = $("#statutory").val();
+  if($("#compliance_frequency").val() != '') c_frequency = $("#compliance_frequency").val();
+
 
   if(country.length == 0){
     displayMessage(message.country_required);
@@ -289,6 +291,11 @@ $("#submit").click(function(){
     displayMessage(message.domain_required);
   }
   else{
+    count=1;
+    compliance_count=0;
+    lastActName = '';
+    lastOccuranceid = 0;
+    lastIndustryName = '';
     displayLoader();
     displayMessage("");
     s_endCount = 0;

@@ -2286,7 +2286,7 @@ class KnowledgeDatabase(Database):
             and t6.user_id = %s \
             WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
             t1.country_id = %s \
-            and t1.domain_id = %s  \
+            and t1.domain_id = %s  %s\
             ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
                 t2.frequency_id " % (
                 user_id, user_id,
@@ -2393,10 +2393,10 @@ class KnowledgeDatabase(Database):
             and t6.user_id = %s \
             WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
             t1.country_id = %s \
-            and t1.domain_id = %s  \
+            and t1.domain_id = %s  %s \
             ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
             (select group_concat(I.industry_name) from tbl_industries I where I.industry_id  in \
-            (select industry_id from tbl_statutory_industry where statutory_mapping_id = t1.statutory_mapping_id)) \
+            (select industry_id from tbl_statutory_industry where statutory_mapping_id = t1.statutory_mapping_id)), \
                 t2.frequency_id " % (
                 user_id, user_id,
                 country_id, domain_id,
