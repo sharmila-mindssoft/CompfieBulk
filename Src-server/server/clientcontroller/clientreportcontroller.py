@@ -177,7 +177,7 @@ def get_assigneewise_compliance(db, request, session_user):
     unit_id = request.unit_id
     user_id = request.user_id
     from_count = request.record_count
-    to_count = request.to_count
+    to_count = 500
 
     assignee_wise_compliances_list, total_count = db.report_assigneewise_compliance(
         country_id, domain_id, business_group_id,

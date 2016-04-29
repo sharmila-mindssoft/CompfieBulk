@@ -958,7 +958,7 @@ function initClientMirror() {
                 "legal_entity_id": legal_entity_id,
                 "division_id": division_id,
                 "unit_id": unit_id,
-                "user_id": user_id
+                "user_id": user_id,
             }
         ];
         callerName = "client_reports";
