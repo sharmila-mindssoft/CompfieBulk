@@ -7,14 +7,15 @@ var statutoryNaturesList;
 var statutoriesList;
 var complianceFrequencyList;
 var finalList;
-var pageSize = 500;
-var startCount;
-var endCount;
+
 var count=1;
 var compliance_count=0;
 var lastActName = '';
 var lastOccuranceid = 0;
 var lastIndustryName = '';
+var s_endCount = 0;
+var totalRecord;
+var filterdata={};
 
 
 function displayLoader() {
@@ -60,7 +61,7 @@ function getStatutoryMappings(){
 
 //display compliance list report data
 function loadCountwiseResult(filterList){
-  if(startCount <= 0){
+  if(compliance_count <= 0){
     $(".grid-table-rpt").show();
     var country = $("#countryval").val();
     var domain = $("#domainval").val();
@@ -83,7 +84,6 @@ function loadCountwiseResult(filterList){
     var statutory_provision = filterList[entity]["statutory_provision"];
     var compliance_name = filterList[entity]["compliance_task"];
     var download_url = filterList[entity]["url"];
-    console.log(frequency_id)
 
     if(actname != lastActName){
       var tableRow=$('#act-templates .table-act-list .table-row-act-list');
@@ -91,9 +91,6 @@ function loadCountwiseResult(filterList){
       $('.actname', clone).html(actname +'<span><img src="/images/chevron_black_down.png"></span>');
       $('.tbody-compliance').append(clone);
       $('.tbody-compliance').append('<tbody class="accordion-content accordion-content'+count+' default"></tbody>');
-      /*if(count==1){
-        $('.accordion-content'+count).addClass("default");
-      }*/
       lastOccuranceid = 0;
       lastIndustryName = '';
       count++;
@@ -202,22 +199,22 @@ function loadCountwiseResult(filterList){
     lastIndustryName = industry_names;
   }
 
-  if(finalList.length > 0){
-    if(endCount > finalList.length) endCount = finalList.length
-    $('.compliance_count').text("Showing " + 1 + " to " + endCount + " of " + finalList.length);
+  if((compliance_count-1) > 0){
+    $('.compliance_count').text("Showing " + 1 + " to " + (compliance_count-1) + " of " + totalRecord);
   }else{
     $('.compliance_count').text('');
   }
 
-  if(endCount >= finalList.length){
+  if((compliance_count-1) >= totalRecord){
     $(document).ready(function($) {
-    $('#accordion').find('.accordion-toggle').click(function(){
-      //Expand or collapse this panel
-      $(this).next().slideToggle('fast');
-      //Hide the other panels
-      $(".accordion-content").not($(this).next()).slideUp('fast');
+      $('#accordion').find('.accordion-toggle').click(function(){
+        //Expand or collapse this panel
+        $(this).next().slideToggle('fast');
+        //Hide the other panels
+        $(".accordion-content").not($(this).next()).slideUp('fast');
+      });
     });
-  });
+    $('#pagination').show();
   }
 
   if(count == 1){
@@ -226,48 +223,11 @@ function loadCountwiseResult(filterList){
     $('.tbody-compliance').append(clone1);
     $('.tbl_norecords', clone1).text("No Records");
     $('.accordion-content'+count).append(clone1);
-  }
-}
-
-//get part of required data from whole list
-function get_sub_array(object, start, end){
-    if(!end){ end=-1;}
-    return object.slice(start, end);
-}
-
-//show more record process
-function showloadrecord(){
-  startCount = endCount;
-  endCount = startCount + pageSize;
-  var sub_act_list =  finalList;
-  var sub_keys_list = get_sub_array(sub_act_list, startCount, endCount);
-  if(sub_keys_list.length < pageSize){
     $('#pagination').hide();
   }
-  loadCountwiseResult(sub_keys_list);
 }
 
-
-$(function() {
-  $('#pagination').click(function(){
-    $(".loading-indicator-spin").show();
-    if($('.loading-indicator-spin').css('display') != 'none')
-    {
-        setTimeout(function(){  
-            showloadrecord();
-        }, 500);
-        
-    }
-    setTimeout(function(){  
-        $(".loading-indicator-spin").hide();
-    }, 500);
-  });
-});
-
-
 function loadresult() {
-  startCount = 0;
-  endCount = pageSize;
   var c_frequency = $("#compliance_frequency").val();
   if(c_frequency == 'All'){
     finalList = statutoryMappingDataList;
@@ -279,17 +239,33 @@ function loadresult() {
     }
     finalList = filteredList;
   }
-
-  if(finalList.length > pageSize){
-    $('#pagination').show();
-  }else{
-    $('#pagination').hide();
-  }
-
-  var sub_act_list =  finalList;
-  var sub_keys_list = get_sub_array(sub_act_list, startCount, endCount);
-  loadCountwiseResult(sub_keys_list);
+  loadCountwiseResult(finalList);
 }
+
+$('#pagination').click(function(){
+  s_endCount = compliance_count - 1;
+  filterdata["record_count"]=parseInt(s_endCount);
+  displayLoader();
+  function onSuccess(data){
+    statutoryMappingDataList = data["statutory_mappings"];
+    totalRecord = data["total_count"];
+    loadresult();
+    hideLoader();
+  }
+  function onFailure(error){
+    onFailure(error);
+    hideLoader();
+  }
+  mirror.getComplianceTaskReport(filterdata,
+    function (error, response) {
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+    });
+});
 
 //get compliance list report data based on filter selection from api
 $("#submit").click(function(){
@@ -313,36 +289,38 @@ $("#submit").click(function(){
     displayMessage(message.domain_required);
   }
   else{
-      displayLoader();
-      displayMessage("");
-      var filterdata={};
-      filterdata["country_id"]=parseInt(country);
-      filterdata["domain_id"]=parseInt(domain);
-      filterdata["industry_id"]=parseInt(industry);
-      filterdata["statutory_nature_id"]=parseInt(statutorynature);
-      filterdata["geography_id"]=parseInt(geography);
-      filterdata["level_1_statutory_id"]=parseInt(act);
+    displayLoader();
+    displayMessage("");
+    s_endCount = 0;
+    filterdata={};
+    filterdata["country_id"]=parseInt(country);
+    filterdata["domain_id"]=parseInt(domain);
+    filterdata["industry_id"]=parseInt(industry);
+    filterdata["statutory_nature_id"]=parseInt(statutorynature);
+    filterdata["geography_id"]=parseInt(geography);
+    filterdata["level_1_statutory_id"]=parseInt(act);
+    filterdata["record_count"]=parseInt(s_endCount);
 
-      function onSuccess(data){
-        statutoryMappingDataList = data["statutory_mappings"];
-        loadresult();
-        hideLoader();
-      }
-      function onFailure(error){
-        onFailure(error);
-        hideLoader();
-      }
-      mirror.getComplianceTaskReport(filterdata,
-      //mirror.getStatutoryMappingsReportData(filterdata,
-        function (error, response) {
-          if (error == null){
-            onSuccess(response);
-          }
-          else {
-            onFailure(error);
-          }
-        });
-  }
+    function onSuccess(data){
+      statutoryMappingDataList = data["statutory_mappings"];
+      totalRecord = data["total_count"];
+      loadresult();
+      hideLoader();
+    }
+    function onFailure(error){
+      onFailure(error);
+      hideLoader();
+    }
+    mirror.getComplianceTaskReport(filterdata,
+      function (error, response) {
+        if (error == null){
+          onSuccess(response);
+        }
+        else {
+          onFailure(error);
+        }
+      });
+    }
 });
 
 //Autocomplete Script Starts
