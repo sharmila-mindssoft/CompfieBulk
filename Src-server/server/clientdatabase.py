@@ -6079,7 +6079,7 @@ class ClientDatabase(Database):
             self.execute(update_assign)
 
             if history_id is not None :
-                update_history = "UPDATE tbl_compliance_history SET due_date='%s', \
+                update_history = "UPDATE tbl_compliance_history SET  \
                     completed_by = '%s', approved_by = %s"
                 if concurrence not in [None, "None", "null", "Null", 0] :
                     update_qry += " ,concurred_by = %s " % (concurrence)
@@ -6088,7 +6088,7 @@ class ClientDatabase(Database):
                 qry = update_history + where_qry
 
                 update_history = qry % (
-                    due_date, assignee, approval, history_id
+                    assignee, approval, history_id
                 )
                 self.execute(update_history)
 
@@ -6325,14 +6325,14 @@ class ClientDatabase(Database):
                     ) for x in compliance[4].split(",")]
             upcoming_compliances_list.append(
                 core.UpcomingCompliance(
-                    compliance_name = compliance_name,
-                    domain_name = compliance[10],
-                    start_date = self.datetime_to_string(start_date),
-                    due_date = self.datetime_to_string(compliance[0]),
-                    format_file_name = format_files,
-                    unit_name = unit_name,
-                    address = compliance[7],
-                    compliance_description = compliance[3]
+                    compliance_name=compliance_name,
+                    domain_name=compliance[10],
+                    start_date=self.datetime_to_string(start_date),
+                    due_date=self.datetime_to_string(compliance[0]),
+                    format_file_name=format_files,
+                    unit_name=unit_name,
+                    address=compliance[7],
+                    compliance_description=compliance[3]
                 ))
         return upcoming_compliances_list
 
