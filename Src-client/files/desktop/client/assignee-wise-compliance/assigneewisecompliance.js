@@ -12,6 +12,7 @@ var startCount = 0;
 var endCount;
 var sno = 0;
 var fullArrayList = [];
+var s_endCount = 0;
 
 //get reports filter data from api
 function getClientReportFilters(){
@@ -256,7 +257,6 @@ $("#submit").click(function(){
   if($("#division").val() != '') division = $("#division").val();
   if($("#unit").val() != '') unit = $("#unit").val();
   if($("#assignee").val() != '') assignee = $("#assignee").val();
-
   if(country.length == 0){
     displayMessage(message.country_required);
   }
@@ -278,7 +278,7 @@ $("#submit").click(function(){
       function onFailure(error){
         onFailure(error);
       }
-      client_mirror.getAssigneewisecomplianceReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), parseInt(assignee), 
+      client_mirror.getAssigneewisecomplianceReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), parseInt(assignee), s_endCount,
         function (error, response) {
           if (error == null){
             onSuccess(response);
