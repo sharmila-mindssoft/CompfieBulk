@@ -8,13 +8,14 @@ var statutoriesList;
 var complianceFrequencyList;
 var temp_act = null;
 var finalList;
-var pageSize = 500;
-var startCount;
-var endCount;
+
 var count=1;
 var compliance_count=0;
 var lastActName = '';
 var lastOccuranceid = 0;
+var s_endCount = 0;
+var totalRecord;
+var filterdata={};
 
 
 function displayLoader() {
@@ -60,7 +61,7 @@ function getStatutoryMappings(){
 
 //display statutory mapping details accoring to count
 function loadCountwiseResult(filterList){
-  if(startCount <= 0){
+  if(compliance_count <= 0){
     $(".grid-table-rpt").show();
     var country = $("#countryval").val();
     var domain = $("#domainval").val();
@@ -192,22 +193,22 @@ function loadCountwiseResult(filterList){
     lastOccuranceid = frequency_id;
   }
 
-  if(finalList.length > 0){
-    if(endCount > finalList.length) endCount = finalList.length
-    $('.compliance_count').text("Showing " + 1 + " to " + endCount + " of " + finalList.length);
+  if(compliance_count > 0){
+    $('.compliance_count').text("Showing " + 1 + " to " + compliance_count + " of " + totalRecord);
   }else{
     $('.compliance_count').text('');
   }
 
-  if(endCount >= finalList.length){
+   if(compliance_count >= totalRecord){
     $(document).ready(function($) {
-    $('#accordion').find('.accordion-toggle').click(function(){
-      //Expand or collapse this panel
-      $(this).next().slideToggle('fast');
-      //Hide the other panels
-      $(".accordion-content").not($(this).next()).slideUp('fast');
+      $('#accordion').find('.accordion-toggle').click(function(){
+        //Expand or collapse this panel
+        $(this).next().slideToggle('fast');
+        //Hide the other panels
+        $(".accordion-content").not($(this).next()).slideUp('fast');
+      });
     });
-  });
+    $('#pagination').hide();
   }
 
   if(count == 1){
@@ -216,51 +217,15 @@ function loadCountwiseResult(filterList){
     $('.tbody-compliance').append(clone1);
     $('.tbl_norecords', clone1).text("No Records");
     $('.accordion-content'+count).append(clone1);
-  }
-}
-
-function get_sub_array(object, start, end){
-    if(!end){ end=-1;}
-    return object.slice(start, end);
-}
-
-//get part of data from full list according to pagination  
-function showloadrecord(){
-  startCount = endCount;
-  endCount = startCount + pageSize;
-  var sub_act_list =  finalList;
-  var sub_keys_list = get_sub_array(sub_act_list, startCount, endCount);
-  if(sub_keys_list.length < pageSize){
     $('#pagination').hide();
   }
-  //e.preventDefault();
-  loadCountwiseResult(sub_keys_list);
 }
 
-//pagination process
-$(function() {
-  $('#pagination').click(function(){
-    //displayLoader();
-    $(".loading-indicator-spin").show();
-    if($('.loading-indicator-spin').css('display') != 'none')
-    {
-        setTimeout(function(){
-            showloadrecord();
-        }, 500);
 
-    }
-    setTimeout(function(){
-        $(".loading-indicator-spin").hide();
-    }, 500);
-    //hideLoader();
-  });
-});
+
 
 function loadresult() {
-  startCount = 0;
-  endCount = pageSize;
-
-  var c_frequency = $("#compliance_frequency").val();
+  /*var c_frequency = $("#compliance_frequency").val();
   if(c_frequency == 'All'){
     finalList = statutoryMappingDataList;
   }else{
@@ -270,18 +235,35 @@ function loadresult() {
       if (c_frequency == filter_frequency) filteredList.push(statutoryMappingDataList[entity]);
     }
     finalList = filteredList;
-  }
-
-  if(finalList.length > pageSize){
-    $('#pagination').show();
-  }else{
-    $('#pagination').hide();
-  }
-
-  var sub_act_list =  finalList;
-  var sub_keys_list = get_sub_array(sub_act_list, startCount, endCount);
-  loadCountwiseResult(sub_keys_list);
+  }*/
+  loadCountwiseResult(statutoryMappingDataList);
 }
+
+
+$('#pagination').click(function(){
+  s_endCount = compliance_count;
+  filterdata["r_count"]=parseInt(s_endCount);
+  displayLoader();
+  function onSuccess(data){
+    statutoryMappingDataList = data["statutory_mappings"];
+    totalRecord = data["total_count"];
+    loadresult();
+    hideLoader();
+  }
+  function onFailure(error){
+    onFailure(error);
+    hideLoader();
+  }
+  mirror.getStatutoryMappingsReportData(filterdata,
+    function (error, response) {
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+    });
+});
 
 // get statutory mapping report data from api
 $("#submit").click(function(){
@@ -291,12 +273,13 @@ $("#submit").click(function(){
   var statutorynature = null;
   var geography = null;
   var act = null;
-  var compliance_frequency = $("#compliance_frequency").val();
+  var c_frequency = null;
 
   if($("#industry").val() != '') industry = $("#industry").val();
   if($("#statutorynature").val() != '') statutorynature = $("#statutorynature").val();
   if($("#geography").val() != '') geography = $("#geography").val();
   if($("#statutory").val() != '') act = $("#statutory").val();
+  if($("#compliance_frequency").val() != '') c_frequency = $("#compliance_frequency").val();
 
   if(country.length == 0){
     displayMessage(message.country_required);
@@ -305,43 +288,46 @@ $("#submit").click(function(){
     displayMessage(message.domain_required);
   }
   else{
+    count=1;
+    compliance_count=0;
+    lastActName = '';
+    lastOccuranceid = 0;
     displayLoader();
-      var filterdata={};
-      filterdata["c_id"]=parseInt(country);
-      filterdata["d_id"]=parseInt(domain);
-      filterdata["i_id"]=parseInt(industry);
-      filterdata["s_n_id"]=parseInt(statutorynature);
-      filterdata["g_id"]=parseInt(geography);
-      filterdata["level_1_s_id"]=parseInt(act);
+    displayMessage("");
+    s_endCount = 0;
+    filterdata={};
+    filterdata["c_id"]=parseInt(country);
+    filterdata["d_id"]=parseInt(domain);
+    filterdata["i_id"]=parseInt(industry);
+    filterdata["s_n_id"]=parseInt(statutorynature);
+    filterdata["g_id"]=parseInt(geography);
+    filterdata["level_1_s_id"]=parseInt(act);
+    filterdata["r_count"]=parseInt(s_endCount);
 
-      function onSuccess(data){
-        statutoryMappingDataList = data["statutory_mappings"];
-        /*var currentTime = new Date();
-        hour = currentTime.getHours();
-        min  = currentTime.getMinutes();
-        sec  = currentTime.getSeconds();
-        ms = currentTime.getMilliseconds();
-        console.log("API Response: "+ hour + ":" + min + ":" + sec + ":" + ms  );*/
-        loadresult();
-        hideLoader();
-      }
-      function onFailure(error){
-        onFailure(error);
-        hideLoader();
-      }
-
-      mirror.getStatutoryMappingsReportData(filterdata,
-        function (error, response) {
-          if (error == null){
-            onSuccess(response);
-          }
-          else {
-            onFailure(error);
-          }
-        });
-    temp_act = act;
-  }
+    function onSuccess(data){
+      statutoryMappingDataList = data["statutory_mappings"];
+      totalRecord = data["total_count"];
+      loadresult();
+      hideLoader();
+    }
+    function onFailure(error){
+      onFailure(error);
+      hideLoader();
+    }
+    mirror.getStatutoryMappingsReportData(filterdata,
+      function (error, response) {
+        if (error == null){
+          onSuccess(response);
+        }
+        else {
+          onFailure(error);
+        }
+      });
+     temp_act = act;
+    }
 });
+
+
 
 //Autocomplete Script Starts
 
