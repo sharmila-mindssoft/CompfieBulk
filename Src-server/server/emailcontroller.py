@@ -354,6 +354,22 @@ class EmailHandler(Email):
             print e
             print "Email Failed for compliance start ", message
 
+    def notify_auto_deletion(
+        self, receiver, content
+    ):
+        subject = "Deletion Alert"
+
+        message = '''<p>%s </p> \
+                    <p> Thanks & Regards, <br>\
+                    Compfie Support Team''' % content
+        cc_person = None
+        try :
+            self.send_email(receiver, subject, message, cc_person)
+            pass
+        except Exception, e :
+            print e
+            print "Email Failed for compliance start ", message
+
     def notify_to_assignee(
         self, assignee, days_left, compliance_name, unit_name,
         receiver

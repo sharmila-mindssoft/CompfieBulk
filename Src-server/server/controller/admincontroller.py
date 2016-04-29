@@ -30,44 +30,44 @@ def process_admin_request(request, db) :
         return login.InvalidSessionToken()
 
     if type(request_frame) is admin.GetUserGroups:
-        logger.logClientApi("GetUserGroups", " process begin")
+        logger.logKnowledgeApi("GetUserGroups", " process begin")
         result = get_user_groups(db, request_frame, session_user)
-        logger.logClientApi("GetUserGroups", "process end")
+        logger.logKnowledgeApi("GetUserGroups", "process end")
 
     if type(request_frame) is admin.SaveUserGroup:
-        logger.logClientApi("SaveUserGroup", "process begin")
+        logger.logKnowledgeApi("SaveUserGroup", "process begin")
         result = save_user_group(db, request_frame, session_user)
-        logger.logClientApi("SaveUserGroup", "process end")
+        logger.logKnowledgeApi("SaveUserGroup", "process end")
 
     if type(request_frame) is admin.UpdateUserGroup:
-        logger.logClientApi("UpdateUserGroup", "process begin")
+        logger.logKnowledgeApi("UpdateUserGroup", "process begin")
         result = update_user_group(db, request_frame, session_user)
-        logger.logClientApi("UpdateUserGroup", "process end")
+        logger.logKnowledgeApi("UpdateUserGroup", "process end")
 
     if type(request_frame) is admin.ChangeUserGroupStatus:
-        logger.loginClientApi("ChangeUserGroupStatus", "process begin")
+        logger.logKnowledgeApi("ChangeUserGroupStatus", "process begin")
         result = change_user_group_status(db, request_frame, session_user)
-        logger.loginClientApi("ChangeUserGroupStatus", "process end")
+        logger.logKnowledgeApi("ChangeUserGroupStatus", "process end")
 
     if type(request_frame) is admin.GetUsers:
-        logger.loginClientApi("GetUsers", "process begin")
+        logger.logKnowledgeApi("GetUsers", "process begin")
         result = get_users(db, request_frame, session_user)
-        logger.loginClientApi("ChangeUserGroupStatus", "process end")
+        logger.logKnowledgeApi("ChangeUserGroupStatus", "process end")
 
     if type(request_frame) is admin.SaveUser:
-        logger.loginClientApi("SaveUser", "process begin")
+        logger.logKnowledgeApi("SaveUser", "process begin")
         result = save_user(db, request_frame, session_user)
-        logger.loginClientApi("SaveUser", "process end")
+        logger.logKnowledgeApi("SaveUser", "process end")
 
     if type(request_frame) is admin.UpdateUser:
-        logger.loginClientApi("UpdateUser", "process begin")
+        logger.logKnowledgeApi("UpdateUser", "process begin")
         result = update_user(db, request_frame, session_user)
-        logger.loginClientApi("UpdateUser", "process end")
+        logger.logKnowledgeApi("UpdateUser", "process end")
 
     if type(request_frame) is admin.ChangeUserStatus:
-        logger.loginClientApi("ChangeUserStatus", "process begin")
+        logger.logKnowledgeApi("ChangeUserStatus", "process begin")
         result = change_user_status(db, request_frame, session_user)
-        logger.loginClientApi("ChangeUserStatus", "process begin")
+        logger.logKnowledgeApi("ChangeUserStatus", "process end")
     return result
 
 

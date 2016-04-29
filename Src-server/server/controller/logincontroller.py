@@ -18,22 +18,34 @@ __all__ = [
 
 def process_login_request(request, db, session_user_ip) :
     if type(request) is login.Login:
+        logger.logKnowledgeApi("Login", "process begin")
         result = process_login(db, request, session_user_ip)
+        logger.logKnowledgeApi("Login", "process end")
 
     if type(request) is login.ForgotPassword :
+        logger.logKnowledgeApi("ForgotPassword", "process begin")
         result = process_forgot_password(db, request)
+        logger.logKnowledgeApi("ForgotPassword", "process end")
 
     if type(request) is login.ResetTokenValidation :
+        logger.logKnowledgeApi("ResetTokenValidation", "process begin")
         result = process_reset_token(db, request)
+        logger.logKnowledgeApi("ResetTokenValidation", "process end")
 
     if type(request) is login.ResetPassword :
+        logger.logKnowledgeApi("ResetPassword", "process begin")
         result = process_reset_password(db, request)
+        logger.logKnowledgeApi("ResetPassword", "process end")
 
     if type(request) is login.ChangePassword :
+        logger.logKnowledgeApi("ChangePassword", "process begin")
         result = process_change_password(db, request)
+        logger.logKnowledgeApi("ChangePassword", "process end")
 
     if type(request) is login.Logout:
+        logger.logKnowledgeApi("Logout", "process begin")
         result = process_logout(db, request)
+        logger.logKnowledgeApi("Logout", "process end")
 
     return result
 
@@ -168,6 +180,3 @@ def process_change_password(db, request):
 
 def process_logout(db, request):
     return login.LogoutSuccess()
-
-
-

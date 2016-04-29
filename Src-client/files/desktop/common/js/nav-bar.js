@@ -167,6 +167,19 @@ function initializeNavBar () {
     }
 }
 
+
+
+function showDeletionPopup(notification_text){
+    $('.overlay').css("visibility","visible");
+    $('.overlay').css("opacity","1");
+    $("#msg").html(notification_text);
+    $('.close').click(function(){
+        console.log("Close clicked");
+        $('.overlay').css("visibility","hidden");
+        $('.overlay').css("opacity","0");
+    });
+}
+
 function get_notification_count(){
     client_mirror.checkContractExpiration(function (status, data) {
             if (data == null) {
@@ -186,9 +199,16 @@ function get_notification_count(){
                 notification_count = data.notification_count;
                 reminder_count = data.reminder_count;
                 escalation_count = data.escalation_count;
+                var show_popup = data.show_popup;
+                var notification_text = data.notification_text
                 $("#notification_count").text(notification_count);
                 $("#reminder_count").text(reminder_count);
                 $("#escalation_count").text(escalation_count);
+                if(show_popup){
+                    console.log(notification_text);
+                    showDeletionPopup(notification_text)
+                }
+
             }
         }
     )

@@ -68,7 +68,9 @@ from protocol.parse_structure import (
     parse_structure_VectorType_CustomTextType_500,
     parse_structure_OptionalType_CustomTextType_100,
     parse_structure_OptionalType_VectorType_CustomTextType_500,
-    parse_structure_MapType_CustomTextType_250_VectorType_RecordType_dashboard_Compliance
+    parse_structure_MapType_CustomTextType_250_VectorType_RecordType_dashboard_Compliance,
+    parse_structure_OptionalType_Bool,
+    parse_structure_UnsignedIntegerType_32
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -827,19 +829,22 @@ class GetTrendChartSuccess(Response):
 
 class CheckContractExpirationSuccesss(Response):
     def __init__(
-        self, no_of_days_left, notification_count, reminder_count, escalation_count
+        self, no_of_days_left, notification_count, reminder_count,
+        escalation_count, show_popup, notification_text
     ):
         self.no_of_days_left = no_of_days_left
         self.notification_count = notification_count
         self.reminder_count = reminder_count
         self.escalation_count = escalation_count
+        self.show_popup = show_popup
+        self.notification_text = notification_text
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
                 "no_of_days_left", "notification_count", "reminder_count",
-                "escalation_count"
+                "escalation_count", "show_popup", "notification_text"
             ]
         )
         no_of_days_left = data.get("no_of_days_left")
@@ -850,8 +855,13 @@ class CheckContractExpirationSuccesss(Response):
         reminder_count = parse_structure_UnignedIntegerType_32(reminder_count)
         escalation_count = data.get("escalation_count")
         escalation_count = parse_structure_UnignedIntegerType_32(escalation_count)
+        show_popup = data.get("show_popup")
+        show_popup = parse_structure_OptionalType_Bool(show_popup)
+        notification_text = data.get("notification_text")
+        notification_text = parse_structure_Text(notification_text)
         return CheckContractExpirationSuccesss(
-            no_of_days_left, notification_count, reminder_count, escalation_count
+            no_of_days_left, notification_count, reminder_count, escalation_count,
+            show_popup, notification_text
         )
 
     def to_inner_structure(self):
@@ -860,6 +870,8 @@ class CheckContractExpirationSuccesss(Response):
             "notification_count": to_structure_UnsignedIntegerType_32(self.notification_count),
             "reminder_count": to_structure_UnsignedIntegerType_32(self.reminder_count),
             "escalation_count": to_structure_UnsignedIntegerType_32(self.escalation_count),
+            "show_popup": to_structure_Bool(self.show_popup),
+            "notification_text": to_structure_Text(self.notification_text)
         }
 
 class GetComplianceApplicabilityStatusChartSuccess(Response):

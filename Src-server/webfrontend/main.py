@@ -49,6 +49,7 @@ def send_bad_request(response, custom_text=None):
         logger.logWebfront("invalid json format")
         response.send("invalid json format")
     else:
+        logger.logWebfront(response)
         logger.logWebfront(custom_text)
         response.send(custom_text)
 
@@ -223,11 +224,11 @@ def run_web_front_end(port, knowledge_server_address):
 
         src_server_path = os.path.join(ROOT_PATH, "Src-server")
         server_path = os.path.join(src_server_path, "server")
-        process_path = os.path.join(src_server_path, "processes")
         format_path = os.path.join(server_path, "knowledgeformat")
         reports_path = os.path.join(ROOT_PATH, "exported_reports")
         client_docs_path = os.path.join(ROOT_PATH, "clientdocuments")
-        expiry_download = os.path.join(process_path, "expired")
+        expiry_download = os.path.join(src_server_path, "expired")
+        seven_year_data_download = os.path.join(src_server_path, "seven_years_before_data")
 
         web_server.low_level_url(
             r"/client/compliance_format/(.*)",
@@ -250,6 +251,12 @@ def run_web_front_end(port, knowledge_server_address):
             r"/download/bkup/(.*)",
             StaticFileHandler,
             dict(path=expiry_download)
+        )
+
+        web_server.low_level_url(
+            r"/download_7_year_data/bkup/(.*)", 
+            StaticFileHandler,
+            dict(path=seven_year_data_download)
         )
 
         static_path = os.path.join(ROOT_PATH, "Src-client")

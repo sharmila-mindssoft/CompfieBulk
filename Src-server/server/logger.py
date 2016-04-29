@@ -4,8 +4,9 @@ ROOTPATH = ""
 knowledge_log_path = "logs/knowledge/knowledge-log"
 client_log_path = "logs/client/client-log"
 client_login_log_path = "logs/client/login-log"
-webfront_log_path = "logs/webfront_log"
-trace_log_path = "logs/client/trace_log"
+webfront_log_path = "logs/webfront-log"
+trace_log_path = "logs/client/trace-log"
+know_trace_log_path = "logs/knowledge/trace-log"
 
 knowledge_log_format = logging.Formatter("%(asctime)s - %(name)s - %(message)s")
 rotateFileHandler = logging.handlers.TimedRotatingFileHandler(
@@ -113,3 +114,21 @@ traceLogger.addHandler(trotateFileHandler)
 def logClientApi(callername, message):
     log_message = "%s: %s" % (callername, message)
     traceLogger.info(log_message)
+
+know_trace_log_format = logging.Formatter("%(asctime)s - %(name)s - %(message)s")
+knowrotateFileHandler = logging.handlers.RotatingFileHandler(
+    know_trace_log_path,
+    maxBytes=102400,
+    backupCount=10
+)
+knowrotateFileHandler.suffix = "%Y-%m-%d"
+knowrotateFileHandler.setFormatter(know_trace_log_format)
+knowrotateFileHandler.setLevel(logging.INFO)
+
+knowtraceLogger = logging.getLogger("know_trace_log")
+knowtraceLogger.setLevel(logging.INFO)
+knowtraceLogger.addHandler(knowrotateFileHandler)
+
+def logKnowledgeApi(callername, message):
+    log_message = "%s: %s" % (callername, message)
+    knowtraceLogger.info(log_message)

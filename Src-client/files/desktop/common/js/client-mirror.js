@@ -164,7 +164,12 @@ function initClientMirror() {
                     // alert("jqXHR:"+jqXHR.status);
                     // alert("textStatus:"+textStatus);
                     // alert("errorThrown:"+errorThrown);
-                    // callback(error, null);
+                    if (errorThrown == "Not Found"){
+                        alert("Server connection not found");
+                        redirect_login();
+                    }
+                    else
+                        callback(jqXHR["responseText"], errorThrown)
                 }
         );
     }
