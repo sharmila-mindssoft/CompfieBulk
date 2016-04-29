@@ -398,6 +398,9 @@ $("#btn-clientgroup-submit").click(function(){
             else if(error == 'InvalidNoOfLicence'){
                 displayMessage(message.invalid_no_of_licence); 
             }
+            else if(error == 'InvalidFileSpace'){
+                displayMessage(message.invalid_file_space); 
+            }
             else{
                 displayMessage(error);   
             }

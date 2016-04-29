@@ -88,6 +88,9 @@ function loadaudittrail(tempadlist){
         $('.username', clone).text(getUserName(value['user_id']));
         $('.datetime', clone).text(value['date']);
         var dispFormname = 'Login';
+        if (value['action'].indexOf('password') >= 0){
+            dispFormname = 'Change Password'
+        }
         if(value['form_id'] != 0){
             dispFormname = getFormName(value['form_id']);
         }

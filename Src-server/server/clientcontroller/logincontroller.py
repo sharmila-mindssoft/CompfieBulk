@@ -159,7 +159,7 @@ def user_login_response(db, data, client_id, ip):
     form_ids = data["form_ids"]
     is_promoted_admin = int(data["is_admin"])
     if is_promoted_admin == 1:
-        form_ids = "%s, 3, 4, 6, 7, 8" % (form_ids)
+        form_ids = "%s, 3, 4, 6, 7, 8, 24" % (form_ids)
         form_ids_list = form_ids.split(",")
         if 1 not in form_ids_list:
             form_ids_list.append(1)

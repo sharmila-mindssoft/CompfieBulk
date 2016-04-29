@@ -1319,6 +1319,19 @@ class InvalidNoOfLicence(Response):
         return {
         }
 
+class InvalidFileSpace(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidFileSpace()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 def _init_Response_class_map():
     classes = [
         GetClientGroupsSuccess, SaveClientGroupSuccess, GroupNameAlreadyExists,
@@ -1331,7 +1344,7 @@ def _init_Response_class_map():
         InvalidUnitId, UserIsNotResponsibleForAnyClient, ClientCreationFailed,
         CannotDeactivateCountry, CannotDeactivateDomain, CreateNewAdminSuccess,
         ClientDatabaseNotExists, CannotDeactivateClient, ReassignFirst,
-        InvalidNoOfLicence
+        InvalidNoOfLicence, InvalidFileSpace
     ]
     class_map = {}
     for c in classes:
