@@ -3116,7 +3116,7 @@ class ClientDatabase(Database):
                 group_by_name,
                 group_by_name
             )
-        print query
+
         rows = self.select_all(query)
         columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
         return filter_ids, self.convert_to_dict(rows, columns)
@@ -5858,10 +5858,11 @@ class ClientDatabase(Database):
 
     def get_user_wise_compliance(self, session_user, client_id):
         # upcoming compliance
+        admin_id = self.get_admin_id()
         result = []
-        user_id = session_user
-        if session_user == 0 :
-            user_id = '%'
+        user_qry = ""
+        if session_user > 0 and session_user != admin_id :
+            user_qry = " AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id like '%s')" % session_user
 
         upcoming = "SELECT distinct t1.compliance_id, t1.unit_id, t1.statutory_dates, t1.assignee, \
             t1.due_date, t1.validity_date, t2.compliance_task, t2.document_name, t2.compliance_description, \
@@ -5883,7 +5884,7 @@ class ClientDatabase(Database):
                 TA.is_active = 1 \
                 AND IFNULL(TC.approve_status, 0) != 1 \
             ) \
-            AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id like '%s') " % (user_id)
+            %s " % (user_qry)
 
         columns = [
             "compliance_id", "unit_id", "statutory_dates",
@@ -5910,7 +5911,7 @@ class ClientDatabase(Database):
             INNER JOIN tbl_compliances t2 on tc.compliance_id = t2.compliance_id AND t2.is_active = 1 \
             INNER JOIN tbl_units t3 on t3.unit_id = tc.unit_id \
             WHERE IFNULL(tc.approve_status, 0) != 1 \
-            AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id like '%s') " % (user_id)
+            %s " % (user_qry)
         rows = self.select_all(ongoing)
         result.extend(self.convert_to_dict(rows, columns))
         return self.return_compliance_to_reassign(result)

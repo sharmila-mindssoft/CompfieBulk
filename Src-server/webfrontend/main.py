@@ -49,6 +49,7 @@ def send_bad_request(response, custom_text=None):
         logger.logWebfront("invalid json format")
         response.send("invalid json format")
     else:
+        logger.logWebfront(response)
         logger.logWebfront(custom_text)
         response.send(custom_text)
 
