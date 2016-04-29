@@ -278,7 +278,7 @@ class ClientDatabase(Database):
         if self.is_primary_admin(user_id) or user_id == 0:
             result = self.update(
                 self.tblAdmin, columns, values, "1", client_id
-            )  
+            )
         if user_id != 0:
             columns = "employee_code, employee_name"
             condition = "user_id = '%d'" % user_id
@@ -1372,7 +1372,7 @@ class ClientDatabase(Database):
             )
             user_ids = rows[0][0]
             condition = "user_id in (%s)" % user_ids
-        
+
         columns = "user_id, form_id, action, created_on"
         condition += " ORDER BY activity_log_id DESC"
         rows = self.get_data(
@@ -5692,7 +5692,7 @@ class ClientDatabase(Database):
         condition = "1"
         self.update(self.tblClientGroups, columns, values, condition, client_id)
 
-        action = "Settings Updated" 
+        action = "Settings Updated"
         self.save_activity(0, 25, action)
 
 #
@@ -8867,4 +8867,5 @@ class ClientDatabase(Database):
                     return False, ""
             else:
                 return False, ""
-
+        else :
+            return False, ""
