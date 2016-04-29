@@ -179,12 +179,12 @@ def get_assigneewise_compliance(db, request, session_user):
     from_count = request.record_count
     to_count = request.to_count
 
-    assignee_wise_compliances_list = db.report_assigneewise_compliance(
+    assignee_wise_compliances_list, total_count = db.report_assigneewise_compliance(
         country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, user_id, session_user,
         from_count, to_count
     )
-    return clientreport.GetAssigneewisecomplianceReportSuccess(assignee_wise_compliances_list)
+    return clientreport.GetAssigneewisecomplianceReportSuccess(assignee_wise_compliances_list, total_count)
 
 def get_serviceprovider_report_filters(db, request, session_user):
     user_company_info = db.get_user_company_details(session_user)
