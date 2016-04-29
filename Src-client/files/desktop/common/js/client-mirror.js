@@ -960,7 +960,7 @@ function initClientMirror() {
                 "unit_id": unit_id,
                 "user_id": user_id,
                 "record_count": record_count
-            }
+          	}
         ];
         callerName = "client_reports";
         clientApiRequest(callerName, request, callback);

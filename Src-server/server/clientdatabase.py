@@ -4243,7 +4243,7 @@ class ClientDatabase(Database):
             "business_group", "legal_entity", "division",
             "unit_code", "unit_name", "frequency",
             "duration_type", "repeat_type", "duration",
-            "repeat_every", "from_count", "to_count"
+            "repeat_every"
         ]
         qry_where = ""
         admin_id = self.get_admin_id()
@@ -4273,11 +4273,12 @@ class ClientDatabase(Database):
         " % (
             qry_where
         )
+
         row = self.select_one(q_count)
         if row :
-            count = 0
-        else :
             count = row[0]
+        else :
+            count = 0 
 
         q = " SELECT  \
             ac.country_id, ac.unit_id, ac.compliance_id, ac.statutory_dates ,\
@@ -4314,7 +4315,7 @@ class ClientDatabase(Database):
             %s \
         ORDER BY u.legal_entity_id, ac.assignee, u.unit_id \
         limit %s, %s" % (
-            qry_where, from_count, count
+            qry_where, from_count, to_count
         )
         rows = self.select_all(q)
         data = self.convert_to_dict(rows, columns)
@@ -4386,9 +4387,9 @@ class ClientDatabase(Database):
                     for u in user_wise_list :
                         print d["assignee_name"]
                         if (
-                            d["assignee_name"].lower() == u.assignee.lower() and
-                            d["concurrence_name"].lower() == u.concurrence_person.lower() and
-                            d["approval_name"].lower() == u.approval_person.lower()
+                            d["assignee_name"] == u.assignee and
+                            d["concurrence_name"] == u.concurrence_person and
+                            d["approval_name"] == u.approval_person
                         ):
                             lst = u.compliances
                             if lst is None :

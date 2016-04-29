@@ -6,13 +6,20 @@ var legalEntitiesList;
 var divisionsList
 var unitsList;
 var assigneesList;
-var finalList;
-var pageSize = 500;
-var startCount = 0;
-var endCount;
+
+
 var sno = 0;
 var fullArrayList = [];
+
 var s_endCount = 0;
+var totalRecord;
+var lastBG = '';
+var lastLE = '';
+var lastDV = '';
+var lastAssignee = '';
+var lastConcurrence = '';
+var lastApproval = '';
+
 
 //get reports filter data from api
 function getClientReportFilters(){
@@ -43,27 +50,36 @@ function getClientReportFilters(){
 
 //display businessgroup details
 function bgList(data){
-  var country = $("#country").find('option:selected').text();
-  var domain = $("#domainval").val();
-  $(".country").text(country);
-  $(".domain").text(domain);
-  var tableRow=$('#assignee-list-templates .table-assignee-list .table-row-assignee-list');
-  var clone=tableRow.clone();
-  $('.tbl_country', clone).text(country);
-  $('.tbl_domain', clone).text(domain);
   var bg = '-';
   if(data["business_group_name"] != null) bg = data["business_group_name"];
-  $('.tbl_businessgroup', clone).text(bg);
   var dv = '-';
   if( data["division_name"] != null) dv = data["division_name"];
-  $('.tbl_division', clone).text(dv);
-  $('.tbl_businessgroup', clone).text(bg);
-  $('.tbl_division', clone).text(dv);
-  $('.tbl_legalentity', clone).text(data["legal_entity_name"]);
-  $('.tbody-assignee').append(clone);
-  var tableRow1=$('#assignee-head-templates .table-assignee-head .table-row-assignee-head');
-  var clone1=tableRow1.clone();
-  $('.tbody-assignee').append(clone1);
+  var le = data["legal_entity_name"];
+
+  if(lastBG != bg || lastLE != le || lastDv != dv){
+    var country = $("#country").find('option:selected').text();
+    var domain = $("#domainval").val();
+    $(".country").text(country);
+    $(".domain").text(domain);
+    var tableRow=$('#assignee-list-templates .table-assignee-list .table-row-assignee-list');
+    var clone=tableRow.clone();
+    $('.tbl_country', clone).text(country);
+    $('.tbl_domain', clone).text(domain);
+    $('.tbl_division', clone).text(dv);
+    $('.tbl_businessgroup', clone).text(bg);
+    $('.tbl_division', clone).text(dv);
+    $('.tbl_legalentity', clone).text(le);
+    $('.tbody-assignee').append(clone);
+    var tableRow1=$('#assignee-head-templates .table-assignee-head .table-row-assignee-head');
+    var clone1=tableRow1.clone();
+    $('.tbody-assignee').append(clone1);
+    lastBG = bg;
+    lastDv = dv;
+    lastLE = le;
+    lastAssignee = '';
+    lastConcurrence = '';
+    lastApproval = '';
+  }
 }
 
 //display assignee details
@@ -72,12 +88,21 @@ function assigneeList(data){
   var concurrence = data["concurrence_person"];
   var approval_ = data["approval_person"];
   if(concurrence == null) concurrence = 'Nil';
-  var tableRow2=$('#assignee-name-templates .table-assignee-name .table-row-assignee-name');
-  var clone2=tableRow2.clone();
-  $('.tbl_assigneeheading', clone2).html('Assignee: ' + assignee_);
-  $('.tbl_concurrenceheading', clone2).html('concurrence: ' + concurrence);
-  $('.tbl_approvalheading', clone2).html('Approval: ' + approval_);
-  $('.tbody-assignee').append(clone2);
+
+  if(lastAssignee != assignee_ || lastConcurrence != concurrence || lastApproval != approval_){
+
+    var tableRow2=$('#assignee-name-templates .table-assignee-name .table-row-assignee-name');
+    var clone2=tableRow2.clone();
+    $('.tbl_assigneeheading', clone2).html('Assignee: ' + assignee_);
+    $('.tbl_concurrenceheading', clone2).html('concurrence: ' + concurrence);
+    $('.tbl_approvalheading', clone2).html('Approval: ' + approval_);
+    $('.tbody-assignee').append(clone2);
+    lastAssignee = assignee_;
+    lastConcurrence = concurrence;
+    lastApproval = approval_;
+
+  }
+  
 }
 
 //display compliance details
@@ -128,58 +153,13 @@ function complianceListArray(data){
   sno++;
 }
 
-function get_sub_array(object, start, end){
-  if(!end){ end = -1;}
-  return object.slice(start, end);
-}
-
-//display report data based on array
-function showloadrecord() {
-  startCount = endCount;
-  endCount = startCount + pageSize;
-  var sub_keys_list = get_sub_array(fullArrayList, startCount, endCount);
-  if(sub_keys_list.length < pageSize){
-      $('#pagination').hide();
-  }
-  for(var y = 0;  y < pageSize; y++){
-    if(sub_keys_list[y] !=  undefined){
-      if(Object.keys(sub_keys_list[y])[0] == "division_name"){
-        bgList(sub_keys_list[y]);
-      }    
-      else if(Object.keys(sub_keys_list[y])[0] == "assignee"){
-        assigneeList(sub_keys_list[y]);
-      }
-      else if(Object.keys(sub_keys_list[y])[0] == "due_date"){
-        complianceListArray(sub_keys_list[y]);
-      } 
-    } 
-  }
-}
-
-//pagination process
-$(function() {
-    $('#pagination').click(function(e){
-        $(".loading-indicator-spin").show();
-        if($('.loading-indicator-spin').css('display') != 'none')
-        {
-          setTimeout(function(){  
-              showloadrecord();
-          }, 500);
-        }
-        setTimeout(function(){  
-            $(".loading-indicator-spin").hide();
-        }, 500);
-    });
-});
 
 function loadArray(complianceList) {   
-  endCount = pageSize;
   $.each(complianceList, function(i, val){
       var list = complianceList[i];
       var list_unit = val["user_wise_compliance"]
       delete val["unit_wise_compliances"];         
       fullArrayList.push(list);
-
       $.each(list_unit, function(i1, val1){
         var list_c = list_unit[i1];
         var list_compliances = val1['compliances'];
@@ -193,16 +173,9 @@ function loadArray(complianceList) {
     });
   });
 
-  var totallist = fullArrayList.length;
-  if(totallist > pageSize){
-    $('#pagination').show();
-  }
-  else{
-    $('#pagination').hide();
-  }
-  var sub_keys_list = get_sub_array(fullArrayList, startCount, endCount);
+  var sub_keys_list = fullArrayList;
   //filterList();
-  for(var y = 0;  y < pageSize; y++){
+  for(var y = 0;  y < fullArrayList.length; y++){
     if(sub_keys_list[y] !=  undefined){
       if(Object.keys(sub_keys_list[y])[0] == "division_name"){
         bgList(sub_keys_list[y]);
@@ -215,32 +188,61 @@ function loadArray(complianceList) {
       } 
     } 
   }
-}
 
-//get total compliance count from list
-function loadTotalCount(complianceList){
-  $("#pagination").hide();
-  var totalrecords = 0;
-  $(".tbody-assignee").find("tbody").remove();
-
-  $.each(complianceList, function(i, val){
-    var ucList = val['user_wise_compliance'];
-    $.each(ucList, function(i1, val1){
-        var complianceCount =val1['compliances'].length;
-        totalrecords = totalrecords + complianceCount;    
-    });       
-  }); 
-
-  loadArray(complianceList);    
-  $('.compliance_count').text("Total : "+ totalrecords +" records");
-
-  if(totalrecords == 0){
+  if(totalRecord == 0){
     var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
     var clone4=tableRow4.clone();
     $('.no_records', clone4).text('No Compliance Found');
     $('.tbody-assignee').append(clone4);
+    $('#pagination').hide();
+    $('.compliance_count').text('');
+  }else{
+    $('.compliance_count').text("Showing " + 1 + " to " + sno + " of " + totalRecord);
+    if(sno >= totalRecord){
+      $('#pagination').hide();
+    }else{
+      $('#pagination').show();
+    }
   }
 }
+
+//pagination process
+$('#pagination').click(function(){
+  s_endCount = sno;
+  var country = $("#country").val();
+  var domain = $("#domain").val();
+  var businessgroup = null;
+  var legalentity = null;
+  var division = null;
+  var unit = null;
+  var assignee = null;
+  if($("#businessgroup").val() != '') businessgroup = $("#businessgroup").val();
+  if($("#legalentity").val() != '') legalentity = $("#legalentity").val();
+  if($("#division").val() != '') division = $("#division").val();
+  if($("#unit").val() != '') unit = $("#unit").val();
+  if($("#assignee").val() != '') assignee = $("#assignee").val();
+
+  fullArrayList = [];
+  clearMessage();
+
+  function onSuccess(data){
+    assigneeWiseComplianceList = data["compliance_list"];
+    totalRecord = data["total_count"];
+    loadArray(assigneeWiseComplianceList);
+  }
+  function onFailure(error){
+    onFailure(error);
+  }
+  client_mirror.getAssigneewisecomplianceReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), parseInt(assignee), s_endCount,
+    function (error, response) {
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+    });
+});
 
 //get report data from api
 $("#submit").click(function(){ 
@@ -257,6 +259,18 @@ $("#submit").click(function(){
   if($("#division").val() != '') division = $("#division").val();
   if($("#unit").val() != '') unit = $("#unit").val();
   if($("#assignee").val() != '') assignee = $("#assignee").val();
+  $(".tbody-assignee").find("tbody").remove();
+  lastAssignee = '';
+  lastConcurrence = '';
+  lastApproval = '';
+  lastBG = '';
+  lastLE = '';
+  lastDv = '';
+  sno = 0;
+  fullArrayList = [];
+  clearMessage();
+  $(".grid-table-rpt").show();
+
   if(country.length == 0){
     displayMessage(message.country_required);
   }
@@ -266,14 +280,8 @@ $("#submit").click(function(){
   else{
       function onSuccess(data){
         assigneeWiseComplianceList = data["compliance_list"];
-
-        fullArrayList = [];
-        clearMessage();
-        sno = 0;
-        startCount = 0;
-        endCount = 0;
-        $(".grid-table-rpt").show();
-        loadTotalCount(assigneeWiseComplianceList);
+        totalRecord = data["total_count"];
+        loadArray(assigneeWiseComplianceList);
       }
       function onFailure(error){
         onFailure(error);
