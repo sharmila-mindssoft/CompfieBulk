@@ -176,8 +176,12 @@ class Database(object) :
     def select_all(self, query) :
         cursor = self.cursor()
         assert cursor is not None
-        cursor.execute(query)
-        return cursor.fetchall()
+        try:
+            cursor.execute(query)
+            return cursor.fetchall()
+        except Exception, e:
+            logger.logClientApi(e)
+            return
 
     ########################################################
     # To execute select query
