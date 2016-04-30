@@ -266,7 +266,7 @@ def save_in_compliance_history(
         )
         print "new task saved in history (unit_id, compliance_id, start_date) %s, %s, %s" % (unit_id, compliance_id, start_date)
         query = "INSERT INTO tbl_compliance_history (%s) \
-            VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s, %s) " % values
+            VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s) " % values
 
     else :
         columns = "compliance_history_id, unit_id, compliance_id, \
@@ -278,7 +278,7 @@ def save_in_compliance_history(
 
         print "new task saved in history (unit_id, compliance_id, start_date) %s, %s, %s" % (unit_id, compliance_id, start_date)
         query = "INSERT INTO tbl_compliance_history (%s) \
-            VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s) " % values
+            VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s) " % values
 
     cursor = db.cursor()
     cursor.execute(query)
