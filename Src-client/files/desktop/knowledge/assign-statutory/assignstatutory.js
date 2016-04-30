@@ -834,7 +834,6 @@ function saveorsubmit(submissionType){
           statutoriesCount++;
       }
     }
-
     actCount++;
     assignedstatutoriesData = mirror.assignedStatutories(level1StatutoryId,compliances, applicableStatus, notApplicableRemarks);
     assignedStatutories.push(assignedstatutoriesData);
@@ -846,6 +845,7 @@ function saveorsubmit(submissionType){
       getAssignedStatutories ();
       hideLoader();
       $(".listfilter").val('');
+      $(".filter-text-box").val('');
       $("#assignstatutory-add").hide();
       $("#assignstatutory-view").show();
       $('ul.setup-panel li:eq(0)').addClass('active');

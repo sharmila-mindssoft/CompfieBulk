@@ -4286,11 +4286,12 @@ class ClientDatabase(Database):
             country_id, domain_id,
             qry_where
         )
+
         row = self.select_one(q_count)
         if row :
-            count = 0
-        else :
             count = row[0]
+        else :
+            count = 0 
 
         q = " SELECT  \
             ac.country_id, ac.unit_id, ac.compliance_id, ac.statutory_dates ,\
