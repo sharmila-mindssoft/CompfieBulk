@@ -474,7 +474,11 @@ class GetAssigneewisecomplianceReport(Request):
 
 
 class GetUnitwisecomplianceReport(Request):
-    def __init__(self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id):
+    def __init__(
+        self, country_id, domain_id, business_group_id,
+        legal_entity_id, division_id, unit_id, user_id,
+        record_count
+    ):
         self.country_id = country_id
         self.domain_id = domain_id
         self.business_group_id = business_group_id
@@ -482,10 +486,15 @@ class GetUnitwisecomplianceReport(Request):
         self.division_id = division_id
         self.unit_id = unit_id
         self.user_id = user_id
+        self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "business_group_id", "legal_entity_id", "division_id", "unit_id", "user_id"])
+        data = parse_dictionary(data, [
+            "country_id", "domain_id", "business_group_id",
+            "legal_entity_id", "division_id", "unit_id",
+            "user_id", "record_count"
+        ])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
@@ -500,7 +509,12 @@ class GetUnitwisecomplianceReport(Request):
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         user_id = data.get("user_id")
         user_id = parse_structure_OptionalType_SignedIntegerType_8(user_id)
-        return GetUnitwisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id)
+        record_count = data.get("record_count")
+        record_count = parse_structure_UnsignedIntegerType_32(record_count)
+        return GetUnitwisecomplianceReport(
+            country_id, domain_id, business_group_id, legal_entity_id,
+            division_id, unit_id, user_id, record_count
+        )
 
     def to_inner_structure(self):
         return {
@@ -511,6 +525,7 @@ class GetUnitwisecomplianceReport(Request):
             "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
             "user_id": to_structure_OptionalType_SignedIntegerType_8(self.user_id),
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
 class GetReassignComplianceTaskReportFilters(Request):
