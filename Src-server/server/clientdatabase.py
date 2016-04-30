@@ -4275,7 +4275,7 @@ class ClientDatabase(Database):
                 )" % int(session_user)
 
         q_count = " SELECT  \
-            count(distinct ac.compliance_id) \
+            count(ac.compliance_id) \
         FROM tbl_assigned_compliances ac \
             INNER JOIN tbl_units u on ac.unit_id = u.unit_id \
             INNER JOIN tbl_compliances c on ac.compliance_id = c.compliance_id \

@@ -6,8 +6,6 @@ var legalEntitiesList;
 var divisionsList
 var unitsList;
 var assigneesList;
-
-
 var sno = 0;
 var fullArrayList = [];
 
@@ -20,6 +18,13 @@ var lastAssignee = '';
 var lastConcurrence = '';
 var lastApproval = '';
 
+
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
 
 //get reports filter data from api
 function getClientReportFilters(){
@@ -208,6 +213,7 @@ function loadArray(complianceList) {
 
 //pagination process
 $('#pagination').click(function(){
+  displayLoader();
   s_endCount = sno;
   var country = $("#country").val();
   var domain = $("#domain").val();
@@ -229,9 +235,11 @@ $('#pagination').click(function(){
     assigneeWiseComplianceList = data["compliance_list"];
     totalRecord = data["total_count"];
     loadArray(assigneeWiseComplianceList);
+    hideLoader();
   }
   function onFailure(error){
     onFailure(error);
+    hideLoader();
   }
   client_mirror.getAssigneewisecomplianceReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), parseInt(assignee), s_endCount,
     function (error, response) {
@@ -246,6 +254,8 @@ $('#pagination').click(function(){
 
 //get report data from api
 $("#submit").click(function(){ 
+  displayLoader();
+
   var country = $("#country").val();
   var domain = $("#domain").val();
   var businessgroup = null;
@@ -260,6 +270,7 @@ $("#submit").click(function(){
   if($("#unit").val() != '') unit = $("#unit").val();
   if($("#assignee").val() != '') assignee = $("#assignee").val();
   $(".tbody-assignee").find("tbody").remove();
+  $('.compliance_count').text('');
   lastAssignee = '';
   lastConcurrence = '';
   lastApproval = '';
@@ -273,18 +284,22 @@ $("#submit").click(function(){
 
   if(country.length == 0){
     displayMessage(message.country_required);
+    hideLoader();
   }
   else if(domain.length == 0){
-    displayMessage(message.domain_required);  
+    displayMessage(message.domain_required);
+    hideLoader();
   }
   else{
       function onSuccess(data){
         assigneeWiseComplianceList = data["compliance_list"];
         totalRecord = data["total_count"];
         loadArray(assigneeWiseComplianceList);
+        hideLoader();
       }
       function onFailure(error){
         onFailure(error);
+        hideLoader();
       }
       client_mirror.getAssigneewisecomplianceReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), parseInt(assignee), s_endCount,
         function (error, response) {
