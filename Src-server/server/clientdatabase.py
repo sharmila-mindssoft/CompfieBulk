@@ -2863,7 +2863,7 @@ class ClientDatabase(Database):
                 validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
                 if due_date > validity_date :
                     due_date = validity_date
-                elif (validity_date - datetime.timedelta(days=90)) < due_date :
+                elif (validity_date - datetime.timedelta(days=90)) > due_date :
                     due_date = validity_date
             else :
                 validity_date = ""
