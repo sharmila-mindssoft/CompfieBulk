@@ -264,6 +264,10 @@ def save_in_compliance_history(
             columns, compliance_history_id, unit_id, compliance_id,
             start_date, due_date, next_due_date, assignee,  approve, concurrence
         )
+        print "new task saved in history (unit_id, compliance_id, start_date) %s, %s, %s" % (unit_id, compliance_id, start_date)
+        query = "INSERT INTO tbl_compliance_history (%s) \
+            VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s, %s) " % values
+
     else :
         columns = "compliance_history_id, unit_id, compliance_id, \
                 start_date, due_date, next_due_date, completed_by, approved_by"
@@ -272,9 +276,9 @@ def save_in_compliance_history(
             start_date, due_date, next_due_date, assignee,  approve
         )
 
-    print "new task saved in history (unit_id, compliance_id, start_date) %s, %s, %s" % (unit_id, compliance_id, start_date)
-    query = "INSERT INTO tbl_compliance_history (%s) \
-        VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s) " % values
+        print "new task saved in history (unit_id, compliance_id, start_date) %s, %s, %s" % (unit_id, compliance_id, start_date)
+        query = "INSERT INTO tbl_compliance_history (%s) \
+            VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s) " % values
 
     cursor = db.cursor()
     cursor.execute(query)
