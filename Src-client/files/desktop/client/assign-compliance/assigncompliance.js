@@ -822,6 +822,7 @@ function submitcompliance(){
           hideLoader();
         }
         function onFailure(error){
+          displayMessage(error);
           err_message = message.error;
           if (err_message == "undefined")
             displayMessage(error);
@@ -861,6 +862,7 @@ function submitcompliance(){
           hideLoader();
         }
         function onFailure(error){
+          displayMessage(error);
           err_message = message.error;
           if (err_message == "undefined")
             displayMessage(error);

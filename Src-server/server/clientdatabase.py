@@ -2863,7 +2863,7 @@ class ClientDatabase(Database):
                 validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
                 if due_date > validity_date :
                     due_date = validity_date
-                elif (validity_date - datetime.timedelta(days=90)) < due_date :
+                elif (validity_date - datetime.timedelta(days=90)) > due_date :
                     due_date = validity_date
             else :
                 validity_date = ""
@@ -4884,6 +4884,9 @@ class ClientDatabase(Database):
         columns = ["approve_status", "approved_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [1, self.get_date_time(), remarks]
+        if next_due_date is not None:
+            columns.append("next_due_date")
+            values.append(next_due_date)
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
         get_columns = "unit_id, compliance_id"
         rows = self.get_data(
@@ -5078,6 +5081,9 @@ class ClientDatabase(Database):
         if validity_date is not None:
             columns.append("validity_date")
             values.append(self.string_to_datetime(validity_date))
+        if next_due_date is not None:
+            columns.append("next_due_date")
+            values.append(self.string_to_datetime(next_due_date))
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
 
         columns = "unit_id, compliance_id, due_date, completion_date"
@@ -5089,6 +5095,18 @@ class ClientDatabase(Database):
         compliance_id = rows[0][1]
         due_date = rows[0][2]
         completion_date = rows[0][3]
+
+        columns = []
+        values = []
+        if validity_date is not None:
+            columns.append("validity_date")
+            values.append(self.string_to_datetime(validity_date))
+        if next_due_date is not None:
+            columns.append("due_date")
+            values.append(self.string_to_datetime(next_due_date))
+        condition = "compliance_id = '%d' AND unit_id = '%d'" % (compliance_id, unit_id)
+        self.update(self.tblAssignedCompliances, columns, values, condition, client_id)
+
         status = "Inprogress"
         # due_date = datetime.datetime(
         #     int(due_date_parts[0]), int(due_date_parts[1]), int(due_date_parts[2])
