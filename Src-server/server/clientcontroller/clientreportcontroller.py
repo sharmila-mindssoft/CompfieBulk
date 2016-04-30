@@ -154,7 +154,7 @@ def get_unitwise_compliance(db, request, session_user):
     unit_id = request.unit_id
     user_id = request.user_id
     from_count = 0
-    to_count = 1000
+    to_count = 10000
     data, total = db.report_unitwise_compliance(
         country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, user_id, session_user,
@@ -179,6 +179,7 @@ def get_assigneewise_compliance(db, request, session_user):
         legal_entity_id, division_id, unit_id, user_id, session_user,
         from_count, to_count
     )
+    print total_count
     assignee_wise_compliances_list = db.return_assignee_report_data(data)
     return clientreport.GetAssigneewisecomplianceReportSuccess(assignee_wise_compliances_list, total_count)
 
