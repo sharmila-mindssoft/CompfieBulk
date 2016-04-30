@@ -4333,9 +4333,9 @@ class ClientDatabase(Database):
         )
         rows = self.select_all(q)
         data = self.convert_to_dict(rows, columns)
-        return self.return_report_data(data), count
+        return data, count
 
-    def return_report_data(self, data):
+    def return_assignee_report_data(self, data):
         legal_wise = {}
         for d in data :
             statutory_dates = json.loads(d["statutory_dates"])
@@ -4419,13 +4419,85 @@ class ClientDatabase(Database):
     def report_unitwise_compliance(
         self, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, assignee,
-        session_user
+        session_user, from_count, to_count
     ):
-        data = report_assigneewise_compliance(
+        data, total = self.report_assigneewise_compliance(
             country_id, domain_id, business_group_id,
             legal_entity_id, division_id, unit_id, assignee,
-            session_user
+            session_user, from_count, to_count
         )
+        return data, total
+
+    def return_unitwise_report(self, data):
+        legal_wise = {}
+        for d in data :
+            statutory_dates = json.loads(d["statutory_dates"])
+            date_list = []
+            for date in statutory_dates :
+                s_date = core.StatutoryDate(
+                    date["statutory_date"],
+                    date["statutory_month"],
+                    date["trigger_before_days"],
+                    date.get("repeat_by")
+                )
+                date_list.append(s_date)
+
+            compliance_frequency = core.COMPLIANCE_FREQUENCY(
+                d["frequency"]
+            )
+
+            due_date = None
+            if(d["due_date"] is not None):
+                due_date = self.datetime_to_string(d["due_date"])
+
+            validity_date = None
+            if(d["validity_date"] is not None):
+                validity_date = self.datetime_to_string(d["validity_date"])
+
+            if d["frequency_id"] in (2, 3) :
+                summary = "Repeats every %s - %s" % (d["repeat_every"], d["repeat_type"])
+            elif d["frequency_id"] == 4 :
+                summary = "To complete within %s - %s" % (d["duration"], d["duration_type"])
+            else :
+                summary = None
+
+            if d["document_name"] in ["None", None, ""] :
+                name = d["compliance_task"]
+            else :
+                name = d["document_name"] + " - " + d["compliance_task"]
+            uname = d["unit_code"] + " - " + d["unit_name"]
+            compliance = clientreport.ComplianceUnit(
+                name, uname,
+                compliance_frequency, d["description"],
+                date_list, due_date, validity_date,
+                summary
+            )
+
+            group_by_legal = legal_wise.get(d["legal_entity"])
+            if group_by_legal is None :
+                unit_wise = {}
+                unit_wise[uname] = [compliance]
+                AC = clientreport.UnitCompliance(
+                    d["business_group"], d["legal_entity"],
+                    d["division"], unit_wise
+                )
+                AC.to_structure()
+                legal_wise[d["legal_entity"]] = AC
+            else :
+                unit_wise_list = group_by_legal.unit_wise_compliances
+                if unit_wise_list is None :
+                    unit_wise_list = {}
+                    unit_wise_list[uname] = [compliance]
+                else :
+                    lst = unit_wise_list.get(uname)
+                    if lst is None :
+                        lst = []
+                    lst.append(compliance)
+                    unit_wise_list[uname] = lst
+
+                group_by_legal.unit_wise_compliances = unit_wise_list
+                legal_wise[d["legal_entity"]] = group_by_legal
+        return legal_wise.values()
 
     def get_assigneewise_compliance_report(
         self, country_id, domain_id, business_group_id,
