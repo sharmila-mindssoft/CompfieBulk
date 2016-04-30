@@ -153,8 +153,9 @@ def get_unitwise_compliance(db, request, session_user):
     division_id = request.division_id
     unit_id = request.unit_id
     user_id = request.user_id
-    from_count = 0
-    to_count = 10000
+    from_count = request.record_count
+    to_count = 500
+
     data, total = db.report_unitwise_compliance(
         country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, user_id, session_user,

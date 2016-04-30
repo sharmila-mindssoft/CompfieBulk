@@ -929,7 +929,7 @@ function initClientMirror() {
 
     function getUnitwisecomplianceReport(
         country_id, domain_id, business_group_id, legal_entity_id,
-        division_id, unit_id, user_id, callback
+        division_id, unit_id, user_id, record_count, callback
     ) {
         var request = [
             "GetUnitwisecomplianceReport", {
@@ -939,7 +939,8 @@ function initClientMirror() {
                 "legal_entity_id": legal_entity_id,
                 "division_id": division_id,
                 "unit_id": unit_id,
-                "user_id": user_id
+                "user_id": user_id,
+                "record_count": record_count
             }
         ];
         callerName = "client_reports";
