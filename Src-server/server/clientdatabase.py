@@ -4275,7 +4275,7 @@ class ClientDatabase(Database):
                 )" % int(session_user)
 
         q_count = " SELECT  \
-            count(distinct ac.compliance_id) \
+            count(ac.compliance_id) \
         FROM tbl_assigned_compliances ac \
             INNER JOIN tbl_units u on ac.unit_id = u.unit_id \
             INNER JOIN tbl_compliances c on ac.compliance_id = c.compliance_id \
@@ -4286,12 +4286,12 @@ class ClientDatabase(Database):
             country_id, domain_id,
             qry_where
         )
-
+        print q_count
         row = self.select_one(q_count)
         if row :
             count = row[0]
         else :
-            count = 0 
+            count = 0
 
         q = " SELECT  \
             ac.country_id, ac.unit_id, ac.compliance_id, ac.statutory_dates ,\
