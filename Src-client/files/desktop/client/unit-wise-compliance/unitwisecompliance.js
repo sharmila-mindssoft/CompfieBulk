@@ -7,12 +7,30 @@ var divisionsList
 var unitsList;
 var assigneesList;
 
-var finalList;
-var pageSize = 500;
-var startCount = 0;
-var endCount;
 var sno = 0;
 var fullArrayList = [];
+
+var s_endCount = 0;
+var totalRecord;
+var lastBG = '';
+var lastLE = '';
+var lastDV = '';
+var lastUnit = '';
+
+var country = null;
+var domain = null;
+var businessgroup = null;
+var legalentity = null;
+var division = null;
+var unit = null;
+var assignee = null;
+
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
 
 //get report filter from api
 function getClientReportFilters(){
@@ -43,40 +61,47 @@ function getClientReportFilters(){
 
 //display businessgroup title
 function bgList(data){
-  var country = $("#country").find('option:selected').text();
-  var domain = $("#domainval").val();
-  $(".country").text(country);
-  $(".domain").text(domain);
-
-  var tableRow=$('#unit-list-templates .table-unit-list .table-row-unit-list');
-  var clone=tableRow.clone();
-  $('.tbl_country', clone).text(country);
-  $('.tbl_domain', clone).text(domain);
-
   var bg = '-';
   if(data["business_group_name"] != null) bg = data["business_group_name"];
-  $('.tbl_businessgroup', clone).text(bg);
-
   var dv = '-';
   if( data["division_name"] != null) dv = data["division_name"];
-  $('.tbl_division', clone).text(dv);
-  $('.tbl_legalentity', clone).text(data["legal_entity_name"]);
-  $('.tbody-unit').append(clone);
+  var le = data["legal_entity_name"];
 
-  var tableRow1=$('#unit-head-templates .table-unit-head .table-row-unit-head');
-  var clone1=tableRow1.clone();
-  $('.tbody-unit').append(clone1);
+  if(lastBG != bg || lastLE != le || lastDv != dv){
+    var country = $("#country").find('option:selected').text();
+    var domain = $("#domainval").val();
+    $(".country").text(country);
+    $(".domain").text(domain);
+    var tableRow=$('#unit-list-templates .table-unit-list .table-row-unit-list');
+    var clone=tableRow.clone();
+    $('.tbl_country', clone).text(country);
+    $('.tbl_domain', clone).text(domain);  
+    $('.tbl_businessgroup', clone).text(bg);
+    $('.tbl_division', clone).text(dv);
+    $('.tbl_legalentity', clone).text(le);
+    $('.tbody-unit').append(clone);
+    var tableRow1=$('#unit-head-templates .table-unit-head .table-row-unit-head');
+    var clone1=tableRow1.clone();
+    $('.tbody-unit').append(clone1);
+    lastBG = bg;
+    lastDv = dv;
+    lastLE = le;
+    lastUnit = '';
+  }
 }
 
 //display unit name
 function unitList(data){
-  var uAddress = '';
-  /*if(compliancelists[compliancelist].length > 0)
-    uAddress = compliancelists[compliancelist][0]["unit_address"]*/
-  var tableRow2=$('#unit-name-templates .table-unit-name .table-row-unit-name');
-  var clone2=tableRow2.clone();
-  $('.tbl_unitheading', clone2).html('<div class="heading" style="margin-top:5px;width:auto;"> <abbr class="page-load tipso_style" title="'+ uAddress +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+data+'</div>');
-  $('.tbody-unit').append(clone2);
+  if(lastUnit != data){
+    var uAddress = data;
+    /*if(compliancelists[compliancelist].length > 0)
+      uAddress = compliancelists[compliancelist][0]["unit_address"]*/
+    var tableRow2=$('#unit-name-templates .table-unit-name .table-row-unit-name');
+    var clone2=tableRow2.clone();
+    $('.tbl_unitheading', clone2).html('<div class="heading" style="margin-top:5px;width:auto;"> <abbr class="page-load tipso_style" title="'+ uAddress +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+data+'</div>');
+    $('.tbody-unit').append(clone2);
+    lastUnit = data;
+  }
 }
 
 //display complaince details
@@ -130,53 +155,9 @@ function complianceListArray(data){
   sno++;
 }
 
-function get_sub_array(object, start, end){
-  if(!end){ end = -1;}
-  return object.slice(start, end);
-}
-
-
-function showloadrecord() {
-  startCount = endCount;
-  endCount = startCount + pageSize;
-  var sub_keys_list = get_sub_array(fullArrayList, startCount, endCount);
-  if(sub_keys_list.length < pageSize){
-      $('#pagination').hide();
-  }
-  for(var y = 0;  y < pageSize; y++){
-    if(sub_keys_list[y] !=  undefined){
-      if(Object.keys(sub_keys_list[y])[0] == "division_name"){
-        bgList(sub_keys_list[y]);
-      }    
-      else if(Object.keys(sub_keys_list[y])[0] == "due_date"){
-        complianceListArray(sub_keys_list[y]);
-      }else{
-        unitList(sub_keys_list[y]);
-      } 
-    } 
-  }
-}
-
-//pagination process
-$(function() {
-    $('#pagination').click(function(e){
-        $(".loading-indicator-spin").show();
-        if($('.loading-indicator-spin').css('display') != 'none')
-        {
-          setTimeout(function(){  
-              showloadrecord();
-          }, 500);
-        }
-        setTimeout(function(){  
-            $(".loading-indicator-spin").hide();
-        }, 500);
-    });
-});
-
 
 //split and save full list into array
 function loadArray(complianceList) {   
-  endCount = pageSize;
   $.each(complianceList, function(i, val){
       var list = complianceList[i];
       var list_unit = val["unit_wise_compliances"]
@@ -192,16 +173,10 @@ function loadArray(complianceList) {
       });
   });
 
-  var totallist = fullArrayList.length;
-  if(totallist > pageSize){
-    $('#pagination').show();
-  }
-  else{
-    $('#pagination').hide();
-  }
-  var sub_keys_list = get_sub_array(fullArrayList, startCount, endCount);
+ 
+  var sub_keys_list = fullArrayList;
   //filterList();
-  for(var y = 0;  y < pageSize; y++){
+  for(var y = 0;  y < fullArrayList.length; y++){
     if(sub_keys_list[y] !=  undefined){
       if(Object.keys(sub_keys_list[y])[0] == "division_name"){
         bgList(sub_keys_list[y]);
@@ -213,69 +188,100 @@ function loadArray(complianceList) {
       } 
     } 
   }
-}
 
-//get total records count from list
-function loadTotalCount(complianceList){
-  $("#pagination").hide();
-  var totalrecords = 0;
-  $(".tbody-unit").find("tbody").remove();
-
-  $.each(complianceList, function(i, val){
-    var ucList = val['unit_wise_compliances'];
-    $.each(ucList, function(i1, val1){
-        var complianceCount = Object.keys(val1).length;
-        totalrecords = totalrecords + complianceCount;    
-    });       
-  });    
-  loadArray(complianceList);    
-  $('.compliance_count').text("Total : "+ totalrecords +" records");
-
-  if(totalrecords == 0){
+  if(totalRecord == 0){
     var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
     var clone4=tableRow4.clone();
     $('.no_records', clone4).text('No Compliance Found');
     $('.tbody-unit').append(clone4);
+    $('#pagination').hide();
+    $('.compliance_count').text('');
+  }else{
+    $('.compliance_count').text("Showing " + 1 + " to " + sno + " of " + totalRecord);
+    if(sno >= totalRecord){
+      $('#pagination').hide();
+    }else{
+      $('#pagination').show();
+    }
   }
 }
 
+//pagination process
+$('#pagination').click(function(){
+  displayLoader();
+  s_endCount = sno;
+  fullArrayList = [];
+  clearMessage();
+
+  function onSuccess(data){
+    unitWiseComplianceList = data["compliance_list"];
+    totalRecord = data["total_count"];
+    loadArray(unitWiseComplianceList);
+    hideLoader();
+  }
+  function onFailure(error){
+    onFailure(error);
+    hideLoader();
+  }
+  client_mirror.getUnitwisecomplianceReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), parseInt(assignee), s_endCount,
+    function (error, response) {
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+    });
+});
+
+
 //get unitwise compliance report from api
 $("#submit").click(function(){ 
-  var country = $("#country").val();
-  var domain = $("#domain").val();
-  var businessgroup = null;
-  var legalentity = null;
-  var division = null;
-  var unit = null;
-  var assignee = null;
-
+  displayLoader();
+  country = $("#country").val();
+  domain = $("#domain").val();
+  businessgroup = null;
+  legalentity = null;
+  division = null;
+  unit = null;
+  assignee = null;
   if($("#businessgroup").val() != '') businessgroup = $("#businessgroup").val();
   if($("#legalentity").val() != '') legalentity = $("#legalentity").val();
   if($("#division").val() != '') division = $("#division").val();
   if($("#unit").val() != '') unit = $("#unit").val();
   if($("#assignee").val() != '') assignee = $("#assignee").val();
+  $(".tbody-unit").find("tbody").remove();
+  $('.compliance_count').text('');
+  lastUnit = '';
+  lastBG = '';
+  lastLE = '';
+  lastDv = '';
+  sno = 0;
+  s_endCount = 0;
+  fullArrayList = [];
+  clearMessage();
+  $(".grid-table-rpt").show();
 
   if(country.length == 0){
     displayMessage(message.country_required);
+    hideLoader();
   }
   else if(domain.length == 0){
-    displayMessage(message.domain_required);  
+    displayMessage(message.domain_required); 
+    hideLoader(); 
   }
   else{
       function onSuccess(data){
         unitWiseComplianceList = data["compliance_list"];
-        fullArrayList = [];
-        clearMessage();
-        sno = 0;
-        startCount = 0;
-        endCount = 0;
-        $(".grid-table-rpt").show();
-        loadTotalCount(unitWiseComplianceList);
+        totalRecord = data["total_count"];
+        loadArray(unitWiseComplianceList);
+        hideLoader();
       }
       function onFailure(error){
         onFailure(error);
+        hideLoader();
       }
-      client_mirror.getUnitwisecomplianceReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), parseInt(assignee), 
+      client_mirror.getUnitwisecomplianceReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), parseInt(assignee), s_endCount,
         function (error, response) {
           if (error == null){
             onSuccess(response);

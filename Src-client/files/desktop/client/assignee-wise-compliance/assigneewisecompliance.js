@@ -18,6 +18,14 @@ var lastAssignee = '';
 var lastConcurrence = '';
 var lastApproval = '';
 
+var country = null;
+var domain = null;
+var businessgroup = null;
+var legalentity = null;
+var division = null;
+var unit = null;
+var assignee = null;
+
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -215,19 +223,6 @@ function loadArray(complianceList) {
 $('#pagination').click(function(){
   displayLoader();
   s_endCount = sno;
-  var country = $("#country").val();
-  var domain = $("#domain").val();
-  var businessgroup = null;
-  var legalentity = null;
-  var division = null;
-  var unit = null;
-  var assignee = null;
-  if($("#businessgroup").val() != '') businessgroup = $("#businessgroup").val();
-  if($("#legalentity").val() != '') legalentity = $("#legalentity").val();
-  if($("#division").val() != '') division = $("#division").val();
-  if($("#unit").val() != '') unit = $("#unit").val();
-  if($("#assignee").val() != '') assignee = $("#assignee").val();
-
   fullArrayList = [];
   clearMessage();
 
@@ -256,13 +251,13 @@ $('#pagination').click(function(){
 $("#submit").click(function(){ 
   displayLoader();
 
-  var country = $("#country").val();
-  var domain = $("#domain").val();
-  var businessgroup = null;
-  var legalentity = null;
-  var division = null;
-  var unit = null;
-  var assignee = null;
+  country = $("#country").val();
+  domain = $("#domain").val();
+  businessgroup = null;
+  legalentity = null;
+  division = null;
+  unit = null;
+  assignee = null;
 
   if($("#businessgroup").val() != '') businessgroup = $("#businessgroup").val();
   if($("#legalentity").val() != '') legalentity = $("#legalentity").val();
@@ -278,6 +273,7 @@ $("#submit").click(function(){
   lastLE = '';
   lastDv = '';
   sno = 0;
+  s_endCount = 0;
   fullArrayList = [];
   clearMessage();
   $(".grid-table-rpt").show();
