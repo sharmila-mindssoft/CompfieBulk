@@ -1513,10 +1513,11 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssigneeWiseCompliances(assignee, callback) {
+    function getAssigneeWiseCompliances(assignee, record_count, callback) {
         var request = [
             "GetAssigneeCompliances", {
-                "assingee": assingee
+                "assingee": assingee,
+                "record_count": record_count
             }
         ];
         callerName = "client_transaction";

@@ -6174,7 +6174,7 @@ class ClientDatabase(Database):
     def get_compliance_for_assignee(self, session_user, assignee):
         pass
 
-    def get_user_wise_compliance(self, session_user, assignee):
+    def get_user_wise_compliance(self, session_user, assignee, from_count, to_count):
         # upcoming compliance
         admin_id = self.get_admin_id()
         result = []
@@ -6204,7 +6204,11 @@ class ClientDatabase(Database):
             ) \
             AND t1.assignee = %s \
             %s \
-            ORDER BY t3.unit_code, t2.statutory_mapping" % (assignee, user_qry)
+            ORDER BY t3.unit_code, t2.statutory_mapping \
+            limit %s, %s" % (
+                assignee, user_qry,
+                from_count, to_count
+            )
 
         columns = [
             "compliance_id", "unit_id", "statutory_dates",
@@ -6233,7 +6237,11 @@ class ClientDatabase(Database):
             WHERE IFNULL(tc.approve_status, 0) != 1 \
             AND t1.assignee = %s \
             %s \
-            ORDER BY t3.unit_code, t2.statutory_mapping" % (assignee, user_qry)
+            ORDER BY t3.unit_code, t2.statutory_mapping \
+            limit %s, %s " % (
+                assignee, user_qry,
+                from_count, to_count
+            )
         rows = self.select_all(ongoing)
         result.extend(self.convert_to_dict(rows, columns))
         return self.return_compliance_to_reassign(result)

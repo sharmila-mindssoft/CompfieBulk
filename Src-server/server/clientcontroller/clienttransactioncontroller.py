@@ -343,7 +343,9 @@ def process_get_user_wise_compliances(db, session_user, client_id):
 
 def process_get_assignee_compliances(db, request, session_user):
     assignee = request.assignee
-    result = db.get_user_wise_compliance(session_user, assignee)
+    from_count = request.record_count
+    to_count = 500
+    result = db.get_user_wise_compliance(session_user, assignee, from_count, to_count)
     assignee_wise_compliance = result[0]
     assignee_compliance_count = result[1]
     final_dict = {}
