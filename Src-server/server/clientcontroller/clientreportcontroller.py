@@ -447,7 +447,7 @@ def get_compliance_activity_report(db, request, session_user, client_id):
     to_date = request.to_date
     compliance_id = request.compliance_id
     level_1_statutory_name = request.level_1_statutory_name
-    if request.csv == False:
+    if request.csv is False:
         activities = db.get_compliance_activity_report(
             country_id, domain_id, user_type, user_id, unit_id, compliance_id, level_1_statutory_name,
             from_date, to_date, session_user, client_id
