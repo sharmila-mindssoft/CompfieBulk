@@ -344,7 +344,7 @@ def process_get_user_wise_compliances(db, session_user, client_id):
 def process_get_assignee_compliances(db, request, session_user):
     assignee = request.assignee
     from_count = request.record_count
-    to_count = 5
+    to_count = 10
     result = db.get_user_wise_compliance(session_user, assignee, from_count, to_count)
     assignee_wise_compliance = result[0]
     assignee_compliance_count = result[1]
@@ -361,7 +361,7 @@ def process_get_assignee_compliances(db, request, session_user):
         )
         final_dict[key] = [user_data]
 
-    return db.GetAssigneeCompliancesSuccess(final_dict)
+    return clienttransactions.GetAssigneeCompliancesSuccess(final_dict)
 
 
 def process_reassign_compliance(db, request, session_user):
