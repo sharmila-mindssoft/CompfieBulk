@@ -1,7 +1,6 @@
 var compliancesList;
 var usersList;
 var unitsList;
-var reassignUserId=null;
 var cCount;
 var two_level_approve;
 var client_admin;
@@ -14,7 +13,7 @@ var lastUnit = '';
 var lastActName = '';
 var s_endCount = 0;
 var count=1;
-var statutoriesCount= 1;
+var statutoriesCount = 1;
 var actCount = 1;
 //var currentUser;
 
@@ -86,6 +85,7 @@ function load_allcompliances(compliancesList){
     for(var entity in userUnitwiseCompliance){
       var statutoriesList = userUnitwiseCompliance[entity]["statutories"];
       var uName = userUnitwiseCompliance[entity]["unit_name"];
+      var unitId = userUnitwiseCompliance[entity]["unit_id"];
 
       if(uName != lastUnit){
         var tableRow3 = $('#head-templates .tbl_heading');
@@ -158,10 +158,11 @@ function load_allcompliances(compliancesList){
           var clone2=complianceDetailtableRow.clone();
           $('.ckbox', clone2).html('<input type="checkbox" id="statutory'+statutoriesCount+'" class="statutoryclass'+(actCount-1)+'" onclick="compliancestatus(this)">');
 
-          $('.sno', clone2).html(statutoriesCount +
+          $('.snoo', clone2).html(statutoriesCount +
             '<input type="hidden" id="complianceid'+statutoriesCount+'" value="'+compliance_id+'"/>' +
             '<input type="hidden" id="compliancename'+statutoriesCount+'" value="'+compliance_name+'"/>' +
             '<input type="hidden" id="frequency'+statutoriesCount+'" value="'+frequency+'"/>' +
+            '<input type="hidden" id="unit'+statutoriesCount+'" value="'+unitId+'"/>' +
             '<input type="hidden" id="compliancehistoryid'+statutoriesCount+'" value="'+compliance_history_id+'"/>' );
 
           $('.compliancetask', clone2).html('<abbr class="page-load" title="'+
@@ -436,7 +437,6 @@ function submitcompliance(){
   for(var i=1; i<=(actCount-1); i++){
     var actComplianceCount = $('.statutoryclass'+i).length;
     for(var j=1; j<=actComplianceCount; j++){
-
       var complianceApplicable = false;
       if($('#statutory'+totalCompliance).is(":checked")){
         complianceApplicable = true;
@@ -448,7 +448,7 @@ function submitcompliance(){
         var compliance_name = $('#compliancename'+totalCompliance).val();
         var compliance_history_id =  parseInt($('#compliancehistoryid'+totalCompliance).val());
         var cfrequency =  $('#frequency'+totalCompliance).val();
-        var uId =  $('#cunitid'+totalCompliance).val();
+        var cunit =  parseInt($('#unit'+totalCompliance).val());
         var due_date = null;
         if(cfrequency != 'On Occurrence'){
           due_date =  $('#duedate'+totalCompliance).val();
@@ -458,11 +458,12 @@ function submitcompliance(){
             return false;
           }
         }
-        reassignComplianceData = client_mirror.reassignComplianceDet(uId,
+        reassignComplianceData = client_mirror.reassignComplianceDet(cunit,
           compliance_id, compliance_name, compliance_history_id, due_date
         );
         reassignCompliance.push(reassignComplianceData);
       }
+      totalCompliance++;
     }
   }
 /*  for(ucompliance in userCompliances){
@@ -524,14 +525,14 @@ function submitcompliance(){
       $('#concurrence').empty();
       $('#approval').empty();
       $('#reason').val('');
-      reassignUserId = null;
+      userId = null;
     }
     function onFailure(error){
       displayMessage(error);
       hideLoader();
     }
     client_mirror.saveReassignCompliance(
-      reassignUserId, assignComplianceAssigneeId,
+      userId, assignComplianceAssigneeId,
       assignComplianceAssigneeName,
       assignComplianceConcurrenceId,
       assignComplianceApprovalId, reassignCompliance, reason,

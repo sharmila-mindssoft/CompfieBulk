@@ -6158,7 +6158,7 @@ class ClientDatabase(Database):
             user_qry = " AND a.unit_id in (select distinct unit_id from tbl_user_units where user_id like '%s')" % session_user
             user_qry += " AND c.domain_id in (select distinct domain_id from tbl_user_domains where user_id like '%s')" % session_user
 
-        q = "select sum(ac.c_count + ch.h_count), ac.assignee from \
+        q = "select sum(ac.c_count), ac.assignee from \
             ( \
             select count(a.compliance_id) c_count, a.assignee \
             from tbl_assigned_compliances a \
@@ -6183,6 +6183,7 @@ class ClientDatabase(Database):
         rows = self.select_all(q)
         result = self.convert_to_dict(rows, columns=["count", "assignee"])
         data = {}
+        print q
         for r in result :
             print r["assignee"]
             print r["count"]
