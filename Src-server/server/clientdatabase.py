@@ -6135,14 +6135,53 @@ class ClientDatabase(Database):
 #
 # ReAssign Compliance
 #
+    def get_assigneewise_complaince_count(self, session_user):
+        admin_id = self.get_admin_id()
+        user_qry = ""
+        if session_user > 0 and session_user != admin_id :
+            user_qry = " AND a.unit_id in (select distinct unit_id from tbl_user_units where user_id like '%s')" % session_user
+            user_qry += " AND c.domain_id in (select distinct domain_id from tbl_user_domains where user_id like '%s')" % session_user
 
-    def get_user_wise_compliance(self, session_user, client_id):
+        q = "select sum(ac.c_count + ch.h_count), ac.assignee from \
+            ( \
+            select count(a.compliance_id) c_count, a.assignee \
+            from tbl_assigned_compliances a \
+            inner join tbl_compliances c on a.compliance_id = c.compliance_id \
+            where a.compliance_id not in ( \
+                select distinct t.compliance_id from tbl_compliance_history t \
+                where t.unit_id = a.unit_id and t.completed_by = a.assignee \
+                and ifnull(t.approve_status, 0) != 1 and a.is_active = 1 \
+            ) %s \
+            group by a.assignee \
+            ) ac \
+            left join  \
+            (select count(a.compliance_id) h_count, a.completed_by from tbl_compliance_history a \
+            inner join tbl_compliances c on a.compliance_id = c.compliance_id \
+            where ifnull(a.approve_status, 0) != 1 \
+            %s \
+            group by a.completed_by \
+            ) ch ON \
+            ac.assignee = ch.completed_by \
+            group by assignee " % (user_qry, user_qry)
+
+        rows = self.select_all(q)
+        result = self.convert_to_dict(rows, columns=["count", "assignee"])
+        data = {}
+        for r in result :
+            data[int(r["assignee"])] = int(r["count"])
+        return data
+
+    def get_compliance_for_assignee(self, session_user, assignee):
+        pass
+
+    def get_user_wise_compliance(self, session_user, assignee):
         # upcoming compliance
         admin_id = self.get_admin_id()
         result = []
         user_qry = ""
         if session_user > 0 and session_user != admin_id :
             user_qry = " AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id like '%s')" % session_user
+            user_qry = " AND t2.domain_id in (select distinct domain_id from tbl_user_domains where domain_id like '%s')" % session_user
 
         upcoming = "SELECT distinct t1.compliance_id, t1.unit_id, t1.statutory_dates, t1.assignee, \
             t1.due_date, t1.validity_date, t2.compliance_task, t2.document_name, t2.compliance_description, \
@@ -6154,7 +6193,7 @@ class ClientDatabase(Database):
             FROM tbl_assigned_compliances t1 \
             INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id AND t1.is_active = 1 \
             INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id \
-            AND t1.compliance_id NOT IN ( \
+            WHERE t1.compliance_id NOT IN ( \
                 SELECT DISTINCT distinct TC.compliance_id \
                 FROM tbl_compliance_history TC \
                 WHERE TC.compliance_id = t1.compliance_id \
@@ -6163,7 +6202,9 @@ class ClientDatabase(Database):
                 t1.is_active = 1 \
                 AND IFNULL(TC.approve_status, 0) != 1 \
             ) \
-            %s " % (user_qry)
+            AND t1.assignee = %s \
+            %s \
+            ORDER BY t3.unit_code, t2.statutory_mapping" % (assignee, user_qry)
 
         columns = [
             "compliance_id", "unit_id", "statutory_dates",
@@ -6190,7 +6231,9 @@ class ClientDatabase(Database):
             INNER JOIN tbl_compliances t2 on tc.compliance_id = t2.compliance_id AND t2.is_active = 1 \
             INNER JOIN tbl_units t3 on t3.unit_id = tc.unit_id \
             WHERE IFNULL(tc.approve_status, 0) != 1 \
-            %s " % (user_qry)
+            AND t1.assignee = %s \
+            %s \
+            ORDER BY t3.unit_code, t2.statutory_mapping" % (assignee, user_qry)
         rows = self.select_all(ongoing)
         result.extend(self.convert_to_dict(rows, columns))
         return self.return_compliance_to_reassign(result)
