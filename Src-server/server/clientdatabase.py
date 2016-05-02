@@ -7402,6 +7402,13 @@ class ClientDatabase(Database):
 #
 #   Compliance Activity Report
 #
+    def report_compliance_activity(
+        self, country_id, domain_id, user_type, user_id, unit_id, compliance_id,
+        level_1_statutory_name, from_date, to_date, session_user,
+        from_count, to_count
+    ):
+        pass
+
     def get_compliance_activity_report(
         self, country_id, domain_id, user_type, user_id, unit_id, compliance_id,
         level_1_statutory_name, from_date, to_date, session_user, client_id

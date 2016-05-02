@@ -361,7 +361,7 @@ def process_get_assignee_compliances(db, request, session_user):
         )
         final_dict[key] = [user_data]
 
-    return db.GetAssigneeCompliancesSuccess(final_dict)
+    return clienttransactions.GetAssigneeCompliancesSuccess(final_dict)
 
 
 def process_reassign_compliance(db, request, session_user):
