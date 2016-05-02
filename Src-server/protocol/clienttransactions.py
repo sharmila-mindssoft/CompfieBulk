@@ -434,18 +434,22 @@ class GetUserwiseCompliances(Request):
 
 class GetAssigneeCompliances(Request):
     def __init__(self, assignee, record_count):
-        pass
+        self.assignee = assignee
+        self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["assignee"])
+        data = parse_dictionary(data, ["assignee", "record_count"])
         assignee = data.get("assignee")
         assignee = parse_structure_UnsignedIntegerType_32(assignee)
-        return GetAssigneeCompliances(assignee)
+        record_count = data.get("record_count")
+        record_count = parse_structure_UnsignedIntegerType_32(record_count)
+        return GetAssigneeCompliances(assignee, record_count)
 
     def to_inner_structure(self):
         return {
-            "assignee": to_structure_UnsignedIntegerType_32(self.assignee)
+            "assignee": to_structure_UnsignedIntegerType_32(self.assignee),
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
 class ReassignCompliance(Request):

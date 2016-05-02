@@ -1516,7 +1516,7 @@ function initClientMirror() {
     function getAssigneeWiseCompliances(assignee, record_count, callback) {
         var request = [
             "GetAssigneeCompliances", {
-                "assingee": assingee,
+                "assignee": assignee,
                 "record_count": record_count
             }
         ];
