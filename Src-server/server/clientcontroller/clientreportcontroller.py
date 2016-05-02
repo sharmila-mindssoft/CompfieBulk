@@ -162,7 +162,7 @@ def get_unitwise_compliance(db, request, session_user):
         from_count, to_count
     )
     unit_wise_compliances_list = db.return_unitwise_report(data)
-    return clientreport.GetUnitwisecomplianceReportSuccess(unit_wise_compliances_list)
+    return clientreport.GetUnitwisecomplianceReportSuccess(unit_wise_compliances_list, total)
 
 def get_assigneewise_compliance(db, request, session_user):
     country_id = request.country_id

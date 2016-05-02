@@ -288,8 +288,9 @@ function showSideBar(idval, data){
                         return;
                     }
                 }
+
                 if(validity_date != null  && next_due_date != null){
-                    if(parseMyDate(next_due_date) > parseMyDate(validity_date)){
+                    if(parseMyDate(next_due_date) >= parseMyDate(validity_date)){
                         displayMessage(message.validity_gt_nextduedate);
                         return;
                     }

@@ -1302,19 +1302,23 @@ class GetAssigneewisecomplianceReportSuccess(Response):
         }
 
 class GetUnitwisecomplianceReportSuccess(Response):
-    def __init__(self, compliance_list):
+    def __init__(self, compliance_list, total_count):
         self.compliance_list = compliance_list
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["compliance_list"])
+        data = parse_dictionary(data, ["compliance_list", "total_count"])
         compliance_list = data.get("compliance_list")
         compliance_list = parse_structure_VectorType_RecordType_clientreport_UnitCompliance(compliance_list)
+        total_count = data.get("total_count")
+        total_count = parse_structure_UnsignedIntegerType_32(total_count)
         return GetUnitwisecomplianceReportSuccess(compliance_list)
 
     def to_inner_structure(self):
         return {
             "compliance_list": to_structure_VectorType_RecordType_clientreport_UnitCompliance(self.compliance_list),
+            "total_count": to_structure_UnsignedIntegerType_32(self.total_count)
         }
 
 class GetReassignComplianceTaskReportFiltersSuccess(Response):

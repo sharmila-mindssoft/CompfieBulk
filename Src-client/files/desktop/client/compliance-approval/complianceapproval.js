@@ -252,6 +252,7 @@ function showSideBar(idval, data){
     }
 
     $('.btn-submit', cloneValSide).on("click", function(e){
+
         var compliance_history_id;
         var approval_status;
         var remarks = '';
@@ -286,22 +287,21 @@ function showSideBar(idval, data){
             remarks = data["remarks"];
         }
 
-        validity_date = $('.validitydate1_label', cloneValSide).html();
-
+        validity_date = $('.validity1-textbox-input', cloneValSide).val();
         if(validity_date == ''){
-            validity_date = $('.validity1-textbox-input', cloneValSide).val();
+            validity_date = $('.validitydate1_label', cloneValSide).html();
             if(validity_date == ''){
                 validity_date = null;
             }
         }
-        next_due_date = $('.duedate1_label abbr', cloneValSide).val();
+
+        next_due_date = $('.duedate1-textbox-input', cloneValSide).val();
         if(next_due_date == ''){
-            next_due_date = $('.duedate1-textbox-input', cloneValSide).val();
+            next_due_date = $('.duedate1_label abbr', cloneValSide).html();
             if(next_due_date == ''){
                 next_due_date = null;
             }
         }
-
 
         if(remarks == ''){
             remarks = null;
@@ -318,11 +318,12 @@ function showSideBar(idval, data){
             return;
         }
         if(validity_date != null  && next_due_date != null){
-            if(parseMyDate(next_due_date) > parseMyDate(validity_date)){
+            if(parseMyDate(next_due_date) >= parseMyDate(validity_date)){
                 displayMessage(message.validitydate_gt_duedate);
                 return;
             }
         }
+
         // if(currentDate != null && validity_date != null){
         //     if(parseMyDate(currentDate) > parseMyDate(next_due_date)){
         //         displayMessage("Validity Date is Greater than Current Date");
@@ -348,8 +349,9 @@ function showSideBar(idval, data){
         function onFailure(error){
             displayMessage(error);
         }
+
         client_mirror.approveCompliance(compliance_history_id, approval_status,
-            remarks, validity_date, next_due_date,
+            remarks, next_due_date, validity_date,
             function (error, response){
                 if(error == null){
                     onSuccess(response);
@@ -359,7 +361,6 @@ function showSideBar(idval, data){
                 }
             }
         );
-
     });
 
     $('.half-width-task-details').append(cloneValSide);
