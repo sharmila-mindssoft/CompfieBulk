@@ -6467,11 +6467,9 @@ class KnowledgeDatabase(Database):
             query = "select count(*) from tbl_assigned_compliances \
             where assignee = '%d' or concurrence_person = '%d' or \
             approval_person = '%d'" % (old_admin_id, old_admin_id, old_admin_id)
-            print query
             cursor.execute(query)
             rows = cursor.fetchall()
             compliance_count = rows[0][0]
-            print compliance_count
             if compliance_count > 0:
                 return "Reassign"
             else:
