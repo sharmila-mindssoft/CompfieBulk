@@ -62,6 +62,11 @@ def process_client_transaction_requests(request, db) :
         )
         logger.logClientApi("GetUserwiseCompliances", "process end")
 
+    elif type(request) is clienttransactions.GetAssigneeCompliances :
+        logger.logClientApi("GetAssigneeCompliances", "process begin")
+        result = process_get_assignee_compliances(db, request, session_user)
+        logger.logClientApi("GetAssigneeCompliances", "process end")
+
     elif type(request) is clienttransactions.ReassignCompliance :
         result = process_reassign_compliance(
             db, request, session_user
@@ -307,7 +312,40 @@ def process_get_user_wise_compliances(db, session_user, client_id):
         session_user, client_id
     )
     units = db.get_units_for_assign_compliance(session_user)
-    result = db.get_user_wise_compliance(session_user, client_id)
+    # result = db.get_user_wise_compliance(session_user, client_id)
+    # assignee_wise_compliance = result[0]
+    # assignee_compliance_count = result[1]
+    # final_dict = {}
+
+    # for key, value in assignee_wise_compliance.iteritems():
+    #     unit_list = []
+    #     for k, v in value.iteritems():
+    #         unit_list.append(v)
+    #     no_of_compliance = assignee_compliance_count[key]
+    #     user_data = clienttransactions.USER_WISE_COMPLIANCE(
+    #         no_of_compliance,
+    #         unit_list
+    #     )
+    #     final_dict[key] = [user_data]
+
+    two_level_approve = db.get_client_settings()
+    client_admin = db.get_admin_info()
+
+    compliance_count = db.get_assigneewise_complaince_count(session_user)
+
+    result = clienttransactions.GetUserwiseCompliancesSuccess(
+        compliance_count, users, units,
+        two_level_approve,
+        client_admin
+    )
+
+    return result
+
+def process_get_assignee_compliances(db, request, session_user):
+    assignee = request.assignee
+    from_count = request.record_count
+    to_count = 500
+    result = db.get_user_wise_compliance(session_user, assignee, from_count, to_count)
     assignee_wise_compliance = result[0]
     assignee_compliance_count = result[1]
     final_dict = {}
@@ -323,16 +361,8 @@ def process_get_user_wise_compliances(db, session_user, client_id):
         )
         final_dict[key] = [user_data]
 
-    two_level_approve = db.get_client_settings()
-    client_admin = db.get_admin_info()
+    return db.GetAssigneeCompliancesSuccess(final_dict)
 
-    result = clienttransactions.GetUserwiseCompliancesSuccess(
-        final_dict, users, units,
-        two_level_approve,
-        client_admin
-    )
-
-    return result
 
 def process_reassign_compliance(db, request, session_user):
     return db.reassign_compliance(request, session_user)

@@ -59,13 +59,13 @@ def process_login(db, request, client_id, session_user_ip):
         print "inside contract not startd"
         return login.ContractNotYetStarted()
     elif not db.is_configured():
-        logger.logLogin(user_ip, username, "NotConfigured")
+        logger.logLogin("info", user_ip, username, "NotConfigured")
         return login.NotConfigured()
     elif not db.is_in_contract():
-        logger.logLogin(user_ip, username, "ContractExpired")
+        logger.logLogin("info", user_ip, username, "ContractExpired")
         return login.ContractExpired()
     elif not db.is_client_active(client_id):
-        logger.logLogin(user_ip, username, "InvalidCredentials")
+        logger.logLogin("info", user_ip, username, "InvalidCredentials")
         return login.InvalidCredentials()
     else:
         response = db.verify_login(username, encrypt_password)

@@ -1513,6 +1513,17 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getAssigneeWiseCompliances(assignee, record_count, callback) {
+        var request = [
+            "GetAssigneeCompliances", {
+                "assingee": assingee,
+                "record_count": record_count
+            }
+        ];
+        callerName = "client_transaction";
+        clientApiRequest(callerName, request, callback);
+    }
+
     function reassignComplianceDet(uID, cID, cNAME, cHistoryId, dDate) {
         return {
             "u_id": uID,
@@ -1686,7 +1697,8 @@ function initClientMirror() {
         get_ip: get_ip,
         checkContractExpiration: checkContractExpiration,
         saveReassignCompliance : saveReassignCompliance,
-        reassignComplianceDet : reassignComplianceDet
+        reassignComplianceDet : reassignComplianceDet,
+        getAssigneeWiseCompliances: getAssigneeWiseCompliances,
     }
 }
 var client_mirror = initClientMirror();

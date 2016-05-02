@@ -3392,6 +3392,15 @@ def to_structure_MapType_UnsignedIntegerType_32_Bool(data):
         d[key] = value
     return d
 
+def to_structure_MapType_UnsignedIntegerType_32_UnsignedIntegerType_32(data):
+    data = parse_dictionary(data)
+    d = {}
+    for key, value in data.items():
+        key = to_structure_UnsignedIntegerType_32(int(key))
+        value = to_structure_UnsignedIntegerType_32(value)
+        d[key] = value
+    return d
+
 def to_structure_RecordType_technotransactions_AssignedStatutoryCompliance(data):
     from protocol import technotransactions
     return technotransactions.AssignedStatutoryCompliance.to_structure(data)
