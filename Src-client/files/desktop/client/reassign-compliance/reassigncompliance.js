@@ -251,7 +251,6 @@ function load_UserCompliances(uCompliances, uId){
   }
 }
 
-
 function load_compliances () {
   var givenUserId = $("#user").val();
   var givenUnitId = $("#seatingunit").val();;
@@ -312,7 +311,6 @@ function load_compliances () {
   }else{
     $('.c-view').hide();
   }
-
 }
 
 //save reassign compliances 

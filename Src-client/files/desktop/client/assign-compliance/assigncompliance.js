@@ -300,14 +300,6 @@ function load_secondwizard(){
     }
   }
 
-  if(count <= 1){
-    var norecordtableRow=$('#no-record-templates .font1');
-    var noclone=norecordtableRow.clone();
-    $('.tbody-assignstatutory').append(noclone);
-    $('#activate-step-3').hide();
-    $('#pagination').hide();
-  }
-
   if(statutoriesCount > 1){
     $('.compliance_count').text("Showing " + 1 + " to " + (statutoriesCount-1) + " of " + totalRecord);
   }else{
@@ -331,7 +323,16 @@ function load_secondwizard(){
     });
   });
   }else{
+    $('#pagination').show();
     $('#activate-step-3').hide();
+  }
+
+  if(count <= 1){
+    var norecordtableRow=$('#no-record-templates .font1');
+    var noclone=norecordtableRow.clone();
+    $('.tbody-assignstatutory').append(noclone);
+    $('#activate-step-3').hide();
+    $('#pagination').hide();
   }
   /*if(statutoriesNameList.length ==0){
     $('#pagination').hide();
@@ -361,13 +362,7 @@ $('#pagination').click(function(){
           statutoriesList = response["statutories"];
           statutoriesNameList = response["level_one_name"];
           totalRecord = response["total_count"];
-          if(parseInt(totalRecord) > s_endCount){
-            $('#pagination').show();
-            $('#activate-step-3').hide();
-          }else{
-            $('#pagination').hide();
-            $('#activate-step-3').show();
-          }
+          
           load_secondwizard();
           hideLoader();
         }
@@ -397,7 +392,7 @@ function validate_firsttab(){
     s_endCount = 0;
     var domainID = $('.domainlist.active').attr('id');
     displayMessage("");
-    displayLoader();
+    
 
     count=1;
     statutoriesCount= 1;
@@ -406,12 +401,11 @@ function validate_firsttab(){
     displayMessage("");
 
     if(assignStatutoryUnitIds.length > 0){
+      displayLoader();
       function onSuccess(data){
         statutoriesList = data["statutories"];
         statutoriesNameList = data["level_one_name"];
         totalRecord = data["total_count"];
-        $('#pagination').show();
-
         load_secondwizard();
         hideLoader();
       }
