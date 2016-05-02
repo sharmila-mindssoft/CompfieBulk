@@ -6,6 +6,7 @@ var cCount;
 var two_level_approve;
 var client_admin;
 var accordionstatus = true;
+var s_endCount = 0;
 //var currentUser;
 
 function displayLoader() {
@@ -213,14 +214,37 @@ function load_allcompliances(userId, userName){
   });
 }
 
+//get user compliance details from api
+function getUserCompliances(userId, userName){
+  displayLoader();
+  s_endCount = 0;
+  function onSuccess(data){
+    //assigneeWiseComplianceList = data["compliance_list"];
+    totalRecord = data["total_count"];
+    load_allcompliances(assigneeWiseComplianceList);
+    hideLoader();
+  }
+  function onFailure(error){
+    onFailure(error);
+    hideLoader();
+  }
+  client_mirror.getAssigneeWiseCompliances( userId, s_endCount,
+    function (error, response) {
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+  });
+}
 //load list in view page
 function load_UserCompliances(uCompliances, uId){
-  for( compliance in uCompliances){
+  if(uCompliances != '' && uCompliances != undefined){
     var userName = "";
     var seatingUnitId = null;
     var seatingUnit = "";
-    var noOfCompliances = uCompliances[compliance]["no_of_compliances"];
-
+    var noOfCompliances = uCompliances;
     for(var user in usersList){
       var userId= usersList[user]["user_id"];
       if(uId == userId){
@@ -233,7 +257,6 @@ function load_UserCompliances(uCompliances, uId){
         seatingUnit = unitsList[unit]["unit_name"];
       }
     }
-
     if(uId == 0){
       userName = "Client Admin";
       seatingUnit = "-";
@@ -245,7 +268,7 @@ function load_UserCompliances(uCompliances, uId){
     $('.assigneename', clone1).text(userName);
     $('.seatingunit', clone1).text(seatingUnit);
     $('.noofcompliance', clone1).text(noOfCompliances);
-    $('.action', clone1).html('<input type="submit" value="Reassign" class="btn-save" style="width:auto;" onclick="load_allcompliances('+uId+ ',\''+userName+'\')"/>');
+    $('.action', clone1).html('<input type="submit" value="Reassign" class="btn-save" style="width:auto;" onclick="getUserCompliances('+uId+ ',\''+userName+'\')"/>');
     $('.tbody-reassign-compliances-list').append(clone1);
     cCount = cCount + 1;
   }
