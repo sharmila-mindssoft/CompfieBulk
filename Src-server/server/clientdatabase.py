@@ -6160,22 +6160,24 @@ class ClientDatabase(Database):
             user_qry = " AND a.unit_id in (select distinct unit_id from tbl_user_units where user_id like '%s')" % session_user
             user_qry += " AND c.domain_id in (select distinct domain_id from tbl_user_domains where user_id like '%s')" % session_user
 
-        q = "select sum(ac.c_count + ch.h_count), ac.assignee from \
+        q = "select sum(ac.c_count + ifnull(ch.h_count, 0)), ac.assignee from \
             ( \
             select count(a.compliance_id) c_count, a.assignee \
             from tbl_assigned_compliances a \
             inner join tbl_compliances c on a.compliance_id = c.compliance_id \
-            where a.compliance_id not in ( \
+            where a.is_active = 1 and a.compliance_id not in ( \
                 select distinct t.compliance_id from tbl_compliance_history t \
                 where t.unit_id = a.unit_id and t.completed_by = a.assignee \
-                and ifnull(t.approve_status, 0) != 1 and a.is_active = 1 \
+                and ifnull(t.approve_status, 0) != 1 \
             ) %s \
             group by a.assignee \
             ) ac \
             left join  \
             (select count(a.compliance_id) h_count, a.completed_by from tbl_compliance_history a \
+            inner join tbl_assigned_compliances a1 on a.compliance_id = a1.compliance_id \
+            and a.unit_id = a1.unit_id and a.completed_by = a1.assignee \
             inner join tbl_compliances c on a.compliance_id = c.compliance_id \
-            where ifnull(a.approve_status, 0) != 1 \
+            where a1.is_active = 1 and ifnull(a.approve_status, 0) != 1 \
             %s \
             group by a.completed_by \
             ) ch ON \
@@ -6183,6 +6185,7 @@ class ClientDatabase(Database):
             group by assignee " % (user_qry, user_qry)
 
         rows = self.select_all(q)
+        print q
         result = self.convert_to_dict(rows, columns=["count", "assignee"])
         data = {}
         for r in result :
