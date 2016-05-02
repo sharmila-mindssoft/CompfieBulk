@@ -585,7 +585,6 @@ class ClientDatabase(Database):
         return results
 
     def save_activity(self, user_id, form_id, action, client_id=None):
-        print "inside save_activity"
         created_on = self.get_date_time()
         activityId = self.get_new_id("activity_log_id", "tbl_activity_log", client_id)
         query = "INSERT INTO tbl_activity_log \
@@ -4286,7 +4285,6 @@ class ClientDatabase(Database):
             country_id, domain_id,
             qry_where
         )
-        print q_count
         row = self.select_one(q_count)
         if row :
             count = row[0]
@@ -6186,6 +6184,8 @@ class ClientDatabase(Database):
         result = self.convert_to_dict(rows, columns=["count", "assignee"])
         data = {}
         for r in result :
+            print r["assignee"]
+            print r["count"]
             data[int(r["assignee"])] = int(r["count"])
         return data
 
@@ -7421,7 +7421,7 @@ class ClientDatabase(Database):
 #   Compliance Activity Report
 #
     def get_compliance_activity_report(
-        self, country_id, domain_id, user_type, user_id, unit_id, compliance_id,
+        self, country_id, domain_id, user_type, user_id, unit_id, request_compliance_id,
         level_1_statutory_name, from_date, to_date, session_user, client_id
     ):
         unit_ids = unit_id
@@ -7459,8 +7459,8 @@ class ClientDatabase(Database):
             unit_name = "%s-%s" % (unit_rows[0][1], unit_rows[0][0])
             address = unit_rows[0][2]
             compliance_ids_list = []
-            if compliance_id is not None:
-                compliance_ids_list = [compliance_id]
+            if request_compliance_id is not None:
+                compliance_ids_list = [request_compliance_id]
             else:
                 client_statutory_columns = "group_concat(client_statutory_id)"
                 client_statutory_conditions = "country_id = '%d' and domain_id = '%d' and unit_id='%d'" % (

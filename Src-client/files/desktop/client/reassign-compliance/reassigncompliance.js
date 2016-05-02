@@ -420,18 +420,52 @@ function submitcompliance(){
     assignComplianceApprovalId = assignComplianceAssigneeId;
   }
 
+
   var reason = $('#reason').val();
-  reassignCompliance = [];
-  var statutoriesCount= 1;
-  var userCompliances = compliancesList[reassignUserId];
+
   var d = new Date();
   var month = d.getMonth()+1;
   var day = d.getDate();
   var output = d.getFullYear() + '/' + month + '/' + day;
   var currentDate = new Date(output);
+  
   var selectedStatus = false;
+  reassignCompliance = [];
+  var totalCompliance= 1;
 
-  for(ucompliance in userCompliances){
+  for(var i=1; i<=(actCount-1); i++){
+    var actComplianceCount = $('.statutoryclass'+i).length;
+    for(var j=1; j<=actComplianceCount; j++){
+
+      var complianceApplicable = false;
+      if($('#statutory'+totalCompliance).is(":checked")){
+        complianceApplicable = true;
+        selectedStatus = true;
+      }
+
+      if(complianceApplicable){
+        var compliance_id = parseInt($('#complianceid'+totalCompliance).val());
+        var compliance_name = $('#compliancename'+totalCompliance).val();
+        var compliance_history_id =  parseInt($('#compliancehistoryid'+totalCompliance).val());
+        var cfrequency =  $('#frequency'+totalCompliance).val();
+        var uId =  $('#cunitid'+totalCompliance).val();
+        var due_date = null;
+        if(cfrequency != 'On Occurrence'){
+          due_date =  $('#duedate'+totalCompliance).val();
+          if(due_date == '' || due_date == undefined){
+            displayMessage(message.duedate_required_compliance + compliance_name);
+            hideLoader();
+            return false;
+          }
+        }
+        reassignComplianceData = client_mirror.reassignComplianceDet(uId,
+          compliance_id, compliance_name, compliance_history_id, due_date
+        );
+        reassignCompliance.push(reassignComplianceData);
+      }
+    }
+  }
+/*  for(ucompliance in userCompliances){
     var userUnitwiseCompliance = userCompliances[ucompliance]["units"];
     for(var entity in userUnitwiseCompliance){
       var uId = userUnitwiseCompliance[entity]["unit_id"];
@@ -461,7 +495,7 @@ function submitcompliance(){
                   displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
                   hideLoader();
                   return false;
-                }*/
+                }*
               }
             }
             reassignComplianceData = client_mirror.reassignComplianceDet(uId,
@@ -473,7 +507,7 @@ function submitcompliance(){
         }
       }
     }
-  }
+  }*/
 
   if(selectedStatus){
     function onSuccess(data){
