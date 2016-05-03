@@ -2624,17 +2624,21 @@ class ClientDatabase(Database):
             FROM \
                 tbl_client_statutories A \
             INNER JOIN tbl_client_compliances B ON A.client_statutory_id = B.client_statutory_id \
+            INNER JOIN tbl_compliances C ON B.compliance_id = C.compliance_id and C.is_active =1 \
             WHERE  B.compliance_opted = 1 \
             AND A.unit_id in %s \
             AND A.domain_id = %s \
             AND B.compliance_id not in (select  AC.compliance_id from tbl_assigned_compliances AC \
             WHERE AC.unit_id = A.unit_id ) \
             group by B.compliance_id \
+            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(C.statutory_mapping, '>>', 1), \
+            '>>', - 1) , C.frequency_id \
             limit %s, %s" % (
                 str(tuple(unit_ids)),
                 domain_id,
                 from_count, to_count
             )
+        print qry_applicable
         rows = self.select_all(qry_applicable)
         temp = self.convert_to_dict(rows, ["compliance_id", "units"])
         applicable_units = {}
@@ -2684,6 +2688,7 @@ class ClientDatabase(Database):
                 from_count,
                 to_count
             )
+        print query
         rows = self.select_all(query)
         columns = [
             "compliance_id", "domain_id",
