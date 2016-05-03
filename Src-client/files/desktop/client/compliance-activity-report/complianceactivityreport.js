@@ -180,9 +180,6 @@ function compactivityfilterList(data){
     $('.country-filter-name', cloneHeading).text(countriesNameVal);
     $('.domain-filter-name', cloneHeading).text(domainNameVal);
     $('.usertype-filter-name', cloneHeading).text(usertype);
-    if ((userval == '') || (userval === null))
-        userval = "Nil";
-    $('.user-filter-name', cloneHeading).text(userval);
     if (fromdate === null )
         fromdate = "Nil";
     $('.fromdate-filter-name', cloneHeading).text(fromdate);
@@ -223,6 +220,7 @@ function compactivitycompliancetasklist(data, acc_count){
 
         $.each(clist, function(k1, val1){
             if(count == 0){
+                $('.assigneee', cloneval).html(clist[k1]['assignee_name']);
                 $('.compliance-date', cloneval).html(clist[k1]['activity_date']);
                 $('.activity-status', cloneval).html(clist[k1]['activity_status']);
                 $('.compliance-task-status', cloneval).html(clist[k1]['compliance_status']);
