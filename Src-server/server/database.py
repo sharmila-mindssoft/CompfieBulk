@@ -6585,7 +6585,7 @@ class KnowledgeDatabase(Database):
                 )
                 self.execute(query)
 
-                query = "update tbl_client_groups set email_id = '%s'" % (admin_email)
+                query = "update tbl_client_groups set email_id = '%s' where client_id = '%d'" % (admin_email, client_id)
                 self.execute(query)
 
                 action = None
