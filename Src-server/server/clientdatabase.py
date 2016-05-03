@@ -2622,7 +2622,7 @@ class ClientDatabase(Database):
         total = self.total_compliance_for_units(unit_ids, domain_id)
         query = "SELECT distinct t2.compliance_id,\
             t1.domain_id,\
-            UC.units,\
+            U.units,\
             t2.statutory_applicable, \
             t2.statutory_opted,\
             t2.not_applicable_remarks,\
@@ -2644,16 +2644,17 @@ class ClientDatabase(Database):
             INNER JOIN tbl_compliances t3 \
             ON t2.compliance_id = t3.compliance_id \
             INNER JOIN \
-            (SELECT distinct U.compliance_id, group_concat(distinct U.unit_id) units FROM  \
-            (SELECT A.unit_id, A.client_statutory_id, B.compliance_id FROM tbl_client_statutories A \
-            INNER JOIN tbl_client_compliances B \
-            ON A.client_statutory_id = B.client_statutory_id \
-            AND B.compliance_id not in (select AC.compliance_id from tbl_assigned_compliances AC \
-            WHERE AC.unit_id = A.unit_id ) \
-            AND B.compliance_opted = 1 \
-            AND A.unit_id IN %s) U \
-            group by U.compliance_id )UC \
-            ON t2.compliance_id = UC.compliance_id \
+            (SELECT  \
+                B.compliance_id, group_concat(distinct A.unit_id) units \
+            FROM \
+                tbl_client_statutories A \
+            INNER JOIN tbl_client_compliances B ON A.client_statutory_id = B.client_statutory_id \
+                AND B.compliance_id not in (select  AC.compliance_id from tbl_assigned_compliances AC \
+                WHERE AC.unit_id = A.unit_id ) \
+                AND B.compliance_opted = 1 \
+                and A.unit_id IN %s \
+                group by B.compliance_id) U \
+            ON U.compliance_id = t2.compliance_id \
             WHERE \
             t1.domain_id = %s\
             AND t1.unit_id IN %s \
