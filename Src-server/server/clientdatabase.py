@@ -4923,12 +4923,12 @@ class ClientDatabase(Database):
         due_date = rows[0][2]
         completion_date = rows[0][3]
         status = "Complied"
-        # due_date_parts = str(due_date).split("-")
-        # due_date = datetime.date(
-        #     int(due_date_parts[0]), int(due_date_parts[1]), int(due_date_parts[2])
-        # )
         if due_date < completion_date:
             status = "Delayed Compliance"
+
+        ageing, remarks = self.calculate_ageing(
+            due_date, frequency_type=frequency_id, completion_date=completion_date, duration_type=None
+        )
         self.save_compliance_activity(
             unit_id, compliance_id, "Approved", status,
             remarks
@@ -5011,6 +5011,10 @@ class ClientDatabase(Database):
         if due_date is not None:
             if due_date < completion_date:
                 status = "Not Complied"
+
+        ageing, remarks = self.calculate_ageing(
+            due_date, frequency_type=None, completion_date=completion_date, duration_type=None
+        )
         self.save_compliance_activity(
             unit_id, compliance_id, "Rejected", status,
             remarks
@@ -5111,6 +5115,9 @@ class ClientDatabase(Database):
         # )
         if due_date < completion_date:
             status = "Not Complied"
+        ageing, remarks = self.calculate_ageing(
+            due_date, frequency_type=None, completion_date=completion_date, duration_type=None
+        )
         self.save_compliance_activity(
             unit_id, compliance_id, "Concurred", status,
             remarks
@@ -5136,6 +5143,9 @@ class ClientDatabase(Database):
         # )
         if due_date < completion_date:
             status = "Not Complied"
+        ageing, remarks = self.calculate_ageing(
+            due_date, frequency_type=None, completion_date=completion_date, duration_type=None
+        )
         self.save_compliance_activity(
             unit_id, compliance_id, "Rejected", status,
             remarks
@@ -6561,7 +6571,11 @@ class ClientDatabase(Database):
             if completion_date is not None:
                 compliance_status = "On Time"
                 if due_date not in [None, "None", 0]:
-                    r = relativedelta.relativedelta(due_date.date(), completion_date.date())
+                    if type(due_date) == datetime.datetime:
+                        due_date = due_date.date()
+                    if type(completion_date) == datetime.datetime:
+                        completion_date = completion_date.date()
+                    r = relativedelta.relativedelta(due_date, completion_date)
                     if r.days < 0:
                         compliance_status = "Delayed by %d day(s)" % abs(r.days)
                     return r.days, compliance_status
@@ -7137,6 +7151,9 @@ class ClientDatabase(Database):
         )
         unit_id = rows[0][0]
         compliance_id = rows[0][1]
+        ageing, remarks = self.calculate_ageing(
+            due_date, frequency_type=None, completion_date=completion_date, duration_type=None
+        )
         self.save_compliance_activity(
             unit_id, compliance_id, "Submited", "Inprogress",
             remarks
@@ -7563,7 +7580,7 @@ class ClientDatabase(Database):
                 INNER JOIN tbl_users us ON (us.user_id = ac.assignee)
                 WHERE u.country_id = '{}'
                 AND c.domain_id = '{}'
-                AND {}'''.format(
+                AND {} ORDER BY cal.updated_on DESC'''.format(
                     country_id, domain_id, " AND ".join(conditions)
                 )
         result = self.select_all(query)
@@ -7594,12 +7611,17 @@ class ClientDatabase(Database):
             if compliance_name not in unit_wise_activities[unit_name][level_1_statutory]:
                 unit_wise_activities[unit_name][level_1_statutory][compliance_name] = []
 
+            employee_name = row["employee_name"]
+            if row["employee_code"] not in ["None", None, ""]:
+                employee_name = "%s - %s" % (row["employee_code"], employee_name)
+
             unit_wise_activities[unit_name][level_1_statutory][compliance_name].append(
                 clientreport.ActivityData(
                     activity_date=self.datetime_to_string(row["activity_date"]),
                     activity_status=core.COMPLIANCE_ACTIVITY_STATUS(row["activity_status"]),
                     compliance_status=core.COMPLIANCE_STATUS(row["compliance_status"]),
-                    remarks=row["remarks"]
+                    remarks=row["remarks"],
+                    assignee_name=employee_name
                 )
             )
 
