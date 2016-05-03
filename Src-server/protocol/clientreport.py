@@ -1779,6 +1779,22 @@ class GetClientDetailsReportFiltersSuccess(Response):
         }
 
 
+class ExportToCSVSuccess(Response):
+    def __init__(self, link):
+        self.link = link
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["link"])
+        link = data.get("link")
+        link = parse_structure_CustomTextType_500(link)
+        return ExportToCSVSuccess(link)
+
+    def to_inner_structure(self):
+        return {
+            "link" : to_structure_CustomTextType_500(self.link)
+        }
+
 def _init_Response_class_map():
     classes = [
         GetComplianceDetailsReportFiltersSuccess,
@@ -1796,7 +1812,7 @@ def _init_Response_class_map():
         GetStatutoryNotificationsListReportSuccess,
         GetClientDetailsReportDataSuccess, GetActivityLogFiltersSuccess,
         GetActivityLogReportSuccess, GetLoginTraceSuccess,
-        GetClientDetailsReportFiltersSuccess
+        GetClientDetailsReportFiltersSuccess, ExportToCSVSuccess
     ]
     class_map = {}
     for c in classes:
