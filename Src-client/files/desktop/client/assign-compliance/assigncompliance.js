@@ -324,7 +324,7 @@ function load_secondwizard(){
   });
   }else{
     $('#pagination').show();
-    $('#activate-step-3').hide();
+    $('#activate-step-3').show();
   }
 
   if(count <= 1){
