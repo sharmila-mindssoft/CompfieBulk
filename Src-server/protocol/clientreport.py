@@ -2106,15 +2106,24 @@ class Activities(object):
 #
 
 class ActivityData(object):
-    def __init__(self, activity_date, activity_status, compliance_status, remarks):
+    def __init__(
+        self, activity_date, activity_status, compliance_status, remarks,
+        assignee_name
+    ):
         self.activity_date = activity_date
         self.activity_status = activity_status
         self.compliance_status = compliance_status
         self.remarks = remarks
+        self.assignee_name = assignee_name
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["activity_date", "activity_status", "compliance_status", "remarks"])
+        data = parse_dictionary(
+            data, [
+                "activity_date", "activity_status", "compliance_status", 
+                "remarks", "assignee_name"
+            ]
+        )
         activity_date = data.get("activity_date")
         activity_date = parse_structure_CustomTextType_20(activity_date)
         activity_status = data.get("activity_status")
@@ -2123,7 +2132,12 @@ class ActivityData(object):
         compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
         remarks = data.get("remarks")
         remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
-        return ActivityCompliance(activity_date, activity_status, compliance_status, remarks)
+        assignee_name = data.get("assignee_name")
+        assignee_name = parse_structure_OptionalType_CustomTextType_500(assignee_name)
+        return ActivityCompliance(
+            activity_date, activity_status, compliance_status, remarks,
+            assignee_name
+        )
 
     def to_structure(self):
         return {
@@ -2131,6 +2145,7 @@ class ActivityData(object):
             "activity_status": to_structure_EnumType_core_COMPLIANCE_ACTIVITY_STATUS(self.activity_status),
             "compliance_status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
             "remarks": to_structure_OptionalType_CustomTextType_500(self.remarks),
+            "assignee_name": to_structure_OptionalType_CustomTextType_500(self.assignee_name)
         }
 
 #

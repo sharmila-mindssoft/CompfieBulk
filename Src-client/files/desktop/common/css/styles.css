@@ -1798,7 +1798,7 @@ list-style-type:none; line-height:25px;
 
 .accordion-toggle {
   cursor: pointer;
-  	border:1px solid #aaa;
+  border-bottom:1px solid #aaa;
 }
 .accordion-content {
 
