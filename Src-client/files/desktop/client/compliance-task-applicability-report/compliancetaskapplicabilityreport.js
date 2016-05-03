@@ -175,7 +175,6 @@ $(function() {
 });
 
 function showloadrecord() {
-
     startCount = endCount;
     endCount = startCount + pageSize;
 
@@ -185,7 +184,6 @@ function showloadrecord() {
     }
     for(var y = 0;  y < pageSize; y++){
         if(list[y] !=  undefined){
-            console.log(Object)
             if(list[y] == "Applicable" ||  list[y] == "Not Applicable" || list[y] == "Not Opted" ){
                applicablestatus(list[y]);
             }
@@ -225,11 +223,8 @@ function loadresult(finalList) {
                 });
             });
         });
-
      });
-    //console.log(fullArrayList)
     var totallist = fullArrayList.length;
-
     if(totallist > pageSize){
         $('#pagination').show();
     }
@@ -237,11 +232,9 @@ function loadresult(finalList) {
         $('#pagination').hide();
     }
     var sub_keys_list = get_sub_array(fullArrayList, startCount, endCount);
-    console.log(sub_keys_list)
 
     for(var y = 0;  y < pageSize; y++){
         if(sub_keys_list[y] !=  undefined){
-            console.log(Object)
             if(sub_keys_list[y] == "Applicable" ||  sub_keys_list[y] == "Not Applicable" || sub_keys_list[y] == "Not Opted" ){
                applicablestatus(sub_keys_list[y]);
             }

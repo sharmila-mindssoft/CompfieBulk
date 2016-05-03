@@ -147,9 +147,9 @@ def get_compliance_to_start(db, client_id, current_date, country_id):
         "assignee", "concurrence_person", "approval_person"
     ]
     result = convert_to_dict(rows, columns)
-    print '*' * 10
+    # print '*' * 10
     # print result
-    print '*' * 10
+    # print '*' * 10
 
     return result
 
@@ -175,28 +175,29 @@ def calculate_next_due_date(
     frequency, statutory_dates, repeat_type,
     repeat_every, old_due_date
 ):
-    print "inside calculate_next_due_date"
     # frequency 1: One Time, 2 : Periodical, 3 : Review, 4: On occurance
     #  repeat_type 1 : Days, 2 : Months, 3 : years
     repeat_every = int(repeat_every)
     repeat_type = int(repeat_type)
     statutory_dates = json.loads(statutory_dates)
     trigger_before_days = None
-    print
     if statutory_dates == []:
         statutory_dates = None
     if frequency == 2 or frequency == 3 :
         print "periodical"
         if statutory_dates is None or len(statutory_dates) == 1 :
             print "statutory_dates is None"
-            print old_due_date
-            print repeat_every
+            print "next Due_date ",  old_due_date
+            print "Repeat_every ", repeat_every, repeat_type
             if repeat_type == 1 :
                 new_due_date = addDays(repeat_every, old_due_date)
             elif repeat_type == 2 :
                 new_due_date = addMonth(repeat_every, old_due_date)
             elif repeat_type == 3 :
                 new_due_date = addYears(repeat_every, old_due_date)
+            else :
+                "repeat_type not matched"
+                new_due_date = old_due_date
             return (new_due_date,  trigger_before_days)
         else :
             print "due_date from next_due_date"
@@ -211,14 +212,12 @@ def calculate_next_due_date(
                             day = statutory_dates[0]["statutory_date"]
                             month = statutory_dates[0]["statutory_month"]
                             trigger_before_days = statutory_dates[0]["trigger_before_days"]
-                            print "first index"
                             new_due_date = create_new_date(old_due_date, day, month)
                             break
                         else :
                             day = statutory_dates[index + 1]["statutory_date"]
                             month = statutory_dates[index + 1]["statutory_month"]
                             trigger_before_days = statutory_dates[index + 1]["trigger_before_days"]
-                            print "next index"
                             new_due_date = create_new_date(old_due_date, day, month)
                             break
                     else :
@@ -232,14 +231,12 @@ def calculate_next_due_date(
                             if index == len(statutory_dates)-1 :
                                 day = statutory_dates[0]["statutory_date"]
                                 month = statutory_dates[0]["statutory_month"]
-                                print "first index"
                                 trigger_before_days = dat["trigger_before_days"]
                                 new_due_date = create_new_date(old_due_date, day, month)
                                 break
 
                 return (new_due_date, trigger_before_days)
     else :
-        print "inside else returning old due date : {}".format(old_due_date)
         return old_due_date, trigger_before_days
 
 def get_new_id(db, table_name, column_name):
@@ -256,22 +253,28 @@ def save_in_compliance_history(
     db, unit_id, compliance_id, start_date, due_date, next_due_date,
     assignee, concurrence, approve
 ):
-    if concurrence is None:
-        concurrence = "NULL"
-
-    print "new task saved in history (unit_id, compliance_id, start_date) %s, %s, %s" % (unit_id, compliance_id, start_date)
     compliance_history_id = get_new_id(db, "tbl_compliance_history", "compliance_history_id")
-    columns = "compliance_history_id, unit_id, compliance_id, \
-            start_date, due_date, next_due_date, completed_by, approved_by, concurred_by"
-    values = (
-        columns, compliance_history_id, unit_id, compliance_id,
-        start_date, due_date, next_due_date, assignee,  approve, concurrence
-    )
-    query = "INSERT INTO tbl_compliance_history (%s) \
-        VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s) " % values
+    if concurrence is not None:
+        columns = "compliance_history_id, unit_id, compliance_id, \
+                start_date, due_date, next_due_date, completed_by, approved_by, concurred_by"
+        values = (
+            columns, compliance_history_id, unit_id, compliance_id,
+            start_date, due_date, next_due_date, assignee,  approve, concurrence
+        )
+        query = "INSERT INTO tbl_compliance_history (%s) \
+            VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s) " % values
 
-    print
-    print query
+    else :
+        columns = "compliance_history_id, unit_id, compliance_id, \
+                start_date, due_date, next_due_date, completed_by, approved_by"
+        values = (
+            columns, compliance_history_id, unit_id, compliance_id,
+            start_date, due_date, next_due_date, assignee,  approve
+        )
+
+        query = "INSERT INTO tbl_compliance_history (%s) \
+            VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s) " % values
+
     cursor = db.cursor()
     cursor.execute(query)
     cursor.close()
@@ -337,7 +340,6 @@ def start_new_task(db, client_id, current_date, country_id):
         approval_person = d["approval_person"]
         if d["frequency"] == 1 :
             next_due_date = ""
-            print "going to save in compliance history"
             compliance_history_id = save_in_compliance_history(
                 db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
                 d["due_date"], next_due_date, int(d["assignee"]),
@@ -345,16 +347,10 @@ def start_new_task(db, client_id, current_date, country_id):
             )
 
         else:
-            print "entering into else"
-            print d["repeats_every"]
-            print d["due_date"]
-            print d
             next_due_date, trigger_before = calculate_next_due_date(
                 d["frequency"], d["statutory_dates"], d["repeat_type_id"],
                 d["repeats_every"], d["due_date"]
             )
-            print next_due_date, trigger_before
-            print next_due_date, d["frequency"], d["statutory_dates"], d["repeat_type_id"]
             compliance_history_id = save_in_compliance_history(
                 db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
                 d["due_date"], next_due_date, int(d["assignee"]), d["concurrence_person"], int(approval_person)

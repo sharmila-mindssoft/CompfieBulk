@@ -13,7 +13,7 @@ from technomastercontroller import (
     get_client_profile,
     create_new_admin
 )
-
+from server import logger
 __all__=[
     "process_techno_request",
 ]
@@ -33,34 +33,58 @@ def process_techno_request(request, db) :
         return login.InvalidSessionToken()
 
     if type(request_frame) is technomasters.GetClientGroups:
-        return get_client_groups(db, request_frame, session_user)
+        logger.logKnowledgeApi("GetClientGroups", "process begin")
+        result = get_client_groups(db, request_frame, session_user)
+        logger.logKnowledgeApi("GetClientGroups", "process end")
 
     if type(request_frame) is technomasters.SaveClientGroup:
-        return save_client_group(db, request_frame, session_user)
+        logger.logKnowledgeApi("SaveClientGroup", "process begin")
+        result = save_client_group(db, request_frame, session_user)
+        logger.logKnowledgeApi("SaveClientGroup", "process end")
 
     if type(request_frame) is technomasters.UpdateClientGroup:
-        return update_client_group(db, request_frame, session_user)
+        logger.logKnowledgeApi("UpdateCleintGroup", "process begin")
+        result = update_client_group(db, request_frame, session_user)
+        logger.logKnowledgeApi("UpdateClientGroup", "process end")
 
     if type(request_frame) is technomasters.ChangeClientGroupStatus:
-        return change_client_group_status(db, request_frame, session_user)
+        logger.logKnowledgeApi("ChangeClientGroupStatus", "process begin")
+        result = change_client_group_status(db, request_frame, session_user)
+        logger.logKnowledgeApi("ChangeClientGroupStatus", "process end")
 
     if type(request_frame) is technomasters.GetClients:
-        return get_clients(db, request_frame, session_user)
+        logger.logKnowledgeApi("GetClients", "process begin")
+        result = get_clients(db, request_frame, session_user)
+        logger.logKnowledgeApi("GetClients", "process end")
 
     if type(request_frame) is technomasters.SaveClient:
-        return save_client(db, request_frame, session_user)
+        logger.logKnowledgeApi("SaveClient", "process begin")
+        result = save_client(db, request_frame, session_user)
+        logger.logKnowledgeApi("SaveCient", "process end")
 
     if type(request_frame) is technomasters.UpdateClient:
-        return update_client(db, request_frame, session_user)
+        logger.logKnowledgeApi("UpdateClient", "process begin")
+        result = update_client(db, request_frame, session_user)
+        logger.logKnowledgeApi("UpdateClient", "process end")
 
     if type(request_frame) is technomasters.ChangeClientStatus:
-        return change_client_status(db, request_frame, session_user)
+        logger.logKnowledgeApi("ChangeClientStatus", "process begin")
+        result = change_client_status(db, request_frame, session_user)
+        logger.logKnowledgeApi("ChangeClientStatus", "process end")
 
     if type(request_frame) is technomasters.ReactivateUnit:
-        return reactivate_unit(db, request_frame, session_user)
+        logger.logKnowledgeApi("ReactivateUnit", "process begin")
+        result = reactivate_unit(db, request_frame, session_user)
+        logger.logKnowledgeApi("ReactivateUnit", "process end")
 
     if type(request_frame) is technomasters.GetClientProfile:
-        return get_client_profile(db, request_frame, session_user)
+        logger.logKnowledgeApi("GetClientProfile", "process begin")
+        result = get_client_profile(db, request_frame, session_user)
+        logger.logKnowledgeApi("GetClientProfile", "process end")
 
     if type(request_frame) is technomasters.CreateNewAdmin:
-        return create_new_admin(db, request_frame, session_user)
+        logger.logKnowledgeApi("GetclientProfile", "process begin")
+        result = create_new_admin(db, request_frame, session_user)
+        logger.logKnowledgeApi("GetClientProfile", "process end")
+
+    return result

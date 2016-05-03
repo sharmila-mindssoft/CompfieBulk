@@ -304,21 +304,22 @@ All are int
 ## Approve Statutory mapping
 
 		{
-			"session_token": "f3bb3e20d38d4624930636de074a0df0",
-			"request": [
-				"ApproveStatutoryMapping",
-				{
-					"statutory_mappings": [
-					    {
-						    "statutory_mapping_id": 3,
-						    "statutory_provision": "POG ActPOG Act>>State Rule All",
-						    "approval_status": 1,
-						    "rejected_reason": null,
-						    "notification_text": null
-						}
-					]
-				}
-			]
+			"session_token": "2f8859eb9b704ae88cbfa7c8fd1c5bdf",
+		 	"request": 
+		 	[
+			  	"ApproveStatutoryMapping",
+			  	{
+			   		"s_mappings": [
+			    		{
+					     	"s_m_id": 20,
+						    "s_provision": "Primary Legislation 1504161021>>Secondary Legislation 1504161021",
+						    "a_status": 1,
+						    "r_reason": null,
+						    "n_text": null
+					    }
+			   		]
+			  	}
+		 	]
 		}
 
 	On Success

@@ -164,7 +164,12 @@ function initClientMirror() {
                     // alert("jqXHR:"+jqXHR.status);
                     // alert("textStatus:"+textStatus);
                     // alert("errorThrown:"+errorThrown);
-                    // callback(error, null);
+                    if (errorThrown == "Not Found"){
+                        alert("Server connection not found");
+                        redirect_login();
+                    }
+                    else
+                        callback(jqXHR["responseText"], errorThrown)
                 }
         );
     }
@@ -924,7 +929,7 @@ function initClientMirror() {
 
     function getUnitwisecomplianceReport(
         country_id, domain_id, business_group_id, legal_entity_id,
-        division_id, unit_id, user_id, callback
+        division_id, unit_id, user_id, record_count, callback
     ) {
         var request = [
             "GetUnitwisecomplianceReport", {
@@ -934,7 +939,8 @@ function initClientMirror() {
                 "legal_entity_id": legal_entity_id,
                 "division_id": division_id,
                 "unit_id": unit_id,
-                "user_id": user_id
+                "user_id": user_id,
+                "record_count": record_count
             }
         ];
         callerName = "client_reports";
@@ -943,7 +949,7 @@ function initClientMirror() {
 
     function getAssigneewisecomplianceReport(
         country_id, domain_id, business_group_id, legal_entity_id,
-        division_id, unit_id, user_id, callback
+        division_id, unit_id, user_id, record_count, callback
     ) {
         var request = [
             "GetAssigneewisecomplianceReport", {
@@ -953,8 +959,9 @@ function initClientMirror() {
                 "legal_entity_id": legal_entity_id,
                 "division_id": division_id,
                 "unit_id": unit_id,
-                "user_id": user_id
-            }
+                "user_id": user_id,
+                "record_count": record_count
+          	}
         ];
         callerName = "client_reports";
         clientApiRequest(callerName, request, callback);
@@ -1506,6 +1513,17 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getAssigneeWiseCompliances(assignee, record_count, callback) {
+        var request = [
+            "GetAssigneeCompliances", {
+                "assignee": assignee,
+                "record_count": record_count
+            }
+        ];
+        callerName = "client_transaction";
+        clientApiRequest(callerName, request, callback);
+    }
+
     function reassignComplianceDet(uID, cID, cNAME, cHistoryId, dDate) {
         return {
             "u_id": uID,
@@ -1679,7 +1697,8 @@ function initClientMirror() {
         get_ip: get_ip,
         checkContractExpiration: checkContractExpiration,
         saveReassignCompliance : saveReassignCompliance,
-        reassignComplianceDet : reassignComplianceDet
+        reassignComplianceDet : reassignComplianceDet,
+        getAssigneeWiseCompliances: getAssigneeWiseCompliances,
     }
 }
 var client_mirror = initClientMirror();

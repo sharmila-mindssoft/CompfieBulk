@@ -176,8 +176,12 @@ class Database(object) :
     def select_all(self, query) :
         cursor = self.cursor()
         assert cursor is not None
-        cursor.execute(query)
-        return cursor.fetchall()
+        try:
+            cursor.execute(query)
+            return cursor.fetchall()
+        except Exception, e:
+            logger.logClientApi(e)
+            return
 
     ########################################################
     # To execute select query
@@ -2258,7 +2262,7 @@ class KnowledgeDatabase(Database):
     def get_statutory_mapping_report(
         self, country_id, domain_id, industry_id,
         statutory_nature_id, geography_id,
-        level_1_statutory_id, user_id
+        level_1_statutory_id, user_id, from_count, to_count
     ) :
         qry_where = ""
         if industry_id is not None :
@@ -2269,6 +2273,35 @@ class KnowledgeDatabase(Database):
             qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
         if level_1_statutory_id is not None :
             qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, '%s') from tbl_statutories where statutory_id = %s)" % (str("%"), level_1_statutory_id)
+
+        q_count = "SELECT  count(distinct t2.compliance_id) \
+            FROM tbl_statutory_mappings t1 \
+            INNER JOIN tbl_compliances t2 \
+            ON t2.statutory_mapping_id = t1.statutory_mapping_id \
+            INNER JOIN tbl_statutory_industry t3 \
+            ON t3.statutory_mapping_id = t1.statutory_mapping_id \
+            INNER JOIN tbl_statutory_geographies t4 \
+            ON t4.statutory_mapping_id = t1.statutory_mapping_id \
+            INNER JOIN tbl_user_domains t5 \
+            ON t5.domain_id = t1.domain_id \
+            and t5.user_id = %s \
+            INNER JOIN tbl_user_countries t6 \
+            ON t6.country_id = t1.country_id \
+            and t6.user_id = %s \
+            WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
+            t1.country_id = %s \
+            and t1.domain_id = %s %s  \
+            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
+                t2.frequency_id " % (
+                user_id, user_id,
+                country_id, domain_id,
+                qry_where
+            )
+        row = self.select_one(q_count)
+        if row :
+            r_count = row[0]
+        else :
+            r_count = 0
 
         q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
@@ -2304,10 +2337,12 @@ class KnowledgeDatabase(Database):
             t1.country_id = %s \
             and t1.domain_id = %s \
             %s \
-            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), t2.frequency_id" % (
+            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), t2.frequency_id \
+            limit %s, %s" % (
                 user_id, user_id,
                 country_id, domain_id,
-                qry_where
+                qry_where,
+                from_count, to_count
             )
         rows = self.select_all(q)
         columns = [
@@ -2328,13 +2363,13 @@ class KnowledgeDatabase(Database):
             report_data = self.convert_to_dict(rows, columns)
 
         return self.return_knowledge_report(
-            report_data
+            report_data, r_count
         )
 
     def get_compliance_list_report_techno(
         self, country_id, domain_id, industry_id,
         statutory_nature_id, geography_id,
-        level_1_statutory_id, user_id
+        level_1_statutory_id, user_id, from_count, to_count
     ) :
         qry_where = ""
         if industry_id is not None :
@@ -2345,6 +2380,37 @@ class KnowledgeDatabase(Database):
             qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
         if level_1_statutory_id is not None :
             qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, '%s') from tbl_statutories where statutory_id = %s)" % (str("%"), level_1_statutory_id)
+
+        q_count = "SELECT  count(distinct t2.compliance_id) \
+            FROM tbl_statutory_mappings t1 \
+            INNER JOIN tbl_compliances t2 \
+            ON t2.statutory_mapping_id = t1.statutory_mapping_id \
+            INNER JOIN tbl_statutory_industry t3 \
+            ON t3.statutory_mapping_id = t1.statutory_mapping_id \
+            INNER JOIN tbl_statutory_geographies t4 \
+            ON t4.statutory_mapping_id = t1.statutory_mapping_id \
+            INNER JOIN tbl_user_domains t5 \
+            ON t5.domain_id = t1.domain_id \
+            and t5.user_id = %s \
+            INNER JOIN tbl_user_countries t6 \
+            ON t6.country_id = t1.country_id \
+            and t6.user_id = %s \
+            WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
+            t1.country_id = %s \
+            and t1.domain_id = %s %s \
+            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
+            (select group_concat(I.industry_name) from tbl_industries I where I.industry_id  in \
+            (select industry_id from tbl_statutory_industry where statutory_mapping_id = t1.statutory_mapping_id)), \
+                t2.frequency_id " % (
+                user_id, user_id,
+                country_id, domain_id,
+                qry_where
+            )
+        row = self.select_one(q_count)
+        if row :
+            r_count = row[0]
+        else :
+            r_count = 0
 
         q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
@@ -2383,10 +2449,12 @@ class KnowledgeDatabase(Database):
             and t1.domain_id = %s \
             %s \
             ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
-                industry, t2.frequency_id" % (
+                industry, t2.frequency_id \
+                limit %s, %s" % (
                 user_id, user_id,
                 country_id, domain_id,
-                qry_where
+                qry_where,
+                from_count, to_count
             )
         rows = self.select_all(q)
         columns = [
@@ -2407,7 +2475,7 @@ class KnowledgeDatabase(Database):
             report_data = self.convert_to_dict(rows, columns)
 
         return self.return_knowledge_report(
-            report_data
+            report_data, r_count
         )
 
     def get_mappings_id(self, statutory_id) :
@@ -2428,7 +2496,7 @@ class KnowledgeDatabase(Database):
             )
         return result
 
-    def return_knowledge_report(self, report_data):
+    def return_knowledge_report(self, report_data, total_count=None):
         if bool(self.geography_parent_mapping) is False :
             self.get_geographies()
 
@@ -2512,7 +2580,7 @@ class KnowledgeDatabase(Database):
                 url
             )
             report_list.append(info)
-        return report_list
+        return report_list, total_count
     #
     # compliance
     #

@@ -1,5 +1,5 @@
 from protocol import (clienttransactions, clientmasters, login, core)
-
+from server import logger
 __all__ = [
     "process_client_transaction_requests"
 ]
@@ -18,55 +18,96 @@ def process_client_transaction_requests(request, db) :
         return login.InvalidSessionToken()
 
     if type(request) is clienttransactions.GetStatutorySettings :
-        return process_get_statutory_settings(db, session_user, client_id)
+        logger.logClientApi("GetStatutorySettings", "process begin")
+        result = process_get_statutory_settings(db, session_user, client_id)
+        logger.logClientApi("GetStatutorySettings", "process end")
 
     elif type(request) is clienttransactions.GetSettingsCompliances :
-        return process_get_statutory_compliance(db, session_user, request)
+        logger.logClientApi("GetSettingsCompliances", "process begin")
+        result = process_get_statutory_compliance(db, session_user, request)
+        logger.logClientApi("GetSettingsCompliances", "process end")
 
     elif type(request) is clienttransactions.UpdateStatutorySettings :
-        return process_update_statutory_settings(
+        logger.logClientApi("UpdateStatutorySettings", "process begin")
+        result = process_update_statutory_settings(
             db, request, session_user, client_id
         )
+        logger.logClientApi("UpdateStatutorySettings", "process end")
+
     elif type(request) is clienttransactions.GetAssignCompliancesFormData:
-        return process_get_assign_compliance_form_data(
+        logger.logClientApi("GetAssignCompliancesFormData", "process begin")
+        result = process_get_assign_compliance_form_data(
             db, session_user, client_id
         )
+        logger.logClientApi("GetAssignCompliancesFormData", "process end")
+
     elif type(request) is clienttransactions.GetComplianceForUnits:
-        return process_get_compliance_for_units(
+        logger.logClientApi("GetComplianceForUnits", "process begin")
+        result = process_get_compliance_for_units(
             db, request, session_user, client_id
         )
+        logger.logClientApi("GetComplianceForUnits", "process end")
+
     elif type(request) is clienttransactions.SaveAssignedCompliance :
-        return process_save_assigned_compliance(
+        logger.logClientApi("SaveAssignedCompliance", "process begin")
+        result = process_save_assigned_compliance(
             db, request, session_user, client_id
         )
+        logger.logClientApi("SaveAssignedCompliance", "process end")
+
     elif type(request) is clienttransactions.GetUserwiseCompliances :
-        return process_get_user_wise_compliances(
+        logger.logClientApi("GetUserwiseCompliances", "process begin")
+        result = process_get_user_wise_compliances(
             db, session_user, client_id
         )
+        logger.logClientApi("GetUserwiseCompliances", "process end")
+
+    elif type(request) is clienttransactions.GetAssigneeCompliances :
+        logger.logClientApi("GetAssigneeCompliances", "process begin")
+        result = process_get_assignee_compliances(db, request, session_user)
+        logger.logClientApi("GetAssigneeCompliances", "process end")
+
     elif type(request) is clienttransactions.ReassignCompliance :
-        return process_reassign_compliance(
+        result = process_reassign_compliance(
             db, request, session_user
         )
     elif type(request) is clienttransactions.GetPastRecordsFormData :
-        return process_get_past_records_form_data(
+        logger.logClientApi("GetPastRecordsFormData", "process begin")
+        result = process_get_past_records_form_data(
             db, request, session_user, client_id
         )
+        logger.logClientApi("GetPastRecordsFormData", "process end")
+
     elif type(request) is clienttransactions.GetStatutoriesByUnit :
-        return process_get_statutories_by_unit(
+        logger.logClientApi("GetStatutoriesByUnit", "process begin")
+        result = process_get_statutories_by_unit(
             db, request, session_user, client_id
         )
+        logger.logClientApi("GetStatutoriesByUnit", "process end")
+
     elif type(request) is clienttransactions.SavePastRecords :
-        return process_save_past_records(
+        logger.logClientApi("SavePastRecords", "process begin")
+        result = process_save_past_records(
             db, request, session_user, client_id
         )
+        logger.logClientApi("SavePastRecords", "process end")
+
     elif type(request) is clienttransactions.GetComplianceApprovalList :
-        return process_get_compliance_approval_list(
+        logger.logClientApi("GetComplianceApprovalList", "process begin")
+        result = process_get_compliance_approval_list(
             db, request, session_user, client_id
         )
+        logger.logClientApi("GetComplianceApprovalList", "process end")
+
     elif type(request) is clienttransactions.ApproveCompliance:
-        return process_approve_compliance(
+        logger.logClientApi("ApproveCompliance", "process begin")
+        result = process_approve_compliance(
             db, request, session_user, client_id
         )
+        logger.logClientApi("ApproveCompliance", "process end")
+
+    return result
+
 
 def process_get_statutory_settings(db, session_user, client_id):
     return db.get_statutory_settings(session_user, client_id)
@@ -271,7 +312,40 @@ def process_get_user_wise_compliances(db, session_user, client_id):
         session_user, client_id
     )
     units = db.get_units_for_assign_compliance(session_user)
-    result = db.get_user_wise_compliance(session_user, client_id)
+    # result = db.get_user_wise_compliance(session_user, client_id)
+    # assignee_wise_compliance = result[0]
+    # assignee_compliance_count = result[1]
+    # final_dict = {}
+
+    # for key, value in assignee_wise_compliance.iteritems():
+    #     unit_list = []
+    #     for k, v in value.iteritems():
+    #         unit_list.append(v)
+    #     no_of_compliance = assignee_compliance_count[key]
+    #     user_data = clienttransactions.USER_WISE_COMPLIANCE(
+    #         no_of_compliance,
+    #         unit_list
+    #     )
+    #     final_dict[key] = [user_data]
+
+    two_level_approve = db.get_client_settings()
+    client_admin = db.get_admin_info()
+
+    compliance_count = db.get_assigneewise_complaince_count(session_user)
+
+    result = clienttransactions.GetUserwiseCompliancesSuccess(
+        compliance_count, users, units,
+        two_level_approve,
+        client_admin
+    )
+
+    return result
+
+def process_get_assignee_compliances(db, request, session_user):
+    assignee = request.assignee
+    from_count = request.record_count
+    to_count = 500
+    result = db.get_compliance_for_assignee(session_user, assignee, from_count, to_count)
     assignee_wise_compliance = result[0]
     assignee_compliance_count = result[1]
     final_dict = {}
@@ -287,16 +361,8 @@ def process_get_user_wise_compliances(db, session_user, client_id):
         )
         final_dict[key] = [user_data]
 
-    two_level_approve = db.get_client_settings()
-    client_admin = db.get_admin_info()
+    return clienttransactions.GetAssigneeCompliancesSuccess(final_dict)
 
-    result = clienttransactions.GetUserwiseCompliancesSuccess(
-        final_dict, users, units,
-        two_level_approve,
-        client_admin
-    )
-
-    return result
 
 def process_reassign_compliance(db, request, session_user):
     return db.reassign_compliance(request, session_user)

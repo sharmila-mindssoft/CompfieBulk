@@ -55,7 +55,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_UnsignedIntegerType_32,
     parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings,
     parse_structure_Text,
-    parse_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES
+    parse_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
+    parse_structure_MapType_UnsignedIntegerType_32_UnsignedIntegerType_32
 )
 from protocol.to_structure import (
     to_structure_SignedIntegerType_8,
@@ -115,7 +116,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings,
     to_structure_Text,
     to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
-    to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS
+    to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
+    to_structure_MapType_UnsignedIntegerType_32_UnsignedIntegerType_32
 )
 
 #
@@ -430,6 +432,26 @@ class GetUserwiseCompliances(Request):
         return {
         }
 
+class GetAssigneeCompliances(Request):
+    def __init__(self, assignee, record_count):
+        self.assignee = assignee
+        self.record_count = record_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["assignee", "record_count"])
+        assignee = data.get("assignee")
+        assignee = parse_structure_UnsignedIntegerType_32(assignee)
+        record_count = data.get("record_count")
+        record_count = parse_structure_UnsignedIntegerType_32(record_count)
+        return GetAssigneeCompliances(assignee, record_count)
+
+    def to_inner_structure(self):
+        return {
+            "assignee": to_structure_UnsignedIntegerType_32(self.assignee),
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
+        }
+
 class ReassignCompliance(Request):
     def __init__(self, r_from, assignee, a_name, c_person, a_person, compliances, r_reason):
         self.reassigned_from = r_from
@@ -592,7 +614,7 @@ class SavePastRecords(Request):
 
 
 def _init_Request_class_map():
-    classes = [GetStatutorySettings, GetSettingsCompliances, UpdateStatutorySettings, GetAssignCompliancesFormData, GetComplianceForUnits, SaveAssignedCompliance, GetUserwiseCompliances, ReassignCompliance, GetComplianceApprovalList, ApproveCompliance, GetPastRecordsFormData, GetStatutoriesByUnit, SavePastRecords]
+    classes = [GetStatutorySettings, GetSettingsCompliances, UpdateStatutorySettings, GetAssignCompliancesFormData, GetComplianceForUnits, SaveAssignedCompliance, GetUserwiseCompliances, GetAssigneeCompliances, ReassignCompliance, GetComplianceApprovalList, ApproveCompliance, GetPastRecordsFormData, GetStatutoriesByUnit, SavePastRecords]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -900,7 +922,7 @@ class GetUserwiseCompliancesSuccess(Response):
             ]
         )
         user_wise_compliances = data.get("user_wise_compliances")
-        user_wise_compliances = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(
+        user_wise_compliances = parse_structure_MapType_UnsignedIntegerType_32_UnsignedIntegerType_32(
             user_wise_compliances
         )
         users = data.get("users")
@@ -921,14 +943,30 @@ class GetUserwiseCompliancesSuccess(Response):
 
     def to_inner_structure(self):
         result = {
-            "user_wise_compliances": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(self.user_wise_compliances),
+            "user_wise_compliances": to_structure_MapType_UnsignedIntegerType_32_UnsignedIntegerType_32(self.user_wise_compliances),
             "users": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users),
             "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units),
             "two_level_approve": to_structure_Bool(self.two_level_approve),
             "client_admin": to_structure_UnsignedIntegerType_32(self.client_admin)
-            # "users": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users)
         }
         return result
+
+class GetAssigneeCompliancesSuccess(Response):
+    def __init__(self, user_wise_compliance):
+        self.user_wise_compliance = user_wise_compliance
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_wise_compliance"])
+        user_wise_complaince = data.get("user_wise_complaince")
+        user_wise_complaince = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(user_wise_complaince)
+        return GetAssigneeCompliancesSuccess(user_wise_complaince)
+
+    def to_inner_structure(self):
+        return {
+            "user_wise_compliance": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(self.user_wise_compliance)
+        }
+
 
 class ReassignComplianceSuccess(Response):
     def __init__(self):
@@ -1119,7 +1157,8 @@ def _init_Response_class_map():
         SaveAssignedComplianceSuccess, InvalidDueDate, AssigneeNotBelongToUnit, ConcurrenceNotBelongToUnit,
         ApprovalPersonNotBelongToUnit, GetUserwiseCompliancesSuccess, ReassignComplianceSuccess,
         GetComplianceApprovalListSuccess, ApproveComplianceSuccess, GetPastRecordsFormDataSuccess,
-        GetStatutoriesByUnitSuccess, SavePastRecordsSuccess, SavePastRecordsFailed
+        GetStatutoriesByUnitSuccess, SavePastRecordsSuccess, SavePastRecordsFailed,
+        GetAssigneeCompliancesSuccess
     ]
     class_map = {}
     for c in classes:

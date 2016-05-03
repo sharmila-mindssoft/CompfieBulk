@@ -275,7 +275,8 @@ function loadUserUpdate(userId){
             $("#mobile-number").val(contactno[2]);
             $("#usergroupval").val(usergroupname);
             $("#usergroup").val(userList[user]['user_group_id']);
-            $("#user-level option[value = "+userList[user]['user_level']+"]").attr('selected','selected');
+            $("#user-level").val(userList[user]['user_level']);
+            //$("#user-level option[value = "+userList[user]['user_level']+"]").attr('selected','selected');
             $("#email-id").val(userList[user]['email_id']);
             $("#email-id").attr("readonly", "readonly");
             $("#country").val(userList[user]['country_ids']);

@@ -14,7 +14,7 @@ from processes.auto_deletion_process import run_auto_deletion_country_wise
 def main() :
     run_daily_process_country_wise()
     run_email_process()
-    run_auto_deletion_country_wise()
+    # run_auto_deletion_country_wise()
 
 if __name__ == "__main__" :
     main()

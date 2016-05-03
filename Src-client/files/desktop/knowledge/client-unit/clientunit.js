@@ -959,7 +959,13 @@ function addUnitRowUpdate(clientunitId, businessgroupId, legalEntityId, division
     var domainsListArray = firstlist['domain_ids'];
     $('.domain-'+countval+'-'+lastClassval).val(domainsListArray);
     $('.domainselected-'+countval+'-'+lastClassval).val(domainsListArray.length+" Selected");
-    $('.activedclass-'+countval+'-'+lastClassval).text("Active");
+    if(firstlist['is_active'] == true){
+        $('.activedclass-'+countval+'-'+lastClassval).text("Active");
+    }
+    else{
+        var classnamec =  'imgactivedclass-'+countryByCount+'-'+1;
+        $('.activedclass-'+countval+'-'+lastClassval).html('<img src="/images/icon-inactive.png" onclick="reactiviteunit(this, \''+firstlist['unit_id']+'\', \''+clientunitId+'\');">');
+    }
 }
 
 
@@ -1596,7 +1602,7 @@ function activate_unitlocaion (element, ccount, mappingname) {
     var checkval = $(element).attr('id');
     $('.unitlocation'+ccount).val(checkname);
     $('.unitlocation-ids'+ccount).val(checkval);
-    $('.full-location-list'+ccount).html(mappingname.replace(/##/gi,'"'));
+    $('.full-location-list'+ccount).html('<br>'+mappingname.replace(/##/gi,'"'));
 }
 function domainunionclientdomainList(classval){
     console.log(classval);

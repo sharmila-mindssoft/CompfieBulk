@@ -269,10 +269,10 @@
 }
 .noti_bubble {
     position:absolute;    /* This breaks the div from the normal HTML document. */
-    top: -6px;
-    right:-6px;
+    top: 9px;
+    right:-3px;
     padding:1px 2px 1px 2px;
-    background-color:red; /* you could use a background image if you'd like as well */
+    background-color: #0024FF; /* you could use a background image if you'd like as well */
     color:white;
     font-weight:bold;
     font-size:0.55em;
