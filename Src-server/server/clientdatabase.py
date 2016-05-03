@@ -2620,9 +2620,30 @@ class ClientDatabase(Database):
         if session_user == 0 or session_user == self.get_admin_id() :
             session_user = '%'
         total = self.total_compliance_for_units(unit_ids, domain_id)
+        qry_applicable = "SELECT distinct B.compliance_id, group_concat(distinct A.unit_id) units \
+            FROM \
+                tbl_client_statutories A \
+            INNER JOIN tbl_client_compliances B ON A.client_statutory_id = B.client_statutory_id \
+            WHERE  B.compliance_opted = 1 \
+            AND A.unit_id in %s \
+            AND A.domain_id = %s \
+            AND B.compliance_id not in (select  AC.compliance_id from tbl_assigned_compliances AC \
+            WHERE AC.unit_id = A.unit_id ) \
+            group by B.compliance_id \
+            limit %s, %s" % (
+                str(tuple(unit_ids)),
+                domain_id,
+                from_count, to_count
+            )
+        rows = self.select_all(qry_applicable)
+        temp = self.convert_to_dict(rows, ["compliance_id", "units"])
+        applicable_units = {}
+        for r in temp :
+            c_id = int(r["compliance_id"])
+            applicable_units[c_id] = r["units"]
+
         query = "SELECT distinct t2.compliance_id,\
             t1.domain_id,\
-            U.units,\
             t2.statutory_applicable, \
             t2.statutory_opted,\
             t2.not_applicable_remarks,\
@@ -2643,28 +2664,21 @@ class ClientDatabase(Database):
             ON t2.client_statutory_id = t1.client_statutory_id \
             INNER JOIN tbl_compliances t3 \
             ON t2.compliance_id = t3.compliance_id \
-            INNER JOIN \
-            (SELECT  \
-                B.compliance_id, group_concat(distinct A.unit_id) units \
-            FROM \
-                tbl_client_statutories A \
-            INNER JOIN tbl_client_compliances B ON A.client_statutory_id = B.client_statutory_id \
-                AND B.compliance_id not in (select  AC.compliance_id from tbl_assigned_compliances AC \
-                WHERE AC.unit_id = A.unit_id ) \
-                AND B.compliance_opted = 1 \
-                and A.unit_id IN %s \
-                group by B.compliance_id) U \
-            ON U.compliance_id = t2.compliance_id \
             WHERE \
             t1.domain_id = %s\
             AND t1.unit_id IN %s \
             AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
             AND t3.is_active = 1 AND t1.is_new = 1 \
+            AND t2.compliance_id not in (select \
+                AC.compliance_id \
+                from \
+                tbl_assigned_compliances AC \
+                WHERE \
+                AC.unit_id = t1.unit_id)\
             ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), '>>', -1),\
             t3.frequency_id \
             limit %s, %s" % (
-                str(tuple(unit_ids)),
                 domain_id,
                 str(tuple(unit_ids)),
                 from_count,
@@ -2672,7 +2686,7 @@ class ClientDatabase(Database):
             )
         rows = self.select_all(query)
         columns = [
-            "compliance_id", "domain_id", "units",
+            "compliance_id", "domain_id",
             "statutory_applicable", "statutory_opted",
             "not_applicable_remarks",
             "compliance_applicable", "compliance_opted",
@@ -2683,7 +2697,7 @@ class ClientDatabase(Database):
             "repeat_type", "repeats_every"
         ]
         result = self.convert_to_dict(rows, columns)
-        return self.return_assign_compliance_data(result, total)
+        return self.return_assign_compliance_data(result, applicable_units, total)
 
     def set_new_due_date(self, statutory_dates):
         due_date = None
@@ -2743,14 +2757,15 @@ class ClientDatabase(Database):
                 due_date_list.append(due_date)
         return due_date, due_date_list, date_list
 
-    def return_assign_compliance_data(self, result, total):
+    def return_assign_compliance_data(self, result, applicable_units, total):
         level_1_wise = {}
         level_1_name = []
         for r in result:
+            c_id = int(r["compliance_id"])
             maipping = r["statutory_mapping"].split(">>")
             level_1 = maipping[0].strip()
             unit_ids = [
-                int(x) for x in r["units"].split(',')
+                int(x) for x in applicable_units.get(c_id).split(',')
             ]
             # level_1_wise = domain_wise_compliance.get(domain_id)
             # if level_1_wise is None :
@@ -2776,7 +2791,7 @@ class ClientDatabase(Database):
                 summary = None
 
             compliance = clienttransactions.UNIT_WISE_STATUTORIES(
-                r["compliance_id"],
+                c_id,
                 name,
                 r["compliance_description"],
                 core.COMPLIANCE_FREQUENCY(r["frequency"]),
