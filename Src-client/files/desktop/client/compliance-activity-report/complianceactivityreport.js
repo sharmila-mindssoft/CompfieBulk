@@ -18,16 +18,8 @@ var endCount;
 var sno = 0;
 var fullArrayList = [];
 var acc_count = 1;
+var tRecord = 0;
 
-function clearMessage() {
-    $(".error-message").hide();
-    $(".error-message").text("");
-}
-
-function displayMessage(message) {
-    $(".error-message").text(message);
-    $(".error-message").show();
-}
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -217,7 +209,6 @@ function compactivitycompliancetasklist(data, acc_count){
         $('.compliance-task', cloneval).html(k);
         var clist = data[k];
         var count = 0;
-
         $.each(clist, function(k1, val1){
             if(count == 0){
                 $('.assigneee', cloneval).html(clist[k1]['assignee_name']);
@@ -243,6 +234,13 @@ function compactivitycompliancetasklist(data, acc_count){
             count++;
         });
     });
+
+    if(sno >= tRecord){
+        $('#accordion').find('.accordion-toggle').click(function(){
+            $(this).next().slideToggle('fast');
+            $(".accordion-content").not($(this).next()).slideUp('fast');
+        });
+    }
 }
 
 
@@ -321,12 +319,6 @@ function loadresult(finalList) {
     });
     var totallist = fullArrayList.length;
 
-    if(totallist > pageSize){
-        $('#pagination').show();
-    }
-    else{
-        $('#pagination').hide();
-    }
     var sub_keys_list = get_sub_array(fullArrayList, startCount, endCount);
     compactivityfilterList();
     for(var y = 0;  y < pageSize; y++){
@@ -343,10 +335,14 @@ function loadresult(finalList) {
             }
         }
     }
-    $('#accordion').find('.accordion-toggle').click(function(){
-        $(this).next().slideToggle('fast');
-        $(".accordion-content").not($(this).next()).slideUp('fast');
-    });
+
+    if(totallist >= pageSize){
+        $('#pagination').show();
+    }
+    else{
+        $('#pagination').hide();
+    }
+
 }
 
 
@@ -354,19 +350,19 @@ function loadComplianceActivityReportList(data){
 
     $(".grid-table-rpt").show();
     $('.table-compliance-activity-list').empty();
-    var sno = 0;
+    
 
     $.each(data, function(key, value) {
         var level1list = data[key]['statutory_wise_compliances'];
         $.each(level1list, function(ke, valu) {
             var list = level1list[ke];
             $.each(list, function(k, val){
-                sno = sno + 1;
+                tRecord = tRecord + 1;
             });
         });
     });
     loadresult(data);
-    $(".total-records").html("Total : "+sno+" records")
+    $(".total-records").html("Total : "+tRecord+" records")
 }
 
 
