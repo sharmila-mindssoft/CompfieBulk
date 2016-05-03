@@ -5330,7 +5330,7 @@ class ClientDatabase(Database):
         self, country_id, domain_id, statutory_id,
         unit_id, compliance_id, assignee,
         from_date, to_date, compliance_status,
-        session_user
+        session_user, from_count, to_count
     ) :
         qry_where = ""
         admin_id = self.get_admin_id()
@@ -5378,10 +5378,11 @@ class ClientDatabase(Database):
                 AND c.statutory_mapping like '%s' \
                 %s \
         order by ch.due_date desc \
-        " % (
+        limit %s, %s " % (
             country_id, domain_id,
             str(statutory_id+"%"),
-            qry_where
+            qry_where,
+            from_count, to_count
         )
 
         row = self.select_one(qry_count)

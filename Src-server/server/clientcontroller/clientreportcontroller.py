@@ -286,10 +286,13 @@ def get_compliancedetails_report(db, request, session_user, client_id):
         from_date = request.from_date
         to_date = request.to_date
         compliance_status = request.compliance_status
+        from_count = request.record_count
+        to_count = 500
 
         compliance_details_list, total = db.report_compliance_details(
             country_id, domain_id, statutory_id, unit_id, compliance_id,
-            assignee_id, from_date, to_date, compliance_status, session_user
+            assignee_id, from_date, to_date, compliance_status, session_user,
+            from_count, to_count
         )
         return clientreport.GetComplianceDetailsReportSuccess(
             compliance_details_list, total
