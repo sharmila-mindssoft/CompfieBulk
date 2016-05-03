@@ -198,7 +198,7 @@ def run_web_front_end(port, knowledge_server_address):
             io_loop,
             knowledge_server_address,
             http_client,
-            60,
+            80,
             server_added
         )
         controller = Controller(
@@ -254,7 +254,7 @@ def run_web_front_end(port, knowledge_server_address):
         )
 
         web_server.low_level_url(
-            r"/download_7_year_data/bkup/(.*)", 
+            r"/download_7_year_data/bkup/(.*)",
             StaticFileHandler,
             dict(path=seven_year_data_download)
         )
