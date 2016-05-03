@@ -6223,7 +6223,7 @@ class ClientDatabase(Database):
             ) \
             AND t1.assignee = %s \
             %s \
-            ORDER BY t3.unit_code, t2.statutory_mapping, t2.frequency_id \
+            ORDER BY t3.unit_id, t2.statutory_mapping, t2.frequency_id \
             " % (
                 assignee, user_qry,
                 from_count, to_count
@@ -6305,7 +6305,7 @@ class ClientDatabase(Database):
         WHERE \
             t1.is_active = 1 and ifnull(t4.approve_status, 0) != 1 \
             and t1.assignee = %s %s\
-        ORDER BY t3.unit_code , t2.statutory_mapping , t2.frequency_id \
+        ORDER BY t3.unit_id , t2.statutory_mapping , t2.frequency_id \
         limit %s, %s " % (
             assignee, user_qry,
             from_count, to_count
