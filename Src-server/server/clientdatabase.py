@@ -5326,6 +5326,184 @@ class ClientDatabase(Database):
                     unit_wise_compliances))
         return service_provider_wise_compliances_list
 
+    def report_compliance_details(
+        self, country_id, domain_id, statutory_id,
+        unit_id, compliance_id, assignee,
+        from_date, to_date, compliance_status,
+        session_user
+    ) :
+        qry_where = ""
+        admin_id = self.get_admin_id()
+        if unit_id is not None :
+            qry_where += " AND ch.unit_id = %s" % (unit_id)
+        if compliance_id is not None :
+            qry_where += " AND ch.compliance_id = %s " % (compliance_id)
+        if assignee is not None :
+            qry_where += " AND ch.completed_by = %s" % (assignee)
+        if session_user > 0 and session_user != admin_id :
+            qry_where += " AND ch.unit_id in \
+                (select us.unit_id from tbl_user_units us where \
+                    us.user_id = %s\
+                )" % int(session_user)
+
+        if from_date is not None and to_date is not None :
+            start_date = self.string_to_datetime(from_date)
+            end_date = self.string_to_datetime(to_date)
+            qry_where += " AND ch.due_date between '%s' and '%s'" % (start_date, end_date)
+
+        else :
+            qry_where += " AND MONTH(ch.due_date) >= (SELECT t.period_from FROM tbl_client_configurations t \
+                where t.country_id = ut.country_id and t.domain_id = c.domain_id ) \
+                AND MONTH(ch.due_date) <= (SELECT t.period_to FROM tbl_client_configurations t \
+                where t.country_id = ut.country_id and t.domain_id = c.domain_id )"
+
+        columns = [
+            "compliance_history_id", "document_name",
+            "compliance_description", "validity_date",
+            "due_date", "completed_by", "status", "assigneename", "documents",
+            "completion_date", "compliance_task", "frequency_id", "fname",
+            "unit_id", "unit_code", "unit_name", "address"
+        ]
+
+        qry_count = "SELECT \
+            count(distinct ch.compliance_history_id) \
+        from \
+            tbl_compliance_history ch  \
+            inner join  \
+            tbl_compliances c on ch.compliance_id = c.compliance_id  \
+            inner join  \
+            tbl_units ut on ch.unit_id = ut.unit_id \
+        where ut.country_id = %s \
+                AND c.domain_id = %s \
+                AND c.statutory_mapping like '%s' \
+                %s \
+        order by ch.due_date desc \
+        " % (
+            country_id, domain_id,
+            str(statutory_id+"%"),
+            qry_where
+        )
+
+        row = self.select_one(qry_count)
+        if row :
+            total = int(row[0])
+        else :
+            total = 0
+
+        qry = "SELECT \
+            distinct ch.compliance_history_id, \
+            c.document_name, \
+            c.compliance_description, \
+            ch.validity_date, \
+            ch.due_date, \
+            ch.completed_by, \
+            ifnull(ch.approve_status, 0) status,\
+            (SELECT  \
+                    concat(u.employee_code, '-', u.employee_name) \
+                FROM \
+                    tbl_users u \
+                WHERE \
+                    u.user_id = ch.completed_by) AS assigneename, \
+            ch.documents, \
+            ch.completion_date, \
+            c.compliance_task, \
+            c.frequency_id, \
+            (select f.frequency from tbl_compliance_frequency f where f.frequency_id = c.frequency_id) fname, \
+            ch.unit_id, ut.unit_code, ut.unit_name, ut.address\
+        from \
+            tbl_compliance_history ch  \
+            inner join  \
+            tbl_compliances c on ch.compliance_id = c.compliance_id  \
+            inner join  \
+            tbl_units ut on ch.unit_id = ut.unit_id \
+        where ut.country_id = %s \
+                AND c.domain_id = %s \
+                AND c.statutory_mapping like '%s' \
+                %s \
+        order by ch.due_date desc \
+        " % (
+            country_id, domain_id,
+            str(statutory_id+"%"),
+            qry_where
+        )
+        print qry
+        rows = self.select_all(qry)
+        result = self.convert_to_dict(rows, columns)
+
+        return self.return_cmopliance_details_report(compliance_status, result, total)
+
+    def return_cmopliance_details_report(self, compliance_status, result, total):
+        unitWise = {}
+        for r in result :
+            uname = r["unit_code"] + ' - ' + r["unit_name"]
+            if r["document_name"] == "None" :
+                compliance_name = r["compliance_task"]
+            else :
+                compliance_name = r["document_name"] + ' - ' + r["compliance_task"]
+
+            if r["assigneename"] is None :
+                assignee = 'Administrator'
+            else :
+                assignee = r["assigneename"]
+
+            due_date = None
+            if(r["due_date"] != None):
+                due_date = self.datetime_to_string(r["due_date"])
+
+            validity_date = None
+            if(r["validity_date"] != None):
+                validity_date = self.datetime_to_string(r["validity_date"])
+
+            documents = [x for x in r["documents"].split(",")] if r["documents"] != None else None
+
+            completion_date = None
+            if(r["completion_date"] != None):
+                completion_date = self.datetime_to_string(r["completion_date"])
+
+            remarks = self.calculate_ageing(r["due_date"], r["fname"], r["completion_date"])[1]
+
+            if(compliance_status == 'Complied'):
+                    c_status = 'On Time'
+            elif(compliance_status == 'Delayed Compliance'):
+                c_status = 'Delayed'
+            elif(compliance_status == 'Inprogress'):
+                c_status = 'days left'
+            elif(compliance_status == 'Not Complied'):
+                c_status = 'Overdue'
+            else:
+                c_status = ''
+
+            if int(r["status"]) == 0 and "Delayed" in remarks :
+                remarks = remarks.replace("Delayed", "Overdue")
+
+            if compliance_status is not None and c_status not in remarks :
+                continue
+
+            compliance = clientreport.ComplianceDetails(
+                compliance_name, assignee, due_date,
+                completion_date, validity_date,
+                documents, remarks
+            )
+            unit_compliance = unitWise.get(uname)
+            if unit_compliance is None :
+                unit_compliance = clientreport.ComplianceDetailsUnitWise(
+                    r["unit_id"], uname, r["address"],
+                    [compliance]
+                )
+            else :
+                compliance_lst = unit_compliance.Compliances
+                if compliance_lst is None :
+                    compliance_lst = []
+                compliance_lst.append(compliance)
+                unit_compliance.Compliances = compliance_lst
+            unitWise[uname] = unit_compliance
+
+        final_lst = []
+        for k in sorted(unitWise):
+            final_lst.append(unitWise.get(k))
+
+        return final_lst, total
+
     def get_compliance_details_report(
         self, country_id, domain_id, statutory_id,
         unit_id, compliance_id, assignee_id,

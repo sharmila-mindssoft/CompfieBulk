@@ -287,17 +287,13 @@ def get_compliancedetails_report(db, request, session_user, client_id):
         to_date = request.to_date
         compliance_status = request.compliance_status
 
-        if compliance_id is None :
-            compliance_id = '%'
-        if assignee_id is None :
-            assignee_id = '%'
-        if compliance_status is None :
-            compliance_status = '%'
-
-        compliance_details_list = db.get_compliance_details_report(
-            country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date, compliance_status, client_id, session_user
+        compliance_details_list, total = db.report_compliance_details(
+            country_id, domain_id, statutory_id, unit_id, compliance_id,
+            assignee_id, from_date, to_date, compliance_status, session_user
         )
-        return clientreport.GetComplianceDetailsReportSuccess(compliance_details_list)
+        return clientreport.GetComplianceDetailsReportSuccess(
+            compliance_details_list, total
+        )
 
 def get_risk_report_filters(db, request, session_user, client_id):
     user_company_info = db.get_user_company_details(session_user)

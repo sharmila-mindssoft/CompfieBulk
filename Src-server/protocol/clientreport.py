@@ -1109,20 +1109,23 @@ class ComplianceDetailsUnitWise(object):
         return result
 
 class GetComplianceDetailsReportSuccess(Response):
-    def __init__(self, unit_wise_compliancess):
+    def __init__(self, unit_wise_compliancess, total_count):
         self.unit_wise_compliancess = unit_wise_compliancess
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["unit_wise_compliancess"])
+        data = parse_dictionary(data, ["unit_wise_compliancess", "total_count"])
         unit_wise_compliances = data.get("unit_wise_compliances")
         unit_wise_compliances = parse_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise(unit_wise_compliances)
-        return GetComplianceDetailsReportSuccess(unit_wise_compliances)
+        total_count = data.get("total_count")
+        total_count = parse_structure_UnsignedIntegerType_32(total_count)
+        return GetComplianceDetailsReportSuccess(unit_wise_compliances, total_count)
 
     def to_inner_structure(self):
-
         return {
-            "unit_wise_compliancess": to_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise(self.unit_wise_compliancess)
+            "unit_wise_compliancess": to_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise(self.unit_wise_compliancess),
+            "total_count": to_structure_UnsignedIntegerType_32(self.total_count)
         }
 
 class GetRiskReportFiltersSuccess(Response):
@@ -2120,7 +2123,7 @@ class ActivityData(object):
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "activity_date", "activity_status", "compliance_status", 
+                "activity_date", "activity_status", "compliance_status",
                 "remarks", "assignee_name"
             ]
         )
