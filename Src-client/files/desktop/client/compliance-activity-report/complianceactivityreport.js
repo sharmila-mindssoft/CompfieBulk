@@ -130,6 +130,7 @@ function loadcomplianceactivityreport(buttontype){
         displayMessage(message.fromdate_required);
     }
     else{
+        sno = 0;
         function onSuccess(data){
             fullArrayList = [];
             hideLoader();
@@ -231,7 +232,6 @@ function compactivitycompliancetasklist(data, acc_count){
                 if(acc_count == 1){
                     $('.accordion-content'+acc_count).addClass("default");
                 }
-
             }
             else{
                 var tableRowvalues_ul = $('#templates .tree-tr');
@@ -245,7 +245,6 @@ function compactivitycompliancetasklist(data, acc_count){
             count++;
         });
     });
-
 }
 
 

@@ -232,7 +232,7 @@ function load_allcompliances(compliancesList){
   });
   }else{
     $('#pagination').show();
-    $('#activate-step-2').hide();
+    $('#activate-step-2').show();
   }
   if(count <= 1){
     var norecordtableRow=$('#no-record-templates .font1');

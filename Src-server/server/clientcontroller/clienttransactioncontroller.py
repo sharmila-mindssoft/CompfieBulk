@@ -352,8 +352,8 @@ def process_get_assignee_compliances(db, request, session_user):
 
     for key, value in assignee_wise_compliance.iteritems():
         unit_list = []
-        for k, v in value.iteritems():
-            unit_list.append(v)
+        for k in sorted(value):
+            unit_list.append(value.get(k))
         no_of_compliance = assignee_compliance_count[key]
         user_data = clienttransactions.USER_WISE_COMPLIANCE(
             no_of_compliance,
