@@ -1025,7 +1025,7 @@ class ClientDatabase(Database):
 
     def get_user_company_details(self, user_id, client_id=None):
         admin_id = self.get_admin_id()
-        columns = "group_concat(unit_id)"
+        columns = "unit_id"
         condition = " 1 "
         rows = None
         if user_id > 0 and user_id != admin_id:
@@ -1037,20 +1037,29 @@ class ClientDatabase(Database):
             rows = self.get_data(
                 self.tblUnits, columns, condition
             )
-        unit_ids = rows[0][0]
+        unit_ids = None
+        division_ids = None
+        legal_entity_ids = None
+        business_group_ids = None
+        if len(rows) > 0:
+            result = []
+            for row in rows:
+                result.append(row[0])
+            unit_ids = ",".join(str(x) for x in result)
 
-        columns = "group_concat(distinct division_id), group_concat(distinct legal_entity_id), "+\
-        "group_concat(distinct business_group_id)"
-        unit_condition = "1"
-        if unit_ids != None:
-            unit_condition = "unit_id in (%s)" % unit_ids
-        rows = self.get_data(
-            self.tblUnits , columns, unit_condition
-        )
+        if unit_ids not in [None, "None", ""]:
+            columns = "group_concat(distinct division_id), group_concat(distinct legal_entity_id), "+\
+            "group_concat(distinct business_group_id)"
+            unit_condition = "1"
+            if unit_ids != None:
+                unit_condition = "unit_id in (%s)" % unit_ids
+            rows = self.get_data(
+                self.tblUnits , columns, unit_condition
+            )
+            division_ids = rows[0][0]
+            legal_entity_ids = rows[0][1]
+            business_group_ids = rows[0][2]
 
-        division_ids = rows[0][0]
-        legal_entity_ids = rows[0][1]
-        business_group_ids = rows[0][2]
         return unit_ids, division_ids, legal_entity_ids, business_group_ids
 
     def get_user_countries(self, user_id, client_id=None):
@@ -5106,8 +5115,9 @@ class ClientDatabase(Database):
         if next_due_date is not None:
             columns.append("due_date")
             values.append(self.string_to_datetime(next_due_date))
-        condition = "compliance_id = '%d' AND unit_id = '%d'" % (compliance_id, unit_id)
-        self.update(self.tblAssignedCompliances, columns, values, condition, client_id)
+        if len(columns) > 0:
+            condition = "compliance_id = '%d' AND unit_id = '%d'" % (compliance_id, unit_id)
+            self.update(self.tblAssignedCompliances, columns, values, condition, client_id)
 
         status = "Inprogress"
         # due_date = datetime.datetime(
@@ -7739,27 +7749,30 @@ class ClientDatabase(Database):
                             from_date = result[0][1][0][1][0]["start_date"]
                             to_date = result[0][1][0][1][0]["end_date"]
                             compliance_ids = client_compliance_rows[0][0]
-                            columns = "sum(case when (approve_status = 1 and (due_date > completion_date or \
-                            due_date = completion_date)) then 1 else 0 end) as complied, \
-                            sum(case when ((approve_status = 0 or approve_status is null) and \
-                            due_date > now()) then 1 else 0 end) as Inprogress, \
-                            sum(case when ((approve_status = 0 or approve_status is null) and \
-                            due_date < now()) then 1 else 0 end) as NotComplied, \
-                            sum(case when (approve_status = 1 and completion_date > due_date) then 1 else 0 end)\
-                            as DelayedCompliance"
-                            condition = "compliance_id in (%s) and due_date \
-                            between '%s' and '%s' and completed_by = '%d'" % (
-                                compliance_ids, from_date.date(), to_date.date(),
-                                user_id
-                            )
-                            rows = self.get_data(
-                                self.tblComplianceHistory, columns, condition
-                            )
-                            complied = int(rows[0][0]) if rows[0][0] is not None else 0
-                            inprogress = int(rows[0][1]) if rows[0][1] is not None else 0
-                            not_complied = int(rows[0][2]) if rows[0][2] is not None else 0
-                            delayed_compliance = int(rows[0][3]) if rows[0][3] is not None else 0
-                            total = complied + inprogress + not_complied + delayed_compliance
+                            if compliance_ids not in ["None", None, ""]:
+                                columns = "sum(case when (approve_status = 1 and (due_date > completion_date or \
+                                due_date = completion_date)) then 1 else 0 end) as complied, \
+                                sum(case when ((approve_status = 0 or approve_status is null) and \
+                                due_date > now()) then 1 else 0 end) as Inprogress, \
+                                sum(case when ((approve_status = 0 or approve_status is null) and \
+                                due_date < now()) then 1 else 0 end) as NotComplied, \
+                                sum(case when (approve_status = 1 and completion_date > due_date) then 1 else 0 end)\
+                                as DelayedCompliance"
+                                condition = "compliance_id in (%s) and due_date \
+                                between '%s' and '%s' and completed_by = '%d'" % (
+                                    compliance_ids, from_date.date(), to_date.date(),
+                                    user_id
+                                )
+                                rows = self.get_data(
+                                    self.tblComplianceHistory, columns, condition
+                                )
+                                complied = int(rows[0][0]) if rows[0][0] is not None else 0
+                                inprogress = int(rows[0][1]) if rows[0][1] is not None else 0
+                                not_complied = int(rows[0][2]) if rows[0][2] is not None else 0
+                                delayed_compliance = int(rows[0][3]) if rows[0][3] is not None else 0
+                                total = complied + inprogress + not_complied + delayed_compliance
+                            else:
+                                continue
                         reassigned_compliances = []
                         delayed_reassigned_count = 0
                         if reassigned_compliance_ids is not None:
