@@ -6216,10 +6216,7 @@ class ClientDatabase(Database):
         rows = self.select_all(q)
         result = self.convert_to_dict(rows, columns=["count", "assignee"])
         data = {}
-        print q
         for r in result :
-            print r["assignee"]
-            print r["count"]
             data[int(r["assignee"])] = int(r["count"])
         return data
 
@@ -6338,7 +6335,7 @@ class ClientDatabase(Database):
             assignee, user_qry,
             from_count, to_count
         )
-
+        
         rows = self.select_all(q)
         result.extend(self.convert_to_dict(rows, columns))
         return self.return_compliance_to_reassign(result)
@@ -7610,7 +7607,6 @@ class ClientDatabase(Database):
                 AND {} ORDER BY cal.updated_on DESC'''.format(
                     country_id, domain_id, " AND ".join(conditions)
                 )
-        print query
         result = self.select_all(query)
         columns = [
             "activity_date", "activity_status", "compliance_status", "remarks",
