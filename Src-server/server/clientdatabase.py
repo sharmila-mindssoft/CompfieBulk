@@ -1039,10 +1039,10 @@ class ClientDatabase(Database):
             )
         unit_ids = rows[0][0]
 
-        columns = "group_concat(distinct division_id), group_concat(distinct legal_entity_id), "+\
-        "group_concat(distinct business_group_id)"
+        columns = "group_concat(distinct division_id), group_concat(distinct legal_entity_id), \
+            group_concat(distinct business_group_id)"
         unit_condition = "1"
-        if unit_ids != None:
+        if unit_ids is not None:
             unit_condition = "unit_id in (%s)" % unit_ids
         rows = self.get_data(
             self.tblUnits , columns, unit_condition
@@ -6335,7 +6335,7 @@ class ClientDatabase(Database):
             assignee, user_qry,
             from_count, to_count
         )
-        
+
         rows = self.select_all(q)
         result.extend(self.convert_to_dict(rows, columns))
         return self.return_compliance_to_reassign(result)
