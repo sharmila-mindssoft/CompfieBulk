@@ -362,7 +362,7 @@ $('#pagination').click(function(){
           statutoriesList = response["statutories"];
           statutoriesNameList = response["level_one_name"];
           totalRecord = response["total_count"];
-          
+
           load_secondwizard();
           hideLoader();
         }
@@ -392,7 +392,7 @@ function validate_firsttab(){
     s_endCount = 0;
     var domainID = $('.domainlist.active').attr('id');
     displayMessage("");
-    
+
 
     count=1;
     statutoriesCount= 1;

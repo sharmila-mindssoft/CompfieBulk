@@ -216,7 +216,7 @@ class GetComplianceDetailsReportFilters(Request):
 class GetComplianceDetailsReport(Request):
     def __init__(
         self, country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date,
-        to_date, compliance_status, csv
+        to_date, compliance_status, csv, record_count
     ):
         self.country_id = country_id
         self.domain_id = domain_id
@@ -228,12 +228,14 @@ class GetComplianceDetailsReport(Request):
         self.to_date = to_date
         self.compliance_status = compliance_status
         self.csv = csv
+        self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
                 "country_id", "domain_id", "statutory_id", "unit_id", "compliance_id", "assignee_id",
-                "from_date", "to_date", "compliance_status", "csv"
+                "from_date", "to_date", "compliance_status", "csv",
+                "record_count"
             ]
         )
         country_id = data.get("country_id")
@@ -256,9 +258,11 @@ class GetComplianceDetailsReport(Request):
         compliance_status = parse_structure_OptionalType_CustomTextType_50(compliance_status)
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
+        record_count = data.get("record_count")
+        record_count = parse_structure_UnsignedIntegerType_32(record_count)
         return GetComplianceDetailsReport(
             country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date,
-            to_date, compliance_status, csv
+            to_date, compliance_status, csv, record_count
         )
 
     def to_inner_structure(self):
@@ -272,7 +276,8 @@ class GetComplianceDetailsReport(Request):
             "from_date": to_structure_OptionalType_CustomTextType_20(self.from_date),
             "to_date": to_structure_OptionalType_CustomTextType_20(self.to_date),
             "compliance_status": to_structure_OptionalType_CustomTextType_50(self.compliance_status),
-            "csv": to_structure_Bool(self.csv)
+            "csv": to_structure_Bool(self.csv),
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
 class GetRiskReportFilters(Request):
@@ -1109,20 +1114,23 @@ class ComplianceDetailsUnitWise(object):
         return result
 
 class GetComplianceDetailsReportSuccess(Response):
-    def __init__(self, unit_wise_compliancess):
+    def __init__(self, unit_wise_compliancess, total_count):
         self.unit_wise_compliancess = unit_wise_compliancess
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["unit_wise_compliancess"])
+        data = parse_dictionary(data, ["unit_wise_compliancess", "total_count"])
         unit_wise_compliances = data.get("unit_wise_compliances")
         unit_wise_compliances = parse_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise(unit_wise_compliances)
-        return GetComplianceDetailsReportSuccess(unit_wise_compliances)
+        total_count = data.get("total_count")
+        total_count = parse_structure_UnsignedIntegerType_32(total_count)
+        return GetComplianceDetailsReportSuccess(unit_wise_compliances, total_count)
 
     def to_inner_structure(self):
-
         return {
-            "unit_wise_compliancess": to_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise(self.unit_wise_compliancess)
+            "unit_wise_compliancess": to_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise(self.unit_wise_compliancess),
+            "total_count": to_structure_UnsignedIntegerType_32(self.total_count)
         }
 
 class GetRiskReportFiltersSuccess(Response):
@@ -2120,7 +2128,7 @@ class ActivityData(object):
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "activity_date", "activity_status", "compliance_status", 
+                "activity_date", "activity_status", "compliance_status",
                 "remarks", "assignee_name"
             ]
         )

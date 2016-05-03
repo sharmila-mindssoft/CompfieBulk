@@ -180,6 +180,7 @@ class Database(object) :
             cursor.execute(query)
             return cursor.fetchall()
         except Exception, e:
+            logger.logClientApi(query)
             logger.logClientApi(e)
             return
 
@@ -5147,6 +5148,7 @@ class KnowledgeDatabase(Database):
             ON t1.geography_id = t3.geography_id \
             INNER JOIN tbl_user_clients t4 \
             ON t1.client_id = t4.client_id \
+            AND t1.is_active = 1 \
             AND t4.user_id = %s \
             AND t2.country_id = %s " % (
                 user_id, country_id

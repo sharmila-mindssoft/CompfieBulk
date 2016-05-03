@@ -1089,7 +1089,8 @@ function initClientMirror() {
                 "from_date": from_date,
                 "to_date": to_date,
                 "compliance_status": compliance_status,
-                "csv" : csv
+                "csv" : csv,
+                "record_count": 0
             }
         ];
         callerName = "client_reports";
