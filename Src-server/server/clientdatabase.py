@@ -2503,11 +2503,6 @@ class ClientDatabase(Database):
         return unit_list
 
     def get_users_for_seating_units(self, session_user, client_id):
-        # where_condition = " WHERE t1.seating_unit_id In \
-        #     (SELECT t.unit_id FROM tbl_user_units t \
-        #     WHERE t.user_id = %s)" % (
-        #         session_user
-        #     )
         where_condition = "WHERE t1.is_primary_admin = 0 AND t1.is_active = 1 AND t2.unit_id \
             IN \
             (select distinct unit_id from tbl_user_units where user_id = %s)" % (session_user)
@@ -2526,7 +2521,7 @@ class ClientDatabase(Database):
         if session_user > 0 and session_user != self.get_admin_id() :
             query = query + where_condition
         else :
-            query = query + " AND t1.is_primary_admin = 0 AND t1.is_active = 1 "
+            query = query + " AND t1.is_active = 1 "
         rows = self.select_all(query)
         columns = [
             "user_id", "employee_name", "employee_code",
