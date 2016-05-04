@@ -2848,7 +2848,7 @@ class ClientDatabase(Database):
                     return False
         return True
 
-    def save_assigned_compliance(self, request, session_user, client_id):
+    def save_assigned_compliance_old(self, request, session_user, client_id):
         new_unit_settings = request.new_units
 
         created_on = self.get_date_time()
@@ -2866,11 +2866,11 @@ class ClientDatabase(Database):
                 date_list = []
                 for dates in statutory_dates :
                     date_list.append(dates.to_structure())
-                date_list = json.dumps(date_list)
                 # due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
                 # validity_date = c.validity_date
             else :
                 date_list = []
+            date_list = json.dumps(date_list)
 
             unit_ids = c.unit_ids
             if c.trigger_before is not None :
@@ -2948,6 +2948,99 @@ class ClientDatabase(Database):
             ]
         )
         notify_assign_compliance.start()
+        # return clienttransactions.SaveAssignedComplianceSuccess()
+
+    def save_assigned_compliance(self, request, session_user):
+        new_unit_settings = request.new_units
+        created_on = str(self.get_date_time())
+        country_id = int(request.country_id)
+        assignee = int(request.assignee)
+        concurrence = request.concurrence_person
+        approval = int(request.approval_person)
+        compliances = request.compliances
+
+        compliance_names = []
+        columns = [
+            "country_id", "unit_id", "compliance_id",
+            "statutory_dates", "assignee",
+            "approval_person", "trigger_before_days",
+            "due_date", "validity_date", "created_by",
+            "created_on"
+        ]
+        value_list = []
+        if concurrence is not None :
+            columns.append("concurrence_person")
+        for c in compliances :
+            compliance_id = int(c.compliance_id)
+            statutory_dates = c.statutory_dates
+            if statutory_dates is not None :
+                date_list = []
+                for dates in statutory_dates :
+                    date_list.append(dates.to_structure())
+                date_list = json.dumps(date_list)
+            else :
+                date_list = []
+
+            unit_ids = c.unit_ids
+            if c.trigger_before is not None :
+                trigger_before = int(c.trigger_before)
+            else :
+                trigger_before = ""
+            if c.due_date is not None :
+                due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+            else :
+                due_date = ""
+            compliance_names.append("Complaince Name:" + c.compliance_name + "- Due Date:" + str(c.due_date))
+            validity_date = c.validity_date
+            if validity_date is not None :
+                validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
+                if due_date > validity_date :
+                    due_date = validity_date
+                elif (validity_date - datetime.timedelta(days=90)) > due_date :
+                    due_date = validity_date
+            else :
+                validity_date = ""
+
+            for unit_id in unit_ids :
+                value = [
+                    country_id, unit_id, compliance_id,
+                    str(date_list), assignee,
+                    approval, trigger_before, str(due_date),
+                    validity_date, int(session_user), created_on
+                ]
+                if concurrence is not None :
+                    value.append(concurrence)
+                value_list.append(tuple(value))
+
+        self.bulk_insert("tbl_assigned_compliances", columns, value_list)
+        if new_unit_settings is not None :
+            self.update_user_settings(new_unit_settings, client_id)
+
+        compliance_names = " <br> ".join(compliance_names)
+        if request.concurrence_person_name is None :
+            action = " Following compliances has assigned to assignee - %s and approval-person - %s <br> %s" % (
+                request.assignee_name,
+                request.approval_person_name,
+                compliance_names
+            )
+        else :
+            action = " Following compliances has assigned to assignee - %s concurrence-person - %s approval-person - %s <br> %s" % (
+                request.assignee_name,
+                request.concurrence_person_name,
+                request.approval_person_name,
+                compliance_names
+            )
+        activity_text = action.replace("<br>", " ")
+        self.save_activity(session_user, 7, json.dumps(activity_text))
+        receiver = self.get_email_id_for_users(assignee)[1]
+        notify_assign_compliance = threading.Thread(
+            target=email.notify_assign_compliance,
+            args=[
+                receiver, request.assignee_name, action
+            ]
+        )
+        notify_assign_compliance.start()
+
         return clienttransactions.SaveAssignedComplianceSuccess()
 
     def update_user_settings(self, new_units, client_id):

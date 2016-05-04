@@ -281,6 +281,7 @@ class Database(object) :
                 query += "%s," % str(value)
             else:
                 query += str(value)
+        print query
         return self.execute(query)
 
     ########################################################
@@ -294,8 +295,6 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
-        print 
-        print query
         return self.execute(query)
 
     ########################################################
