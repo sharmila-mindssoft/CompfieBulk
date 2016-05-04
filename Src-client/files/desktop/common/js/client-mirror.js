@@ -1299,7 +1299,7 @@ function initClientMirror() {
     }
 
     function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id,
-        compliance_id, user_id, from_date, to_date, csv, callback) {
+        compliance_id, user_id, from_date, to_date, csv, record_count, callback) {
         var request = [
             "GetReassignedHistoryReport", {
 
@@ -1311,7 +1311,8 @@ function initClientMirror() {
                 "user_id": user_id,
                 "from_date" : from_date,
                 "to_date" : to_date,
-                "csv": csv
+                "csv": csv,
+                "record_count" : record_count
             }
         ];
         callerName = "client_reports";

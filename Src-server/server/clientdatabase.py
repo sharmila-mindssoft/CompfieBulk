@@ -7593,7 +7593,7 @@ class ClientDatabase(Database):
         rows = self.select_all(qry)
         result = self.convert_to_dict(rows, columns)
 
-        qry_count = " SELECT count(distinct t1.compliance_id)\
+        qry_count = " SELECT count(t1.compliance_id)\
             FROM tbl_reassigned_compliances_history t1 \
             INNER JOIN tbl_assigned_compliances t2 on t1.compliance_id = t2.compliance_id \
             AND t1.unit_id = t2.unit_id \

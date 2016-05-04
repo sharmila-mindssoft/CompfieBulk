@@ -818,7 +818,7 @@ class GetReassignedHistoryReportFilters(Request):
 class GetReassignedHistoryReport(Request):
     def __init__(
         self, country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id,
-        from_date, to_date, csv
+        from_date, to_date, csv, record_count
     ):
         self.country_id = country_id
         self.domain_id = domain_id
@@ -829,12 +829,13 @@ class GetReassignedHistoryReport(Request):
         self.from_date = from_date
         self.to_date = to_date
         self.csv = csv
+        self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "country_id", "domain_id", "unit_id", "level_1_statutory_id", "compliance_id",
-            "user_id", "from_date", "to_date", "csv"]
+            "user_id", "from_date", "to_date", "csv", "record_count"]
         )
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
@@ -854,9 +855,11 @@ class GetReassignedHistoryReport(Request):
         to_date = parse_structure_OptionalType_CustomTextType_20(to_date)
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
+        record_count = data.get("record_count")
+        record_count = parse_structure_UnsignedIntegerType_32(record_count)
         return GetReassignedHistoryReport(
             country_id, domain_id, unit_id, level_1_statutory_id, compliance_id,
-            user_id, from_date, to_date, csv)
+            user_id, from_date, to_date, csv, record_count)
 
     def to_inner_structure(self):
         return {
@@ -868,7 +871,8 @@ class GetReassignedHistoryReport(Request):
             "user_id": to_structure_OptionalType_SignedIntegerType_8(self.user_id),
             "from_date": to_structure_OptionalType_CustomTextType_20(self.from_date),
             "to_date": to_structure_OptionalType_CustomTextType_20(self.to_date),
-            "csv": to_structure_Bool(self.csv)
+            "csv": to_structure_Bool(self.csv),
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
 class GetStatutoryNotificationsListFilters(Request):
