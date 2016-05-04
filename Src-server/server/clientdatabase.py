@@ -5359,7 +5359,6 @@ class ClientDatabase(Database):
                 (SELECT ud.domain_id FROM tbl_user_domains ud \
                 where ud.user_id = %s)" % int(session_user)
 
-
         if from_date is not None and to_date is not None :
             start_date = self.string_to_datetime(from_date)
             end_date = self.string_to_datetime(to_date)
@@ -7573,7 +7572,7 @@ class ClientDatabase(Database):
         qry = " SELECT distinct t1.compliance_id, t1.assignee, t1.reassigned_from, \
             t1.reassigned_date, t1.remarks, t2.due_date, t3.compliance_task, \
             t3.document_name, t4.unit_code, t4.unit_name, t4.address, \
-            (select concat(a.employee_code, ' - ', a.employee_name) from tbl_users a where a.user_id = t1.assignee) assigneename, \
+            ifnull((select concat(a.employee_code, ' - ', a.employee_name) from tbl_users a where a.user_id = t1.assignee), 'Administrator') assigneename, \
             ifnull((select concat(a.employee_code, ' - ', a.employee_name) from tbl_users a where a.user_id = t1.reassigned_from) , 'Administrator') oldassignee, \
             t1.unit_id, t3.statutory_mapping \
             FROM tbl_reassigned_compliances_history t1 \
@@ -7591,7 +7590,6 @@ class ClientDatabase(Database):
                 from_count, to_count
 
             )
-        print qry
         rows = self.select_all(qry)
         result = self.convert_to_dict(rows, columns)
 
@@ -7844,12 +7842,6 @@ class ClientDatabase(Database):
 #
 #   Compliance Activity Report
 #
-    def report_compliance_activity(
-        self, country_id, domain_id, user_type, user_id, unit_id, compliance_id,
-        level_1_statutory_name, from_date, to_date, session_user,
-        from_count, to_count
-    ):
-        pass
 
     def get_compliance_activity_report(
         self, country_id, domain_id, user_type, user_id, unit_id, compliance_id,
