@@ -7,6 +7,7 @@ var userList;
 var countriesNameVal;
 var domainNameVal;
 var lastUnit = '';
+var lastAct = '';
 var totalRecord;
 var sno = 0;
 
@@ -56,6 +57,7 @@ $("#export-button").click(function(){
 function loadreassignedhistory(buttontype, end_count){
 
     if(end_count == 0){
+        lastAct = '';
         lastUnit = '';
         sno = 0;
         $('.grid-table-rpt').show();
@@ -151,14 +153,19 @@ function loadReassignedHistoryList(data){
     $('.country-name').text(countriesNameVal);
     $('.domain-name').text(domainNameVal);
     $.each(data, function(key, value) {
-        var tableRowHeading = $('#templates .table-reassigned-list .table-level1-heading');
-        var cloneHeading = tableRowHeading.clone();
-        $('.level1-heading', cloneHeading).text(data[key]['level_1_statutory_name']);
-        $('.table-reassignedhistory-list').append(cloneHeading);
 
-        var tableRow_tr = $('#templates .table-reassigned-list .heading-list');
-        var clonetr = tableRow_tr.clone();
-        $('.table-reassignedhistory-list').append(clonetr);
+        if(lastAct != data[key]['level_1_statutory_name']){
+            var tableRowHeading = $('#templates .table-reassigned-list .level1-list');
+            var cloneHeading = tableRowHeading.clone();
+            $('.level1-heading', cloneHeading).text(data[key]['level_1_statutory_name']);
+            $('.table-reassignedhistory-list').append(cloneHeading);
+
+            var tableRow_tr = $('#templates .table-reassigned-list .heading-list');
+            var clonetr = tableRow_tr.clone();
+            $('.table-reassignedhistory-list').append(clonetr);
+            lastUnit = '';
+        }
+        
 
         var clist = data[key]['compliance'];
         $.each(clist, function(ke, val) {  
