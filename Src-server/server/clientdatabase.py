@@ -2771,13 +2771,12 @@ class ClientDatabase(Database):
             c_id = int(r["compliance_id"])
             maipping = r["statutory_mapping"].split(">>")
             level_1 = maipping[0].strip()
+            c_units = applicable_units.get(c_id)
+            if c_units is None :
+                continue
             unit_ids = [
-                int(x) for x in applicable_units.get(c_id).split(',')
+                int(x) for x in c_units.split(',')
             ]
-            # level_1_wise = domain_wise_compliance.get(domain_id)
-            # if level_1_wise is None :
-            #     level_1_wise = {}
-
             compliance_list = level_1_wise.get(level_1)
             if compliance_list is None :
                 compliance_list = []
