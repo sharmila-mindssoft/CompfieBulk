@@ -10,6 +10,7 @@ var lastUnit = '';
 var lastAct = '';
 var totalRecord;
 var sno = 0;
+var acc_count = 1;
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -30,7 +31,7 @@ function initialize(){
     function onFailure(error){
         console.log(error);
     }
-    client_mirror.getReassignedHistoryReportFilters(  
+    client_mirror.getReassignedHistoryReportFilters(
         function (error, response){
             if(error == null){
                 onSuccess(response);
@@ -48,10 +49,10 @@ $('#pagination').click(function(){
 });
 
 
-$("#show-button").click(function(){   
+$("#show-button").click(function(){
     loadreassignedhistory("show", 0);
 });
-$("#export-button").click(function(){ 
+$("#export-button").click(function(){
     loadreassignedhistory("export", 0);
 });
 function loadreassignedhistory(buttontype, end_count){
@@ -59,17 +60,18 @@ function loadreassignedhistory(buttontype, end_count){
     if(end_count == 0){
         lastAct = '';
         lastUnit = '';
+        acc_count = 1;
         sno = 0;
         $('.grid-table-rpt').show();
-        $('.table-reassignedhistory-list').empty(); 
+        $('.table-reassignedhistory-list').empty();
     }
     displayLoader();
     var countries = parseInt($("#country").val());
     countriesNameVal = $("#countryval").val();
-    //Domain    
+    //Domain
     var domain = parseInt($("#domain").val());
     domainNameVal = $("#domainval").val();
-   
+
     //Unit
     var unitid = $("#unitid").val();
     if(unitid == ''){
@@ -105,25 +107,25 @@ function loadreassignedhistory(buttontype, end_count){
     if(todate == ''){
         todate = null;
     }
- 
+
     if(countriesNameVal == ""){
         displayMessage(message.country_required);
         hideLoader();
     }
     else if(domainNameVal == ""){
-        displayMessage(message.domain_required);  
+        displayMessage(message.domain_required);
         hideLoader();
     }
     else{
         function onSuccess(data){
             if(buttontype == "export"){
                 var download_url = data["link"];
-                window.open(download_url, '_blank'); 
-                hideLoader();       
+                window.open(download_url, '_blank');
+                hideLoader();
             }else{
                 totalRecord = data["total"];
                 loadReassignedHistoryList(data['statutory_wise_compliances']);
-                hideLoader();     
+                hideLoader();
             }
         }
         function onFailure(error){
@@ -149,7 +151,7 @@ function loadreassignedhistory(buttontype, end_count){
 }
 
 function loadReassignedHistoryList(data){
-     
+
     $('.country-name').text(countriesNameVal);
     $('.domain-name').text(domainNameVal);
     $.each(data, function(key, value) {
@@ -164,31 +166,31 @@ function loadReassignedHistoryList(data){
             var clonetr = tableRow_tr.clone();
             $('.table-reassignedhistory-list').append(clonetr);
             lastUnit = '';
+            lastAct = data[key]['level_1_statutory_name'];
         }
-        
+
 
         var clist = data[key]['compliance'];
-        $.each(clist, function(ke, val) {  
+        $.each(clist, function(ke, val) {
 
-            if(lastUnit != clist[ke]['unit_name']){       
+            if(lastUnit != clist[ke]['unit_name']){
                 var tableRowUnit = $('#templates .table-reassigned-list .unit-list');
                 var cloneUnit = tableRowUnit.clone();
-                $('.unit-heading', cloneUnit).html(clist[ke]['unit_name']);              
+                $('.unit-heading', cloneUnit).html(clist[ke]['unit_name']);
                 $('.table-reassignedhistory-list').append(cloneUnit);
             }
             var list = clist[ke]['reassign_compliances'];
-            var acc_count = 1;
 
-            $.each(list, function(k, val) {   
+            $.each(list, function(k, val) {
                 var tableRow = $('#templates .table-reassigned-list .tbody-reassigned-list');
-                var clone = tableRow.clone();      
+                var clone = tableRow.clone();
                 sno = sno + 1;
                 $('.sno', clone).text(sno);
                 $('.compliance-task', clone).html(list[k]['compliance_name']);
                 $('.due-date', clone).html(list[k]['due_date']);
                 var rhistory = list[k]['reassign_history'];
                 var count = 0;
-                $.each(rhistory, function(k1, val1) {                      
+                $.each(rhistory, function(k1, val1) {
                     if(count == 0){
                         $('.assignee', clone).html(rhistory[k1]['reassigned_to']);
                         $('.reassign-date', clone).html(rhistory[k1]['reassigned_date']);
@@ -197,7 +199,7 @@ function loadReassignedHistoryList(data){
                         $('.table-reassignedhistory-list').append(clone);
                         $('.table-reassignedhistory-list').append('<tbody class="accordion-content accordion-content'+acc_count+'"></tbody>');
                         $('.accordion-content'+acc_count).addClass("default");
-                        
+
                     }
                     else{
                         var tableRowvalues_ul = $('#templates .reassigned-inner-list');
@@ -206,13 +208,13 @@ function loadReassignedHistoryList(data){
                         $('.inner-reassigndate', cloneval_ul).html(rhistory[k1]['reassigned_date']);
                         $('.inner-reassigned-from', cloneval_ul).html(rhistory[k1]['reassigned_from']);
                         $('.inner-reason', cloneval_ul).html(rhistory[k1]['reassign_reason']);
-                        $('.accordion-content'+acc_count).append(cloneval_ul);   
+                        $('.accordion-content'+acc_count).append(cloneval_ul);
                     }
                     count++;
                 });
                 acc_count++;
             });
-        });          
+        });
     });
 
     if(totalRecord == 0){
@@ -229,7 +231,7 @@ function loadReassignedHistoryList(data){
           $('#accordion').find('.accordion-toggle').click(function(){
             $(this).next().slideToggle('fast');
             $(".accordion-content").not($(this).next()).slideUp('fast');
-        });     
+        });
         }else{
           $('#pagination').show();
         }
@@ -243,7 +245,7 @@ function onCountrySuccess(val){
   $("#country").val(val[0]);
 }
 
-//load country list in autocomplete text box  
+//load country list in autocomplete text box
 $("#countryval").keyup(function(){
   var textval = $(this).val();
   getCountryAutocomplete(textval, countriesList, function(val){
@@ -256,7 +258,7 @@ function onDomainSuccess(val){
   $("#domainval").val(val[1]);
   $("#domain").val(val[0]);
 }
-//load domain list in autocomplete textbox  
+//load domain list in autocomplete textbox
 $("#domainval").keyup(function(){
   var textval = $(this).val();
   getDomainAutocomplete(textval, domainsList, function(val){
@@ -270,7 +272,7 @@ function onUnitSuccess(val){
   $("#unitid").val(val[0]);
 }
 
-//load unit  form list in autocomplete text box  
+//load unit  form list in autocomplete text box
 $("#unitval").keyup(function(){
   var textval = $(this).val();
   getUnitAutocomplete(textval, unitList, function(val){
@@ -283,7 +285,7 @@ function onStatutorySuccess(val){
   $("#level1val").val(val[1]);
   $("#level1id").val(val[0].replace(/##/gi,'"'));
 }
-//load statutory list in autocomplete textbox  
+//load statutory list in autocomplete textbox
 $("#level1val").keyup(function(){
   var textval = $(this).val();
   getClientStatutoryAutocomplete(textval, level1List, function(val){
@@ -297,7 +299,7 @@ function onComplianceTaskSuccess(val){
   $("#compliancesid").val(val[0]);
 }
 
-//load compliancetask form list in autocomplete text box  
+//load compliancetask form list in autocomplete text box
 $("#compliancesval").keyup(function(){
   var textval = $(this).val();
   getComplianceTaskAutocomplete(textval, compliancesList, function(val){
@@ -311,7 +313,7 @@ function onUserSuccess(val){
   $("#userid").val(val[0]);
 }
 
-//load user list in autocomplete text box  
+//load user list in autocomplete text box
 $("#userval").keyup(function(){
   var textval = $(this).val();
   getUserAutocomplete(textval, userList, function(val){

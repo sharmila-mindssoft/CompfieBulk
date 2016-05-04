@@ -2642,7 +2642,6 @@ class ClientDatabase(Database):
                 domain_id,
                 from_count, to_count
             )
-        print qry_applicable
         rows = self.select_all(qry_applicable)
         temp = self.convert_to_dict(rows, ["compliance_id", "units"])
         applicable_units = {}
@@ -2692,7 +2691,6 @@ class ClientDatabase(Database):
                 from_count,
                 to_count
             )
-        print query
         rows = self.select_all(query)
         columns = [
             "compliance_id", "domain_id",
@@ -5439,7 +5437,6 @@ class ClientDatabase(Database):
             str(statutory_id+"%"),
             qry_where, from_count, to_count
         )
-        print qry
         rows = self.select_all(qry)
         result = self.convert_to_dict(rows, columns)
 
@@ -7583,36 +7580,39 @@ class ClientDatabase(Database):
             WHERE t4.country_id = %s \
             AND t3.domain_id = %s \
             %s \
-            order by t3.statutory_mapping, t1.unit_id,  t1.reassigned_date desc \
+            order by SUBSTRING_INDEX(SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), \
+            '>>', - 1), t1.unit_id,  t1.reassigned_date desc \
             limit %s, %s" % (
                 country_id, domain_id,
                 qry_where,
                 from_count, to_count
 
             )
-        print qry
-        print
 
         rows = self.select_all(qry)
         result = self.convert_to_dict(rows, columns)
-
-        qry_count = " SELECT count( t1.compliance_id)\
-            FROM tbl_reassigned_compliances_history t1 \
-            INNER JOIN tbl_assigned_compliances t2 on t1.compliance_id = t2.compliance_id \
-            AND t1.unit_id = t2.unit_id \
-            INNEr JOIN tbl_compliances t3 on t1.compliance_id = t3.compliance_id \
-            INNER JOIN tbl_units t4 on t1.unit_id = t4.unit_id \
-            WHERE t4.country_id = %s \
-            AND t3.domain_id = %s \
-            %s \
-            order by t1.unit_id, t1.reassigned_date desc " % (
+        qry_count = "SELECT sum(t.c_count) from \
+            (SELECT \
+                count(distinct t1.compliance_id) c_count \
+            FROM \
+                tbl_reassigned_compliances_history t1 \
+                    INNER JOIN \
+                tbl_assigned_compliances t2 ON t1.compliance_id = t2.compliance_id \
+                    AND t1.unit_id = t2.unit_id \
+                    INNEr JOIN \
+                tbl_compliances t3 ON t1.compliance_id = t3.compliance_id \
+                    INNER JOIN \
+                tbl_units t4 ON t1.unit_id = t4.unit_id \
+            WHERE \
+                t4.country_id = %s AND t3.domain_id = %s \
+                %s \
+            group by t1.unit_id) t " % (
                 country_id, domain_id,
                 qry_where,
             )
-        print qry_count
         rcount = self.select_one(qry_count)
         if rcount :
-            count = rcount[0]
+            count = int(rcount[0])
         else :
             count = 0
 

@@ -352,7 +352,7 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
         from_date = request.from_date
         to_date = request.to_date
         from_count = request.record_count
-        to_count = 5
+        to_count = 200
         reassigned_history_list, total = db.report_reassigned_history(
             country_id, domain_id, level_1_statutory_id,
             unit_id, compliance_id, user_id, from_date, to_date, session_user,
