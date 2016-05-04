@@ -351,11 +351,14 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
         user_id = request.user_id
         from_date = request.from_date
         to_date = request.to_date
-        reassigned_history_list = db.get_reassigned_history_report(
-        country_id, domain_id, level_1_statutory_id,
-            unit_id, compliance_id, user_id, from_date, to_date, client_id, session_user
+        from_count = 0
+        to_count = 500
+        reassigned_history_list, total = db.report_reassigned_history(
+            country_id, domain_id, level_1_statutory_id,
+            unit_id, compliance_id, user_id, from_date, to_date, session_user,
+            from_count, to_count
         )
-        return clientreport.GetReassignedHistoryReportSuccess(reassigned_history_list)
+        return clientreport.GetReassignedHistoryReportSuccess(reassigned_history_list, total)
     else:
         converter = ConvertJsonToCSV(db, request, session_user, client_id, "Reassign")
         return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)

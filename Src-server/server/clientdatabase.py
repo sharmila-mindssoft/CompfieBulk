@@ -5345,6 +5345,10 @@ class ClientDatabase(Database):
                 (select us.unit_id from tbl_user_units us where \
                     us.user_id = %s\
                 )" % int(session_user)
+            qry_where += " and c.domain_id IN \
+                (SELECT ud.domain_id FROM tbl_user_domains ud \
+                where ud.user_id = %s)" % int(session_user)
+
 
         if from_date is not None and to_date is not None :
             start_date = self.string_to_datetime(from_date)
@@ -7519,6 +7523,159 @@ class ClientDatabase(Database):
         )
 
     # Reassigned History Report
+    def report_reassigned_history(
+        self, country_id, domain_id, level_1_statutory_name,
+        unit_id, compliance_id, user_id, from_date, to_date, session_user,
+        from_count, to_count
+    ) :
+        qry_where = ""
+        admin_id = self.get_admin_id()
+        if level_1_statutory_name is not None :
+            qry_where += " AND t3.statutory_mapping like '%s'" % (str(level_1_statutory_name+'%'))
+        if unit_id is not None :
+            qry_where += " And t1.unit_id = %s" % (unit_id)
+
+        if compliance_id is not None :
+            qry_where += " AND t1.compliance_id = %s" % (compliance_id)
+        if user_id is not None :
+            qry_where += " AND t1.assignee = %s " % (user_id)
+
+        if from_date is not None and to_date is not None :
+            start_date = self.string_to_datetime(from_date)
+            end_date = self.string_to_datetime(to_date)
+            qry_where += " AND t2.due_date between '%s' and '%s'" % (start_date, end_date)
+
+        if session_user > 0 and session_user != admin_id :
+            qry_where += " AND T1.unit_id in \
+                (select us.unit_id from tbl_user_units us where \
+                    us.user_id = %s\
+                )" % int(session_user)
+            qry_where += " and T3.domain_id IN \
+                (SELECT ud.domain_id FROM tbl_user_domains ud \
+                where ud.user_id = %s)" % int(session_user)
+
+        columns = [
+            "compliance_id", "assignee", "reassigned_from", "reassigned_date",
+            "remarks", "due_date", "compliance_task",
+            "document_name", "unit_code", "unit_name", "address",
+            "assigneename", "oldassignee", "unit_id", "statutory_mapping"
+        ]
+
+        qry = " SELECT distinct t1.compliance_id, t1.assignee, t1.reassigned_from, \
+            t1.reassigned_date, t1.remarks, t2.due_date, t3.compliance_task, \
+            t3.document_name, t4.unit_code, t4.unit_name, t4.address, \
+            (select concat(a.employee_code, ' - ', a.employee_name) from tbl_users a where a.user_id = t1.assignee) assigneename, \
+            ifnull((select concat(a.employee_code, ' - ', a.employee_name) from tbl_users a where a.user_id = t1.reassigned_from) , 'Administrator') oldassignee, \
+            t1.unit_id, t3.statutory_mapping \
+            FROM tbl_reassigned_compliances_history t1 \
+            INNER JOIN tbl_assigned_compliances t2 on t1.compliance_id = t2.compliance_id \
+            AND t1.unit_id = t2.unit_id \
+            INNEr JOIN tbl_compliances t3 on t1.compliance_id = t3.compliance_id \
+            INNER JOIN tbl_units t4 on t1.unit_id = t4.unit_id \
+            WHERE t4.country_id = %s \
+            AND t3.domain_id = %s \
+            %s \
+            order by t1.unit_id, t3.statutory_mapping, t1.reassigned_date desc \
+            limit %s, %s" % (
+                country_id, domain_id,
+                qry_where,
+                from_count, to_count
+
+            )
+        print qry
+        rows = self.select_all(qry)
+        result = self.convert_to_dict(rows, columns)
+
+        qry_count = " SELECT count(distinct t1.compliance_id)\
+            FROM tbl_reassigned_compliances_history t1 \
+            INNER JOIN tbl_assigned_compliances t2 on t1.compliance_id = t2.compliance_id \
+            AND t1.unit_id = t2.unit_id \
+            INNEr JOIN tbl_compliances t3 on t1.compliance_id = t3.compliance_id \
+            INNER JOIN tbl_units t4 on t1.unit_id = t4.unit_id \
+            WHERE t4.country_id = %s \
+            AND t3.domain_id = %s \
+            %s \
+            order by t1.unit_id, t1.reassigned_date desc \
+            limit %s, %s" % (
+                country_id, domain_id,
+                qry_where,
+                from_count, to_count
+
+            )
+        rcount = self.select_one(qry_count)
+        if rcount :
+            count = rcount[0]
+        else :
+            count = 0
+
+        return self.return_reassinged_history_report(result, count)
+
+    def return_reassinged_history_report(self, result, total):
+        level_wise = {}
+        # print result
+        for r in result :
+            if r["document_name"] is not None :
+                cname = " %s - %s" % (r["document_name"], r["compliance_task"])
+            else :
+                cname = r["compliance_task"]
+
+            uname = r["unit_code"] + ' - ' + r["unit_name"]
+            uid = r["unit_id"]
+
+            mappings = r["statutory_mapping"].split('>>')
+            statutory_name = mappings[0].strip()
+            statutory_name = statutory_name.strip()
+
+            reassign = clientreport.ReassignHistory(
+                r["oldassignee"], r["assigneename"],
+                self.datetime_to_string(r["reassigned_date"]),
+                r["remarks"]
+            )
+            reassignCompliance = clientreport.ReassignCompliance(
+                cname, self.datetime_to_string(r["due_date"]),
+                [reassign]
+            )
+            unitcompliance = clientreport.ReassignUnitCompliance(
+                uid,
+                uname,
+                r["address"], [reassignCompliance]
+            )
+            level_unit = level_wise.get(statutory_name)
+            if level_unit is None :
+                level_unit = clientreport.StatutoryReassignCompliance(
+                    statutory_name, [unitcompliance]
+                )
+            else :
+                unitcompliancelst = level_unit.compliance
+                if unitcompliancelst is None :
+                    unitcompliancelst = []
+                u_new = True
+                for c in unitcompliancelst :
+                    if uid == c.unit_id :
+                        u_new = False
+                        reassing_compliance_lst = c.reassign_compliances
+                        if reassing_compliance_lst is None :
+                            reassing_compliance_lst = []
+                        r_new = True
+                        for r in reassing_compliance_lst :
+                            if cname == r.compliance_name :
+                                r_new = False
+                                history_lst = r.reassign_history
+                                if history_lst is None :
+                                    history_lst = []
+                                history_lst.append(reassign)
+                                r.reassign_history = history_lst
+                        if r_new is True :
+                            reassing_compliance_lst.append(reassignCompliance)
+                if u_new is True :
+                    unitcompliancelst.append(unitcompliance)
+                level_unit.compliance = unitcompliancelst
+            level_wise[statutory_name] = level_unit
+        final_list = []
+        for k in sorted(level_wise) :
+            final_list.append(level_wise.get(k))
+        return final_list, total
+
     def get_reassigned_history_report(
         self, country_id, domain_id, level_1_statutory_name,
         unit_id, compliance_id, user_id, from_date, to_date, client_id, session_user
