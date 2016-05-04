@@ -2693,7 +2693,6 @@ class ClientDatabase(Database):
                 from_count,
                 to_count
             )
-        print query
         rows = self.select_all(query)
         columns = [
             "compliance_id", "domain_id",
@@ -7723,7 +7722,7 @@ class ClientDatabase(Database):
                 qry_where,
             )
         rcount = self.select_one(qry_count)
-        if rcount :
+        if rcount[0] :
             count = int(rcount[0])
         else :
             count = 0
