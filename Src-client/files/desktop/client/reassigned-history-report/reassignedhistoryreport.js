@@ -10,6 +10,9 @@ var lastUnit = '';
 var lastAct = '';
 var totalRecord;
 var sno = 0;
+var acc_count = 1;
+var s_endCount = 0;
+
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -57,9 +60,11 @@ $("#export-button").click(function(){
 function loadreassignedhistory(buttontype, end_count){
 
     if(end_count == 0){
+        acc_count = 1;
         lastAct = '';
         lastUnit = '';
         sno = 0;
+        s_endCount = 0;
         $('.grid-table-rpt').show();
         $('.table-reassignedhistory-list').empty(); 
     }
@@ -135,7 +140,7 @@ function loadreassignedhistory(buttontype, end_count){
             csv = true
         }
         client_mirror.getReassignedHistoryReport(
-            countries, domain, unitid, level1id,  compliancesid , userid, fromdate, todate, csv, end_count,
+            countries, domain, unitid, level1id,  compliancesid , userid, fromdate, todate, csv, s_endCount,
             function (error, response){
                 if(error == null){
                     onSuccess(response);
@@ -177,7 +182,6 @@ function loadReassignedHistoryList(data){
                 $('.table-reassignedhistory-list').append(cloneUnit);
             }
             var list = clist[ke]['reassign_compliances'];
-            var acc_count = 1;
 
             $.each(list, function(k, val) {   
                 var tableRow = $('#templates .table-reassigned-list .tbody-reassigned-list');
@@ -197,6 +201,7 @@ function loadReassignedHistoryList(data){
                         $('.table-reassignedhistory-list').append(clone);
                         $('.table-reassignedhistory-list').append('<tbody class="accordion-content accordion-content'+acc_count+'"></tbody>');
                         $('.accordion-content'+acc_count).addClass("default");
+                        s_endCount++;
                         
                     }
                     else{
@@ -206,7 +211,8 @@ function loadReassignedHistoryList(data){
                         $('.inner-reassigndate', cloneval_ul).html(rhistory[k1]['reassigned_date']);
                         $('.inner-reassigned-from', cloneval_ul).html(rhistory[k1]['reassigned_from']);
                         $('.inner-reason', cloneval_ul).html(rhistory[k1]['reassign_reason']);
-                        $('.accordion-content'+acc_count).append(cloneval_ul);   
+                        $('.accordion-content'+acc_count).append(cloneval_ul);
+                        s_endCount++;   
                     }
                     count++;
                 });
