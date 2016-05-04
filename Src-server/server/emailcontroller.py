@@ -1,33 +1,14 @@
 #!/usr/bin/python
-import mandrill
+
+# import mandrill
 from smtplib import SMTP_SSL as SMTP
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 
 from server.constants import (
-    CLIENT_URL, KNOWLEDGE_URL
+    CLIENT_URL, KNOWLEDGE_URL, SEND_EMAIL
 )
-
-
-# server = smtplib.SMTP('mail.mindssoft.com', 25)
-# server.ehlo()
-# server.login(self.sender, self.password)
-
-# msg = MIMEMultipart()
-# msg['From'] = self.sender
-# msg['To'] = receive
-# msg['Subject'] = subject
-# if cc is not None:
-#     msg['Cc'] = cc
-#     receiver += cc
-# msg.attach(MIMEText(message, 'plain'))
-
-# server.sendmail(self.sender, receiver,  msg.as_string())
-# server.close()
-
-__all__ = [
-	"EmailHandler"
-]
+__all__ = ["EmailHandler"]
 
 # CLIENT_URL = "http://localhost:8080/"
 # KNOWLEDGE_URL= "http://localhost:8082/knowledge/"
@@ -50,28 +31,30 @@ class Email(object):
         # server.ehlo()
         # server.starttls()
         # print server.login(self.sender, self.password)
+        if SEND_EMAIL :
+            server = SMTP("mail.aparajitha.com", 465)
+            print server
+            server.set_debuglevel(False)
+            server.login(self.sender, self.password)
 
-        server = SMTP("mail.aparajitha.com", 465)
-        print server
-        server.set_debuglevel(False)
-        server.login(self.sender, self.password)
-
-        msg = MIMEMultipart()
-        msg['From'] = self.sender
-        print msg['From']
-        msg['To'] = receiver
-        print msg['To']
-        msg['Subject'] = subject
-        print msg['Subject']
-        if cc is not None:
-            msg['Cc'] = cc
-            print msg['Cc']
-            # receiver += cc
-        msg.attach(MIMEText(message, 'html'))
-        print msg.as_string()
-        response = server.sendmail(self.sender, receiver,  msg.as_string())
-        print response
-        server.close()
+            msg = MIMEMultipart()
+            msg['From'] = self.sender
+            print msg['From']
+            msg['To'] = receiver
+            print msg['To']
+            msg['Subject'] = subject
+            print msg['Subject']
+            if cc is not None:
+                msg['Cc'] = cc
+                print msg['Cc']
+                # receiver += cc
+            msg.attach(MIMEText(message, 'html'))
+            print msg.as_string()
+            response = server.sendmail(self.sender, receiver,  msg.as_string())
+            print response
+            server.close()
+        else :
+            print "SEND_EMAIL is ", SEND_EMAIL
 
     def initializeTemplates(self):
         self.templates = {
