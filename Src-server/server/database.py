@@ -294,6 +294,8 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
+        print 
+        print query
         return self.execute(query)
 
     ########################################################

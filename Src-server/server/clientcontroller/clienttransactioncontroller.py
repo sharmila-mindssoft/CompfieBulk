@@ -153,7 +153,6 @@ def process_get_assign_compliance_form_data(db, session_user, client_id):
         two_level_approve, client_admin
     )
 
-
 def process_get_compliance_for_units(db, request, session_user, client_id):
     unit_ids = request.unit_ids
     domain_id = request.domain_id
