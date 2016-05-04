@@ -8932,9 +8932,9 @@ class ClientDatabase(Database):
         duration_type = duration[1]
         due_date = None
         if duration_type == "Day(s)":
-            due_date = start_date + datetime.timedelta(days = int(duration_value))
+            due_date = start_date + datetime.timedelta(days=int(duration_value))
         elif duration_type == "Hour(s)":
-            due_date = start_date + datetime.timedelta(hours = int(duration_value))
+            due_date = start_date + datetime.timedelta(hours=int(duration_value))
         values = [
             compliance_history_id, unit_id, compliance_id, start_date, due_date,
             session_user
