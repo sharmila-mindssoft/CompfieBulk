@@ -11,6 +11,7 @@ var lastAct = '';
 var totalRecord;
 var sno = 0;
 var acc_count = 1;
+var s_endCount = 0;
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -58,10 +59,12 @@ $("#export-button").click(function(){
 function loadreassignedhistory(buttontype, end_count){
 
     if(end_count == 0){
+        acc_count = 1;
         lastAct = '';
         lastUnit = '';
         acc_count = 1;
         sno = 0;
+        s_endCount = 0;
         $('.grid-table-rpt').show();
         $('.table-reassignedhistory-list').empty();
     }
@@ -137,7 +140,7 @@ function loadreassignedhistory(buttontype, end_count){
             csv = true
         }
         client_mirror.getReassignedHistoryReport(
-            countries, domain, unitid, level1id,  compliancesid , userid, fromdate, todate, csv, end_count,
+            countries, domain, unitid, level1id,  compliancesid , userid, fromdate, todate, csv, s_endCount,
             function (error, response){
                 if(error == null){
                     onSuccess(response);
@@ -199,7 +202,7 @@ function loadReassignedHistoryList(data){
                         $('.table-reassignedhistory-list').append(clone);
                         $('.table-reassignedhistory-list').append('<tbody class="accordion-content accordion-content'+acc_count+'"></tbody>');
                         $('.accordion-content'+acc_count).addClass("default");
-
+                        s_endCount++;
                     }
                     else{
                         var tableRowvalues_ul = $('#templates .reassigned-inner-list');
@@ -209,6 +212,7 @@ function loadReassignedHistoryList(data){
                         $('.inner-reassigned-from', cloneval_ul).html(rhistory[k1]['reassigned_from']);
                         $('.inner-reason', cloneval_ul).html(rhistory[k1]['reassign_reason']);
                         $('.accordion-content'+acc_count).append(cloneval_ul);
+                        s_endCount++;
                     }
                     count++;
                 });
