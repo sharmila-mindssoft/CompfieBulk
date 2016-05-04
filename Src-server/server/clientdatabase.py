@@ -5357,6 +5357,23 @@ class ClientDatabase(Database):
                 (SELECT ud.domain_id FROM tbl_user_domains ud \
                 where ud.user_id = %s)" % int(session_user)
 
+        if(compliance_status == 'Complied'):
+            c_status = " AND ch.due_date >= ch.completion_date \
+                AND IFNULL(ch.approve_status,0) = 1"
+        elif(compliance_status == 'Delayed Compliance'):
+            c_status = " AND ch.due_date < ch.completion_date \
+                AND IFNULL(ch.approve_status,0) = 1"
+        elif(compliance_status == 'Inprogress'):
+            c_status = " AND ((c.duration_type_id =2 AND ch.due_date >= now()) or (c.duration_type_id != 2 and ch.due_date >= CURDATE())) \
+                AND IFNULL(ch.approve_status,0) <> 1"
+        elif(compliance_status == 'Not Complied'):
+            c_status = " AND ((c.duration_type_id =2 AND ch.due_date < now()) or (c.duration_type_id != 2 and ch.due_date < CURDATE())) \
+                AND IFNULL(ch.approve_status,0) <> 1"
+        else:
+            c_status = ''
+
+        qry_where += c_status
+
         if from_date is not None and to_date is not None :
             start_date = self.string_to_datetime(from_date)
             end_date = self.string_to_datetime(to_date)
@@ -5472,22 +5489,22 @@ class ClientDatabase(Database):
 
             remarks = self.calculate_ageing(r["due_date"], r["fname"], r["completion_date"])[1]
 
-            if(compliance_status == 'Complied'):
-                    c_status = 'On Time'
-            elif(compliance_status == 'Delayed Compliance'):
-                c_status = 'Delayed'
-            elif(compliance_status == 'Inprogress'):
-                c_status = 'days left'
-            elif(compliance_status == 'Not Complied'):
-                c_status = 'Overdue'
-            else:
-                c_status = ''
+            # if(compliance_status == 'Complied'):
+            #         c_status = 'On Time'
+            # elif(compliance_status == 'Delayed Compliance'):
+            #     c_status = 'Delayed'
+            # elif(compliance_status == 'Inprogress'):
+            #     c_status = 'days left'
+            # elif(compliance_status == 'Not Complied'):
+            #     c_status = 'Overdue'
+            # else:
+            #     c_status = ''
 
-            if int(r["status"]) == 0 and "Delayed" in remarks :
-                remarks = remarks.replace("Delayed", "Overdue")
+            # if int(r["status"]) == 0 and "Delayed" in remarks :
+            #     remarks = remarks.replace("Delayed", "Overdue")
 
-            if compliance_status is not None and c_status not in remarks :
-                continue
+            # if compliance_status is not None and c_status not in remarks :
+            #     continue
 
             compliance = clientreport.ComplianceDetails(
                 compliance_name, assignee, due_date,
