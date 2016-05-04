@@ -2598,6 +2598,7 @@ class ClientDatabase(Database):
                 ON B.compliance_id = C.compliance_id \
                 AND C.is_active = 1 \
                 where A.domain_id = %s \
+                AND C.is_active = 1 AND A.is_new = 1 \
                 AND B.compliance_id not in (select  \
                         AC.compliance_id \
                     from \
@@ -2630,6 +2631,7 @@ class ClientDatabase(Database):
             INNER JOIN tbl_client_compliances B ON A.client_statutory_id = B.client_statutory_id \
             INNER JOIN tbl_compliances C ON B.compliance_id = C.compliance_id and C.is_active =1 \
             WHERE  B.compliance_opted = 1 \
+            AND C.is_active = 1 AND A.is_new = 1 \
             AND A.unit_id in %s \
             AND A.domain_id = %s \
             AND B.compliance_id not in (select  AC.compliance_id from tbl_assigned_compliances AC \
@@ -2691,6 +2693,7 @@ class ClientDatabase(Database):
                 from_count,
                 to_count
             )
+        print query
         rows = self.select_all(query)
         columns = [
             "compliance_id", "domain_id",
