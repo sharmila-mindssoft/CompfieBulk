@@ -6,14 +6,15 @@ var compliancesList;
 var userList;
 var countriesNameVal;
 var domainNameVal;
+var lastUnit = '';
+var totalRecord;
+var sno = 0;
 
-function clearMessage() {
-    $(".error-message").hide();
-    $(".error-message").text("");
+function displayLoader() {
+    $(".loading-indicator-spin").show();
 }
-function displayMessage(message) {
-    $(".error-message").text(message);
-    $(".error-message").show();
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
 }
 
 function initialize(){
@@ -39,13 +40,28 @@ function initialize(){
         }
     );
 }
+
+//pagination process
+$('#pagination').click(function(){
+  loadreassignedhistory("show", sno);
+});
+
+
 $("#show-button").click(function(){   
-    loadreassignedhistory("show");
+    loadreassignedhistory("show", 0);
 });
 $("#export-button").click(function(){ 
-    loadreassignedhistory("export");
+    loadreassignedhistory("export", 0);
 });
-function loadreassignedhistory(buttontype){
+function loadreassignedhistory(buttontype, end_count){
+
+    if(end_count == 0){
+        lastUnit = '';
+        sno = 0;
+        $('.grid-table-rpt').show();
+        $('.table-reassignedhistory-list').empty(); 
+    }
+    displayLoader();
     var countries = parseInt($("#country").val());
     countriesNameVal = $("#countryval").val();
     //Domain    
@@ -88,31 +104,36 @@ function loadreassignedhistory(buttontype){
         todate = null;
     }
  
-   
     if(countriesNameVal == ""){
         displayMessage(message.country_required);
+        hideLoader();
     }
     else if(domainNameVal == ""){
         displayMessage(message.domain_required);  
+        hideLoader();
     }
     else{
         function onSuccess(data){
             if(buttontype == "export"){
                 var download_url = data["link"];
-                window.open(download_url, '_blank');        
+                window.open(download_url, '_blank'); 
+                hideLoader();       
             }else{
-                loadReassignedHistoryList(data['statutory_wise_compliances']);     
+                totalRecord = data["total"];
+                loadReassignedHistoryList(data['statutory_wise_compliances']);
+                hideLoader();     
             }
         }
         function onFailure(error){
             console.log(error);
+            hideLoader();
         }
         csv = false
         if(buttontype == "export"){
             csv = true
         }
         client_mirror.getReassignedHistoryReport(
-            countries, domain, unitid, level1id,  compliancesid , userid, fromdate, todate, csv,
+            countries, domain, unitid, level1id,  compliancesid , userid, fromdate, todate, csv, end_count,
             function (error, response){
                 if(error == null){
                     onSuccess(response);
@@ -125,11 +146,8 @@ function loadreassignedhistory(buttontype){
     }
 }
 
-
 function loadReassignedHistoryList(data){
-    $('.grid-table-rpt').show();
-    $('.table-reassignedhistory-list').empty();
-    var sno = 0;  
+     
     $('.country-name').text(countriesNameVal);
     $('.domain-name').text(domainNameVal);
     $.each(data, function(key, value) {
@@ -143,11 +161,14 @@ function loadReassignedHistoryList(data){
         $('.table-reassignedhistory-list').append(clonetr);
 
         var clist = data[key]['compliance'];
-        $.each(clist, function(ke, val) {         
-            var tableRowUnit = $('#templates .table-reassigned-list .unit-list');
-            var cloneUnit = tableRowUnit.clone();
-            $('.unit-heading', cloneUnit).html(clist[ke]['unit_name']);              
-            $('.table-reassignedhistory-list').append(cloneUnit);
+        $.each(clist, function(ke, val) {  
+
+            if(lastUnit != clist[ke]['unit_name']){       
+                var tableRowUnit = $('#templates .table-reassigned-list .unit-list');
+                var cloneUnit = tableRowUnit.clone();
+                $('.unit-heading', cloneUnit).html(clist[ke]['unit_name']);              
+                $('.table-reassignedhistory-list').append(cloneUnit);
+            }
             var list = clist[ke]['reassign_compliances'];
             var acc_count = 1;
 
@@ -184,14 +205,28 @@ function loadReassignedHistoryList(data){
                 });
                 acc_count++;
             });
-
-            $('#accordion').find('.accordion-toggle').click(function(){
-                $(this).next().slideToggle('fast');
-                $(".accordion-content").not($(this).next()).slideUp('fast');
-            });     
         });          
     });
-    $(".total-records").html("Total : "+sno+" records")
+
+    if(totalRecord == 0){
+        var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
+        var clone4=tableRow4.clone();
+        $('.no_records', clone4).text('No Compliance Found');
+        $('.tbody-unit').append(clone4);
+        $('#pagination').hide();
+        $('.total-records').text('');
+    }else{
+        $('.total-records').text("Showing " + 1 + " to " + sno + " of " + totalRecord);
+        if(sno >= totalRecord){
+          $('#pagination').hide();
+          $('#accordion').find('.accordion-toggle').click(function(){
+            $(this).next().slideToggle('fast');
+            $(".accordion-content").not($(this).next()).slideUp('fast');
+        });     
+        }else{
+          $('#pagination').show();
+        }
+    }
 }
 
 

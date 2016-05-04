@@ -7563,7 +7563,7 @@ class ClientDatabase(Database):
         qry = " SELECT distinct t1.compliance_id, t1.assignee, t1.reassigned_from, \
             t1.reassigned_date, t1.remarks, t2.due_date, t3.compliance_task, \
             t3.document_name, t4.unit_code, t4.unit_name, t4.address, \
-            (select concat(a.employee_code, ' - ', a.employee_name) from tbl_users a where a.user_id = t1.assignee) assigneename, \
+            ifnull((select concat(a.employee_code, ' - ', a.employee_name) from tbl_users a where a.user_id = t1.assignee) , 'Administrator') assigneename, \
             ifnull((select concat(a.employee_code, ' - ', a.employee_name) from tbl_users a where a.user_id = t1.reassigned_from) , 'Administrator') oldassignee, \
             t1.unit_id, t3.statutory_mapping \
             FROM tbl_reassigned_compliances_history t1 \
@@ -7581,11 +7581,10 @@ class ClientDatabase(Database):
                 from_count, to_count
 
             )
-        print qry
         rows = self.select_all(qry)
         result = self.convert_to_dict(rows, columns)
 
-        qry_count = " SELECT count(distinct t1.compliance_id)\
+        qry_count = " SELECT count(t1.compliance_id)\
             FROM tbl_reassigned_compliances_history t1 \
             INNER JOIN tbl_assigned_compliances t2 on t1.compliance_id = t2.compliance_id \
             AND t1.unit_id = t2.unit_id \
