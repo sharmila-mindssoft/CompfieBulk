@@ -7583,17 +7583,20 @@ class ClientDatabase(Database):
             WHERE t4.country_id = %s \
             AND t3.domain_id = %s \
             %s \
-            order by t1.unit_id, t3.statutory_mapping, t1.reassigned_date desc \
+            order by t3.statutory_mapping, t1.unit_id,  t1.reassigned_date desc \
             limit %s, %s" % (
                 country_id, domain_id,
                 qry_where,
                 from_count, to_count
 
             )
+        print qry
+        print
+
         rows = self.select_all(qry)
         result = self.convert_to_dict(rows, columns)
 
-        qry_count = " SELECT count(t1.compliance_id)\
+        qry_count = " SELECT count( t1.compliance_id)\
             FROM tbl_reassigned_compliances_history t1 \
             INNER JOIN tbl_assigned_compliances t2 on t1.compliance_id = t2.compliance_id \
             AND t1.unit_id = t2.unit_id \
@@ -7602,13 +7605,11 @@ class ClientDatabase(Database):
             WHERE t4.country_id = %s \
             AND t3.domain_id = %s \
             %s \
-            order by t1.unit_id, t1.reassigned_date desc \
-            limit %s, %s" % (
+            order by t1.unit_id, t1.reassigned_date desc " % (
                 country_id, domain_id,
                 qry_where,
-                from_count, to_count
-
             )
+        print qry_count
         rcount = self.select_one(qry_count)
         if rcount :
             count = rcount[0]
