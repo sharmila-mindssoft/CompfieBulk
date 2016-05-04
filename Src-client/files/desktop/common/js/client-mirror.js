@@ -1076,7 +1076,7 @@ function initClientMirror() {
 
     function getComplianceDetailsReport(
         country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date,
-        compliance_status, csv, callback
+        compliance_status, csv, record_count, callback
     ) {
         var request = [
             "GetComplianceDetailsReport", {
@@ -1090,7 +1090,7 @@ function initClientMirror() {
                 "to_date": to_date,
                 "compliance_status": compliance_status,
                 "csv" : csv,
-                "record_count": 0
+                "record_count": record_count
             }
         ];
         callerName = "client_reports";

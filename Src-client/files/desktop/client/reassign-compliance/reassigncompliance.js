@@ -82,11 +82,14 @@ function load_allcompliances(compliancesList){
   var userCompliances = compliancesList;
   for(ucompliance in userCompliances){
     var userUnitwiseCompliance = userCompliances[ucompliance]["units"];
+
     for(var entity in userUnitwiseCompliance){
       var statutoriesList = userUnitwiseCompliance[entity]["statutories"];
+      var statutoriesNameList = Object.keys(statutoriesList);
+      var statutoriesNameList1 = [];
+
       var uName = userUnitwiseCompliance[entity]["unit_name"];
       var unitId = userUnitwiseCompliance[entity]["unit_id"];
-
       if(uName != lastUnit){
         var tableRow3 = $('#head-templates .tbl_heading');
         var clone3 = tableRow3.clone();
@@ -95,10 +98,26 @@ function load_allcompliances(compliancesList){
         lastUnit = uName;
         lastActName = '';
       }
+
+      if(lastActName != ''){
+        var cactname = ''; 
+        for(var l=0; l<statutoriesNameList.length; l++){
+          var actname = statutoriesNameList[l];
+          if(actname == lastActName){
+            cactname = actname;
+            statutoriesNameList.splice(statutoriesNameList.indexOf(cactname),1);
+            statutoriesNameList1.push(cactname);
+          }
+        }
+        for(var l=0; l<statutoriesNameList.length; l++){
+          statutoriesNameList1.push(statutoriesNameList[l]);
+        }
+      }else{
+         statutoriesNameList1 = Object.keys(statutoriesList);
+      }
       
-      for(var statutory in statutoriesList){
-        var actname = '';
-        actname = statutory;
+      for(var l=0; l<statutoriesNameList1.length; l++){
+        var actname = statutoriesNameList1[l];
         if(actname != lastActName){
           var acttableRow=$('#act-templates .font1 .tbody-heading');
           var clone=acttableRow.clone();
@@ -114,8 +133,7 @@ function load_allcompliances(compliancesList){
           lastActName = actname;
         }
 
-
-        var actList = statutoriesList[statutory];
+        var actList = statutoriesList[actname];
         //$('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
         for(var actentity in actList){
           var compliance_id = actList[actentity]["compliance_id"];

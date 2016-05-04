@@ -1,6 +1,6 @@
 <style>
 
-.overlay {
+.overlay-nav-bar {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -12,13 +12,13 @@
   opacity: 0;
   z-index: 1000;
 }
-.overlay:target {
+.overlay-nav-bar:target {
   visibility: visible;
   opacity: 1;
 
 }
 
-.popup {
+.popup-nav-bar {
   margin: 70px auto;
   padding: 20px;
   background: #fff;
@@ -28,12 +28,12 @@
   transition: all 5s ease-in-out;
 }
 
-.popup h2 {
+.popup-nav-bar h2 {
   margin-top: 0;
   color: #333;
   font-family: Tahoma, Arial, sans-serif;
 }
-.popup .close {
+.popup-nav-bar .close {
   position: absolute;
   top: 5px;
   right: 10px;
@@ -44,14 +44,14 @@
   text-decoration: none;
   color: #333;
 }
-.popup .close:hover {
+.popup-nav-bar .close:hover {
   color: orange;
 }
-.popup .content {
+.popup-nav-bar .content {
   max-height: 40%;
   overflow: auto;
 }
-.popup-error-msg{
+.popup-nav-bar-error-msg{
   font-size: 0.813em;
   color: red;
 }
@@ -127,8 +127,8 @@
       </li>
     </ul>
   </div>
-  <div id="popup" class="overlay" >
-    <div class="popup">
+  <div id="popup" class="overlay-nav-bar" >
+    <div class="popup-nav-bar">
       <a class="close" href="#">X</a>
       <div class="content">
        <span id="msg"></span><br>

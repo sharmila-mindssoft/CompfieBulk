@@ -6,11 +6,29 @@ var compliancesList;
 var unitsList;
 var usersList;
 
-var pageSize = 500;
-var startCount = 0;
-var endCount;
 var sno = 0;
 var fullArrayList = [];
+
+var s_endCount = 0;
+var totalRecord;
+var lastUnit = '';
+
+var country = null;
+var domain = null;
+var act = null;
+var unit = null;
+var compliances = null;
+var userId = null;
+var fromdate = null;
+var todate = null;
+var status = null;
+
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
 
 //get compliance details filter from api
 function getComplianceDetailsReportFilters(){
@@ -77,10 +95,13 @@ function filterList(data){
 
 //clone & display unit name
 function unitList(data){
-  var tableRow2=$('#unit-name-templates .table-unit-name .table-row-unit-name');
-  var clone2=tableRow2.clone();
-  $('.tbl_unitheading', clone2).html('<div class="heading" style="margin-top:5px;width:auto;">' + data["unit_name"] + '</div>');
-  $('.tbody-unit').append(clone2);
+  if(lastUnit != data["unit_name"]){
+    var tableRow2=$('#unit-name-templates .table-unit-name .table-row-unit-name');
+    var clone2=tableRow2.clone();
+    $('.tbl_unitheading', clone2).html('<div class="heading" style="margin-top:5px;width:auto;">' + data["unit_name"] + '</div>');
+    $('.tbody-unit').append(clone2);
+    lastUnit = data["unit_name"];
+  }
 }
 
 //clone & display compliance details
@@ -114,50 +135,13 @@ function complianceListArray(data){
   sno++;
 }
 
-function get_sub_array(object, start, end){
-    if(!end){ end = -1;}
-    return object.slice(start, end);
-}
 
-//call display function on show more record process
-function showloadrecord() {
-  startCount = endCount;
-  endCount = startCount + pageSize;
-  var list = get_sub_array(fullArrayList, startCount, endCount);
-  if(list.length < pageSize){
-      $('#pagination').hide();
-  }
-  for(var y = 0;  y < pageSize; y++){
-    if(list[y] !=  undefined){
-      if(Object.keys(list[y])[0] == "unit_name"){
-         unitList(list[y]);
-      }
-      else if(Object.keys(list[y])[0] == "due_date"){
-         complianceListArray(list[y]);
-      }
-    }
-  }
-}
 
-//pagination process
-$(function() {
-    $('#pagination').click(function(e){
-        $(".loading-indicator-spin").show();
-        if($('.loading-indicator-spin').css('display') != 'none')
-        {
-          setTimeout(function(){
-              showloadrecord();
-          }, 500);
-        }
-        setTimeout(function(){
-            $(".loading-indicator-spin").hide();
-        }, 500);
-    });
-});
+
+
 
 //create array for pagination and call display function
 function loadArray(complianceList) {
-  endCount = pageSize;
   $.each(complianceList, function(i, val){
       var list = complianceList[i];
       var list_comp = val["compliances"]
@@ -169,17 +153,9 @@ function loadArray(complianceList) {
         fullArrayList.push(list_c);
       });
   });
-  var totallist = fullArrayList.length;
-
-  if(totallist > pageSize){
-      $('#pagination').show();
-  }
-  else{
-      $('#pagination').hide();
-  }
-  var sub_keys_list = get_sub_array(fullArrayList, startCount, endCount);
-  filterList();
-  for(var y = 0;  y < pageSize; y++){
+  
+  var sub_keys_list = fullArrayList;
+  for(var y = 0;  y < fullArrayList.length; y++){
     if(sub_keys_list[y] !=  undefined){
       if(Object.keys(sub_keys_list[y])[0] == "unit_name"){
         unitList(sub_keys_list[y]);
@@ -189,76 +165,116 @@ function loadArray(complianceList) {
       }
     }
   }
-}
 
-//count total records of result
-function loadTotalCount(complianceList){
-  $("#pagination").hide();
-  var totalrecords = 0;
-  $(".tbody-unit").find("tbody").remove();
-  $.each(complianceList, function(i, val){
-    var complianceCount = val['compliances'].length;
-    totalrecords = totalrecords + complianceCount;
-  });
-  loadArray(complianceList);
-  $('.compliance_count').text("Total : "+ totalrecords +" records");
-
-  if(totalrecords == 0){
+  if(totalRecord == 0){
     var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
     var clone4=tableRow4.clone();
     $('.no_records', clone4).text('No Compliance Found');
     $('.tbody-unit').append(clone4);
+    $('#pagination').hide();
+    $('.compliance_count').text('');
+  }else{
+    $('.compliance_count').text("Showing " + 1 + " to " + sno + " of " + totalRecord);
+    if(sno >= totalRecord){
+      $('#pagination').hide();
+    }else{
+      $('#pagination').show();
+    }
   }
 }
 
+//pagination process
+$('#pagination').click(function(){
+  displayLoader();
+  s_endCount = sno;
+  fullArrayList = [];
+  clearMessage();
+
+  function onSuccess(data){
+    unitWiseComplianceList = data["unit_wise_compliancess"];
+    totalRecord = data["total_count"];
+    loadArray(unitWiseComplianceList);
+    hideLoader();
+  }
+  function onFailure(error){
+    onFailure(error);
+    hideLoader();
+  }
+
+  client_mirror.getComplianceDetailsReport(
+      parseInt(country), parseInt(domain), act, parseInt(unit),
+      parseInt(compliances), parseInt(userId), fromdate, todate,
+      status, csv, s_endCount,
+      function (error, response) {
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+    });
+});
+
+
 //get compliance details report data from api
 function loadCompliance(reportType){
-  var country = $("#country").val();
-  var domain = $("#domain").val();
-  var act = $("#act").val().trim();
-  var unit = null;
-  var compliances = null;
-  var user = null;
-  var fromdate = null;
-  var todate = null;
-  var status = null;
+  displayLoader();
+  country = $("#country").val();
+  domain = $("#domain").val();
+  act = $("#act").val().trim();
+  unit = null;
+  compliances = null;
+  userId = null;
+  fromdate = null;
+  todate = null;
+  status = null;
 
   if($("#compliancetask").val() != '') compliances = $("#compliancetask").val();
   if($("#unit").val() != '') unit = $("#unit").val();
-  if($("#assignee").val() != '') user = $("#assignee").val();
+  if($("#assignee").val() != '') userId = $("#assignee").val();
   if($("#fromdate").val() != '') fromdate = $("#fromdate").val();
   if($("#todate").val() != '') todate = $("#todate").val();
   if($("#status").val() != '') status = $("#status").val();
 
+  $(".tbody-unit").find("tbody").remove();
+  $('.compliance_count').text('');
+  lastUnit = '';
+  sno = 0;
+  s_endCount = 0;
+  fullArrayList = [];
+  clearMessage();
+  $(".grid-table-rpt").show();
+
   if(country.length == 0){
     displayMessage(message.country_required);
+    hideLoader();
   }
   else if(domain.length == 0){
     displayMessage(message.domain_required);
+    hideLoader();
   }
   else if(act.length == 0){
     displayMessage(message.act_required);
+    hideLoader();
   }
   else{
     function onSuccess(data){
       unitWiseComplianceList = data["unit_wise_compliancess"];
-      fullArrayList = [];
-      clearMessage();
-      sno = 0;
-      startCount = 0;
-      endCount = 0;
-      $(".grid-table-rpt").show();
+      totalRecord = data["total_count"];
+      filterList();
 
       if(reportType == "show"){
-        loadTotalCount(unitWiseComplianceList);
+        loadArray(unitWiseComplianceList);
       }else{
         // loadTotalCount(unitWiseComplianceList);
         var download_url = data["link"];
         window.open(download_url, '_blank');
       }
+      hideLoader();
     }
     function onFailure(error){
       onFailure(error);
+      hideLoader();
     }
     csv = true
     if(reportType == "show"){
@@ -266,8 +282,8 @@ function loadCompliance(reportType){
     }
     client_mirror.getComplianceDetailsReport(
       parseInt(country), parseInt(domain), act, parseInt(unit),
-      parseInt(compliances), parseInt(user), fromdate, todate,
-      status, csv,
+      parseInt(compliances), parseInt(userId), fromdate, todate,
+      status, csv, s_endCount,
       function (error, response) {
         if (error == null){
           onSuccess(response);

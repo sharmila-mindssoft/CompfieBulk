@@ -5392,11 +5392,10 @@ class ClientDatabase(Database):
                 AND c.statutory_mapping like '%s' \
                 %s \
         order by ch.due_date desc \
-        limit %s, %s " % (
+         " % (
             country_id, domain_id,
             str(statutory_id+"%"),
-            qry_where,
-            from_count, to_count
+            qry_where
         )
 
         row = self.select_one(qry_count)
@@ -5435,11 +5434,11 @@ class ClientDatabase(Database):
                 AND c.domain_id = %s \
                 AND c.statutory_mapping like '%s' \
                 %s \
-        order by ch.due_date desc \
+        order by ch.due_date desc limit %s, %s \
         " % (
             country_id, domain_id,
             str(statutory_id+"%"),
-            qry_where
+            qry_where, from_count, to_count
         )
         print qry
         rows = self.select_all(qry)
