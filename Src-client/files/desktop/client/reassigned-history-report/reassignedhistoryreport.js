@@ -202,7 +202,6 @@ function loadReassignedHistoryList(data){
                         $('.table-reassignedhistory-list').append('<tbody class="accordion-content accordion-content'+acc_count+'"></tbody>');
                         $('.accordion-content'+acc_count).addClass("default");
                         s_endCount++;
-                        
                     }
                     else{
                         var tableRowvalues_ul = $('#templates .reassigned-inner-list');
