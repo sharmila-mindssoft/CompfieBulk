@@ -736,8 +736,11 @@ class ClientDatabase(Database):
         self, users, client_id, unit_ids=None
     ):
         unit_ids_list = []
-        if unit_ids is not None:
-            unit_ids_list = [int(x) for x in unit_ids.split(",")]
+        if unit_ids not in [None, "", "None"]:
+            try :
+                unit_ids_list = [int(x) for x in unit_ids.split(",")]
+            except e :
+                unit_ids_list = []
         results = []
         for user in users :
             if len(unit_ids_list) > 0:
@@ -2326,7 +2329,8 @@ class ClientDatabase(Database):
             where_condition = "(completion_date is not Null and \
             completion_date != 0 ) and (completed_on is not Null \
             and completed_on != 0) and \
-            (approve_status is Null or approve_status = 0) and completed_by = '%d' and is_closed = 0"% (
+            (approve_status is Null or approve_status = 0) and completed_by = '%d' and is_closed = 0 \
+            limit 500 " % (
                 assignee[0]
             )
             rows = self.get_data_from_multiple_tables(
@@ -2605,8 +2609,8 @@ class ClientDatabase(Database):
             and t01.compliance_opted = 1 \
             and t04.is_active = 1 \
             and t03.compliance_id IS NULL " % (
-            domain_id,
-            str(tuple(unit_ids))
+            str(tuple(unit_ids)),
+            domain_id
         )
         row = self.select_one(q)
         if row :
@@ -2682,8 +2686,8 @@ class ClientDatabase(Database):
         ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), \
                 '>>', - 1) , t3.frequency_id \
         limit %s, %s " % (
-            domain_id,
             str(tuple(unit_ids)),
+            domain_id,
             from_count,
             to_count
         )
@@ -6936,7 +6940,7 @@ class ClientDatabase(Database):
         where_condition = "ch.completed_by='%d' and is_closed = 0 and ac.is_active = 1" % (
             session_user)
         where_condition += " and ((ch.completed_on is null or ch.completed_on = 0) \
-        and (ch.approve_status is null or ch.approve_status = 0)) ORDER BY due_date ASC"
+        and (ch.approve_status is null or ch.approve_status = 0)) ORDER BY due_date ASC limit 500 "
 
         current_compliances_row = self.get_data_from_multiple_tables(
             columns,
@@ -7024,7 +7028,7 @@ class ClientDatabase(Database):
         join_type = "inner join"
         where_condition = " assignee = '%d' and frequency_id != 4  and is_closed = 0" % session_user
         where_condition += " and due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) "
-        where_condition += " and ac.is_active = 1"
+        where_condition += " and ac.is_active = 1 limit 500 "
         upcoming_compliances_rows = self.get_data_from_multiple_tables(
             columns,
             tables, aliases, join_type, join_conditions,
