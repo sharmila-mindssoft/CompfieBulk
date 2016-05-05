@@ -129,7 +129,6 @@ function load_secondwizard(){
   var actname = '';
   for(var l=0; l<statutoriesNameList.length; l++){
     actname = statutoriesNameList[l];
-    //alert($.inArray(actname, statutoriesNameList) == -1)
     if(actname != lastActName){
       var acttableRow=$('#act-templates .font1 .tbody-heading');
       var clone=acttableRow.clone();
@@ -145,9 +144,7 @@ function load_secondwizard(){
       count++;
       lastActName = actname;
     }
-    /*if(count==1){
-      $('.accordion-content'+count).addClass("default");
-    }*/
+    
     var actList = statutoriesList[actname];
     for(var actentity in actList){
       var statutoryprovision = '';

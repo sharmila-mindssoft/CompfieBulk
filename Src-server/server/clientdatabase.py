@@ -9348,7 +9348,7 @@ class ClientDatabase(Database):
         column = "count(*)"
         condition = "user_id = '%d' and is_primary_admin = 1" % user_id
         rows = self.get_data(self.tblUsers, column, condition)
-        if rows[0][0] > 0:
+        if rows[0][0] > 0 or user_id == 0:
             return True
         else:
             return False
