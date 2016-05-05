@@ -170,7 +170,7 @@ def process_save_assigned_compliance(db, request, session_user, client_id):
     if (db.validate_compliance_due_date(request) is False) :
         return clienttransactions.InvalidDueDate()
     else :
-        return db.save_assigned_compliance(request, session_user)
+        return db.save_assigned_compliance(request, session_user, client_id)
         # save_data = threading.Thread(
         #     target=db.save_assigned_compliance, args=[
         #         request, session_user, client_id

@@ -2949,7 +2949,7 @@ class ClientDatabase(Database):
         notify_assign_compliance.start()
         # return clienttransactions.SaveAssignedComplianceSuccess()
 
-    def save_assigned_compliance(self, request, session_user):
+    def save_assigned_compliance(self, request, session_user, client_id):
         new_unit_settings = request.new_units
         created_on = str(self.get_date_time())
         country_id = int(request.country_id)
