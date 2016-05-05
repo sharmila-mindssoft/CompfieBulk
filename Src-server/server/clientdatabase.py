@@ -2644,8 +2644,6 @@ class ClientDatabase(Database):
                 domain_id,
                 from_count, to_count
             )
-        print qry_applicable
-
         query = " SELECT distinct \
             t2.compliance_id, \
             t1.domain_id, \
