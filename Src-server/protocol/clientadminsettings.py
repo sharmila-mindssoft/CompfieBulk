@@ -82,19 +82,19 @@ class UpdateSettings(Request):
         is_two_levels_of_approval = data.get("is_two_levels_of_approval")
         is_two_levels_of_approval = parse_structure_Bool(is_two_levels_of_approval)
         assignee_reminder_days = data.get("assignee_reminder_days")
-        assignee_reminder_days = parse_structure_CustomIntegerType_1_7(assignee_reminder_days)
+        assignee_reminder_days = parse_structure_UnsignedIntegerType_32(assignee_reminder_days)
         escalation_reminder_In_advance_days = data.get("escalation_reminder_In_advance_days")
-        escalation_reminder_In_advance_days = parse_structure_CustomIntegerType_1_7(escalation_reminder_In_advance_days)
+        escalation_reminder_In_advance_days = parse_structure_UnsignedIntegerType_32(escalation_reminder_In_advance_days)
         escalation_reminder_days = data.get("escalation_reminder_days")
-        escalation_reminder_days = parse_structure_CustomIntegerType_1_7(escalation_reminder_days)
+        escalation_reminder_days = parse_structure_UnsignedIntegerType_32(escalation_reminder_days)
         return UpdateSettings(is_two_levels_of_approval, assignee_reminder_days, escalation_reminder_In_advance_days, escalation_reminder_days)
 
     def to_inner_structure(self):
         return {
             "is_two_levels_of_approval": to_structure_Bool(self.is_two_levels_of_approval),
-            "assignee_reminder_days": to_structure_CustomIntegerType_1_7(self.assignee_reminder_days),
-            "escalation_reminder_In_advance_days": to_structure_CustomIntegerType_1_7(self.escalation_reminder_In_advance_days),
-            "escalation_reminder_days": to_structure_CustomIntegerType_1_7(self.escalation_reminder_days),
+            "assignee_reminder_days": to_structure_UnsignedIntegerType_32(self.assignee_reminder_days),
+            "escalation_reminder_In_advance_days": to_structure_UnsignedIntegerType_32(self.escalation_reminder_In_advance_days),
+            "escalation_reminder_days": to_structure_UnsignedIntegerType_32(self.escalation_reminder_days),
         }
 
 
