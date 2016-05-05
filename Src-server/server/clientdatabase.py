@@ -2286,7 +2286,7 @@ class ClientDatabase(Database):
 #
 
     def get_compliance_approval_list(
-            self, session_user, client_id
+            self, start_count, session_user, client_id
         ):
         assignee_columns = "completed_by, employee_code, employee_name"
         join_type = "inner join"
@@ -2332,7 +2332,9 @@ class ClientDatabase(Database):
             (approve_status is Null or approve_status = 0) and completed_by = '%d' and is_closed = 0"% (
                 assignee[0]
             )
-            where_condition += " ORDER BY tch.due_date ASC LIMIT 500"
+            where_condition += " ORDER BY tch.due_date ASC LIMIT %d, %d" % (
+                int(start_count), int(start_count) + 500
+            )
             rows = self.get_data_from_multiple_tables(
                 query_columns, query_tables, aliases,
                 join_type, join_condition,
@@ -6915,7 +6917,7 @@ class ClientDatabase(Database):
         return 0, compliance_status
 
 
-    def get_current_compliances_list(self, session_user, client_id):
+    def get_current_compliances_list(self, current_start_count, session_user, client_id):
         columns = "DISTINCT compliance_history_id, start_date, ch.due_date, " +\
             "ch.validity_date, ch.next_due_date, document_name, compliance_task, " + \
             "compliance_description, format_file, unit_code, unit_name," + \
@@ -6940,7 +6942,9 @@ class ClientDatabase(Database):
             session_user)
         where_condition += " and ((ch.completed_on is null or ch.completed_on = 0) \
         and (ch.approve_status is null or ch.approve_status = 0)) \
-        ORDER BY due_date ASC LIMIT 500"
+        ORDER BY due_date ASC LIMIT %d, %d" % (
+            int(current_start_count), int(current_start_count) + 500
+        )
 
         current_compliances_row = self.get_data_from_multiple_tables(
             columns,
@@ -7009,7 +7013,7 @@ class ClientDatabase(Database):
             return False
 
 
-    def get_upcoming_compliances_list(self, session_user, client_id):
+    def get_upcoming_compliances_list(self, upcoming_start_count, session_user, client_id):
         columns = "due_date, document_name, compliance_task," + \
             " compliance_description, format_file, unit_code, unit_name," + \
             "  address, ac.statutory_dates, repeats_every, (select domain_name \
@@ -7029,7 +7033,9 @@ class ClientDatabase(Database):
         where_condition = " assignee = '%d' and frequency_id != 4  and is_closed = 0" % session_user
         where_condition += " and due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) "
         where_condition += " and ac.is_active = 1 ORDER BY due_date ASC \
-        LIMIT 500"
+        LIMIT %d, %d" % (
+            int(upcoming_start_count), int(upcoming_start_count) + 500
+        )
         upcoming_compliances_rows = self.get_data_from_multiple_tables(
             columns,
             tables, aliases, join_type, join_conditions,

@@ -33,7 +33,7 @@ function initialize(){
     function onFailure(error){
         console.log(error);
     }
-    client_mirror.getComplianceDetail(
+    client_mirror.getComplianceDetail( 0, 0,
         function (error, response){
             if(error == null){
                 onSuccess(response);

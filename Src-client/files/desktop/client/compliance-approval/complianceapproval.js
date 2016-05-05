@@ -22,7 +22,7 @@ function initialize(){
     function onFailure(error){
         console.log(error);
     }
-    client_mirror.getComplianceApprovalList(
+    client_mirror.getComplianceApprovalList(0,
         function (error, response){
             if(error == null){
                 onSuccess(response);

@@ -263,7 +263,7 @@ def process_save_past_records(
 ########################################################
 def process_get_compliance_approval_list(db, request, session_user, client_id):
     compliance_approval_list = db.get_compliance_approval_list(
-        session_user, client_id
+        request.start_count, session_user, client_id
     )
     approval_status = [
         core.COMPLIANCE_APPROVAL_STATUS("Concur"),
