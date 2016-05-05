@@ -2544,6 +2544,9 @@ function prepareNotCompliedChart(source_data) {
         }
         chartTitle = "Over due compliance of " + chartTitle + " " + filter_names;
     }
+    console.log(chartDataSeries)
+    console.log(chartTitle)
+    console.log(count)
     return [chartDataSeries, chartTitle,  count];
 }
 
