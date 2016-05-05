@@ -1,5 +1,6 @@
 from protocol import (clienttransactions, clientmasters, login, core)
 from server import logger
+import threading
 __all__ = [
     "process_client_transaction_requests"
 ]
@@ -157,7 +158,7 @@ def process_get_compliance_for_units(db, request, session_user, client_id):
     unit_ids = request.unit_ids
     domain_id = request.domain_id
     from_count = request.record_count
-    to_count = 500
+    to_count = 250
     level_1_name, statutories, total = db.get_assign_compliance_statutories_for_units(
         unit_ids, domain_id, session_user, from_count, to_count
     )
@@ -169,9 +170,7 @@ def process_save_assigned_compliance(db, request, session_user, client_id):
     if (db.validate_compliance_due_date(request) is False) :
         return clienttransactions.InvalidDueDate()
     else :
-        return db.save_assigned_compliance(
-            request, session_user, client_id
-        )
+        return db.save_assigned_compliance(request, session_user, client_id)
 
 ########################################################
 # To get data to populate the completed task -
@@ -351,8 +350,8 @@ def process_get_assignee_compliances(db, request, session_user):
 
     for key, value in assignee_wise_compliance.iteritems():
         unit_list = []
-        for k, v in value.iteritems():
-            unit_list.append(v)
+        for k in sorted(value):
+            unit_list.append(value.get(k))
         no_of_compliance = assignee_compliance_count[key]
         user_data = clienttransactions.USER_WISE_COMPLIANCE(
             no_of_compliance,

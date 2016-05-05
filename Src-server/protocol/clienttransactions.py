@@ -1714,7 +1714,7 @@ class USER_WISE_UNITS(object):
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_50(unit_name)
+        unit_name = parse_structure_CustomTextType_100(unit_name)
         address = data.get("address")
         address = parse_structure_CustomTextType_250(address)
         statutories = data.get("statutories")
@@ -1724,7 +1724,7 @@ class USER_WISE_UNITS(object):
     def to_structure(self):
         return {
             "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_250(self.address),
             "statutories": to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(self.statutories),
         }

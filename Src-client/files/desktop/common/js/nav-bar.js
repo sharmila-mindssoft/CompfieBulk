@@ -170,13 +170,13 @@ function initializeNavBar () {
 
 
 function showDeletionPopup(notification_text){
-    $('.overlay').css("visibility","visible");
-    $('.overlay').css("opacity","1");
+    $('.overlay-nav-bar').css("visibility","visible");
+    $('.overlay-nav-bar').css("opacity","1");
     $("#msg").html(notification_text);
     $('.close').click(function(){
         console.log("Close clicked");
-        $('.overlay').css("visibility","hidden");
-        $('.overlay').css("opacity","0");
+        $('.overlay-nav-bar').css("visibility","hidden");
+        $('.overlay-nav-bar').css("opacity","0");
     });
 }
 

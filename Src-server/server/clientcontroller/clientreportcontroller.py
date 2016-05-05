@@ -286,18 +286,17 @@ def get_compliancedetails_report(db, request, session_user, client_id):
         from_date = request.from_date
         to_date = request.to_date
         compliance_status = request.compliance_status
+        from_count = request.record_count
+        to_count = 500
 
-        if compliance_id is None :
-            compliance_id = '%'
-        if assignee_id is None :
-            assignee_id = '%'
-        if compliance_status is None :
-            compliance_status = '%'
-
-        compliance_details_list = db.get_compliance_details_report(
-            country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date, compliance_status, client_id, session_user
+        compliance_details_list, total = db.report_compliance_details(
+            country_id, domain_id, statutory_id, unit_id, compliance_id,
+            assignee_id, from_date, to_date, compliance_status, session_user,
+            from_count, to_count
         )
-        return clientreport.GetComplianceDetailsReportSuccess(compliance_details_list)
+        return clientreport.GetComplianceDetailsReportSuccess(
+            compliance_details_list, total
+        )
 
 def get_risk_report_filters(db, request, session_user, client_id):
     user_company_info = db.get_user_company_details(session_user)
@@ -352,11 +351,14 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
         user_id = request.user_id
         from_date = request.from_date
         to_date = request.to_date
-        reassigned_history_list = db.get_reassigned_history_report(
-        country_id, domain_id, level_1_statutory_id,
-            unit_id, compliance_id, user_id, from_date, to_date, client_id, session_user
+        from_count = request.record_count
+        to_count = 200
+        reassigned_history_list, total = db.report_reassigned_history(
+            country_id, domain_id, level_1_statutory_id,
+            unit_id, compliance_id, user_id, from_date, to_date, session_user,
+            from_count, to_count
         )
-        return clientreport.GetReassignedHistoryReportSuccess(reassigned_history_list)
+        return clientreport.GetReassignedHistoryReportSuccess(reassigned_history_list, total)
     else:
         converter = ConvertJsonToCSV(db, request, session_user, client_id, "Reassign")
         return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
@@ -487,7 +489,6 @@ def process_get_task_applicability_report_data(db, request, session_user, client
         return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
     else:
         result = db.get_compliance_task_applicability(request, session_user)
-        print result
         return result
 
 def get_client_details_report_filters(db, request, session_user, client_id):

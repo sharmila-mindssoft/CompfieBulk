@@ -988,7 +988,7 @@ class ClientDatabase(Database):
 
     def update_admin_status(self, user_id, is_admin, session_user, client_id):
         columns = ["is_admin", "updated_on" , "updated_by"]
-        is_admin = 1 if is_admin != False else 0
+        is_admin = 1 if is_admin is not False else 0
         values = [is_admin, self.get_date_time(), session_user]
         condition = "user_id='%d'" % user_id
         result = self.update(self.tblUsers, columns, values, condition, client_id)
@@ -1048,10 +1048,10 @@ class ClientDatabase(Database):
             unit_ids = ",".join(str(x) for x in result)
 
         if unit_ids not in [None, "None", ""]:
-            columns = "group_concat(distinct division_id), group_concat(distinct legal_entity_id), "+\
-            "group_concat(distinct business_group_id)"
+            columns = "group_concat(distinct division_id), group_concat(distinct legal_entity_id), \
+            group_concat(distinct business_group_id)"
             unit_condition = "1"
-            if unit_ids != None:
+            if unit_ids is not None :
                 unit_condition = "unit_id in (%s)" % unit_ids
             rows = self.get_data(
                 self.tblUnits , columns, unit_condition
@@ -2512,11 +2512,6 @@ class ClientDatabase(Database):
         return unit_list
 
     def get_users_for_seating_units(self, session_user, client_id):
-        # where_condition = " WHERE t1.seating_unit_id In \
-        #     (SELECT t.unit_id FROM tbl_user_units t \
-        #     WHERE t.user_id = %s)" % (
-        #         session_user
-        #     )
         where_condition = "WHERE t1.is_primary_admin = 0 AND t1.is_active = 1 AND t2.unit_id \
             IN \
             (select distinct unit_id from tbl_user_units where user_id = %s)" % (session_user)
@@ -2535,7 +2530,7 @@ class ClientDatabase(Database):
         if session_user > 0 and session_user != self.get_admin_id() :
             query = query + where_condition
         else :
-            query = query + " AND t1.is_primary_admin = 0 AND t1.is_active = 1 "
+            query = query + " AND t1.is_active = 1 "
         rows = self.select_all(query)
         columns = [
             "user_id", "employee_name", "employee_code",
@@ -2603,6 +2598,7 @@ class ClientDatabase(Database):
                 ON B.compliance_id = C.compliance_id \
                 AND C.is_active = 1 \
                 where A.domain_id = %s \
+                AND C.is_active = 1 AND A.is_new = 1 \
                 AND B.compliance_id not in (select  \
                         AC.compliance_id \
                     from \
@@ -2615,6 +2611,7 @@ class ClientDatabase(Database):
             domain_id,
             str(tuple(unit_ids))
         )
+        print q
         row = self.select_one(q)
         if row :
             return row[0]
@@ -2629,9 +2626,29 @@ class ClientDatabase(Database):
         if session_user == 0 or session_user == self.get_admin_id() :
             session_user = '%'
         total = self.total_compliance_for_units(unit_ids, domain_id)
+
+        qry_applicable = "SELECT distinct B.compliance_id, group_concat(distinct A.unit_id) units \
+            FROM \
+                tbl_client_statutories A \
+            INNER JOIN tbl_client_compliances B ON A.client_statutory_id = B.client_statutory_id \
+            INNER JOIN tbl_compliances C ON B.compliance_id = C.compliance_id and C.is_active =1 \
+            WHERE  B.compliance_opted = 1 \
+            AND C.is_active = 1 AND A.is_new = 1 \
+            AND A.unit_id in %s \
+            AND A.domain_id = %s \
+            AND B.compliance_id not in (select  AC.compliance_id from tbl_assigned_compliances AC \
+            WHERE AC.unit_id = A.unit_id ) \
+            group by B.compliance_id \
+            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(C.statutory_mapping, '>>', 1), \
+            '>>', - 1) , C.frequency_id \
+            limit %s, %s" % (
+                str(tuple(unit_ids)),
+                domain_id,
+                from_count, to_count
+            )
+
         query = "SELECT distinct t2.compliance_id,\
             t1.domain_id,\
-            UC.units,\
             t2.statutory_applicable, \
             t2.statutory_opted,\
             t2.not_applicable_remarks,\
@@ -2652,35 +2669,40 @@ class ClientDatabase(Database):
             ON t2.client_statutory_id = t1.client_statutory_id \
             INNER JOIN tbl_compliances t3 \
             ON t2.compliance_id = t3.compliance_id \
-            INNER JOIN \
-            (SELECT distinct U.compliance_id, group_concat(distinct U.unit_id) units FROM  \
-            (SELECT A.unit_id, A.client_statutory_id, B.compliance_id FROM tbl_client_statutories A \
-            INNER JOIN tbl_client_compliances B \
-            ON A.client_statutory_id = B.client_statutory_id \
-            AND B.compliance_id not in (select AC.compliance_id from tbl_assigned_compliances AC \
-            WHERE AC.unit_id = A.unit_id ) \
-            AND B.compliance_opted = 1 \
-            AND A.unit_id IN %s) U \
-            group by U.compliance_id )UC \
-            ON t2.compliance_id = UC.compliance_id \
             WHERE \
             t1.domain_id = %s\
             AND t1.unit_id IN %s \
             AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
             AND t3.is_active = 1 AND t1.is_new = 1 \
+            AND t2.compliance_id not in (select \
+                AC.compliance_id \
+                from \
+                tbl_assigned_compliances AC \
+                WHERE \
+                AC.unit_id = t1.unit_id)\
             ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), '>>', -1),\
             t3.frequency_id \
             limit %s, %s" % (
-                str(tuple(unit_ids)),
                 domain_id,
                 str(tuple(unit_ids)),
                 from_count,
                 to_count
             )
+
+        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
+        c_rows = self.select_all(qry_applicable)
         rows = self.select_all(query)
+        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
+
+        temp = self.convert_to_dict(c_rows, ["compliance_id", "units"])
+        applicable_units = {}
+        for r in temp :
+            c_id = int(r["compliance_id"])
+            applicable_units[c_id] = r["units"]
+
         columns = [
-            "compliance_id", "domain_id", "units",
+            "compliance_id", "domain_id",
             "statutory_applicable", "statutory_opted",
             "not_applicable_remarks",
             "compliance_applicable", "compliance_opted",
@@ -2691,7 +2713,7 @@ class ClientDatabase(Database):
             "repeat_type", "repeats_every"
         ]
         result = self.convert_to_dict(rows, columns)
-        return self.return_assign_compliance_data(result, total)
+        return self.return_assign_compliance_data(result, applicable_units, total)
 
     def set_new_due_date(self, statutory_dates):
         due_date = None
@@ -2751,19 +2773,19 @@ class ClientDatabase(Database):
                 due_date_list.append(due_date)
         return due_date, due_date_list, date_list
 
-    def return_assign_compliance_data(self, result, total):
+    def return_assign_compliance_data(self, result, applicable_units, total):
         level_1_wise = {}
         level_1_name = []
         for r in result:
+            c_id = int(r["compliance_id"])
             maipping = r["statutory_mapping"].split(">>")
             level_1 = maipping[0].strip()
+            c_units = applicable_units.get(c_id)
+            if c_units is None :
+                continue
             unit_ids = [
-                int(x) for x in r["units"].split(',')
+                int(x) for x in c_units.split(',')
             ]
-            # level_1_wise = domain_wise_compliance.get(domain_id)
-            # if level_1_wise is None :
-            #     level_1_wise = {}
-
             compliance_list = level_1_wise.get(level_1)
             if compliance_list is None :
                 compliance_list = []
@@ -2784,7 +2806,7 @@ class ClientDatabase(Database):
                 summary = None
 
             compliance = clienttransactions.UNIT_WISE_STATUTORIES(
-                r["compliance_id"],
+                c_id,
                 name,
                 r["compliance_description"],
                 core.COMPLIANCE_FREQUENCY(r["frequency"]),
@@ -2832,7 +2854,7 @@ class ClientDatabase(Database):
                     return False
         return True
 
-    def save_assigned_compliance(self, request, session_user, client_id):
+    def save_assigned_compliance_old(self, request, session_user, client_id):
         new_unit_settings = request.new_units
 
         created_on = self.get_date_time()
@@ -2850,11 +2872,11 @@ class ClientDatabase(Database):
                 date_list = []
                 for dates in statutory_dates :
                     date_list.append(dates.to_structure())
-                date_list = json.dumps(date_list)
                 # due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
                 # validity_date = c.validity_date
             else :
                 date_list = []
+            date_list = json.dumps(date_list)
 
             unit_ids = c.unit_ids
             if c.trigger_before is not None :
@@ -2932,6 +2954,99 @@ class ClientDatabase(Database):
             ]
         )
         notify_assign_compliance.start()
+        # return clienttransactions.SaveAssignedComplianceSuccess()
+
+    def save_assigned_compliance(self, request, session_user, client_id):
+        new_unit_settings = request.new_units
+        created_on = str(self.get_date_time())
+        country_id = int(request.country_id)
+        assignee = int(request.assignee)
+        concurrence = request.concurrence_person
+        approval = int(request.approval_person)
+        compliances = request.compliances
+
+        compliance_names = []
+        columns = [
+            "country_id", "unit_id", "compliance_id",
+            "statutory_dates", "assignee",
+            "approval_person", "trigger_before_days",
+            "due_date", "validity_date", "created_by",
+            "created_on"
+        ]
+        value_list = []
+        if concurrence is not None :
+            columns.append("concurrence_person")
+        for c in compliances :
+            compliance_id = int(c.compliance_id)
+            statutory_dates = c.statutory_dates
+            if statutory_dates is not None :
+                date_list = []
+                for dates in statutory_dates :
+                    date_list.append(dates.to_structure())
+                date_list = json.dumps(date_list)
+            else :
+                date_list = []
+
+            unit_ids = c.unit_ids
+            if c.trigger_before is not None :
+                trigger_before = int(c.trigger_before)
+            else :
+                trigger_before = ""
+            if c.due_date is not None :
+                due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+            else :
+                due_date = ""
+            compliance_names.append("Complaince Name:" + c.compliance_name + "- Due Date:" + str(c.due_date))
+            validity_date = c.validity_date
+            if validity_date is not None :
+                validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
+                if due_date > validity_date :
+                    due_date = validity_date
+                elif (validity_date - datetime.timedelta(days=90)) > due_date :
+                    due_date = validity_date
+            else :
+                validity_date = ""
+
+            for unit_id in unit_ids :
+                value = [
+                    country_id, unit_id, compliance_id,
+                    str(date_list), assignee,
+                    approval, trigger_before, str(due_date),
+                    validity_date, int(session_user), created_on
+                ]
+                if concurrence is not None :
+                    value.append(concurrence)
+                value_list.append(tuple(value))
+
+        self.bulk_insert("tbl_assigned_compliances", columns, value_list)
+        if new_unit_settings is not None :
+            self.update_user_settings(new_unit_settings, client_id)
+
+        compliance_names = " <br> ".join(compliance_names)
+        if request.concurrence_person_name is None :
+            action = " Following compliances has assigned to assignee - %s and approval-person - %s <br> %s" % (
+                request.assignee_name,
+                request.approval_person_name,
+                compliance_names
+            )
+        else :
+            action = " Following compliances has assigned to assignee - %s concurrence-person - %s approval-person - %s <br> %s" % (
+                request.assignee_name,
+                request.concurrence_person_name,
+                request.approval_person_name,
+                compliance_names
+            )
+        activity_text = action.replace("<br>", " ")
+        self.save_activity(session_user, 7, json.dumps(activity_text))
+        receiver = self.get_email_id_for_users(assignee)[1]
+        notify_assign_compliance = threading.Thread(
+            target=email.notify_assign_compliance,
+            args=[
+                receiver, request.assignee_name, action
+            ]
+        )
+        notify_assign_compliance.start()
+
         return clienttransactions.SaveAssignedComplianceSuccess()
 
     def update_user_settings(self, new_units, client_id):
@@ -5320,6 +5435,203 @@ class ClientDatabase(Database):
                     unit_wise_compliances))
         return service_provider_wise_compliances_list
 
+    def report_compliance_details(
+        self, country_id, domain_id, statutory_id,
+        unit_id, compliance_id, assignee,
+        from_date, to_date, compliance_status,
+        session_user, from_count, to_count
+    ) :
+        qry_where = ""
+        admin_id = self.get_admin_id()
+        if unit_id is not None :
+            qry_where += " AND ch.unit_id = %s" % (unit_id)
+        if compliance_id is not None :
+            qry_where += " AND ch.compliance_id = %s " % (compliance_id)
+        if assignee is not None :
+            qry_where += " AND ch.completed_by = %s" % (assignee)
+        if session_user > 0 and session_user != admin_id :
+            qry_where += " AND ch.unit_id in \
+                (select us.unit_id from tbl_user_units us where \
+                    us.user_id = %s\
+                )" % int(session_user)
+            qry_where += " and c.domain_id IN \
+                (SELECT ud.domain_id FROM tbl_user_domains ud \
+                where ud.user_id = %s)" % int(session_user)
+
+        if(compliance_status == 'Complied'):
+            c_status = " AND ch.due_date >= ch.completion_date \
+                AND IFNULL(ch.approve_status,0) = 1"
+        elif(compliance_status == 'Delayed Compliance'):
+            c_status = " AND ch.due_date < ch.completion_date \
+                AND IFNULL(ch.approve_status,0) = 1"
+        elif(compliance_status == 'Inprogress'):
+            c_status = " AND ((c.duration_type_id =2 AND ch.due_date >= now()) or (c.duration_type_id != 2 and ch.due_date >= CURDATE())) \
+                AND IFNULL(ch.approve_status,0) <> 1"
+        elif(compliance_status == 'Not Complied'):
+            c_status = " AND ((c.duration_type_id =2 AND ch.due_date < now()) or (c.duration_type_id != 2 and ch.due_date < CURDATE())) \
+                AND IFNULL(ch.approve_status,0) <> 1"
+        else:
+            c_status = ''
+
+        qry_where += c_status
+
+        if from_date is not None and to_date is not None :
+            start_date = self.string_to_datetime(from_date)
+            end_date = self.string_to_datetime(to_date)
+            qry_where += " AND ch.due_date between '%s' and '%s'" % (start_date, end_date)
+
+        else :
+            qry_where += " AND MONTH(ch.due_date) >= (SELECT t.period_from FROM tbl_client_configurations t \
+                where t.country_id = ut.country_id and t.domain_id = c.domain_id ) \
+                AND MONTH(ch.due_date) <= (SELECT t.period_to FROM tbl_client_configurations t \
+                where t.country_id = ut.country_id and t.domain_id = c.domain_id )"
+
+        columns = [
+            "compliance_history_id", "document_name",
+            "compliance_description", "validity_date",
+            "due_date", "completed_by", "status", "assigneename", "documents",
+            "completion_date", "compliance_task", "frequency_id", "fname",
+            "unit_id", "unit_code", "unit_name", "address"
+        ]
+
+        qry_count = "SELECT \
+            count(distinct ch.compliance_history_id) \
+        from \
+            tbl_compliance_history ch  \
+            inner join  \
+            tbl_compliances c on ch.compliance_id = c.compliance_id  \
+            inner join  \
+            tbl_units ut on ch.unit_id = ut.unit_id \
+        where ut.country_id = %s \
+                AND c.domain_id = %s \
+                AND c.statutory_mapping like '%s' \
+                %s \
+        order by ch.due_date desc \
+         " % (
+            country_id, domain_id,
+            str(statutory_id+"%"),
+            qry_where
+        )
+
+        row = self.select_one(qry_count)
+        if row :
+            total = int(row[0])
+        else :
+            total = 0
+
+        qry = "SELECT \
+            distinct ch.compliance_history_id, \
+            c.document_name, \
+            c.compliance_description, \
+            ch.validity_date, \
+            ch.due_date, \
+            ch.completed_by, \
+            ifnull(ch.approve_status, 0) status,\
+            (SELECT  \
+                    concat(u.employee_code, '-', u.employee_name) \
+                FROM \
+                    tbl_users u \
+                WHERE \
+                    u.user_id = ch.completed_by) AS assigneename, \
+            ch.documents, \
+            ch.completion_date, \
+            c.compliance_task, \
+            c.frequency_id, \
+            (select f.frequency from tbl_compliance_frequency f where f.frequency_id = c.frequency_id) fname, \
+            ch.unit_id, ut.unit_code, ut.unit_name, ut.address\
+        from \
+            tbl_compliance_history ch  \
+            inner join  \
+            tbl_compliances c on ch.compliance_id = c.compliance_id  \
+            inner join  \
+            tbl_units ut on ch.unit_id = ut.unit_id \
+        where ut.country_id = %s \
+                AND c.domain_id = %s \
+                AND c.statutory_mapping like '%s' \
+                %s \
+        order by ch.due_date desc limit %s, %s \
+        " % (
+            country_id, domain_id,
+            str(statutory_id+"%"),
+            qry_where, from_count, to_count
+        )
+        rows = self.select_all(qry)
+        result = self.convert_to_dict(rows, columns)
+
+        return self.return_cmopliance_details_report(compliance_status, result, total)
+
+    def return_cmopliance_details_report(self, compliance_status, result, total):
+        unitWise = {}
+        for r in result :
+            uname = r["unit_code"] + ' - ' + r["unit_name"]
+            if r["document_name"] == "None" :
+                compliance_name = r["compliance_task"]
+            else :
+                compliance_name = r["document_name"] + ' - ' + r["compliance_task"]
+
+            if r["assigneename"] is None :
+                assignee = 'Administrator'
+            else :
+                assignee = r["assigneename"]
+
+            due_date = None
+            if(r["due_date"] != None):
+                due_date = self.datetime_to_string(r["due_date"])
+
+            validity_date = None
+            if(r["validity_date"] != None):
+                validity_date = self.datetime_to_string(r["validity_date"])
+
+            documents = [x for x in r["documents"].split(",")] if r["documents"] != None else None
+
+            completion_date = None
+            if(r["completion_date"] != None):
+                completion_date = self.datetime_to_string(r["completion_date"])
+
+            remarks = self.calculate_ageing(r["due_date"], r["fname"], r["completion_date"])[1]
+
+            # if(compliance_status == 'Complied'):
+            #         c_status = 'On Time'
+            # elif(compliance_status == 'Delayed Compliance'):
+            #     c_status = 'Delayed'
+            # elif(compliance_status == 'Inprogress'):
+            #     c_status = 'days left'
+            # elif(compliance_status == 'Not Complied'):
+            #     c_status = 'Overdue'
+            # else:
+            #     c_status = ''
+
+            # if int(r["status"]) == 0 and "Delayed" in remarks :
+            #     remarks = remarks.replace("Delayed", "Overdue")
+
+            # if compliance_status is not None and c_status not in remarks :
+            #     continue
+
+            compliance = clientreport.ComplianceDetails(
+                compliance_name, assignee, due_date,
+                completion_date, validity_date,
+                documents, remarks
+            )
+            unit_compliance = unitWise.get(uname)
+            if unit_compliance is None :
+                unit_compliance = clientreport.ComplianceDetailsUnitWise(
+                    r["unit_id"], uname, r["address"],
+                    [compliance]
+                )
+            else :
+                compliance_lst = unit_compliance.Compliances
+                if compliance_lst is None :
+                    compliance_lst = []
+                compliance_lst.append(compliance)
+                unit_compliance.Compliances = compliance_lst
+            unitWise[uname] = unit_compliance
+
+        final_lst = []
+        for k in sorted(unitWise):
+            final_lst.append(unitWise.get(k))
+
+        return final_lst, total
+
     def get_compliance_details_report(
         self, country_id, domain_id, statutory_id,
         unit_id, compliance_id, assignee_id,
@@ -6239,7 +6551,7 @@ class ClientDatabase(Database):
             ) \
             AND t1.assignee = %s \
             %s \
-            ORDER BY t3.unit_code, t2.statutory_mapping, t2.frequency_id \
+            ORDER BY t3.unit_id, t2.statutory_mapping, t2.frequency_id \
             " % (
                 assignee, user_qry,
                 from_count, to_count
@@ -6319,7 +6631,7 @@ class ClientDatabase(Database):
         WHERE \
             t1.is_active = 1 and ifnull(t4.approve_status, 0) != 1 \
             and t1.assignee = %s %s\
-        ORDER BY t3.unit_code , t2.statutory_mapping , t2.frequency_id \
+        ORDER BY t3.unit_id , t2.statutory_mapping , t2.frequency_id \
         limit %s, %s " % (
             assignee, user_qry,
             from_count, to_count
@@ -7334,6 +7646,162 @@ class ClientDatabase(Database):
         )
 
     # Reassigned History Report
+    def report_reassigned_history(
+        self, country_id, domain_id, level_1_statutory_name,
+        unit_id, compliance_id, user_id, from_date, to_date, session_user,
+        from_count, to_count
+    ) :
+        qry_where = ""
+        admin_id = self.get_admin_id()
+        if level_1_statutory_name is not None :
+            qry_where += " AND t3.statutory_mapping like '%s'" % (str(level_1_statutory_name+'%'))
+        if unit_id is not None :
+            qry_where += " And t1.unit_id = %s" % (unit_id)
+
+        if compliance_id is not None :
+            qry_where += " AND t1.compliance_id = %s" % (compliance_id)
+        if user_id is not None :
+            qry_where += " AND t1.assignee = %s " % (user_id)
+
+        if from_date is not None and to_date is not None :
+            start_date = self.string_to_datetime(from_date)
+            end_date = self.string_to_datetime(to_date)
+            qry_where += " AND t2.due_date between '%s' and '%s'" % (start_date, end_date)
+
+        if session_user > 0 and session_user != admin_id :
+            qry_where += " AND T1.unit_id in \
+                (select us.unit_id from tbl_user_units us where \
+                    us.user_id = %s\
+                )" % int(session_user)
+            qry_where += " and T3.domain_id IN \
+                (SELECT ud.domain_id FROM tbl_user_domains ud \
+                where ud.user_id = %s)" % int(session_user)
+
+        columns = [
+            "compliance_id", "assignee", "reassigned_from", "reassigned_date",
+            "remarks", "due_date", "compliance_task",
+            "document_name", "unit_code", "unit_name", "address",
+            "assigneename", "oldassignee", "unit_id", "statutory_mapping"
+        ]
+
+        qry = " SELECT distinct t1.compliance_id, t1.assignee, t1.reassigned_from, \
+            t1.reassigned_date, t1.remarks, t2.due_date, t3.compliance_task, \
+            t3.document_name, t4.unit_code, t4.unit_name, t4.address, \
+            ifnull((select concat(a.employee_code, ' - ', a.employee_name) from tbl_users a where a.user_id = t1.assignee), 'Administrator') assigneename, \
+            ifnull((select concat(a.employee_code, ' - ', a.employee_name) from tbl_users a where a.user_id = t1.reassigned_from) , 'Administrator') oldassignee, \
+            t1.unit_id, t3.statutory_mapping \
+            FROM tbl_reassigned_compliances_history t1 \
+            INNER JOIN tbl_assigned_compliances t2 on t1.compliance_id = t2.compliance_id \
+            AND t1.unit_id = t2.unit_id \
+            INNEr JOIN tbl_compliances t3 on t1.compliance_id = t3.compliance_id \
+            INNER JOIN tbl_units t4 on t1.unit_id = t4.unit_id \
+            WHERE t4.country_id = %s \
+            AND t3.domain_id = %s \
+            %s \
+            order by SUBSTRING_INDEX(SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), \
+            '>>', - 1), t1.unit_id,  t1.reassigned_date desc \
+            limit %s, %s" % (
+                country_id, domain_id,
+                qry_where,
+                from_count, to_count
+
+            )
+
+        rows = self.select_all(qry)
+        result = self.convert_to_dict(rows, columns)
+        qry_count = "SELECT sum(t.c_count) from \
+            (SELECT \
+                count(distinct t1.compliance_id) c_count \
+            FROM \
+                tbl_reassigned_compliances_history t1 \
+                    INNER JOIN \
+                tbl_assigned_compliances t2 ON t1.compliance_id = t2.compliance_id \
+                    AND t1.unit_id = t2.unit_id \
+                    INNEr JOIN \
+                tbl_compliances t3 ON t1.compliance_id = t3.compliance_id \
+                    INNER JOIN \
+                tbl_units t4 ON t1.unit_id = t4.unit_id \
+            WHERE \
+                t4.country_id = %s AND t3.domain_id = %s \
+                %s \
+            group by t1.unit_id) t " % (
+                country_id, domain_id,
+                qry_where,
+            )
+        rcount = self.select_one(qry_count)
+        if rcount[0] :
+            count = int(rcount[0])
+        else :
+            count = 0
+
+        return self.return_reassinged_history_report(result, count)
+
+    def return_reassinged_history_report(self, result, total):
+        level_wise = {}
+        # print result
+        for r in result :
+            if r["document_name"] is not None :
+                cname = " %s - %s" % (r["document_name"], r["compliance_task"])
+            else :
+                cname = r["compliance_task"]
+
+            uname = r["unit_code"] + ' - ' + r["unit_name"]
+            uid = r["unit_id"]
+
+            mappings = r["statutory_mapping"].split('>>')
+            statutory_name = mappings[0].strip()
+            statutory_name = statutory_name.strip()
+
+            reassign = clientreport.ReassignHistory(
+                r["oldassignee"], r["assigneename"],
+                self.datetime_to_string(r["reassigned_date"]),
+                r["remarks"]
+            )
+            reassignCompliance = clientreport.ReassignCompliance(
+                cname, self.datetime_to_string(r["due_date"]),
+                [reassign]
+            )
+            unitcompliance = clientreport.ReassignUnitCompliance(
+                uid,
+                uname,
+                r["address"], [reassignCompliance]
+            )
+            level_unit = level_wise.get(statutory_name)
+            if level_unit is None :
+                level_unit = clientreport.StatutoryReassignCompliance(
+                    statutory_name, [unitcompliance]
+                )
+            else :
+                unitcompliancelst = level_unit.compliance
+                if unitcompliancelst is None :
+                    unitcompliancelst = []
+                u_new = True
+                for c in unitcompliancelst :
+                    if uid == c.unit_id :
+                        u_new = False
+                        reassing_compliance_lst = c.reassign_compliances
+                        if reassing_compliance_lst is None :
+                            reassing_compliance_lst = []
+                        r_new = True
+                        for r in reassing_compliance_lst :
+                            if cname == r.compliance_name :
+                                r_new = False
+                                history_lst = r.reassign_history
+                                if history_lst is None :
+                                    history_lst = []
+                                history_lst.append(reassign)
+                                r.reassign_history = history_lst
+                        if r_new is True :
+                            reassing_compliance_lst.append(reassignCompliance)
+                if u_new is True :
+                    unitcompliancelst.append(unitcompliance)
+                level_unit.compliance = unitcompliancelst
+            level_wise[statutory_name] = level_unit
+        final_list = []
+        for k in sorted(level_wise) :
+            final_list.append(level_wise.get(k))
+        return final_list, total
+
     def get_reassigned_history_report(
         self, country_id, domain_id, level_1_statutory_name,
         unit_id, compliance_id, user_id, from_date, to_date, client_id, session_user
@@ -7493,25 +7961,19 @@ class ClientDatabase(Database):
 #
 #   Compliance Activity Report
 #
-    def report_compliance_activity(
-        self, country_id, domain_id, user_type, user_id, unit_id, compliance_id,
-        level_1_statutory_name, from_date, to_date, session_user,
-        from_count, to_count
-    ):
-        pass
 
     def get_compliance_activity_report(
         self, country_id, domain_id, user_type, user_id, unit_id, compliance_id,
         level_1_statutory_name, from_date, to_date, session_user, client_id
     ):
         conditions = []
-        #user_type_condition 
+        #user_type_condition
         if user_type == "Inhouse":
             conditions.append("us.service_provider_id is null")
         else:
             conditions.append("us.service_provider_id is not null")
 
-        #session_user_condition 
+        #session_user_condition
         if session_user != 0:
             conditions.append(
                 '''
@@ -7520,21 +7982,26 @@ class ClientDatabase(Database):
                 ) '''.format(session_user)
             )
         else:
-           conditions.append("SELECT unit_id FROM tbl_units") 
+           conditions.append(
+                '''
+                u.unit_id in (
+                    SELECT unit_id FROM tbl_units
+                ) '''.format(session_user)
+            )
 
         # assignee_condition
         if user_id is not None:
             conditions.append("ac.assignee = {}".format(user_id))
 
 
-        # unit_condition 
+        # unit_condition
         if unit_id is not None:
             conditions.append("cal.unit_id = {}".format(unit_id))
 
         # level_1_statutory_condition
         if level_1_statutory_name is not None:
             conditions.append(
-                "c.statutory_mapping like '%{}%".format(
+                "c.statutory_mapping like '%{}%'".format(
                     level_1_statutory_name
                 )
             )
@@ -7542,10 +8009,8 @@ class ClientDatabase(Database):
         # compliance_name_condition
         if compliance_id is not None:
             conditions.append(
-                "compliance_name like '%{}%'".format(
-                    "SELECT compliance_task FROM tbl_compliances WHERE \
-                    compliance_id = '%d'" % compliance_id
-                )
+                "compliance_task = (SELECT compliance_task FROM tbl_compliances WHERE \
+                    compliance_id = '%d')" % compliance_id
             )
 
         #timeline_condition
@@ -7557,33 +8022,33 @@ class ClientDatabase(Database):
         year_end_date = timeline[0][1][0][1][0]["end_date"]
         if from_date is not None and to_date is not None:
             conditions.append(
-                "cal.updated_on between '{}' and '{}'".format(
-                   from_date, to_date 
+                "cal.updated_on between '{}' and DATE_ADD('{}', INTERVAL 1 DAY)".format(
+                   self.string_to_datetime(from_date).date(), self.string_to_datetime(to_date).date()
                 )
             )
         elif from_date is not None and to_date is None:
             conditions.append(
-                "cal.updated_on between '{}' and '{}'".format(
-                   from_date, year_end_date 
+                "cal.updated_on between '{}' and DATE_ADD('{}', INTERVAL 1 DAY)".format(
+                   self.string_to_datetime(from_date).date(), year_end_date
                 )
             )
         elif from_date is None and to_date is not None:
             conditions.append(
-                "cal.updated_on between '{}' and '{}'".format(
-                   year_start_date, to_date 
+                "cal.updated_on between '{}' and DATE_ADD('{}', INTERVAL 1 DAY)".format(
+                   year_start_date, self.string_to_datetime(to_date).date()
                 )
             )
         else:
             conditions.append(
-                "cal.updated_on between '{}' and '{}'".format(
-                   year_start_date, year_end_date 
+                "cal.updated_on between '{}' and DATE_ADD('{}', INTERVAL 1 DAY)".format(
+                   year_start_date, year_end_date
                 )
             )
- 
+
         query = '''SELECT activity_date, activity_status, compliance_status, remarks, concat(unit_code, "-", unit_name),
                 address, document_name, compliance_task, compliance_description, statutory_mapping, ac.assignee,
                 employee_code, employee_name
-                FROM tbl_compliance_activity_log cal 
+                FROM tbl_compliance_activity_log cal
                 INNER JOIN tbl_compliances c ON (c.compliance_id = cal.compliance_id)
                 INNER JOIN tbl_units u ON (u.unit_id = cal.unit_id)
                 INNER JOIN tbl_assigned_compliances ac ON ((cal.compliance_id = ac.compliance_id) and (cal.unit_id = ac.unit_id))
@@ -8585,9 +9050,9 @@ class ClientDatabase(Database):
         duration_type = duration[1]
         due_date = None
         if duration_type == "Day(s)":
-            due_date = start_date + datetime.timedelta(days = int(duration_value))
+            due_date = start_date + datetime.timedelta(days=int(duration_value))
         elif duration_type == "Hour(s)":
-            due_date = start_date + datetime.timedelta(hours = int(duration_value))
+            due_date = start_date + datetime.timedelta(hours=int(duration_value))
         values = [
             compliance_history_id, unit_id, compliance_id, start_date, due_date,
             session_user

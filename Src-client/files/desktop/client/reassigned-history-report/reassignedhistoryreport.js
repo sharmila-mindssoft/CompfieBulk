@@ -6,14 +6,18 @@ var compliancesList;
 var userList;
 var countriesNameVal;
 var domainNameVal;
+var lastUnit = '';
+var lastAct = '';
+var totalRecord;
+var sno = 0;
+var acc_count = 1;
+var s_endCount = 0;
 
-function clearMessage() {
-    $(".error-message").hide();
-    $(".error-message").text("");
+function displayLoader() {
+    $(".loading-indicator-spin").show();
 }
-function displayMessage(message) {
-    $(".error-message").text(message);
-    $(".error-message").show();
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
 }
 
 function initialize(){
@@ -28,7 +32,7 @@ function initialize(){
     function onFailure(error){
         console.log(error);
     }
-    client_mirror.getReassignedHistoryReportFilters(  
+    client_mirror.getReassignedHistoryReportFilters(
         function (error, response){
             if(error == null){
                 onSuccess(response);
@@ -39,19 +43,38 @@ function initialize(){
         }
     );
 }
-$("#show-button").click(function(){   
-    loadreassignedhistory("show");
+
+//pagination process
+$('#pagination').click(function(){
+  loadreassignedhistory("show", sno);
 });
-$("#export-button").click(function(){ 
-    loadreassignedhistory("export");
+
+
+$("#show-button").click(function(){
+    loadreassignedhistory("show", 0);
 });
-function loadreassignedhistory(buttontype){
+$("#export-button").click(function(){
+    loadreassignedhistory("export", 0);
+});
+function loadreassignedhistory(buttontype, end_count){
+
+    if(end_count == 0){
+        acc_count = 1;
+        lastAct = '';
+        lastUnit = '';
+        acc_count = 1;
+        sno = 0;
+        s_endCount = 0;
+        $('.grid-table-rpt').show();
+        $('.table-reassignedhistory-list').empty();
+    }
+    displayLoader();
     var countries = parseInt($("#country").val());
     countriesNameVal = $("#countryval").val();
-    //Domain    
+    //Domain
     var domain = parseInt($("#domain").val());
     domainNameVal = $("#domainval").val();
-   
+
     //Unit
     var unitid = $("#unitid").val();
     if(unitid == ''){
@@ -87,32 +110,37 @@ function loadreassignedhistory(buttontype){
     if(todate == ''){
         todate = null;
     }
- 
-   
+
     if(countriesNameVal == ""){
         displayMessage(message.country_required);
+        hideLoader();
     }
     else if(domainNameVal == ""){
-        displayMessage(message.domain_required);  
+        displayMessage(message.domain_required);
+        hideLoader();
     }
     else{
         function onSuccess(data){
             if(buttontype == "export"){
                 var download_url = data["link"];
-                window.open(download_url, '_blank');        
+                window.open(download_url, '_blank');
+                hideLoader();
             }else{
-                loadReassignedHistoryList(data['statutory_wise_compliances']);     
+                totalRecord = data["total"];
+                loadReassignedHistoryList(data['statutory_wise_compliances']);
+                hideLoader();
             }
         }
         function onFailure(error){
             console.log(error);
+            hideLoader();
         }
         csv = false
         if(buttontype == "export"){
             csv = true
         }
         client_mirror.getReassignedHistoryReport(
-            countries, domain, unitid, level1id,  compliancesid , userid, fromdate, todate, csv,
+            countries, domain, unitid, level1id,  compliancesid , userid, fromdate, todate, csv, s_endCount,
             function (error, response){
                 if(error == null){
                     onSuccess(response);
@@ -125,42 +153,47 @@ function loadreassignedhistory(buttontype){
     }
 }
 
-
 function loadReassignedHistoryList(data){
-    $('.grid-table-rpt').show();
-    $('.table-reassignedhistory-list').empty();
-    var sno = 0;  
+
     $('.country-name').text(countriesNameVal);
     $('.domain-name').text(domainNameVal);
     $.each(data, function(key, value) {
-        var tableRowHeading = $('#templates .table-reassigned-list .table-level1-heading');
-        var cloneHeading = tableRowHeading.clone();
-        $('.level1-heading', cloneHeading).text(data[key]['level_1_statutory_name']);
-        $('.table-reassignedhistory-list').append(cloneHeading);
 
-        var tableRow_tr = $('#templates .table-reassigned-list .heading-list');
-        var clonetr = tableRow_tr.clone();
-        $('.table-reassignedhistory-list').append(clonetr);
+        if(lastAct != data[key]['level_1_statutory_name']){
+            var tableRowHeading = $('#templates .table-reassigned-list .level1-list');
+            var cloneHeading = tableRowHeading.clone();
+            $('.level1-heading', cloneHeading).text(data[key]['level_1_statutory_name']);
+            $('.table-reassignedhistory-list').append(cloneHeading);
+
+            var tableRow_tr = $('#templates .table-reassigned-list .heading-list');
+            var clonetr = tableRow_tr.clone();
+            $('.table-reassignedhistory-list').append(clonetr);
+            lastUnit = '';
+            lastAct = data[key]['level_1_statutory_name'];
+        }
+
 
         var clist = data[key]['compliance'];
-        $.each(clist, function(ke, val) {         
-            var tableRowUnit = $('#templates .table-reassigned-list .unit-list');
-            var cloneUnit = tableRowUnit.clone();
-            $('.unit-heading', cloneUnit).html(clist[ke]['unit_name']);              
-            $('.table-reassignedhistory-list').append(cloneUnit);
-            var list = clist[ke]['reassign_compliances'];
-            var acc_count = 1;
+        $.each(clist, function(ke, val) {
 
-            $.each(list, function(k, val) {   
+            if(lastUnit != clist[ke]['unit_name']){
+                var tableRowUnit = $('#templates .table-reassigned-list .unit-list');
+                var cloneUnit = tableRowUnit.clone();
+                $('.unit-heading', cloneUnit).html(clist[ke]['unit_name']);
+                $('.table-reassignedhistory-list').append(cloneUnit);
+            }
+            var list = clist[ke]['reassign_compliances'];
+
+            $.each(list, function(k, val) {
                 var tableRow = $('#templates .table-reassigned-list .tbody-reassigned-list');
-                var clone = tableRow.clone();      
+                var clone = tableRow.clone();
                 sno = sno + 1;
                 $('.sno', clone).text(sno);
                 $('.compliance-task', clone).html(list[k]['compliance_name']);
                 $('.due-date', clone).html(list[k]['due_date']);
                 var rhistory = list[k]['reassign_history'];
                 var count = 0;
-                $.each(rhistory, function(k1, val1) {                      
+                $.each(rhistory, function(k1, val1) {
                     if(count == 0){
                         $('.assignee', clone).html(rhistory[k1]['reassigned_to']);
                         $('.reassign-date', clone).html(rhistory[k1]['reassigned_date']);
@@ -169,7 +202,7 @@ function loadReassignedHistoryList(data){
                         $('.table-reassignedhistory-list').append(clone);
                         $('.table-reassignedhistory-list').append('<tbody class="accordion-content accordion-content'+acc_count+'"></tbody>');
                         $('.accordion-content'+acc_count).addClass("default");
-                        
+                        s_endCount++;
                     }
                     else{
                         var tableRowvalues_ul = $('#templates .reassigned-inner-list');
@@ -178,20 +211,35 @@ function loadReassignedHistoryList(data){
                         $('.inner-reassigndate', cloneval_ul).html(rhistory[k1]['reassigned_date']);
                         $('.inner-reassigned-from', cloneval_ul).html(rhistory[k1]['reassigned_from']);
                         $('.inner-reason', cloneval_ul).html(rhistory[k1]['reassign_reason']);
-                        $('.accordion-content'+acc_count).append(cloneval_ul);   
+                        $('.accordion-content'+acc_count).append(cloneval_ul);
+                        s_endCount++;
                     }
                     count++;
                 });
                 acc_count++;
             });
-
-            $('#accordion').find('.accordion-toggle').click(function(){
-                $(this).next().slideToggle('fast');
-                $(".accordion-content").not($(this).next()).slideUp('fast');
-            });     
-        });          
+        });
     });
-    $(".total-records").html("Total : "+sno+" records")
+
+    if(totalRecord == 0){
+        var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
+        var clone4=tableRow4.clone();
+        $('.no_records', clone4).text('No Compliance Found');
+        $('.tbody-unit').append(clone4);
+        $('#pagination').hide();
+        $('.total-records').text('');
+    }else{
+        $('.total-records').text("Showing " + 1 + " to " + sno + " of " + totalRecord);
+        if(sno >= totalRecord){
+          $('#pagination').hide();
+          $('#accordion').find('.accordion-toggle').click(function(){
+            $(this).next().slideToggle('fast');
+            $(".accordion-content").not($(this).next()).slideUp('fast');
+        });
+        }else{
+          $('#pagination').show();
+        }
+    }
 }
 
 
@@ -201,7 +249,7 @@ function onCountrySuccess(val){
   $("#country").val(val[0]);
 }
 
-//load country list in autocomplete text box  
+//load country list in autocomplete text box
 $("#countryval").keyup(function(){
   var textval = $(this).val();
   getCountryAutocomplete(textval, countriesList, function(val){
@@ -214,7 +262,7 @@ function onDomainSuccess(val){
   $("#domainval").val(val[1]);
   $("#domain").val(val[0]);
 }
-//load domain list in autocomplete textbox  
+//load domain list in autocomplete textbox
 $("#domainval").keyup(function(){
   var textval = $(this).val();
   getDomainAutocomplete(textval, domainsList, function(val){
@@ -228,7 +276,7 @@ function onUnitSuccess(val){
   $("#unitid").val(val[0]);
 }
 
-//load unit  form list in autocomplete text box  
+//load unit  form list in autocomplete text box
 $("#unitval").keyup(function(){
   var textval = $(this).val();
   getUnitAutocomplete(textval, unitList, function(val){
@@ -241,7 +289,7 @@ function onStatutorySuccess(val){
   $("#level1val").val(val[1]);
   $("#level1id").val(val[0].replace(/##/gi,'"'));
 }
-//load statutory list in autocomplete textbox  
+//load statutory list in autocomplete textbox
 $("#level1val").keyup(function(){
   var textval = $(this).val();
   getClientStatutoryAutocomplete(textval, level1List, function(val){
@@ -255,7 +303,7 @@ function onComplianceTaskSuccess(val){
   $("#compliancesid").val(val[0]);
 }
 
-//load compliancetask form list in autocomplete text box  
+//load compliancetask form list in autocomplete text box
 $("#compliancesval").keyup(function(){
   var textval = $(this).val();
   getComplianceTaskAutocomplete(textval, compliancesList, function(val){
@@ -269,7 +317,7 @@ function onUserSuccess(val){
   $("#userid").val(val[0]);
 }
 
-//load user list in autocomplete text box  
+//load user list in autocomplete text box
 $("#userval").keyup(function(){
   var textval = $(this).val();
   getUserAutocomplete(textval, userList, function(val){

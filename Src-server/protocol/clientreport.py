@@ -216,7 +216,7 @@ class GetComplianceDetailsReportFilters(Request):
 class GetComplianceDetailsReport(Request):
     def __init__(
         self, country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date,
-        to_date, compliance_status, csv
+        to_date, compliance_status, csv, record_count
     ):
         self.country_id = country_id
         self.domain_id = domain_id
@@ -228,12 +228,14 @@ class GetComplianceDetailsReport(Request):
         self.to_date = to_date
         self.compliance_status = compliance_status
         self.csv = csv
+        self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
                 "country_id", "domain_id", "statutory_id", "unit_id", "compliance_id", "assignee_id",
-                "from_date", "to_date", "compliance_status", "csv"
+                "from_date", "to_date", "compliance_status", "csv",
+                "record_count"
             ]
         )
         country_id = data.get("country_id")
@@ -256,9 +258,11 @@ class GetComplianceDetailsReport(Request):
         compliance_status = parse_structure_OptionalType_CustomTextType_50(compliance_status)
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
+        record_count = data.get("record_count")
+        record_count = parse_structure_UnsignedIntegerType_32(record_count)
         return GetComplianceDetailsReport(
             country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date,
-            to_date, compliance_status, csv
+            to_date, compliance_status, csv, record_count
         )
 
     def to_inner_structure(self):
@@ -272,7 +276,8 @@ class GetComplianceDetailsReport(Request):
             "from_date": to_structure_OptionalType_CustomTextType_20(self.from_date),
             "to_date": to_structure_OptionalType_CustomTextType_20(self.to_date),
             "compliance_status": to_structure_OptionalType_CustomTextType_50(self.compliance_status),
-            "csv": to_structure_Bool(self.csv)
+            "csv": to_structure_Bool(self.csv),
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
 class GetRiskReportFilters(Request):
@@ -813,7 +818,7 @@ class GetReassignedHistoryReportFilters(Request):
 class GetReassignedHistoryReport(Request):
     def __init__(
         self, country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id,
-        from_date, to_date, csv
+        from_date, to_date, csv, record_count
     ):
         self.country_id = country_id
         self.domain_id = domain_id
@@ -824,12 +829,13 @@ class GetReassignedHistoryReport(Request):
         self.from_date = from_date
         self.to_date = to_date
         self.csv = csv
+        self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "country_id", "domain_id", "unit_id", "level_1_statutory_id", "compliance_id",
-            "user_id", "from_date", "to_date", "csv"]
+            "user_id", "from_date", "to_date", "csv", "record_count"]
         )
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
@@ -849,9 +855,11 @@ class GetReassignedHistoryReport(Request):
         to_date = parse_structure_OptionalType_CustomTextType_20(to_date)
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
+        record_count = data.get("record_count")
+        record_count = parse_structure_UnsignedIntegerType_32(record_count)
         return GetReassignedHistoryReport(
             country_id, domain_id, unit_id, level_1_statutory_id, compliance_id,
-            user_id, from_date, to_date, csv)
+            user_id, from_date, to_date, csv, record_count)
 
     def to_inner_structure(self):
         return {
@@ -863,7 +871,8 @@ class GetReassignedHistoryReport(Request):
             "user_id": to_structure_OptionalType_SignedIntegerType_8(self.user_id),
             "from_date": to_structure_OptionalType_CustomTextType_20(self.from_date),
             "to_date": to_structure_OptionalType_CustomTextType_20(self.to_date),
-            "csv": to_structure_Bool(self.csv)
+            "csv": to_structure_Bool(self.csv),
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
 class GetStatutoryNotificationsListFilters(Request):
@@ -1109,20 +1118,23 @@ class ComplianceDetailsUnitWise(object):
         return result
 
 class GetComplianceDetailsReportSuccess(Response):
-    def __init__(self, unit_wise_compliancess):
+    def __init__(self, unit_wise_compliancess, total_count):
         self.unit_wise_compliancess = unit_wise_compliancess
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["unit_wise_compliancess"])
+        data = parse_dictionary(data, ["unit_wise_compliancess", "total_count"])
         unit_wise_compliances = data.get("unit_wise_compliances")
         unit_wise_compliances = parse_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise(unit_wise_compliances)
-        return GetComplianceDetailsReportSuccess(unit_wise_compliances)
+        total_count = data.get("total_count")
+        total_count = parse_structure_UnsignedIntegerType_32(total_count)
+        return GetComplianceDetailsReportSuccess(unit_wise_compliances, total_count)
 
     def to_inner_structure(self):
-
         return {
-            "unit_wise_compliancess": to_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise(self.unit_wise_compliancess)
+            "unit_wise_compliancess": to_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise(self.unit_wise_compliancess),
+            "total_count": to_structure_UnsignedIntegerType_32(self.total_count)
         }
 
 class GetRiskReportFiltersSuccess(Response):
@@ -1576,19 +1588,23 @@ class GetReassignedHistoryReportFiltersSuccess(Response):
         }
 
 class GetReassignedHistoryReportSuccess(Response):
-    def __init__(self, statutory_wise_compliances):
+    def __init__(self, statutory_wise_compliances, total):
         self.statutory_wise_compliances = statutory_wise_compliances
+        self.total = total
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory_wise_compliances"])
+        data = parse_dictionary(data, ["statutory_wise_compliances", "total"])
         statutory_wise_compliances = data.get("statutory_wise_compliances")
         statutory_wise_compliances = parse_structure_VectorType_RecordType_clientreport_StatutoryReassignCompliance(statutory_wise_compliances)
-        return GetReassignedHistoryReportSuccess(statutory_wise_compliances)
+        total = data.get("total")
+        total = parse_structure_UnsignedIntegerType_32(total)
+        return GetReassignedHistoryReportSuccess(statutory_wise_compliances, total)
 
     def to_inner_structure(self):
         return {
             "statutory_wise_compliances": to_structure_VectorType_RecordType_clientreport_StatutoryReassignCompliance(self.statutory_wise_compliances),
+            "total": to_structure_UnsignedIntegerType_32(self.total)
         }
 
 
@@ -1771,6 +1787,22 @@ class GetClientDetailsReportFiltersSuccess(Response):
         }
 
 
+class ExportToCSVSuccess(Response):
+    def __init__(self, link):
+        self.link = link
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["link"])
+        link = data.get("link")
+        link = parse_structure_CustomTextType_500(link)
+        return ExportToCSVSuccess(link)
+
+    def to_inner_structure(self):
+        return {
+            "link" : to_structure_CustomTextType_500(self.link)
+        }
+
 def _init_Response_class_map():
     classes = [
         GetComplianceDetailsReportFiltersSuccess,
@@ -1788,7 +1820,7 @@ def _init_Response_class_map():
         GetStatutoryNotificationsListReportSuccess,
         GetClientDetailsReportDataSuccess, GetActivityLogFiltersSuccess,
         GetActivityLogReportSuccess, GetLoginTraceSuccess,
-        GetClientDetailsReportFiltersSuccess
+        GetClientDetailsReportFiltersSuccess, ExportToCSVSuccess
     ]
     class_map = {}
     for c in classes:
@@ -2120,7 +2152,7 @@ class ActivityData(object):
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "activity_date", "activity_status", "compliance_status", 
+                "activity_date", "activity_status", "compliance_status",
                 "remarks", "assignee_name"
             ]
         )
@@ -2469,24 +2501,28 @@ class LoginTrace(object):
 # ReassignUnitCompliance
 #
 class ReassignUnitCompliance(object):
-    def __init__(self, unit_name, address, reassign_compliances):
+    def __init__(self, unit_id, unit_name, address, reassign_compliances):
+        self.unit_id = unit_id
         self.unit_name = unit_name
         self.address = address
         self.reassign_compliances = reassign_compliances
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_name",  "address", "reassign_compliances"])
+        data = parse_dictionary(data, ["unit_id", "unit_name",  "address", "reassign_compliances"])
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_100(unit_name)
         address = data.get("address")
         address = parse_structure_CustomTextType_100(address)
         reassign_compliances = data.get("reassign_compliances")
         reassign_compliances = parse_structure_VectorType_RecordType_clientreport_ReassignCompliance(reassign_compliances)
-        return ReassignCompliance(unit_name, address, reassign_compliances)
+        return ReassignCompliance(unit_id, unit_name, address, reassign_compliances)
 
     def to_structure(self):
         return {
+            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_100(self.address),
             "reassign_compliances": to_structure_VectorType_RecordType_clientreport_ReassignCompliance(self.reassign_compliances)
@@ -2543,7 +2579,7 @@ class ReassignCompliance(object):
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_500(compliance_name)
         due_date = data.get("due_date")
-        due_date = parse_structure_CustomTextType_20(due_date)
+        due_date = parse_structure_OptionalType_CustomTextType_50(due_date)
         reassign_history = data.get("reassign_history")
         reassign_history = parse_structure_VectorType_RecordType_clientreport_ReassignHistory(reassign_history)
         return ReassignCompliance(compliance_name, due_date, reassign_history)
@@ -2551,7 +2587,7 @@ class ReassignCompliance(object):
     def to_structure(self):
         return {
             "compliance_name": to_structure_CustomTextType_500(self.compliance_name),
-            "due_date": to_structure_CustomTextType_20(self.due_date),
+            "due_date": to_structure_OptionalType_CustomTextType_50(self.due_date),
             "reassign_history": to_structure_VectorType_RecordType_clientreport_ReassignHistory(self.reassign_history),
         }
 

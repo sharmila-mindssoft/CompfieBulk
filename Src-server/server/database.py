@@ -180,6 +180,7 @@ class Database(object) :
             cursor.execute(query)
             return cursor.fetchall()
         except Exception, e:
+            logger.logClientApi(query)
             logger.logClientApi(e)
             return
 
@@ -280,6 +281,7 @@ class Database(object) :
                 query += "%s," % str(value)
             else:
                 query += str(value)
+        print query
         return self.execute(query)
 
     ########################################################
@@ -293,8 +295,6 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
-        print 
-        print query
         return self.execute(query)
 
     ########################################################
@@ -5149,6 +5149,7 @@ class KnowledgeDatabase(Database):
             ON t1.geography_id = t3.geography_id \
             INNER JOIN tbl_user_clients t4 \
             ON t1.client_id = t4.client_id \
+            AND t1.is_active = 1 \
             AND t4.user_id = %s \
             AND t2.country_id = %s " % (
                 user_id, country_id
@@ -6469,11 +6470,9 @@ class KnowledgeDatabase(Database):
             query = "select count(*) from tbl_assigned_compliances \
             where assignee = '%d' or concurrence_person = '%d' or \
             approval_person = '%d'" % (old_admin_id, old_admin_id, old_admin_id)
-            print query
             cursor.execute(query)
             rows = cursor.fetchall()
             compliance_count = rows[0][0]
-            print compliance_count
             if compliance_count > 0:
                 return "Reassign"
             else:
@@ -6589,7 +6588,7 @@ class KnowledgeDatabase(Database):
                 )
                 self.execute(query)
 
-                query = "update tbl_client_groups set email_id = '%s'" % (admin_email)
+                query = "update tbl_client_groups set email_id = '%s' where client_id = '%d'" % (admin_email, client_id)
                 self.execute(query)
 
                 action = None
