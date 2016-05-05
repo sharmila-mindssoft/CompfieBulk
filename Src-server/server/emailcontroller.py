@@ -1,33 +1,14 @@
 #!/usr/bin/python
-import mandrill
+
+# import mandrill
 from smtplib import SMTP_SSL as SMTP
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 
 from server.constants import (
-    CLIENT_URL, KNOWLEDGE_URL
+    CLIENT_URL, KNOWLEDGE_URL, SEND_EMAIL
 )
-
-
-# server = smtplib.SMTP('mail.mindssoft.com', 25)
-# server.ehlo()
-# server.login(self.sender, self.password)
-
-# msg = MIMEMultipart()
-# msg['From'] = self.sender
-# msg['To'] = receive
-# msg['Subject'] = subject
-# if cc is not None:
-#     msg['Cc'] = cc
-#     receiver += cc
-# msg.attach(MIMEText(message, 'plain'))
-
-# server.sendmail(self.sender, receiver,  msg.as_string())
-# server.close()
-
-__all__ = [
-	"EmailHandler"
-]
+__all__ = ["EmailHandler"]
 
 # CLIENT_URL = "http://localhost:8080/"
 # KNOWLEDGE_URL= "http://localhost:8082/knowledge/"
@@ -42,7 +23,7 @@ class Email(object):
         # self.API_KEY = 'u5IPdlY1JAxa5_fJoJaPEw'
         self.initializeTemplates()
 
-    def send_email(self, receiver, subject, message, cc=None):
+    def send_email(self, receiver, subject, message, cc=None, is_credential=False):
         print "inside send email"
         # server = smtplib.SMTP('smtp.gmail.com', 25, timeout=30)
         # server = smtplib.SMTP("mail.aparajitha.com", 465)
@@ -50,28 +31,33 @@ class Email(object):
         # server.ehlo()
         # server.starttls()
         # print server.login(self.sender, self.password)
+        _is_send = SEND_EMAIL
+        if is_credential :
+            _is_send = True
+        if _is_send :
+            server = SMTP("mail.aparajitha.com", 465)
+            print server
+            server.set_debuglevel(False)
+            server.login(self.sender, self.password)
 
-        server = SMTP("mail.aparajitha.com", 465)
-        print server
-        server.set_debuglevel(False)
-        server.login(self.sender, self.password)
-
-        msg = MIMEMultipart()
-        msg['From'] = self.sender
-        print msg['From']
-        msg['To'] = receiver
-        print msg['To']
-        msg['Subject'] = subject
-        print msg['Subject']
-        if cc is not None:
-            msg['Cc'] = cc
-            print msg['Cc']
-            # receiver += cc
-        msg.attach(MIMEText(message, 'html'))
-        print msg.as_string()
-        response = server.sendmail(self.sender, receiver,  msg.as_string())
-        print response
-        server.close()
+            msg = MIMEMultipart()
+            msg['From'] = self.sender
+            print msg['From']
+            msg['To'] = receiver
+            print msg['To']
+            msg['Subject'] = subject
+            print msg['Subject']
+            if cc is not None:
+                msg['Cc'] = cc
+                print msg['Cc']
+                # receiver += cc
+            msg.attach(MIMEText(message, 'html'))
+            print msg.as_string()
+            response = server.sendmail(self.sender, receiver,  msg.as_string())
+            print response
+            server.close()
+        else :
+            print "SEND_EMAIL is ", _is_send
 
     def initializeTemplates(self):
         self.templates = {
@@ -113,7 +99,7 @@ class EmailHandler(Email):
             Compfie Support Team''' % (
             employee_name, reset_link
         )
-        self.send_email(receiver, subject, message, cc=None)
+        self.send_email(receiver, subject, message, cc=None, is_credential=True)
         # self.send_mail(template_name, email_to, context)
         return True
 
@@ -137,7 +123,7 @@ class EmailHandler(Email):
             CLIENT_URL, short_name, CLIENT_URL, short_name,
             receiver, password
         )
-        self.send_email(receiver, subject, message)
+        self.send_email(receiver, subject, message, cc=None, is_credential=True)
 
     def send_user_credentials(
         self, short_name, receiver, password, employee_name, employee_code
@@ -159,7 +145,7 @@ class EmailHandler(Email):
             employee_name, CLIENT_URL, short_name, CLIENT_URL, short_name,
             receiver, password
         )
-        self.send_email(receiver, subject, message)
+        self.send_email(receiver, subject, message, cc=None, is_credential=True)
 
     def send_knowledge_user_credentials(
         self, receiver, password, employee_name, employee_code
@@ -176,7 +162,7 @@ class EmailHandler(Email):
             Compfie Support Team''' % (
              employee_name, KNOWLEDGE_URL, KNOWLEDGE_URL, receiver, password
         )
-        self.send_email(receiver, subject, message)
+        self.send_email(receiver, subject, message, cc=None, is_credential=True)
 
     def notify_task_assigned(
         self, receiver, assignee_name, compliance_name, due_date
@@ -186,7 +172,7 @@ class EmailHandler(Email):
             Compliance %s has assigned to you. Due date for the compliance is %s" % (
             assignee_name, compliance_name, due_date
         )
-        self.send_email(receiver, subject, message)
+        self.send_email(receiver, subject, message, cc=None)
 
     def notify_assign_compliance(self, receiver, assignee_name, compliance_info):
         subject = "New compliance task assigned "
@@ -195,7 +181,7 @@ class EmailHandler(Email):
             assignee_name, compliance_info,
         )
         print message
-        self.send_email(receiver, subject, message)
+        self.send_email(receiver, subject, message, cc=None)
 
     def notify_task(
         self, assignee_email, assignee_name,
@@ -219,7 +205,7 @@ class EmailHandler(Email):
             message = "Dear %s, Compliance %s is delayed" % (
                 assignee_name, compliance_name, due_date
             )
-        self.send_email(receiver, subject, message)
+        self.send_email(receiver, subject, message, cc=None)
 
     def notify_reassigned(self, receiver, reassigned_from, assignee, compliance_name, due_date):
         assignee_id, concurrence_id, approver_id,  compliance_name, document_name,  due_date = db.get_compliance_history_details(
@@ -240,14 +226,14 @@ class EmailHandler(Email):
         self.send_email(receiver, subject, message, cc)
 
     def notify_service_provider_contract_expired(
-        db, service_provider_id
+        self, db, service_provider_id
     ):
         receiver = db.get_admin_username()
         service_provider_name = db.get_service_provider_name_by_id(service_provider_id)
         subject = "Contract Expired"
         message = "Dear Client, your contract with Service Provider %s has expired. \
         Kindly renew the contract" % (service_provider_name)
-        self.send_email(receiver, subject, message)
+        self.send_email(receiver, subject, message, cc=None)
 
     def notify_task_rejected(
         self, compliance_history_id, remarks, reject_status,
@@ -382,7 +368,7 @@ class EmailHandler(Email):
             )
         try :
             print
-            self.send_email(receiver, subject, message)
+            self.send_email(receiver, subject, message, cc=None)
             pass
         except Exception, e :
             print e
