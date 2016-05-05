@@ -2587,31 +2587,27 @@ class ClientDatabase(Database):
         return user_list
 
     def total_compliance_for_units(self, unit_ids, domain_id):
-        q = "select count(distinct t1.compliance_id) \
-            from \
-            (SELECT \
-                    A.unit_id, B.compliance_id \
-                FROM tbl_client_statutories A \
-                INNER JOIN tbl_client_compliances B \
-                ON A.client_statutory_id = B.client_statutory_id \
-                INNEr JOIN tbl_compliances C \
-                ON B.compliance_id = C.compliance_id \
-                AND C.is_active = 1 \
-                where A.domain_id = %s \
-                AND C.is_active = 1 AND A.is_new = 1 \
-                AND B.compliance_id not in (select  \
-                        AC.compliance_id \
-                    from \
-                        tbl_assigned_compliances AC \
-                    WHERE \
-                        AC.unit_id = A.unit_id) \
-                AND B.compliance_opted = 1 \
-                AND A.unit_id IN %s ) t1 " % (
-
+        q = "select distinct \
+                count(t01.compliance_id) \
+            From \
+                tbl_client_compliances t01 \
+                    inner join \
+                tbl_client_statutories t02 ON t01.client_statutory_id = t02.client_statutory_id \
+                    inner join \
+                tbl_compliances t04 ON t01.compliance_id = t04.compliance_id \
+                    left join \
+                tbl_assigned_compliances t03 ON t02.unit_id = t03.unit_id \
+                    and t01.compliance_id = t03.compliance_id \
+            where \
+            t02.unit_id in %s \
+            and t02.domain_id = %s \
+            and t02.is_new = 1 \
+            and t01.compliance_opted = 1 \
+            and t04.is_active = 1 \
+            and t03.compliance_id IS NULL " % (
             domain_id,
             str(tuple(unit_ids))
         )
-        print q
         row = self.select_one(q)
         if row :
             return row[0]
@@ -2625,72 +2621,79 @@ class ClientDatabase(Database):
             unit_ids.append(0)
         if session_user == 0 or session_user == self.get_admin_id() :
             session_user = '%'
-        total = self.total_compliance_for_units(unit_ids, domain_id)
 
-        qry_applicable = "SELECT distinct B.compliance_id, group_concat(distinct A.unit_id) units \
+        qry_applicable = "SELECT distinct A.compliance_id, group_concat(distinct B.unit_id) units \
             FROM \
-                tbl_client_statutories A \
-            INNER JOIN tbl_client_compliances B ON A.client_statutory_id = B.client_statutory_id \
-            INNER JOIN tbl_compliances C ON B.compliance_id = C.compliance_id and C.is_active =1 \
-            WHERE  B.compliance_opted = 1 \
-            AND C.is_active = 1 AND A.is_new = 1 \
-            AND A.unit_id in %s \
-            AND A.domain_id = %s \
-            AND B.compliance_id not in (select  AC.compliance_id from tbl_assigned_compliances AC \
-            WHERE AC.unit_id = A.unit_id ) \
-            group by B.compliance_id \
+                tbl_client_compliances A \
+                INNER JOIN tbl_client_statutories B ON A.client_statutory_id = B.client_statutory_id \
+                INNER JOIN tbl_compliances C ON A.compliance_id = C.compliance_id \
+                LEFT JOIN tbl_assigned_compliances AC ON B.unit_id = AC.unit_id AND A.compliance_id = AC.compliance_id \
+            WHERE \
+                B.unit_id in %s \
+                AND B.domain_id = %s \
+                AND A.compliance_opted = 1 \
+                AND C.is_active = 1 \
+                AND B.is_new = 1 \
+                AND AC.compliance_id is null \
+            group by A.compliance_id \
             ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(C.statutory_mapping, '>>', 1), \
-            '>>', - 1) , C.frequency_id \
+                    '>>', \
+                    - 1) , C.frequency_id \
             limit %s, %s" % (
                 str(tuple(unit_ids)),
                 domain_id,
                 from_count, to_count
             )
+        print qry_applicable
 
-        query = "SELECT distinct t2.compliance_id,\
-            t1.domain_id,\
+        query = " SELECT distinct \
+            t2.compliance_id, \
+            t1.domain_id, \
             t2.statutory_applicable, \
-            t2.statutory_opted,\
-            t2.not_applicable_remarks,\
-            t2.compliance_applicable,\
-            t2.compliance_opted,\
-            t2.compliance_remarks,\
-            t3.compliance_task,\
-            t3.document_name,\
-            t3.compliance_description,\
-            t3.statutory_mapping,\
-            t3.statutory_provision,\
-            t3.statutory_dates,\
-            (select frequency from tbl_compliance_frequency where frequency_id = t3.frequency_id)frequency, t3.frequency_id, \
-            (select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) duration_type, t3.duration,\
-            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t3.repeats_type_id) repeat_type, t3.repeats_every \
-            FROM tbl_client_compliances t2 \
-            INNER JOIN tbl_client_statutories t1 \
-            ON t2.client_statutory_id = t1.client_statutory_id \
-            INNER JOIN tbl_compliances t3 \
-            ON t2.compliance_id = t3.compliance_id \
-            WHERE \
-            t1.domain_id = %s\
-            AND t1.unit_id IN %s \
-            AND t2.statutory_opted = 1 \
-            AND t2.compliance_opted = 1 \
-            AND t3.is_active = 1 AND t1.is_new = 1 \
-            AND t2.compliance_id not in (select \
-                AC.compliance_id \
-                from \
-                tbl_assigned_compliances AC \
-                WHERE \
-                AC.unit_id = t1.unit_id)\
-            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), '>>', -1),\
-            t3.frequency_id \
-            limit %s, %s" % (
-                domain_id,
-                str(tuple(unit_ids)),
-                from_count,
-                to_count
-            )
+            t2.statutory_opted, \
+            t2.not_applicable_remarks, \
+            t2.compliance_applicable, \
+            t2.compliance_opted, \
+            t2.compliance_remarks, \
+            t3.compliance_task, \
+            t3.document_name, \
+            t3.compliance_description, \
+            t3.statutory_mapping, \
+            t3.statutory_provision, \
+            t3.statutory_dates, \
+            (select frequency from tbl_compliance_frequency where frequency_id = t3.frequency_id) frequency, \
+            t3.frequency_id, \
+            (select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) duration_type, \
+            t3.duration, \
+            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t3.repeats_type_id) repeat_type, \
+            t3.repeats_every \
+        FROM \
+            tbl_client_compliances t2  \
+                INNER JOIN \
+            tbl_client_statutories t1 ON t2.client_statutory_id = t1.client_statutory_id \
+                INNER JOIN \
+            tbl_compliances t3 ON t2.compliance_id = t3.compliance_id \
+          LEFT JOIN tbl_assigned_compliances AC ON t2.compliance_id = AC.compliance_id and t1.unit_id = AC.unit_id \
+        WHERE t1.unit_id IN %s \
+          AND t1.domain_id = %s \
+                AND t1.is_new = 1 \
+                AND t2.statutory_opted = 1 \
+                AND t2.compliance_opted = 1 \
+                AND t3.is_active = 1 \
+                AND AC.compliance_id IS NULL \
+        ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), \
+                '>>', - 1) , t3.frequency_id \
+        limit %s, %s " % (
+            domain_id,
+            str(tuple(unit_ids)),
+            from_count,
+            to_count
+        )
 
+        self.execute("SET GLOBAL connect_timeout=120000")
+        self.execute("SET GLOBAL wait_timeout=120000")
         self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
+        total = self.total_compliance_for_units(unit_ids, domain_id)
         c_rows = self.select_all(qry_applicable)
         rows = self.select_all(query)
         self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
