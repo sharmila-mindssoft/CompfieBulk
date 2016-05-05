@@ -2611,6 +2611,7 @@ class ClientDatabase(Database):
             domain_id,
             str(tuple(unit_ids))
         )
+        print q
         row = self.select_one(q)
         if row :
             return row[0]
@@ -2625,6 +2626,7 @@ class ClientDatabase(Database):
         if session_user == 0 or session_user == self.get_admin_id() :
             session_user = '%'
         total = self.total_compliance_for_units(unit_ids, domain_id)
+
         qry_applicable = "SELECT distinct B.compliance_id, group_concat(distinct A.unit_id) units \
             FROM \
                 tbl_client_statutories A \
@@ -2644,12 +2646,6 @@ class ClientDatabase(Database):
                 domain_id,
                 from_count, to_count
             )
-        rows = self.select_all(qry_applicable)
-        temp = self.convert_to_dict(rows, ["compliance_id", "units"])
-        applicable_units = {}
-        for r in temp :
-            c_id = int(r["compliance_id"])
-            applicable_units[c_id] = r["units"]
 
         query = "SELECT distinct t2.compliance_id,\
             t1.domain_id,\
@@ -2693,7 +2689,18 @@ class ClientDatabase(Database):
                 from_count,
                 to_count
             )
+
+        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
+        c_rows = self.select_all(qry_applicable)
         rows = self.select_all(query)
+        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
+
+        temp = self.convert_to_dict(c_rows, ["compliance_id", "units"])
+        applicable_units = {}
+        for r in temp :
+            c_id = int(r["compliance_id"])
+            applicable_units[c_id] = r["units"]
+
         columns = [
             "compliance_id", "domain_id",
             "statutory_applicable", "statutory_opted",
