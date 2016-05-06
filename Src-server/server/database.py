@@ -223,7 +223,6 @@ class Database(object) :
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        print query
         return self.select_all(query)
 
     ########################################################
@@ -282,7 +281,6 @@ class Database(object) :
                 query += "%s," % str(value)
             else:
                 query += str(value)
-        print query
         return self.execute(query)
 
     ########################################################
