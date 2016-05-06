@@ -2318,8 +2318,6 @@ class ClientDatabase(Database):
     def get_compliance_approval_list(
         self, start_count, to_count, session_user, client_id
     ):
-        print "start_count : {}".format(start_count)
-        print "to_count : {}".format(to_count)
         approval_user_ids = str(session_user)
         if self.is_primary_admin(session_user):
             approval_user_ids += ",0"
@@ -2349,16 +2347,12 @@ class ClientDatabase(Database):
             self.tblDomains, approval_user_ids,
             session_user, session_user, int(start_count), to_count
         )
-        print
-        print query
         rows = self.select_all(query)
         is_two_levels = self.is_two_levels_of_approval()
         compliances = []
         assignee_wise_compliances = {}
         assignee_id_name_map = {}
         count = 0
-        print
-        print len(rows)
         for row in rows:
             download_urls = []
             file_name = []
