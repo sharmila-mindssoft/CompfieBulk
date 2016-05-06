@@ -217,7 +217,7 @@ class RequestFormat(object):
 #
 
 class PROFILE_DETAIL(object):
-    def __init__(self, contract_from, contract_to, no_of_user_licence, 
+    def __init__(self, contract_from, contract_to, no_of_user_licence,
         remaining_licence, licence_holders, total_file_space, used_space):
         self.contract_from = contract_from
         self.contract_to = contract_to
@@ -229,7 +229,7 @@ class PROFILE_DETAIL(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["contract_from", "contract_to", 
+        data = parse_dictionary(data, ["contract_from", "contract_to",
             "no_of_user_licence", "remaining_licence", "licence_holders",
             "total_file_space", "used_space"])
         contract_from = data.get("contract_from")
@@ -246,7 +246,7 @@ class PROFILE_DETAIL(object):
         total_file_space = parse_structure_Float(total_file_space)
         used_space = data.get("used_space")
         used_space = parse_structure_Float(used_space)
-        return PROFILE_DETAIL(contract_from, contract_to, no_of_user_licence, 
+        return PROFILE_DETAIL(contract_from, contract_to, no_of_user_licence,
             remaining_licence, licence_holders, total_file_space, used_space)
 
     def to_structure(self):

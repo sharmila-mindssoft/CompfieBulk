@@ -390,13 +390,13 @@ def get_risk_report(db, request, session_user, client_id):
                 legal_entity_id, division_id, unit_id, level_1_statutory_name, 2,
                 client_id, session_user
             )
-        if statutory_status in [3, None, "None", "", 0]: # Not opted
+        if statutory_status in [3, None, "None", "", 0] :  # Not opted
             not_opted = db.get_risk_report(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name, 3,
                 client_id, session_user
             )
-        if statutory_status in [4, None, "None", "", 0]: # Unassigned
+        if statutory_status in [4, None, "None", "", 0] :  # Unassigned
             unassigned = db.get_risk_report(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name, 4,
@@ -404,10 +404,10 @@ def get_risk_report(db, request, session_user, client_id):
             )
 
         return clientreport.GetRiskReportSuccess(
-            delayed_compliance = delayed_compliance,
-            not_complied = not_complied,
-            not_opted = not_opted,
-            unassigned_compliance = unassigned
+            delayed_compliance=delayed_compliance,
+            not_complied=not_complied,
+            not_opted=not_opted,
+            unassigned_compliance=unassigned
         )
     else:
         converter = ConvertJsonToCSV(db, request, session_user, client_id, "RiskReport")
@@ -415,7 +415,9 @@ def get_risk_report(db, request, session_user, client_id):
 
 def get_login_trace(db, request, session_user, client_id):
     users_list = db.get_client_users()
-    logintracelist = db.get_login_trace(client_id, session_user)
+    from_count = request.record_count
+    to_count = 500
+    logintracelist = db.get_login_trace(client_id, session_user, from_count, to_count)
     return clientreport.GetLoginTraceSuccess(
         users=users_list,
         login_trace=logintracelist
