@@ -6920,6 +6920,7 @@ class ClientDatabase(Database):
     def get_inprogress_count(self, session_user):
         columns = "count(*)"
         current_date_time = self.get_date_time()
+        current_date_time = current_date_time + datetime.timedelta(days=1)
         current_date_time.replace(hour=0, minute=0)
         condition = "completed_by='{}' AND (due_date >= '{}' \
         AND due_date is not null and due_date != 0 and due_date != '')\
@@ -6934,6 +6935,7 @@ class ClientDatabase(Database):
     def get_overdue_count(self, session_user):
         columns = "count(*)"
         current_date_time = self.get_date_time()
+        current_date_time = current_date_time + datetime.timedelta(days=1)
         current_date_time.replace(hour=0, minute=0)
         condition = "completed_by ='%d'" % (session_user)
         condition += " AND (due_date < '{}' AND \
