@@ -87,7 +87,7 @@ function loadClientProfileList(groupId){
                 var isAdmin = lists[key]["is_admin"];
                 var isActive = lists[key]["is_active"];
                 var isServiceProvider = lists[key]["is_service_provider"];
-                if(isActive == true){
+                /*if(isActive == true){
                     imageName = "icon-active.png";
                     title = "Click here to deactivate"
                     statusVal = false;
@@ -96,16 +96,22 @@ function loadClientProfileList(groupId){
                   imageName = "icon-inactive.png";
                   title = "Click here to Activate"
                   statusVal = true;
-                }
+                }*/
                 if(isAdmin == true){
                     adminstatus = false;
                     imageadminName = "promote-active.png";
                     admintitle = "Click here to deactivate Promote Admin";
+                    if(isActive == false){
+                        imageadminName = "icon-inactive.png";
+                    }
                 }
                 else{
                     adminstatus = true;
                     imageadminName = "promote-inactive.png";
                     admintitle = "Click here to Promote Admin";
+                    if(isActive == false){
+                        imageadminName = "icon-inactive.png";
+                    }
                 }
                 // $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientprofile_active('+userId+','+groupId+', '+statusVal+')"/>');
                 if(isActive == true){
@@ -147,7 +153,7 @@ function clientprofile_active(userId, clientId, status){
         }
         function onFailure(error){
             if(error == "ReassignFirst"){
-                alert("Cannot Promote this user as Primary admin. \nSince the old admin has compliances under him. \nFirst inform the client to reassign those compliances to another user.");
+                alert("Cannot Promote this user as Client admin. \nSince the old admin has compliances under him. \nFirst inform the client to reassign those compliances to another user.");
             }
         }
         mirror.changeClientUserStatus(userId, status,
@@ -165,7 +171,7 @@ function clientprofile_active(userId, clientId, status){
 
 function alertUserToPromoteAnotherAdmin(isActive){
     if (isActive == true){
-        alert("Try Promote another person as admin. \nCurrent admin will be deactivated automatically");
+        alert("Try Promote another person as Client admin. \nCurrent admin will be deactivated automatically");
     }else{
         alert("Cannot Change status of inactive administrator");
     }
@@ -174,11 +180,31 @@ function alertUserToPromoteAnotherAdmin(isActive){
 function clientprofile_isadmin(userId, clientId){
     function onSuccess(data){
         // initialize();
-        loadClientProfileList(clientId)
+        //$('#groupsval').val('');
+        function onSuccess(data){
+            groupList = data['group_companies'];
+            profiles = data['profiles'];
+            $("#group-id").val(clientId);
+            loadClientProfileList(clientId)
+        }
+        function onFailure(error){
+            console.log(error);
+        }
+        mirror.getClientProfile(
+            function(error, response){
+                if(error == null){
+                    onSuccess(response);
+                }
+                else{
+                    onFailure(error);
+                }
+            }
+
+        );
     }
     function failure(error){
         if(error == "ReassignFirst"){
-            alert("Cannot Promote this user as Primary admin. \nSince the old admin has compliances under him. \nFirst inform the client to reassign those compliances to another user.");
+            alert("Cannot Promote this user as Client admin. \nSince the old admin has compliances under him. \nFirst inform admin to reassign those compliances to another user.");
         }
     }
     mirror.createNewAdmin(userId, clientId,
@@ -193,36 +219,21 @@ function clientprofile_isadmin(userId, clientId){
     );
 }
 
-
-function hidelist(){
-	document.getElementById('autocompleteview').style.display = 'none';
-}
-function loadauto_text (textval) {
-  document.getElementById('autocompleteview').style.display = 'block';
-  var groups = groupList;
-  var suggestions = [];
-  $('#autocompleteview ul').empty();
-  if(textval.length>0){
-    for(var i in groups){
-        if(groups[i]['is_active'] == true){
-            if (~groups[i]['group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([groups[i]["client_id"],groups[i]["group_name"]]);
-        }
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview ul').append(str);
-    $("#group-id").val('');
-    }
-}
-//set selected autocomplte value to textbox
-function activate_text (element,checkval,checkname) {
-  $("#groupsval").val(checkname);
-  $("#group-id").val(checkval);
+//retrive form autocomplete value
+function onGroupSuccess(val){
+  $("#groupsval").val(val[1]);
+  $("#group-id").val(val[0]);
   $('.list-container').show();
-  loadClientProfileList(checkval);
+  loadClientProfileList(val[0]);
 }
+
+//load form list in autocomplete text box
+$("#groupsval").keyup(function(){
+  var textval = $(this).val();
+  getGroupAutocomplete(textval, groupList, function(val){
+    onGroupSuccess(val)
+  })
+});
 
 $(function() {
   initialize();

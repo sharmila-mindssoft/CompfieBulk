@@ -4,7 +4,7 @@ from protocol import login, mobile
 from server.constants import (
     CLIENT_URL
 )
-
+from server import logger
 
 __all__ = [
     "process_login_request",
@@ -15,55 +15,83 @@ __all__ = [
     "process_logout"
 ]
 
-def process_login_request(request, db, company_id) :
+def process_login_request(request, db, company_id, session_user_ip) :
     if type(request) is login.Login:
-        return process_login(db, request, company_id)
+        logger.logClientApi("Login", "begin")
+        result = process_login(db, request, company_id, session_user_ip)
+        logger.logClientApi("Login", "end")
 
-    if type(request) is login.ForgotPassword :
-        return process_forgot_password(db, request)
+    elif type(request) is login.ForgotPassword :
+        logger.logClientApi("ForgotPassword", "begin")
+        result = process_forgot_password(db, request)
+        logger.logClientApi("ForgotPassword", "end")
 
-    if type(request) is login.ResetTokenValidation :
-        return process_reset_token(db, request)
+    elif type(request) is login.ResetTokenValidation :
+        logger.logClientApi("ResetTokenValidation", "begin")
+        result = process_reset_token(db, request)
+        logger.logClientApi("ResetTokenValidation", "end")
 
-    if type(request) is login.ResetPassword :
-        return process_reset_password(db, request)
+    elif type(request) is login.ResetPassword :
+        logger.logClientApi("ResetPassword", "begin")
+        result = process_reset_password(db, request)
+        logger.logClientApi("ResetPassword", "end")
 
-    if type(request) is login.ChangePassword :
-        return process_change_password(db, request)
+    elif type(request) is login.ChangePassword :
+        logger.logClientApi("ResetPassword", "begin")
+        result = process_change_password(db, request)
+        logger.logClientApi("ResetPassword", "end")
 
-    if type(request) is login.Logout:
-        return process_logout(db, request)
+    elif type(request) is login.Logout:
+        logger.logClientApi("Logout", "begin")
+        result = process_logout(db, request)
+        logger.logClientApi("Logout", "end")
 
+    return result
 
-def process_login(db, request, client_id):
+def process_login(db, request, client_id, session_user_ip):
     login_type = request.login_type
     username = request.username
     password = request.password
     encrypt_password = db.encrypt(password)
+    user_ip = session_user_ip
+    logger.logLogin("info", user_ip, username, "Login process begin")
     if db.is_contract_not_started():
-        return login.InvalidCredentials()
+        print "inside contract not startd"
+        return login.ContractNotYetStarted()
     elif not db.is_configured():
+        logger.logLogin("info", user_ip, username, "NotConfigured")
         return login.NotConfigured()
     elif not db.is_in_contract():
+        logger.logLogin("info", user_ip, username, "ContractExpired")
         return login.ContractExpired()
     elif not db.is_client_active(client_id):
+        logger.logLogin("info", user_ip, username, "InvalidCredentials")
         return login.InvalidCredentials()
     else:
         response = db.verify_login(username, encrypt_password)
-    print response
     if login_type.lower() == "web":
         if response is True:
-            return admin_login_response(db, client_id, request.ip)
+            logger.logLogin("info", user_ip, username, "Login process end")
+            return admin_login_response(db, client_id, user_ip)
         else :
-            if bool(response):
-                return user_login_response(db, response, client_id, request.ip)
+            if type(response) is not bool:
+                logger.logLogin("info", user_ip, username, "Login process end")
+                return user_login_response(db, response, client_id, user_ip)
             else :
+                logger.logLogin("info", user_ip, username, "Login process end")
                 return login.InvalidCredentials()
     else :
         if response is True :
-            return mobile_user_admin_response(db, login_type, client_id, request.ip)
+            logger.logLogin("info", user_ip, username, "Login process end")
+            return mobile_user_admin_response(db, login_type, client_id, user_ip)
         else :
-            return mobile_user_login_respone(db, response, login_type, client_id, request.ip)
+            if type(response) is not bool:
+                logger.logLogin("info", user_ip, username, "Login process end")
+                return mobile_user_login_respone(db, response, login_type, client_id, user_ip)
+            else :
+                logger.logLogin("info", user_ip, username, "Login process end")
+                return login.InvalidCredentials()
+
 
 def mobile_user_admin_response(db, login_type, client_id, ip):
     if login_type.lower() == "web" :
@@ -155,7 +183,7 @@ def user_login_response(db, data, client_id, ip):
     form_ids = data["form_ids"]
     is_promoted_admin = int(data["is_admin"])
     if is_promoted_admin == 1:
-        form_ids = "%s, 3, 4, 6, 7, 8" % (form_ids)
+        form_ids = "%s, 3, 4, 6, 7, 8, 24" % (form_ids)
         form_ids_list = form_ids.split(",")
         if 1 not in form_ids_list:
             form_ids_list.append(1)

@@ -2,15 +2,6 @@ var countriesList;
 var geographyLevelsList;
 var geographiesList;
 
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
-
 $(".btn-geography-add").click(function(){
   $("#geography-view").hide();
   $("#geography-add").show();
@@ -30,8 +21,7 @@ $(".btn-geography-back").click(function(){
   $(".tbody-geography-level").find("div").remove();
 });
 
-
-
+// display geographies list in view page
 function loadGeographiesList(geographiesList) {
   var j = 1;
   var imgName = '';
@@ -79,8 +69,8 @@ function loadGeographiesList(geographiesList) {
       $('.country', clone).text(countryName);
       $('.level', clone).text(level);
       $('.name', clone).text(geographyName);
-      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+geographyId+',\''+geographyName+'\',\''+
-        countryName+'\','+entity+','+lposition+','+parentid+')"/>');
+      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+geographyId+',\''+geographyName.replace(/"/gi,'##')+'\',\''+
+        countryName.replace(/"/gi,'##')+'\','+entity+','+lposition+','+parentid+')"/>');
       $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+geographyId+','+passStatus+')"/>');
       $('.tbody-geography-list').append(clone);
       j = j + 1;
@@ -88,6 +78,7 @@ function loadGeographiesList(geographiesList) {
   }
 }
 
+// activate/deactivate geographies
 function changeStatus (geographyId,isActive) {
   var msgstatus='deactivate';
   if(isActive){
@@ -98,6 +89,7 @@ function changeStatus (geographyId,isActive) {
   {
     function onSuccess(response){
     GetGeographies();
+    $(".listfilter").val('');
   }
   function onFailure(error){
   }
@@ -115,43 +107,25 @@ function changeStatus (geographyId,isActive) {
 }
 
 //Autocomplete Script Starts
-//Hide list items after select
-$(".hidemenu").click(function(){
-  $("#autocompleteview").hide();
-});
 
-//load country list in autocomplete text box
+//retrive country autocomplete value
+function onCountrySuccess(val){
+  $("#countryval").val(val[1]);
+  $("#country").val(val[0]);
+  loadGeographyFirstLevels(val[0]);
+}
+
+//load country list in autocomplete text box  
 $("#countryval").keyup(function(){
   var textval = $(this).val();
-  $("#autocompleteview").show();
-  var countries = countriesList;
-  var suggestions = [];
-  $('#ulist_text').empty();
-  if(textval.length>0){
-    for(var i in countries){
-      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true)
-        suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]);
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+
-              suggestions[i][1]+'</li>';
-    }
-    $('#ulist_text').append(str);
-    $("#country").val('');
-    }else{
-      $("#country").val('');
-      $("#autocompleteview").hide();
-    }
+  getCountryAutocomplete(textval, countriesList, function(val){
+    onCountrySuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_text (element,saverecord,checkname) {
-  $("#countryval").val(checkname);
-  $("#country").val(saverecord);
-  loadGeographyFirstLevels(saverecord);
-}
+
 //Autocomplete Script ends
 
+// dynamically load geograph first levels data according to geography level
 function loadGeographyFirstLevels(saverecord){
   $(".tbody-geography-level").find("div").remove();
   var geographyLevelList = geographyLevelsList[saverecord];
@@ -319,6 +293,7 @@ function saverecord(j,e){
         function (error, response) {
           if (error == null){
             onSuccess(response);
+            $(".listfilter").val('');
           }
           else {
             onFailure(error);
@@ -329,8 +304,8 @@ function saverecord(j,e){
   }
 }
 
+// reload newly added data in geography list
 function reload(last_geography_id,last_level,cny){
-
   function onSuccess(data){
     geographiesList = data["geographies"];
     load(last_geography_id,last_level,cny)
@@ -342,6 +317,7 @@ function reload(last_geography_id,last_level,cny){
     function (error, response) {
           if (error == null){
             onSuccess(response);
+            $(".listfilter").val('');
           }
           else {
             onFailure(error);
@@ -350,12 +326,13 @@ function reload(last_geography_id,last_level,cny){
   );
 }
 
+// edit geography master process
 function displayEdit (geographyId,geographyName,country,countryid,lposition,parentidval) {
   $(".error-message").html("");
   $("#geography-view").hide();
   $("#geography-add").show();
   $("#geographyid").val(geographyId);
-  $("#countryval").val(country);
+  $("#countryval").val(country.replace(/##/gi,'"'));
   $("#country").val(countryid);
   $(".tbody-geography-level").find("div").remove();
   var geographyLevelList = geographyLevelsList[countryid];
@@ -372,7 +349,7 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
     }
     $('.tbody-geography-level').append(clone);
   }
-  $('#datavalue'+lposition).val(geographyName);
+  $('#datavalue'+lposition).val(geographyName.replace(/##/gi,'"'));
   var levelstages= lposition-1;
   var parentid=parentidval;
   var parentid1=parentidval;
@@ -415,6 +392,7 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
   }
 }
 
+//update geography master
 function updaterecord(j,e){
   var data = e.keyCode;
   if(data==13 || data ==undefined){
@@ -463,6 +441,7 @@ function updaterecord(j,e){
         function (error, response) {
           if (error == null){
             onSuccess(response);
+            $(".listfilter").val('');
           }
           else {
             onFailure(error);
@@ -507,6 +486,7 @@ function loadedit(id,level,country,levelstagemax){
   }
 }
 
+// get geography master list from api
 function GetGeographies(){
   function onSuccess(data){
     geographyLevelsList = data["geography_levels"];
@@ -521,6 +501,7 @@ function GetGeographies(){
     function (error, response) {
           if (error == null){
             onSuccess(response);
+            $(".listfilter").val('');
           }
           else {
             onFailure(error);
@@ -529,6 +510,7 @@ function GetGeographies(){
   );
 }
 
+//initialization
 $(document).ready(function(){
   GetGeographies();
 });

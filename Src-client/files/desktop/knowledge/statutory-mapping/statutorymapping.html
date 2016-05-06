@@ -188,10 +188,10 @@
 
 
           </div>
-          <div style="float:left;width:33.3%" id="statutory-level-templates">
+          <div style="float:left;width:33.3%;" id="statutory-level-templates">
             <table style="width:100%;">
               <tr align="left">
-                <th style="overflow: hidden;" class="statutory_title"></th>
+                <th style="height:30px;" class="statutory_title">  </th>
               </tr>
               <tr>
                 <td style="overflow: hidden;" class="statutory_levelvalue">
@@ -215,27 +215,27 @@
                 <section id="section-flip-1">
                   <div class="input-row-left">
                     <div class="input-row">
-                      <div class="field-label">Statutory Provision<span class="mandatory">*</span></div>
+                      <div class="field-label">Statutory Provision: <span class="mandatory">*</span></div>
                       <div class="field-input">
                         <textarea class="input-box heightsmall" id="statutory_provision"></textarea>
                         <p id="counter1" style="font-size:0.65em;" maxlength="500"></p>
                       </div>
                     </div>
                     <div class="input-row">
-                      <div class="field-label">Compliance Task<span class="mandatory">*</span></div>
+                      <div class="field-label">Compliance Task: <span class="mandatory">*</span></div>
                       <div class="field-input">
                         <input type="text" maxlength="100" class="input-box" value="" id="compliance_task"/>
                       </div>
                     </div>
                     <div class="input-row">
-                      <div class="field-label">Compliance Description<span class="mandatory">*</span></div>
+                      <div class="field-label">Compliance Description: <span class="mandatory">*</span></div>
                       <div class="field-input">
                         <textarea class="input-box heightsmall" id="compliance_description" ></textarea>
                         <p id="counter" style="font-size:0.65em;" maxlength="500"></p>
                       </div>
                     </div>
                     <div class="input-row">
-                      <div class="field-label">Compliance Frequency<span class="mandatory">*</span></div>
+                      <div class="field-label">Compliance Frequency: <span class="mandatory">*</span></div>
                       <div class="field-input">
                         <select class="input-box tasktype" id="compliance_frequency">
                           <!-- <option value="">Select</option> -->
@@ -250,13 +250,13 @@
                   </div>
                   <div class="input-row-right">
                     <div class="input-row">
-                      <div class="field-label">Compliance Document</div>
+                      <div class="field-label">Compliance Document: </div>
                       <div class="field-input">
                         <input type="text" maxlength="50" class="input-box"  value="" id="compliance_document">
                       </div>
                     </div>
                     <div class="input-row">
-                      <div class="field-label">Format</div>
+                      <div class="field-label">Format: </div>
                       <div class="field-input">
                         <input type="file" class="input-box" id="upload_file">
                       </div>
@@ -267,7 +267,7 @@
                     </div>
 
                     <div class="input-row">
-                      <div class="field-label">Penal Consequences</div>
+                      <div class="field-label">Penal Consequences: </div>
                       <div class="field-input">
                         <textarea class="input-box heightsmall" id="penal_consequences"></textarea>
                         <p id="counter2" style="font-size:0.65em;" maxlength="500"></p>
@@ -281,7 +281,7 @@
                     <legend>One Time</legend>
                     <div class="input-row-left">
                       <div class="input-row">
-                        <div class="field-label">Statutory Date</div>
+                        <div class="field-label">Statutory Date: </div>
                         <div class="field-input">
                           <select class="input-box sdate" style="width:80px;" id="statutory_month">
                           </select>
@@ -293,7 +293,7 @@
                     </div>
                     <div class="input-row-right">
                       <div class="input-row">
-                        <div class="field-label">Trigger Before</div>
+                        <div class="field-label">Trigger Before: </div>
                         <div class="field-input">
                           <input type="text" maxlength="3" class="input-box trigger sdate" value="" style="width:50px; float:left;" id="triggerbefore">
                           <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span>
@@ -309,7 +309,7 @@
                     <legend>On Occurrence</legend>
                     <div class="input-row-left">
                       <div class="input-row">
-                        <div class="field-label">To Complete Within<span class="mandatory">*</span></div>
+                        <div class="field-label">To Complete Within: <span class="mandatory">*</span></div>
                         <div class="field-input">
                           <input class="input-box" maxlength="3" value="" style="width:55px; float:left;" id="duration">
                           <select class="input-box dayhour" style="width:100px; margin-left:10px; float:left;" id="duration_type">
@@ -317,7 +317,7 @@
                         </div>
                       </div>
                       <div class="input-row">
-                        <div class="field-label">Summary</div>
+                        <div class="field-label">Summary: </div>
                         <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;" class="occasional_summary" id="summary"></span> </div>
                       </div>
                     </div>
@@ -330,7 +330,7 @@
                     <legend class="frequency_type"></legend>
                     <div class="input-row-left">
                       <div class="input-row">
-                        <div class="field-label">Repeats Every<span class="mandatory">*</span></div>
+                        <div class="field-label">Repeats Every: <span class="mandatory">*</span></div>
                         <div class="field-input">
                            <input type="text" maxlength="3" class="input-box" value="" style="width:50px; float:left;" id="repeats_every">
                           <select class="input-box" style="width:100px; margin-left:10px; float:left;" id="repeats_type">
@@ -340,7 +340,7 @@
                         </div>
                       </div>
                       <div class="input-row repeatby-view">
-                        <div class="field-label">Repeat by<span class="mandatory">*</span></div>
+                        <div class="field-label">Repeat by: <span class="mandatory">*</span></div>
                         <div class="field-input">
                           <label style="padding:3px 0px 5px 0px; vertical-align:middle;" class="repeatlabelday" >
                             <input type="radio" name="repeatby" id="dayofmonth" style="width:20px;float:left;" value="dayofmonth" checked="checked">
@@ -360,7 +360,7 @@
                       </div>
                       <div class="multipleselect" style="display:none">
                         <div class="input-row">
-                          <div class="field-label">Statutory Date 1</div>
+                          <div class="field-label">Statutory Date 1: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month1">
@@ -375,7 +375,7 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row2" style="display:none">
-                          <div class="field-label">Statutory Date 2</div>
+                          <div class="field-label">Statutory Date 2: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month2">
@@ -390,7 +390,7 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row3" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 3</div>
+                          <div class="field-label">Statutory Date 3: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month3">
@@ -406,7 +406,7 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row4" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 4</div>
+                          <div class="field-label">Statutory Date 4: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month4">
@@ -422,7 +422,7 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row5" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 5</div>
+                          <div class="field-label">Statutory Date 5: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month5">
@@ -438,7 +438,7 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row6" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 6</div>
+                          <div class="field-label">Statutory Date 6: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month6">
@@ -454,7 +454,7 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row7" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 7</div>
+                          <div class="field-label">Statutory Date 7: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month7">
@@ -470,7 +470,7 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row8" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 8</div>
+                          <div class="field-label">Statutory Date 8: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month8">
@@ -486,7 +486,7 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row9" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 9</div>
+                          <div class="field-label">Statutory Date 9: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month9">
@@ -502,7 +502,7 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row10" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 10</div>
+                          <div class="field-label">Statutory Date 10: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month10">
@@ -518,7 +518,7 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row11" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 11</div>
+                          <div class="field-label">Statutory Date 11: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month11">
@@ -534,7 +534,7 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="input-row12" style="display:none;padding-top:10px;">
-                          <div class="field-label">Statutory Date 12</div>
+                          <div class="field-label">Statutory Date 12: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
                               <select class="input-box sdate" style="width:70px;" id="multiple_statutory_month12">
@@ -549,7 +549,7 @@
                           <br/>
                         </div>
                         <div>
-                          <div class="field-label">Summary</div>
+                          <div class="field-label">Summary: </div>
                           <div class="field-input">
                             <span style="font-size:0.8em; float:left; padding-top:5px;" class="summary_repeat"></span>
                           </div>
@@ -557,7 +557,7 @@
                       </div>
                       <div class="multipleselectnone">
                         <div class="input-row">
-                          <div class="field-label" id="sdate">Statutory Date </div>
+                          <div class="field-label" id="sdate">Statutory Date: </div>
                           <div class="field-input">
                             <span style="float:left;margin-left:0px;">
                               <select class="input-box sdate" style="width:80px;" id="single_statutory_month">   
@@ -568,13 +568,13 @@
                           </div>
                         </div>
                         <div class="input-row">
-                          <div class="field-label">Trigger Before</div>
+                          <div class="field-label">Trigger Before: </div>
                           <div class="field-input">
                             <input type="text" maxlength="3" class="input-box trigger sdate" value="" style="width:50px; float:left;" id="single_triggerbefore">
                             <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span> </div>
                           </div>
                           <div class="input-row">
-                            <div class="field-label">Summary</div>
+                            <div class="field-label">Summary: </div>
                             <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;" class="summary_repeat"> </span> </div>
                           </div>
                         </div>

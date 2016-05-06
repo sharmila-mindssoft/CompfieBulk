@@ -41,7 +41,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_500,
     to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
     to_structure_OptionalType_Text,
-    to_structure_VectorType_RecordType_knowledgereport_StatutoryMapping
+    to_structure_VectorType_RecordType_knowledgereport_StatutoryMapping,
+    to_structure_UnsignedIntegerType_32
 )
 
 #
@@ -84,17 +85,22 @@ class GetStatutoryMappingReportFilters(Request):
         }
 
 class GetStatutoryMappingReportData(Request):
-    def __init__(self, country_id, domain_id, industry_id, statutory_nature_id, geography_id, level_1_statutory_id):
+    def __init__(
+        self, country_id, domain_id, industry_id,
+        statutory_nature_id, geography_id, level_1_statutory_id,
+        record_count
+    ):
         self.country_id = country_id
         self.domain_id = domain_id
         self.industry_id = industry_id
         self.statutory_nature_id = statutory_nature_id
         self.geography_id = geography_id
         self.level_1_statutory_id = level_1_statutory_id
+        self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_id", "d_id", "i_id", "s_n_id", "g_id", "level_1_s_id"])
+        data = parse_dictionary(data, ["c_id", "d_id", "i_id", "s_n_id", "g_id", "level_1_s_id", "r_count"])
         country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("d_id")
@@ -107,7 +113,9 @@ class GetStatutoryMappingReportData(Request):
         geography_id = parse_structure_OptionalType_SignedIntegerType_8(geography_id)
         level_1_statutory_id = data.get("level_1_s_id")
         level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
-        return GetStatutoryMappingReportData(country_id, domain_id, industry_id, statutory_nature_id, geography_id, level_1_statutory_id)
+        record_count = data.get("r_count")
+        record_count = parse_structure_UnsignedIntegerType_32(record_count)
+        return GetStatutoryMappingReportData(country_id, domain_id, industry_id, statutory_nature_id, geography_id, level_1_statutory_id, record_count)
 
     def to_inner_structure(self):
         return {
@@ -117,6 +125,7 @@ class GetStatutoryMappingReportData(Request):
             "s_n_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_nature_id),
             "g_id": to_structure_OptionalType_SignedIntegerType_8(self.geography_id),
             "level_1_s_id": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_id),
+            "r_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
 class GetGeographyReport(Request):
@@ -376,22 +385,25 @@ class StatutoryMappingReport(object):
 
 
 class GetStatutoryMappingReportDataSuccess(Response):
-    def __init__(self, country_id, domain_id, statutory_mappings):
+    def __init__(self, country_id, domain_id, statutory_mappings, total_count):
         self.country_id = country_id
         self.domain_id = domain_id
         self.statutory_mappings = statutory_mappings
+        self.total_count = total_count
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "statutory_mappings"])
+        data = parse_dictionary(data, ["country_id", "domain_id", "statutory_mappings", "total_count"])
         country_id = data.get("country_id")
         country_id = parse_structure_SignedIntegerType_8(country_id)
         domain_id = data.get("domain_id")
         domain_id = parse_structure_SignedIntegerType_8(domain_id)
         statutory_mappings = data.get("statutory_mappings")
         statutory_mappings = to_structure_VectorType_RecordType_knowledgereport_StatutoryMapping(statutory_mappings)
+        total_count = data.get("total_count")
+        total_count = parse_structure_UnsignedIntegerType_32(total_count)
         return GetStatutoryMappingReportDataSuccess(
-            country_id, domain_id, statutory_mappings
+            country_id, domain_id, statutory_mappings, total_count
         )
 
     def to_inner_structure(self):
@@ -399,6 +411,7 @@ class GetStatutoryMappingReportDataSuccess(Response):
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
             "statutory_mappings": to_structure_VectorType_RecordType_knowledgereport_StatutoryMapping(self.statutory_mappings),
+            "total_count": to_structure_UnsignedIntegerType_32(self.total_count)
         }
 
 class GetGeographyReportSuccess(Response):

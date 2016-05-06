@@ -1,6 +1,6 @@
 from protocol import login, technoreports, knowledgereport
 from generalcontroller import validate_user_session, validate_user_forms
-
+from server import logger
 __all__ = [
     "process_techno_report_request"
 ]
@@ -17,24 +17,48 @@ def process_techno_report_request(request, db):
             return login.InvalidSessionToken()
     if user_id is None:
         return login.InvalidSessionToken()
-    print "Validated session token : request frame : {}".format(request_frame)
-    if type(request_frame) is technoreports.GetAssignedStatutoryReportFilters:
-        return process_get_assigned_statutory_report_filters(db, user_id)
-    elif type(request_frame) is technoreports.GetAssignedStatutoryReport:
-        return process_get_assigned_statutory_report_data(db, request_frame, user_id)
-    elif type(request_frame) is technoreports.GetClientDetailsReportFilters:
-        return process_get_client_details_report_filters(db, request_frame, user_id)
-    elif type(request_frame) is technoreports.GetClientDetailsReportData:
-        return process_get_client_details_report_data(db, request_frame, user_id)
-    elif type(request_frame) is technoreports.GetStatutoryNotificationsFilters:
-        return process_get_statutory_notifications_filters(db, request_frame, user_id)
-    elif type(request_frame) is technoreports.GetStatutoryNotificationsReportData:
-        return process_get_statutory_notifications_report_data(db, request_frame, user_id)
-    elif type(request_frame) is technoreports.GetComplianceTaskFilter :
-        return process_get_compliance_task_filter(db, request_frame, user_id)
-    elif type(request_frame) is technoreports.GetComplianceTaskReport :
-        return process_get_compliance_task_report(db, request_frame, user_id)
 
+    if type(request_frame) is technoreports.GetAssignedStatutoryReportFilters:
+        logger.logKnowledgeApi("GetAssignedStatutoryReportFilters", "process begin")
+        result = process_get_assigned_statutory_report_filters(db, user_id)
+        logger.logKnowledgeApi("GetAssignedStatutoryReportFilters", "process end")
+
+    elif type(request_frame) is technoreports.GetAssignedStatutoryReport:
+        logger.logKnowledgeApi("GetAssignedStatutoryReport", "process begin")
+        result = process_get_assigned_statutory_report_data(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetAssignedStatutoryReport", "process end")
+
+    elif type(request_frame) is technoreports.GetClientDetailsReportFilters:
+        logger.logKnowledgeApi("GetClientDetailsReportFilters", "process begin")
+        result = process_get_client_details_report_filters(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetClientDetailsReportFilters", "process end")
+
+    elif type(request_frame) is technoreports.GetClientDetailsReportData:
+        logger.logKnowledgeApi("GetClientDetailsReportData", "process begin")
+        result = process_get_client_details_report_data(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetClientDetailsReportData", "process end")
+
+    elif type(request_frame) is technoreports.GetStatutoryNotificationsFilters:
+        logger.logKnowledgeApi("GetStatutoryNotificationsFilters", "process begin")
+        result = process_get_statutory_notifications_filters(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetStatutoryNotificationsFilters", "process end")
+
+    elif type(request_frame) is technoreports.GetStatutoryNotificationsReportData:
+        logger.logKnowledgeApi("GetStatutoryNotificationsReportData", "process begin")
+        result = process_get_statutory_notifications_report_data(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetStatutoryNotificationsReportData", "process end")
+
+    elif type(request_frame) is technoreports.GetComplianceTaskFilter :
+        logger.logKnowledgeApi("GetComplianceTaskFilter", "process begin")
+        result = process_get_compliance_task_filter(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetComplianceTaskFilter", "process end")
+
+    elif type(request_frame) is technoreports.GetComplianceTaskReport :
+        logger.logKnowledgeApi("GetComplianceTaskReport", "process begin")
+        result = process_get_compliance_task_report(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetComplianceTaskFilter", "process end")
+
+    return result
 
 def process_get_assigned_statutory_report_filters(db, user_id):
     countries = db.get_countries_for_user(user_id)
@@ -118,12 +142,14 @@ def process_get_compliance_task_report(db, request_frame, user_id):
     nature_id = request_frame.statutory_nature_id
     geography_id = request_frame.geography_id
     level_1_id = request_frame.level_1_statutory_id
-
-    report_data = db.get_compliance_list_report_techno(
+    from_count = request_frame.record_count
+    to_count = 500
+    report_data, total_count = db.get_compliance_list_report_techno(
         country_id, domain_id, industry_id,
-        nature_id, geography_id, level_1_id, user_id
+        nature_id, geography_id, level_1_id, user_id,
+        from_count, to_count
     )
 
     return knowledgereport.GetStatutoryMappingReportDataSuccess(
-        country_id, domain_id, report_data
+        country_id, domain_id, report_data, total_count
     )

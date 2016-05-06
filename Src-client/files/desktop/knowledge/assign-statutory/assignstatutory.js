@@ -13,7 +13,6 @@ var statutoriesList;
 var assignStatutoryUnitIds = [];
 var assignStatutoryUnitValues = [];
 var accordionstatus = true;
-
 var finalList;
 var pageSize = 100;
 var startCount;
@@ -26,6 +25,7 @@ function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
 
+//clear old list values
 function clearValues(levelvalue) {
   if(levelvalue == 'all'){
     assignStatutoryUnitIds = [];
@@ -122,6 +122,7 @@ function clearValues(levelvalue) {
   }
 }
 
+//show/hide remark textbox based on act applicable selection
 function actstatus(element){
   var remarkbox = '.remark'+$(element).val();
   var changestatusStatutories = '.statutoryclass'+$(element).val();
@@ -139,6 +140,7 @@ function actstatus(element){
   }
   accordionstatus = false;
 }
+
 
 function compliancestatus(element){
   var sClass = $(element).attr('class');
@@ -160,6 +162,7 @@ function compliancestatus(element){
   }
 }
 
+//display breadcrumbs
 function make_breadcrumbs(){
 
   var bc_businessgroup = $('.businessgrouplist.active').text();
@@ -169,11 +172,12 @@ function make_breadcrumbs(){
   if(bc_businessgroup != '') bc_businessgroup = arrowimage + bc_businessgroup;
   if(bc_divisionname != '') bc_divisionname = arrowimage + bc_divisionname;
 
-$(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + $('.grouplist.active').text()
-+ bc_businessgroup + arrowimage + $('.legalentitylist.active').text() + bc_divisionname + arrowimage + $('.locationlist.active').text()
-  + arrowimage + $('.industrylist.active').text() + arrowimage + assignStatutoryUnitValues + arrowimage + $('.domainlist.active').text());
+  $(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + $('.grouplist.active').text()
+  + bc_businessgroup + arrowimage + $('.legalentitylist.active').text() + bc_divisionname + arrowimage + $('.locationlist.active').text()
+    + arrowimage + $('.industrylist.active').text() + arrowimage + assignStatutoryUnitValues + arrowimage + $('.domainlist.active').text());
 }
 
+//load compliances in second wizard
 function load_secondwizard(){
   displayMessage("");
   var count=1;
@@ -297,6 +301,7 @@ function load_secondwizard(){
   });
 }
 
+//load unit according to filter selection
 function loadunit(){
 
   var assignStatutoryGroupId = null;
@@ -383,7 +388,6 @@ $("#group").click(function(event){
     $('#legalentity').append(str1);
   }
 });
-
 
 $("#businessgroup").click(function(event){
   if($(event.target).attr('class') == 'businessgrouplist'){
@@ -516,6 +520,7 @@ $("#domain").click(function(event){
   }
 });
 
+//load lists on first wizard
 function load_firstwizard(){
 
   var c_id = parseInt($('.countrylist.active').attr('id'));
@@ -545,6 +550,7 @@ function load_firstwizard(){
   $('#industry').append(str2);
 }
 
+//get master data based on country selection
 $("#country").click(function(event){
   if($(event.target).attr('class') == 'countrylist'){
       clearValues('country');
@@ -580,6 +586,7 @@ mirror.getAssignStatutoryWizardOne(parseInt($('.countrylist.active').attr('id'))
   }
 });
 
+//load country list
 function loadCountriesList(data){
   var countriesList = data["countries"];
   var str='';
@@ -644,6 +651,7 @@ mirror.getCountriesForGroup(
 );
 });
 
+//first wizard validation
 function validate_firsttab(){
   if($('.countrylist.active').text() == ''){
     displayMessage(message.country_required);
@@ -676,13 +684,13 @@ function validate_firsttab(){
       if($('.industrylist.active').text() == assignedStatutoriesList[entity]["industry_name"] && $('.domainlist.active').attr('id') == assignedStatutoriesList[entity]["domain_id"]){
         for(var j=0;j<assignStatutoryUnitIds.length;j++){
           if(assignStatutoryUnitIds[j] == assignedStatutoriesList[entity]["unit_id"] && assignedStatutoriesList[entity]["submission_status"] == 0){
-            displayMessage("Statutes already assigned for '"+assignStatutoryUnitValues[j]+"' unit");
+            displayMessage(message.statutory_already_assigned_unit + assignStatutoryUnitValues[j]);
             checkDuplicateAssignStauttory = false;
             break;
             return false;
           }
           if(assignStatutoryUnitIds[j] == assignedStatutoriesList[entity]["unit_id"] && assignedStatutoriesList[entity]["submission_status"] == 1 && assignStatutoryUnitIds.length > 1){
-            displayMessage("Please select individual unit, Statutes already submitted for '"+assignStatutoryUnitValues[j] + "' unit");
+            displayMessage(message.statutory_already_submitted_unit + assignStatutoryUnitValues[j]);
             checkDuplicateAssignStauttory = false;
             break;
             return false;
@@ -694,6 +702,7 @@ function validate_firsttab(){
       }
     }
 
+    //get compliances list for selected unit from api
     if(checkDuplicateAssignStauttory){
       displayLoader();
       function onSuccess(data){
@@ -729,6 +738,7 @@ function validate_secondtab(){
   return true;
 }
 
+//create wizard
 var navListItems = $('ul.setup-panel li a'),
 allWells = $('.setup-content');
 allWells.hide();
@@ -757,6 +767,7 @@ $('ul.setup-panel li a[href="#step-1"]').trigger('click');
 
 })
 
+//save or submit assign statutory
 function saveorsubmit(submissionType){
   displayMessage("");
   if (validate_secondtab()){
@@ -823,7 +834,6 @@ function saveorsubmit(submissionType){
           statutoriesCount++;
       }
     }
-
     actCount++;
     assignedstatutoriesData = mirror.assignedStatutories(level1StatutoryId,compliances, applicableStatus, notApplicableRemarks);
     assignedStatutories.push(assignedstatutoriesData);
@@ -834,6 +844,8 @@ function saveorsubmit(submissionType){
     function onSuccess(data){
       getAssignedStatutories ();
       hideLoader();
+      $(".listfilter").val('');
+      $(".filter-text-box").val('');
       $("#assignstatutory-add").hide();
       $("#assignstatutory-view").show();
       $('ul.setup-panel li:eq(0)').addClass('active');
@@ -867,7 +879,7 @@ $('#activate-step-submit').on('click', function(e) {
   saveorsubmit("Submit")
 })
 
-
+//edit assign statutory
 function displayEdit(client_statutory_id, country_id, group_id, location_id, domain_id, unit_id, submit_type){
   displayLoader();
  function onSuccess(data){
@@ -931,6 +943,7 @@ function displayEdit(client_statutory_id, country_id, group_id, location_id, dom
   );
 }
 
+//display assigned statutories list in view page
 function loadCountwiseAssignedStatutoriesList(assignedStatutoriesList){
   var j = startCount + 1;
   var client_statutory_id = 0;
@@ -994,6 +1007,7 @@ function get_sub_array(object, start, end){
   return object.slice(start, end);
 }
 
+//create pagination based on total records
 function loadAssignedStatutoriesList(assignedStatutoriesList){
   var listSize = Math.ceil(assignedStatutoriesList.length / pageSize);
   startCount = 0;
@@ -1021,7 +1035,7 @@ function loadAssignedStatutoriesList(assignedStatutoriesList){
   loadCountwiseAssignedStatutoriesList(sub_list);
 }
 
-
+//pagination process
 $(".pagination").click(function(event){
   var text = $(event.target).attr('id');
   var pageId = text.substring(text.lastIndexOf('w') + 1);
@@ -1039,7 +1053,7 @@ $(".pagination").click(function(event){
   loadCountwiseAssignedStatutoriesList(sub_list);
 });
 
-
+//get assigned statutories list from api
 function getAssignedStatutories () {
   function onSuccess(data){
     assignedStatutoriesList = data["assigned_statutories"];
@@ -1060,6 +1074,7 @@ function getAssignedStatutories () {
   );
 }
 
+//filter process
 $(".listfilter").keyup(function() {
   var filter1 = $("#filter1").val().toLowerCase();
   var filter2 = $("#filter2").val().toLowerCase();
@@ -1101,6 +1116,7 @@ $(".listfilter").keyup(function() {
   loadAssignedStatutoriesList(filteredList);
 });
 
+//initialization and UL filter process
 $(document).ready(function () {
   hideLoader();
   getAssignedStatutories ();
@@ -1223,4 +1239,20 @@ $(document).ready(function () {
         lis[i].style.display = 'none';
     }
   });
+});
+
+//create tool tip
+$( document ).tooltip({
+  position: {
+    my: "center bottom-20",
+    at: "center top",
+    using: function( position, feedback ) {
+      $( this ).css( position );
+      $( "<div>" )
+          .addClass( "arrow" )
+          .addClass( feedback.vertical )
+          .addClass( feedback.horizontal )
+          .appendTo( this );
+    }
+  }
 });

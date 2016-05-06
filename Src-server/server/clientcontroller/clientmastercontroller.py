@@ -1,12 +1,12 @@
 from protocol import (clientmasters, core, login)
 from server.controller.corecontroller import process_user_menus
-
+from server import logger
 __all__ = [
     "process_client_master_requests"
 ]
 
 ########################################################
-# To Redirect the requests to the corresponding 
+# To Redirect the requests to the corresponding
 # functions
 ########################################################
 def process_client_master_requests(request, db) :
@@ -19,56 +19,90 @@ def process_client_master_requests(request, db) :
         return login.InvalidSessionToken()
 
     if type(request) is clientmasters.GetServiceProviders:
-        return get_service_providers(db, request, session_user, client_id)
+        logger.logClientApi("GetServiceProviders", "process begin")
+        result = get_service_providers(db, request, session_user, client_id)
+        logger.logClientApi("GetServiceProviders", "process end")
 
-    if type(request) is clientmasters.SaveServiceProvider:
-        return save_service_provider(db, request, session_user, client_id)
+    elif type(request) is clientmasters.SaveServiceProvider:
+        logger.logClientApi("SaveServiceProvider", "process begin")
+        result = save_service_provider(db, request, session_user, client_id)
+        logger.logClientApi("SaveServiceProvider", "process end")
 
-    if type(request) is clientmasters.UpdateServiceProvider:
-        return update_service_provider(db, request, session_user, client_id)
+    elif type(request) is clientmasters.UpdateServiceProvider:
+        logger.logClientApi("UpdateServiceProvider", "process begin")
+        result = update_service_provider(db, request, session_user, client_id)
+        logger.logClientApi("UpdateServiceProvider", "process end")
 
-    if type(request) is clientmasters.ChangeServiceProviderStatus:
-        return change_service_provider_status(
+    elif type(request) is clientmasters.ChangeServiceProviderStatus:
+        logger.logClientApi("ChangeServiceProviderStatus", "process begin")
+        result = change_service_provider_status(
             db, request, session_user, client_id
         )
+        logger.logClientApi("ChangeServiceProviderStatus", "process end")
 
-    if type(request) is clientmasters.GetUserPrivileges:
-        return get_user_privileges(db, request, session_user, client_id)
+    elif type(request) is clientmasters.GetUserPrivileges:
+        logger.logClientApi("GetUserPrivileges", "process begin")
+        result = get_user_privileges(db, request, session_user, client_id)
+        logger.logClientApi("GetUserPrivileges", "process end")
 
-    if type(request) is clientmasters.SaveUserPrivileges:
-        return save_user_privileges(db, request, session_user, client_id)
+    elif type(request) is clientmasters.SaveUserPrivileges:
+        logger.logClientApi("SaveUserPrivileges", "process begin")
+        result = save_user_privileges(db, request, session_user, client_id)
+        logger.logClientApi("SaveUserPrivileges", "process end")
 
-    if type(request) is clientmasters.UpdateUserPrivileges:
-        return update_user_privileges(db, request, session_user, client_id)
+    elif type(request) is clientmasters.UpdateUserPrivileges:
+        logger.logClientApi("UpdateUserPrivileges", "process begin")
+        result = update_user_privileges(db, request, session_user, client_id)
+        logger.logClientApi("UpdateUserPrivileges", "process end")
 
-    if type(request) is clientmasters.ChangeUserPrivilegeStatus:
-        return change_user_privilege_status(
+    elif type(request) is clientmasters.ChangeUserPrivilegeStatus:
+        logger.logClientApi("ChangeUserPrivilegeStatus", "process begin")
+        result = change_user_privilege_status(
             db, request, session_user, client_id
         )
+        logger.logClientApi("ChangeUserPrivilegeStatus", "process end")
 
-    if type(request) is clientmasters.GetClientUsers:
-        return get_client_users(db, request, session_user, client_id)
+    elif type(request) is clientmasters.GetClientUsers:
+        logger.logClientApi("GetClientUsers", "process begin")
+        result = get_client_users(db, request, session_user, client_id)
+        logger.logClientApi("GetClientUsers", "process end")
 
-    if type(request) is clientmasters.SaveClientUser:
-        return save_client_user(db, request, session_user, client_id)
+    elif type(request) is clientmasters.SaveClientUser:
+        logger.logClientApi("SaveClientUser", "process begin")
+        result = save_client_user(db, request, session_user, client_id)
+        logger.logClientApi("SaveClientUser", "process end")
 
-    if type(request) is clientmasters.UpdateClientUser:
-        return update_client_user(db, request, session_user, client_id)
+    elif type(request) is clientmasters.UpdateClientUser:
+        logger.logClientApi("UpdateClientUser", "process begin")
+        result = update_client_user(db, request, session_user, client_id)
+        logger.logClientApi("UpdateClientUser", "process end")
 
-    if type(request) is clientmasters.ChangeClientUserStatus:
-        return change_client_user_status(db, request, session_user, client_id)
+    elif type(request) is clientmasters.ChangeClientUserStatus:
+        logger.logClientApi("ChangeClientUserStatus", "process begin")
+        result = change_client_user_status(db, request, session_user, client_id)
+        logger.logClientApi("ChangeClientUserStatus", "process end")
 
-    if type(request) is clientmasters.ChangeAdminStatus:
-        return change_admin_status(db, request, session_user, client_id)
+    elif type(request) is clientmasters.ChangeAdminStatus:
+        logger.logClientApi("ChangeAdminStatus", "process begin")
+        result = change_admin_status(db, request, session_user, client_id)
+        logger.logClientApi("ChangeAdminStatus", "process end")
 
-    if type(request) is clientmasters.GetUnits:
-        return get_units(db, request, session_user, client_id)
+    elif type(request) is clientmasters.GetUnits:
+        logger.logClientApi("GetUnits", "process begin")
+        result = get_units(db, request, session_user, client_id)
+        logger.logClientApi("GetUnits", "process end")
 
-    if type(request) is clientmasters.CloseUnit:
-        return close_unit(db, request, session_user, client_id)
+    elif type(request) is clientmasters.CloseUnit:
+        logger.logClientApi("CloseUnit", "process begin")
+        result = close_unit(db, request, session_user, client_id)
+        logger.logClientApi("CloseUnit", "process end")
 
-    if type(request) is clientmasters.GetAuditTrails:
-        return get_audit_trails(db, request, session_user, client_id)
+    elif type(request) is clientmasters.GetAuditTrails:
+        logger.logClientApi("GetAuditTrails", "process begin")
+        result = get_audit_trails(db, request, session_user, client_id)
+        logger.logClientApi("GetAuditTrails", "process end")
+
+    return result
 
 ########################################################
 # To get the list of all service providers
@@ -79,7 +113,7 @@ def get_service_providers(db, request, session_user, client_id):
         service_providers=service_provider_list)
 
 ########################################################
-# To validate and Save service provider 
+# To validate and Save service provider
 ########################################################
 def save_service_provider(db, request, session_user, client_id):
     service_provider_id = db.generate_new_service_provider_id(client_id)
@@ -123,6 +157,8 @@ def change_service_provider_status(db, request, session_user, client_id):
         request.service_provider_id, client_id
     ):
         return clientmasters.InvalidServiceProviderId()
+    elif not db.is_service_provider_in_contract(request.service_provider_id):
+        return clientmasters.CannotChangeStatusOfContractExpiredSP()
     elif db.is_user_exists_under_service_provider(
         request.service_provider_id
     ):
@@ -377,10 +413,13 @@ def get_units(db, request, session_user, client_id):
 def close_unit(db, request, session_user, client_id):
     session_user = session_user
     password = request.password
-
+    
     if db.verify_password(password, session_user, client_id):
-        db.close_unit(request.unit_id, session_user)
-        return clientmasters.CloseUnitSuccess()
+        if db.is_seating_unit(request.unit_id):
+            return clientmasters.CannotCloseUnit()
+        else:
+            db.close_unit(request.unit_id, session_user)
+            return clientmasters.CloseUnitSuccess()
     else:
         return clientmasters.InvalidPassword()
 
@@ -390,4 +429,3 @@ def close_unit(db, request, session_user, client_id):
 def get_audit_trails(db, request, session_user, client_id):
     audit_trails = db.get_audit_trails(session_user, client_id)
     return audit_trails
-             

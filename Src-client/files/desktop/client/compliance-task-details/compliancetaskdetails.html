@@ -79,10 +79,10 @@ $(document).ready(function() {
           <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
             <tr>
               <td width="100%" class="full-width-list">
-                <div class="grid-table" style="padding-bottom:0em;">
+                <div class="grid-table" style="padding-bottom:0em;height:600px;overflow-y:scroll;">
                   <table class="js-filtertable">
                   <thead>
-                    <tr align="left" style="background:#ccc;">
+                    <tr align="left" style="background:#ccc;" >
                       <td width="3%">
                         <span style="font-weight:bold;">#</span>
                       </td>
@@ -141,7 +141,7 @@ $(document).ready(function() {
           <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
             <tr>
               <td width="100%">
-                <div class="grid-table" style="padding-bottom:0em;">
+                <div class="grid-table" style="padding-bottom:0em;height:600px;overflow-y:scroll;">
                   <table class="js-filtertable-upcoming">
                   <thead>
 
@@ -326,6 +326,12 @@ $(document).ready(function() {
           <span style="font-weight:bold;">Status</span>
         </td>
         <td class="sideview-compliance-status"></td>
+      </tr>
+      <tr id="rejected-reason-header">
+        <td>
+          <span style="font-weight:bold;" >Rejected Reason</span>
+        </td>
+        <td class="sideview-compliance-reason"></td>
       </tr>
       <tr>
         <td style="vertical-align:middle;">

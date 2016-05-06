@@ -1,6 +1,6 @@
 from protocol import login, core, technotransactions
 from generalcontroller import validate_user_session, validate_user_forms, process_get_countries_for_user
-
+from server import logger
 __all__ =[
     "process_techno_transaction_request"
 ]
@@ -20,22 +20,36 @@ def process_techno_transaction_request(request, db):
         return login.InvalidSessionToken()
 
     if type(request_frame) is technotransactions.GetAssignedStatutoriesList:
-        return process_get_assigned_statutories(db, user_id)
+        logger.logKnowledgeApi("GetAssignedStatutoriesList", "process begin")
+        result = process_get_assigned_statutories(db, user_id)
+        logger.logKnowledgeApi("GetAssignedStatutoriesList", "process end")
 
     elif type(request_frame) is technotransactions.GetAssignedStatutoriesById:
-        return process_get_assigned_statutories_by_id(db, request_frame)
+        logger.logKnowledgeApi("GetAssignedStatutoriesById", "process begin")
+        result = process_get_assigned_statutories_by_id(db, request_frame)
+        logger.logKnowledgeApi("GetAssignedStatutoriesById", "process end")
 
     elif type(request_frame) is technotransactions.GetAssignedStatutoryWizardOneData:
-        return process_get_assigned_statutory_wizard_one(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetAssignedStatutoryWizardOneData", "process begin")
+        result = process_get_assigned_statutory_wizard_one(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetAssignedStatutoryWizardOneData", "process end")
 
     elif type(request_frame) is technotransactions.GetStatutoryWizardTwoData:
-        return process_get_assigned_statutory_wizard_two(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetStatutoryWizardTwoData", "process begin")
+        result = process_get_assigned_statutory_wizard_two(db, request_frame, user_id)
+        logger.logKnowledgeApi("GetStatutoryWizardTwoData", "process end")
 
     elif type(request_frame) is technotransactions.SaveAssignedStatutory:
-        return process_save_assigned_statutory(db, request_frame, user_id)
+        logger.logKnowledgeApi("SaveAssignedStatutory", "process begin")
+        result = process_save_assigned_statutory(db, request_frame, user_id)
+        logger.logKnowledgeApi("SaveAssignedStatutory", "process end")
 
     elif type(request_frame) is technotransactions.GetCountriesForGroup:
-        return process_get_countries_for_groups(db, user_id)
+        logger.logKnowledgeApi("GetCountriesForGroup", "process begin")
+        result = process_get_countries_for_groups(db, user_id)
+        logger.logKnowledgeApi("GetCountriesForGroup", "process end")
+
+    return result
 
 def process_get_assigned_statutories(db, user_id):
     return db.get_assigned_statutories_list(user_id)

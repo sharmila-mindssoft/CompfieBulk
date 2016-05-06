@@ -1,3 +1,61 @@
+<style>
+
+.overlay-nav-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 1000;
+}
+.overlay-nav-bar:target {
+  visibility: visible;
+  opacity: 1;
+
+}
+
+.popup-nav-bar {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 30%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.popup-nav-bar h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.popup-nav-bar .close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  transition: all 200ms;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: Arial;
+  text-decoration: none;
+  color: #333;
+}
+.popup-nav-bar .close:hover {
+  color: orange;
+}
+.popup-nav-bar .content {
+  max-height: 40%;
+  overflow: auto;
+}
+.popup-nav-bar-error-msg{
+  font-size: 0.813em;
+  color: red;
+}
+</style>
 <div class="header-section">
   <div class="header-content">
   <div class="header-content-inner">
@@ -6,7 +64,7 @@
     <div class="navigation">
       <div id="cssmenu">
         <ul class="menu-ul">
-          <li><a href='/home'><span>Home</span></a></li>
+          <li><a class="home-menu" href='/home'><span>Home</span></a></li>
         </ul>
       </div>
     </div>
@@ -32,40 +90,48 @@
         </ul>
       </li>
     </ul>
-    
-    
+
+
     <ul class="reminder">
       <li class="noti_icon">
         <div id="noti_Container">
           <a href="/reminders">
             <img src="/files/desktop/common/images/reminder.png" alt="Reminder" title="Reminder"  style="vertical-align: text-bottom;"/>
-          
+
             <div id="reminder_count" class="noti_bubble">0</div>
             </a>
         </div>
       </li>
-    </ul> 
+    </ul>
     <ul class="notification">
-      <li class="noti_icon"> 
+      <li class="noti_icon">
         <div id="noti_Container">
             <a href="/notifications">
               <img src="/files/desktop/common/images/notification.png" alt="Notification" title="Notification" style="vertical-align: text-bottom;"/>
-            
+
             <div id="notification_count" class="noti_bubble">0</div>
             </a>
         </div>
       </li>
-    </ul>   
+    </ul>
     <ul class="escalations">
       <li class="noti_icon">
         <div id="noti_Container">
           <a href="/escalations">
             <img src="/files/desktop/common/images/escalation.png" alt="Escalation"  title="Escalation"  style="vertical-align: text-bottom;"/>
-          
+
             <div id="escalation_count" class="noti_bubble noti_bubble_escalation">0</div>
             </a>
         </div>
-        
+
       </li>
     </ul>
+  </div>
+  <div id="popup" class="overlay-nav-bar" >
+    <div class="popup-nav-bar">
+      <a class="close" href="#">X</a>
+      <div class="content">
+       <span id="msg"></span><br>
+      </div>
+    </div>
   </div>

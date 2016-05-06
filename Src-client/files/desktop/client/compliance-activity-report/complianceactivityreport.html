@@ -87,9 +87,9 @@
           </div>
           <div class="field-input">
             <input type="hidden" id="country" value="">
-            <input type="text" class="input-box icon-autocomplete" id="countryval" value=""  onkeyup="loadauto_country(this.value)">
-            <div id="selectboxview-country" class="ac-textbox" style="display:none;" onclick="hidecountrylist();">
-              <ul style="width:195px;"></ul>
+            <input type="text" class="input-box icon-autocomplete" id="countryval" value="">
+            <div id="ac-country" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
             </div>
           </div>
         </div>
@@ -100,9 +100,9 @@
           </div>
           <div class="field-input">
             <input type="hidden" id="domain" value="">
-            <input type="text" class="input-box icon-autocomplete" id="domainval" value=""  onkeyup="loadauto_domains(this.value)">
-            <div id="selectboxview-domains" class="ac-textbox" style="display:none;" onclick="hidedomainslist();">
-              <ul style="width:195px;"></ul>
+            <input type="text" class="input-box icon-autocomplete" id="domainval" value="">
+            <div id="ac-domain" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
             </div>
           </div>
         </div>
@@ -122,10 +122,10 @@
         <div class="input-row">
           <div class="field-label">Assignee:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="userval" autofocus onkeyup="loadauto_user(this.value)">
+            <input type="text" class="input-box icon-autocomplete" id="userval">
             <input type="hidden" id="userid">
-            <div id="autocompleteview-user" class="ac-textbox default-display-none"  onchange="hideuserlist();" onclick="hideuserlist();">
-              <ul style="width:195px;"></ul>
+            <div id="ac-user" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
             </div>
           </div>
         </div>
@@ -133,10 +133,10 @@
         <div class="input-row">
           <div class="field-label">Act:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="level1val" value=""   onkeyup="loadauto_level1(this.value)" >
+            <input type="text" class="input-box icon-autocomplete" id="level1val" value="" >
             <input type="hidden" id="level1id">
-            <div id="autocompleteview-level1" class="ac-textbox" style="display:none;"  onclick="hidelevel1list();">
-              <ul style="width:195px;"></ul>
+            <div id="ac-statutory" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
             </div>
           </div>
         </div>
@@ -145,10 +145,10 @@
         <div class="input-row">
           <div class="field-label">Unit:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="unitval" value=""     onkeyup="loadauto_unit(this.value)">
+            <input type="text" class="input-box icon-autocomplete" id="unitval" value="" >
             <input type="hidden" id="unitid">
-            <div id="autocompleteview-unit" class="ac-textbox" style="display:none;"  onclick="hideunitlist();">
-              <ul style="width:195px;"></ul>
+            <div id="ac-unit" class="ac-textbox default-display-none">
+              <ul style="width:85%;"></ul>
             </div>
           </div>
         </div>
@@ -156,9 +156,9 @@
         <div class="input-row">
           <div class="field-label">Compliance Task:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="complianceval" value=""   onkeyup="loadauto_compliance(this.value)">
+            <input type="text" class="input-box icon-autocomplete" id="complianceval" value="">
             <input type="hidden" id="complianceid">
-            <div id="autocompleteview-compliance" class="ac-textbox" style="display:none;"  onclick="hidecompliancelist();">
+            <div id="ac-compliancetask" class="ac-textbox default-display-none">
               <ul></ul>
             </div>
           </div>
@@ -198,7 +198,7 @@
 <table class="table-compliance-activity-list-temp">
 <tbody class="filter-heading-list">
 <tr class="">
-  <td colspan="6">
+  <td colspan="7">
   <div style="margin-left:15%;">
       <div style="float:left; padding-bottom:0.5em; margin-left:1%;">
         <div style="margin-left:10px; padding-bottom:1em;">
@@ -209,10 +209,7 @@
           User Type :
           <span style="margin-left:10px; font-weight:bold;" class="usertype-filter-name"> </span>
         </div>
-        <div style="margin-left:10px; padding-bottom:1em;" >
-          User :
-          <span style="margin-left:10px; font-weight:bold;" class="user-filter-name"> </span>
-        </div>
+       
       </div>
       <div style="float:right; margin-right:20%;">
         <div style="margin-left:10px; padding-bottom:1em;">
@@ -232,45 +229,52 @@
   </td>
 </tr>
 </tbody>
-  <tr class="table-unit-heading">
-    <td colspan="6">
+<tbody class="table-unit-heading">
+  <tr >
+    <td colspan="7">
        <h2 style="background:#f1e9f6; text-align:left;" class="unit-heading"> <abbr class="page-load tipso_style" title=""></abbr></h2>
     </td>
   </tr>
-  <tr class="table-level1-heading">
-    <td colspan="6">
+<tbody class="table-level1-heading">
+  <tr>
+    <td colspan="7">
         <span class="heading level1-heading"></span>
     </td>
   </tr>
-  <tr align="left" class="table-heading-th">
+</tbody>
+  <tbody class="table-heading-th">
+  <tr align="left" >
     <th class="header-bg">#</th>
     <th class="header-bg">Compliance Task</th>
+    <th class="header-bg">Assignee</th>
     <th class="header-bg">Date</th>
     <th class="header-bg">Activity Status</th>
     <th class="header-bg">Compliance Task Status</th>
     <th class="header-bg">Remarks</th>
   </tr>
+  </tbody>
   <tbody class="accordion-toggle tbody-activity-list">
     <tr class="table-row-list">
-      <td class="sno" style="width: 20px;"></td>
-      <td class="compliance-task" style="width: 450px;"></td>
-      <td class="compliance-date" style="width: 120px;"></td>
-      <td class="activity-status" style="width: 120px;"></td>
-      <td class="compliance-task-status" style="width: 120px;" width="22%"></td>
-      <td class="remarks" style="width: 150px;"></td>
+      <td class="sno" style="width: 2%;"></td>
+      <td class="compliance-task" style="width: 30%;"></td>
+      <td class="assigneee" style="width: 15%;"></td>
+      <td class="compliance-date" style="width: 10%;"></td>
+      <td class="activity-status" style="width: 15%;"></td>
+      <td class="compliance-task-status" style="width: 13%;"></td>
+      <td class="remarks" style="width: 15%;"></td>
     </tr>
   </tbody>
 
 <tr class="tree-tr" style="padding: 0px; margin: 0px;">
-  <td colspan="6" style="padding: 0px; margin: 0px;"> 
+  <td colspan="7" style="padding: 0px; margin: 0px;"> 
   <ul class="tree" >
     <li>
       <table style="padding: 0px; margin: 0px;"  >
         <tr class="" style="background-color:#eae8e8; color:#000000;">
-          <td class="li-date"  style="width: 120px;"></td>
-          <td class="li-activitystatus"  style="width: 120px;"></td>
-          <td class="li-taskstatus"  style="width: 120px;"></td>
-          <td class="li-remarks"  style="width: 150px;"></td>
+          <td class="li-date"  style="width: 7%;"></td>
+          <td class="li-activitystatus"  style="width: 15%;"></td>
+          <td class="li-taskstatus"  style="width: 13%;"></td>
+          <td class="li-remarks"  style="width: 15%;"></td>
         </tr>
       </table>  
     </li>

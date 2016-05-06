@@ -87,7 +87,14 @@ function loadaudittrail(tempadlist){
         $('.sno', clone).text(sno++);
         $('.username', clone).text(getUserName(value['user_id']));
         $('.datetime', clone).text(value['date']);
-        $('.formname', clone).text(getFormName(value['form_id']));
+        var dispFormname = 'Login';
+        if (value['action'].indexOf('password') >= 0){
+            dispFormname = 'Change Password'
+        }
+        if(value['form_id'] != 0){
+            dispFormname = getFormName(value['form_id']);
+        }
+        $('.formname', clone).text(dispFormname);
         $('.action', clone).text(value['action']);
         $('.tbody-audittrail-list').append(clone);
     });
@@ -192,61 +199,35 @@ $("#show").click(function(){
         loadresult(tempadlist);
     }
 });
-function hidemenu(){
-    $("#userListView").hide(); 
+
+
+//retrive user autocomplete value
+function onUserSuccess(val){
+  $("#user").val(val[1]);
+  $("#userid").val(val[0]);
 }
 
-$("#user").keypress(function(){
-    var textval = $(this).val();
-    $("#userListView").show();
-    var users = userList;
-    var suggestions = [];
-    $('#userListView ul').empty();
-    if(textval.length>0){
-        for(var i in users){
-            if (~users[i]["employee_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([users[i]["user_id"],users[i]["employee_name"]]); 
-        }
-        var str='';
-        for(var i in suggestions){
-            str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-        }
-        $('#userListView ul').append(str);
-        $("#userid").val('');
-    }
+//load user list in autocomplete text box  
+$("#user").keyup(function(){
+  var textval = $(this).val();
+  getUserAutocomplete(textval, userList, function(val){
+    onUserSuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_text (element,checkval,checkname) {
-  $("#user").val(checkname);
-  $("#userid").val(checkval);
+
+//retrive form autocomplete value
+function onFormSuccess(val){
+  $("#formname").val(val[1]);
+  $("#formid").val(val[0]);
 }
 
-function hideMenuFormList(){
-    $("#formListView").hide(); 
-}
-
-$("#formname").keypress(function(){
-    var textval = $(this).val();
-    $("#formListView").show();
-    var forms = formList;
-    var suggestions = [];
-    $('#formListView ul').empty();
-    if(textval.length>0){
-        for(var i in forms){
-            if (~forms[i]["form_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([forms[i]["form_id"],forms[i]["form_name"]]); 
-        }
-        var str='';
-        for(var i in suggestions){
-            str += '<li id="'+suggestions[i][0]+'"onclick="activate_text1(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-        }
-        $('#formListView ul').append(str);
-        $("#formid").val('');
-    }
+//load form list in autocomplete text box  
+$("#formname").keyup(function(){
+  var textval = $(this).val();
+  getFormAutocomplete(textval, formList, function(val){
+    onFormSuccess(val)
+  })
 });
-//selectedt selected autocomplte value to textbox
-function activate_text1 (element,checkval,checkname) {
-    $("#formname").val(checkname);
-    $("#formid").val(checkval);
-}
 
 $(function() {
     initialize();

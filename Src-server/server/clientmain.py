@@ -69,11 +69,12 @@ class API(object):
             io_loop,
             knowledge_server_address,
             http_client,
-            60,
+            120,
             self.server_added
         )
         self._databases = {}
         self._replication_managers = {}
+        self._ip_address = None
 
     def close_connection(self, db):
         try:
@@ -123,11 +124,16 @@ class API(object):
                             self._replication_managers[company_id] = rep_man
                     except Exception, e:
                         print e
+                        logger.logClientApi(ip, port)
+                        logger.logClientApi(e, "Server added")
+                        logger.logClientApi(traceback.format_exc(), "")
                         logger.logClient("error", "clientmain.py-server-added", e)
-                        # print "Client database not available to connect ", company_id, company.to_structure()
+                        logger.logClientApi("Client database not available to connect ", company_id + "-" + company.to_structure())
                         continue
 
         except Exception, e :
+            logger.logClientApi(e, "Server added")
+            logger.logClientApi(traceback.format_exc(), "")
             logger.logClient("error", "clientmain.py-server-added", e)
             logger.logClient("error", "clientmain.py-server-added", traceback.format_exc())
 
@@ -176,19 +182,15 @@ class API(object):
             if db is None:
                 response.set_status(404)
                 response.send("Company not found")
-                # data = login.ClientDatabaseNotExists().to_structure()
-                # s = json.dumps(data, indent=2)
-                # response.send(s)
-                # response.send()
-                # self._send_response(login.ClientDatabaseNotExists(), response)
                 return None
             actual_data = data[1]
             request_data = request_data_type.parse_structure(
                 actual_data
             )
         except Exception, e:
-            # print e
-            # print(traceback.format_exc())
+            logger.logClientApi(e, "_parse_request")
+            logger.logClientApi(traceback.format_exc(), "")
+
             logger.logClient("error", "clientmain.py-parse-request", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
@@ -201,6 +203,8 @@ class API(object):
         self, unbound_method, request, response,
         request_data_type, need_client_id
     ):
+        ip_address = str(request.remote_ip())
+        self._ip_address = ip_address
         response.set_default_header("Access-Control-Allow-Origin", "*")
         request_data = self._parse_request(
             request_data_type, request, response
@@ -228,6 +232,9 @@ class API(object):
         except Exception, e:
             # print(traceback.format_exc())
             # print e
+            logger.logClientApi(e, "handle_api_request")
+            logger.logClientApi(traceback.format_exc(), "")
+
             logger.logClient("error", "clientmain.py-handle-api", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
@@ -235,7 +242,9 @@ class API(object):
 
     @api_request(login.Request, need_client_id=True)
     def handle_login(self, request, db, client_id):
-        return controller.process_login_request(request, db, client_id)
+        print self._ip_address
+        logger.logLogin("info", self._ip_address, "login-user", "Login process end")
+        return controller.process_login_request(request, db, client_id, self._ip_address)
 
     @api_request(clientmasters.RequestFormat)
     def handle_client_masters(self, request, db):

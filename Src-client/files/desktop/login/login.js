@@ -1,4 +1,4 @@
-
+var landingPage = null;
 function clearLoginMessage() {
     $(".login-error-message").hide();
     $(".login-error-message span").text("");
@@ -14,12 +14,21 @@ function displayLoginLoader() {
     $(".loading-indicator-spin").show();
 }
 function initSession(userProfile, shortName) {
+    setLandingPage(userProfile);
     window.localStorage["userInfo"] = JSON.stringify(userProfile, null, " ");
     if (shortName !== null) {
         window.localStorage["shortName"] = shortName;
     }
 }
-
+function setLandingPage(userProfile) {
+    menus = userProfile["menu"]["menus"];
+    if ("Home" in menus) {
+        landingPage = "/dashboard";
+    }
+    else {
+        landingPage = "/home";
+    }
+}
 function getShortName(){
     var pathArray = window.location.pathname.split( '/' );
     short_name = null;
@@ -61,18 +70,7 @@ function resetLoginUI(e_button, e_email, e_password) {
     e_password.removeAttr("disabled", "disabled");
     e_email.focus();
 }
-function get_ip(callback){
-    $.getJSON("http://jsonip.com?callback=?", function (data) {
-        callback(data.ip);
-    });
-}
 function processLogin(username, password, shortName, callback) {
-    my_ip = null ;
-    get_ip(function (ip) {
-        my_ip = ip;
-    });
-    if (my_ip == null)
-        my_ip = "unknown"
 
     var request = [
         "Login", {
@@ -80,7 +78,7 @@ function processLogin(username, password, shortName, callback) {
             "username": username,
             "password": password,
             "short_name": short_name,
-            "ip" : my_ip
+            "ip" : ''
         }
     ];
     if (shortName == null) {
@@ -111,6 +109,11 @@ function processLogin(username, password, shortName, callback) {
             }
         }
     )
+    .fail(
+        function (jqXHR, textStatus, errorThrown) {
+            callback(jqXHR["responseText"], errorThrown)
+        }
+    );
 }
 function performLogin(e_button, e_email, e_password) {
     if (!isLoginValidated(e_email, e_password))
@@ -128,6 +131,11 @@ function performLogin(e_button, e_email, e_password) {
             message = "Contract Expired"
         }else if (status == "NotConfigured"){
             message = "Please Wait...Your account configuration is under progress.."
+        }else if (status == "ContractNotYetStarted"){
+            message = "Contract not yet started"
+        }
+        else if (status.indexOf("timeout") >= 0) {
+            message = "Connection Timeout"
         }
         displayLoginMessage(message);
         $("input").val("");
@@ -140,6 +148,7 @@ function performLogin(e_button, e_email, e_password) {
             e_password.val(),
             null,
             function (error, response) {
+                console.log(response)
                 console.log(error)
                 if (error == null){
                     // onSuccess(response)
@@ -156,10 +165,11 @@ function performLogin(e_button, e_email, e_password) {
             e_password.val(),
             getShortName(),
             function (error, response) {
+                console.log(response)
                 console.log(error);
                 if (error == null){
                     // onSuccess(response)
-                    window.location.href = "/home";
+                    window.location.href = landingPage;
                 }
                 else {
                     console.log("login failed")

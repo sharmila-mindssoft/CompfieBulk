@@ -20,9 +20,9 @@
                     </div>
                     <div class="field-input">
                         <input type="hidden" id="country" value="">
-                        <input type="text" class="input-box icon-autocomplete" id="countryval" autofocus value=""  onkeyup="loadauto_country(this.value)">
-                        <div id="selectboxview-country" class="ac-textbox" style="display:none;" onclick="hidecountrylist();">
-                            <ul style="width:195px;"></ul>
+                        <input type="text" class="input-box icon-autocomplete" id="countryval" autofocus value=""  >
+                        <div id="ac-country" class="ac-textbox default-display-none">
+                            <ul style="width:85%;"></ul>
                         </div>
                     </div>
                 </div>
@@ -34,19 +34,19 @@
                     </div>
                     <div class="field-input">
                         <input type="hidden" id="domain" value="">
-                        <input type="text" class="input-box icon-autocomplete" id="domainval" value=""  onkeyup="loadauto_domains(this.value)">
-                        <div id="selectboxview-domains" class="ac-textbox" style="display:none;" onclick="hidedomainslist();">
-                            <ul style="width:195px;"></ul>
+                        <input type="text" class="input-box icon-autocomplete" id="domainval" value="" >
+                        <div id="ac-domain" class="ac-textbox default-display-none">
+                            <ul style="width:85%;"></ul>
                         </div>
                     </div>
                 </div>
                 <div class="input-row">
                     <div class="field-label">Business Group:</div>
                     <div class="field-input">
-                        <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value=""   onkeyup="loadauto_businessgroups(this.value)">
+                        <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value="" >
                         <input type="hidden" id="businessgroupid">
-                        <div id="autocompleteview-bgroups" class="ac-textbox" style="display:none;"  onclick="hidebgroupslist();">
-                            <ul style="width:195px;"></ul>
+                        <div id="ac-businessgroup" class="ac-textbox default-display-none">
+                            <ul style="width:85%;"></ul>
                         </div>
 
                     </div>
@@ -54,20 +54,20 @@
                 <div class="input-row">
                     <div class="field-label">Legal Entity:</div>
                     <div class="field-input">
-                        <input type="text" class="input-box icon-autocomplete" id="legalentityval" value="" onkeyup="loadauto_lentity(this.value)">
+                        <input type="text" class="input-box icon-autocomplete" id="legalentityval" value="">
                         <input type="hidden" id="legalentityid">
-                        <div id="autocompleteview-lentity" class="ac-textbox" style="display:none;"  onclick="hidelentitylist();">
-                            <ul style="width:195px;"></ul>
+                        <div id="ac-legalentity" class="ac-textbox default-display-none">
+                            <ul style="width:85%;"></ul>
                         </div>
                     </div>
                 </div>
                 <div class="input-row">
                     <div class="field-label">Division:</div>
                     <div class="field-input">
-                        <input type="text" class="input-box icon-autocomplete" id="divisionval" value=""   onkeyup="loadauto_division(this.value)">
+                        <input type="text" class="input-box icon-autocomplete" id="divisionval" value="">
                         <input type="hidden" id="divisionid">
-                        <div id="autocompleteview-division" class="ac-textbox" style="display:none;"  onclick="hidedivisionlist();">
-                            <ul style="width:195px;"></ul>
+                        <div id="ac-division" class="ac-textbox default-display-none">
+                            <ul style="width:85%;"></ul>
                         </div>
                     </div>
                 </div>
@@ -77,10 +77,10 @@
                 <div class="input-row">
                     <div class="field-label">Unit:</div>
                     <div class="field-input">
-                        <input type="text" class="input-box icon-autocomplete" id="unitval" value=""  onkeyup="loadauto_unit(this.value)">
+                        <input type="text" class="input-box icon-autocomplete" id="unitval" value="">
                         <input type="hidden" id="unitid">
-                        <div id="autocompleteview-unit" class="ac-textbox" style="display:none;"  onclick="hideunitlist();">
-                            <ul style="width:195px;"></ul>
+                        <div id="ac-unit" class="ac-textbox default-display-none">
+                            <ul style="width:85%;"></ul>
                         </div>
                     </div>
                 </div>
@@ -91,10 +91,10 @@
                         :
                     </div>
                     <div class="field-input">
-                        <input type="text" class="input-box icon-autocomplete" id="level1val" value=""   onkeyup="loadauto_level1(this.value)">
+                        <input type="text" class="input-box icon-autocomplete" id="level1val" value="">
                         <input type="hidden" id="level1id">
-                        <div id="autocompleteview-level1" class="ac-textbox" style="display:none;"  onclick="hidelevel1list();">
-                            <ul style="width:195px;"></ul>
+                        <div id="ac-statutory" class="ac-textbox default-display-none">
+                            <ul style="width:85%;"></ul>
                         </div>
                     </div>
                 </div>
@@ -176,7 +176,7 @@
         <td width="22%" style="padding-top:6px;">Statutory Provision</td>
         <td style="padding-top:6px;">Unit Name</td>
         <td style="padding-top:6px;">Notifications Content</td>
-        <td style="padding-top:6px;" width="15%">Date and Time</td>
+        <td style="padding-top:6px;" width="15%">Date</td>
     </tr>
     <tr class="table-row-heading">
         <td colspan="4" class="table-definition">

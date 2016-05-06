@@ -5,7 +5,7 @@ var levelOneStatutoriesList;
 var unitsList;
 var serviceProvidersList;
 
-
+//get report filter data
 function getServiceProviderReportFilters(){
   function onSuccess(data){
     countriesList = data["countries"];
@@ -30,17 +30,15 @@ function getServiceProviderReportFilters(){
   );
 }
 
+//display compliance details in view page
 function loadresult(filterList){
   $(".grid-table-rpt").show();
   var country = $("#country").find('option:selected').text();
   var domain = $("#domainval").val();
   var act = $("#actval").val();
-
-
   $(".tbody-serviceprovider").find("tbody").remove();
   var compliance_count=0;
   var sp_count=0;
-
   var tableRow=$('#serviceprovider-list-templates .table-serviceprovider-list .table-row-serviceprovider-list');
   var clone=tableRow.clone();
   $('.tbl_country', clone).text(country);
@@ -91,27 +89,13 @@ function loadresult(filterList){
 
           var sDay = '';
           if(compliancelists[compliancelist][i]["statutory_dates"][j]["statutory_date"] != null) sDay = compliancelists[compliancelist][i]["statutory_dates"][j]["statutory_date"];
-
           var sMonth = '';
           if(compliancelists[compliancelist][i]["statutory_dates"][j]["statutory_month"] != null) sMonth = compliancelists[compliancelist][i]["statutory_dates"][j]["statutory_month"];
-
           var tDays = '';
           if(compliancelists[compliancelist][i]["statutory_dates"][j]["trigger_before_days"] != null) tDays = compliancelists[compliancelist][i]["statutory_dates"][j]["trigger_before_days"];
 
+          if(sMonth != '') sMonth = getMonth_IntegettoString(sMonth);
 
-          if(sMonth == 1) sMonth = "January"
-          else if(sMonth == 2) sMonth = "February"
-          else if(sMonth == 3) sMonth = "March"
-          else if(sMonth == 4) sMonth = "April"  
-          else if(sMonth == 5) sMonth = "May"
-          else if(sMonth == 6) sMonth = "June"
-          else if(sMonth == 7) sMonth = "July"
-          else if(sMonth == 8) sMonth = "Auguest"
-          else if(sMonth == 9) sMonth = "September"
-          else if(sMonth == 10) sMonth = "October"
-          else if(sMonth == 11) sMonth = "November"
-          else if(sMonth == 12) sMonth = "December"
-            
           triggerdate +=  tDays + " Days" + ', ';
           statutorydate +=  sDay + ' - ' + sMonth +', ';
         }
@@ -161,6 +145,7 @@ function loadresult(filterList){
   $('.compliance_count').text("Total : "+ (compliance_count) +" records");
 }
 
+//get report data from api
 function loadCompliance(reportType){ 
   var country = $("#country").val();
   var domain = $("#domain").val();
@@ -193,16 +178,18 @@ function loadCompliance(reportType){
         loadresult(serviceProviderWiseComplianceList);
 
         if(reportType == "export"){
-          client_mirror.exportToCSV(data, 
-          function (error, response) {
-            if (error == null){
-              var download_url = response["link"];
-              window.open(download_url, '_blank');
-            }
-            else {
-              displayMessage(error);
-            }
-          });
+          var download_url = data["link"];
+          window.open(download_url, '_blank');
+          // client_mirror.exportToCSV(data, 
+          // function (error, response) {
+          //   if (error == null){
+          //     var download_url = response["link"];
+          //     window.open(download_url, '_blank');
+          //   }
+          //   else {
+          //     displayMessage(error);
+          //   }
+          // });
         }
       }
       function onFailure(error){
@@ -237,9 +224,6 @@ $("#export").click(function(){
 //Autocomplete Script Starts
 //Hide list items after select
 $(".hidemenu").click(function(){
-  $("#autocomplete_domain").hide();
-  $("#autocomplete_act").hide();
-  $("#autocomplete_unit").hide();
   $("#autocomplete_serviceprovider").hide();
 });
 
@@ -253,91 +237,45 @@ function loadCountries(countriesList){
   });
 }
 
-//load domain list in autocomplete text box  
+//retrive domain autocomplete value
+function onDomainSuccess(val){
+  $("#domainval").val(val[1]);
+  $("#domain").val(val[0]);
+}
+//load domain list in autocomplete textbox  
 $("#domainval").keyup(function(){
   var textval = $(this).val();
-  $("#autocomplete_domain").show();
-  var domains = domainsList;
-  var suggestions = [];
-  $('#ulist_domain').empty();
-  if(textval.length>0){
-    for(var i in domains){
-      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == true) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_domain(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_domain').append(str);
-    $("#domain").val('');
-    }else{
-      $("#domain").val('');
-      $("#autocomplete_domain").hide();
-    }
+  getDomainAutocomplete(textval, domainsList, function(val){
+    onDomainSuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_domain (element,checkval,checkname) {
-  $("#domainval").val(checkname);
-  $("#domain").val(checkval);
-}
 
-//acts-----------------------------------------
+//retrive statutory autocomplete value
+function onStatutorySuccess(val){
+  $("#actval").val(val[1]);
+  $("#act").val(val[0].replace(/##/gi,'"'));
+}
+//load statutory list in autocomplete textbox  
 $("#actval").keyup(function(){
   var textval = $(this).val();
-  $("#autocomplete_act").show();
-  var acts = levelOneStatutoriesList;
-  var suggestions = [];
-  $('#ulist_act').empty();
-  if(textval.length>0){
-    for(var i in acts){
-      if (~acts[i].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([acts[i],acts[i]]); 
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_acts(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_act').append(str);
-    $("#act").val('');
-    }else{
-      $("#act").val('');
-      $("#autocomplete_act").hide();
-    }
+  getClientStatutoryAutocomplete(textval, levelOneStatutoriesList, function(val){
+    onStatutorySuccess(val)
+  })
 });
-function activate_acts (element,checkval,checkname) {
-  $("#actval").val(checkname);
-  $("#act").val(checkval);
+
+//retrive unit form autocomplete value
+function onUnitSuccess(val){
+  $("#unitval").val(val[1]);
+  $("#unit").val(val[0]);
 }
 
-
+//load unit  form list in autocomplete text box  
 $("#unitval").keyup(function(){
-
   var textval = $(this).val();
-  $("#autocomplete_unit").show();
-  
-  var units = unitsList;
-  var suggestions = [];
- $('#ulist_unit').empty();
-  if(textval.length>0){
-    for(var i in units){
-      var combineUnitName = units[i]['unit_code']+"-"+units[i]['unit_name'];
-      if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],combineUnitName]); 
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_unit(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_unit').append(str);
-    $("#unit").val('');
-    }else{
-      $("#unit").val('');
-      $("#autocomplete_unit").hide();
-    }
+  getUnitAutocomplete(textval, unitsList, function(val){
+    onUnitSuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_unit (element,checkval,checkname) {
-  $("#unitval").val(checkname);
-  $("#unit").val(checkval);
-}
 
 
 //Assignee---------------------------------------------------
@@ -355,7 +293,7 @@ $("#serviceproviderval").keyup(function(){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_serviceprovider(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_serviceprovider(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_serviceprovider').append(str);
     $("#serviceprovider").val('');
@@ -365,12 +303,15 @@ $("#serviceproviderval").keyup(function(){
     }
 });
 //set selected autocomplte value to textbox
-function activate_serviceprovider (element,checkval,checkname) {
+function activate_serviceprovider (element) {
+  var checkname = $(element).text();
+  var checkval = $(element).attr('id');
   $("#serviceproviderval").val(checkname);
   $("#serviceprovider").val(checkval);
 }
 //Autocomplete Script ends
 
+//initialization
 $(function() {
   $(".grid-table-rpt").hide();
   getServiceProviderReportFilters();

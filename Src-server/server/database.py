@@ -176,8 +176,13 @@ class Database(object) :
     def select_all(self, query) :
         cursor = self.cursor()
         assert cursor is not None
-        cursor.execute(query)
-        return cursor.fetchall()
+        try:
+            cursor.execute(query)
+            return cursor.fetchall()
+        except Exception, e:
+            logger.logClientApi(query)
+            logger.logClientApi(e)
+            return
 
     ########################################################
     # To execute select query
@@ -276,6 +281,7 @@ class Database(object) :
                 query += "%s," % str(value)
             else:
                 query += str(value)
+        print query
         return self.execute(query)
 
     ########################################################
@@ -1749,7 +1755,7 @@ class KnowledgeDatabase(Database):
             parent_ids, parent_names, int(user_id), str(created_on)
         )
         if (self.save_data(table_name, field, data)) :
-            action = "New Geography %s added" % (geography_id)
+            action = "New Geography %s added" % (geography_name)
             self.save_activity(user_id, 6, action)
             is_saved = True
         return is_saved
@@ -1772,10 +1778,6 @@ class KnowledgeDatabase(Database):
         action = "Geography - %s updated" % name
         self.save_activity(updated_by, 6, action)
 
-
-        # if oldparent_ids != parent_ids :
-            # oldPId = str(oldparent_ids) + str(geography_id)
-            # newPId = str(parent_ids) + str(geography_id)
         qry = "SELECT geography_id, geography_name, parent_ids, level_id \
           from tbl_geographies \
             WHERE parent_ids like '%s'" % str("%" + str(geography_id) + ",%")
@@ -1788,15 +1790,6 @@ class KnowledgeDatabase(Database):
                 row["parent_ids"] = geography_id
             else :
                 row["parent_ids"] = row["parent_ids"][:-1]
-            # newParentId = str(row[2]).replace(oldPId, newPId)
-            # q = "UPDATE tbl_geographies \
-            #   set parent_names = (select group_concat(a.geography_name, '>>') \
-            #     from tbl_geographies a where a.geography_id in (%s)), \
-            #   updated_by=%s \
-            #   where geography_id=%s" % (
-            #     row[2], updated_by, row[0]
-            # )
-            #  updating child parent-names
             q = "UPDATE tbl_geographies as A inner join ( \
                 select p.geography_id, (select group_concat(p1.geography_name SEPARATOR '>>') \
                     from tbl_geographies as p1 where geography_id in (%s)) as names \
@@ -1811,8 +1804,8 @@ class KnowledgeDatabase(Database):
                     row["parent_ids"], row["geography_id"], row["geography_id"], row["level_id"]
                 )
             self.execute(q)
-        action = "Geography name  %s updated in child parent_names" % (name)
-        self.save_activity(updated_by, 6, action)
+        # action = "Geography name  %s updated in child parent_names" % (name)
+        # self.save_activity(updated_by, 6, action)
         # self.getAllGeographies()
         return True
 
@@ -2271,7 +2264,7 @@ class KnowledgeDatabase(Database):
     def get_statutory_mapping_report(
         self, country_id, domain_id, industry_id,
         statutory_nature_id, geography_id,
-        level_1_statutory_id, user_id
+        level_1_statutory_id, user_id, from_count, to_count
     ) :
         qry_where = ""
         if industry_id is not None :
@@ -2282,6 +2275,35 @@ class KnowledgeDatabase(Database):
             qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
         if level_1_statutory_id is not None :
             qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, '%s') from tbl_statutories where statutory_id = %s)" % (str("%"), level_1_statutory_id)
+
+        q_count = "SELECT  count(distinct t2.compliance_id) \
+            FROM tbl_statutory_mappings t1 \
+            INNER JOIN tbl_compliances t2 \
+            ON t2.statutory_mapping_id = t1.statutory_mapping_id \
+            INNER JOIN tbl_statutory_industry t3 \
+            ON t3.statutory_mapping_id = t1.statutory_mapping_id \
+            INNER JOIN tbl_statutory_geographies t4 \
+            ON t4.statutory_mapping_id = t1.statutory_mapping_id \
+            INNER JOIN tbl_user_domains t5 \
+            ON t5.domain_id = t1.domain_id \
+            and t5.user_id = %s \
+            INNER JOIN tbl_user_countries t6 \
+            ON t6.country_id = t1.country_id \
+            and t6.user_id = %s \
+            WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
+            t1.country_id = %s \
+            and t1.domain_id = %s %s  \
+            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
+                t2.frequency_id " % (
+                user_id, user_id,
+                country_id, domain_id,
+                qry_where
+            )
+        row = self.select_one(q_count)
+        if row :
+            r_count = row[0]
+        else :
+            r_count = 0
 
         q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
@@ -2317,10 +2339,12 @@ class KnowledgeDatabase(Database):
             t1.country_id = %s \
             and t1.domain_id = %s \
             %s \
-            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), t2.frequency_id" % (
+            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), t2.frequency_id \
+            limit %s, %s" % (
                 user_id, user_id,
                 country_id, domain_id,
-                qry_where
+                qry_where,
+                from_count, to_count
             )
         rows = self.select_all(q)
         columns = [
@@ -2341,13 +2365,13 @@ class KnowledgeDatabase(Database):
             report_data = self.convert_to_dict(rows, columns)
 
         return self.return_knowledge_report(
-            report_data
+            report_data, r_count
         )
 
     def get_compliance_list_report_techno(
         self, country_id, domain_id, industry_id,
         statutory_nature_id, geography_id,
-        level_1_statutory_id, user_id
+        level_1_statutory_id, user_id, from_count, to_count
     ) :
         qry_where = ""
         if industry_id is not None :
@@ -2358,6 +2382,37 @@ class KnowledgeDatabase(Database):
             qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
         if level_1_statutory_id is not None :
             qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, '%s') from tbl_statutories where statutory_id = %s)" % (str("%"), level_1_statutory_id)
+
+        q_count = "SELECT  count(distinct t2.compliance_id) \
+            FROM tbl_statutory_mappings t1 \
+            INNER JOIN tbl_compliances t2 \
+            ON t2.statutory_mapping_id = t1.statutory_mapping_id \
+            INNER JOIN tbl_statutory_industry t3 \
+            ON t3.statutory_mapping_id = t1.statutory_mapping_id \
+            INNER JOIN tbl_statutory_geographies t4 \
+            ON t4.statutory_mapping_id = t1.statutory_mapping_id \
+            INNER JOIN tbl_user_domains t5 \
+            ON t5.domain_id = t1.domain_id \
+            and t5.user_id = %s \
+            INNER JOIN tbl_user_countries t6 \
+            ON t6.country_id = t1.country_id \
+            and t6.user_id = %s \
+            WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
+            t1.country_id = %s \
+            and t1.domain_id = %s %s \
+            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
+            (select group_concat(I.industry_name) from tbl_industries I where I.industry_id  in \
+            (select industry_id from tbl_statutory_industry where statutory_mapping_id = t1.statutory_mapping_id)), \
+                t2.frequency_id " % (
+                user_id, user_id,
+                country_id, domain_id,
+                qry_where
+            )
+        row = self.select_one(q_count)
+        if row :
+            r_count = row[0]
+        else :
+            r_count = 0
 
         q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
@@ -2396,10 +2451,12 @@ class KnowledgeDatabase(Database):
             and t1.domain_id = %s \
             %s \
             ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
-                industry, t2.frequency_id" % (
+                industry, t2.frequency_id \
+                limit %s, %s" % (
                 user_id, user_id,
                 country_id, domain_id,
-                qry_where
+                qry_where,
+                from_count, to_count
             )
         rows = self.select_all(q)
         columns = [
@@ -2420,7 +2477,7 @@ class KnowledgeDatabase(Database):
             report_data = self.convert_to_dict(rows, columns)
 
         return self.return_knowledge_report(
-            report_data
+            report_data, r_count
         )
 
     def get_mappings_id(self, statutory_id) :
@@ -2441,7 +2498,7 @@ class KnowledgeDatabase(Database):
             )
         return result
 
-    def return_knowledge_report(self, report_data):
+    def return_knowledge_report(self, report_data, total_count=None):
         if bool(self.geography_parent_mapping) is False :
             self.get_geographies()
 
@@ -2525,7 +2582,7 @@ class KnowledgeDatabase(Database):
                 url
             )
             report_list.append(info)
-        return report_list
+        return report_list, total_count
     #
     # compliance
     #
@@ -4015,6 +4072,50 @@ class KnowledgeDatabase(Database):
             ))
         return results
 
+    def get_next_unit_auto_gen_no(self, client_id):
+        columns = "count(*)"
+        condition = "client_id = '%d'" % client_id
+        rows = self.get_data(self.tblUnits, columns, condition)
+        no_of_units = rows[0][0]
+
+        group_columns = "group_name"
+        group_condition = "client_id = '%d'" % client_id
+        group_company = self.get_data(self.tblClientGroups, group_columns, group_condition)
+
+        group_name = group_company[0][0].replace(" ", "")
+        unit_code_start_letters = group_name[:2].upper()
+
+        columns = "TRIM(LEADING '%s' FROM unit_code)" % unit_code_start_letters
+        condition = "unit_code like binary '%s%s' and CHAR_LENGTH(unit_code) = 7 and client_id='%d'" % (
+            unit_code_start_letters, "%", client_id
+        )
+        rows = self.get_data(self.tblUnits, columns, condition)
+        auto_generated_unit_codes = []
+        for row in rows:
+            try:
+                auto_generated_unit_codes.append(int(row[0]))
+            except Exception, ex:
+                print ex
+                continue
+        next_auto_gen_no = 1
+        if len(auto_generated_unit_codes) > 0:
+            existing_max_unit_code = max(auto_generated_unit_codes)
+            if existing_max_unit_code == no_of_units:
+                next_auto_gen_no = no_of_units + 1
+            else:
+                next_auto_gen_no = existing_max_unit_code + 1
+        unit_code = group_name[:2].upper()
+        if len(str(next_auto_gen_no)) == 1:
+            unit_code += "0000"
+        elif len(str(next_auto_gen_no)) == 2:
+            unit_code += "000"
+        elif len(str(next_auto_gen_no)) == 3:
+            unit_code += "00"
+        elif len(str(next_auto_gen_no)) == 4:
+            unit_code += "0"
+        unit_code += "%d" % (next_auto_gen_no)
+        return unit_code
+
     def get_client_countries(self, client_id):
         columns = "group_concat(country_id)"
         condition = "client_id ='%d'" % client_id
@@ -4209,6 +4310,11 @@ class KnowledgeDatabase(Database):
                 break
         encrypted_password, password = self.generate_and_return_password()
         query = "insert into tbl_admin (username, password) values ('%s', '%s')" % (
+            email_id, encrypted_password)
+        client_db_cursor.execute(query)
+        query = "insert into tbl_users (user_id, employee_name, email_id, password, user_level,\
+        is_primary_admin, is_service_provider, is_admin)\
+        values (0, 'Administrator', '%s', '%s', 1 , 1, 0, 0 )" % (
             email_id, encrypted_password)
         client_db_cursor.execute(query)
         self._save_client_countries(country_ids, client_db_cursor)
@@ -4656,6 +4762,7 @@ class KnowledgeDatabase(Database):
         if division_id is not None:
             columns.append("division_id")
         values_list = []
+        unit_names = []
         for unit in units:
             domain_ids = ",".join(str(x) for x in unit.domain_ids)
             if business_group_id != None and division_id is not None:
@@ -4678,9 +4785,10 @@ class KnowledgeDatabase(Database):
                         str(unit.industry_id), domain_ids, str(unit.unit_code).upper(), str(unit.unit_name), str(unit.unit_address),
                         str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp)
             values_list.append(values_tuple)
+            unit_names.append("\"%s - %s\"" % (str(unit.unit_code).upper(), unit.unit_name))
         result = self.bulk_insert(self.tblUnits, columns, values_list)
 
-        action = "Created Unit \"%s - %s\"" % (str(unit.unit_code).upper(), unit.unit_name)
+        action = "Created following Units %s" % (",".join(unit_names))
         self.save_activity(session_user, 19, action)
 
         return result
@@ -4740,32 +4848,26 @@ class KnowledgeDatabase(Database):
         return True
 
     def reactivate_unit(self, client_id, unit_id, session_user):
-        current_time_stamp = str(self.get_date_time())
-        columns = ["is_active", "updated_on" , "updated_by"]
-        values = [1, current_time_stamp, session_user]
-        condition = "unit_id = '%d' and client_id = '%d' "% (unit_id, client_id)
-        result = self.update(self.tblUnits, columns, values, condition)
-
-        rows = self.get_client_db_info(client_id)
-
-        ip = rows[0][0]
-        username = rows[0][2]
-        password = rows[0][3]
-        dbname = rows[0][4]
-        conn = self._db_connect(ip, username, password, dbname)
-        cursor = conn.cursor()
-
-        query = "update tbl_units set is_closed = 0 where unit_id = '%d'" % unit_id
-        cursor.execute(query)
-        conn.commit()
-        conn.close()
-
-        action_column = "unit_code, unit_name"
+        action_column = "business_group_id,legal_entity_id,division_id,country_id,geography_id,industry_id,unit_code,unit_name,address,postal_code,domain_ids"
+        condition = "unit_id = '%d'" % (unit_id)
         rows = self.get_data(self.tblUnits, action_column, condition)
+        result = self.convert_to_dict(rows, action_column.split(","))
+
         action = "Reactivated Unit \"%s-%s\"" % (rows[0][0], rows[0][1])
         self.save_activity(session_user, 19, action)
 
-        return result
+        columns = ["client_id", "unit_id", "is_active"] + action_column.split(",")
+        new_unit_id = self.get_new_id("unit_id", self.tblUnits)
+        result = result[0]
+        unit_code = self.get_next_unit_auto_gen_no(client_id)
+        values = [
+            client_id, new_unit_id,1, result["business_group_id"], result["legal_entity_id"],
+            result["division_id"], result["country_id"], result["geography_id"],
+            result["industry_id"],unit_code, result["unit_name"], result["address"],
+            result["postal_code"], result["domain_ids"]
+        ]
+        self.insert(self.tblUnits, columns, values)
+        return unit_code, result["unit_name"]
 
     def verify_username(self, username):
         columns = "count(*), user_id"
@@ -4810,6 +4912,20 @@ class KnowledgeDatabase(Database):
             result = self.update(self.tblUsers, columns, values, condition)
         else:
             result = self.update(self.tblAdmin, columns, values, condition)
+
+        if user_id != 0:
+            columns = "employee_code, employee_name"
+            condition = "user_id = '%d'" % user_id
+            rows = self.get_data(self.tblUsers, columns, condition)
+            employee_name = rows[0][1]
+            if rows[0][0] is not None:
+                employee_name = "%s - %s" % (rows[0][0], rows[0][1])
+        else:
+            employee_name = "Administrator"
+
+        action = "\"%s\" has updated his/her password" % ( employee_name)
+        self.save_activity(user_id, 0, action)
+
         if result:
             return True
         else:
@@ -5033,6 +5149,7 @@ class KnowledgeDatabase(Database):
             ON t1.geography_id = t3.geography_id \
             INNER JOIN tbl_user_clients t4 \
             ON t1.client_id = t4.client_id \
+            AND t1.is_active = 1 \
             AND t4.user_id = %s \
             AND t2.country_id = %s " % (
                 user_id, country_id
@@ -5278,8 +5395,6 @@ class KnowledgeDatabase(Database):
             )
             if (self.save_data(self.tblClientStatutories, field, values)) :
                 assigned_statutories = data.assigned_statutories
-                print "unit_id ", unit_id
-
                 value_list.extend(self.save_update_client_complainces(client_statutory_id, assigned_statutories, user_id, created_on))
         self.execute_bulk_insert(value_list)
 
@@ -5449,11 +5564,13 @@ class KnowledgeDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return self.return_assigned_statutories_by_id(result)
 
-    def return_assigned_compliances_by_id(self, client_statutory_id, statutory_id=None):
+    def return_assigned_compliances_by_id(self, client_statutory_id, statutory_id=None, applicable_status=None):
         if bool(self.statutory_parent_mapping) is False:
             self.get_statutory_master()
         if statutory_id is None :
             statutory_id = '%'
+        if applicable_status is None :
+            applicable_status = '%'
         query = "SELECT t1.client_statutory_id, t1.compliance_id, \
             t1.statutory_id, t1.statutory_applicable, \
             t1.statutory_opted, \
@@ -5475,8 +5592,11 @@ class KnowledgeDatabase(Database):
             ON t3.compliance_id = t1.compliance_id \
             WHERE \
             t1.client_statutory_id = %s \
-            AND t1.statutory_id like '%s' ORDER BY level, statutory_name, compliance_id" % (
-                client_statutory_id, statutory_id
+            AND t1.statutory_id like '%s' \
+            AND  t1.compliance_applicable like '%s' \
+            ORDER BY level, statutory_name, compliance_id" % (
+                client_statutory_id, statutory_id,
+                applicable_status
             )
         rows = self.select_all(query)
         columns = [
@@ -5730,8 +5850,8 @@ class KnowledgeDatabase(Database):
             qry += " AND t4.statutory_id = %s " % (level_1_statutory_id)
         applicable_status = request_data.applicability_status
         if applicable_status is not None :
-            qry += " AND t4.statutory_applicable = %s " % (applicable_status)
-            qry += " AND t4.compliance_applicable = %s " % (applicable_status)
+            applicable_status = int(applicable_status)
+            qry += " AND t4.compliance_applicable = %s " % applicable_status
 
         query = "SELECT distinct t1.client_statutory_id, t1.client_id, \
             t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, \
@@ -5763,9 +5883,9 @@ class KnowledgeDatabase(Database):
             "division_name", "address", "postal_code", "unit_code"
         ]
         result = self.convert_to_dict(rows, columns)
-        return self.return_assigned_statutory_report(result, level_1_statutory_id)
+        return self.return_assigned_statutory_report(result, level_1_statutory_id, applicable_status)
 
-    def return_assigned_statutory_report(self, report_data, level_1_statutory_id):
+    def return_assigned_statutory_report(self, report_data, level_1_statutory_id, applicable_status):
         if bool(self.geography_parent_mapping) is False:
             self.get_geographies()
 
@@ -5783,7 +5903,7 @@ class KnowledgeDatabase(Database):
                 unit_address = "%s, %s, %s" % (
                     data["address"], ', '.join(ordered), data["postal_code"]
                 )
-                statutories = self.return_assigned_compliances_by_id(client_statutory_id, level_1_statutory_id)
+                statutories = self.return_assigned_compliances_by_id(client_statutory_id, level_1_statutory_id, applicable_status)
                 unit_statutories = technoreports.UNIT_WISE_ASSIGNED_STATUTORIES(
                     data["unit_id"],
                     unit_name,
@@ -5796,7 +5916,7 @@ class KnowledgeDatabase(Database):
                 )
             else :
                 statutories = unit_statutories.assigned_statutories
-                new_stautory = self.return_assigned_compliances_by_id(client_statutory_id)
+                new_stautory = self.return_assigned_compliances_by_id(client_statutory_id, None, applicable_status)
                 for new_s in new_stautory :
                     new_id = new_s.level_1_statutory_id
                     is_exists = False
@@ -6039,10 +6159,12 @@ class KnowledgeDatabase(Database):
 #   Get Details Report
 #
 
-    def get_client_details_report(self, country_id, client_id, business_group_id,
-            legal_entity_id, division_id, unit_id, domain_ids):
+    def get_client_details_report(
+        self, country_id, client_id, business_group_id,
+        legal_entity_id, division_id, unit_id, domain_ids
+    ):
 
-        condition = "country_id = '%d' AND client_id = '%d' "%(
+        condition = "country_id = '%d' AND client_id = '%d' " % (
             country_id, client_id
         )
         if business_group_id is not None:
@@ -6054,24 +6176,30 @@ class KnowledgeDatabase(Database):
         if unit_id is not None:
             condition += " AND unit_id = '%d'" % unit_id
         if domain_ids is not None:
-            for domain_id in domain_ids:
-                condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
-                            "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
-                            "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
-                            " or domain_ids LIKE '"+str(domain_id)+"') "
+            domain_con = ""
+            for i, domain_id in enumerate(domain_ids):
+                # condition += " AND  ( domain_ids LIKE  '%," + str(domain_id) + ",%' " +\
+                #             "or domain_ids LIKE  '%," + str(domain_id) + "' " +\
+                #             "or domain_ids LIKE  '" + str(domain_id) + ",%'" +\
+                #             " or domain_ids LIKE '" + str(domain_id) + "') "
+                if i == 0 :
+                    domain_con += " FIND_IN_SET('%s', domain_ids)" % (domain_id)
+                elif i > 0 :
+                    domain_con += " OR FIND_IN_SET('%s', domain_ids)" % (domain_id)
+            condition += " AND(%s)" % (domain_con)
 
         group_by_columns = "business_group_id, legal_entity_id, division_id"
         group_by_condition = condition+" group by business_group_id, legal_entity_id, division_id"
         group_by_rows = self.get_data(self.tblUnits, group_by_columns, group_by_condition)
         GroupedUnits = []
         for row in group_by_rows:
-            columns = "tu.unit_id, tu.unit_code, tu.unit_name, tg.geography_name, "\
-            "tu.address, tu.domain_ids, tu.postal_code"
+            columns = "tu.unit_id, tu.unit_code, tu.unit_name, tg.geography_name, \
+                tu.address, tu.domain_ids, tu.postal_code"
             tables = [self.tblUnits, self.tblGeographies]
             aliases = ["tu", "tg"]
             join_type = " left join "
             join_conditions = ["tu.geography_id = tg.geography_id"]
-            where_condition = "tu.legal_entity_id = '%d' "% row[1]
+            where_condition = "tu.legal_entity_id = '%d' " % row[1]
             if row[0] == None:
                 where_condition += " And tu.business_group_id is NULL"
             else:
@@ -6083,16 +6211,26 @@ class KnowledgeDatabase(Database):
             if unit_id is not None:
                 where_condition += " AND tu.unit_id = '%d'" % unit_id
             if domain_ids is not None:
-                for domain_id in domain_ids:
-                    where_condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
-                                "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
-                                "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
-                                " or domain_ids LIKE '"+str(domain_id)+"') "
-            result_rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type,
-            join_conditions, where_condition)
+                domain_con = ""
+                for i, domain_id in enumerate(domain_ids):
+                    # where_condition += " AND  ( domain_ids LIKE  '%," + str(domain_id)+",%' " +\
+                    #             "or domain_ids LIKE  '%," + str(domain_id) + "' " +\
+                    #             "or domain_ids LIKE  '" + str(domain_id) + ",%'" +\
+                    #             " or domain_ids LIKE '" + str(domain_id) + "') "
+                    if i == 0 :
+                        domain_con += "FIND_IN_SET('%s', domain_ids)" % (domain_id)
+                    elif i > 0 :
+                        domain_con += " OR FIND_IN_SET('%s', domain_ids)" % (domain_id)
+            where_condition += " AND(%s)" % (domain_con)
+
+            result_rows = self.get_data_from_multiple_tables(
+                columns, tables, aliases, join_type,
+                join_conditions, where_condition
+            )
             units = []
             for result_row in result_rows:
-                units.append(technoreports.UnitDetails(result_row[0], result_row[3], result_row[1],
+                units.append(technoreports.UnitDetails(
+                    result_row[0], result_row[3], result_row[1],
                     result_row[2], result_row[4], result_row[6],
                     [int(x) for x in result_row[5].split(",")]))
             GroupedUnits.append(technoreports.GroupedUnits(row[2], row[1], row[0], units))
@@ -6178,7 +6316,9 @@ class KnowledgeDatabase(Database):
     def get_notifications(
         self, notification_type, session_user, client_id=None
     ):
-        user_type = self.get_user_type(session_user)
+        user_type = None
+        if session_user != 0 :
+            user_type = self.get_user_type(session_user)
 
         columns = "tn.notification_id, notification_text, link, "+\
         "created_on, read_status"
@@ -6191,7 +6331,7 @@ class KnowledgeDatabase(Database):
         )
         if user_type == "Techno":
             where_condition += " AND link not like '%sstatutory%s' " % ("%" , "%")
-        else:
+        elif user_type == "Knowledge":
             where_condition += " AND link not like '%sclient%s'" % ("%" , "%")
         where_condition += "order by created_on DESC limit 30"
         rows = self.get_data_from_multiple_tables(
@@ -6328,7 +6468,8 @@ class KnowledgeDatabase(Database):
             old_admin_password = rows[0][2]
 
             query = "select count(*) from tbl_assigned_compliances \
-            where assignee = '%d'" % old_admin_id
+            where assignee = '%d' or concurrence_person = '%d' or \
+            approval_person = '%d'" % (old_admin_id, old_admin_id, old_admin_id)
             cursor.execute(query)
             rows = cursor.fetchall()
             compliance_count = rows[0][0]
@@ -6405,6 +6546,32 @@ class KnowledgeDatabase(Database):
                     for row in rows:
                         q = "%s (%s, %s) " % ( query, row[0], new_admin_id)
                         cursor.execute(q)
+
+
+                query = "update tbl_assigned_compliances set concurrence_person = null,\
+                approval_person = '%d' where assignee = '%d'" % (new_admin_id, new_admin_id)
+                cursor.execute(query)
+
+                query = "update tbl_compliance_history set concurred_by = null,\
+                approved_by = '%d' where completed_by = '%d' and completed_on is null\
+                or completed_on = 0 " % (new_admin_id, new_admin_id)
+                cursor.execute(query)
+
+                query = "update tbl_compliance_history set approve_status = 1, \
+                approved_on=now(), approved_by='%d' where completed_by = '%d' and \
+                completed_on is not null and completed_on != 0 and approve_status \
+                is null or approve_status = 0" % (new_admin_id, new_admin_id)
+                cursor.execute(query)
+
+                query = "SELECT employee_name, employee_code FROM tbl_users \
+                WHERE user_id='%d'" % new_admin_id
+                cursor.execute(query)
+                rows = cursor.fetchall()
+                if rows[0][1] is not None:
+                    employee_name = "%s - %s" % (rows[0][1], rows[0][0])
+                else:
+                    employee_name = rows[0][0]
+
                 conn.commit()
 
                 # Promoting to new admin in Knowledge db
@@ -6420,6 +6587,13 @@ class KnowledgeDatabase(Database):
                     old_admin_id, client_id
                 )
                 self.execute(query)
+
+                query = "update tbl_client_groups set email_id = '%s' where client_id = '%d'" % (admin_email, client_id)
+                self.execute(query)
+
+                action = None
+                action = "User \"%s\" was promoted to Primary Admin status" % (employee_name)
+                self.save_activity(session_user, 20, action)
                 return True
         else:
             return "ClientDatabaseNotExists"
@@ -6429,6 +6603,26 @@ class KnowledgeDatabase(Database):
         condition = "client_id = '%d' and is_active = 1" % client_id
         rows = self.get_data(self.tblUnits, column, condition)
         if rows[0][0] > 0:
+            return True
+        else:
+            return False
+
+    def validate_no_of_user_licence(self, no_of_user_licence, client_id):
+        column = "count(*)"
+        condition = "client_id = '%d'" % client_id
+        rows = self.get_data(self.tblClientUsers, column, condition)
+        current_no_of_users = int(rows[0][0])
+        if no_of_user_licence < current_no_of_users:
+            return True
+        else:
+            return False
+
+    def validate_total_disk_space(self, file_space, client_id):
+        settings_columns = "total_disk_space_used"
+        condition = "client_id = '%d'" % client_id
+        rows = self.get_data(self.tblClientGroups, settings_columns, condition)
+        used_space = int(rows[0][0])
+        if file_space < used_space:
             return True
         else:
             return False

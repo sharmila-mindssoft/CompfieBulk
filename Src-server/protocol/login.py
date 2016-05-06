@@ -1,12 +1,10 @@
-import json
-from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list, parse_bool)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list, parse_bool)
 from protocol.parse_structure import (
     parse_structure_CustomTextType_100,
     parse_structure_RecordType_core_Menu,
-    parse_structure_CustomTextType_250,
     parse_structure_UnsignedIntegerType_32,
     parse_structure_EnumType_core_SESSION_TYPE,
-    parse_structure_CustomTextType_20, 
+    parse_structure_CustomTextType_20,
     parse_structure_CustomTextType_50,
     parse_structure_OptionalType_CustomTextType_50,
     parse_structure_OptionalType_CustomTextType_100,
@@ -15,7 +13,7 @@ from protocol.parse_structure import (
 )
 from protocol.to_structure import (
     to_structure_CustomTextType_100,
-    to_structure_RecordType_core_Menu, to_structure_CustomTextType_250,
+    to_structure_RecordType_core_Menu,
     to_structure_SignedIntegerType_8,
     to_structure_EnumType_core_SESSION_TYPE,
     to_structure_OptionalType_CustomTextType_50,
@@ -225,7 +223,7 @@ class Response(object):
         raise NotImplementedError
 
 class UserLoginSuccess(Response):
-    def __init__(self, user_id, session_token, email_id, user_group_name, menu, 
+    def __init__(self, user_id, session_token, email_id, user_group_name, menu,
         employee_name, employee_code, contact_no, address, designation, client_id,
         is_admin
     ):
@@ -244,8 +242,8 @@ class UserLoginSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_id", "session_token", "email_id", 
-            "user_group_name", "menu", "employee_name", "employee_code", 
+        data = parse_dictionary(data, ["user_id", "session_token", "email_id",
+            "user_group_name", "menu", "employee_name", "employee_code",
             "contact_no", "address", "designation", "client_id", "is_admin"])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
@@ -260,7 +258,7 @@ class UserLoginSuccess(Response):
         employee_name = data.get("employee_name")
         employee_name = parse_structure_CustomTextType_50(employee_name)
         employee_code = data.get("employee_code")
-        employee_code = parse_structure_CustomTextType_50(employee_code)
+        employee_code = parse_structure_OptionalType_CustomTextType_50(employee_code)
         contact_no = data.get("contact_no")
         contact_no = parse_structure_CustomTextType_20(contact_no)
         address = data.get("address")
@@ -283,7 +281,7 @@ class UserLoginSuccess(Response):
             "user_group_name": to_structure_CustomTextType_50(self.user_group_name),
             "menu": to_structure_RecordType_core_Menu(self.menu),
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
-            "employee_code": to_structure_CustomTextType_50(self.employee_code),
+            "employee_code": to_structure_OptionalType_CustomTextType_50(self.employee_code),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
             "address": to_structure_OptionalType_CustomTextType_500(self.address),
             "designation": to_structure_OptionalType_CustomTextType_50(self.designation),
@@ -483,6 +481,19 @@ class ContractExpired(Response):
         return {
         }
 
+class ContractNotYetStarted(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ContractNotYetStarted()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class NotConfigured(Response):
     def __init__(self):
         pass
@@ -511,12 +522,12 @@ class EnterDifferentPassword(Response):
 
 def _init_Response_class_map():
     classes = [
-        UserLoginSuccess, AdminLoginSuccess, InvalidCredentials, 
-        ForgotPasswordSuccess, InvalidUserName, ResetSessionTokenValidationSuccess, 
-        InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess, 
-        InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken, 
+        UserLoginSuccess, AdminLoginSuccess, InvalidCredentials,
+        ForgotPasswordSuccess, InvalidUserName, ResetSessionTokenValidationSuccess,
+        InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess,
+        InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken,
         ClientDatabaseNotExists, ContractExpired, EnterDifferentPassword,
-        NotConfigured
+        NotConfigured, ContractNotYetStarted
     ]
     class_map = {}
     for c in classes:

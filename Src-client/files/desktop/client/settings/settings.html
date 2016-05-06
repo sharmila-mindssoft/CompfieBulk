@@ -103,7 +103,8 @@
           </table>
       </div>
       <div class="grid-table">
-          <table>
+          <table  class="js-filtertable">
+          <thead>
             <tr>
               <th align="left" colspan="4" style="background:#ccc;color:black;font-weight:bold">
               Licence Holders list
@@ -120,13 +121,15 @@
           <th style="background:#A381BD;color:black;font-weight:bold" align="left" width="20%">Seating Unit</th>
 
         </tr>
+
         <tr>
           <td align="center">&nbsp;</td>
-          <td><input type="text" class="filter-text-box" id="search-employee"></td>
-          <td><input type="text" class="filter-text-box" id="search-email"></td>
-          <td><input type="text" class="filter-text-box" id="search-mobile-number"></td>
-          <td><input type="text" class="filter-text-box" id="search-seating-unit"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="search-employee"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="search-email"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="search-mobile-number"></td>
+          <td><input type="text" class="filter-text-box js-filter" id="search-seating-unit"></td>
         </tr>
+        </thead>
         <tbody class="tbody-clientprofile-list">
         </tbody>
         </table>

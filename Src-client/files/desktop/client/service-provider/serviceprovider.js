@@ -315,10 +315,11 @@ function serviceprovider_active(serviceProviderId, isActive){
         }
         function onFailure(error){
             if(error == "CannotDeactivateUserExists"){
-                displayMessage(message.cannot_deactivate_sp);
-            }
-            else{
-                displayMessage(error);
+                alert(message.cannot_deactivate_sp);
+            }else if(error == "CannotChangeStatusOfContractExpiredSP"){
+                alert(message.cannot_change_status);
+            }else{
+                alert(error);
             }
         }
         client_mirror.changeServiceProviderStatus(parseInt(serviceProviderId), isActive, 

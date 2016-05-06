@@ -12,9 +12,9 @@ function initMirror() {
         }
     }
 
-    if (window.localStorage["my_ip"] == null || window.localStorage["my_ip"] == "unknown"){
-        get_ip();
-    }
+    // if (window.localStorage["my_ip"] == null){
+    //     get_ip();
+    // }
 
     function toJSON(data) {
         return JSON.stringify(data, null, " ");
@@ -113,6 +113,14 @@ function initMirror() {
             return null;
     }
 
+    function getUserId() {
+        var info = getUserInfo();
+        if (info !== null)
+            return info["user_id"];
+        else
+            return null;
+    }
+
     function get_ip(){
         $.getJSON("http://jsonip.com?callback=?", function (data) {
             window.localStorage["my_ip"]  = data.ip;
@@ -191,11 +199,10 @@ function initMirror() {
 
     // Login function
     function login(username, password, short_name, callback) {
-        if (window.localStorage["my_ip"] == null){
-            my_ip = "unknown"
-        }else{
-            my_ip = window.localStorage["my_ip"]
-        }
+        if (window.localStorage["my_ip"] == null)
+            get_ip();
+        my_ip = window.localStorage["my_ip"]
+
         var request = [
             "Login", {
                 "login_type": "Web",
@@ -758,7 +765,7 @@ function initMirror() {
         apiRequest("knowledge_report", request, callback);
     }
 
-    function filterData(cId, dId, iId, sNId, gId, level1SId) {
+    function filterData(cId, dId, iId, sNId, gId, level1SId, rCount) {
         var filter = {};
         filter["c_id"] = cId;
         filter["d_id"] = dId;
@@ -766,6 +773,7 @@ function initMirror() {
         filter["s_n_id"] = sNId;
         filter["g_id"] = gId;
         filter["level_1_s_id"] = level1SId;
+        filter["r_count"] = rCount
         return filter;
     }
 
@@ -1462,6 +1470,7 @@ function initMirror() {
         logout: logout,
 
         getEmployeeName: getEmployeeName,
+        getUserId: getUserId,
         getUserInfo: getUserInfo,
         updateUserInfo: updateUserInfo,
         getUserProfile: getUserProfile,

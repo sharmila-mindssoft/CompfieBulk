@@ -23,6 +23,7 @@ countryIds = []
 displayMessage('');
 });
 
+// Edit process
 function displayEdit (userId) {
 	displayMessage("");
 	$("#user-view").hide();
@@ -70,6 +71,7 @@ function displayEdit (userId) {
 	}
 }
 
+// activate/deactivate process
 function changeStatus (userId,isActive) {
 	var msgstatus='deactivate';
     if(isActive){
@@ -80,6 +82,7 @@ function changeStatus (userId,isActive) {
     {
 		function onSuccess(response){
 			getUsers();
+			$(".filter-text-box").val('');
 		}
 		function onFailure(error){
 			displayMessage(error);
@@ -97,7 +100,7 @@ function changeStatus (userId,isActive) {
 	}
 }
 
-
+// display user list in view page
 function loadUserList(usersList) {
 	var j = 1;
 	var imgName = '';
@@ -139,13 +142,14 @@ function loadUserList(usersList) {
     $('.employee-name', clone).html(employeeId + ' - ' + employeeName);
     $('.user-group', clone).text(usergroup);
     $('.designation', clone).text(designation);
-    $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+userId+',\''+employeeName+'\')"/>');
+    $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+userId+')"/>');
     $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+userId+','+passStatus+')"/>');
     $('.tbody-user-list').append(clone);
     j = j + 1;
   }
 }
 
+// get users list from api
 function getUsers(){
 	function onSuccess(data){
 		usersList = data["users"];
@@ -168,6 +172,7 @@ function getUsers(){
   );
 }
 
+//validation
 function validate(){
 	var employeeName = $("#employeename").val().trim();
 	var employeeId = $("#employeeid").val().trim();
@@ -206,6 +211,7 @@ function validate(){
   }
 }
 
+// save or update user details
 $("#submit").click(function(){
 	var userId = parseInt($("#userid").val());
 	var employeeName = $("#employeename").val().trim();
@@ -220,9 +226,10 @@ $("#submit").click(function(){
 	if(validate()){
 		if($("#userid").val() == '') {
 			function onSuccess(response) {
-					getUsers();
-					$("#user-view").show();
+				getUsers();
+				$("#user-view").show();
    				$("#user-add").hide();
+   				$(".filter-text-box").val('');
 			}
 			function onFailure(error){
 				if(error == "EmailIDAlreadyExists"){
@@ -251,6 +258,7 @@ $("#submit").click(function(){
 				getUsers();
 				$("#user-add").hide();
 				$("#user-view").show();
+				$(".filter-text-box").val('');
  			}
 			function failure(data) {
 				if(error == "EmailIDAlreadyExists"){
@@ -384,38 +392,25 @@ function activatecountry(element){
     $(element).addClass("active_selectbox_country");
      countryIds.push(parseInt(element.id))
    }  
-   
    $("#countryselected").val(countryIds.length+" Selected");
   }
+
+
+//retrive usergroup autocomplete value
+function onUserGroupSuccess(val){
+  $("#usergroupval").val(val[1]);
+  $("#usergroup").val(val[0]);
+}
 
 //load usergroup list in autocomplete text box  
 $("#usergroupval").keyup(function(){
   var textval = $(this).val();
-  $("#autocompleteview").show();
-  var usergroups = userGroupsList;
-  var suggestions = [];
-  $('#ulist_text').empty();
-  if(textval.length>0){
-    for(var i in usergroups){
-      if (~usergroups[i]["user_group_name"].toLowerCase().indexOf(textval.toLowerCase()) && usergroups[i]["is_active"] == true) suggestions.push([usergroups[i]["user_group_id"],usergroups[i]["user_group_name"]]); 
-    }
-    var str='';
-    for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-    }
-    $('#ulist_text').append(str);
-    $("#usergroup").val('');
-    }else{
-      $("#usergroup").val('');
-      $("#autocompleteview").hide();
-    }
+  getUserGroupAutocomplete(textval, userGroupsList, function(val){
+    onUserGroupSuccess(val)
+  })
 });
-//set selected autocomplte value to textbox
-function activate_text (element,checkval,checkname) {
-  $("#usergroupval").val(checkname);
-  $("#usergroup").val(checkval);
-}
 
+//initialize
 $(document).ready(function(){
 	getUsers();
 	$("#employeename").focus();

@@ -82,19 +82,19 @@ class UpdateSettings(Request):
         is_two_levels_of_approval = data.get("is_two_levels_of_approval")
         is_two_levels_of_approval = parse_structure_Bool(is_two_levels_of_approval)
         assignee_reminder_days = data.get("assignee_reminder_days")
-        assignee_reminder_days = parse_structure_CustomIntegerType_1_7(assignee_reminder_days)
+        assignee_reminder_days = parse_structure_UnsignedIntegerType_32(assignee_reminder_days)
         escalation_reminder_In_advance_days = data.get("escalation_reminder_In_advance_days")
-        escalation_reminder_In_advance_days = parse_structure_CustomIntegerType_1_7(escalation_reminder_In_advance_days)
+        escalation_reminder_In_advance_days = parse_structure_UnsignedIntegerType_32(escalation_reminder_In_advance_days)
         escalation_reminder_days = data.get("escalation_reminder_days")
-        escalation_reminder_days = parse_structure_CustomIntegerType_1_7(escalation_reminder_days)
+        escalation_reminder_days = parse_structure_UnsignedIntegerType_32(escalation_reminder_days)
         return UpdateSettings(is_two_levels_of_approval, assignee_reminder_days, escalation_reminder_In_advance_days, escalation_reminder_days)
 
     def to_inner_structure(self):
         return {
             "is_two_levels_of_approval": to_structure_Bool(self.is_two_levels_of_approval),
-            "assignee_reminder_days": to_structure_CustomIntegerType_1_7(self.assignee_reminder_days),
-            "escalation_reminder_In_advance_days": to_structure_CustomIntegerType_1_7(self.escalation_reminder_In_advance_days),
-            "escalation_reminder_days": to_structure_CustomIntegerType_1_7(self.escalation_reminder_days),
+            "assignee_reminder_days": to_structure_UnsignedIntegerType_32(self.assignee_reminder_days),
+            "escalation_reminder_In_advance_days": to_structure_UnsignedIntegerType_32(self.escalation_reminder_In_advance_days),
+            "escalation_reminder_days": to_structure_UnsignedIntegerType_32(self.escalation_reminder_days),
         }
 
 
@@ -217,7 +217,7 @@ class RequestFormat(object):
 #
 
 class PROFILE_DETAIL(object):
-    def __init__(self, contract_from, contract_to, no_of_user_licence, 
+    def __init__(self, contract_from, contract_to, no_of_user_licence,
         remaining_licence, licence_holders, total_file_space, used_space):
         self.contract_from = contract_from
         self.contract_to = contract_to
@@ -229,7 +229,7 @@ class PROFILE_DETAIL(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["contract_from", "contract_to", 
+        data = parse_dictionary(data, ["contract_from", "contract_to",
             "no_of_user_licence", "remaining_licence", "licence_holders",
             "total_file_space", "used_space"])
         contract_from = data.get("contract_from")
@@ -246,7 +246,7 @@ class PROFILE_DETAIL(object):
         total_file_space = parse_structure_Float(total_file_space)
         used_space = data.get("used_space")
         used_space = parse_structure_Float(used_space)
-        return PROFILE_DETAIL(contract_from, contract_to, no_of_user_licence, 
+        return PROFILE_DETAIL(contract_from, contract_to, no_of_user_licence,
             remaining_licence, licence_holders, total_file_space, used_space)
 
     def to_structure(self):

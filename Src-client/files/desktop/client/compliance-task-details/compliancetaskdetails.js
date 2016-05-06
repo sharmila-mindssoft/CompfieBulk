@@ -95,6 +95,7 @@ function loadComplianceTaskDetails(data){
             $('.status', cloneval).attr("style", "color:#f00;");
         }
         $('.status', cloneval).html(data[k]['compliance_status']);
+
         if(data[k]['format_file_name']  != null){
             $('.format-file', cloneval).attr("href", data[k]['format_file_name']);
         }
@@ -170,6 +171,8 @@ function showSideBar(idval, data){
             var tableRowSide = $('#templates .sideview-div');
             var cloneValSide = tableRowSide.clone();
             var complianceStatus = data[k]['compliance_status'];
+            var rejected_reason = data[k]['remarks'];
+            console.log("rejected_reason"+rejected_reason);
 
             $('.sideview-compliance-unit span', cloneValSide).html(data[k]['unit_name']);
             $('.sideview-compliance-unit abbr', cloneValSide).attr("title", data[k]['address']);
@@ -179,6 +182,13 @@ function showSideBar(idval, data){
             $('.sideview-startdate', cloneValSide).val(data[k]['start_date']);
             $('.sideview-completion-date-td', cloneValSide).html("<input  type='text' class='input-box datepick sideview-completion-date' id='completion-date' readonly='readonly'>");
             $('.sideview-compliance-status', cloneValSide).html(complianceStatus);
+            if (rejected_reason != null){
+                $('#rejected-reason-header', cloneValSide).show();
+                $('.sideview-compliance-reason', cloneValSide).html(rejected_reason);
+            }else{
+                console.log("rejected reason is null");
+                $('#rejected-reason-header', cloneValSide).hide();
+            }
             $('.sideview-upload-date', cloneValSide).html(currentDate.substring(0, 11));
             $('.sideview-remarks-td', cloneValSide).html("<textarea class='input-box sideview-remarks' maxlength='500'></textarea>");
             $("#upload_file", cloneValSide).on("change", function(e) {
@@ -278,8 +288,9 @@ function showSideBar(idval, data){
                         return;
                     }
                 }
+
                 if(validity_date != null  && next_due_date != null){
-                    if(parseMyDate(next_due_date) > parseMyDate(validity_date)){
+                    if(parseMyDate(next_due_date) >= parseMyDate(validity_date)){
                         displayMessage(message.validity_gt_nextduedate);
                         return;
                     }

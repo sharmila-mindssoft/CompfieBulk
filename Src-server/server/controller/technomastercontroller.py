@@ -1,8 +1,8 @@
 ########################################################
-# This Controller will handle Client and Client Unit 
+# This Controller will handle Client and Client Unit
 # related requests
 #
-# In this module "db" is an object of "KnowledgeDatabase" 
+# In this module "db" is an object of "KnowledgeDatabase"
 ########################################################
 import threading
 import re
@@ -68,7 +68,7 @@ def create_database(
 
 
 ########################################################
-# To send the credentials of the created client to 
+# To send the credentials of the created client to
 # the same
 ########################################################
 def send_client_credentials(
@@ -188,6 +188,12 @@ def update_client_group(db, request, session_user):
         return technomasters.CannotDeactivateCountry()
     elif db.is_deactivated_existing_domain(request.client_id, request.domain_ids):
         return technomasters.CannotDeactivateDomain()
+    elif db.validate_no_of_user_licence(request.no_of_user_licence, request.client_id):
+        return technomasters.InvalidNoOfLicence()
+    elif db.validate_total_disk_space(
+        request.file_space * 1000000000, request.client_id
+    ):
+        return technomasters.InvalidFileSpace()
     else:
         db.update_client_group(request, session_user)
         db.save_client_countries(request.client_id, request.country_ids)
@@ -222,7 +228,7 @@ def change_client_group_status(db, request, session_user):
 #
 
 ########################################################
-# To Validate and Save Business group, Legal Entity, 
+# To Validate and Save Business group, Legal Entity,
 # Division and Units received in the request
 ########################################################
 def save_client(db, request, session_user):
@@ -317,7 +323,7 @@ def save_client(db, request, session_user):
         return technomasters.SaveClientSuccess()
 
 ########################################################
-# To Validate and Update Business group, Legal Entity, 
+# To Validate and Update Business group, Legal Entity,
 # Division and Units received in the request
 ########################################################
 def update_client(db, request, session_user):
@@ -412,7 +418,7 @@ def update_client(db, request, session_user):
         return technomasters.UpdateClientSuccess()
 
 ########################################################
-# To Get List of Business groups, Legal Entities, 
+# To Get List of Business groups, Legal Entities,
 # Divisions and Units with details of all clients
 ########################################################
 def get_clients(db, request, session_user):
@@ -438,7 +444,7 @@ def get_clients(db, request, session_user):
         return technomasters.UserIsNotResponsibleForAnyClient()
 
 ########################################################
-# To Change the status of Units under a particular 
+# To Change the status of Units under a particular
 # division or Legal entity
 ########################################################
 def change_client_status(db, request, session_user):
@@ -479,8 +485,10 @@ def reactivate_unit(db, request, session_user):
         return technomasters.InvalidUnitId()
     else:
         if db.verify_password(password, session_user):
-            if db.reactivate_unit(client_id, unit_id, session_user):
-                return technomasters.ReactivateUnitSuccess()
+            unit_code, unit_name = db.reactivate_unit(client_id, unit_id, session_user)
+            return technomasters.ReactivateUnitSuccess(
+                unit_code=unit_code, unit_name=unit_name
+            )
         else:
             return technomasters.InvalidPassword()
 

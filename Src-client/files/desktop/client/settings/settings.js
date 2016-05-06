@@ -103,13 +103,13 @@ function validate(){
   if($("input[name=2levels]:checked").val() == ''){
     displayMessage(message.approval_level);
   }
-  else if($("#assigneeval").val().trim().length==0){
+  else if($("#assigneeval").val().trim().length==0 || $("#assigneeval").val().trim() == 0){
     displayMessage(message.reminder_assignee_required);
   }
-  else if($("#concurrenceapprovalval").val().trim().length==0){
+  else if($("#concurrenceapprovalval").val().trim().length==0 || $("#concurrenceapprovalval").val().trim() == 0){
     displayMessage(message.escalationreminder_concurrence_approval_required);
   }
-  else if($("#allval").val().trim().length==0){
+  else if($("#allval").val().trim().length==0 || $("#allval").val().trim() == 0){
     displayMessage(message.escalationreminder_all);
   }
   else{
@@ -146,46 +146,6 @@ if(validate()){
 }
 }); 
 
-$("#search-employee").keyup(function() { 
-  var count=0;
-    var value = this.value.toLowerCase();
-    $(".tbody-clientprofile-list").find("tr").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".employee").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
-
-$("#search-email").keyup(function() { 
-  var count=0;
-    var value = this.value.toLowerCase();
-    $(".tbody-clientprofile-list").find("tr").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".email").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
-
-$("#search-mobile-number").keyup(function() { 
-  var count=0;
-    var value = this.value.toLowerCase();
-    $(".tbody-clientprofile-list").find("tr").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".mobile-number").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
-
-$("#search-seating-unit").keyup(function() { 
-  var count=0;
-    var value = this.value.toLowerCase();
-    $(".tbody-clientprofile-list").find("tr").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".seating-unit").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
-
 $(function() {
   initialize();
 
@@ -202,6 +162,10 @@ $(function() {
   });
 
 });
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
+});
+
 
 $( document ).tooltip({
     position: {

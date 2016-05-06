@@ -15,6 +15,7 @@ $(".btn-country-cancel").click(function(){
     loadCountriesList(counList);
 });
 
+//get countries list from api
 function initialize(){
     function onSuccess(data){
         $("#search-country-name").val("");
@@ -35,6 +36,7 @@ function initialize(){
         }
     );
 }
+//display cpuntry details in view page
 function loadCountriesList(countriesList){
     $(".tbody-countries-list").find("tr").remove();
     var sno = 0;
@@ -61,7 +63,7 @@ function loadCountriesList(countriesList){
             sno = sno + 1;
             $('.sno', clone).text(sno);
             $('.country-name', clone).text(countryName);
-            $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="country_edit('+countryId+',\''+countryName+'\')"/>');
+            $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="country_edit('+countryId+',\''+countryName.replace(/"/gi,'##')+'\')"/>');
             $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="country_active('+countryId+', '+statusVal+')"/>');
             $('.tbody-countries-list').append(clone);
         });
@@ -74,6 +76,7 @@ $('#country-name').keypress(function (e) {
     }
 });
 
+//save/update country details
 $("#submit").click(function(){
     var countryIdValue = $("#country-id").val();
     var countryNameValue = $("#country-name").val().trim();
@@ -130,15 +133,16 @@ $("#submit").click(function(){
             );
         }
     }
-
 });
+//edit country
 function country_edit(countryId, countryName){
     $("#country-view").hide();
     $("#country-add").show();
     clearMessage();
-    $("#country-name").val(countryName);
+    $("#country-name").val(countryName.replace(/##/gi,'"'));
     $("#country-id").val(countryId);
 }
+//activate/deactivate country
 function country_active(countryId, isActive){
     var msgstatus='deactivate';
     if(isActive){
@@ -166,7 +170,7 @@ function country_active(countryId, isActive){
         );
     }
 }
-
+//filter process
 $("#search-country-name").keyup(function() {
     var count = 0;
     var value = this.value.toLowerCase();
@@ -176,7 +180,7 @@ $("#search-country-name").keyup(function() {
         $(this).toggle(id.indexOf(value) !== -1);;
     });
 });
-
+//initialization
 $(function() {
     initialize();
 });

@@ -27,7 +27,6 @@ def process_user_forms(
 
 def process_user_menus(form_list):
     menus = {}
-
     for form in form_list:
         form_type = form.form_type
         _forms = menus.get(form_type)
@@ -40,6 +39,8 @@ def process_user_menus(form_list):
 
 def reorder_menu(menus):
     new_menu = collections.OrderedDict()
+    if "Home" in menus :
+        new_menu["Home"] = menus["Home"]
     if "Master" in menus:
         new_menu["Master"] = menus["Master"]
     if "Transaction" in menus:

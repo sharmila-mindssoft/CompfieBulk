@@ -5,6 +5,7 @@ from server.constants import (
     KNOWLEDGE_URL
 )
 
+from server import logger
 
 __all__ = [
     "process_login_request",
@@ -17,22 +18,36 @@ __all__ = [
 
 def process_login_request(request, db, session_user_ip) :
     if type(request) is login.Login:
-        return process_login(db, request, session_user_ip)
+        logger.logKnowledgeApi("Login", "process begin")
+        result = process_login(db, request, session_user_ip)
+        logger.logKnowledgeApi("Login", "process end")
 
     if type(request) is login.ForgotPassword :
-        return process_forgot_password(db, request)
+        logger.logKnowledgeApi("ForgotPassword", "process begin")
+        result = process_forgot_password(db, request)
+        logger.logKnowledgeApi("ForgotPassword", "process end")
 
     if type(request) is login.ResetTokenValidation :
-        return process_reset_token(db, request)
+        logger.logKnowledgeApi("ResetTokenValidation", "process begin")
+        result = process_reset_token(db, request)
+        logger.logKnowledgeApi("ResetTokenValidation", "process end")
 
     if type(request) is login.ResetPassword :
-        return process_reset_password(db, request)
+        logger.logKnowledgeApi("ResetPassword", "process begin")
+        result = process_reset_password(db, request)
+        logger.logKnowledgeApi("ResetPassword", "process end")
 
     if type(request) is login.ChangePassword :
-        return process_change_password(db, request)
+        logger.logKnowledgeApi("ChangePassword", "process begin")
+        result = process_change_password(db, request)
+        logger.logKnowledgeApi("ChangePassword", "process end")
 
     if type(request) is login.Logout:
-        return process_logout(db, request)
+        logger.logKnowledgeApi("Logout", "process begin")
+        result = process_logout(db, request)
+        logger.logKnowledgeApi("Logout", "process end")
+
+    return result
 
 def process_login(db, request, session_user_ip):
     login_type = request.login_type
@@ -41,11 +56,11 @@ def process_login(db, request, session_user_ip):
     encrypt_password = db.encrypt(password)
     response = db.verify_login(username, encrypt_password)
     if response is True:
-        return admin_login_response(db, request.ip)
+        return admin_login_response(db, session_user_ip)
     else :
         if bool(response):
             if login_type.lower() == "web" :
-                return user_login_response(db, response, request.ip)
+                return user_login_response(db, response, session_user_ip)
             else :
                 return mobile_user_login_respone(db, response, request, session_user_ip)
         else :
@@ -165,6 +180,3 @@ def process_change_password(db, request):
 
 def process_logout(db, request):
     return login.LogoutSuccess()
-
-
-

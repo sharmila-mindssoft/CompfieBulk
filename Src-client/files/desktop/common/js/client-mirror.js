@@ -5,9 +5,9 @@ var my_ip = null;
 function initClientMirror() {
     var DEBUG = true;
 
-    if (window.localStorage["my_ip"] == null || window.localStorage["my_ip"] == "unknown"){
-        get_ip();
-    }
+    // if (window.localStorage["my_ip"] == null){
+    //     get_ip();
+    // }
 
     function log() {
         if (window.console) {
@@ -164,18 +164,20 @@ function initClientMirror() {
                     // alert("jqXHR:"+jqXHR.status);
                     // alert("textStatus:"+textStatus);
                     // alert("errorThrown:"+errorThrown);
-                    // callback(error, null);
+                    if (errorThrown == "Not Found"){
+                        alert("Server connection not found");
+                        redirect_login();
+                    }
+                    else
+                        callback(jqXHR["responseText"], errorThrown)
                 }
         );
     }
 
     // Login function
     function login(username, password, short_name, callback) {
-        if (window.localStorage["my_ip"] == null){
-            my_ip = "unknown"
-        }else{
-            my_ip = window.localStorage["my_ip"]
-        }
+        if (window.localStorage["my_ip"] == null)
+            get_ip();
         var request = [
             short_name, [
                 "Login", {
@@ -183,7 +185,7 @@ function initClientMirror() {
                     "username": username,
                     "password": password,
                     "short_name": short_name,
-                    "ip": my_ip
+                    "ip": window.localStorage["my_ip"]
                 }
             ]
         ]
@@ -697,9 +699,10 @@ function initClientMirror() {
     }
 
 
-    function updateStatutory(clientSId, aStatus, aRemarks, compId, oStatus, remarks) {
+    function updateStatutory(clientSId, clientCId, aStatus, aRemarks, compId, oStatus, remarks) {
         return {
             "c_s_id": clientSId,
+            "c_c_id": clientCId,
             "a_status": aStatus,
             "n_a_remarks": aRemarks,
             "comp_id": compId,
@@ -926,7 +929,7 @@ function initClientMirror() {
 
     function getUnitwisecomplianceReport(
         country_id, domain_id, business_group_id, legal_entity_id,
-        division_id, unit_id, user_id, callback
+        division_id, unit_id, user_id, record_count, callback
     ) {
         var request = [
             "GetUnitwisecomplianceReport", {
@@ -936,7 +939,8 @@ function initClientMirror() {
                 "legal_entity_id": legal_entity_id,
                 "division_id": division_id,
                 "unit_id": unit_id,
-                "user_id": user_id
+                "user_id": user_id,
+                "record_count": record_count
             }
         ];
         callerName = "client_reports";
@@ -945,7 +949,7 @@ function initClientMirror() {
 
     function getAssigneewisecomplianceReport(
         country_id, domain_id, business_group_id, legal_entity_id,
-        division_id, unit_id, user_id, callback
+        division_id, unit_id, user_id, record_count, callback
     ) {
         var request = [
             "GetAssigneewisecomplianceReport", {
@@ -955,8 +959,9 @@ function initClientMirror() {
                 "legal_entity_id": legal_entity_id,
                 "division_id": division_id,
                 "unit_id": unit_id,
-                "user_id": user_id
-            }
+                "user_id": user_id,
+                "record_count": record_count
+          	}
         ];
         callerName = "client_reports";
         clientApiRequest(callerName, request, callback);
@@ -1071,7 +1076,7 @@ function initClientMirror() {
 
     function getComplianceDetailsReport(
         country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date,
-        compliance_status, csv, callback
+        compliance_status, csv, record_count, callback
     ) {
         var request = [
             "GetComplianceDetailsReport", {
@@ -1084,7 +1089,8 @@ function initClientMirror() {
                 "from_date": from_date,
                 "to_date": to_date,
                 "compliance_status": compliance_status,
-                "csv" : csv
+                "csv" : csv,
+                "record_count": record_count
             }
         ];
         callerName = "client_reports";
@@ -1293,7 +1299,7 @@ function initClientMirror() {
     }
 
     function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id,
-        compliance_id, user_id, from_date, to_date, csv, callback) {
+        compliance_id, user_id, from_date, to_date, csv, record_count, callback) {
         var request = [
             "GetReassignedHistoryReport", {
 
@@ -1305,7 +1311,8 @@ function initClientMirror() {
                 "user_id": user_id,
                 "from_date" : from_date,
                 "to_date" : to_date,
-                "csv": csv
+                "csv": csv,
+                "record_count" : record_count
             }
         ];
         callerName = "client_reports";
@@ -1508,6 +1515,17 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getAssigneeWiseCompliances(assignee, record_count, callback) {
+        var request = [
+            "GetAssigneeCompliances", {
+                "assignee": assignee,
+                "record_count": record_count
+            }
+        ];
+        callerName = "client_transaction";
+        clientApiRequest(callerName, request, callback);
+    }
+
     function reassignComplianceDet(uID, cID, cNAME, cHistoryId, dDate) {
         return {
             "u_id": uID,
@@ -1681,7 +1699,8 @@ function initClientMirror() {
         get_ip: get_ip,
         checkContractExpiration: checkContractExpiration,
         saveReassignCompliance : saveReassignCompliance,
-        reassignComplianceDet : reassignComplianceDet
+        reassignComplianceDet : reassignComplianceDet,
+        getAssigneeWiseCompliances: getAssigneeWiseCompliances,
     }
 }
 var client_mirror = initClientMirror();

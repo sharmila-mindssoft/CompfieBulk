@@ -1,12 +1,4 @@
 var industriesList;
-function clearMessage() {
-  $(".error-message").hide();
-  $(".error-message").text("");
-}
-function displayMessage(message) {
-  $(".error-message").text(message);
-  $(".error-message").show();
-}
 
 $(".btn-industry-add").click(function(){
   $("#industry-view").hide();
@@ -21,6 +13,7 @@ $(".btn-industry-cancel").click(function(){
   $("#industry-view").show();
 });
 
+// get industry list from api
 function getIndustries () {
   function onSuccess(data){
       industriesList = data["industries"];
@@ -41,6 +34,7 @@ function getIndustries () {
   );
 }
 
+//display industry list in view page
 function loadIndustryList (industriesList) {
   var j = 1;
   var imgName = null;
@@ -66,13 +60,14 @@ function loadIndustryList (industriesList) {
       var clone=tableRow.clone();
       $('.sno', clone).text(j);
       $('.industry-name', clone).text(industryName);
-      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+industryId+',\''+industryName+'\')"/>');
+      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+industryId+',\''+industryName.replace(/"/gi,'##')+'\')"/>');
       $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+industryId+','+passStatus+')"/>');
       $('.tbody-industry-list-view').append(clone);
       j = j + 1;
     }
 }
 
+// validation
 function validate(){
   if($("#industryname").val().trim().length==0){
     displayMessage(message.industryname_required);
@@ -82,6 +77,7 @@ function validate(){
   }
 }
 
+//save or update industry master on enter key press
 $('#industryname').keypress(function (e) {
   if (e.which == 13) {
     if(validate()){
@@ -90,6 +86,7 @@ $('#industryname').keypress(function (e) {
   }
 });
 
+// save or update industry master 
 $("#submit").click(function(){
   var industryId = $("#industryid").val();
   var industryName = $("#industryname").val().trim();
@@ -143,16 +140,17 @@ if(validate()){
 }
 }); 
 
+// edit industry master
 function displayEdit (industryId,industryName) {
   $(".error-message").text("");
   $("#industry-view").hide();
   $("#industry-add").show();
-  $("#industryname").val(industryName);
+  $("#industryname").val(industryName.replace(/##/gi,'"'));
   $("#industryid").val(industryId);
 }
 
+// activate / deactivate industry master
 function changeStatus (industryId,isActive) {
-
   var msgstatus='deactivate';
   if(isActive){
     msgstatus='activate';
@@ -178,6 +176,7 @@ function changeStatus (industryId,isActive) {
     }
 }
 
+//filter process
 $("#search-industry-name").keyup(function() { 
   var filterkey = this.value.toLowerCase();
   var filteredList=[];
@@ -188,6 +187,7 @@ $("#search-industry-name").keyup(function() {
   loadIndustryList(filteredList);
 });
 
+//initialization
 $(document).ready(function () {
   getIndustries ();
 });

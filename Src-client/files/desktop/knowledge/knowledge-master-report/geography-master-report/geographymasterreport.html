@@ -5,14 +5,14 @@
   <div class="content-area">
     <div class="add-container">
       <div class="add-container-heading">Geography<span class="error-message"></span></div>
-      <div class="input-row-left">
+      <div class="single-column-input-row" style="padding-top:10px;">
         <div class="input-row">
-          <div class="field-label">Country:<span class="mandatory">*</span></div>
-          <div class="field-input no-padding-top">
-              <input type="text" class="input-box icon-autocomplete" id="countryval" value="">
+          <div class="single-column-field-label">Country:<span class="mandatory">*</span></div>
+          <div class="single-column-field-input">
+              <input type="text" class="input-box icon-autocomplete" id="countryval" value="" style="width:50%;">
               <input type="hidden" id="country">
-              <div id="autocompleteview" class="ac-textbox default-display-none">
-              <ul id="ulist_text" class="hidemenu" style="width:195px;"></ul>
+              <div id="ac-country" class="ac-textbox default-display-none">
+              <ul style="width:50%;"></ul>
             </div>
           </div>
         </div>
