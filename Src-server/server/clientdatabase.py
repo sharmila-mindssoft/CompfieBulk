@@ -2289,7 +2289,7 @@ class ClientDatabase(Database):
         columns = "count(*)"
         condition = "1"
         concur_count = 0
-        if (self.is_two_levels_of_approval):
+        if (self.is_two_levels_of_approval) and (not self.is_primary_admin(session_user)):
             condition = " concurrence_status is not NULL AND \
             concurrence_status != 0 AND concurrence_status != ''" 
             concur_condition = "concurred_by = '%d' AND (approve_status is NULL OR \
@@ -2315,8 +2315,151 @@ class ClientDatabase(Database):
 
 
     def get_compliance_approval_list(
-            self, start_count, to_count, session_user, client_id
-        ):
+        self, start_count, to_count, session_user, client_id
+    ):
+        approval_user_ids = str(session_user)
+        if self.is_primary_admin(session_user):
+            approval_user_ids += ",0"
+        query = "SELECT compliance_history_id, tch.compliance_id, start_date,\
+        tch.due_date, documents, completion_date, completed_on, next_due_date, \
+        concurred_by, remarks, datediff(tch.due_date, completion_date ), \
+        compliance_task, compliance_description, tc.frequency_id, frequency, \
+        document_name, concurrence_status, (select statutory_dates from \
+        tbl_assigned_compliances tac where tac.compliance_id = tch.compliance_id \
+        limit 1), tch.validity_date, approved_by, \
+        concat(unit_code, '-', tu.unit_name), completed_by, tus.employee_code, \
+        tus.employee_name, domain_name FROM %s tch \
+        INNER JOIN %s tc ON (tch.compliance_id = tc.compliance_id) \
+        INNER JOIN %s tcf ON (tc.frequency_id = tcf.frequency_id) \
+        INNER JOIN %s tu ON (tch.unit_id = tu.unit_id) \
+        INNER JOIN %s tus ON (tus.user_id = tch.completed_by) \
+        INNER JOIN %s td ON (td.domain_id = tc.domain_id) \
+        WHERE (completion_date IS NOT NULL AND completion_date != 0 ) \
+        AND (completed_on IS NOT NULL AND completed_on != 0) \
+        AND (approve_status IS NULL OR approve_status = 0)  \
+        AND (approved_by IN (%s) OR concurred_by = '%d') \
+        AND is_closed = 0 \
+        ORDER BY tch.due_date ASC LIMIT %d, %d" % (
+            self.tblComplianceHistory, self.tblCompliances, 
+            self.tblComplianceFrequency, self.tblUnits, self.tblUsers,
+            self.tblDomains, approval_user_ids,
+            session_user, int(start_count), to_count
+        )
+        query
+        rows = self.select_all(query)
+        is_two_levels = self.is_two_levels_of_approval()
+        compliances = []
+        assignee_wise_compliances = {}
+        assignee_id_name_map = {}
+        count = 0
+        for row in rows:
+            download_urls = []
+            file_name = []
+            if row[4] is not None and len(row[4]) > 0:
+                for document in row[4].split(","):
+                    if document is not None and document.strip(',') != '':
+                        dl_url = "%s/%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document)
+                        download_urls.append(dl_url)
+                        file_name_part = document.split("-")[0]
+                        file_extn_parts = document.split(".")
+                        file_extn_part = None
+                        if len(file_extn_parts) > 1:
+                            file_extn_part = file_extn_parts[len(file_extn_parts)-1]
+                        if file_extn_part is not None:
+                            name  = "%s.%s" % (
+                                file_name_part, file_extn_part
+                            )
+                            file_name.append(name)
+                        else:
+                           file_name.append(file_name_part)
+            concurred_by_id = None if row[8] is None else int(row[8])
+            approved_by_id = row[19]
+            compliance_history_id = row[0]
+            compliance_id = row[1]
+            start_date = self.datetime_to_string(row[2])
+            due_date = self.datetime_to_string(row[3])
+            documents = download_urls if len(download_urls) > 0 else None
+            file_names = file_name if len(file_name) > 0 else None
+            completion_date = None if row[5] is None else self.datetime_to_string(row[5])
+            completed_on = None if row[6] is None else self.datetime_to_string(row[6])
+            next_due_date = None if row[7] is None else self.datetime_to_string(row[7])
+            concurred_by = None if concurred_by_id is None else self.get_user_name_by_id(concurred_by_id, client_id)
+            remarks = row[9]
+            delayed_by = None if row[10] < 0 else row[10]
+            compliance_name = row[11]
+            if row[15] not in (None, "None", "") :
+                compliance_name = "%s - %s"%(row[15], row[11])
+            compliance_description = row[12]
+            frequency_id = int(row[13])
+            frequency = core.COMPLIANCE_FREQUENCY(row[14])
+            description = row[12]
+            concurrence_status = None if row[16] in [None, "None", ""] else bool(int(row[16]))
+            statutory_dates = [] if row[17] is [None, "None", ""] else json.loads(row[17])
+            validity_date = None if row[18] is [None, "None", ""] else self.datetime_to_string(row[18])
+            unit_name = row[20]
+            date_list = []
+            for date in statutory_dates :
+                s_date = core.StatutoryDate(
+                    date["statutory_date"],
+                    date["statutory_month"],
+                    date["trigger_before_days"],
+                    date.get("repeat_by")
+                )
+                date_list.append(s_date)
+
+            domain_name = row[24]
+            action = None
+            if is_two_levels:
+                if concurred_by_id == session_user:
+                    if concurrence_status is True:
+                        continue
+                    else:
+                        action = "Concur"
+                elif concurrence_status is True and session_user in [int(x) for x in approval_user_ids.split(",")]:
+                    action = "Approve"
+                elif concurred_by_id is None and session_user in [int(x) for x in approval_user_ids.split(",")]:
+                    action = "Approve"
+                else:
+                    continue
+            elif concurred_by_id != session_user and session_user in [int(x) for x in approval_user_ids.split(",")]:
+                action = "Approve"
+            else:
+                continue
+            employee_code = row[22]
+            assignee = row[23]
+
+            if employee_code is not None:
+                assignee = "%s - %s" % (employee_code, assignee)
+            if assignee not in assignee_id_name_map:
+                assignee_id_name_map[assignee] = row[21]
+            if assignee not in assignee_wise_compliances:
+                assignee_wise_compliances[assignee] = []
+            count += 1
+            assignee_wise_compliances[assignee].append(
+                clienttransactions.APPROVALCOMPLIANCE(
+                    compliance_history_id, compliance_name, description, domain_name,
+                    start_date, due_date, delayed_by, frequency, documents,
+                    file_names, completion_date, completed_on, next_due_date,
+                    concurred_by, remarks, action, date_list, validity_date, unit_name
+                )
+            )
+        approval_compliances = []
+        for assignee in assignee_wise_compliances:
+            if len(assignee_wise_compliances[assignee]) > 0:
+                approval_compliances.append(
+                    clienttransactions.APPORVALCOMPLIANCELIST(
+                        assignee_id_name_map[assignee], assignee, 
+                        assignee_wise_compliances[assignee]
+                    )
+                )
+            else:
+                continue
+        return approval_compliances, count
+
+
+    def get_compliance_approval_list1(
+        self, start_count, to_count, session_user, client_id
+    ):
         assignee_columns = "completed_by, employee_code, employee_name"
         join_type = "inner join"
         tables = [self.tblComplianceHistory, self.tblUsers]
@@ -2325,7 +2468,8 @@ class ClientDatabase(Database):
         approval_user_ids = str(session_user)
         if self.is_primary_admin(session_user):
             approval_user_ids += ",0"
-        assignee_condition = "(completion_date is not Null and completion_date != 0 \
+        assignee_condition = "(completion_date is not Null and \
+        completion_date != 0 \
         ) and (completed_on is not Null and completed_on != 0 ) and "+\
         "(approve_status is Null or approve_status = 0) and (approved_by in (%s) or concurred_by = '%d')\
         group by completed_by" % (approval_user_ids, session_user)
@@ -2649,7 +2793,6 @@ class ClientDatabase(Database):
             domain_id,
             str(tuple(unit_ids))
         )
-        print q
         row = self.select_one(q)
         if row :
             return row[0]
@@ -6354,7 +6497,11 @@ class ClientDatabase(Database):
 #
 #   Notifications
 #
-    def get_notifications(self, notification_type, session_user, client_id):
+    def get_notifications(
+        self, notification_type, 
+        # start_count, to_count, 
+        session_user, client_id
+    ):
         notification_type_id = None
         if notification_type == "Notification":
             notification_type_id = 1
@@ -6373,10 +6520,11 @@ class ClientDatabase(Database):
             notification_id = notification[0]
             read_status = bool(int(notification[1]))
             # Getting notification details
-            columns = "notification_id, notification_text, created_on, extra_details, " + \
-                "statutory_provision, unit_code, unit_name, address, assignee, " + \
-                "concurrence_person, approval_person, nl.compliance_id, " + \
-                " compliance_task, document_name, compliance_description, penal_consequences"
+            columns = "notification_id, notification_text, created_on, extra_details, \
+                statutory_provision, unit_code, unit_name, address, assignee, \
+                concurrence_person, approval_person, nl.compliance_id, \
+                compliance_task, document_name, compliance_description, \
+                penal_consequences"
             tables = [self.tblNotificationsLog, self.tblUnits, self.tblCompliances]
             aliases = ["nl", "u", "c"]
             join_conditions = [
@@ -6385,7 +6533,10 @@ class ClientDatabase(Database):
             ]
             join_type = " left join"
             where_condition = "notification_id = '%d'" % notification_id
-            where_condition += " and notification_type_id = '%d' order by notification_id DESC" % notification_type_id
+            where_condition += " and notification_type_id = '%d' \
+            order by notification_id DESC LIMIT 500" % (
+                notification_type_id
+            )
             notification_detail_row = self.get_data_from_multiple_tables(
                 columns, tables, aliases, join_type,
                 join_conditions, where_condition
@@ -6405,17 +6556,7 @@ class ClientDatabase(Database):
                     )
 
                 if compliance_history_id not in [0, "0", None, "None", ""] and len(due_date_rows) > 0:
-                    # due_date_rows = self.get_data(
-                    #     self.tblComplianceHistory,
-                    #     "due_date, completion_date, approve_status",
-                    #     "compliance_history_id = '%d'" % int(compliance_history_id)
-                    # )
                     due_date_as_date = due_date_rows[0][0]
-                    # due_date_as_datetime = datetime.datetime(
-                    #     due_date_as_date.year,
-                    #     due_date_as_date.month,
-                    #     due_date_as_date.day
-                    # )
                     due_date = self.datetime_to_string_time(due_date_rows[0][0])
                     completion_date = due_date_rows[0][1]
                     approve_status = due_date_rows[0][2]
