@@ -6928,7 +6928,7 @@ class ClientDatabase(Database):
 
     def get_overdue_count(self, session_user):
         columns = "count(*)"
-        condition = "completed_by ='%d' AND due_date <= now() and \
+        condition = "completed_by ='%d' AND due_date < now() and \
         (completed_on is null or completed_on = 0)" % (session_user)
         rows = self.get_data(
             self.tblComplianceHistory, columns, condition
@@ -7049,7 +7049,7 @@ class ClientDatabase(Database):
             where_condition
         )
         count = rows[0][0]
-
+        print "count : {}".format(count)
         columns = "ac.compliance_id, u.unit_id"
         where_condition = " assignee = '%d' and frequency_id = 1  and is_closed = 0" % session_user
         where_condition += " and due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) "
@@ -7059,10 +7059,12 @@ class ClientDatabase(Database):
             tables, aliases, join_type, join_conditions,
             where_condition
         )
+        print "onetime count : {}".format(len(rows))
         for row in rows:
             if self.is_already_started(
                 compliance_id=row[0], unit_id=row[1]
             ):
+                print "skipping========>"
                 continue
             else:
                 count += 1
@@ -7097,11 +7099,12 @@ class ClientDatabase(Database):
             tables, aliases, join_type, join_conditions,
             where_condition
         )
-
+        print '>>> %d' % len(upcoming_compliances_rows)
         upcoming_compliances_list = []
         for compliance in upcoming_compliances_rows:
             if compliance[11] in [1, "1"]:
                 if self.is_already_started(compliance_id=compliance[12], unit_id=compliance[13]):
+                    print "skiping=======>"
                     continue
 
             document_name = compliance[1]
@@ -9411,7 +9414,7 @@ class ClientDatabase(Database):
         column = "count(*)"
         condition = "user_id = '%d' and is_primary_admin = 1" % user_id
         rows = self.get_data(self.tblUsers, column, condition)
-        if rows[0][0] > 0:
+        if rows[0][0] > 0 or user_id == 0:
             return True
         else:
             return False
