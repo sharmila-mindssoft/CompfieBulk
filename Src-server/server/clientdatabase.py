@@ -2612,6 +2612,7 @@ class ClientDatabase(Database):
             str(tuple(unit_ids)),
             domain_id
         )
+        print q
         row = self.select_one(q)
         if row :
             return row[0]
@@ -7940,17 +7941,22 @@ class ClientDatabase(Database):
                 )
         return level_1_statutory_wise_compliance
 
-    #login trace
-    def get_login_trace(self, client_id, session_user ):
+    # login trace
+
+    def get_login_trace(self, client_id, session_user, from_count, to_count):
         query = "SELECT al.created_on, al.action \
-                FROM tbl_activity_log al \
-                INNER JOIN \
-                tbl_users u ON \
-                al.user_id  = u.user_id \
-                WHERE \
-                al.form_id = 0 and al.action not like '%s%s%s'" % (
-                    "%", "password", "%"
-                )
+            FROM tbl_activity_log al \
+            INNER JOIN \
+            tbl_users u ON \
+            al.user_id  = u.user_id \
+            WHERE \
+            al.form_id = 0 and al.action not like '%s%s%s'\
+            order by al.created_on desc \
+            limit %s, %s" % (
+                "%", "password", "%",
+                from_count, to_count
+            )
+
         rows = self.select_all(query)
         columns = ["created_on", "action"]
         result = self.convert_to_dict(rows, columns)
