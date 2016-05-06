@@ -1,5 +1,6 @@
 var userList;
 var logintraceList;
+var sno;
 
 function clearMessage() {
     $(".error-message").hide();
