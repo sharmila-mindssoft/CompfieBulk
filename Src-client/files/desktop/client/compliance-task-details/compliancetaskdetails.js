@@ -16,7 +16,6 @@ var sno = 0;
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
-
 function hideLoader() {
     $(".loading-indicator-spin").hide();
 }

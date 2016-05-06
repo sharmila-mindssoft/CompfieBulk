@@ -3,13 +3,11 @@ var file_list = [];
 var action;
 var currentDate;
 var sno = 0;
-var endCount = 0;
 var totalRecord;
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
-
 function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
@@ -20,7 +18,6 @@ function initialize(){
         closeicon();
         $('.tbody-compliance-approval-list tr').remove();
         sno = 0;
-        endCount = 0;
         approvalList = data['approval_list'];
         currentDate = data['current_date'];
         totalRecord = data['total_count'];
@@ -31,7 +28,7 @@ function initialize(){
         console.log(error);
         hideLoader();
     }
-    client_mirror.getComplianceApprovalList(endCount,
+    client_mirror.getComplianceApprovalList(sno,
         function (error, response){
             if(error == null){
                 onSuccess(response);
@@ -45,7 +42,6 @@ function initialize(){
 
 $('#pagination').click(function(){
     displayLoader();
-    endCount = sno;
     function onSuccess(data){
         closeicon();
         approvalList = data['approval_list'];
@@ -58,7 +54,7 @@ $('#pagination').click(function(){
         console.log(error);
         hideLoader();
     }
-    client_mirror.getComplianceApprovalList(endCount,
+    client_mirror.getComplianceApprovalList(sno,
         function (error, response){
             if(error == null){
                 onSuccess(response);
@@ -121,6 +117,7 @@ function loadComplianceApprovalDetails(data){
         }
     }
 }
+
 
 function showSideBar(idval, data){
     var fileslist = [];

@@ -1,5 +1,6 @@
 var compliancesList;
 var sno = 0;
+var totalRecord;
 
 
 function displayLoader() {
@@ -11,8 +12,6 @@ function hideLoader() {
 
 //load compliances in view page
 function load_compliances (compliancesList) {
-  
-  $(".tbody-complainces-list").find("tr").remove();
     for(var entity in compliancesList) {
       var tableRow = $('#head-templates .tbl_heading');
       var clone = tableRow.clone();
@@ -49,6 +48,18 @@ function load_compliances (compliancesList) {
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         });
       }
+    }
+
+    if(totalRecord == 0){
+        $('#pagination').hide();
+        $('.compliance_count').text('');
+    }else{
+        $('.compliance_count').text("Total Compliances : " + totalRecord);
+        if(sno >= totalRecord){
+          $('#pagination').hide();
+        }else{
+          $('#pagination').show();
+        }
     }
 }
 
@@ -112,11 +123,16 @@ function submitOnOccurence(complianceId, count, unitId, complete_within_days){
 
 }
 
+
 //get on occurance compliance list from api
-function getOnOccuranceCompliances () {
-  displayLoader();
+function getOnOccuranceCompliances (sno) {
+  //displayLoader();
+  if(sno == 0){
+      $(".tbody-complainces-list").find("tr").remove();
+  }
   function onSuccess(data){
     compliancesList = data["compliances"];
+    totalRecord = data['total_count'];
     load_compliances(compliancesList);
     hideLoader();
   }
@@ -124,7 +140,7 @@ function getOnOccuranceCompliances () {
     displayMessage(error);
     hideLoader();
   }
-  client_mirror.getOnOccurrenceCompliances(
+  client_mirror.getOnOccurrenceCompliances(sno,
     function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -136,7 +152,13 @@ function getOnOccuranceCompliances () {
   );
 }
 
+$('#pagination').click(function(){
+    endCount = sno;
+    getOnOccuranceCompliances (sno);
+});
+
 //initialization
 $(document).ready(function () {
-  getOnOccuranceCompliances ();
+  sno = 0;
+  getOnOccuranceCompliances (sno);
 });
