@@ -44,26 +44,11 @@
   vertical-align: middle;
 }
 </style>
-<script type="text/javascript">
-$(document).ready(function() {
-  $(".current-tab").click(function() {
-    $(".current-tab").addClass("active");
-    $(".upcomming-tab").removeClass("active");
-    $(".main-tab-content").show();
-    $(".upcomming-tab-content").hide();
-  })
-  $(".upcomming-tab").click(function() {
-    $(".upcomming-tab").addClass("active");
-    $(".current-tab").removeClass("active");
-    $(".main-tab-content").hide();
-    $(".upcomming-tab-content").show();
-  })
-  $(".close").click(function() {
-    $(".current-tab-content").hide();
-    $(".main-tab-content").show();
-  })
-})
-</script>
+
+
+<div class='loading-indicator-spin'>
+  <span><img src='/files/desktop/common/images/loading-img.gif' alt=""></span>
+</div>
 
 <div class="content-container width100">
   <div class="content-area">
@@ -129,6 +114,13 @@ $(document).ready(function() {
                     <tbody class="tbody-compliances-task-list-overdue"></tbody>
                     <tbody class="tbody-compliances-task-list-inprogress"></tbody>
                   </table>
+
+                  <div align="center" style="padding-top:10px;">
+                    <input type="button" value="Show more records" class="btn-submit" id="pagination">
+                  </div>
+                  <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count1"></p>
+                  <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count2"></p>
+
                 </div>
               </td>
               <td width="1%" class="half-width-task-details default-display-none" style="vertical-align:top; background:#F1E9F6; padding-left:10px;"></td>
@@ -182,6 +174,12 @@ $(document).ready(function() {
                     <tbody class="tbody-upcoming-compliances-list"></tbody>
                   </table>
                 </div>
+
+                <div align="center" style="padding-top:10px;">
+                  <input type="button" value="Show more records" class="btn-submit" id="pagination-upcoming">
+                </div>
+                <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count_upcoming"></p>
+
               </td>
 
             </tr>

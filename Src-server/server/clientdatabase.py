@@ -6943,7 +6943,7 @@ class ClientDatabase(Database):
         where_condition += " and ((ch.completed_on is null or ch.completed_on = 0) \
         and (ch.approve_status is null or ch.approve_status = 0)) \
         ORDER BY due_date ASC LIMIT %d, %d" % (
-            int(current_start_count), int(current_start_count) + 500
+            int(current_start_count),  5
         )
 
         current_compliances_row = self.get_data_from_multiple_tables(
@@ -7034,7 +7034,7 @@ class ClientDatabase(Database):
         where_condition += " and due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) "
         where_condition += " and ac.is_active = 1 ORDER BY due_date ASC \
         LIMIT %d, %d" % (
-            int(upcoming_start_count), int(upcoming_start_count) + 500
+            int(upcoming_start_count), 5
         )
         upcoming_compliances_rows = self.get_data_from_multiple_tables(
             columns,
