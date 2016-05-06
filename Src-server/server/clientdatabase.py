@@ -2289,7 +2289,7 @@ class ClientDatabase(Database):
         columns = "count(*)"
         condition = "1"
         concur_count = 0
-        if (self.is_two_levels_of_approval):
+        if (self.is_two_levels_of_approval) and (not self.is_primary_admin(session_user)) :
             condition = " concurrence_status is not NULL AND \
             concurrence_status != 0 AND concurrence_status != ''" 
             concur_condition = "concurred_by = '%d' AND (approve_status is NULL OR \
@@ -2308,11 +2308,10 @@ class ClientDatabase(Database):
         )" % (
             session_user, condition
         )
+
         approve_count = self.get_data(
             self.tblComplianceHistory, columns, approve_condition
         )[0][0]
-        print "concur_count : {}".format(concur_count)
-        print "approve_count : {}".format(approve_count)
         return concur_count + approve_count
 
 
@@ -2361,7 +2360,7 @@ class ClientDatabase(Database):
             completion_date != 0 ) and (completed_on is not Null \
             and completed_on != 0) and \
             (approve_status is Null or approve_status = 0) and completed_by = '%d' and is_closed = 0 \
-            limit 500 " % (
+            " % (
                 assignee[0]
             )
             where_condition += " AND  (approved_by in (%s) or concurred_by = '%d')" % (
@@ -6876,35 +6875,60 @@ class ClientDatabase(Database):
 
 
     def get_inprogress_count(self, session_user):
-        columns = "count(*)"
-        current_date_time = self.get_date_time()
-        current_date_time = current_date_time + datetime.timedelta(days=1)
-        current_date_time.replace(hour=0, minute=0)
-
-        condition = "completed_by='{}' AND (due_date >= '{}' \
+        other_compliance_condition = "completed_by='{}' AND \
+        (due_date >= current_date() \
         AND due_date is not null and due_date != 0 and due_date != '')\
         AND (completed_on is null or completed_on = 0)".format(
-            session_user, current_date_time
+            session_user
         )
-        rows = self.get_data(
-            self.tblComplianceHistory, columns, condition
+        on_occurrence_condition = "completed_by='{}' AND \
+        (due_date >= now() \
+        AND due_date is not null and due_date != 0 and due_date != '')\
+        AND (completed_on is null or completed_on = 0)".format(
+            session_user
         )
-        return rows[0][0]
+        query = "SELECT count(*) FROM %s ch INNER JOIN \
+        %s c ON (ch.compliance_id = c.compliance_id ) " % (
+            self.tblComplianceHistory , self.tblCompliances
+        )
+      
+        other_compliance_rows = self.select_all(
+            "%s WHERE frequency_id != 4 AND %s" % (query, other_compliance_condition)
+        )
+        other_compliance_count = other_compliance_rows[0][0]
+
+        query += " WHERE frequency_id = 4 AND %s" % (on_occurrence_condition)
+        on_occurrence_rows = self.select_all(query)
+        on_occurrence_count = on_occurrence_rows[0][0]
+
+        return int(other_compliance_count) + int(on_occurrence_count)
 
     def get_overdue_count(self, session_user):
-        columns = "count(*)"
-        current_date_time = self.get_date_time()
-        current_date_time = current_date_time + datetime.timedelta(days=1)
-        current_date_time.replace(hour=0, minute=0)
-
-        condition = "completed_by ='%d'" % (session_user)
-        condition += " AND (due_date < '{}' AND \
-        due_date is not null AND due_date != 0 AND due_date != '') AND \
-        (completed_on is null or completed_on = 0)".format(current_date_time)
-        rows = self.get_data(
-            self.tblComplianceHistory, columns, condition
+        query = "SELECT count(*) FROM %s ch INNER JOIN \
+        %s c ON (ch.compliance_id = c.compliance_id) WHERE " % (
+            self.tblComplianceHistory, self.tblCompliances
         )
-        return rows[0][0]
+        condition = "completed_by ='%d'" % (session_user)
+        other_compliance_condition = " %s AND frequency_id != 4 AND \
+        (due_date < current_date() AND \
+        due_date is not null AND due_date != 0 AND due_date != '') AND \
+        (completed_on is null or completed_on = 0)" % (
+            condition
+        )
+
+        on_occurrence_condition = " %s AND frequency_id = 4 AND \
+        (due_date < now() AND \
+        due_date is not null AND due_date != 0 AND due_date != '') AND \
+        (completed_on is null or completed_on = 0)" % (
+            condition
+        )
+        other_compliance_count = self.select_all("%s %s" % (
+            query, other_compliance_condition)
+        )[0][0]
+        on_occurrence_count = self.select_all("%s %s" % (
+            query, on_occurrence_condition)
+        )[0][0]
+        return int(other_compliance_count) + int(on_occurrence_count)
 
     def get_current_compliances_list(self, current_start_count, to_count, session_user, client_id):
         columns = "DISTINCT compliance_history_id, start_date, ch.due_date, " +\

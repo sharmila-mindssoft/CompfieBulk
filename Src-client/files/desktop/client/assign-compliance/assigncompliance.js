@@ -303,7 +303,7 @@ function load_secondwizard(){
     $('.compliance_count').text('');
   }
 
-  if(totalRecord <= statutoriesCount && statutoriesCount > 1){
+  if(totalRecord <= (statutoriesCount - 1) && statutoriesCount > 1){
     $('#pagination').hide();
     $('#activate-step-3').show();
     $(document).ready(function($) {
