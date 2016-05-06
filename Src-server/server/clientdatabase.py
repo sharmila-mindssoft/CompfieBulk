@@ -2318,6 +2318,8 @@ class ClientDatabase(Database):
     def get_compliance_approval_list(
         self, start_count, to_count, session_user, client_id
     ):
+        print "start_count : {}".format(start_count)
+        print "to_count : {}".format(to_count)
         approval_user_ids = str(session_user)
         if self.is_primary_admin(session_user):
             approval_user_ids += ",0"
@@ -2339,20 +2341,24 @@ class ClientDatabase(Database):
         AND (completed_on IS NOT NULL AND completed_on != 0) \
         AND (approve_status IS NULL OR approve_status = 0)  \
         AND (approved_by IN (%s) OR concurred_by = '%d') \
-        AND is_closed = 0 \
+        AND is_closed = 0 AND IF ( \
+        (concurred_by = '%d' AND concurrence_status = 1), 0, 1)\
         ORDER BY tch.due_date ASC LIMIT %d, %d" % (
             self.tblComplianceHistory, self.tblCompliances, 
             self.tblComplianceFrequency, self.tblUnits, self.tblUsers,
             self.tblDomains, approval_user_ids,
-            session_user, int(start_count), to_count
+            session_user, session_user, int(start_count), to_count
         )
-        query
+        print
+        print query
         rows = self.select_all(query)
         is_two_levels = self.is_two_levels_of_approval()
         compliances = []
         assignee_wise_compliances = {}
         assignee_id_name_map = {}
         count = 0
+        print
+        print len(rows)
         for row in rows:
             download_urls = []
             file_name = []
@@ -2412,16 +2418,11 @@ class ClientDatabase(Database):
             action = None
             if is_two_levels:
                 if concurred_by_id == session_user:
-                    if concurrence_status is True:
-                        continue
-                    else:
-                        action = "Concur"
+                    action = "Concur"
                 elif concurrence_status is True and session_user in [int(x) for x in approval_user_ids.split(",")]:
                     action = "Approve"
                 elif concurred_by_id is None and session_user in [int(x) for x in approval_user_ids.split(",")]:
                     action = "Approve"
-                else:
-                    continue
             elif concurred_by_id != session_user and session_user in [int(x) for x in approval_user_ids.split(",")]:
                 action = "Approve"
             else:

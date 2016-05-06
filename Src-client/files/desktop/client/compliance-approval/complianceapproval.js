@@ -13,6 +13,7 @@ function hideLoader() {
 }
 
 function initialize(){
+    sno = 0;
     displayLoader();
     function onSuccess(data){
         closeicon();
