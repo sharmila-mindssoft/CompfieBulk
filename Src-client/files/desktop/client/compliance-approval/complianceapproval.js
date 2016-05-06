@@ -376,6 +376,7 @@ function showSideBar(idval, data){
         //         return;
         //     }
         // }
+        displayLoader();
         function onSuccess(data){
             clearMessage();
             if(approval_status == "Reject Concurrence"){
@@ -391,9 +392,11 @@ function showSideBar(idval, data){
                 displayMessage(message.compliance_concurred);
             }
             initialize();
+            hideLoader();
         }
         function onFailure(error){
             displayMessage(error);
+            hideLoader();
         }
 
         client_mirror.approveCompliance(compliance_history_id, approval_status,
