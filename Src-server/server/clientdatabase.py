@@ -6508,7 +6508,9 @@ class ClientDatabase(Database):
                 t02.is_active =1 and t01.is_active = 1 \
                 GROUP BY t01.assignee " % (user_qry)
 
+        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
         rows = self.select_all(q)
+        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
         result = self.convert_to_dict(rows, columns=["assignee", "count"])
         data = {}
         for r in result :
@@ -6553,15 +6555,16 @@ class ClientDatabase(Database):
             t4.compliance_id = t1.compliance_id and t4.completed_by = t1.assignee \
             and t4.unit_id = t1.unit_id \
         WHERE \
-            and t1.assignee = %s %s \
-            t1.is_active = 1 and ifnull(t4.approve_status, 0) != 1 \
+            t1.assignee = %s %s \
+            and t1.is_active = 1 and ifnull(t4.approve_status, 0) != 1 \
         ORDER BY t3.unit_id , t2.statutory_mapping , t2.frequency_id \
         limit %s, %s " % (
             assignee, user_qry,
             from_count, to_count
         )
-
+        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
         rows = self.select_all(q)
+        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
         result.extend(self.convert_to_dict(rows, columns))
         return self.return_compliance_to_reassign(result)
 
