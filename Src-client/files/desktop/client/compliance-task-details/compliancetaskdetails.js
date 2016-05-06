@@ -16,7 +16,6 @@ var sno = 0;
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
-
 function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
@@ -92,7 +91,6 @@ $('#pagination').click(function(){
 });
 
 function loadComplianceTaskDetails(data){
-    
     $.each(data, function(k, value) {
         if(data[k]['compliance_status'] == "Not Complied" && countOverdue == 0){
             var tableRowHeading = $('#templates .table-compliances-task-list .headingRow');
@@ -159,31 +157,25 @@ function loadComplianceTaskDetails(data){
         }
     });
 
+    var total = (snoOverdue - 1) + (snoInprogress - 1);
 
     if(c_totalRecord1 == 0){
-        $('#pagination').hide();
         $('.compliance_count1').text('');
     }else{
-        $('.compliance_count1').text("Total Over due Compliances : " + c_totalRecord1);
-        if((snoOverdue - 1) >= c_totalRecord1){
-          $('#pagination').hide();
-        }else{
-          $('#pagination').show();
-        }
+        $('.compliance_count1').text("Total Over due Compliances : " + c_totalRecord2);
     }
 
     if(c_totalRecord2 == 0){
-        $('#pagination').hide();
         $('.compliance_count2').text('');
     }else{
-        $('.compliance_count2').text("Total Inprogress Compliances : " + c_totalRecord2);
-        if((snoInprogress - 1) >= c_totalRecord2){
-          $('#pagination').hide();
-        }else{
-          $('#pagination').show();
-        }
+        $('.compliance_count2').text("Total Inprogress Compliances : " + c_totalRecord1);
     }
 
+    if(total >= c_totalRecord1 + c_totalRecord2){
+      $('#pagination').hide();
+    }else{
+      $('#pagination').show();
+    }
 }
 $('.upcomming-tab').click(function(){
     if(sno == 0){
@@ -426,8 +418,8 @@ function showSideBar(idval, data){
                     }
                 }
                 function onSuccess(data){
-                    hideLoader();
                     initialize();
+                    hideLoader();
                 }
                 function onFailure(error){
                     hideLoader();
@@ -474,8 +466,6 @@ function showSideBar(idval, data){
                 monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
             });
-           
-            
         }
     });
     

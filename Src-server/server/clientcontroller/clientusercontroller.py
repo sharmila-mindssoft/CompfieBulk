@@ -56,7 +56,7 @@ def process_client_user_request(request, db) :
 ########################################################
 def process_get_current_compliance_detail(db, request, session_user, client_id):
     current_start_count = request.current_start_count
-    to_count = 5
+    to_count = 500
     current_compliances_list = db.get_current_compliances_list(
         current_start_count, to_count, session_user, client_id
     )
@@ -73,7 +73,7 @@ def process_get_current_compliance_detail(db, request, session_user, client_id):
 
 def process_get_upcoming_compliance_detail(db, request, session_user, client_id):
     upcoming_start_count = request.upcoming_start_count
-    to_count = 10
+    to_count = 500
     upcoming_compliances_list = db.get_upcoming_compliances_list(
         upcoming_start_count, to_count, session_user, client_id
     )
