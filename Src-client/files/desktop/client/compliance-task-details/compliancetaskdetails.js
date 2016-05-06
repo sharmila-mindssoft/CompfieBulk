@@ -164,7 +164,7 @@ function loadComplianceTaskDetails(data){
         $('#pagination').hide();
         $('.compliance_count1').text('');
     }else{
-        $('.compliance_count1').text("Total Over due Compliances : " + c_totalRecord1);
+        $('.compliance_count1').text("Total Over due Compliances : " + c_totalRecord2);
         if((snoOverdue - 1) >= c_totalRecord1){
           $('#pagination').hide();
         }else{
@@ -176,7 +176,7 @@ function loadComplianceTaskDetails(data){
         $('#pagination').hide();
         $('.compliance_count2').text('');
     }else{
-        $('.compliance_count2').text("Total Inprogress Compliances : " + c_totalRecord2);
+        $('.compliance_count2').text("Total Inprogress Compliances : " + c_totalRecord1);
         if((snoInprogress - 1) >= c_totalRecord2){
           $('#pagination').hide();
         }else{
