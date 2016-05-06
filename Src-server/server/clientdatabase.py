@@ -6917,7 +6917,25 @@ class ClientDatabase(Database):
         return 0, compliance_status
 
 
-    def get_current_compliances_list(self, current_start_count, session_user, client_id):
+    def get_inprogress_count(self, session_user):
+        columns = "count(*)"
+        condition = "completed_by='%d' AND due_date >= now() and (completed_on \
+        is null or completed_on = 0)"
+        rows = self.get_data(
+            self.tblComplianceHistory, columns, condition
+        )
+        return rows[0][0]
+
+    def get_overdue_count(self, session_user):
+        columns = "count(*)"
+        condition = "completed_by ='%d' AND due_date <= now() and \
+        (completed_on is null or completed_on = 0)" % (session_user)
+        rows = self.get_data(
+            self.tblComplianceHistory, columns, condition
+        )
+        return rows[0][0]
+
+    def get_current_compliances_list(self, current_start_count, to_count, session_user, client_id):
         columns = "DISTINCT compliance_history_id, start_date, ch.due_date, " +\
             "ch.validity_date, ch.next_due_date, document_name, compliance_task, " + \
             "compliance_description, format_file, unit_code, unit_name," + \
@@ -6943,7 +6961,7 @@ class ClientDatabase(Database):
         where_condition += " and ((ch.completed_on is null or ch.completed_on = 0) \
         and (ch.approve_status is null or ch.approve_status = 0)) \
         ORDER BY due_date ASC LIMIT %d, %d" % (
-            int(current_start_count), int(current_start_count) + 500
+            int(current_start_count), to_count
         )
 
         current_compliances_row = self.get_data_from_multiple_tables(
@@ -7000,8 +7018,6 @@ class ClientDatabase(Database):
             )
         return current_compliances_list
 
-
-
     def is_already_started(self, compliance_id, unit_id):
         column = "count(*)"
         condition = "compliance_id = '%d' and unit_id = '%d'" % (compliance_id, unit_id)
@@ -7013,7 +7029,47 @@ class ClientDatabase(Database):
             return False
 
 
-    def get_upcoming_compliances_list(self, upcoming_start_count, session_user, client_id):
+    def get_upcoming_count(self, session_user):
+        columns = "count(*)"
+        tables = [
+            self.tblAssignedCompliances, self.tblUnits,  self.tblCompliances
+        ]
+        aliases = ["ac", "u", "c"]
+        join_conditions = [
+            "ac.unit_id = u.unit_id",
+            "ac.compliance_id = c.compliance_id"
+        ]
+        where_condition = " assignee = '%d' and frequency_id not in (4, 1)  and is_closed = 0" % session_user
+        where_condition += " and due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) "
+        where_condition += " and ac.is_active = 1"
+        join_type = "inner join"
+        rows = self.get_data_from_multiple_tables(
+            columns,
+            tables, aliases, join_type, join_conditions,
+            where_condition
+        )
+        count = rows[0][0]
+
+        columns = "ac.compliance_id, u.unit_id"
+        where_condition = " assignee = '%d' and frequency_id = 1  and is_closed = 0" % session_user
+        where_condition += " and due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) "
+        where_condition += " and ac.is_active = 1"
+        rows = self.get_data_from_multiple_tables(
+            columns,
+            tables, aliases, join_type, join_conditions,
+            where_condition
+        )
+        for row in rows:
+            if self.is_already_started(
+                compliance_id=row[0], unit_id=row[1]
+            ):
+                continue
+            else:
+                count += 1
+        return count
+
+
+    def get_upcoming_compliances_list(self, upcoming_start_count, to_count, session_user, client_id):
         columns = "due_date, document_name, compliance_task," + \
             " compliance_description, format_file, unit_code, unit_name," + \
             "  address, ac.statutory_dates, repeats_every, (select domain_name \
@@ -7034,7 +7090,7 @@ class ClientDatabase(Database):
         where_condition += " and due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) "
         where_condition += " and ac.is_active = 1 ORDER BY due_date ASC \
         LIMIT %d, %d" % (
-            int(upcoming_start_count), int(upcoming_start_count) + 500
+            int(upcoming_start_count), to_count
         )
         upcoming_compliances_rows = self.get_data_from_multiple_tables(
             columns,

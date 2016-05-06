@@ -67,23 +67,45 @@ class Request(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
-class GetComplianceDetail(Request):
-    def __init__(self, current_start_count, upcoming_start_count):
+class GetCurrentComplianceDetail(Request):
+    def __init__(
+        self, current_start_count
+    ):
         self.current_start_count = current_start_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, ["current_start_count"]
+        )
+        current_start_count = data.get("current_start_count")
+        current_start_count = parse_structure_UnsignedIntegerType_32(current_start_count)
+        return GetCurrentComplianceDetail(current_start_count)
+
+    def to_inner_structure(self):
+        return {
+            "current_start_count": to_structure_UnsignedIntegerType_32(self.current_start_count)
+        }
+
+class GetUpcomingComplianceDetail(Request):
+    def __init__(
+        self, upcoming_start_count
+    ):
         self.upcoming_start_count = upcoming_start_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["current_start_count", "upcoming_start_count"])
-        current_start_count = data.get("current_start_count")
-        current_start_count = parse_structure_UnsignedIntegerType_32(current_start_count)
+        data = parse_dictionary(
+            data, ["upcoming_start_count", ]
+        )
         upcoming_start_count = data.get("upcoming_start_count")
         upcoming_start_count = parse_structure_UnsignedIntegerType_32(upcoming_start_count)
-        return GetComplianceDetail(current_start_count, upcoming_start_count)
+        return GetUpcomingComplianceDetail(
+            upcoming_start_count
+        )
 
     def to_inner_structure(self):
         return {
-            "current_start_count": to_structure_UnsignedIntegerType_32(self.current_start_count),
             "upcoming_start_count": to_structure_UnsignedIntegerType_32(self.upcoming_start_count),
         }
 
@@ -181,7 +203,11 @@ class StartOnOccurrenceCompliance(Request):
 
 
 def _init_Request_class_map():
-    classes = [GetComplianceDetail, CheckDiskSpace, UpdateComplianceDetail, GetOnOccurrenceCompliances, StartOnOccurrenceCompliance]
+    classes = [
+        GetCurrentComplianceDetail, GetUpcomingComplianceDetail, CheckDiskSpace, 
+        UpdateComplianceDetail, GetOnOccurrenceCompliances, 
+        StartOnOccurrenceCompliance
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -215,21 +241,62 @@ class Response(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
-class GetComplianceDetailSuccess(Response):
-    def __init__(self, compliance_detail):
-        self.compliance_detail = compliance_detail
+class GetCurrentComplianceDetailSuccess(Response):
+    def __init__(
+        self, current_compliances, current_date, overdue_count, inprogress_count
+    ):
+        self.current_compliances = current_compliances
+        self.current_date = current_date
+        self.overdue_count = overdue_count
+        self.inprogress_count = inprogress_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["compliance_detail"])
-        compliance_detail = data.get("compliance_detail")
-        compliance_detail = parse_structure_RecordType_clientuser_ComplianceDetail(compliance_detail)
-        return GetComplianceDetailSuccess(compliance_detail)
+        data = parse_dictionary(data, [
+                "current_compliances", "current_date", "overdue_count", 
+                "inprogress_count"
+            ]
+        )
+        current_compliances = data.get("current_compliances")
+        current_compliances = parse_structure_VectorType_RecordType_core_ActiveCompliance(current_compliances)
+        current_date = data.get("current_date")
+        current_date = parse_structure_CustomTextType_20(current_date)
+        overdue_count = data.get("overdue_count")
+        overdue_count = parse_structure_UnsignedIntegerType_32(overdue_count)
+        inprogress_count = data.get("inprogress_count")
+        inprogress_count = parse_structure_UnsignedIntegerType_32(inprogress_count)
+        return GetCurrentComplianceDetailSuccess(
+            current_compliances, current_date. overdue_count, inprogress_count
+        )
 
     def to_inner_structure(self):
         return {
-            "compliance_detail": to_structure_RecordType_clientuser_ComplianceDetail(self.compliance_detail),
+            "current_compliances": to_structure_VectorType_RecordType_core_ActiveCompliance(self.current_compliances),
+            "current_date" : to_structure_CustomTextType_20(self.current_date),
+            "overdue_count" : to_structure_UnsignedIntegerType_32(self.overdue_count),
+            "inprogress_count": to_structure_UnsignedIntegerType_32(self.inprogress_count)
         }
+
+class GetUpcomingComplianceDetailSuccess(Response):
+    def __init__(self, upcoming_compliances, total_count):
+        self.upcoming_compliances = upcoming_compliances
+        self.total_count = total_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["upcoming_compliances", "total_count"])
+        upcoming_compliances = data.get("upcoming_compliances")
+        upcoming_compliances = parse_structure_VectorType_RecordType_core_UpcomingCompliance(upcoming_compliances)
+        total_count = data.get("total_count")
+        total_count = parse_structure_UnsignedIntegerType_32(total_count)
+        return GetUpcomingComplianceDetailSuccess(upcoming_compliances, total_count)
+
+    def to_inner_structure(self):
+        return {
+            "upcoming_compliances": to_structure_VectorType_RecordType_core_UpcomingCompliance(self.upcoming_compliances),
+            "total_count":  to_structure_UnsignedIntegerType_32(self.total_count)
+        }
+
 
 class CheckDiskSpaceSuccess(Response):
     def __init__(self, total_disk_space, available_disk_space):
@@ -336,9 +403,11 @@ class StartOnOccurrenceComplianceSuccess(Response):
 
 def _init_Response_class_map():
     classes = [
-        GetComplianceDetailSuccess, CheckDiskSpaceSuccess, UpdateComplianceDetailSuccess, 
+        GetCurrentComplianceDetailSuccess, GetUpcomingComplianceDetailSuccess,
+        CheckDiskSpaceSuccess, UpdateComplianceDetailSuccess, 
         NotEnoughDiskSpaceAvailable, GetOnOccurrenceCompliancesSuccess, 
-        StartOnOccurrenceComplianceSuccess, NextDueDateMustBeWithIn90DaysBeforeValidityDate
+        StartOnOccurrenceComplianceSuccess, 
+        NextDueDateMustBeWithIn90DaysBeforeValidityDate
     ]
     class_map = {}
     for c in classes:

@@ -514,8 +514,11 @@
 				has_read = false
 				client_mirror.updateNotificationStatus(notification_id, has_read, callback)	;
 			}
-			function getComplianceDetail(){
-				client_mirror.getComplianceDetail(callback);
+			function getCurrentComplianceDetail(){
+				client_mirror.getCurrentComplianceDetail(0, callback);
+			}
+			function getUpcomingComplianceDetail(){
+				client_mirror.getUpcomingComplianceDetail(0, callback);
 			}
 			function updateComplianceDetail(){
 				compliance_history_id = 1;
@@ -1015,8 +1018,11 @@
 				<div id="uploaded_filename"></div>
 			</div>
 			<div>
-				<button onclick="getComplianceDetail()">
-					Get Compliance Detail
+				<button onclick="getCurrentComplianceDetail()">
+					Get Current Compliance Detail
+				</button>
+				<button onclick="getUpcomingComplianceDetail()">
+					Get Upcoming Compliance Detail
 				</button>
 				<button onclick="updateComplianceDetail()">
 					Update Compliance Detail
