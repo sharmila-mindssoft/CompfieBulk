@@ -493,16 +493,19 @@ class ReassignCompliance(Request):
         }
 
 class GetComplianceApprovalList(Request):
-    def __init__(self):
-        pass
+    def __init__(self, start_count):
+        self.start_count = start_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetComplianceApprovalList()
+        data = parse_dictionary(data, ["start_count"])
+        start_count = data.get("start_count")
+        start_count = parse_structure_UnsignedIntegerType_32(start_count)
+        return GetComplianceApprovalList(start_count)
 
     def to_inner_structure(self):
         return {
+            "start_count": to_structure_UnsignedIntegerType_32(self.start_count)
         }
 
 class ApproveCompliance(Request):
@@ -539,7 +542,7 @@ class ApproveCompliance(Request):
 
     def to_inner_structure(self):
         return {
-            "compliance_history_id": to_structure_SignedIntegerType_8(self.compliance_history_id),
+            "compliance_history_id": to_structure_UnsignedIntegerType_32(self.compliance_history_id),
             "approval_status": to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(self.approval_status),
             "remarks": to_structure_OptionalType_CustomTextType_500(self.remarks),
             "next_due_date": parse_structure_OptionalType_CustomTextType_20(self.next_due_date),

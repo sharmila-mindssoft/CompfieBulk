@@ -68,16 +68,23 @@ class Request(object):
         raise NotImplementedError
 
 class GetComplianceDetail(Request):
-    def __init__(self):
-        pass
+    def __init__(self, current_start_count, upcoming_start_count):
+        self.current_start_count = current_start_count
+        self.upcoming_start_count = upcoming_start_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetComplianceDetail()
+        data = parse_dictionary(data, ["current_start_count", "upcoming_start_count"])
+        current_start_count = data.get("current_start_count")
+        current_start_count = parse_structure_UnsignedIntegerType_32(current_start_count)
+        upcoming_start_count = data.get("upcoming_start_count")
+        upcoming_start_count = parse_structure_UnsignedIntegerType_32(upcoming_start_count)
+        return GetComplianceDetail(current_start_count, upcoming_start_count)
 
     def to_inner_structure(self):
         return {
+            "current_start_count": to_structure_UnsignedIntegerType_32(self.current_start_count),
+            "upcoming_start_count": to_structure_UnsignedIntegerType_32(self.upcoming_start_count),
         }
 
 class CheckDiskSpace(Request):

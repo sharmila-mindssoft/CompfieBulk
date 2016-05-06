@@ -912,9 +912,12 @@ function initClientMirror() {
 
     /* Compliance Approal */
 
-    function getComplianceApprovalList(callback) {
+    function getComplianceApprovalList(start_count, callback) {
         var request = [
-            "GetComplianceApprovalList", {}
+            "GetComplianceApprovalList", 
+            {
+                "start_count": start_count
+            }
         ];
         clientApiRequest("client_transaction", request, callback);
     }
@@ -1200,11 +1203,12 @@ function initClientMirror() {
     }
 
     /* Get Compliance List*/
-    function getComplianceDetail(callback) {
+    function getComplianceDetail(current_start_count, upcoming_start_count, callback) {
         callerName = "client_user"
         var request = [
             "GetComplianceDetail", {
-
+                "current_start_count": current_start_count,
+                "upcoming_start_count": upcoming_start_count
             }
         ];
         clientApiRequest(callerName, request, callback);

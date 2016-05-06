@@ -50,8 +50,14 @@ def process_client_user_request(request, db) :
 # given user
 ########################################################
 def process_get_compliance_detail(db, request, session_user, client_id):
-    current_compliances_list = db.get_current_compliances_list(session_user, client_id)
-    upcoming_compliances_list = db.get_upcoming_compliances_list(session_user, client_id)
+    current_start_count = request.current_start_count
+    upcoming_start_count = request.upcoming_start_count
+    current_compliances_list = db.get_current_compliances_list(
+        current_start_count, session_user, client_id
+    )
+    upcoming_compliances_list = db.get_upcoming_compliances_list(
+        upcoming_start_count, session_user, client_id
+    )
     current_date_time = db.get_date_time()
     str_current_date_time = db.datetime_to_string_time(current_date_time)
     compliance_details = clientuser.ComplianceDetail(
