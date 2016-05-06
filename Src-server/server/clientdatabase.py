@@ -2285,8 +2285,39 @@ class ClientDatabase(Database):
 #   Compliance Approval
 #
 
+    def get_compliance_approval_count(self, session_user):
+        columns = "count(*)"
+        condition = "1"
+        concur_count = 0
+        if (self.is_two_levels_of_approval):
+            condition = " concurrence_status is not NULL AND \
+            concurrence_status != 0 AND concurrence_status != ''" 
+            concur_condition = "concurred_by = '%d' AND (approve_status is NULL OR \
+                approve_status = 0 OR approve_status = '') AND (\
+                completed_on is not NULL AND completed_on !=0) AND \
+                (concurrence_status = 0 OR concurrence_status is NULL OR \
+                concurrence_status = '')" % (
+                    session_user
+                )
+            concur_count = self.get_data(
+                self.tblComplianceHistory, columns, concur_condition
+            )[0][0]
+        approve_condition = "approved_by = '%d' AND (approve_status is NULL OR \
+        approve_status = 0 or approve_status = '') AND ( \
+        completed_on is not NULL and completed_on !=0) AND ( %s \
+        )" % (
+            session_user, condition
+        )
+        approve_count = self.get_data(
+            self.tblComplianceHistory, columns, approve_condition
+        )[0][0]
+        print "concur_count : {}".format(concur_count)
+        print "approve_count : {}".format(approve_count)
+        return concur_count + approve_count
+
+
     def get_compliance_approval_list(
-            self, start_count, session_user, client_id
+            self, start_count, to_count, session_user, client_id
         ):
         assignee_columns = "completed_by, employee_code, employee_name"
         join_type = "inner join"
@@ -2332,8 +2363,11 @@ class ClientDatabase(Database):
             (approve_status is Null or approve_status = 0) and completed_by = '%d' and is_closed = 0"% (
                 assignee[0]
             )
+            where_condition += " AND  (approved_by in (%s) or concurred_by = '%d')" % (
+                approval_user_ids, session_user
+            )
             where_condition += " ORDER BY tch.due_date ASC LIMIT %d, %d" % (
-                int(start_count), int(start_count) + 500
+                int(start_count), to_count
             )
             rows = self.get_data_from_multiple_tables(
                 query_columns, query_tables, aliases,
@@ -6920,7 +6954,9 @@ class ClientDatabase(Database):
     def get_inprogress_count(self, session_user):
         columns = "count(*)"
         current_date_time = self.get_date_time()
-        current_date_time.replace(hour=0, minute=0)
+        # current_date_time = current_date_time + datetime.timedelta(days=1)
+        # current_date_time = current_date_time.replace(hour=0, minute=0)
+        print "current_date_time : {}".format(current_date_time)
         condition = "completed_by='{}' AND (due_date >= '{}' \
         AND due_date is not null and due_date != 0 and due_date != '')\
         AND (completed_on is null or completed_on = 0)".format(
@@ -6934,7 +6970,9 @@ class ClientDatabase(Database):
     def get_overdue_count(self, session_user):
         columns = "count(*)"
         current_date_time = self.get_date_time()
-        current_date_time.replace(hour=0, minute=0)
+        current_date_time = current_date_time + datetime.timedelta(days=1)
+        current_date_time = current_date_time.replace(hour=0, minute=0)
+        print "current_date_time : {}".format(current_date_time)
         condition = "completed_by ='%d'" % (session_user)
         condition += " AND (due_date < '{}' AND \
         due_date is not null AND due_date != 0 AND due_date != '') AND \
