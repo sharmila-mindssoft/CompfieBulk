@@ -46,10 +46,8 @@ function initialize(){
 $('#pagination').click(function(){
     displayLoader();
     endCount = sno;
+    function onSuccess(data){
         closeicon();
-        $('.tbody-compliance-approval-list tr').remove();
-        sno = 0;
-        endCount = 0;
         approvalList = data['approval_list'];
         currentDate = data['current_date'];
         totalRecord = data['total_count'];
@@ -108,7 +106,6 @@ function loadComplianceApprovalDetails(data){
                 showSideBar(compliance_history_id, val);
             });
             $('.full-width-list .tbody-compliance-approval-list').append(clonelist);
-            sno = sno + 1;
         });
     });
     
