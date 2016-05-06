@@ -1203,11 +1203,20 @@ function initClientMirror() {
     }
 
     /* Get Compliance List*/
-    function getComplianceDetail(current_start_count, upcoming_start_count, callback) {
+    function getCurrentComplianceDetail(current_start_count, callback) {
         callerName = "client_user"
         var request = [
-            "GetComplianceDetail", {
+            "GetCurrentComplianceDetail", {
                 "current_start_count": current_start_count,
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getUpcomingComplianceDetail(upcoming_start_count, callback) {
+        callerName = "client_user"
+        var request = [
+            "GetUpcomingComplianceDetail", {
                 "upcoming_start_count": upcoming_start_count
             }
         ];
@@ -1665,7 +1674,8 @@ function initClientMirror() {
         getNotifications: getNotifications,
         updateNotificationStatus: updateNotificationStatus,
 
-        getComplianceDetail: getComplianceDetail,
+        getCurrentComplianceDetail: getCurrentComplianceDetail,
+        getUpcomingComplianceDetail: getUpcomingComplianceDetail,
 
         getRiskReportFilters: getRiskReportFilters,
         getRiskReport: getRiskReport,

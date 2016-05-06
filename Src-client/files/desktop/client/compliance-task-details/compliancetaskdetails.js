@@ -37,16 +37,18 @@ function initialize(){
     function onSuccess(data){
         clearMessage();
         closeicon();
-        currentCompliances = data['compliance_detail']['current_compliances'];
+        currentCompliances = data['current_compliances'];
+        c_totalRecord1 = data['inprogress_count'];
+        c_totalRecord2 = data['overdue_count'];
+        currentDate = data['current_date'];
         loadComplianceTaskDetails(currentCompliances);
-        currentDate = data['compliance_detail']['current_date'];
         hideLoader();
     }
     function onFailure(error){
         console.log(error);
         hideLoader();
     }
-    client_mirror.getComplianceDetail( c_endCount,
+    client_mirror.getCurrentComplianceDetail( c_endCount,
         function (error, response){
             if(error == null){
                 onSuccess(response);
@@ -66,16 +68,18 @@ $('#pagination').click(function(){
   function onSuccess(data){
         clearMessage();
         closeicon();
-        currentCompliances = data['compliance_detail']['current_compliances'];
+        currentCompliances = data['current_compliances'];
+        c_totalRecord1 = data['inprogress_count'];
+        c_totalRecord2 = data['overdue_count'];
+        currentDate = data['current_date'];
         loadComplianceTaskDetails(currentCompliances);
-        currentDate = data['compliance_detail']['current_date'];
         hideLoader();
     }
     function onFailure(error){
         console.log(error);
         hideLoader();
     }
-    client_mirror.getComplianceDetail( c_endCount, u_endCount,
+    client_mirror.getCurrentComplianceDetail( c_endCount,
         function (error, response){
             if(error == null){
                 onSuccess(response);
@@ -190,14 +194,15 @@ $('.upcomming-tab').click(function(){
         function onSuccess(data){
             clearMessage();
             closeicon();
-            loadUpcomingCompliancesDetails(data['compliance_detail']['upcoming_compliances'])
+            u_totalRecord = data['total_count'];
+            loadUpcomingCompliancesDetails(data['upcoming_compliances']);
             hideLoader();
         }
         function onFailure(error){
             console.log(error);
             hideLoader();
         }
-        client_mirror.getComplianceDetail(u_endCount,
+        client_mirror.getUpcomingComplianceDetail(u_endCount,
             function (error, response){
                 if(error == null){
                     onSuccess(response);
@@ -216,14 +221,15 @@ $('#pagination-upcoming').click(function(){
     function onSuccess(data){
         clearMessage();
         closeicon();
-        loadUpcomingCompliancesDetails(data['compliance_detail']['upcoming_compliances'])
+        u_totalRecord = data['total_count'];
+        loadUpcomingCompliancesDetails(data['upcoming_compliances']);
         hideLoader();
     }
     function onFailure(error){
         console.log(error);
         hideLoader();
     }
-    client_mirror.getComplianceDetail(u_endCount,
+    client_mirror.getUpcomingComplianceDetail(u_endCount,
         function (error, response){
             if(error == null){
                 onSuccess(response);
