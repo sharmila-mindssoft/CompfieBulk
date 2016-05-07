@@ -1181,11 +1181,12 @@ function initClientMirror() {
     }
 
     /* Notifications */
-    function getNotifications(notification_type, callback) {
+    function getNotifications(notification_type, start_count, callback) {
         callerName = "client_dashboard"
         var request = [
             "GetNotifications", {
-                "notification_type": notification_type
+                "notification_type": notification_type,
+                "start_count" : start_count
             }
         ];
         clientApiRequest(callerName, request, callback);

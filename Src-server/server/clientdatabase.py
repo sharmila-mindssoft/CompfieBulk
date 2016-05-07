@@ -6497,8 +6497,7 @@ class ClientDatabase(Database):
 #   Notifications
 #
     def get_notifications(
-        self, notification_type, 
-        # start_count, to_count, 
+        self, notification_type, start_count, to_count, 
         session_user, client_id
     ):
         notification_type_id = None
@@ -6512,7 +6511,10 @@ class ClientDatabase(Database):
         notification_rows = self.get_data(
             self.tblNotificationUserLog,
             "notification_id, read_status",
-            "user_id = '%d' ORDER BY notification_id DESC" % session_user
+            "user_id = '%d' AND read_status = 0 ORDER BY read_status ASC, \
+            notification_id DESC LIMIT %d, %d" % (
+                session_user, int(start_count), to_count
+            )
         )
         notifications = []
         for notification in notification_rows:
@@ -6533,7 +6535,7 @@ class ClientDatabase(Database):
             join_type = " left join"
             where_condition = "notification_id = '%d'" % notification_id
             where_condition += " and notification_type_id = '%d' \
-            order by notification_id DESC LIMIT 500" % (
+            order by notification_id DESC" % (
                 notification_type_id
             )
             notification_detail_row = self.get_data_from_multiple_tables(

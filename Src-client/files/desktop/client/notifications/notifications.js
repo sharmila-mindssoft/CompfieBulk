@@ -121,7 +121,7 @@ function get_notifications(){
     function onFailure(error){
         console.log(error);
     }
-    client_mirror.getNotifications('Notification',
+    client_mirror.getNotifications('Notification', 0,
         function(error, response){
             if(error == null){
                 onSuccess(response);
