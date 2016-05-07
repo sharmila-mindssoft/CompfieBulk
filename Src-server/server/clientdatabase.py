@@ -753,7 +753,6 @@ class ClientDatabase(Database):
             countries = self.get_user_countries(user["user_id"], client_id)
             domains = self.get_user_domains(user["user_id"], client_id)
             units = self.get_user_unit_ids(user["user_id"], client_id)
-            print units
             results.append(core.ClientUser(user["user_id"], user["email_id"],
                 user["user_group_id"], user["employee_name"],
                 user["employee_code"], user["contact_no"],
@@ -6524,12 +6523,12 @@ class ClientDatabase(Database):
             nl.compliance_id, compliance_task, document_name, \
             compliance_description, penal_consequences, read_status,\
             due_date, completion_date, approve_status"
-        subquery_columns = "(SELECT concat(employee_code, '-', employee_name,\
-        ',','(' , contact_no, '-', email_id, ')') FROM %s WHERE user_id = assignee), IF(\
-        concurrence_person IS NULL, '', (SELECT concat(employee_code, '-', \
-        employee_name,',','(' , contact_no, '-', email_id, ')') FROM %s WHERE \
-        user_id = concurrence_person)), (SELECT concat(employee_code, '-',\
-        employee_name,',','(' , contact_no, '-', email_id, ')') FROM %s WHERE \
+        subquery_columns = "(SELECT concat(IFNULL(employee_code, 'Administrator'), '-', employee_name,\
+        ',','(' , IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE user_id = assignee), IF(\
+        concurrence_person IS NULL, '', (SELECT concat(IFNULL(employee_code, 'Administrator'), '-', \
+        employee_name,',','(' ,  IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE \
+        user_id = concurrence_person)), (SELECT concat(IFNULL(employee_code, 'Administrator'), '-',\
+        employee_name,',','(' ,  IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE \
         user_id = approval_person)\
         " % (self.tblUsers, self.tblUsers, self.tblUsers)
         query = "SELECT %s,%s \
@@ -8751,6 +8750,62 @@ class ClientDatabase(Database):
             result = rows[0][0]
         return result
 
+    def get_client_details_report1(
+        self, country_id,  business_group_id, legal_entity_id, division_id,
+        unit_id, domain_ids, session_user
+    ):
+        user_unit_ids = self.get_user_unit_ids(session_user)
+        condition = "u.country_id = '%d' "%(country_id)
+        if business_group_id is not None:
+            condition += " AND u.business_group_id = '%d'" % business_group_id
+        if legal_entity_id is not None:
+            condition += " AND u.legal_entity_id = '%d'" % legal_entity_id
+        if division_id is not None:
+            condition += " AND u.division_id = '%d'" % division_id
+        if unit_id is not None:
+            condition += " AND unit_id = '%d'" % unit_id
+        else:
+            condition += " AND unit_id in (%s)" % user_unit_ids
+        if domain_ids is not None:
+            for domain_id in domain_ids:
+                condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
+                            "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
+                            "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
+                            " or domain_ids LIKE '"+str(domain_id)+"') "
+
+        columns = "unit_id, unit_code, unit_name, geography, "\
+                "address, domain_ids, postal_code, business_group_name,\
+                legal_entity_name, division_name"
+        query = "SELECT %s \
+                FROM %s u \
+                LEFT JOIN %s b ON (u.business_group_id = b.business_group_id)\
+                LEFT JOIN %s l ON (u.legal_entity_id = l.legal_entity_id) \
+                LEFT JOIN %s d ON (u.division_id = d.division_id) \
+                WHERE %s " % (
+                    columns, self.tblUnits, self.tblBusinessGroups,
+                    self.tblLegalEntities, self.tblDomains, condition 
+
+                )
+        rows = self.select_all(query)
+        columns_list = columns.replace(" ", "").split(",")
+        unit_rows = self.convert_to_dict(rows, columns_list)
+        units = []
+        grouped_units = {}
+        for unit in unit_rows:
+            # if unit["business_group_name"] not in grouped_units:
+            units.append(
+                clientreport.UnitDetails(
+                    unit["unit_id"], unit["geography"], unit["unit_code"],
+                    unit["unit_name"], unit["address"], unit["postal_code"],
+                    [int(x) for x in unit["domain_ids"].split(",")]
+                )
+            )
+        GroupedUnits.append(
+            clientreport.GroupedUnits(row[2], row[1], row[0], units)
+        )
+        return GroupedUnits
+
+    
     def get_client_details_report(
         self, country_id,  business_group_id, legal_entity_id, division_id,
         unit_id, domain_ids, session_user
@@ -8810,7 +8865,6 @@ class ClientDatabase(Database):
                 )
             GroupedUnits.append(clientreport.GroupedUnits(row[2], row[1], row[0], units))
         return GroupedUnits
-
 
     def get_user_assigned_reassigned_ids(self, user_id):
         columns = "group_concat(compliance_id)"
