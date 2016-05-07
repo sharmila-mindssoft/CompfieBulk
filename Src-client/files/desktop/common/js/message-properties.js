@@ -188,7 +188,8 @@ var message = {
 	'invalid_duedate' : 'Invalid due date for - ',
 	'cannot_change_status' : 'Cannot change the status of Service provider - Contract of Service Provider expired',
 	'invalid_contractto' : 'Invalid Contract To date',
-	'InvalidDueDate': 'Due date should not greater then statutory date'
+	'InvalidDueDate': 'Due date should not greater then statutory date',
+	'startdate_required': 'Start date Required'
 };
 
 function clearMessage() {

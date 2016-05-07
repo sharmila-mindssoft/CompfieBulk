@@ -1,39 +1,52 @@
 var currentCompliances;
 var file_list = [];
 var currentDate;
+var c_endCount = 0;
+var u_endCount = 0;
 
-function clearMessage() {
-    $(".error-message").hide();
-    $(".error-message").text("");
-}
-
-function displayMessage(message) {
-    $(".error-message").text(message);
-    $(".error-message").show();
-}
+var c_totalRecord1;
+var c_totalRecord2;
+var u_totalRecord;
+var snoOverdue = 1;
+var snoInprogress = 1;
+var countOverdue = 0;
+var countInprogress = 0;
+var sno = 0;
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
-
 function hideLoader() {
     $(".loading-indicator-spin").hide();
 }
 
 function initialize(){
-    hideLoader();
+    displayLoader();
+    c_endCount = 0;
+    $('.tbody-compliances-task-list-overdue tr').remove();
+    $('.tbody-compliances-task-list-inprogress tr').remove();
+    clearMessage();
+    $('.uploaded-filename').empty();
+    snoOverdue = 1;
+    snoInprogress = 1;
+    countOverdue = 0;
+    countInprogress = 0;
+
     function onSuccess(data){
         clearMessage();
         closeicon();
-        currentCompliances = data['compliance_detail']['current_compliances'];
+        currentCompliances = data['current_compliances'];
+        c_totalRecord1 = data['inprogress_count'];
+        c_totalRecord2 = data['overdue_count'];
+        currentDate = data['current_date'];
         loadComplianceTaskDetails(currentCompliances);
-        loadUpcomingCompliancesDetails(data['compliance_detail']['upcoming_compliances'])
-        currentDate = data['compliance_detail']['current_date'];
+        hideLoader();
     }
     function onFailure(error){
         console.log(error);
+        hideLoader();
     }
-    client_mirror.getComplianceDetail(
+    client_mirror.getCurrentComplianceDetail( c_endCount,
         function (error, response){
             if(error == null){
                 onSuccess(response);
@@ -45,16 +58,38 @@ function initialize(){
     );
 }
 
-function loadComplianceTaskDetails(data){
-    $('.tbody-compliances-task-list-overdue tr').remove();
-    $('.tbody-compliances-task-list-inprogress tr').remove();
-    clearMessage();
-    $('.uploaded-filename').empty();
-    var snoOverdue = 1;
-    var snoInprogress = 1;
-    var countOverdue = 0;
-    var countInprogress = 0;
+$('#pagination').click(function(){
+  displayLoader();
+  c_endCount = snoOverdue + snoInprogress - 2;
+  clearMessage();
 
+  function onSuccess(data){
+        clearMessage();
+        closeicon();
+        currentCompliances = data['current_compliances'];
+        c_totalRecord1 = data['inprogress_count'];
+        c_totalRecord2 = data['overdue_count'];
+        currentDate = data['current_date'];
+        loadComplianceTaskDetails(currentCompliances);
+        hideLoader();
+    }
+    function onFailure(error){
+        console.log(error);
+        hideLoader();
+    }
+    client_mirror.getCurrentComplianceDetail( c_endCount,
+        function (error, response){
+            if(error == null){
+                onSuccess(response);
+            }
+            else{
+                onFailure(error);
+            }
+        }
+    );
+});
+
+function loadComplianceTaskDetails(data){
     $.each(data, function(k, value) {
         if(data[k]['compliance_status'] == "Not Complied" && countOverdue == 0){
             var tableRowHeading = $('#templates .table-compliances-task-list .headingRow');
@@ -120,10 +155,85 @@ function loadComplianceTaskDetails(data){
             snoInprogress = snoInprogress + 1
         }
     });
+
+    var total = (snoOverdue - 1) + (snoInprogress - 1);
+
+    if(c_totalRecord1 == 0){
+        $('.compliance_count1').text('');
+    }else{
+        $('.compliance_count1').text("Total Over Due Compliances : " + c_totalRecord2);
+    }
+
+    if(c_totalRecord2 == 0){
+        $('.compliance_count2').text('');
+    }else{
+        $('.compliance_count2').text("Total Inprogress Compliances : " + c_totalRecord1);
+    }
+
+    if(total >= c_totalRecord1 + c_totalRecord2){
+      $('#pagination').hide();
+    }else{
+      $('#pagination').show();
+    }
 }
+$('.upcomming-tab').click(function(){
+    if(sno == 0){
+        displayLoader();
+        u_endCount = 0;
+        $('.tbody-upcoming-compliances-list tr').remove();
+        sno = 0;
+        function onSuccess(data){
+            clearMessage();
+            closeicon();
+            u_totalRecord = data['total_count'];
+            loadUpcomingCompliancesDetails(data['upcoming_compliances']);
+            hideLoader();
+        }
+        function onFailure(error){
+            console.log(error);
+            hideLoader();
+        }
+        client_mirror.getUpcomingComplianceDetail(u_endCount,
+            function (error, response){
+                if(error == null){
+                    onSuccess(response);
+                }
+                else{
+                    onFailure(error);
+                }
+            }
+        );
+    }
+});
+
+$('#pagination-upcoming').click(function(){
+    displayLoader();
+    u_endCount = sno;
+    function onSuccess(data){
+        clearMessage();
+        closeicon();
+        u_totalRecord = data['total_count'];
+        loadUpcomingCompliancesDetails(data['upcoming_compliances']);
+        hideLoader();
+    }
+    function onFailure(error){
+        console.log(error);
+        hideLoader();
+    }
+    client_mirror.getUpcomingComplianceDetail(u_endCount,
+        function (error, response){
+            if(error == null){
+                onSuccess(response);
+            }
+            else{
+                onFailure(error);
+            }
+        }
+    );
+});
+
 function loadUpcomingCompliancesDetails(data){
-    $('.tbody-upcoming-compliances-list tr').remove();
-    var sno = 0;
+    
     $.each(data, function(k, value) {
         var tableRowvalues = $('#templates .table-upcoming-compliances-list .table-row-list');
         var cloneval = tableRowvalues.clone();
@@ -144,6 +254,17 @@ function loadUpcomingCompliancesDetails(data){
         $('.tbody-upcoming-compliances-list').append(cloneval);
     });
 
+    if(u_totalRecord == 0){
+        $('#pagination-upcoming').hide();
+        $('.compliance_count_upcoming').text('');
+    }else{
+        $('.compliance_count_upcoming').text("Total Upcoming Compliances : " + u_totalRecord);
+        if(sno >= u_totalRecord){
+          $('#pagination-upcoming').hide();
+        }else{
+          $('#pagination-upcoming').show();
+        }
+    }
 }
 
 function compliancealreadyexists(){
@@ -296,8 +417,8 @@ function showSideBar(idval, data){
                     }
                 }
                 function onSuccess(data){
-                    hideLoader();
                     initialize();
+                    hideLoader();
                 }
                 function onFailure(error){
                     hideLoader();
@@ -344,8 +465,6 @@ function showSideBar(idval, data){
                 monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
             });
-           
-            
         }
     });
     
@@ -419,3 +538,22 @@ $( document ).tooltip({
         }
     }
 });
+
+$(document).ready(function() {
+  $(".current-tab").click(function() {
+    $(".current-tab").addClass("active");
+    $(".upcomming-tab").removeClass("active");
+    $(".main-tab-content").show();
+    $(".upcomming-tab-content").hide();
+  })
+  $(".upcomming-tab").click(function() {
+    $(".upcomming-tab").addClass("active");
+    $(".current-tab").removeClass("active");
+    $(".main-tab-content").hide();
+    $(".upcomming-tab-content").show();
+  })
+  $(".close").click(function() {
+    $(".current-tab-content").hide();
+    $(".main-tab-content").show();
+  })
+})

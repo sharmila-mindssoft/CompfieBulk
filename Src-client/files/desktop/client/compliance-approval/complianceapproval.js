@@ -2,27 +2,36 @@ var approvalList;
 var file_list = [];
 var action;
 var currentDate;
+var sno = 0;
+var totalRecord;
+var lastAssignee;
 
-function clearMessage() {
-    $(".error-message").hide();
-    $(".error-message").text("");
+function displayLoader() {
+    $(".loading-indicator-spin").show();
 }
-function displayMessage(message) {
-    $(".error-message").text(message);
-    $(".error-message").show();
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
 }
 
 function initialize(){
+    sno = 0;
+    lastAssignee = '';
+    displayLoader();
     function onSuccess(data){
         closeicon();
+        $('.tbody-compliance-approval-list tr').remove();
+        sno = 0;
         approvalList = data['approval_list'];
         currentDate = data['current_date'];
+        totalRecord = data['total_count'];
         loadComplianceApprovalDetails(approvalList);
+        hideLoader();
     }
     function onFailure(error){
         console.log(error);
+        hideLoader();
     }
-    client_mirror.getComplianceApprovalList(
+    client_mirror.getComplianceApprovalList(sno,
         function (error, response){
             if(error == null){
                 onSuccess(response);
@@ -34,19 +43,48 @@ function initialize(){
     );
 }
 
+$('#pagination').click(function(){
+    displayLoader();
+    function onSuccess(data){
+        closeicon();
+        approvalList = data['approval_list'];
+        currentDate = data['current_date'];
+        totalRecord = data['total_count'];
+        loadComplianceApprovalDetails(approvalList);
+        hideLoader();
+    }
+    function onFailure(error){
+        console.log(error);
+        hideLoader();
+    }
+    client_mirror.getComplianceApprovalList(sno,
+        function (error, response){
+            if(error == null){
+                onSuccess(response);
+            }
+            else{
+                onFailure(error);
+            }
+        }
+    );
+});
+
 function loadComplianceApprovalDetails(data){
-    $('.tbody-compliance-approval-list tr').remove();
-    var sno = 1;
     $.each(data, function(key, value) {
-        var tableRowHeading = $('#templates .table-compliance-approval-list .headingRow');
-        var clone = tableRowHeading.clone();
-        $('.heading', clone).html(value["assignee_name"]);
-        $('.tbody-compliance-approval-list').append(clone);
+        if(lastAssignee != value["assignee_name"]){
+            var tableRowHeading = $('#templates .table-compliance-approval-list .headingRow');
+            var clone = tableRowHeading.clone();
+            $('.heading', clone).html(value["assignee_name"]);
+            $('.tbody-compliance-approval-list').append(clone);
+            lastAssignee = value["assignee_name"];
+        }
+        
         complianceList = value['compliances'];
         //Full Width list append ---------------------------------------------------------------
         $.each(complianceList, function(k, val) {
             var tableRowvalues = $('#templates .table-compliance-approval-list .table-row-list');
             var clonelist = tableRowvalues.clone();
+            sno = sno + 1;
             $('.sno-ca', clonelist).html(sno);
             $('.compliance-task span', clonelist).html(val['compliance_name']);
             $('.compliance-task abbr', clonelist).attr("title", val['description']);
@@ -71,10 +109,22 @@ function loadComplianceApprovalDetails(data){
                 showSideBar(compliance_history_id, val);
             });
             $('.full-width-list .tbody-compliance-approval-list').append(clonelist);
-            sno = sno + 1;
         });
     });
+    
+    if(totalRecord == 0){
+        $('#pagination').hide();
+        $('.compliance_count').text('');
+    }else{
+        $('.compliance_count').text("Total Compliances : " + totalRecord);
+        if(sno >= totalRecord){
+          $('#pagination').hide();
+        }else{
+          $('#pagination').show();
+        }
+    }
 }
+
 
 function showSideBar(idval, data){
     var fileslist = [];
@@ -330,6 +380,7 @@ function showSideBar(idval, data){
         //         return;
         //     }
         // }
+        displayLoader();
         function onSuccess(data){
             clearMessage();
             if(approval_status == "Reject Concurrence"){
@@ -345,9 +396,11 @@ function showSideBar(idval, data){
                 displayMessage(message.compliance_concurred);
             }
             initialize();
+            hideLoader();
         }
         function onFailure(error){
             displayMessage(error);
+            hideLoader();
         }
 
         client_mirror.approveCompliance(compliance_history_id, approval_status,

@@ -912,9 +912,12 @@ function initClientMirror() {
 
     /* Compliance Approal */
 
-    function getComplianceApprovalList(callback) {
+    function getComplianceApprovalList(start_count, callback) {
         var request = [
-            "GetComplianceApprovalList", {}
+            "GetComplianceApprovalList", 
+            {
+                "start_count": start_count
+            }
         ];
         clientApiRequest("client_transaction", request, callback);
     }
@@ -1200,11 +1203,21 @@ function initClientMirror() {
     }
 
     /* Get Compliance List*/
-    function getComplianceDetail(callback) {
+    function getCurrentComplianceDetail(current_start_count, callback) {
         callerName = "client_user"
         var request = [
-            "GetComplianceDetail", {
+            "GetCurrentComplianceDetail", {
+                "current_start_count": current_start_count,
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
 
+    function getUpcomingComplianceDetail(upcoming_start_count, callback) {
+        callerName = "client_user"
+        var request = [
+            "GetUpcomingComplianceDetail", {
+                "upcoming_start_count": upcoming_start_count
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -1663,7 +1676,8 @@ function initClientMirror() {
         getNotifications: getNotifications,
         updateNotificationStatus: updateNotificationStatus,
 
-        getComplianceDetail: getComplianceDetail,
+        getCurrentComplianceDetail: getCurrentComplianceDetail,
+        getUpcomingComplianceDetail: getUpcomingComplianceDetail,
 
         getRiskReportFilters: getRiskReportFilters,
         getRiskReport: getRiskReport,

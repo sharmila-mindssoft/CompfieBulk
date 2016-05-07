@@ -26,6 +26,11 @@
   margin-right: 15px;
 }
 </style>
+
+<div class='loading-indicator-spin'>
+  <span><img src='/files/desktop/common/images/loading-img.gif' alt=""></span>
+</div>
+
 <div class="content-container width100">
   <div class="content-area">
     <div class="add-container completed-container" style="min-height: 395px;" >
@@ -80,14 +85,17 @@
               </thead>
               <tbody class="tbody-compliance-approval-list"></tbody>
             </table>
+            <div align="center" style="padding-top:10px;">
+              <input type="button" value="Show more records" class="btn-submit default-display-none" id="pagination">
+            </div>
+
             </div>
             </td>
               <td width="1%" class="half-width-task-details default-display-none" style="vertical-align:top; background:#F1E9F6; padding-left:10px;" ></td>
             </tr>
           </table>
-         
-
-  
+          
+          <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
       </div>
       <div class="current-tab-content" style="border:1px solid white;display:none">
         <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">

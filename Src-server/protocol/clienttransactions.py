@@ -493,16 +493,19 @@ class ReassignCompliance(Request):
         }
 
 class GetComplianceApprovalList(Request):
-    def __init__(self):
-        pass
+    def __init__(self, start_count):
+        self.start_count = start_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetComplianceApprovalList()
+        data = parse_dictionary(data, ["start_count"])
+        start_count = data.get("start_count")
+        start_count = parse_structure_UnsignedIntegerType_32(start_count)
+        return GetComplianceApprovalList(start_count)
 
     def to_inner_structure(self):
         return {
+            "start_count": to_structure_UnsignedIntegerType_32(self.start_count)
         }
 
 class ApproveCompliance(Request):
@@ -539,7 +542,7 @@ class ApproveCompliance(Request):
 
     def to_inner_structure(self):
         return {
-            "compliance_history_id": to_structure_SignedIntegerType_8(self.compliance_history_id),
+            "compliance_history_id": to_structure_UnsignedIntegerType_32(self.compliance_history_id),
             "approval_status": to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(self.approval_status),
             "remarks": to_structure_OptionalType_CustomTextType_500(self.remarks),
             "next_due_date": parse_structure_OptionalType_CustomTextType_20(self.next_due_date),
@@ -982,23 +985,27 @@ class ReassignComplianceSuccess(Response):
         }
 
 class GetComplianceApprovalListSuccess(Response):
-    def __init__(self, approval_list, approval_status):
+    def __init__(self, approval_list, approval_status, total_count):
         self.approval_list = approval_list
         self.approval_status = approval_status
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["approval_list", "approval_status"])
+        data = parse_dictionary(data, ["approval_list", "approval_status", "total_count"])
         approval_list = data.get("approval_list")
         approval_list = parse_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST(approval_list)
         approval_status = data.get("approval_status")
         approval_status = parse_structure_VectorType_RecordType_core_COMPLIANCE_APPROVAL_STATUS(approval_status)
-        return GetComplianceApprovalListSuccess(approval_list, approval_status)
+        total_count = data.get("total_count")
+        total_count = parse_structure_UnsignedIntegerType_32(total_count)
+        return GetComplianceApprovalListSuccess(approval_list, approval_status, total_count)
 
     def to_inner_structure(self):
         return {
             "approval_list": to_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST(self.approval_list),
-            "approval_status": to_structure_VectorType_RecordType_core_COMPLIANCE_APPROVAL_STATUS(self.approval_status)
+            "approval_status": to_structure_VectorType_RecordType_core_COMPLIANCE_APPROVAL_STATUS(self.approval_status),
+            "total_count": to_structure_UnsignedIntegerType_32(self.total_count)
         }
 
 class ApproveComplianceSuccess(Response):

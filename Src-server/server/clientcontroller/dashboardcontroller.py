@@ -197,7 +197,12 @@ def process_compliance_applicability_drill_down(db, request, session_user, clien
 
 def process_get_notifications(db, request, session_user, client_id):
     notifications = None
-    notifications = db.get_notifications(request.notification_type, session_user, client_id)
+    to_count = 500
+    notifications = db.get_notifications(
+        request.notification_type, 
+        # request.start_count, to_count, 
+        session_user, client_id
+    )
     return dashboard.GetNotificationsSuccess(notifications = notifications)
 
 def process_update_notification_status(db, request, session_user, client_id):
