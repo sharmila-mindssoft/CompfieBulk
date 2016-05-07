@@ -6667,7 +6667,7 @@ class ClientDatabase(Database):
         current_time_stamp = self.get_date_time()
         compliance_status = "-"
         # due_date = self.localize(due_date)
-        if frequency_type =="On Occurrence":
+        if frequency_type == "On Occurrence":
             r = relativedelta.relativedelta(due_date, current_time_stamp)
             if completion_date is not None:
                 r = relativedelta.relativedelta(due_date, completion_date)
