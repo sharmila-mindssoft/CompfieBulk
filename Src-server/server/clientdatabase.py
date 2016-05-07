@@ -1355,43 +1355,65 @@ class ClientDatabase(Database):
 #
 #   Audit Trail
 #
+    def get_audit_trails(
+        self, session_user, client_id, from_count, to_count,
+        from_date, to_Date, user_id, form_id
+    ):
 
-    def get_audit_trails(self, user_id, client_id, from_count, to_count):
-        user_ids = ""
-        form_ids = None
-        if self.is_primary_admin(user_id):
-            condition = "1"
-            form_column = "group_concat(form_id)"
-            form_condition = "form_type_id != 4"
-            rows = self.get_data(
-                self.tblForms, form_column, form_condition
-            )
-            form_ids = rows[0][0]
-        else:
-            column = "user_group_id"
-            condition = "user_id = '%d'" % user_id
-            rows = self.get_data(
-                self.tblUsers, column, condition
-            )
-            user_group_id = rows[0][0]
+        # user_ids = ""
+        # form_ids = None
+        # if self.is_primary_admin(user_id):
+        #     condition = "1"
+        #     form_column = "group_concat(form_id)"
+        #     form_condition = "form_type_id != 4"
+        #     rows = self.get_data(
+        #         self.tblForms, form_column, form_condition
+        #     )
+        #     form_ids = rows[0][0]
+        # else:
+        #     column = "user_group_id"
+        #     condition = "user_id = '%d'" % user_id
+        #     rows = self.get_data(
+        #         self.tblUsers, column, condition
+        #     )
+        #     user_group_id = rows[0][0]
 
-            column = "form_ids"
-            condition = "user_group_id = '%d'" % user_group_id
-            rows = self.get_data(
-                self.tblUserGroups, column, condition
-            )
+        #     column = "form_ids"
+        #     condition = "user_group_id = '%d'" % user_group_id
+        #     rows = self.get_data(
+        #         self.tblUserGroups, column, condition
+        #     )
 
-            form_ids = rows[0][0]
+        #     form_ids = rows[0][0]
 
-            column = "group_concat(user_id)"
-            condition = "user_group_id in (%s)" % user_group_id
-            rows = self.get_data(
-                self.tblUsers, column, condition
-            )
-            user_ids = rows[0][0]
-            condition = "user_id in (%s)" % user_ids
+            # column = "group_concat(user_id)"
+            # condition = "user_group_id in (%s)" % user_group_id
+            # rows = self.get_data(
+            #     self.tblUsers, column, condition
+            # )
+            # user_ids = rows[0][0]
+            # condition = "user_id in (%s)" % user_ids
+        admin_id = self.get_admin_id()
+        condition = "1"
+        where_qry = ""
+        if session_user > 0 and session_user != admin_id :
+            where_qry += " AND user_id = %s" % (session_user)
+        else :
+            if user_id is not None :
+                where_qry += " AND user_id = %s" % (user_id)
+            else :
+                where_qry += " AND user_id like '%'"
+
+        if from_date is not None and to_Date is not None :
+            from_date = self.string_to_datetime(from_date)
+            to_date = self.string_to_datetime(to_date)
+            where_qry = "AND created_on >= '%s' AND created_on <= '%s' " % (from_date, to_date)
+
+        if form_id is not None :
+            where_qry = " AND form_id = %s " % (form_id)
 
         columns = "user_id, form_id, action, created_on"
+        condition += where_qry
         condition += " ORDER BY activity_log_id DESC \
         limit %s, %s " % (from_count, to_count)
         rows = self.get_data(
@@ -2878,13 +2900,9 @@ class ClientDatabase(Database):
             to_count
         )
 
-        self.execute("SET GLOBAL connect_timeout=120000")
-        self.execute("SET GLOBAL wait_timeout=120000")
-        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
         total = self.total_compliance_for_units(unit_ids, domain_id)
         c_rows = self.select_all(qry_applicable)
         rows = self.select_all(query)
-        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
 
         temp = self.convert_to_dict(c_rows, ["compliance_id", "units"])
         applicable_units = {}
@@ -8826,7 +8844,6 @@ class ClientDatabase(Database):
 
         return email_ids, employee_name
 
-
     def get_compliance_history_details(self, compliance_history_id):
         columns = "completed_by, ifnull(concurred_by, 0), approved_by, ( \
             select compliance_task from %s c \
@@ -8835,11 +8852,11 @@ class ClientDatabase(Database):
             where c.compliance_id = ch.compliance_id ), due_date" % (
                 self.tblCompliances, self.tblCompliances)
         condition = "compliance_history_id = '%d'" % compliance_history_id
-        rows = self.get_data(self.tblComplianceHistory+" ch", columns, condition )
+        rows = self.get_data(self.tblComplianceHistory + " ch", columns, condition)
         if rows:
             return rows[0]
 
-    def get_compliance_task_applicability(self, request, session_user):
+    def get_compliance_task_applicability_old(self, request, session_user):
         business_group = request.business_group_id
         legal_entity = request.legal_entity_id
         division_id = request.division_id
@@ -8970,6 +8987,7 @@ class ClientDatabase(Database):
                     request.domain_id,
                     where_qry
                 )
+            print query
             rows = self.select_all(query)
             columns = [
                 "statutory_provision", "statutory_mapping", "compliance_task",
@@ -9065,7 +9083,7 @@ class ClientDatabase(Database):
                             not_applicable_list[act] = unit_list
                         else :
                             not_opted_list[act] = unit_list
-            if len(applicable_list) >0 :
+            if len(applicable_list) > 0 :
                 applicable_compliances.append(
                     clientreport.GetComplianceTaskApplicabilityStatusReportData(
                         business_group_name, legal_entity_name, division_name,
@@ -9090,6 +9108,170 @@ class ClientDatabase(Database):
             applicable_compliances, not_applicable_compliances,
             not_opted_compliances
         )
+
+    def get_compliance_task_applicability(self, request, session_user):
+        business_group = request.business_group_id
+        legal_entity = request.legal_entity_id
+        division_id = request.division_id
+        unit = request.unit_id
+
+        def statutory_repeat_text(statutory_dates, repeat, repeat_type) :
+            trigger_days = ""
+            repeats_text = ""
+            for index, dat in enumerate(statutory_dates) :
+                if dat["statutory_month"] is not None :
+                    day = dat["statutory_date"]
+                    if day == 1 :
+                        day = "1st"
+                    elif day == 2 :
+                        day = "2nd"
+                    else :
+                        day = "%sth" % (day)
+                    month = self.string_months[dat["statutory_month"]]
+                    days = dat["trigger_before_days"]
+                    if index == 0 :
+                        repeats_text += " %s %s" % (day, month)
+                        trigger_days += " %s days" % (days)
+                    else :
+                        repeats_text += " %s %s" % (day, month)
+                        trigger_days += " and %s days" % (days)
+
+            if repeats_text == "" :
+                repeats_text = "Every %s %s" % (repeat, repeat_type)
+            else :
+                repeats_text = "Every %s" % (repeats_text)
+
+            if trigger_days is not "" :
+                trigger_days = "triggers (%s)" % (trigger_days)
+            result = "%s %s" % (repeats_text, trigger_days)
+            return result
+
+        def statutory_duration_text(duration, duration_type):
+            result = "To complete within %s %s" % (duration, duration_type)
+            return result
+
+        if business_group is not None :
+            where_qry = " AND T4.business_group_id = %s" % (business_group)
+
+        if legal_entity is not None :
+            where_qry += " AND T4.legal_entity_id = %s" % (legal_entity)
+
+        if division_id is not None :
+            where_qry += " AND T4.division_id = %s" % (division_id)
+
+        if unit is not None :
+            where_qry += " AND T3.unit_id = %s" % (unit)
+
+        applicable_compliances = []
+        not_applicable_compliances = []
+        not_opted_compliances = []
+
+        query = "SELECT T2.statutory_provision, T2.statutory_mapping, \
+            T2.compliance_task, T2.document_name, T2.format_file, \
+            T2.penal_consequences, T2.compliance_description, \
+            T2.statutory_dates, T3.unit_id, (select frequency \
+                from tbl_compliance_frequency where \
+                frequency_id = T2.frequency_id) as frequency,\
+            (select business_group_name from tbl_business_groups where business_group_id = T4.business_group_id)business_group, \
+            (select legal_entity_name from tbl_legal_entities where legal_entity_id = T4.legal_entity_id)legal_entity, \
+            (select division_name from tbl_divisions where division_id = T4.division_id )division_name,\
+            T4.unit_id, T4.unit_code, T4.unit_name, T4.address, T4.postal_code, \
+            T1.statutory_applicable, T1.statutory_opted, T1.compliance_opted, \
+            (select repeat_type from tbl_compliance_repeat_type where \
+                repeat_type_id = T2.repeats_type_id) repeat_type, \
+            (select duration_type from tbl_compliance_duration_type where \
+                duration_type_id = T2.duration_type_id) duration_type , \
+            T2.repeats_every, T2.duration \
+            FROM tbl_client_compliances T1 \
+            INNER JOIN tbl_compliances T2 \
+            ON T1.compliance_id = T2.compliance_id \
+            INNER JOIN tbl_client_statutories T3 \
+            ON T1.client_statutory_id = T3.client_statutory_id \
+            INNER JOIN tbl_units T4 \
+            ON T3.unit_id = T4.unit_id \
+            WHERE T3.country_id = %s \
+            AND T3.domain_id = %s \
+            %s \
+            " % (
+                request.country_id,
+                request.domain_id,
+                where_qry
+            )
+        print query
+        rows = self.select_all(query)
+        columns = [
+            "statutory_provision", "statutory_mapping", "compliance_task",
+            "document_name", "format_file", "penal_consequences",
+            "compliance_description", "statutory_dates", "unit_id", "frequency",
+            "business_group", "legal_entity", "division_name",
+            "unit_name", "unit_address", "statutory_applicable",
+            "statutory_opted", "compliance_opted",
+            "repeat_type", "duration_type", "repeats_every",
+            "duration"
+        ]
+        result = self.convert_to_dict(rows, columns)
+
+        for r in result :
+            unit_id = r["unit_id"]
+            mapping = r["statutory_mapping"].split(">>")
+            level_1_statutory = mapping[0]
+            level_1_statutory = level_1_statutory.strip()
+
+            if r["statutory_applicable"] == 1 :
+                applicability_status = "applicable"
+            else :
+                applicability_status = "not applicable"
+
+            if r["compliance_opted"] == 0:
+                applicability_status = "not opted"
+
+            act_wise = applicable_wise.get(applicability_status)
+            if act_wise is None :
+                act_wise = {}
+
+            unit_wise = act_wise.get(level_1_statutory)
+
+            document_name = r["document_name"]
+            if document_name not in (None, "None", "") :
+                compliance_name = "%s - %s" % (document_name, r["compliance_task"])
+            else :
+                compliance_name = r["compliance_task"]
+
+            if unit_wise is None :
+                unit_wise = {}
+
+            statutory_dates = json.loads(r["statutory_dates"])
+            repeat_text = ""
+            repeats_every = r["repeats_every"]
+            repeat_type = r["repeat_type"]
+            if repeats_every :
+                repeat_text = statutory_repeat_text(statutory_dates, repeats_every, repeat_type)
+
+            duration = r["duration"]
+            duration_type = r["duration_type"]
+            if duration:
+                repeat_text = statutory_duration_text(duration, duration_type)
+
+            compliance_name_list = [compliance_name]
+            format_file = r["format_file"]
+            if format_file :
+                compliance_name_list.append("%s/%s" % (FORMAT_DOWNLOAD_URL, format_file))
+            compliance = clientreport.ComplianceList(
+                r["statutory_provision"] + r["statutory_mapping"],
+                compliance_name_list,
+                r["compliance_description"],
+                r["penal_consequences"],
+                core.COMPLIANCE_FREQUENCY(r["frequency"]),
+                repeat_text
+            )
+
+
+
+        return clientreport.GetComplianceTaskApplicabilityStatusReportSuccess(
+            applicable_compliances, not_applicable_compliances,
+            not_opted_compliances
+        )
+
 
     def get_on_occurrence_compliances_for_user(self, session_user):
         user_domain_ids = self.get_user_domains(session_user)
