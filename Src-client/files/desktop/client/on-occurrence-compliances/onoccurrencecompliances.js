@@ -1,4 +1,6 @@
 var compliancesList;
+var sno = 0;
+var totalRecord;
 
 
 function displayLoader() {
@@ -10,8 +12,6 @@ function hideLoader() {
 
 //load compliances in view page
 function load_compliances (compliancesList) {
-  var j = 1;
-  $(".tbody-complainces-list").find("tr").remove();
     for(var entity in compliancesList) {
       var tableRow = $('#head-templates .tbl_heading');
       var clone = tableRow.clone();
@@ -19,18 +19,19 @@ function load_compliances (compliancesList) {
       $('.tbody-compliances-list').append(clone);
       var compliances = compliancesList[entity];
       for(var compliance in compliances){
+        sno = sno + 1;
         var complianceId = compliances[compliance]["compliance_id"];
         var unitId = compliances[compliance]["unit_id"];
         var completeDays = compliances[compliance]["complete_within_days"];
         var tableRow1=$('#templates .table-compliances .table-row');
         var clone1=tableRow1.clone();
-        $('.sno', clone1).text(j);
+        $('.sno', clone1).text(sno);
         $('.statutory', clone1).text(compliances[compliance]["statutory_provision"]);
         $('.compliance-task', clone1).text(compliances[compliance]["compliance_name"]);
         $('.description', clone1).text(compliances[compliance]["description"]);
         $('.duration', clone1).text(completeDays);
-        $('.startdate', clone1).html('<input type="text" class="input-box" width="200px" readonly="readonly" id="startdate'+j+'"/>');
-        $('.action', clone1).html('<input type="button" class="btn-submit" value="Start" onclick="submitOnOccurence('+complianceId+','+j+','+unitId+',\''+completeDays+'\')"/>');
+        $('.startdate', clone1).html('<input type="text" class="input-box" width="200px" readonly="readonly" id="startdate'+sno+'"/>');
+        $('.action', clone1).html('<input type="button" class="btn-submit" value="Start" onclick="submitOnOccurence('+complianceId+','+sno+','+unitId+',\''+completeDays+'\')"/>');
 
         /*$(clone1, '.action').on("click", function(e){
             submitOnOccurence(complianceId, j, unitId, completeDays);
@@ -38,7 +39,7 @@ function load_compliances (compliancesList) {
 
         $('.tbody-compliances-list').append(clone1);
 
-        $("#startdate"+j).datetimepicker({
+        $("#startdate"+sno).datetimepicker({
             changeMonth: true,
             changeYear: true,
             numberOfMonths: 1,
@@ -46,8 +47,19 @@ function load_compliances (compliancesList) {
             monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         });
-        j = j + 1;
       }
+    }
+
+    if(totalRecord == 0){
+        $('#pagination').hide();
+        $('.compliance_count').text('');
+    }else{
+        $('.compliance_count').text("Total Compliances : " + totalRecord);
+        if(sno >= totalRecord){
+          $('#pagination').hide();
+        }else{
+          $('#pagination').show();
+        }
     }
 }
 
@@ -111,15 +123,24 @@ function submitOnOccurence(complianceId, count, unitId, complete_within_days){
 
 }
 
+
 //get on occurance compliance list from api
-function getOnOccuranceCompliances () {
+function getOnOccuranceCompliances (sno) {
+  //displayLoader();
+  if(sno == 0){
+      $(".tbody-complainces-list").find("tr").remove();
+  }
   function onSuccess(data){
     compliancesList = data["compliances"];
+    totalRecord = data['total_count'];
     load_compliances(compliancesList);
+    hideLoader();
   }
   function onFailure(error){
+    displayMessage(error);
+    hideLoader();
   }
-  client_mirror.getOnOccurrenceCompliances(
+  client_mirror.getOnOccurrenceCompliances(sno,
     function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -131,7 +152,13 @@ function getOnOccuranceCompliances () {
   );
 }
 
+$('#pagination').click(function(){
+    endCount = sno;
+    getOnOccuranceCompliances (sno);
+});
+
 //initialization
 $(document).ready(function () {
-  getOnOccuranceCompliances ();
+  sno = 0;
+  getOnOccuranceCompliances (sno);
 });

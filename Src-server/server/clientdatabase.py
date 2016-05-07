@@ -2285,8 +2285,38 @@ class ClientDatabase(Database):
 #   Compliance Approval
 #
 
+    def get_compliance_approval_count(self, session_user):
+        columns = "count(*)"
+        condition = "1"
+        concur_count = 0
+        if (self.is_two_levels_of_approval) and (not self.is_primary_admin(session_user)) :
+            condition = " concurrence_status is not NULL AND \
+            concurrence_status != 0 AND concurrence_status != ''" 
+            concur_condition = "concurred_by = '%d' AND (approve_status is NULL OR \
+                approve_status = 0 OR approve_status = '') AND (\
+                completed_on is not NULL AND completed_on !=0) AND \
+                (concurrence_status = 0 OR concurrence_status is NULL OR \
+                concurrence_status = '')" % (
+                    session_user
+                )
+            concur_count = self.get_data(
+                self.tblComplianceHistory, columns, concur_condition
+            )[0][0]
+        approve_condition = "approved_by = '%d' AND (approve_status is NULL OR \
+        approve_status = 0 or approve_status = '') AND ( \
+        completed_on is not NULL and completed_on !=0) AND ( %s \
+        )" % (
+            session_user, condition
+        )
+
+        approve_count = self.get_data(
+            self.tblComplianceHistory, columns, approve_condition
+        )[0][0]
+        return concur_count + approve_count
+
+
     def get_compliance_approval_list(
-            self, session_user, client_id
+            self, start_count, to_count, session_user, client_id
         ):
         assignee_columns = "completed_by, employee_code, employee_name"
         join_type = "inner join"
@@ -2330,8 +2360,14 @@ class ClientDatabase(Database):
             completion_date != 0 ) and (completed_on is not Null \
             and completed_on != 0) and \
             (approve_status is Null or approve_status = 0) and completed_by = '%d' and is_closed = 0 \
-            limit 500 " % (
+            " % (
                 assignee[0]
+            )
+            where_condition += " AND  (approved_by in (%s) or concurred_by = '%d')" % (
+                approval_user_ids, session_user
+            )
+            where_condition += " ORDER BY tch.due_date ASC LIMIT %d, %d" % (
+                int(start_count), to_count
             )
             rows = self.get_data_from_multiple_tables(
                 query_columns, query_tables, aliases,
@@ -6749,7 +6785,63 @@ class ClientDatabase(Database):
         return 0, compliance_status
 
 
-    def get_current_compliances_list(self, session_user, client_id):
+    def get_inprogress_count(self, session_user):
+        other_compliance_condition = "completed_by='{}' AND \
+        (due_date >= current_date() \
+        AND due_date is not null and due_date != 0 and due_date != '')\
+        AND (completed_on is null or completed_on = 0)".format(
+            session_user
+        )
+        on_occurrence_condition = "completed_by='{}' AND \
+        (due_date >= now() \
+        AND due_date is not null and due_date != 0 and due_date != '')\
+        AND (completed_on is null or completed_on = 0)".format(
+            session_user
+        )
+        query = "SELECT count(*) FROM %s ch INNER JOIN \
+        %s c ON (ch.compliance_id = c.compliance_id ) " % (
+            self.tblComplianceHistory , self.tblCompliances
+        )
+      
+        other_compliance_rows = self.select_all(
+            "%s WHERE frequency_id != 4 AND %s" % (query, other_compliance_condition)
+        )
+        other_compliance_count = other_compliance_rows[0][0]
+
+        query += " WHERE frequency_id = 4 AND %s" % (on_occurrence_condition)
+        on_occurrence_rows = self.select_all(query)
+        on_occurrence_count = on_occurrence_rows[0][0]
+
+        return int(other_compliance_count) + int(on_occurrence_count)
+
+    def get_overdue_count(self, session_user):
+        query = "SELECT count(*) FROM %s ch INNER JOIN \
+        %s c ON (ch.compliance_id = c.compliance_id) WHERE " % (
+            self.tblComplianceHistory, self.tblCompliances
+        )
+        condition = "completed_by ='%d'" % (session_user)
+        other_compliance_condition = " %s AND frequency_id != 4 AND \
+        (due_date < current_date() AND \
+        due_date is not null AND due_date != 0 AND due_date != '') AND \
+        (completed_on is null or completed_on = 0)" % (
+            condition
+        )
+
+        on_occurrence_condition = " %s AND frequency_id = 4 AND \
+        (due_date < now() AND \
+        due_date is not null AND due_date != 0 AND due_date != '') AND \
+        (completed_on is null or completed_on = 0)" % (
+            condition
+        )
+        other_compliance_count = self.select_all("%s %s" % (
+            query, other_compliance_condition)
+        )[0][0]
+        on_occurrence_count = self.select_all("%s %s" % (
+            query, on_occurrence_condition)
+        )[0][0]
+        return int(other_compliance_count) + int(on_occurrence_count)
+
+    def get_current_compliances_list(self, current_start_count, to_count, session_user, client_id):
         columns = "DISTINCT compliance_history_id, start_date, ch.due_date, " +\
             "ch.validity_date, ch.next_due_date, document_name, compliance_task, " + \
             "compliance_description, format_file, unit_code, unit_name," + \
@@ -6773,7 +6865,11 @@ class ClientDatabase(Database):
         where_condition = "ch.completed_by='%d' and is_closed = 0 and ac.is_active = 1" % (
             session_user)
         where_condition += " and ((ch.completed_on is null or ch.completed_on = 0) \
-        and (ch.approve_status is null or ch.approve_status = 0)) ORDER BY due_date ASC limit 500 "
+        and (ch.approve_status is null or ch.approve_status = 0)) and \
+        (ch.due_date is not null and ch.due_date != 0 and ch.due_date != '')  \
+        ORDER BY due_date ASC LIMIT %d, %d" % (
+            int(current_start_count), to_count
+        )
 
         current_compliances_row = self.get_data_from_multiple_tables(
             columns,
@@ -6829,8 +6925,6 @@ class ClientDatabase(Database):
             )
         return current_compliances_list
 
-
-
     def is_already_started(self, compliance_id, unit_id):
         column = "count(*)"
         condition = "compliance_id = '%d' and unit_id = '%d'" % (compliance_id, unit_id)
@@ -6842,14 +6936,8 @@ class ClientDatabase(Database):
             return False
 
 
-    def get_upcoming_compliances_list(self, session_user, client_id):
-        columns = "due_date, document_name, compliance_task," + \
-            " compliance_description, format_file, unit_code, unit_name," + \
-            "  address, ac.statutory_dates, repeats_every, (select domain_name \
-            from %s d where d.domain_id = c.domain_id) as domain_name, frequency_id, \
-            c.compliance_id, u.unit_id" % (
-            self.tblDomains
-        )
+    def get_upcoming_count(self, session_user):
+        columns = "count(*)"
         tables = [
             self.tblAssignedCompliances, self.tblUnits,  self.tblCompliances
         ]
@@ -6858,22 +6946,57 @@ class ClientDatabase(Database):
             "ac.unit_id = u.unit_id",
             "ac.compliance_id = c.compliance_id"
         ]
-        join_type = "inner join"
-        where_condition = " assignee = '%d' and frequency_id != 4  and is_closed = 0" % session_user
+        where_condition = " assignee = '%d' and frequency_id not in (4, 1)  and is_closed = 0" % session_user
         where_condition += " and due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) "
-        where_condition += " and ac.is_active = 1 limit 500 "
-        upcoming_compliances_rows = self.get_data_from_multiple_tables(
+        where_condition += " and ac.is_active = 1"
+        join_type = "inner join"
+        rows = self.get_data_from_multiple_tables(
             columns,
             tables, aliases, join_type, join_conditions,
             where_condition
         )
+        count = rows[0][0]
+        columns = "ac.compliance_id, u.unit_id"
+        where_condition = " assignee = '%d' and frequency_id = 1  and is_closed = 0" % session_user
+        where_condition += " and due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) "
+        where_condition += " and ac.is_active = 1"
+        rows = self.get_data_from_multiple_tables(
+            columns,
+            tables, aliases, join_type, join_conditions,
+            where_condition
+        )
+        for row in rows:
+            if self.is_already_started(
+                compliance_id=row[0], unit_id=row[1]
+            ):
+                continue
+            else:
+                count += 1
+        return count
 
+
+    def get_upcoming_compliances_list(self, upcoming_start_count, to_count, session_user, client_id):
+        query = "SELECT ac.due_date, document_name, compliance_task, \
+                compliance_description, format_file, unit_code, unit_name,\
+                address, ac.statutory_dates, repeats_every, (select domain_name \
+                FROM %s d where d.domain_id = c.domain_id) as domain_name, \
+                frequency_id, c.compliance_id, u.unit_id\
+                FROM %s  ac INNER JOIN %s u ON (ac.unit_id = u.unit_id) \
+                INNER JOIN %s c ON (ac.compliance_id = c.compliance_id) WHERE \
+                assignee = '%d' AND frequency_id != 4  AND is_closed = 0\
+                AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) \
+                AND ac.is_active = 1 AND IF ( (frequency_id = 1 AND ( \
+                select count(*) from tbl_compliance_history ch \
+                where ch.compliance_id = ac.compliance_id and \
+                ch.unit_id = ac.unit_id ) >0), 0,1) \
+                ORDER BY ac.due_date ASC LIMIT %d, %d"  % (
+                    self.tblDomains, self.tblAssignedCompliances, self.tblUnits,
+                    self.tblCompliances, session_user, int(upcoming_start_count), 
+                    to_count
+                )
+        upcoming_compliances_rows = self.select_all(query)
         upcoming_compliances_list = []
         for compliance in upcoming_compliances_rows:
-            if compliance[11] in [1, "1"]:
-                if self.is_already_started(compliance_id=compliance[12], unit_id=compliance[13]):
-                    continue
-
             document_name = compliance[1]
             compliance_task = compliance[2]
             compliance_name = compliance_task
@@ -7576,7 +7699,6 @@ class ClientDatabase(Database):
 
     def return_reassinged_history_report(self, result, total):
         level_wise = {}
-        # print result
         for r in result :
             if r["document_name"] is not None :
                 cname = " %s - %s" % (r["document_name"], r["compliance_task"])

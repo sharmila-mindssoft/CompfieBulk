@@ -281,7 +281,6 @@ class Database(object) :
                 query += "%s," % str(value)
             else:
                 query += str(value)
-        print query
         return self.execute(query)
 
     ########################################################
