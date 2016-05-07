@@ -1096,18 +1096,23 @@ class ClientDatabase(Database):
         return result
 
     def get_user_unit_ids(self, user_id, client_id=None):
-        columns = "group_concat(unit_id)"
+        columns = "unit_id"
         table = self.tblUnits
         result = None
         condition = 1
         if user_id > 0:
             table = self.tblUserUnits
-            condition = " user_id = '%d'"% user_id
+            condition = " user_id = '%d'" % user_id
         rows = self.get_data(
             table, columns, condition
         )
         if rows :
-            result = rows[0][0]
+            result = ""
+            for index, row in enumerate(rows):
+                if index == 0:
+                    result += str(row[0])
+                else:
+                    result += ",%s" % str(row[0])
         return result
 
     def get_user_business_group_ids(self, user_id):
