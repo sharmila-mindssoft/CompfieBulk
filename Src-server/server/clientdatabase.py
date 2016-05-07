@@ -2766,8 +2766,8 @@ class ClientDatabase(Database):
         return user_list
 
     def total_compliance_for_units(self, unit_ids, domain_id):
-        q = "select distinct \
-                count(t01.compliance_id) \
+        q = "select \
+                count(distinct t01.compliance_id) \
             From \
                 tbl_client_compliances t01 \
                     inner join \
@@ -2843,7 +2843,8 @@ class ClientDatabase(Database):
             (select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) duration_type, \
             t3.duration, \
             (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t3.repeats_type_id) repeat_type, \
-            t3.repeats_every \
+            t3.repeats_every, \
+            t3.repeats_type_id\
         FROM \
             tbl_client_compliances t2  \
                 INNER JOIN \
@@ -2890,17 +2891,18 @@ class ClientDatabase(Database):
             "document_name", "compliance_description",
             "statutory_mapping", "statutory_provision",
             "statutory_dates", "frequency", "frequency_id", "duration_type", "duration",
-            "repeat_type", "repeats_every"
+            "repeat_type", "repeats_every", "repeats_type_id"
         ]
         result = self.convert_to_dict(rows, columns)
         return self.return_assign_compliance_data(result, applicable_units, total)
 
-    def set_new_due_date(self, statutory_dates):
+    def set_new_due_date(self, statutory_dates, repeats_type_id):
         due_date = None
         due_date_list = []
         date_list = []
         now = datetime.datetime.now()
         current_year = now.year
+        current_month = now.month
         for date in statutory_dates:
                 s_date = core.StatutoryDate(
                     date["statutory_date"],
@@ -2937,15 +2939,27 @@ class ClientDatabase(Database):
                                 days = (n_date.replace(day=1, month=s_month+1) - datetime.timedelta(days=1)).day
                             n_date = n_date.replace(day=days, month=int(s_month))
                 if current_date > n_date:
-                    try :
-                        n_date = n_date.replace(year=current_year+1)
-                    except ValueError :
-                        if n_date.month == 12 :
-                            days = 31
-                        else :
-                            days = (n_date.replace(day=1, month=n_date.month+1, year=current_year+1) - datetime.timedelta(days=1)).day
-                        n_date = n_date.replace(day=days, year=current_year+1)
+                    if repeats_type_id == 2 and len(statutory_dates) == 1 :
+                        try :
+                            n_date = n_date.replace(month=current_month+1)
+                        except ValueError :
+                            if n_date.month == 12 :
+                                days = 31
+                            else :
+                                days = (n_date.replace(day=1, month=n_date.month+1, year=current_year+1) - datetime.timedelta(days=1)).day
 
+                            n_date = n_date.replace(day=days, month=current_month+1)
+
+                    else :
+                        try :
+                            n_date = n_date.replace(year=current_year+1)
+                        except ValueError :
+                            if n_date.month == 12 :
+                                days = 31
+                            else :
+                                days = (n_date.replace(day=1, month=n_date.month+1, year=current_year+1) - datetime.timedelta(days=1)).day
+
+                            n_date = n_date.replace(day=days, year=current_year+1)
                 if s_day is None and s_month is None :
                     due_date = ""
                 else :
@@ -2976,14 +2990,14 @@ class ClientDatabase(Database):
             statutory_dates = r["statutory_dates"]
             statutory_dates = json.loads(statutory_dates)
 
-            due_date, due_date_list, date_list = self.set_new_due_date(statutory_dates)
-
             if r["frequency_id"] in (2, 3) :
                 summary = "Repeats every %s - %s" % (r["repeats_every"], r["repeat_type"])
             elif r["frequency_id"] == 4 :
                 summary = "To complete within %s - %s" % (r["duration"], r["duration_type"])
             else :
                 summary = None
+
+            due_date, due_date_list, date_list = self.set_new_due_date(statutory_dates, r["repeats_type_id"])
 
             compliance = clienttransactions.UNIT_WISE_STATUTORIES(
                 c_id,
@@ -3020,11 +3034,12 @@ class ClientDatabase(Database):
         c_ids = []
         for c in request.compliances :
             c_ids.append(c.compliance_id)
-            q = "SELECT compliance_id, statutory_dates from tbl_compliances \
+            q = "SELECT compliance_id, statutory_dates, repeats_type_id from tbl_compliances \
                 where compliance_id = %s" % int(c.compliance_id)
             row = self.select_one(q)
             s_dates = json.loads(row[1])
-            due_date, due_date_list, date_list = self.set_new_due_date(s_dates)
+            repeats_type_id = row[2]
+            due_date, due_date_list, date_list = self.set_new_due_date(s_dates, repeats_type_id)
 
             if c.due_date not in [None, ""] and due_date not in [None, ""]:
                 t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
@@ -3033,108 +3048,6 @@ class ClientDatabase(Database):
                     # Due date should be lessthen statutory date
                     return False
         return True
-
-    def save_assigned_compliance_old(self, request, session_user, client_id):
-        new_unit_settings = request.new_units
-
-        created_on = self.get_date_time()
-        country_id = int(request.country_id)
-        assignee = int(request.assignee)
-        concurrence = request.concurrence_person
-        approval = int(request.approval_person)
-        compliances = request.compliances
-
-        compliance_names = []
-        for c in compliances:
-            compliance_id = int(c.compliance_id)
-            statutory_dates = c.statutory_dates
-            if statutory_dates is not None :
-                date_list = []
-                for dates in statutory_dates :
-                    date_list.append(dates.to_structure())
-                # due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
-                # validity_date = c.validity_date
-            else :
-                date_list = []
-            date_list = json.dumps(date_list)
-
-            unit_ids = c.unit_ids
-            if c.trigger_before is not None :
-                trigger_before = int(c.trigger_before)
-            else :
-                trigger_before = ""
-            if c.due_date is not None :
-                due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
-            else :
-                due_date = ""
-            compliance_names.append("Complaince Name:" + c.compliance_name + "- Due Date:" + str(c.due_date))
-            validity_date = c.validity_date
-            if validity_date is not None :
-                validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
-                if due_date > validity_date :
-                    due_date = validity_date
-                elif (validity_date - datetime.timedelta(days=90)) > due_date :
-                    due_date = validity_date
-            else :
-                validity_date = ""
-
-            for unit_id in unit_ids:
-                if concurrence is not None :
-                    query = "INSERT INTO tbl_assigned_compliances \
-                        (country_id, unit_id, compliance_id, \
-                        statutory_dates, assignee, \
-                        concurrence_person, approval_person, \
-                        trigger_before_days, due_date, validity_date, created_by, \
-                        created_on) VALUES \
-                        (%s, %s, %s, '%s', %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (
-                            country_id, unit_id, compliance_id,
-                            date_list, assignee, concurrence,
-                            approval, trigger_before, due_date, validity_date,
-                            int(session_user), created_on
-                        )
-                else :
-                    query = "INSERT INTO tbl_assigned_compliances \
-                    (country_id, unit_id, compliance_id, \
-                    statutory_dates, assignee, \
-                    approval_person, \
-                    trigger_before_days, due_date, validity_date, created_by, \
-                    created_on) VALUES \
-                    (%s, %s, %s, '%s', %s, '%s', '%s', '%s', '%s', '%s', '%s')" % (
-                        country_id, unit_id, compliance_id,
-                        date_list, assignee,
-                        approval, trigger_before, due_date, validity_date,
-                        int(session_user), created_on
-                    )
-                self.execute(query)
-            # self.update_user_units(assignee, unit_ids, client_id)
-        if new_unit_settings is not None :
-            self.update_user_settings(new_unit_settings, client_id)
-
-        compliance_names = " <br> ".join(compliance_names)
-        if request.concurrence_person_name is None :
-            action = " Following compliances has assigned to assignee - %s and approval-person - %s <br> %s" % (
-                request.assignee_name,
-                request.approval_person_name,
-                compliance_names
-            )
-        else :
-            action = " Following compliances has assigned to assignee - %s concurrence-person - %s approval-person - %s <br> %s" % (
-                request.assignee_name,
-                request.concurrence_person_name,
-                request.approval_person_name,
-                compliance_names
-            )
-        activity_text = action.replace("<br>", " ")
-        self.save_activity(session_user, 7, json.dumps(activity_text))
-        receiver = self.get_email_id_for_users(assignee)[1]
-        notify_assign_compliance = threading.Thread(
-            target=email.notify_assign_compliance,
-            args=[
-                receiver, request.assignee_name, action
-            ]
-        )
-        notify_assign_compliance.start()
-        # return clienttransactions.SaveAssignedComplianceSuccess()
 
     def save_assigned_compliance(self, request, session_user, client_id):
         new_unit_settings = request.new_units
@@ -6679,7 +6592,6 @@ class ClientDatabase(Database):
                 %s \
                 t02.is_active =1 and t01.is_active = 1 \
                 GROUP BY t01.assignee " % (user_qry)
-
         self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
         rows = self.select_all(q)
         self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
@@ -6928,7 +6840,7 @@ class ClientDatabase(Database):
         current_time_stamp = self.get_date_time()
         compliance_status = "-"
         # due_date = self.localize(due_date)
-        if frequency_type =="On Occurrence":
+        if frequency_type == "On Occurrence":
             r = relativedelta.relativedelta(due_date, current_time_stamp)
             if completion_date is not None:
                 r = relativedelta.relativedelta(due_date, completion_date)
