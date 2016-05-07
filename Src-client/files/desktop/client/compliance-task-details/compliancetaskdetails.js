@@ -23,7 +23,6 @@ function hideLoader() {
 function initialize(){
     displayLoader();
     c_endCount = 0;
-
     $('.tbody-compliances-task-list-overdue tr').remove();
     $('.tbody-compliances-task-list-inprogress tr').remove();
     clearMessage();
