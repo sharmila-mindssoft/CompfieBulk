@@ -161,7 +161,7 @@ function loadComplianceTaskDetails(data){
     if(c_totalRecord1 == 0){
         $('.compliance_count1').text('');
     }else{
-        $('.compliance_count1').text("Total Over due Compliances : " + c_totalRecord2);
+        $('.compliance_count1').text("Total Over Due Compliances : " + c_totalRecord2);
     }
 
     if(c_totalRecord2 == 0){
