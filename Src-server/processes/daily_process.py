@@ -135,7 +135,9 @@ def get_compliance_to_start(db, client_id, current_date, country_id):
         AND t1.country_id = %s" % (current_date, country_id)
 
     cursor = db.cursor()
+    cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
     cursor.execute(query)
+    cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
     rows = cursor.fetchall()
     columns = [
         "country_id", "unit_id", "compliance_id", "statutory_dates",
