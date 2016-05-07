@@ -4,6 +4,7 @@ var action;
 var currentDate;
 var sno = 0;
 var totalRecord;
+var lastAssignee;
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -14,6 +15,7 @@ function hideLoader() {
 
 function initialize(){
     sno = 0;
+    lastAssignee = '';
     displayLoader();
     function onSuccess(data){
         closeicon();
@@ -69,10 +71,14 @@ $('#pagination').click(function(){
 
 function loadComplianceApprovalDetails(data){
     $.each(data, function(key, value) {
-        var tableRowHeading = $('#templates .table-compliance-approval-list .headingRow');
-        var clone = tableRowHeading.clone();
-        $('.heading', clone).html(value["assignee_name"]);
-        $('.tbody-compliance-approval-list').append(clone);
+        if(lastAssignee != value["assignee_name"]){
+            var tableRowHeading = $('#templates .table-compliance-approval-list .headingRow');
+            var clone = tableRowHeading.clone();
+            $('.heading', clone).html(value["assignee_name"]);
+            $('.tbody-compliance-approval-list').append(clone);
+            lastAssignee = value["assignee_name"];
+        }
+        
         complianceList = value['compliances'];
         //Full Width list append ---------------------------------------------------------------
         $.each(complianceList, function(k, val) {

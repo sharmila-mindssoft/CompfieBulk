@@ -2341,7 +2341,7 @@ class ClientDatabase(Database):
         AND (approved_by IN (%s) OR concurred_by = '%d') \
         AND is_closed = 0 AND IF ( \
         (concurred_by = '%d' AND concurrence_status = 1), 0, 1)\
-        ORDER BY tch.due_date ASC LIMIT %d, %d" % (
+        ORDER BY completed_by, tch.due_date ASC LIMIT %d, %d" % (
             self.tblComplianceHistory, self.tblCompliances, 
             self.tblComplianceFrequency, self.tblUnits, self.tblUsers,
             self.tblDomains, approval_user_ids,
