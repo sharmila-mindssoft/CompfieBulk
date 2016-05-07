@@ -1081,7 +1081,7 @@ class ClientDatabase(Database):
         return result
 
     def get_user_domains(self, user_id, client_id=None):
-        columns = "group_concat(domain_id)"
+        columns = "domain_id"
         table = self.tblDomains
         result = None
         condition = 1
@@ -1091,12 +1091,17 @@ class ClientDatabase(Database):
         rows = self.get_data(
             table, columns, condition
         )
+        result = ""
         if rows:
-            result = rows[0][0]
+            for index, row in enumerate(rows):
+                if index == 0:
+                    result += str(row[0])
+                else:
+                    result += ", %s" % str(row[0])
         return result
 
     def get_user_unit_ids(self, user_id, client_id=None):
-        columns = "group_concat(unit_id)"
+        columns = "unit_id"
         table = self.tblUnits
         result = None
         condition = 1
@@ -1107,7 +1112,12 @@ class ClientDatabase(Database):
             table, columns, condition
         )
         if rows :
-            result = rows[0][0]
+            result = ""
+            for index, row in enumerate(rows):
+                if index == 0:
+                    result += str(row[0])
+                else:
+                    result += ",%s" % str(row[0])
         return result
 
     def get_user_business_group_ids(self, user_id):
@@ -4495,7 +4505,7 @@ class ClientDatabase(Database):
         FROM tbl_assigned_compliances ac \
             INNER JOIN tbl_units u on ac.unit_id = u.unit_id \
             INNER JOIN tbl_compliances c on ac.compliance_id = c.compliance_id \
-            WHERE ac.is_active = 1 and c.is_active = 1 \
+            WHERE c.is_active = 1 \
             and ac.country_id = %s and c.domain_id = %s \
             %s \
         " % (
@@ -4539,7 +4549,7 @@ class ClientDatabase(Database):
         FROM tbl_assigned_compliances ac \
             INNER JOIN tbl_units u on ac.unit_id = u.unit_id \
             INNER JOIN tbl_compliances c on ac.compliance_id = c.compliance_id \
-            WHERE ac.is_active = 1 and c.is_active = 1 \
+            WHERE c.is_active = 1 \
             and ac.country_id = %s and c.domain_id = %s \
             %s \
         ORDER BY u.legal_entity_id, ac.assignee, u.unit_id \
@@ -4547,6 +4557,7 @@ class ClientDatabase(Database):
             country_id, domain_id,
             qry_where, from_count, to_count
         )
+        print q
         rows = self.select_all(q)
         data = self.convert_to_dict(rows, columns)
         return data, count
@@ -6420,132 +6431,120 @@ class ClientDatabase(Database):
             notification_type_id = 2
         elif notification_type == "Escalation":
             notification_type_id = 3
-
-        notification_rows = self.get_data(
-            self.tblNotificationUserLog,
-            "notification_id, read_status",
-            "user_id = '%d' AND read_status = 0 ORDER BY read_status ASC, \
-            notification_id DESC LIMIT %d, %d" % (
-                session_user, int(start_count), to_count
-            )
-        )
-        print notification_rows
-        notifications = []
-        for notification in notification_rows:
-            notification_id = notification[0]
-            read_status = bool(int(notification[1]))
-            # Getting notification details
-            columns = "notification_id, notification_text, created_on, extra_details, \
-                statutory_provision, unit_code, unit_name, address, assignee, \
-                concurrence_person, approval_person, nl.compliance_id, \
-                compliance_task, document_name, compliance_description, \
-                penal_consequences"
-            tables = [self.tblNotificationsLog, self.tblUnits, self.tblCompliances]
-            aliases = ["nl", "u", "c"]
-            join_conditions = [
-                "nl.unit_id = u.unit_id",
-                "nl.compliance_id = c.compliance_id"
-            ]
-            join_type = " left join"
-            where_condition = "notification_id = '%d'" % notification_id
-            where_condition += " and notification_type_id = '%d' \
-            order by notification_id DESC" % (
-                notification_type_id
-            )
-            notification_detail_row = self.get_data_from_multiple_tables(
-                columns, tables, aliases, join_type,
-                join_conditions, where_condition
-            )
-            print notification_detail_row
-            notification_detail = []
-            if notification_detail_row:
-                notification_detail = notification_detail_row[0]
-                extra_details_with_history_id = notification_detail[3].split("-")
-                compliance_history_id = int(extra_details_with_history_id[0])
-                extra_details = extra_details_with_history_id[1]
-                due_date_rows = None
-                if compliance_history_id not in [0, "0", None, "None", ""]:
-                    due_date_rows = self.get_data(
-                        self.tblComplianceHistory,
-                        "due_date, completion_date, approve_status",
-                        "compliance_history_id = '%d'" % int(compliance_history_id)
-                    )
-
-                if compliance_history_id not in [0, "0", None, "None", ""] and len(due_date_rows) > 0:
-                    due_date_as_date = due_date_rows[0][0]
-                    due_date = self.datetime_to_string_time(due_date_rows[0][0])
-                    completion_date = due_date_rows[0][1]
-                    approve_status = due_date_rows[0][2]
-                    delayed_days = "-"
-                    if completion_date is None or approve_status == 0:
-                        no_of_days, delayed_days = self.calculate_ageing(due_date_as_date)
-                    else:
-                        r = relativedelta.relativedelta(due_date_as_date, completion_date)
-                        delayed_days = "-"
-                        if r.days < 0 and r.hours < 0 and r.minutes < 0:
-                            delayed_days = "Overdue by %d days" % abs(r.days)
-                    if "Overdue" not in delayed_days:
-                        delayed_days = "-"
-                    # diff = self.get_date_time() - due_date_as_datetime
-                    statutory_provision = notification_detail[4].split(">>")
-                    level_1_statutory = statutory_provision[0]
-
-                    notification_id = notification_detail[0]
-                    notification_text = notification_detail[1]
-                    updated_on = self.datetime_to_string(notification_detail[2])
-                    unit_name = "%s - %s" % (
-                        notification_detail[5],
-                        notification_detail[6]
-                    )
-                    unit_address = notification_detail[7]
-                    assignee = self.get_user_contact_details_by_id(
-                        notification_detail[8], client_id
-                    )
-                    if notification_detail[9] is not None:
-                        concurrence_person = self.get_user_contact_details_by_id(
-                            notification_detail[9], client_id
-                        )
-                    else:
-                        concurrence_person = None
-                    approval_person = self.get_user_contact_details_by_id(
-                        notification_detail[10], client_id
-                    )
-                    compliance_name = notification_detail[12]
-                    if notification_detail[13] is not None and notification_detail[13].replace(" ","") != "None":
-                        compliance_name = "%s - %s" % (
-                            notification_detail[13], notification_detail[12]
-                        )
-
-                    compliance_description = notification_detail[14]
-                    penal_consequences = notification_detail[15]
-                    due_date = self.datetime_to_string_time(due_date_rows[0][0])
-                else:
-                    penal_consequences = None
-                    delayed_days = None
-                    due_date = None
-                    compliance_description = None
-                    approval_person = None
-                    compliance_name = None
-                    concurrence_person = None
-                    assignee = None
-                    unit_name = None
-                    unit_address = None
-                    level_1_statutory = None
-                    extra_details = notification_detail_row[0][3].split("-")[1]
-                    read_status = bool(0)
-                    updated_on = self.datetime_to_string(self.get_date_time())
-                    notification_text = notification_detail_row[0][1]
-                notifications.append(
-                    dashboard.Notification(
-                        notification_id, read_status, notification_text, extra_details,
-                        updated_on, level_1_statutory, unit_name, unit_address, assignee,
-                        concurrence_person, approval_person, compliance_name,
-                        compliance_description,
-                        due_date,
-                        delayed_days, penal_consequences
-                    )
+        columns = "nul.notification_id, notification_text, created_on, \
+            extra_details, statutory_provision, unit_code, unit_name, \
+            address, assignee, concurrence_person, approval_person, \
+            nl.compliance_id, compliance_task, document_name, \
+            compliance_description, penal_consequences, read_status,\
+            due_date, completion_date, approve_status"
+        subquery_columns = "(SELECT concat(IFNULL(employee_code, 'Administrator'), '-', employee_name,\
+        ',','(' , IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE user_id = assignee), IF(\
+        concurrence_person IS NULL, '', (SELECT concat(IFNULL(employee_code, 'Administrator'), '-', \
+        employee_name,',','(' ,  IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE \
+        user_id = concurrence_person)), (SELECT concat(IFNULL(employee_code, 'Administrator'), '-',\
+        employee_name,',','(' ,  IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE \
+        user_id = approval_person)\
+        " % (self.tblUsers, self.tblUsers, self.tblUsers)
+        query = "SELECT %s,%s \
+                FROM %s nl \
+                INNER JOIN %s nul ON (nl.notification_id = nul.notification_id)\
+                INNER JOIN %s tu ON (tu.unit_id = nl.unit_id) \
+                INNER JOIN %s tc ON (tc.compliance_id = nl.compliance_id) \
+                INNER JOIN %s tch ON (tch.compliance_id = nl.compliance_id AND \
+                tch.unit_id = nl.unit_id) \
+                WHERE notification_type_id = '%d' \
+                AND user_id = '%d' \
+                AND read_status = 0\
+                AND IF (\
+                (SUBSTRING_INDEX(extra_details,'-',1) != '' OR \
+                SUBSTRING_INDEX(extra_details,'-',1) != '0'), \
+                compliance_history_id = CAST(\
+                REPLACE(SUBSTRING_INDEX(extra_details,'-',1), ' ', '') AS UNSIGNED), 1)\
+                ORDER BY read_status ASC, nul.notification_id DESC \
+                LIMIT %d, %d" % (
+                    columns, subquery_columns, self.tblNotificationsLog, 
+                    self.tblNotificationUserLog,
+                    self.tblUnits, self.tblCompliances,
+                    self.tblComplianceHistory,
+                    notification_type_id, session_user, 
+                    int(start_count), to_count
                 )
-        return notifications
+        rows = self.select_all(query)
+        columns_list = columns.replace(" ", "").split(",")
+        columns_list += ["assignee_details", "concurrence_details", "approver_details"]
+        notifications = self.convert_to_dict(rows, columns_list)
+        notifications_list = []
+        for notification in notifications:
+            notification_id = notification["nul.notification_id"]
+            read_status = bool(int(notification["read_status"]))
+            extra_details_with_history_id = notification["extra_details"].split("-")
+            compliance_history_id = int(extra_details_with_history_id[0])
+            extra_details = extra_details_with_history_id[1]
+            due_date_rows = None
+            if compliance_history_id not in [0, "0", None, "None", ""]:
+                due_date_as_date = notification["due_date"]
+                due_date = self.datetime_to_string_time(due_date_as_date)
+                completion_date = notification["completion_date"]
+                approve_status = notification["approve_status"]
+                delayed_days = "-"
+                if completion_date is None or approve_status == 0:
+                    no_of_days, delayed_days = self.calculate_ageing(due_date_as_date)
+                else:
+                    r = relativedelta.relativedelta(due_date_as_date, completion_date)
+                    delayed_days = "-"
+                    if r.days < 0 and r.hours < 0 and r.minutes < 0:
+                        delayed_days = "Overdue by %d days" % abs(r.days)
+                if "Overdue" not in delayed_days:
+                    delayed_days = "-"
+                # diff = self.get_date_time() - due_date_as_datetime
+                statutory_provision = notification["statutory_provision"].split(">>")
+                level_1_statutory = statutory_provision[0]
+
+                notification_text = notification["notification_text"]
+                updated_on = self.datetime_to_string(notification["created_on"])
+                unit_name = "%s - %s" % (
+                    notification["unit_code"],
+                    notification["unit_name"]
+                )
+                unit_address = notification["address"]
+                assignee = notification["assignee_details"]
+                concurrence_person = None if notification["concurrence_details"] in ['', None, "None"] else notification["concurrence_details"]
+                approval_person = notification["approver_details"]
+                compliance_name = notification["compliance_task"]
+                if notification["document_name"] is not None and notification["document_name"].replace(" ","") != "None":
+                    compliance_name = "%s - %s" % (
+                        notification["document_name"], 
+                        notification["compliance_task"]
+                    )
+                compliance_description = notification["compliance_description"]
+                penal_consequences = notification["penal_consequences"]
+                due_date = self.datetime_to_string_time(notification["due_date"])
+            else:
+                penal_consequences = None
+                delayed_days = None
+                due_date = None
+                compliance_description = None
+                approval_person = None
+                compliance_name = None
+                concurrence_person = None
+                assignee = None
+                unit_name = None
+                unit_address = None
+                level_1_statutory = None
+                extra_details = notification_detail_row[0][3].split("-")[1]
+                read_status = bool(0)
+                updated_on = self.datetime_to_string(self.get_date_time())
+                notification_text = notification_detail_row[0][1]
+            notifications_list.append(
+                dashboard.Notification(
+                    notification_id, read_status, notification_text, extra_details,
+                    updated_on, level_1_statutory, unit_name, unit_address, assignee,
+                    concurrence_person, approval_person, compliance_name,
+                    compliance_description, due_date, delayed_days, 
+                    penal_consequences
+                )
+            )
+        return notifications_list
 
     def get_user_contact_details_by_id(self, user_id, client_id):
         employee_name_with_contact_details = None
@@ -8664,6 +8663,62 @@ class ClientDatabase(Database):
             result = rows[0][0]
         return result
 
+    def get_client_details_report1(
+        self, country_id,  business_group_id, legal_entity_id, division_id,
+        unit_id, domain_ids, session_user
+    ):
+        user_unit_ids = self.get_user_unit_ids(session_user)
+        condition = "u.country_id = '%d' "%(country_id)
+        if business_group_id is not None:
+            condition += " AND u.business_group_id = '%d'" % business_group_id
+        if legal_entity_id is not None:
+            condition += " AND u.legal_entity_id = '%d'" % legal_entity_id
+        if division_id is not None:
+            condition += " AND u.division_id = '%d'" % division_id
+        if unit_id is not None:
+            condition += " AND unit_id = '%d'" % unit_id
+        else:
+            condition += " AND unit_id in (%s)" % user_unit_ids
+        if domain_ids is not None:
+            for domain_id in domain_ids:
+                condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
+                            "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
+                            "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
+                            " or domain_ids LIKE '"+str(domain_id)+"') "
+
+        columns = "unit_id, unit_code, unit_name, geography, "\
+                "address, domain_ids, postal_code, business_group_name,\
+                legal_entity_name, division_name"
+        query = "SELECT %s \
+                FROM %s u \
+                LEFT JOIN %s b ON (u.business_group_id = b.business_group_id)\
+                LEFT JOIN %s l ON (u.legal_entity_id = l.legal_entity_id) \
+                LEFT JOIN %s d ON (u.division_id = d.division_id) \
+                WHERE %s " % (
+                    columns, self.tblUnits, self.tblBusinessGroups,
+                    self.tblLegalEntities, self.tblDomains, condition 
+
+                )
+        rows = self.select_all(query)
+        columns_list = columns.replace(" ", "").split(",")
+        unit_rows = self.convert_to_dict(rows, columns_list)
+        units = []
+        grouped_units = {}
+        for unit in unit_rows:
+            # if unit["business_group_name"] not in grouped_units:
+            units.append(
+                clientreport.UnitDetails(
+                    unit["unit_id"], unit["geography"], unit["unit_code"],
+                    unit["unit_name"], unit["address"], unit["postal_code"],
+                    [int(x) for x in unit["domain_ids"].split(",")]
+                )
+            )
+        GroupedUnits.append(
+            clientreport.GroupedUnits(row[2], row[1], row[0], units)
+        )
+        return GroupedUnits
+
+    
     def get_client_details_report(
         self, country_id,  business_group_id, legal_entity_id, division_id,
         unit_id, domain_ids, session_user
@@ -8723,7 +8778,6 @@ class ClientDatabase(Database):
                 )
             GroupedUnits.append(clientreport.GroupedUnits(row[2], row[1], row[0], units))
         return GroupedUnits
-
 
     def get_user_assigned_reassigned_ids(self, user_id):
         columns = "group_concat(compliance_id)"
@@ -9084,60 +9138,73 @@ class ClientDatabase(Database):
             not_opted_compliances
         )
 
-    def get_on_occurrence_compliances_for_user(self, session_user):
-        user_domain_ids = self.get_user_domains(session_user)
-        user_unit_ids = self.get_user_unit_ids(session_user)
+    def get_on_occurrence_compliance_count(
+        self, session_user, user_domain_ids, user_unit_ids
+    ):
+        query = "SELECT count(*) \
+                FROM %s ac \
+                INNER JOIN %s c ON (ac.compliance_id = c.compliance_id)\
+                INNER JOIN %s u ON (ac.unit_id = u.unit_id) \
+                WHERE u.is_closed = 0 \
+                AND ac.unit_id in (%s)\
+                AND c.domain_id in (%s) \
+                AND c.frequency_id = 4 \
+                AND ac.assignee = '%d' " % (
+                    self.tblAssignedCompliances, 
+                    self.tblCompliances, self.tblUnits, user_unit_ids, 
+                    user_domain_ids, session_user
+                )
+        rows = self.select_all(query)
+        return rows[0][0]
+
+    def get_on_occurrence_compliances_for_user(
+        self, session_user, user_domain_ids, user_unit_ids, start_count,
+        to_count
+    ):  
+        columns = "ac.compliance_id, c.statutory_provision,\
+                compliance_task, compliance_description, \
+                duration_type, duration, document_name, u.unit_id"
+        concat_columns = "concat(unit_code, '-', unit_name)"
+        query = "SELECT %s, %s \
+                FROM %s ac \
+                INNER JOIN %s c ON (ac.compliance_id = c.compliance_id)\
+                INNER JOIN %s cd ON (c.duration_type_id = cd.duration_type_id) \
+                INNER JOIN %s u ON (ac.unit_id = u.unit_id) \
+                WHERE u.is_closed = 0 \
+                AND ac.unit_id in (%s)\
+                AND c.domain_id in (%s) \
+                AND c.frequency_id = 4 \
+                AND ac.assignee = '%d' \
+                ORDER BY u.unit_id, document_name, compliance_task \
+                LIMIT %d, %d" % (
+                    columns, concat_columns, self.tblAssignedCompliances, 
+                    self.tblCompliances, self.tblComplianceDurationType,
+                    self.tblUnits, user_unit_ids, user_domain_ids, 
+                    session_user, int(start_count), to_count
+                )
+        rows = self.select_all(query)
+        columns_list = columns.replace(" ", "").split(",")
+        columns_list += ["unit_name"]
+        result = self.convert_to_dict(rows, columns_list)
+        compliances = []
         unit_wise_compliances = {}
-        if user_domain_ids is not None and user_unit_ids is not None:
-            for unit in [int(x) for x in user_unit_ids.split(",")]:
-                columns = "ac.compliance_id, c.statutory_provision,\
-                compliance_task, compliance_description, duration_type, duration,\
-                document_name"
-                tables = [
-                    self.tblAssignedCompliances, self.tblCompliances,
-                    self.tblComplianceDurationType,
-                    self.tblUnits
-                ]
-                aliases = [
-                    "ac", "c", "cd", "u"
-                ]
-                join_type = "inner join"
-                join_condition = [
-                    "ac.compliance_id = c. compliance_id",
-                    "c.duration_type_id = cd.duration_type_id",
-                    "ac.unit_id = u.unit_id"
-                ]
-                where_condition = "u.is_closed = 0 and ac.unit_id = (%d) and c.domain_id in (%s) and \
-                c.frequency_id = 4 and ac.assignee='%d'" % (
-                    unit, user_domain_ids, session_user
+        for row in result:
+            duration = "%s %s" % (row["duration"], row["duration_type"])
+            compliance_name = row["compliance_task"]
+            if row["document_name"] not in ["None", "", None]:
+                compliance_name = "%s - %s" % (
+                    row["document_name"], compliance_name
                 )
-                rows = self.get_data_from_multiple_tables(
-                    columns, tables, aliases, join_type,
-                    join_condition, where_condition
+            unit_name = row["unit_name"]
+            if unit_name not in unit_wise_compliances:
+                unit_wise_compliances[unit_name] = []
+            unit_wise_compliances[unit_name].append(
+                clientuser.ComplianceOnOccurrence(
+                    row["ac.compliance_id"], row["c.statutory_provision"],
+                    compliance_name, row["compliance_description"],
+                    duration, row["u.unit_id"]
                 )
-                columns = [
-                    "compliance_id", "statutory_provision", "compliance_name",
-                    "description", "duration_type", "duration", "document_name"
-                ]
-                result = self.convert_to_dict(rows, columns)
-                compliances = []
-                for row in result:
-                    duration = "%s %s" % (row["duration"], row["duration_type"])
-                    compliance_name = row["compliance_name"]
-                    if row["document_name"] not in ["None", "", None]:
-                        compliance_name = "%s - %s" % (
-                            row["document_name"], row["compliance_name"]
-                        )
-                    compliances.append(
-                        clientuser.ComplianceOnOccurrence(
-                            row["compliance_id"], row["statutory_provision"],
-                            compliance_name, row["description"],
-                            duration, unit
-                        )
-                    )
-                if len(compliances) > 0:
-                    unit_name = self.get_unit_name_by_id(unit)
-                    unit_wise_compliances[unit_name] = compliances
+            )
         return unit_wise_compliances
 
     def start_on_occurrence_task(

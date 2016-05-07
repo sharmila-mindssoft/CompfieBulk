@@ -1481,9 +1481,11 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getOnOccurrenceCompliances(callback){
+    function getOnOccurrenceCompliances(start_count, callback){
         var request = [
-            "GetOnOccurrenceCompliances", {}
+            "GetOnOccurrenceCompliances", {
+                "start_count": start_count
+            }
         ];
         callerName = "client_user";
         clientApiRequest(callerName, request, callback);

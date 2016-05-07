@@ -1,5 +1,8 @@
 
 var escalationsList;
+var sno=0;
+var notificationDict = [];
+
 function clearMessage() {
     $(".error-message").hide();
     $(".error-message").text("");
@@ -9,10 +12,18 @@ function displayMessage(message) {
     $(".error-message").show();
 }
 
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
+
 function loadEscalations(escalations){
-    $("#escalationList").empty();
+    
     var str='';
     for(var reminder in escalations){
+      sno++;
       var readStatus = 'unread';
       var notificationId = escalations[reminder]["notification_id"];
       var notificationText = escalations[reminder]["notification_text"];
@@ -32,7 +43,7 @@ function loadEscalations(escalations){
       "'> <img src='images/icon-info-blue.png' style='width:15px;height:15px'> </abbr></span> </li></a>"
     }
 
-    if(str == ''){
+    if(str == '' && sno == 0){
       str += '<li style="text-align:center">'+"No Escalations Found"+"</li>"
     }
    $('#escalationList').append(str);      
@@ -85,15 +96,23 @@ function changeStatus(notification_id, read_status){
   }
 }
 
-function get_escalations(){
+function get_escalations(sno){
+  displayLoader();
     function onSuccess(data){
     escalationsList = data['notifications'];
-    loadEscalations(escalationsList)
+    loadEscalations(escalationsList);
+    if(notificationsList.length == 0){
+        $('#pagination').hide();
+    }else{
+        $('#pagination').show();
+    }
+    hideLoader();
   }
   function onFailure(error){
-        console.log(error);
+    console.log(error);
+    hideLoader();
   }
-  client_mirror.getNotifications( 'Escalation',
+  client_mirror.getNotifications( 'Escalation', sno, 
         function(error, response){
             if(error == null){
                 onSuccess(response);
@@ -108,10 +127,13 @@ function get_escalations(){
 
 
 function initialize(){
-  get_escalations();
-  setInterval(function() {
+  $("#escalationList").empty();
+  sno = 0;
+  notificationDict = [];
+  get_escalations(sno);
+  /*setInterval(function() {
       get_escalations();
-  }, 10000);
+  }, 10000);*/
   
 }
 

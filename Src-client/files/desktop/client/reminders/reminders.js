@@ -147,6 +147,7 @@ function get_reminders(sno){
         hideLoader();
   }
   client_mirror.getNotifications( 'Reminder', sno,
+
         function(error, response){
             if(error == null){
                 onSuccess(response);
