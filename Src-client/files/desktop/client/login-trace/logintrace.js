@@ -1,6 +1,16 @@
 var userList;
 var logintraceList;
-var sno;
+var sno = 0;
+var userid;
+var fromdate;
+var todate;
+
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
 
 function clearMessage() {
     $(".error-message").hide();
@@ -35,12 +45,12 @@ function initialize(){
 
         $("#to-date").val(todaydate);
         $("#from-date").val(lastdate);
-        $("#show-button").trigger("click");
+        showrecord();
     }
     function onFailure(error){
         console.log(error);
     }
-    client_mirror.getLoginTrace(
+    client_mirror.getLoginTrace(sno, 
         function (error, response){
             if(error == null){
                 onSuccess(response);
@@ -51,6 +61,33 @@ function initialize(){
         }
     );
 }
+//pagination process
+$('#pagination').click(function(){
+    displayLoader();
+    s_endCount = sno;
+    clearMessage();
+
+    function onSuccess(data){    
+        if(data['login_trace'] ==''){
+            $('#pagination').hide();
+        }
+        loadrecords(data['login_trace'], fromdate, todate, userid);
+        hideLoader();
+    }
+    function onFailure(error){
+        console.log(error);
+        hideLoader();
+    }
+    client_mirror.getLoginTrace(sno, 
+    function (error, response) {
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+    });
+});
 function datetonumber(datetime){
     var date = datetime.substring(0,11);
     var timeval = datetime.substring(12,18);
@@ -69,51 +106,56 @@ function datetonumber(datetime){
     return Date.parse(newdate);
 }
 function showrecord(){
-    var userid = $("#userid").val();   
-    var fromdate = $("#from-date").val();
-    var todate = $("#to-date").val();
+    userid = $("#userid").val();   
+    fromdate = $("#from-date").val();
+    todate = $("#to-date").val();
     if(fromdate == ''){
         displayMessage(message.fromdate_required);
     }
     else if(todate ==''){
         displayMessage(message.todate_required);
     }
-    else{
-        fromdate = fromdate+" 00:00:00";
-        todate = todate+" 23:59:59";
+    else{      
         $('.grid-table').show();
         $('.tbody-login-trace-list tr').remove();
-        var sno = 0;
-        $.each(logintraceList, function(key, value) {
-            var formname;            
-            if(logintraceList[key]['action'].substring(0, 6) == "Log In"){
-                formname = "Login"
-            }
-            else{
-                formname = "Logout"
-            }
-            
-            if((datetonumber(fromdate) <= datetonumber(logintraceList[key]['created_on'])) && (datetonumber(todate) >= datetonumber(logintraceList[key]['created_on'])) && userid == ''){ 
-                var tableRow = $('#templates .table-logintrace-list .table-row');
-                var clone = tableRow.clone();
-                $('.date-time', clone).text(logintraceList[key]['created_on']);
-                $('.form-name', clone).text(formname);
-                $('.info-text', clone).text(logintraceList[key]['action']);
-                $('.tbody-login-trace-list').append(clone);
-                sno++;
-            }
-            if((datetonumber(fromdate) <= datetonumber(logintraceList[key]['created_on'])) && (datetonumber(todate) >= datetonumber(logintraceList[key]['created_on'])) && userid == logintraceList[key]['user_id']){ 
-                var tableRow= $('#templates .table-logintrace-list .table-row');
-                var clone= tableRow.clone();
-                $('.date-time', clone).text(logintraceList[key]['created_on']);
-                $('.form-name', clone).text(formname);
-                $('.info-text', clone).text(logintraceList[key]['action']);
-                $('.tbody-login-trace-list').append(clone);
-                sno++;
-            }
-        });
+        loadrecords(logintraceList, fromdate, todate, userid);
         $(".total-records").html("Total : "+sno+" records")
     }
+}
+function loadrecords(logintraceListdetails, fromdate, todate, userid){    
+    fromdate = fromdate+" 00:00:00";
+    todate = todate+" 23:59:59";
+    if(logintraceListdetails ==''){
+        $('#pagination').hide();
+    }
+    $.each(logintraceListdetails, function(key, value) {
+        var formname;            
+        if(value['action'].substring(0, 6) == "Log In"){
+            formname = "Login"
+        }
+        else{
+            formname = "Logout"
+        }
+        
+        if((datetonumber(fromdate) <= datetonumber(value['created_on'])) && (datetonumber(todate) >= datetonumber(value['created_on'])) && userid == ''){ 
+            var tableRow = $('#templates .table-logintrace-list .table-row');
+            var clone = tableRow.clone();
+            $('.date-time', clone).text(value['created_on']);
+            $('.form-name', clone).text(formname);
+            $('.info-text', clone).text(value['action']);
+            $('.tbody-login-trace-list').append(clone);
+            sno++;
+        }
+        if((datetonumber(fromdate) <= datetonumber(value['created_on'])) && (datetonumber(todate) >= datetonumber(value['created_on'])) && userid == logintraceList[key]['user_id']){ 
+            var tableRow= $('#templates .table-logintrace-list .table-row');
+            var clone= tableRow.clone();
+            $('.date-time', clone).text(value['created_on']);
+            $('.form-name', clone).text(formname);
+            $('.info-text', clone).text(value['action']);
+            $('.tbody-login-trace-list').append(clone);
+            sno++;
+        }
+    });
 }
 
 //retrive user autocomplete value
