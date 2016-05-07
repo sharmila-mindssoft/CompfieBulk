@@ -6429,6 +6429,7 @@ class ClientDatabase(Database):
                 session_user, int(start_count), to_count
             )
         )
+        print notification_rows
         notifications = []
         for notification in notification_rows:
             notification_id = notification[0]
@@ -6455,6 +6456,7 @@ class ClientDatabase(Database):
                 columns, tables, aliases, join_type,
                 join_conditions, where_condition
             )
+            print notification_detail_row
             notification_detail = []
             if notification_detail_row:
                 notification_detail = notification_detail_row[0]
