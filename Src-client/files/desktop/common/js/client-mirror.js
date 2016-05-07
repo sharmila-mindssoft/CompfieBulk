@@ -668,10 +668,12 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAuditTrail(callback) {
+    function getAuditTrail(record_count, callback) {
         callerName = "client_masters"
         var request = [
-            "GetAuditTrails", {}
+            "GetAuditTrails", {
+                "record_count":record_count
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
