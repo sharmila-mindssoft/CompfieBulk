@@ -280,7 +280,8 @@ CREATE TABLE `tbl_assigned_compliances` (
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`unit_id`, `compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_reassigned_compliances_history`;
 CREATE TABLE `tbl_reassigned_compliances_history` (
@@ -483,3 +484,5 @@ INSERT INTO tbl_notification_types VALUES(2, "Reminder");
 INSERT INTO tbl_notification_types VALUES(3, "Escalation");
 DROP TRIGGER IF EXISTS `after_tbl_statutory_notifications_units_insert`;
 INSERT INTO tbl_mobile_sync_versions VALUES(0, 0, 0, 0, 0);
+SET GLOBAL connect_timeout=120000;
+SET GLOBAL wait_timeout=120000;
