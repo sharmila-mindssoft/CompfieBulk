@@ -616,23 +616,23 @@ class GetTrendChartDrillDownData(Request):
         }
 
 class GetNotifications(Request):
-    def __init__(self, notification_type):
+    def __init__(self, notification_type, start_count):
         self.notification_type = notification_type
-        # self.start_count = start_count
+        self.start_count = start_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["notification_type"])
+        data = parse_dictionary(data, ["notification_type", "start_count"])
         notification_type = data.get("notification_type")
         notification_type = parse_structure_CustomTextType_20(notification_type)
-        # start_count = data.get("start_count")
-        # start_count = parse_structure_UnsignedIntegerType_32(start_count)
-        return GetNotifications(notification_type)
+        start_count = data.get("start_count")
+        start_count = parse_structure_UnsignedIntegerType_32(start_count)
+        return GetNotifications(notification_type, start_count)
 
     def to_inner_structure(self):
         return {
             "notification_type": to_structure_CustomTextType_20(self.notification_type),
-            # "start_count": to_structure_UnsignedIntegerType_32(self.start_count)
+            "start_count": to_structure_UnsignedIntegerType_32(self.start_count)
         }
 
 class UpdateNotificationStatus(Request):
