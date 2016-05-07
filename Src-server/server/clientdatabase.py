@@ -2291,7 +2291,7 @@ class ClientDatabase(Database):
         concur_count = 0
         if (self.is_two_levels_of_approval) and (not self.is_primary_admin(session_user)):
             condition = " concurrence_status is not NULL AND \
-            concurrence_status != 0 AND concurrence_status != ''" 
+            concurrence_status != 0 AND concurrence_status != ''"
             concur_condition = "concurred_by = '%d' AND (approve_status is NULL OR \
                 approve_status = 0 OR approve_status = '') AND (\
                 completed_on is not NULL AND completed_on !=0) AND \
@@ -2342,7 +2342,7 @@ class ClientDatabase(Database):
         AND is_closed = 0 AND IF ( \
         (concurred_by = '%d' AND concurrence_status = 1), 0, 1)\
         ORDER BY completed_by, tch.due_date ASC LIMIT %d, %d" % (
-            self.tblComplianceHistory, self.tblCompliances, 
+            self.tblComplianceHistory, self.tblCompliances,
             self.tblComplianceFrequency, self.tblUnits, self.tblUsers,
             self.tblDomains, approval_user_ids,
             session_user, session_user, int(start_count), to_count
@@ -2444,7 +2444,7 @@ class ClientDatabase(Database):
             if len(assignee_wise_compliances[assignee]) > 0:
                 approval_compliances.append(
                     clienttransactions.APPORVALCOMPLIANCELIST(
-                        assignee_id_name_map[assignee], assignee, 
+                        assignee_id_name_map[assignee], assignee,
                         assignee_wise_compliances[assignee]
                     )
                 )
@@ -3759,7 +3759,8 @@ class ClientDatabase(Database):
             %s \
             %s \
             %s \
-            ORDER BY T1.due_date" % (
+            ORDER BY T1.due_date \
+            limit 0, 500 " % (
                 user_qry,
                 str(tuple(domain_ids)),
                 date_qry,
@@ -6410,8 +6411,8 @@ class ClientDatabase(Database):
 #   Notifications
 #
     def get_notifications(
-        self, notification_type, 
-        # start_count, to_count, 
+        self, notification_type,
+        # start_count, to_count,
         session_user, client_id
     ):
         notification_type_id = None
@@ -6939,7 +6940,7 @@ class ClientDatabase(Database):
         %s c ON (ch.compliance_id = c.compliance_id ) " % (
             self.tblComplianceHistory , self.tblCompliances
         )
-      
+
         other_compliance_rows = self.select_all(
             "%s WHERE frequency_id != 4 AND %s" % (query, other_compliance_condition)
         )
@@ -7128,7 +7129,7 @@ class ClientDatabase(Database):
                 ch.unit_id = ac.unit_id ) >0), 0,1) \
                 ORDER BY ac.due_date ASC LIMIT %d, %d"  % (
                     self.tblDomains, self.tblAssignedCompliances, self.tblUnits,
-                    self.tblCompliances, session_user, int(upcoming_start_count), 
+                    self.tblCompliances, session_user, int(upcoming_start_count),
                     to_count
                 )
         upcoming_compliances_rows = self.select_all(query)
