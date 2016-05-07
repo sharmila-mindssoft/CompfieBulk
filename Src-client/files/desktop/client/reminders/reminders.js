@@ -127,7 +127,7 @@ function get_reminders(){
   function onFailure(error){
         console.log(error);
   }
-  client_mirror.getNotifications( 'Reminder',
+  client_mirror.getNotifications( 'Reminder', 0, 
         function(error, response){
             if(error == null){
                 onSuccess(response);

@@ -93,7 +93,7 @@ function get_escalations(){
   function onFailure(error){
         console.log(error);
   }
-  client_mirror.getNotifications( 'Escalation',
+  client_mirror.getNotifications( 'Escalation', 0, 
         function(error, response){
             if(error == null){
                 onSuccess(response);
