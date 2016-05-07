@@ -811,17 +811,21 @@ class ClientDatabase(Database):
         result2 = None
         result3 = None
         current_time_stamp = self.get_date_time()
-        user.is_service_provider = 0 if user.is_service_provider== False else 1
-        columns = ["user_id", "user_group_id", "email_id", "password", "employee_name",
-                    "employee_code", "contact_no", "user_level",
-                "is_admin", "is_service_provider","created_by", "created_on",
-                "updated_by", "updated_on"]
+        user.is_service_provider = 0 if user.is_service_provider is False else 1
+        columns = [
+            "user_id", "user_group_id", "email_id", "password", "employee_name",
+            "employee_code", "contact_no", "user_level",
+            "is_admin", "is_service_provider", "created_by", "created_on",
+            "updated_by", "updated_on"
+        ]
         encrypted_password, password = self.generate_and_return_password()
-        values = [ user_id, user.user_group_id, user.email_id,
-                encrypted_password, user.employee_name,
-                user.employee_code.replace(" ", ""), user.contact_no, user.user_level,
-                0, user.is_service_provider, session_user,current_time_stamp,
-                session_user, current_time_stamp]
+        values = [
+            user_id, user.user_group_id, user.email_id,
+            encrypted_password, user.employee_name,
+            user.employee_code.replace(" ", ""), user.contact_no, user.user_level,
+            0, user.is_service_provider, session_user, current_time_stamp,
+            session_user, current_time_stamp
+        ]
         if user.is_service_provider == 1:
             columns.append("service_provider_id")
             values.append(user.service_provider_id)
@@ -1352,7 +1356,7 @@ class ClientDatabase(Database):
 #   Audit Trail
 #
 
-    def get_audit_trails(self, user_id, client_id):
+    def get_audit_trails(self, user_id, client_id, from_count, to_count):
         user_ids = ""
         form_ids = None
         if self.is_primary_admin(user_id):
@@ -1388,7 +1392,8 @@ class ClientDatabase(Database):
             condition = "user_id in (%s)" % user_ids
 
         columns = "user_id, form_id, action, created_on"
-        condition += " ORDER BY activity_log_id DESC"
+        condition += " ORDER BY activity_log_id DESC \
+        limit %s, %s " % (from_count, to_count)
         rows = self.get_data(
             self.tblActivityLog, columns, condition
         )

@@ -671,7 +671,9 @@ function initClientMirror() {
     function getAuditTrail(callback) {
         callerName = "client_masters"
         var request = [
-            "GetAuditTrails", {}
+            "GetAuditTrails", {
+                "record_count": 0
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -914,7 +916,7 @@ function initClientMirror() {
 
     function getComplianceApprovalList(start_count, callback) {
         var request = [
-            "GetComplianceApprovalList", 
+            "GetComplianceApprovalList",
             {
                 "start_count": start_count
             }
