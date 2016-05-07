@@ -6506,6 +6506,7 @@ class ClientDatabase(Database):
 #
 #   Notifications
 #
+
     def get_notifications(
         self, notification_type, start_count, to_count, 
         session_user, client_id
@@ -6534,18 +6535,17 @@ class ClientDatabase(Database):
         query = "SELECT %s,%s \
                 FROM %s nl \
                 INNER JOIN %s nul ON (nl.notification_id = nul.notification_id)\
-                INNER JOIN %s tu ON (tu.unit_id = nl.unit_id) \
-                INNER JOIN %s tc ON (tc.compliance_id = nl.compliance_id) \
-                INNER JOIN %s tch ON (tch.compliance_id = nl.compliance_id AND \
+                LEFT JOIN %s tu ON (tu.unit_id = nl.unit_id) \
+                LEFT JOIN %s tc ON (tc.compliance_id = nl.compliance_id) \
+                LEFT JOIN %s tch ON (tch.compliance_id = nl.compliance_id AND \
                 tch.unit_id = nl.unit_id) \
                 WHERE notification_type_id = '%d' \
                 AND user_id = '%d' \
                 AND read_status = 0\
-                AND IF (\
-                (SUBSTRING_INDEX(extra_details,'-',1) != '' OR \
-                SUBSTRING_INDEX(extra_details,'-',1) != '0'), \
-                compliance_history_id = CAST(\
-                REPLACE(SUBSTRING_INDEX(extra_details,'-',1), ' ', '') AS UNSIGNED), 1)\
+                AND (compliance_history_id is null \
+                OR  compliance_history_id = CAST(REPLACE(\
+                SUBSTRING_INDEX(extra_details, '-', 1),\
+                ' ','') AS UNSIGNED)) \
                 ORDER BY read_status ASC, nul.notification_id DESC \
                 LIMIT %d, %d" % (
                     columns, subquery_columns, self.tblNotificationsLog, 
@@ -6617,10 +6617,10 @@ class ClientDatabase(Database):
                 unit_name = None
                 unit_address = None
                 level_1_statutory = None
-                extra_details = notification_detail_row[0][3].split("-")[1]
+                extra_details = notification["extra_details"].split("-")[1]
                 read_status = bool(0)
                 updated_on = self.datetime_to_string(self.get_date_time())
-                notification_text = notification_detail_row[0][1]
+                notification_text = notification["notification_text"]
             notifications_list.append(
                 dashboard.Notification(
                     notification_id, read_status, notification_text, extra_details,
