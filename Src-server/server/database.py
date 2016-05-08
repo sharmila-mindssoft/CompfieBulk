@@ -6157,13 +6157,11 @@ class KnowledgeDatabase(Database):
 #
 #   Get Details Report
 #
-
-    def get_client_details_report(
+    def get_client_details_report_condition(
         self, country_id, client_id, business_group_id,
         legal_entity_id, division_id, unit_id, domain_ids
     ):
-
-        condition = "country_id = '%d' AND client_id = '%d' " % (
+        condition = "tu.country_id = '%d' AND tu.client_id = '%d' " % (
             country_id, client_id
         )
         if business_group_id is not None:
@@ -6175,64 +6173,89 @@ class KnowledgeDatabase(Database):
         if unit_id is not None:
             condition += " AND unit_id = '%d'" % unit_id
         if domain_ids is not None:
-            domain_con = ""
             for i, domain_id in enumerate(domain_ids):
-                # condition += " AND  ( domain_ids LIKE  '%," + str(domain_id) + ",%' " +\
-                #             "or domain_ids LIKE  '%," + str(domain_id) + "' " +\
-                #             "or domain_ids LIKE  '" + str(domain_id) + ",%'" +\
-                #             " or domain_ids LIKE '" + str(domain_id) + "') "
                 if i == 0 :
-                    domain_con += " FIND_IN_SET('%s', domain_ids)" % (domain_id)
+                    condition += "FIND_IN_SET('%s', domain_ids)" % (domain_id)
                 elif i > 0 :
-                    domain_con += " OR FIND_IN_SET('%s', domain_ids)" % (domain_id)
-            condition += " AND(%s)" % (domain_con)
+                    condition += " OR FIND_IN_SET('%s', domain_ids)" % (domain_id)
+        return condition
+    
+    def get_client_details_report_count(
+        self, country_id, client_id, business_group_id,
+        legal_entity_id, division_id, unit_id, domain_ids
+    ):
+        condition = self.get_client_details_report_condition(
+            country_id, client_id, business_group_id,
+            legal_entity_id, division_id, unit_id, domain_ids
+        )
+        query = "SELECT count(*) \
+        FROM %s tu \
+        WHERE %s" % (
+            self.tblUnits, condition
+        )
+        rows = self.select_all(query)
+        return rows[0][0]
 
-        group_by_columns = "business_group_id, legal_entity_id, division_id"
-        group_by_condition = condition+" group by business_group_id, legal_entity_id, division_id"
-        group_by_rows = self.get_data(self.tblUnits, group_by_columns, group_by_condition)
-        GroupedUnits = []
-        for row in group_by_rows:
-            columns = "tu.unit_id, tu.unit_code, tu.unit_name, tg.geography_name, \
-                tu.address, tu.domain_ids, tu.postal_code"
-            tables = [self.tblUnits, self.tblGeographies]
-            aliases = ["tu", "tg"]
-            join_type = " left join "
-            join_conditions = ["tu.geography_id = tg.geography_id"]
-            where_condition = "tu.legal_entity_id = '%d' " % row[1]
-            if row[0] == None:
-                where_condition += " And tu.business_group_id is NULL"
-            else:
-                where_condition += " And tu.business_group_id = '%d'" % row[0]
-            if row[2] == None:
-                where_condition += " And tu.division_id is NULL"
-            else:
-                where_condition += " And tu.division_id = '%d'" % row[2]
-            if unit_id is not None:
-                where_condition += " AND tu.unit_id = '%d'" % unit_id
-            if domain_ids is not None:
-                domain_con = ""
-                for i, domain_id in enumerate(domain_ids):
-                    # where_condition += " AND  ( domain_ids LIKE  '%," + str(domain_id)+",%' " +\
-                    #             "or domain_ids LIKE  '%," + str(domain_id) + "' " +\
-                    #             "or domain_ids LIKE  '" + str(domain_id) + ",%'" +\
-                    #             " or domain_ids LIKE '" + str(domain_id) + "') "
-                    if i == 0 :
-                        domain_con += "FIND_IN_SET('%s', domain_ids)" % (domain_id)
-                    elif i > 0 :
-                        domain_con += " OR FIND_IN_SET('%s', domain_ids)" % (domain_id)
-            where_condition += " AND(%s)" % (domain_con)
-
-            result_rows = self.get_data_from_multiple_tables(
-                columns, tables, aliases, join_type,
-                join_conditions, where_condition
+    def get_client_details_report(
+        self, country_id, client_id, business_group_id,
+        legal_entity_id, division_id, unit_id, domain_ids, 
+        start_count, to_count
+    ):
+        condition = self.get_client_details_report_condition(
+            country_id, client_id, business_group_id,
+            legal_entity_id, division_id, unit_id, domain_ids
+        )
+        columns = "unit_id, unit_code, unit_name, geography_name, \
+                    address, domain_ids, postal_code, business_group_id, \
+                    legal_entity_id, division_id"
+        query = "SELECT %s \
+        FROM %s tu INNER JOIN %s tg \
+        ON (tu.geography_id = tg.geography_id) \
+        WHERE %s \
+        ORDER BY business_group_id, legal_entity_id, division_id, \
+        unit_id DESC LIMIt %d, %d" % (
+            columns, self.tblUnits, self.tblGeographies, condition, 
+            int(start_count), to_count
+        )
+        columns_list = columns.replace(" ", "").split(",")
+        rows = self.select_all(query)
+        unit_rows = self.convert_to_dict(rows, columns_list)
+        grouped_units = {}
+        for unit in unit_rows:
+            business_group_id = unit["business_group_id"]
+            legal_entity_id = unit["legal_entity_id"]
+            division_id = unit["division_id"]
+            if business_group_id in ["None", None, ""]:
+                business_group_id = "null"
+            if division_id in ["None", None, ""]:
+                division_id = "null"
+            if business_group_id not in grouped_units:
+                grouped_units[business_group_id] = {}
+            if legal_entity_id not in grouped_units[business_group_id]:
+                grouped_units[business_group_id][legal_entity_id] = {}
+            if division_id not in grouped_units[business_group_id][legal_entity_id]:
+                grouped_units[business_group_id][legal_entity_id][division_id] = []
+            grouped_units[business_group_id][legal_entity_id][division_id].append(
+                technoreports.UnitDetails(
+                    unit["unit_id"], unit["geography_name"], unit["unit_code"],
+                    unit["unit_name"], unit["address"], unit["postal_code"],
+                    [int(x) for x in unit["domain_ids"].split(",")]
+                )
             )
-            units = []
-            for result_row in result_rows:
-                units.append(technoreports.UnitDetails(
-                    result_row[0], result_row[3], result_row[1],
-                    result_row[2], result_row[4], result_row[6],
-                    [int(x) for x in result_row[5].split(",")]))
-            GroupedUnits.append(technoreports.GroupedUnits(row[2], row[1], row[0], units))
+        GroupedUnits = []
+        for business_group in grouped_units:
+            for legal_entity_id in grouped_units[business_group]:
+                for division in grouped_units[business_group][legal_entity_id]:
+                    if business_group == "null":
+                        business_group_id = None
+                    if division == "null":
+                        division_id = None
+                    GroupedUnits.append(
+                        technoreports.GroupedUnits(
+                            division_id, legal_entity_id, business_group_id,
+                            grouped_units[business_group][legal_entity_id][division]
+                        )
+                    )        
         return GroupedUnits
 
 

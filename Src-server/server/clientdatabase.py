@@ -8750,7 +8750,7 @@ class ClientDatabase(Database):
             result = rows[0][0]
         return result
 
-    def get_client_details_report1(
+    def get_client_details_condition(
         self, country_id,  business_group_id, legal_entity_id, division_id,
         unit_id, domain_ids, session_user
     ):
@@ -8772,19 +8772,43 @@ class ClientDatabase(Database):
                             "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
                             "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
                             " or domain_ids LIKE '"+str(domain_id)+"') "
+        return condition
 
+    def get_client_details_count(
+        self, country_id,  business_group_id, legal_entity_id, division_id,
+        unit_id, domain_ids, session_user
+    ):
+        
+        condition = self.get_client_details_condition(
+            country_id,  business_group_id, legal_entity_id, division_id,
+            unit_id, domain_ids, session_user
+        )
+        query = "SELECT count(*) \
+                FROM %s u \
+                WHERE %s " % (
+                    self.tblUnits, condition 
+                )
+        rows = self.select_all(query)
+        return rows[0][0]
+
+    def get_client_details_report(
+        self, country_id,  business_group_id, legal_entity_id, division_id,
+        unit_id, domain_ids, session_user, start_count, to_count
+    ):
+        condition = self.get_client_details_condition(
+            country_id,  business_group_id, legal_entity_id, division_id,
+            unit_id, domain_ids, session_user
+        )
         columns = "unit_id, unit_code, unit_name, geography, "\
-                "address, domain_ids, postal_code, business_group_name,\
-                legal_entity_name, division_name"
+                "address, domain_ids, postal_code, business_group_id,\
+                legal_entity_id, division_id"
         query = "SELECT %s \
                 FROM %s u \
-                LEFT JOIN %s b ON (u.business_group_id = b.business_group_id)\
-                LEFT JOIN %s l ON (u.legal_entity_id = l.legal_entity_id) \
-                LEFT JOIN %s d ON (u.division_id = d.division_id) \
-                WHERE %s " % (
-                    columns, self.tblUnits, self.tblBusinessGroups,
-                    self.tblLegalEntities, self.tblDomains, condition 
-
+                WHERE %s \
+                ORDER BY business_group_id, legal_entity_id, division_id, \
+                unit_id DESC LIMIt %d, %d" % (
+                    columns, self.tblUnits, condition,
+                    int(start_count), to_count
                 )
         rows = self.select_all(query)
         columns_list = columns.replace(" ", "").split(",")
@@ -8792,78 +8816,41 @@ class ClientDatabase(Database):
         units = []
         grouped_units = {}
         for unit in unit_rows:
-            # if unit["business_group_name"] not in grouped_units:
-            units.append(
+            business_group_id = unit["business_group_id"]
+            legal_entity_id = unit["legal_entity_id"]
+            division_id = unit["division_id"]
+            if business_group_id in ["None", None, ""]:
+                business_group_id = "null"
+            if division_id in ["None", None, ""]:
+                division_id = "null"
+            if business_group_id not in grouped_units:
+                grouped_units[business_group_id] = {}
+            if legal_entity_id not in grouped_units[business_group_id]:
+                grouped_units[business_group_id][legal_entity_id] = {}
+            if division_id not in grouped_units[business_group_id][legal_entity_id]:
+                grouped_units[business_group_id][legal_entity_id][division_id] = []
+
+            grouped_units[business_group_id][legal_entity_id][division_id].append(
                 clientreport.UnitDetails(
                     unit["unit_id"], unit["geography"], unit["unit_code"],
                     unit["unit_name"], unit["address"], unit["postal_code"],
                     [int(x) for x in unit["domain_ids"].split(",")]
                 )
             )
-        GroupedUnits.append(
-            clientreport.GroupedUnits(row[2], row[1], row[0], units)
-        )
-        return GroupedUnits
-
-    
-    def get_client_details_report(
-        self, country_id,  business_group_id, legal_entity_id, division_id,
-        unit_id, domain_ids, session_user
-    ):
-        condition = "country_id = '%d' "%(country_id)
-        if business_group_id is not None:
-            condition += " AND business_group_id = '%d'" % business_group_id
-        if legal_entity_id is not None:
-            condition += " AND legal_entity_id = '%d'" % legal_entity_id
-        if division_id is not None:
-            condition += " AND division_id = '%d'" % division_id
-        if unit_id is not None:
-            condition += " AND unit_id = '%d'" % unit_id
-        else:
-            condition += " AND unit_id in (%s)" % self.get_user_unit_ids(session_user)
-        if domain_ids is not None:
-            for domain_id in domain_ids:
-                condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
-                            "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
-                            "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
-                            " or domain_ids LIKE '"+str(domain_id)+"') "
-
-        group_by_columns = "business_group_id, legal_entity_id, division_id"
-        group_by_condition = condition+" group by business_group_id, legal_entity_id, division_id"
-        group_by_rows = self.get_data(self.tblUnits, group_by_columns, group_by_condition)
         GroupedUnits = []
-        for row in group_by_rows:
-            columns = "unit_id, unit_code, unit_name, geography, "\
-            "address, domain_ids, postal_code"
-            where_condition = "legal_entity_id = '%d' "% row[1]
-            if row[0] == None:
-                where_condition += " And business_group_id is NULL"
-            else:
-                where_condition += " And business_group_id = '%d'" % row[0]
-            if row[2] == None:
-                where_condition += " And division_id is NULL"
-            else:
-                where_condition += " And division_id = '%d'" % row[2]
-            if unit_id is not None:
-                where_condition += " AND unit_id = '%d'" % unit_id
-            else:
-                where_condition += " AND unit_id in (%s)" % self.get_user_unit_ids(session_user)
-            if domain_ids is not None:
-                for domain_id in domain_ids:
-                    where_condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
-                                "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
-                                "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
-                                " or domain_ids LIKE '"+str(domain_id)+"') "
-            where_condition += " AND country_id = '%d' " % country_id
-            result_rows = self.get_data(self.tblUnits, columns,  where_condition)
-            units = []
-            for result_row in result_rows:
-                units.append(clientreport.UnitDetails(
-                    result_row[0], result_row[3], result_row[1],
-                    result_row[2], result_row[4], result_row[6],
-                    [int(x) for x in result_row[5].split(",")])
-                )
-            GroupedUnits.append(clientreport.GroupedUnits(row[2], row[1], row[0], units))
+        for business_group in grouped_units:
+            for legal_entity_id in grouped_units[business_group]:
+                for division in grouped_units[business_group][legal_entity_id]:
+                    if business_group == "null":
+                        business_group_id = None
+                    if division == "null":
+                        division_id = None
+                    GroupedUnits.append(
+                        clientreport.GroupedUnits(
+                            division_id, legal_entity_id, business_group_id,
+                            grouped_units[business_group][legal_entity_id][division]
+                        )
+                    )
         return GroupedUnits
 
     def get_user_assigned_reassigned_ids(self, user_id):

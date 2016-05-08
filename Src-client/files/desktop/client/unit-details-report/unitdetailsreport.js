@@ -122,7 +122,7 @@ function loadunitdetailsreport(buttontype){
         csv = true
     }
 		client_mirror.getClientDetailsReportData(parseInt(countries), businessgroupid,	
-			lentityid, divisionid, unitid,  domainsVal, csv,
+			lentityid, divisionid, unitid,  domainsVal, csv, 0, 
 			function (error, response){
 				if(error == null){
 					onSuccess(response);
