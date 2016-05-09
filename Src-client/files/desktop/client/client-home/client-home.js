@@ -3047,7 +3047,8 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter
         "filter_type": filterType,
         "filter_id": filter_type_id,
         "compliance_status": compliance_status,
-        "year": chartInput.getCurrentYear()
+        "year": chartInput.getCurrentYear(),
+        "record_count": 0
     }
     $(".btn-back").on("click", function() {
         loadComplianceStatusChart();
@@ -3075,7 +3076,8 @@ function loadEscalationDrillDown(year) {
         "domain_ids": chartInput.getDomains(),
         "filter_type": filterType,
         "filter_ids": filter_ids,
-        "year": parseInt(year)
+        "year": parseInt(year),
+        "record_count": 0
     }
     $(".btn-back").on("click", function() {
         loadEscalationChart();
@@ -3188,7 +3190,8 @@ function loadNotCompliedDrillDown(type){
         "domain_ids": chartInput.getDomains(),
         "filter_type": filterType,
         "filter_ids": filter_ids,
-        "not_complied_type": type
+        "not_complied_type": type,
+        "record_count": 0
     }
     client_mirror.getNotCompliedDrillDown(
         requestData,

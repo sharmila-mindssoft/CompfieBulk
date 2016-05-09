@@ -2925,7 +2925,7 @@ class ClientDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return self.return_assign_compliance_data(result, applicable_units, total)
 
-    def set_new_due_date(self, statutory_dates, repeats_type_id):
+    def set_new_due_date(self, statutory_dates, repeats_type_id, compliance_id):
         due_date = None
         due_date_list = []
         date_list = []
@@ -2976,8 +2976,12 @@ class ClientDatabase(Database):
                                 days = 31
                             else :
                                 days = (n_date.replace(day=1, month=current_month+1, year=current_year+1) - datetime.timedelta(days=1)).day
-
-                            n_date = n_date.replace(day=days, month=current_month+1)
+                            try :
+                                n_date = n_date.replace(day=days, month=current_month+1)
+                            except ValueError :
+                                logger.logClient("error", "set_new_due_date", n_date)
+                                logger.logClient("error", "set_new_due_date", days)
+                                logger.logClient("error", "set_new_due_date", current_month+1)
 
                     else :
                         try :
@@ -3026,7 +3030,7 @@ class ClientDatabase(Database):
             else :
                 summary = None
 
-            due_date, due_date_list, date_list = self.set_new_due_date(statutory_dates, r["repeats_type_id"])
+            due_date, due_date_list, date_list = self.set_new_due_date(statutory_dates, r["repeats_type_id"], c_id)
 
             compliance = clienttransactions.UNIT_WISE_STATUTORIES(
                 c_id,
@@ -3066,9 +3070,10 @@ class ClientDatabase(Database):
             q = "SELECT compliance_id, statutory_dates, repeats_type_id from tbl_compliances \
                 where compliance_id = %s" % int(c.compliance_id)
             row = self.select_one(q)
+            comp_id = row[0]
             s_dates = json.loads(row[1])
             repeats_type_id = row[2]
-            due_date, due_date_list, date_list = self.set_new_due_date(s_dates, repeats_type_id)
+            due_date, due_date_list, date_list = self.set_new_due_date(s_dates, repeats_type_id, comp_id)
 
             if c.due_date not in [None, ""] and due_date not in [None, ""]:
                 t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
@@ -3753,7 +3758,10 @@ class ClientDatabase(Database):
 
         return dashboard.GetComplianceStatusChartSuccess(final)
 
-    def compliance_details_query(self, domain_ids, date_qry, status_qry, filter_type_qry, user_id) :
+    def compliance_details_query(
+        self, domain_ids, date_qry, status_qry, filter_type_qry, user_id,
+        from_count, to_count
+    ) :
         if len(domain_ids) == 1 :
             domain_ids.append(0)
         if user_id == 0 :
@@ -3790,12 +3798,13 @@ class ClientDatabase(Database):
             %s \
             %s \
             ORDER BY T1.due_date \
-            limit 0, 500 " % (
+            limit %s, %s " % (
                 user_qry,
                 str(tuple(domain_ids)),
                 date_qry,
                 status_qry,
                 filter_type_qry,
+                from_count , to_count
             )
         rows = self.select_all(query)
         columns = [
@@ -3815,7 +3824,7 @@ class ClientDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return result
 
-    def get_compliances_details_for_status_chart(self, request, session_user, client_id):
+    def get_compliances_details_for_status_chart(self, request, session_user, client_id, from_count, to_count):
         domain_ids = request.domain_ids
         from_date = request.from_date
         to_date = request.to_date
@@ -3862,7 +3871,10 @@ class ClientDatabase(Database):
             to_date = self.string_to_datetime(to_date)
             date_qry = " AND T1.due_date >= '%s' AND T1.due_date <= '%s' " % (from_date, to_date)
 
-        result = self.compliance_details_query(domain_ids, date_qry, status_qry, filter_type_qry, session_user)
+        result = self.compliance_details_query(
+            domain_ids, date_qry, status_qry, filter_type_qry,
+            session_user, from_count, to_count
+        )
         year_info = self.get_client_domain_configuration(int(year))[0]
         return self.return_compliance_details_drill_down(year_info, compliance_status, request.year, result, client_id)
 
@@ -4080,7 +4092,9 @@ class ClientDatabase(Database):
             years, chart_data
         )
 
-    def get_escalation_drill_down_data(self, request, session_user, client_id):
+    def get_escalation_drill_down_data(
+        self, request, session_user, client_id, from_count, to_count
+    ):
         domain_ids = request.domain_ids
         filter_type = request.filter_type
         filter_ids = request.filter_ids
@@ -4116,7 +4130,8 @@ class ClientDatabase(Database):
 
         delayed_details = self.compliance_details_query(
             domain_ids, date_qry, delayed_status_qry,
-            filter_type_qry, session_user
+            filter_type_qry, session_user,
+            from_count, to_count
         )
 
         delayed_details_list = self.return_compliance_details_drill_down(
@@ -4126,7 +4141,8 @@ class ClientDatabase(Database):
 
         not_complied_details = self.compliance_details_query(
             domain_ids, date_qry, not_complied_status_qry,
-            filter_type_qry, session_user
+            filter_type_qry, session_user,
+            from_count, to_count
         )
 
         not_complied_details_list = self.return_compliance_details_drill_down(
@@ -4244,7 +4260,7 @@ class ClientDatabase(Database):
             below_90, above_90
         )
 
-    def get_not_complied_drill_down(self, request, session_user, client_id):
+    def get_not_complied_drill_down(self, request, session_user, client_id, from_count, to_count):
         domain_ids = request.domain_ids
         if len(domain_ids) == 1:
             domain_ids.append(0)
@@ -4277,7 +4293,8 @@ class ClientDatabase(Database):
 
         not_complied_details = self.compliance_details_query(
             domain_ids, date_qry, not_complied_status_qry,
-            filter_type_qry, session_user
+            filter_type_qry, session_user,
+            from_count, to_count
         )
         current_date = datetime.datetime.today()
         not_complied_details_filtered = []

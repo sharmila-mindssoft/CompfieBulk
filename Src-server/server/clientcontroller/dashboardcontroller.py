@@ -170,7 +170,12 @@ def process_get_trend_chart_drilldown(db, request, session_user, client_id):
     )
 
 def process_compliance_status_chart_drilldown(db, request, session_user, client_id):
-    unit_wise_data = db.get_compliances_details_for_status_chart(request, session_user, client_id)
+    from_count = request.record_count
+    to_count = 500
+    unit_wise_data = db.get_compliances_details_for_status_chart(
+        request, session_user, client_id,
+        from_count, to_count
+    )
     return dashboard.GetComplianceStatusDrillDownDataSuccess(
         unit_wise_data.values()
     )
@@ -179,7 +184,12 @@ def process_escalation_chart(db, request, session_user, client_id):
     return db.get_escalation_chart(request, session_user, client_id)
 
 def process_escalation_chart_drilldown(db, request, session_user, client_id) :
-    result_list = db.get_escalation_drill_down_data(request, session_user, client_id)
+    from_count = request.record_count
+    to_count = 500
+    result_list = db.get_escalation_drill_down_data(
+        request, session_user, client_id,
+        from_count, to_count
+    )
     return dashboard.GetEscalationsDrillDownDataSuccess(
         result_list[0],
         result_list[1]
@@ -189,7 +199,12 @@ def process_not_complied_chart(db, request, session_user, client_id):
     return db.get_not_complied_chart(request, session_user, client_id)
 
 def  process_not_complied_drill_down(db, request, session_user, client_id):
-    result_list = db.get_not_complied_drill_down(request, session_user, client_id)
+    from_count = request.record_count
+    to_count = 500
+    result_list = db.get_not_complied_drill_down(
+        request, session_user, client_id,
+        from_count, to_count
+    )
     return dashboard.GetNotCompliedDrillDownSuccess(result_list.values())
 
 def process_compliance_applicability_chat(db, request, session_user, client_id):
