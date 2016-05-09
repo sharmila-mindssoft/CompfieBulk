@@ -4525,7 +4525,7 @@ class ClientDatabase(Database):
         FROM tbl_assigned_compliances ac \
             INNER JOIN tbl_units u on ac.unit_id = u.unit_id \
             INNER JOIN tbl_compliances c on ac.compliance_id = c.compliance_id \
-            WHERE ac.is_active = 1 and c.is_active = 1 \
+            WHERE c.is_active = 1 \
             and ac.country_id = %s and c.domain_id = %s \
             %s \
         " % (
@@ -4569,7 +4569,7 @@ class ClientDatabase(Database):
         FROM tbl_assigned_compliances ac \
             INNER JOIN tbl_units u on ac.unit_id = u.unit_id \
             INNER JOIN tbl_compliances c on ac.compliance_id = c.compliance_id \
-            WHERE ac.is_active = 1 and c.is_active = 1 \
+            WHERE c.is_active = 1 \
             and ac.country_id = %s and c.domain_id = %s \
             %s \
         ORDER BY u.legal_entity_id, ac.assignee, u.unit_id \
