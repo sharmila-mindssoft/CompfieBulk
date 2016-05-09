@@ -4505,7 +4505,7 @@ class ClientDatabase(Database):
         FROM tbl_assigned_compliances ac \
             INNER JOIN tbl_units u on ac.unit_id = u.unit_id \
             INNER JOIN tbl_compliances c on ac.compliance_id = c.compliance_id \
-            WHERE ac.is_active = 1 and c.is_active = 1 \
+            WHERE c.is_active = 1 \
             and ac.country_id = %s and c.domain_id = %s \
             %s \
         " % (
@@ -4549,7 +4549,7 @@ class ClientDatabase(Database):
         FROM tbl_assigned_compliances ac \
             INNER JOIN tbl_units u on ac.unit_id = u.unit_id \
             INNER JOIN tbl_compliances c on ac.compliance_id = c.compliance_id \
-            WHERE ac.is_active = 1 and c.is_active = 1 \
+            WHERE c.is_active = 1 \
             and ac.country_id = %s and c.domain_id = %s \
             %s \
         ORDER BY u.legal_entity_id, ac.assignee, u.unit_id \
@@ -4557,6 +4557,7 @@ class ClientDatabase(Database):
             country_id, domain_id,
             qry_where, from_count, to_count
         )
+        print q
         rows = self.select_all(q)
         data = self.convert_to_dict(rows, columns)
         return data, count
@@ -9165,7 +9166,7 @@ class ClientDatabase(Database):
                 AND c.domain_id in (%s) \
                 AND c.frequency_id = 4 \
                 AND ac.assignee = '%d' \
-                ORDER BY document_name, compliance_task \
+                ORDER BY u.unit_id, document_name, compliance_task \
                 LIMIT %d, %d" % (
                     columns, concat_columns, self.tblAssignedCompliances, 
                     self.tblCompliances, self.tblComplianceDurationType,

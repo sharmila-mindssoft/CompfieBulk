@@ -1,6 +1,7 @@
 var compliancesList;
 var sno = 0;
 var totalRecord;
+var lastUnit = '';
 
 
 function displayLoader() {
@@ -13,10 +14,15 @@ function hideLoader() {
 //load compliances in view page
 function load_compliances (compliancesList) {
     for(var entity in compliancesList) {
-      var tableRow = $('#head-templates .tbl_heading');
-      var clone = tableRow.clone();
-      $('.heading', clone).html(entity);
-      $('.tbody-compliances-list').append(clone);
+
+      if(lastUnit != entity){
+        var tableRow = $('#head-templates .tbl_heading');
+        var clone = tableRow.clone();
+        $('.heading', clone).html(entity);
+        $('.tbody-compliances-list').append(clone);
+        lastUnit = entity;
+      }
+      
       var compliances = compliancesList[entity];
       for(var compliance in compliances){
         sno = sno + 1;
@@ -129,6 +135,7 @@ function getOnOccuranceCompliances (sno) {
   //displayLoader();
   if(sno == 0){
       $(".tbody-complainces-list").find("tr").remove();
+      lastUnit = '';
   }
   function onSuccess(data){
     compliancesList = data["compliances"];
@@ -160,5 +167,6 @@ $('#pagination').click(function(){
 //initialization
 $(document).ready(function () {
   sno = 0;
+  lastUnit = '';
   getOnOccuranceCompliances (sno);
 });
