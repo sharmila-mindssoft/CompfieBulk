@@ -676,7 +676,7 @@ function initClientMirror() {
                 "from_date": fromDate,
                 "to_date": toDate,
                 "user_id": userId,
-                "from_id": formId,
+                "form_id": formId,
                 "record_count": recordCount
             }
         ];
