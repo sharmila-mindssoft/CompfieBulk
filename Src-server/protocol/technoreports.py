@@ -30,7 +30,8 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_20,
     parse_structure_CustomTextType_500,
     parse_structure_OptionalType_CustomTextType_50,
-    parse_structure_Text
+    parse_structure_Text,
+    parse_structure_OptionalType_CustomTextType_250
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Domain,
@@ -63,7 +64,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_technoreports_NOTIFICATIONS,
     to_structure_CustomTextType_500,
     to_structure_OptionalType_CustomTextType_50,
-    to_structure_Text
+    to_structure_Text,
+    to_structure_OptionalType_CustomTextType_250
 )
 
 #
@@ -416,7 +418,7 @@ class GroupedUnits(object):
         business_group_name = data.get("business_group_name")
         business_group_name = parse_structure_OptionalType_CustomTextType_250(business_group_name)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_client_report_UnitDetails(units)
+        units = parse_structure_VectorType_RecordType_techno_report_UnitDetails(units)
         return GroupedUnits(division_name, legal_entity_name, business_group_name, units)
 
     def to_structure(self):
@@ -424,7 +426,7 @@ class GroupedUnits(object):
             "division_name": to_structure_OptionalType_CustomTextType_250(self.division_name),
             "legal_entity_name": to_structure_CustomTextType_250(self.legal_entity_name),
             "business_group_name": to_structure_OptionalType_CustomTextType_250(self.business_group_name),
-            "units" : to_structure_VectorType_RecordType_client_report_UnitDetails(self.units)
+            "units" : to_structure_VectorType_RecordType_techno_report_UnitDetails(self.units)
         }
 
 

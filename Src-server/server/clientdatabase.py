@@ -8760,8 +8760,12 @@ class ClientDatabase(Database):
                 for division in grouped_units[business_group][legal_entity_name]:
                     if business_group == "null":
                         business_group_name = None
+                    else:
+                        business_group_name = business_group
                     if division == "null":
                         division_name = None
+                    else:
+                        division_name = division
                     GroupedUnits.append(
                         clientreport.GroupedUnits(
                             division_name, legal_entity_name, business_group_name,

@@ -6220,36 +6220,40 @@ class KnowledgeDatabase(Database):
             legal_entity_id, division_id, unit_id, domain_ids
         )
         columns = "unit_id, unit_code, unit_name, geography_name, \
-                    address, domain_ids, postal_code, business_group_id, \
-                    legal_entity_id, division_id"
+                    address, domain_ids, postal_code, business_group_name, \
+                    legal_entity_name, division_name"
         query = "SELECT %s \
-        FROM %s tu INNER JOIN %s tg \
-        ON (tu.geography_id = tg.geography_id) \
+        FROM %s tu \
+        INNER JOIN %s tg ON (tu.geography_id = tg.geography_id) \
+        INNER JOIN %s tb ON (tb.business_group_id = tu.business_group_id) \
+        INNER JOIN %s tl ON (tl.legal_entity_id = tu.legal_entity_id) \
+        INNER JOIN %s td ON (td.division_id = tu.division_id) \
         WHERE %s \
-        ORDER BY business_group_id, legal_entity_id, division_id, \
-        unit_id DESC LIMIt %d, %d" % (
-            columns, self.tblUnits, self.tblGeographies, condition, 
+        ORDER BY tu.business_group_id, tu.legal_entity_id, tu.division_id, \
+        tu.unit_id DESC LIMIt %d, %d" % (
+            columns, self.tblUnits, self.tblGeographies,  self.tblBusinessGroups,
+            self.tblLegalEntities, self.tblDivisions, condition, 
             int(start_count), to_count
         )
-        columns_list = columns.replace(" ", "").split(",")
         rows = self.select_all(query)
+        columns_list = columns.replace(" ", "").split(",")
         unit_rows = self.convert_to_dict(rows, columns_list)
         grouped_units = {}
         for unit in unit_rows:
-            business_group_id = unit["business_group_id"]
-            legal_entity_id = unit["legal_entity_id"]
-            division_id = unit["division_id"]
-            if business_group_id in ["None", None, ""]:
-                business_group_id = "null"
-            if division_id in ["None", None, ""]:
-                division_id = "null"
-            if business_group_id not in grouped_units:
-                grouped_units[business_group_id] = {}
-            if legal_entity_id not in grouped_units[business_group_id]:
-                grouped_units[business_group_id][legal_entity_id] = {}
-            if division_id not in grouped_units[business_group_id][legal_entity_id]:
-                grouped_units[business_group_id][legal_entity_id][division_id] = []
-            grouped_units[business_group_id][legal_entity_id][division_id].append(
+            business_group_name = unit["business_group_name"]
+            legal_entity_name = unit["legal_entity_name"]
+            division_name = unit["division_name"]
+            if business_group_name in ["None", None, ""]:
+                business_group_name = "null"
+            if division_name in ["None", None, ""]:
+                division_name = "null"
+            if business_group_name not in grouped_units:
+                grouped_units[business_group_name] = {}
+            if legal_entity_name not in grouped_units[business_group_name]:
+                grouped_units[business_group_name][legal_entity_name] = {}
+            if division_name not in grouped_units[business_group_name][legal_entity_name]:
+                grouped_units[business_group_name][legal_entity_name][division_name] = []
+            grouped_units[business_group_name][legal_entity_name][division_name].append(
                 technoreports.UnitDetails(
                     unit["unit_id"], unit["geography_name"], unit["unit_code"],
                     unit["unit_name"], unit["address"], unit["postal_code"],
@@ -6258,16 +6262,20 @@ class KnowledgeDatabase(Database):
             )
         GroupedUnits = []
         for business_group in grouped_units:
-            for legal_entity_id in grouped_units[business_group]:
-                for division in grouped_units[business_group][legal_entity_id]:
+            for legal_entity_name in grouped_units[business_group]:
+                for division in grouped_units[business_group][legal_entity_name]:
                     if business_group == "null":
-                        business_group_id = None
+                        business_group_name = None
+                    else:
+                        business_group_name = business_group
                     if division == "null":
-                        division_id = None
+                        division_name = None
+                    else:
+                        division_name = division
                     GroupedUnits.append(
                         technoreports.GroupedUnits(
-                            division_id, legal_entity_id, business_group_id,
-                            grouped_units[business_group][legal_entity_id][division]
+                            division_name, legal_entity_name, business_group_name,
+                            grouped_units[business_group][legal_entity_name][division]
                         )
                     )        
         return GroupedUnits
