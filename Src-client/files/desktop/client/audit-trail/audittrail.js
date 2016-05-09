@@ -10,8 +10,10 @@ var tempadlist;
 var sno = 0;
 var formid;
 var userid;
-var fromdate;
-var todate;
+var fromDateValue;
+var toDateValue;
+var userIdValue;
+var formIdValue;
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -68,85 +70,6 @@ function initialize(){
     );
 }
 
-// function get_sub_array(object, start, end){
-//     if(!end){ end=-1;}
-//     return object.slice(start, end);
-// }
-
-// $('#pagination').click(function(e){
-//     startCount = endCount;
-//     endCount = startCount + pageSize;
-//     var sub_act_list =  tempadlist;
-//     var sub_keys_list = get_sub_array(sub_act_list, startCount, endCount);
-//     if(sub_keys_list.length < pageSize){
-//         $('#pagination').hide();
-//     }
-//     //alert(startCount + '-' + endCount + '-' +sub_keys_list.length)
-//     loadaudittrail(sub_keys_list);
-//     e.preventDefault();
-// });
-
-// function loadresult(tempadlist) {
-//     pageSize = 50;
-//     startCount = 0;
-//     endCount = pageSize;
-
-//     if(tempadlist.length > pageSize){
-//         $('#pagination').show();
-//     }else{
-//         $('#pagination').hide();
-//     }
-
-//     var sub_keys_list = get_sub_array(tempadlist, startCount, endCount);
-//     loadaudittrail(sub_keys_list);
-// }
-function loadaudittrail(tempadlist){    
-    console.log(tempadlist['action']);
-    var tableRow = $('#templates .table-audittrail-list .tableRow');
-    var clone = tableRow.clone();
-    $('.username', clone).text(sno+getUserName(tempadlist['user_id']));
-    $('.datetime', clone).text(tempadlist['date']);
-    var dispFormname = 'Login';
-    if(tempadlist['action'] != ''){
-        if (tempadlist['action'].indexOf('password') >= 0){
-            dispFormname = 'Change Password';
-        }
-    }
-        
-
-    if(tempadlist['form_id'] != 0){
-        dispFormname = getFormName(tempadlist['form_id']);
-    }
-    $('.formname', clone).text(dispFormname);
-    $('.action', clone).text(tempadlist['action']);
-    $('.tbody-audittrail-list').append(clone);    
-}
-$('#pagination').click(function(){
-    displayLoader();    
-    clearMessage();    
-
-    function onSuccess(data){    
-        if(data['audit_trail_details'] ==''){
-            $('#pagination').hide();
-        }
-        loadrecord(data['audit_trail_details'], fromdate, todate, userid, formid);
-        hideLoader();
-    }
-    function onFailure(error){
-        console.log(error);
-        hideLoader();
-    }
-    client_mirror.getAuditTrail(sno, 
-    function (error, response) {
-      if (error == null){
-        onSuccess(response);
-      }
-      else {
-        onFailure(error);
-      }
-    });
-});
-
 function getUserName(userId){
     var userName;
     if(userId != 0){
@@ -189,10 +112,11 @@ function datetonumber(datetime){
     return Date.parse(newdate);
 }
 function showaudittrailclick(){
-    var fromDateValue = $("#from-date").val();
-    var toDateValue = $("#to-date").val();
-    var userIdValue = $("#userid").val();
-    var formIdValue = $("#formid").val();
+    fromDateValue = $("#from-date").val();
+    toDateValue = $("#to-date").val();
+    userIdValue = $("#userid").val();
+    formIdValue = $("#formid").val();
+
     if($("#user").val().trim() == ''){
         userIdValue = '';
     }
@@ -212,74 +136,96 @@ function showaudittrailclick(){
         var sno = 0;
         tempadlist = [];
         loadrecord(auditTrailList, fromDateValue, toDateValue, userIdValue, formIdValue);      
-        loadaudittrail(tempadlist);
+        //loadaudittrail(tempadlist);
     }
 }
 
 function loadrecord(auditTrailList, fromDateValue, toDateValue, userIdValue, formIdValue){
 
-      $.each(auditTrailList, function (key, value){
-            var fromDateVal = fromDateValue+" 00:00:00";
-            var toDateVal = toDateValue+" 23:59:59";
-            var auditDateVal = value['date'];
-
-            var auditUser = value['user_id'];
-            var auditFormId = value['form_id'];
-
-            var formCheckval;
-            var userCheckval;
-            //userid empty, formid empty            
-            if((datetonumber(fromDateVal) <= datetonumber(auditDateVal)) && (datetonumber(toDateVal) >= datetonumber(auditDateVal)) && userIdValue == '' && formIdValue == ''){ 
-                sno++;
-                loadaudittrail(value);
-            }
-            //userid empty
-            else if((datetonumber(fromDateVal) <= datetonumber(auditDateVal)) && (datetonumber(toDateVal) >= datetonumber(auditDateVal)) && (userIdValue == '') && (formIdValue == auditFormId)){   
-                sno++;
-                loadaudittrail(value);
-            }
-            //formid empty
-            else if((datetonumber(fromDateVal) <= datetonumber(auditDateVal)) && (datetonumber(toDateVal) >= datetonumber(auditDateVal)) && userIdValue == auditUser && formIdValue == ''){ 
-                sno++;
-                loadaudittrail(value);  
-            }
-            //all != empty
-             else if((datetonumber(fromDateVal) <= datetonumber(auditDateVal)) && (datetonumber(toDateVal) >= datetonumber(auditDateVal)) && userIdValue == auditUser && formIdValue == auditFormId){   
-                sno++;
-                loadaudittrail(value);
-            }
-        });
-        $("#total-records").html('Total : '+sno+' records');
+    $.each(auditTrailList, function (key, value){
+        loadaudittrail(value);
+    });
+    $("#total-records").html('Total : '+sno+' records');
 
 }
+
+
+function loadaudittrail(tempadlist){    
+    if(typeof tempadlist['action'] != "undefined"){
+        sno++;
+        var tableRow = $('#templates .table-audittrail-list .tableRow');
+        var clone = tableRow.clone();
+        $('.username', clone).text(sno+getUserName(tempadlist['user_id']));
+        $('.datetime', clone).text(tempadlist['date']);
+        var dispFormname = 'Login';
+        if(tempadlist['action'] != ''){
+            if (tempadlist['action'].indexOf('password') >= 0){
+                dispFormname = 'Change Password';
+            }
+        }        
+
+        if(tempadlist['form_id'] != 0){
+            dispFormname = getFormName(tempadlist['form_id']);
+        }
+        $('.formname', clone).text(dispFormname);
+        $('.action', clone).text(tempadlist['action']);
+        $('.tbody-audittrail-list').append(clone);    
+    }
+}
+$('#pagination').click(function(){
+    displayLoader();    
+    clearMessage();    
+
+    function onSuccess(data){    
+        if(data['audit_trail_details'] ==''){
+            $('#pagination').hide();
+        }
+     
+        loadrecord(data['audit_trail_details'], fromDateValue, toDateValue, userIdValue, formIdValue);
+        hideLoader();
+    }
+    function onFailure(error){
+        console.log(error);
+        hideLoader();
+    }
+    client_mirror.getAuditTrail(sno, 
+        function (error, response) {
+            if (error == null){
+                onSuccess(response);
+            }
+            else {
+                onFailure(error);
+            }
+        });
+});
 
 
 //retrive user autocomplete value
 function onUserSuccess(val){
-  $("#user").val(val[1]);
-  $("#userid").val(val[0]);
+    $("#user").val(val[1]);
+    $("#userid").val(val[0]);
 }
 
 //load user list in autocomplete text box  
 $("#user").keyup(function(){
-  var textval = $(this).val();
-  getUserAutocomplete(textval, userList, function(val){
-    onUserSuccess(val)
-  })
+    var textval = $(this).val();
+    getUserAutocomplete(textval, userList, function(val){
+        onUserSuccess(val);
+    })
 });
 
 //retrive form autocomplete value
 function onFormSuccess(val){
-  $("#formname").val(val[1]);
-  $("#formid").val(val[0]);
+    $("#formname").val(val[1]);
+    $("#formid").val(val[0]);
 }
 
 //load form list in autocomplete text box  
 $("#formname").keyup(function(){
-  var textval = $(this).val();
-  getFormAutocomplete(textval, formList, function(val){
-    onFormSuccess(val)
-  })
+    var textval = $(this).val();
+    getFormAutocomplete(textval, formList, function(val){
+        onFormSuccess(val);
+    });
 });
 
 $(function() {

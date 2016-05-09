@@ -513,16 +513,19 @@ class CloseUnit(Request):
         }
 
 class GetAuditTrails(Request):
-    def __init__(self):
-        pass
+    def __init__(self, record_count):
+        self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetAuditTrails()
+        data = parse_dictionary(data, ["record_count"])
+        record_count = data.get("record_count")
+        record_count = parse_structure_UnsignedIntegerType_32(record_count)
+        return GetAuditTrails(record_count)
 
     def to_inner_structure(self):
         return {
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
 

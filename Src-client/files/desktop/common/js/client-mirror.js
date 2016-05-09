@@ -916,7 +916,7 @@ function initClientMirror() {
 
     function getComplianceApprovalList(start_count, callback) {
         var request = [
-            "GetComplianceApprovalList", 
+            "GetComplianceApprovalList",
             {
                 "start_count": start_count
             }
@@ -1463,7 +1463,7 @@ function initClientMirror() {
     function getTaskApplicabilityReportData(
         country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id,
-        statutory_name, applicable_status, csv, callback
+        statutory_name, applicable_status, csv, record_count, callback
     ) {
         var request = [
             "GetComplianceTaskApplicabilityStatusReport", {
@@ -1475,6 +1475,7 @@ function initClientMirror() {
                 "unit_id": unit_id,
                 "statutory_name": statutory_name,
                 "applicable_status": applicable_status,
+                "record_count":record_count,
                 "csv": csv
             }
         ];
