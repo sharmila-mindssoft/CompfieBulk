@@ -23,22 +23,22 @@ function loadReminders(reminders){
     
     var str='';
     for(var reminder in reminders){
+      sno++;
       var readStatus = 'unread';
       var notificationId = reminders[reminder]["notification_id"];
       var notificationText = reminders[reminder]["notification_text"];
 
-      var act = notifications[key]["level_1_statutory"];
-      var unit = notifications[key]["unit_name"];
-      var unitaddress = notifications[key]["unit_address"];
-      var compliance = notifications[key]["compliance_name"];
-      var duedate = notifications[key]["due_date"];
-      var delayedby = notifications[key]["delayed_days"];
-      var assignee = notifications[key]["assignee"];
-      var concurrence = notifications[key]["concurrence_person"];
-      var approval = notifications[key]["approval_person"];
+      var act = reminders[reminder]["level_1_statutory"];
+      var unit = reminders[reminder]["unit_name"];
+      var unitaddress = reminders[reminder]["unit_address"];
+      var compliance = reminders[reminder]["compliance_name"];
+      var duedate = reminders[reminder]["due_date"];
+      var delayedby = reminders[reminder]["delayed_days"];
+      var assignee = reminders[reminder]["assignee"];
+      var concurrence = reminders[reminder]["concurrence_person"];
+      var approval = reminders[reminder]["approval_person"];
 
       notificationDict[notificationId] = [act,unit,unitaddress,compliance,duedate,delayedby,assignee,concurrence,approval];
-
 
       if (reminders[reminder]["assignee"] != null){
         var assignee1 = reminders[reminder]["assignee"];
@@ -49,11 +49,10 @@ function loadReminders(reminders){
         readStatus = '';
       }
 
-
-      str += '<a href="#popup1" style="text-decoration: none;"> <li class="'+readStatus+'" id="notification'+notificationId+'" onclick="changeStatus('+notificationId+','+reminders[reminder]["read_status"]+')">'+notificationText
-
-      if (reminders[reminder]["assignee"] != null){
-        str += "<span style='font-weight:bold'>"+assigneesplit[0]+"</span> </li></a>"
+      if(assignee != null){
+        str += '<a href="#popup1" style="text-decoration: none;"> <li class="'+readStatus+'" id="notification'+notificationId+'" onclick="changeStatus('+notificationId+','+reminders[reminder]["read_status"]+')">'+ notificationText + "<span style='font-weight:bold'>"+assigneesplit[0]+"</span> </li></a>"
+      }else{
+        str += '<li class="'+readStatus+'" id="notification'+notificationId+'" onclick="changeStatus('+notificationId+','+reminders[reminder]["read_status"]+')">'+notificationText
       }
     }
     if(str == '' && sno == 0){
@@ -64,53 +63,54 @@ function loadReminders(reminders){
 
 function changeStatus(notification_id, read_status){
   $('#notification'+notification_id).removeClass( "unread" );
-  $("#popup1").show();
-  var nId;
-  var act = notificationDict[notification_id][0];
-  var unit = notificationDict[notification_id][1];
-  var unitaddress = notificationDict[notification_id][2];
-  var compliance = notificationDict[notification_id][3];
-  var duedate = notificationDict[notification_id][4];
-  var delayedby = notificationDict[notification_id][5];
-  var assignee = notificationDict[notification_id][6];
-  var concurrence = notificationDict[notification_id][7];
-  var approval = notificationDict[notification_id][8];
 
+  if(notificationDict[notification_id][6] != null){
+    $("#popup1").show();
+    var act = notificationDict[notification_id][0];
+    var unit = notificationDict[notification_id][1];
+    var unitaddress = notificationDict[notification_id][2];
+    var compliance = notificationDict[notification_id][3];
+    var duedate = notificationDict[notification_id][4];
+    var delayedby = notificationDict[notification_id][5];
+    var assignee = notificationDict[notification_id][6];
+    var concurrence = notificationDict[notification_id][7];
+    var approval = notificationDict[notification_id][8];
 
-  var assigneeName;
-  var assigneeDetails;
-  var concurrenceName;
-  var concurrenceDetails;
-  var assigneeName;
-  var assigneeDetails;
+    var assigneeName;
+    var assigneeDetails;
+    var concurrenceName;
+    var concurrenceDetails;
+    var assigneeName;
+    var assigneeDetails;
 
-  if(assignee != ''){
-    assigneeName = assignee.split(',')[0];
-    assigneeDetails = assignee.substring(assignee.indexOf(",")+1).trim().replace(/--, /gi,'');
+    if(assignee != ''){
+      assigneeName = assignee.split(',')[0];
+      assigneeDetails = assignee.substring(assignee.indexOf(",")+1).trim().replace(/--, /gi,'');
+    }
+
+    if(concurrence != '' && concurrence != null){
+      concurrenceName = concurrence.split(',')[0];
+      concurrenceDetails = concurrence.substring(concurrence.indexOf(",")+1).trim().replace(/--, /gi,'');
+    }else{
+      concurrenceName = '-'
+      concurrenceDetails = '-' 
+    }
+
+    if(approval != ''){
+      approvalName = approval.split(',')[0];
+      approvalDetails = approval.substring(approval.indexOf(",")+1).trim().replace(/--, /gi,'');
+    }
+   
+    $(".popup_act").text(act);
+    $(".popup_unit").html('<abbr class="page-load tipso_style" title="'+ unitaddress +'"></abbr>'+unit);
+    $(".popup_compliance").text(compliance);
+    $(".popup_duedate").text(duedate);
+    $(".popup_delayedby").text(delayedby);
+    $(".popup_assignee").html(assigneeName +'<br>'+ assigneeDetails);
+    $(".popup_concurrence").html(concurrenceName +'<br>'+ concurrenceDetails);
+    $(".popup_approval").html(approvalName +'<br>'+ approvalDetails);
   }
 
-  if(concurrence != '' && concurrence != null){
-    concurrenceName = concurrence.split(',')[0];
-    concurrenceDetails = concurrence.substring(concurrence.indexOf(",")+1).trim().replace(/--, /gi,'');
-  }else{
-    concurrenceName = '-'
-    concurrenceDetails = '-' 
-  }
-
-  if(approval != ''){
-    approvalName = approval.split(',')[0];
-    approvalDetails = approval.substring(approval.indexOf(",")+1).trim().replace(/--, /gi,'');
-  }
- 
-  $(".popup_act").text(act);
-  $(".popup_unit").html('<abbr class="page-load tipso_style" title="'+ unitaddress +'"></abbr>'+unit);
-  $(".popup_compliance").text(compliance);
-  $(".popup_duedate").text(duedate);
-  $(".popup_delayedby").text(delayedby);
-  $(".popup_assignee").html(assigneeName +'<br>'+ assigneeDetails);
-  $(".popup_concurrence").html(concurrenceName +'<br>'+ concurrenceDetails);
-  $(".popup_approval").html(approvalName +'<br>'+ approvalDetails);
-  
   if(read_status == false){
     function onSuccess(response){
         
@@ -161,7 +161,7 @@ function get_reminders(sno){
 }
 
 $('#pagination').click(function(){
-    get_notifications(sno);
+    get_reminders(sno);
 });
 
 function initialize(){
