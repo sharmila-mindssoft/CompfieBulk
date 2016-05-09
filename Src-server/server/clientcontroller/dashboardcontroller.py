@@ -293,6 +293,8 @@ def check_contract_expiration(
     db, request, session_user, client_id
 ):
     no_of_days_left = db.get_no_of_days_left_for_contract_expiration()
+    if no_of_days_left < 0:
+        no_of_days_left = 0
     notification_count, reminder_count, escalation_count = db.get_dashboard_notification_counts(
         session_user
     )
