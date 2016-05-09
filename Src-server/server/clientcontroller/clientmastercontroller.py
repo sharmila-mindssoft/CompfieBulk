@@ -429,5 +429,12 @@ def close_unit(db, request, session_user, client_id):
 def get_audit_trails(db, request, session_user, client_id):
     from_count = request.record_count
     to_count = 500
-    audit_trails = db.get_audit_trails(session_user, client_id, from_count, to_count)
+    from_date = request.from_date
+    to_date = request.to_date
+    user_id = request.user_id
+    form_id = request.form_id
+    audit_trails = db.get_audit_trails(
+        session_user, client_id, from_count, to_count,
+        from_date, to_date, user_id, form_id
+    )
     return audit_trails
