@@ -144,7 +144,7 @@ function load_secondwizard(){
       count++;
       lastActName = actname;
     }
-    
+
     var actList = statutoriesList[actname];
     for(var actentity in actList){
       var statutoryprovision = '';

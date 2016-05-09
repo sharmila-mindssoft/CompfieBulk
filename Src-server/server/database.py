@@ -4289,6 +4289,7 @@ class KnowledgeDatabase(Database):
         query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" % (
             database_name, db_username, host, db_password)
         client_cursor.execute(query)
+        client_cursor.execute("FLUSH PRIVILEGES;")
         client_con.commit()
 
         client_db_con = self._db_connect(host, username, password, database_name)

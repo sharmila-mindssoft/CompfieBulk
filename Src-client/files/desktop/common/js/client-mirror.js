@@ -1335,7 +1335,9 @@ function initClientMirror() {
 
     function getLoginTrace(callback){
         var request = [
-            "GetLoginTrace",{}
+            "GetLoginTrace",{
+                "record_count" : 0
+            }
         ];
         callerName = "client_reports";
         clientApiRequest(callerName, request, callback);
