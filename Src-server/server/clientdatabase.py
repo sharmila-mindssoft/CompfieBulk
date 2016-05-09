@@ -1357,7 +1357,7 @@ class ClientDatabase(Database):
 #
     def get_audit_trails(
         self, session_user, client_id, from_count, to_count,
-        from_date, to_Date, user_id, form_id
+        from_date, to_date, user_id, form_id
     ):
 
         # user_ids = ""
@@ -1404,10 +1404,10 @@ class ClientDatabase(Database):
             else :
                 where_qry += " AND user_id like '%'"
 
-        if from_date is not None and to_Date is not None :
+        if from_date is not None and to_date is not None :
             from_date = self.string_to_datetime(from_date)
             to_date = self.string_to_datetime(to_date)
-            where_qry = "AND created_on >= '%s' AND created_on <= '%s' " % (from_date, to_date)
+            where_qry = "AND created_on.date() >= '%s' AND created_on.date() <= '%s' " % (from_date, to_date)
 
         if form_id is not None :
             where_qry = " AND form_id = %s " % (form_id)
