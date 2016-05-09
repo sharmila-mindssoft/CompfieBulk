@@ -108,7 +108,7 @@ $("#show-button").click(function(){
             console.log(error);
         }
         mirror.getClientDetailsReport(parseInt(countries), parseInt(groupid), businessgroupid,  
-            lentityid, divisionid, unitid,  domainsVal,
+            lentityid, divisionid, unitid,  domainsVal, 0, 
             function (error, response){
                 if(error == null){
                     onSuccess(response);

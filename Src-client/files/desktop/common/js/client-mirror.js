@@ -662,7 +662,7 @@ function initClientMirror() {
                 "division_id": divisionId,
                 "unit_id": unitId,
                 "domain_ids": domainIds,
-                "csv": csv
+                "csv": csv,
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -1386,7 +1386,7 @@ function initClientMirror() {
     }
 
     function getClientDetailsReportData(countryId, businessGroupId, legalEntityId, divisionId,
-        unitId, domainIds, csv, callback){
+        unitId, domainIds, csv, start_count, callback){
         callerName = "client_reports"
         var request = [
             "GetClientDetailsReportData",
@@ -1397,7 +1397,8 @@ function initClientMirror() {
                 "division_id" : divisionId,
                 "unit_id": unitId,
                 "domain_ids" : domainIds,
-                "csv": csv
+                "csv": csv,
+                "start_count": start_count
             }
         ];
         clientApiRequest(callerName, request, callback);
