@@ -6225,9 +6225,9 @@ class KnowledgeDatabase(Database):
         query = "SELECT %s \
         FROM %s tu \
         INNER JOIN %s tg ON (tu.geography_id = tg.geography_id) \
-        INNER JOIN %s tb ON (tb.business_group_id = tu.business_group_id) \
+        LEFT JOIN %s tb ON (tb.business_group_id = tu.business_group_id) \
         INNER JOIN %s tl ON (tl.legal_entity_id = tu.legal_entity_id) \
-        INNER JOIN %s td ON (td.division_id = tu.division_id) \
+        LEFT JOIN %s td ON (td.division_id = tu.division_id) \
         WHERE %s \
         ORDER BY tu.business_group_id, tu.legal_entity_id, tu.division_id, \
         tu.unit_id DESC LIMIt %d, %d" % (
