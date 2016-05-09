@@ -129,9 +129,6 @@ function loadunitdetailsreport(){
             $(".grid-table-rpt").show();
             $(".countryval").text(countriesText);
             $(".groupsval").text(groupsval);
-            $(".bgroupsval").text(businessgroupsval);
-            $(".lentityval").text(legalentityval);
-            $(".divisionval").text(divisionval);
             totalRecord = data["total_count"];
             loadClientDetailsList(data['units']);       
         }
