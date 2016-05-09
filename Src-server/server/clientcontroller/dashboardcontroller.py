@@ -211,7 +211,12 @@ def process_compliance_applicability_chat(db, request, session_user, client_id):
     return db.get_compliance_applicability_chart(request, session_user, client_id)
 
 def process_compliance_applicability_drill_down(db, request, session_user, client_id) :
-    result_list = db.get_compliance_applicability_drill_down(request, session_user, client_id)
+    from_count = request.record_count
+    to_count = 500
+    result_list = db.get_compliance_applicability_drill_down(
+        request, session_user, client_id,
+        from_count, to_count
+    )
     return dashboard.GetComplianceApplicabilityStatusDrillDownSuccess(result_list)
 
 def process_get_notifications(db, request, session_user, client_id):

@@ -3239,7 +3239,8 @@ function loadComplianceApplicabilityDrillDown(type){
         "domain_ids": chartInput.getDomains(),
         "filter_type": filterType,
         "filter_ids": filter_ids,
-        "applicability_status": type
+        "applicability_status": type,
+        "record_count": 0
     }
     $(".btn-back").on("click", function() {
         $(".graph-container.compliance-status").show();

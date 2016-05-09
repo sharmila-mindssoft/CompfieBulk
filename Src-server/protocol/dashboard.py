@@ -543,16 +543,23 @@ class GetEscalationsDrillDownData(Request):
         }
 
 class GetComplianceApplicabilityStatusDrillDown(Request):
-    def __init__(self, country_ids, domain_ids, filter_type, filter_ids, applicability_status):
+    def __init__(
+        self, country_ids, domain_ids, filter_type, filter_ids,
+        applicability_status, record_count
+    ):
         self.country_ids = country_ids
         self.domain_ids = domain_ids
         self.filter_type = filter_type
         self.filter_ids = filter_ids
         self.applicability_status = applicability_status
+        self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_ids", "domain_ids", "filter_type", "filter_ids", "applicability_status"])
+        data = parse_dictionary(data, [
+            "country_ids", "domain_ids", "filter_type", "filter_ids",
+            "applicability_status", "record_count"
+        ])
         country_ids = data.get("country_ids")
         country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
         domain_ids = data.get("domain_ids")
@@ -563,7 +570,12 @@ class GetComplianceApplicabilityStatusDrillDown(Request):
         filter_ids = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(filter_ids)
         applicability_status = data.get("applicability_status")
         applicability_status = parse_structure_EnumType_core_APPLICABILITY_STATUS(applicability_status)
-        return GetComplianceApplicabilityStatusDrillDown(country_ids, domain_ids, filter_type, filter_ids, applicability_status)
+        record_count = data.get("record_count")
+        record_count = parse_structure_UnsignedIntegerType_32(record_count)
+        return GetComplianceApplicabilityStatusDrillDown(
+            country_ids, domain_ids, filter_type, filter_ids,
+            applicability_status, record_count
+        )
 
     def to_inner_structure(self):
         return {
@@ -572,6 +584,7 @@ class GetComplianceApplicabilityStatusDrillDown(Request):
             "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
             "filter_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.filter_ids),
             "applicability_status": to_structure_EnumType_core_APPLICABILITY_STATUS(self.applicability_status),
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
 class GetNotCompliedDrillDown(Request):

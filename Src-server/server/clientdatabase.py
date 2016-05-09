@@ -4971,7 +4971,7 @@ class ClientDatabase(Database):
         )
 
     def get_compliance_applicability_drill_down(
-        self, request, session_user, client_id
+        self, request, session_user, client_id, from_count, to_count
     ):
         query = "SELECT T1.compliance_id, T2.unit_id, T4.frequency_id, \
             (select frequency from tbl_compliance_frequency where frequency_id = T4.frequency_id) frequency,\
@@ -4991,7 +4991,8 @@ class ClientDatabase(Database):
             ON T4.compliance_id = T1.compliance_id\
             WHERE T2.country_id IN %s \
             AND T2.domain_id IN %s \
-            %s %s"
+            %s %s \
+            limit %s, %s "
 
         country_ids = request.country_ids
         if len(country_ids) == 1:
@@ -5036,7 +5037,8 @@ class ClientDatabase(Database):
             str(tuple(country_ids)),
             str(tuple(domain_ids)),
             filter_type_qry,
-            applicable_type_qry
+            applicable_type_qry,
+            from_count, to_count
         )
         rows = self.select_all(query1)
         columns = [
