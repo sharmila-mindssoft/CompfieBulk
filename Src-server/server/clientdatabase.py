@@ -2974,7 +2974,7 @@ class ClientDatabase(Database):
                             if n_date.month == 12 :
                                 days = 31
                             else :
-                                days = (n_date.replace(day=1, month=n_date.month+1, year=current_year+1) - datetime.timedelta(days=1)).day
+                                days = (n_date.replace(day=1, month=current_month+1, year=current_year+1) - datetime.timedelta(days=1)).day
 
                             n_date = n_date.replace(day=days, month=current_month+1)
 
@@ -3180,9 +3180,10 @@ class ClientDatabase(Database):
             user_units = self.get_user_unit_ids(user_id)
             user_units = [int(x) for x in user_units.split(',')]
             new_unit = []
-            for u_id in unit_ids :
-                if u_id not in user_units :
-                    new_unit.append(u_id)
+            if unit_ids is not None :
+                for u_id in unit_ids :
+                    if u_id not in user_units :
+                        new_unit.append(u_id)
 
             if len(new_unit) > 0 :
                 unit_values_list = []
