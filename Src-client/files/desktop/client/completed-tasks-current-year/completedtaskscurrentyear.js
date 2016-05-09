@@ -411,7 +411,9 @@ function getStatutories(){
     function onFailure(error){
       hideLoader();
     }
-    client_mirror.getStatutoriesByUnit(assignComplianceUnitId, assignComplianceDomainId, assignComplianceActId, assignComplianceFrequencyId, assignComplianceCountryId,
+    client_mirror.getStatutoriesByUnit(
+      assignComplianceUnitId, assignComplianceDomainId, assignComplianceActId, 
+      assignComplianceFrequencyId, assignComplianceCountryId, 0,
       function (error, response) {
             if (error == null){
               onSuccess(response);

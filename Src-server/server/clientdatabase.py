@@ -1869,7 +1869,7 @@ class ClientDatabase(Database):
 
     def get_statutory_wise_compliances(
         self, unit_id, domain_id, level_1_statutory_name, frequency_name,
-        country_id, session_user
+        country_id, session_user, start_count, to_count
     ):
         condition = "1"
         if frequency_name:
@@ -1910,10 +1910,10 @@ class ClientDatabase(Database):
                 LEFT JOIN %s f ON (c.frequency_id = f.frequency_id) \
                 LEFT JOIN %s rt ON (c.repeats_type_id = rt.repeat_type_id) \
                 WHERE ac.compliance_id IN (%s) AND ac.is_active = %d \
-                AND unit_id = %d AND %s AND %s" % (
+                AND unit_id = %d AND %s AND %s LIMIT %d, %d" % (
                     self.tblAssignedCompliances, self.tblUsers, self.tblCompliances,
                     self.tblComplianceFrequency, self.tblComplianceRepeatType, compliance_ids,
-                    1, unit_id, condition, add_condition
+                    1, unit_id, condition, add_condition, int(start_count), to_count
                 )
                 client_compliance_rows = self.select_all(query)
                 if client_compliance_rows:
@@ -8722,7 +8722,7 @@ class ClientDatabase(Database):
                 LEFT JOIN %s d ON (d.division_id = u.division_id) \
                 WHERE %s \
                 ORDER BY u.business_group_id, u.legal_entity_id, u.division_id, \
-                u.unit_id DESC LIMIt %d, %d" % (
+                u.unit_id DESC LIMIT %d, %d" % (
                     columns, self.tblUnits, self.tblBusinessGroups, 
                     self.tblLegalEntities, self.tblDivisions, condition,
                     int(start_count), to_count

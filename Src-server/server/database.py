@@ -6230,7 +6230,7 @@ class KnowledgeDatabase(Database):
         LEFT JOIN %s td ON (td.division_id = tu.division_id) \
         WHERE %s \
         ORDER BY tu.business_group_id, tu.legal_entity_id, tu.division_id, \
-        tu.unit_id DESC LIMIt %d, %d" % (
+        tu.unit_id DESC LIMIT %d, %d" % (
             columns, self.tblUnits, self.tblGeographies,  self.tblBusinessGroups,
             self.tblLegalEntities, self.tblDivisions, condition, 
             int(start_count), to_count
