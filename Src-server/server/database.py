@@ -180,8 +180,8 @@ class Database(object) :
             cursor.execute(query)
             return cursor.fetchall()
         except Exception, e:
-            logger.logClientApi(query)
-            logger.logClientApi(e)
+            logger.logClientApi("select_all", query)
+            logger.logClientApi("select_all", e)
             return
 
     ########################################################
@@ -270,8 +270,8 @@ class Database(object) :
         try:
             return self.execute(query)
         except Exception, e:
-            logger.logClientApi(query)
-            logger.logClientApi(e)
+            logger.logKnowledgeApi("insert", query)
+            logger.logKnowledgeApi("insert", e)
             return
 
 
@@ -290,8 +290,8 @@ class Database(object) :
         try:
             return self.execute(query)
         except Exception, e:
-            logger.logClientApi(query)
-            logger.logClientApi(e)
+            logger.logKnowledgeApi("bulk_insert", query)
+            logger.logKnowledgeApi("bulk_insert", e)
             return
 
     ########################################################
@@ -308,8 +308,8 @@ class Database(object) :
         try:
             return self.execute(query)
         except Exception, e:
-            logger.logClientApi(query)
-            logger.logClientApi(e)
+            logger.logKnowledgeApi("update", query)
+            logger.logKnowledgeApi("update", e)
             return
 
 
@@ -350,8 +350,8 @@ class Database(object) :
         try:
             return self.execute(query)
         except Exception, e:
-            logger.logClientApi(query)
-            logger.logClientApi(e)
+            logger.logClientApi("delete", query)
+            logger.logClientApi("delete", e)
             return
 
 
