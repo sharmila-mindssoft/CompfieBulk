@@ -12,6 +12,12 @@ var legalentityval;
 var divisionval;
 var unitval;
 
+var sno = 0;
+var totalRecord;
+var lastBG = '';
+var lastLE = '';
+var lastDV = '';
+
 function initialize(){
     function onSuccess(data){
         countriesList = data['countries'];

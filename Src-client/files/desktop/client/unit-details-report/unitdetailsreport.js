@@ -176,10 +176,10 @@ function getdomainnames(list){
 function loadUnitDetailsList(data){
     $.each(data, function(key, value) {
     	var bg = '-';
-		if(data["business_group_name"] != null) bg = data["business_group_name"];
+		if(data[key]["business_group_name"] != null) bg = data[key]["business_group_name"];
 		var dv = '-';
-		if( data["division_name"] != null) dv = data["division_name"];
-		var le = data["legal_entity_name"];
+		if( data[key]["division_name"] != null) dv = data[key]["division_name"];
+		var le = data[key]["legal_entity_name"];
 
     	if(lastBG != bg || lastLE != le || lastDv != dv){
     		var tableRowHeading = $('#templates .table-unitdetails-list .filter-heading-list');
