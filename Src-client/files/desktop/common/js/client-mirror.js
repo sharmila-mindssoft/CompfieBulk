@@ -668,6 +668,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+
     function getAuditTrail(fromDate, toDate, userId, formId, recordCount, callback) {
         callerName = "client_masters"
         var request = [
@@ -675,7 +676,7 @@ function initClientMirror() {
                 "from_date": fromDate,
                 "to_date": toDate,
                 "user_id": userId,
-                "from_id": formId,
+                "form_id": formId,
                 "record_count": recordCount
             }
         ];
@@ -1467,7 +1468,7 @@ function initClientMirror() {
     function getTaskApplicabilityReportData(
         country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id,
-        statutory_name, applicable_status, csv, callback
+        statutory_name, applicable_status, csv, record_count, callback
     ) {
         var request = [
             "GetComplianceTaskApplicabilityStatusReport", {
@@ -1479,6 +1480,7 @@ function initClientMirror() {
                 "unit_id": unit_id,
                 "statutory_name": statutory_name,
                 "applicable_status": applicable_status,
+                "record_count":record_count,
                 "csv": csv
             }
         ];

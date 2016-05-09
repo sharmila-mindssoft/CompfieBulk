@@ -7,35 +7,88 @@ var startCount;
 var endCount;
 var tempadlist;
 
+var sno = 0;
+var formid;
+var userid;
+var fromDateValue;
+var toDateValue;
+var userIdValue;
+var formIdValue;
+
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
+
+function clearMessage() {
+    $(".error-message").hide();
+    $(".error-message").text("");
+}
+function displayMessage(message) {
+    $(".error-message").text(message);
+    $(".error-message").show();
+}
+
 function initialize(){
+    var m_names = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+    var d = new Date();
+    var curr_date = d.getDate();
+    var curr_month = d.getMonth();
+    var curr_year = d.getFullYear();
+    if(curr_date < 10){ curr_date ='0'+curr_date; }
+    var todaydate = curr_date + "-" + m_names[curr_month] + "-" + curr_year;
+    var currentDate = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 7);
+    var day = currentDate.getDate()
+    var month = currentDate.getMonth()
+    var year = currentDate.getFullYear()
+    if(day < 10){ day ='0'+day; }
+    var lastdate = day + "-" + m_names[month] + "-" + year;
+
+    $("#to-date").val(todaydate);
+    $("#from-date").val(lastdate);
+
+    var userid = null;
+    var formid = null;
+
+    fromDateValue = $("#from-date").val();
+    toDateValue = $("#to-date").val();
+    userIdValue = $("#userid").val();
+    formIdValue = $("#formid").val();
+
+    if($("#user").val().trim() == ''){
+        userIdValue = '';
+    }
+    if($("#formname").val().trim() == ''){
+        formIdValue = '';
+    }
+    
+    if(fromDateValue == ''){
+        displayMessage(message.fromdate_required);
+    }
+    else if(toDateValue == ''){
+        displayMessage(message.todate_required);
+    }
+    else{
+        $(".tbody-audittrail-list").find("tr").remove();
+        $('.grid-table').show();
+        sno = 0;
+        apipass(lastdate, todaydate, userid, formid, sno);   
+    }
+}
+function apipass(lastdate, todaydate, userid, formid, sno){
     function onSuccess(data){
+       
         auditTrailList = data['audit_trail_details'];
         formList = data['forms'];
-        userList = data['users'];
-        var m_names = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
-        var d = new Date();
-        var curr_date = d.getDate();
-        var curr_month = d.getMonth();
-        var curr_year = d.getFullYear();
-        if(curr_date < 10){ curr_date ='0'+curr_date; }
-        var todaydate = curr_date + "-" + m_names[curr_month] + "-" + curr_year;
-        var currentDate = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 7);
-        var day = currentDate.getDate()
-        var month = currentDate.getMonth()
-        var year = currentDate.getFullYear()
-        if(day < 10){ day ='0'+day; }
-        var lastdate = day + "-" + m_names[month] + "-" + year;
-
-
-        $("#to-date").val(todaydate);
-        $("#from-date").val(lastdate);
-        $("#show").trigger("click");
-
+        userList = data['users'];      
+        loadrecord(auditTrailList);
     }
     function onFailure(error){
         console.log(error);
     }
-    client_mirror.getAuditTrail(
+    client_mirror.getAuditTrail(lastdate, todaydate, userid, formid, sno,
         function(error, response){
             if(error == null){
                 onSuccess(response);
@@ -45,59 +98,6 @@ function initialize(){
             }
         }
     );
-}
-
-function get_sub_array(object, start, end){
-    if(!end){ end=-1;}
-    return object.slice(start, end);
-}
-
-$('#pagination').click(function(e){
-    startCount = endCount;
-    endCount = startCount + pageSize;
-    var sub_act_list =  tempadlist;
-    var sub_keys_list = get_sub_array(sub_act_list, startCount, endCount);
-    if(sub_keys_list.length < pageSize){
-        $('#pagination').hide();
-    }
-    //alert(startCount + '-' + endCount + '-' +sub_keys_list.length)
-    loadaudittrail(sub_keys_list);
-    e.preventDefault();
-});
-
-function loadresult(tempadlist) {
-    pageSize = 50;
-    startCount = 0;
-    endCount = pageSize;
-
-    if(tempadlist.length > pageSize){
-        $('#pagination').show();
-    }else{
-        $('#pagination').hide();
-    }
-
-    var sub_keys_list = get_sub_array(tempadlist, startCount, endCount);
-    loadaudittrail(sub_keys_list);
-}
-function loadaudittrail(tempadlist){
-    var sno = 1;
-    $.each(tempadlist, function (key, value){
-        var tableRow = $('#templates .table-audittrail-list .tableRow');
-        var clone = tableRow.clone();
-        $('.sno', clone).text(sno++);
-        $('.username', clone).text(getUserName(value['user_id']));
-        $('.datetime', clone).text(value['date']);
-        var dispFormname = 'Login';
-        if (value['action'].indexOf('password') >= 0){
-            dispFormname = 'Change Password'
-        }
-        if(value['form_id'] != 0){
-            dispFormname = getFormName(value['form_id']);
-        }
-        $('.formname', clone).text(dispFormname);
-        $('.action', clone).text(value['action']);
-        $('.tbody-audittrail-list').append(clone);
-    });
 }
 
 function getUserName(userId){
@@ -141,16 +141,27 @@ function datetonumber(datetime){
     var newdate = new Date(formattedDate+" "+timeval);
     return Date.parse(newdate);
 }
-$("#show").click(function(){
-    var fromDateValue = $("#from-date").val();
-    var toDateValue = $("#to-date").val();
-    var userIdValue = $("#userid").val();
-    var formIdValue = $("#formid").val();
+ function showaudittrailclick(){
+    $(".tbody-audittrail-list").find("tr").remove();
+    $('.grid-table').show();
+    sno = 0;
+
+    fromDateValue = $("#from-date").val();
+    toDateValue = $("#to-date").val();
+    userIdValue = $("#userid").val();
+    formIdValue = $("#formid").val();
+
     if($("#user").val().trim() == ''){
-        userIdValue = '';
+        userid = null;
+    }
+    else{
+        userid = parseInt(userIdValue);
     }
     if($("#formname").val().trim() == ''){
-        formIdValue = '';
+        formid = null;
+    }
+    else{
+        formid = parseInt(formIdValue);
     }
     
     if(fromDateValue == ''){
@@ -160,73 +171,110 @@ $("#show").click(function(){
         displayMessage(message.todate_required);
     }
     else{
-        $(".tbody-audittrail-list").find("tr").remove();
-        $('.grid-table').show();
-        var sno = 0;
-        tempadlist = [];
+       apipass(fromDateValue, toDateValue, userid, formid, sno);   
+    }
+   
+ }
 
-        $.each(auditTrailList, function (key, value){
-            var fromDateVal = fromDateValue+" 00:00:00";
-            var toDateVal = toDateValue+" 23:59:59";
-            var auditDateVal = auditTrailList[key]['date'];
+function loadrecord(auditTrailList){
+    $.each(auditTrailList, function (key, value){
+        loadaudittrail(value);
+    });
+    //$("#total-records").html('Total : '+sno+' records');
+}
 
-            var auditUser = value['user_id'];
-            var auditFormId = value['form_id'];
-            var formCheckval;
-            var userCheckval;
-            //userid empty, formid empty            
-            if((datetonumber(fromDateVal) <= datetonumber(auditDateVal)) && (datetonumber(toDateVal) >= datetonumber(auditDateVal)) && userIdValue == '' && formIdValue == ''){ 
-                sno++;
-                tempadlist.push(auditTrailList[key]);
+
+function loadaudittrail(tempadlist){    
+    if(typeof tempadlist['action'] != "undefined"){
+        sno++;
+        var tableRow = $('#templates .table-audittrail-list .tableRow');
+        var clone = tableRow.clone();
+        $('.username', clone).text(sno+getUserName(tempadlist['user_id']));
+        $('.datetime', clone).text(tempadlist['date']);
+        var dispFormname = 'Login';
+        if(tempadlist['action'] != ''){
+            if (tempadlist['action'].indexOf('password') >= 0){
+                dispFormname = 'Change Password';
             }
-            //userid empty
-            else if((datetonumber(fromDateVal) <= datetonumber(auditDateVal)) && (datetonumber(toDateVal) >= datetonumber(auditDateVal)) && (userIdValue == '') && (formIdValue == auditFormId)){   
-                sno++;
-                tempadlist.push(auditTrailList[key]);
+        }        
+
+        if(tempadlist['form_id'] != 0){
+            dispFormname = getFormName(tempadlist['form_id']);
+        }
+        $('.formname', clone).text(dispFormname);
+        $('.action', clone).text(tempadlist['action']);
+        $('.tbody-audittrail-list').append(clone);    
+    }
+}
+$('#pagination').click(function(){
+    displayLoader();    
+    clearMessage(); 
+
+       
+    if(userIdValue.trim() == ''){
+        var userid = null;
+    }
+    else{
+        var userid = parseInt(userIdValue);
+    }
+    if(formIdValue.trim() == ''){
+        var formid = null;
+    }
+    else{
+        var formid = parseInt(formIdValue);
+    }
+    
+
+    function onSuccess(data){    
+        if(data['audit_trail_details'] ==''){
+            $('#pagination').hide();
+        }
+     
+        loadrecord(data['audit_trail_details']);
+        hideLoader();
+    }
+    function onFailure(error){
+        console.log(error);
+        hideLoader();
+    }
+    client_mirror.getAuditTrail(fromDateValue, toDateValue, userid, formid, sno, 
+        function (error, response) {
+            if (error == null){
+                onSuccess(response);
             }
-            //formid empty
-            else if((datetonumber(fromDateVal) <= datetonumber(auditDateVal)) && (datetonumber(toDateVal) >= datetonumber(auditDateVal)) && userIdValue == auditUser && formIdValue == ''){ 
-                sno++;
-                tempadlist.push(auditTrailList[key]);  
-            }
-            //all != empty
-             else if((datetonumber(fromDateVal) <= datetonumber(auditDateVal)) && (datetonumber(toDateVal) >= datetonumber(auditDateVal)) && userIdValue == auditUser && formIdValue == auditFormId){   
-                sno++;
-                tempadlist.push(auditTrailList[key]);
+            else {
+                onFailure(error);
             }
         });
-        $("#total-records").html('Total : '+sno+' records');
-        loadresult(tempadlist);
-    }
 });
 
 
 //retrive user autocomplete value
 function onUserSuccess(val){
-  $("#user").val(val[1]);
-  $("#userid").val(val[0]);
+    $("#user").val(val[1]);
+    $("#userid").val(val[0]);
 }
 
 //load user list in autocomplete text box  
 $("#user").keyup(function(){
-  var textval = $(this).val();
-  getUserAutocomplete(textval, userList, function(val){
-    onUserSuccess(val)
-  })
+    var textval = $(this).val();
+    getUserAutocomplete(textval, userList, function(val){
+        onUserSuccess(val);
+    })
 });
 
 //retrive form autocomplete value
 function onFormSuccess(val){
-  $("#formname").val(val[1]);
-  $("#formid").val(val[0]);
+    $("#formname").val(val[1]);
+    $("#formid").val(val[0]);
 }
 
 //load form list in autocomplete text box  
 $("#formname").keyup(function(){
-  var textval = $(this).val();
-  getFormAutocomplete(textval, formList, function(val){
-    onFormSuccess(val)
-  })
+    var textval = $(this).val();
+    getFormAutocomplete(textval, formList, function(val){
+        onFormSuccess(val);
+    });
 });
 
 $(function() {

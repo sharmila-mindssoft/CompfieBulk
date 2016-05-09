@@ -1360,34 +1360,34 @@ class ClientDatabase(Database):
         from_date, to_date, user_id, form_id
     ):
 
-        # user_ids = ""
-        # form_ids = None
-        # if self.is_primary_admin(user_id):
-        #     condition = "1"
-        #     form_column = "group_concat(form_id)"
-        #     form_condition = "form_type_id != 4"
-        #     rows = self.get_data(
-        #         self.tblForms, form_column, form_condition
-        #     )
-        #     form_ids = rows[0][0]
-        # else:
-        #     column = "user_group_id"
-        #     condition = "user_id = '%d'" % user_id
-        #     rows = self.get_data(
-        #         self.tblUsers, column, condition
-        #     )
-        #     user_group_id = rows[0][0]
+        user_ids = ""
+        form_ids = None
+        if self.is_primary_admin(user_id):
+            condition = "1"
+            form_column = "group_concat(form_id)"
+            form_condition = "form_type_id != 4"
+            rows = self.get_data(
+                self.tblForms, form_column, form_condition
+            )
+            form_ids = rows[0][0]
+        else:
+            column = "user_group_id"
+            condition = "user_id = '%d'" % user_id
+            rows = self.get_data(
+                self.tblUsers, column, condition
+            )
+            user_group_id = rows[0][0]
 
-        #     column = "form_ids"
-        #     condition = "user_group_id = '%d'" % user_group_id
-        #     rows = self.get_data(
-        #         self.tblUserGroups, column, condition
-        #     )
+            column = "form_ids"
+            condition = "user_group_id = '%d'" % user_group_id
+            rows = self.get_data(
+                self.tblUserGroups, column, condition
+            )
 
-        #     form_ids = rows[0][0]
+            form_ids = rows[0][0]
 
-            # column = "group_concat(user_id)"
-            # condition = "user_group_id in (%s)" % user_group_id
+            column = "group_concat(user_id)"
+            condition = "user_group_id in (%s)" % user_group_id
             # rows = self.get_data(
             #     self.tblUsers, column, condition
             # )
@@ -1396,18 +1396,19 @@ class ClientDatabase(Database):
         admin_id = self.get_admin_id()
         condition = "1"
         where_qry = ""
+        session_user = user_id
         if session_user > 0 and session_user != admin_id :
             where_qry += " AND user_id = %s" % (session_user)
         else :
-            if user_id is not None :
-                where_qry += " AND user_id = %s" % (user_id)
+            if select_user_id is not None :
+                where_qry += " AND user_id = %s" % (select_user_id)
             else :
                 where_qry += " AND user_id like '%'"
 
         if from_date is not None and to_date is not None :
-            from_date = self.string_to_datetime(from_date)
-            to_date = self.string_to_datetime(to_date)
-            where_qry = "AND created_on.date() >= '%s' AND created_on.date() <= '%s' " % (from_date, to_date)
+            from_date = self.string_to_datetime(from_date).date()
+            to_date = self.string_to_datetime(to_date).date()
+            where_qry = " AND date(created_on) >= '%s' AND date(created_on) <= '%s' " % (from_date, to_date)
 
         if form_id is not None :
             where_qry = " AND form_id = %s " % (form_id)
