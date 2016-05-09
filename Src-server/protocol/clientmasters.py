@@ -513,28 +513,50 @@ class CloseUnit(Request):
         }
 
 class GetAuditTrails(Request):
-    def __init__(self, record_count):
+    def __init__(self, from_date, to_date, user_id, form_id, record_count):
+        self.from_date = from_date
+        self.to_date = to_date
+        self.user_id = user_id
+        self.form_id = form_id
         self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["record_count"])
+        data = parse_dictionary(data, ["from_date", "to_date", "user_id", "form_id", "record_count"])
+        from_date = data.get("from_date")
+        from_date = parse_structure_CustomTextType_20(from_date)
+        to_date = data.get("to_date")
+        to_date = parse_structure_CustomTextType_20(to_date)
+        user_id = data.get("user_id")
+        user_id = parse_structure_OptionalType_UnsignedIntegerType_32(user_id)
+        form_id = data.get("form_id")
+        form_id = parse_structure_OptionalType_UnsignedIntegerType_32(form_id)
         record_count = data.get("record_count")
         record_count = parse_structure_UnsignedIntegerType_32(record_count)
-        return GetAuditTrails(record_count)
+        return GetAuditTrails(
+            from_date, to_date,
+            user_id, form_id,
+            record_count
+        )
 
     def to_inner_structure(self):
         return {
+            "from_date": to_structure_CustomTextType_20(self.from_date),
+            "to_date": to_structure_CustomTextType_20(self.to_date),
+            "user_id": to_structure_OptionalType_UnsignedIntegerType_32(self.user_id),
+            "form_id": to_structure_OptionalType_UnsignedIntegerType_32(self.form_id),
             "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
 
 def _init_Request_class_map():
-    classes = [GetServiceProviders, ChangeClientUserStatus, ChangeAdminStatus,
-    SaveServiceProvider, UpdateServiceProvider, ChangeServiceProviderStatus,
-    GetUserPrivileges, SaveUserPrivileges, UpdateUserPrivileges,
-    ChangeUserPrivilegeStatus, GetClientUsers, SaveClientUser, UpdateClientUser,
-    UpdateClientUserStatus, GetUnits, CloseUnit, GetAuditTrails]
+    classes = [
+        GetServiceProviders, ChangeClientUserStatus, ChangeAdminStatus,
+        SaveServiceProvider, UpdateServiceProvider, ChangeServiceProviderStatus,
+        GetUserPrivileges, SaveUserPrivileges, UpdateUserPrivileges,
+        ChangeUserPrivilegeStatus, GetClientUsers, SaveClientUser, UpdateClientUser,
+        UpdateClientUserStatus, GetUnits, CloseUnit, GetAuditTrails
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
