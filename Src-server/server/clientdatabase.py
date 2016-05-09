@@ -2859,12 +2859,6 @@ class ClientDatabase(Database):
         query = " SELECT distinct \
             t2.compliance_id, \
             t1.domain_id, \
-            t2.statutory_applicable, \
-            t2.statutory_opted, \
-            t2.not_applicable_remarks, \
-            t2.compliance_applicable, \
-            t2.compliance_opted, \
-            t2.compliance_remarks, \
             t3.compliance_task, \
             t3.document_name, \
             t3.compliance_description, \
@@ -2893,14 +2887,13 @@ class ClientDatabase(Database):
                 AND t3.is_active = 1 \
                 AND AC.compliance_id IS NULL \
         ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), \
-                '>>', - 1) , t3.frequency_id \
+                '>>', - 1) , t3.frequency_id, t2.compliance_id \
         limit %s, %s " % (
             str(tuple(unit_ids)),
             domain_id,
             from_count,
             to_count
         )
-
         total = self.total_compliance_for_units(unit_ids, domain_id)
         c_rows = self.select_all(qry_applicable)
         rows = self.select_all(query)
@@ -2913,10 +2906,7 @@ class ClientDatabase(Database):
 
         columns = [
             "compliance_id", "domain_id",
-            "statutory_applicable", "statutory_opted",
-            "not_applicable_remarks",
-            "compliance_applicable", "compliance_opted",
-            "compliance_remarks", "compliance_task",
+            "compliance_task",
             "document_name", "compliance_description",
             "statutory_mapping", "statutory_provision",
             "statutory_dates", "frequency", "frequency_id", "duration_type", "duration",
@@ -3044,7 +3034,7 @@ class ClientDatabase(Database):
             )
             compliance_list.append(compliance)
             level_1_wise[level_1] = compliance_list
-            level_1_name = sorted(level_1_wise.keys())
+        level_1_name = sorted(level_1_wise.keys())
         return level_1_name, level_1_wise, total
 
     def get_email_id_for_users(self, user_id):
