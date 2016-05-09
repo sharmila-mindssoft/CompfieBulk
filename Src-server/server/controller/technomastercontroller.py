@@ -109,6 +109,8 @@ def save_client_group(db, request, session_user):
         short_name = short_name.replace(" ", "")
         database_name = "compfie_%s_%d" % (short_name.lower(), client_id)
         row = db._get_server_details()
+        if len(row) <= 0:
+            return technomasters.ServerIsFull()
         host = row[0][0]
         username = row[0][1]
         password = row[0][2]

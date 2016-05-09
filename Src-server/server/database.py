@@ -4450,6 +4450,12 @@ class KnowledgeDatabase(Database):
         )
         return result
 
+    def set_server_full(self, db_server_condition):
+        columns = ["server_full"]
+        values = [1]
+        self.update(self.tblDatabaseServer, columns, values, db_server_condition)
+        self.update(self.tblMachines, columns, values, db_server_condition)
+
     def update_client_db_details(self, host, client_id, db_username,
             db_password, short_name, database_name, db_port):
         db_server_column = "company_ids"
@@ -4466,6 +4472,7 @@ class KnowledgeDatabase(Database):
             self.tblDatabaseServer, db_server_column,
             db_server_condition
         )
+
         result = self._get_machine_details()
         machine_id = result[0][0]
         server_ip = result[0][1]
@@ -4489,6 +4496,12 @@ class KnowledgeDatabase(Database):
             db_password, short_name, database_name,
             server_ip, server_port
         ]
+        length_rows = self.get_data(
+            self.tblDatabaseServer, db_server_column, 
+            db_server_condition
+        )
+        if length_rows[0][0] >= 30:
+            self.set_server_full(db_server_condition)
         return self.insert(
             self.tblClientDatabase, client_db_columns,
             client_dB_values

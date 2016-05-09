@@ -8713,14 +8713,18 @@ class ClientDatabase(Database):
             unit_id, domain_ids, session_user
         )
         columns = "unit_id, unit_code, unit_name, geography, "\
-                "address, domain_ids, postal_code, business_group_id,\
-                legal_entity_id, division_id"
+                "address, domain_ids, postal_code, business_group_name,\
+                legal_entity_name, division_name"
         query = "SELECT %s \
                 FROM %s u \
+                LEFT JOIN %s b ON (b.business_group_id = u.business_group_id)\
+                INNER JOIN %s l ON (l.legal_entity_id = u.legal_entity_id) \
+                LEFT JOIN %s d ON (d.division_id = u.division_id) \
                 WHERE %s \
-                ORDER BY business_group_id, legal_entity_id, division_id, \
-                unit_id DESC LIMIt %d, %d" % (
-                    columns, self.tblUnits, condition,
+                ORDER BY u.business_group_id, u.legal_entity_id, u.division_id, \
+                u.unit_id DESC LIMIt %d, %d" % (
+                    columns, self.tblUnits, self.tblBusinessGroups, 
+                    self.tblLegalEntities, self.tblDivisions, condition,
                     int(start_count), to_count
                 )
         rows = self.select_all(query)
@@ -8729,21 +8733,21 @@ class ClientDatabase(Database):
         units = []
         grouped_units = {}
         for unit in unit_rows:
-            business_group_id = unit["business_group_id"]
-            legal_entity_id = unit["legal_entity_id"]
-            division_id = unit["division_id"]
-            if business_group_id in ["None", None, ""]:
-                business_group_id = "null"
-            if division_id in ["None", None, ""]:
-                division_id = "null"
-            if business_group_id not in grouped_units:
-                grouped_units[business_group_id] = {}
-            if legal_entity_id not in grouped_units[business_group_id]:
-                grouped_units[business_group_id][legal_entity_id] = {}
-            if division_id not in grouped_units[business_group_id][legal_entity_id]:
-                grouped_units[business_group_id][legal_entity_id][division_id] = []
+            business_group_name = unit["business_group_name"]
+            legal_entity_name = unit["legal_entity_name"]
+            division_name = unit["division_name"]
+            if business_group_name in ["None", None, ""]:
+                business_group_name = "null"
+            if division_name in ["None", None, ""]:
+                division_name = "null"
+            if business_group_name not in grouped_units:
+                grouped_units[business_group_name] = {}
+            if legal_entity_name not in grouped_units[business_group_name]:
+                grouped_units[business_group_name][legal_entity_name] = {}
+            if division_name not in grouped_units[business_group_name][legal_entity_name]:
+                grouped_units[business_group_name][legal_entity_name][division_name] = []
 
-            grouped_units[business_group_id][legal_entity_id][division_id].append(
+            grouped_units[business_group_name][legal_entity_name][division_name].append(
                 clientreport.UnitDetails(
                     unit["unit_id"], unit["geography"], unit["unit_code"],
                     unit["unit_name"], unit["address"], unit["postal_code"],
@@ -8752,16 +8756,16 @@ class ClientDatabase(Database):
             )
         GroupedUnits = []
         for business_group in grouped_units:
-            for legal_entity_id in grouped_units[business_group]:
-                for division in grouped_units[business_group][legal_entity_id]:
+            for legal_entity_name in grouped_units[business_group]:
+                for division in grouped_units[business_group][legal_entity_name]:
                     if business_group == "null":
-                        business_group_id = None
+                        business_group_name = None
                     if division == "null":
-                        division_id = None
+                        division_name = None
                     GroupedUnits.append(
                         clientreport.GroupedUnits(
-                            division_id, legal_entity_id, business_group_id,
-                            grouped_units[business_group][legal_entity_id][division]
+                            division_name, legal_entity_name, business_group_name,
+                            grouped_units[business_group][legal_entity_name][division]
                         )
                     )
         return GroupedUnits
