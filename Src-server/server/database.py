@@ -180,8 +180,8 @@ class Database(object) :
             cursor.execute(query)
             return cursor.fetchall()
         except Exception, e:
-            logger.logClientApi(query)
-            logger.logClientApi(e)
+            logger.logClientApi("select_all", query)
+            logger.logClientApi("select_all", e)
             return
 
     ########################################################
@@ -267,7 +267,13 @@ class Database(object) :
         query = "INSERT INTO %s (%s) VALUES (%s)" % (
             table, columns, stringValue
         )
-        return self.execute(query)
+        try:
+            return self.execute(query)
+        except Exception, e:
+            logger.logKnowledgeApi("insert", query)
+            logger.logKnowledgeApi("insert", e)
+            return
+
 
     ########################################################
     # To form a bulk insert query
@@ -281,7 +287,12 @@ class Database(object) :
                 query += "%s," % str(value)
             else:
                 query += str(value)
-        return self.execute(query)
+        try:
+            return self.execute(query)
+        except Exception, e:
+            logger.logKnowledgeApi("bulk_insert", query)
+            logger.logKnowledgeApi("bulk_insert", e)
+            return
 
     ########################################################
     # To form a update query
@@ -294,7 +305,15 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
-        return self.execute(query)
+        print query
+        try:
+            return self.execute(query)
+        except Exception, e:
+            logger.logKnowledgeApi("update", query)
+            logger.logKnowledgeApi("update", e)
+            return
+
+
 
     ########################################################
     # Insert a row If already key exists
@@ -329,7 +348,13 @@ class Database(object) :
     ########################################################
     def delete(self, table, condition, client_id=None):
         query = "DELETE from "+table+" WHERE "+condition
-        return self.execute(query)
+        try:
+            return self.execute(query)
+        except Exception, e:
+            logger.logClientApi("delete", query)
+            logger.logClientApi("delete", e)
+            return
+
 
     ########################################################
     # To concate the value with the existing value in the
@@ -4285,13 +4310,17 @@ class KnowledgeDatabase(Database):
         client_con = self._mysql_server_connect(host, username, password)
         client_cursor = client_con.cursor()
         query = "CREATE DATABASE %s" % database_name
+        print query
         client_cursor.execute(query)
-        query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" % (
+        query = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, REFERENCES, \
+            TRIGGER, EVENT, CREATE ROUTINE, aLTER  on %s.* to %s@%s IDENTIFIED BY '%s';" % (
             database_name, db_username, host, db_password)
+        print query
+        print "priv crossed"
         client_cursor.execute(query)
         client_cursor.execute("FLUSH PRIVILEGES;")
         client_con.commit()
-
+        print "connection begin"
         client_db_con = self._db_connect(host, username, password, database_name)
         client_db_cursor = client_db_con.cursor()
         sql_script_path = os.path.join(
@@ -4320,7 +4349,9 @@ class KnowledgeDatabase(Database):
         self._save_client_countries(country_ids, client_db_cursor)
         self._save_client_domains(domain_ids, client_db_cursor)
         self._create_procedure(client_db_cursor)
+        print "trigger created"
         self._create_trigger(client_db_cursor)
+        print "close connection"
         client_db_con.commit()
         return password
 

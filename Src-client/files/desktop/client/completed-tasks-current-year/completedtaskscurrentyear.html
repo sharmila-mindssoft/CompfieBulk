@@ -154,15 +154,16 @@
 
              <table>
              <tr align="left">
-            <td width="20%"  ><span style="font-weight:bold;">Compliance Tasks</span><span class="mandatory">*</span></td>
-            <td width="8%" ><span style="font-weight:bold;">Compliance Frequency</span></td>
-            <td width="12%"><span style="font-weight:bold;" >Statutory Date</span></td>
-            <td width="12%" ><span style="font-weight:bold;">Due Date</span><span class="mandatory">*</span></td>
-            <td width="12%" ><span style="font-weight:bold;">Completion Date</span><span class="mandatory">*</span></td>
-            <td width="12%"  ><span style="font-weight:bold;">Validity Date</span></td>
-            <td width="11%" ><span style="font-weight:bold;">Document Upload</span></td>                  
-            <td width="18%" ><span style="font-weight:bold;">Assignee</span><span class="mandatory">*</span></td>
-            <td width="3%" ><span style="font-weight:bold;">Save</span></td>
+              <td width="2%"  ><span style="font-weight:bold;">#</td>
+              <td width="18%"  ><span style="font-weight:bold;">Compliance Tasks</td>
+              <td width="8%" ><span style="font-weight:bold;">Compliance Frequency</span></td>
+              <td width="12%"><span style="font-weight:bold;" >Statutory Date</span></td>
+              <td width="12%" ><span style="font-weight:bold;">Due Date</span><span class="mandatory">*</span></td>
+              <td width="12%" ><span style="font-weight:bold;">Completion Date</span><span class="mandatory">*</span></td>
+              <td width="12%"  ><span style="font-weight:bold;">Validity Date</span></td>
+              <td width="11%" ><span style="font-weight:bold;">Document Upload</span></td>                  
+              <td width="18%" ><span style="font-weight:bold;">Assignee</span><span class="mandatory">*</span></td>
+              <td width="3%" ><span style="font-weight:bold;">Save</span></td>
             </tr>
             <tbody class="tbody-assignstatutory">
           </tbody>
@@ -171,6 +172,11 @@
               
             </div>
           </div>
+
+          <div align="center" style="padding-top:10px;">
+            <input type="button" value="Show more records" class="btn-submit" id="pagination">
+          </div>
+          <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
 
           <table width="100%">
             <tr>
@@ -193,7 +199,7 @@
 <div id="act-templates" class="default-display-none">
   <table class="font1" >
     <tr align="left" class="tableRow">
-      <td colspan="9" style="padding:0em;" class="actname">
+      <td colspan="10" style="padding:0em;" class="actname">
   
       </td>
     </tr>
@@ -203,6 +209,7 @@
  <div id="statutory-values">
   <table class="table-statutory-values">
     <tr class="compliance-details">
+      <td class="sno"></td>
       <td class="compliancetask"></td>
       <td class="compliancefrequency"></td>
       <td class="statutorydate"></td>

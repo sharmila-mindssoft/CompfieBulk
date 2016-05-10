@@ -2299,6 +2299,7 @@ function prepareEscalationChartdata(source_data) {
         }
         chartTitle = "Escalation of " + chartTitle + " " + filter_names;
     }
+    console.log(chartDataSeries)
     return [xAxis, chartDataSeries, chartTitle]
 }
 
@@ -2364,6 +2365,7 @@ function prepareTrendChartData(source_data) {
     var xAxisIds = [];
     var chartDataSeries = [];
     xAxis = source_data["years"];
+    console.log(xAxis)
     for (var i =0; i< source_data["data"].length; i++) {
         chartData = source_data["data"][i];
         var filter_type_id = chartData["filter_id"];
@@ -2375,6 +2377,7 @@ function prepareTrendChartData(source_data) {
         total_count = [];
         compliance_info = chartData["complied_compliance"];
         data = []
+        console.log(compliance_info)
         for (var j = 0; j < compliance_info.length; j++) {
             compliance_count.push(
                 compliance_info[j]["complied_compliances_count"]
@@ -2395,6 +2398,7 @@ function prepareTrendChartData(source_data) {
                 "total":total_count
             }
         );
+        console.log(chartDataSeries);
     }
     chartTitle = "Complied (" + xAxis[0] + " to " + xAxis[xAxis.length - 1] + ")";
     return [xAxis, chartTitle, chartDataSeries];
@@ -2779,6 +2783,9 @@ function updateAssigneeWiseComplianceList(data){
     $('.compliance-details-drilldown tr').remove();
     $(".table-assignee-wise-compliance-list").show();
     var sno = 0;
+    var country_assignee = parseInt($("#country").val().trim());
+    var unit_assignee = 47;
+    var user_assignee = 1;
 
     $.each(data, function(key, value) {
         var tableRowHeadingth = $('#templates .assignee-wise-compliance-list .unitHeading');
@@ -2790,10 +2797,11 @@ function updateAssigneeWiseComplianceList(data){
         $.each(assigneewiselist, function(ke, valu) {
             var tableRow = $('#templates .assignee-wise-compliance-list .userHeading ');
             var clone = tableRow.clone();
-            $('.assignee-name-for-popup', clone).html(valu['assignee_name']);
+            var name_assignee = valu['assignee_name'];
+            $('.assignee-name-for-popup', clone).html(name_assignee);
             $(clone, ".assignee-name-for-popup").on("click", function(e){
                 $("#popup-year").show();
-                showPopup(assigneewiselist);
+                showPopup(country_assignee, unit_assignee, user_assignee, name_assignee);
             });
             $('.tbody-assignee-wise-compliance-list').append(clone);
 
@@ -2807,19 +2815,19 @@ function updateAssigneeWiseComplianceList(data){
                 $('.level1value', cloneval).html(val['domain_name']);
                 $('.total-count', cloneval).html(val['total_compliances']);
                 $('.complied-count', cloneval).html(val['complied_count']);
-                if(val['delayed_compliance']['reassigned_count'] == 0){
-                    $('.delayed-count', cloneval).html(val['delayed_compliance']['assigned_count']);
+                if(val['reassigned_count'] == 0){
+                    $('.delayed-count', cloneval).html(val['assigned_count']);
                     $(".delayed-count", cloneval).on("click", function(e){
                         $("#popup-reassigned").show();
-                        showPopupCompDelayed();
+                        //showPopupCompDelayed();
                     });
                 }
                 else{
-                    var delayvalue = val['delayed_compliance']['assigned_count']+"("+val['delayed_compliance']['reassigned_count']+")";
+                    var delayvalue = val['assigned_count']+"("+val['reassigned_count']+")";
                     $('.delayed-count', cloneval).html(delayvalue);
                     $('.delayed-count', cloneval).addClass("delayedvalue");
                     $(cloneval, ".delayedvalue").on("click", function(e){
-                        showComplianceNotifications(val['delayed_compliance']['reassigned_compliances']);
+                        //showComplianceNotifications(val['delayed_compliance']['reassigned_compliances']);
                     });
                 }
 
@@ -2948,9 +2956,47 @@ function listingCompliance(data, userid, year){
     });
 
 }
-function showPopup(assigneewiselist){
+
+function showPopup(country_assignee, unit_assignee, user_assignee, name_assignee){
     $(".tbody-popup-list tr").remove();
-    $.each(assigneewiselist, function(ke, valu) {
+    $('.popupoverlay').css("visibility","visible");
+    $('.popupoverlay').css("opacity","1");
+    var popupsno = 0;
+    client_mirror.getAssigneewiseYearwiseComplianes( country_assignee, unit_assignee, user_assignee,
+    function (error, response) {
+        if (error == null){
+            var yearWiseDetails = response["chart_data"];
+            $.each(yearWiseDetails, function(k, val){
+                var tableRow = $('#templates .year-wise-compliance-list-popup .tablerow');
+                var cloneval = tableRow.clone();
+                popupsno = popupsno + 1;
+                $('.popup-sno', cloneval).text(popupsno);
+                $('.popup-year-val', cloneval).html(val['year']);
+                $('.popup-total-count', cloneval).html(val['total_compliances']);
+                $('.popup-complied-count', cloneval).html(val['complied_count']);
+                $('.popup-delayed-count', cloneval).html(val['delayed_compliance']);
+                $('.popup-inprogress-count', cloneval).html(val['inprogress_compliance_count']);
+                $('.popup-not-complied-count', cloneval).html(val['not_complied_count']);
+                $(".popup-click-drilldown", cloneval).on("click", function(){
+                    //updateComplianceList(userid, domainArr, parseInt(val['year']));
+                });
+                $('.tbody-popup-list').append(cloneval);
+            });
+
+        }
+        else {
+            console.log(error);
+        }
+      }
+    );
+
+    $('.close').click(function(){
+      $('.popupoverlay').css("visibility","hidden");
+      $('.popupoverlay').css("opacity","0");
+    });
+
+
+    /*$.each(assigneewiselist, function(ke, valu) {
         $('.popupoverlay').css("visibility","visible");
         $('.popupoverlay').css("opacity","1");
         var popupsno = 0;
@@ -2977,7 +3023,7 @@ function showPopup(assigneewiselist){
             });
             $('.tbody-popup-list').append(cloneval);
         });
-    });
+    });*/
 }
 function showPopupCompDelayed(){
     $.each(reassignedlist, function(ke, valu) {
@@ -3051,7 +3097,8 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter
         "filter_type": filterType,
         "filter_id": filter_type_id,
         "compliance_status": compliance_status,
-        "year": chartInput.getCurrentYear()
+        "year": chartInput.getCurrentYear(),
+        "record_count": 0
     }
     $(".btn-back").on("click", function() {
         loadComplianceStatusChart();
@@ -3079,7 +3126,8 @@ function loadEscalationDrillDown(year) {
         "domain_ids": chartInput.getDomains(),
         "filter_type": filterType,
         "filter_ids": filter_ids,
-        "year": parseInt(year)
+        "year": parseInt(year),
+        "record_count": 0
     }
     $(".btn-back").on("click", function() {
         loadEscalationChart();
@@ -3192,7 +3240,8 @@ function loadNotCompliedDrillDown(type){
         "domain_ids": chartInput.getDomains(),
         "filter_type": filterType,
         "filter_ids": filter_ids,
-        "not_complied_type": type
+        "not_complied_type": type,
+        "record_count": 0
     }
     client_mirror.getNotCompliedDrillDown(
         requestData,
@@ -3240,7 +3289,8 @@ function loadComplianceApplicabilityDrillDown(type){
         "domain_ids": chartInput.getDomains(),
         "filter_type": filterType,
         "filter_ids": filter_ids,
-        "applicability_status": type
+        "applicability_status": type,
+        "record_count": 0
     }
     $(".btn-back").on("click", function() {
         $(".graph-container.compliance-status").show();

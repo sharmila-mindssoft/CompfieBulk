@@ -490,7 +490,7 @@ def process_get_task_applicability_report_data(db, request, session_user, client
         converter = ConvertJsonToCSV(db, request, session_user, client_id, "TaskApplicability")
         return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
     else:
-        result = db.get_compliance_task_applicability(request, session_user)
+        result = db.get_compliance_task_applicability_old(request, session_user)
         return result
 
 def get_client_details_report_filters(db, request, session_user, client_id):
@@ -516,7 +516,7 @@ def get_client_details_report_filters(db, request, session_user, client_id):
     )
 
 def get_client_details_report_data(db, request, session_user, client_id):
-    to_count = 5
+    to_count = 500
     if request.csv:
         converter = ConvertJsonToCSV(db, request, session_user, client_id, "ClientDetails")
         return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)

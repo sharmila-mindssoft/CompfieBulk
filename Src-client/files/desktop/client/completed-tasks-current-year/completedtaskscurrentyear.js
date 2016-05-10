@@ -10,6 +10,10 @@ var actList;
 var file_list = [];
 var usersList;
 
+var sno = 0;
+var totalRecord;
+var lastAct = '';
+
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
@@ -59,22 +63,22 @@ function load_thirdwizard(){
       $('.legalentitylist.active').text() + arrowimage + $('.divisionlist.active').text() + arrowimage + $('.unitlist.active').text() +
       arrowimage + $('.domainlist.active').text());*/
 
-  var count=1;
-  var statutoriesCount= 1;
-  var actCount = 1;
-  $(".tbody-assignstatutory").find("tr").remove();
 
   for(var entity in statutoriesList){
     var actname = statutoriesList[entity]["level_1_statutory_name"];;
     var actCompliances = statutoriesList[entity]["compliences"];
       
       if(actCompliances.length > 0){
-        var acttableRow=$('#act-templates .font1 .tableRow');
-        var clone=acttableRow.clone();
-        $('.actname', clone).html('<div class="heading" style="margin-top:5px;width:auto;">'+actname+'</div>');
-        $('.tbody-assignstatutory').append(clone);
+        if(lastAct != actname){
+          var acttableRow=$('#act-templates .font1 .tableRow');
+          var clone=acttableRow.clone();
+          $('.actname', clone).html('<div class="heading" style="margin-top:5px;width:auto;">'+actname+'</div>');
+          $('.tbody-assignstatutory').append(clone);
+          lastAct = actname;
+        }
       }
-      for(var ac in actCompliances){    
+      for(var ac in actCompliances){   
+        sno++; 
         var compliance_id = actCompliances[ac]["compliance_id"];
         var compliance_name = actCompliances[ac]["compliance_name"];
         var compliance_description = actCompliances[ac]["description"];
@@ -87,25 +91,30 @@ function load_thirdwizard(){
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
         
+        $('.sno', clone2).html(sno +
+        '<input type="hidden" id="complianceid'+sno+'" value="'+compliance_id+'"/>' +
+        '<input type="hidden" id="compliancename'+sno+'" value="'+compliance_name+'"/>' +
+        '<input type="hidden" id="frequency'+sno+'" value="'+frequency+'"/>');
+
         $('.compliancetask', clone2).html('<abbr class="page-load" title="'+
           compliance_description+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliance_name);
         $('.compliancefrequency', clone2).text(frequency);
         $('.statutorydate', clone2).text(statutorydate);
-        $('.duedate', clone2).html('<input type="text" value="'+due_date+'" readonly="readonly" class="input-box" id="duedate'+statutoriesCount+'" />');
-        $('.completiondate', clone2).html('<input type="text" value="" readonly="readonly" class="input-box" id="completiondate'+statutoriesCount+'" />');
+        $('.duedate', clone2).html('<input type="text" value="'+due_date+'" readonly="readonly" class="input-box" id="duedate'+sno+'" />');
+        $('.completiondate', clone2).html('<input type="text" value="" readonly="readonly" class="input-box" id="completiondate'+sno+'" />');
         if(frequency == 'Periodical' || frequency == 'Review'){
-          $('.validitydate', clone2).html('<input type="text" value="" class="input-box" readonly="readonly" id="validitydate'+statutoriesCount+'" />');
+          $('.validitydate', clone2).html('<input type="text" value="" class="input-box" readonly="readonly" id="validitydate'+sno+'" />');
         }else{
           $('.validitydate', clone2).html("");
         }
-        $('.documentupload', clone2).html('<input type="file" class="input-box" id="upload'+statutoriesCount+'" multiple />');
-        $('.assignee', clone2).html('<input type="text" value="'+assignee_name+'" class="input-box icon-autocomplete" id="assigneeval'+statutoriesCount+'" style="width:100px;" /> <input type="hidden" id="assignee'+statutoriesCount+'" value="'+assignee_id+'"> <div id="autocomplete_assignee'+statutoriesCount+'" class="ac-textbox default-display-none"> <ul id="ulist_assignee'+statutoriesCount+'" style="width:115px;" class="hidemenu"></ul></div>');
+        $('.documentupload', clone2).html('<input type="file" class="input-box" id="upload'+sno+'" multiple />');
+        $('.assignee', clone2).html('<input type="text" value="'+assignee_name+'" class="input-box icon-autocomplete" id="assigneeval'+sno+'" style="width:100px;" /> <input type="hidden" id="assignee'+sno+'" value="'+assignee_id+'"> <div id="autocomplete_assignee'+sno+'" class="ac-textbox default-display-none"> <ul id="ulist_assignee'+sno+'" style="width:115px;" class="hidemenu"></ul></div>');
 
-        $('.completedstatus', clone2).html('<input type="checkbox" id="completedstatus'+statutoriesCount+'">');
+        $('.completedstatus', clone2).html('<input type="checkbox" id="completedstatus'+sno+'">');
         $('.tbody-assignstatutory').append(clone2);
 
         
-        $("#upload"+statutoriesCount).on("change", function(e) {
+        $("#upload"+sno).on("change", function(e) {
         client_mirror.uploadFile(e, function result_data(data) {
           if(data != 'File max limit exceeded' || data != 'File content is empty'){
             uploadFile = data;
@@ -117,7 +126,7 @@ function load_thirdwizard(){
          });
         });
 
-        $("#duedate"+statutoriesCount).datepicker({
+        $("#duedate"+sno).datepicker({
             changeMonth: true,
             changeYear: true,
             numberOfMonths: 1,
@@ -126,7 +135,7 @@ function load_thirdwizard(){
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         });
 
-        $("#validitydate"+statutoriesCount ).datepicker({
+        $("#validitydate"+sno ).datepicker({
             changeMonth: true,
             changeYear: true,
             numberOfMonths: 1,
@@ -135,7 +144,7 @@ function load_thirdwizard(){
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         });
 
-        $("#completiondate"+statutoriesCount ).datepicker({
+        $("#completiondate"+sno ).datepicker({
             changeMonth: true,
             changeYear: true,
             numberOfMonths: 1,
@@ -144,7 +153,7 @@ function load_thirdwizard(){
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         });
 
-        $("#assigneeval"+statutoriesCount).keyup(function(){
+        $("#assigneeval"+sno).keyup(function(){
         var textval = $(this).val();
         var text = $(this).attr('id');
         var clickvalue = text.substring(text.lastIndexOf('l') + 1);
@@ -169,23 +178,27 @@ function load_thirdwizard(){
             $("#autocomplete_assignee"+clickvalue).hide();
           }
       });
-
-        statutoriesCount = statutoriesCount + 1;
       }  
-      actCount = actCount + 1;
-      count++;
   }
 
   $(".hidemenu").click(function(){
     $(".ac-textbox").hide();
   });
 
-  if(count <= 1){
-    var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
-    var clone4=tableRow4.clone();
-    $('.no_records', clone4).text('No Compliance Found');
-    $('.tbody-assignstatutory').append(clone4);
-    $('#activate-step-finish').hide();
+  if(totalRecord == 0){ 
+      var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
+      var clone4=tableRow4.clone();
+      $('.no_records', clone4).text('No Compliance Found');
+      $('.tbody-unitdetails-list').append(clone4);
+      $('#pagination').hide();
+      $('.compliance_count').text('');
+  }else{
+      $('.compliance_count').text("Showing " + 1 + " to " + sno + " of " + totalRecord);
+      if(sno >= totalRecord){
+        $('#pagination').hide();
+      }else{
+        $('#pagination').show();
+      }
   }
 }
 
@@ -245,25 +258,20 @@ function submitcompliance(){
     displayLoader();
     var unit_id = parseInt($('.unitlist.active').attr('id'));;
     compliance_list = [];
-    var statutoriesCount= 1;
-    var actCount = 1;
-
-    for(var entity in statutoriesList){
-    var actCompliances = statutoriesList[entity]["compliences"];
-
-      for(var ac in actCompliances){  
+    
+    for(var i=1; i<=sno; i++){
         var complianceApplicable = false;
-        if($('#completedstatus'+statutoriesCount).is(":checked")){
+        if($('#completedstatus'+i).is(":checked")){
           complianceApplicable = true;
         }
         if(complianceApplicable){
-          var compliance_id = actCompliances[ac]["compliance_id"];
-          var validity_date = $('#validitydate'+statutoriesCount).val();
-          var due_date = $('#duedate'+statutoriesCount).val();
-          var completion_date = $('#completiondate'+statutoriesCount).val();
-          var completed_by = $('#assignee'+statutoriesCount).val();
-          var frequency_ = actCompliances[ac]["frequency"];
-          var compliance_name = actCompliances[ac]["compliance_name"];
+          var compliance_id = parseInt($('#complianceid'+i).val());
+          var validity_date = $('#validitydate'+i).val();
+          var due_date = $('#duedate'+i).val();
+          var completion_date = $('#completiondate'+i).val();
+          var completed_by = $('#assignee'+i).val();
+          var frequency_ = $('#frequency'+i).val();
+          var compliance_name = $('#complaincename'+i).val();
 
           if(completed_by != '') completed_by = parseInt(completed_by);
 
@@ -305,10 +313,7 @@ function submitcompliance(){
           compliance = client_mirror.getPastRecordsComplianceDict(unit_id, compliance_id, due_date, completion_date, file_list, validity_date, completed_by);
           compliance_list.push(compliance);
         }
-        statutoriesCount = statutoriesCount + 1;
-      }  
-      actCount = actCount + 1;
-  }
+    }
 
   function onSuccess(data){
     $('ul.setup-panel li:eq(0)').addClass('active');
@@ -361,6 +366,8 @@ $('ul.setup-panel li a[href="#step-2"]').trigger('click');
 
 $('#activate-step-3').on('click', function(e) {
 if (validate_secondtab()){
+  sno = 0;
+  $(".tbody-assignstatutory").find("tr").remove();
   getStatutories();
   $('#activate-step-finish').show();
   $('ul.setup-panel li:eq(2)').removeClass('disabled');
@@ -403,17 +410,18 @@ function getStatutories(){
   
   if(assignComplianceUnitId != null && assignComplianceDomainId != null){
     function onSuccess(data){
-    statutoriesList = data["statutory_wise_compliances"];
-    usersList = data["users"];
-    load_thirdwizard();
-    hideLoader();
+      statutoriesList = data["statutory_wise_compliances"];
+      usersList = data["users"];
+      totalRecord = data["total_count"];
+      load_thirdwizard();
+      hideLoader();
     }
     function onFailure(error){
       hideLoader();
     }
     client_mirror.getStatutoriesByUnit(
       assignComplianceUnitId, assignComplianceDomainId, assignComplianceActId, 
-      assignComplianceFrequencyId, assignComplianceCountryId, 0,
+      assignComplianceFrequencyId, assignComplianceCountryId, sno,
       function (error, response) {
             if (error == null){
               onSuccess(response);
@@ -425,6 +433,11 @@ function getStatutories(){
     );
     }
 }
+
+//pagination process
+$('#pagination').click(function(){
+  getStatutories();
+});
 
 //load unit in unit list based on filter selection
 function loadunit(){

@@ -60,6 +60,7 @@ def create_database(
             db_password, email_id, client_id, short_name, country_ids,
             domain_ids
         )
+        print "database created"
         return True, password
     except Exception, ex:
         print "Error :{}".format(ex)
@@ -131,6 +132,7 @@ def save_client_group(db, request, session_user):
                             country_ids, domain_ids
                         )
                     )
+                    print "database create thread"
                 create_database_thread = threading.Thread(
                     target=wrapper
                 )
@@ -140,10 +142,12 @@ def save_client_group(db, request, session_user):
             result = result_q.get()
 
             db.save_client_group(client_id, request, session_user)
+            print "client group saved"
             db.save_date_configurations(
                 client_id, request.date_configurations,
                 session_user
             )
+            print "client date_configurations"
             db.save_client_countries(client_id, request.country_ids)
             db.save_client_domains(client_id, request.domain_ids)
             db.save_incharge_persons(request, client_id)

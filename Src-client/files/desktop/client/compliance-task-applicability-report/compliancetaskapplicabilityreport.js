@@ -117,6 +117,10 @@ function loadcompliancetaskapplicabilityreport(buttontype){
         displayMessage(message.domain_required);
     }
     else{
+        var csv = false;
+        if(buttontype == "export"){
+            csv = true;
+        }
         function onSuccess(data){
             $(".grid-table-rpt").show();
             sno = 0;
@@ -133,10 +137,7 @@ function loadcompliancetaskapplicabilityreport(buttontype){
         function onFailure(error){
             console.log(error);
         }
-        csv = false
-        if(buttontype == "export"){
-            csv = true
-        }
+
 
         client_mirror.getTaskApplicabilityReportData(
             parseInt(countries), parseInt(domain), businessgroupid,
@@ -189,11 +190,11 @@ function showloadrecord() {
             }
             else if(Object.keys(list[y])[0] == "compliance_frequency"){
                compliancelist(list[y]);
-            } 
+            }
             else if(Object.keys(list[y])[0] == "division_name"){
                filterheading(list[y]);
             }
-            else{ 
+            else{
                level1heading(list[y]);
             }
         }
@@ -206,8 +207,8 @@ function loadresult(finalList) {
         fullArrayList.push(i);
         $.each(val, function(i1, val1){
             var grouplist = val[i1];
-            var list_act = val1["actwise_units"]
-            delete val1["actwise_units"];         
+            var list_act = val1["actwise_units"];
+            delete val1["actwise_units"];
             fullArrayList.push(grouplist);
             $.each(list_act, function (i_act, val_act){
                 var actval = i_act;
@@ -231,6 +232,7 @@ function loadresult(finalList) {
     else{
         $('#pagination').hide();
     }
+
     var sub_keys_list = get_sub_array(fullArrayList, startCount, endCount);
 
     for(var y = 0;  y < pageSize; y++){
@@ -240,15 +242,16 @@ function loadresult(finalList) {
             }
             else if(Object.keys(sub_keys_list[y])[0] == "compliance_frequency"){
                compliancelist(sub_keys_list[y]);
-            } 
+            }
             else if(Object.keys(sub_keys_list[y])[0] == "division_name"){
                filterheading(sub_keys_list[y]);
             }
-            else{ 
+            else{
                level1heading(sub_keys_list[y]);
             }
         }
     }
+
 }
 function filterheading(data){
     var tableFilterHeading = $('#templates .table-task-applicability-list .filter-task-applicability-list');
@@ -324,7 +327,7 @@ function loadTaskApplicabilityStatusList(data1){
                 totalrecords += valu["compliances"].length;
                 });
             });
-        } 
+        }
     });
     loadresult(data);
     $(".total-records").html("Total : "+totalrecords+" records");

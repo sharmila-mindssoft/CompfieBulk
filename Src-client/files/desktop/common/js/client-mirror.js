@@ -139,10 +139,13 @@ function initClientMirror() {
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
-                log("API STATUS :" + status)
+                log("API STATUS :" + status);
+                console.log(response)
+                console.log(status.toLowerCase().indexOf(matchString))
+                callback(null, response)
 
                 if (status.toLowerCase().indexOf(matchString) != -1) {
-                    callback(null, response);
+                    callback(error=null, response);
                 }
                 else if (status == "InvalidSessionToken") {
                     // console.log(status)
@@ -150,9 +153,9 @@ function initClientMirror() {
                 }
                 else {
                     if (status == "SavePastRecordsFailed"){
-                        callback(data, null)
+                        callback(data, null);
                     }else{
-                        callback(status, null)
+                        callback(status, null);
                     }
 
                 }
@@ -668,10 +671,17 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAuditTrail(callback) {
+
+    function getAuditTrail(fromDate, toDate, userId, formId, recordCount, callback) {
         callerName = "client_masters"
         var request = [
-            "GetAuditTrails", {}
+            "GetAuditTrails", {
+                "from_date": fromDate,
+                "to_date": toDate,
+                "user_id": userId,
+                "form_id": formId,
+                "record_count": recordCount
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -915,7 +925,7 @@ function initClientMirror() {
 
     function getComplianceApprovalList(start_count, callback) {
         var request = [
-            "GetComplianceApprovalList", 
+            "GetComplianceApprovalList",
             {
                 "start_count": start_count
             }
@@ -1334,10 +1344,10 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getLoginTrace(callback){
+    function getLoginTrace(record_count, callback){
         var request = [
             "GetLoginTrace",{
-                "record_count" : 0
+                "record_count" : record_count
             }
         ];
         callerName = "client_reports";
@@ -1509,7 +1519,8 @@ function initClientMirror() {
                 "unit_id": unit_id,
                 "statutory_name": statutory_name,
                 "applicable_status": applicable_status,
-                "csv": csv
+                "record_count":0,
+                "csv": csv,
             }
         ];
         callerName = "client_reports";
