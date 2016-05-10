@@ -950,17 +950,19 @@ function get_sub_array(object, start, end){
 }
 
 $('#pagination').click(function(e){
-    displayLoader();
-    if($('.loading-indicator-spin').css('display') != 'none')
-    {
-        setTimeout(function(){
-            paginationrecord_showComplianceApplicabilityDrillDownRecord();
-        }, 500);
+    console.log(chartInput.chartType);
+    //if(chartInput.chartType)
+        displayLoader();
+        if($('.loading-indicator-spin').css('display') != 'none')
+        {
+            setTimeout(function(){
+                paginationrecord_showComplianceApplicabilityDrillDownRecord();
+            }, 500);
 
-    }
-    setTimeout(function(){
-        hideLoader();
-    }, 500);
+        }
+        setTimeout(function(){
+            hideLoader();
+        }, 500);
 
 });
 function paginationrecord_showComplianceApplicabilityDrillDownRecord(data){
@@ -1951,7 +1953,7 @@ function accordianType(idtype, toggleClass, contentClass){
 
 
 function showDrillDownRecord(status, data, filterTypeName){
-    $("#pagination").hide();
+    //$("#pagination").hide();
     var data = data["drill_down_data"];
     var filter_type = chartInput.getFilterType();
     if(filter_type == "group"){
@@ -3061,6 +3063,8 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter
         }
     );
 }
+
+
 
 function loadEscalationDrillDown(year) {
     var filter_type = chartInput.getFilterType();
