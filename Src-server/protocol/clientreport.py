@@ -669,7 +669,7 @@ class GetTaskApplicabilityStatusFilters(Request):
 class GetComplianceTaskApplicabilityStatusReport(Request):
     def __init__(
         self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id,
-        statutory_name, applicable_status, csv
+        statutory_name, applicable_status, csv, record_count
     ):
         self.country_id = country_id
         self.domain_id = domain_id
@@ -680,12 +680,13 @@ class GetComplianceTaskApplicabilityStatusReport(Request):
         self.statutory_name = statutory_name
         self.applicable_status = applicable_status
         self.csv = csv
+        self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
                 "country_id", "domain_id", "business_group_id", "legal_entity_id", "division_id",
-                "unit_id", "statutory_name", "applicable_status", "csv"
+                "unit_id", "statutory_name", "applicable_status", "csv", "record_count"
             ]
         )
         country_id = data.get("country_id")
@@ -706,10 +707,12 @@ class GetComplianceTaskApplicabilityStatusReport(Request):
         applicable_status = parse_structure_OptionalType_EnumType_core_APPLICABILITY_STATUS(applicable_status)
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
+        record_count = data.get("record_count")
+        record_count = parse_structure_UnsignedIntegerType_32(record_count)
         return GetComplianceTaskApplicabilityStatusReport(
             country_id, domain_id, business_group_id, legal_entity_id,
             division_id, unit_id,
-            statutory_name, applicable_status, csv
+            statutory_name, applicable_status, csv, record_count
         )
 
     def to_inner_structure(self):
@@ -722,7 +725,8 @@ class GetComplianceTaskApplicabilityStatusReport(Request):
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
             "statutory_name": to_structure_OptionalType_SignedIntegerType_8(self.statutory_name),
             "applicable_status": to_structure_OptionalType_EnumType_core_APPLICABILITY_STATUS(self.applicable_status),
-            "csv": to_structure_Bool(self.csv)
+            "csv": to_structure_Bool(self.csv),
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
 class GetComplianceActivityReportFilters(Request):
