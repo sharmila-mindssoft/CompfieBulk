@@ -305,6 +305,7 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
+        print query
         try:
             return self.execute(query)
         except Exception, e:
@@ -4309,13 +4310,17 @@ class KnowledgeDatabase(Database):
         client_con = self._mysql_server_connect(host, username, password)
         client_cursor = client_con.cursor()
         query = "CREATE DATABASE %s" % database_name
+        print query
         client_cursor.execute(query)
-        query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" % (
+        query = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, REFERENCES, \
+            TRIGGER, EVENT, CREATE ROUTINE, aLTER  on %s.* to %s@%s IDENTIFIED BY '%s';" % (
             database_name, db_username, host, db_password)
+        print query
+        print "priv crossed"
         client_cursor.execute(query)
         client_cursor.execute("FLUSH PRIVILEGES;")
         client_con.commit()
-
+        print "connection begin"
         client_db_con = self._db_connect(host, username, password, database_name)
         client_db_cursor = client_db_con.cursor()
         sql_script_path = os.path.join(
@@ -4344,7 +4349,9 @@ class KnowledgeDatabase(Database):
         self._save_client_countries(country_ids, client_db_cursor)
         self._save_client_domains(domain_ids, client_db_cursor)
         self._create_procedure(client_db_cursor)
+        print "trigger created"
         self._create_trigger(client_db_cursor)
+        print "close connection"
         client_db_con.commit()
         return password
 

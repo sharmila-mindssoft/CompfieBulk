@@ -140,6 +140,10 @@ function loadcompliancetaskapplicabilityreport(buttontype){
         displayMessage(message.domain_required);
     }
     else{
+        var csv = false;
+        if(buttontype == "export"){
+            csv = true;
+        }
         function onSuccess(data){
             $(".grid-table-rpt").show();
             sno = 0;
@@ -155,10 +159,7 @@ function loadcompliancetaskapplicabilityreport(buttontype){
         function onFailure(error){
             console.log(error);
         }
-        csv = false
-        if(buttontype == "export"){
-            csv = true
-        }
+
 
         client_mirror.getTaskApplicabilityReportData(
             parseInt(countries), parseInt(domain), businessgroupid,
@@ -288,8 +289,8 @@ function loadresult(finalList) {
         fullArrayList.push(i);
         $.each(val, function(i1, val1){
             var grouplist = val[i1];
-            var list_act = val1["actwise_units"]
-            delete val1["actwise_units"];         
+            var list_act = val1["actwise_units"];
+            delete val1["actwise_units"];
             fullArrayList.push(grouplist);
             $.each(list_act, function (i_act, val_act){
                 var actval = i_act;
@@ -310,6 +311,7 @@ function loadresult(finalList) {
     for (var k = 0 ; k < totallist; k++){
         splitwisedisplay(fullArrayList[k]);
     }
+
     // if(totallist > pageSize){
     //     $('#pagination').show();
     // }
@@ -336,6 +338,7 @@ function splitwisedisplay(sub_keys_list){
            level1heading(sub_keys_list);
         }
     }
+
 }
 
 function filterheading(data){

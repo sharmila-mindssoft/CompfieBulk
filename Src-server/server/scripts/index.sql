@@ -9,7 +9,7 @@ ALTER TABLE `tbl_client_compliances` ADD CONSTRAINT `fk_compliance_id` FOREIGN K
 
 ALTER TABLE `tbl_assigned_compliances` ADD CONSTRAINT `fk_assign_compliance_id` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE `tbl_assigned_compliances` ADD CONSTRAINT `fk_assign_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-ALTER TABLE `tbl_assigned_compliances` ADD INDEX `compliance_id_unit_id_idx` (`unit_id`, `compliance_id`);
+ALTER TABLE `tbl_assigned_compliances` ADD UNIQUE INDEX `compliance_id_unit_id_idx` (`unit_id`, `compliance_id`);
 
 ALTER TABLE `tbl_compliance_history` ADD CONSTRAINT `fk_history_compliance_id` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE `tbl_compliance_history` ADD CONSTRAINT `fk_history_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -31,6 +31,5 @@ ALTER TABLE `tbl_statutory_notification_status` ADD INDEX `user_id_idx` (`user_i
 
 ALTER TABLE `tbl_statutory_notifications_units` ADD CONSTRAINT `fk_statutory_notify_unit_id` FOREIGN KEY (`statutory_notification_id`) REFERENCES `tbl_statutory_notifications_log` (`statutory_notification_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE `tbl_statutory_notifications_units` ADD CONSTRAINT `fk_notify_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
 
 
