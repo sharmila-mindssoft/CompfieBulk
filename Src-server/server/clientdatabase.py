@@ -7338,7 +7338,124 @@ class ClientDatabase(Database):
 #
 #   Risk Report
 #
-    def get_risk_report(
+    def get_not_opted_compliances(
+        self, country_id, domain_id, business_group_id,
+        legal_entity_id, division_id, unit_id, leval_1_statutory_name,
+        statutory_status, session_user
+    ) :
+        where_qry = ""
+        if business_group_id is not None :
+            where_qry = " AND u.business_group_id = %s " % (business_group_id)
+
+        if legal_entity_id is not None :
+            where_qry = " AND u.legal_entity_id = %s " % (legal_entity_id)
+
+        if division_id is not None :
+            where_qry = " AND u.division_id = %s " % (division_id)
+
+        if unit_id is not None :
+            where_qry = " AND u.unit_id = %s " % (unit_id)
+
+        if level_1_statutory_name is not None :
+            where_qry = " AND c.statutory_mapping like '%s' " % (level_1_statutory + '%')
+
+        query = "SELECT c.compliance_id, c.compliance_task, c.document_name, \
+            c.statutory_dates, c.compliance_description, c.penal_consequences, c.frequency_id, \
+            (select frequnecy from tbl_compliance_frequency where frequency_id = c.frequency_id ),\
+            SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) level_1, \
+            (select business_group_name from tbl_business_groups where business_group_id = u.business_group_id ), \
+            (select legal_entity_name from tbl_legal_entities where legal_entity_id = u.legal_entity_id), \
+            (select division_name from tbl_divisions where division_id = u.division_id), \
+            u.unit_code, u.unit_name, u.address, u.postal_code \
+            FROM tbl_compliances c \
+            INNER JOIN tbl_client_compliances cc \
+            ON c.compliance_id = cc.compliance_id \
+            INNEr JOIN tbl_client_statutories cs  \
+            ON cs.client_statutory_id = cc.client_statutory_id \
+            INNER JOIN tbl_units u ON  \
+            cs.unit_id = u.unit_id \
+            WHERE  cc.compliance_opted = 0 \
+            AND c.domain_id = %s \
+            AND cs.county_id = %s \
+            %s \
+            order by level_1" % (
+                domain_id, country_id,
+                where_qry
+            )
+        columns = [
+            "compliance_id", "compliance_task", "document_name",
+            "statutory_dates", "compliance_description", "penal_consequences",
+            "frequency_id", "frequnecy", "level_1", "business_group", "legal_entity",
+            "division", "unit_code", "unit_name",
+            "address", "postal_code"
+        ]
+        rows = self.select_all(query)
+        result = self.convert_to_dict(rows, columns)
+        return self.return_risk_report_data(result)
+
+    def return_risk_report_data(self, data) :
+        for d in data :
+            business_group_name = d["business_group"]
+            legal_entity_name = d["legal_entity"]
+            division_name = d["division"]
+            level_1 = d["level_1"]
+            compliance_name = d["compliance_task"]
+            if d["document_name"] not in (None, "None", "") :
+                compliance_name = "%s - %s" % (
+                    d["document_name"], d["compliance_task"]
+                )
+            statutory_mapping = "%s >> %s" % (
+                d["statutory_mapping"], d["statutory_provision"]
+            )
+            repeats = ""
+            trigger = "Trigger :"
+            if d["frequency_id"] != 1 and d["frequency_id"] != 4 :
+                if d["repeats_type_id"] == 1 :
+                    repeats = "Every %s Day/s " % (d["repeats_every"])
+                elif d["repeats_type_id"] == 2 :
+                    repeats = "Every %s Month/s " % (d["repeats_every"])
+                elif d["repeats_type_id"] == 3 :
+                    repeats = "Every %s Year/s " % (d["repeats_every"])
+                if d["statutory_dates"] is not None:
+                    statutory_dates = json.loads(d["statutory_dates"])
+                    for index, statutory_date in enumerate(statutory_dates):
+                        if index == 0:
+                            if statutory_date["statutory_date"] is not None and statutory_date["statutory_month"] is not None:
+                                repeats += "%s %s, " % (
+                                    statutory_date["statutory_date"], statutory_date["statutory_month"]
+                                )
+                            if statutory_date["trigger_before_days"] is not None:
+                                trigger += "%s Days" % statutory_date["trigger_before_days"]
+                        else:
+                            if statutory_date["trigger_before_days"] is not None:
+                                trigger += " and %s Days" % statutory_date["trigger_before_days"]
+                repeats += trigger
+            elif d["frequency_id"] == 1:
+                statutory_dates = json.loads(d["statutory_dates"])
+                statutory_date = statutory_dates[0]
+                if statutory_date["statutory_date"] is not None and statutory_date["statutory_month"] is not None:
+                    repeats = "%s %s " % (
+                        statutory_date["statutory_date"], self.string_months[statutory_date["statutory_month"]]
+                    )
+                if statutory_date["trigger_before_days"] is not None:
+                    trigger += "%s Days " % statutory_date["trigger_before_days"]
+                repeats += trigger
+            elif d["frequency_id"] == 4:
+                if d["duration_type_id"] == 1 :
+                    if d["duration"] is not None:
+                        repeats = "Complete within %s Day/s " % (d["duration"])
+                elif d["duration_type_id"] == 2 :  # Hours
+                    if d["duration"] is not None:
+                        repeats = "Complete within %s Hour/s" % (d["duration"])
+            compliances_list.append(
+                clientreport.Level1Compliance(
+                    statutory_mapping, compliance_name,
+                    d["compliance_description"], d["penal_consequences"],
+                    d["frequency"], repeats
+                )
+            )
+
+    def get_risk_report_old(
         self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id,
         level_1_statutory_name, statutory_status, client_id, session_user
     ) :
@@ -9185,7 +9302,7 @@ class ClientDatabase(Database):
 
         applicable_wise = {}
 
-        query = "SELECT T2.statutory_provision, T2.statutory_mapping, \
+        query = "SELECT distinct T2.compliance_id, T2.statutory_provision, T2.statutory_mapping, \
             T2.compliance_task, T2.document_name, T2.format_file, \
             T2.penal_consequences, T2.compliance_description, \
             T2.statutory_dates, (select frequency \
@@ -9219,7 +9336,7 @@ class ClientDatabase(Database):
             )
         rows = self.select_all(query)
         columns = [
-            "statutory_provision", "statutory_mapping", "compliance_task",
+            "compliance_id", "statutory_provision", "statutory_mapping", "compliance_task",
             "document_name", "format_file", "penal_consequences",
             "compliance_description", "statutory_dates", "frequency",
             "business_group", "legal_entity", "division_name",
