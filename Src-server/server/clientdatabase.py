@@ -8458,12 +8458,52 @@ class ClientDatabase(Database):
             )
         return reassigned_compliances
 
-    def get_assigneewise_compliances_drilldown_data1(
+    def get_assigneewise_compliances_drilldown_data(
         self, assignee_id, domain_id, client_id, year
     ):
-        pass
+        columns = '''ch.compliance_id, start_date, due_date, completed_on, \
+                concat(document_name, '-', compliance_task), 
+                compliance_description, statutory_mapping'''
+        subquery_columns = '''
+            IF(approve_status = 1 and completed_on <= due_date) 
+            THEN "Complied"
+            ELSEIF (approve_status = 1 and completed_on > due_date)
+            THEN "Delayed"
+            ELSEIF (approve_status = 0 or approve_status is null) and 
+            due_date > now() THEN "Inprogress"
+            ELSE "NotComplied"
+        '''
 
-    def get_assigneewise_compliances_drilldown_data(
+        query = '''SELECT %s 
+        FROM %s tch 
+        INNER JOIN %s tc ON (tch.compliance_id = tc.compliance_id)
+        WHERE completed_by = '%d' AND unit_id = '%d' 
+        AND due_date BETWEEN '%s' AND '%s'  
+        ''' % (
+            columns, self.tblComplianceHistory, self.tblCompliances,
+            assignee_id, unit_id, from_date, to_date
+        )
+        print query
+        complied_condition = "approve_status = 1 and completed_on <= due_date"
+        delayed_condition = "approve_status = 1 and completed_on > due_date"
+        inprogress_condition = "(approve_status = 0 or approve_status is null) and \
+        due_date > now()"
+        not_complied_condition = "(approve_status = 0 or approve_status is null) and \
+        due_date < now()" 
+
+        complied_query = "%s AND %s" % (query, complied_condition)
+        complied_rows = self.select_all(complied_query)
+
+        delayed_query = "%s AND %s" % (query, delayed_condition)
+        delayed_rows = self.select_all(delayed_query)
+
+        inprogress_query = "%s AND %s" % (query, inprogress_condition)
+        inprogress_rows = self.select_all(inprogress_query)
+
+        not_complied_query = "%s AND %s" % (query, not_complied_condition)
+        not_complied_rows = self.select_all(not_complied_query)
+
+    def get_assigneewise_compliances_drilldown_data1(
         self, assignee_id, domain_id, client_id, year
     ):
         level_1_statutories_list = self.get_level_1_statutories_for_user(
