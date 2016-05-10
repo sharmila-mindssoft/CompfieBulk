@@ -1453,6 +1453,23 @@ function initClientMirror() {
 
     }
 
+    function getAssigneewiseReassignedComplianes(
+        country_id, unit_id, user_id, domain_id, callback
+    ){
+        var request = [
+            "GetAssigneewiseReassignedComplianes",
+            {
+                "country_id": country_id,
+                "unit_id": unit_id,
+                "user_id" : user_id,
+                "domain_id": domain_id
+            }
+        ];
+        callerName = "client_dashboard";
+        clientApiRequest(callerName, request, callback);
+
+    }
+
     function getAssigneewiseCompliancesDrilldown(
         assignee_id, domain_id, year, callback
     ){
@@ -1738,7 +1755,8 @@ function initClientMirror() {
         saveReassignCompliance : saveReassignCompliance,
         reassignComplianceDet : reassignComplianceDet,
         getAssigneeWiseCompliances: getAssigneeWiseCompliances,
-        getAssigneewiseYearwiseComplianes: getAssigneewiseYearwiseComplianes
+        getAssigneewiseYearwiseComplianes: getAssigneewiseYearwiseComplianes,
+        getAssigneewiseReassignedComplianes: getAssigneewiseReassignedComplianes
     }
 }
 var client_mirror = initClientMirror();

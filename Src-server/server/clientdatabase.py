@@ -8225,19 +8225,19 @@ class ClientDatabase(Database):
     ):
         condition = "tu.country_id = '%d'" % country_id
         if business_group_id is not None:
-            condition += "tu.business_group_id = '%d'" % (business_group_id)
+            condition += " AND tu.business_group_id = '%d'" % (business_group_id)
         if legal_entity_id is not None:
-            condition += "tu.legal_entity_id = '%d'" % (legal_entity_id)
+            condition += " AND tu.legal_entity_id = '%d'" % (legal_entity_id)
         if division_id is not None:
-            condition += "tu.division_id = '%d'" % (division_id)
+            condition += " AND tu.division_id = '%d'" % (division_id)
         if unit_id is not None:
             condition += "tu.unit_id = '%d'" % (unit_id)
         else:
-            condition += "tu.unit_id in (%s)" % (
+            condition += " AND tu.unit_id in (%s)" % (
                 self.get_user_unit_ids(session_user)
             )
         if assignee_id is not None:
-            condition += "tch.completed_by = '%d'" % (assignee_id)
+            condition += " AND tch.completed_by = '%d'" % (assignee_id)
 
         query = '''
             SELECT concat(IFNULL(employee_code, 'Administrator'), '-', employee_name) 
@@ -8546,10 +8546,14 @@ class ClientDatabase(Database):
             domainwise_notcomplied = 0
             domainwise_total = 0
             domainwise_delayed = 0
-            for domain_id in domain_ids:
+            for domain_id in domain_ids_list:
                 result = self.get_country_domain_timelines(
                         [country_id], [domain_id], [iter_year], client_id
                 )
+                print 
+                print domain_id
+                print result
+                print
                 from_date = result[0][1][0][1][0]["start_date"].date()
                 to_date = result[0][1][0][1][0]["end_date"].date()
                 query = '''
@@ -8600,6 +8604,63 @@ class ClientDatabase(Database):
             )
             iter_year += 1
         return year_wise_compliance_count
+
+    def get_assigneewise_reassigned_compliances(
+        self, country_id, unit_id, user_id, domain_id, client_id
+    ):
+        current_year = self.get_date_time().year
+        result = self.get_country_domain_timelines(
+                [country_id], [domain_id], [current_year], client_id
+        )
+        from_date = result[0][1][0][1][0]["start_date"].date()
+        to_date = result[0][1][0][1][0]["end_date"].date()
+        query = '''
+            SELECT reassigned_date, concat(IFNULL(employee_code, 'Administrator'), '-',
+            employee_name) as previous_assignee, document_name, compliance_task,
+            tch.due_date, DATE_SUB(tch.due_date, INTERVAL trigger_before_days DAY) as start_date,
+            completion_date
+            FROM %s trch INNER JOIN 
+            tbl_compliance_history tch ON (trch.compliance_id = tch.compliance_id 
+            AND assignee='%d' AND trch.unit_id = tch.unit_id)
+            INNER JOIN tbl_assigned_compliances tac ON (
+            tch.compliance_id = tac.compliance_id AND tch.unit_id = tac.unit_id 
+            AND tch.completed_by = '%s')
+            INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id)
+            INNER JOIN tbl_users tus ON (tus.user_id = tac.assignee)
+            INNER JOIN tbl_compliances tc ON (tac.compliance_id = tc.compliance_id)
+            INNER JOIN tbl_domains td ON (td.domain_id = tc.domain_id)
+            WHERE tch.unit_id = '%d' AND tc.domain_id = '%d' 
+            AND approve_status = 1 AND completed_by = '%d' 
+            AND reassigned_date between tch.due_date and completion_date
+            AND completion_date > tch.due_date AND is_reassigned = 1
+            AND tch.due_date between '%s' AND '%s'
+        ''' % (
+            self.tblReassignedCompliancesHistory, user_id, user_id, unit_id, 
+            int(domain_id), user_id, from_date, to_date
+        )
+        print query
+        rows = self.select_all(query)
+        columns = ["reassigned_date", "reassigned_from", "document_name", 
+        "compliance_name", "due_date", "start_date", "completion_date"]
+        results = self.convert_to_dict(rows, columns)
+        reassigned_compliances = []
+        for compliance in results:
+            compliance_name = compliance["compliance_name"]
+            if compliance["document_name"] is not None:
+                compliance_name = "%s - %s" % (
+                    compliance["document_name"], compliance_name
+                )
+            reassigned_compliances.append(
+                dashboard.RessignedCompliance(
+                    compliance_name=compliance_name,
+                    reassigned_from=compliance["reassigned_from"],
+                    start_date=self.datetime_to_string(compliance["start_date"]),
+                    due_date=self.datetime_to_string(compliance["due_date"]),
+                    reassigned_date=self.datetime_to_string(compliance["reassigned_date"]),
+                    completed_date=self.datetime_to_string(compliance["completion_date"])
+                )
+            )
+        return reassigned_compliances
 
     def get_assigneewise_compliances_drilldown_data(
         self, assignee_id, domain_id, client_id, year
