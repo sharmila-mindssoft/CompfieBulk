@@ -702,7 +702,7 @@ class GetComplianceTaskApplicabilityStatusReport(Request):
         unit_id = data.get("unit_id")
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         statutory_name = data.get("statutory_name")
-        statutory_name = parse_structure_OptionalType_SignedIntegerType_8(statutory_name)
+        statutory_name = parse_structure_OptionalType_CustomTextType_100(statutory_name)
         applicable_status = data.get("applicable_status")
         applicable_status = parse_structure_OptionalType_EnumType_core_APPLICABILITY_STATUS(applicable_status)
         csv = data.get("csv")
@@ -723,7 +723,7 @@ class GetComplianceTaskApplicabilityStatusReport(Request):
             "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
             "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
-            "statutory_name": to_structure_OptionalType_SignedIntegerType_8(self.statutory_name),
+            "statutory_name": to_structure_OptionalType_CustomTextType_100(self.statutory_name),
             "applicable_status": to_structure_OptionalType_EnumType_core_APPLICABILITY_STATUS(self.applicable_status),
             "csv": to_structure_Bool(self.csv),
             "record_count": to_structure_UnsignedIntegerType_32(self.record_count)

@@ -7377,8 +7377,8 @@ class ClientDatabase(Database):
                 unit_wise_compliances = []
                 for unit_id in unit_ids_list:
                     compliance_ids_list = [""] * 4
-                    if statutory_status in [1, 2, None, "None", "", 0]:
-                        if statutory_status in [1,None, "None", "", 0]: # Delayed compliance
+                    if statutory_status in [1, 2, None, "None", "", 0] :
+                        if statutory_status in [1,None, "None", "", 0] :  #  Delayed compliance
                             query = "SELECT distinct compliance_id FROM tbl_compliance_history \
                                 WHERE unit_id = '%d' AND completed_on > due_date AND \
                                 approve_status = 1" % unit_id
@@ -7388,7 +7388,7 @@ class ClientDatabase(Database):
                                 for row in compliance_history_rows:
                                     concated_result += row
                                 compliance_ids_list[0] = ",".join(str(x) for x in concated_result)
-                        if statutory_status in [2, None, "None", "", 0]: # Not complied
+                        if statutory_status in [2, None, "None", "", 0] :  #  Not complied
                             query = "SELECT distinct compliance_id FROM tbl_compliance_history \
                                 WHERE unit_id = '%d' AND (approve_status = 0 or \
                                 approve_status is null) AND due_date < now()" % unit_id
@@ -7398,7 +7398,7 @@ class ClientDatabase(Database):
                                 for row in compliance_history_rows:
                                     concated_result += row
                                 compliance_ids_list[1] = ",".join(str(x) for x in concated_result)
-                    if statutory_status in [4, None, "None", "", 0]:# Unassigned compliances
+                    if statutory_status in [4, None, "None", "", 0] :  # Unassigned compliances
                         query = "SELECT distinct compliance_id FROM tbl_client_compliances \
                             WHERE client_statutory_id IN (SELECT client_statutory_id FROM \
                             tbl_client_statutories WHERE unit_id = '%d') and compliance_id \
@@ -7410,7 +7410,7 @@ class ClientDatabase(Database):
                             for row in result:
                                 concated_result += row
                             compliance_ids_list[3] = ",".join(str(x) for x in concated_result)
-                    if statutory_status in [3, None, "None", "", 0]: # Not Opted
+                    if statutory_status in [3, None, "None", "", 0]:  #  Not Opted
                         query = "SELECT distinct compliance_id FROM tbl_client_compliances where \
                             client_statutory_id IN (SELECT client_statutory_id FROM \
                             tbl_client_statutories WHERE unit_id = '%d') AND compliance_opted = 0" % (unit_id)
@@ -9125,6 +9125,7 @@ class ClientDatabase(Database):
         division_id = request.division_id
         unit = request.unit_id
         from_count = request.record_count
+        statutory_name = request.statutory_name
         to_count = 500
 
         def statutory_repeat_text(statutory_dates, repeat, repeat_type) :
@@ -9174,6 +9175,9 @@ class ClientDatabase(Database):
 
         if unit is not None :
             where_qry += " AND T3.unit_id = %s" % (unit)
+
+        if statutory_name is not None :
+            where_qry += " AND T2.statutory_mapping like '%s%'" % (statutory_name)
 
         applicable_compliances = []
         not_applicable_compliances = []
