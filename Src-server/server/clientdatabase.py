@@ -9177,7 +9177,7 @@ class ClientDatabase(Database):
             where_qry += " AND T3.unit_id = %s" % (unit)
 
         if statutory_name is not None :
-            where_qry += " AND T2.statutory_mapping like '%s%'" % (statutory_name)
+            where_qry += " AND T2.statutory_mapping like '%s'" % (statutory_name + '%')
 
         applicable_compliances = []
         not_applicable_compliances = []
