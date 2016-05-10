@@ -70,7 +70,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_CustomTextType_500,
     parse_structure_MapType_CustomTextType_250_VectorType_RecordType_dashboard_Compliance,
     parse_structure_OptionalType_Bool,
-    parse_structure_UnsignedIntegerType_32
+    parse_structure_UnsignedIntegerType_32,
+    parse_structure_RecordType_dashboard_AssigneeWiseCompliance
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -142,7 +143,8 @@ from protocol.to_structure import (
     to_structure_VectorType_CustomTextType_500,
     to_structure_OptionalType_CustomTextType_100,
     to_structure_OptionalType_VectorType_CustomTextType_500,
-    to_structure_MapType_CustomTextType_250_VectorType_RecordType_dashboard_Compliance
+    to_structure_MapType_CustomTextType_250_VectorType_RecordType_dashboard_Compliance,
+    to_structure_RecordType_dashboard_AssigneeWiseCompliance
 )
 
 #
@@ -495,27 +497,42 @@ class GetAssigneewiseReassignedComplianes(Request):
         }
 
 class GetAssigneeWiseComplianceDrillDown(Request):
-    def __init__(self, assignee_id, domain_id, year):
+    def __init__(self, country_id, assignee_id, domain_id, year, unit_id, start_count):
+        self.country_id = country_id
         self.assignee_id = assignee_id
         self.domain_id = domain_id
         self.year = year
+        self.unit_id = unit_id
+        self.start_count = start_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["assignee_id", "domain_id", "year"])
+        data = parse_dictionary(data, ["country_id", "assignee_id", 
+            "domain_id", "year", "start_count"])
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         assignee_id = data.get("assignee_id")
         assignee_id = parse_structure_UnsignedIntegerType_32(assignee_id)
         domain_id = data.get("domain_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         year = data.get("year")
         year = parse_structure_OptionalType_UnsignedIntegerType_32(year)
-        return GetAssigneeWiseComplianceDrillDown(assignee_id, domain_id, year)
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
+        start_count = data.get("start_count")
+        start_count = parse_structure_UnsignedIntegerType_32(start_count)
+        return GetAssigneeWiseComplianceDrillDown(
+            country_id, assignee_id, domain_id, year, unit_id, start_count
+        )
 
     def to_inner_structure(self):
         return {
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
             "assignee_id": to_structure_UnsignedIntegerType_32(self.assignee_id),
             "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "year": to_structure_OptionalType_UnsignedIntegerType_32(self.year),
+            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
+            "start_count" : to_structure_UnsignedIntegerType_32(self.start_count)
         }
 
 class GetComplianceStatusDrillDownData(Request):
@@ -1124,36 +1141,42 @@ class AssigneeWiseCompliance(object):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["complied", "delayed", "inprogress", "not_complied"])
         complied = data.get("complied")
-        complied = parse_structure_VectorType_RecordType_dashboard_UnitCompliance(complied)
+        complied = parse_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(complied)
         delayed = data.get("delayed")
-        delayed = parse_structure_VectorType_RecordType_dashboard_UnitCompliance(delayed)
+        delayed = parse_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(delayed)
         inprogress = data.get("inprogress")
-        inprogress = parse_structure_VectorType_RecordType_dashboard_UnitCompliance(inprogress)
+        inprogress = parse_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(inprogress)
         not_complied = data.get("not_complied")
-        not_complied = parse_structure_VectorType_RecordType_dashboard_UnitCompliance(not_complied)
+        not_complied = parse_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(not_complied)
         return AssigneeWiseCompliance(complied, delayed, inprogress, not_complied)
 
     def to_inner_structure(self):
         return {
-            "complied": to_structure_VectorType_RecordType_dashboard_UnitCompliance(self.complied),
-            "delayed": to_structure_VectorType_RecordType_dashboard_UnitCompliance(self.delayed),
-            "inprogress": to_structure_VectorType_RecordType_dashboard_UnitCompliance(self.inprogress),
-            "not_complied": to_structure_VectorType_RecordType_dashboard_UnitCompliance(self.not_complied),
+            "complied": to_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(self.complied),
+            "delayed": to_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(self.delayed),
+            "inprogress": to_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(self.inprogress),
+            "not_complied": to_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(self.not_complied),
         }
 
 class GetAssigneeWiseComplianceDrillDownSuccess(Response):
-    def __init__(self, drill_down_data):
+    def __init__(self, drill_down_data, total_count):
         self.drill_down_data = drill_down_data
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["drill_down_data"])
         drill_down_data = data.get("drill_down_data")
-        drill_down_data = parse_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWiseCompliance(drill_down_data)
-        return GetAssigneeWiseComplianceDrillDownSuccess(drill_down_data)
+        drill_down_data = parse_structure_RecordType_dashboard_AssigneeWiseCompliance(drill_down_data)
+        total_count = data.get("total_count")
+        total_count = parse_structure_UnsignedIntegerType_32(total_count)
+        return GetAssigneeWiseComplianceDrillDownSuccess(drill_down_data, total_count)
 
     def to_inner_structure(self):
-        return to_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWiseCompliance(self.drill_down_data)
+        return {
+            "drill_down_data": to_structure_RecordType_dashboard_AssigneeWiseCompliance(self.drill_down_data),
+            "total_count": to_structure_UnsignedIntegerType_32(self.total_count)
+        }
 
 class GetComplianceStatusDrillDownDataSuccess(Response):
     def __init__(self, drill_down_data):

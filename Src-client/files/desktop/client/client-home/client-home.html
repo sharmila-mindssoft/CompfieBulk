@@ -248,6 +248,11 @@
                         <div class="input-row">
                           <div class="field-label">Country:<span class="mandatory">*</span></div>
                           <div class="field-input">
+                            <input type="hidden" id="a_user" value="">
+                            <input type="hidden" id="a_domain" value="">
+                            <input type="hidden" id="a_year" value="">
+                            <input type="hidden" id="a_unit" value="">
+
                              <input type="hidden" id="country" value="">
                               <input type="text" class="input-box icon-autocomplete" id="countryval" value=""  onkeyup="loadauto_country(this.value)">
                               <div id="autocompleteview-country" class="ac-textbox" style="display:none;" onclick="hidecountrylist();">
@@ -345,6 +350,12 @@
                     </div>
                   </div>
                 </div>
+
+                <div align="center" style="padding-top:10px; ">
+                  <input type="button" value="Show more records" class="btn-submit default-display-none" id="pagination-assignee" onclick="getShowmoreData()">
+                </div>
+                <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count_assignee"></p>
+
                 <!-- archive tab content end here -->
                   <div id="popup-year" class="popupoverlay" >
                     <div class="popup-year">
