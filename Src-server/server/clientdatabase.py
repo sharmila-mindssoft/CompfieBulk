@@ -9124,6 +9124,8 @@ class ClientDatabase(Database):
         legal_entity = request.legal_entity_id
         division_id = request.division_id
         unit = request.unit_id
+        from_count = request.record_count
+        to_count = 500
 
         def statutory_repeat_text(statutory_dates, repeat, repeat_type) :
             trigger_days = ""
@@ -9205,12 +9207,12 @@ class ClientDatabase(Database):
             WHERE T3.country_id = %s \
             AND T3.domain_id = %s \
             %s \
-            " % (
+            limit %s, %s" % (
                 request.country_id,
                 request.domain_id,
-                where_qry
+                where_qry,
+                from_count, to_count
             )
-        print query
         rows = self.select_all(query)
         columns = [
             "statutory_provision", "statutory_mapping", "compliance_task",
