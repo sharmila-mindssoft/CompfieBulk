@@ -8638,7 +8638,6 @@ class ClientDatabase(Database):
             self.tblReassignedCompliancesHistory, user_id, user_id, unit_id, 
             int(domain_id), user_id, from_date, to_date
         )
-        print query
         rows = self.select_all(query)
         columns = ["reassigned_date", "reassigned_from", "document_name", 
         "compliance_name", "due_date", "start_date", "completion_date"]
