@@ -1638,25 +1638,29 @@ class AssigneeWiseDetails(object):
 #
 
 class AssigneeChartData(object):
-    def __init__(self, unit_name, assignee_wise_details, address):
+    def __init__(self, unit_name, unit_id, assignee_wise_details, address):
         self.unit_name = unit_name
+        self.unit_id = unit_id
         self.assignee_wise_details = assignee_wise_details
         self.address = address
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_name", "assignee_wise_details", "address"])
+        data = parse_dictionary(data, ["unit_name", "unit_id", "assignee_wise_details", "address"])
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_50(unit_name)
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         assignee_wise_details = data.get("assignee_wise_details")
         assignee_wise_details = parse_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(assignee_wise_details)
         address = data.get("address")
         address = parse_structure_CustomTextType_500(address)
-        return AssigneeChartData(unit_name, assignee_wise_details, address)
+        return AssigneeChartData(unit_name, unit_id, assignee_wise_details, address)
 
     def to_structure(self):
         return {
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
+            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
             "address": to_structure_CustomTextType_500(self.address),
             "assignee_wise_details": to_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(self.assignee_wise_details),
         }
