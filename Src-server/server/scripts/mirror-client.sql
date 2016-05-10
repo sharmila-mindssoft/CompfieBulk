@@ -176,7 +176,7 @@ CREATE TABLE `tbl_admin` (
 DROP TABLE IF EXISTS `tbl_users`;
 CREATE TABLE `tbl_users` (
   `user_id` int(11) NOT NULL,
-  `user_group_id` int(11) NOT NULL,
+  `user_group_id` int(11) DEFAULT NULL,
   `service_provider_id` int(11) DEFAULT NULL,
   `email_id` varchar(100) NOT NULL,
   `password` varchar(50) NOT NULL,
@@ -434,6 +434,29 @@ CREATE TABLE `tbl_mobile_sync_versions` (
   `compliance_history_version` int(11) NOT NULL,
   `reassign_history_version` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+ALTER TABLE `tbl_compliances` ADD INDEX `ccompliance_id_domain_id_idx` (`compliance_id`, `domain_id`);
+ALTER TABLE `tbl_client_statutories` ADD CONSTRAINT `fk_client_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `tbl_client_statutories` ADD INDEX `country_idx` (`country_id`);
+ALTER TABLE `tbl_client_statutories` ADD INDEX `domain_idx` (`domain_id`);
+ALTER TABLE `tbl_client_compliances` ADD CONSTRAINT `fk_client_statutory_id` FOREIGN KEY (`client_statutory_id`) REFERENCES `tbl_client_statutories` (`client_statutory_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `tbl_client_compliances` ADD CONSTRAINT `fk_compliance_id` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `tbl_assigned_compliances` ADD CONSTRAINT `fk_assign_compliance_id` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `tbl_assigned_compliances` ADD CONSTRAINT `fk_assign_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `tbl_assigned_compliances` ADD UNIQUE INDEX `compliance_id_unit_id_idx` (`unit_id`, `compliance_id`);
+ALTER TABLE `tbl_compliance_history` ADD CONSTRAINT `fk_history_compliance_id` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `tbl_compliance_history` ADD CONSTRAINT `fk_history_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `tbl_compliance_history` ADD INDEX `hisoty_compliance_id_unit_id_idx` (`unit_id`, `compliance_id`);
+ALTER TABLE `tbl_reassigned_compliances_history` ADD CONSTRAINT `fk_reassign_compliance_id` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `tbl_reassigned_compliances_history` ADD CONSTRAINT `fk_reassign_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `tbl_reassigned_compliances_history` ADD INDEX `reassign_compliance_id_unit_id_idx` (`unit_id`, `compliance_id`);
+ALTER TABLE `tbl_notifications_log` ADD CONSTRAINT `fk_notification_compliance_id` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `tbl_notifications_log` ADD CONSTRAINT `fk_notification_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `tbl_notifications_log` ADD INDEX `notification_compliance_id_unit_id_idx` (`unit_id`, `compliance_id`);
+ALTER TABLE `tbl_notification_user_log` ADD CONSTRAINT `fk_notification_id` FOREIGN KEY (`notification_id`) REFERENCES `tbl_notifications_log` (`notification_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `tbl_statutory_notification_status` ADD CONSTRAINT `fk_statutory_notification_id` FOREIGN KEY (`statutory_notification_id`) REFERENCES `tbl_statutory_notifications_log` (`statutory_notification_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `tbl_statutory_notification_status` ADD INDEX `user_id_idx` (`user_id`);
+ALTER TABLE `tbl_statutory_notifications_units` ADD CONSTRAINT `fk_statutory_notify_unit_id` FOREIGN KEY (`statutory_notification_id`) REFERENCES `tbl_statutory_notifications_log` (`statutory_notification_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `tbl_statutory_notifications_units` ADD CONSTRAINT `fk_notify_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 INSERT INTO tbl_audit_log VALUES(0);
 INSERT INTO tbl_form_type VALUES(1, "Home");
 INSERT INTO tbl_form_type VALUES(2, "Master");
@@ -509,3 +532,4 @@ ALTER TABLE `tbl_statutory_notifications_units` ADD CONSTRAINT `fk_statutory_not
 ALTER TABLE `tbl_statutory_notifications_units` ADD CONSTRAINT `fk_notify_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 SET GLOBAL connect_timeout=120000;
 SET GLOBAL wait_timeout=120000;
+SET GLOBAL max_connections = 5000;

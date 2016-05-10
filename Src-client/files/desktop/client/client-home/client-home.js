@@ -2299,6 +2299,7 @@ function prepareEscalationChartdata(source_data) {
         }
         chartTitle = "Escalation of " + chartTitle + " " + filter_names;
     }
+    console.log(chartDataSeries)
     return [xAxis, chartDataSeries, chartTitle]
 }
 
@@ -2364,6 +2365,7 @@ function prepareTrendChartData(source_data) {
     var xAxisIds = [];
     var chartDataSeries = [];
     xAxis = source_data["years"];
+    console.log(xAxis)
     for (var i =0; i< source_data["data"].length; i++) {
         chartData = source_data["data"][i];
         var filter_type_id = chartData["filter_id"];
@@ -2375,6 +2377,7 @@ function prepareTrendChartData(source_data) {
         total_count = [];
         compliance_info = chartData["complied_compliance"];
         data = []
+        console.log(compliance_info)
         for (var j = 0; j < compliance_info.length; j++) {
             compliance_count.push(
                 compliance_info[j]["complied_compliances_count"]
@@ -2395,6 +2398,7 @@ function prepareTrendChartData(source_data) {
                 "total":total_count
             }
         );
+        console.log(chartDataSeries);
     }
     chartTitle = "Complied (" + xAxis[0] + " to " + xAxis[xAxis.length - 1] + ")";
     return [xAxis, chartTitle, chartDataSeries];

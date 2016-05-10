@@ -139,10 +139,13 @@ function initClientMirror() {
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
-                log("API STATUS :" + status)
+                log("API STATUS :" + status);
+                console.log(response)
+                console.log(status.toLowerCase().indexOf(matchString))
+                callback(null, response)
 
                 if (status.toLowerCase().indexOf(matchString) != -1) {
-                    callback(null, response);
+                    callback(error=null, response);
                 }
                 else if (status == "InvalidSessionToken") {
                     // console.log(status)
@@ -150,9 +153,9 @@ function initClientMirror() {
                 }
                 else {
                     if (status == "SavePastRecordsFailed"){
-                        callback(data, null)
+                        callback(data, null);
                     }else{
-                        callback(status, null)
+                        callback(status, null);
                     }
 
                 }
@@ -1487,7 +1490,7 @@ function initClientMirror() {
     function getTaskApplicabilityReportData(
         country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id,
-        statutory_name, applicable_status, csv, record_count, callback
+        statutory_name, applicable_status, csv, callback
     ) {
         var request = [
             "GetComplianceTaskApplicabilityStatusReport", {
@@ -1499,8 +1502,8 @@ function initClientMirror() {
                 "unit_id": unit_id,
                 "statutory_name": statutory_name,
                 "applicable_status": applicable_status,
-                "record_count":record_count,
-                "csv": csv
+                "record_count":0,
+                "csv": csv,
             }
         ];
         callerName = "client_reports";
