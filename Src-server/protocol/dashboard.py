@@ -1443,18 +1443,25 @@ class DelayedCompliance(object):
 #
 
 class DomainWise(object):
-    def __init__(self, domain_id, domain_name, total_compliances, complied_count, delayed_compliance, inprogress_compliance_count, not_complied_count):
+    def __init__(
+        self, domain_id, domain_name, total_compliances, complied_count, 
+        assigned_count, reassigned_count, inprogress_compliance_count, 
+        not_complied_count
+    ):
         self.domain_id = domain_id
         self.domain_name = domain_name
         self.total_compliances = total_compliances
         self.complied_count = complied_count
-        self.delayed_compliance = delayed_compliance
+        self.assigned_count = assigned_count
+        self.reassigned_count = reassigned_count
         self.inprogress_compliance_count = inprogress_compliance_count
         self.not_complied_count = not_complied_count
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["domain_id", "domain_name", "total_compliances", "complied_count", "delayed_compliance", "inprogress_compliance_count", "not_complied_count"])
+        data = parse_dictionary(data, ["domain_id", "domain_name", 
+        "total_compliances", "complied_count", "assigned_count", 
+        "reassigned_count", "inprogress_compliance_count", "not_complied_count"])
         domain_id = data.get("domain_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         domain_name = data.get("domain_name")
@@ -1463,13 +1470,18 @@ class DomainWise(object):
         total_compliances = parse_structure_UnsignedIntegerType_32(total_compliances)
         complied_count = data.get("complied_count")
         complied_count = parse_structure_UnsignedIntegerType_32(complied_count)
-        delayed_compliance = data.get("delayed_compliance")
-        delayed_compliance = parse_structure_RecordType_dashboard_DelayedCompliance(delayed_compliance)
+        assigned_count = data.get("assigned_count")
+        assigned_count = parse_structure_UnsignedIntegerType_32(assigned_count)
+        reassigned_count = data.get("reassigned_count")
+        reassigned_count = parse_structure_UnsignedIntegerType_32(reassigned_count)
         inprogress_compliance_count = data.get("inprogress_compliance_count")
         inprogress_compliance_count = parse_structure_UnsignedIntegerType_32(inprogress_compliance_count)
         not_complied_count = data.get("not_complied_count")
         not_complied_count = parse_structure_UnsignedIntegerType_32(not_complied_count)
-        return DomainWise(domain_id, domain_name, total_compliances, complied_count, delayed_compliance, inprogress_compliance_count, not_complied_count)
+        return DomainWise(domain_id, domain_name, total_compliances, 
+            complied_count, assigned_count, reassigned_count, 
+            inprogress_compliance_count, not_complied_count
+        )
 
     def to_structure(self):
         return {
@@ -1477,7 +1489,8 @@ class DomainWise(object):
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "total_compliances": to_structure_UnsignedIntegerType_32(self.total_compliances),
             "complied_count": to_structure_UnsignedIntegerType_32(self.complied_count),
-            "delayed_compliance": to_structure_RecordType_dashboard_DelayedCompliance(self.delayed_compliance),
+            "assigned_count": to_structure_UnsignedIntegerType_32(self.assigned_count),
+            "reassigned_count": to_structure_UnsignedIntegerType_32(self.reassigned_count),
             "inprogress_compliance_count": to_structure_UnsignedIntegerType_32(self.inprogress_compliance_count),
             "not_complied_count": to_structure_UnsignedIntegerType_32(self.not_complied_count),
         }
@@ -1534,18 +1547,16 @@ class YearWise(object):
 #
 
 class AssigneeWiseDetails(object):
-    def __init__(self, user_id, assignee_name, domain_wise_details, year_wise_details):
+    def __init__(self, user_id, assignee_name, domain_wise_details):
         self.user_id = user_id
         self.assignee_name = assignee_name
         self.domain_wise_details = domain_wise_details
-        self.year_wise_details = year_wise_details
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "user_id", "assignee_name",
-                "domain_wise_details", "year_wise_details"
+                "user_id", "assignee_name", "domain_wise_details"
             ]
         )
         user_id = data.get("user_id")
@@ -1554,18 +1565,15 @@ class AssigneeWiseDetails(object):
         assignee_name = parse_structure_CustomTextType_100(assignee_name)
         domain_wise_details = data.get("domain_wise_details")
         domain_wise_details = parse_structure_VectorType_RecordType_dashboard_DomainWise(domain_wise_details)
-        year_wise_details = data.get("year_wise_details")
-        year_wise_details = parse_structure_VectorType_RecordType_dashboard_YearWise(year_wise_details)
         return AssigneeWiseDetails(
-            user_id, assignee_name, domain_wise_details, year_wise_details
+            user_id, assignee_name, domain_wise_details
         )
 
     def to_structure(self):
         return {
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
             "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
-            "domain_wise_details": to_structure_VectorType_RecordType_dashboard_DomainWise(self.domain_wise_details),
-            "year_wise_details": to_structure_VectorType_RecordType_dashboard_YearWise(self.year_wise_details)
+            "domain_wise_details": to_structure_VectorType_RecordType_dashboard_DomainWise(self.domain_wise_details)
         }
 
 #
