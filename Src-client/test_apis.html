@@ -613,11 +613,15 @@
 				);
 			}
 			function getAssigneewiseComplianesDrillDown(){
-				user_id = 3
-				domain_id = 1
-				year = null
+                console.log("inside getAssigneewiseComplianesDrillDown=====>");
+                country_id = 1;
+				user_id = 0;
+				domain_id = 2;
+				year = null;
+                unit_id = 38;
+                start_count = 0
 				client_mirror.getAssigneewiseCompliancesDrilldown(
-					user_id, domain_id, year
+					country_id, user_id, domain_id, year, unit_id, start_count, callback
 				);
 			}
 			function getOnOccurrenceList(){

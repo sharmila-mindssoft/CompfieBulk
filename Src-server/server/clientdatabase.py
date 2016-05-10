@@ -4589,7 +4589,6 @@ class ClientDatabase(Database):
             country_id, domain_id,
             qry_where, from_count, to_count
         )
-        print q
         rows = self.select_all(q)
         data = self.convert_to_dict(rows, columns)
         return data, count
@@ -8381,10 +8380,6 @@ class ClientDatabase(Database):
                 result = self.get_country_domain_timelines(
                         [country_id], [domain_id], [iter_year], client_id
                 )
-                print 
-                print domain_id
-                print result
-                print
                 from_date = result[0][1][0][1][0]["start_date"].date()
                 to_date = result[0][1][0][1][0]["end_date"].date()
                 query = '''
@@ -8492,50 +8487,129 @@ class ClientDatabase(Database):
             )
         return reassigned_compliances
 
-    def get_assigneewise_compliances_drilldown_data(
-        self, assignee_id, domain_id, client_id, year
+    def get_assigneewise_compliances_drilldown_data_count(
+        self, country_id, assignee_id, domain_id, client_id, year, unit_id
     ):
-        columns = '''ch.compliance_id, start_date, due_date, completed_on, \
-                concat(document_name, '-', compliance_task), 
-                compliance_description, statutory_mapping'''
-        subquery_columns = '''
-            IF(approve_status = 1 and completed_on <= due_date) 
-            THEN "Complied"
-            ELSEIF (approve_status = 1 and completed_on > due_date)
-            THEN "Delayed"
-            ELSEIF (approve_status = 0 or approve_status is null) and 
-            due_date > now() THEN "Inprogress"
-            ELSE "NotComplied"
-        '''
+        if year is None:
+            current_year = self.get_date_time().year
+        result = self.get_country_domain_timelines(
+            [country_id], [domain_id], [current_year], client_id
+        )
+        from_date = result[0][1][0][1][0]["start_date"]
+        to_date = result[0][1][0][1][0]["end_date"]
 
-        query = '''SELECT %s 
+        query = '''SELECT count(*)
         FROM %s tch 
         INNER JOIN %s tc ON (tch.compliance_id = tc.compliance_id)
+        INNER JOIN %s tu ON (tch.completed_by = tu.user_id)
         WHERE completed_by = '%d' AND unit_id = '%d' 
-        AND due_date BETWEEN '%s' AND '%s'  
+        AND due_date BETWEEN '%s' AND '%s '  
         ''' % (
-            columns, self.tblComplianceHistory, self.tblCompliances,
+            self.tblComplianceHistory, self.tblCompliances, self.tblUsers, 
             assignee_id, unit_id, from_date, to_date
         )
-        print query
-        complied_condition = "approve_status = 1 and completed_on <= due_date"
-        delayed_condition = "approve_status = 1 and completed_on > due_date"
-        inprogress_condition = "(approve_status = 0 or approve_status is null) and \
-        due_date > now()"
-        not_complied_condition = "(approve_status = 0 or approve_status is null) and \
-        due_date < now()" 
+        rows = self.select_all(query)
+        return rows[0][0]
 
-        complied_query = "%s AND %s" % (query, complied_condition)
-        complied_rows = self.select_all(complied_query)
 
-        delayed_query = "%s AND %s" % (query, delayed_condition)
-        delayed_rows = self.select_all(delayed_query)
+    def get_assigneewise_compliances_drilldown_data(
+        self, country_id, assignee_id, domain_id, client_id, year, unit_id,
+        start_count, to_count
+    ):
+        if year is None:
+            current_year = self.get_date_time().year
+        result = self.get_country_domain_timelines(
+            [country_id], [domain_id], [current_year], client_id
+        )
+        from_date = result[0][1][0][1][0]["start_date"]
+        to_date = result[0][1][0][1][0]["end_date"]
+        columns = '''tch.compliance_id, start_date, due_date, completion_date,
+                document_name, compliance_task, compliance_description, 
+                statutory_mapping, concat(IFNULL(employee_code, 'Administrator'),
+                '-', employee_name)'''
+        subquery_columns = '''
+            IF(
+                (approve_status = 1 and completed_on <= due_date), 
+                "Complied", 
+                (
+                    IF(
+                        (approve_status = 1 and completed_on > due_date),
+                        "Delayed",
+                        (
+                            IF (
+                                 ((approve_status = 0 or approve_status is null) and 
+                                due_date > now()),
+                                "Inprogress",
+                                "NotComplied"
+                            )
+                        )
+                    )
+                )
+            ) as compliance_status
+        '''
 
-        inprogress_query = "%s AND %s" % (query, inprogress_condition)
-        inprogress_rows = self.select_all(inprogress_query)
+        query = '''SELECT %s, %s 
+        FROM %s tch 
+        INNER JOIN %s tc ON (tch.compliance_id = tc.compliance_id)
+        INNER JOIN %s tu ON (tch.completed_by = tu.user_id)
+        WHERE completed_by = '%d' AND unit_id = '%d' 
+        AND due_date BETWEEN '%s' AND '%s'
+        ORDER BY compliance_status
+        LIMIT %d, %d  
+        ''' % (
+            columns, subquery_columns, self.tblComplianceHistory, 
+            self.tblCompliances, self.tblUsers, assignee_id, unit_id, 
+            from_date, to_date, int(start_count), to_count
+        )
+        rows = self.select_all(query)
+        columns_list = [
+            "compliance_id", "start_date", "due_date", "completion_date", 
+            "document_name", "compliance_name", "compliance_description", 
+            "statutory_mapping", "assignee", "compliance_status"
+        ]
+        result = self.convert_to_dict(rows, columns_list)
 
-        not_complied_query = "%s AND %s" % (query, not_complied_condition)
-        not_complied_rows = self.select_all(not_complied_query)
+        complied_compliances = {}
+        inprogress_compliances = {}
+        delayed_compliances = {}
+        not_complied_compliances = {}
+
+        for compliance in result:
+            compliance_name = compliance["compliance_name"]
+            compliance_status = compliance["compliance_status"]
+            if compliance["document_name"] is not None:
+                compliance_name = "%s - %s" % (
+                    compliance["document_name"], compliance_name
+                )
+            level_1_statutory = compliance["statutory_mapping"].split(">>")[0]
+
+            current_list = not_complied_compliances
+            if compliance_status == "Complied":
+                current_list = complied_compliances
+            elif compliance_status == "Delayed":
+                current_list = delayed_compliances
+            elif compliance_status == "Inprogress":
+                current_list = inprogress_compliances
+
+            if level_1_statutory not in current_list:
+                current_list[level_1_statutory] = []
+
+            current_list[level_1_statutory].append(
+                dashboard.AssigneeWiseLevel1Compliance(
+                    compliance_name=compliance_name, 
+                    description=compliance["compliance_description"],
+                    assignee_name=compliance["assignee"],
+                    assigned_date=None if compliance["start_date"] is None else self.datetime_to_string(compliance["start_date"]),
+                    due_date=self.datetime_to_string(compliance["due_date"]),
+                    completion_date=None if compliance["completion_date"] is None else self.datetime_to_string(compliance["completion_date"])
+                )
+            )
+        return (
+            complied_compliances, delayed_compliances, inprogress_compliances,
+            not_complied_compliances
+        )
+
+
 
     def get_assigneewise_compliances_drilldown_data1(
         self, assignee_id, domain_id, client_id, year
@@ -9078,7 +9152,6 @@ class ClientDatabase(Database):
                     request.domain_id,
                     where_qry
                 )
-            print query
             rows = self.select_all(query)
             columns = [
                 "statutory_provision", "statutory_mapping", "compliance_task",
@@ -9360,7 +9433,6 @@ class ClientDatabase(Database):
                 request.domain_id,
                 where_qry
             )
-        print query
         rows = self.select_all(query)
         columns = [
             "statutory_provision", "statutory_mapping", "compliance_task",

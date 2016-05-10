@@ -2857,7 +2857,7 @@ function updateComplianceList(userid, domainid, year){
     $(".table-assignee-wise-compliance-list").hide();
     $(".grid-table-dash1").show();
     client_mirror.getAssigneewiseCompliancesDrilldown(
-        userid, domainid, year,
+        country_id, userid, domainid, year, unit_id, 
         function (status, data) {
             listingCompliance(data, userid, year);
         }
@@ -2978,7 +2978,7 @@ function showPopup(country_assignee, unit_assignee, user_assignee, name_assignee
                 $('.popup-inprogress-count', cloneval).html(val['inprogress_compliance_count']);
                 $('.popup-not-complied-count', cloneval).html(val['not_complied_count']);
                 $(".popup-click-drilldown", cloneval).on("click", function(){
-                    //updateComplianceList(userid, domainArr, parseInt(val['year']));
+                    updateComplianceList(userid, domainArr, parseInt(val['year']));
                 });
                 $('.tbody-popup-list').append(cloneval);
             });

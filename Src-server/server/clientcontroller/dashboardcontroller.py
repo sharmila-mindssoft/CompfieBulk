@@ -320,26 +320,35 @@ def process_get_assigneewise_reassigned_compliances(db, request, session_user, c
 def process_assigneewise_compliances_drilldown(
     db, request, session_user, client_id
 ):
+    country_id = request.country_id
     assignee_id = request.assignee_id
     domain_id = request.domain_id
     year = request.year
+    unit_id = request.unit_id
+    start_count = request.start_count
+    to_count = 1
 
     drill_down_data = {}
     complied, delayed, inprogress, not_complied = db.get_assigneewise_compliances_drilldown_data(
-        assignee_id, domain_id, client_id, year
+        country_id, assignee_id, domain_id, client_id, year, unit_id, start_count,
+        to_count
+    )
+    total_count = db.get_assigneewise_compliances_drilldown_data_count(
+        country_id, assignee_id, domain_id, client_id, year, unit_id
     )
     if (
         (len(complied) > 0) or (len(delayed) > 0)
         or (len(inprogress) > 0) or (len(not_complied) > 0)
     ):
-        drill_down_data[domain_id] = dashboard.AssigneeWiseCompliance(
+        drill_down_data = dashboard.AssigneeWiseCompliance(
             complied=complied,
             delayed=delayed,
             inprogress=inprogress,
             not_complied=not_complied
         )
     return dashboard.GetAssigneeWiseComplianceDrillDownSuccess(
-        drill_down_data=drill_down_data
+        drill_down_data=drill_down_data,
+        total_count=total_count
     )
 
 ########################################################
