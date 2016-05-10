@@ -458,6 +458,42 @@ class GetAssigneewiseYearwiseCompliances(Request):
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id)
         }
 
+class GetAssigneewiseReassignedComplianes(Request):
+    def __init__(
+        self, country_id, unit_id, user_id, domain_id
+    ):
+        self.country_id = country_id
+        self.unit_id = unit_id
+        self.user_id = user_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, [
+                "country_id", "unit_id", "user_id", "domain_id"
+            ]
+        )
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
+        user_id = data.get("user_id")
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        return GetAssigneewiseReassignedComplianes(
+            country_id, unit_id, user_id, domain_id
+        )
+
+    def to_inner_structure(self):
+        return {
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
+            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
+            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
+        }
+
 class GetAssigneeWiseComplianceDrillDown(Request):
     def __init__(self, assignee_id, domain_id, year):
         self.assignee_id = assignee_id
@@ -741,7 +777,7 @@ def _init_Request_class_map():
     GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown,
     GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus,
     GetAssigneewiseComplianesFilters, CheckContractExpiration, 
-    GetAssigneewiseYearwiseCompliances]
+    GetAssigneewiseYearwiseCompliances, GetAssigneewiseReassignedComplianes]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -1058,6 +1094,22 @@ class GetAssigneewiseYearwiseCompliancesSuccess(Response):
     def to_inner_structure(self):
         return {
             "chart_data": to_structure_VectorType_RecordType_dashboard_YearWise(self.chart_data),
+        }
+
+class GetAssigneewiseReassignedComplianesSuccess(Response):
+    def __init__(self, chart_data):
+        self.chart_data = chart_data
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["chart_data"])
+        chart_data = data.get("chart_data")
+        chart_data = parse_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance(chart_data)
+        return GetAssigneewiseReassignedComplianesSuccess(chart_data)
+
+    def to_inner_structure(self):
+        return {
+            "chart_data": to_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance(self.chart_data),
         }
 
 
@@ -1632,25 +1684,29 @@ class AssigneeWiseDetails(object):
 #
 
 class AssigneeChartData(object):
-    def __init__(self, unit_name, assignee_wise_details, address):
+    def __init__(self, unit_name, unit_id, assignee_wise_details, address):
         self.unit_name = unit_name
+        self.unit_id = unit_id
         self.assignee_wise_details = assignee_wise_details
         self.address = address
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_name", "assignee_wise_details", "address"])
+        data = parse_dictionary(data, ["unit_name", "unit_id", "assignee_wise_details", "address"])
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_50(unit_name)
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         assignee_wise_details = data.get("assignee_wise_details")
         assignee_wise_details = parse_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(assignee_wise_details)
         address = data.get("address")
         address = parse_structure_CustomTextType_500(address)
-        return AssigneeChartData(unit_name, assignee_wise_details, address)
+        return AssigneeChartData(unit_name, unit_id, assignee_wise_details, address)
 
     def to_structure(self):
         return {
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
+            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
             "address": to_structure_CustomTextType_500(self.address),
             "assignee_wise_details": to_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(self.assignee_wise_details),
         }

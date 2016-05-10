@@ -106,6 +106,11 @@ def process_client_dashboard_requests(request, db) :
         result = process_assigneewise_yearwise_compliances(db, request, session_user, client_id)
         logger.logClientApi("GetAssigneewiseYearwiseCompliances", "process end")
 
+    elif type(request) is dashboard.GetAssigneewiseReassignedComplianes:
+        logger.logClientApi("GetAssigneewiseReassignedComplianes", "process begin")
+        result = process_get_assigneewise_reassigned_compliances(db, request, session_user, client_id)
+        logger.logClientApi("GetAssigneewiseReassignedComplianes", "process end")
+
     elif type(request) is dashboard.GetAssigneeWiseComplianceDrillDown :
         logger.logClientApi("GetAssigneeWiseComplianceDrillDown", "process begin")
         result = process_assigneewise_compliances_drilldown(db, request, session_user, client_id)
@@ -292,6 +297,18 @@ def process_assigneewise_yearwise_compliances(db, request, session_user, client_
         country_id, unit_id, user_id, client_id
     )
     return dashboard.GetAssigneewiseYearwiseCompliancesSuccess(
+        chart_data=chart_data
+    )
+
+def process_get_assigneewise_reassigned_compliances(db, request, session_user, client_id):
+    country_id = request.country_id
+    unit_id = request.unit_id
+    user_id = request.user_id
+    domain_id = request.domain_id
+    chart_data = db.get_assigneewise_reassigned_compliances(
+        country_id, unit_id, user_id, domain_id, client_id
+    )
+    return dashboard.GetAssigneewiseReassignedComplianesSuccess(
         chart_data=chart_data
     )
 

@@ -774,18 +774,28 @@
 			}
 			function yearwise(){
 				country_id = 1
-                unit_id = 1
-                user_id = 1
+                unit_id = 38
+                user_id = 0
                 client_mirror.getAssigneewiseYearwiseComplianes(
                     country_id, unit_id, user_id, callback
                 );
 			}
+            function reassigned(){
+                country_id = 1
+                unit_id = 38
+                user_id = 0
+                domain_id = 2
+                client_mirror.getAssigneewiseReassignedComplianes(
+                    country_id, unit_id, user_id, domain_id, callback
+                );
+            }
 		</script>
 	</head>
 	<body>
 		<h1>Testing APIs</h1>
 		<div>
 			<button onclick="yearwise()">Assigneewise Yearwise compliance count</button>
+            <button onclick="reassigned()">Assigneewise Reassigned compliance popup</button>
 		</div>
 		<div>
 			<button onclick="login()">Login</button>
