@@ -8553,8 +8553,7 @@ class ClientDatabase(Database):
                 from_date = result[0][1][0][1][0]["start_date"]
                 to_date = result[0][1][0][1][0]["end_date"]
                 query = '''
-                    SELECT tc.domain_id,
-                    (SELECT domain_name FROM tbl_domains td WHERE tc.domain_id = td.domain_id) as Domain,
+                    SELECT tc.domain_id, domain_name,
                     sum(case when (approve_status = 1 and (tch.due_date > completion_date or 
                         tch.due_date = completion_date)) then 1 else 0 end) as complied, 
                     sum(case when ((approve_status = 0 or approve_status is null) and 
@@ -8573,18 +8572,27 @@ class ClientDatabase(Database):
                     INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id)
                     INNER JOIN tbl_users tus ON (tus.user_id = tac.assignee)
                     INNER JOIN tbl_compliances tc ON (tac.compliance_id = tc.compliance_id)
-                    WHERE tch.unit_id = '%d' AND 
+                    INNER JOIN tbl_domains td ON (td.domain_id = tc.domain_id)
+                    WHERE tch.unit_id = '%d' AND domain_name = '%s'
                     group by tch.unit_id, completed_by, tc.domain_id;
                 ''' % (
-                    user_id, unit_id
+                    user_id, unit_id, domain_id
                 )
                 rows = self.select_all(query)
-                domainwise_complied += 0 if rows[0][0] is None else int(rows[0][0])
-                domainwise_inprogress += 0 if rows[0][1] is None else int(rows[0][1])
-                domainwise_notcomplied += 0 if rows[0][2] is None else int(rows[0][2])
-                domainwise_delayed += 0 if rows[0][3] is None else  int(rows[0][3])
-                domainwise_total += domainwise_complied + domainwise_inprogress 
-                domainwise_total += domainwise_notcomplied + domainwise_delayed
+                if rows:
+                    domainwise_complied += 0 if rows[0][0] is None else int(rows[0][0])
+                    domainwise_inprogress += 0 if rows[0][1] is None else int(rows[0][1])
+                    domainwise_notcomplied += 0 if rows[0][2] is None else int(rows[0][2])
+                    domainwise_delayed += 0 if rows[0][3] is None else  int(rows[0][3])
+                    domainwise_total += domainwise_complied + domainwise_inprogress 
+                    domainwise_total += domainwise_notcomplied + domainwise_delayed
+                    print "domain_id = {}".format(domain_id)
+                    print "domainwise_complied : {}".format(domainwise_complied)
+                    print "domainwise_inprogress : {}".format(domainwise_inprogress)
+                    print "domainwise_notcomplied : {}".format(domainwise_notcomplied)
+                    print "domainwise_delayed : {}".format(domainwise_delayed)
+                    print "domainwise_total : {}".format(domainwise_total)
+
             year_wise_compliance_count.append(
                 dashboard.YearWise(
                     year=str(iter_year),
