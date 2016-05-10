@@ -101,6 +101,11 @@ def process_client_dashboard_requests(request, db) :
         result = process_assigneewise_compliances(db, request, session_user, client_id)
         logger.logClientApi("GetAssigneeWiseCompliancesChart", "process end")
 
+    elif type(request) is dashboard.GetAssigneewiseYearwiseCompliances:
+        logger.logClientApi("GetAssigneewiseYearwiseCompliances", "process begin")
+        result = process_assigneewise_yearwise_compliances(db, request, session_user, client_id)
+        logger.logClientApi("GetAssigneewiseYearwiseCompliances", "process end")
+
     elif type(request) is dashboard.GetAssigneeWiseComplianceDrillDown :
         logger.logClientApi("GetAssigneeWiseComplianceDrillDown", "process begin")
         result = process_assigneewise_compliances_drilldown(db, request, session_user, client_id)
@@ -278,6 +283,18 @@ def process_assigneewise_compliances(db, request, session_user, client_id):
     return dashboard.GetAssigneeWiseCompliancesChartSuccess(
         chart_data=chart_data
     )
+
+def process_assigneewise_yearwise_compliances(db, request, session_user, client_id):
+    country_id = request.country_id
+    unit_id = request.unit_id
+    user_id = request.user_id
+    chart_data = db.get_assigneewise_yearwise_compliances(
+        country_id, unit_id, user_id, client_id
+    )
+    return dashboard.GetAssigneewiseYearwiseCompliancesSuccess(
+        chart_data=chart_data
+    )
+
 
 ########################################################
 # To get the detailed info of the selected domain in the
