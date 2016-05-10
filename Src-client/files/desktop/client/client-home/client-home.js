@@ -2803,7 +2803,7 @@ function updateAssigneeWiseComplianceList(data){
                 $('.level1value', cloneval).html(val['domain_name']);
                 $('.total-count', cloneval).html(val['total_compliances']);
                 $('.complied-count', cloneval).html(val['complied_count']);
-                if(val['delayed_compliance']['reassigned_count'] == 0){
+                /*if(val['delayed_compliance']['reassigned_count'] == 0){
                     $('.delayed-count', cloneval).html(val['delayed_compliance']['assigned_count']);
                     $(".delayed-count", cloneval).on("click", function(e){
                         $("#popup-reassigned").show();
@@ -2817,7 +2817,7 @@ function updateAssigneeWiseComplianceList(data){
                     $(cloneval, ".delayedvalue").on("click", function(e){
                         showComplianceNotifications(val['delayed_compliance']['reassigned_compliances']);
                     });
-                }
+                }*/
 
                 $('.inprogress-count', cloneval).html(val['inprogress_compliance_count']);
                 $('.not-complied-count', cloneval).html(val['not_complied_count']);

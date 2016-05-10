@@ -8259,7 +8259,7 @@ class ClientDatabase(Database):
         session_user, client_id, assignee_id
     ):
         query = '''
-            SELECT concat(employee_code, '-', employee_name) as Assignee, tch.completed_by,
+            SELECT concat(IFNULL(employee_code, "Administrator"), '-', employee_name) as Assignee, tch.completed_by,
             concat(unit_code, '-', unit_name) as Unit, address, tc.domain_id,
             (SELECT domain_name FROM tbl_domains td WHERE tc.domain_id = td.domain_id) as Domain,
             sum(case when (approve_status = 1 and (tch.due_date > completion_date or 
@@ -8282,6 +8282,7 @@ class ClientDatabase(Database):
             INNER JOIN tbl_compliances tc ON (tac.compliance_id = tc.compliance_id)
             group by completed_by, tch.unit_id;
         '''
+        print query
         rows = self.select_all(query)
         columns = [
             "assignee", "completed_by", "unit_name", "address", "domain_id", 
