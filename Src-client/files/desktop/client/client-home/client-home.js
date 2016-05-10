@@ -2402,9 +2402,13 @@ function prepareTrendChartData(source_data) {
 
 function updateTrendChart(data) {
     data = prepareTrendChartData(data);
+    console.log(data);
+    print_data = JSON.stringify(data, null, " ");
+    console.log(print_data);
     xAxis = data[0];
     chartTitle = data[1];
     chartDataSeries = data[2];
+    console.log(chartDataSeries);
     var highchart;
     highchart = new Highcharts.Chart({
         chart: {

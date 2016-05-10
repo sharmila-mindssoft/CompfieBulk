@@ -1432,11 +1432,27 @@ function initClientMirror() {
                 "user_id" : user_id
             }
         ];
-        console.log(request);
         callerName = "client_dashboard";
         clientApiRequest(callerName, request, callback);
 
     }
+
+    function getAssigneewiseYearwiseComplianes(
+        country_id, unit_id, user_id, callback
+    ){
+        var request = [
+            "GetAssigneewiseYearwiseCompliances",
+            {
+                "country_id": country_id,
+                "unit_id": unit_id,
+                "user_id" : user_id
+            }
+        ];
+        callerName = "client_dashboard";
+        clientApiRequest(callerName, request, callback);
+
+    }
+
     function getAssigneewiseCompliancesDrilldown(
         assignee_id, domain_id, year, callback
     ){
@@ -1722,6 +1738,7 @@ function initClientMirror() {
         saveReassignCompliance : saveReassignCompliance,
         reassignComplianceDet : reassignComplianceDet,
         getAssigneeWiseCompliances: getAssigneeWiseCompliances,
+        getAssigneewiseYearwiseComplianes: getAssigneewiseYearwiseComplianes
     }
 }
 var client_mirror = initClientMirror();

@@ -426,6 +426,38 @@ class GetAssigneeWiseCompliancesChart(Request):
             "user_id": to_structure_OptionalType_UnsignedIntegerType_32(self.user_id)
         }
 
+class GetAssigneewiseYearwiseCompliances(Request):
+    def __init__(
+        self, country_id, unit_id, user_id
+    ):
+        self.country_id = country_id
+        self.unit_id = unit_id
+        self.user_id = user_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, [
+                "country_id", "unit_id", "user_id"
+            ]
+        )
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
+        user_id = data.get("user_id")
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
+        return GetAssigneewiseYearwiseCompliances(
+            country_id, unit_id, user_id
+        )
+
+    def to_inner_structure(self):
+        return {
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
+            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
+            "user_id": to_structure_UnsignedIntegerType_32(self.user_id)
+        }
+
 class GetAssigneeWiseComplianceDrillDown(Request):
     def __init__(self, assignee_id, domain_id, year):
         self.assignee_id = assignee_id
@@ -662,7 +694,8 @@ def _init_Request_class_map():
     GetComplianceStatusDrillDownData, GetEscalationsDrillDownData,
     GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown,
     GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus,
-    GetAssigneewiseComplianesFilters, CheckContractExpiration]
+    GetAssigneewiseComplianesFilters, CheckContractExpiration, 
+    GetAssigneewiseYearwiseCompliances]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -965,6 +998,23 @@ class GetAssigneeWiseCompliancesChartSuccess(Response):
             "chart_data": to_structure_VectorType_RecordType_dashboard_AssigneeChartData(self.chart_data),
         }
 
+class GetAssigneewiseYearwiseCompliancesSuccess(Response):
+    def __init__(self, chart_data):
+        self.chart_data = chart_data
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["chart_data"])
+        chart_data = data.get("chart_data")
+        chart_data = parse_structure_VectorType_RecordType_dashboard_YearWise(chart_data)
+        return GetAssigneewiseYearwiseCompliancesSuccess(chart_data)
+
+    def to_inner_structure(self):
+        return {
+            "chart_data": to_structure_VectorType_RecordType_dashboard_YearWise(self.chart_data),
+        }
+
+
 class AssigneeWiseCompliance(object):
     def __init__(self, complied, delayed, inprogress, not_complied):
         self.complied = complied
@@ -1137,7 +1187,8 @@ def _init_Response_class_map():
         GetNotificationsSuccess,
         UpdateNotificationStatusSuccess,
         GetAssigneewiseComplianesFiltersSuccess,
-        CheckContractExpirationSuccesss
+        CheckContractExpirationSuccesss,
+        GetAssigneewiseYearwiseCompliancesSuccess
     ]
     class_map = {}
     for c in classes:
