@@ -2850,7 +2850,7 @@ class ClientDatabase(Database):
             group by A.compliance_id \
             ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(C.statutory_mapping, '>>', 1), \
                     '>>', \
-                    - 1) , C.frequency_id \
+                    - 1) , A.compliance_id \
             limit %s, %s" % (
                 str(tuple(unit_ids)),
                 domain_id,
@@ -2882,12 +2882,11 @@ class ClientDatabase(Database):
         WHERE t1.unit_id IN %s \
           AND t1.domain_id = %s \
                 AND t1.is_new = 1 \
-                AND t2.statutory_opted = 1 \
                 AND t2.compliance_opted = 1 \
                 AND t3.is_active = 1 \
                 AND AC.compliance_id IS NULL \
         ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), \
-                '>>', - 1) , t3.frequency_id, t2.compliance_id \
+                '>>', - 1) , t2.compliance_id \
         limit %s, %s " % (
             str(tuple(unit_ids)),
             domain_id,
