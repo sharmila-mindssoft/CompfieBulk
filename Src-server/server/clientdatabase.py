@@ -8220,9 +8220,25 @@ class ClientDatabase(Database):
 #   Assigee wise compliance chart
 #
     def get_assigneewise_compliances_list(
-        self, country_id, business_group_id, legal_entity_id, division_id, unit_id,
-        session_user, client_id, assignee_id
+        self, country_id, business_group_id, legal_entity_id, division_id, 
+        unit_id, session_user, client_id, assignee_id
     ):
+        condition = "tu.country_id = '%d'" % country_id
+        if business_group_id is not None:
+            condition += "tu.business_group_id = '%d'" % (business_group_id)
+        if legal_entity_id is not None:
+            condition += "tu.legal_entity_id = '%d'" % (legal_entity_id)
+        if division_id is not None:
+            condition += "tu.division_id = '%d'" % (division_id)
+        if unit_id is not None:
+            condition += "tu.unit_id = '%d'" % (unit_id)
+        else:
+            condition += "tu.unit_id in (%s)" % (
+                self.get_user_unit_ids(session_user)
+            )
+        if assignee_id is not None:
+            condition += "tch.completed_by = '%d'" % (assignee_id)
+
         query = '''
             SELECT concat(employee_code, '-', employee_name) as Assignee, tch.completed_by,
             concat(unit_code, '-', unit_name) as Unit, address, tc.domain_id,
@@ -8245,8 +8261,11 @@ class ClientDatabase(Database):
             INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id)
             INNER JOIN tbl_users tus ON (tus.user_id = tac.assignee)
             INNER JOIN tbl_compliances tc ON (tac.compliance_id = tc.compliance_id)
+            WHERE %s
             group by completed_by, tch.unit_id;
-        '''
+        ''' % (
+            condition
+        )
         rows = self.select_all(query)
         columns = [
             "assignee", "completed_by", "unit_name", "address", "domain_id", 
@@ -8510,47 +8529,58 @@ class ClientDatabase(Database):
                 )
         return chart_data
 
-    def get_year_wise_assignee_compliances(
-        self, country_id, domain_id, client_id, compliance_ids
+    def get_assigneewise_yearwise_compliances(
+        self, country_id, unit_id, user_id, client_id
     ):
         current_year = self.get_date_time().year
+        domain_ids = [int(x) for x in self.get_user_domains(user_id).split(",")]
         start_year = current_year - 5
         iter_year = start_year
         year_wise_compliance_count = []
         while iter_year <= current_year:
-            result = self.get_country_domain_timelines(
-                [country_id], [domain_id], [iter_year], client_id
-            )
-            from_date = result[0][1][0][1][0]["start_date"]
-            to_date = result[0][1][0][1][0]["end_date"]
-            columns = "sum(case when (approve_status = 1 and (due_date < completion_date or \
-            due_date = completion_date)) then 1 else 0 end) as complied, \
-            sum(case when ((approve_status = 0 or approve_status is null) and \
-            due_date > now()) then 1 else 0 end) as Inprogress, \
-            sum(case when ((approve_status = 0 or approve_status is null) and \
-            due_date < now()) then 1 else 0 end) as NotComplied, \
-            sum(case when (approve_status = 1 and completion_date > due_date) then 1 else 0 end)\
-            as DelayedCompliance"
-            condition = "compliance_id in (%s) and due_date \
-            between '%s' and '%s'" % (
-                compliance_ids, from_date, to_date
-            )
-            rows = self.get_data(
-                self.tblComplianceHistory, columns, condition
-            )
-            complied = 0 if rows[0][0] is None else int(rows[0][0])
-            inprogress = 0 if rows[0][1] is None else int(rows[0][1])
-            not_complied = 0 if rows[0][2] is None else int(rows[0][2])
-            delayed_compliance = 0 if rows[0][3] is None else  int(rows[0][3])
-            total = complied + inprogress + not_complied + delayed_compliance
+            domainwise_complied = 0
+            domainwise_inprogress = 0
+            domainwise_notcomplied = 0
+            domainwise_delayed = 0
+            domainwise_total = 0
+            for domain_id in domain_ids:
+                result = self.get_country_domain_timelines(
+                    [country_id], [domain_id], [iter_year], client_id
+                )
+                from_date = result[0][1][0][1][0]["start_date"]
+                to_date = result[0][1][0][1][0]["end_date"]
+                columns = "sum(case when (approve_status = 1 and (due_date < completion_date or \
+                due_date = completion_date)) then 1 else 0 end) as complied, \
+                sum(case when ((approve_status = 0 or approve_status is null) and \
+                due_date > now()) then 1 else 0 end) as Inprogress, \
+                sum(case when ((approve_status = 0 or approve_status is null) and \
+                due_date < now()) then 1 else 0 end) as NotComplied, \
+                sum(case when (approve_status = 1 and completion_date > due_date) then 1 else 0 end)\
+                as DelayedCompliance"
+                condition = "compliance_id in (SELECT tac.compliance_id FROM \
+                %s tac INNER JOIN %s tc ON (tac.compliance_id = tc.compliance_id) \
+                WHERE assignee='%d' and domain_id = '%d') and due_date \
+                between '%s' and '%s'" % (
+                    self.tblAssignedCompliances, self.tblCompliances,
+                    user_id, domain_id, from_date, to_date
+                )
+                rows = self.get_data(
+                    self.tblComplianceHistory, columns, condition
+                )
+                domainwise_complied += 0 if rows[0][0] is None else int(rows[0][0])
+                domainwise_inprogress += 0 if rows[0][1] is None else int(rows[0][1])
+                domainwise_notcomplied += 0 if rows[0][2] is None else int(rows[0][2])
+                domainwise_delayed += 0 if rows[0][3] is None else  int(rows[0][3])
+                domainwise_total += domainwise_complied + domainwise_inprogress 
+                domainwise_total += domainwise_notcomplied + domainwise_delayed
             year_wise_compliance_count.append(
                 dashboard.YearWise(
                     year=str(iter_year),
-                    total_compliances=total,
-                    complied_count=complied,
-                    delayed_compliance=delayed_compliance,
-                    inprogress_compliance_count=inprogress,
-                    not_complied_count=not_complied
+                    total_compliances=domainwise_total,
+                    complied_count=domainwise_complied,
+                    delayed_compliance=domainwise_delayed,
+                    inprogress_compliance_count=domainwise_inprogress,
+                    not_complied_count=domainwise_notcomplied
                 )
             )
             iter_year += 1
