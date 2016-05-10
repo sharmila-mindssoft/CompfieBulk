@@ -280,7 +280,8 @@ CREATE TABLE `tbl_assigned_compliances` (
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`unit_id`, `compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_reassigned_compliances_history`;
 CREATE TABLE `tbl_reassigned_compliances_history` (
@@ -506,3 +507,5 @@ ALTER TABLE `tbl_statutory_notification_status` ADD CONSTRAINT `fk_statutory_not
 ALTER TABLE `tbl_statutory_notification_status` ADD INDEX `user_id_idx` (`user_id`);
 ALTER TABLE `tbl_statutory_notifications_units` ADD CONSTRAINT `fk_statutory_notify_unit_id` FOREIGN KEY (`statutory_notification_id`) REFERENCES `tbl_statutory_notifications_log` (`statutory_notification_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE `tbl_statutory_notifications_units` ADD CONSTRAINT `fk_notify_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+SET GLOBAL connect_timeout=120000;
+SET GLOBAL wait_timeout=120000;

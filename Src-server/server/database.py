@@ -180,8 +180,8 @@ class Database(object) :
             cursor.execute(query)
             return cursor.fetchall()
         except Exception, e:
-            logger.logClientApi(query)
-            logger.logClientApi(e)
+            logger.logClientApi("select_all", query)
+            logger.logClientApi("select_all", e)
             return
 
     ########################################################
@@ -267,7 +267,13 @@ class Database(object) :
         query = "INSERT INTO %s (%s) VALUES (%s)" % (
             table, columns, stringValue
         )
-        return self.execute(query)
+        try:
+            return self.execute(query)
+        except Exception, e:
+            logger.logKnowledgeApi("insert", query)
+            logger.logKnowledgeApi("insert", e)
+            return
+
 
     ########################################################
     # To form a bulk insert query
@@ -281,7 +287,12 @@ class Database(object) :
                 query += "%s," % str(value)
             else:
                 query += str(value)
-        return self.execute(query)
+        try:
+            return self.execute(query)
+        except Exception, e:
+            logger.logKnowledgeApi("bulk_insert", query)
+            logger.logKnowledgeApi("bulk_insert", e)
+            return
 
     ########################################################
     # To form a update query
@@ -294,7 +305,14 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
-        return self.execute(query)
+        try:
+            return self.execute(query)
+        except Exception, e:
+            logger.logKnowledgeApi("update", query)
+            logger.logKnowledgeApi("update", e)
+            return
+
+
 
     ########################################################
     # Insert a row If already key exists
@@ -329,7 +347,13 @@ class Database(object) :
     ########################################################
     def delete(self, table, condition, client_id=None):
         query = "DELETE from "+table+" WHERE "+condition
-        return self.execute(query)
+        try:
+            return self.execute(query)
+        except Exception, e:
+            logger.logClientApi("delete", query)
+            logger.logClientApi("delete", e)
+            return
+
 
     ########################################################
     # To concate the value with the existing value in the

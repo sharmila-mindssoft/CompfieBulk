@@ -668,10 +668,17 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAuditTrail(callback) {
+
+    function getAuditTrail(fromDate, toDate, userId, formId, recordCount, callback) {
         callerName = "client_masters"
         var request = [
-            "GetAuditTrails", {}
+            "GetAuditTrails", {
+                "from_date": fromDate,
+                "to_date": toDate,
+                "user_id": userId,
+                "form_id": formId,
+                "record_count": recordCount
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -915,7 +922,7 @@ function initClientMirror() {
 
     function getComplianceApprovalList(start_count, callback) {
         var request = [
-            "GetComplianceApprovalList", 
+            "GetComplianceApprovalList",
             {
                 "start_count": start_count
             }
@@ -1334,10 +1341,10 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getLoginTrace(callback){
+    function getLoginTrace(record_count, callback){
         var request = [
             "GetLoginTrace",{
-                "record_count" : 0
+                "record_count" : record_count
             }
         ];
         callerName = "client_reports";
@@ -1464,7 +1471,7 @@ function initClientMirror() {
     function getTaskApplicabilityReportData(
         country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id,
-        statutory_name, applicable_status, csv, callback
+        statutory_name, applicable_status, csv, record_count, callback
     ) {
         var request = [
             "GetComplianceTaskApplicabilityStatusReport", {
@@ -1476,6 +1483,7 @@ function initClientMirror() {
                 "unit_id": unit_id,
                 "statutory_name": statutory_name,
                 "applicable_status": applicable_status,
+                "record_count":record_count,
                 "csv": csv
             }
         ];
