@@ -564,17 +564,19 @@ class GetPastRecordsFormData(Request):
 
 class GetStatutoriesByUnit(Request):
     def __init__(self, unit_id, domain_id, level_1_statutory_name,
-        compliance_frequency, country_id):
+        compliance_frequency, country_id, start_count):
         self.unit_id = unit_id
         self.domain_id = domain_id
         self.level_1_statutory_name = level_1_statutory_name
         self.compliance_frequency = compliance_frequency
         self.country_id = country_id
+        self.start_count = start_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["unit_id", "domain_id",
-            "level_1_statutory_name", "compliance_frequency", "country_id"])
+            "level_1_statutory_name", "compliance_frequency", 
+            "country_id", "start_count"])
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         domain_id = data.get("domain_id")
@@ -585,9 +587,11 @@ class GetStatutoriesByUnit(Request):
         compliance_frequency = parse_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        start_count = data.get("start_count")
+        start_count = parse_structure_UnsignedIntegerType_32(start_count)
         return GetStatutoriesByUnit(
             unit_id, domain_id, level_1_statutory_name,
-            compliance_frequency, country_id
+            compliance_frequency, country_id, start_count
         )
 
     def to_inner_structure(self):
@@ -596,7 +600,8 @@ class GetStatutoriesByUnit(Request):
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
             "level_1_statutory_name": to_structure_OptionalType_CustomTextType_100(self.level_1_statutory_name),
             "compliance_frequency": to_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
-            "country_id": to_structure_UnsignedIntegerType_32(self.country_id)
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
+            "start_count": to_structure_UnsignedIntegerType_32(self.start_count)
         }
 
 class SavePastRecords(Request):
@@ -1096,23 +1101,27 @@ class GetPastRecordsFormDataSuccess(Response):
         }
 
 class GetStatutoriesByUnitSuccess(Response):
-    def __init__(self, statutory_wise_compliances, users):
+    def __init__(self, statutory_wise_compliances, users, total_count):
         self.statutory_wise_compliances = statutory_wise_compliances
         self.users = users
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory_wise_compliances", "users"])
+        data = parse_dictionary(data, ["statutory_wise_compliances", "users", "total_count"])
         statutory_wise_compliances = data.get("statutory_wise_compliances")
         statutory_wise_compliances = parse_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES(statutory_wise_compliances)
         users = data.get("users")
         users = parse_structure_VectorType_RecordType_core_User(users)
-        return GetStatutoriesByUnitSuccess(statutory_wise_compliances, users)
+        total_count = data.get("total_count")
+        total_count = parse_structure_UnsignedIntegerType_32(total_count)
+        return GetStatutoriesByUnitSuccess(statutory_wise_compliances, users, total_count)
 
     def to_inner_structure(self):
         return {
             "statutory_wise_compliances" : to_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES(self.statutory_wise_compliances),
-            "users" : to_structure_VectorType_RecordType_core_User(self.users)
+            "users" : to_structure_VectorType_RecordType_core_User(self.users),
+            "total_count": to_structure_UnsignedIntegerType_32(self.total_count)
         }
 
 class NotEnoughSpaceAvailable(Response):

@@ -1248,7 +1248,7 @@ function initMirror() {
     }
 
     function getClientDetailsReport(countryId, clientId, businessGroupId, legalEntityId, divisionId,
-        unitId, domainIds, callback){
+        unitId, domainIds, start_count, callback){
         callerName = "techno_report"
         var request = [
             "GetClientDetailsReportData",
@@ -1259,7 +1259,8 @@ function initMirror() {
                 "legal_entity_id" : legalEntityId,
                 "division_id" : divisionId,
                 "unit_id": unitId,
-                "domain_ids" : domainIds
+                "domain_ids" : domainIds,
+                "start_count" : start_count
             }
         ];
         apiRequest(callerName, request, callback);

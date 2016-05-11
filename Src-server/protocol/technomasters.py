@@ -1079,6 +1079,19 @@ class NotAnImageFile(Response):
         return {
         }
 
+class ServerIsFull(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ServerIsFull()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class BusinessGroupNameAlreadyExists(Response):
     def __init__(self):
         pass
@@ -1344,7 +1357,7 @@ def _init_Response_class_map():
         InvalidUnitId, UserIsNotResponsibleForAnyClient, ClientCreationFailed,
         CannotDeactivateCountry, CannotDeactivateDomain, CreateNewAdminSuccess,
         ClientDatabaseNotExists, CannotDeactivateClient, ReassignFirst,
-        InvalidNoOfLicence, InvalidFileSpace
+        InvalidNoOfLicence, InvalidFileSpace, ServerIsFull, NotAnImageFile
     ]
     class_map = {}
     for c in classes:

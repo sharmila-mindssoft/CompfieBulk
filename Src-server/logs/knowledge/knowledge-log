@@ -286,3 +286,169 @@ NameError: global name 'employee_code' is not defined
 2016-05-06 19:31:01,637 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'CZTNJW7'@'localhost' (using password: YES)")
 2016-05-06 19:31:01,638 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'XAKHUFU'@'localhost' (using password: YES)")
 2016-05-06 19:31:01,639 - knowledge_logger - database.py-connect : (1045, "Access denied for user 'DK31NTQ'@'localhost' (using password: YES)")
+2016-05-09 13:37:57,021 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 13:39:57,058 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 13:41:57,066 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 13:43:57,074 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 13:45:57,081 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 13:47:57,089 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 13:49:57,097 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 13:51:57,104 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 13:53:57,111 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 13:55:57,119 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 13:57:57,127 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 13:59:57,134 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:01:57,142 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:03:57,181 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:05:57,189 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:07:57,195 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:09:57,234 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:11:57,241 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:13:57,248 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:15:57,256 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:17:57,263 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:19:57,270 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:21:57,278 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:23:57,285 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:25:57,292 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:27:57,300 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:29:57,316 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:31:57,324 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:33:57,382 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:35:57,389 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:37:57,397 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:39:57,404 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:41:57,412 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:43:57,429 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:45:57,437 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:47:57,446 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:49:57,454 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 14:51:57,462 - knowledge_logger - database.py-connect : (1049, "Unknown database 'compfie_sms_6'")
+2016-05-09 15:11:22,912 - knowledge_logger - main.py-handle-api- : not enough arguments for format string
+2016-05-09 15:11:22,912 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 134, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 220, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 38, in process_techno_report_request
+    result = process_get_client_details_report_data(db, request_frame, user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 122, in process_get_client_details_report_data
+    request.unit_id, request.domain_ids, request.start_count, to_count
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 6235, in get_client_details_report
+    int(start_count), to_count
+TypeError: not enough arguments for format string
+
+2016-05-09 15:11:26,990 - knowledge_logger - main.py-handle-api- : not enough arguments for format string
+2016-05-09 15:11:26,990 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 134, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 220, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 38, in process_techno_report_request
+    result = process_get_client_details_report_data(db, request_frame, user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 122, in process_get_client_details_report_data
+    request.unit_id, request.domain_ids, request.start_count, to_count
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 6235, in get_client_details_report
+    int(start_count), to_count
+TypeError: not enough arguments for format string
+
+2016-05-09 15:12:21,606 - knowledge_logger - main.py-handle-api- : logClientApi() takes exactly 2 arguments (1 given)
+2016-05-09 15:12:21,606 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 134, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 220, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 38, in process_techno_report_request
+    result = process_get_client_details_report_data(db, request_frame, user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 122, in process_get_client_details_report_data
+    request.unit_id, request.domain_ids, request.start_count, to_count
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 6239, in get_client_details_report
+    rows = self.select_all(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 183, in select_all
+    logger.logClientApi(query)
+TypeError: logClientApi() takes exactly 2 arguments (1 given)
+
+2016-05-09 15:13:02,244 - knowledge_logger - main.py-handle-api- : logClientApi() takes exactly 2 arguments (1 given)
+2016-05-09 15:13:02,244 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 134, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 220, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 38, in process_techno_report_request
+    result = process_get_client_details_report_data(db, request_frame, user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 122, in process_get_client_details_report_data
+    request.unit_id, request.domain_ids, request.start_count, to_count
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 6239, in get_client_details_report
+    rows = self.select_all(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 183, in select_all
+    logger.logClientApi(query)
+TypeError: logClientApi() takes exactly 2 arguments (1 given)
+
+2016-05-09 15:14:11,328 - knowledge_logger - main.py-handle-api- : None
+2016-05-09 15:14:11,329 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 134, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 220, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 38, in process_techno_report_request
+    result = process_get_client_details_report_data(db, request_frame, user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 122, in process_get_client_details_report_data
+    request.unit_id, request.domain_ids, request.start_count, to_count
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 6267, in get_client_details_report
+    for division in grouped_units[business_group][legal_entity_id]:
+KeyError: None
+
+2016-05-09 15:14:18,576 - knowledge_logger - main.py-handle-api- : None
+2016-05-09 15:14:18,576 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 134, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 220, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 38, in process_techno_report_request
+    result = process_get_client_details_report_data(db, request_frame, user_id)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 122, in process_get_client_details_report_data
+    request.unit_id, request.domain_ids, request.start_count, to_count
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database.py", line 6267, in get_client_details_report
+    for division in grouped_units[business_group][legal_entity_id]:
+KeyError: None
+
+2016-05-09 15:14:47,804 - knowledge_logger - main.py-handle-api- : global name 'to_structure_OptionalType_CustomTextType_250' is not defined
+2016-05-09 15:14:47,804 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 139, in handle_api_request
+    respond(response_data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in respond
+    response_data, response
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 88, in _send_response
+    data = response_data.to_structure()
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technoreports.py", line 343, in to_structure
+    inner = self.to_inner_structure()
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technoreports.py", line 488, in to_inner_structure
+    "units": to_structure_VectorType_RecordType_techno_report_GroupedUnits(self.units),
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/to_structure.py", line 1569, in to_structure_VectorType_RecordType_techno_report_GroupedUnits
+    lst.append(to_structure_RecordType_techno_report_GroupedUnits(item))
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/to_structure.py", line 1704, in to_structure_RecordType_techno_report_GroupedUnits
+    return technoreports.GroupedUnits.to_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technoreports.py", line 424, in to_structure
+    "division_name": to_structure_OptionalType_CustomTextType_250(self.division_name),
+NameError: global name 'to_structure_OptionalType_CustomTextType_250' is not defined
+
+2016-05-09 15:15:15,054 - knowledge_logger - main.py-handle-api- : global name 'to_structure_VectorType_RecordType_client_report_UnitDetails' is not defined
+2016-05-09 15:15:15,054 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 139, in handle_api_request
+    respond(response_data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 129, in respond
+    response_data, response
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 88, in _send_response
+    data = response_data.to_structure()
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technoreports.py", line 345, in to_structure
+    inner = self.to_inner_structure()
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technoreports.py", line 490, in to_inner_structure
+    "units": to_structure_VectorType_RecordType_techno_report_GroupedUnits(self.units),
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/to_structure.py", line 1569, in to_structure_VectorType_RecordType_techno_report_GroupedUnits
+    lst.append(to_structure_RecordType_techno_report_GroupedUnits(item))
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/to_structure.py", line 1704, in to_structure_RecordType_techno_report_GroupedUnits
+    return technoreports.GroupedUnits.to_structure(data)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/protocol/technoreports.py", line 429, in to_structure
+    "units" : to_structure_VectorType_RecordType_client_report_UnitDetails(self.units)
+NameError: global name 'to_structure_VectorType_RecordType_client_report_UnitDetails' is not defined
+

@@ -83,7 +83,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_Text,
     parse_structure_Bool,
     parse_structure_OptionalType_VectorType_CustomTextType_500,
-    parse_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData
+    parse_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData,
+    parse_structure_OptionalType_CustomTextType_250
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
@@ -171,7 +172,8 @@ from protocol.to_structure import (
     to_structure_Bool,
     to_structure_OptionalType_VectorType_CustomTextType_500,
     to_structure_MapType_CustomTextType_500_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ActivityData,
-    to_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData
+    to_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData,
+    to_structure_OptionalType_CustomTextType_250
 )
 
 #
@@ -606,7 +608,8 @@ class GetClientDetailsReportFilters(Request):
 
 class GetClientDetailsReportData(Request):
     def __init__(
-        self, country_id, business_group_id, legal_entity_id, division_id, unit_id, domain_ids, csv
+        self, country_id, business_group_id, legal_entity_id, division_id, 
+        unit_id, domain_ids, csv, start_count
     ):
         self.country_id = country_id
         self.business_group_id = business_group_id
@@ -615,13 +618,14 @@ class GetClientDetailsReportData(Request):
         self.unit_id = unit_id
         self.domain_ids = domain_ids
         self.csv = csv
+        self.start_count = start_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
                 "country_id", "business_group_id", "legal_entity_id", "division_id",
-                "unit_id", "domain_ids", "csv"
+                "unit_id", "domain_ids", "csv", "start_count"
             ]
         )
         country_id = data.get("country_id")
@@ -638,8 +642,11 @@ class GetClientDetailsReportData(Request):
         domain_ids = parse_structure_OptionalType_VectorType_SignedIntegerType_8(domain_ids)
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
+        start_count = data.get("start_count")
+        start_count = parse_structure_UnsignedIntegerType_32(start_count)
         return GetClientDetailsReportData(
-            country_id, business_group_id, legal_entity_id, division_id, unit_id, domain_ids, csv
+            country_id, business_group_id, legal_entity_id, division_id, 
+            unit_id, domain_ids, csv, start_count
         )
 
     def to_inner_structure(self):
@@ -650,7 +657,8 @@ class GetClientDetailsReportData(Request):
             "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
             "domain_ids": to_structure_OptionalType_VectorType_SignedIntegerType_8(self.domain_ids),
-            "csv": to_structure_Bool(self.csv)
+            "csv": to_structure_Bool(self.csv),
+            "start_count": to_structure_UnsignedIntegerType_32(self.start_count)
         }
 
 class GetTaskApplicabilityStatusFilters(Request):
@@ -1732,19 +1740,23 @@ class GetLoginTraceSuccess(Response):
         }
 
 class GetClientDetailsReportDataSuccess(Response):
-    def __init__(self, units):
+    def __init__(self, units, total_count):
         self.units = units
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["units"])
+        data = parse_dictionary(data, ["units", "total_count"])
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_core_UnitDetails(units)
-        return GetClientDetailsReportDataSuccess(units)
+        total_count = data.get("total_count")
+        total_count = parse_structure_UnsignedIntegerType_32(total_count)
+        return GetClientDetailsReportDataSuccess(units, total_count)
 
     def to_inner_structure(self):
         return {
-            "units": to_structure_VectorType_RecordType_client_report_GroupedUnits(self.units)
+            "units": to_structure_VectorType_RecordType_client_report_GroupedUnits(self.units),
+            "total_count": to_structure_UnsignedIntegerType_32(self.total_count)
         }
 
 class GetClientDetailsReportFiltersSuccess(Response):
@@ -2829,30 +2841,30 @@ class UserWiseCompliance(object):
         }
 
 class GroupedUnits(object):
-    def __init__(self, division_id, legal_entity_id, business_group_id, units):
-        self.division_id = division_id
-        self.legal_entity_id = legal_entity_id
-        self.business_group_id = business_group_id
+    def __init__(self, division_name, legal_entity_name, business_group_name, units):
+        self.division_name = division_name
+        self.legal_entity_name = legal_entity_name
+        self.business_group_name = business_group_name
         self.units = units
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["division_id", "legal_entity_id", "business_group_id", "units"])
-        division_id = data.get("division_id")
-        division_id = parse_structure_OptionalType_UnsignedIntegerType_32(division_id)
-        legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
-        business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_OptionalType_UnsignedIntegerType_32(business_group_id)
+        data = parse_dictionary(data, ["division_name", "legal_entity_name", "business_group_name", "units"])
+        division_name = data.get("division_name")
+        division_name = parse_structure_OptionalType_CustomTextType_250(division_name)
+        legal_entity_name = data.get("legal_entity_name")
+        legal_entity_name = parse_structure_CustomTextType_250(legal_entity_name)
+        business_group_name = data.get("business_group_name")
+        business_group_name = parse_structure_OptionalType_CustomTextType_250(business_group_name)
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_client_report_UnitDetails(units)
-        return GroupedUnits(division_id, legal_entity_id, business_group_id, units)
+        return GroupedUnits(division_name, legal_entity_name, business_group_name, units)
 
     def to_structure(self):
         return {
-            "division_id": to_structure_OptionalType_UnsignedIntegerType_32(self.division_id),
-            "legal_entity_id": to_structure_UnsignedIntegerType_32(self.legal_entity_id),
-            "business_group_id": to_structure_OptionalType_UnsignedIntegerType_32(self.business_group_id),
+            "division_name": to_structure_OptionalType_CustomTextType_250(self.division_name),
+            "legal_entity_name": to_structure_CustomTextType_250(self.legal_entity_name),
+            "business_group_name": to_structure_OptionalType_CustomTextType_250(self.business_group_name),
             "units" : to_structure_VectorType_RecordType_client_report_UnitDetails(self.units)
         }
 

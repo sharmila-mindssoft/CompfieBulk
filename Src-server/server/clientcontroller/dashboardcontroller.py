@@ -101,6 +101,16 @@ def process_client_dashboard_requests(request, db) :
         result = process_assigneewise_compliances(db, request, session_user, client_id)
         logger.logClientApi("GetAssigneeWiseCompliancesChart", "process end")
 
+    elif type(request) is dashboard.GetAssigneewiseYearwiseCompliances:
+        logger.logClientApi("GetAssigneewiseYearwiseCompliances", "process begin")
+        result = process_assigneewise_yearwise_compliances(db, request, session_user, client_id)
+        logger.logClientApi("GetAssigneewiseYearwiseCompliances", "process end")
+
+    elif type(request) is dashboard.GetAssigneewiseReassignedComplianes:
+        logger.logClientApi("GetAssigneewiseReassignedComplianes", "process begin")
+        result = process_get_assigneewise_reassigned_compliances(db, request, session_user, client_id)
+        logger.logClientApi("GetAssigneewiseReassignedComplianes", "process end")
+
     elif type(request) is dashboard.GetAssigneeWiseComplianceDrillDown :
         logger.logClientApi("GetAssigneeWiseComplianceDrillDown", "process begin")
         result = process_assigneewise_compliances_drilldown(db, request, session_user, client_id)
@@ -221,10 +231,10 @@ def process_compliance_applicability_drill_down(db, request, session_user, clien
 
 def process_get_notifications(db, request, session_user, client_id):
     notifications = None
-    to_count = 500
+    to_count = 5
     notifications = db.get_notifications(
-        request.notification_type,
-        # request.start_count, to_count,
+        request.notification_type, 
+        request.start_count, to_count, 
         session_user, client_id
     )
     return dashboard.GetNotificationsSuccess(notifications = notifications)
@@ -279,6 +289,30 @@ def process_assigneewise_compliances(db, request, session_user, client_id):
         chart_data=chart_data
     )
 
+def process_assigneewise_yearwise_compliances(db, request, session_user, client_id):
+    country_id = request.country_id
+    unit_id = request.unit_id
+    user_id = request.user_id
+    chart_data = db.get_assigneewise_yearwise_compliances(
+        country_id, unit_id, user_id, client_id
+    )
+    return dashboard.GetAssigneewiseYearwiseCompliancesSuccess(
+        chart_data=chart_data
+    )
+
+def process_get_assigneewise_reassigned_compliances(db, request, session_user, client_id):
+    country_id = request.country_id
+    unit_id = request.unit_id
+    user_id = request.user_id
+    domain_id = request.domain_id
+    chart_data = db.get_assigneewise_reassigned_compliances(
+        country_id, unit_id, user_id, domain_id, client_id
+    )
+    return dashboard.GetAssigneewiseReassignedComplianesSuccess(
+        chart_data=chart_data
+    )
+
+
 ########################################################
 # To get the detailed info of the selected domain in the
 # assignee wise compliances chart
@@ -286,26 +320,35 @@ def process_assigneewise_compliances(db, request, session_user, client_id):
 def process_assigneewise_compliances_drilldown(
     db, request, session_user, client_id
 ):
+    country_id = request.country_id
     assignee_id = request.assignee_id
     domain_id = request.domain_id
     year = request.year
+    unit_id = request.unit_id
+    start_count = request.start_count
+    to_count = 5
 
     drill_down_data = {}
     complied, delayed, inprogress, not_complied = db.get_assigneewise_compliances_drilldown_data(
-        assignee_id, domain_id, client_id, year
+        country_id, assignee_id, domain_id, client_id, year, unit_id, start_count,
+        to_count
+    )
+    total_count = db.get_assigneewise_compliances_drilldown_data_count(
+        country_id, assignee_id, domain_id, client_id, year, unit_id
     )
     if (
         (len(complied) > 0) or (len(delayed) > 0)
         or (len(inprogress) > 0) or (len(not_complied) > 0)
     ):
-        drill_down_data[domain_id] = dashboard.AssigneeWiseCompliance(
+        drill_down_data = dashboard.AssigneeWiseCompliance(
             complied=complied,
             delayed=delayed,
             inprogress=inprogress,
             not_complied=not_complied
         )
     return dashboard.GetAssigneeWiseComplianceDrillDownSuccess(
-        drill_down_data=drill_down_data
+        drill_down_data=drill_down_data,
+        total_count=total_count
     )
 
 ########################################################
@@ -317,6 +360,8 @@ def check_contract_expiration(
     db, request, session_user, client_id
 ):
     no_of_days_left = db.get_no_of_days_left_for_contract_expiration()
+    if no_of_days_left < 0:
+        no_of_days_left = 0
     notification_count, reminder_count, escalation_count = db.get_dashboard_notification_counts(
         session_user
     )

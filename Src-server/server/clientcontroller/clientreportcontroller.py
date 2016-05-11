@@ -516,6 +516,7 @@ def get_client_details_report_filters(db, request, session_user, client_id):
     )
 
 def get_client_details_report_data(db, request, session_user, client_id):
+    to_count = 500
     if request.csv:
         converter = ConvertJsonToCSV(db, request, session_user, client_id, "ClientDetails")
         return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
@@ -523,9 +524,16 @@ def get_client_details_report_data(db, request, session_user, client_id):
         units = db.get_client_details_report(
             request.country_id, request.business_group_id,
             request.legal_entity_id, request.division_id, request.unit_id,
+            request.domain_ids, session_user, request.start_count, to_count
+        )
+        total_count = db.get_client_details_count(
+            request.country_id, request.business_group_id,
+            request.legal_entity_id, request.division_id, request.unit_id,
             request.domain_ids, session_user
         )
-        return clientreport.GetClientDetailsReportDataSuccess(units=units)
+        return clientreport.GetClientDetailsReportDataSuccess(
+            units=units, total_count=total_count
+        )
 
 def export_to_csv(db, request, session_user, client_id):
     converter = ConvertJsonToCSV(db, request, session_user)
