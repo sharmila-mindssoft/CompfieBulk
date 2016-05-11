@@ -1995,6 +1995,11 @@ class ClientDatabase(Database):
             total_count += len(final_due_dates)
             for due_date in final_due_dates:
                 if int(start_count) <= compliance_count and compliance_count < (int(start_count)+to_count):
+                    due_date_parts = due_date.replace("'","").split("-")
+                    year = due_date_parts[0]
+                    month = due_date_parts[1]
+                    day = due_date_parts[2]
+                    due_date = datetime.date(int(year), int(month), int(day))
                     level_1_statutory_wise_compliances[
                         statutories[0].strip()
                     ].append(
@@ -2026,28 +2031,33 @@ class ClientDatabase(Database):
     def filter_out_due_dates(self, unit_id, compliance_id, due_dates_list):
         # Checking same due date already exists
         if due_dates_list is not None and len(due_dates_list) > 0:
-            due_dates = ",".join(str(x) for x in due_dates_list)
+            formated_date_list = []
+            for x in due_dates_list:
+                x = str(x)
+                x.replace(" ", "")
+                formated_date_list.append('%s%s%s' % ("'", x, "'"))
+            due_dates = ",".join(str(x) for x in formated_date_list)
             query = '''
                 SELECT is_ok FROM
-                (SELECT (CASE WHEN (unit_id = '{}' AND due_date IN ({}) AND \
-                compliance_id = '{}') THEN due_date ELSE 'NotExists' END ) as 
+                (SELECT (CASE WHEN (unit_id = '{}' AND DATE(due_date) IN ({}) AND \
+                compliance_id = '{}') THEN DATE(due_date) ELSE 'NotExists' END ) as 
                 is_ok FROM {} ) a WHERE is_ok != "NotExists"'''.format(
                 unit_id, due_dates, compliance_id, self.tblComplianceHistory
             )
             rows = self.select_all(query)
             if len(rows) > 0:
                 for row in rows:
-                    due_dates_list.remove(row[0])
+                    formated_date_list.remove("%s%s%s" % ("'", row[0], "'"))
             result_due_date = []
-            for current_due_date_index, due_date in enumerate(due_dates_list):
+            for current_due_date_index, due_date in enumerate(formated_date_list):
                 next_due_date = None
                 if len(due_dates_list)-1 < current_due_date_index+1:
                     continue
                 else:
                     next_due_date = due_dates_list[current_due_date_index+1]
                     columns = "count(*)"
-                    condition = "unit_id = '{}' AND due_date < '{}' AND compliance_id = '{}' AND \
-                    approve_status = 1 and validity_date > '{}' and validity_date > '{}'".format(
+                    condition = "unit_id = '{}' AND due_date < {} AND compliance_id = '{}' AND \
+                    approve_status = 1 and validity_date > {} and validity_date > '{}'".format(
                         unit_id, due_date, compliance_id, due_date, next_due_date
                     )
                     rows = self.get_data(self.tblComplianceHistory, columns, condition)
