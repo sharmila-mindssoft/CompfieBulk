@@ -7393,10 +7393,69 @@ class ClientDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return self.return_risk_report_data(result)
 
+    def get_unassigned_compliances(
+        self, country_id, domain_id, business_group_id,
+        legal_entity_id, division_id, unit_id, leval_1_statutory_name,
+        statutory_status, session_user
+    ) :
+        where_qry = ""
+        if business_group_id is not None :
+            where_qry = " AND u.business_group_id = %s " % (business_group_id)
+
+        if legal_entity_id is not None :
+            where_qry = " AND u.legal_entity_id = %s " % (legal_entity_id)
+
+        if division_id is not None :
+            where_qry = " AND u.division_id = %s " % (division_id)
+
+        if unit_id is not None :
+            where_qry = " AND u.unit_id = %s " % (unit_id)
+
+        if level_1_statutory_name is not None :
+            where_qry = " AND c.statutory_mapping like '%s' " % (level_1_statutory + '%')
+
+        query = "SELECT c.compliance_id, c.compliance_task, c.document_name, \
+            c.statutory_dates, c.compliance_description, c.penal_consequences, c.frequency_id, \
+            (select frequnecy from tbl_compliance_frequency where frequency_id = c.frequency_id ),\
+            SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) level_1, \
+            (select business_group_name from tbl_business_groups where business_group_id = u.business_group_id ), \
+            (select legal_entity_name from tbl_legal_entities where legal_entity_id = u.legal_entity_id), \
+            (select division_name from tbl_divisions where division_id = u.division_id), \
+            u.unit_code, u.unit_name, u.address, u.postal_code \
+            FROM tbl_compliances c \
+            INNER JOIN tbl_client_compliances cc \
+            ON c.compliance_id = cc.compliance_id \
+            INNEr JOIN tbl_client_statutories cs  \
+            ON cs.client_statutory_id = cc.client_statutory_id \
+            INNER JOIN tbl_units u ON  \
+            cs.unit_id = u.unit_id \
+            INNEr JOIN tbl_assigned_compliances ac \
+            ON ac.complaince_id = cc.compliance_id and \
+            ac.unit_id = cs.unit_id \
+            WHERE  ac.compliance_id is Null \
+            AND c.domain_id = %s \
+            AND cs.county_id = %s \
+            %s \
+            order by level_1" % (
+                domain_id, country_id,
+                where_qry
+            )
+        columns = [
+            "compliance_id", "compliance_task", "document_name",
+            "statutory_dates", "compliance_description", "penal_consequences",
+            "frequency_id", "frequnecy", "level_1", "business_group", "legal_entity",
+            "division", "unit_code", "unit_name",
+            "address", "postal_code"
+        ]
+        rows = self.select_all(query)
+        result = self.convert_to_dict(rows, columns)
+        return self.return_risk_report_data(result)
+
     def return_risk_report_data(self, data) :
+        report_data_list = []
         for d in data :
             business_group_name = d["business_group"]
-            legal_entity_name = d["legal_entity"]
+            legal_entity = d["legal_entity"]
             division_name = d["division"]
             level_1 = d["level_1"]
             compliance_name = d["compliance_task"]
@@ -7447,13 +7506,46 @@ class ClientDatabase(Database):
                 elif d["duration_type_id"] == 2 :  # Hours
                     if d["duration"] is not None:
                         repeats = "Complete within %s Hour/s" % (d["duration"])
-            compliances_list.append(
-                clientreport.Level1Compliance(
-                    statutory_mapping, compliance_name,
-                    d["compliance_description"], d["penal_consequences"],
-                    d["frequency"], repeats
-                )
+            compliance = clientreport.Level1Compliance(
+                statutory_mapping, compliance_name,
+                d["compliance_description"], d["penal_consequences"],
+                d["frequency"], repeats
             )
+            unit_name = "%s - %s" % (
+                d["unit_code"], d["unit_name"]
+            )
+            address = d["address"] + " - " + d["postal_code"]
+            unit_wise_comp = clientreport.Level1Statutory(
+                unit_name, address, [compliance]
+            )
+            level_1_statutory_wise_units = {}
+            level_1_statutory_wise_units[level_1] = [unit_wise_comp]
+            report_data = clientreport.RiskData(
+                business_group_name, legal_entity_name, division_name,
+                level_1_statutory_wise_units
+            )
+            if len(report_data_list) == 0 :
+                report_data_list.append(report_data)
+            else :
+                is_new = True
+                for r in report_data_list :
+                    if r.legal_entity_name == legal_entity :
+                        is_new = False
+                        level_1_wise = r.level_1_statutory_wise_units
+                        if level_1_wise is None :
+                            level_1_wise = {}
+                            level_1_wise[level_1] = [unit_wise_comp]
+                        else :
+                            unit_wise_compliance = level_1_wise.get(level_1)
+                            if unit_wise_compliance is None :
+                                unit_wise_compliance = []
+
+                            unit_wise_compliance.append(unit_wise_comp)
+                            level_1_wise[level_1] = unit_wise_compliance
+                        r.level_1_statutory_wise_units = level_1_wise
+                if is_new :
+                    report_data_list.append(report_data)
+        return report_data_list
 
     def get_risk_report_old(
         self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id,
