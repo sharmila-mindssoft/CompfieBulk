@@ -2040,7 +2040,7 @@ class ClientDatabase(Database):
             query = '''
                 SELECT is_ok FROM
                 (SELECT (CASE WHEN (unit_id = '{}' AND DATE(due_date) IN ({}) AND \
-                compliance_id = '{}') THEN DATE(due_date) ELSE 'NotExists' END ) as 
+                compliance_id = '{}') THEN DATE(due_date) ELSE 'NotExists' END ) as
                 is_ok FROM {} ) a WHERE is_ok != "NotExists"'''.format(
                 unit_id, due_dates, compliance_id, self.tblComplianceHistory
             )
@@ -3808,7 +3808,8 @@ class ClientDatabase(Database):
             %s \
             %s \
             %s \
-            ORDER BY T1.due_date \
+            ORDER BY T1.due_date, T1.unit_id, \
+            SUBSTRING_INDEX(SUBSTRING_INDEX(T4.statutory_mapping, '>>', 1) \
             limit %s, %s " % (
                 user_qry,
                 str(tuple(domain_ids)),
@@ -6472,7 +6473,7 @@ class ClientDatabase(Database):
 #
 
     def get_notifications(
-        self, notification_type, start_count, to_count, 
+        self, notification_type, start_count, to_count,
         session_user, client_id
     ):
         notification_type_id = None
@@ -6512,11 +6513,11 @@ class ClientDatabase(Database):
                 ' ','') AS UNSIGNED)) \
                 ORDER BY read_status ASC, nul.notification_id DESC \
                 LIMIT %d, %d" % (
-                    columns, subquery_columns, self.tblNotificationsLog, 
+                    columns, subquery_columns, self.tblNotificationsLog,
                     self.tblNotificationUserLog,
                     self.tblUnits, self.tblCompliances,
                     self.tblComplianceHistory,
-                    notification_type_id, session_user, 
+                    notification_type_id, session_user,
                     int(start_count), to_count
                 )
         rows = self.select_all(query)
@@ -6563,7 +6564,7 @@ class ClientDatabase(Database):
                 compliance_name = notification["compliance_task"]
                 if notification["document_name"] is not None and notification["document_name"].replace(" ","") != "None":
                     compliance_name = "%s - %s" % (
-                        notification["document_name"], 
+                        notification["document_name"],
                         notification["compliance_task"]
                     )
                 compliance_description = notification["compliance_description"]
@@ -6590,7 +6591,7 @@ class ClientDatabase(Database):
                     notification_id, read_status, notification_text, extra_details,
                     updated_on, level_1_statutory, unit_name, unit_address, assignee,
                     concurrence_person, approval_person, compliance_name,
-                    compliance_description, due_date, delayed_days, 
+                    compliance_description, due_date, delayed_days,
                     penal_consequences
                 )
             )
@@ -8485,7 +8486,7 @@ class ClientDatabase(Database):
 #   Assigee wise compliance chart
 #
     def get_assigneewise_compliances_list(
-        self, country_id, business_group_id, legal_entity_id, division_id, 
+        self, country_id, business_group_id, legal_entity_id, division_id,
         unit_id, session_user, client_id, assignee_id
     ):
         condition = "tu.country_id = '%d'" % country_id
@@ -8505,24 +8506,24 @@ class ClientDatabase(Database):
             condition += " AND tch.completed_by = '%d'" % (assignee_id)
 
         query = '''
-            SELECT concat(IFNULL(employee_code, 'Administrator'), '-', employee_name) 
+            SELECT concat(IFNULL(employee_code, 'Administrator'), '-', employee_name)
             as Assignee, tch.completed_by, tch.unit_id,
             concat(unit_code, '-', unit_name) as Unit, address, tc.domain_id,
             (SELECT domain_name FROM tbl_domains td WHERE tc.domain_id = td.domain_id) as Domain,
-            sum(case when (approve_status = 1 and (tch.due_date > completion_date or 
-                tch.due_date = completion_date)) then 1 else 0 end) as complied, 
-            sum(case when ((approve_status = 0 or approve_status is null) and 
-                tch.due_date > now()) then 1 else 0 end) as Inprogress, 
-            sum(case when ((approve_status = 0 or approve_status is null) and 
-                tch.due_date < now()) then 1 else 0 end) as NotComplied, 
-            sum(case when (approve_status = 1 and completion_date > tch.due_date and 
-                (is_reassigned = 0 or is_reassigned is null) ) 
+            sum(case when (approve_status = 1 and (tch.due_date > completion_date or
+                tch.due_date = completion_date)) then 1 else 0 end) as complied,
+            sum(case when ((approve_status = 0 or approve_status is null) and
+                tch.due_date > now()) then 1 else 0 end) as Inprogress,
+            sum(case when ((approve_status = 0 or approve_status is null) and
+                tch.due_date < now()) then 1 else 0 end) as NotComplied,
+            sum(case when (approve_status = 1 and completion_date > tch.due_date and
+                (is_reassigned = 0 or is_reassigned is null) )
                 then 1 else 0 end) as DelayedCompliance ,
-            sum(case when (approve_status = 1 and completion_date > tch.due_date and (is_reassigned = 1)) 
+            sum(case when (approve_status = 1 and completion_date > tch.due_date and (is_reassigned = 1))
                 then 1 else 0 end) as DelayedReassignedCompliance
             FROM tbl_compliance_history tch
             INNER JOIN tbl_assigned_compliances tac ON (
-            tch.compliance_id = tac.compliance_id AND tch.unit_id = tac.unit_id 
+            tch.compliance_id = tac.compliance_id AND tch.unit_id = tac.unit_id
             AND tch.completed_by = tac.assignee)
             INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id)
             INNER JOIN tbl_users tus ON (tus.user_id = tac.assignee)
@@ -8534,8 +8535,8 @@ class ClientDatabase(Database):
         )
         rows = self.select_all(query)
         columns = [
-            "assignee", "completed_by", "unit_id", "unit_name", "address", "domain_id", 
-            "domain_name", "complied", "inprogress", "not_complied", "delayed", 
+            "assignee", "completed_by", "unit_id", "unit_name", "address", "domain_id",
+            "domain_name", "complied", "inprogress", "not_complied", "delayed",
             "delayed_reassigned"
         ]
         assignee_wise_compliances = self.convert_to_dict(rows, columns)
@@ -8589,8 +8590,8 @@ class ClientDatabase(Database):
                         address=result[unit_name]["address"],
                         assignee_wise_details=assignee_wise_compliances_count
                     )
-                ) 
-        return chart_data       
+                )
+        return chart_data
 
     def get_assigneewise_yearwise_compliances(
         self, country_id, unit_id, user_id, client_id
@@ -8600,7 +8601,7 @@ class ClientDatabase(Database):
         start_year = current_year - 5
         iter_year = start_year
         year_wise_compliance_count = []
-        while iter_year <= current_year: 
+        while iter_year <= current_year:
             domain_ids = self.get_user_domains(user_id)
             domain_ids_list = [int(x) for x in domain_ids.split(",")]
             domainwise_complied = 0
@@ -8616,20 +8617,20 @@ class ClientDatabase(Database):
                 to_date = result[0][1][0][1][0]["end_date"].date()
                 query = '''
                     SELECT tc.domain_id,
-                    sum(case when (approve_status = 1 and (tch.due_date > completion_date or 
-                        tch.due_date = completion_date)) then 1 else 0 end) as complied, 
-                    sum(case when ((approve_status = 0 or approve_status is null) and 
-                        tch.due_date > now()) then 1 else 0 end) as Inprogress, 
-                    sum(case when ((approve_status = 0 or approve_status is null) and 
-                        tch.due_date < now()) then 1 else 0 end) as NotComplied, 
-                    sum(case when (approve_status = 1 and completion_date > tch.due_date and 
-                        (is_reassigned = 0 or is_reassigned is null) ) 
+                    sum(case when (approve_status = 1 and (tch.due_date > completion_date or
+                        tch.due_date = completion_date)) then 1 else 0 end) as complied,
+                    sum(case when ((approve_status = 0 or approve_status is null) and
+                        tch.due_date > now()) then 1 else 0 end) as Inprogress,
+                    sum(case when ((approve_status = 0 or approve_status is null) and
+                        tch.due_date < now()) then 1 else 0 end) as NotComplied,
+                    sum(case when (approve_status = 1 and completion_date > tch.due_date and
+                        (is_reassigned = 0 or is_reassigned is null) )
                         then 1 else 0 end) as DelayedCompliance ,
-                    sum(case when (approve_status = 1 and completion_date > tch.due_date and (is_reassigned = 1)) 
+                    sum(case when (approve_status = 1 and completion_date > tch.due_date and (is_reassigned = 1))
                         then 1 else 0 end) as DelayedReassignedCompliance
                     FROM tbl_compliance_history tch
                     INNER JOIN tbl_assigned_compliances tac ON (
-                    tch.compliance_id = tac.compliance_id AND tch.unit_id = tac.unit_id 
+                    tch.compliance_id = tac.compliance_id AND tch.unit_id = tac.unit_id
                     AND tch.completed_by = '%s')
                     INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id)
                     INNER JOIN tbl_users tus ON (tus.user_id = tac.assignee)
@@ -8647,7 +8648,7 @@ class ClientDatabase(Database):
                     domainwise_inprogress += 0 if rows[0][1] is None else int(rows[0][1])
                     domainwise_notcomplied += 0 if rows[0][2] is None else int(rows[0][2])
                     domainwise_delayed += 0 if rows[0][3] is None else  int(rows[0][3])
-                    domainwise_total += domainwise_complied + domainwise_inprogress 
+                    domainwise_total += domainwise_complied + domainwise_inprogress
                     domainwise_total += domainwise_notcomplied + domainwise_delayed
 
             year_wise_compliance_count.append(
@@ -8677,27 +8678,27 @@ class ClientDatabase(Database):
             employee_name) as previous_assignee, document_name, compliance_task,
             tch.due_date, DATE_SUB(tch.due_date, INTERVAL trigger_before_days DAY) as start_date,
             completion_date
-            FROM %s trch INNER JOIN 
-            tbl_compliance_history tch ON (trch.compliance_id = tch.compliance_id 
+            FROM %s trch INNER JOIN
+            tbl_compliance_history tch ON (trch.compliance_id = tch.compliance_id
             AND assignee='%d' AND trch.unit_id = tch.unit_id)
             INNER JOIN tbl_assigned_compliances tac ON (
-            tch.compliance_id = tac.compliance_id AND tch.unit_id = tac.unit_id 
+            tch.compliance_id = tac.compliance_id AND tch.unit_id = tac.unit_id
             AND tch.completed_by = '%s')
             INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id)
             INNER JOIN tbl_users tus ON (tus.user_id = tac.assignee)
             INNER JOIN tbl_compliances tc ON (tac.compliance_id = tc.compliance_id)
             INNER JOIN tbl_domains td ON (td.domain_id = tc.domain_id)
-            WHERE tch.unit_id = '%d' AND tc.domain_id = '%d' 
-            AND approve_status = 1 AND completed_by = '%d' 
+            WHERE tch.unit_id = '%d' AND tc.domain_id = '%d'
+            AND approve_status = 1 AND completed_by = '%d'
             AND reassigned_date between tch.due_date and completion_date
             AND completion_date > tch.due_date AND is_reassigned = 1
             AND tch.due_date between '%s' AND '%s'
         ''' % (
-            self.tblReassignedCompliancesHistory, user_id, user_id, unit_id, 
+            self.tblReassignedCompliancesHistory, user_id, user_id, unit_id,
             int(domain_id), user_id, from_date, to_date
         )
         rows = self.select_all(query)
-        columns = ["reassigned_date", "reassigned_from", "document_name", 
+        columns = ["reassigned_date", "reassigned_from", "document_name",
         "compliance_name", "due_date", "start_date", "completion_date"]
         results = self.convert_to_dict(rows, columns)
         reassigned_compliances = []
@@ -8731,13 +8732,13 @@ class ClientDatabase(Database):
         to_date = result[0][1][0][1][0]["end_date"]
 
         query = '''SELECT count(*)
-        FROM %s tch 
+        FROM %s tch
         INNER JOIN %s tc ON (tch.compliance_id = tc.compliance_id)
         INNER JOIN %s tu ON (tch.completed_by = tu.user_id)
-        WHERE completed_by = '%d' AND unit_id = '%d' 
-        AND due_date BETWEEN '%s' AND '%s '  
+        WHERE completed_by = '%d' AND unit_id = '%d'
+        AND due_date BETWEEN '%s' AND '%s '
         ''' % (
-            self.tblComplianceHistory, self.tblCompliances, self.tblUsers, 
+            self.tblComplianceHistory, self.tblCompliances, self.tblUsers,
             assignee_id, unit_id, from_date, to_date
         )
         rows = self.select_all(query)
@@ -8756,20 +8757,20 @@ class ClientDatabase(Database):
         from_date = result[0][1][0][1][0]["start_date"]
         to_date = result[0][1][0][1][0]["end_date"]
         columns = '''tch.compliance_id, start_date, due_date, completion_date,
-                document_name, compliance_task, compliance_description, 
+                document_name, compliance_task, compliance_description,
                 statutory_mapping, concat(IFNULL(employee_code, 'Administrator'),
                 '-', employee_name)'''
         subquery_columns = '''
             IF(
-                (approve_status = 1 and completed_on <= due_date), 
-                "Complied", 
+                (approve_status = 1 and completed_on <= due_date),
+                "Complied",
                 (
                     IF(
                         (approve_status = 1 and completed_on > due_date),
                         "Delayed",
                         (
                             IF (
-                                 ((approve_status = 0 or approve_status is null) and 
+                                 ((approve_status = 0 or approve_status is null) and
                                 due_date > now()),
                                 "Inprogress",
                                 "NotComplied"
@@ -8780,23 +8781,23 @@ class ClientDatabase(Database):
             ) as compliance_status
         '''
 
-        query = '''SELECT %s, %s 
-        FROM %s tch 
+        query = '''SELECT %s, %s
+        FROM %s tch
         INNER JOIN %s tc ON (tch.compliance_id = tc.compliance_id)
         INNER JOIN %s tu ON (tch.completed_by = tu.user_id)
-        WHERE completed_by = '%d' AND unit_id = '%d' 
+        WHERE completed_by = '%d' AND unit_id = '%d'
         AND due_date BETWEEN '%s' AND '%s'
         ORDER BY compliance_status
-        LIMIT %d, %d  
+        LIMIT %d, %d
         ''' % (
-            columns, subquery_columns, self.tblComplianceHistory, 
-            self.tblCompliances, self.tblUsers, assignee_id, unit_id, 
+            columns, subquery_columns, self.tblComplianceHistory,
+            self.tblCompliances, self.tblUsers, assignee_id, unit_id,
             from_date, to_date, int(start_count), to_count
         )
         rows = self.select_all(query)
         columns_list = [
-            "compliance_id", "start_date", "due_date", "completion_date", 
-            "document_name", "compliance_name", "compliance_description", 
+            "compliance_id", "start_date", "due_date", "completion_date",
+            "document_name", "compliance_name", "compliance_description",
             "statutory_mapping", "assignee", "compliance_status"
         ]
         result = self.convert_to_dict(rows, columns_list)
@@ -8828,7 +8829,7 @@ class ClientDatabase(Database):
 
             current_list[level_1_statutory].append(
                 dashboard.AssigneeWiseLevel1Compliance(
-                    compliance_name=compliance_name, 
+                    compliance_name=compliance_name,
                     description=compliance["compliance_description"],
                     assignee_name=compliance["assignee"],
                     assigned_date=None if compliance["start_date"] is None else self.datetime_to_string(compliance["start_date"]),
@@ -9064,7 +9065,7 @@ class ClientDatabase(Database):
         self, country_id,  business_group_id, legal_entity_id, division_id,
         unit_id, domain_ids, session_user
     ):
-        
+
         condition = self.get_client_details_condition(
             country_id,  business_group_id, legal_entity_id, division_id,
             unit_id, domain_ids, session_user
@@ -9072,7 +9073,7 @@ class ClientDatabase(Database):
         query = "SELECT count(*) \
                 FROM %s u \
                 WHERE %s " % (
-                    self.tblUnits, condition 
+                    self.tblUnits, condition
                 )
         rows = self.select_all(query)
         return rows[0][0]
@@ -9096,7 +9097,7 @@ class ClientDatabase(Database):
                 WHERE %s \
                 ORDER BY u.business_group_id, u.legal_entity_id, u.division_id, \
                 u.unit_id DESC LIMIT %d, %d" % (
-                    columns, self.tblUnits, self.tblBusinessGroups, 
+                    columns, self.tblUnits, self.tblBusinessGroups,
                     self.tblLegalEntities, self.tblDivisions, condition,
                     int(start_count), to_count
                 )
@@ -9517,8 +9518,8 @@ class ClientDatabase(Database):
                 AND c.domain_id in (%s) \
                 AND c.frequency_id = 4 \
                 AND ac.assignee = '%d' " % (
-                    self.tblAssignedCompliances, 
-                    self.tblCompliances, self.tblUnits, user_unit_ids, 
+                    self.tblAssignedCompliances,
+                    self.tblCompliances, self.tblUnits, user_unit_ids,
                     user_domain_ids, session_user
                 )
         rows = self.select_all(query)
@@ -9527,7 +9528,7 @@ class ClientDatabase(Database):
     def get_on_occurrence_compliances_for_user(
         self, session_user, user_domain_ids, user_unit_ids, start_count,
         to_count
-    ):  
+    ):
         columns = "ac.compliance_id, c.statutory_provision,\
                 compliance_task, compliance_description, \
                 duration_type, duration, document_name, u.unit_id"
@@ -9544,9 +9545,9 @@ class ClientDatabase(Database):
                 AND ac.assignee = '%d' \
                 ORDER BY u.unit_id, document_name, compliance_task \
                 LIMIT %d, %d" % (
-                    columns, concat_columns, self.tblAssignedCompliances, 
+                    columns, concat_columns, self.tblAssignedCompliances,
                     self.tblCompliances, self.tblComplianceDurationType,
-                    self.tblUnits, user_unit_ids, user_domain_ids, 
+                    self.tblUnits, user_unit_ids, user_domain_ids,
                     session_user, int(start_count), to_count
                 )
         rows = self.select_all(query)
