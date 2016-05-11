@@ -7709,10 +7709,14 @@ class ClientDatabase(Database):
         self, compliance_history_id, documents, completion_date,
         validity_date, next_due_date, remarks, client_id, session_user
     ):
-        if validity_date is not None:
+        if validity_date not in [None, "None", ""]:
             validity_date = self.string_to_datetime(validity_date)
-        if next_due_date is not None:
+        else:
+            validity_date = None
+        if next_due_date not in [None, "None", ""]:
             next_due_date = self.string_to_datetime(next_due_date)
+        else:
+            next_due_date = None
 
         if None not in [validity_date, next_due_date]:
             r = relativedelta.relativedelta(validity_date, next_due_date)
@@ -7754,8 +7758,7 @@ class ClientDatabase(Database):
         )
         current_time_stamp = self.get_date_time()
         history_columns = [
-            "completion_date", "documents", "validity_date",
-            "next_due_date", "remarks", "completed_on"
+            "completion_date", "documents", "remarks", "completed_on"
         ]
         if self.is_onOccurrence_with_hours(compliance_history_id):
             completion_date = self.string_to_datetime(completion_date)
@@ -7764,11 +7767,15 @@ class ClientDatabase(Database):
         history_values = [
             completion_date,
             ",".join(document_names),
-            validity_date,
-            next_due_date,
             remarks,
             current_time_stamp
         ]
+        if validity_date not in ["", None, "None"]:
+            history_columns.append("validity_date")
+            history_values.append(validity_date)
+        if next_due_date not in ["", None, "None"]:
+            history_columns.append("next_due_date")
+            history_values.append(next_due_date)
         history_condition = "compliance_history_id = '%d' \
             and completed_by ='%d'" % (
                 compliance_history_id, session_user
