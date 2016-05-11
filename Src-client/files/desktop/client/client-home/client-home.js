@@ -35,6 +35,7 @@ var ENDCOUNT;
 var SNO = 1;
 var FULLARRAYLIST = [];
 var ACCORDIONCOUNT = 0;
+var RECORDCOUNT  = 0;
 
 
 
@@ -949,7 +950,8 @@ function get_sub_array(object, start, end){
     return object.slice(start, end);
 }
 
-$('#pagination').click(function(e){
+$("#pagination").on("click", function(e){
+    alert("welcome to paginationrecord");
     console.log(chartInput.chartType);
     //if(chartInput.chartType)
         displayLoader();
@@ -3054,7 +3056,7 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter
         "filter_id": filter_type_id,
         "compliance_status": compliance_status,
         "year": chartInput.getCurrentYear(),
-        "record_count": 0
+        "record_count": RECORDCOUNT
     }
     $(".btn-back").on("click", function() {
         loadComplianceStatusChart();

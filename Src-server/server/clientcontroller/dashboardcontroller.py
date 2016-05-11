@@ -171,7 +171,7 @@ def process_get_trend_chart_drilldown(db, request, session_user, client_id):
 
 def process_compliance_status_chart_drilldown(db, request, session_user, client_id):
     from_count = request.record_count
-    to_count = 500
+    to_count = 10
     unit_wise_data = db.get_compliances_details_for_status_chart(
         request, session_user, client_id,
         from_count, to_count

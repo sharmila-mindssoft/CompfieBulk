@@ -17,6 +17,7 @@ var startCount = 0;
 var endCount;
 var sno = 0;
 var fullArrayList = [];
+var totalrecords = 0;
 
 var laststatus = '';
 var lastcountry = '';
@@ -84,6 +85,7 @@ $("#export-button").click(function(){
     loadcompliancetaskapplicabilityreport("export");
 });
 function loadcompliancetaskapplicabilityreport(buttontype){
+    console.log("load===="+buttontype);
     countries = $("#country").val();
     countriesText = $("#countryval").val();
     //Domain
@@ -130,7 +132,7 @@ function loadcompliancetaskapplicabilityreport(buttontype){
         level1id = null;
     }
     else{
-        level1id = parseInt(level1id);
+        level1id = level1id;
     }
     appstatus = $("#applicable-status").val();
     if(countries == ""){
@@ -140,6 +142,7 @@ function loadcompliancetaskapplicabilityreport(buttontype){
         displayMessage(message.domain_required);
     }
     else{
+        console.log("else part");
         var csv = false;
         if(buttontype == "export"){
             csv = true;
@@ -148,11 +151,12 @@ function loadcompliancetaskapplicabilityreport(buttontype){
             $(".grid-table-rpt").show();
             sno = 0;
             fullArrayList = [];
-
+            $('.tbody-task-applicability-list tr').remove();
             if(buttontype == "export"){
                 var download_url = data["link"];
                 window.open(download_url, '_blank');
             }else{
+                console.log("success");
                 loadTaskApplicabilityStatusList(data);
             }
         }
@@ -160,12 +164,12 @@ function loadcompliancetaskapplicabilityreport(buttontype){
             console.log(error);
         }
 
-
         client_mirror.getTaskApplicabilityReportData(
             parseInt(countries), parseInt(domain), businessgroupid,
-            legalentityid, divisionid, unitid, level1id, appstatus, csv, sno, 
+            legalentityid, divisionid, unitid, level1id, appstatus, csv, sno,
             function (error, response){
                 if(error == null){
+                    console.log("response success")
                     onSuccess(response);
                 }
                 else{
@@ -176,10 +180,8 @@ function loadcompliancetaskapplicabilityreport(buttontype){
     }
 }
 function loadTaskApplicabilityStatusList(data1){
-    $("#pagination").hide();
-    var totalrecords = 0;
-    $('.tbody-task-applicability-list tr').remove();
-
+    //$("#pagination").hide();
+    console.log("welcome");
     applicable = $("#applicable-status").val();
     var data = {}
     if (applicable == "Applicable")
@@ -195,7 +197,7 @@ function loadTaskApplicabilityStatusList(data1){
             var actwiselist = value[k]["actwise_units"];
             $.each(actwiselist, function(k1, v1) {
                 $.each(v1, function(ke, valu) {
-                totalrecords += valu["compliances"].length;
+                    totalrecords += valu["compliances"].length;
                 });
             });
         } 
@@ -211,35 +213,35 @@ function get_sub_array(object, start, end){
     return object.slice(start, end);
 }
 
-$(function() {
-    $('#pagination').click(function(e){
-        displayLoader();
-        fullArrayList = [];
-        clearMessage();
+$('#pagination').click(function(e){
+    console.log("pagination");
+    displayLoader();
+    fullArrayList = [];
+    clearMessage();
 
-        function onSuccess(data){
-            loadTaskApplicabilityStatusList(data);
-            totalRecord = data["total_count"];
-            hideLoader();
-        }
-        function onFailure(error){
-            onFailure(error);
-            hideLoader();
-        }
+    function onSuccess(data){
+        loadTaskApplicabilityStatusList(data);
+        totalRecord = data["total_count"];
+        hideLoader();
+    }
+    function onFailure(error){
+        onFailure(error);
+        hideLoader();
+    }
 
-        client_mirror.getTaskApplicabilityReportData(
-            parseInt(countries), parseInt(domain), businessgroupid,
-            legalentityid, divisionid, unitid, level1id, appstatus, csv, sno, 
-            function (error, response){
-                if(error == null){
-                    onSuccess(response);
-                }
-                else{
-                    onFailure(error);
-                }
+    client_mirror.getTaskApplicabilityReportData(
+        parseInt(countries), parseInt(domain), businessgroupid,
+        legalentityid, divisionid, unitid, level1id, appstatus,  csv, sno,
+        function (error, response){
+            if(error == null){
+                onSuccess(response);
             }
-        );
-
+            else{
+                onFailure(error);
+            }
+        }
+    );
+});
 
 
         // $(".loading-indicator-spin").show();
@@ -254,8 +256,8 @@ $(function() {
         //     $(".loading-indicator-spin").hide();
         // }, 500);
 
-    });
-});
+
+
 
 // function showloadrecord() {
 //     startCount = endCount;
@@ -284,13 +286,13 @@ $(function() {
 // }
 
 function loadresult(finalList) {
-
+    fullArrayList = [];
      $.each(finalList, function(i, val){
         fullArrayList.push(i);
         $.each(val, function(i1, val1){
-            var grouplist = val[i1];
+            var grouplist = val1;
             var list_act = val1["actwise_units"];
-            delete val1["actwise_units"];
+            //delete grouplist["actwise_units"];
             fullArrayList.push(grouplist);
             $.each(list_act, function (i_act, val_act){
                 var actval = i_act;
@@ -306,11 +308,11 @@ function loadresult(finalList) {
                 });
             });
         });
-     });
-    var totallist = fullArrayList.length;
-    for (var k = 0 ; k < totallist; k++){
-        splitwisedisplay(fullArrayList[k]);
-    }
+    });
+     var totallist = fullArrayList.length;
+     for (var k = 0 ; k < totallist; k++){
+         splitwisedisplay(fullArrayList[k]);
+     }
 
     // if(totallist > pageSize){
     //     $('#pagination').show();
@@ -323,7 +325,7 @@ function loadresult(finalList) {
     
 }
 function splitwisedisplay(sub_keys_list){
-    console.log(sub_keys_list);
+    //console.log(sub_keys_list);
     if(sub_keys_list !=  undefined){
         if(sub_keys_list == "Applicable" ||  sub_keys_list == "Not Applicable" || sub_keys_list == "Not Opted" ){
            applicablestatus(sub_keys_list);
@@ -342,32 +344,57 @@ function splitwisedisplay(sub_keys_list){
 }
 
 function filterheading(data){
-    var tableFilterHeading = $('#templates .table-task-applicability-list .filter-task-applicability-list');
-    var clonefilterHeading = tableFilterHeading.clone();
-    $('.filter-country', clonefilterHeading).text(countriesText);
-    $('.filter-domain', clonefilterHeading).text(domainText);
 
-    $('.filter-businessgroup', clonefilterHeading).text(data["business_group_name"]);
-    $('.filter-legalentity', clonefilterHeading).text(data["legal_entity_name"]);
-    $('.filter-division', clonefilterHeading).text(data["division_name"]);
-    $('.tbody-task-applicability-list').append(clonefilterHeading);
+    var bg = '-';
+    if(data["business_group_name"] != null) bg = data["business_group_name"];
+    var dv = '-';
+    if( data["division_name"] != null) dv = data["division_name"];
+    var le = data["legal_entity_name"];
+    console.log(lastbg+"--"+bg);
+    console.log(lastle+"--"+le);
+    console.log(lastdivision+"--"+dv);
+
+    if(lastbg !=  bg || lastle != le || lastdivision != dv){
+        lastbg = bg;
+        lastle = le;
+        lastdivision =  dv;
+
+        var tableFilterHeading = $('#templates .table-task-applicability-list .filter-task-applicability-list');
+        var clonefilterHeading = tableFilterHeading.clone();
+        $('.filter-country', clonefilterHeading).text(countriesText);
+        $('.filter-domain', clonefilterHeading).text(domainText);
+
+        $('.filter-businessgroup', clonefilterHeading).text(data["business_group_name"]);
+        $('.filter-legalentity', clonefilterHeading).text(data["legal_entity_name"]);
+        $('.filter-division', clonefilterHeading).text(data["division_name"]);
+        $('.tbody-task-applicability-list').append(clonefilterHeading);
+
+    }
 }
 function applicablestatus(key){
-    count = 0;
-    var tableRowHeading = $('#templates .table-task-applicability-list .applicable-status-list');
-    var cloneHeading = tableRowHeading.clone();
-    $('.applicable-status-heading', cloneHeading).text(key);
-    $('.tbody-task-applicability-list').append(cloneHeading);
+    //console.log(laststatus+"--"+key);
+    if(laststatus != key){
+        laststatus = key;
+        count = 0;
+        var tableRowHeading = $('#templates .table-task-applicability-list .applicable-status-list');
+        var cloneHeading = tableRowHeading.clone();
+        $('.applicable-status-heading', cloneHeading).text(key);
+        $('.tbody-task-applicability-list').append(cloneHeading);    
+    }    
 }
 function level1heading(ke){
-    var arr = [];
-    var tableRowLevel1 = $('#templates .table-task-applicability-list .level1-list');
-    var cloneLevel1 = tableRowLevel1.clone();
-    $('.level1-heading', cloneLevel1).text(ke);
-    $('.tbody-task-applicability-list').append(cloneLevel1);
-    var tableRowList = $('#templates .table-task-applicability-list .list-heading');
-    var cloneList = tableRowList.clone();
-    $('.tbody-task-applicability-list').append(cloneList);
+    if(lastlevel1 != ke){
+        lastlevel1 = ke;
+        var arr = [];
+        var tableRowLevel1 = $('#templates .table-task-applicability-list .level1-list');
+        var cloneLevel1 = tableRowLevel1.clone();
+        $('.level1-heading', cloneLevel1).text(ke);
+        $('.tbody-task-applicability-list').append(cloneLevel1);
+        var tableRowList = $('#templates .table-task-applicability-list .list-heading');
+        var cloneList = tableRowList.clone();
+        $('.tbody-task-applicability-list').append(cloneList);    
+    }
+    
 }
 function compliancelist(data){
     var valcomp = data;
@@ -477,9 +504,9 @@ $("#unitval").keyup(function(){
 });
 
 //retrive statutory autocomplete value
-function onStatutorySuccess(val){
-  $("#level1val").val(val[1]);
-  $("#level1id").val(val[0].replace(/##/gi,'"'));
+function onStatutorySuccess(value){
+  $("#level1val").val(value[1]);
+  $("#level1id").val(value[0]);
 }
 //load statutory list in autocomplete textbox
 $("#level1val").keyup(function(){

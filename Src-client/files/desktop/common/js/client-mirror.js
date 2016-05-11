@@ -140,9 +140,9 @@ function initClientMirror() {
                 var response = data[1];
                 matchString = 'success';
                 log("API STATUS :" + status);
-                console.log(response)
-                console.log(status.toLowerCase().indexOf(matchString))
-                callback(null, response)
+                ///console.log(response)
+                ///console.log(status.toLowerCase().indexOf(matchString))
+                ///callback(null, response)
 
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(error=null, response);
@@ -1471,7 +1471,7 @@ function initClientMirror() {
     function getTaskApplicabilityReportData(
         country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id,
-        statutory_name, applicable_status, csv, callback
+        statutory_name, applicable_status, csv, record_count, callback
     ) {
         var request = [
             "GetComplianceTaskApplicabilityStatusReport", {
@@ -1482,9 +1482,9 @@ function initClientMirror() {
                 "division_id": division_id,
                 "unit_id": unit_id,
                 "statutory_name": statutory_name,
-                "applicable_status": applicable_status,
-                "record_count":0,
+                "applicable_status": applicable_status,                
                 "csv": csv,
+                "record_count":record_count,
             }
         ];
         callerName = "client_reports";
