@@ -152,6 +152,7 @@ function performLogin(e_button, e_email, e_password) {
                 console.log(error)
                 if (error == null){
                     // onSuccess(response)
+                    resetLoginUI(e_button, e_email, e_password);
                     window.location.href = "/knowledge/home";
                 }
                 else {
@@ -169,6 +170,7 @@ function performLogin(e_button, e_email, e_password) {
                 console.log(error);
                 if (error == null){
                     // onSuccess(response)
+                    resetLoginUI(e_button, e_email, e_password);
                     window.location.href = landingPage;
                 }
                 else {
