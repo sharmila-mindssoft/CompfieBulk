@@ -1481,7 +1481,7 @@ function initClientMirror() {
     }
 
     function getAssigneewiseCompliancesDrilldown(
-        country_id, assignee_id, domain_id, year, unit_id, callback
+        country_id, assignee_id, domain_id, year, unit_id, start_count, callback
     ){
         var request = [
             "GetAssigneeWiseComplianceDrillDown",

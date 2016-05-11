@@ -211,7 +211,7 @@ def process_get_statutories_by_unit(
     compliance_frequency = request.compliance_frequency
     country_id = request.country_id
     start_count = request.start_count
-    statutory_wise_compliances = db.get_statutory_wise_compliances(
+    statutory_wise_compliances, total_count = db.get_statutory_wise_compliances(
         unit_id, domain_id, level_1_statutory_name,
         compliance_frequency, country_id, session_user, start_count,
         to_count
@@ -219,7 +219,7 @@ def process_get_statutories_by_unit(
     users = db.get_users_by_unit_and_domain(unit_id, domain_id)
     return clienttransactions.GetStatutoriesByUnitSuccess(
         statutory_wise_compliances=statutory_wise_compliances,
-        users=users, total_count=10
+        users=users, total_count=total_count
     )
 
 ########################################################
