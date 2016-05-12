@@ -3809,7 +3809,7 @@ class ClientDatabase(Database):
             %s \
             %s \
             ORDER BY T1.due_date, T1.unit_id, \
-            SUBSTRING_INDEX(SUBSTRING_INDEX(T4.statutory_mapping, '>>', 1) \
+            SUBSTRING_INDEX(SUBSTRING_INDEX(T4.statutory_mapping, '>>', 1), '>>', -1) \
             limit %s, %s " % (
                 user_qry,
                 str(tuple(domain_ids)),
