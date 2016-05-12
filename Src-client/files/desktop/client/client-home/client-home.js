@@ -40,7 +40,6 @@ var snoAssignee = 0;
 var totalRecordAssignee;
 var lastAct = '';
 var lastStatus = '';
-var loadStatus = 'true';
 
 function clearMessage() {
     $(".chart-error-message").text("");
@@ -2864,7 +2863,6 @@ function updateComplianceList(country_id, user_id, domain_id, year, unit_id, sta
     $(".table-assignee-wise-compliance-list").hide();
     $(".grid-table-dash1").show();
     snoAssignee = 0;
-    loadStatus = 'true';
     $('.tbody-assignee-wise-compliance-list tr').remove();
     $('.compliance-details-drilldown tr').remove();
     $(".table-assignee-wise-compliance-list").show();
@@ -2899,7 +2897,6 @@ function getShowmoreData(){
     var a_domain = parseInt($("#a_domain").val().trim());
     var a_year = parseInt($("#a_year").val().trim());
     var a_unit = parseInt($("#a_unit").val().trim());
-    loadStatus = 'true';
 
     client_mirror.getAssigneewiseCompliancesDrilldown(
        country, a_user, a_domain, a_year, a_unit, snoAssignee, 
@@ -2952,7 +2949,6 @@ function fullnamestatus(val){
 }
 
 function listingCompliance(data, userid, year){
-    if(loadStatus == 'true'){
         totalRecordAssignee = data['total_count'];
         if(snoAssignee == 0){
             
@@ -3013,8 +3009,6 @@ function listingCompliance(data, userid, year){
               $('#pagination-assignee').show();
             }
         }
-        loadStatus = 'false';
-    }
 }
 
 
