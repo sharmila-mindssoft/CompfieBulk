@@ -140,7 +140,7 @@ function showSideBar(idval, data){
     var complianceFrequency = data['compliance_frequency'];
     $(".validityAndDueDate", cloneValSide).hide();
     $('.sidebar-unit span', cloneValSide).html(data['unit_name']);
-   // $('.sidebar-unit abbr', cloneValSide).attr("title", data['address']);
+    // $('.sidebar-unit abbr', cloneValSide).attr("title", data['address']);
     $('.sidebar-compliance-task span', cloneValSide).html(data['compliance_name']);
     $('.sidebar-compliance-task abbr', cloneValSide).attr("title", data['description']);
     $('.sidebar-compliance-frequency', cloneValSide).html(complianceFrequency);
@@ -149,7 +149,7 @@ function showSideBar(idval, data){
     if( fileslist != null){
         for (var i = 0; i < fileslist.length; i++){
             if(fileslist[i] != ""){
-                $('.sidebar-uploaded-documents', cloneValSide).append("<span><abbr class='sidebardocview'>"+fileslist[i]+"</abbr><a href='' download='"+documentslist[i]+"' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' title='Download' /></a><a href='"+ documentslist[i] +"' target='_new' class='view-file'> <img src='/images/view.png' style='width:16px;height:16px;' title='View' /></a></span>");
+                $('.sidebar-uploaded-documents', cloneValSide).append("<span><abbr class='sidebardocview'>"+fileslist[i]+"</abbr><a href='"+documentslist[i]+"' download='"+documentslist[i]+"' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' title='Download' /></a><a href='"+ documentslist[i] +"' target='_new' class='view-file'> <img src='/images/view.png' style='width:16px;height:16px;' title='View' /></a></span>");
                 $(".tr-sidebar-uploaded-date", cloneValSide).show();
             }
         }

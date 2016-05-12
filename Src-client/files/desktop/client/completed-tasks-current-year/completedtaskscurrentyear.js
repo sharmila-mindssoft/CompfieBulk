@@ -189,7 +189,7 @@ function load_thirdwizard(){
       var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
       var clone4=tableRow4.clone();
       $('.no_records', clone4).text('No Compliance Found');
-      $('.tbody-unitdetails-list').append(clone4);
+      $('.tbody-assignstatutory').append(clone4);
       $('#pagination').hide();
       $('.compliance_count').text('');
   }else{

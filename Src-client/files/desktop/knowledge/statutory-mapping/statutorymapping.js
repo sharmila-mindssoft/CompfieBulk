@@ -30,6 +30,7 @@ var finalList;
 var pageSize = 50;
 var startCount;
 var endCount;
+var editLevel = '';
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -577,8 +578,40 @@ function saverecord(j,e){
     }else if(datavalue==""){
       displayMessage("Level-" + levelstage + message.shouldnot_empty);
     }else{
-      if($("#statutoryid").val() == ''){
+      if($("#statutoryid").val() != '' && editLevel == levelstage){
+        function onSuccessUpdate(data){
+          $("#statutoryid").val('');
+          $('.addleft').val('');
+          editLevel = '';
+          displayMessage(message.record_updated);
+          reload(last_statutory_id,last_level,sm_countryid,sm_domainid);
+        }
+        function onFailureUpdate(error){
+          if(error == "StatutoryNameAlreadyExists"){
+            displayMessage(message.statutoryname_exists);
+          }else{
+            displayMessage(error);
+          }
+        }
+        if(map_statutory_id.length == 0){
+          map_statutory_id.push(0);
+          map_statutory_names.push(datavalue);
+        }
+        mirror.updateStatutory(parseInt($("#statutoryid").val()), parseInt(statutorylevel_id), datavalue, map_statutory_id, map_statutory_names,
+        function (error, response) {
+          if (error == null){
+            onSuccessUpdate(response);
+          }
+          else {
+            onFailureUpdate(error);
+          }
+        }
+        );
+      }else{
         function onSuccess(data){
+          $("#statutoryid").val('');
+          $('.addleft').val('');
+          editLevel = '';
           displayMessage(message.record_added);
           reload(last_statutory_id,last_level,sm_countryid,sm_domainid);
         }
@@ -603,35 +636,6 @@ function saverecord(j,e){
           }
         }
         );
-      }else{
-        function onSuccessUpdate(data){
-          displayMessage(message.record_updated);
-          reload(last_statutory_id,last_level,sm_countryid,sm_domainid);
-        }
-        function onFailureUpdate(error){
-
-          if(error == "StatutoryNameAlreadyExists"){
-            displayMessage(message.statutoryname_exists);
-          }else{
-            displayMessage(error);
-          }
-        }
-        if(map_statutory_id.length == 0){
-          map_statutory_id.push(0);
-          map_statutory_names.push(datavalue);
-        }
-        mirror.updateStatutory(parseInt($("#statutoryid").val()), parseInt(statutorylevel_id), datavalue, map_statutory_id, map_statutory_names,
-        function (error, response) {
-          if (error == null){
-            onSuccessUpdate(response);
-          }
-          else {
-            onFailureUpdate(error);
-          }
-        }
-        );
-        $("#statutoryid").val('');
-        $('#datavalue'+j).val('');
       }
     }
   }
@@ -666,6 +670,7 @@ function filter_statutory(position){
 
 function editstaturoty(statu_id, statu_name, position){
   $("#statutoryid").val(statu_id);
+  editLevel = position;
   for(var z=1; z<=10; z++){
     $('#datavalue'+z).val('');
   }

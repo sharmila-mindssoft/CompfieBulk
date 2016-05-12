@@ -8751,6 +8751,9 @@ class ClientDatabase(Database):
     ):
         if year is None:
             current_year = self.get_date_time().year
+        else:
+            current_year = year
+
         result = self.get_country_domain_timelines(
             [country_id], [domain_id], [current_year], client_id
         )

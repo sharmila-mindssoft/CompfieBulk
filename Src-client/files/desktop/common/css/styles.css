@@ -1825,6 +1825,22 @@ list-style-type:none; line-height:25px;
   opacity: 1;
 }
 
+.overlay1 {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay1:target {
+  visibility: visible;
+  opacity: 1;
+}
+
 .popup {
   margin: 70px auto;
   padding: 20px;
