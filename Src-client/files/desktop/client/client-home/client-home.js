@@ -2771,11 +2771,13 @@ function showFiltersResults() {
     if(userval == ""){
         userid = null
     }
+    displayLoader();
     client_mirror.getAssigneewiseComplianes(
         parseInt(country), businessgroupid, legalentityid,
         divisionid, unitid, userid,
         function (status, data) {
             updateAssigneeWiseComplianceList(data['chart_data']);
+            hideLoader();
         }
     );
 
@@ -2845,9 +2847,11 @@ function updateAssigneeWiseComplianceList(data){
         });
 
     });
+    
 }
 
 function updateComplianceList(country_id, user_id, domain_id, year, unit_id, start_count, assigneename, domain_name){
+    displayLoader();
     $('.popupoverlay').css("visibility","hidden");
     $('.popupoverlay').css("opacity","0");
     $(".table-assignee-wise-compliance-list").hide();
@@ -2877,6 +2881,7 @@ function updateComplianceList(country_id, user_id, domain_id, year, unit_id, sta
        country_id, user_id, domain_id, year, unit_id, start_count, 
         function (status, data) {
             listingCompliance(data, userid, year);
+            hideLoader();
         }
     );
 }
@@ -2999,6 +3004,7 @@ function showPopup(country_assignee, unit_assignee, user_assignee, name_assignee
     $('.popupoverlay').css("visibility","visible");
     $('.popupoverlay').css("opacity","1");
     $('.year-heading').text(name_assignee);
+    window.scrollTo(0, 0);
 
     var popupsno = 0;
     client_mirror.getAssigneewiseYearwiseComplianes( country_assignee, unit_assignee, user_assignee,
@@ -3039,6 +3045,7 @@ function showPopupCompDelayed(country_id, unit_id, user_id, domain_id, name_assi
     $('.popupoverlay1').css("visibility","visible");
     $('.popupoverlay1').css("opacity","1");
     $('.comp-delayed-heading').text(name_assignee);
+    window.scrollTo(0, 0);
 
     var popupdelayedsno = 0;
     client_mirror.getAssigneewiseReassignedComplianes( country_id, unit_id, user_id, domain_id,
@@ -3056,7 +3063,7 @@ function showPopupCompDelayed(country_id, unit_id, user_id, domain_id, name_assi
                     $('.comp-delayed-reassigned-from', cloneval).html(val['reassigned_from']);
                     $('.comp-delayed-startdate', cloneval).html(val['start_date']);
                     $('.comp-delayed-duedate', cloneval).html(val['due_date']);
-                    $('.comp-delayed-reassigned-date', cloneval).html(val['reassigned_from']);
+                    $('.comp-delayed-reassigned-date', cloneval).html(val['reassigned_date']);
                     $('.comp-delayed-completed-date', cloneval).html(val['completed_date']);
                     $('.tbody-popup-reassigned-list').append(cloneval);
                 });
@@ -3075,7 +3082,6 @@ function showPopupCompDelayed(country_id, unit_id, user_id, domain_id, name_assi
 
 
 //Chart load function
-
 function loadComplianceStatusChart () {
     var requestData = parseComplianceStatusApiInput();
     client_mirror.getComplianceStatusChartData(
