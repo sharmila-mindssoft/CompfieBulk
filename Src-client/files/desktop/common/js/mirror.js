@@ -255,12 +255,6 @@ function initMirror() {
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
-                // if (status.toLowerCase().indexOf(matchString) != -1){
-                //     callback(null, response)
-                // }
-                // else {
-                //     callback(status, null);
-                // }
                 clearSession();
                 login_url = "/knowledge/login"
                 window.localStorage["login_url"] = login_url;

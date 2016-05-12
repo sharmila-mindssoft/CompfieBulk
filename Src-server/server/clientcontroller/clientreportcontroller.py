@@ -373,18 +373,18 @@ def get_risk_report(db, request, session_user, client_id):
     unit_id = request.unit_id
     level_1_statutory_name = request.level_1_statutory_name
     statutory_status = request.statutory_status
-    delayed_compliance = [] #1
-    not_complied = [] # 2
-    not_opted = [] # 3
-    unassigned = [] # 4
-    if request.csv == False:
-        if statutory_status in [1, None, "None", "", 0]:# Delayed compliance
+    delayed_compliance = []  # 1
+    not_complied = []  # 2
+    not_opted = []  # 3
+    unassigned = []  # 4
+    if request.csv is False :
+        if statutory_status in [1, None, "None", "", 0]:  # Delayed compliance
             delayed_compliance = db.get_risk_report(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name, 1,
                 client_id, session_user
             )
-        if statutory_status in [2, None, "None", "", 0]: # Not complied
+        if statutory_status in [2, None, "None", "", 0]:  # Not complied
             not_complied = db.get_risk_report(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name, 2,
@@ -490,7 +490,7 @@ def process_get_task_applicability_report_data(db, request, session_user, client
         converter = ConvertJsonToCSV(db, request, session_user, client_id, "TaskApplicability")
         return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
     else:
-        result = db.get_compliance_task_applicability_old(request, session_user)
+        result = db.get_compliance_task_applicability(request, session_user)
         return result
 
 def get_client_details_report_filters(db, request, session_user, client_id):
