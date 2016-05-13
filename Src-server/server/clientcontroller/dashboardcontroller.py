@@ -331,21 +331,18 @@ def process_assigneewise_compliances_drilldown(
     drill_down_data = {}
     complied, delayed, inprogress, not_complied = db.get_assigneewise_compliances_drilldown_data(
         country_id, assignee_id, domain_id, client_id, year, unit_id, start_count,
-        to_count
+        to_count, session_user
     )
     total_count = db.get_assigneewise_compliances_drilldown_data_count(
-        country_id, assignee_id, domain_id, client_id, year, unit_id
+        country_id, assignee_id, domain_id, client_id, year, unit_id, session_user
     )
-    if (
-        (len(complied) > 0) or (len(delayed) > 0)
-        or (len(inprogress) > 0) or (len(not_complied) > 0)
-    ):
-        drill_down_data = dashboard.AssigneeWiseCompliance(
-            complied=complied,
-            delayed=delayed,
-            inprogress=inprogress,
-            not_complied=not_complied
-        )
+    
+    drill_down_data = dashboard.AssigneeWiseCompliance(
+        complied=complied,
+        delayed=delayed,
+        inprogress=inprogress,
+        not_complied=not_complied
+    )
     return dashboard.GetAssigneeWiseComplianceDrillDownSuccess(
         drill_down_data=drill_down_data,
         total_count=total_count
