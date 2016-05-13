@@ -2507,7 +2507,8 @@ class ClientDatabase(Database):
         concur_count = 0
         if (self.is_two_levels_of_approval) and (not self.is_primary_admin(session_user)):
             condition = " concurrence_status is not NULL AND \
-            concurrence_status != 0 AND concurrence_status != ''"
+            concurrence_status != 0 AND concurrence_status != '' AND \
+            concurred_by is not NULL"
             concur_condition = "concurred_by = '%d' AND (approve_status is NULL OR \
                 approve_status = 0 OR approve_status = '') AND (\
                 completed_on is not NULL AND completed_on !=0) AND \
@@ -2780,6 +2781,12 @@ class ClientDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         user_list = []
         for r in result :
+            q = "select distinct unit_id from tbl_user_units where user_id = %s" % (int(r["user_id"]))
+            r_rows = self.select_all(q)
+            r_unit_ids = self.convert_to_dict(r_rows, ["unit_id"])
+            unit_ids = []
+            for u in r_unit_ids :
+                unit_ids.append(u["unit_id"])
             if int(r["is_service_provider"]) == 0 :
                 name = "%s - %s" % (r["employee_code"], r["employee_name"])
             else :
@@ -2790,9 +2797,9 @@ class ClientDatabase(Database):
             domain_ids = [
                 int(x) for x in r["domain_ids"].split(',')
             ]
-            unit_ids = [
-                int(y) for y in r["unit_ids"].split(',')
-            ]
+            # unit_ids = [
+            #     int(y) for y in r["unit_ids"].split(',')
+            # ]
             form_ids = [int(x) for x in r["form_ids"].split(',')]
             is_assignee = False
             is_approver = False
@@ -3834,6 +3841,8 @@ class ClientDatabase(Database):
                 from_count , to_count
             )
         rows = self.select_all(query)
+        print query
+        print
         columns = [
             "compliance_history_id", "unit_id",
             "compliance_id", "start_date", "due_date",
@@ -5306,12 +5315,12 @@ class ClientDatabase(Database):
             if due_date < completion_date:
                 status = "Not Complied"
 
-        ageing, remarks = self.calculate_ageing(
+        ageing, ageing_remarks = self.calculate_ageing(
             due_date, frequency_type=None, completion_date=completion_date, duration_type=None
         )
         self.save_compliance_activity(
             unit_id, compliance_id, "Rejected", status,
-            remarks
+            ageing_remarks
         )
 
         columns = ["approve_status", "remarks", "completion_date", "completed_on",
@@ -5438,12 +5447,12 @@ class ClientDatabase(Database):
         # )
         if due_date < completion_date:
             status = "Not Complied"
-        ageing, remarks = self.calculate_ageing(
+        ageing, ageing_remarks = self.calculate_ageing(
             due_date, frequency_type=None, completion_date=completion_date, duration_type=None
         )
         self.save_compliance_activity(
             unit_id, compliance_id, "Rejected", status,
-            remarks
+            ageing_remarks
         )
         columns = ["concurrence_status", "remarks", "completion_date", "completed_on"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
