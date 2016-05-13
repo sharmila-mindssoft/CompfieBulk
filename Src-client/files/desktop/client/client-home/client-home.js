@@ -64,6 +64,10 @@ var NC_LEVEL1 = null;
 
 var TC_YEAR = null;
 
+var CAS_TYPE = null;
+var CAS_LEVEL1 = null;
+var CAS_UNITNAME = null;
+
 
 function clearMessage() {
     $(".chart-error-message").text("");
@@ -967,6 +971,12 @@ function updateComplianceApplicabilityDrillDown(status, data, type) {
 }
 function showComplianceApplicabilityDrillDownRecord_set(data, type){
     $(".level-heading").attr("colspan", "7");
+    $(".drilldown-title").text(GROUP_NAME+" - "+type+" Compliances");
+    $(".table-thead-drilldown-list").empty();
+    $(".table-drilldown-list tbody").remove();
+    $(".escalation-drilldown-list .td-escalation").empty();
+    SNO = 1;
+    showComplianceApplicabilityDrillDownRecord_headingList();
     showComplianceApplicabilityDrillDownRecord(data, type);
 }
 
@@ -1047,7 +1057,7 @@ function showmorerecords(){
         client_mirror.getNotCompliedDrillDown(
             requestData,
             function (status, data) {
-                notCompliedDrilldown("not_complied", data);
+                notCompliedDrilldown("not_complied", data['drill_down_data']);
             }
         );
 
@@ -1076,7 +1086,35 @@ function showmorerecords(){
 
     }
     else if(getcharttype == "applicability_status"){
-
+        var filter_type = chartInput.getFilterType();
+        filter_ids = getFilterIds(filter_type)
+        var filterType = filter_type.replace("_", "-");
+        filterType = hyphenatedToUpperCamelCase(filterType);
+        if (filterType == "Group") {
+            filter_ids = chartInput.getCountries();
+        }
+        var requestData = {
+            "country_ids": chartInput.getCountries(),
+            "domain_ids": chartInput.getDomains(),
+            "filter_type": filterType,
+            "filter_ids": filter_ids,
+            "applicability_status": CAS_TYPE,
+            "record_count": SNO
+        }
+        $(".btn-back").on("click", function() {
+            $(".graph-container.compliance-status").show();
+            $(".drilldown-container").hide();
+            loadComplianceApplicabilityChart();
+        });
+        client_mirror.getComplianceApplicabilityDrillDown(
+            requestData,
+            function (status, data) {    
+                if(data["drill_down_data"] == ''){
+                    $("pagination").hide();
+                }
+                showComplianceApplicabilityDrillDownRecord(data, CAS_TYPE);
+            }
+        );
     }
 
 
@@ -1098,31 +1136,31 @@ function showmorerecords(){
 //         }, 500);
 
 // });
-function paginationrecord_showComplianceApplicabilityDrillDownRecord(data){
-    STARTCOUNT = ENDCOUNT;
-    ENDCOUNT = STARTCOUNT + PAGESIZE;
+// function paginationrecord_showComplianceApplicabilityDrillDownRecord(data){
+//     STARTCOUNT = ENDCOUNT;
+//     ENDCOUNT = STARTCOUNT + PAGESIZE;
 
-    var list = get_sub_array(fullArrayList, STARTCOUNT, ENDCOUNT);
-    if(list.length < PAGESIZE){
-        $('#pagination').hide();
-    }
+//     var list = get_sub_array(fullArrayList, STARTCOUNT, ENDCOUNT);
+//     if(list.length < PAGESIZE){
+//         $('#pagination').hide();
+//     }
 
-    //e.preventDefault();
-    for(var y = 0;  y < PAGESIZE; y++){
-        if(list[y] !=  undefined){
-            if(Object.keys(list[y])[0] == "level1_name"){
-                ACCORDIONCOUNT++;
-                showComplianceApplicabilityDrillDownRecord_level1List(list[y]);
-            }
-            else if(Object.keys(list[y])[0] == "unit_name"){
-                showComplianceApplicabilityDrillDownRecord_unitList(list[y]);
-            }
-            else if(Object.keys(list[y])[0] == "description"){
-                showComplianceApplicabilityDrillDownRecord_complianceList(list[y]);
-            }
-        }
-    }
-}
+//     //e.preventDefault();
+//     for(var y = 0;  y < PAGESIZE; y++){
+//         if(list[y] !=  undefined){
+//             if(Object.keys(list[y])[0] == "level1_name"){
+//                 ACCORDIONCOUNT++;
+//                 showComplianceApplicabilityDrillDownRecord_level1List(list[y]);
+//             }
+//             else if(Object.keys(list[y])[0] == "unit_name"){
+//                 showComplianceApplicabilityDrillDownRecord_unitList(list[y]);
+//             }
+//             else if(Object.keys(list[y])[0] == "description"){
+//                 showComplianceApplicabilityDrillDownRecord_complianceList(list[y]);
+//             }
+//         }
+//     }
+// }
 
 function showComplianceApplicabilityDrillDownRecord_headingList(){
     var tableHeading = $('#templates .compliance-applicable-status .tr-heading');
@@ -1130,23 +1168,29 @@ function showComplianceApplicabilityDrillDownRecord_headingList(){
     $(".table-thead-drilldown-list").append(cloneHeading);
 }
 function showComplianceApplicabilityDrillDownRecord_level1List(data){
-    var tableLevel1 = $('#templates .compliance-applicable-status .tr-level1');
-    var cloneLevel1 = tableLevel1.clone();
-    $(".level-heading", cloneLevel1).html(data["level1_name"]);
-    $(".table-drilldown-list").append(cloneLevel1);
+    if(CAS_LEVEL1 != data["level1_name"]){
+        var tableLevel1 = $('#templates .compliance-applicable-status .tr-level1');
+        var cloneLevel1 = tableLevel1.clone();
+        $(".level-heading", cloneLevel1).html(data["level1_name"]);
+        $(".table-drilldown-list").append(cloneLevel1);
 
-    $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+ACCORDIONCOUNT+'"></tbody>');
-    if(ACCORDIONCOUNT == 1){
-        $('.accordion-content'+ACCORDIONCOUNT).addClass("default");
+        $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+ACCORDIONCOUNT+'"></tbody>');
+        if(ACCORDIONCOUNT == 1){
+            $('.accordion-content'+ACCORDIONCOUNT).addClass("default");
+        }    
+        CAS_LEVEL1 = data["level1_name"];
     }
+    
 }
 function showComplianceApplicabilityDrillDownRecord_unitList(data){
-    var tableUnit = $('#templates .compliance-applicable-status .tr-unit');
-    var cloneUnit = tableUnit.clone();
-    var disp_unitname = '';
-    $(".heading", cloneUnit).html(data['unit_name']);
-    $('.accordion-content'+ACCORDIONCOUNT).append(cloneUnit);
-
+    if(CAS_UNITNAME != data['unit_name']){
+        var tableUnit = $('#templates .compliance-applicable-status .tr-unit');
+        var cloneUnit = tableUnit.clone();
+        var disp_unitname = '';
+        $(".heading", cloneUnit).html(data['unit_name']);
+        $('.accordion-content'+ACCORDIONCOUNT).append(cloneUnit);    
+        CAS_UNITNAME = data['unit_name'];
+    }
 }
 function showComplianceApplicabilityDrillDownRecord_complianceList(val){
     var frequency =  val["frequency"];
@@ -1212,19 +1256,10 @@ function showComplianceApplicabilityDrillDownRecord_complianceList(val){
 }
 
 function showComplianceApplicabilityDrillDownRecord(data, type){
-    $(".drilldown-title").text(GROUP_NAME+" - "+type+" Compliances");
-    $(".table-thead-drilldown-list").empty();
-    $(".table-drilldown-list tbody").remove();
-    $(".escalation-drilldown-list .td-escalation").empty();
+ 
 
-    FULLARRAYLIST = [];
-    SNO = 1;
-    STARTCOUNT = 0;
-    ENDCOUNT = 0;
-
+    FULLARRAYLIST = [];  
     var data =  data['drill_down_data'];
-
-    ENDCOUNT = PAGESIZE;
 
     $.each(data, function(i, val){
         var level1_Object = new Object();
@@ -1247,28 +1282,27 @@ function showComplianceApplicabilityDrillDownRecord(data, type){
     });
 
     var totallist = FULLARRAYLIST.length;
-
-    if(totallist > PAGESIZE){
-        $('#pagination').show();
-    }
-    else{
-        $('#pagination').hide();
-    }
-    var sub_array_list = get_sub_array(FULLARRAYLIST, STARTCOUNT, ENDCOUNT);
-    showComplianceApplicabilityDrillDownRecord_headingList();
-    for(var y = 0;  y < PAGESIZE; y++){
-        if(sub_array_list[y] !=  undefined){
-            if(Object.keys(sub_array_list[y])[0] == "level1_name"){
+    console.log(totallist);
+    // if(totallist > PAGESIZE){
+    //     $('#pagination').show();
+    // }
+    // else{
+    //     $('#pagination').hide();
+    // }
+    //var sub_array_list = get_sub_array(FULLARRAYLIST, STARTCOUNT, ENDCOUNT);
+    
+    for(var y = 0;  y < totallist; y++){
+        console.log(Object.keys(FULLARRAYLIST[y])[0]);
+            if(Object.keys(FULLARRAYLIST[y])[0] == "level1_name"){
                 ACCORDIONCOUNT++;
-                showComplianceApplicabilityDrillDownRecord_level1List(sub_array_list[y]);
+                showComplianceApplicabilityDrillDownRecord_level1List(FULLARRAYLIST[y]);
             }
-            else if(Object.keys(sub_array_list[y])[0] == "unit_name"){
-                showComplianceApplicabilityDrillDownRecord_unitList(sub_array_list[y]);
+            else if(Object.keys(FULLARRAYLIST[y])[0] == "unit_name"){
+                showComplianceApplicabilityDrillDownRecord_unitList(FULLARRAYLIST[y]);
             }
-            else if(Object.keys(sub_array_list[y])[0] == "description"){
-                showComplianceApplicabilityDrillDownRecord_complianceList(sub_array_list[y]);
+            else if(Object.keys(FULLARRAYLIST[y])[0] == "description"){
+                showComplianceApplicabilityDrillDownRecord_complianceList(FULLARRAYLIST[y]);
             }
-        }
     }
     accordianType('accordion', 'accordion-toggle', 'accordion-content');
 }
@@ -1402,20 +1436,22 @@ function notCompliedDrilldown(status, data){
         $(".drilldown-container").hide();
         loadNotCompliedChart();
     });
-   //console.log(JSON.stringify(data));
+   
     $.each(data, function(key, value){
+
         if(NC_UNITNAME != value["unit_name"]){
+            ACCORDIONCOUNT = ACCORDIONCOUNT + 1;
             var tableUnit = $('#templates .notComplied-status .tr-unit');
             var cloneUnit = tableUnit.clone();
             $(".unit-heading", cloneUnit).html(value["unit_name"]);
             $(".table-drilldown-list").append(cloneUnit);
             $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+ACCORDIONCOUNT+'"></tbody>');
-            if(ACCORDIONCOUNT == 0){
+            if(ACCORDIONCOUNT == 1){
                 $('.accordion-content'+ACCORDIONCOUNT).addClass("default");
             }
             NC_UNITNAME = value["unit_name"];
         }
-
+        
         var unitList = value["compliances"];
 
         $.each(unitList, function(ke, valu){
@@ -1427,6 +1463,7 @@ function notCompliedDrilldown(status, data){
                 NC_LEVEL1= ke;
             }
             $.each(valu, function(k, val){
+                console.log(ACCORDIONCOUNT);
                 var tableRow = $('#templates .notComplied-status .table-row-list');
                 var clone = tableRow.clone();
                 $(".sno", clone).html(SNO);
@@ -1442,7 +1479,7 @@ function notCompliedDrilldown(status, data){
 
             });
         });
-        ACCORDIONCOUNT = ACCORDIONCOUNT + 1;
+        
     });
     accordianType('accordion', 'accordion-toggle', 'accordion-content');
     $('.js-filtertable').on('keyup', function () {
@@ -3482,6 +3519,7 @@ function loadComplianceApplicabilityDrillDown(type){
         "applicability_status": type,
         "record_count": 0
     }
+    CAS_TYPE = type;
     $(".btn-back").on("click", function() {
         $(".graph-container.compliance-status").show();
         $(".drilldown-container").hide();
