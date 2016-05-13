@@ -3112,8 +3112,17 @@ class ClientDatabase(Database):
             "created_on"
         ]
         value_list = []
+        update_column = [
+            "statutory_dates", "assignee",
+            "approval_person", "trigger_before_days",
+            "due_date", "validity_date", "created_by",
+            "created_on"
+        ]
+
         if concurrence is not None :
             columns.append("concurrence_person")
+            update_column.append("concurrence_person")
+
         for c in compliances :
             compliance_id = int(c.compliance_id)
             statutory_dates = c.statutory_dates
@@ -3129,11 +3138,11 @@ class ClientDatabase(Database):
             if c.trigger_before is not None :
                 trigger_before = int(c.trigger_before)
             else :
-                trigger_before = ""
+                trigger_before = "0"
             if c.due_date is not None :
                 due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
             else :
-                due_date = ""
+                due_date = "0000-00-00"
             compliance_names.append("Complaince Name:" + c.compliance_name + "- Due Date:" + str(c.due_date))
             validity_date = c.validity_date
             if validity_date is not None :
@@ -3143,7 +3152,7 @@ class ClientDatabase(Database):
                 elif (validity_date - datetime.timedelta(days=90)) > due_date :
                     due_date = validity_date
             else :
-                validity_date = ""
+                validity_date = "0000-00-00"
 
             for unit_id in unit_ids :
                 value = [
@@ -3156,7 +3165,8 @@ class ClientDatabase(Database):
                     value.append(concurrence)
                 value_list.append(tuple(value))
 
-        self.bulk_insert("tbl_assigned_compliances", columns, value_list)
+        # self.bulk_insert("tbl_assigned_compliances", columns, value_list)
+        self.on_duplicate_key_update("tbl_assigned_compliances", ",".join(columns), value_list, update_column)
         if new_unit_settings is not None :
             self.update_user_settings(new_unit_settings, client_id)
 
