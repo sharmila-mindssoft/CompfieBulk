@@ -2972,6 +2972,7 @@ function updateAssigneeWiseComplianceList(data){
     $(".table-assignee-wise-compliance-list").show();
     $('#pagination-assignee').hide();
     $('.compliance_count_assignee').text('');
+    var aSno = 0;
 
     var country_assignee = parseInt($("#country").val().trim());
     $.each(data, function(key, value) {
@@ -2997,8 +2998,8 @@ function updateAssigneeWiseComplianceList(data){
                 var domainArr = [];
                 var tableRowvalues = $('#templates .assignee-wise-compliance-list .assignee-row-list');
                 var cloneval = tableRowvalues.clone();
-                SNO = SNO + 1;
-                $('.sno', cloneval).text(SNO);
+                aSno++;
+                $('.sno', cloneval).text(aSno);
                 $('.level1value', cloneval).html(val['domain_name']);
                 $('.total-count', cloneval).html(val['total_compliances']);
                 $('.complied-count', cloneval).html(val['complied_count']);
@@ -3055,9 +3056,14 @@ function updateComplianceList(country_id, user_id, domain_id, year, unit_id, sta
     var cloneHeadingth = tableRowHeadingth.clone();
     $('.comp-list-user', cloneHeadingth).text(assigneename);
     var dispYear = '-';
+    var dispDomain = '-';
+
+    if(domain_name != null || domain_name != 'null') dispDomain = dispDomain;
     if(year != null || year != 'null') dispYear = year;
+
     $('.comp-list-year', cloneHeadingth).text(dispYear);
-    $('.comp-list-domain', cloneHeadingth).text(domain_name);
+    $('.comp-list-domain', cloneHeadingth).text(dispDomain);
+
     $('.compliance-details-drilldown').append(cloneHeadingth);
 
     client_mirror.getAssigneewiseCompliancesDrilldown(
