@@ -432,6 +432,41 @@ table.filtertable-1 tr td table tr td {
   max-height: 30%;
   overflow: auto;
 }
+
+.popup-reassigned {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 70%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.popup-reassigned h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.popup-reassigned .close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  transition: all 200ms;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: Arial;
+  text-decoration: none;
+  color: #333;
+}
+.popup-reassigned .close:hover {
+  color: orange;
+}
+.popup-reassigned .content {
+  max-height: 30%;
+  overflow: auto;
+}
+
 .popup-error-msg{
   font-size: 0.813em;
   color: red;

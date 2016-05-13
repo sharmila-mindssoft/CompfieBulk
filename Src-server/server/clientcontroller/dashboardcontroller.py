@@ -231,7 +231,7 @@ def process_compliance_applicability_drill_down(db, request, session_user, clien
 
 def process_get_notifications(db, request, session_user, client_id):
     notifications = None
-    to_count = 5
+    to_count = 500
     notifications = db.get_notifications(
         request.notification_type,
         request.start_count, to_count,
@@ -326,7 +326,7 @@ def process_assigneewise_compliances_drilldown(
     year = request.year
     unit_id = request.unit_id
     start_count = request.start_count
-    to_count = 5
+    to_count = 500
 
     drill_down_data = {}
     complied, delayed, inprogress, not_complied = db.get_assigneewise_compliances_drilldown_data(
