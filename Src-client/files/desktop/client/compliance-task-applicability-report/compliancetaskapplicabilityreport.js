@@ -36,6 +36,7 @@ var unitid = null;
 var level1id = null;
 var appstatus = null;
 var csv = false;
+var astatus = null;
 
 function clearMessage() {
     $(".error-message").hide();
@@ -85,7 +86,6 @@ $("#export-button").click(function(){
     loadcompliancetaskapplicabilityreport("export");
 });
 function loadcompliancetaskapplicabilityreport(buttontype){
-    console.log("load===="+buttontype);
     countries = $("#country").val();
     countriesText = $("#countryval").val();
     //Domain
@@ -142,7 +142,7 @@ function loadcompliancetaskapplicabilityreport(buttontype){
         displayMessage(message.domain_required);
     }
     else{
-        console.log("else part");
+        
         var csv = false;
         if(buttontype == "export"){
             csv = true;
@@ -156,7 +156,6 @@ function loadcompliancetaskapplicabilityreport(buttontype){
                 var download_url = data["link"];
                 window.open(download_url, '_blank');
             }else{
-                console.log("success");
                 loadTaskApplicabilityStatusList(data);
             }
         }
@@ -169,7 +168,6 @@ function loadcompliancetaskapplicabilityreport(buttontype){
             legalentityid, divisionid, unitid, level1id, appstatus, csv, sno,
             function (error, response){
                 if(error == null){
-                    console.log("response success")
                     onSuccess(response);
                 }
                 else{
@@ -179,30 +177,30 @@ function loadcompliancetaskapplicabilityreport(buttontype){
         );
     }
 }
-function loadTaskApplicabilityStatusList(data1){
+function loadTaskApplicabilityStatusList(data){
     //$("#pagination").hide();
-    console.log("welcome");
-    applicable = $("#applicable-status").val();
-    var data = {}
-    if (applicable == "Applicable")
-        data["Applicable"] = data1["applicable"];
-    else if (applicable == "Not Applicable")
-        data["Not Applicable"] = data1["not_applicable"];
-    else if (applicable == "Not Opted")
-        data["Not Opted"] = data1["not_opted"];
-
-    $.each(data, function(key, value) {
-        var grouplist = data[key];
-        for(var k=0; k<value.length; k++){
-            var actwiselist = value[k]["actwise_units"];
-            $.each(actwiselist, function(k1, v1) {
-                $.each(v1, function(ke, valu) {
-                    totalrecords += valu["compliances"].length;
-                });
-            });
-        } 
-    });
-    loadresult(data);
+    astatus = $("#applicable-status").val();
+    var datastatus = data['applicable_status'];
+    totalrecords = data['total_record'];
+    // if (applicable == "Applicable")
+    //     data["Applicable"] = data1["applicable"];
+    // else if (applicable == "Not Applicable")
+    //     data["Not Applicable"] = data1["not_applicable"];
+    // else if (applicable == "Not Opted")
+    //     data["Not Opted"] = data1["not_opted"];
+    // console.log(datastatus);
+    // $.each(datastatus, function(key, value) {
+    //     var grouplist = data[key];
+    //     for(var k=0; k<value.length; k++){
+    //         var actwiselist = value[k]["actwise_units"];
+    //         $.each(actwiselist, function(k1, v1) {
+    //             $.each(v1, function(ke, valu) {
+    //                 totalrecords += valu["compliances"].length;
+    //             });
+    //         });
+    //     } 
+    // });
+    loadresult(data, astatus);
     $(".total-records").html("Total : "+totalrecords+" records");
 }
 
@@ -214,7 +212,6 @@ function get_sub_array(object, start, end){
 }
 
 $('#pagination').click(function(e){
-    console.log("pagination");
     displayLoader();
     fullArrayList = [];
     clearMessage();
@@ -285,26 +282,24 @@ $('#pagination').click(function(e){
 //     }
 // }
 
-function loadresult(finalList) {
+function loadresult(finalList, astatus) {
     fullArrayList = [];
-     $.each(finalList, function(i, val){
-        fullArrayList.push(i);
-        $.each(val, function(i1, val1){
-            var grouplist = val1;
-            var list_act = val1["actwise_units"];
-            //delete grouplist["actwise_units"];
-            fullArrayList.push(grouplist);
-            $.each(list_act, function (i_act, val_act){
-                var actval = i_act;
-                var list_unit = val_act;
-                delete val_act;
-                fullArrayList.push(actval);
-                $.each(list_unit, function(i_unit, val_unit){
-                    var list_comp = val_unit['compliances'];
-                    $.each(list_comp, function(i_com, val_com){
-                        jQuery.extend(val_com, {'unit_name': val_unit['unit_name'], 'address': val_unit['address']});
-                        fullArrayList.push(val_com);
-                    });
+    fullArrayList.push(astatus);
+    $.each(finalList["applicable_status"], function(i1, val1){
+        var grouplist = val1;
+        var list_act = val1["actwise_units"];
+        //delete grouplist["actwise_units"];
+        fullArrayList.push(grouplist);
+        $.each(list_act, function (i_act, val_act){
+            var actval = i_act;
+            var list_unit = val_act;
+            delete val_act;
+            fullArrayList.push(actval);
+            $.each(list_unit, function(i_unit, val_unit){
+                var list_comp = val_unit['compliances'];
+                $.each(list_comp, function(i_com, val_com){
+                    jQuery.extend(val_com, {'unit_name': val_unit['unit_name'], 'address': val_unit['address']});
+                    fullArrayList.push(val_com);
                 });
             });
         });
@@ -325,7 +320,6 @@ function loadresult(finalList) {
     
 }
 function splitwisedisplay(sub_keys_list){
-    //console.log(sub_keys_list);
     if(sub_keys_list !=  undefined){
         if(sub_keys_list == "Applicable" ||  sub_keys_list == "Not Applicable" || sub_keys_list == "Not Opted" ){
            applicablestatus(sub_keys_list);
@@ -350,9 +344,6 @@ function filterheading(data){
     var dv = '-';
     if( data["division_name"] != null) dv = data["division_name"];
     var le = data["legal_entity_name"];
-    console.log(lastbg+"--"+bg);
-    console.log(lastle+"--"+le);
-    console.log(lastdivision+"--"+dv);
 
     if(lastbg !=  bg || lastle != le || lastdivision != dv){
         lastbg = bg;
@@ -372,7 +363,6 @@ function filterheading(data){
     }
 }
 function applicablestatus(key){
-    //console.log(laststatus+"--"+key);
     if(laststatus != key){
         laststatus = key;
         count = 0;
@@ -417,6 +407,9 @@ function compliancelist(data){
     $('.compliance-frequency', clone).html(valcomp['compliance_frequency']);
     $('.repeats', clone).html(valcomp['repeats']);
     $('.tbody-task-applicability-list').append(clone);
+    if(totalrecords == sno){
+        $("#pagination").hide();
+    }
 }
 
 
