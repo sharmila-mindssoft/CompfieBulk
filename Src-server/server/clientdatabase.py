@@ -8559,7 +8559,6 @@ class ClientDatabase(Database):
         ''' % (
             condition
         )
-        print query
         rows = self.select_all(query)
         columns = [
             "assignee", "completed_by", "unit_id", "unit_name", "address", "domain_id",
