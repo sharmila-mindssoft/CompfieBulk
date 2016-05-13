@@ -2776,6 +2776,12 @@ class ClientDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         user_list = []
         for r in result :
+            q = "select distinct unit_id from tbl_user_units where user_id = %s" % (int(r["user_id"]))
+            r_rows = self.select_all(q)
+            r_unit_ids = self.convert_to_dict(r_rows, ["unit_id"])
+            unit_ids = []
+            for u in r_unit_ids :
+                unit_ids.append(u["unit_id"])
             if int(r["is_service_provider"]) == 0 :
                 name = "%s - %s" % (r["employee_code"], r["employee_name"])
             else :
@@ -2786,9 +2792,9 @@ class ClientDatabase(Database):
             domain_ids = [
                 int(x) for x in r["domain_ids"].split(',')
             ]
-            unit_ids = [
-                int(y) for y in r["unit_ids"].split(',')
-            ]
+            # unit_ids = [
+            #     int(y) for y in r["unit_ids"].split(',')
+            # ]
             form_ids = [int(x) for x in r["form_ids"].split(',')]
             is_assignee = False
             is_approver = False
@@ -3830,6 +3836,8 @@ class ClientDatabase(Database):
                 from_count , to_count
             )
         rows = self.select_all(query)
+        print query
+        print
         columns = [
             "compliance_history_id", "unit_id",
             "compliance_id", "start_date", "due_date",
