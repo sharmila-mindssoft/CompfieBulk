@@ -341,6 +341,7 @@ class Database(object) :
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
 
+        print query
         return self.execute(query)
 
     ########################################################
@@ -578,6 +579,8 @@ class Database(object) :
     # columns as keys
     ########################################################
     def convert_to_dict(self, data_list, columns) :
+        if data_list is None :
+            return []
         assert type(data_list) in (list, tuple)
         if len(data_list) > 0:
             if type(data_list[0]) is tuple :
@@ -4528,7 +4531,7 @@ class KnowledgeDatabase(Database):
             server_ip, server_port
         ]
         length_rows = self.get_data(
-            self.tblDatabaseServer, db_server_column, 
+            self.tblDatabaseServer, db_server_column,
             db_server_condition
         )
         if length_rows[0][0] >= 30:
@@ -6220,11 +6223,13 @@ class KnowledgeDatabase(Database):
         if domain_ids is not None:
             for i, domain_id in enumerate(domain_ids):
                 if i == 0 :
-                    condition += "FIND_IN_SET('%s', domain_ids)" % (domain_id)
+                    condition += " AND FIND_IN_SET('%s', domain_ids)" % (domain_id)
                 elif i > 0 :
                     condition += " OR FIND_IN_SET('%s', domain_ids)" % (domain_id)
+
+        print condition
         return condition
-    
+
     def get_client_details_report_count(
         self, country_id, client_id, business_group_id,
         legal_entity_id, division_id, unit_id, domain_ids
@@ -6243,7 +6248,7 @@ class KnowledgeDatabase(Database):
 
     def get_client_details_report(
         self, country_id, client_id, business_group_id,
-        legal_entity_id, division_id, unit_id, domain_ids, 
+        legal_entity_id, division_id, unit_id, domain_ids,
         start_count, to_count
     ):
         condition = self.get_client_details_report_condition(
@@ -6263,7 +6268,7 @@ class KnowledgeDatabase(Database):
         ORDER BY tu.business_group_id, tu.legal_entity_id, tu.division_id, \
         tu.unit_id DESC LIMIT %d, %d" % (
             columns, self.tblUnits, self.tblGeographies,  self.tblBusinessGroups,
-            self.tblLegalEntities, self.tblDivisions, condition, 
+            self.tblLegalEntities, self.tblDivisions, condition,
             int(start_count), to_count
         )
         rows = self.select_all(query)
@@ -6308,7 +6313,7 @@ class KnowledgeDatabase(Database):
                             division_name, legal_entity_name, business_group_name,
                             grouped_units[business_group][legal_entity_name][division]
                         )
-                    )        
+                    )
         return GroupedUnits
 
 

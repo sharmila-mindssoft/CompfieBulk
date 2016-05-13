@@ -233,8 +233,8 @@ def process_get_notifications(db, request, session_user, client_id):
     notifications = None
     to_count = 500
     notifications = db.get_notifications(
-        request.notification_type, 
-        request.start_count, to_count, 
+        request.notification_type,
+        request.start_count, to_count,
         session_user, client_id
     )
     return dashboard.GetNotificationsSuccess(notifications = notifications)
