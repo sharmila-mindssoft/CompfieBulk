@@ -1621,9 +1621,9 @@ class ClientDatabase(Database):
                 unit_statutories.domain_names = domain_list
                 # unit_statutories.statutories = statutory_dict
             unit_wise_statutories[unit_id] = unit_statutories
-            lst = []
-            for k in sorted(unit_wise_statutories):
-                lst.append(unit_wise_statutories.get(k))
+        lst = []
+        for k in sorted(unit_wise_statutories):
+            lst.append(unit_wise_statutories.get(k))
 
         return clienttransactions.GetStatutorySettingsSuccess(
             lst
