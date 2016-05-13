@@ -19,7 +19,6 @@ var count = 1;
 var statutoriesCount = 1;
 var actCount = 1;
 var s_endCount = 0;
-var status = 'true';
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -123,7 +122,7 @@ function disppopup(units_string){
 
 //load available compliance based on first wizard
 function load_secondwizard(){
-  if(status == 'true'){
+
     if(statutoriesCount <= 1){
       $(".tbody-assignstatutory").find("tbody").remove();
     }
@@ -332,13 +331,10 @@ function load_secondwizard(){
       $('#activate-step-3').hide();
       $('#pagination').hide();
     }
-    status = 'false';
-  }
 }
 
 //pagination process
 $('#pagination').click(function(){
-  status = 'true';
   var domainID = $('.domainlist.active').attr('id');
   unit_id =  parseInt($("#unit").val());
   s_endCount = statutoriesCount - 1;
@@ -378,7 +374,6 @@ function validate_firsttab(){
     s_endCount = 0;
     var domainID = $('.domainlist.active').attr('id');
     displayMessage("");
-    status = 'true';
 
     count=1;
     statutoriesCount= 1;

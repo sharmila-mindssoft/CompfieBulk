@@ -106,7 +106,7 @@ def process_update_compliance_detail(db, request, session_user, client_id):
 def process_get_on_occurrence_compliances(
     db, request, session_user, client_id
 ):
-    to_count = 1
+    to_count = 500
     user_domain_ids = db.get_user_domains(session_user)
     user_unit_ids = db.get_user_unit_ids(session_user)
     compliances = db.get_on_occurrence_compliances_for_user(

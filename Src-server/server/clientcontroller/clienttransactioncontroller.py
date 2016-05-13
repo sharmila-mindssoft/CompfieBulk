@@ -204,7 +204,7 @@ def process_get_past_records_form_data(db, request, session_user, client_id):
 def process_get_statutories_by_unit(
         db, request, session_user, client_id
 ):
-    to_count = 5
+    to_count = 100
     unit_id = request.unit_id
     domain_id = request.domain_id
     level_1_statutory_name = request.level_1_statutory_name

@@ -140,7 +140,7 @@ function showSideBar(idval, data){
     var complianceFrequency = data['compliance_frequency'];
     $(".validityAndDueDate", cloneValSide).hide();
     $('.sidebar-unit span', cloneValSide).html(data['unit_name']);
-   // $('.sidebar-unit abbr', cloneValSide).attr("title", data['address']);
+    // $('.sidebar-unit abbr', cloneValSide).attr("title", data['address']);
     $('.sidebar-compliance-task span', cloneValSide).html(data['compliance_name']);
     $('.sidebar-compliance-task abbr', cloneValSide).attr("title", data['description']);
     $('.sidebar-compliance-frequency', cloneValSide).html(complianceFrequency);

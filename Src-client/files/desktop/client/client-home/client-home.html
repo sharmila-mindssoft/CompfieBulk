@@ -386,29 +386,36 @@
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  <div id="popup-reassigned" class="popupoverlay1" >
-                  <a class="close-delayed" onclick="closepopupdelayed()">x</a>
-                    <header>
-                    <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;" class="comp-delayed-heading"></h1>
-                    </header>
-                    <section>
-                    <p style="font-size:0.8em; padding-top:10px;">
-                    <table class="modaltable" width="100%">
-                    <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
-                    <th width="5%" align="center">#</th>
-                    <th width="15%" align="left">Compliance</th>
-                    <th width="15%" align="left">Reassigned From</th>
-                    <th width="12%" align="center">Start Date</th>
-                    <th width="12%" align="center">Due Date</th>
-                    <th width="12%" align="center">Reassigned Date</th>
-                    <th width="13%" align="center">Completed Date</th>
-                    </tr>
-                    <tbody class="tbody-popup-reassigned-list"></tbody>                   
-                   
-                    </table>
-                    </p>
-                    </section>
+                <div id="popup-reassigned" class="popupoverlay1" >
+                  <div class="popup-reassigned">
+                    <a class="close">x</a>
+                    <div class="content">
+                      <div>
+                        <header>
+                        <h1 style="background:#ccc; padding:5px 10px; border-radius:3px; color:#000; font-size:1em;" class="comp-delayed-heading"></h1>
+                        </header>
+                        <section>
+                        <p style="font-size:0.8em; padding-top:10px;">
+                        <table class="modaltable" width="100%">
+                        <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
+                        <th width="5%" align="center">#</th>
+                        <th width="15%" align="left">Compliance</th>
+                        <th width="15%" align="left">Reassigned From</th>
+                        <th width="12%" align="center">Start Date</th>
+                        <th width="12%" align="center">Due Date</th>
+                        <th width="12%" align="center">Reassigned Date</th>
+                        <th width="13%" align="center">Completed Date</th>
+                        </tr>
+                        <tbody class="tbody-popup-reassigned-list">
+                          
+                        </tbody>                   
+                        </table>
+                        </p>
+                        </section>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -418,6 +425,7 @@
       </div>
     </div>
   </div>
+
   {% include "/files/desktop/client/home/footer.html" %}
   <div id="templates">
 
