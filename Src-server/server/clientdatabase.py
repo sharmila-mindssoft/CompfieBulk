@@ -3845,8 +3845,6 @@ class ClientDatabase(Database):
                 from_count , to_count
             )
         rows = self.select_all(query)
-        print query
-        print
         columns = [
             "compliance_history_id", "unit_id",
             "compliance_id", "start_date", "due_date",
@@ -8561,6 +8559,7 @@ class ClientDatabase(Database):
         ''' % (
             condition
         )
+        print query
         rows = self.select_all(query)
         columns = [
             "assignee", "completed_by", "unit_id", "unit_name", "address", "domain_id",
@@ -9675,62 +9674,6 @@ class ClientDatabase(Database):
         return clientreport.GetComplianceTaskApplicabilityStatusReportSuccess(
             total, lst
         )
-
-    def get_on_occurrence_compliances_for_user(self, session_user):
-        user_domain_ids = self.get_user_domains(session_user)
-        user_unit_ids = self.get_user_unit_ids(session_user)
-        unit_wise_compliances = {}
-        if user_domain_ids is not None and user_unit_ids is not None:
-            for unit in [int(x) for x in user_unit_ids.split(",")]:
-                columns = "ac.compliance_id, c.statutory_provision,\
-                compliance_task, compliance_description, duration_type, duration,\
-                document_name"
-                tables = [
-                    self.tblAssignedCompliances, self.tblCompliances,
-                    self.tblComplianceDurationType,
-                    self.tblUnits
-                ]
-                aliases = [
-                    "ac", "c", "cd", "u"
-                ]
-                join_type = "inner join"
-                join_condition = [
-                    "ac.compliance_id = c. compliance_id",
-                    "c.duration_type_id = cd.duration_type_id",
-                    "ac.unit_id = u.unit_id"
-                ]
-                where_condition = "u.is_closed = 0 and ac.unit_id = (%d) and c.domain_id in (%s) and \
-                c.frequency_id = 4 and ac.assignee='%d'" % (
-                    unit, user_domain_ids, session_user
-                )
-                rows = self.get_data_from_multiple_tables(
-                    columns, tables, aliases, join_type,
-                    join_condition, where_condition
-                )
-                columns = [
-                    "compliance_id", "statutory_provision", "compliance_name",
-                    "description", "duration_type", "duration", "document_name"
-                ]
-                result = self.convert_to_dict(rows, columns)
-                compliances = []
-                for row in result:
-                    duration = "%s %s" % (row["duration"], row["duration_type"])
-                    compliance_name = row["compliance_name"]
-                    if row["document_name"] not in ["None", "", None]:
-                        compliance_name = "%s - %s" % (
-                            row["document_name"], row["compliance_name"]
-                        )
-                    compliances.append(
-                        clientuser.ComplianceOnOccurrence(
-                            row["compliance_id"], row["statutory_provision"],
-                            compliance_name, row["description"],
-                            duration, unit
-                        )
-                    )
-                if len(compliances) > 0:
-                    unit_name = self.get_unit_name_by_id(unit)
-                    unit_wise_compliances[unit_name] = compliances
-        return unit_wise_compliances
 
     def start_on_occurrence_task(
         self, compliance_id, start_date, unit_id, duration, session_user, client_id
