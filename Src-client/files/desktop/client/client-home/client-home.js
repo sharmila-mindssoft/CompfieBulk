@@ -3058,8 +3058,8 @@ function updateComplianceList(country_id, user_id, domain_id, year, unit_id, sta
     var dispYear = '-';
     var dispDomain = '-';
 
-    if(domain_name != null || domain_name != 'null') dispDomain = dispDomain;
-    if(year != null || year != 'null') dispYear = year;
+    if(domain_name != null && domain_name != 'null') dispDomain = domain_name;
+    if(year != null && year != 'null') dispYear = year;
 
     $('.comp-list-year', cloneHeadingth).text(dispYear);
     $('.comp-list-domain', cloneHeadingth).text(dispDomain);
@@ -3212,7 +3212,7 @@ function showPopup(country_assignee, unit_assignee, user_assignee, name_assignee
                     $('.popup-inprogress-count', cloneval).html(val['inprogress_compliance_count']);
                     $('.popup-not-complied-count', cloneval).html(val['not_complied_count']);
                     $(".popup-click-drilldown", cloneval).on("click", function(){
-                        updateComplianceList(country_assignee, user_assignee, null, year, unit_assignee,  0, name_assignee, null);
+                        updateComplianceList(country_assignee, user_assignee, null, parseInt(val['year']), unit_assignee,  0, name_assignee, null);
                     });
                     $('.tbody-popup-list').append(cloneval);
                 });
@@ -3267,7 +3267,6 @@ function showPopupCompDelayed(country_id, unit_id, user_id, domain_id, name_assi
       $('.popupoverlay1').css("opacity","0");
     });
 }
-
 
 //Chart load function
 function loadComplianceStatusChart () {
@@ -4084,178 +4083,80 @@ $(document).ready(function () {
 });
 
 
-//Assignee Wise Compliance list - autocomplete for all fields
-function hidecountrylist(){
-    document.getElementById('autocompleteview-country').style.display = 'none';
-}
-function loadauto_country (textval) {
-    document.getElementById('autocompleteview-country').style.display = 'block';
-    var countries = COUNTRYLIST;
-    var suggestions = [];
-    $('#autocompleteview-country ul').empty();
-    if(textval.length>0){
-        for(var i in countries){
-          if (~countries[i]['country_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]);
-        }
-        var str='';
-        for(var i in suggestions){
-          str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-        }
-        $('#autocompleteview-country ul').append(str);
-        $("#country").val('');
-    }
-}
-function activate_text (element,checkval,checkname) {
-    $("#countryval").val(checkname);
-    $("#country").val(checkval);
+//retrive country autocomplete value
+function onCountrySuccess(val){
+  $("#countryval").val(val[1]);
+  $("#country").val(val[0]);
 }
 
-//Business Groups---------------------------------------------------------------------------------------------------------------
-function hidebgroupslist(){
-    document.getElementById('autocompleteview-bgroups').style.display = 'none';
-}
-function loadauto_businessgroups (textval) {
-    if($("#businessgroupsval").val() == ''){
-        $("#businessgroupid").val('');
-    }
-    document.getElementById('autocompleteview-bgroups').style.display = 'block';
-    var bgroups = BUSINESSGROUPSLIST;
-    var suggestions = [];
-    $('#autocompleteview-bgroups ul').empty();
-    if(textval.length>0){
-        for(var i in bgroups){
-            if (~bgroups[i]['business_group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([bgroups[i]["business_group_id"],bgroups[i]["business_group_name"]]);
-        }
-        var str='';
-        for(var i in suggestions){
-            str += '<li id="'+suggestions[i][0]+'" onclick="activate_businessgroups(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-        }
-        $('#autocompleteview-bgroups ul').append(str);
-        $("#businessgroupid").val('');
-    }
-}
-function activate_businessgroups (element,checkval,checkname) {
-  $("#businessgroupsval").val(checkname);
-  $("#businessgroupid").val(checkval);
-}
-//Legal Entity---------------------------------------------------------------------------------------------------------------
-function hidelentitylist(){
-    document.getElementById('autocompleteview-lentity').style.display = 'none';
-}
-function loadauto_lentity (textval) {
-    if($("#legalentityval").val() == ''){
-        $("#legalentityid").val('');
-    }
-  document.getElementById('autocompleteview-lentity').style.display = 'block';
-  var lentity = LEGALENTITYLIST;
-  var suggestions = [];
-  $('#autocompleteview-lentity ul').empty();
-  if(textval.length>0){
-    for(var i in lentity){
-        if($("#businessgroupid").val()!=''){
-            if (~lentity[i]['legal_entity_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([lentity[i]["legal_entity_id"],lentity[i]["legal_entity_name"]]);
-        }
-        else{
-         if (~lentity[i]['legal_entity_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([lentity[i]["legal_entity_id"],lentity[i]["legal_entity_name"]]);
-        }
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_lentity(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview-lentity ul').append(str);
-    $("#legalentityid").val('');
-    }
-}
-function activate_lentity (element,checkval,checkname) {
-  $("#legalentityval").val(checkname);
-  $("#legalentityid").val(checkval);
-}
-//Division---------------------------------------------------------------------------------------------------------------
-function hidedivisionlist(){
-    document.getElementById('autocompleteview-division').style.display = 'none';
-}
-function loadauto_division (textval) {
-    if($("#divisionval").val() == ''){
-        $("#divisionid").val('');
-    }
-  document.getElementById('autocompleteview-division').style.display = 'block';
-  var division = DIVISIONLIST;
-  var suggestions = [];
-  $('#autocompleteview-division ul').empty();
-  if(textval.length>0){
-    for(var i in division){
-        if (~division[i]['division_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([division[i]["division_id"],division[i]["division_name"]]);
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_division(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview-division ul').append(str);
-    $("#divisionid").val('');
-    }
-}
-function activate_division (element,checkval,checkname) {
-  $("#divisionval").val(checkname);
-  $("#divisionid").val(checkval);
+//load country list in autocomplete text box  
+function ac_country_load(textval){
+  getCountryAutocomplete(textval, COUNTRYLIST, function(val){
+    onCountrySuccess(val)
+  })
 }
 
-//Units---------------------------------------------------------------------------------------------------------------
-function hideunitlist(){
-    document.getElementById('autocompleteview-unit').style.display = 'none';
-}
-function loadauto_unit (textval) {
-    if($("#unitval").val() == ''){
-        $("#unitid").val('');
-    }
-  document.getElementById('autocompleteview-unit').style.display = 'block';
-  var unit = UNITLIST;
-  var suggestions = [];
-  $('#autocompleteview-unit ul').empty();
-  if(textval.length>0){
-    for(var i in unit){
-        var getunitidname = unit[i]['unit_code']+"-"+unit[i]['unit_name'];
-        if (~getunitidname.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]);
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_unit(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\', \''+suggestions[i][2]+'\')">'+suggestions[i][2]+'-'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview-unit ul').append(str);
-    $("#unitid").val('');
-    }
-}
-function activate_unit (element,checkval,checkname, concatunit) {
-  $("#unitval").val(concatunit+'-'+checkname);
-  $("#unitid").val(checkval);
+//retrive legelentity form autocomplete value
+function onLegalEntitySuccess(val){
+  $("#legalentityval").val(val[1]);
+  $("#legalentity").val(val[0]);
 }
 
+//load legalentity form list in autocomplete text box  
+function ac_le_load(textval){
+  getClientLegalEntityAutocomplete(textval, LEGALENTITYLIST, function(val){
+    onLegalEntitySuccess(val)
+  })
+}
 
-//USer---------------------------------------------------------------------------------------------------------------
-function hideuserlist(){
-    document.getElementById('autocompleteview-user').style.display = 'none';
+//retrive unit form autocomplete value
+function onUnitSuccess(val){
+  $("#unitval").val(val[1]);
+  $("#unitid").val(val[0]);
 }
-function loadauto_user (textval) {
-    if($("#userval").val() == ''){
-        $("#userid").val('');
-    }
-  document.getElementById('autocompleteview-user').style.display = 'block';
-  var users = USERLIST;
-  var suggestions = [];
-  $('#autocompleteview-user ul').empty();
-  if(textval.length>0){
-    for(var i in users){
-        if (~users[i]['employee_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([users[i]["employee_id"],users[i]["employee_name"]]);
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_user(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview-user ul').append(str);
-    $("#userid").val('');
-    }
+
+//load unit  form list in autocomplete text box
+function ac_unit_load(textval){
+  getUnitAutocomplete(textval, UNITLIST, function(val){
+    onUnitSuccess(val)
+  })
 }
-function activate_user(element,checkval,checkname) {
-  $("#userval").val(checkname);
-  $("#userid").val(checkval);
+
+//retrive businessgroup form autocomplete value
+function onBusinessGroupSuccess(val){
+  $("#businessgroupsval").val(val[1]);
+  $("#businessgroupid").val(val[0]);
+}
+
+//load businessgroup form list in autocomplete text box
+function ac_bg_load(textval){
+  getClientBusinessGroupAutocomplete(textval, BUSINESSGROUPSLIST, function(val){
+    onBusinessGroupSuccess(val)
+  })
+}
+
+//retrive division form autocomplete value
+function onDivisionSuccess(val){
+  $("#divisionval").val(val[1]);
+  $("#divisionid").val(val[0]);
+}
+
+//load division form list in autocomplete text box
+function ac_division_load(textval){
+  getClientDivisionAutocomplete(textval, DIVISIONLIST, function(val){
+    onDivisionSuccess(val)
+  })
+}
+
+//retrive user autocomplete value
+function onUserSuccess(val){
+    $("#userval").val(val[1]);
+    $("#userid").val(val[0]);
+}
+
+//load user list in autocomplete text box  
+function ac_user_load(textval){
+    getUserAutocomplete(textval, USERLIST, function(val){
+        onUserSuccess(val);
+    })
 }
