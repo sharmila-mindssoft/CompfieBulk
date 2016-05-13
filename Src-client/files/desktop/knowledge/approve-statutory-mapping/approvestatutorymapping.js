@@ -212,14 +212,14 @@ function loadApproveStatutory(){
       }
       $('#saverecord').show();
     }
-
     if(j <= 1){
-      var norecordtableRow=$('#norecord-templates');
-      var noclone=norecordtableRow.clone();
-      $('.tbody-statutorymapping-list').append(noclone);
+      $(".grid-table").show();
+      var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
+      var clone4=tableRow4.clone();
+      $('.no_records', clone4).text('No Compliance Found');
+      $('.tbody-statutorymapping-list').append(clone4);
       $('#saverecord').hide();
     }
-
   }
 }
 $("#submit").click(function(){

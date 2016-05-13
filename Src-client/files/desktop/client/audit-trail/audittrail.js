@@ -189,7 +189,7 @@ function loadaudittrail(tempadlist){
         sno++;
         var tableRow = $('#templates .table-audittrail-list .tableRow');
         var clone = tableRow.clone();
-        $('.username', clone).text(sno+getUserName(tempadlist['user_id']));
+        $('.username', clone).text(getUserName(tempadlist['user_id']));
         $('.datetime', clone).text(tempadlist['date']);
         var dispFormname = 'Login';
         if(tempadlist['action'] != ''){

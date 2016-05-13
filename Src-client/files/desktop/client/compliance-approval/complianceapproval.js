@@ -78,7 +78,7 @@ function loadComplianceApprovalDetails(data){
             $('.tbody-compliance-approval-list').append(clone);
             lastAssignee = value["assignee_name"];
         }
-        
+
         complianceList = value['compliances'];
         //Full Width list append ---------------------------------------------------------------
         $.each(complianceList, function(k, val) {
@@ -111,7 +111,7 @@ function loadComplianceApprovalDetails(data){
             $('.full-width-list .tbody-compliance-approval-list').append(clonelist);
         });
     });
-    
+
     if(totalRecord == 0){
         $('#pagination').hide();
         $('.compliance_count').text('');
