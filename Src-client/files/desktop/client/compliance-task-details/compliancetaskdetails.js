@@ -158,13 +158,13 @@ function loadComplianceTaskDetails(data){
 
     var total = (snoOverdue - 1) + (snoInprogress - 1);
 
-    if(c_totalRecord1 == 0){
+    if(c_totalRecord2 == 0){
         $('.compliance_count1').text('');
     }else{
         $('.compliance_count1').text("Total Over Due Compliances : " + c_totalRecord2);
     }
 
-    if(c_totalRecord2 == 0){
+    if(c_totalRecord1 == 0){
         $('.compliance_count2').text('');
     }else{
         $('.compliance_count2').text("Total Inprogress Compliances : " + c_totalRecord1);

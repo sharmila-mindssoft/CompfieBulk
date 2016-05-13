@@ -2505,7 +2505,7 @@ class ClientDatabase(Database):
         columns = "count(*)"
         condition = "1"
         concur_count = 0
-        if (self.is_two_levels_of_approval) and (not self.is_primary_admin(session_user)):
+        if (self.is_two_levels_of_approval()):
             condition = " concurrence_status is not NULL AND \
             concurrence_status != 0 AND concurrence_status != '' AND \
             concurred_by is not NULL"
@@ -2538,6 +2538,11 @@ class ClientDatabase(Database):
         approval_user_ids = str(session_user)
         if self.is_primary_admin(session_user):
             approval_user_ids += ",0"
+
+        if self.is_two_levels_of_approval():
+            concurrence_condition = "IF ( (concurred_by = '%d' AND concurrence_status = 1), 0, 1)" % (session_user)
+        else:
+            concurrence_condition = "1"
         query = "SELECT compliance_history_id, tch.compliance_id, start_date,\
         tch.due_date, documents, completion_date, completed_on, next_due_date, \
         concurred_by, remarks, datediff(tch.due_date, completion_date ), \
@@ -2556,13 +2561,12 @@ class ClientDatabase(Database):
         AND (completed_on IS NOT NULL AND completed_on != 0) \
         AND (approve_status IS NULL OR approve_status = 0)  \
         AND (approved_by IN (%s) OR concurred_by = '%d') \
-        AND is_closed = 0 AND IF ( \
-        (concurred_by = '%d' AND concurrence_status = 1), 0, 1)\
+        AND is_closed  = 0 AND %s\
         ORDER BY completed_by, tch.due_date ASC LIMIT %d, %d" % (
             self.tblComplianceHistory, self.tblCompliances,
             self.tblComplianceFrequency, self.tblUnits, self.tblUsers,
             self.tblDomains, approval_user_ids,
-            session_user, session_user, int(start_count), to_count
+            session_user, concurrence_condition, int(start_count), to_count
         )
         rows = self.select_all(query)
         is_two_levels = self.is_two_levels_of_approval()

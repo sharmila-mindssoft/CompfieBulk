@@ -193,7 +193,7 @@ function load_allcompliances(compliancesList){
           $('.triggerbefore', clone2).text(triggerdate);
 
           if(frequency != 'On Occurrence'){
-            if(compliance_history_id != null){
+            if(compliance_history_id == null){
               $('.duedate', clone2).html('<input type="text" value="'+due_date+'" class="input-box" readonly id="duedate'+statutoriesCount+'" />');
             }else{
               $('.duedate', clone2).html(due_date + '<input type="hidden" value="'+due_date+'" id="duedate'+statutoriesCount+'" />');
@@ -206,7 +206,7 @@ function load_allcompliances(compliancesList){
 
           $('.accordion-content'+(count-1)).append(clone2);
 
-          if(compliance_history_id != null){
+          if(compliance_history_id == null){
             $("#duedate"+statutoriesCount).datepicker({
               changeMonth: true,
               changeYear: true,
