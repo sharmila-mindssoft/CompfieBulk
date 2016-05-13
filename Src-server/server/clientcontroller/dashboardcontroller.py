@@ -326,7 +326,7 @@ def process_assigneewise_compliances_drilldown(
     year = request.year
     unit_id = request.unit_id
     start_count = request.start_count
-    to_count = 1
+    to_count = 5
 
     drill_down_data = {}
     complied, delayed, inprogress, not_complied = db.get_assigneewise_compliances_drilldown_data(

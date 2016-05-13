@@ -107,7 +107,6 @@ def mobile_user_admin_response(db, login_type, client_id, ip):
     condition = "1"
     rows = db.get_data(db.tblAdmin, column, condition)
     user_id = rows[0][0]
-    session_type = 1  # web
     session_token = db.add_session(
         user_id, session_type, ip, "Administrator", client_id
     )
