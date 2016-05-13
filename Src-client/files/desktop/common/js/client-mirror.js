@@ -140,11 +140,9 @@ function initClientMirror() {
                 var response = data[1];
                 matchString = 'success';
                 log("API STATUS :" + status);
-
                 ///console.log(response)
                 ///console.log(status.toLowerCase().indexOf(matchString))
                 ///callback(null, response)
-
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
                 }
@@ -1522,7 +1520,7 @@ function initClientMirror() {
                 "division_id": division_id,
                 "unit_id": unit_id,
                 "statutory_name": statutory_name,
-                "applicable_status": applicable_status,                
+                "applicable_status": applicable_status,
                 "csv": csv,
                 "record_count":record_count,
             }

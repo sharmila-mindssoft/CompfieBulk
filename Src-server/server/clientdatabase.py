@@ -6647,9 +6647,9 @@ class ClientDatabase(Database):
                 %s \
                 t02.is_active =1 and t01.is_active = 1 \
                 GROUP BY t01.assignee " % (user_qry)
-        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
+        # self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
         rows = self.select_all(q)
-        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
+        # self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
         result = self.convert_to_dict(rows, columns=["assignee", "count"])
         data = {}
         for r in result :
@@ -6701,9 +6701,9 @@ class ClientDatabase(Database):
             assignee, user_qry,
             from_count, to_count
         )
-        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
+        # self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
         rows = self.select_all(q)
-        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
+        # self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
         result.extend(self.convert_to_dict(rows, columns))
         return self.return_compliance_to_reassign(result)
 
@@ -9582,8 +9582,9 @@ class ClientDatabase(Database):
         division_id = request.division_id
         unit = request.unit_id
         from_count = request.record_count
-        statutory_name = request.statutory_name
         to_count = 500
+        statutory_name = request.statutory_name
+        status = request.applicable_status
 
         def statutory_repeat_text(statutory_dates, repeat, repeat_type) :
             trigger_days = ""
@@ -9621,6 +9622,14 @@ class ClientDatabase(Database):
             return result
 
         where_qry = ""
+
+        if status.lower() == "applicable" :
+            where_qry += " AND T1.statutory_applicable = 1"
+        elif status.lower() == "not applicable":
+            where_qry += " AND T1.statutory_applicable = 0"
+        else :
+            where_qry += " AND T1.compliance_opted = 0"
+
         if business_group is not None :
             where_qry = " AND T4.business_group_id = %s" % (business_group)
 
@@ -9636,11 +9645,29 @@ class ClientDatabase(Database):
         if statutory_name is not None :
             where_qry += " AND T2.statutory_mapping like '%s'" % (statutory_name + '%')
 
-        applicable_compliances = []
-        not_applicable_compliances = []
-        not_opted_compliances = []
+        act_wise = {}
 
-        applicable_wise = {}
+        q_count = "SELECT count( T2.compliance_id) \
+            FROM tbl_client_compliances T1 \
+            INNER JOIN tbl_compliances T2 \
+            ON T1.compliance_id = T2.compliance_id \
+            INNER JOIN tbl_client_statutories T3 \
+            ON T1.client_statutory_id = T3.client_statutory_id \
+            INNER JOIN tbl_units T4 \
+            ON T3.unit_id = T4.unit_id \
+            WHERE T3.country_id = %s \
+            AND T3.domain_id = %s \
+            %s \
+            " % (
+                request.country_id,
+                request.domain_id,
+                where_qry
+            )
+        row = self.select_one(q_count)
+        if row :
+            total = int(row[0])
+        else :
+            total = 0
 
         query = "SELECT distinct T2.compliance_id, T2.statutory_provision, T2.statutory_mapping, \
             T2.compliance_task, T2.document_name, T2.format_file, \
@@ -9686,23 +9713,17 @@ class ClientDatabase(Database):
             "duration"
         ]
         result = self.convert_to_dict(rows, columns)
+        legal_entity_wise = {}
         for r in result :
             business_group_name = r["business_group"]
             legal_entity_name = r["legal_entity"]
             division_name = r["division_name"]
             unit_id = r["unit_id"]
+            name = "%s - %s" % (r["unit_code"], r["unit_name"])
             mapping = r["statutory_mapping"].split(">>")
             address = "%s - %s" % (r["address"], r["postal_code"])
             level_1_statutory = mapping[0]
             level_1_statutory = level_1_statutory.strip()
-
-            if r["statutory_applicable"] == 1 :
-                applicability_status = "applicable"
-            else :
-                applicability_status = "not_applicable"
-
-            if r["compliance_opted"] == 0:
-                applicability_status = "not_opted"
 
             document_name = r["document_name"]
             if document_name not in (None, "None", ""):
@@ -9735,66 +9756,45 @@ class ClientDatabase(Database):
                 repeat_text
             )
             unit_data = clientreport.ApplicabilityCompliance(
-                unit_id, r["unit_name"], address,
-                [compliance]
+                unit_id, name, address, [compliance]
             )
 
-            act_wise = applicable_wise.get(applicability_status)
-            if act_wise is None :
+            legal_wise = legal_entity_wise.get(legal_entity_name)
+            if legal_wise is None :
                 act_wise = {}
-
-            unit_wise = act_wise.get(level_1_statutory)
-
-            if unit_wise is None :
-                unit_wise = []
-                unit_wise.append(unit_data)
+                act_wise[level_1_statutory] = [unit_data]
+                legal_wise = clientreport.GetComplianceTaskApplicabilityStatusReportData(
+                    business_group_name, legal_entity_name, division_name,
+                    act_wise
+                )
+                legal_entity_wise[legal_entity_name] = legal_wise
             else :
-                for u in unit_wise :
-                    if u.unit_id == unit_id :
-                        c_list = u.compliances
-                        if c_list is None :
-                            c_list = []
-                        c_list.append(compliance)
+                act_wise = legal_wise.actwise_units
+                unit_wise = act_wise.get(level_1_statutory)
 
-            act_wise[level_1_statutory] = unit_wise
-            applicable_wise[applicability_status] = act_wise
+                if unit_wise is None :
+                    unit_wise = []
+                    unit_wise.append(unit_data)
+                else :
+                    is_new_unit = True
+                    for u in unit_wise :
+                        if u.unit_id == unit_id :
+                            is_new_unit = False
+                            c_list = u.compliances
+                            if c_list is None :
+                                c_list = []
+                            c_list.append(compliance)
+                            u.compliances = c_list
 
-        applicable_list = applicable_wise.get("applicable")
-        if applicable_list is None :
-            applicable_list = []
-        not_applicable_list = applicable_wise.get("not_applicable")
-        if not_applicable_list is None :
-            not_applicable_list = []
-        not_opted_list = applicable_wise.get("not_opted")
-        if not_opted_list is None :
-            not_opted_list = []
-        if len(applicable_list) > 0 :
-            applicable_compliances.append(
-                clientreport.GetComplianceTaskApplicabilityStatusReportData(
-                    business_group_name, legal_entity_name, division_name,
-                    applicable_list
-                )
-            )
-        if len(not_applicable_list) > 0:
-            not_applicable_compliances.append(
-                clientreport.GetComplianceTaskApplicabilityStatusReportData(
-                    business_group_name, legal_entity_name, division_name,
-                    not_applicable_list
-                )
-            )
-        if len(not_opted_list) > 0:
-            not_opted_compliances.append(
-                clientreport.GetComplianceTaskApplicabilityStatusReportData(
-                    business_group_name, legal_entity_name, division_name,
-                    not_opted_list
-                )
-            )
+                    if is_new_unit :
+                        unit_wise.append(unit_data)
+
+                act_wise[level_1_statutory] = unit_wise
+                legal_wise.actwise_units = act_wise
 
         return clientreport.GetComplianceTaskApplicabilityStatusReportSuccess(
-            applicable_compliances, not_applicable_compliances,
-            not_opted_compliances
+            total, [legal_wise]
         )
-
 
     def get_on_occurrence_compliances_for_user(self, session_user):
         user_domain_ids = self.get_user_domains(session_user)
@@ -10220,6 +10220,7 @@ class ClientDatabase(Database):
             compliance_applicability_version, compliance_history_version, \
             reassign_history_version FROM tbl_mobile_sync_versions"
         rows = self.select_one(q)
+        print q
         column = [
             "unit_details", "user_details",
             "compliance_applicability",

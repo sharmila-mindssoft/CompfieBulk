@@ -608,7 +608,7 @@ class GetClientDetailsReportFilters(Request):
 
 class GetClientDetailsReportData(Request):
     def __init__(
-        self, country_id, business_group_id, legal_entity_id, division_id, 
+        self, country_id, business_group_id, legal_entity_id, division_id,
         unit_id, domain_ids, csv, start_count
     ):
         self.country_id = country_id
@@ -645,7 +645,7 @@ class GetClientDetailsReportData(Request):
         start_count = data.get("start_count")
         start_count = parse_structure_UnsignedIntegerType_32(start_count)
         return GetClientDetailsReportData(
-            country_id, business_group_id, legal_entity_id, division_id, 
+            country_id, business_group_id, legal_entity_id, division_id,
             unit_id, domain_ids, csv, start_count
         )
 
@@ -1474,7 +1474,7 @@ class GetComplianceTaskApplicabilityStatusReportData(object):
         division_name = parse_structure_OptionalType_CustomTextType_50(division_name)
         actwise_units = data.get("actwise_units")
         actwise_units = parse_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ApplicabilityCompliance(actwise_units)
-        return GetComplianceTaskApplicabilityStatusReportSuccess(
+        return GetComplianceTaskApplicabilityStatusReportData(
             business_group_name, legal_entity_name, division_name, actwise_units
         )
 
@@ -1487,27 +1487,23 @@ class GetComplianceTaskApplicabilityStatusReportData(object):
         }
 
 class GetComplianceTaskApplicabilityStatusReportSuccess(Response):
-    def __init__(self, applicable, not_applicable, not_opted):
-        self.applicable = applicable
-        self.not_applicable = not_applicable
-        self.not_opted = not_opted
+    def __init__(self, total_record, applicable_status):
+        self.total_record = total_record
+        self.applicable_status = applicable_status
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["applicable", "not_applicable", "not_opted"])
-        applicable = data.get("applicable")
-        applicable = parse_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(applicable)
-        not_applicable = data.get("not_applicable")
-        not_applicable = parse_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(not_applicable)
-        not_opted = data.get("not_opted")
-        not_opted = parse_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(not_opted)
-        return GetComplianceTaskApplicabilityStatusReportSuccess(applicable, not_applicable, not_opted)
+        data = parse_dictionary(data, ["total_record", "applicable_status"])
+        total_record = data.get("total_record")
+        total_record = parse_structure_UnsignedIntegerType_32(total_record)
+        applicable_status = data.get("applicable_status")
+        applicable_status = parse_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(applicable_status)
+        return GetComplianceTaskApplicabilityStatusReportSuccess(total_record, applicable_status)
 
     def to_inner_structure(self):
         return {
-            "applicable": to_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(self.applicable),
-            "not_applicable": to_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(self.not_applicable),
-            "not_opted": to_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(self.not_opted)
+            "total_record": to_structure_UnsignedIntegerType_32(self.total_record),
+            "applicable_status": to_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(self.applicable_status),
         }
 
 class GetComplianceActivityReportFiltersSuccess(Response):
