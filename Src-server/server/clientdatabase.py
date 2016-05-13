@@ -5307,12 +5307,12 @@ class ClientDatabase(Database):
             if due_date < completion_date:
                 status = "Not Complied"
 
-        ageing, remarks = self.calculate_ageing(
+        ageing, ageing_remarks = self.calculate_ageing(
             due_date, frequency_type=None, completion_date=completion_date, duration_type=None
         )
         self.save_compliance_activity(
             unit_id, compliance_id, "Rejected", status,
-            remarks
+            ageing_remarks
         )
 
         columns = ["approve_status", "remarks", "completion_date", "completed_on",
@@ -5439,12 +5439,12 @@ class ClientDatabase(Database):
         # )
         if due_date < completion_date:
             status = "Not Complied"
-        ageing, remarks = self.calculate_ageing(
+        ageing, ageing_remarks = self.calculate_ageing(
             due_date, frequency_type=None, completion_date=completion_date, duration_type=None
         )
         self.save_compliance_activity(
             unit_id, compliance_id, "Rejected", status,
-            remarks
+            ageing_remarks
         )
         columns = ["concurrence_status", "remarks", "completion_date", "completed_on"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
