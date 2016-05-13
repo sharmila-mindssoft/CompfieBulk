@@ -3024,7 +3024,7 @@ function showPopup(country_assignee, unit_assignee, user_assignee, name_assignee
                     $('.popup-inprogress-count', cloneval).html(val['inprogress_compliance_count']);
                     $('.popup-not-complied-count', cloneval).html(val['not_complied_count']);
                     $(".popup-click-drilldown", cloneval).on("click", function(){
-                        updateComplianceList(country_assignee, user_assignee, 1, year, unit_assignee,  0, name_assignee, null);
+                        updateComplianceList(country_assignee, user_assignee, null, year, unit_assignee,  0, name_assignee, null);
                     });
                     $('.tbody-popup-list').append(cloneval);
                 });
