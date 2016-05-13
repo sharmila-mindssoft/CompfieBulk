@@ -9767,7 +9767,7 @@ class ClientDatabase(Database):
                     business_group_name, legal_entity_name, division_name,
                     act_wise
                 )
-                legal_entity_wise[legal_entity_name] = legal_wise
+                # legal_entity_wise[legal_entity_name] = legal_wise
             else :
                 act_wise = legal_wise.actwise_units
                 unit_wise = act_wise.get(level_1_statutory)
@@ -9791,9 +9791,13 @@ class ClientDatabase(Database):
 
                 act_wise[level_1_statutory] = unit_wise
                 legal_wise.actwise_units = act_wise
+            legal_entity_wise[legal_entity_name] = legal_wise
 
+        lst = []
+        for k in sorted(legal_entity_wise):
+            lst.append(legal_entity_wise.get(k))
         return clientreport.GetComplianceTaskApplicabilityStatusReportSuccess(
-            total, [legal_wise]
+            total, lst
         )
 
     def get_on_occurrence_compliances_for_user(self, session_user):

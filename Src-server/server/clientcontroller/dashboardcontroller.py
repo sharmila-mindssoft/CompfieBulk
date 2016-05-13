@@ -181,7 +181,7 @@ def process_get_trend_chart_drilldown(db, request, session_user, client_id):
 
 def process_compliance_status_chart_drilldown(db, request, session_user, client_id):
     from_count = request.record_count
-    to_count = 10
+    to_count = 500
     unit_wise_data = db.get_compliances_details_for_status_chart(
         request, session_user, client_id,
         from_count, to_count
@@ -195,7 +195,7 @@ def process_escalation_chart(db, request, session_user, client_id):
 
 def process_escalation_chart_drilldown(db, request, session_user, client_id) :
     from_count = request.record_count
-    to_count = 10
+    to_count = 500
     result_list = db.get_escalation_drill_down_data(
         request, session_user, client_id,
         from_count, to_count
@@ -210,7 +210,7 @@ def process_not_complied_chart(db, request, session_user, client_id):
 
 def  process_not_complied_drill_down(db, request, session_user, client_id):
     from_count = request.record_count
-    to_count = 10
+    to_count = 500
     result_list = db.get_not_complied_drill_down(
         request, session_user, client_id,
         from_count, to_count
@@ -233,8 +233,8 @@ def process_get_notifications(db, request, session_user, client_id):
     notifications = None
     to_count = 5
     notifications = db.get_notifications(
-        request.notification_type, 
-        request.start_count, to_count, 
+        request.notification_type,
+        request.start_count, to_count,
         session_user, client_id
     )
     return dashboard.GetNotificationsSuccess(notifications = notifications)
