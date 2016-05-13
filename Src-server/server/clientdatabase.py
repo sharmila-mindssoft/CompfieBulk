@@ -2507,7 +2507,8 @@ class ClientDatabase(Database):
         concur_count = 0
         if (self.is_two_levels_of_approval) and (not self.is_primary_admin(session_user)):
             condition = " concurrence_status is not NULL AND \
-            concurrence_status != 0 AND concurrence_status != ''"
+            concurrence_status != 0 AND concurrence_status != '' AND \
+            concurred_by is not NULL"
             concur_condition = "concurred_by = '%d' AND (approve_status is NULL OR \
                 approve_status = 0 OR approve_status = '') AND (\
                 completed_on is not NULL AND completed_on !=0) AND \
