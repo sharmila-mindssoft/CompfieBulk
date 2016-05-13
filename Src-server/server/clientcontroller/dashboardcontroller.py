@@ -195,7 +195,7 @@ def process_escalation_chart(db, request, session_user, client_id):
 
 def process_escalation_chart_drilldown(db, request, session_user, client_id) :
     from_count = request.record_count
-    to_count = 500
+    to_count = 10
     result_list = db.get_escalation_drill_down_data(
         request, session_user, client_id,
         from_count, to_count
@@ -210,7 +210,7 @@ def process_not_complied_chart(db, request, session_user, client_id):
 
 def  process_not_complied_drill_down(db, request, session_user, client_id):
     from_count = request.record_count
-    to_count = 500
+    to_count = 10
     result_list = db.get_not_complied_drill_down(
         request, session_user, client_id,
         from_count, to_count

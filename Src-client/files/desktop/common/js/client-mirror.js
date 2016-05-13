@@ -140,7 +140,9 @@ function initClientMirror() {
                 var response = data[1];
                 matchString = 'success';
                 log("API STATUS :" + status);
-
+                ///console.log(response)
+                ///console.log(status.toLowerCase().indexOf(matchString))
+                ///callback(null, response)
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
                 }
