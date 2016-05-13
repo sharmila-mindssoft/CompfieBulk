@@ -8530,72 +8530,82 @@ class ClientDatabase(Database):
             )
         if assignee_id is not None:
             condition += " AND tch.completed_by = '%d'" % (assignee_id)
-
-        query = '''
-            SELECT concat(IFNULL(employee_code, 'Administrator'), '-', employee_name)
-            as Assignee, tch.completed_by, tch.unit_id,
-            concat(unit_code, '-', unit_name) as Unit, address, tc.domain_id,
-            (SELECT domain_name FROM tbl_domains td WHERE tc.domain_id = td.domain_id) as Domain,
-            sum(case when (approve_status = 1 and (tch.due_date > completion_date or
-                tch.due_date = completion_date)) then 1 else 0 end) as complied,
-            sum(case when ((approve_status = 0 or approve_status is null) and
-                tch.due_date > now()) then 1 else 0 end) as Inprogress,
-            sum(case when ((approve_status = 0 or approve_status is null) and
-                tch.due_date < now()) then 1 else 0 end) as NotComplied,
-            sum(case when (approve_status = 1 and completion_date > tch.due_date and
-                (is_reassigned = 0 or is_reassigned is null) )
-                then 1 else 0 end) as DelayedCompliance ,
-            sum(case when (approve_status = 1 and completion_date > tch.due_date and (is_reassigned = 1))
-                then 1 else 0 end) as DelayedReassignedCompliance
-            FROM tbl_compliance_history tch
-            INNER JOIN tbl_assigned_compliances tac ON (
-            tch.compliance_id = tac.compliance_id AND tch.unit_id = tac.unit_id
-            AND tch.completed_by = tac.assignee)
-            INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id)
-            INNER JOIN tbl_users tus ON (tus.user_id = tac.assignee)
-            INNER JOIN tbl_compliances tc ON (tac.compliance_id = tc.compliance_id)
-            WHERE %s
-            group by completed_by, tch.unit_id;
-        ''' % (
-            condition
-        )
-        rows = self.select_all(query)
-        columns = [
-            "assignee", "completed_by", "unit_id", "unit_name", "address", "domain_id",
-            "domain_name", "complied", "inprogress", "not_complied", "delayed",
-            "delayed_reassigned"
-        ]
-        assignee_wise_compliances = self.convert_to_dict(rows, columns)
+        domain_ids = self.get_user_domains(session_user)
+        domain_ids_list = [int(x) for x in domain_ids.split(",")]
+        current_date = self.get_date_time()
         result = {}
-        for compliance in assignee_wise_compliances:
-            unit_name = compliance["unit_name"]
-            assignee = compliance["assignee"]
-            if unit_name not in result:
-                result[unit_name] = {
-                    "unit_id": compliance["unit_id"],
-                    "address" : compliance["address"],
-                    "assignee_wise" : {}
-                }
-            if assignee not in result[unit_name]["assignee_wise"]:
-                result[unit_name]["assignee_wise"][assignee] = {
-                    "user_id": compliance["completed_by"],
-                    "domain_wise" : []
-                }
-            total_compliances = int(compliance["complied"]) + int(compliance["inprogress"])
-            total_compliances += int(compliance["delayed"]) + int(compliance["delayed_reassigned"])
-            total_compliances += int(compliance["not_complied"])
-            result[unit_name]["assignee_wise"][assignee]["domain_wise"].append(
-                dashboard.DomainWise(
-                    domain_id=int(compliance["domain_id"]),
-                    domain_name=compliance["domain_name"],
-                    total_compliances=total_compliances,
-                    complied_count=int(compliance["complied"]),
-                    assigned_count=int(compliance["delayed"]),
-                    reassigned_count=int(compliance["delayed_reassigned"]),
-                    inprogress_compliance_count=int(compliance["inprogress"]),
-                    not_complied_count=int(compliance["not_complied"])
-                )
+        for domain_id in domain_ids_list:
+            timelines = self.get_country_domain_timelines(
+                    [country_id], [domain_id], [current_date.year], client_id
             )
+            from_date = timelines[0][1][0][1][0]["start_date"].date()
+            to_date = timelines[0][1][0][1][0]["end_date"].date()
+            
+            query = '''
+                SELECT concat(IFNULL(employee_code, 'Administrator'), '-', employee_name)
+                as Assignee, tch.completed_by, tch.unit_id,
+                concat(unit_code, '-', unit_name) as Unit, address, tc.domain_id,
+                (SELECT domain_name FROM tbl_domains td WHERE tc.domain_id = td.domain_id) as Domain,
+                sum(case when (approve_status = 1 and (tch.due_date > completion_date or
+                    tch.due_date = completion_date)) then 1 else 0 end) as complied,
+                sum(case when ((approve_status = 0 or approve_status is null) and
+                    tch.due_date > now()) then 1 else 0 end) as Inprogress,
+                sum(case when ((approve_status = 0 or approve_status is null) and
+                    tch.due_date < now()) then 1 else 0 end) as NotComplied,
+                sum(case when (approve_status = 1 and completion_date > tch.due_date and
+                    (is_reassigned = 0 or is_reassigned is null) )
+                    then 1 else 0 end) as DelayedCompliance ,
+                sum(case when (approve_status = 1 and completion_date > tch.due_date and (is_reassigned = 1))
+                    then 1 else 0 end) as DelayedReassignedCompliance
+                FROM tbl_compliance_history tch
+                INNER JOIN tbl_assigned_compliances tac ON (
+                tch.compliance_id = tac.compliance_id AND tch.unit_id = tac.unit_id
+                AND tch.completed_by = tac.assignee)
+                INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id)
+                INNER JOIN tbl_users tus ON (tus.user_id = tac.assignee)
+                INNER JOIN tbl_compliances tc ON (tac.compliance_id = tc.compliance_id)
+                WHERE %s AND domain_id = '%d' AND tch.due_date BETWEEN '%s' AND '%s'
+                group by completed_by, tch.unit_id;
+            ''' % (
+                condition, domain_id, from_date, to_date
+            )
+            rows = self.select_all(query)
+            columns = [
+                "assignee", "completed_by", "unit_id", "unit_name", "address", "domain_id",
+                "domain_name", "complied", "inprogress", "not_complied", "delayed",
+                "delayed_reassigned"
+            ]
+            assignee_wise_compliances = self.convert_to_dict(rows, columns)
+            
+            for compliance in assignee_wise_compliances:
+                unit_name = compliance["unit_name"]
+                assignee = compliance["assignee"]
+                if unit_name not in result:
+                    result[unit_name] = {
+                        "unit_id": compliance["unit_id"],
+                        "address" : compliance["address"],
+                        "assignee_wise" : {}
+                    }
+                if assignee not in result[unit_name]["assignee_wise"]:
+                    result[unit_name]["assignee_wise"][assignee] = {
+                        "user_id": compliance["completed_by"],
+                        "domain_wise" : []
+                    }
+                total_compliances = int(compliance["complied"]) + int(compliance["inprogress"])
+                total_compliances += int(compliance["delayed"]) + int(compliance["delayed_reassigned"])
+                total_compliances += int(compliance["not_complied"])
+                result[unit_name]["assignee_wise"][assignee]["domain_wise"].append(
+                    dashboard.DomainWise(
+                        domain_id=domain_id,
+                        domain_name=compliance["domain_name"],
+                        total_compliances=total_compliances,
+                        complied_count=int(compliance["complied"]),
+                        assigned_count=int(compliance["delayed"]),
+                        reassigned_count=int(compliance["delayed_reassigned"]),
+                        inprogress_compliance_count=int(compliance["inprogress"]),
+                        not_complied_count=int(compliance["not_complied"])
+                    )
+                )
         chart_data = []
         for unit_name in result:
             assignee_wise_compliances_count = []
@@ -8663,19 +8673,23 @@ class ClientDatabase(Database):
                     INNER JOIN tbl_compliances tc ON (tac.compliance_id = tc.compliance_id)
                     INNER JOIN tbl_domains td ON (td.domain_id = tc.domain_id)
                     WHERE tch.unit_id = '%d' AND tc.domain_id = '%d'
-                    AND tch.due_date between '%s' AND '%s'
-                    group by tch.unit_id, completed_by, tc.domain_id;
+                    AND tch.due_date between '%s' AND '%s';
                 ''' % (
                     user_id, unit_id, int(domain_id), from_date, to_date
                 )
                 rows = self.select_all(query)
                 if rows:
-                    domainwise_complied += 0 if rows[0][0] is None else int(rows[0][0])
-                    domainwise_inprogress += 0 if rows[0][1] is None else int(rows[0][1])
-                    domainwise_notcomplied += 0 if rows[0][2] is None else int(rows[0][2])
-                    domainwise_delayed += 0 if rows[0][3] is None else  int(rows[0][3])
-                    domainwise_total += domainwise_complied + domainwise_inprogress
-                    domainwise_total += domainwise_notcomplied + domainwise_delayed
+                    convert_columns = ["domain_id", "complied", "inprogress", "not_complied",
+                    "delayed", "delayed_reassigned"]
+                    count_rows = self.convert_to_dict(rows, convert_columns)
+                    for row in count_rows:
+                        domainwise_complied += 0 if row["complied"] is None else int(row["complied"])
+                        domainwise_inprogress += 0 if row["inprogress"] is None else int(row["inprogress"])
+                        domainwise_notcomplied += 0 if row["not_complied"] is None else int(row["not_complied"])
+                        domainwise_delayed += 0 if row["delayed"] is None else  int(row["delayed"])
+                        domainwise_delayed += 0 if row["delayed_reassigned"] is None else  int(row["delayed_reassigned"])
+                        domainwise_total += domainwise_complied + domainwise_inprogress
+                        domainwise_total += domainwise_notcomplied + domainwise_delayed
 
             year_wise_compliance_count.append(
                 dashboard.YearWise(
