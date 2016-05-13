@@ -339,6 +339,9 @@ $("#btn-clientgroup-submit").click(function(){
             else if(error == "NotAnImageFile"){
                 displayMessage(message.logo_invalid);
             }
+            else if(error == "ServerIsFull"){
+                displayMessage(message.server_full);
+            }
             else{
                 displayMessage(error);
             }
@@ -377,12 +380,12 @@ $("#btn-clientgroup-submit").click(function(){
                 return false;
             }
         }
-        function onSuccess(data){
+        function onUpdateSuccess(data){
             $("#clientgroup-add").hide();
             $("#clientgroup-view").show();
             initialize();
         }
-        function onFailure(error){
+        function onUpdateFailure(error){
             if(error == 'GroupNameAlreadyExists'){
                 displayMessage(message.groupname_exists);
             }
@@ -401,6 +404,9 @@ $("#btn-clientgroup-submit").click(function(){
             else if(error == 'InvalidFileSpace'){
                 displayMessage(message.invalid_file_space); 
             }
+            else if(error == 'ServerIsFull'){
+                displayMessage(message.server_full); 
+            }
             else{
                 displayMessage(error);   
             }
@@ -413,10 +419,10 @@ $("#btn-clientgroup-submit").click(function(){
         mirror.updateClientGroup( clientGroupDetails,
             function (error, response) {
                 if (error == null){
-                    onSuccess(response);
+                    onUpdateSuccess(response);
                 }
                 else {
-                    onFailure(error);
+                    onUpdateFailure(error);
                 }
             }
         );

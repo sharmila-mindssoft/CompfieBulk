@@ -116,6 +116,7 @@ var message = {
 	'dateconfig_required' : 'Select Date Configurations From & To',
 	'logo_required' : 'Logo Required',
 	'logo_invalid' : 'Logo Invalid',
+	'server_full' : 'Server Full - Add a new server to create new clients',
 	'groupname_exists' : 'Group Name Already Exists',
 	'username_exists' : 'Username Already Exists',
 	'client_creation_failed' : 'Client Creation Failed. Check your server connection details',

@@ -37,17 +37,35 @@ var FULLARRAYLIST = [];
 var ACCORDIONCOUNT = 0;
 var RECORDCOUNT  = 0;
 
+
 var CS_STATUS = null;
 var CS_FILTERTYPEID = null;
 var CS_FILTERTYPENAME = null;
+var CS_LAST_UNITNAME = null;
+var CS_LAST_LEVEL1 = null;
 
 var ES_YEAR = null;
 var ES_STATUS = null;
 var ES_STATUS1 = null;
+var ES_NC_UNITNAME = null;
+var ES_NC_LEVEL1 = null;
+var ES_NC_COUNT = 1;
+var ES_D_UNITNAME = null;
+var ES_D_LEVEL1 = null;
+var ES_D_COUNT = 1;
 
 var NC_TYPE = null;
+var NC_UNITNAME = null;
+var NC_LEVEL1 = null;
 
 var TC_YEAR = null; 
+
+var snoAssignee = 0;
+var totalRecordAssignee;
+var lastAct = '';
+var lastStatus = '';
+var loadStatus = 'true';
+
 
 
 function clearMessage() {
@@ -982,12 +1000,12 @@ function showmorerecords(){
         client_mirror.getComplianceStatusDrillDown(
             requestData,
             function (status, data) {
-                complianceStatusDrilldown(CS_STATUS, data);
+                complianceStatusDrilldown(CS_STATUS, data['drill_down_data']);
             }
         );
     }
     else if(getcharttype == "escalations"){
-         ES_YEAR = year;
+        ES_YEAR = year;
         var filter_type = chartInput.getFilterType();
         var filterType = filter_type.replace("_", "-");
         filterType = hyphenatedToUpperCamelCase(filterType);
@@ -1007,8 +1025,8 @@ function showmorerecords(){
         client_mirror.getEscalationDrillDown(
             requestData,
             function (status, data) {
-                escalationDrilldown(ES_STATUS, data);
-                escalationDrilldown(ES_STATUS1, data);
+                escalationDrilldowndelayed(ES_STATUS, data);
+                escalationDrilldownnotcomplied(ES_STATUS1, data);
             }
         );
 
@@ -1270,6 +1288,15 @@ function showNotCompliedDrillDownRecord(data){
     $(".table-drilldown-list tbody").remove();
     $(".escalation-drilldown-list .td-escalation").empty();
     $(".drilldown-title").text("Over due compliances of "+GROUP_NAME);
+
+    var tableHeading = $('#templates .notComplied-status .tr-heading');
+    var cloneHeading = tableHeading.clone();
+    $(".table-thead-drilldown-list").append(cloneHeading);
+
+    var tableFilter = $('#templates .notComplied-status .tr-filter');
+    var cloneFilter = tableFilter.clone();
+    $(".table-thead-drilldown-list").append(cloneFilter);
+
     var data =  data['drill_down_data'];
     var filter_type = chartInput.getFilterType();
     if(filter_type == "group"){
@@ -1289,9 +1316,6 @@ function showNotCompliedDrillDownRecord(data){
     }
 }
 function groupWiseNotCompliedDrillDown(status, data){
-    $(".table-thead-drilldown-list").empty();
-    $(".table-drilldown-list tbody").remove();
-
     $(".business-group-row").show();
     $(".businessgroup-name").show();
 
@@ -1308,9 +1332,6 @@ function groupWiseNotCompliedDrillDown(status, data){
 }
 
 function businessgroupWiseNotCompliedDrillDown(status, data){
-    $(".table-thead-drilldown-list").empty();
-    $(".table-drilldown-list tbody").remove();
-
     $(".business-group-row").hide();
     $(".businessgroup-name").hide();
 
@@ -1327,9 +1348,6 @@ function businessgroupWiseNotCompliedDrillDown(status, data){
     notCompliedDrilldown(status, data);
 }
 function legalentityWiseNotCompliedDrillDown(status, data){
-    $(".table-thead-drilldown-list").empty();
-    $(".table-drilldown-list tbody").remove();
-
     $(".business-group-row").hide();
     $(".businessgroup-name").hide();
 
@@ -1346,9 +1364,7 @@ function legalentityWiseNotCompliedDrillDown(status, data){
 }
 
 function divisionWiseNotCompliedDrillDown(status, data){
-    $(".table-thead-drilldown-list").empty();
-    $(".table-drilldown-list tbody").remove();
-
+    
     $(".business-group-row").hide();
     $(".businessgroup-name").hide();
 
@@ -1366,8 +1382,7 @@ function divisionWiseNotCompliedDrillDown(status, data){
 }
 
 function unitWiseNotCompliedDrillDown(status, data){
-    $(".table-thead-drilldown-list").empty();
-    $(".table-drilldown-list tbody").remove();
+  
 
     $(".business-group-row").hide();
     $(".businessgroup-name").hide();
@@ -1390,37 +1405,34 @@ function notCompliedDrilldown(status, data){
         $(".drilldown-container").hide();
         loadNotCompliedChart();
     });
-    var count = 1;
-
-    var tableHeading = $('#templates .notComplied-status .tr-heading');
-    var cloneHeading = tableHeading.clone();
-    $(".table-thead-drilldown-list").append(cloneHeading);
-
-    var tableFilter = $('#templates .notComplied-status .tr-filter');
-    var cloneFilter = tableFilter.clone();
-    $(".table-thead-drilldown-list").append(cloneFilter);
-
+   //console.log(JSON.stringify(data));
     $.each(data, function(key, value){
-        var tableUnit = $('#templates .notComplied-status .tr-unit');
-        var cloneUnit = tableUnit.clone();
-        $(".unit-heading", cloneUnit).html(value["unit_name"]);
-        $(".table-drilldown-list").append(cloneUnit);
-        $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
-        if(count==1){
-            $('.accordion-content'+count).addClass("default");
+        if(NC_UNITNAME != value["unit_name"]){
+            var tableUnit = $('#templates .notComplied-status .tr-unit');
+            var cloneUnit = tableUnit.clone();
+            $(".unit-heading", cloneUnit).html(value["unit_name"]);
+            $(".table-drilldown-list").append(cloneUnit);
+            $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+ACCORDIONCOUNT+'"></tbody>');
+            if(ACCORDIONCOUNT == 0){
+                $('.accordion-content'+ACCORDIONCOUNT).addClass("default");
+            }   
+            NC_UNITNAME = value["unit_name"]; 
         }
+        
         var unitList = value["compliances"];
 
         $.each(unitList, function(ke, valu){
-            var tableLevel1 = $('#templates .notComplied-status .tr-level1');
-            var cloneLevel1 = tableLevel1.clone();
-            $(".heading", cloneLevel1).html(ke);
-            $('.accordion-content'+count).append(cloneLevel1);
-
+            if(NC_LEVEL1 != ke){                
+                var tableLevel1 = $('#templates .notComplied-status .tr-level1');
+                var cloneLevel1 = tableLevel1.clone();
+                $(".heading", cloneLevel1).html(ke);
+                $('.accordion-content'+ACCORDIONCOUNT).append(cloneLevel1);
+                NC_LEVEL1= ke;
+            }
             $.each(valu, function(k, val){
                 var tableRow = $('#templates .notComplied-status .table-row-list');
                 var clone = tableRow.clone();
-                $(".sno", clone).html(sno);
+                $(".sno", clone).html(SNO);
                 $(".businessgroup-name", clone).html(value["business_group"]);
                 $(".legalentity-name", clone).html(value["legal_entity"])
                 $(".division-name", clone).html(value["division"]);
@@ -1428,12 +1440,12 @@ function notCompliedDrilldown(status, data){
                 $(".compliance-name span", clone).html(val['compliance_name']);
                 $(".assigned-to", clone).html(val['assignee_name']);
                 $(".over-due", clone).html(val['ageing']);
-                $('.accordion-content'+count).append(clone);
+                $('.accordion-content'+ACCORDIONCOUNT).append(clone);
                 SNO = SNO + 1;
 
             });
         });
-        count = count + 1;
+        ACCORDIONCOUNT = ACCORDIONCOUNT + 1;
     });
     accordianType('accordion', 'accordion-toggle', 'accordion-content');
     $('.js-filtertable').on('keyup', function () {
@@ -1442,7 +1454,7 @@ function notCompliedDrilldown(status, data){
 
 }
 
-function showEscalationDrillDownRecord(data, year){
+function showEscalationDrillDownRecord(data, year){  
     var filter_type = chartInput.getFilterType();
     $('.drilldown-title').text("Escalations of "+GROUP_NAME+" for the year "+year);
     if(filter_type == "group"){
@@ -1596,179 +1608,207 @@ function unitWiseEscalationDrillDown(status, data){
         $(".tr-unit .unit-heading").attr("colspan", "4");
         $(".over-due-row").show();
         $(".delayed-by-row").hide();
-        var status = "Not Complied"
+       //var status = "Not Complied"
     }
     else if (status == "delayed") {
         $(".tr-level1 th").attr("colspan", "5");
         $(".tr-unit .unit-heading").attr("colspan", "4");
         $(".delayed-by-row").show();
         $(".over-due-row").hide();
-        var status = "Delayed"
+        //var status = "Delayed"
     }
 
     escalationDrilldown(status, data);
 }
-
 function escalationDrilldown(status, data){
-    var count = 1;
 
     if(status == "not_complied"){
-        $(".escalation-drilldown-list .td-escalation").append('<table class="inner-table-notcomplied-escalation-list js-filtertable_not_c"><thead class="thead-itncel"></thead></table>');
-        var h2heading = $('#templates .escalation-status .tr-h2');
-        var cloneh2 = h2heading.clone();
-        $(".escalation-status-value", cloneh2).html("Not Complied compliances");
-        $(".thead-itncel").append(cloneh2);
+        if(ES_NC_COUNT == 1){
+            $(".escalation-drilldown-list .td-escalation").append('<table class="inner-table-notcomplied-escalation-list js-filtertable_not_c"><thead class="thead-itncel"></thead></table>');
+            var h2heading = $('#templates .escalation-status .tr-h2');
+            var cloneh2 = h2heading.clone();
+            $(".escalation-status-value", cloneh2).html("Not Complied compliances");
+            $(".thead-itncel").append(cloneh2);
 
-        var tableHeading = $('#templates .escalation-status .tr-heading');
-        var cloneHeading = tableHeading.clone();
-        $(".thead-itncel").append(cloneHeading);
+            var tableHeading = $('#templates .escalation-status .tr-heading');
+            var cloneHeading = tableHeading.clone();
+            $(".thead-itncel").append(cloneHeading);
 
-        var tableFilter = $('#templates .escalation-status .tr-filter');
-        var cloneFilter = tableFilter.clone();
-        $(".thead-itncel").append(cloneFilter);
+            var tableFilter = $('#templates .escalation-status .tr-filter');
+            var cloneFilter = tableFilter.clone();
+            $(".thead-itncel").append(cloneFilter);
 
-        $(".inner-table-notcomplied-escalation-list .business-group-row .filter-text-box").addClass("js-filter_not_c");
-        $(".inner-table-notcomplied-escalation-list .legal-entity-row .filter-text-box").addClass("js-filter_not_c");
-        $(".inner-table-notcomplied-escalation-list .division-row .filter-text-box").addClass("js-filter_not_c");
-        $(".inner-table-notcomplied-escalation-list .type-row .filter-text-box").addClass("js-filter_not_c");
-        $(".inner-table-notcomplied-escalation-list .compliance-row .filter-text-box").addClass("js-filter_not_c");
-        $(".inner-table-notcomplied-escalation-list .assigned-to-row .filter-text-box").addClass("js-filter_not_c");
-        $(".inner-table-notcomplied-escalation-list .over-due-row .filter-text-box").addClass("js-filter_not_c");
+            $(".inner-table-notcomplied-escalation-list .business-group-row .filter-text-box").addClass("js-filter_not_c");
+            $(".inner-table-notcomplied-escalation-list .legal-entity-row .filter-text-box").addClass("js-filter_not_c");
+            $(".inner-table-notcomplied-escalation-list .division-row .filter-text-box").addClass("js-filter_not_c");
+            $(".inner-table-notcomplied-escalation-list .type-row .filter-text-box").addClass("js-filter_not_c");
+            $(".inner-table-notcomplied-escalation-list .compliance-row .filter-text-box").addClass("js-filter_not_c");
+            $(".inner-table-notcomplied-escalation-list .assigned-to-row .filter-text-box").addClass("js-filter_not_c");
+            $(".inner-table-notcomplied-escalation-list .over-due-row .filter-text-box").addClass("js-filter_not_c");
+            ES_NC_COUNT++;
+        }
+        
+        escalationDrilldownnotcomplied(status, data);
+    }
+    if(status == "delayed"){
+        if(ES_D_COUNT ==1){
+            $(".escalation-drilldown-list .td-escalation").append('<table class="inner-table-delayed-escalation-list js-filtertable_delayed"><thead-itdel class="thead-itdel"></thead></table>');
+            var h2heading = $('#templates .escalation-status .tr-h2');
+            var cloneh2 = h2heading.clone();
+            $(".escalation-status-value", cloneh2).html("Delayed compliances");
+            $(".thead-itdel").append(cloneh2);
 
-        if(data[status].length > 0){
+            var tableHeading = $('#templates .escalation-status .tr-heading');
+            var cloneHeading = tableHeading.clone();
+            $(".thead-itdel").append(cloneHeading);
 
-            $.each(data[status], function(key, value){
+            var tableFilter = $('#templates .escalation-status .tr-filter');
+            var cloneFilter = tableFilter.clone();
+            $(".thead-itdel").append(cloneFilter);
+
+            $(".inner-table-delayed-escalation-list .business-group-row .filter-text-box").addClass("js-filter_delayed");
+            $(".inner-table-delayed-escalation-list .legal-entity-row .filter-text-box").addClass("js-filter_delayed");
+            $(".inner-table-delayed-escalation-list .division-row .filter-text-box").addClass("js-filter_delayed");
+            $(".inner-table-delayed-escalation-list .type-row .filter-text-box").addClass("js-filter_delayed");
+            $(".inner-table-delayed-escalation-list .compliance-row .filter-text-box").addClass("js-filter_delayed");
+            $(".inner-table-delayed-escalation-list .assigned-to-row .filter-text-box").addClass("js-filter_delayed");
+            $(".inner-table-delayed-escalation-list .delayed-by-row .filter-text-box").addClass("js-filter_delayed");
+        }
+        escalationDrilldowndelayed(status, data);
+    }
+    
+}
+function escalationDrilldownnotcomplied(status, data){
+    if(data[status] == ''){
+        $("#pagination").hide();
+    }
+    else{
+        $("#pagination").show();   
+    }
+    console.log(data[status]);
+    if(typeof data[status] != "undefined"){
+        $.each(data[status], function(key, value){
+            if(ES_NC_UNITNAME != value["unit_name"]){
                 var tableUnit = $('#templates .escalation-status .tr-unit');
                 var cloneUnit = tableUnit.clone();
                 $(".unit-heading", cloneUnit).html(value["unit_name"]);
                 $(".inner-table-notcomplied-escalation-list").append(cloneUnit);
-                $('.inner-table-notcomplied-escalation-list').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
-                if(count==1){
-                    $('.accordion-content'+count).addClass("default");
-                }
-                var unitList = value["compliances"];
+                $('.inner-table-notcomplied-escalation-list').append('<tbody class="accordion-content accordion-content'+ACCORDIONCOUNT+'"></tbody>');
+                if(ACCORDIONCOUNT == 0){
+                    $('.accordion-content'+ACCORDIONCOUNT).addClass("default");
+                }    
+            }
+            var unitList = value["compliances"];
 
-                $.each(unitList, function(ke, valu){
+            $.each(unitList, function(ke, valu){
+                if(ES_NC_LEVEL1 != ke){
                     var tableLevel1 = $('#templates .escalation-status .tr-level1');
                     var cloneLevel1 = tableLevel1.clone();
                     $(".heading", cloneLevel1).html(ke);
-                    $('.accordion-content'+count).append(cloneLevel1);
-
-                    $.each(valu, function(k, val){
-                        var tableRow = $('#templates .escalation-status .table-row-list');
-                        var clone = tableRow.clone();
-                        $(".sno", clone).html(sno);
-                        $(".businessgroup-name", clone).html(value["business_group"]);
-                        $(".legalentity-name", clone).html(value["legal_entity"])
-                        $(".division-name", clone).html(value["division"]);
-                        $(".industry-type-name", clone).html(value["industry_name"]);
-                        $(".compliance-name span", clone).html(val['compliance_name']);
-                        $(".assigned-to", clone).html(val['assignee_name']);
-
-                        if(val['status'] == "Delayed Compliance"){
-                            $(".delayed-by", clone).html(val['ageing']);
-                        }
-                        if(val['status'] == "Not Complied"){
-                            $(".over-due", clone).html(val['ageing']);
-                        }
-                        $('.accordion-content'+count).append(clone);
-                        SNO = SNO + 1;
-
-                    });
-                });
-                count = count + 1;
-            });
-            accordianType('accordion', 'accordion-toggle', 'accordion-content');
-        }
-        else{
-            var tableRow = $('#templates .escalation-status .norecords-list');
-            var clone = tableRow.clone();
-            $('.norecord', clone).html("No Record Found");
-            $('.inner-table-notcomplied-escalation-list').append(clone);
-        }
-        $('.js-filtertable_not_c').on('keyup', function () {
-            $(this).filtertable().addFilter('.js-filter_not_c');
-        });
-    }
-    if(status == "delayed"){
-        $(".escalation-drilldown-list .td-escalation").append('<table class="inner-table-delayed-escalation-list js-filtertable_delayed"><thead-itdel class="thead-itdel"></thead></table>');
-        var h2heading = $('#templates .escalation-status .tr-h2');
-        var cloneh2 = h2heading.clone();
-        $(".escalation-status-value", cloneh2).html("Delayed compliances");
-        $(".thead-itdel").append(cloneh2);
-
-        var tableHeading = $('#templates .escalation-status .tr-heading');
-        var cloneHeading = tableHeading.clone();
-        $(".thead-itdel").append(cloneHeading);
-
-        var tableFilter = $('#templates .escalation-status .tr-filter');
-        var cloneFilter = tableFilter.clone();
-        $(".thead-itdel").append(cloneFilter);
-
-        $(".inner-table-delayed-escalation-list .business-group-row .filter-text-box").addClass("js-filter_delayed");
-        $(".inner-table-delayed-escalation-list .legal-entity-row .filter-text-box").addClass("js-filter_delayed");
-        $(".inner-table-delayed-escalation-list .division-row .filter-text-box").addClass("js-filter_delayed");
-        $(".inner-table-delayed-escalation-list .type-row .filter-text-box").addClass("js-filter_delayed");
-        $(".inner-table-delayed-escalation-list .compliance-row .filter-text-box").addClass("js-filter_delayed");
-        $(".inner-table-delayed-escalation-list .assigned-to-row .filter-text-box").addClass("js-filter_delayed");
-        $(".inner-table-delayed-escalation-list .delayed-by-row .filter-text-box").addClass("js-filter_delayed");
-
-        if(data[status].length > 0){
-
-            $.each(data[status], function(key, value){
-                var tableUnit = $('#templates .escalation-status .tr-unit');
-                var cloneUnit = tableUnit.clone();
-                $(".unit-heading", cloneUnit).html(value["unit_name"]);
-                $(".inner-table-delayed-escalation-list").append(cloneUnit);
-                $('.inner-table-delayed-escalation-list').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
-                if(count==1){
-                    $('.accordion-content'+count).addClass("default");
+                    $('.accordion-content'+ACCORDIONCOUNT).append(cloneLevel1);    
                 }
-                var unitList = value["compliances"];
+                
 
-                $.each(unitList, function(ke, valu){
-                    var tableLevel1 = $('#templates .escalation-status .tr-level1');
-                    var cloneLevel1 = tableLevel1.clone();
-                    $(".heading", cloneLevel1).html(ke);
-                    $('.accordion-content'+count).append(cloneLevel1);
+                $.each(valu, function(k, val){
+                    var tableRow = $('#templates .escalation-status .table-row-list');
+                    var clone = tableRow.clone();
+                    $(".sno", clone).html(SNO);
+                    $(".businessgroup-name", clone).html(value["business_group"]);
+                    $(".legalentity-name", clone).html(value["legal_entity"])
+                    $(".division-name", clone).html(value["division"]);
+                    $(".industry-type-name", clone).html(value["industry_name"]);
+                    $(".compliance-name span", clone).html(val['compliance_name']);
+                    $(".assigned-to", clone).html(val['assignee_name']);
 
-                    $.each(valu, function(k, val){
-                        var tableRow = $('#templates .escalation-status .table-row-list');
-                        var clone = tableRow.clone();
-                        $(".sno", clone).html(sno);
-                        $(".businessgroup-name", clone).html(value["business_group"]);
-                        $(".legalentity-name", clone).html(value["legal_entity"])
-                        $(".division-name", clone).html(value["division"]);
-                        $(".industry-type-name", clone).html(value["industry_name"]);
-                        $(".compliance-name span", clone).html(val['compliance_name']);
-                        $(".assigned-to", clone).html(val['assignee_name']);
+                    if(val['status'] == "Delayed Compliance"){
+                        $(".delayed-by", clone).html(val['ageing']);
+                    }
+                    if(val['status'] == "Not Complied"){
+                        $(".over-due", clone).html(val['ageing']);
+                    }
+                    $('.accordion-content'+ACCORDIONCOUNT).append(clone);
+                    SNO = SNO + 1;
 
-                        if(val['status'] == "Delayed Compliance"){
-                            $(".delayed-by", clone).html(val['ageing']);
-                        }
-                        if(val['status'] == "Not Complied"){
-                            $(".over-due", clone).html(val['ageing']);
-                        }
-                        $('.accordion-content'+count).append(clone);
-                        SNO = SNO + 1;
-
-                    });
                 });
-                count = count + 1;
             });
-
-            accordianType('accordion', 'accordion-toggle', 'accordion-content');
-        }
-        else{
-            var tableRow = $('#templates .escalation-status .norecords-list');
-            var clone = tableRow.clone();
-            $('.norecord', clone).html("No Record Found");
-            $('.inner-table-delayed-escalation-list').append(clone);
-        }
-        $('.js-filtertable_delayed').on('keyup', function () {
-            $(this).filtertable().addFilter('.js-filter_delayed');
+            ACCORDIONCOUNT = ACCORDIONCOUNT + 1;
         });
+        accordianType('accordion', 'accordion-toggle', 'accordion-content');
     }
+    else{
+        var tableRow = $('#templates .escalation-status .norecords-list');
+        var clone = tableRow.clone();
+        $('.norecord', clone).html("No Record Found");
+        $('.inner-table-notcomplied-escalation-list').append(clone);
+    }
+    $('.js-filtertable_not_c').on('keyup', function () {
+        $(this).filtertable().addFilter('.js-filter_not_c');
+    });
+
+}
+function escalationDrilldowndelayed(status, data){
+    if(data[status] == ''){
+        $("#pagination").hide();
+    }  
+    else{
+        $("#pagination").show();   
+    }
+    
+    if(typeof data[status] != "undefined"){
+        $.each(data[status], function(key, value){
+            var tableUnit = $('#templates .escalation-status .tr-unit');
+            var cloneUnit = tableUnit.clone();
+            $(".unit-heading", cloneUnit).html(value["unit_name"]);
+            $(".inner-table-delayed-escalation-list").append(cloneUnit);
+            $('.inner-table-delayed-escalation-list').append('<tbody class="accordion-content accordion-content'+ACCORDIONCOUNT+'"></tbody>');
+            if(ACCORDIONCOUNT == 1){
+                $('.accordion-content'+ACCORDIONCOUNT).addClass("default");
+            }
+            var unitList = value["compliances"];
+
+            $.each(unitList, function(ke, valu){
+                var tableLevel1 = $('#templates .escalation-status .tr-level1');
+                var cloneLevel1 = tableLevel1.clone();
+                $(".heading", cloneLevel1).html(ke);
+                $('.accordion-content'+ACCORDIONCOUNT).append(cloneLevel1);
+
+                $.each(valu, function(k, val){
+                    var tableRow = $('#templates .escalation-status .table-row-list');
+                    var clone = tableRow.clone();
+                    $(".sno", clone).html(SNO);
+                    $(".businessgroup-name", clone).html(value["business_group"]);
+                    $(".legalentity-name", clone).html(value["legal_entity"])
+                    $(".division-name", clone).html(value["division"]);
+                    $(".industry-type-name", clone).html(value["industry_name"]);
+                    $(".compliance-name span", clone).html(val['compliance_name']);
+                    $(".assigned-to", clone).html(val['assignee_name']);
+
+                    if(val['status'] == "Delayed Compliance"){
+                        $(".delayed-by", clone).html(val['ageing']);
+                    }
+                    if(val['status'] == "Not Complied"){
+                        $(".over-due", clone).html(val['ageing']);
+                    }
+                    $('.accordion-content'+ACCORDIONCOUNT).append(clone);
+                    SNO = SNO + 1;
+
+                });
+            });
+            ACCORDIONCOUNT = ACCORDIONCOUNT + 1;
+        });
+
+        accordianType('accordion', 'accordion-toggle', 'accordion-content');
+    }
+    else{
+        var tableRow = $('#templates .escalation-status .norecords-list');
+        var clone = tableRow.clone();
+        $('.norecord', clone).html("No Record Found");
+        $('.inner-table-delayed-escalation-list').append(clone);
+    }
+    $('.js-filtertable_delayed').on('keyup', function () {
+        $(this).filtertable().addFilter('.js-filter_delayed');
+    });
+   
 }
 
 // Trend Chart Drill Down
@@ -1999,8 +2039,6 @@ function unitWiseTrendChartDrillDown(status, data){
 }
 
 function trendChartDrilldown(status, data){
-    var sno = 1;
-    var count = 1;
     var tableHeading = $('#templates .compliance-status .tr-heading');
     var cloneHeading = tableHeading.clone();
     $(".table-thead-drilldown-list").append(cloneHeading);
@@ -2012,20 +2050,20 @@ function trendChartDrilldown(status, data){
         var cloneUnit = tableUnit.clone();
         $(".unit-heading", cloneUnit).html(value["unit_name"]);
         $(".table-drilldown-list").append(cloneUnit);
-        $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
-        if(count==1){
-            $('.accordion-content'+count).addClass("default");
+        $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+ACCORDIONCOUNT+'"></tbody>');
+        if(ACCORDIONCOUNT==1){
+            $('.accordion-content'+ACCORDIONCOUNT).addClass("default");
         }
         var unitList = value["compliances"];
         $.each(unitList, function(ke, valu){
             var tableLevel1 = $('#templates .compliance-status .tr-level1');
             var cloneLevel1 = tableLevel1.clone();
             $(".heading", cloneLevel1).html(ke);
-            $('.accordion-content'+count).append(cloneLevel1);
+            $('.accordion-content'+ACCORDIONCOUNT).append(cloneLevel1);
             $.each(valu, function(k, val){
                 var tableRow = $('#templates .compliance-status .table-row-list');
                 var clone = tableRow.clone();
-                $(".sno", clone).html(sno);
+                $(".sno", clone).html(SNO);
                 $(".businessgroup-name", clone).html(value["business_group"]);
                 $(".legalentity-name", clone).html(value["legal_entity"])
                 $(".division-name", clone).html(value["division"]);
@@ -2041,12 +2079,12 @@ function trendChartDrilldown(status, data){
                 if(val['status'] == "Not Complied"){
                     $(".over-due", clone).html(val['ageing']+" Days");
                 }
-                $('.accordion-content'+count).append(clone);
+                $('.accordion-content'+ACCORDIONCOUNT).append(clone);
                 SNO = SNO + 1;
 
             });
         });
-        count = count + 1;
+        ACCORDIONCOUNT = ACCORDIONCOUNT + 1;
     });
 
     accordianType('accordion', 'accordion-toggle', 'accordion-content');
@@ -2089,6 +2127,12 @@ function showDrillDownRecord(status, data, filterTypeName){
         unitWiseComplianceDrillDown(status, data);
         drilldownTitleText = "Compliances - Unit: " +filterTypeName +", Status: "+status;
     }
+    var tableHeading = $('#templates .compliance-status .tr-heading');
+    var cloneHeading = tableHeading.clone();
+    $(".table-thead-drilldown-list").append(cloneHeading);
+    var tableFilter = $('#templates .compliance-status .tr-filter');
+    var cloneFilter = tableFilter.clone();
+    $(".table-thead-drilldown-list").append(cloneFilter);
     $('.drilldown-title').text(drilldownTitleText);
 }
 
@@ -2277,33 +2321,37 @@ function unitWiseComplianceDrillDown(status, data){
 }
 
 function complianceStatusDrilldown(status, data){
-    var sno = 1;
-    var count = 1;
-    var tableHeading = $('#templates .compliance-status .tr-heading');
-    var cloneHeading = tableHeading.clone();
-    $(".table-thead-drilldown-list").append(cloneHeading);
-    var tableFilter = $('#templates .compliance-status .tr-filter');
-    var cloneFilter = tableFilter.clone();
-    $(".table-thead-drilldown-list").append(cloneFilter);
+    if(data == ''){
+        $("#pagination").hide();
+    }
+    
     $.each(data, function(key, value){
-        var tableUnit = $('#templates .compliance-status .tr-unit');
-        var cloneUnit = tableUnit.clone();
-        $(".unit-heading", cloneUnit).html(value["unit_name"]);
-        $(".table-drilldown-list").append(cloneUnit);
-        $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
-        if(count==1){
-            $('.accordion-content'+count).addClass("default");
+        if(CS_LAST_UNITNAME != value["unit_name"]){
+            ACCORDIONCOUNT = ACCORDIONCOUNT + 1;
+            var tableUnit = $('#templates .compliance-status .tr-unit');
+            var cloneUnit = tableUnit.clone();
+            $(".unit-heading", cloneUnit).html(value["unit_name"]);
+            $(".table-drilldown-list").append(cloneUnit);
+            $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+ACCORDIONCOUNT+'"></tbody>');
+            if(ACCORDIONCOUNT == 1){
+                $('.accordion-content'+ACCORDIONCOUNT).addClass("default");
+            }
+            CS_LAST_UNITNAME = value["unit_name"];
         }
+       
         var unitList = value["compliances"];
         $.each(unitList, function(ke, valu){
-            var tableLevel1 = $('#templates .compliance-status .tr-level1');
-            var cloneLevel1 = tableLevel1.clone();
-            $(".heading", cloneLevel1).html(ke);
-            $('.accordion-content'+count).append(cloneLevel1);
+            if(CS_LAST_LEVEL1 != ke){
+                var tableLevel1 = $('#templates .compliance-status .tr-level1');
+                var cloneLevel1 = tableLevel1.clone();
+                $(".heading", cloneLevel1).html(ke);
+                $('.accordion-content'+ACCORDIONCOUNT).append(cloneLevel1);
+                CS_LAST_LEVEL1 = ke;
+            }
             $.each(valu, function(k, val){
                 var tableRow = $('#templates .compliance-status .table-row-list');
                 var clone = tableRow.clone();
-                $(".sno", clone).html(sno);
+                $(".sno", clone).html(SNO);
                 $(".businessgroup-name", clone).html(value["business_group"]);
                 $(".legalentity-name", clone).html(value["legal_entity"])
                 $(".division-name", clone).html(value["division"]);
@@ -2319,12 +2367,12 @@ function complianceStatusDrilldown(status, data){
                 if(val['status'] == "Not Complied"){
                     $(".over-due", clone).html(val['ageing']);
                 }
-                $('.accordion-content'+count).append(clone);
+                $('.accordion-content'+ACCORDIONCOUNT).append(clone);
                 SNO = SNO + 1;
 
             });
         });
-        count = count + 1;
+        
     });
 
     accordianType('accordion', 'accordion-toggle', 'accordion-content');
@@ -2332,6 +2380,7 @@ function complianceStatusDrilldown(status, data){
         $(this).filtertable().addFilter('.js-filter');
     });
 }
+//-----------------------------------End Compliance Status--------------------------------------------------------------
 
 function accordianType(idtype, toggleClass, contentClass){
     $('#'+idtype).find('.'+toggleClass).click(function(){
@@ -2509,9 +2558,13 @@ function prepareTrendChartData(source_data) {
 
 function updateTrendChart(data) {
     data = prepareTrendChartData(data);
+    console.log(data);
+    print_data = JSON.stringify(data, null, " ");
+    console.log(print_data);
     xAxis = data[0];
     chartTitle = data[1];
     chartDataSeries = data[2];
+    console.log(chartDataSeries);
     var highchart;
     highchart = new Highcharts.Chart({
         chart: {
@@ -2881,7 +2934,11 @@ function updateAssigneeWiseComplianceList(data){
     $('.tbody-assignee-wise-compliance-list tr').remove();
     $('.compliance-details-drilldown tr').remove();
     $(".table-assignee-wise-compliance-list").show();
-    var sno = 0;
+    $('#pagination-assignee').hide();
+    $('.compliance_count_assignee').text('');
+
+    var country_assignee = parseInt($("#country").val().trim());
+    
 
     $.each(data, function(key, value) {
         var tableRowHeadingth = $('#templates .assignee-wise-compliance-list .unitHeading');
@@ -2893,10 +2950,11 @@ function updateAssigneeWiseComplianceList(data){
         $.each(assigneewiselist, function(ke, valu) {
             var tableRow = $('#templates .assignee-wise-compliance-list .userHeading ');
             var clone = tableRow.clone();
-            $('.assignee-name-for-popup', clone).html(valu['assignee_name']);
+            var name_assignee = valu['assignee_name'];
+            $('.assignee-name-for-popup', clone).html(name_assignee);
             $(clone, ".assignee-name-for-popup").on("click", function(e){
                 $("#popup-year").show();
-                showPopup(assigneewiselist);
+                showPopup(country_assignee, value['unit_id'], valu['user_id'], valu['assignee_name']);
             });
             $('.tbody-assignee-wise-compliance-list').append(clone);
 
@@ -2906,35 +2964,35 @@ function updateAssigneeWiseComplianceList(data){
                 var tableRowvalues = $('#templates .assignee-wise-compliance-list .assignee-row-list');
                 var cloneval = tableRowvalues.clone();
                 SNO = SNO + 1;
-                $('.sno', cloneval).text(sno);
+                $('.sno', cloneval).text(SNO);
                 $('.level1value', cloneval).html(val['domain_name']);
                 $('.total-count', cloneval).html(val['total_compliances']);
                 $('.complied-count', cloneval).html(val['complied_count']);
-                if(val['delayed_compliance']['reassigned_count'] == 0){
-                    $('.delayed-count', cloneval).html(val['delayed_compliance']['assigned_count']);
+                if(val['reassigned_count'] == 0){
+                    $('.delayed-count', cloneval).html(val['assigned_count']);
                     $(".delayed-count", cloneval).on("click", function(e){
                         $("#popup-reassigned").show();
-                        showPopupCompDelayed();
+                        //showPopupCompDelayed();
                     });
                 }
                 else{
-                    var delayvalue = val['delayed_compliance']['assigned_count']+"("+val['delayed_compliance']['reassigned_count']+")";
+                    var delayvalue = val['assigned_count']+"("+val['reassigned_count']+")";
                     $('.delayed-count', cloneval).html(delayvalue);
                     $('.delayed-count', cloneval).addClass("delayedvalue");
-                    $(cloneval, ".delayedvalue").on("click", function(e){
-                        showComplianceNotifications(val['delayed_compliance']['reassigned_compliances']);
+                    $(".delayedvalue", cloneval).on("click", function(e){
+                        showPopupCompDelayed(country_assignee, value['unit_id'], valu['user_id'], val['domain_id']);
+                        //showComplianceNotifications(val['delayed_compliance']['reassigned_compliances']);
                     });
                 }
 
                 $('.inprogress-count', cloneval).html(val['inprogress_compliance_count']);
                 $('.not-complied-count', cloneval).html(val['not_complied_count']);
-                $(cloneval, ".assign-wise-compliance-details").on("click", function(e){
+                $(".assign-wise-compliance-details", cloneval).on("click", function(e){
                     showComplianceList();
                 });
-                domainArr = val['domain_id'];
                 var year = null;
-                $(cloneval, ".assignee-row-list").on("click", function(e){
-                    updateComplianceList(valu['user_id'], domainArr, year );
+                $(".open-details-list", cloneval).on("click", function(e){
+                    updateComplianceList(country_assignee, valu['user_id'], val['domain_id'], year, value['unit_id'],  0, valu['assignee_name'], val['domain_name']);
                 });
                 $('.tbody-assignee-wise-compliance-list').append(cloneval);
             });
@@ -2942,22 +3000,67 @@ function updateAssigneeWiseComplianceList(data){
 
     });
 }
+
+                
 function showComplianceList(reassigned_compliances){
     $('.popupoverlay').css("visibility","visible");
     $('.popupoverlay').css("opacity","1");
 }
-function updateComplianceList(userid, domainid, year){
+function updateComplianceList(country_id, user_id, domain_id, year, unit_id, start_count, assigneename, domain_name){
     $('.popupoverlay').css("visibility","hidden");
     $('.popupoverlay').css("opacity","0");
     $(".table-assignee-wise-compliance-list").hide();
     $(".grid-table-dash1").show();
+    snoAssignee = 0;
+    loadStatus = 'true';
+    $('.tbody-assignee-wise-compliance-list tr').remove();
+    $('.compliance-details-drilldown tr').remove();
+    $(".table-assignee-wise-compliance-list").show();
+    $('#pagination-assignee').hide();
+    $('.compliance_count_assignee').text('');
+
+    $('#a_user').val(user_id);
+    $('#a_domain').val(domain_id);
+    $('#a_year').val(year);
+    $('#a_unit').val(unit_id);
+
+    var tableRowHeadingth = $('#templates .compliance-details-list .filterHeader');
+    var cloneHeadingth = tableRowHeadingth.clone();
+    $('.comp-list-user', cloneHeadingth).text(assigneename);
+    var dispYear = '-';
+    if(year != null || year != 'null') dispYear = year;
+    $('.comp-list-year', cloneHeadingth).text(dispYear);
+    $('.comp-list-domain', cloneHeadingth).text(domain_name);
+    $('.compliance-details-drilldown').append(cloneHeadingth);
+
     client_mirror.getAssigneewiseCompliancesDrilldown(
-        userid, domainid, year,
+       country_id, user_id, domain_id, year, unit_id, start_count, 
         function (status, data) {
             listingCompliance(data, userid, year);
         }
     );
 }
+
+function getShowmoreData(){
+    var country = parseInt($("#country").val().trim());
+    var a_user = parseInt($("#a_user").val().trim());
+    var a_domain = parseInt($("#a_domain").val().trim());
+    var a_year = parseInt($("#a_year").val().trim());
+    var a_unit = parseInt($("#a_unit").val().trim());
+    loadStatus = 'true';
+
+    client_mirror.getAssigneewiseCompliancesDrilldown(
+       country, a_user, a_domain, a_year, a_unit, snoAssignee, 
+        function (status, data) {
+            listingCompliance(data, a_user, a_year);
+        }
+    );
+}
+/*//pagination process
+$('#pagination-assignee').click(function(){
+    
+});*/
+
 function getDomainName(doaminId){
     var domainName;
     $.each(DOMAINLIST, function (key, value){
@@ -2978,6 +3081,7 @@ function getUserName(userid){
     });
     return userName;
 }
+
 function fullnamestatus(val){
     var fullname = null;
     if(val == "not_complied"){
@@ -2994,66 +3098,117 @@ function fullnamestatus(val){
     }
     return fullname;
 }
+
 function listingCompliance(data, userid, year){
-    $('.tbody-assignee-wise-compliance-list tr').remove();
-    $('.compliance-details-drilldown tr').remove();
-
-    $(".table-assignee-wise-compliance-list").show();
-    var sno = 0;
-
-    $.each(data, function(key, value) {
-        var tableRowHeadingth = $('#templates .compliance-details-list .filterHeader');
-        var cloneHeadingth = tableRowHeadingth.clone();
-        $('.comp-list-user', cloneHeadingth).text(getUserName[userid]);
-        $('.comp-list-year', cloneHeadingth).text(year);
-        $('.comp-list-filter-domain', cloneHeadingth).hide();
-        $('.compliance-details-drilldown').append(cloneHeadingth);
-
-        var statuswiselist = value;
+    if(loadStatus == 'true'){
+        totalRecordAssignee = data['total_count'];
+        if(snoAssignee == 0){
+            
+        }
+        var fullStatus = '';
+        var statuswiselist = data['drill_down_data'];
         $.each(statuswiselist, function(ke, valu) {
-            var tableRow = $('#templates .compliance-details-list .comp-list-statusheading ');
-            var clone = tableRow.clone();
-            $('.comp-list-status', clone).html(fullnamestatus(ke));
-            $('.compliance-details-drilldown').append(clone);
+            if(Object.keys(valu).length > 0){
+                fullStatus = fullnamestatus(ke);
+                if(lastStatus != fullStatus){
+                    var tableRow = $('#templates .compliance-details-list .comp-list-statusheading ');
+                    var clone = tableRow.clone();
+                    $('.comp-list-status', clone).html(fullStatus);
+                    $('.compliance-details-drilldown').append(clone);
 
-            var tableRowheading = $('#templates .compliance-details-list .comp-list-heading');
-            var cloneHeading = tableRowheading.clone();
-            $('.compliance-details-drilldown').append(cloneHeading);
-
+                    var tableRowheading = $('#templates .compliance-details-list .comp-list-heading');
+                    var cloneHeading = tableRowheading.clone();
+                    $('.compliance-details-drilldown').append(cloneHeading);
+                    lastStatus = fullStatus;
+                }
+            }
             var list = valu;
             $.each(list, function(k, val){
-                var tableRowunits = $('#templates .compliance-details-list .comp-list-filter-unitname');
-                var cloneunits = tableRowunits.clone();
-                $('.comp-list-unitname', cloneunits).html(val['unit_name']);
-                $('.compliance-details-drilldown').append(cloneunits);
-
-                var complianceslist = val['compliances'];
-                $.each(complianceslist, function(k1, v1){
+                if(lastAct != k){
                     var tableRowLevel1 = $('#templates .compliance-details-list .comp-list-level1');
                     var cloneLevel1 = tableRowLevel1.clone();
-                    $(".comp-list-level1-val", cloneLevel1).text(k1)
+                    $(".comp-list-level1-val", cloneLevel1).text(k)
                     $(".compliance-details-drilldown").append(cloneLevel1);
-                    $.each(v1, function(k2, v2){
-                        var tableRowvalues = $('#templates .compliance-details-list .comp-list-tablerowlist');
-                        var cloneval = tableRowvalues.clone();
-                        SNO = SNO + 1;
-                        $('.comp-list-sno', cloneval).text(sno);
-                        $('.comp-list-compliance', cloneval).html(v2['compliance_name']);
-                        $('.comp-list-startdate', cloneval).text(v2['assigned_date']);
-                        $('.comp-list-duedate', cloneval).text(v2['due_date']);
-                        $('.comp-list-completiondate', cloneval).text(v2['completion_date']);
-                        $('.compliance-details-drilldown').append(cloneval);
-                    });
+                    lastAct = k;
+                }
+                $.each(val, function(k2, v2){
+                    var tableRowvalues = $('#templates .compliance-details-list .comp-list-tablerowlist');
+                    var cloneval = tableRowvalues.clone();
+                    snoAssignee++;
+                    var cDate = '';
+                    if(v2['completion_date'] != null) cDate = v2['completion_date'];
+                    $('.comp-list-sno', cloneval).text(snoAssignee);
+                    $('.comp-list-compliance', cloneval).html(v2['compliance_name']);
+                    $('.comp-list-startdate', cloneval).text(v2['assigned_date']);
+                    $('.comp-list-duedate', cloneval).text(v2['due_date']);
+                    $('.comp-list-completiondate', cloneval).text(cDate);
+                    $('.compliance-details-drilldown').append(cloneval);
                 });
             });
         });
+        if(totalRecordAssignee == 0){   
+            /*var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
+            var clone4=tableRow4.clone();
+            $('.no_records', clone4).text('No Compliance Found');
+            $('.tbody-unitdetails-list').append(clone4);*/
+            $('#pagination-assignee').hide();
+            $('.compliance_count_assignee').text('');
+        }else{
+            $('.compliance_count_assignee').text("Showing " + 1 + " to " + snoAssignee + " of " + totalRecordAssignee);
+            if(snoAssignee >= totalRecordAssignee){
+              $('#pagination-assignee').hide();
+            }else{
+              $('#pagination-assignee').show();
+            }
+        }
+        loadStatus = 'false';
+    }
+}
 
+
+function showPopup(country_assignee, unit_assignee, user_assignee, name_assignee){
+    $(".tbody-popup-list tr").remove();
+    $('.popupoverlay').css("visibility","visible");
+    $('.popupoverlay').css("opacity","1");
+    $('.year-heading').text(name_assignee);
+
+    var popupsno = 0;
+    client_mirror.getAssigneewiseYearwiseComplianes( country_assignee, unit_assignee, user_assignee,
+    function (error, response) {
+        if (error == null){
+            if(popupsno == 0){
+                var yearWiseDetails = response["chart_data"];
+                $.each(yearWiseDetails, function(k, val){
+                    var tableRow = $('#templates .year-wise-compliance-list-popup .tablerow');
+                    var cloneval = tableRow.clone();
+                    popupsno = popupsno + 1;
+                    $('.popup-sno', cloneval).text(popupsno);
+                    $('.popup-year-val', cloneval).html(val['year']);
+                    $('.popup-total-count', cloneval).html(val['total_compliances']);
+                    $('.popup-complied-count', cloneval).html(val['complied_count']);
+                    $('.popup-delayed-count', cloneval).html(val['delayed_compliance']);
+                    $('.popup-inprogress-count', cloneval).html(val['inprogress_compliance_count']);
+                    $('.popup-not-complied-count', cloneval).html(val['not_complied_count']);
+                    $(".popup-click-drilldown", cloneval).on("click", function(){
+                        updateComplianceList(country_assignee, user_assignee, null, year, unit_assignee,  0, name_assignee, null);
+                        //updateComplianceList(userid, domainArr, parseInt(val['year']));
+                    });
+                    $('.tbody-popup-list').append(cloneval);
+                });
+            }
+        }
+        else {
+            console.log(error);
+        }
+      }
+    );
+    $('.close').click(function(){
+      $('.popupoverlay').css("visibility","hidden");
+      $('.popupoverlay').css("opacity","0");
     });
 
-}
-function showPopup(assigneewiselist){
-    $(".tbody-popup-list tr").remove();
-    $.each(assigneewiselist, function(ke, valu) {
+
+    /*$.each(assigneewiselist, function(ke, valu) {
         $('.popupoverlay').css("visibility","visible");
         $('.popupoverlay').css("opacity","1");
         var popupsno = 0;
@@ -3080,10 +3235,40 @@ function showPopup(assigneewiselist){
             });
             $('.tbody-popup-list').append(cloneval);
         });
-    });
+    });*/
 }
-function showPopupCompDelayed(){
-    $.each(reassignedlist, function(ke, valu) {
+function showPopupCompDelayed(country_id, unit_id, user_id, domain_id){
+    //alert('hi')
+    $('.popupoverlay1').css("visibility","visible");
+    $('.popupoverlay1').css("opacity","1");
+    var popupdelayedsno = 0;
+    client_mirror.getAssigneewiseReassignedComplianes( country_id, unit_id, user_id, domain_id,
+    function (error, response) {
+        if (error == null){
+            if(popupdelayedsno == 0){
+                var reassignedlist = response["chart_data"];
+                $.each(reassignedlist, function(k, val){
+                    //alert('k')
+                    var tableRow = $('#templates .comp-list-delayed-row-list');
+                    var cloneval = tableRow.clone();
+                    popupdelayedsno = popupdelayedsno + 1;
+                    $('.comp-delayed-sno', cloneval).text(popupdelayedsno);
+                    $('.comp-delayed-compliance', cloneval).html(val['compliance_name']);
+                    $('.comp-delayed-reassigned-from', cloneval).html(val['reassigned_from']);
+                    $('.comp-delayed-startdate', cloneval).html(val['start_date']);
+                    $('.comp-delayed-duedate', cloneval).html(val['due_date']);
+                    $('.comp-delayed-reassigned-date', cloneval).html(val['reassigned_from']);
+                    $('.comp-delayed-completed-date', cloneval).html(val['completion_date']);
+                    $('.tbody-popup-reassigned-list').append(cloneval);
+                });
+            }
+        }
+        else {
+            console.log(error);
+        }
+    });
+
+   /* $.each(reassignedlist, function(ke, valu) {
         $('.popupoverlay1').css("visibility","visible");
         $('.popupoverlay1').css("opacity","1");
         var popupdelayedsno = 0;
@@ -3100,7 +3285,7 @@ function showPopupCompDelayed(){
             $('.comp-delayed-completed-date', cloneval).html(val['completion_date']);
             $('.tbody-popup-reassigned-list').append(cloneval);
         });
-    });
+    });*/
 }
 
 function close(){
@@ -3155,7 +3340,7 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter
     CS_STATUS = compliance_status;
     CS_FILTERTYPEID = filter_type_id;
     CS_FILTERTYPENAME = filterType;
-    SNO = 0;
+    SNO = 1;
 
     requestData = {
         "domain_ids": chartInput.getDomains(),
@@ -3182,7 +3367,10 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter
 
 
 function loadEscalationDrillDown(year) {
+    SNO = 1;
     ES_YEAR = year;
+    ACCORDIONCOUNT = 0;
+    $("#pagination").show();
     var filter_type = chartInput.getFilterType();
     var filterType = filter_type.replace("_", "-");
     filterType = hyphenatedToUpperCamelCase(filterType);
@@ -3299,6 +3487,7 @@ function loadNotCompliedChart(){
 }
 
 function loadNotCompliedDrillDown(type){
+    SNO = 1;
     NC_TYPE = type;
     var filter_type = chartInput.getFilterType();
     var filter_ids = getFilterIds(filter_type);
@@ -3312,7 +3501,7 @@ function loadNotCompliedDrillDown(type){
         "filter_type": filterType,
         "filter_ids": filter_ids,
         "not_complied_type": type,
-        "record_count": 0
+        "record_count": SNO
     }
     client_mirror.getNotCompliedDrillDown(
         requestData,

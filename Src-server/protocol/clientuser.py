@@ -159,16 +159,19 @@ class UpdateComplianceDetail(Request):
         }
 
 class GetOnOccurrenceCompliances(Request):
-    def __init__(self):
-        pass
+    def __init__(self, start_count):
+        self.start_count = start_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetOnOccurrenceCompliances()
+        data = parse_dictionary(data, ["start_count"])
+        start_count = data.get("start_count")
+        start_count = parse_structure_UnsignedIntegerType_32(start_count)
+        return GetOnOccurrenceCompliances(start_count)
 
     def to_inner_structure(self):
         return {
+            "start_count": to_structure_UnsignedIntegerType_32(self.start_count)
         }
 
 class StartOnOccurrenceCompliance(Request):
@@ -372,19 +375,23 @@ class NotEnoughDiskSpaceAvailable(Response):
         }
 
 class GetOnOccurrenceCompliancesSuccess(Response):
-    def __init__(self, compliances):
+    def __init__(self, compliances, total_count):
         self.compliances = compliances
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["compliances"])
+        data = parse_dictionary(data, ["compliances", "total_count"])
         compliances = data.get("compliances")
         compliances = parse_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence(compliances) #parse_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence(compliances)
-        return GetOnOccurrenceCompliancesSuccess(compliances)
+        total_count = data.get("total_count")
+        total_count = parse_structure_UnsignedIntegerType_32(total_count) 
+        return GetOnOccurrenceCompliancesSuccess(compliances, total_count)
 
     def to_inner_structure(self):
         return {
             "compliances": to_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence(self.compliances),
+            "total_count": to_structure_UnsignedIntegerType_32(self.total_count)
         }
 
 class StartOnOccurrenceComplianceSuccess(Response):

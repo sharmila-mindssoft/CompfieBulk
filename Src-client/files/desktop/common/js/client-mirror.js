@@ -140,12 +140,13 @@ function initClientMirror() {
                 var response = data[1];
                 matchString = 'success';
                 log("API STATUS :" + status);
+
                 ///console.log(response)
                 ///console.log(status.toLowerCase().indexOf(matchString))
                 ///callback(null, response)
 
                 if (status.toLowerCase().indexOf(matchString) != -1) {
-                    callback(error=null, response);
+                    callback(null, response);
                 }
                 else if (status == "InvalidSessionToken") {
                     // console.log(status)
@@ -665,7 +666,7 @@ function initClientMirror() {
                 "division_id": divisionId,
                 "unit_id": unitId,
                 "domain_ids": domainIds,
-                "csv": csv
+                "csv": csv,
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -823,14 +824,15 @@ function initClientMirror() {
     }
 
     function getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_name,
-        compliance_frequency, country_id, callback) {
+        compliance_frequency, country_id, start_count, callback) {
         var request = [
             "GetStatutoriesByUnit", {
                 "unit_id": unit_id,
                 "domain_id": domain_id,
                 "level_1_statutory_name": level_1_statutory_name,
                 "compliance_frequency": compliance_frequency,
-                "country_id": country_id
+                "country_id": country_id,
+                "start_count": start_count
             }
         ]
         clientApiRequest("client_transaction", request, callback);
@@ -1191,11 +1193,12 @@ function initClientMirror() {
     }
 
     /* Notifications */
-    function getNotifications(notification_type, callback) {
+    function getNotifications(notification_type, start_count, callback) {
         callerName = "client_dashboard"
         var request = [
             "GetNotifications", {
-                "notification_type": notification_type
+                "notification_type": notification_type,
+                "start_count" : start_count
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -1395,7 +1398,7 @@ function initClientMirror() {
     }
 
     function getClientDetailsReportData(countryId, businessGroupId, legalEntityId, divisionId,
-        unitId, domainIds, csv, callback){
+        unitId, domainIds, csv, start_count, callback){
         callerName = "client_reports"
         var request = [
             "GetClientDetailsReportData",
@@ -1406,7 +1409,8 @@ function initClientMirror() {
                 "division_id" : divisionId,
                 "unit_id": unitId,
                 "domain_ids" : domainIds,
-                "csv": csv
+                "csv": csv,
+                "start_count": start_count
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -1439,20 +1443,56 @@ function initClientMirror() {
                 "user_id" : user_id
             }
         ];
-        console.log(request);
         callerName = "client_dashboard";
         clientApiRequest(callerName, request, callback);
 
     }
+
+    function getAssigneewiseYearwiseComplianes(
+        country_id, unit_id, user_id, callback
+    ){
+        var request = [
+            "GetAssigneewiseYearwiseCompliances",
+            {
+                "country_id": country_id,
+                "unit_id": unit_id,
+                "user_id" : user_id
+            }
+        ];
+        callerName = "client_dashboard";
+        clientApiRequest(callerName, request, callback);
+
+    }
+
+    function getAssigneewiseReassignedComplianes(
+        country_id, unit_id, user_id, domain_id, callback
+    ){
+        var request = [
+            "GetAssigneewiseReassignedComplianes",
+            {
+                "country_id": country_id,
+                "unit_id": unit_id,
+                "user_id" : user_id,
+                "domain_id": domain_id
+            }
+        ];
+        callerName = "client_dashboard";
+        clientApiRequest(callerName, request, callback);
+
+    }
+
     function getAssigneewiseCompliancesDrilldown(
-        assignee_id, domain_id, year, callback
+        country_id, assignee_id, domain_id, year, unit_id, start_count, callback
     ){
         var request = [
             "GetAssigneeWiseComplianceDrillDown",
             {
+                "country_id" : country_id,
                 "assignee_id": assignee_id,
                 "domain_id": domain_id,
-                "year" : year
+                "year" : year,
+                "unit_id": unit_id,
+                "start_count": start_count
             }
         ];
         callerName = "client_dashboard";
@@ -1491,9 +1531,11 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getOnOccurrenceCompliances(callback){
+    function getOnOccurrenceCompliances(start_count, callback){
         var request = [
-            "GetOnOccurrenceCompliances", {}
+            "GetOnOccurrenceCompliances", {
+                "start_count": start_count
+            }
         ];
         callerName = "client_user";
         clientApiRequest(callerName, request, callback);
@@ -1728,6 +1770,8 @@ function initClientMirror() {
         saveReassignCompliance : saveReassignCompliance,
         reassignComplianceDet : reassignComplianceDet,
         getAssigneeWiseCompliances: getAssigneeWiseCompliances,
+        getAssigneewiseYearwiseComplianes: getAssigneewiseYearwiseComplianes,
+        getAssigneewiseReassignedComplianes: getAssigneewiseReassignedComplianes
     }
 }
 var client_mirror = initClientMirror();

@@ -115,12 +115,20 @@ def process_get_client_details_report_filters(db, request_frame, session_user):
     )
 
 def process_get_client_details_report_data(db, request, session_user):
+    to_count = 500
     units = db.get_client_details_report(
+        request.country_id, request.group_id, request.business_group_id,
+        request.legal_entity_id, request.division_id,
+        request.unit_id, request.domain_ids, request.start_count, to_count
+    )
+    total_count = db.get_client_details_report_count(
         request.country_id, request.group_id, request.business_group_id,
         request.legal_entity_id, request.division_id,
         request.unit_id, request.domain_ids
     )
-    return technoreports.GetClientDetailsReportDataSuccess(units=units)
+    return technoreports.GetClientDetailsReportDataSuccess(
+        units=units, total_count=total_count
+    )
 
 def process_get_compliance_task_filter(db, request, session_user):
     countries = db.get_countries_for_user(session_user)
