@@ -7384,9 +7384,21 @@ class ClientDatabase(Database):
     def get_not_opted_compliances(
         self, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, leval_1_statutory_name,
-        session_user
+        session_user, from_count, to_count
     ) :
         where_qry = ""
+        admin_id = self.get_admin_id()
+
+        if session_user > 0 and session_user != admin_id :
+            where_qry += " AND u.unit_id in \
+                (select us.unit_id from tbl_user_units us where \
+                    us.user_id = %s\
+                )" % int(session_user)
+            where_qry += " AND c.domain_id in \
+                (select us.domain_id from tbl_user_domains us where \
+                    us.user_id = %s\
+                )" % int(session_user)
+
         if business_group_id is not None :
             where_qry = " AND u.business_group_id = %s " % (business_group_id)
 
@@ -7444,9 +7456,11 @@ class ClientDatabase(Database):
             AND c.domain_id = %s \
             AND cs.country_id = %s \
             %s \
-            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1)" % (
+            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) \
+            limit %s, %s " % (
                 domain_id, country_id,
-                where_qry
+                where_qry,
+                from_count, to_count
             )
         columns = [
             "compliance_id", "compliance_task", "document_name",
@@ -7465,9 +7479,21 @@ class ClientDatabase(Database):
     def get_unassigned_compliances(
         self, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, leval_1_statutory_name,
-        session_user
+        session_user, from_count, to_count
     ) :
         where_qry = ""
+        admin_id = self.get_admin_id()
+
+        if session_user > 0 and session_user != admin_id :
+            where_qry += " AND u.unit_id in \
+                (select us.unit_id from tbl_user_units us where \
+                    us.user_id = %s\
+                )" % int(session_user)
+            where_qry += " AND c.domain_id in \
+                (select us.domain_id from tbl_user_domains us where \
+                    us.user_id = %s\
+                )" % int(session_user)
+
         if business_group_id is not None :
             where_qry = " AND u.business_group_id = %s " % (business_group_id)
 
@@ -7531,9 +7557,11 @@ class ClientDatabase(Database):
             AND c.domain_id = %s \
             AND cs.country_id = %s \
             %s \
-            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1)" % (
+            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) \
+            limit %s, %s " % (
                 domain_id, country_id,
-                where_qry
+                where_qry,
+                from_count, to_count
             )
         print query
         columns = [
@@ -7554,9 +7582,21 @@ class ClientDatabase(Database):
     def get_delayed_compliances(
         self, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, leval_1_statutory_name,
-        session_user
+        session_user, from_count, to_count
     ) :
         where_qry = ""
+        admin_id = self.get_admin_id()
+
+        if session_user > 0 and session_user != admin_id :
+            where_qry += " AND u.unit_id in \
+                (select us.unit_id from tbl_user_units us where \
+                    us.user_id = %s\
+                )" % int(session_user)
+            where_qry += " AND c.domain_id in \
+                (select us.domain_id from tbl_user_domains us where \
+                    us.user_id = %s\
+                )" % int(session_user)
+
         if business_group_id is not None :
             where_qry = " AND u.business_group_id = %s " % (business_group_id)
 
@@ -7618,9 +7658,11 @@ class ClientDatabase(Database):
             AND ch.due_date < ch.completion_date \
             AND ch.approve_status = 1 \
             %s \
-            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1)" % (
+            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) \
+            limit %s, %s " % (
                 domain_id, country_id,
-                where_qry
+                where_qry.
+                from_count, to_count
             )
         print query
         columns = [
@@ -7640,9 +7682,21 @@ class ClientDatabase(Database):
     def get_not_complied_compliances(
         self, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, leval_1_statutory_name,
-        session_user
+        session_user, from_count, to_count
     ) :
         where_qry = ""
+        admin_id = self.get_admin_id()
+
+        if session_user > 0 and session_user != admin_id :
+            where_qry += " AND u.unit_id in \
+                (select us.unit_id from tbl_user_units us where \
+                    us.user_id = %s\
+                )" % int(session_user)
+            where_qry += " AND c.domain_id in \
+                (select us.domain_id from tbl_user_domains us where \
+                    us.user_id = %s\
+                )" % int(session_user)
+
         if business_group_id is not None :
             where_qry = " AND u.business_group_id = %s " % (business_group_id)
 
@@ -7704,9 +7758,11 @@ class ClientDatabase(Database):
             AND ((c.duration_type_id =2 AND ch.due_date < now()) or (c.duration_type_id != 2 AND ch.due_date < CURDATE()))  \
             AND IFNULL(ch.approve_status, 0) != 1 \
             %s \
-            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1)" % (
+            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) \
+            limit %s, %s " % (
                 domain_id, country_id,
-                where_qry
+                where_qry,
+                from_count, to_count
             )
         columns = [
             "compliance_id", "compliance_task", "document_name",
