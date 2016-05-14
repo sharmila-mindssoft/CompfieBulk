@@ -2135,8 +2135,6 @@ function accordianType(idtype, toggleClass, contentClass){
 }
 
 
-
-
 function showDrillDownRecord(status, data, filterTypeName){
     //$("#pagination").hide();
     var data = data["drill_down_data"];
@@ -3336,8 +3334,6 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter
     );
 }
 
-
-
 function loadEscalationDrillDown(year) {
     SNO = 1;
     ES_YEAR = year;
@@ -3413,6 +3409,7 @@ function loadTrendChart(){
         }
     )
 }
+
 
 function loadTrendChartDrillDown(year){
     var filter_type = chartInput.getFilterType();
@@ -3538,7 +3535,6 @@ function loadComplianceApplicabilityDrillDown(type){
         }
     );
 }
-
 
 function loadAssigneeWiseCompliance() {
     client_mirror.getAssigneewiseComplianesFilters(
