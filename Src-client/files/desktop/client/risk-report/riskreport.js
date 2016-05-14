@@ -1,7 +1,4 @@
-var unassignedComplianceList;
-var delayedComplianceList;
-var notCompliedComplianceList;
-var notOptedComplianceList;
+var riskComplianceList;
 var countriesList;
 var domainsList;
 var businessGroupsList;
@@ -9,6 +6,7 @@ var legalEntitiesList;
 var divisionsList
 var unitsList;
 var actList;
+var totalRecord;
 
 
 //get risk report filters from api
@@ -39,15 +37,16 @@ function getRiskReportFilters(){
 }
 
 //load report data
-function loadresult(complianceList, heading){
+function loadresult(complianceList){
   var country = $("#country").find('option:selected').text();
   var domain = $("#domainval").val();
   var compliance_count=0;
 
-  var tableRowStatus=$('#statutory-status-templates .table-unit-name .table-row-unit-name');
+  /*var tableRowStatus=$('#statutory-status-templates .table-unit-name .table-row-unit-name');
   var cloneStatus=tableRowStatus.clone();
-  $('.tbl_statutory_status', cloneStatus).text(heading);
+  $('.tbl_statutory_status', cloneStatus).text('');
   $('.tbody-unit').append(cloneStatus);
+  console.log(complianceList)*/
 
   for(var entity in complianceList){
     var tableRow=$('#unit-list-templates .table-unit-list .table-row-unit-list');
@@ -140,38 +139,13 @@ function loadCompliance(reportType){
     displayMessage(message.domain_required);
   }
   else{
-    var filterdata={};
-    filterdata["country_id"] = country;
-    filterdata["domain_id"] = domain;
-    filterdata["businessgroup_id"] = businessgroup;
-    filterdata["legalentity_id"] = legalentity;
-    filterdata["division_id"] = division;
-    filterdata["unit_id"] = unit;
-    filterdata["statutory_id"] = act;
-    filterdata["statutory_status"] = statutory_status;
-
+   
     function onSuccess(data){
-      delayedComplianceList = data["delayed_compliance"];
-      unassignedComplianceList = data["unassigned_compliance"];
-      notCompliedComplianceList = data["not_complied"];
-      notOptedComplianceList = data["not_opted"];
+      riskComplianceList = data['compliance_list'];
+      totalRecord = data['total_record'];
       $(".grid-table-rpt").show();
       $(".tbody-unit").find("tbody").remove();
-
-      if(statutory_status == 1){
-        loadresult(delayedComplianceList, 'Delayed Compliances');
-      }else if(statutory_status == 2){
-        loadresult(notCompliedComplianceList, 'Not Complied Compliances');
-      }else if(statutory_status == 3){
-        loadresult(notOptedComplianceList, 'Not Opted Compliances');
-      }else if(statutory_status == 4){
-        loadresult(unassignedComplianceList, 'Un assigned Compliances');
-      }else{
-        loadresult(delayedComplianceList, 'Delayed Compliances');
-        loadresult(notCompliedComplianceList, 'Not Complied Compliances');
-        loadresult(notOptedComplianceList, 'Not Opted Compliances');
-        loadresult(unassignedComplianceList, 'Un assigned Compliances');
-      }
+      loadresult(riskComplianceList);
 
       if(reportType == "export"){
         var download_url = data["link"];
