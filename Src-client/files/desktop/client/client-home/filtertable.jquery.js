@@ -13,7 +13,7 @@
             };
             
             this.getRows = function() {
-                return this.getBody().children('tr');
+                return $filtertable.children('tr');
             };
             
             this.getField = function(index, $row) {
