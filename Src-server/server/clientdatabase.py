@@ -7661,7 +7661,7 @@ class ClientDatabase(Database):
             order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) \
             limit %s, %s " % (
                 domain_id, country_id,
-                where_qry.
+                where_qry,
                 from_count, to_count
             )
         print query
