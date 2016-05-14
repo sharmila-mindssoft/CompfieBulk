@@ -719,7 +719,7 @@ class ClientDatabase(Database):
         columns = "user_id, email_id, user_group_id, employee_name,"+\
         "employee_code, contact_no, seating_unit_id, user_level, "+\
         " is_admin, is_service_provider, service_provider_id, is_active,\
-        is_primary_admin" 
+        is_primary_admin"
         condition = "1 ORDER BY employee_name"
         rows =  self.get_data(
             self.tblUsers+ " tu",columns, condition
@@ -1625,9 +1625,9 @@ class ClientDatabase(Database):
                 unit_statutories.domain_names = domain_list
                 # unit_statutories.statutories = statutory_dict
             unit_wise_statutories[unit_id] = unit_statutories
-            lst = []
-            for k in sorted(unit_wise_statutories):
-                lst.append(unit_wise_statutories.get(k))
+        lst = []
+        for k in sorted(unit_wise_statutories):
+            lst.append(unit_wise_statutories.get(k))
 
         return clienttransactions.GetStatutorySettingsSuccess(
             lst
@@ -2930,9 +2930,11 @@ class ClientDatabase(Database):
             from_count,
             to_count
         )
+        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
         total = self.total_compliance_for_units(unit_ids, domain_id)
         c_rows = self.select_all(qry_applicable)
         rows = self.select_all(query)
+        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
 
         temp = self.convert_to_dict(c_rows, ["compliance_id", "units"])
         applicable_units = {}
@@ -6675,9 +6677,9 @@ class ClientDatabase(Database):
                 %s \
                 t02.is_active =1 and t01.is_active = 1 \
                 GROUP BY t01.assignee " % (user_qry)
-        # self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
+        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
         rows = self.select_all(q)
-        # self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
+        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
         result = self.convert_to_dict(rows, columns=["assignee", "count"])
         data = {}
         for r in result :
@@ -6729,9 +6731,9 @@ class ClientDatabase(Database):
             assignee, user_qry,
             from_count, to_count
         )
-        # self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
+        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
         rows = self.select_all(q)
-        # self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
+        self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
         result.extend(self.convert_to_dict(rows, columns))
         return self.return_compliance_to_reassign(result)
 
@@ -7385,7 +7387,7 @@ class ClientDatabase(Database):
     def get_not_opted_compliances(
         self, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, leval_1_statutory_name,
-        statutory_status, session_user
+        session_user
     ) :
         where_qry = ""
         if business_group_id is not None :
@@ -7400,47 +7402,73 @@ class ClientDatabase(Database):
         if unit_id is not None :
             where_qry = " AND u.unit_id = %s " % (unit_id)
 
-        if level_1_statutory_name is not None :
-            where_qry = " AND c.statutory_mapping like '%s' " % (level_1_statutory + '%')
+        if leval_1_statutory_name is not None :
+            where_qry = " AND c.statutory_mapping like '%s' " % (leval_1_statutory_name + '%')
 
-        query = "SELECT c.compliance_id, c.compliance_task, c.document_name, \
-            c.statutory_dates, c.compliance_description, c.penal_consequences, c.frequency_id, \
-            (select frequnecy from tbl_compliance_frequency where frequency_id = c.frequency_id ),\
-            SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) level_1, \
-            (select business_group_name from tbl_business_groups where business_group_id = u.business_group_id ), \
-            (select legal_entity_name from tbl_legal_entities where legal_entity_id = u.legal_entity_id), \
-            (select division_name from tbl_divisions where division_id = u.division_id), \
-            u.unit_code, u.unit_name, u.address, u.postal_code \
+        q_count = "SELECT count(c.compliance_id) \
             FROM tbl_compliances c \
             INNER JOIN tbl_client_compliances cc \
             ON c.compliance_id = cc.compliance_id \
-            INNEr JOIN tbl_client_statutories cs  \
+            INNER JOIN tbl_client_statutories cs  \
             ON cs.client_statutory_id = cc.client_statutory_id \
             INNER JOIN tbl_units u ON  \
             cs.unit_id = u.unit_id \
             WHERE  cc.compliance_opted = 0 \
             AND c.domain_id = %s \
-            AND cs.county_id = %s \
+            AND cs.country_id = %s \
+            %s " % (
+                domain_id, country_id,
+                where_qry
+            )
+        c_row = self.select_one(q_count)
+        if c_row :
+            total = int(c_row[0])
+        else :
+            total = 0
+
+        query = "SELECT c.compliance_id, c.compliance_task, c.document_name, \
+            c.statutory_dates, c.compliance_description, c.penal_consequences, c.frequency_id, \
+            (select frequency from tbl_compliance_frequency where frequency_id = c.frequency_id ), \
+            c.repeats_type_id, c.repeats_every, c.duration_type_id, c.duration, \
+            c.statutory_mapping, \
+            SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) level_1, c.statutory_provision, \
+            (select business_group_name from tbl_business_groups where business_group_id = u.business_group_id ), \
+            (select legal_entity_name from tbl_legal_entities where legal_entity_id = u.legal_entity_id), \
+            (select division_name from tbl_divisions where division_id = u.division_id), \
+            u.unit_code, u.unit_name, u.address, u.postal_code, u.unit_id \
+            FROM tbl_compliances c \
+            INNER JOIN tbl_client_compliances cc \
+            ON c.compliance_id = cc.compliance_id \
+            INNER JOIN tbl_client_statutories cs  \
+            ON cs.client_statutory_id = cc.client_statutory_id \
+            INNER JOIN tbl_units u ON  \
+            cs.unit_id = u.unit_id \
+            WHERE  cc.compliance_opted = 0 \
+            AND c.domain_id = %s \
+            AND cs.country_id = %s \
             %s \
-            order by level_1" % (
+            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1)" % (
                 domain_id, country_id,
                 where_qry
             )
         columns = [
             "compliance_id", "compliance_task", "document_name",
             "statutory_dates", "compliance_description", "penal_consequences",
-            "frequency_id", "frequnecy", "level_1", "business_group", "legal_entity",
+            "frequency_id", "frequency",
+            "repeats_type_id", "repeats_every", "duration_type_id", "duration",
+            "statutory_mapping", "level_1", "statutory_provision",
+            "business_group", "legal_entity",
             "division", "unit_code", "unit_name",
-            "address", "postal_code"
+            "address", "postal_code", "unit_id"
         ]
         rows = self.select_all(query)
         result = self.convert_to_dict(rows, columns)
-        return self.return_risk_report_data(result)
+        return self.return_risk_report_data(result, total)
 
     def get_unassigned_compliances(
         self, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, leval_1_statutory_name,
-        statutory_status, session_user
+        session_user
     ) :
         where_qry = ""
         if business_group_id is not None :
@@ -7455,17 +7483,43 @@ class ClientDatabase(Database):
         if unit_id is not None :
             where_qry = " AND u.unit_id = %s " % (unit_id)
 
-        if level_1_statutory_name is not None :
-            where_qry = " AND c.statutory_mapping like '%s' " % (level_1_statutory + '%')
+        if leval_1_statutory_name is not None :
+            where_qry = " AND c.statutory_mapping like '%s' " % (leval_1_statutory_name + '%')
+
+        q_count = "SELECT count(c.compliance_id) \
+            FROM tbl_compliances c \
+            INNER JOIN tbl_client_compliances cc \
+            ON c.compliance_id = cc.compliance_id \
+            INNER JOIN tbl_client_statutories cs  \
+            ON cs.client_statutory_id = cc.client_statutory_id \
+            INNER JOIN tbl_units u ON  \
+            cs.unit_id = u.unit_id \
+            Left JOIN tbl_assigned_compliances ac \
+            ON ac.compliance_id = cc.compliance_id and \
+            ac.unit_id = cs.unit_id \
+            WHERE  ac.compliance_id is Null \
+            AND c.domain_id = %s \
+            AND cs.country_id = %s \
+            %s " % (
+                domain_id, country_id,
+                where_qry
+            )
+        c_row = self.select_one(q_count)
+        if c_row :
+            total = int(c_row[0])
+        else :
+            total = 0
 
         query = "SELECT c.compliance_id, c.compliance_task, c.document_name, \
             c.statutory_dates, c.compliance_description, c.penal_consequences, c.frequency_id, \
-            (select frequnecy from tbl_compliance_frequency where frequency_id = c.frequency_id ),\
-            SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) level_1, \
+            (select frequency from tbl_compliance_frequency where frequency_id = c.frequency_id ), \
+            c.repeats_type_id, c.repeats_every, c.duration_type_id, c.duration, \
+            c.statutory_mapping,\
+            SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) level_1, c.statutory_provision, \
             (select business_group_name from tbl_business_groups where business_group_id = u.business_group_id ), \
             (select legal_entity_name from tbl_legal_entities where legal_entity_id = u.legal_entity_id), \
             (select division_name from tbl_divisions where division_id = u.division_id), \
-            u.unit_code, u.unit_name, u.address, u.postal_code \
+            u.unit_code, u.unit_name, u.address, u.postal_code, u.unit_id \
             FROM tbl_compliances c \
             INNER JOIN tbl_client_compliances cc \
             ON c.compliance_id = cc.compliance_id \
@@ -7473,31 +7527,209 @@ class ClientDatabase(Database):
             ON cs.client_statutory_id = cc.client_statutory_id \
             INNER JOIN tbl_units u ON  \
             cs.unit_id = u.unit_id \
-            INNEr JOIN tbl_assigned_compliances ac \
-            ON ac.complaince_id = cc.compliance_id and \
+            LEFT JOIN tbl_assigned_compliances ac \
+            ON ac.compliance_id = cc.compliance_id and \
             ac.unit_id = cs.unit_id \
             WHERE  ac.compliance_id is Null \
             AND c.domain_id = %s \
-            AND cs.county_id = %s \
+            AND cs.country_id = %s \
             %s \
-            order by level_1" % (
+            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1)" % (
+                domain_id, country_id,
+                where_qry
+            )
+        print query
+        columns = [
+            "compliance_id", "compliance_task", "document_name",
+            "statutory_dates", "compliance_description", "penal_consequences",
+            "frequency_id", "frequency",
+            "repeats_type_id", "repeats_every", "duration_type_id", "duration",
+            "statutory_mapping", "level_1", "statutory_provision",
+            "business_group", "legal_entity",
+            "division", "unit_code", "unit_name",
+            "address", "postal_code", "unit_id"
+        ]
+        rows = self.select_all(query)
+        result = self.convert_to_dict(rows, columns)
+        print result
+        return self.return_risk_report_data(result, total)
+
+    def get_delayed_compliances(
+        self, country_id, domain_id, business_group_id,
+        legal_entity_id, division_id, unit_id, leval_1_statutory_name,
+        session_user
+    ) :
+        where_qry = ""
+        if business_group_id is not None :
+            where_qry = " AND u.business_group_id = %s " % (business_group_id)
+
+        if legal_entity_id is not None :
+            where_qry = " AND u.legal_entity_id = %s " % (legal_entity_id)
+
+        if division_id is not None :
+            where_qry = " AND u.division_id = %s " % (division_id)
+
+        if unit_id is not None :
+            where_qry = " AND u.unit_id = %s " % (unit_id)
+
+        if leval_1_statutory_name is not None :
+            where_qry = " AND c.statutory_mapping like '%s' " % (leval_1_statutory_name + '%')
+
+        q_count = "SELECT count(c.compliance_id) \
+            FROM tbl_compliance_history ch \
+            INNER JOIN tbl_assigned_compliances ac \
+            ON ch.compliance_id = ac.compliance_id \
+            AND ch.unit_id = ac.unit_id \
+            INNER JOIN tbl_compliances c \
+            ON ch.compliance_id = c.compliance_id \
+            INNER JOIN tbl_units u ON  \
+            ch.unit_id = u.unit_id \
+            WHERE c.domain_id = %s \
+            AND ac.country_id = %s \
+            AND ch.due_date < ch.completion_date \
+            AND ch.approve_status = 1 \
+            %s " % (
+                domain_id, country_id,
+                where_qry
+            )
+        c_row = self.select_one(q_count)
+        if c_row :
+            total = int(c_row[0])
+        else :
+            total = 0
+
+        query = "SELECT distinct c.compliance_id, c.compliance_task, c.document_name, \
+            ac.statutory_dates, c.compliance_description, c.penal_consequences, c.frequency_id, \
+            (select frequency from tbl_compliance_frequency where frequency_id = c.frequency_id ), \
+            c.repeats_type_id, c.repeats_every, c.duration_type_id, c.duration, \
+            c.statutory_mapping,\
+            SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) level_1, c.statutory_provision, \
+            (select business_group_name from tbl_business_groups where business_group_id = u.business_group_id ), \
+            (select legal_entity_name from tbl_legal_entities where legal_entity_id = u.legal_entity_id), \
+            (select division_name from tbl_divisions where division_id = u.division_id), \
+            u.unit_code, u.unit_name, u.address, u.postal_code, u.unit_id \
+            FROM tbl_compliance_history ch \
+            INNER JOIN tbl_assigned_compliances ac \
+            ON ch.compliance_id = ac.compliance_id \
+            AND ch.unit_id = ac.unit_id \
+            INNER JOIN tbl_compliances c \
+            ON ch.compliance_id = c.compliance_id \
+            INNER JOIN tbl_units u ON  \
+            ch.unit_id = u.unit_id \
+            WHERE c.domain_id = %s \
+            AND ac.country_id = %s \
+            AND ch.due_date < ch.completion_date \
+            AND ch.approve_status = 1 \
+            %s \
+            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1)" % (
+                domain_id, country_id,
+                where_qry
+            )
+        print query
+        columns = [
+            "compliance_id", "compliance_task", "document_name",
+            "statutory_dates", "compliance_description", "penal_consequences",
+            "frequency_id", "frequency",
+            "repeats_type_id", "repeats_every", "duration_type_id", "duration",
+            "statutory_mapping", "level_1", "statutory_provision",
+            "business_group", "legal_entity",
+            "division", "unit_code", "unit_name",
+            "address", "postal_code", "unit_id"
+        ]
+        rows = self.select_all(query)
+        result = self.convert_to_dict(rows, columns)
+        return self.return_risk_report_data(result, total)
+
+    def get_not_complied_compliances(
+        self, country_id, domain_id, business_group_id,
+        legal_entity_id, division_id, unit_id, leval_1_statutory_name,
+        session_user
+    ) :
+        where_qry = ""
+        if business_group_id is not None :
+            where_qry = " AND u.business_group_id = %s " % (business_group_id)
+
+        if legal_entity_id is not None :
+            where_qry = " AND u.legal_entity_id = %s " % (legal_entity_id)
+
+        if division_id is not None :
+            where_qry = " AND u.division_id = %s " % (division_id)
+
+        if unit_id is not None :
+            where_qry = " AND u.unit_id = %s " % (unit_id)
+
+        if leval_1_statutory_name is not None :
+            where_qry = " AND c.statutory_mapping like '%s' " % (leval_1_statutory_name + '%')
+
+        q_count = "SELECT count(c.compliance_id) \
+            FROM tbl_compliance_history ch \
+            INNER JOIN tbl_assigned_compliances ac \
+            ON ch.compliance_id = ac.compliance_id \
+            AND ch.unit_id = ac.unit_id \
+            INNER JOIN tbl_compliances c \
+            ON ch.compliance_id = c.compliance_id \
+            INNER JOIN tbl_units u ON  \
+            ch.unit_id = u.unit_id \
+            WHERE c.domain_id = %s \
+            AND ac.country_id = %s \
+            AND ((c.duration_type_id =2 AND ch.due_date < now()) or (c.duration_type_id != 2 AND ch.due_date < CURDATE()))  \
+            AND IFNULL(ch.approve_status, 0) != 1 \
+            %s " % (
+                domain_id, country_id,
+                where_qry
+            )
+        c_row = self.select_one(q_count)
+        if c_row :
+            total = int(c_row[0])
+        else :
+            total = 0
+
+        query = "SELECT distinct c.compliance_id, c.compliance_task, c.document_name, \
+            ac.statutory_dates, c.compliance_description, c.penal_consequences, c.frequency_id, \
+            (select frequency from tbl_compliance_frequency where frequency_id = c.frequency_id ), \
+            c.repeats_type_id, c.repeats_every, c.duration_type_id, c.duration, \
+            c.statutory_mapping,\
+            SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) level_1, c.statutory_provision, \
+            (select business_group_name from tbl_business_groups where business_group_id = u.business_group_id ), \
+            (select legal_entity_name from tbl_legal_entities where legal_entity_id = u.legal_entity_id), \
+            (select division_name from tbl_divisions where division_id = u.division_id), \
+            u.unit_code, u.unit_name, u.address, u.postal_code, u.unit_id \
+            FROM tbl_compliance_history ch \
+            INNER JOIN tbl_assigned_compliances ac \
+            ON ch.compliance_id = ac.compliance_id \
+            AND ch.unit_id = ac.unit_id \
+            INNER JOIN tbl_compliances c \
+            ON ch.compliance_id = c.compliance_id \
+            INNER JOIN tbl_units u ON  \
+            ch.unit_id = u.unit_id \
+            WHERE c.domain_id = %s \
+            AND ac.country_id = %s \
+            AND ((c.duration_type_id =2 AND ch.due_date < now()) or (c.duration_type_id != 2 AND ch.due_date < CURDATE()))  \
+            AND IFNULL(ch.approve_status, 0) != 1 \
+            %s \
+            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1)" % (
                 domain_id, country_id,
                 where_qry
             )
         columns = [
             "compliance_id", "compliance_task", "document_name",
             "statutory_dates", "compliance_description", "penal_consequences",
-            "frequency_id", "frequnecy", "level_1", "business_group", "legal_entity",
+            "frequency_id", "frequency",
+            "repeats_type_id", "repeats_every", "duration_type_id", "duration",
+            "statutory_mapping", "level_1", "statutory_provision",
+            "business_group", "legal_entity",
             "division", "unit_code", "unit_name",
-            "address", "postal_code"
+            "address", "postal_code", "unit_id"
         ]
         rows = self.select_all(query)
         result = self.convert_to_dict(rows, columns)
-        return self.return_risk_report_data(result)
+        return self.return_risk_report_data(result, total)
 
-    def return_risk_report_data(self, data) :
-        report_data_list = []
+    def return_risk_report_data(self, data, total) :
+        print data
+        report_data_list = {}
         for d in data :
+            unit_id = int(d["unit_id"])
             business_group_name = d["business_group"]
             legal_entity = d["legal_entity"]
             division_name = d["division"]
@@ -7558,38 +7790,43 @@ class ClientDatabase(Database):
             unit_name = "%s - %s" % (
                 d["unit_code"], d["unit_name"]
             )
-            address = d["address"] + " - " + d["postal_code"]
+            address = d["address"] + " - " + str(d["postal_code"])
             unit_wise_comp = clientreport.Level1Statutory(
-                unit_name, address, [compliance]
+                unit_id, unit_name, address, [compliance]
             )
             level_1_statutory_wise_units = {}
             level_1_statutory_wise_units[level_1] = [unit_wise_comp]
             report_data = clientreport.RiskData(
-                business_group_name, legal_entity_name, division_name,
+                business_group_name, legal_entity, division_name,
                 level_1_statutory_wise_units
             )
-            if len(report_data_list) == 0 :
-                report_data_list.append(report_data)
+            legal_wise = report_data_list.get(legal_entity)
+            if legal_wise is None :
+                legal_wise = report_data
             else :
-                is_new = True
-                for r in report_data_list :
-                    if r.legal_entity_name == legal_entity :
-                        is_new = False
-                        level_1_wise = r.level_1_statutory_wise_units
-                        if level_1_wise is None :
-                            level_1_wise = {}
-                            level_1_wise[level_1] = [unit_wise_comp]
-                        else :
-                            unit_wise_compliance = level_1_wise.get(level_1)
-                            if unit_wise_compliance is None :
-                                unit_wise_compliance = []
+                level_1_units = legal_wise.level_1_statutory_wise_units.get(level_1)
+                if level_1_units is None :
+                    level_1_units = []
+                    level_1_units.append(unit_wise_comp)
+                else :
+                    is_new_unit = True
+                    for u in level_1_units :
+                        if u.unit_id == unit_id :
+                            is_new_unit = False
+                            c_list = u.compliances
+                            if c_list is None :
+                                c_list = []
+                            c_list.append(compliance)
+                            u.compliances = c_list
+                    if is_new_unit :
+                        level_1_units.append(unit_wise_comp)
+                legal_wise.level_1_statutory_wise_units[level_1] = level_1_units
+            report_data_list[legal_entity] = legal_wise
 
-                            unit_wise_compliance.append(unit_wise_comp)
-                            level_1_wise[level_1] = unit_wise_compliance
-                        r.level_1_statutory_wise_units = level_1_wise
-                if is_new :
-                    report_data_list.append(report_data)
-        return report_data_list
+        final_lst = []
+        for k in sorted(report_data_list) :
+            final_lst.append(report_data_list.get(k))
+        return total, final_lst
 
     def get_risk_report_old(
         self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id,
@@ -8769,7 +9006,7 @@ class ClientDatabase(Database):
         domain_id_list = []
         if domain_id is None:
             domain_ids = self.get_user_domains(session_user)
-            domain_id_list = [int(x) for x in domain_ids.split(",")] 
+            domain_id_list = [int(x) for x in domain_ids.split(",")]
         else:
             domain_id_list = [domain_id]
 
@@ -8794,11 +9031,11 @@ class ClientDatabase(Database):
         FROM %s tch
         INNER JOIN %s tc ON (tch.compliance_id = tc.compliance_id)
         INNER JOIN %s tu ON (tch.completed_by = tu.user_id)
-        WHERE completed_by = '%d' AND unit_id = '%d' 
-        AND due_date BETWEEN '%s' AND '%s '  
+        WHERE completed_by = '%d' AND unit_id = '%d'
+        AND due_date BETWEEN '%s' AND '%s '
         AND domain_id in (%s)
         ''' % (
-            self.tblComplianceHistory, self.tblCompliances, self.tblUsers, 
+            self.tblComplianceHistory, self.tblCompliances, self.tblUsers,
             assignee_id, unit_id, from_date, to_date, domain_condition
         )
         rows = self.select_all(query)
@@ -8812,7 +9049,7 @@ class ClientDatabase(Database):
         domain_id_list = []
         if domain_id is None:
             domain_ids = self.get_user_domains(session_user)
-            domain_id_list = [int(x) for x in domain_ids.split(",")] 
+            domain_id_list = [int(x) for x in domain_ids.split(",")]
         else:
             domain_id_list = [domain_id]
 
@@ -8854,8 +9091,8 @@ class ClientDatabase(Database):
                 )
             ) as compliance_status
         '''
-        query = '''SELECT %s, %s 
-        FROM %s tch 
+        query = '''SELECT %s, %s
+        FROM %s tch
         INNER JOIN %s tc ON (tch.compliance_id = tc.compliance_id)
         INNER JOIN %s tu ON (tch.completed_by = tu.user_id)
         WHERE completed_by = '%d' AND unit_id = '%d'
@@ -8864,8 +9101,8 @@ class ClientDatabase(Database):
         ORDER BY compliance_status
         LIMIT %d, %d
         ''' % (
-            columns, subquery_columns, self.tblComplianceHistory, 
-            self.tblCompliances, self.tblUsers, assignee_id, unit_id, 
+            columns, subquery_columns, self.tblComplianceHistory,
+            self.tblCompliances, self.tblUsers, assignee_id, unit_id,
             from_date, to_date, domain_condition, int(start_count), to_count
         )
         rows = self.select_all(query)
@@ -10109,10 +10346,11 @@ class ClientDatabase(Database):
         return user_list
 
     def get_business_groups_for_mobile(self):
-        columns = "business_group_id, business_group_name"
-        condition = " 1 order by business_group_name"
-        rows = self.get_data(self.tblBusinessGroups, columns, condition)
-        result = self.convert_to_dict(rows, ["business_group_id", "business_group_name", "client_id"])
+        q = "select business_group_id, business_group_name from tbl_business_groups order by business_group_name"
+        rows = self.select_all(q)
+        print q
+        print rows
+        result = self.convert_to_dict(rows, ["business_group_id", "business_group_name"])
         business_group_list = []
         for r in result :
             business_group_list.append(

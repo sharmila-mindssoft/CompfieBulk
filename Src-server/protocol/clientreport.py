@@ -84,7 +84,8 @@ from protocol.parse_structure import (
     parse_structure_Bool,
     parse_structure_OptionalType_VectorType_CustomTextType_500,
     parse_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData,
-    parse_structure_OptionalType_CustomTextType_250
+    parse_structure_OptionalType_CustomTextType_250,
+    parse_structure_VectorType_RecordType_clientreport_Level1Compliance
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
@@ -1193,31 +1194,23 @@ class GetRiskReportFiltersSuccess(Response):
         }
 
 class GetRiskReportSuccess(Response):
-    def __init__(self, delayed_compliance, not_complied, not_opted, unassigned_compliance):
-        self.delayed_compliance = delayed_compliance
-        self.not_complied = not_complied
-        self.not_opted = not_opted
-        self.unassigned_compliance = unassigned_compliance
+    def __init__(self, total_record, compliance_list):
+        self.total_record = total_record
+        self.compliance_list = compliance_list
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["delayed_compliance", "not_complied", "not_opted", "unassigned_compliance"])
-        delayed_compliance = data.get("delayed_compliance")
-        delayed_compliance = parse_structure_VectorType_RecordType_clientreport_RiskData(delayed_compliance)
-        not_complied = data.get("not_complied")
-        not_complied = parse_structure_VectorType_RecordType_clientreport_RiskData(not_complied)
-        not_opted = data.get("not_opted")
-        not_opted = parse_structure_VectorType_RecordType_clientreport_RiskData(not_opted)
-        unassigned_compliance = data.get("unassigned_compliance")
-        unassigned_compliance = parse_structure_VectorType_RecordType_clientreport_RiskData(unassigned_compliance)
-        return GetRiskReportSuccess(delayed_compliance, not_complied, not_opted, unassigned_compliance)
+        data = parse_dictionary(data, ["total_record", "compliance_list"])
+        total_record = data.get("total_record")
+        total_record = parse_structure_UnsignedIntegerType_32(total_record)
+        compliance_list = data.get("compliance_list")
+        compliance_list = parse_structure_VectorType_RecordType_clientreport_RiskData(compliance_list)
+        return GetRiskReportSuccess(total_record, compliance_list)
 
     def to_inner_structure(self):
         return {
-            "delayed_compliance": to_structure_VectorType_RecordType_clientreport_RiskData(self.delayed_compliance),
-            "not_complied": to_structure_VectorType_RecordType_clientreport_RiskData(self.not_complied),
-            "not_opted": to_structure_VectorType_RecordType_clientreport_RiskData(self.not_opted),
-            "unassigned_compliance" : to_structure_VectorType_RecordType_clientreport_RiskData(self.unassigned_compliance)
+            "total_record": to_structure_UnsignedIntegerType_32(self.total_record),
+            "compliance_list": to_structure_VectorType_RecordType_clientreport_RiskData(self.compliance_list),
         }
 
 class GetServiceProviderReportFiltersSuccess(Response):
@@ -2016,24 +2009,28 @@ class Level1Compliance(object):
         }
 
 class Level1Statutory(object):
-    def __init__(self, unit_name, address, compliances):
+    def __init__(self, unit_id, unit_name, address, compliances):
+        self.unit_id = unit_id
         self.unit_name = unit_name
         self.address = address
         self.compliances = compliances
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_name", "address", "compliances"])
+        data = parse_dictionary(data, ["unit_id", "unit_name", "address", "compliances"])
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_100(unit_name)
         address = data.get("address")
         address = parse_structure_CustomTextType_250(address)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_clientreport_Level1Compliance(compliances)
-        return Level1Statutory(unit_name, address, compliances)
+        return Level1Statutory(unit_id, unit_name, address, compliances)
 
     def to_structure(self):
         return {
+            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_250(self.address),
             "compliances": to_structure_VectorType_RecordType_clientreport_Level1Compliance(self.compliances)
