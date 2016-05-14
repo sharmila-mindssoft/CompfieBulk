@@ -39,11 +39,16 @@ $("#submit").click(function(){
 	var areacode = $(".areacode").val().trim();
 	var mobile = $(".mobile").val().trim();
 	var address = $(".address").val().trim();
-	
-	if(address == ''){
-		displayMessage(message.address_required);
+	if(countrycode == "" && areacode == "" && mobile == ""){
+
 	}
-	else{
+	if(address == ""){
+		address = null;
+	}
+	// if(address == ''){
+	// 	displayMessage(message.address_required);
+	// }
+	// else{
 		function onSuccess(data){
 			initialize();
 			displayMessage(message.updated_success);
@@ -51,7 +56,7 @@ $("#submit").click(function(){
 		function onFailure(error){
 			console.log(error);
 		}
-		mirror.updateUserProfile( countrycode+"-"+areacode+"-"+mobile, address,
+		mirror.updateUserProfile( , ,
 	    	function(error, response){
 	            if(error == null){
 	                onSuccess(response);
@@ -61,7 +66,7 @@ $("#submit").click(function(){
 	            }
 	        }
 	    );
-	}
+	//}
 });
 
 $(function() {
