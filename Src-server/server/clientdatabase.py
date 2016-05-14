@@ -6238,16 +6238,19 @@ class ClientDatabase(Database):
                     rows = self.get_data(
                         self.tblBusinessGroups, "business_group_name", "business_group_id='%d'" % (business_group_id)
                     )
-                    business_group_name = rows[0][0]
+                    if rows:
+                        business_group_name = rows[0][0]
                 if division_id is not None:
                     rows = self.get_data(
                         self.tblDivisions, "division_name", "division_id='%d'" % (division_id)
                     )
-                    division_name = rows[0][0]
+                    if rows:
+                        division_name = rows[0][0]
                 rows = self.get_data(
                     self.tblLegalEntities, "legal_entity_name", "legal_entity_id='%d'" % (legal_entity_id)
                 )
-                legal_entity_name = rows[0][0]
+                if rows:
+                    legal_entity_name = rows[0][0]
 
                 drill_down_data.append(
                     dashboard.TrendDrillDownData(
@@ -8559,8 +8562,7 @@ class ClientDatabase(Database):
                     then 1 else 0 end) as DelayedReassignedCompliance
                 FROM tbl_compliance_history tch
                 INNER JOIN tbl_assigned_compliances tac ON (
-                tch.compliance_id = tac.compliance_id AND tch.unit_id = tac.unit_id
-                AND tch.completed_by = tac.assignee)
+                tch.compliance_id = tac.compliance_id AND tch.unit_id = tac.unit_id)
                 INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id)
                 INNER JOIN tbl_users tus ON (tus.user_id = tac.assignee)
                 INNER JOIN tbl_compliances tc ON (tac.compliance_id = tc.compliance_id)
