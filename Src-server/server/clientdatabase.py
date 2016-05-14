@@ -1371,7 +1371,7 @@ class ClientDatabase(Database):
 
         user_ids = ""
         form_ids = None
-        if self.is_primary_admin(user_id):
+        if self.is_primary_admin(session_user):
             condition = "1"
             form_column = "group_concat(form_id)"
             form_condition = "form_type_id != 4"
@@ -1381,7 +1381,7 @@ class ClientDatabase(Database):
             form_ids = rows[0][0]
         else:
             column = "user_group_id"
-            condition = "user_id = '%d'" % user_id
+            condition = "user_id = '%d'" % session_user
             rows = self.get_data(
                 self.tblUsers, column, condition
             )
@@ -1405,7 +1405,7 @@ class ClientDatabase(Database):
         admin_id = self.get_admin_id()
         condition = "1"
         where_qry = ""
-        session_user = user_id
+        select_user_id = user_id
         if session_user > 0 and session_user != admin_id :
             where_qry += " AND user_id = %s" % (session_user)
         else :
@@ -5814,127 +5814,6 @@ class ClientDatabase(Database):
             final_lst.append(unitWise.get(k))
 
         return final_lst, total
-
-    def get_compliance_details_report(
-        self, country_id, domain_id, statutory_id,
-        unit_id, compliance_id, assignee_id,
-        from_date, to_date, compliance_status,
-        client_id, session_user
-    ) :
-
-        if unit_id is None :
-            unit_ids = self.get_user_unit_ids(session_user, client_id)
-        else :
-            unit_ids = unit_id
-
-        if from_date is None :
-            query = "SELECT period_from, period_to FROM tbl_client_configurations where country_id = %s AND domain_id = %s " % (country_id, domain_id)
-            daterow = self.select_all(query, client_id)
-
-            period_from = daterow[0][0]
-            period_to = daterow[0][1]
-
-            current_year = datetime.date.today().year
-
-            if period_from == 1 :
-                year_from = current_year
-                year_to = current_year
-            else :
-                current_month = datetime.date.today().month
-                if current_month < period_from :
-                    year_from = datetime.date.today().year - 1
-                    year_to = datetime.date.today().year
-                else :
-                    year_from = datetime.date.today().year
-                    year_to = datetime.date.today().year + 1
-
-            start_date = self.string_to_datetime('01-' + self.string_months[period_from] + '-' + str(year_from))
-            day = "30-"
-            if period_to == 2:
-                day = "28-"
-            elif period_to in [1, 3, 5, 7, 8, 10, 12]:
-                day = "31-"
-            end_date = self.string_to_datetime(
-                day + self.string_months[period_to] + '-' + str(year_to))
-
-        else :
-            start_date = self.string_to_datetime(from_date)
-            end_date = self.string_to_datetime(to_date)
-
-        unit_columns = "unit_id, unit_code, unit_name, address"
-        detail_condition = "country_id = '%d' and unit_id in (%s) " % (country_id, unit_ids)
-        unit_rows = self.get_data(self.tblUnits, unit_columns, detail_condition)
-
-        unit_wise_compliances = []
-        for unit in unit_rows:
-            unit_id = unit[0]
-            unit_name = "%s - %s " % (unit[1], unit[2])
-            unit_address = unit[3]
-
-            query = "SELECT ch.compliance_history_id, c.document_name, c.compliance_description, ch.validity_date, ch.due_date, \
-                    (SELECT concat( u.employee_code, '-' ,u.employee_name ) FROM tbl_users u WHERE u.user_id = ch.completed_by) AS assigneename, \
-                    ch.documents, ch.completion_date, c.compliance_task, c.frequency_id \
-                    from tbl_compliances c,tbl_compliance_history ch, \
-                    tbl_units ut where \
-                    ch.unit_id = %s \
-                    AND ut.country_id = %s and c.domain_id = %s and ch.unit_id = ut.unit_id\
-                    AND c.compliance_id = ch.compliance_id \
-                    AND ch.completed_by like '%s'  AND c.statutory_mapping like '%s'  AND c.compliance_id like '%s' and ch.due_date BETWEEN '%s' AND '%s'" % (
-                    unit_id, country_id, domain_id,
-                    assignee_id, str(statutory_id+"%"), compliance_id, start_date, end_date
-                )
-            compliance_rows = self.select_all(query, client_id)
-
-            compliances_list = []
-            for compliance in compliance_rows:
-
-                if compliance[1] == "None" :
-                    compliance_name = compliance[8]
-                else :
-                    compliance_name = compliance[1]+' - '+compliance[8]
-
-                if compliance[5] is None :
-                    assignee = 'Administrator'
-                else :
-                    assignee = compliance[5]
-
-                due_date = None
-                if(compliance[4] != None):
-                    due_date = self.datetime_to_string(compliance[4])
-
-                validity_date = None
-                if(compliance[3] != None):
-                    validity_date = self.datetime_to_string(compliance[3])
-
-                documents = [x for x in compliance[6].split(",")] if compliance[6] != None else None
-
-                completion_date = None
-                if(compliance[7] != None):
-                    completion_date = self.datetime_to_string(compliance[7])
-
-                remarks = self.calculate_ageing(compliance[4], compliance[8], compliance[7])
-
-                if(compliance_status == 'Complied'):
-                    c_status = 'On Time'
-                elif(compliance_status == 'Delayed Compliance'):
-                    c_status = 'Delayed'
-                elif(compliance_status == 'Inprogress'):
-                    c_status = 'days left'
-                elif(compliance_status == 'Not Complied'):
-                    c_status = 'Overdue'
-                else:
-                    c_status = ''
-
-                if (c_status in remarks[1] or c_status == '') :
-                    compliance = clientreport.ComplianceDetails(
-                        compliance_name, assignee,
-                        due_date, completion_date, validity_date, documents, remarks[1]
-                    )
-                    compliances_list.append(compliance)
-            if len(compliances_list) > 0:
-                unitwise = clientreport.ComplianceDetailsUnitWise(unit_id, unit_name, unit_address, compliances_list)
-                unit_wise_compliances.append(unitwise)
-        return unit_wise_compliances
 
 #
 #   Trend Chart
