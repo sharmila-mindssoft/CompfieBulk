@@ -131,7 +131,7 @@ function loadUnitClosureList(unitsListData){
 		var bgroupid = value['business_group_id'];
 		var lentityid = value['legal_entity_id'];
 		var divisionid = value['division_id'];
-		var unitName = value['unit_name'];	
+		var unitName = value['unit_code'] + '-' + value['unit_name'];	
 		var unitId = value["unit_id"];
 		var address = value["unit_address"];		
 		var isClosed = value["is_closed"];

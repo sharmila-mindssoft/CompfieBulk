@@ -136,6 +136,10 @@ function complianceListArray(data){
     statutorydate +=  sDay + ' - ' + sMonth +', ';
   }
 
+  if(data["statutory_dates"].length <= 1){
+    statutorydate = '';
+  }
+  
   if(statutorydate.trim() != '') statutorydate = statutorydate.replace(/,\s*$/, "");
   if(triggerdate.trim() != '') triggerdate = triggerdate.replace(/,\s*$/, "");
   var summary = data["summary"];
