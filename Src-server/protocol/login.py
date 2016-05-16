@@ -9,7 +9,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_50,
     parse_structure_OptionalType_CustomTextType_100,
     parse_structure_OptionalType_CustomTextType_20,
-    parse_structure_OptionalType_UnsignedIntegerType_32
+    parse_structure_OptionalType_UnsignedIntegerType_32,
+    parse_structure_CustomTextType_250
 )
 from protocol.to_structure import (
     to_structure_CustomTextType_100,
@@ -22,7 +23,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_20,
     to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_OptionalType_CustomTextType_500,
-    to_structure_Bool
+    to_structure_Bool,
+    to_structure_CustomTextType_250
 )
 
 #
@@ -147,6 +149,30 @@ class ResetPassword(Request):
             "short_name": to_structure_OptionalType_CustomTextType_50(self.short_name)
         }
 
+class UpdateUserProfile(Request):
+    def __init__(self, contact_no, address, session_token):
+        self.contact_no = contact_no
+        self.address = address
+        self.session_token = session_token
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["contact_no", "address", "session_token"])
+        contact_no = data.get("contact_no")
+        contact_no = parse_structure_CustomTextType_20(contact_no)
+        address = data.get("address")
+        address = parse_structure_CustomTextType_250(address)
+        session_token = data.get("session_token")
+        session_token = parse_structure_CustomTextType_50(session_token)
+        return UpdateUserProfile(contact_no, address, session_token)
+
+    def to_inner_structure(self):
+        return {
+            "contact_no": to_structure_CustomTextType_20(self.contact_no),
+            "address": to_structure_CustomTextType_250(self.address),
+            "session_token": to_structure_CustomTextType_50(self.session_token)
+        }
+
 class ChangePassword(Request):
     def __init__(self, current_password, new_password, session_token):
         self.current_password = current_password
@@ -188,7 +214,8 @@ class Logout(Request):
         }
 
 def _init_Request_class_map():
-    classes = [Login, ForgotPassword, ResetTokenValidation, ResetPassword, ChangePassword, Logout]
+    classes = [Login, ForgotPassword, ResetTokenValidation, ResetPassword, 
+    ChangePassword, Logout, UpdateUserProfile]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -520,6 +547,26 @@ class EnterDifferentPassword(Response):
         return {
         }
 
+class UpdateUserProfileSuccess(Response):
+    def __init__(self, contact_no, address):
+        self.contact_no = contact_no
+        self.address = address
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["contact_no", "address"])
+        contact_no = data.get("contact_no")
+        contact_no = parse_structure_CustomTextType_20(contact_no)
+        address = data.get("address")
+        address = parse_structure_CustomTextType_250(address)
+        return UpdateUserProfile(contact_no, address)
+
+    def to_inner_structure(self):
+        return {
+            "contact_no": to_structure_CustomTextType_20(self.contact_no),
+            "address": to_structure_CustomTextType_250(self.address)
+        }
+
 def _init_Response_class_map():
     classes = [
         UserLoginSuccess, AdminLoginSuccess, InvalidCredentials,
@@ -527,7 +574,7 @@ def _init_Response_class_map():
         InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess,
         InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken,
         ClientDatabaseNotExists, ContractExpired, EnterDifferentPassword,
-        NotConfigured, ContractNotYetStarted
+        NotConfigured, ContractNotYetStarted, UpdateUserProfileSuccess
     ]
     class_map = {}
     for c in classes:
