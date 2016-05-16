@@ -8298,16 +8298,22 @@ class ClientDatabase(Database):
             qry_where += " AND t1.assignee = %s " % (user_id)
 
         if from_date is not None and to_date is not None :
-            start_date = self.string_to_datetime(from_date)
-            end_date = self.string_to_datetime(to_date)
-            qry_where += " AND t2.due_date between '%s' and '%s'" % (start_date, end_date)
+            start_date = self.string_to_datetime(from_date).date()
+            end_date = self.string_to_datetime(to_date).date()
+            qry_where += " AND t1.reassigned_date between DATE_SUB('%s', INTERVAL 1 DAY) and '%s'" % (start_date, end_date)
+        elif from_date is not None:
+            start_date = self.string_to_datetime(from_date).date()
+            qry_where += " AND t1.reassigned_date > DATE_SUB('%s', INTERVAL 1 DAY)" % (start_date)
+        elif to_date is not None:
+            end_date = self.string_to_datetime(from_date).date()
+            qry_where += " AND t1.reassigned_date < DATE_SUB('%s', INTERVAL 1 DAY)" % (end_date)
 
         if session_user > 0 and session_user != admin_id :
-            qry_where += " AND T1.unit_id in \
+            qry_where += " AND t1.unit_id in \
                 (select us.unit_id from tbl_user_units us where \
                     us.user_id = %s\
                 )" % int(session_user)
-            qry_where += " and T3.domain_id IN \
+            qry_where += " and t3.domain_id IN \
                 (SELECT ud.domain_id FROM tbl_user_domains ud \
                 where ud.user_id = %s)" % int(session_user)
 
@@ -8340,7 +8346,7 @@ class ClientDatabase(Database):
                 from_count, to_count
 
             )
-
+        print qry
         rows = self.select_all(qry)
         result = self.convert_to_dict(rows, columns)
         qry_count = "SELECT sum(t.c_count) from \
@@ -10662,3 +10668,13 @@ class ClientDatabase(Database):
                 return False, ""
         else :
             return False, ""
+
+#
+#   Update Profile
+#
+
+    def update_profile(self, contact_no, address, session_user):
+        columns = ["contact_no", "address"]
+        values = [contact_no, address]
+        condition = "user_id= '%d'" % session_user
+        self.update(self.tblUsers, columns, values, condition)
