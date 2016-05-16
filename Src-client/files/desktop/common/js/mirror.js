@@ -1108,6 +1108,17 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function getNextUnitCode(client_id, callback){
+        callerName = "techno"
+        var request = [
+            "GetNextUnitCode",
+            {
+                "client_id" : client_id
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
     function getBusinessGroupDict(bgId, bgName){
         if (bgName == null || bgName == '' ){
             return null
@@ -1593,7 +1604,8 @@ function initMirror() {
         updateUserProfile: updateUserProfile,
         getNotifications: getNotifications,
         updateNotificationStatus: updateNotificationStatus,
-        createNewAdmin: createNewAdmin
+        createNewAdmin: createNewAdmin,
+        getNextUnitCode: getNextUnitCode
     }
 }
 

@@ -610,12 +610,28 @@ class GetClientProfile(Request):
         return {
         }
 
+class GetNextUnitCode(Request):
+    def __init__(self, client_id):
+        self.client_id = client_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["client_id"])
+        client_id = data["client_id"]
+        client_id = parse_structure_UnsignedIntegerType_32(client_id)
+        return GetNextUnitCode(client_id)
+
+    def to_inner_structure(self):
+        return {
+            "client_id" : to_structure_UnsignedIntegerType_32(self.client_id)
+        }
 
 def _init_Request_class_map():
     classes = [
         GetClientGroups, SaveClientGroup, UpdateClientGroup, 
         ChangeClientGroupStatus, GetClients, SaveClient, UpdateClient, 
-        ChangeClientStatus, ReactivateUnit, GetClientProfile, CreateNewAdmin
+        ChangeClientStatus, ReactivateUnit, GetClientProfile, CreateNewAdmin,
+        GetNextUnitCode
     ]
     class_map = {}
     for c in classes:
@@ -1145,16 +1161,35 @@ class UnitNameAlreadyExists(Response):
         }
 
 class UnitCodeAlreadyExists(Response):
-    def __init__(self):
-        pass
+    def __init__(self, next_unit_code):
+        self.next_unit_code = next_unit_code
 
     @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return UnitCodeAlreadyExists()
+    def parse_structure(data):
+        data = parse_dictionary(data, ["next_unit_code"])
+        next_unit_code = data.get("next_unit_code")
+        next_unit_code = parse_structure_UnsignedIntegerType_32(next_unit_code)
+        return UnitCodeAlreadyExists(next_unit_code)
 
     def to_inner_structure(self):
         return {
+            "next_unit_code": to_structure_UnsignedIntegerType_32(self.next_unit_code)
+        }
+
+class GetNextUnitCodeSuccess(Response):
+    def __init__(self, next_unit_code):
+        self.next_unit_code = next_unit_code
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["next_unit_code"])
+        next_unit_code = data.get("next_unit_code")
+        next_unit_code = parse_structure_UnsignedIntegerType_32(next_unit_code)
+        return GetNextUnitCodeSuccess(next_unit_code)
+
+    def to_inner_structure(self):
+        return {
+            "next_unit_code": to_structure_UnsignedIntegerType_32(self.next_unit_code)
         }
 
 class LogoSizeLimitExceeds(Response):
@@ -1357,7 +1392,8 @@ def _init_Response_class_map():
         InvalidUnitId, UserIsNotResponsibleForAnyClient, ClientCreationFailed,
         CannotDeactivateCountry, CannotDeactivateDomain, CreateNewAdminSuccess,
         ClientDatabaseNotExists, CannotDeactivateClient, ReassignFirst,
-        InvalidNoOfLicence, InvalidFileSpace, ServerIsFull, NotAnImageFile
+        InvalidNoOfLicence, InvalidFileSpace, ServerIsFull, NotAnImageFile,
+        GetNextUnitCodeSuccess
     ]
     class_map = {}
     for c in classes:

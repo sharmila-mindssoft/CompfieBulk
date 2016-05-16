@@ -793,10 +793,19 @@
                     country_id, unit_id, user_id, domain_id, callback
                 );
             }
+            function next_count(){
+            	alert("inside next count")
+            	mirror.getNextUnitCode(
+                    1, callback
+                );
+            }
 		</script>
 	</head>
 	<body>
 		<h1>Testing APIs</h1>
+		<div>
+			<button onclick="next_count()">Next unit code count</button>	
+		</div>
 		<div>
 			<button onclick="yearwise()">Assigneewise Yearwise compliance count</button>
             <button onclick="reassigned()">Assigneewise Reassigned compliance popup</button>

@@ -8346,7 +8346,6 @@ class ClientDatabase(Database):
                 from_count, to_count
 
             )
-        print qry
         rows = self.select_all(qry)
         result = self.convert_to_dict(rows, columns)
         qry_count = "SELECT sum(t.c_count) from \
