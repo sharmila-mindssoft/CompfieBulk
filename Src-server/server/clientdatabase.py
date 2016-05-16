@@ -517,7 +517,7 @@ class ClientDatabase(Database):
         columns += " legal_entity_id, business_group_id, is_active, is_closed"
         condition = "1"
         if unit_ids is not None:
-            condition = "unit_id in (%s)  ORDER BY unit_name" % unit_ids
+            condition = "unit_id in (%s)  ORDER BY unit_id ASC" % unit_ids
         rows = self.get_data(
             self.tblUnits, columns, condition
         )
@@ -7200,9 +7200,10 @@ class ClientDatabase(Database):
     def get_upcoming_compliances_list(self, upcoming_start_count, to_count, session_user, client_id):
         query = "SELECT ac.due_date, document_name, compliance_task, \
                 compliance_description, format_file, unit_code, unit_name,\
-                address, ac.statutory_dates, repeats_every, (select domain_name \
+                address, (select domain_name \
                 FROM %s d where d.domain_id = c.domain_id) as domain_name, \
-                frequency_id, c.compliance_id, u.unit_id\
+                DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) \
+                as start_date\
                 FROM %s  ac INNER JOIN %s u ON (ac.unit_id = u.unit_id) \
                 INNER JOIN %s c ON (ac.compliance_id = c.compliance_id) WHERE \
                 assignee = '%d' AND frequency_id != 4  AND is_closed = 0\
@@ -7211,43 +7212,50 @@ class ClientDatabase(Database):
                 select count(*) from tbl_compliance_history ch \
                 where ch.compliance_id = ac.compliance_id and \
                 ch.unit_id = ac.unit_id ) >0), 0,1) \
-                ORDER BY ac.due_date ASC LIMIT %d, %d"  % (
+                ORDER BY start_date ASC LIMIT %d, %d"  % (
                     self.tblDomains, self.tblAssignedCompliances, self.tblUnits,
                     self.tblCompliances, session_user, int(upcoming_start_count),
                     to_count
                 )
         upcoming_compliances_rows = self.select_all(query)
+        columns = ["due_date", "document_name", "compliance_task", 
+        "description","format_file", "unit_code", "unit_name", "address",
+        "domain_name",  "start_date"]
+        upcoming_compliances_result = self.convert_to_dict(
+            upcoming_compliances_rows, columns
+        )
         upcoming_compliances_list = []
-        for compliance in upcoming_compliances_rows:
-            document_name = compliance[1]
-            compliance_task = compliance[2]
+        for compliance in upcoming_compliances_result:
+            document_name = compliance["document_name"]
+            compliance_task = compliance["compliance_task"]
             compliance_name = compliance_task
             if document_name not in (None, "None", "") :
                 compliance_name = "%s - %s" % (document_name, compliance_task)
 
-            unit_code = compliance[5]
-            unit_name = compliance[6]
+            unit_code = compliance["unit_code"]
+            unit_name = compliance["unit_name"]
             unit_name = "%s - %s" % (unit_code, unit_name)
 
-            start_date = self.calculate_next_start_date(
-                compliance[0],
-                compliance[8],  compliance[9]
-            )
+            # start_date = self.calculate_next_start_date(
+            #     compliance[0],
+            #     compliance[8],  compliance[9]
+            # )
+            start_date = compliance["start_date"]
             format_files = None
-            if compliance[4] is not None and compliance[4].strip() != '':
+            if compliance["format_file"] is not None and compliance["format_file"].strip() != '':
                 format_files = [ "%s/%s" % (
                         FORMAT_DOWNLOAD_URL, x
                     ) for x in compliance[4].split(",")]
             upcoming_compliances_list.append(
                 core.UpcomingCompliance(
                     compliance_name=compliance_name,
-                    domain_name=compliance[10],
+                    domain_name=compliance["domain_name"],
                     start_date=self.datetime_to_string(start_date),
-                    due_date=self.datetime_to_string(compliance[0]),
+                    due_date=self.datetime_to_string(compliance["due_date"]),
                     format_file_name=format_files,
                     unit_name=unit_name,
-                    address=compliance[7],
-                    compliance_description=compliance[3]
+                    address=compliance["address"],
+                    compliance_description=compliance["description"]
                 ))
         return upcoming_compliances_list
 
