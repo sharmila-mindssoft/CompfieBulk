@@ -316,7 +316,19 @@ function loadUserUpdate(userId){
         }
     }
 }
-
+$('#country-code').on('input', function (event) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+$('#area-code').on('input', function (event) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+$('#mobile-number').on('input', function (event) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+function isEmail(email) {
+  var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  return regex.test(email);
+}
 $("#submit").click(function(){
     var userId = $("#user-id").val();
 	var usertype = $('#usertype').val().trim();
@@ -379,6 +391,9 @@ $("#submit").click(function(){
 	else if(emailid == ''){
 		displayMessage(message.emailid_required);
 	}
+    else if(!isEmail(emailid)){
+        displayMessage(message.invalid_emailid);
+    }
 	else if(country == ''){
 		displayMessage(message.country_required);
 	}
