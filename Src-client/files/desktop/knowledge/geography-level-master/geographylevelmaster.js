@@ -117,13 +117,15 @@ function onCountrySuccess(val){
   $("#view-insert-level").hide();
   $("#add").show();
   loadGeographyLevelsList(val[0]);
+  $("#level1").focus();
 }
 
 //load country list in autocomplete text box
 $("#countryval").keyup(function(){
   var textval = $(this).val();
   getCountryAutocomplete(textval, countriesList, function(val){
-    onCountrySuccess(val)
+    onCountrySuccess(val);
+
   })
 });
 
@@ -184,31 +186,32 @@ $("#submit").click(function(){
 	   	var passlevellist = [];
 	   	var isAdd = true;
 		for(var k=1; k<=10; k++) {
-			if($("#levelid"+k).val() != '' && $("#level"+k).val().trim() == ''){
-				displayMessage("Level "+ k + message.shouldnot_empty)
-				return false;
-			}else if($("#level"+k).val().trim() != ''){
 				if($("#levelid"+k).val() != ''){
+					var isRemove = false;
+					if($("#level"+k).val().trim() == ''){
+						isRemove = true;
+					}
 					passlevellist.push(
 						{
 							"l_position" : k,
 							"l_name" : $("#level"+k).val().trim(),
 							"l_id" : parseInt($("#levelid"+k).val()),
-							"is_remove": false
+							"is_remove": isRemove
 						}
 					);
 					isAdd = false;
 				}else{
-					passlevellist.push(
-						{
-							"l_position" : k,
-							"l_name" : $("#level"+k).val().trim(),
-							"l_id" : null,
-							"is_remove": false
-						}
-					);
+					if($("#level"+k).val().trim() != ''){
+						passlevellist.push(
+							{
+								"l_position" : k,
+								"l_name" : $("#level"+k).val().trim(),
+								"l_id" : null,
+								"is_remove": false
+							}
+						);
+					}
 				}
-			}
 	   }
 		function onSuccess(response) {
 			if(isAdd){
@@ -237,7 +240,7 @@ $("#submit").click(function(){
 	   }else{
 	   		displayMessage(message.intermediatelevel_required);
 	   }
-		}
+	}
 });
 
 //insert a new level in between levels

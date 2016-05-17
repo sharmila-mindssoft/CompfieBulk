@@ -9,7 +9,7 @@
             <div class="input-row">
               <div class="field-label">Country:<span class="mandatory">*</span></div>
               <div class="single-column-field-input">
-                <input type="text" class="input-box icon-autocomplete" id="countryval" value="">
+                <input type="text" class="input-box icon-autocomplete" id="countryval" value="" autofocus="autofocus" tabindex="1">
                 <input type="hidden" id="country">
                 <div id="ac-country" class="ac-textbox default-display-none">
                 <ul style="width: 85%; z-index: 1"></ul>
@@ -21,7 +21,7 @@
           <div class="input-row">
             <div class="field-label">Domain:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
-              <input type="text" class="input-box icon-autocomplete" id="domainval">
+              <input type="text" class="input-box icon-autocomplete" id="domainval" tabindex="2">
               <input type="hidden" id="domain">
               <div id="ac-domain" class="ac-textbox default-display-none">
               <ul style="width: 85%"></ul>
@@ -42,14 +42,14 @@
               1
             </td>
             <td>
-              <input type="text" id="level1" class="input-box fieldvalue" maxlength="50" tabindex="1"/>
+              <input type="text" id="level1" class="input-box fieldvalue" maxlength="50" tabindex="3"/>
               <input type="hidden" id="levelid1" class="input-box hiddenvalue" value=""/>
             </td>
             <td>
               6
             </td>
             <td>
-              <input type="text" id="level6" class="input-box fieldvalue" maxlength="50" tabindex="6"/>
+              <input type="text" id="level6" class="input-box fieldvalue" maxlength="50" tabindex="8"/>
               <input type="hidden" id="levelid6" class="input-box hiddenvalue" value=""/>
             </td>
           </tr>
@@ -58,14 +58,14 @@
               2
             </td>
             <td>
-              <input type="text" id="level2" class="input-box fieldvalue" maxlength="50" tabindex="2"/>
+              <input type="text" id="level2" class="input-box fieldvalue" maxlength="50" tabindex="4"/>
               <input type="hidden" id="levelid2" class="input-box hiddenvalue" value=""/>
             </td>
             <td>
               7
             </td>
             <td>
-              <input type="text" id="level7" class="input-box fieldvalue" maxlength="50" tabindex="7"/>
+              <input type="text" id="level7" class="input-box fieldvalue" maxlength="50" tabindex="9"/>
               <input type="hidden" id="levelid7" class="input-box hiddenvalue" value=""/>
             </td>
           </tr>
@@ -74,14 +74,14 @@
               3
             </td>
             <td>
-              <input type="text" id="level3" class="input-box fieldvalue" maxlength="50" tabindex="3"/>
+              <input type="text" id="level3" class="input-box fieldvalue" maxlength="50" tabindex="5"/>
               <input type="hidden" id="levelid3" class="input-box hiddenvalue" value=""/>
             </td>
             <td>
               8
             </td>
             <td>
-              <input type="text" id="level8" class="input-box fieldvalue" maxlength="50" tabindex="8"/>
+              <input type="text" id="level8" class="input-box fieldvalue" maxlength="50" tabindex="10"/>
               <input type="hidden" id="levelid8" class="input-box hiddenvalue" value=""/>
             </td>
           </tr>
@@ -90,14 +90,14 @@
               4
             </td>
             <td>
-              <input type="text" id="level4" class="input-box fieldvalue" maxlength="50" tabindex="4"/>
+              <input type="text" id="level4" class="input-box fieldvalue" maxlength="50" tabindex="6"/>
               <input type="hidden" id="levelid4" class="input-box hiddenvalue" value=""/>
             </td>
             <td>
               9
             </td>
             <td>
-              <input type="text" id="level9" class="input-box fieldvalue" maxlength="50" tabindex="9"/>
+              <input type="text" id="level9" class="input-box fieldvalue" maxlength="50" tabindex="11"/>
               <input type="hidden" id="levelid9" class="input-box hiddenvalue" value=""/>
             </td>
           </tr>
@@ -106,14 +106,14 @@
               5
             </td>
             <td>
-              <input type="text" id="level5" class="input-box fieldvalue" maxlength="50" tabindex="5"/>
+              <input type="text" id="level5" class="input-box fieldvalue" maxlength="50" tabindex="7"/>
               <input type="hidden" id="levelid5" class="input-box hiddenvalue" value=""/>
             </td>
             <td>
               10
             </td>
             <td>
-              <input type="text" id="level10" class="input-box fieldvalue" maxlength="50" tabindex="10"/>
+              <input type="text" id="level10" class="input-box fieldvalue" maxlength="50" tabindex="12"/>
               <input type="hidden" id="levelid10" class="input-box hiddenvalue" value=""/>
             </td>
           </tr>
@@ -121,7 +121,7 @@
       </div>
       <div class="submit-button-container">
         <input type="reset" name="cancel" value="Reset" class="btn-cancel btn-statutorylevel-cancel">&nbsp;&nbsp;
-        <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit">
+        <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit" tabindex="13">
       </div>
     </div>
     <div class="clearfix"></div>

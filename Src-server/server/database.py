@@ -252,6 +252,8 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
+        print
+        print query
         return self.select_all(query)
 
     ########################################################

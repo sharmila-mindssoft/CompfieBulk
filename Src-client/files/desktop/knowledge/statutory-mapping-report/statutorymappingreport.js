@@ -330,6 +330,7 @@ $("#submit").click(function(){
 function onCountrySuccess(val){
   $("#countryval").val(val[1]);
   $("#country").val(val[0]);
+  $("#countryval").focus();
 }
 
 //load country list in autocomplete text box  
@@ -344,6 +345,7 @@ $("#countryval").keyup(function(){
 function onDomainSuccess(val){
   $("#domainval").val(val[1]);
   $("#domain").val(val[0]);
+  $("#domainval").focus();
 }
 //load domain list in autocomplete textbox  
 $("#domainval").keyup(function(){
@@ -357,6 +359,7 @@ $("#domainval").keyup(function(){
 function onIndustrySuccess(val){
   $("#industryval").val(val[1]);
   $("#industry").val(val[0]);
+  $("#industryval").focus();
 }
 //load industry list in autocomplete textbox  
 $("#industryval").keyup(function(){
@@ -370,6 +373,7 @@ $("#industryval").keyup(function(){
 function onStatutoryNatureSuccess(val){
   $("#statutorynatureval").val(val[1]);
   $("#statutorynature").val(val[0]);
+  $("#statutorynature").focus();
 }
 //load statutorynature list in autocomplete textbox  
 $("#statutorynatureval").keyup(function(){
@@ -383,6 +387,7 @@ $("#statutorynatureval").keyup(function(){
 function onGeogaphySuccess(val){
   $("#geographyval").val(val[1]);
   $("#geography").val(val[0]);
+  $("#geographyval").focus();
 }
 //load geography list in autocomplete textbox  
 $("#geographyval").keyup(function(){
@@ -396,6 +401,7 @@ $("#geographyval").keyup(function(){
 function onStatutorySuccess(val){
   $("#statutoryval").val(val[1]);
   $("#statutory").val(val[0]);
+  $("#statutoryval").focus();
 }
 //load statutory list in autocomplete textbox  
 $("#statutoryval").keyup(function(){
@@ -411,5 +417,6 @@ $("#statutoryval").keyup(function(){
 $(function() {
   $(".grid-table-rpt").hide();
   getStatutoryMappings();
+  $("#countryval").focus();
 });
 

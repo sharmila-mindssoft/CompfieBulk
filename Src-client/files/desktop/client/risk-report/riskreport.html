@@ -14,14 +14,14 @@
           <div class="input-row">
             <div class="field-label">Country:<span class="mandatory">*</span></div>
             <div class="field-input">
-            <select class="input-box" id="country">
+            <select class="input-box" id="country" autoselect="autoselect" tabindex="1">
             </select>
           </div>
         </div>
         <div class="input-row">
           <div class="field-label">Domain:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" >
+            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" tabindex="2">
             <input type="hidden" id="domain" value="">
             <div id="ac-domain" class="ac-textbox default-display-none">
             <ul style="width:85%;"></ul>
@@ -31,7 +31,7 @@
       <div class="input-row">
         <div class="field-label">Business Group:</div>
         <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" id="businessgroupval" placeholder="Enter Business Group">
+          <input type="text" class="input-box icon-autocomplete" id="businessgroupval" placeholder="Enter Business Group" tabindex="3">
           <input type="hidden" id="businessgroup">
           <div id="ac-businessgroup" class="ac-textbox default-display-none">
           <ul style="width:85%;"></ul>
@@ -41,7 +41,7 @@
     <div class="input-row">
       <div class="field-label">Legal Entity:</div>
       <div class="field-input">
-        <input type="text" class="input-box icon-autocomplete" id="legalentityval" placeholder="Enter Legal Entity">
+        <input type="text" class="input-box icon-autocomplete" id="legalentityval" placeholder="Enter Legal Entity" tabindex="4">
         <input type="hidden" id="legalentity">
         <div id="ac-legalentity" class="ac-textbox default-display-none" >
         <ul style="width:85%;"></ul>
@@ -53,7 +53,7 @@
   <div class="input-row">
     <div class="field-label">Division:</div>
     <div class="field-input">
-      <input type="text" class="input-box icon-autocomplete" id="divisionval" placeholder="Enter Division">
+      <input type="text" class="input-box icon-autocomplete" id="divisionval" placeholder="Enter Division" tabindex="5">
       <input type="hidden" id="division">
       <div id="ac-division" class="ac-textbox default-display-none">
       <ul style="width:85%;"></ul>
@@ -63,7 +63,7 @@
 <div class="input-row">
   <div class="field-label">Unit:</div>
   <div class="field-input">
-    <input type="text" class="input-box icon-autocomplete" id="unitval" placeholder="Enter Unit">
+    <input type="text" class="input-box icon-autocomplete" id="unitval" placeholder="Enter Unit" tabindex="6">
     <input type="hidden" id="unit">
     <div id="ac-unit" class="ac-textbox default-display-none">
     <ul style="width:85%;"></ul>
@@ -74,7 +74,7 @@
 <div class="input-row">
         <div class="field-label">Act:</div>
         <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" id="actval" placeholder="Enter Act">
+          <input type="text" class="input-box icon-autocomplete" id="actval" placeholder="Enter Act" tabindex="7">
           <input type="hidden" id="act">
           <div id="ac-statutory" class="ac-textbox default-display-none">
           <ul style="width:85%;"></ul>
@@ -85,7 +85,7 @@
 <div class="input-row">
   <div class="field-label">Statutory Status:</div>
   <div class="field-input">
-  <select class="input-box" id="statutory_status">
+  <select class="input-box" id="statutory_status" tabindex="8">
   <option value='1'>Delayed Compliance</option>
   <option value='2'>Not Complied</option>
   <option value='3'>Not Opted</option>
@@ -96,8 +96,8 @@
 
 </div>
 <div class="submit-button-container">
-<input type="submit" value="Show" class="btn-submit" id="submit">
-<input type="submit" value="Export" class="btn-submit" id="export">
+<input type="submit" value="Show" class="btn-submit" id="submit" tabindex="9">
+<input type="submit" value="Export" class="btn-submit" id="export" tabindex="10">
 </div>
 
 

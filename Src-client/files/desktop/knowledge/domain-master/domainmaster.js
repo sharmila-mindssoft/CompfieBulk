@@ -6,6 +6,7 @@ $(".btn-domain-add").click(function(){
   $("#domainname").val('');
   $("#domainid").val('');
   $(".error-message").html('');
+  $("#domainname").focus();
 });
 $(".btn-domain-cancel").click(function(){
   $("#domain-add").hide();

@@ -9,6 +9,7 @@ $(".btn-geography-add").click(function(){
   $("#countryval").val('');
   $(".error-message").html('');
   $(".tbody-geography-level").find("div").remove();
+  $("#countryval").focus();
 });
 
 $(".btn-geography-back").click(function(){

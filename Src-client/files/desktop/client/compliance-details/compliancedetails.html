@@ -14,14 +14,14 @@
           <div class="input-row">
             <div class="field-label">Country:<span class="mandatory">*</span></div>
             <div class="field-input">
-            <select class="input-box" id="country">
+            <select class="input-box" id="country" autofocus="autofocus" tabindex="1">
             </select>
           </div>
         </div>
         <div class="input-row">
           <div class="field-label">Domain:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" >
+            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" tabindex="2">
             <input type="hidden" id="domain" value="">
             <div id="ac-domain" class="ac-textbox default-display-none">
             <ul style="width:85%;" class="hidemenu"></ul>
@@ -31,7 +31,7 @@
       <div class="input-row">
         <div class="field-label">Act:<span class="mandatory">*</span></div>
         <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" id="actval" placeholder="Enter Act">
+          <input type="text" class="input-box icon-autocomplete" id="actval" placeholder="Enter Act" tabindex="3"> 
           <input type="hidden" id="act">
           <div id="ac-statutory" class="ac-textbox default-display-none">
           <ul style="width:85%;"></ul>
@@ -42,7 +42,7 @@
     <div class="input-row">
       <div class="field-label">Unit:</div>
       <div class="field-input">
-        <input type="text" class="input-box icon-autocomplete" id="unitval" placeholder="Enter Unit">
+        <input type="text" class="input-box icon-autocomplete" id="unitval" placeholder="Enter Unit" tabindex="4">
         <input type="hidden" id="unit">
         <div id="ac-unit" class="ac-textbox default-display-none">
         <ul style="width:85%;"></ul>
@@ -53,7 +53,7 @@
       <div class="input-row">
         <div class="field-label">Compliance Task:</div>
         <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" id="compliancetaskval" placeholder="Enter Compliance Task">
+          <input type="text" class="input-box icon-autocomplete" id="compliancetaskval" placeholder="Enter Compliance Task" tabindex="5">
           <input type="hidden" id="compliancetask">
           <div id="ac-compliancetask" class="ac-textbox default-display-none">
           <ul style="width:85%;"></ul>
@@ -67,7 +67,7 @@
 <div class="input-row">
 <div class="field-label">User:</div>
  <div class="field-input">
-    <input type="text" class="input-box icon-autocomplete" id="assigneeval" placeholder="Enter User">
+    <input type="text" class="input-box icon-autocomplete" id="assigneeval" placeholder="Enter User" tabindex="6">
     <input type="hidden" id="assignee">
     <div id="ac-user" class="ac-textbox default-display-none">
     <ul style="width:85%;"></ul>
@@ -78,21 +78,21 @@
 <div class="input-row">
 <div class="field-label">From:</div>
  <div class="field-input">
-    <input type="text" class="input-box icon-autocomplete" readonly="readonly" id="fromdate" placeholder="dd-mon-yyyy">
+    <input type="text" class="input-box icon-autocomplete" readonly="readonly" id="fromdate" placeholder="dd-mon-yyyy" tabindex="7">
 </div>
 </div>
 
 <div class="input-row">
 <div class="field-label">To:</div>
  <div class="field-input">
-    <input type="text" class="input-box icon-autocomplete" readonly="readonly" id="todate" placeholder="dd-mon-yyyy">
+    <input type="text" class="input-box icon-autocomplete" readonly="readonly" id="todate" placeholder="dd-mon-yyyy" tabindex="8">
 </div>
 </div>
 
 <div class="input-row">
   <div class="field-label">Status:</div>
   <div class="field-input">
-  <select class="input-box" id="status">
+  <select class="input-box" id="status" tabindex="9">
   <option value=''>Select</option>
   <option value='Complied'>Complied</option>
   <option value='Delayed Compliance'>Delayed Compliance</option>
@@ -105,8 +105,8 @@
 
 </div>
 <div class="submit-button-container">
-<input type="submit" value="Show" class="btn-submit" id="submit">
-<input type="submit" value="Export" class="btn-submit" id="export">
+<input type="submit" value="Show" class="btn-submit" id="submit" tabindex="10">
+<input type="submit" value="Export" class="btn-submit" id="export" tabindex="11">
 </div>
 
 
