@@ -79,7 +79,7 @@ $('#pagination').click(function(){
         console.log(error);
         hideLoader();
     }
-    client_mirror.getLoginTrace(sno, null
+    client_mirror.getLoginTrace(sno, null, 
     function (error, response) {
       if (error == null){
         onSuccess(response);
