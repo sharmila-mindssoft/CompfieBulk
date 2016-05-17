@@ -76,10 +76,10 @@ function getUserGroupAutocomplete(textval, listval, callback){
     }
     $('#ac-usergroup ul').append(str);
     $("#usergroup").val('');
-    }else{
-      $("#usergroup").val('');
-      $(".ac-textbox").hide();
-    }
+  }else{
+    $("#usergroup").val('');
+    $(".ac-textbox").hide();
+  }
 }
 
 //industry autocomplete function

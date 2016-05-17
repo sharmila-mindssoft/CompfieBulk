@@ -251,32 +251,34 @@
                             <input type="hidden" id="a_domain" value="">
                             <input type="hidden" id="a_year" value="">
                             <input type="hidden" id="a_unit" value="">
-
-                             <input type="hidden" id="country" value="">
-                              <input type="text" class="input-box icon-autocomplete" id="countryval" value=""  onkeyup="loadauto_country(this.value)">
-                              <div id="autocompleteview-country" class="ac-textbox" style="display:none;" onclick="hidecountrylist();">
-                                  <ul style="width:85%"></ul>
-                              </div>
+                              
+                            <input type="hidden" id="country" value="">
+                            <input type="text" class="input-box icon-autocomplete" id="countryval" value="" onkeyup="ac_country_load(this.value)">
+                            <div id="ac-country" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+                          
                           </div>
                         </div>
                         <div class="input-row">
                           <div class="field-label">Legal Entity:</div>
                           <div class="field-input">
-                              <input type="text" class="input-box icon-autocomplete" id="legalentityval" value=""   onkeyup="loadauto_lentity(this.value)">
-                              <input type="hidden" id="legalentityid">
-                              <div id="autocompleteview-lentity" class="ac-textbox" style="display:none;"  onclick="hidelentitylist();">
-                                  <ul style="width:85%"></ul>
-                              </div>
+                            <input type="text" class="input-box icon-autocomplete" id="legalentityval" onkeyup="ac_le_load(this.value)">
+                            <input type="hidden" id="legalentityid">
+                            <div id="ac-legalentity" class="ac-textbox default-display-none" >
+                            <ul style="width:85%;"></ul>
                           </div>
+                        </div>
                         </div>
                         <div class="input-row">
                           <div class="field-label">Seating Unit:</div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" id="unitval" value="" onkeyup="loadauto_unit(this.value)">
-                        <input type="hidden" id="unitid">
-                        <div id="autocompleteview-unit" class="ac-textbox" style="display:none;"  onclick="hideunitlist();">
-                            <ul style="width:85%"></ul>
-                        </div>
+                            <input type="text" class="input-box icon-autocomplete" id="unitval" value="" onkeyup="ac_unit_load(this.value)">
+                            <input type="hidden" id="unitid">
+                            <div id="ac-unit" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+
                           </div>
                         </div>
                       </div>
@@ -284,31 +286,37 @@
                         <div class="input-row">
                           <div class="field-label">Business Group:</div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value=""  onkeyup="loadauto_businessgroups(this.value)">
-                        <input type="hidden" id="businessgroupid">
-                        <div id="autocompleteview-bgroups" class="ac-textbox" style="display:none;"  onclick="hidebgroupslist();">
-                            <ul style="width:85%"></ul>
-                        </div>
+                            <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value="" onkeyup="ac_bg_load(this.value)">
+                            <input type="hidden" id="businessgroupid">
+                            <div id="ac-businessgroup" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+
                           </div>
                         </div>
                         <div class="input-row">
                           <div class="field-label">Division:</div>
                           <div class="field-input">
-                             <input type="text" class="input-box icon-autocomplete" id="divisionval" value=""   onkeyup="loadauto_division(this.value)">
-                        <input type="hidden" id="divisionid">
-                        <div id="autocompleteview-division" class="ac-textbox" style="display:none;"  onclick="hidedivisionlist();">
-                            <ul style="width:85%"></ul>
-                        </div>
+
+                            <input type="text" class="input-box icon-autocomplete" id="divisionval" value="" onkeyup="ac_division_load(this.value)">
+                            <input type="hidden" id="divisionid">
+                            <div id="ac-division" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+
                           </div>
                         </div>
                         <div class="input-row">
                           <div class="field-label">User:</div>
                           <div class="field-input">
-                             <input type="text" class="input-box icon-autocomplete" id="userval" value="" s  onkeyup="loadauto_user(this.value)">
-                        <input type="hidden" id="userid">
-                        <div id="autocompleteview-user" class="ac-textbox" style="display:none;"  onclick="hideuserlist();">
-                            <ul style="width:85%"></ul>
-                        </div>
+
+                            <input type="text" class="input-box icon-autocomplete" id="userval" value="" onkeyup="ac_user_load(this.value)">
+                            <input type="hidden" id="userid">
+                            <div id="ac-user" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+
+                             
                           </div>
                         </div>
                       </div>
@@ -481,9 +489,9 @@
       </table>
     </div>
     <div class="escalation-status">
-      <table>
+      <table > 
       <tr class="tr-h2">
-        <td colspan="8" style="padding:0px;"><h2 style="color:black" class="escalation-status-value"> </h2></td>
+        <td colspan="8" style="padding:0px;"><h2 class="escalation-status-value"> </h2></td>
       </tr>
         <tr class="tr-heading">
           <th width="3%" align="center">#</th>
@@ -516,7 +524,7 @@
         </tbody>
         <tr align="left" class="rightside tr-level1" >
           <th  colspan="7" style="background-color:#fff; padding-left:0px; " align="left">
-            <span class="heading" style="color:#000; float:left;"></span>
+            <span class="heading" style="color:#000; float:left; font-size: 0.95em;"></span>
           </th>
         </tr>
         <tr class="table-row-list">

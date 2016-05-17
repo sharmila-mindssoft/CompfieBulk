@@ -300,7 +300,7 @@ class GetRiskReport(Request):
     def __init__(
         self, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, level_1_statutory_name,
-        statutory_status, csv
+        statutory_status, csv, record_count
     ):
         self.country_id = country_id
         self.domain_id = domain_id
@@ -311,6 +311,7 @@ class GetRiskReport(Request):
         self.level_1_statutory_name = level_1_statutory_name
         self.statutory_status = statutory_status
         self.csv = csv
+        self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
@@ -318,7 +319,8 @@ class GetRiskReport(Request):
             data, [
                 "country_id", "domain_id", "business_group_id",
                 "legal_entity_id", "division_id", "unit_id",
-                "level_1_statutory_name", "statutory_status", "csv"
+                "level_1_statutory_name", "statutory_status", "csv",
+                "record_count"
             ]
         )
         country_id = data.get("country_id")
@@ -339,10 +341,13 @@ class GetRiskReport(Request):
         statutory_status = parse_structure_OptionalType_UnsignedIntegerType_32(statutory_status)
         csv = data.get("csv")
         csv = parse_structure_Bool(csv)
+        record_count = data.get("record_count")
+        record_count = parse_structure_UnsignedIntegerType_32(record_count)
         return GetRiskReport(
             country_id, domain_id, business_group_id,
             legal_entity_id, division_id, unit_id, level_1_statutory_name,
-            statutory_status, csv
+            statutory_status, csv,
+            record_count
         )
 
     def to_inner_structure(self):
@@ -355,7 +360,8 @@ class GetRiskReport(Request):
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
             "level_1_statutory_name": to_structure_OptionalType_CustomTextType_100(self.level_1_statutory_name),
             "statutory_status": to_structure_OptionalType_SignedIntegerType_8(self.statutory_status),
-            "csv": to_structure_Bool(self.csv)
+            "csv": to_structure_Bool(self.csv),
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
 class GetServiceProviderReportFilters(Request):

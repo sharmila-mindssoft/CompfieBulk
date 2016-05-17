@@ -77,8 +77,6 @@ $("#submit").click(function(){
             }
         );
     }
-    
-    
 });
 
 $(function() {
