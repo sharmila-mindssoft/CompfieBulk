@@ -945,6 +945,22 @@ function initClientMirror() {
                 callback("File max limit exceeded");
                 return;
             }
+            else if(file_extension == 'exe'){
+                callback("Invalid file format");
+                return;
+            }
+            else if(file_extension == 'htm'){
+                callback("Invalid file format");
+                return;
+            }
+            else if(file_extension == 'xhtml'){
+                callback("Invalid file format");
+                return;
+            }
+            else if(file_extension == 'html'){
+                callback("Invalid file format");
+                return;
+            }
             else{
                 file_content = null;
                 if (file) {
