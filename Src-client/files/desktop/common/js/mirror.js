@@ -414,11 +414,12 @@ function initMirror() {
         apiRequest("knowledge_master", request, callback);
     }
 
-    function levelDetails(lId, lPosition, lName) {
+    function levelDetails(lId, lPosition, lName, is_remove) {
         var level = {};
         level["l_id"] = lId;
         level["l_position"] = lPosition;
         level["l_name"] = lName;
+        level["is_remove"] = is_remove;
         return level;
     }
 
