@@ -8385,7 +8385,10 @@ class ClientDatabase(Database):
 
     # login trace
 
-    def get_login_trace(self, client_id, session_user, from_count, to_count):
+    def get_login_trace(self, client_id, session_user, from_count, to_count, user_id):
+        user_condition = "1"
+        if user_id is not None:
+            user_condition = " user_id = '%d' " % user_id
         query = "SELECT al.created_on, al.action \
             FROM tbl_activity_log al \
             INNER JOIN \
@@ -8393,9 +8396,10 @@ class ClientDatabase(Database):
             al.user_id  = u.user_id \
             WHERE \
             al.form_id = 0 and al.action not like '%s%s%s'\
+            AND %s\
             order by al.created_on desc \
             limit %s, %s" % (
-                "%", "password", "%",
+                "%", "password", "%", user_condition,
                 from_count, to_count
             )
 

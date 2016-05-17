@@ -412,8 +412,11 @@ def get_risk_report(db, request, session_user, client_id):
 def get_login_trace(db, request, session_user, client_id):
     users_list = db.get_client_users()
     from_count = request.record_count
+    user_id = request.user_id
     to_count = 500
-    logintracelist = db.get_login_trace(client_id, session_user, from_count, to_count)
+    logintracelist = db.get_login_trace(
+        client_id, session_user, from_count, to_count, user_id
+    )
     return clientreport.GetLoginTraceSuccess(
         users=users_list,
         login_trace=logintracelist
