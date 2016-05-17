@@ -191,7 +191,7 @@ var message = {
 	'invalid_contractto' : 'Invalid Contract To date',
 	'InvalidDueDate': 'Due date should not greater then statutory date',
 	'startdate_required': 'Start date Required',
-	'unsupported_file': 'Unsupported File'
+	'unsupported_file': 'Unsupported File',
 	'category_invalid': 'Category Name And Form List are Invalid.'
 };
 
