@@ -145,7 +145,7 @@ function complianceListArray(data){
   var summary = data["summary"];
   if(summary != null){
     if(statutorydate.trim() != ''){
-      statutorydate = summary + ' ( '+statutorydate+' )';
+      statutorydate = summary + ' ('+statutorydate+')';
     }else{
       statutorydate = summary;
     }

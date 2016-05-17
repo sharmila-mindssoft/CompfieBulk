@@ -4056,6 +4056,42 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return self.return_group_companies_with_max_unit_count(result)
 
+    def get_next_auto_gen_number(self, group_name=None, client_id=None):
+        if group_name is None:
+            columns = "group_name"
+            condition = "client_id = '%d'" % client_id
+            rows = self.get_data(self.tblClientGroups, columns, condition)
+            if rows:
+                group_name = rows[0][0]
+
+        columns = "count(*)"
+        condition = "client_id = '%d'" % client_id
+        rows = self.get_data(self.tblUnits, columns, condition)
+        if rows:
+            no_of_units = rows[0][0]
+        group_name = group_name.replace(" ", "")
+        unit_code_start_letters = group_name[:2].upper()
+
+        columns = "TRIM(LEADING '%s' FROM unit_code)" % unit_code_start_letters
+        condition = "unit_code like binary '%s%s' and CHAR_LENGTH(unit_code) = 7 and client_id='%d'" % (
+            unit_code_start_letters, "%", client_id
+        )
+        rows = self.get_data(self.tblUnits, columns, condition)
+        auto_generated_unit_codes = []
+        for row in rows:
+            try:
+                auto_generated_unit_codes.append(int(row[0]))
+            except Exception, ex:
+                continue
+        next_auto_gen_no = 1
+        if len(auto_generated_unit_codes) > 0:
+            existing_max_unit_code = max(auto_generated_unit_codes)
+            if existing_max_unit_code == no_of_units:
+                next_auto_gen_no = no_of_units + 1
+            else:
+                next_auto_gen_no = existing_max_unit_code + 1
+        return next_auto_gen_no
+
     def return_group_companies_with_max_unit_count(self, group_companies):
         results = []
         for group_company in group_companies :
@@ -4063,33 +4099,9 @@ class KnowledgeDatabase(Database):
             countries = None if client_countries is None else [int(x) for x in client_countries.split(",")]
             client_domains = self.get_client_domains(group_company["client_id"])
             domains = None if client_domains is None else [int(x) for x in client_domains.split(",")]
-
-            columns = "count(*)"
-            condition = "client_id = '%d'" % group_company["client_id"]
-            rows = self.get_data(self.tblUnits, columns, condition)
-            no_of_units = rows[0][0]
-            group_name = group_company["group_name"].replace(" ", "")
-            unit_code_start_letters = group_name[:2].upper()
-
-            columns = "TRIM(LEADING '%s' FROM unit_code)" % unit_code_start_letters
-            condition = "unit_code like binary '%s%s' and CHAR_LENGTH(unit_code) = 7 and client_id='%d'" % (
-                unit_code_start_letters, "%", group_company["client_id"]
+            next_auto_gen_no = self.get_next_auto_gen_number(
+                group_company["group_name"], group_company["client_id"]
             )
-            rows = self.get_data(self.tblUnits, columns, condition)
-            auto_generated_unit_codes = []
-            for row in rows:
-                try:
-                    auto_generated_unit_codes.append(int(row[0]))
-                except Exception, ex:
-                    continue
-            next_auto_gen_no = 1
-            if len(auto_generated_unit_codes) > 0:
-                existing_max_unit_code = max(auto_generated_unit_codes)
-                if existing_max_unit_code == no_of_units:
-                    next_auto_gen_no = no_of_units + 1
-                else:
-                    next_auto_gen_no = existing_max_unit_code + 1
-
             results.append(core.GroupCompanyForUnitCreation(
                 group_company["client_id"], group_company["group_name"],
                 bool(group_company["is_active"]), countries, domains,
@@ -6213,19 +6225,19 @@ class KnowledgeDatabase(Database):
             country_id, client_id
         )
         if business_group_id is not None:
-            condition += " AND business_group_id = '%d'" % business_group_id
+            condition += " AND tu.business_group_id = '%d'" % business_group_id
         if legal_entity_id is not None:
-            condition += " AND legal_entity_id = '%d'" % legal_entity_id
+            condition += " AND tu.legal_entity_id = '%d'" % legal_entity_id
         if division_id is not None:
-            condition += " AND division_id = '%d'" % division_id
+            condition += " AND tu.division_id = '%d'" % division_id
         if unit_id is not None:
-            condition += " AND unit_id = '%d'" % unit_id
+            condition += " AND tu.unit_id = '%d'" % unit_id
         if domain_ids is not None:
             for i, domain_id in enumerate(domain_ids):
                 if i == 0 :
-                    condition += " AND FIND_IN_SET('%s', domain_ids)" % (domain_id)
+                    condition += " AND FIND_IN_SET('%s', tu.domain_ids)" % (domain_id)
                 elif i > 0 :
-                    condition += " OR FIND_IN_SET('%s', domain_ids)" % (domain_id)
+                    condition += " OR FIND_IN_SET('%s', tu.domain_ids)" % (domain_id)
         return condition
 
     def get_client_details_report_count(
@@ -6269,6 +6281,7 @@ class KnowledgeDatabase(Database):
             self.tblLegalEntities, self.tblDivisions, condition,
             int(start_count), to_count
         )
+        print query
         rows = self.select_all(query)
         columns_list = columns.replace(" ", "").split(",")
         unit_rows = self.convert_to_dict(rows, columns_list)

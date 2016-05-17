@@ -60,6 +60,14 @@ function initClientMirror() {
         return user;
     }
 
+    function updateUserInfo(response){
+        var info = getUserInfo();
+        info["contact_no"] = response["contact_no"]
+        info["address"] = response["address"]
+        window.localStorage["userInfo"] = toJSON(info)
+    }
+
+
     function get_ip(){
         $.getJSON("http://jsonip.com?callback=?", function (data) {
             window.localStorage["my_ip"] = data.ip;
@@ -174,6 +182,44 @@ function initClientMirror() {
                         callback(jqXHR["responseText"], errorThrown)
                 }
         );
+    }
+
+    function updateUserProfile(contact_no, address, callback){
+        var request = [
+            sessionToken = getSessionToken(), 
+            [
+                "UpdateUserProfile", 
+                {
+                    "contact_no" : contact_no,
+                    "address" : address,
+                    "session_token": sessionToken
+                }
+            ]
+        ]
+        jQuery.post(
+            CLIENT_BASE_URL + "login",
+            toJSON(request),
+            function(data) {
+                console.log("data:"+data);
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                matchString = 'success';
+                if (status.toLowerCase().indexOf(matchString) != -1) {
+                    console.log("status success");
+                    console.log(data);
+                    updateUserInfo(response);
+                    callback(null, response);
+                }
+                else {
+                    callback(status, null);
+                }
+            }
+        ).fail(function(jqXHR, textStatus, errorThrown){
+            if(jqXHR.status == 404) {
+                callback("Client Database not exists")
+            }
+        });
     }
 
     // Login function
@@ -1770,7 +1816,9 @@ function initClientMirror() {
         reassignComplianceDet : reassignComplianceDet,
         getAssigneeWiseCompliances: getAssigneeWiseCompliances,
         getAssigneewiseYearwiseComplianes: getAssigneewiseYearwiseComplianes,
-        getAssigneewiseReassignedComplianes: getAssigneewiseReassignedComplianes
+        getAssigneewiseReassignedComplianes: getAssigneewiseReassignedComplianes,
+        updateUserProfile: updateUserProfile,
+        updateUserInfo: updateUserInfo
     }
 }
 var client_mirror = initClientMirror();

@@ -422,6 +422,7 @@ function showSideBar(idval, data){
                 }
                 function onFailure(error){
                     hideLoader();
+                    displayMessage(message.unsupported_file);
                     console.log(error);
                 }
                 displayLoader();
