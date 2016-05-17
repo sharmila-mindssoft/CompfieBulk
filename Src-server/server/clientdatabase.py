@@ -7597,7 +7597,6 @@ class ClientDatabase(Database):
                 where_qry
             )
         c_row = self.select_one(q_count)
-        print q_count
         if c_row :
             total = int(c_row[0])
         else :
@@ -9945,6 +9944,51 @@ class ClientDatabase(Database):
         remaining_licence = int(no_of_licence) - int(no_of_licence_holders)
         return remaining_licence
 
+    def is_already_notified(self):
+        query = '''
+            select count(*) from tbl_notifications_log 
+            where notification_text like '%sYour contract with Compfie for%s'
+            AND created_on > DATE_SUB(now(), INTERVAL 30 DAY);
+        ''' % ('%', '%')
+        rows = self.select_all(query)
+        if rows:
+            count = rows[0][0]
+            if count > 0:
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    def notify_expiration(self):
+        # download_link = exp(client_id, db).generate_report()
+        group_name = self.get_group_name()
+
+        notification_text = '''Your contract with Compfie for the group \"%s\" is about to expire. \
+        Kindly renew your contract to avail the services continuously.'''  % group_name
+        # Before contract expiration \
+        # You can download documents of %s <a href="%s">here </a> ''' % (
+        #     group_name, download_link
+        # )
+        extra_details = "0 - Reminder : Contract Expiration"
+        notification_id = self.get_new_id("notification_id", self.tblNotificationsLog)
+        created_on = datetime.datetime.now()
+        columns = ["notification_id", "notification_type_id", "notification_text", 
+        "extra_details", "created_on"]
+        values = [notification_id, 2, notification_text, extra_details, created_on]
+        self.insert(self.tblNotificationsLog, columns, values)
+
+        columns = ["notification_id", "user_id"]
+        values = [notification_id, 0]
+        self.insert(self.tblNotificationUserLog, columns, values)
+
+        q = "SELECT username from tbl_admin"
+        rows = self.select_all(q)
+        admin_mail_id = rows[0][0]
+        email.notify_contract_expiration(
+            admin_mail_id, notification_text
+        )
+
     def get_no_of_days_left_for_contract_expiration(self):
         column = "contract_to"
         condition = "1"
@@ -9955,6 +9999,9 @@ class ClientDatabase(Database):
             contract_to_parts[0], contract_to_parts[1], contract_to_parts[2]
         )
         delta = contract_to - self.get_date_time().date()
+        if delta.days < 30:
+            if not self.is_already_notified():
+                self.notify_expiration()
         return delta.days
 
     def is_client_active(self, client_id):
@@ -10129,7 +10176,6 @@ class ClientDatabase(Database):
             compliance_applicability_version, compliance_history_version, \
             reassign_history_version FROM tbl_mobile_sync_versions"
         rows = self.select_one(q)
-        print q
         column = [
             "unit_details", "user_details",
             "compliance_applicability",
@@ -10182,8 +10228,6 @@ class ClientDatabase(Database):
     def get_business_groups_for_mobile(self):
         q = "select business_group_id, business_group_name from tbl_business_groups order by business_group_name"
         rows = self.select_all(q)
-        print q
-        print rows
         result = self.convert_to_dict(rows, ["business_group_id", "business_group_name"])
         business_group_list = []
         for r in result :
