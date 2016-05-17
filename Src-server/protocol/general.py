@@ -11,6 +11,7 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_general_User,
     parse_structure_VectorType_RecordType_general_AuditTrailForm,
     parse_structure_VectorType_RecordType_core_Country,
+    parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_Text
 )
 from protocol.to_structure import (
@@ -26,6 +27,7 @@ from protocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
     to_structure_VectorType_RecordType_general_User,
     to_structure_VectorType_RecordType_general_AuditTrailForm,
+    to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_Text
 )
 
@@ -263,16 +265,39 @@ class UpdateNotificationStatus(Request):
         }
 
 class GetAuditTrails(Request):
-    def __init__(self):
-        pass
+    def __init__(self, from_date, to_date, user_id, form_id, record_count):
+        self.from_date = from_date
+        self.to_date = to_date
+        self.user_id = user_id
+        self.form_id = form_id
+        self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetAuditTrails()
+        data = parse_dictionary(data, ["from_date", "to_date", "user_id", "form_id", "record_count"])
+        from_date = data.get("from_date")
+        from_date = parse_structure_CustomTextType_20(from_date)
+        to_date = data.get("to_date")
+        to_date = parse_structure_CustomTextType_20(to_date)
+        user_id = data.get("user_id")
+        user_id = parse_structure_OptionalType_UnsignedIntegerType_32(user_id)
+        form_id = data.get("form_id")
+        form_id = parse_structure_OptionalType_UnsignedIntegerType_32(form_id)
+        record_count = data.get("record_count")
+        record_count = parse_structure_UnsignedIntegerType_32(record_count)
+        return GetAuditTrails(
+            from_date, to_date,
+            user_id, form_id,
+            record_count
+        )
 
     def to_inner_structure(self):
         return {
+            "from_date": to_structure_CustomTextType_20(self.from_date),
+            "to_date": to_structure_CustomTextType_20(self.to_date),
+            "user_id": to_structure_OptionalType_UnsignedIntegerType_32(self.user_id),
+            "form_id": to_structure_OptionalType_UnsignedIntegerType_32(self.form_id),
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
 def _init_Request_class_map():

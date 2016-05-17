@@ -1380,7 +1380,7 @@ class ClientDatabase(Database):
         form_ids = rows[0][0]
         forms = self.return_forms(client_id, form_ids)
         
-        if not self.is_primary_admin(session_user):
+        if not self.is_primary_admin(session_user) and not self.is_admin(session_user):
             unit_ids = self.get_user_unit_ids(session_user)
             query = "SELECT DISTINCT user_id FROM %s where unit_id in (%s)" % (
                 self.tblUserUnits, unit_ids
