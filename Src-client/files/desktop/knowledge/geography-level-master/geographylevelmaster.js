@@ -117,13 +117,15 @@ function onCountrySuccess(val){
   $("#view-insert-level").hide();
   $("#add").show();
   loadGeographyLevelsList(val[0]);
+  $("#level1").focus();
 }
 
 //load country list in autocomplete text box  
 $("#countryval").keyup(function(){
   var textval = $(this).val();
   getCountryAutocomplete(textval, countriesList, function(val){
-    onCountrySuccess(val)
+    onCountrySuccess(val);
+
   })
 });
 
