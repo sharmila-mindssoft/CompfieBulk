@@ -1254,6 +1254,14 @@ def parse_structure_VectorType_RecordType_core_Level(data):
         lst.append(parse_structure_RecordType_core_Level(item))
     return lst
 
+def parse_structure_VectorType_RecordType_knowledgemaster_Level(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_knowledgemaster_Level(item))
+    return lst
+
+
 def parse_structure_VariantType_knowledgetransaction_Request(data):
     from protocol import knowledgetransaction
     return knowledgetransaction.Request.parse_structure(data)
@@ -2887,6 +2895,10 @@ def parse_structure_RecordType_core_Form(data):
 def parse_structure_RecordType_core_Level(data):
     from protocol import core
     return core.Level.parse_structure(data)
+
+def parse_structure_RecordType_knowledgemaster_Level(data):
+    from protocol import knowledgemaster
+    return knowledgemaster.Level.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreport_ActivityCompliance(data):
     data = parse_list(data, 0)

@@ -17,7 +17,10 @@ from protocol.parse_structure import (
     parse_structure_VectorType_CustomTextType_50,
     parse_structure_VectorType_UnsignedIntegerType_32,
     parse_structure_CustomTextType_100,
-    parse_structure_VectorType_CustomTextType_100
+    parse_structure_VectorType_CustomTextType_100,
+    parse_structure_OptionalType_UnsignedIntegerType_32,
+    parse_structure_CustomIntegerType_1_10,
+    parse_structure_VectorType_RecordType_knowledgemaster_Level
 )
 from protocol.to_structure import (
     to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
@@ -37,7 +40,10 @@ from protocol.to_structure import (
     to_structure_VectorType_UnsignedIntegerType_32,
     to_structure_UnsignedIntegerType_32,
     to_structure_CustomTextType_100,
-    to_structure_VectorType_CustomTextType_100
+    to_structure_VectorType_CustomTextType_100,
+    to_structure_OptionalType_UnsignedIntegerType_32,
+    to_structure_CustomIntegerType_1_10,
+    to_structure_VectorType_RecordType_knowledgemaster_Level
 )
 
 #
@@ -79,6 +85,34 @@ class GetGeographyLevels(Request):
         return {
         }
 
+class Level(object):
+    def __init__(self, level_id, level_position, level_name, is_remove):
+        self.level_id = level_id
+        self.level_position = level_position
+        self.level_name = level_name
+        self.is_remove = is_remove
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["l_id", "l_position", "l_name", "is_remove"])
+        level_id = data.get("l_id")
+        level_id = parse_structure_OptionalType_UnsignedIntegerType_32(level_id)
+        level_position = data.get("l_position")
+        level_position = parse_structure_CustomIntegerType_1_10(level_position)
+        level_name = data.get("l_name")
+        level_name = parse_structure_CustomTextType_50(level_name)
+        is_remove = data.get("is_remove")
+        is_remove = parse_structure_Bool(is_remove)
+        return Level(level_id, level_position, level_name, is_remove)
+
+    def to_structure(self):
+        return {
+            "l_id": to_structure_OptionalType_UnsignedIntegerType_32(self.level_id),
+            "l_position": to_structure_CustomIntegerType_1_10(self.level_position),
+            "l_name": to_structure_CustomTextType_50(self.level_name),
+            "is_remove": to_structure_Bool(self.is_remove)
+        }
+
 class SaveGeographyLevel(Request):
     def __init__(self, country_id, levels):
         self.country_id = country_id
@@ -90,13 +124,13 @@ class SaveGeographyLevel(Request):
         country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         levels = data.get("levels")
-        levels = parse_structure_VectorType_RecordType_core_Level(levels)
+        levels = parse_structure_VectorType_RecordType_knowledgemaster_Level(levels)
         return SaveGeographyLevel(country_id, levels)
 
     def to_inner_structure(self):
         return {
             "c_id": to_structure_SignedIntegerType_8(self.country_id),
-            "levels": to_structure_VectorType_RecordType_core_Level(self.levels),
+            "levels": to_structure_VectorType_RecordType_knowledgemaster_Level(self.levels),
         }
 
 class GetGeographies(Request):
@@ -534,6 +568,22 @@ class DuplicateGeographyLevelsExists(Response):
         return {
         }
 
+class LevelShouldNotbeEmpty(Response):
+    def __init__(self, level):
+        self.level = level
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["level"])
+        level = data.get("level")
+        level = parse_structure_UnsignedIntegerType_32(level)
+        return LevelShouldNotbeEmpty(level)
+
+    def to_inner_structure(self):
+        return {
+            "level": to_structure_UnsignedIntegerType_32(self.level)
+        }
+
 class UpdateGeographyLevelSuccess(Response):
     def __init__(self):
         pass
@@ -948,7 +998,7 @@ class InvalidStatutoryId(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetGeographyLevelsSuccess, SaveGeographyLevelSuccess, DuplicateGeographyLevelsExists, UpdateGeographyLevelSuccess, InvalidGeographyLevelId, GetGeographiesSuccess, SaveGeographySuccess, GeographyNameAlreadyExists, InvalidGeographyId, ChangeGeographyStatusSuccess, GetIndustriesSuccess, SaveIndustrySuccess, IndustryNameAlreadyExists, UpdateIndustrySuccess, InvalidIndustryId, ChangeIndustryStatusSuccess, GetStatutoryNaturesSuccess, SaveStatutoryNatureSuccess, StatutoryNatureNameAlreadyExists, UpdateStatutoryNatureSuccess, ChangeStatutoryNatureStatusSuccess, InvalidStatutoryNatureId, GetStatutoryLevelsSuccess, SaveStatutoryLevelSuccess, DuplicateStatutoryLevelsExists, GetStatutoriesSuccess, SaveStatutorySuccess, StatutoryNameAlreadyExists, InvalidStatutoryId]
+    classes = [GetGeographyLevelsSuccess, SaveGeographyLevelSuccess, DuplicateGeographyLevelsExists, LevelShouldNotbeEmpty, UpdateGeographyLevelSuccess, InvalidGeographyLevelId, GetGeographiesSuccess, SaveGeographySuccess, GeographyNameAlreadyExists, InvalidGeographyId, ChangeGeographyStatusSuccess, GetIndustriesSuccess, SaveIndustrySuccess, IndustryNameAlreadyExists, UpdateIndustrySuccess, InvalidIndustryId, ChangeIndustryStatusSuccess, GetStatutoryNaturesSuccess, SaveStatutoryNatureSuccess, StatutoryNatureNameAlreadyExists, UpdateStatutoryNatureSuccess, ChangeStatutoryNatureStatusSuccess, InvalidStatutoryNatureId, GetStatutoryLevelsSuccess, SaveStatutoryLevelSuccess, DuplicateStatutoryLevelsExists, GetStatutoriesSuccess, SaveStatutorySuccess, StatutoryNameAlreadyExists, InvalidStatutoryId]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
