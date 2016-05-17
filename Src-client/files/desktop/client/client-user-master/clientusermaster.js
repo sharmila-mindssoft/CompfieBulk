@@ -38,6 +38,7 @@ $("#btn-user-add").click(function(){
     $("#email-id").removeAttr("readonly");
     $("#usertype").val("");
     $("#user-level option:selected").removeAttr("selected");
+    $("#usergroupval").removeAttr("disabled", "disabled");
     loadautocountry();
     hidemenu();
     loadautobusinessgroups();
@@ -63,6 +64,7 @@ $("#btn-user-cancel").click(function(){
     $("#email-id").removeAttr("readonly");
     $("#usertype").val("");
     $("#user-level option:selected").removeAttr("selected");
+    $("#usergroupval").removeAttr("disabled", "disabled");
 });
 function initialize(){
     function onSuccess(data){
@@ -275,9 +277,12 @@ function loadUserUpdate(userId){
             $("#mobile-number").val(contactno[2]);
             $("#usergroupval").val(usergroupname);
             $("#usergroup").val(userList[user]['user_group_id']);
+            if(userList[user]['is_admin']){
+                $("#usergroupval").attr("disabled", "disabled");
+            }
             $("#user-level").val(userList[user]['user_level']);
             //$("#user-level option[value = "+userList[user]['user_level']+"]").attr('selected','selected');
-            $("#email-id").val(userList[user]['email_id']);
+            $("#email-id").val(userList[user]['email_id']);            
             $("#email-id").attr("readonly", "readonly");
             $("#country").val(userList[user]['country_ids']);
             $("#units").val(userList[user]['unit_ids']);
@@ -490,6 +495,7 @@ $("#submit").click(function(){
 		var contactNo = countrycode+"-"+areacode+"-"+mobilenumber;
 
 		function onSuccess(data){
+            $("#usergroupval").removeAttr("disabled", "disabled");
 			$("#user-add").hide();
 			$("#user-view").show();
             $(".filter-text-box").val('');
