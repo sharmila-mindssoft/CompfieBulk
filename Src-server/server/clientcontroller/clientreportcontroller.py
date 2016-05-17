@@ -373,41 +373,39 @@ def get_risk_report(db, request, session_user, client_id):
     unit_id = request.unit_id
     level_1_statutory_name = request.level_1_statutory_name
     statutory_status = request.statutory_status
-    delayed_compliance = []  # 1
-    not_complied = []  # 2
-    not_opted = []  # 3
-    unassigned = []  # 4
+    from_count = request.record_count
+    to_count = 500
+    compliance_list = []
     if request.csv is False :
-        if statutory_status in [1, None, "None", "", 0]:  # Delayed compliance
-            delayed_compliance = db.get_risk_report_old(
+        if statutory_status == 1 :  # Delayed compliance
+            total, compliance_list = db.get_delayed_compliances(
                 country_id, domain_id, business_group_id,
-                legal_entity_id, division_id, unit_id, level_1_statutory_name, 1,
-                client_id, session_user
+                legal_entity_id, division_id, unit_id, level_1_statutory_name,
+                session_user, from_count, to_count
             )
-        if statutory_status in [2, None, "None", "", 0]:  # Not complied
-            not_complied = db.get_risk_report_old(
+        if statutory_status == 2 :  # Not complied
+            total, compliance_list = db.get_not_complied_compliances(
                 country_id, domain_id, business_group_id,
-                legal_entity_id, division_id, unit_id, level_1_statutory_name, 2,
-                client_id, session_user
+                legal_entity_id, division_id, unit_id, level_1_statutory_name,
+                session_user, from_count, to_count
             )
-        if statutory_status in [3, None, "None", "", 0] :  # Not opted
-            not_opted = db.get_risk_report_old(
+        if statutory_status == 3 :  # Not opted
+            total, compliance_list = db.get_not_opted_compliances(
                 country_id, domain_id, business_group_id,
-                legal_entity_id, division_id, unit_id, level_1_statutory_name, 3,
-                client_id, session_user
+                legal_entity_id, division_id, unit_id, level_1_statutory_name,
+                session_user, from_count, to_count
             )
-        if statutory_status in [4, None, "None", "", 0] :  # Unassigned
-            unassigned = db.get_risk_report_old(
+        if statutory_status == 4 :  # Unassigned
+            total, compliance_list = db.get_unassigned_compliances(
                 country_id, domain_id, business_group_id,
-                legal_entity_id, division_id, unit_id, level_1_statutory_name, 4,
-                client_id, session_user
+                legal_entity_id, division_id, unit_id,
+                level_1_statutory_name,
+                session_user, from_count, to_count
             )
 
         return clientreport.GetRiskReportSuccess(
-            delayed_compliance=delayed_compliance,
-            not_complied=not_complied,
-            not_opted=not_opted,
-            unassigned_compliance=unassigned
+            total, compliance_list
+
         )
     else:
         converter = ConvertJsonToCSV(db, request, session_user, client_id, "RiskReport")

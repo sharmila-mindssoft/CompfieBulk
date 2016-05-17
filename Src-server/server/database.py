@@ -305,7 +305,6 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
-        print query
         try:
             return self.execute(query)
         except Exception, e:
@@ -341,7 +340,6 @@ class Database(object) :
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
 
-        print query
         return self.execute(query)
 
     ########################################################
@@ -4313,17 +4311,13 @@ class KnowledgeDatabase(Database):
         client_con = self._mysql_server_connect(host, username, password)
         client_cursor = client_con.cursor()
         query = "CREATE DATABASE %s" % database_name
-        print query
         client_cursor.execute(query)
         query = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, REFERENCES, \
             TRIGGER, EVENT, CREATE ROUTINE, aLTER  on %s.* to %s@%s IDENTIFIED BY '%s';" % (
             database_name, db_username, host, db_password)
-        print query
-        print "priv crossed"
         client_cursor.execute(query)
         client_cursor.execute("FLUSH PRIVILEGES;")
         client_con.commit()
-        print "connection begin"
         client_db_con = self._db_connect(host, username, password, database_name)
         client_db_cursor = client_db_con.cursor()
         sql_script_path = os.path.join(
@@ -4352,9 +4346,7 @@ class KnowledgeDatabase(Database):
         self._save_client_countries(country_ids, client_db_cursor)
         self._save_client_domains(domain_ids, client_db_cursor)
         self._create_procedure(client_db_cursor)
-        print "trigger created"
         self._create_trigger(client_db_cursor)
-        print "close connection"
         client_db_con.commit()
         return password
 
@@ -4903,17 +4895,25 @@ class KnowledgeDatabase(Database):
         action = "Reactivated Unit \"%s-%s\"" % (rows[0][0], rows[0][1])
         self.save_activity(session_user, 19, action)
 
-        columns = ["client_id", "unit_id", "is_active"] + action_column.split(",")
         new_unit_id = self.get_new_id("unit_id", self.tblUnits)
         result = result[0]
         unit_code = self.get_next_unit_auto_gen_no(client_id)
+        unit_columns = ["client_id", "unit_id", "is_active", "legal_entity_id", \
+        "country_id", "geography_id", "industry_id", "unit_code", "unit_name", 
+        "address", "postal_code", "domain_ids"]
         values = [
-            client_id, new_unit_id,1, result["business_group_id"], result["legal_entity_id"],
-            result["division_id"], result["country_id"], result["geography_id"],
-            result["industry_id"],unit_code, result["unit_name"], result["address"],
-            result["postal_code"], result["domain_ids"]
+            client_id, new_unit_id, 1, result["legal_entity_id"],
+            result["country_id"], result["geography_id"],
+            result["industry_id"],unit_code, result["unit_name"], 
+            result["address"], result["postal_code"], result["domain_ids"]
         ]
-        self.insert(self.tblUnits, columns, values)
+        if result["business_group_id"] not in ["Null", "None", None, ""]:
+            unit_columns.append("business_group_id")
+            values.append(result["business_group_id"])
+        if result["division_id"] not in ["Null", "None", None, ""]:
+            unit_columns.append("division_id")
+            values.append(result["division_id"])
+        self.insert(self.tblUnits, unit_columns, values)
         return unit_code, result["unit_name"]
 
     def verify_username(self, username):
@@ -6226,8 +6226,6 @@ class KnowledgeDatabase(Database):
                     condition += " AND FIND_IN_SET('%s', domain_ids)" % (domain_id)
                 elif i > 0 :
                     condition += " OR FIND_IN_SET('%s', domain_ids)" % (domain_id)
-
-        print condition
         return condition
 
     def get_client_details_report_count(

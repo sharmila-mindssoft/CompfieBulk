@@ -42,7 +42,7 @@ class HandleRequest(object):
                 "Content-Type": "application/json",
                 "X-Real-Ip": self._remote_ip
             },
-            request_timeout=30
+            request_timeout=100
         )
         self._http_client.fetch(request, client_callback)
 
@@ -66,7 +66,7 @@ class HandleRequest(object):
 
     def _respond_connection_timeout(self):
         self._http_response.set_status(500)
-        self._http_response.send("Client server connection timeout")
+        self._http_response.send("Request timeout")
 
     def _forward_request_callback(self, code, response_data):
         if self._connection_closed:

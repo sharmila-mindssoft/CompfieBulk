@@ -108,8 +108,10 @@ class GetClientDetailsReportFilters(Request):
         }
 
 class GetClientDetailsReportData(Request):
-    def __init__(self, country_id, group_id, business_group_id, legal_entity_id, 
-        division_id, unit_id, domain_ids, start_count):
+    def __init__(
+        self, country_id, group_id, business_group_id, legal_entity_id,
+        division_id, unit_id, domain_ids, start_count
+    ):
         self.country_id = country_id
         self.group_id = group_id
         self.business_group_id = business_group_id
@@ -121,9 +123,11 @@ class GetClientDetailsReportData(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "group_id", 
-            "business_group_id", "legal_entity_id", "division_id", 
-            "unit_id", "domain_ids", "start_count"])
+        data = parse_dictionary(data, [
+            "country_id", "group_id",
+            "business_group_id", "legal_entity_id", "division_id",
+            "unit_id", "domain_ids", "start_count"
+        ])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         group_id = data.get("group_id")
@@ -140,9 +144,11 @@ class GetClientDetailsReportData(Request):
         domain_ids = parse_structure_OptionalType_VectorType_SignedIntegerType_8(domain_ids)
         start_count = data.get("start_count")
         start_count = parse_structure_UnsignedIntegerType_32(start_count)
-        return GetClientDetailsReportData(country_id, group_id, 
-            business_group_id, legal_entity_id, division_id, unit_id, 
-            domain_ids, start_count)
+        return GetClientDetailsReportData(
+            country_id, group_id,
+            business_group_id, legal_entity_id, division_id, unit_id,
+            domain_ids, start_count
+        )
 
     def to_inner_structure(self):
         return {

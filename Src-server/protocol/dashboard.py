@@ -514,7 +514,7 @@ class GetAssigneeWiseComplianceDrillDown(Request):
         assignee_id = data.get("assignee_id")
         assignee_id = parse_structure_UnsignedIntegerType_32(assignee_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        domain_id = parse_structure_OptionalType_UnsignedIntegerType_32(domain_id)
         year = data.get("year")
         year = parse_structure_OptionalType_UnsignedIntegerType_32(year)
         unit_id = data.get("unit_id")
@@ -529,7 +529,7 @@ class GetAssigneeWiseComplianceDrillDown(Request):
         return {
             "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
             "assignee_id": to_structure_UnsignedIntegerType_32(self.assignee_id),
-            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
+            "domain_id": to_structure_OptionalType_UnsignedIntegerType_32(self.domain_id),
             "year": to_structure_OptionalType_UnsignedIntegerType_32(self.year),
             "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
             "start_count" : to_structure_UnsignedIntegerType_32(self.start_count)
