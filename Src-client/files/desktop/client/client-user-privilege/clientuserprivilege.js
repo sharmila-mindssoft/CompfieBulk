@@ -5,6 +5,7 @@ $("#btn-userprivilege-add").click(function(){
 	$("#search-user-group-name").val("");
   	$("#user-privilege-id").val('');
   	$("#user-privilege-name").val('');
+  	$("#user-privilege-name").focus();
   	$(".checkbox-full-check").prop('checked', false);
   	$(".tbody-userprivilege-form-list tr").remove();
 	$('.tbody-userprivilege-form-list .form-checkbox').each(function() {

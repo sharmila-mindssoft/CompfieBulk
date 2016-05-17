@@ -6,6 +6,9 @@ $(".btn-country-add").click(function(){
     $("#country-name").val('');
     $("#country-id").val('');
     displayMessage('');
+    // $("#country-name").focus();
+    // $('#country-name').select();
+    // $('#country-name').trigger('focus');
 });
 
 $(".btn-country-cancel").click(function(){

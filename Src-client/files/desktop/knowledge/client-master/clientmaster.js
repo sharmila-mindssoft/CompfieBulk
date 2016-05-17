@@ -29,6 +29,8 @@ function hideLoader() {
 $(".btn-clientgroup-add").click(function(){
     $("#clientgroup-view").hide();
     $("#clientgroup-add").show();
+    $("#clientgroup-name").focus();
+    
     function onSuccess(data){
         clearMessage();
 

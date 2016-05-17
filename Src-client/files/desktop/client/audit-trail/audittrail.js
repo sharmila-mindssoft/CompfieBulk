@@ -73,17 +73,24 @@ function initialize(){
     else{
         $(".tbody-audittrail-list").find("tr").remove();
         $('.grid-table').show();
-        sno = 0;
+        sno = 0;    
         apipass(lastdate, todaydate, userid, formid, sno);   
     }
 }
 function apipass(lastdate, todaydate, userid, formid, sno){
     function onSuccess(data){
-       
-        auditTrailList = data['audit_trail_details'];
-        formList = data['forms'];
-        userList = data['users'];      
-        loadrecord(auditTrailList);
+        if(data['audit_trail_details'] != ''){
+            auditTrailList = data['audit_trail_details'];
+            formList = data['forms'];
+            userList = data['users'];      
+            loadrecord(auditTrailList); 
+        }
+        else{
+            $("#pagination").hide();
+            if(sno == 0){
+                $(".tbody-audittrail-list").val("No record found.");    
+            }            
+        }
     }
     function onFailure(error){
         console.log(error);

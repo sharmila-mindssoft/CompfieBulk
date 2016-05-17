@@ -53,15 +53,15 @@
         <div class="input-row">
           <div class="field-label">Service Provider:<span class="mandatory">*</span></div>
           <div class="field-input"><input type="hidden" id="service-provider-id" value="">
-          <input type="text" class="input-box" value="" id="service-provider-name" maxlength="50"></div>
+          <input type="text" class="input-box" value="" id="service-provider-name" maxlength="50" autofocus="autofocus" tabindex="1" ></div>
         </div>
          <div class="input-row">
           <div class="field-label">Contact Person:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" class="input-box" id="contact-person" maxlength="50"></div>
+          <div class="field-input"><input type="text" class="input-box" id="contact-person" maxlength="50" tabindex="2"></div>
         </div>
            <div class="input-row" style="padding-bottom:0px;">
           <div class="field-label">Contact No.:</div>
-          <div class="field-input"><input type="text" class="input-box countrycode" id="country-code" value="" maxlength="4"> <input type="text" class="input-box areacode" id="area-code" value=""  maxlength="4"> <input type="text" class="input-box mobile" id="mobile-number" maxlength="10"></div>
+          <div class="field-input"><input type="text" class="input-box countrycode" id="country-code" value="" maxlength="4" tabindex="3"><input type="text" class="input-box areacode" id="area-code" value="" tabindex="4"  maxlength="4"> <input type="text" class="input-box mobile" id="mobile-number" maxlength="10" tabindex="5"></div>
         </div>
         <div class="input-row">
           <div class="field-label">&nbsp;</div>
@@ -74,21 +74,21 @@
       <div class="input-row-right">
         <div class="input-row">
           <div class="field-label">Address:</div>
-          <div class="field-input"><textarea class="input-box" style="height:50px;" id="address" maxlength="250"></textarea></div>
+          <div class="field-input"><textarea class="input-box" style="height:50px;" id="address" maxlength="250" tabindex="6"></textarea></div>
         </div>
          <div class="input-row" >
           <div class="field-label">Contract From:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" readonly="readonly" class="input-box" id="contract-from"></div>
+          <div class="field-input"><input type="text" readonly="readonly" class="input-box" id="contract-from" tabindex="7"></div>
         </div>
         <div class="input-row" >
           <div class="field-label">Contract To:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" readonly="readonly" class="input-box" id="contract-to">
+          <div class="field-input"><input type="text" readonly="readonly" class="input-box" id="contract-to" tabindex="8">
           </div>
         </div>
       </div>
       <div class="submit-button-container">
         <input type="submit" name="cancel" value="Cancel" id="btn-service-provider-cancel" class="btn-cancel">&nbsp;&nbsp;
-        <input type="submit" name="submit" value="Submit" id="submit" class="btn-submit">
+        <input type="submit" name="submit" value="Submit" id="submit" class="btn-submit" tabindex="9">
       </div>
     </div>
   </div>
