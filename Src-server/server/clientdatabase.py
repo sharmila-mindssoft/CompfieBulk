@@ -2547,9 +2547,9 @@ class ClientDatabase(Database):
         INNER JOIN %s tu ON (tch.unit_id = tu.unit_id) \
         INNER JOIN %s tus ON (tus.user_id = tch.completed_by) \
         INNER JOIN %s td ON (td.domain_id = tc.domain_id) \
-        WHERE (ifnull(completion_date, 0)!= 0 ) \
-        AND (ifnull(completed_on, 0) != 0) \
-        AND (ifnull(approve_status, 0 ) = 0)  \
+        WHERE (completion_date IS NOT NULL AND completion_date != 0 ) \
+        AND (completed_on IS NOT NULL AND completed_on != 0) \
+        AND (approve_status IS NULL OR approve_status = 0)  \
         AND (approved_by IN (%s) OR concurred_by = '%d') \
         AND is_closed  = 0 AND %s\
         ORDER BY completed_by, tch.due_date ASC LIMIT %d, %d" % (
@@ -6986,13 +6986,13 @@ class ClientDatabase(Database):
         join_type = "inner join"
         where_condition = "ch.completed_by='%d' and is_closed = 0 and ac.is_active = 1" % (
             session_user)
-        where_condition += " AND ifnull(ch.completed_on, 0) != 0 "
-        where_condition += " AND ifnull(ch.approve_status, 0) = 0"
-        where_condition += " AND ifnull(ch.due_date, 0) != 0"
-        where_condition += " ORDER BY due_date ASC"
-        where_condition += " LIMIT %d, %d" % (
+        where_condition += " and ((ch.completed_on is null or ch.completed_on = 0) \
+        and (ch.approve_status is null or ch.approve_status = 0)) and \
+        (ch.due_date is not null and ch.due_date != 0 and ch.due_date != '')  \
+        ORDER BY due_date ASC LIMIT %d, %d" % (
             int(current_start_count), to_count
-        ) 
+        )
+
         current_compliances_row = self.get_data_from_multiple_tables(
             columns,
             tables, aliases, join_type, join_conditions, where_condition

@@ -96,8 +96,17 @@ def is_unsupported_file(documents):
         else:
             continue
 
+def validate_documents(documents):
+    if documents is not None:
+        if is_unsupported_file(documents):
+            return True
+        else:
+            return False
+    else:
+        return False
+
 def process_update_compliance_detail(db, request, session_user, client_id):
-    if is_unsupported_file(request.documents):
+    if validate_documents(request.documents):
         return clientuser.UnSupportedFile()
     else:
         result = db.update_compliances(
