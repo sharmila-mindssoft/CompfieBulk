@@ -5619,7 +5619,7 @@ class ClientDatabase(Database):
         return service_provider_wise_compliances_list
 
     def report_compliance_details(
-        self, country_id, domain_id, statutory_id,
+        self, client_id, country_id, domain_id, statutory_id,
         unit_id, compliance_id, assignee,
         from_date, to_date, compliance_status,
         session_user, from_count, to_count
@@ -5741,9 +5741,9 @@ class ClientDatabase(Database):
         rows = self.select_all(qry)
         result = self.convert_to_dict(rows, columns)
 
-        return self.return_cmopliance_details_report(compliance_status, result, total)
+        return self.return_cmopliance_details_report(client_id, compliance_status, result, total)
 
-    def return_cmopliance_details_report(self, compliance_status, result, total):
+    def return_cmopliance_details_report(self, client_id, compliance_status, result, total):
         unitWise = {}
         for r in result :
             uname = r["unit_code"] + ' - ' + r["unit_name"]
@@ -5766,6 +5766,12 @@ class ClientDatabase(Database):
                 validity_date = self.datetime_to_string(r["validity_date"])
 
             documents = [x for x in r["documents"].split(",")] if r["documents"] != None else None
+            doc_urls = []
+            if documents is not None :
+                for d in documents :
+                    if d != "" :
+                        t = "%s/%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, str(client_id), str(d))
+                        doc_urls.append(t)
 
             completion_date = None
             if(r["completion_date"] != None):
@@ -5773,27 +5779,10 @@ class ClientDatabase(Database):
 
             remarks = self.calculate_ageing(r["due_date"], r["fname"], r["completion_date"])[1]
 
-            # if(compliance_status == 'Complied'):
-            #         c_status = 'On Time'
-            # elif(compliance_status == 'Delayed Compliance'):
-            #     c_status = 'Delayed'
-            # elif(compliance_status == 'Inprogress'):
-            #     c_status = 'days left'
-            # elif(compliance_status == 'Not Complied'):
-            #     c_status = 'Overdue'
-            # else:
-            #     c_status = ''
-
-            # if int(r["status"]) == 0 and "Delayed" in remarks :
-            #     remarks = remarks.replace("Delayed", "Overdue")
-
-            # if compliance_status is not None and c_status not in remarks :
-            #     continue
-
             compliance = clientreport.ComplianceDetails(
                 compliance_name, assignee, due_date,
                 completion_date, validity_date,
-                documents, remarks
+                doc_urls, remarks
             )
             unit_compliance = unitWise.get(uname)
             if unit_compliance is None :
