@@ -7335,7 +7335,7 @@ class ClientDatabase(Database):
             AND c.domain_id = %s \
             AND cs.country_id = %s \
             %s \
-            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) \
+            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1), u.unit_id \
             limit %s, %s " % (
                 domain_id, country_id,
                 where_qry,
@@ -7436,7 +7436,7 @@ class ClientDatabase(Database):
             AND c.domain_id = %s \
             AND cs.country_id = %s \
             %s \
-            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) \
+            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1), u.unit_id \
             limit %s, %s " % (
                 domain_id, country_id,
                 where_qry,
@@ -7537,7 +7537,7 @@ class ClientDatabase(Database):
             AND ch.due_date < ch.completion_date \
             AND ch.approve_status = 1 \
             %s \
-            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) \
+            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1), u.unit_id \
             limit %s, %s " % (
                 domain_id, country_id,
                 where_qry,
@@ -7591,7 +7591,6 @@ class ClientDatabase(Database):
         if leval_1_statutory_name is not None :
             where_qry += " AND c.statutory_mapping like '%s' " % (leval_1_statutory_name + '%')
 
-
         q_count = "SELECT count(distinct ch.compliance_history_id) \
             FROM tbl_compliance_history ch \
             INNER JOIN tbl_assigned_compliances ac \
@@ -7625,7 +7624,8 @@ class ClientDatabase(Database):
             (select business_group_name from tbl_business_groups where business_group_id = u.business_group_id ), \
             (select legal_entity_name from tbl_legal_entities where legal_entity_id = u.legal_entity_id), \
             (select division_name from tbl_divisions where division_id = u.division_id), \
-            u.unit_code, u.unit_name, u.address, u.postal_code, u.unit_id \
+            u.unit_code, u.unit_name, u.address, u.postal_code, u.unit_id, \
+            ch.compliance_history_id \
             FROM tbl_compliance_history ch \
             INNER JOIN tbl_assigned_compliances ac \
             ON ch.compliance_id = ac.compliance_id \
@@ -7639,7 +7639,7 @@ class ClientDatabase(Database):
             AND ((c.duration_type_id =2 AND ch.due_date < now()) or (c.duration_type_id != 2 AND ch.due_date < CURDATE()))  \
             AND IFNULL(ch.approve_status, 0) != 1 \
             %s \
-            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1) \
+            order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1), u.unit_id \
             limit %s, %s " % (
                 domain_id, country_id,
                 where_qry,
@@ -7653,7 +7653,8 @@ class ClientDatabase(Database):
             "statutory_mapping", "level_1", "statutory_provision",
             "business_group", "legal_entity",
             "division", "unit_code", "unit_name",
-            "address", "postal_code", "unit_id"
+            "address", "postal_code", "unit_id",
+            "compliance_history_id"
         ]
         rows = self.select_all(query)
         result = self.convert_to_dict(rows, columns)
@@ -8517,7 +8518,7 @@ class ClientDatabase(Database):
             )
             from_date = timelines[0][1][0][1][0]["start_date"].date()
             to_date = timelines[0][1][0][1][0]["end_date"].date()
-            
+
             query = '''
                 SELECT concat(IFNULL(employee_code, 'Administrator'), '-', employee_name)
                 as Assignee, tch.completed_by, tch.unit_id,
@@ -8553,7 +8554,7 @@ class ClientDatabase(Database):
                 "delayed_reassigned"
             ]
             assignee_wise_compliances = self.convert_to_dict(rows, columns)
-            
+
             for compliance in assignee_wise_compliances:
                 unit_name = compliance["unit_name"]
                 assignee = compliance["assignee"]
