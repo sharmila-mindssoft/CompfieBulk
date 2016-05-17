@@ -969,6 +969,7 @@ function updateComplianceApplicabilityDrillDown(status, data, type) {
     $(".graph-selections-bottom").hide();
     $(".drilldown-container").show();
     $(".btn-back").show();
+
     showComplianceApplicabilityDrillDownRecord_set(data, type);
 }
 function showComplianceApplicabilityDrillDownRecord_set(data, type){
@@ -3542,6 +3543,7 @@ function loadComplianceApplicabilityDrillDown(type){
     CAS_LEVEL1 = null;
     CAS_UNITNAME = null;
     SNO = 0;
+    $("#pagination").show();
 
     var filter_type = chartInput.getFilterType();
     filter_ids = getFilterIds(filter_type)

@@ -45,6 +45,7 @@ function initialize(){
 
         $("#to-date").val(todaydate);
         $("#from-date").val(lastdate);
+        $("#userval").focus();
         showrecord();
     }
     function onFailure(error){

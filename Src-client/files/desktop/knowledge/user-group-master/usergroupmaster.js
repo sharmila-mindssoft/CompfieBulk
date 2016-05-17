@@ -41,6 +41,7 @@ function loadFormCategories(){
 //get user group master details from api
 function initialize(){
 	clearMessage();
+	$('.checkbox-full-check').prop('checked', false);
 	$(".js-filter").val("");
 	function onSuccess(data){
 		categoryList = data['form_categories'];
@@ -105,14 +106,17 @@ function loadUserGroupdata(userGroupList){
 	}
 }
 $("#categoryName").on("change", function(){
-	$("#btnUserGroupShow").trigger("click");
+	//$("#btnUserGroupShow").trigger("click");
 });
 $("#btnUserGroupShow").click(function(){
 	clearMessage();
+	$('.checkbox-full-check').prop('checked', false);
 	var groupNameVal = $("#groupName").val().trim();
 	var categoryNameVal = $("#categoryName").val().trim();
+
 	if(groupNameVal == ''){
 		displayMessage(message.group_required);
+		groupNameVal.focus();
 	}
 	else if(categoryNameVal == ''){
 		displayMessage(message.catgname_required);
@@ -120,6 +124,7 @@ $("#btnUserGroupShow").click(function(){
 	else{
 		clearMessage();
 		$("#formList").show();
+		$("#tempcatgid").val(categoryNameVal);
 		function onSuccess(data){
 			loadFormList(data['forms'], categoryNameVal);
 		}
@@ -204,6 +209,7 @@ $("#btnUserGroupSubmit").click(function(){
 	var groupIdVal = $("#groupId").val();
 	var groupNameVal = $("#groupName").val().trim();
 	var categoryNameVal = $("#categoryName").val().trim();
+	var tempcategoryidVal = $("#tempcatgid").val().trim();
 	var chkArray = [];
 	var chkArrayInt = [];
 	if(groupNameVal == ''){
@@ -214,6 +220,9 @@ $("#btnUserGroupSubmit").click(function(){
 	}
 	else if(categoryNameVal.length > 50){
 		displayMessage(message.category_max50);
+	}
+	else if(tempcategoryidVal != categoryNameVal){
+		displayMessage(message.category_invalid);	
 	}
 	else if(groupIdVal == ''){
 		$(".checkedFormId:checked").each(function() {
@@ -296,6 +305,7 @@ function userGroupEdit(userGroupId, userGroupName, catgid){
 	$('#categoryName option:gt(0)').remove();
  	loadFormCategories();
  	$('#categoryName option[value = '+catgid+']').attr('selected','selected');
+ 	$("#tempcatgid").val(catgid);
 	function onSuccess(data){
 		loadFormListUpdate(data['forms'], data['user_groups'], catgid, userGroupId);
 	}

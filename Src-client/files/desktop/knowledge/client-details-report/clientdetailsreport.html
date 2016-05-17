@@ -12,7 +12,7 @@
        <div class="input-row">
           <div class="field-label">Country<span class="mandatory">*</span>:</div>
           <div class="field-input">
-            <select class="input-box" id="countries" >
+            <select class="input-box" id="countries"  tabindex="1" autofocus="autofocus">
                 <option value="">Select</option>
             </select>
           </div>
@@ -20,7 +20,7 @@
         <div class="input-row">
           <div class="field-label">Group<span class="mandatory">*</span>:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="groupsval" value="">
+            <input type="text" class="input-box icon-autocomplete" id="groupsval" value="" tabindex="2">
             <input type="hidden" id="group-id">
             <div id="ac-group" class="ac-textbox default-display-none">
               <ul style="width:85%;"></ul>
@@ -31,7 +31,7 @@
         <div class="input-row">
           <div class="field-label">Business Group:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value="" >
+            <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value=""  tabindex="3">
             <input type="hidden" id="businessgroupid">
             <div id="ac-businessgroup" class="ac-textbox default-display-none" >
               <ul style="width:85%;"></ul>
@@ -41,7 +41,7 @@
         <div class="input-row">
           <div class="field-label">Legal Entity:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="legalentityval" value="">
+            <input type="text" class="input-box icon-autocomplete" id="legalentityval" value="" tabindex="4">
             <input type="hidden" id="legalentityid">
             <div id="ac-legalentity" class="ac-textbox default-display-none">
               <ul style="width:85%;"></ul>
@@ -53,7 +53,7 @@
          <div class="input-row">
           <div class="field-label">Division:</div>
           <div class="field-input">
-             <input type="text" class="input-box icon-autocomplete" id="divisionval" value="" >
+             <input type="text" class="input-box icon-autocomplete" id="divisionval" value="" tabindex="5">
             <input type="hidden" id="divisionid">
             <div id="ac-division" class="ac-textbox default-display-none">
               <ul style="width:85%;"></ul>
@@ -61,9 +61,9 @@
           </div>
         </div>
          <div class="input-row">
-          <div class="field-label"> Unit:</div>
+          <div class="field-label">Unit:</div>
           <div class="field-input">
-             <input type="text" class="input-box icon-autocomplete" id="unitval" value="">
+             <input type="text" class="input-box icon-autocomplete" id="unitval" value="" tabindex="6">
             <input type="hidden" id="unitid">
             <div id="ac-unit" class="ac-textbox default-display-none">
               <ul style="width:85%;"></ul>
@@ -74,7 +74,7 @@
           <div class="field-label">Domain:</div>
           <div class="field-input">
             <input type="hidden" id="domain">
-            <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" readonly="readonly" onclick="loadauto_domains()">
+            <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" readonly="readonly" onclick="loadauto_domains()" tabindex="7">
             <div id="selectboxview-domains" class="ac-selectbox" style="display:none;" onmouseleave="hidedomainmenu();">
               <ul style="width:213px;"></ul>
             </div>
