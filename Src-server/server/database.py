@@ -1543,7 +1543,7 @@ class KnowledgeDatabase(Database):
     def delete_grography_level(self, level_id, level_position):
         q = "select count(*) from tbl_geographies where level_id = %s" % (level_id)
         row = self.select_one(q)
-        if row(0) > 0 :
+        if row[0] > 0 :
             return knowledgemaster.LevelShouldNotbeEmpty(level_position)
         else :
             self.execute("delete from tbl_geographies where level_id = %s " % (level_id))

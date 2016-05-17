@@ -301,11 +301,11 @@ def process_save_geography_level(db, request_frame, user_id):
     country_id = request_frame.country_id
     levels = request_frame.levels
 
-    level_names = [x.level_name.lower().strip() for x in levels]
+    level_names = [x.level_name.lower().strip() for x in levels if x.level_name is not None]
     if len([n for n in level_names if level_names.count(n.lower()) > 1]) > 1 :
         return knowledgemaster.DuplicateGeographyLevelsExists()
 
-    level_positions = [x.level_position for x in levels]
+    level_positions = [x.level_position for x in levels if x.level_position is not None]
     if len([p for p in level_positions if level_positions.count(p) > 1]) > 1 :
         return knowledgemaster.DuplicateGeographyLevelsExists()
 
