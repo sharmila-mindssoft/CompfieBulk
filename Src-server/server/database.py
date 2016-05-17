@@ -6281,7 +6281,6 @@ class KnowledgeDatabase(Database):
             self.tblLegalEntities, self.tblDivisions, condition,
             int(start_count), to_count
         )
-        print query
         rows = self.select_all(query)
         columns_list = columns.replace(" ", "").split(",")
         unit_rows = self.convert_to_dict(rows, columns_list)
