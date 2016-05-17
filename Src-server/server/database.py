@@ -12,7 +12,8 @@ import logger
 from types import *
 from protocol import (
     core, knowledgereport, technomasters,
-    technotransactions, technoreports, general
+    technotransactions, technoreports, general,
+    knowledgemaster
 )
 from distribution.protocol import (
     Company, IPAddress
@@ -1539,12 +1540,28 @@ class KnowledgeDatabase(Database):
                     return name
         return None
 
+    def delete_grography_level(self, level_id, level_position):
+        q = "select count(*) from tbl_geographies where level_id = %s" % (level_id)
+        row = self.select_one(q)
+        if row(0) > 0 :
+            return knowledgemaster.LevelShouldNotbeEmpty(level_position)
+        else :
+            self.execute("delete from tbl_geographies where level_id = %s " % (level_id))
+            self.execute("delete from tbl_geography_levels where level_id = %s " % (level_id))
+
     def save_geography_levels(self, country_id, levels, user_id):
         table_name = "tbl_geography_levels"
         created_on = self.get_date_time()
+        newlist = sorted(levels, key=lambda k: k.level_position, reverse=True)
+        print newlist
+        for n in newlist :
+            print n.to_structure()
         for level in levels :
             name = level.level_name
             position = level.level_position
+            if level.is_remove is True :
+                self.delete_grography_level(level.level_id, level.level_position)
+
             if level.level_id is None :
                 level_id = self.get_new_id("level_id", table_name)
                 field = "(level_id, level_position, level_name, \
@@ -4899,12 +4916,12 @@ class KnowledgeDatabase(Database):
         result = result[0]
         unit_code = self.get_next_unit_auto_gen_no(client_id)
         unit_columns = ["client_id", "unit_id", "is_active", "legal_entity_id", \
-        "country_id", "geography_id", "industry_id", "unit_code", "unit_name", 
+        "country_id", "geography_id", "industry_id", "unit_code", "unit_name",
         "address", "postal_code", "domain_ids"]
         values = [
             client_id, new_unit_id, 1, result["legal_entity_id"],
             result["country_id"], result["geography_id"],
-            result["industry_id"],unit_code, result["unit_name"], 
+            result["industry_id"],unit_code, result["unit_name"],
             result["address"], result["postal_code"], result["domain_ids"]
         ]
         if result["business_group_id"] not in ["Null", "None", None, ""]:

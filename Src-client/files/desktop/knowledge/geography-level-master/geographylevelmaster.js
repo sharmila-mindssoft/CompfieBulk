@@ -11,12 +11,12 @@ $(".btn-geographylevel-cancel").click(function(){
   	$("#add").show();
 });
 
-$(".add-insert-level").click(function(){  
+$(".add-insert-level").click(function(){
      $("#view-insert-level").show();
      $("#add").hide();
 });
 
-$(".insert-level-cancel").click(function(){ 
+$(".insert-level-cancel").click(function(){
      $("#view-insert-level").hide();
       $("#add").show();
 });
@@ -45,30 +45,30 @@ function GetGeographyLevels(){
 
 //Autocomplete Script Starts
 
-//load country list in autocomplete text box  
+//load country list in autocomplete text box
 //var chosen = "";
 /*$("#countryval").keyup(function(e){
-	/*if (e.keyCode == 40) { 
+	/*if (e.keyCode == 40) {
         if(chosen === "") {
             chosen = 0;
         } else if((chosen+1) < $('#ulist_text li').length) {
-            chosen++; 
+            chosen++;
         }
         $('#ulist_text li').removeClass('auto-selected');
         $('#ulist_text li:eq('+chosen+')').addClass('auto-selected');
         return false;
     }
-    if (e.keyCode == 38) { 
+    if (e.keyCode == 38) {
         if(chosen === "") {
             chosen = 0;
         } else if(chosen > 0) {
-            chosen--;            
+            chosen--;
         }
         $('#ulist_text li').removeClass('auto-selected');
         $('#ulist_text li:eq('+chosen+')').addClass('auto-selected');
         return false;
     }
-    if (e.keyCode == 13) { 
+    if (e.keyCode == 13) {
     	var id = $('.country_auto.auto-selected').attr('id');
     	var id_val = $('.country_auto.auto-selected').text().trim();
         activate_text(id,id_val);
@@ -82,7 +82,7 @@ function GetGeographyLevels(){
   	$('#ulist_text').empty();
   	if(textval.length>0){
 	    for(var i in countries){
-	      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
+	      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]);
 	    }
 	    var str='';
 	    for(var i in suggestions){
@@ -119,7 +119,7 @@ function onCountrySuccess(val){
   loadGeographyLevelsList(val[0]);
 }
 
-//load country list in autocomplete text box  
+//load country list in autocomplete text box
 $("#countryval").keyup(function(){
   var textval = $(this).val();
   getCountryAutocomplete(textval, countriesList, function(val){
@@ -165,7 +165,7 @@ function validate(){
 }
 
 //save or update geography level master
-$("#submit").click(function(){  
+$("#submit").click(function(){
 	var country = $("#country").val();
 	if(validate()){
 		for(var k=1; k<=10; k++) {
@@ -189,10 +189,24 @@ $("#submit").click(function(){
 				return false;
 			}else if($("#level"+k).val().trim() != ''){
 				if($("#levelid"+k).val() != ''){
-					passlevellist.push({"l_position" : k, "l_name" : $("#level"+k).val().trim(), "l_id" : parseInt($("#levelid"+k).val())});
+					passlevellist.push(
+						{
+							"l_position" : k,
+							"l_name" : $("#level"+k).val().trim(),
+							"l_id" : parseInt($("#levelid"+k).val()),
+							"is_remove": false
+						}
+					);
 					isAdd = false;
 				}else{
-					passlevellist.push({"l_position" : k, "l_name" : $("#level"+k).val().trim(), "l_id" : null });
+					passlevellist.push(
+						{
+							"l_position" : k,
+							"l_name" : $("#level"+k).val().trim(),
+							"l_id" : null,
+							"is_remove": false
+						}
+					);
 				}
 			}
 	   }
@@ -202,16 +216,16 @@ $("#submit").click(function(){
 			}else{
 				displayMessage(message.record_updated);
 			}
-			
+
 			jQuery('.btn-geographylevel-cancel').focus().click();
-			GetGeographyLevels();			
+			GetGeographyLevels();
 		}
-		function onFailure(error){             
+		function onFailure(error){
           if(error == "DuplicateGeographyLevelsExists"){
             displayMessage(message.geographylevel_exists);
           }
         }
-		mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist, 
+		mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist,
 			function (error, response) {
             if (error == null){
               onSuccess(response);
