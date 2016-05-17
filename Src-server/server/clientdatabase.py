@@ -7712,8 +7712,6 @@ class ClientDatabase(Database):
         if leval_1_statutory_name is not None :
             where_qry += " AND c.statutory_mapping like '%s' " % (leval_1_statutory_name + '%')
 
-        print "where_qry"
-        print where_qry
 
         q_count = "SELECT count(distinct ch.compliance_history_id) \
             FROM tbl_compliance_history ch \
@@ -7734,7 +7732,6 @@ class ClientDatabase(Database):
             )
         c_row = self.select_one(q_count)
         print q_count
-        print
         if c_row :
             total = int(c_row[0])
         else :
@@ -7769,7 +7766,6 @@ class ClientDatabase(Database):
                 where_qry,
                 from_count, to_count
             )
-        print query
         columns = [
             "compliance_id", "compliance_task", "document_name",
             "statutory_dates", "compliance_description", "penal_consequences",

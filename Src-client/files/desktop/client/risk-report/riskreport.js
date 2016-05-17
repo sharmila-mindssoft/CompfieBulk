@@ -83,17 +83,14 @@ function loadresult(complianceList){
 
     var statutoryUnits = complianceList[entity]["level_1_statutory_wise_units"]
     for(var statutoryUnit in statutoryUnits){
-
       if(lastAct != statutoryUnit){
         var tableRow5=$('#unit-head-templates .table-unit-head .table-row-act-name');
         var clone5=tableRow5.clone();
         $('.tbl_actname', clone5).html('<div class="heading" style="margin-top:5px;width:auto;">'+statutoryUnit+'</div>');
         $('.tbody-unit').append(clone5);
-
         var tableRow1=$('#unit-head-templates .table-unit-head .table-row-unit-head');
         var clone1=tableRow1.clone();
         $('.tbody-unit').append(clone1);
-
         lastUnit = '';
         lastAct = statutoryUnit;
       }
@@ -101,7 +98,6 @@ function loadresult(complianceList){
       for(var j=0; j<statutoryUnits[statutoryUnit].length; j++){
         var uName = statutoryUnits[statutoryUnit][j]["unit_name"];
         var uAddress = statutoryUnits[statutoryUnit][j]["address"];
-
         if(lastUnit != uName){
           var tableRow2=$('#unit-name-templates .table-unit-name .table-row-unit-name');
           var clone2=tableRow2.clone();
@@ -109,7 +105,6 @@ function loadresult(complianceList){
           $('.tbody-unit').append(clone2);
           lastUnit = uName;
         }
-
         var uCompliences = statutoryUnits[statutoryUnit][j]["compliances"];
         for(i=0; i<uCompliences.length; i++){
           sno++;
@@ -147,6 +142,7 @@ function loadresult(complianceList){
 
 //get risk report data from api
 function loadCompliance(reportType){
+  displayLoader();
   var country = $("#country").val();
   var domain = $("#domain").val();
   var businessgroup = null;
@@ -166,11 +162,13 @@ function loadCompliance(reportType){
   if(country.length == 0){
     displayMessage(message.country_required);
     $(".grid-table-rpt").hide();
+    hideLoader();
     return false;
   }
   else if(domain.length == 0){
     displayMessage(message.domain_required);
     $(".grid-table-rpt").hide();
+    hideLoader();
     return false;
   }
   else{
@@ -180,6 +178,7 @@ function loadCompliance(reportType){
       riskComplianceList = data['compliance_list'];
       totalRecord = data['total_record'];
       loadresult(riskComplianceList);
+      hideLoader();
       if(reportType == "export"){
         var download_url = data["link"];
         window.open(download_url, '_blank');
@@ -187,6 +186,7 @@ function loadCompliance(reportType){
     }
     function onFailure(error){
       onFailure(error);
+      hideLoader();
     }
     var csv = true
     if(reportType == "show"){
