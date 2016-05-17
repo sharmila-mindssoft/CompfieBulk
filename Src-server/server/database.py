@@ -1542,28 +1542,38 @@ class KnowledgeDatabase(Database):
                     return name
         return None
 
-    def delete_grography_level(self, level_id, level_position):
+    def delete_grography_level(self, level_id):
         q = "select count(*) from tbl_geographies where level_id = %s" % (level_id)
         row = self.select_one(q)
         if row[0] > 0 :
-            return knowledgemaster.LevelShouldNotbeEmpty(level_position)
+            print "if"
+            return True
         else :
+            print "else"
             self.execute("delete from tbl_geographies where level_id = %s " % (level_id))
             self.execute("delete from tbl_geography_levels where level_id = %s " % (level_id))
+            return False
 
     def save_geography_levels(self, country_id, levels, user_id):
         table_name = "tbl_geography_levels"
         created_on = self.get_date_time()
         newlist = sorted(levels, key=lambda k: k.level_position, reverse=True)
         print newlist
+        result = False
         for n in newlist :
-            print n.to_structure()
+            if n.is_remove is True :
+                result = self.delete_grography_level(n.level_id)
+                print result
+                if result :
+                    break
+                else :
+                    continue
+        if result :
+            return knowledgemaster.LevelShouldNotbeEmpty(n.level_position)
+
         for level in levels :
             name = level.level_name
             position = level.level_position
-            if level.is_remove is True :
-                self.delete_grography_level(level.level_id, level.level_position)
-
             if level.level_id is None :
                 level_id = self.get_new_id("level_id", table_name)
                 field = "(level_id, level_position, level_name, \
@@ -1588,7 +1598,7 @@ class KnowledgeDatabase(Database):
                 ):
                     action = "Geography levels updated"
                     self.save_activity(user_id, 5, action)
-        return True
+        return knowledgemaster.SaveGeographyLevelSuccess()
 
     def get_geographies(self, user_id=None, country_id=None) :
         query = "SELECT distinct t1.geography_id, \
