@@ -368,7 +368,7 @@ def get_risk_report(db, request, session_user, client_id):
     country_id = request.country_id
     domain_id = request.domain_id
     business_group_id = request.business_group_id
-    legal_entity_id = request.division_id
+    legal_entity_id = request.legal_entity_id
     division_id = request.division_id
     unit_id = request.unit_id
     level_1_statutory_name = request.level_1_statutory_name
