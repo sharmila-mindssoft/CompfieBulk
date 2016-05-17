@@ -793,7 +793,10 @@ class ClientDatabase(Database):
     def return_users(self, users):
         results = []
         for user in users :
-            employee_name = "%s - %s"% (user["employee_code"],user["employee_name"])
+            if user["employee_code"] is not None:
+                employee_name = "%s - %s"% (user["employee_code"],user["employee_name"])
+            else:
+                employee_name = "Administrator"
             results.append(core.User(
                 user["user_id"], employee_name, bool(user["is_active"])
             ))
@@ -1368,66 +1371,59 @@ class ClientDatabase(Database):
         self, session_user, client_id, from_count, to_count,
         from_date, to_date, user_id, form_id
     ):
-
-        user_ids = ""
         form_ids = None
-        if self.is_primary_admin(session_user):
-            condition = "1"
-            form_column = "group_concat(form_id)"
-            form_condition = "form_type_id != 4"
-            rows = self.get_data(
-                self.tblForms, form_column, form_condition
+        form_column = "group_concat(form_id)"
+        form_condition = "form_type_id != 4"
+        rows = self.get_data(
+            self.tblForms, form_column, form_condition
+        )
+        form_ids = rows[0][0]
+        forms = self.return_forms(client_id, form_ids)
+        
+        if not self.is_primary_admin(session_user):
+            unit_ids = self.get_user_unit_ids(session_user)
+            query = "SELECT DISTINCT user_id FROM %s where unit_id in (%s)" % (
+                self.tblUserUnits, unit_ids
             )
-            form_ids = rows[0][0]
+            rows = self.select_all(query)
+            user_ids = ""
+            for index, row in enumerate(rows):
+                if index == 0:
+                    user_ids += str(row[0])
+                else:
+                    user_ids += "%s%s" % (
+                        ",", str(row[0])
+                    )
+            users = self.get_users_by_id(user_ids, client_id)
         else:
-            column = "user_group_id"
-            condition = "user_id = '%d'" % session_user
-            rows = self.get_data(
-                self.tblUsers, column, condition
+            users = self.get_users(client_id)
+
+        from_date = self.string_to_datetime(from_date)
+        to_date = self.string_to_datetime(to_date)
+        where_qry = "1"
+        if from_date is not None and to_date is not None:
+            where_qry += " AND  created_on between '%s' AND '%s'" % (
+                from_date, to_date
+                
             )
-            user_group_id = rows[0][0]
-
-            column = "form_ids"
-            condition = "user_group_id = '%d'" % user_group_id
-            rows = self.get_data(
-                self.tblUserGroups, column, condition
+        elif from_date is not None:
+            where_qry += " AND  created_on > '%s' " % (
+                from_date
             )
-
-            form_ids = rows[0][0]
-
-            column = "group_concat(user_id)"
-            condition = "user_group_id in (%s)" % user_group_id
-            # rows = self.get_data(
-            #     self.tblUsers, column, condition
-            # )
-            # user_ids = rows[0][0]
-            # condition = "user_id in (%s)" % user_ids
-        admin_id = self.get_admin_id()
-        condition = "1"
-        where_qry = ""
-        select_user_id = user_id
-        if session_user > 0 and session_user != admin_id :
-            where_qry += " AND user_id = %s" % (session_user)
-        else :
-            if select_user_id is not None :
-                where_qry += " AND user_id = %s" % (select_user_id)
-            else :
-                where_qry += " AND user_id like '%'"
-
-        if from_date is not None and to_date is not None :
-            from_date = self.string_to_datetime(from_date).date()
-            to_date = self.string_to_datetime(to_date).date()
-            where_qry = " AND date(created_on) >= '%s' AND date(created_on) <= '%s' " % (from_date, to_date)
-
-        if form_id is not None :
-            where_qry = " AND form_id = %s " % (form_id)
+        elif to_date is not None:
+            where_qry += " AND created_on < '%s'" % (
+                to_date
+            )
+        if user_id is not None:
+            where_qry += " AND user_id = '%s'" % (user_id)
+        if form_id is not None:
+            where_qry += " AND form_id = '%s'" % (form_id)
 
         columns = "user_id, form_id, action, created_on"
-        condition += where_qry
-        condition += " ORDER BY activity_log_id DESC \
+        where_qry += " ORDER BY activity_log_id DESC \
         limit %s, %s " % (from_count, to_count)
         rows = self.get_data(
-            self.tblActivityLog, columns, condition
+            self.tblActivityLog, columns, where_qry
         )
         audit_trail_details = []
         for row in rows:
@@ -1438,12 +1434,6 @@ class ClientDatabase(Database):
             audit_trail_details.append(
                 general.AuditTrail(user_id, form_id, action, date)
             )
-        users = None
-        if user_id != 0:
-            users = self.get_users_by_id(user_ids, client_id)
-        else:
-            users = self.get_users(client_id)
-        forms = self.return_forms(client_id, form_ids)
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
 
 #
