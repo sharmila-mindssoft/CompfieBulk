@@ -939,6 +939,7 @@ function initClientMirror() {
             var file = files[i];
             file_name = file.name
             file_size = file.size
+            var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
             console.log("file.size : "+file.size);
             console.log("max_limit : "+max_limit);
             if (file_size > max_limit) {
