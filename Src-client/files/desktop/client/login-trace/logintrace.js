@@ -9,7 +9,7 @@ function displayLoader() {
     $(".loading-indicator-spin").show();
 }
 function hideLoader() {
-    $(".loading-indicator-spin").hide();
+    $(".loading-indicator-spin").hide();    
 }
 
 function clearMessage() {
@@ -69,7 +69,7 @@ $('#pagination').click(function(){
     clearMessage();
 
     function onSuccess(data){    
-        if(data['login_trace'] ==''){
+        if(data['login_trace'] == ''){
             $('#pagination').hide();
         }
         loadrecords(data['login_trace'], fromdate, todate, userid);
