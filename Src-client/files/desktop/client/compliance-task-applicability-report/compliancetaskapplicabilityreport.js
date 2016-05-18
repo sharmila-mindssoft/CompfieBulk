@@ -149,6 +149,7 @@ function loadcompliancetaskapplicabilityreport(buttontype){
             csv = true;
         }
         function onSuccess(data){
+            clearMessage();
             $(".grid-table-rpt").show();
             sno = 0;
             fullArrayList = [];

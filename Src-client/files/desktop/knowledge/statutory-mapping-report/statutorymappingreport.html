@@ -11,7 +11,7 @@
           <div class="input-row">
             <div class="field-label">Country:<span class="mandatory">*</span></div>
             <div class="field-input">
-              <input type="text" class="input-box icon-autocomplete" id="countryval" placeholder="Enter Country" value="">
+              <input type="text" class="input-box icon-autocomplete" id="countryval" placeholder="Enter Country" value="" autofocus="autofocus" tabindex="1">
               <input type="hidden" id="country" value="">
               <div id="ac-country" class="ac-textbox default-display-none">
               <ul style="width:85%;" class="hidemenu"></ul>
@@ -21,7 +21,7 @@
             <div class="input-row">
               <div class="field-label">Domain:<span class="mandatory">*</span></div>
               <div class="field-input">
-                <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" value="" >
+                <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" value="" tabindex="2">
                 <input type="hidden" id="domain" value="">
                 <div id="ac-domain" class="ac-textbox default-display-none">
                 <ul style="width:85%;" class="hidemenu"></ul>
@@ -31,7 +31,7 @@
           <div class="input-row">
             <div class="field-label">Industry:</div>
             <div class="field-input">
-              <input type="text" class="input-box icon-autocomplete" id="industryval" placeholder="Enter Industry">
+              <input type="text" class="input-box icon-autocomplete" id="industryval" placeholder="Enter Industry" tabindex="3">
               <input type="hidden" id="industry">
               <div id="ac-industry" class="ac-textbox default-display-none">
               <ul style="width:85%;" class="hidemenu"></ul>
@@ -41,7 +41,7 @@
         <div class="input-row">
           <div class="field-label">Statutory Nature:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="statutorynatureval" placeholder="Enter Statutory Nature">
+            <input type="text" class="input-box icon-autocomplete" id="statutorynatureval" placeholder="Enter Statutory Nature" tabindex="4">
             <input type="hidden" id="statutorynature">
             <div id="ac-statutorynature" class="ac-textbox default-display-none" >
             <ul style="width:85%;" class="hidemenu"></ul>
@@ -53,7 +53,7 @@
   <div class="input-row">
     <div class="field-label">Geography:</div>
     <div class="field-input">
-      <input type="text" class="input-box icon-autocomplete" id="geographyval" placeholder="Enter Geography">
+      <input type="text" class="input-box icon-autocomplete" id="geographyval" placeholder="Enter Geography" tabindex="5">
       <input type="hidden" id="geography">
       <div id="ac-geography" class="ac-textbox default-display-none">
       <ul style="width:85%;" class="hidemenu"></ul>
@@ -63,7 +63,7 @@
 <div class="input-row">
   <div class="field-label">Act:</div>
   <div class="field-input">
-    <input type="text" class="input-box icon-autocomplete" id="statutoryval" placeholder="Enter Act">
+    <input type="text" class="input-box icon-autocomplete" id="statutoryval" placeholder="Enter Act" tabindex="6">
     <input type="hidden" id="statutory">
     <div id="ac-statutory" class="ac-textbox default-display-none">
     <ul style="width:85%;" class="hidemenu"></ul>
@@ -73,7 +73,7 @@
 <div class="input-row">
 <div class="field-label">Compliance Frequency:</div>
 <div class="field-input">
-  <select class="input-box tasktype" id="compliance_frequency">
+  <select class="input-box tasktype" id="compliance_frequency" tabindex="7">
     <option value="All" Selected="selected">All</option>
   </select>
 </div>
@@ -81,7 +81,7 @@
 </div>
 
 <div class="submit-button-container">
-<input type="submit" value="Show" class="btn-submit" id="submit">
+<input type="submit" value="Show" class="btn-submit" id="submit" tabindex="8">
 </div>
 
 <div class="clearfix"></div>

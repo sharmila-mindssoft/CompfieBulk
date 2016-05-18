@@ -39,6 +39,7 @@ function GetStatutoryLevels(){
 function onCountrySuccess(val){
   $("#countryval").val(val[1]);
   $("#country").val(val[0]);
+  $("#domainval").focus();
   loadstatutoryLevelsList();
 }
 
@@ -54,6 +55,7 @@ $("#countryval").keyup(function(){
 function onDomainSuccess(val){
   $("#domainval").val(val[1]);
   $("#domain").val(val[0]);
+  $("#level1").focus();
   loadstatutoryLevelsList();
 }
 //load domain list in autocomplete textbox  
@@ -143,6 +145,7 @@ $("#submit").click(function(){
           }
           GetStatutoryLevels();
           jQuery('.btn-statutorylevel-cancel').focus().click();
+          $("#countryval").focus();
         }
         function onFailure(error){             
           if(error == "DuplicateStatutoryLevelsExists"){

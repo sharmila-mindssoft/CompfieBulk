@@ -1,6 +1,6 @@
 from protocol import (dashboard, login, general)
 from server import logger
-
+from server.constants import RECORD_DISPLAY_COUNT
 __all__ = [
     "process_client_dashboard_requests"
 ]
@@ -181,7 +181,7 @@ def process_get_trend_chart_drilldown(db, request, session_user, client_id):
 
 def process_compliance_status_chart_drilldown(db, request, session_user, client_id):
     from_count = request.record_count
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     unit_wise_data = db.get_compliances_details_for_status_chart(
         request, session_user, client_id,
         from_count, to_count
@@ -195,7 +195,7 @@ def process_escalation_chart(db, request, session_user, client_id):
 
 def process_escalation_chart_drilldown(db, request, session_user, client_id) :
     from_count = request.record_count
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     result_list = db.get_escalation_drill_down_data(
         request, session_user, client_id,
         from_count, to_count
@@ -210,7 +210,7 @@ def process_not_complied_chart(db, request, session_user, client_id):
 
 def  process_not_complied_drill_down(db, request, session_user, client_id):
     from_count = request.record_count
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     result_list = db.get_not_complied_drill_down(
         request, session_user, client_id,
         from_count, to_count
@@ -222,7 +222,7 @@ def process_compliance_applicability_chat(db, request, session_user, client_id):
 
 def process_compliance_applicability_drill_down(db, request, session_user, client_id) :
     from_count = request.record_count
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     result_list = db.get_compliance_applicability_drill_down(
         request, session_user, client_id,
         from_count, to_count
@@ -231,7 +231,7 @@ def process_compliance_applicability_drill_down(db, request, session_user, clien
 
 def process_get_notifications(db, request, session_user, client_id):
     notifications = None
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     notifications = db.get_notifications(
         request.notification_type,
         request.start_count, to_count,
@@ -326,7 +326,7 @@ def process_assigneewise_compliances_drilldown(
     year = request.year
     unit_id = request.unit_id
     start_count = request.start_count
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
 
     drill_down_data = {}
     complied, delayed, inprogress, not_complied = db.get_assigneewise_compliances_drilldown_data(

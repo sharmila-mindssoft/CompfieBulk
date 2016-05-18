@@ -1,6 +1,7 @@
 from protocol import login, technoreports, knowledgereport
 from generalcontroller import validate_user_session, validate_user_forms
 from server import logger
+from server.constants import RECORD_DISPLAY_COUNT
 __all__ = [
     "process_techno_report_request"
 ]
@@ -115,7 +116,7 @@ def process_get_client_details_report_filters(db, request_frame, session_user):
     )
 
 def process_get_client_details_report_data(db, request, session_user):
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     units = db.get_client_details_report(
         request.country_id, request.group_id, request.business_group_id,
         request.legal_entity_id, request.division_id,
@@ -151,7 +152,7 @@ def process_get_compliance_task_report(db, request_frame, user_id):
     geography_id = request_frame.geography_id
     level_1_id = request_frame.level_1_statutory_id
     from_count = request_frame.record_count
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     report_data, total_count = db.get_compliance_list_report_techno(
         country_id, domain_id, industry_id,
         nature_id, geography_id, level_1_id, user_id,

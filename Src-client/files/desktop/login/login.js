@@ -120,9 +120,9 @@ function performLogin(e_button, e_email, e_password) {
         return;
 
     displayLoginLoader();
-    e_button.attr("disabled", "disabled");
-    e_email.attr("disabled", "disabled");
-    e_password.attr("disabled", "disabled");
+    // e_button.attr("disabled", "disabled");
+    // e_email.attr("disabled", "disabled");
+    // e_password.attr("disabled", "disabled");
 
     function onFailure(status) {
         console.log("status"+status);

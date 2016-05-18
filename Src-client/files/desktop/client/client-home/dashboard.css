@@ -683,3 +683,7 @@ img, object {
 	color: #ffae00;
 	font-size: 0.813em;
 }
+
+.escalations-font-list table tr td{
+	font-size: 1em !important;
+}

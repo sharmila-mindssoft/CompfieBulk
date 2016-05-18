@@ -376,6 +376,7 @@ ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 IS_DEVELOPMENT = True
 VERSION = 1
 SEND_EMAIL = False
+RECORD_DISPLAY_COUNT = 100
 
 KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306

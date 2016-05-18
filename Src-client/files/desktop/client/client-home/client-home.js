@@ -65,6 +65,8 @@ var NC_UNITNAME = null;
 var NC_LEVEL1 = null;
 
 var TC_YEAR = null;
+var TC_UNIT = null;
+var TC_LEVEL1 = null;
 
 var CAS_TYPE = null;
 var CAS_LEVEL1 = null;
@@ -1526,6 +1528,7 @@ function showEscalationDrillDownRecord(data, year){
         unitWiseEscalationDrillDown("delayed", data);
         unitWiseEscalationDrillDown("not_complied", data);
     }
+    //$(".td-escalation").empty();
 }
 function groupWiseEscalationDrillDown(status, data){
     $(".business-group-row").show();
@@ -1705,6 +1708,7 @@ function escalationDrilldown(status, data){
             $(".inner-table-delayed-escalation-list .compliance-row .filter-text-box").addClass("js-filter_delayed");
             $(".inner-table-delayed-escalation-list .assigned-to-row .filter-text-box").addClass("js-filter_delayed");
             $(".inner-table-delayed-escalation-list .delayed-by-row .filter-text-box").addClass("js-filter_delayed");
+            ES_D_COUNT++;
         }
         escalationDrilldowndelayed("delayed", data);
     }
@@ -1720,21 +1724,21 @@ function escalationDrilldownnotcomplied(status, data){
     if(typeof data[status] != "undefined"){
         $.each(data[status], function(key, value){
             if(ES_NC_UNITNAME != value["unit_name"]){
+                ACCORDIONCOUNTNC = ACCORDIONCOUNTNC + 1;
                 var tableUnit = $('#templates .escalation-status .tr-unit');
                 var cloneUnit = tableUnit.clone();
                 $(".unit-heading", cloneUnit).html(value["unit_name"]);
                 $(".inner-table-notcomplied-escalation-list").append(cloneUnit);
                 $('.inner-table-notcomplied-escalation-list').append('<tbody class="accordion-content accordion-content'+ACCORDIONCOUNTNC+'"></tbody>');
-                if(ACCORDIONCOUNTNC == 0){
+                if(ACCORDIONCOUNTNC == 1){
                     $('.accordion-content'+ACCORDIONCOUNTNC).addClass("default");
-                }
+                }                
                 ES_NC_UNITNAME = value["unit_name"];
             }
             var unitList = value["compliances"];
 
             $.each(unitList, function(ke, valu){
-                if(ES_NC_LEVEL1 != ke){
-                    ACCORDIONCOUNTNC = ACCORDIONCOUNTNC + 1;
+                if(ES_NC_LEVEL1 != ke){                    
                     var tableLevel1 = $('#templates .escalation-status .tr-level1');
                     var cloneLevel1 = tableLevel1.clone();
                     $(".heading", cloneLevel1).html(ke);
@@ -1788,12 +1792,13 @@ function escalationDrilldowndelayed(status, data){
     if(typeof data[status] != "undefined"){
         $.each(data[status], function(key, value){
             if(ES_D_UNITNAME != value["unit_name"]){
+                ACCORDIONCOUNTD = ACCORDIONCOUNTD + 1;
                 var tableUnit = $('#templates .escalation-status .tr-unit');
                 var cloneUnit = tableUnit.clone();
                 $(".unit-heading", cloneUnit).html(value["unit_name"]);
                 $(".inner-table-delayed-escalation-list").append(cloneUnit);
                 $('.inner-table-delayed-escalation-list').append('<tbody class="accordion-content accordion-content'+ACCORDIONCOUNTD+'"></tbody>');
-                if(ACCORDIONCOUNTD == 0){
+                if(ACCORDIONCOUNTD == 1){
                     $('.accordion-content'+ACCORDIONCOUNTD).addClass("default");
                 }
                 ES_D_UNITNAME = value["unit_name"];
@@ -1802,7 +1807,7 @@ function escalationDrilldowndelayed(status, data){
 
             $.each(unitList, function(ke, valu){
                 if(ES_D_LEVEL1 != ke){
-                    ACCORDIONCOUNTD = ACCORDIONCOUNTD + 1;
+                    
                     var tableLevel1 = $('#templates .escalation-status .tr-level1');
                     var cloneLevel1 = tableLevel1.clone();
                     $(".heading", cloneLevel1).html(ke);
@@ -2097,20 +2102,28 @@ function unitWiseTrendChartDrillDown(status, data){
 function trendChartDrilldown(status, data){
  
     $.each(data, function(key, value){
-        var tableUnit = $('#templates .compliance-status .tr-unit');
-        var cloneUnit = tableUnit.clone();
-        $(".unit-heading", cloneUnit).html(value["unit_name"]);
-        $(".table-drilldown-list").append(cloneUnit);
-        $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+ACCORDIONCOUNT+'"></tbody>');
-        if(ACCORDIONCOUNT==1){
-            $('.accordion-content'+ACCORDIONCOUNT).addClass("default");
+        if(TC_UNIT != value["unit_name"]){
+            ACCORDIONCOUNT = ACCORDIONCOUNT + 1;
+            var tableUnit = $('#templates .compliance-status .tr-unit');
+            var cloneUnit = tableUnit.clone();
+            $(".unit-heading", cloneUnit).html(value["unit_name"]);
+            $(".table-drilldown-list").append(cloneUnit);
+            $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+ACCORDIONCOUNT+'"></tbody>');
+            if(ACCORDIONCOUNT == 1){
+                $('.accordion-content'+ACCORDIONCOUNT).addClass("default");
+            }
+           
+            TC_UNIT = value["unit_name"];
         }
         var unitList = value["compliances"];
         $.each(unitList, function(ke, valu){
-            var tableLevel1 = $('#templates .compliance-status .tr-level1');
-            var cloneLevel1 = tableLevel1.clone();
-            $(".heading", cloneLevel1).html(ke);
-            $('.accordion-content'+ACCORDIONCOUNT).append(cloneLevel1);
+            if(TC_LEVEL1 != ke){
+                var tableLevel1 = $('#templates .compliance-status .tr-level1');
+                var cloneLevel1 = tableLevel1.clone();
+                $(".heading", cloneLevel1).html(ke);
+                $('.accordion-content'+ACCORDIONCOUNT).append(cloneLevel1);
+                TC_LEVEL1 = ke;
+            }
             $.each(valu, function(k, val){
                 SNO = SNO + 1;
                 var tableRow = $('#templates .compliance-status .table-row-list');
@@ -2135,7 +2148,7 @@ function trendChartDrilldown(status, data){
                
             });
         });
-        ACCORDIONCOUNT = ACCORDIONCOUNT + 1;
+        
     });
 
     accordianType('accordion', 'accordion-toggle', 'accordion-content');

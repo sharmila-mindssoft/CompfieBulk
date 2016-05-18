@@ -494,7 +494,7 @@ class DURATION_TYPE(object):
 #
 
 class COMPLIANCE_ACTIVITY_STATUS(object):
-    Submited = "Submited"
+    Submitted = "Submitted"
     Approved = "Approved"
     Rejected = "Rejected"
     Concurred = "Concurred"
@@ -504,7 +504,7 @@ class COMPLIANCE_ACTIVITY_STATUS(object):
 
     @staticmethod
     def values():
-        return ["Submited", "Approved", "Rejected", "Concurred"]
+        return ["Submitted", "Approved", "Rejected", "Concurred"]
 
     def value(self):
         return self._value

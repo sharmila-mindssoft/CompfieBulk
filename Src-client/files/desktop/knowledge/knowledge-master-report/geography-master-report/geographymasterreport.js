@@ -54,6 +54,7 @@ $('.tbody-geography-report-list').append(clone);
 function onCountrySuccess(val){
   $("#countryval").val(val[1]);
   $("#country").val(val[0]);
+  $("#countryval").focus();
   var geographyList = geographiesList[val[0]];
   $("#search-geography-name").val('');
   loadGeographyList(geographyList);
@@ -89,4 +90,5 @@ $("#search-geography-name").keyup(function(){
 //initialization
 $(function() {
   getGeography();
+  $("#countryval").focus();
 });

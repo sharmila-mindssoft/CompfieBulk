@@ -939,10 +939,27 @@ function initClientMirror() {
             var file = files[i];
             file_name = file.name
             file_size = file.size
+            var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
             console.log("file.size : "+file.size);
             console.log("max_limit : "+max_limit);
             if (file_size > max_limit) {
                 callback("File max limit exceeded");
+                return;
+            }
+            else if(file_extension == 'exe'){
+                callback("Invalid file format");
+                return;
+            }
+            else if(file_extension == 'htm'){
+                callback("Invalid file format");
+                return;
+            }
+            else if(file_extension == 'xhtml'){
+                callback("Invalid file format");
+                return;
+            }
+            else if(file_extension == 'html'){
+                callback("Invalid file format");
                 return;
             }
             else{

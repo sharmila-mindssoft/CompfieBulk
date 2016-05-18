@@ -31,8 +31,9 @@ function getCountryAutocomplete(textval, listval, callback){
       str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-country ul').append(str);
-    $("#country").val('');
+    //$("#country").val('');
   }else{
+    alert('ent')
     $("#country").val('');
     $(".ac-textbox").hide();
   }
@@ -53,7 +54,7 @@ function getDomainAutocomplete(textval, listval, callback){
               str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-domain ul').append(str);
-    $("#domain").val('');
+    //$("#domain").val('');
     }else{
       $("#domain").val('');
       $(".ac-textbox").hide();
@@ -75,7 +76,7 @@ function getUserGroupAutocomplete(textval, listval, callback){
       str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-usergroup ul').append(str);
-    $("#usergroup").val('');
+    //$("#usergroup").val('');
   }else{
     $("#usergroup").val('');
     $(".ac-textbox").hide();
@@ -97,7 +98,7 @@ function getIndustryAutocomplete(textval, listval, callback){
               str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-industry ul').append(str);
-    $("#industry").val('');
+    //$("#industry").val('');
     }else{
       $("#industry").val('');
       $(".ac-textbox").hide();
@@ -119,7 +120,7 @@ function getStatutoryNatureAutocomplete(textval, listval, callback){
               str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-statutorynature ul').append(str);
-    $("#statutorynature").val('');
+    //$("#statutorynature").val('');
     }else{
       $("#statutorynature").val('');
       $(".ac-textbox").hide();
@@ -141,7 +142,7 @@ function getGeographyAutocomplete(textval, listval, callback){
       str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-geography ul').append(str);
-    $("#geography").val('');
+    //$("#geography").val('');
     }else{
       $("#geography").val('');
       $(".ac-textbox").hide();
@@ -163,7 +164,7 @@ function getStatutoryAutocomplete(textval, listval, callback){
               str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-statutory ul').append(str);
-    $("#statutory").val('');
+    //$("#statutory").val('');
   }else{
     $("#statutory").val('');
     $(".ac-textbox").hide();
@@ -199,8 +200,8 @@ function getUserAutocomplete(textval, listval, callback){
       }
       $('#ac-user ul').append(str);
       
-      $("#userid").val('');
-      $("#assignee").val('');
+      //$("#userid").val('');
+      //$("#assignee").val('');
   }else{
     $("#userid").val('');
     $("#assignee").val('');
@@ -223,7 +224,7 @@ function getFormAutocomplete(textval, listval, callback){
         str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
       }
       $('#ac-form ul').append(str);
-      $("#formid").val('');
+      //$("#formid").val('');
   }else{
     $("#formid").val('');
     $(".ac-textbox").hide();
@@ -247,7 +248,7 @@ function getGroupAutocomplete(textval, listval, callback){
       str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-group ul').append(str);
-    $("#group-id").val('');
+    //$("#group-id").val('');
   }else{
     $("#group-id").val('');
     $(".ac-textbox").hide();
@@ -271,7 +272,7 @@ function getBusinessGroupAutocomplete(textval, listval, callback){
         str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
       }
       $('#ac-businessgroup ul').append(str);
-      $("#businessgroupid").val('');
+     // $("#businessgroupid").val('');
   }
   else{
     $("#businessgroupid").val('');
@@ -304,7 +305,7 @@ function getLegalEntityAutocomplete(textval, listval, callback){
       str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-legalentity ul').append(str);
-    $("#legalentityid").val('');
+    //$("#legalentityid").val('');
     }else{
       $("#legalentityid").val('');
       $(".ac-textbox").hide();
@@ -336,7 +337,7 @@ function getDivisionAutocomplete(textval, listval, callback){
       str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-division ul').append(str);
-    $("#divisionid").val('');
+    //$("#divisionid").val('');
     }else{
       $("#divisionid").val('');
       $(".ac-textbox").hide();
@@ -373,7 +374,7 @@ function getUnitConditionAutocomplete(textval, listval, callback){
             str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
         }
         $('#ac-unit ul').append(str);
-        $("#unitid").val('');
+        //$("#unitid").val('');
     }
     else{
       $("#unitid").val('');
@@ -403,9 +404,9 @@ function getUnitAutocomplete(textval, listval, callback){
             str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
         }
         $('#ac-unit ul').append(str);
-        $("#seatingunit").val('');
-        $("#unit").val('');
-        $("#unitid").val('');
+        //$("#seatingunit").val('');
+        //$("#unit").val('');
+        //$("#unitid").val('');
         
     }else{
       $("#seatingunit").val('');
@@ -435,7 +436,7 @@ function getReassignUserAutocomplete(textval, listval, callback){
 
     }
     $('#ac-user ul').append(str);
-    $("#user").val('');
+    //$("#user").val('');
     }else{
       $("#user").val('');
       $(".ac-textbox").hide();
@@ -457,8 +458,8 @@ function getClientStatutoryAutocomplete(textval, listval, callback){
       str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-statutory ul').append(str);
-    $("#act").val('');
-    $("#level1id").val('');
+    //$("#act").val('');
+    //$("#level1id").val('');
   }else{
     $("#act").val('');
     $("#level1id").val('');
@@ -481,9 +482,9 @@ function getComplianceTaskAutocomplete(textval, listval, callback){
               str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-compliancetask ul').append(str);
-    $("#compliancetask").val('');
-    $("#complianceid").val('');
-    $("#compliancesid").val('');
+    //$("#compliancetask").val('');
+    //$("#complianceid").val('');
+    //$("#compliancesid").val('');
   }else{
     $("#compliancetask").val('');
     $("#complianceid").val('');
@@ -507,8 +508,8 @@ function getClientBusinessGroupAutocomplete(textval, listval, callback){
               str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-businessgroup ul').append(str);
-    $("#businessgroup").val('');
-    $("#businessgroupid").val('');
+    //$("#businessgroup").val('');
+    //$("#businessgroupid").val('');
   }else{
     $("#businessgroup").val('');
     $("#businessgroupid").val('');
@@ -532,8 +533,8 @@ function getClientLegalEntityAutocomplete(textval, listval, callback){
               str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-legalentity ul').append(str);
-    $("#legalentity").val('');
-    $("#legalentityid").val('');
+    //$("#legalentity").val('');
+    //$("#legalentityid").val('');
   }else{
     $("#legalentity").val('');
     $("#legalentityid").val('');
@@ -556,8 +557,8 @@ function getClientDivisionAutocomplete(textval, listval, callback){
               str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-division ul').append(str);
-    $("#division").val('');
-    $("#divisionid").val('');
+    //$("#division").val('');
+    //$("#divisionid").val('');
   }else{
     $("#division").val('');
     $("#divisionid").val('');
