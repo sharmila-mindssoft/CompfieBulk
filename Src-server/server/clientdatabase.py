@@ -8378,7 +8378,7 @@ class ClientDatabase(Database):
         if user_id is not None:
             condition = " user_id = '%d' " % user_id
         if from_date is not None and to_date is not None:
-            condition += " AND  alcreated_on between '%s' AND '%s'" % (
+            condition += " AND  al.created_on between '%s' AND '%s'" % (
                 from_date, to_date
                 
             )
