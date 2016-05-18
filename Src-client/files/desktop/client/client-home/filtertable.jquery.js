@@ -9,11 +9,11 @@
             };
             
             this.getBody = function() {
-                return $filtertable.children('tbody');
+                return $filtertable.find('tbody');
             };
             
             this.getRows = function() {
-                return $filtertable.children('tr');
+                return this.getBody().children('tr');
             };
             
             this.getField = function(index, $row) {
