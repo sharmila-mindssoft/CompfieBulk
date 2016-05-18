@@ -4,6 +4,7 @@ $("#btn-service-provider-add").click(function(){
     $("#service-provider-view").hide();
     $("#service-provider-add").show();  
     $("#service-provider-id").val('');
+    $("#service-provider-name").focus();
     $("input[id$='contract-from'], input[id$='contract-to']").datepicker( "option", "maxDate", null );
     $("input[id$='contract-from'], input[id$='contract-to']").datepicker( "option", "minDate", null );
     clearMessage();

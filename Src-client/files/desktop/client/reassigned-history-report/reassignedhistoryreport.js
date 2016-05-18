@@ -65,7 +65,6 @@ function loadreassignedhistory(buttontype, end_count){
         acc_count = 1;
         sno = 0;
         s_endCount = 0;
-        $('.grid-table-rpt').show();
         $('.table-reassignedhistory-list').empty();
     }
     displayLoader();
@@ -121,11 +120,13 @@ function loadreassignedhistory(buttontype, end_count){
     }
     else{
         function onSuccess(data){
+
             if(buttontype == "export"){
                 var download_url = data["link"];
                 window.open(download_url, '_blank');
                 hideLoader();
             }else{
+                $('.grid-table-rpt').show();
                 totalRecord = data["total"];
                 loadReassignedHistoryList(data['statutory_wise_compliances']);
                 hideLoader();

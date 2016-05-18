@@ -54,7 +54,7 @@
               <div class="single-column-field-label">Group:<span class="mandatory">*</span></div>
               <div class="field-input">
                 <input id="clientgroup-id" type="hidden" value="">
-                <input id="clientgroup-name" type="text" class="input-box"  value="" maxlength="50" >
+                <input id="clientgroup-name" type="text" class="input-box"  autofocus="autofocus" tabindex="1" value="" maxlength="50" >
               </div>
             </div>
             <div class="input-row">
@@ -62,7 +62,7 @@
               <div class="field-input">
                 <input type="hidden" id="country">
                 <input type="hidden" id="countryNames">
-                <input type="text" class="input-box icon-autocomplete" id="countryselected" value="" readonly="readonly" onclick="loadautocountry()">
+                <input type="text" class="input-box icon-autocomplete" id="countryselected" value="" tabindex="2" readonly="readonly" onclick="loadautocountry()">
                 <div id="selectboxview-country" class="ac-selectbox" style="display:none;">
                 <ul id="ulist-country" onmouseleave="hidemenu();" style="width:85%;" ></ul>
               </div>
@@ -73,7 +73,7 @@
             <div class="field-input">
               <input type="hidden" id="domain">
               <input type="hidden" id="domainNames">
-              <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" readonly="readonly" onclick="loadauto()">
+              <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" tabindex="3" readonly="readonly" onclick="loadauto()">
               <div id="selectboxview" class="ac-selectbox" style="display:none;">
               <ul id="ulist" onmouseleave="hidemenu();" style="width:85%;"></ul>
             </div>
@@ -82,20 +82,20 @@
         <div class="input-row">
           <div class="single-column-field-label">Contract From:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box"  id="contract-from" readonly="readonly"  value="">
+            <input type="text" class="input-box"  id="contract-from" readonly="readonly"  value="" tabindex="4">
           </div>
         </div>
         <div class="input-row">
           <div class="single-column-field-label">Contract  To:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box" id="contract-to" readonly="readonly" value="">
+            <input type="text" class="input-box" id="contract-to" readonly="readonly" value="" tabindex="5">
           </div>
         </div>
         <div class="input-row">
           <div class="single-column-field-label">Username:<span class="mandatory">*</span></div>
           <div class="field-input">
             <span id="labelusername"></span>
-            <input type="text" class="input-box" placeholder="user@domain.com" id="username" value=""><br>
+            <input type="text" class="input-box" placeholder="user@domain.com" id="username" value="" tabindex="5"><br>
             <span style="font-size:10px;">[&#9658;This will be used as the username for user acc.<br>&#9658;
             Password will be auto-generated]</span>
           </div>
@@ -105,34 +105,34 @@
         <div class="input-row">
           <div class="single-column-field-label">Upload Logo:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="file" class="input-box" id="upload-logo" value="" accept="image/*" >
+            <input type="file" class="input-box" id="upload-logo" value="" accept="image/*"  tabindex="6">
             <img  id="upload-logo-img" width="32">
           </div>
         </div>
         <div class="input-row">
           <div class="single-column-field-label">Number of user licence:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box"  id="no-of-user-licence" value="" maxlength="3">
+            <input type="text" class="input-box"  id="no-of-user-licence" value="" maxlength="3" tabindex="7">
           </div>
         </div>
         <div class="input-row">
           <div class="single-column-field-label">File Space:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box"  id="file-space" style="width:50px;float:left" value="" maxlength="3">
+            <input type="text" class="input-box"  id="file-space" style="width:50px;float:left" value="" tabindex="8" maxlength="3">
             <span style="font-size:0.813em; padding-left:10px; line-height:2em;">GB</span>
           </div>
         </div>
         <div class="input-row">
           <div class="single-column-field-label"><p>Subscribe for SMS Notification:</p></div>
           <div class="field-input" style="margin-top:5px;">
-            <input type="checkbox" id="subscribe-sms">
+            <input type="checkbox" id="subscribe-sms" tabindex="9">
           </div>
         </div>
         <div class="input-row">
           <div class="single-column-field-label">Incharge Person:<span class="mandatory">*</span></div>
           <div class="field-input">
             <input type="hidden" id="users">
-            <input type="text" class="input-box icon-autocomplete" id="usersSelected" value="" readonly="readonly" onclick="loadAutoUsers()">
+            <input type="text" class="input-box icon-autocomplete" id="usersSelected" value="" tabindex="9" readonly="readonly" onclick="loadAutoUsers()">
             <div id="selectboxview-users" class="ac-selectbox" style="display:none;">
             <ul onmouseleave="hidemenu();" style="width:85%;"></ul>
           </div>
@@ -141,7 +141,7 @@
       <div class="input-row">
         <div class="single-column-field-label">Short Name:<span class="mandatory">*</span></div>
         <div class="field-input">
-          <input id="short-name" type="text" class="input-box"  value="" maxlength="20">
+          <input id="short-name" type="text" class="input-box" tabindex="10"  value="" maxlength="20">
            <span style="font-size:10px;">[http://domain.com/login/<abbr class="shorturl"></abbr>]</span>
         </div>
       </div>

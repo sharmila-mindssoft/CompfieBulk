@@ -190,7 +190,9 @@ var message = {
 	'cannot_change_status' : 'Cannot change the status of Service provider - Contract of Service Provider expired',
 	'invalid_contractto' : 'Invalid Contract To date',
 	'InvalidDueDate': 'Due date should not greater then statutory date',
-	'startdate_required': 'Start date Required'
+	'startdate_required': 'Start date Required',
+	'unsupported_file': 'Unsupported File',
+	'category_invalid': 'Category Name And Form List are Invalid.'
 };
 
 function clearMessage() {

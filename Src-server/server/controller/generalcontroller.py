@@ -1,5 +1,6 @@
 from protocol import login, general, core
 from server import logger
+from server.constants import RECORD_DISPLAY_COUNT
 
 __all__ = [
     "process_general_request",
@@ -261,8 +262,17 @@ def process_get_countries(db, user_id):
 ########################################################
 # To retrieve all the audit trails of the given User
 ########################################################
-def process_get_audit_trails(db, request_frame, user_id):
-    audit_trails = db.get_audit_trails(user_id)
+def process_get_audit_trails(db, request, session_user):
+    from_count = request.record_count
+    to_count = RECORD_DISPLAY_COUNT
+    from_date = request.from_date
+    to_date = request.to_date
+    user_id = request.user_id
+    form_id = request.form_id
+    audit_trails = db.get_audit_trails(
+        session_user, from_count, to_count,
+        from_date, to_date, user_id, form_id
+    )
     return audit_trails
 
 ########################################################

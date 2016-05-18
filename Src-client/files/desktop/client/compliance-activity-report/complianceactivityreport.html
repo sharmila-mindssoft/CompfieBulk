@@ -87,7 +87,7 @@
           </div>
           <div class="field-input">
             <input type="hidden" id="country" value="">
-            <input type="text" class="input-box icon-autocomplete" id="countryval" value="">
+            <input type="text" class="input-box icon-autocomplete" id="countryval" tabindex="1" autofocus="autofocus" value="">
             <div id="ac-country" class="ac-textbox default-display-none">
               <ul style="width:85%;"></ul>
             </div>
@@ -100,7 +100,7 @@
           </div>
           <div class="field-input">
             <input type="hidden" id="domain" value="">
-            <input type="text" class="input-box icon-autocomplete" id="domainval" value="">
+            <input type="text" class="input-box icon-autocomplete" id="domainval" value="" tabindex="2">
             <div id="ac-domain" class="ac-textbox default-display-none">
               <ul style="width:85%;"></ul>
             </div>
@@ -112,7 +112,7 @@
             <span class="mandatory">*</span>
           </div>
           <div class="field-input">
-            <select class="input-box" id="user-type" >
+            <select class="input-box" id="user-type" tabindex="3" >
               <option value="">Select</option>
               <option value="Inhouse">Inhouse</option>
               <option value="ServiceProvider">Service Provider</option>
@@ -122,7 +122,7 @@
         <div class="input-row">
           <div class="field-label">Assignee:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="userval">
+            <input type="text" class="input-box icon-autocomplete" id="userval" tabindex="4">
             <input type="hidden" id="userid">
             <div id="ac-user" class="ac-textbox default-display-none">
               <ul style="width:85%;"></ul>
@@ -133,7 +133,7 @@
         <div class="input-row">
           <div class="field-label">Act:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="level1val" value="" >
+            <input type="text" class="input-box icon-autocomplete" id="level1val" value="" tabindex="5" >
             <input type="hidden" id="level1id">
             <div id="ac-statutory" class="ac-textbox default-display-none">
               <ul style="width:85%;"></ul>
@@ -145,7 +145,7 @@
         <div class="input-row">
           <div class="field-label">Unit:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="unitval" value="" >
+            <input type="text" class="input-box icon-autocomplete" id="unitval" value="" tabindex="6" >
             <input type="hidden" id="unitid">
             <div id="ac-unit" class="ac-textbox default-display-none">
               <ul style="width:85%;"></ul>
@@ -156,7 +156,7 @@
         <div class="input-row">
           <div class="field-label">Compliance Task:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="complianceval" value="">
+            <input type="text" class="input-box icon-autocomplete" id="complianceval" value="" tabindex="7">
             <input type="hidden" id="complianceid">
             <div id="ac-compliancetask" class="ac-textbox default-display-none">
               <ul></ul>
@@ -166,16 +166,16 @@
         <div class="input-row">
           <div class="field-label">From Date:</div>
           <div class="field-input">
-            <input type="text" class="input-box" id="from-date" readonly="readonly"></div>
+            <input type="text" class="input-box" id="from-date" readonly="readonly" tabindex="8"></div>
         </div>
         <div class="input-row">
           <div class="field-label">To Date:</div>
           <div class="field-input">
-            <input type="text" class="input-box" id="to-date" readonly="readonly"></div>
+            <input type="text" class="input-box" id="to-date" readonly="readonly" tabindex="9"></div>
         </div>
       </div>
       <div class="submit-button-container">
-        <input type="submit" name="cancel" value="Show" id="show-button" class="btn-submit">
+        <input type="submit" name="cancel" value="Show" id="show-button" class="btn-submit" tabindex="10">
         &nbsp;&nbsp;
         <input type="submit" name="cancel" value="Export" id="export-button" class="btn-submit"></div>
       <div class="clearfix"></div>

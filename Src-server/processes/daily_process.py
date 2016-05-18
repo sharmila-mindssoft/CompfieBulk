@@ -385,18 +385,19 @@ def start_new_task(db, client_id, current_date, country_id):
 def notify_before_contract_period(db, client_id):
     cursor = db.cursor()
 
-    download_link = exp(client_id, db).generate_report()
+    # download_link = exp(client_id, db).generate_report()
 
     query = "SELECT group_name FROM tbl_client_groups"
     cursor.execute(query)
     rows = cursor.fetchall()
     group_name = rows[0][0]
 
-    notification_text = '''Your contract with Compfie is about to expire. \
-    Kindly renew your contract to avail the services continuously. Before contract expiration \
-    You can download documents of %s <a href="%s">here </a> ''' % (
-        group_name, download_link
-    )
+    notification_text = '''Your contract with Compfie for the group '%s' is about to expire. \
+    Kindly renew your contract to avail the services continuously.'''  % group_name
+    # Before contract expiration \
+    # You can download documents of %s <a href="%s">here </a> ''' % (
+    #     group_name, download_link
+    # )
     extra_details = "0 - Reminder : Contract Expiration"
 
     notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")

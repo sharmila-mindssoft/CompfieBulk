@@ -305,7 +305,10 @@ def save_client(db, request, session_user):
             unit_id = (unit_id+1) if unit_id != None else db.generate_new_unit_id()
             domain_ids = ",".join(str(x) for x in unit.domain_ids)
             if db.is_duplicate_unit_code(unit_id, unit.unit_code, client_id):
-                return technomasters.UnitCodeAlreadyExists()
+                next_unit_code = db.get_next_auto_gen_number(client_id=client_id)
+                return technomasters.UnitCodeAlreadyExists(
+                    next_unit_code=next_unit_code
+                )
             else:
                 unit.unit_id = unit_id
                 unit.country_id = country_id
@@ -396,7 +399,10 @@ def update_client(db, request, session_user):
             if unit.unit_id == None:
                 unit_id = (unit_id+1) if unit_id != None else db.generate_new_unit_id()
                 if db.is_duplicate_unit_code(unit_id, unit.unit_code, client_id):
-                    return technomasters.UnitCodeAlreadyExists()
+                    next_unit_code = db.get_next_auto_gen_number(client_id=client_id)
+                    return technomasters.UnitCodeAlreadyExists(
+                        next_unit_code=next_unit_code
+                    )
                 else:
                     unit.unit_id = unit_id
                     unit.country_id = country_id
@@ -405,7 +411,10 @@ def update_client(db, request, session_user):
                 if db.is_invalid_id(db.tblUnits, "unit_id", unit.unit_id):
                     return technomasters.InvalidUnitId()
                 elif db.is_duplicate_unit_code(unit.unit_id, unit.unit_code, client_id):
-                    return technomasters.UnitCodeAlreadyExists()
+                    next_unit_code = db.get_next_auto_gen_number(client_id=client_id)
+                    return technomasters.UnitCodeAlreadyExists(
+                        next_unit_code=next_unit_code
+                    )
                 else:
                     unit.country_id = country_id
                     existing_units_list.append(unit)
@@ -525,3 +534,8 @@ def create_new_admin(db, request, session_user):
         return technomasters.ReassignFirst()
     else:
         return technomasters.CreateNewAdminSuccess()
+
+def get_next_unit_code(db, request, session_user):
+    client_id = request.client_id
+    next_unit_code = db.get_next_auto_gen_number(client_id=client_id)
+    return technomasters.GetNextUnitCodeSuccess(next_unit_code)

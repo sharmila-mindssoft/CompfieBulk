@@ -1011,19 +1011,23 @@ class GetActivityLogReport(Request):
         }
 
 class GetLoginTrace(Request):
-    def __init__(self, record_count):
+    def __init__(self, record_count, user_id):
         self.record_count = record_count
+        self.user_id = user_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["record_count"])
+        data = parse_dictionary(data, ["record_count", "user_id"])
         record_count = data.get("record_count")
         record_count = parse_structure_UnsignedIntegerType_32(record_count)
-        return GetLoginTrace(record_count)
+        user_id = data.get("user_id")
+        user_id = parse_structure_OptionalType_UnsignedIntegerType_32(user_id)
+        return GetLoginTrace(record_count, user_id)
 
     def to_inner_structure(self):
         return {
-            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
+            "record_count": to_structure_UnsignedIntegerType_32(self.record_count),
+            "user_id": to_structure_OptionalType_UnsignedIntegerType_32(self.user_id)
         }
 
 def _init_Request_class_map():

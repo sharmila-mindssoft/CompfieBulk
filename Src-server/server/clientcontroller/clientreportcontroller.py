@@ -1,6 +1,7 @@
 from server.jsontocsvconverter import ConvertJsonToCSV
 from protocol import (core, clientreport, login)
 from server import logger
+from server.constants import RECORD_DISPLAY_COUNT
 __all__ = [
     "process_client_report_requests"
 ]
@@ -154,7 +155,7 @@ def get_unitwise_compliance(db, request, session_user):
     unit_id = request.unit_id
     user_id = request.user_id
     from_count = request.record_count
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
 
     data, total = db.report_unitwise_compliance(
         country_id, domain_id, business_group_id,
@@ -173,14 +174,13 @@ def get_assigneewise_compliance(db, request, session_user):
     unit_id = request.unit_id
     user_id = request.user_id
     from_count = request.record_count
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
 
     data, total_count = db.report_assigneewise_compliance(
         country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, user_id, session_user,
         from_count, to_count
     )
-    print total_count
     assignee_wise_compliances_list = db.return_assignee_report_data(data)
     return clientreport.GetAssigneewisecomplianceReportSuccess(assignee_wise_compliances_list, total_count)
 
@@ -287,7 +287,7 @@ def get_compliancedetails_report(db, request, session_user, client_id):
         to_date = request.to_date
         compliance_status = request.compliance_status
         from_count = request.record_count
-        to_count = 500
+        to_count = RECORD_DISPLAY_COUNT
 
         compliance_details_list, total = db.report_compliance_details(
             client_id,
@@ -375,35 +375,34 @@ def get_risk_report(db, request, session_user, client_id):
     level_1_statutory_name = request.level_1_statutory_name
     statutory_status = request.statutory_status
     from_count = request.record_count
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     compliance_list = []
     if request.csv is False :
         if statutory_status == 1 :  # Delayed compliance
-            total, compliance_list = db.get_delayed_compliances(
+            total, compliance_list = db.get_delayed_compliances_with_count(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name,
                 session_user, from_count, to_count
             )
         if statutory_status == 2 :  # Not complied
-            total, compliance_list = db.get_not_complied_compliances(
+            total, compliance_list = db.get_not_complied_compliances_with_count(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name,
                 session_user, from_count, to_count
             )
         if statutory_status == 3 :  # Not opted
-            total, compliance_list = db.get_not_opted_compliances(
+            total, compliance_list = db.get_not_opted_compliances_with_count(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name,
                 session_user, from_count, to_count
             )
         if statutory_status == 4 :  # Unassigned
-            total, compliance_list = db.get_unassigned_compliances(
+            total, compliance_list = db.get_unassigned_compliances_with_count(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id,
                 level_1_statutory_name,
                 session_user, from_count, to_count
             )
-
         return clientreport.GetRiskReportSuccess(
             total, compliance_list
 
@@ -415,8 +414,11 @@ def get_risk_report(db, request, session_user, client_id):
 def get_login_trace(db, request, session_user, client_id):
     users_list = db.get_client_users()
     from_count = request.record_count
-    to_count = 500
-    logintracelist = db.get_login_trace(client_id, session_user, from_count, to_count)
+    user_id = request.user_id
+    to_count = RECORD_DISPLAY_COUNT
+    logintracelist = db.get_login_trace(
+        client_id, session_user, from_count, to_count, user_id
+    )
     return clientreport.GetLoginTraceSuccess(
         users=users_list,
         login_trace=logintracelist
@@ -452,7 +454,7 @@ def get_compliance_activity_report(db, request, session_user, client_id):
     level_1_statutory_name = request.level_1_statutory_name
     if request.csv is False:
         print "inside if in get_compliance_activity_report controller"
-        activities = db.get_compliance_activity_report(
+        activities = db.return_compliance_activity_report(
             country_id, domain_id, user_type, user_id, unit_id, compliance_id, level_1_statutory_name,
             from_date, to_date, session_user, client_id
         )
@@ -515,7 +517,7 @@ def get_client_details_report_filters(db, request, session_user, client_id):
     )
 
 def get_client_details_report_data(db, request, session_user, client_id):
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     if request.csv:
         converter = ConvertJsonToCSV(db, request, session_user, client_id, "ClientDetails")
         return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)

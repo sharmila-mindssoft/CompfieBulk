@@ -64,6 +64,7 @@ function initialize(){
         level1List = data['level_1_statutories'];
         applicableStatusList = data['applicable_status'];
         loadApplicableStatus(applicableStatusList);
+        $("#countryval").focus();
     }
     function onFailure(error){
         console.log(error);
@@ -148,6 +149,7 @@ function loadcompliancetaskapplicabilityreport(buttontype){
             csv = true;
         }
         function onSuccess(data){
+            clearMessage();
             $(".grid-table-rpt").show();
             sno = 0;
             fullArrayList = [];

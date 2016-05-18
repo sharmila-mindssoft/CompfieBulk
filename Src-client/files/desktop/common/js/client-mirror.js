@@ -60,6 +60,14 @@ function initClientMirror() {
         return user;
     }
 
+    function updateUserInfo(response){
+        var info = getUserInfo();
+        info["contact_no"] = response["contact_no"]
+        info["address"] = response["address"]
+        window.localStorage["userInfo"] = toJSON(info)
+    }
+
+
     function get_ip(){
         $.getJSON("http://jsonip.com?callback=?", function (data) {
             window.localStorage["my_ip"] = data.ip;
@@ -174,6 +182,44 @@ function initClientMirror() {
                         callback(jqXHR["responseText"], errorThrown)
                 }
         );
+    }
+
+    function updateUserProfile(contact_no, address, callback){
+        var request = [
+            sessionToken = getSessionToken(), 
+            [
+                "UpdateUserProfile", 
+                {
+                    "contact_no" : contact_no,
+                    "address" : address,
+                    "session_token": sessionToken
+                }
+            ]
+        ]
+        jQuery.post(
+            CLIENT_BASE_URL + "login",
+            toJSON(request),
+            function(data) {
+                console.log("data:"+data);
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                matchString = 'success';
+                if (status.toLowerCase().indexOf(matchString) != -1) {
+                    console.log("status success");
+                    console.log(data);
+                    updateUserInfo(response);
+                    callback(null, response);
+                }
+                else {
+                    callback(status, null);
+                }
+            }
+        ).fail(function(jqXHR, textStatus, errorThrown){
+            if(jqXHR.status == 404) {
+                callback("Client Database not exists")
+            }
+        });
     }
 
     // Login function
@@ -893,10 +939,27 @@ function initClientMirror() {
             var file = files[i];
             file_name = file.name
             file_size = file.size
+            var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
             console.log("file.size : "+file.size);
             console.log("max_limit : "+max_limit);
             if (file_size > max_limit) {
                 callback("File max limit exceeded");
+                return;
+            }
+            else if(file_extension == 'exe'){
+                callback("Invalid file format");
+                return;
+            }
+            else if(file_extension == 'htm'){
+                callback("Invalid file format");
+                return;
+            }
+            else if(file_extension == 'xhtml'){
+                callback("Invalid file format");
+                return;
+            }
+            else if(file_extension == 'html'){
+                callback("Invalid file format");
                 return;
             }
             else{
@@ -1344,10 +1407,11 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getLoginTrace(record_count, callback){
+    function getLoginTrace(record_count, user_id, callback){
         var request = [
             "GetLoginTrace",{
-                "record_count" : record_count
+                "record_count" : record_count,
+                "user_id" : user_id
             }
         ];
         callerName = "client_reports";
@@ -1770,7 +1834,9 @@ function initClientMirror() {
         reassignComplianceDet : reassignComplianceDet,
         getAssigneeWiseCompliances: getAssigneeWiseCompliances,
         getAssigneewiseYearwiseComplianes: getAssigneewiseYearwiseComplianes,
-        getAssigneewiseReassignedComplianes: getAssigneewiseReassignedComplianes
+        getAssigneewiseReassignedComplianes: getAssigneewiseReassignedComplianes,
+        updateUserProfile: updateUserProfile,
+        updateUserInfo: updateUserInfo
     }
 }
 var client_mirror = initClientMirror();
