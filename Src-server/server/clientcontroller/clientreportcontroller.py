@@ -416,8 +416,11 @@ def get_login_trace(db, request, session_user, client_id):
     from_count = request.record_count
     user_id = request.user_id
     to_count = RECORD_DISPLAY_COUNT
+    from_date = request.from_date
+    to_date = request.to_date
     logintracelist = db.get_login_trace(
-        client_id, session_user, from_count, to_count, user_id
+        client_id, session_user, from_count, to_count, user_id,
+        from_date, to_date
     )
     return clientreport.GetLoginTraceSuccess(
         users=users_list,
