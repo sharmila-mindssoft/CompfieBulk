@@ -162,7 +162,7 @@ function initializeNavBar () {
         get_notification_count()
         setInterval(function() {
             get_notification_count();
-        }, 100000);
+        }, 1000000);
 
     }
 }
