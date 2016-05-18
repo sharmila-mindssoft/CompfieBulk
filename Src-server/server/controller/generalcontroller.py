@@ -1,5 +1,6 @@
 from protocol import login, general, core
 from server import logger
+from server.constants import RECORD_DISPLAY_COUNT
 
 __all__ = [
     "process_general_request",
@@ -263,7 +264,7 @@ def process_get_countries(db, user_id):
 ########################################################
 def process_get_audit_trails(db, request, session_user):
     from_count = request.record_count
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     from_date = request.from_date
     to_date = request.to_date
     user_id = request.user_id

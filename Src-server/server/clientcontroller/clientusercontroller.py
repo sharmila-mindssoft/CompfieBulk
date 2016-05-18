@@ -1,6 +1,6 @@
 from protocol import (clientuser, login)
 from server import logger
-
+from server.constants import RECORD_DISPLAY_COUNT
 __all__ = [
     "process_client_user_request"
 ]
@@ -56,7 +56,7 @@ def process_client_user_request(request, db) :
 ########################################################
 def process_get_current_compliance_detail(db, request, session_user, client_id):
     current_start_count = request.current_start_count
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     current_compliances_list = db.get_current_compliances_list(
         current_start_count, to_count, session_user, client_id
     )
@@ -73,7 +73,7 @@ def process_get_current_compliance_detail(db, request, session_user, client_id):
 
 def process_get_upcoming_compliance_detail(db, request, session_user, client_id):
     upcoming_start_count = request.upcoming_start_count
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     upcoming_compliances_list = db.get_upcoming_compliances_list(
         upcoming_start_count, to_count, session_user, client_id
     )
@@ -128,7 +128,7 @@ def process_update_compliance_detail(db, request, session_user, client_id):
 def process_get_on_occurrence_compliances(
     db, request, session_user, client_id
 ):
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     user_domain_ids = db.get_user_domains(session_user)
     user_unit_ids = db.get_user_unit_ids(session_user)
     compliances = db.get_on_occurrence_compliances_for_user(

@@ -14,7 +14,7 @@ from types import *
 
 from types import *
 from server.emailcontroller import EmailHandler
-from server.constants import KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+from server.constants import KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME, RECORD_DISPLAY_COUNT
 import logger
 
 __all__ = [
@@ -9531,7 +9531,7 @@ class ClientDatabase(Database):
         division_id = request.division_id
         unit = request.unit_id
         from_count = request.record_count
-        to_count = 500
+        to_count = RECORD_DISPLAY_COUNT
         statutory_name = request.statutory_name
         status = request.applicable_status
 

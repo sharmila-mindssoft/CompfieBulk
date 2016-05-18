@@ -1,5 +1,6 @@
 from protocol import (clientmasters, core, login)
 from server.controller.corecontroller import process_user_menus
+from server.constants import RECORD_DISPLAY_COUNT
 from server import logger
 __all__ = [
     "process_client_master_requests"
@@ -428,7 +429,7 @@ def close_unit(db, request, session_user, client_id):
 ########################################################
 def get_audit_trails(db, request, session_user, client_id):
     from_count = request.record_count
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     from_date = request.from_date
     to_date = request.to_date
     user_id = request.user_id
