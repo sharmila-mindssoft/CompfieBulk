@@ -1404,11 +1404,16 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getAuditTrail(callback){
+    function getAuditTrail(fromDate, toDate, userId, formId, recordCount, callback){
         callerName = "general"
         var request = [
-            "GetAuditTrails",
-            {}
+            "GetAuditTrails", {
+                "from_date": fromDate,
+                "to_date": toDate,
+                "user_id": userId,
+                "form_id": formId,
+                "record_count": recordCount
+            }
         ];
         apiRequest(callerName, request, callback);
     }

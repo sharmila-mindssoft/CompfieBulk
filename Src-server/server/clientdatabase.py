@@ -1380,7 +1380,7 @@ class ClientDatabase(Database):
         form_ids = rows[0][0]
         forms = self.return_forms(client_id, form_ids)
         
-        if not self.is_primary_admin(session_user):
+        if not self.is_primary_admin(session_user) and not self.is_admin(session_user):
             unit_ids = self.get_user_unit_ids(session_user)
             query = "SELECT DISTINCT user_id FROM %s where unit_id in (%s)" % (
                 self.tblUserUnits, unit_ids
@@ -8370,7 +8370,10 @@ class ClientDatabase(Database):
 
     # login trace
 
-    def get_login_trace(self, client_id, session_user, from_count, to_count):
+    def get_login_trace(self, client_id, session_user, from_count, to_count, user_id):
+        user_condition = "1"
+        if user_id is not None:
+            user_condition = " user_id = '%d' " % user_id
         query = "SELECT al.created_on, al.action \
             FROM tbl_activity_log al \
             INNER JOIN \
@@ -8378,9 +8381,10 @@ class ClientDatabase(Database):
             al.user_id  = u.user_id \
             WHERE \
             al.form_id = 0 and al.action not like '%s%s%s'\
+            AND %s\
             order by al.created_on desc \
             limit %s, %s" % (
-                "%", "password", "%",
+                "%", "password", "%", user_condition,
                 from_count, to_count
             )
 

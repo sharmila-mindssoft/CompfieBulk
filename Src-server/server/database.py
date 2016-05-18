@@ -252,7 +252,6 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
-        print
         print query
         return self.select_all(query)
 
@@ -6178,45 +6177,58 @@ class KnowledgeDatabase(Database):
 #   Audit Trail
 #
 
-    def get_audit_trails(self, session_user):
-        user_ids = ""
-        form_ids = None
-        if session_user != 0:
-            column = "user_group_id"
-            condition = "user_id = '%d'" % session_user
-            rows = self.get_data(self.tblUsers, column, condition)
-            user_group_id = rows[0][0]
-
-            column = "form_category_id, form_ids"
-            condition = "user_group_id = '%d'" % user_group_id
-            rows = self.get_data(self.tblUserGroups, column, condition)
-            form_category_id = rows[0][0]
-            form_ids = rows[0][1]
-
-            form_category_ids = "%d, 4" % form_category_id
-            column = "group_concat(form_id)"
-            condition = "form_category_id in (%s) AND \
-            form_type_id != 3" % form_category_ids
-            rows = self.get_data(
-                self.tblForms, column, condition
-            )
+    def get_audit_trails(
+        self, session_user, from_count, to_count,
+        from_date, to_date, user_id, form_id
+    ):
+        form_column = "group_concat(form_id)"
+        form_condition = "form_type_id != 3"
+        rows = self.get_data(
+            self.tblForms, form_column, form_condition
+        )
+        forms = None
+        if rows:
             form_ids = rows[0][0]
+            forms = self.return_forms(form_ids)
 
-            column = "group_concat(user_group_id)"
-            condition = "form_category_id = '%d'" % form_category_id
-            rows = self.get_data(self.tblUserGroups, column, condition)
-            user_group_ids = rows[0][0]
-
-            column = "group_concat(user_id)"
-            condition = "user_group_id in (%s)" % user_group_ids
-            rows = self.get_data(self.tblUsers, column, condition)
+        users = None
+        user_ids = None
+        query = '''
+        SELECT group_concat(user_id) from tbl_users where user_group_id = (
+        SELECT user_group_id from tbl_users where user_id = '%d')''' % session_user
+        rows = self.select_all(query)
+        if rows:
             user_ids = rows[0][0]
-            condition = "user_id in (%s)"% user_ids
-        else:
-            condition = "1"
+        condition = '''user_id in (%s)''' % user_ids
+        users = self.return_users(condition)
+
+        from_date = self.string_to_datetime(from_date)
+        to_date = self.string_to_datetime(to_date)
+        where_qry = "1"
+        if from_date is not None and to_date is not None:
+            where_qry += " AND  created_on between DATE_SUB('%s', INTERVAL 1 DAY) \
+            AND DATE_ADD('%s', INTERVAL 1 DAY)" % (
+                from_date, to_date
+                
+            )
+        elif from_date is not None:
+            where_qry += " AND  created_on > DATE_SUB('%s', INTERVAL 1 DAY) " % (
+                from_date
+            )
+        elif to_date is not None:
+            where_qry += " AND created_on < DATE_ADD('%s', INTERVAL 1 DAY)" % (
+                to_date
+            )
+        if user_id is not None:
+            where_qry += " AND user_id = '%s'" % (user_id)
+        if form_id is not None:
+            where_qry += " AND form_id = '%s'" % (form_id)
+        
         columns = "user_id, form_id, action, created_on"
-        condition += " ORDER BY created_on DESC"
-        rows = self.get_data(self.tblActivityLog, columns, condition)
+        where_qry += " AND user_id in (%s)" % (user_ids)
+        where_qry += " ORDER BY created_on DESC"
+        where_qry += " LIMIT %d, %d" % (from_count, to_count)
+        rows = self.get_data(self.tblActivityLog, columns, where_qry)
         audit_trail_details = []
         for row in rows:
             user_id = row[0]
@@ -6224,13 +6236,6 @@ class KnowledgeDatabase(Database):
             action = row[2]
             date = self.datetime_to_string_time(row[3])
             audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
-        users = None
-        if session_user != 0:
-            condition = "user_id in (%s)" % user_ids
-            users = self.return_users(condition)
-        else:
-            users = self.return_users()
-        forms = self.return_forms(form_ids)
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
 
 #
@@ -6310,7 +6315,6 @@ class KnowledgeDatabase(Database):
             self.tblLegalEntities, self.tblDivisions, condition,
             int(start_count), to_count
         )
-        print query
         rows = self.select_all(query)
         columns_list = columns.replace(" ", "").split(",")
         unit_rows = self.convert_to_dict(rows, columns_list)
