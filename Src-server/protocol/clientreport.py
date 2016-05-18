@@ -1011,23 +1011,31 @@ class GetActivityLogReport(Request):
         }
 
 class GetLoginTrace(Request):
-    def __init__(self, record_count, user_id):
+    def __init__(self, record_count, user_id, from_date, to_date):
         self.record_count = record_count
         self.user_id = user_id
+        self.from_date = from_date
+        self.to_date = to_date
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["record_count", "user_id"])
+        data = parse_dictionary(data, ["record_count", "user_id", "from_date", "to_date"])
         record_count = data.get("record_count")
         record_count = parse_structure_UnsignedIntegerType_32(record_count)
         user_id = data.get("user_id")
         user_id = parse_structure_OptionalType_UnsignedIntegerType_32(user_id)
-        return GetLoginTrace(record_count, user_id)
+        from_date = data.get("from_date")
+        from_date = parse_structure_OptionalType_CustomTextType_20(from_date)
+        to_date = data.get("to_date")
+        to_date = parse_structure_OptionalType_CustomTextType_20(to_date)
+        return GetLoginTrace(record_count, user_id, from_date, to_date)
 
     def to_inner_structure(self):
         return {
             "record_count": to_structure_UnsignedIntegerType_32(self.record_count),
-            "user_id": to_structure_OptionalType_UnsignedIntegerType_32(self.user_id)
+            "user_id": to_structure_OptionalType_UnsignedIntegerType_32(self.user_id),
+            "from_date": to_structure_OptionalType_CustomTextType_20(self.from_date),
+            "to_date": to_structure_OptionalType_CustomTextType_20(self.to_date)
         }
 
 def _init_Request_class_map():

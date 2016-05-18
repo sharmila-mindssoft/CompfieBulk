@@ -51,7 +51,7 @@ function initialize(){
     function onFailure(error){
         console.log(error);
     }
-    client_mirror.getLoginTrace(sno, null,
+    client_mirror.getLoginTrace(sno, null, lastdate, todaydate,
         function (error, response){
             if(error == null){
                 onSuccess(response);
@@ -79,7 +79,7 @@ $('#pagination').click(function(){
         console.log(error);
         hideLoader();
     }
-    client_mirror.getLoginTrace(sno, null, 
+    client_mirror.getLoginTrace(sno, null, fromdate, todate,
     function (error, response) {
       if (error == null){
         onSuccess(response);
