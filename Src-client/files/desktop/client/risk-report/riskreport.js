@@ -245,6 +245,7 @@ function loadCountries(countriesList){
 function onDomainSuccess(val){
   $("#domainval").val(val[1]);
   $("#domain").val(val[0]);
+  $("#domainval").focus();
 }
 //load domain list in autocomplete textbox  
 $("#domainval").keyup(function(){
@@ -258,6 +259,7 @@ $("#domainval").keyup(function(){
 function onBusinessGroupSuccess(val){
   $("#businessgroupval").val(val[1]);
   $("#businessgroup").val(val[0]);
+  $("#businessgroupval").focus();
 }
 
 //load businessgroup form list in autocomplete text box  
@@ -272,6 +274,7 @@ $("#businessgroupval").keyup(function(){
 function onLegalEntitySuccess(val){
   $("#legalentityval").val(val[1]);
   $("#legalentity").val(val[0]);
+  $("#legalentityval").focus();
 }
 
 //load legalentity form list in autocomplete text box  
@@ -286,6 +289,7 @@ $("#legalentityval").keyup(function(){
 function onDivisionSuccess(val){
   $("#divisionval").val(val[1]);
   $("#division").val(val[0]);
+  $("#divisionval").focus();
 }
 
 //load division form list in autocomplete text box  
@@ -300,6 +304,7 @@ $("#divisionval").keyup(function(){
 function onUnitSuccess(val){
   $("#unitval").val(val[1]);
   $("#unit").val(val[0]);
+  $("#unitval").focus();
 }
 
 //load unit  form list in autocomplete text box  
@@ -314,6 +319,7 @@ $("#unitval").keyup(function(){
 function onStatutorySuccess(val){
   $("#actval").val(val[1]);
   $("#act").val(val[0].replace(/##/gi,'"'));
+  $("#actval").focus();
 }
 //load statutory list in autocomplete textbox  
 $("#actval").keyup(function(){
@@ -329,4 +335,5 @@ $("#actval").keyup(function(){
 $(function() {
   $(".grid-table-rpt").hide();
   getRiskReportFilters();
+  $("#country").focus();
 });

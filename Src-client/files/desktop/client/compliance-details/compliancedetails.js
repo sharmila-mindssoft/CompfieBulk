@@ -320,6 +320,7 @@ function loadCountries(countriesList){
 function onDomainSuccess(val){
   $("#domainval").val(val[1]);
   $("#domain").val(val[0]);
+  $("#domainval").focus();
 }
 //load domain list in autocomplete textbox
 $("#domainval").keyup(function(){
@@ -333,6 +334,7 @@ $("#domainval").keyup(function(){
 function onStatutorySuccess(val){
   $("#actval").val(val[1]);
   $("#act").val(val[0].replace(/##/gi,'"'));
+  $("#actval").focus();
 }
 //load statutory list in autocomplete textbox
 $("#actval").keyup(function(){
@@ -346,6 +348,7 @@ $("#actval").keyup(function(){
 function onUnitSuccess(val){
   $("#unitval").val(val[1]);
   $("#unit").val(val[0]);
+  $("#unitval").focus();
 }
 
 //load unit  form list in autocomplete text box
@@ -360,6 +363,7 @@ $("#unitval").keyup(function(){
 function onComplianceTaskSuccess(val){
   $("#compliancetaskval").val(val[1]);
   $("#compliancetask").val(val[0]);
+  $("#compliancetaskval").focus();
 }
 
 //load compliancetask form list in autocomplete text box
@@ -374,6 +378,7 @@ $("#compliancetaskval").keyup(function(){
 function onUserSuccess(val){
   $("#assigneeval").val(val[1]);
   $("#assignee").val(val[0]);
+  $("#assigneeval").focus();
 }
 
 //load user list in autocomplete text box
@@ -383,11 +388,11 @@ $("#assigneeval").keyup(function(){
     onUserSuccess(val)
   })
 });
-
 //Autocomplete Script ends
 
 //initialization
 $(function() {
   $(".grid-table-rpt").hide();
   getComplianceDetailsReportFilters();
+  $("#country").focus();
 });

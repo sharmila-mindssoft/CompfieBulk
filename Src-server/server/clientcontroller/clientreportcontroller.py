@@ -289,6 +289,7 @@ def get_compliancedetails_report(db, request, session_user, client_id):
         to_count = 500
 
         compliance_details_list, total = db.report_compliance_details(
+            client_id,
             country_id, domain_id, statutory_id, unit_id, compliance_id,
             assignee_id, from_date, to_date, compliance_status, session_user,
             from_count, to_count

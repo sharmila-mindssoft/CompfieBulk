@@ -12,7 +12,8 @@ import logger
 from types import *
 from protocol import (
     core, knowledgereport, technomasters,
-    technotransactions, technoreports, general
+    technotransactions, technoreports, general,
+    knowledgemaster
 )
 from distribution.protocol import (
     Company, IPAddress
@@ -251,6 +252,8 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
+        print
+        print query
         return self.select_all(query)
 
     ########################################################
@@ -1539,9 +1542,35 @@ class KnowledgeDatabase(Database):
                     return name
         return None
 
+    def delete_grography_level(self, level_id):
+        q = "select count(*) from tbl_geographies where level_id = %s" % (level_id)
+        row = self.select_one(q)
+        if row[0] > 0 :
+            print "if"
+            return True
+        else :
+            print "else"
+            self.execute("delete from tbl_geographies where level_id = %s " % (level_id))
+            self.execute("delete from tbl_geography_levels where level_id = %s " % (level_id))
+            return False
+
     def save_geography_levels(self, country_id, levels, user_id):
         table_name = "tbl_geography_levels"
         created_on = self.get_date_time()
+        newlist = sorted(levels, key=lambda k: k.level_position, reverse=True)
+        print newlist
+        result = False
+        for n in newlist :
+            if n.is_remove is True :
+                result = self.delete_grography_level(n.level_id)
+                print result
+                if result :
+                    break
+                else :
+                    continue
+        if result :
+            return knowledgemaster.LevelShouldNotbeEmpty(n.level_position)
+
         for level in levels :
             name = level.level_name
             position = level.level_position
@@ -1569,7 +1598,7 @@ class KnowledgeDatabase(Database):
                 ):
                     action = "Geography levels updated"
                     self.save_activity(user_id, 5, action)
-        return True
+        return knowledgemaster.SaveGeographyLevelSuccess()
 
     def get_geographies(self, user_id=None, country_id=None) :
         query = "SELECT distinct t1.geography_id, \
@@ -4911,12 +4940,12 @@ class KnowledgeDatabase(Database):
         result = result[0]
         unit_code = self.get_next_unit_auto_gen_no(client_id)
         unit_columns = ["client_id", "unit_id", "is_active", "legal_entity_id", \
-        "country_id", "geography_id", "industry_id", "unit_code", "unit_name", 
+        "country_id", "geography_id", "industry_id", "unit_code", "unit_name",
         "address", "postal_code", "domain_ids"]
         values = [
             client_id, new_unit_id, 1, result["legal_entity_id"],
             result["country_id"], result["geography_id"],
-            result["industry_id"],unit_code, result["unit_name"], 
+            result["industry_id"],unit_code, result["unit_name"],
             result["address"], result["postal_code"], result["domain_ids"]
         ]
         if result["business_group_id"] not in ["Null", "None", None, ""]:

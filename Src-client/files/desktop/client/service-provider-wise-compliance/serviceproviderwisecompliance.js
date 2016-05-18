@@ -241,6 +241,7 @@ function loadCountries(countriesList){
 function onDomainSuccess(val){
   $("#domainval").val(val[1]);
   $("#domain").val(val[0]);
+  $("#domainval").focus();
 }
 //load domain list in autocomplete textbox  
 $("#domainval").keyup(function(){
@@ -254,6 +255,7 @@ $("#domainval").keyup(function(){
 function onStatutorySuccess(val){
   $("#actval").val(val[1]);
   $("#act").val(val[0].replace(/##/gi,'"'));
+  $("#actval").focus();
 }
 //load statutory list in autocomplete textbox  
 $("#actval").keyup(function(){
@@ -267,6 +269,7 @@ $("#actval").keyup(function(){
 function onUnitSuccess(val){
   $("#unitval").val(val[1]);
   $("#unit").val(val[0]);
+  $("#unitval").focus();
 }
 
 //load unit  form list in autocomplete text box  
@@ -296,7 +299,7 @@ $("#serviceproviderval").keyup(function(){
               str += '<li id="'+suggestions[i][0]+'"onclick="activate_serviceprovider(this)">'+suggestions[i][1]+'</li>';
     }
     $('#ulist_serviceprovider').append(str);
-    $("#serviceprovider").val('');
+    //$("#serviceprovider").val('');
     }else{
       $("#serviceprovider").val('');
       $("#autocomplete_serviceprovider").hide();
@@ -308,6 +311,7 @@ function activate_serviceprovider (element) {
   var checkval = $(element).attr('id');
   $("#serviceproviderval").val(checkname);
   $("#serviceprovider").val(checkval);
+  $("#serviceproviderval").focus();
 }
 //Autocomplete Script ends
 
@@ -315,6 +319,7 @@ function activate_serviceprovider (element) {
 $(function() {
   $(".grid-table-rpt").hide();
   getServiceProviderReportFilters();
+  $("#country").focus();
 });
 
 $( document ).tooltip({

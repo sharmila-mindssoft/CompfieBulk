@@ -21,6 +21,7 @@ $("#userid").val('');
 domainIds = [];
 countryIds = []
 displayMessage('');
+$("#employeename").focus();
 });
 
 // Edit process
@@ -366,7 +367,6 @@ function activate(element){
 //load country list in multi select box
 $("#countryselected").click(function(){
 	$("#selectboxview-country").show();
-	
 	var countries = countriesList;
 	$('#ulist-country').empty();
 	var str='';
@@ -400,6 +400,7 @@ function activatecountry(element){
 function onUserGroupSuccess(val){
   $("#usergroupval").val(val[1]);
   $("#usergroup").val(val[0]);
+  $("#usergroupval").focus();
 }
 
 //load usergroup list in autocomplete text box  

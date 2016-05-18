@@ -589,6 +589,21 @@ class TransactionExists(Response):
         return {
         }
 
+class TransactionJobId(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["job_id"])
+        job_id = data.get("job_id")
+        job_id = parse_structure_UnsignedIntegerType_32(job_id)
+        return TransactionJobId(job_id)
+
+    def to_inner_structure(self):
+        return {
+            "job_id": to_structure_UnsignedIntegerType_32(self.job_id)
+        }
 
 def _init_Response_class_map():
     classes = [
@@ -596,7 +611,7 @@ def _init_Response_class_map():
         GetDomainsSuccess, SaveDomainSuccess, DomainNameAlreadyExists,
         UpdateDomainSuccess, InvalidDomainId, ChangeDomainStatusSuccess,
         GetNotificationsSuccess, UpdateNotificationStatusSuccess, GetAuditTrailSuccess,
-        MasterDataNotAvailableForClient, TransactionExists
+        MasterDataNotAvailableForClient, TransactionExists, TransactionJobId
     ]
     class_map = {}
     for c in classes:

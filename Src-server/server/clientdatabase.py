@@ -2547,9 +2547,9 @@ class ClientDatabase(Database):
         INNER JOIN %s tu ON (tch.unit_id = tu.unit_id) \
         INNER JOIN %s tus ON (tus.user_id = tch.completed_by) \
         INNER JOIN %s td ON (td.domain_id = tc.domain_id) \
-        WHERE (completion_date IS NOT NULL AND completion_date != 0 ) \
-        AND (completed_on IS NOT NULL AND completed_on != 0) \
-        AND (approve_status IS NULL OR approve_status = 0)  \
+        WHERE IFNULL(completion_date, 0) != 0  \
+        AND IFNULL(completed_on, 0) != 0  \
+        AND IFNULL(approve_status, 0) = 0 \
         AND (approved_by IN (%s) OR concurred_by = '%d') \
         AND is_closed  = 0 AND %s\
         ORDER BY completed_by, tch.due_date ASC LIMIT %d, %d" % (
@@ -5740,7 +5740,7 @@ class ClientDatabase(Database):
         return qry_where
 
     def report_compliance_details(
-        self, country_id, domain_id, statutory_id,
+        self, client_id, country_id, domain_id, statutory_id,
         unit_id, compliance_id, assignee,
         from_date, to_date, compliance_status,
         session_user, from_count, to_count
@@ -5762,9 +5762,9 @@ class ClientDatabase(Database):
             qry_where, from_count, to_count
         )
 
-        return self.return_cmopliance_details_report(compliance_status, result, total)
+        return self.return_cmopliance_details_report(client_id, compliance_status, result, total)
 
-    def return_cmopliance_details_report(self, compliance_status, result, total):
+    def return_cmopliance_details_report(self, client_id, compliance_status, result, total):
         unitWise = {}
         for r in result :
             uname = r["unit_code"] + ' - ' + r["unit_name"]
@@ -5787,6 +5787,12 @@ class ClientDatabase(Database):
                 validity_date = self.datetime_to_string(r["validity_date"])
 
             documents = [x for x in r["documents"].split(",")] if r["documents"] != None else None
+            doc_urls = []
+            if documents is not None :
+                for d in documents :
+                    if d != "" :
+                        t = "%s/%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, str(client_id), str(d))
+                        doc_urls.append(t)
 
             completion_date = None
             if(r["completion_date"] != None):
@@ -5794,27 +5800,10 @@ class ClientDatabase(Database):
 
             remarks = self.calculate_ageing(r["due_date"], r["fname"], r["completion_date"])[1]
 
-            # if(compliance_status == 'Complied'):
-            #         c_status = 'On Time'
-            # elif(compliance_status == 'Delayed Compliance'):
-            #     c_status = 'Delayed'
-            # elif(compliance_status == 'Inprogress'):
-            #     c_status = 'days left'
-            # elif(compliance_status == 'Not Complied'):
-            #     c_status = 'Overdue'
-            # else:
-            #     c_status = ''
-
-            # if int(r["status"]) == 0 and "Delayed" in remarks :
-            #     remarks = remarks.replace("Delayed", "Overdue")
-
-            # if compliance_status is not None and c_status not in remarks :
-            #     continue
-
             compliance = clientreport.ComplianceDetails(
                 compliance_name, assignee, due_date,
                 completion_date, validity_date,
-                documents, remarks
+                doc_urls, remarks
             )
             unit_compliance = unitWise.get(uname)
             if unit_compliance is None :
@@ -6906,18 +6895,15 @@ class ClientDatabase(Database):
                         return r.days, compliance_status
         return 0, compliance_status
 
-
     def get_inprogress_count(self, session_user):
         other_compliance_condition = "completed_by='{}' AND \
-        (due_date >= current_date() \
-        AND due_date is not null and due_date != 0 and due_date != '')\
-        AND (completed_on is null or completed_on = 0)".format(
+        IFNULL(due_date, 0) >= current_date() \
+        AND IFNULL(completed_on, 0) = 0".format(
             session_user
         )
         on_occurrence_condition = "completed_by='{}' AND \
-        (due_date >= now() \
-        AND due_date is not null and due_date != 0 and due_date != '')\
-        AND (completed_on is null or completed_on = 0)".format(
+        IFNULL(due_date, 0) >= now() \
+        AND IFNULL(completed_on, 0) = 0".format(
             session_user
         )
         query = "SELECT count(*) FROM %s ch INNER JOIN \
@@ -6943,16 +6929,14 @@ class ClientDatabase(Database):
         )
         condition = "completed_by ='%d'" % (session_user)
         other_compliance_condition = " %s AND frequency_id != 4 AND \
-        (due_date < current_date() AND \
-        due_date is not null AND due_date != 0 AND due_date != '') AND \
-        (completed_on is null or completed_on = 0)" % (
+        IFNULL(due_date, 0) < current_date() AND \
+        IFNULL(completed_on, 0) = 0 " % (
             condition
         )
 
         on_occurrence_condition = " %s AND frequency_id = 4 AND \
-        (due_date < now() AND \
-        due_date is not null AND due_date != 0 AND due_date != '') AND \
-        (completed_on is null or completed_on = 0)" % (
+        IFNULL(due_date, 0) < now() AND \
+        IFNULL(completed_on, 0) = 0 " % (
             condition
         )
         other_compliance_count = self.select_all("%s %s" % (
@@ -6968,7 +6952,8 @@ class ClientDatabase(Database):
             "ch.validity_date, ch.next_due_date, document_name, compliance_task, " + \
             "compliance_description, format_file, unit_code, unit_name," + \
             "address, (select domain_name from %s d \
-            where d.domain_id = c.domain_id) as domain_name, frequency, ch.remarks,\
+            where d.domain_id = c.domain_id) as domain_name, \
+            (select frequency from tbl_compliance_frequency where frequency_id = c.frequency_id), ch.remarks,\
             ch.compliance_id, duration_type_id" % (
                 self.tblDomains
             )
@@ -6981,16 +6966,16 @@ class ClientDatabase(Database):
             "ch.compliance_id = c.compliance_id",
             "ch.unit_id = u.unit_id",
             "c.frequency_id = cf.frequency_id",
-            "ch.compliance_id = ac.compliance_id"
+            "ac.unit_id = ch.unit_id AND ac.compliance_id = ch.compliance_id"
         ]
         join_type = "inner join"
         where_condition = "ch.completed_by='%d' and is_closed = 0 and ac.is_active = 1" % (
             session_user)
-        where_condition += " and ((ch.completed_on is null or ch.completed_on = 0) \
-        and (ch.approve_status is null or ch.approve_status = 0)) and \
-        (ch.due_date is not null and ch.due_date != 0 and ch.due_date != '')  \
-        ORDER BY due_date ASC LIMIT %d, %d" % (
-            int(current_start_count), to_count
+        where_condition += " and IFNULL(ch.completed_on, 0) = 0 \
+            and IFNULL(ch.approve_status, 0) = 0 \
+            and IFNULL(ch.due_date, 0) != 0  "
+        where_condition += "ORDER BY due_date ASC LIMIT %s, %s " % (
+            current_start_count, to_count
         )
 
         current_compliances_row = self.get_data_from_multiple_tables(
