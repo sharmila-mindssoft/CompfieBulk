@@ -227,7 +227,7 @@ function load_secondwizard(){
         if(frequency != 'On Occurrence'){
           if(triggerdate == ''){
           $('.triggerbefore', clone2).html(' <input type="text" value="" class="input-box trigger" id="triggerdate'+statutoriesCount+'" maxlength="3"/>');
-          $('.duedate', clone2).html('<input type="text" value="" class="input-box" id="duedate'+statutoriesCount+'" />');
+          $('.duedate', clone2).html('<input type="text" value="" class="input-box" readonly="readonly" id="duedate'+statutoriesCount+'" />');
           }
           else{
             $('.triggerbefore', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/delete.png" width="12"></span>'+triggerdate +

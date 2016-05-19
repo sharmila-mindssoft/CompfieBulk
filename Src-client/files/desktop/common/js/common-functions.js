@@ -17,7 +17,35 @@ function getMonth_IntegettoString(intMonth){
 }
 
 //country autocomplete function
+//var chosen = "";
 function getCountryAutocomplete(textval, listval, callback){
+  
+  /*if (e.keyCode == 40) {
+      if(chosen === "") {
+          chosen = 0;
+      } else if((chosen+1) < $('#ac-country li').length) {
+          chosen++;
+      }
+      $('#ac-country li').removeClass('auto-selected');
+      $('#ac-country li:eq('+chosen+')').addClass('auto-selected');
+      return false;
+  }
+  if (e.keyCode == 38) {
+      if(chosen === "") {
+          chosen = 0;
+      } else if(chosen > 0) {
+          chosen--;
+      }
+      $('#ac-country li').removeClass('auto-selected');
+      $('#ac-country li:eq('+chosen+')').addClass('auto-selected');
+      return false;
+  }
+  
+  if (e.keyCode == 13) {
+    activate_text_arrow('country_auto',callback);
+    return false;
+  }*/
+
   $("#ac-country").show(); 
   var countries = listval;
   var suggestions = [];
@@ -28,12 +56,12 @@ function getCountryAutocomplete(textval, listval, callback){
     }
     var str='';
     for(var i in suggestions){
+      //str += '<li class="country_auto" id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
       str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-country ul').append(str);
     //$("#country").val('');
   }else{
-    alert('ent')
     $("#country").val('');
     $(".ac-textbox").hide();
   }
@@ -565,6 +593,7 @@ function getClientDivisionAutocomplete(textval, listval, callback){
     $(".ac-textbox").hide();
   }
 }
+
 //autocomplete function callback
 function activate_text (element,callback) {
   $(".ac-textbox").hide();
@@ -573,3 +602,12 @@ function activate_text (element,callback) {
   var ac_result = [ac_id,ac_name];
   callback(ac_result);
 }
+
+/*function activate_text_arrow (clsname,callback) {
+  $(".ac-textbox").hide();
+  var cls = '.'+clsname+'.auto-selected';
+  var ac_id = $(cls).attr('id');
+  var ac_name = $('.country_auto.auto-selected').text().trim();
+  var ac_result = [ac_id,ac_name];
+  callback(ac_result);
+}*/
