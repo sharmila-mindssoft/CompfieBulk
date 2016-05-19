@@ -86,18 +86,40 @@ def process_get_upcoming_compliance_detail(db, request, session_user, client_id)
 ########################################################
 # To validate and update the compliance details
 ########################################################
-def process_update_compliance_detail(db, request, session_user, client_id):
-    result = db.update_compliances(
-        request.compliance_history_id, request.documents,
-        request.completion_date, request.validity_date, request.next_due_date,
-        request.remarks, client_id, session_user
-    )
-    if result is True:
-        return clientuser.UpdateComplianceDetailSuccess()
-    elif result == "InvalidUser":
-        return clientuser.InvalidUser()
+def is_unsupported_file(documents):
+    for doc in documents:
+        file_name_parts = doc.file_name.split('.')
+        name = doc.file_name.split('.')[0]
+        exten = doc.file_name.split('.')[1]
+        if exten in ["exe", "htm", "html", "xhtml"]:
+            return True
+        else:
+            continue
+
+def validate_documents(documents):
+    if documents is not None:
+        if is_unsupported_file(documents):
+            return True
+        else:
+            return False
     else:
-        return clientuser.NextDueDateMustBeWithIn90DaysBeforeValidityDate()
+        return False
+
+def process_update_compliance_detail(db, request, session_user, client_id):
+    if validate_documents(request.documents):
+        return clientuser.UnSupportedFile()
+    else:
+        result = db.update_compliances(
+            request.compliance_history_id, request.documents,
+            request.completion_date, request.validity_date, request.next_due_date,
+            request.remarks, client_id, session_user
+        )
+        if result is True:
+            return clientuser.UpdateComplianceDetailSuccess()
+        elif result == "InvalidUser":
+            return clientuser.InvalidUser()
+        else:
+            return clientuser.NextDueDateMustBeWithIn90DaysBeforeValidityDate()
 
 ########################################################
 # To get the list of all on occurrence compliances

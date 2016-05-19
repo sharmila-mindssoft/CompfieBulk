@@ -88,7 +88,7 @@
         <div class="input-row"><input type="hidden" id="client-user-id" value="">
           <div class="field-label">User Type:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <select class="input-box" id="usertype" >
+            <select class="input-box" id="usertype" tabindex="1" autofocus="autofocus" >
              <option value="">Select</option>
              <option>Inhouse</option><option>Service Provider</option></select>
           </div>
@@ -96,7 +96,7 @@
            <div class="input-row service_provider">
           <div class="field-label">Service Provider:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="serviceproviderval" value=""  onkeyup="loadauto_serviceprovider(this.value)">
+            <input type="text" class="input-box icon-autocomplete" id="serviceproviderval" tabindex="2" value=""  onkeyup="loadauto_serviceprovider(this.value)">
             <input type="hidden" id="serviceprovider">
             <div id="serviceproviderview" class="ac-textbox" style="display:none;"  onclick="hidemenuserviceprovider();">
               <ul style="width:85%;"></ul>
@@ -106,7 +106,7 @@
             <div class="input-row seatingunit">
           <div class="field-label">Seating Unit:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="seatingunitval" value="">
+            <input type="text" class="input-box icon-autocomplete" id="seatingunitval" tabindex="3" value="">
             <input type="hidden" id="seatingunit">
             <div id="ac-unit" class="ac-textbox default-display-none">
               <ul style="width:85%;"></ul>
@@ -115,22 +115,22 @@
         </div>
         <div class="input-row">
           <div class="field-label">Employee Name:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" class="input-box" id="employee-name" value="" maxlength="50"></div>
+          <div class="field-input"><input type="text" class="input-box" id="employee-name" tabindex="4" value="" maxlength="50"></div>
         </div>
         <div class="input-row">
           <div class="field-label">Employee ID:<span class="mandatory star">*</span></div>
-          <div class="field-input"><input type="text" class="input-box" id="employee-id" value="" maxlength="50"></div>
+          <div class="field-input"><input type="text" class="input-box" id="employee-id" value="" tabindex="5" maxlength="50"></div>
         </div>
       </div>
       <div class="input-row-right">
          <div class="input-row">
           <div class="field-label">Contact No</div>
-          <div class="field-input"><input type="text" class="input-box countrycode" id="country-code" value="" maxlength="4"> <input type="text" class="input-box areacode" value="" id="area-code" maxlength="4"> <input type="text" class="input-box mobile" id="mobile-number" value="" maxlength="10"></div>
+          <div class="field-input"><input type="text" class="input-box countrycode" id="country-code" tabindex="6" value="" maxlength="4"> <input type="text" class="input-box areacode" value="" id="area-code" maxlength="4" tabindex="7"> <input type="text" class="input-box mobile" id="mobile-number" value="" maxlength="10" tabindex="8"></div>
         </div>
         <div class="input-row">
           <div class="field-label">User Group:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="usergroupval" value="">
+            <input type="text" class="input-box icon-autocomplete" id="usergroupval" tabindex="9" value="">
             <input type="hidden" id="usergroup">
             <div id="ac-usergroup" class="ac-textbox default-display-none" >
               <ul style="width:85%;"></ul>
@@ -140,7 +140,7 @@
         <div class="input-row">
           <div class="field-label">User Level:<span class="mandatory">*</span></div>
           <div class="field-input">
-           <select class="input-box" id="user-level">
+           <select class="input-box" id="user-level" tabindex="10">
             <option value="">Select</option>
             <option value="1">Level 1</option>
             <option value="2">Level 2</option>
@@ -161,7 +161,7 @@
       <div class="input-row" style="padding-bottom:0px;">
         <div class="field-label">Email ID:<span class="mandatory">*</span></div>
         <div class="field-input" style="width:61%;">
-          <input type="text" class="input-box" id="email-id" value="" style="width:77%;"><br><span style="font-size:10px;">[&#9658;This will be used as the username for user account.<br>&#9658;Password will be auto-generated]</span>
+          <input type="text" class="input-box" id="email-id" value="" tabindex="11" style="width:77%;"><br><span style="font-size:10px;">[&#9658;This will be used as the username for user account.<br>&#9658;Password will be auto-generated]</span>
         </div>
       </div>
     </div>
@@ -171,7 +171,7 @@
         <div class="field-label">Country:<span class="mandatory">*</span></div>
         <div class="field-input">
           <input type="hidden" id="country">
-          <input type="text" class="input-box icon-autocomplete" id="countryselected" value="" readonly="readonly" onclick="loadautocountry()">
+          <input type="text" class="input-box icon-autocomplete" id="countryselected"  tabindex="12" value="" readonly="readonly" onclick="loadautocountry()">
           <div id="selectboxview-country" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenu();">
             <ul style="width:85%;"></ul>
           </div>
@@ -181,7 +181,7 @@
       <div class="field-label">Business Group:</div>
       <div class="field-input">
            <input type="hidden" id="business-groups">
-          <input type="text" class="input-box icon-autocomplete" id="bgroupsselected" value="" readonly="readonly" onclick="loadautobusinessgroups()">
+          <input type="text" class="input-box icon-autocomplete" id="bgroupsselected" tabindex="13" value="" readonly="readonly" onclick="loadautobusinessgroups()">
           <div id="selectboxview-businessgroup" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenubgroup();">
             <ul style="width:85%;"></ul>
           </div>
@@ -191,7 +191,7 @@
       <div class="field-label">Legal Entity:<span class="mandatory">*</span></div>
       <div class="field-input">
         <input type="hidden" id="legal-entities">
-        <input type="text" class="input-box icon-autocomplete" id="legal-entities-selected" value="" readonly="readonly" onclick="loadautolegalentities()">
+        <input type="text" class="input-box icon-autocomplete" id="legal-entities-selected"  tabindex="14" value="" readonly="readonly" onclick="loadautolegalentities()">
         <div id="selectboxview-legal-entities" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenulegalentities();">
           <ul style="width:85%;"></ul>
         </div>
@@ -203,7 +203,7 @@
       <div class="field-label">Division:</div>
       <div class="field-input">
         <input type="hidden" id="division">
-        <input type="text" class="input-box icon-autocomplete" id="division-selected" value="" readonly="readonly" onclick="loadautodivision()">
+        <input type="text" class="input-box icon-autocomplete" id="division-selected" value="" tabindex="15" readonly="readonly" onclick="loadautodivision()">
         <div id="selectboxview-division" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenudivision();">
           <ul style="width:85%;"></ul>
         </div>
@@ -213,7 +213,7 @@
         <div class="field-label">Domain:<span class="mandatory">*</span></div>
         <div class="field-input">
           <input type="hidden" id="domains">
-          <input type="text" class="input-box icon-autocomplete" id="domainsselected" value="" readonly="readonly" onclick="loadautodomains()">
+          <input type="text" class="input-box icon-autocomplete" id="domainsselected" value="" tabindex="16" readonly="readonly" onclick="loadautodomains()">
           <div id="selectboxview-domains" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenudomains();">
             <ul style="width:85%;"></ul>
           </div>
@@ -230,7 +230,7 @@
         <div id="unitList">
           <ul style="height:183px; font-size:1em;">
             <li>
-              <input type="text" class="filter-text-box" id="search-units">
+              <input type="text" class="filter-text-box" id="search-units" tabindex="17">
             </li>
           </ul>
           </div>

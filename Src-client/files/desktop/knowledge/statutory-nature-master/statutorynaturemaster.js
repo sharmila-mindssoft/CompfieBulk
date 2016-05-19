@@ -4,6 +4,8 @@ $("#btn-statutory-nature-add").click(function(){
     $("#statutory-nature-name").val('');
     $("#statutory-nature-id").val('');
     displayMessage('');
+    $("#statutory-nature-name").focus();
+
 });
 $("#btn-statutory-nature-cancel").click(function(){
     $("#statutory-nature-add").hide();
@@ -132,6 +134,7 @@ function statNature_edit(statNatureId, statNatureName){
     $("#statutory-nature-view").hide();
     $("#statutory-nature-name").val(statNatureName.replace(/##/gi,'"'));
     $("#statutory-nature-id").val(statNatureId);
+    $("#statutory-nature-name").focus();
 }
 function statNature_active(statNatureId, isActive){
     var msgstatus='deactivate';

@@ -11,6 +11,7 @@ function displayMessage(message) {
 }
 function initialize(){
     $('#groupsval').val('');
+    $("#groupsval").focus();
 	function onSuccess(data){
 		groupList = data['group_companies'];
 		profiles = data['profiles'];

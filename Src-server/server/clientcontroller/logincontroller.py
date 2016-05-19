@@ -46,6 +46,11 @@ def process_login_request(request, db, company_id, session_user_ip) :
         result = process_logout(db, request)
         logger.logClientApi("Logout", "end")
 
+    elif type(request) is login.UpdateUserProfile:
+        logger.logClientApi("Logout", "begin")
+        result = process_update_profile(db, request)
+        logger.logClientApi("Logout", "end")        
+
     return result
 
 def process_login(db, request, client_id, session_user_ip):
@@ -274,3 +279,11 @@ def process_change_password(db, request):
 def process_logout(db, request):
     # save logout time
     return login.LogoutSuccess()
+
+def process_update_profile(db, request):
+    client_info = request.session_token.split("-")
+    session_token = "{}-{}".format(client_info[0],client_info[1])
+    client_id = int(client_info[0])
+    session_user = db.validate_session_token(client_id, session_token)
+    db.update_profile(request.contact_no, request.address, session_user)
+    return login.UpdateUserProfileSuccess(request.contact_no, request.address)

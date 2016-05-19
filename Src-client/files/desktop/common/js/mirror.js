@@ -1109,6 +1109,17 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function getNextUnitCode(client_id, callback){
+        callerName = "techno"
+        var request = [
+            "GetNextUnitCode",
+            {
+                "client_id" : client_id
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
     function getBusinessGroupDict(bgId, bgName){
         if (bgName == null || bgName == '' ){
             return null
@@ -1393,11 +1404,16 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getAuditTrail(callback){
+    function getAuditTrail(fromDate, toDate, userId, formId, recordCount, callback){
         callerName = "general"
         var request = [
-            "GetAuditTrails",
-            {}
+            "GetAuditTrails", {
+                "from_date": fromDate,
+                "to_date": toDate,
+                "user_id": userId,
+                "form_id": formId,
+                "record_count": recordCount
+            }
         ];
         apiRequest(callerName, request, callback);
     }
@@ -1594,7 +1610,8 @@ function initMirror() {
         updateUserProfile: updateUserProfile,
         getNotifications: getNotifications,
         updateNotificationStatus: updateNotificationStatus,
-        createNewAdmin: createNewAdmin
+        createNewAdmin: createNewAdmin,
+        getNextUnitCode: getNextUnitCode
     }
 }
 

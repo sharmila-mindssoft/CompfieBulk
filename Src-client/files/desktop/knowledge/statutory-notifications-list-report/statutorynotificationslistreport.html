@@ -10,7 +10,7 @@
 		  <div class="field-label">Country<span class="mandatory">*</span>:</div>
 		  <div class="field-input">
 		  <input type="hidden" id="country" value="">
-			<input type="text" class="input-box icon-autocomplete" id="countryval" value="" >
+			<input type="text" class="input-box icon-autocomplete" id="countryval" value="" autofocus="autofocus"  tabindex="1">
 			<div id="ac-country" class="ac-textbox default-display-none">
 			  <ul style="width:85%;"></ul>
 			</div>
@@ -20,7 +20,7 @@
 		  <div class="field-label">Domain<span class="mandatory">*</span>:</div>
 		  <div class="field-input">
 			<input type="hidden" id="domain" value="">
-			<input type="text" class="input-box icon-autocomplete" id="domainval" value="" >
+			<input type="text" class="input-box icon-autocomplete" id="domainval" value="" tabindex="2">
 			<div id="ac-domain" class="ac-textbox default-display-none" >
 			  <ul style="width:85%;"></ul>
 			</div>
@@ -29,7 +29,7 @@
 		 <div class="input-row">
 		  <div class="field-label">Act<span class="mandatory"></span>:</div>
 		  <div class="field-input">
-			<input type="text" class="input-box icon-autocomplete" id="level1val">
+			<input type="text" class="input-box icon-autocomplete" id="level1val" tabindex="3">
 			<input type="hidden" id="level1id">
 			<div id="ac-statutory" class="ac-textbox default-display-none">
 			  <ul style="width:85%;"></ul>
@@ -41,14 +41,14 @@
 		  <div class="input-row">
 		  <div class="field-label">From:</div>
 		  <div class="field-input">
-			<input type="text" class="input-box" id="from-date" value="" placeholder="From Date" />
+			<input type="text" class="input-box" id="from-date" value="" placeholder="From Date" tabindex="4" />
 		  </div>
 		</div>
 
 	   <div class="input-row">
 		  <div class="field-label">To:</div>
 		  <div class="field-input">
-		   <input type="text" class="input-box" id="to-date" value="" placeholder="To Date" />
+		   <input type="text" class="input-box" id="to-date" value="" placeholder="To Date" tabindex="5" />
 		  </div>
 		</div>
 	  </div>

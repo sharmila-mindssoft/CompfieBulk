@@ -64,6 +64,7 @@ function initialize(){
         level1List = data['level_1_statutories'];
         applicableStatusList = data['applicable_status'];
         loadApplicableStatus(applicableStatusList);
+        $("#countryval").focus();
     }
     function onFailure(error){
         console.log(error);

@@ -252,8 +252,6 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
-        print
-        print query
         return self.select_all(query)
 
     ########################################################
@@ -4085,6 +4083,42 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return self.return_group_companies_with_max_unit_count(result)
 
+    def get_next_auto_gen_number(self, group_name=None, client_id=None):
+        if group_name is None:
+            columns = "group_name"
+            condition = "client_id = '%d'" % client_id
+            rows = self.get_data(self.tblClientGroups, columns, condition)
+            if rows:
+                group_name = rows[0][0]
+
+        columns = "count(*)"
+        condition = "client_id = '%d'" % client_id
+        rows = self.get_data(self.tblUnits, columns, condition)
+        if rows:
+            no_of_units = rows[0][0]
+        group_name = group_name.replace(" ", "")
+        unit_code_start_letters = group_name[:2].upper()
+
+        columns = "TRIM(LEADING '%s' FROM unit_code)" % unit_code_start_letters
+        condition = "unit_code like binary '%s%s' and CHAR_LENGTH(unit_code) = 7 and client_id='%d'" % (
+            unit_code_start_letters, "%", client_id
+        )
+        rows = self.get_data(self.tblUnits, columns, condition)
+        auto_generated_unit_codes = []
+        for row in rows:
+            try:
+                auto_generated_unit_codes.append(int(row[0]))
+            except Exception, ex:
+                continue
+        next_auto_gen_no = 1
+        if len(auto_generated_unit_codes) > 0:
+            existing_max_unit_code = max(auto_generated_unit_codes)
+            if existing_max_unit_code == no_of_units:
+                next_auto_gen_no = no_of_units + 1
+            else:
+                next_auto_gen_no = existing_max_unit_code + 1
+        return next_auto_gen_no
+
     def return_group_companies_with_max_unit_count(self, group_companies):
         results = []
         for group_company in group_companies :
@@ -4092,33 +4126,9 @@ class KnowledgeDatabase(Database):
             countries = None if client_countries is None else [int(x) for x in client_countries.split(",")]
             client_domains = self.get_client_domains(group_company["client_id"])
             domains = None if client_domains is None else [int(x) for x in client_domains.split(",")]
-
-            columns = "count(*)"
-            condition = "client_id = '%d'" % group_company["client_id"]
-            rows = self.get_data(self.tblUnits, columns, condition)
-            no_of_units = rows[0][0]
-            group_name = group_company["group_name"].replace(" ", "")
-            unit_code_start_letters = group_name[:2].upper()
-
-            columns = "TRIM(LEADING '%s' FROM unit_code)" % unit_code_start_letters
-            condition = "unit_code like binary '%s%s' and CHAR_LENGTH(unit_code) = 7 and client_id='%d'" % (
-                unit_code_start_letters, "%", group_company["client_id"]
+            next_auto_gen_no = self.get_next_auto_gen_number(
+                group_company["group_name"], group_company["client_id"]
             )
-            rows = self.get_data(self.tblUnits, columns, condition)
-            auto_generated_unit_codes = []
-            for row in rows:
-                try:
-                    auto_generated_unit_codes.append(int(row[0]))
-                except Exception, ex:
-                    continue
-            next_auto_gen_no = 1
-            if len(auto_generated_unit_codes) > 0:
-                existing_max_unit_code = max(auto_generated_unit_codes)
-                if existing_max_unit_code == no_of_units:
-                    next_auto_gen_no = no_of_units + 1
-                else:
-                    next_auto_gen_no = existing_max_unit_code + 1
-
             results.append(core.GroupCompanyForUnitCreation(
                 group_company["client_id"], group_company["group_name"],
                 bool(group_company["is_active"]), countries, domains,
@@ -6166,45 +6176,58 @@ class KnowledgeDatabase(Database):
 #   Audit Trail
 #
 
-    def get_audit_trails(self, session_user):
-        user_ids = ""
-        form_ids = None
-        if session_user != 0:
-            column = "user_group_id"
-            condition = "user_id = '%d'" % session_user
-            rows = self.get_data(self.tblUsers, column, condition)
-            user_group_id = rows[0][0]
-
-            column = "form_category_id, form_ids"
-            condition = "user_group_id = '%d'" % user_group_id
-            rows = self.get_data(self.tblUserGroups, column, condition)
-            form_category_id = rows[0][0]
-            form_ids = rows[0][1]
-
-            form_category_ids = "%d, 4" % form_category_id
-            column = "group_concat(form_id)"
-            condition = "form_category_id in (%s) AND \
-            form_type_id != 3" % form_category_ids
-            rows = self.get_data(
-                self.tblForms, column, condition
-            )
+    def get_audit_trails(
+        self, session_user, from_count, to_count,
+        from_date, to_date, user_id, form_id
+    ):
+        form_column = "group_concat(form_id)"
+        form_condition = "form_type_id != 3"
+        rows = self.get_data(
+            self.tblForms, form_column, form_condition
+        )
+        forms = None
+        if rows:
             form_ids = rows[0][0]
+            forms = self.return_forms(form_ids)
 
-            column = "group_concat(user_group_id)"
-            condition = "form_category_id = '%d'" % form_category_id
-            rows = self.get_data(self.tblUserGroups, column, condition)
-            user_group_ids = rows[0][0]
-
-            column = "group_concat(user_id)"
-            condition = "user_group_id in (%s)" % user_group_ids
-            rows = self.get_data(self.tblUsers, column, condition)
+        users = None
+        user_ids = None
+        query = '''
+        SELECT group_concat(user_id) from tbl_users where user_group_id = (
+        SELECT user_group_id from tbl_users where user_id = '%d')''' % session_user
+        rows = self.select_all(query)
+        if rows:
             user_ids = rows[0][0]
-            condition = "user_id in (%s)"% user_ids
-        else:
-            condition = "1"
+        condition = '''user_id in (%s)''' % user_ids
+        users = self.return_users(condition)
+
+        from_date = self.string_to_datetime(from_date)
+        to_date = self.string_to_datetime(to_date)
+        where_qry = "1"
+        if from_date is not None and to_date is not None:
+            where_qry += " AND  created_on between DATE_SUB('%s', INTERVAL 1 DAY) \
+            AND DATE_ADD('%s', INTERVAL 1 DAY)" % (
+                from_date, to_date
+                
+            )
+        elif from_date is not None:
+            where_qry += " AND  created_on > DATE_SUB('%s', INTERVAL 1 DAY) " % (
+                from_date
+            )
+        elif to_date is not None:
+            where_qry += " AND created_on < DATE_ADD('%s', INTERVAL 1 DAY)" % (
+                to_date
+            )
+        if user_id is not None:
+            where_qry += " AND user_id = '%s'" % (user_id)
+        if form_id is not None:
+            where_qry += " AND form_id = '%s'" % (form_id)
+        
         columns = "user_id, form_id, action, created_on"
-        condition += " ORDER BY created_on DESC"
-        rows = self.get_data(self.tblActivityLog, columns, condition)
+        where_qry += " AND user_id in (%s)" % (user_ids)
+        where_qry += " ORDER BY created_on DESC"
+        where_qry += " LIMIT %d, %d" % (from_count, to_count)
+        rows = self.get_data(self.tblActivityLog, columns, where_qry)
         audit_trail_details = []
         for row in rows:
             user_id = row[0]
@@ -6212,13 +6235,6 @@ class KnowledgeDatabase(Database):
             action = row[2]
             date = self.datetime_to_string_time(row[3])
             audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
-        users = None
-        if session_user != 0:
-            condition = "user_id in (%s)" % user_ids
-            users = self.return_users(condition)
-        else:
-            users = self.return_users()
-        forms = self.return_forms(form_ids)
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
 
 #
@@ -6242,19 +6258,19 @@ class KnowledgeDatabase(Database):
             country_id, client_id
         )
         if business_group_id is not None:
-            condition += " AND business_group_id = '%d'" % business_group_id
+            condition += " AND tu.business_group_id = '%d'" % business_group_id
         if legal_entity_id is not None:
-            condition += " AND legal_entity_id = '%d'" % legal_entity_id
+            condition += " AND tu.legal_entity_id = '%d'" % legal_entity_id
         if division_id is not None:
-            condition += " AND division_id = '%d'" % division_id
+            condition += " AND tu.division_id = '%d'" % division_id
         if unit_id is not None:
-            condition += " AND unit_id = '%d'" % unit_id
+            condition += " AND tu.unit_id = '%d'" % unit_id
         if domain_ids is not None:
             for i, domain_id in enumerate(domain_ids):
                 if i == 0 :
-                    condition += " AND FIND_IN_SET('%s', domain_ids)" % (domain_id)
+                    condition += " AND FIND_IN_SET('%s', tu.domain_ids)" % (domain_id)
                 elif i > 0 :
-                    condition += " OR FIND_IN_SET('%s', domain_ids)" % (domain_id)
+                    condition += " OR FIND_IN_SET('%s', tu.domain_ids)" % (domain_id)
         return condition
 
     def get_client_details_report_count(

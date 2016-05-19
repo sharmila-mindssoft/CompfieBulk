@@ -51,8 +51,8 @@
           <div class="input-row">
             <div class="single-column-field-label">Group Name:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
-              <input type="text" class="input-box" name="groupName" id="groupName" maxlength="50">
-              <input type="hidden" name="groupId" id="groupId" value="">
+              <input type="text" class="input-box" name="groupName" id="groupName" autofocus="autofocus" maxlength="50" tabindex="1">
+              <input type="hidden" name="groupId" id="groupId" value="">        
             </div>
           </div>
         </div>
@@ -60,15 +60,16 @@
           <div class="input-row">
             <div class="single-column-field-label">Category Name:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
-              <select class="input-box" id="categoryName" name="categoryName">
+              <select class="input-box" id="categoryName" name="categoryName" tabindex="2">
               <option value="">Select</option>
               </select>
             </div>
           </div>
         </div>
-        <div class="submit-button-container">
+        <input type="hidden" id="tempcatgid" value="">
+      <div class="submit-button-container">
           <input type="submit" name="cancel" value="Show" class="btn-submit" id="btnUserGroupShow">
-        </div>
+        </div> 
         <div class="clearfix"></div>
         <div id="formList">
           <div class="grid-table formNameList">
