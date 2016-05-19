@@ -939,10 +939,27 @@ function initClientMirror() {
             var file = files[i];
             file_name = file.name
             file_size = file.size
+            var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
             console.log("file.size : "+file.size);
             console.log("max_limit : "+max_limit);
             if (file_size > max_limit) {
                 callback("File max limit exceeded");
+                return;
+            }
+            else if(file_extension == 'exe'){
+                callback("Invalid file format");
+                return;
+            }
+            else if(file_extension == 'htm'){
+                callback("Invalid file format");
+                return;
+            }
+            else if(file_extension == 'xhtml'){
+                callback("Invalid file format");
+                return;
+            }
+            else if(file_extension == 'html'){
+                callback("Invalid file format");
                 return;
             }
             else{
@@ -1390,11 +1407,13 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getLoginTrace(record_count, user_id, callback){
+    function getLoginTrace(record_count, user_id, from_date, to_date, callback){
         var request = [
             "GetLoginTrace",{
                 "record_count" : record_count,
-                "user_id" : user_id
+                "user_id" : user_id,
+                "from_date": from_date,
+                "to_date": to_date
             }
         ];
         callerName = "client_reports";

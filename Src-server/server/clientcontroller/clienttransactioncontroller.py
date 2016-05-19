@@ -1,5 +1,6 @@
 from protocol import (clienttransactions, clientmasters, login, core)
 from server import logger
+from server.constants import RECORD_DISPLAY_COUNT
 import threading
 __all__ = [
     "process_client_transaction_requests"
@@ -115,7 +116,7 @@ def process_get_statutory_settings(db, session_user, client_id):
 
 def process_get_statutory_compliance(db, session_user, request):
     from_count = request.record_count
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     unit_id = request.unit_id
 
     data, total_count = db.return_compliance_for_statutory_settings(unit_id, from_count, to_count)
@@ -158,7 +159,7 @@ def process_get_compliance_for_units(db, request, session_user, client_id):
     unit_ids = request.unit_ids
     domain_id = request.domain_id
     from_count = request.record_count
-    to_count = 250
+    to_count = RECORD_DISPLAY_COUNT
     level_1_name, statutories, total = db.get_assign_compliance_statutories_for_units(
         unit_ids, domain_id, session_user, from_count, to_count
     )
@@ -204,7 +205,7 @@ def process_get_past_records_form_data(db, request, session_user, client_id):
 def process_get_statutories_by_unit(
         db, request, session_user, client_id
 ):
-    to_count = 100
+    to_count = RECORD_DISPLAY_COUNT
     unit_id = request.unit_id
     domain_id = request.domain_id
     level_1_statutory_name = request.level_1_statutory_name
@@ -263,7 +264,7 @@ def process_save_past_records(
 # given user
 ########################################################
 def process_get_compliance_approval_list(db, request, session_user, client_id):
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     compliance_approval_list, count = db.get_compliance_approval_list(
         request.start_count, to_count, session_user, client_id
     )
@@ -346,7 +347,7 @@ def process_get_user_wise_compliances(db, session_user, client_id):
 def process_get_assignee_compliances(db, request, session_user):
     assignee = request.assignee
     from_count = request.record_count
-    to_count = 500
+    to_count = RECORD_DISPLAY_COUNT
     result = db.get_compliance_for_assignee(session_user, assignee, from_count, to_count)
     assignee_wise_compliance = result[0]
     assignee_compliance_count = result[1]

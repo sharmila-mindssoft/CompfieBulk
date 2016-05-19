@@ -579,15 +579,38 @@ function intTo5digitsString(nb) {
         return "0"+nb;
 }
 function autoGenerateUnitCode(){
+    var client_id = $("#group-select").val();
+    if (client_id == '' || client_id == null){
+        client_id = $("#client-unit-id").val()
+    }
+    function  onSuccess(data){
+        console.log(data["next_unit_code"]);
+        unitcodeautogenerate(data["next_unit_code"]);
+    }
+    function onFailure(error){
+        console.log(error);
+    }
+    mirror.getNextUnitCode(parseInt(client_id), 
+        function(error, response){
+            if(error == null){
+                onSuccess(response);
+            }
+            else{
+                onFailure(error);
+            }
+        }
+    );
+}
+function unitcodeautogenerate(auto_generate_initial_value){
     unitcodeautogenerateids = null;
     if($(".labelgroup").text().trim() == ""){
-        client_id = $("#group-select").val();
-        $.each(groupList, function(key, value){
-            if(value['client_id'] == client_id){
-                auto_generate_initial_value = value["next_unit_code"];
-            }
-        });
-
+        // client_id = $("#group-select").val();
+        // $.each(groupList, function(key, value){
+        //     if(value['client_id'] == client_id){
+        //         auto_generate_initial_value = value["next_unit_code"];
+        //     }
+        // });
+        //auto_generate_initial_value = 
         unitcodeautogenerateids = auto_generate_initial_value;
         var sno = [];
         if($('.unitcode-checkbox').is(':checked')){
@@ -614,12 +637,12 @@ function autoGenerateUnitCode(){
         }
     }
     if($(".labelgroup").text().trim() != ""){
-        client_id = $("#client-unit-id").val();
-        $.each(groupList, function(key, value){
-            if(value['client_id'] == client_id){
-                auto_generate_initial_value = value["next_unit_code"];
-            }
-        });
+        // client_id = $("#client-unit-id").val();
+        // $.each(groupList, function(key, value){
+        //     if(value['client_id'] == client_id){
+        //         auto_generate_initial_value = value["next_unit_code"];
+        //     }
+        // });
 
         unitcodeautogenerateids = auto_generate_initial_value;
         var sno = [];
@@ -1413,7 +1436,7 @@ $("#btn-clientunit-submit").click(function(){
 function reactiviteunit(thisval, unitid, clientid){
     $('#unitidval').val(unitid);
     $('#clientidval').val(clientid);
-
+    window.scrollTo(0, 0);
     $('.overlay').css("visibility","visible");
     $('.overlay').css("opacity","1");
     $('.popup-error-msg').html("");

@@ -38,6 +38,7 @@ $("#btn-user-add").click(function(){
     $("#email-id").removeAttr("readonly");
     $("#usertype").val("");
     $("#user-level option:selected").removeAttr("selected");
+    $("#usergroupval").removeAttr("disabled", "disabled");
     loadautocountry();
     hidemenu();
     loadautobusinessgroups();
@@ -63,6 +64,7 @@ $("#btn-user-cancel").click(function(){
     $("#email-id").removeAttr("readonly");
     $("#usertype").val("");
     $("#user-level option:selected").removeAttr("selected");
+    $("#usergroupval").removeAttr("disabled", "disabled");
 });
 function initialize(){
     function onSuccess(data){
@@ -275,9 +277,12 @@ function loadUserUpdate(userId){
             $("#mobile-number").val(contactno[2]);
             $("#usergroupval").val(usergroupname);
             $("#usergroup").val(userList[user]['user_group_id']);
+            if(userList[user]['is_admin']){
+                $("#usergroupval").attr("disabled", "disabled");
+            }
             $("#user-level").val(userList[user]['user_level']);
             //$("#user-level option[value = "+userList[user]['user_level']+"]").attr('selected','selected');
-            $("#email-id").val(userList[user]['email_id']);
+            $("#email-id").val(userList[user]['email_id']);            
             $("#email-id").attr("readonly", "readonly");
             $("#country").val(userList[user]['country_ids']);
             $("#units").val(userList[user]['unit_ids']);
@@ -316,7 +321,19 @@ function loadUserUpdate(userId){
         }
     }
 }
-
+$('#country-code').on('input', function (event) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+$('#area-code').on('input', function (event) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+$('#mobile-number').on('input', function (event) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+function isEmail(email) {
+  var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  return regex.test(email);
+}
 $("#submit").click(function(){
     var userId = $("#user-id").val();
 	var usertype = $('#usertype').val().trim();
@@ -379,6 +396,9 @@ $("#submit").click(function(){
 	else if(emailid == ''){
 		displayMessage(message.emailid_required);
 	}
+    else if(!isEmail(emailid)){
+        displayMessage(message.invalid_emailid);
+    }
 	else if(country == ''){
 		displayMessage(message.country_required);
 	}
@@ -475,6 +495,7 @@ $("#submit").click(function(){
 		var contactNo = countrycode+"-"+areacode+"-"+mobilenumber;
 
 		function onSuccess(data){
+            $("#usergroupval").removeAttr("disabled", "disabled");
 			$("#user-add").hide();
 			$("#user-view").show();
             $(".filter-text-box").val('');

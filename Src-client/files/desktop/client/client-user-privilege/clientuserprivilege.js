@@ -1,3 +1,13 @@
+
+function clearMessage() {
+    $(".error-message").hide();
+    $(".error-message").text("");
+}
+function displayMessage(message) {
+    $(".error-message").text(message);
+    $(".error-message").show();
+}
+
 $("#btn-userprivilege-add").click(function(){
 	$("#userprivilege-view").hide();
 	$("#userprivilege-add").show();

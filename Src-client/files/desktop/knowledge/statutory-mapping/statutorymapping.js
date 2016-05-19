@@ -982,13 +982,13 @@ $("#temp_addcompliance").click(function() {
   var ccount = 0;
   $.each(compliances, function(index, value) {
   if (
-    (value.statutory_provision == statutory_provision) &&
-    (value.compliance_task == compliance_task) &&
+    (value.s_provision == statutory_provision) &&
+    (value.c_task == compliance_task) &&
     (comp_id == '' || comp_id != ccount )) {
-    if(value.statutory_provision == statutory_provision){
+    if(value.s_provision == statutory_provision){
       displayMessage(message.statutoryprovision_duplicate);
     }
-    if(value.compliance_task == compliance_task){
+    if(value.c_task == compliance_task){
       displayMessage(message.compliancetask_duplicate);
     }
     check_duplicate_status = false;
@@ -997,64 +997,64 @@ $("#temp_addcompliance").click(function() {
   });
 
   if(check_duplicate_status){
-  if(comp_id == ''){
-    compliance = mirror.complianceDetails(statutory_provision, compliance_task, description, compliance_document, file_format, penal_consequences, parseInt(compliance_frequency),
-      statutory_dates, repeats_type, repeats_every, duration_type, duration, is_active, comp_id);
-    compliances.push(compliance);
-  }else{
-    compliances[comp_id]["s_provision"] = statutory_provision;
-    compliances[comp_id]["c_task"] = compliance_task;
-    compliances[comp_id]["description"] = description;
-    compliances[comp_id]["doc_name"] = compliance_document;
-    compliances[comp_id]["f_f_list"] = file_format;
-    compliances[comp_id]["p_consequences"] = penal_consequences;
-    compliances[comp_id]["f_id"] = parseInt(compliance_frequency);
-    compliances[comp_id]["statu_dates"] = statutory_dates;
-    compliances[comp_id]["r_type_id"] = repeats_type;
-    compliances[comp_id]["r_every"] = repeats_every;
-    compliances[comp_id]["d_type_id"] = duration_type;
-    compliances[comp_id]["duration"] = duration;
-    compliances[comp_id]["is_active"] = true;
-    compliances[comp_id]["download_file_list"] = null;
-  }
-  $('#statutory_provision').val('');
-  $('#compliance_task').val('');
-  $('#compliance_description').val('');
-  $('#compliance_frequency').val('');
-  $('#compliance_document').val('');
-  $('#upload_file').val('');
-  $('#penal_consequences').val('');
-  $('#Recurring').hide();
-  $('#Occasional').hide();
-  $('#One_Time').hide();
-  $('#repeats_every').val('');
-  $('#repeats_type').val('');
-  $('#duration').val('');
-  $('#statutory_date').val('');
-  $('#statutory_month').val('');
-  $('#triggerbefore').val('');
-  $('#complianceid').val('');
-  uploadFile = null;
-  $("#uploaded_fileview").hide();
-  $("#uploaded_filename").html('');
-  $('.multipleinput').prop("checked",false);
-  $('.multipleselectnone').show();
-  $('.multipleselect').hide();
-  $('#multipleview').hide();
-  $('#dayofmonth').prop("checked", true);
-  $('.repeatby-view').show();
-  $('#counter').html('');
-  $('#counter1').html('');
-  $('#counter2').html('');
-  $('#duration_type').val('');
-  $("#summary").html("");
-  for(i=1; i<=12; i++){
-    $('#multiple_statutory_date'+i).show();
-  }
-  resetvalues();
-  load_compliance();
-  $("#statutory_provision").focus();
-  }
+    if(comp_id == ''){
+      compliance = mirror.complianceDetails(statutory_provision, compliance_task, description, compliance_document, file_format, penal_consequences, parseInt(compliance_frequency),
+        statutory_dates, repeats_type, repeats_every, duration_type, duration, is_active, comp_id);
+      compliances.push(compliance);
+    }else{
+      compliances[comp_id]["s_provision"] = statutory_provision;
+      compliances[comp_id]["c_task"] = compliance_task;
+      compliances[comp_id]["description"] = description;
+      compliances[comp_id]["doc_name"] = compliance_document;
+      compliances[comp_id]["f_f_list"] = file_format;
+      compliances[comp_id]["p_consequences"] = penal_consequences;
+      compliances[comp_id]["f_id"] = parseInt(compliance_frequency);
+      compliances[comp_id]["statu_dates"] = statutory_dates;
+      compliances[comp_id]["r_type_id"] = repeats_type;
+      compliances[comp_id]["r_every"] = repeats_every;
+      compliances[comp_id]["d_type_id"] = duration_type;
+      compliances[comp_id]["duration"] = duration;
+      compliances[comp_id]["is_active"] = true;
+      compliances[comp_id]["download_file_list"] = null;
+    }
+    $('#statutory_provision').val('');
+    $('#compliance_task').val('');
+    $('#compliance_description').val('');
+    $('#compliance_frequency').val('');
+    $('#compliance_document').val('');
+    $('#upload_file').val('');
+    $('#penal_consequences').val('');
+    $('#Recurring').hide();
+    $('#Occasional').hide();
+    $('#One_Time').hide();
+    $('#repeats_every').val('');
+    $('#repeats_type').val('');
+    $('#duration').val('');
+    $('#statutory_date').val('');
+    $('#statutory_month').val('');
+    $('#triggerbefore').val('');
+    $('#complianceid').val('');
+    uploadFile = null;
+    $("#uploaded_fileview").hide();
+    $("#uploaded_filename").html('');
+    $('.multipleinput').prop("checked",false);
+    $('.multipleselectnone').show();
+    $('.multipleselect').hide();
+    $('#multipleview').hide();
+    $('#dayofmonth').prop("checked", true);
+    $('.repeatby-view').show();
+    $('#counter').html('');
+    $('#counter1').html('');
+    $('#counter2').html('');
+    $('#duration_type').val('');
+    $("#summary").html("");
+    for(i=1; i<=12; i++){
+      $('#multiple_statutory_date'+i).show();
+    }
+    resetvalues();
+    load_compliance();
+    $("#statutory_provision").focus();
+    }
   }
 });
 

@@ -5608,10 +5608,6 @@ class ClientDatabase(Database):
                     unit_wise_compliances))
         return service_provider_wise_compliances_list
 
-<<<<<<< HEAD
-    def report_compliance_details(
-        self, client_id, country_id, domain_id, statutory_id,
-=======
     def get_compliance_details(
         self, country_id, domain_id, statutory_id,
         qry_where, from_count, to_count    ):
@@ -5693,7 +5689,6 @@ class ClientDatabase(Database):
 
     def get_where_query_for_compliance_details_report(
         self, country_id, domain_id, statutory_id,
->>>>>>> ff16363f3188af6cf057b5579e72f96c302cf065
         unit_id, compliance_id, assignee,
         from_date, to_date, compliance_status,
         session_user
@@ -5745,7 +5740,7 @@ class ClientDatabase(Database):
         return qry_where
 
     def report_compliance_details(
-        self, country_id, domain_id, statutory_id,
+        self, client_id, country_id, domain_id, statutory_id,
         unit_id, compliance_id, assignee,
         from_date, to_date, compliance_status,
         session_user, from_count, to_count
