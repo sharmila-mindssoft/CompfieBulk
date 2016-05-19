@@ -6948,86 +6948,109 @@ class ClientDatabase(Database):
         return int(other_compliance_count) + int(on_occurrence_count)
 
     def get_current_compliances_list(self, current_start_count, to_count, session_user, client_id):
-        columns = "DISTINCT compliance_history_id, start_date, ch.due_date, " +\
-            "ch.validity_date, ch.next_due_date, document_name, compliance_task, " + \
-            "compliance_description, format_file, unit_code, unit_name," + \
-            "address, (select domain_name from %s d \
-            where d.domain_id = c.domain_id) as domain_name, \
-            (select frequency from tbl_compliance_frequency where frequency_id = c.frequency_id), ch.remarks,\
-            ch.compliance_id, duration_type_id" % (
-                self.tblDomains
-            )
-        tables = [
-            self.tblComplianceHistory, self.tblCompliances, self.tblUnits,
-            self.tblComplianceFrequency, self.tblAssignedCompliances
+        columns = [
+            "compliance_history_id", "start_date", "due_date", "validity_date",
+            "next_due_date", "document_name", "compliance_task", "description",
+            "format_file", "unit","domain_name", "frequency", "remarks", 
+            "compliance_id", "duration_type_id"
         ]
-        aliases = ["ch", "c" , "u", "cf", "ac"]
-        join_conditions = [
-            "ch.compliance_id = c.compliance_id",
-            "ch.unit_id = u.unit_id",
-            "c.frequency_id = cf.frequency_id",
-            "ac.unit_id = ch.unit_id AND ac.compliance_id = ch.compliance_id"
-        ]
-        join_type = "inner join"
-        where_condition = "ch.completed_by='%d' and is_closed = 0 and ac.is_active = 1" % (
-            session_user)
-        where_condition += " and IFNULL(ch.completed_on, 0) = 0 \
-            and IFNULL(ch.approve_status, 0) = 0 \
-            and IFNULL(ch.due_date, 0) != 0  "
-        where_condition += "ORDER BY due_date ASC LIMIT %s, %s " % (
-            current_start_count, to_count
+        query = '''
+            SELECT * FROM
+            (SELECT 
+            compliance_history_id,
+            start_date,
+            ch.due_date as due_date,
+            ch.validity_date,
+            ch.next_due_date,
+            document_name,
+            compliance_task,
+            compliance_description,
+            format_file,
+            (SELECT 
+                    concat(unit_code, '-', unit_name, ',', address)
+                FROM
+                    tbl_units tu
+                WHERE
+                    tu.unit_id = ch.unit_id) as unit,
+            (SELECT 
+                    domain_name
+                FROM
+                    tbl_domains td
+                WHERE
+                    td.domain_id = c.domain_id) as domain_name,
+            (SELECT 
+                    frequency
+                FROM
+                    tbl_compliance_frequency
+                WHERE
+                    frequency_id = c.frequency_id),
+            ch.remarks,
+            ch.compliance_id,
+            duration_type_id
+        FROM
+            tbl_compliance_history ch
+                INNER JOIN
+            tbl_assigned_compliances ac ON (ac.unit_id = ch.unit_id
+                AND ac.compliance_id = ch.compliance_id)
+                INNER JOIN
+            tbl_compliances c ON (ac.compliance_id = c.compliance_id)
+        WHERE
+            ch.completed_by = '%d'
+                and ac.is_active = 1
+                and IFNULL(ch.completed_on, 0) = 0
+                and IFNULL(ch.due_date, 0) != 0
+        LIMIT %s, %s ) a
+        ORDER BY due_date ASC
+        ''' % (
+            session_user, current_start_count, to_count
         )
-
-        current_compliances_row = self.get_data_from_multiple_tables(
-            columns,
-            tables, aliases, join_type, join_conditions, where_condition
-        )
+        rows = self.select_all(query)
+        current_compliances_row = self.convert_to_dict(rows, columns)
         current_compliances_list = []
         for compliance in current_compliances_row:
-            document_name = compliance[5]
-            compliance_task = compliance[6]
+            document_name = compliance["document_name"]
+            compliance_task = compliance["compliance_task"]
             compliance_name = compliance_task
             if document_name not in (None, "None", "") :
                 compliance_name = "%s - %s" % (
                     document_name, compliance_task
                 )
-
-            unit_code = compliance[9]
-            unit_name = compliance[10]
-            unit_name = "%s - %s" % (
-                unit_code, unit_name
-            )
+            unit_details = compliance["unit"].split(",")
+            unit_name = unit_details[0]
+            address = unit_details[1]
             no_of_days, ageing = self.calculate_ageing(
-                due_date=compliance[2], frequency_type=compliance[13], duration_type=compliance[16]
+                due_date=compliance["due_date"], 
+                frequency_type=compliance["frequency"], 
+                duration_type=compliance["duration_type_id"]
             )
             compliance_status = core.COMPLIANCE_STATUS("Inprogress")
             if "Overdue" in ageing:
                 compliance_status = core.COMPLIANCE_STATUS("Not Complied")
             format_files = None
-            if compliance[8] is not None and compliance[8].strip() != '':
+            if compliance["format_file"] is not None and compliance["format_file"].strip() != '':
                 format_files = [ "%s/%s" % (
                         FORMAT_DOWNLOAD_URL, x
-                    ) for x in compliance[8].split(",")]
-            remarks = compliance[14]
+                    ) for x in compliance["format_file"].split(",")]
+            remarks = compliance["remarks"]
             if remarks in ["None", None, ""]:
                 remarks = None
             current_compliances_list.append(
                 core.ActiveCompliance(
-                    compliance_history_id=compliance[0],
+                    compliance_history_id=compliance["compliance_history_id"],
                     compliance_name=compliance_name,
-                    compliance_frequency=core.COMPLIANCE_FREQUENCY(compliance[13]),
-                    domain_name=compliance[12],
-                    start_date=self.datetime_to_string(compliance[1]),
-                    due_date=self.datetime_to_string(compliance[2]),
+                    compliance_frequency=core.COMPLIANCE_FREQUENCY(compliance["frequency"]),
+                    domain_name=compliance["domain_name"],
+                    start_date=self.datetime_to_string(compliance["start_date"]),
+                    due_date=self.datetime_to_string(compliance["due_date"]),
                     compliance_status=compliance_status,
-                    validity_date=None if compliance[3] == None else self.datetime_to_string(compliance[3]),
-                    next_due_date=None if compliance[4] == None else self.datetime_to_string(compliance[4]),
+                    validity_date=None if compliance["validity_date"] == None else self.datetime_to_string(compliance["validity_date"]),
+                    next_due_date=None if compliance["next_due_date"] == None else self.datetime_to_string(compliance["next_due_date"]),
                     ageing=ageing,
                     format_file_name=format_files,
-                    unit_name=unit_name, address=compliance[11],
-                    compliance_description=compliance[7],
+                    unit_name=unit_name, address=address,
+                    compliance_description=compliance["description"],
                     remarks=remarks,
-                    compliance_id=compliance[15]
+                    compliance_id=compliance["compliance_id"]
                 )
             )
         return current_compliances_list
@@ -8374,6 +8397,8 @@ class ClientDatabase(Database):
         self, client_id, session_user, from_count, to_count, user_id,
         from_date, to_date
     ):
+        from_date = self.string_to_datetime(from_date)
+        to_date = self.string_to_datetime(to_date)
         condition = "1"
         if user_id is not None:
             condition = " user_id = '%d' " % user_id
