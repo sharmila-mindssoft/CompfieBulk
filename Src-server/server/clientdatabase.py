@@ -8370,10 +8370,26 @@ class ClientDatabase(Database):
 
     # login trace
 
-    def get_login_trace(self, client_id, session_user, from_count, to_count, user_id):
-        user_condition = "1"
+    def get_login_trace(
+        self, client_id, session_user, from_count, to_count, user_id,
+        from_date, to_date
+    ):
+        condition = "1"
         if user_id is not None:
-            user_condition = " user_id = '%d' " % user_id
+            condition = " user_id = '%d' " % user_id
+        if from_date is not None and to_date is not None:
+            condition += " AND  al.created_on between '%s' AND '%s'" % (
+                from_date, to_date
+                
+            )
+        elif from_date is not None:
+            condition += " AND  al.created_on > '%s' " % (
+                from_date
+            )
+        elif to_date is not None:
+            condition += " AND al.created_on < '%s'" % (
+                to_date
+            )
         query = "SELECT al.created_on, al.action \
             FROM tbl_activity_log al \
             INNER JOIN \
@@ -8384,7 +8400,7 @@ class ClientDatabase(Database):
             AND %s\
             order by al.created_on desc \
             limit %s, %s" % (
-                "%", "password", "%", user_condition,
+                "%", "password", "%", condition,
                 from_count, to_count
             )
 
