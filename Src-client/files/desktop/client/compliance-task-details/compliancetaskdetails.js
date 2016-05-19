@@ -40,6 +40,7 @@ function initialize(){
     snoInprogress = 1;
     countOverdue = 0;
     countInprogress = 0;
+    closeicon();
 
     function onSuccess(data){
         clearMessage();
@@ -49,7 +50,7 @@ function initialize(){
         c_totalRecord2 = data['overdue_count'];
         currentDate = data['current_date'];
         loadComplianceTaskDetails(currentCompliances);
-        hideLoader();
+        
     }
     function onFailure(error){
         console.log(error);
@@ -184,6 +185,7 @@ function loadComplianceTaskDetails(data){
     }else{
       $('#pagination').show();
     }
+    hideLoader();
 }
 $('.upcomming-tab').click(function(){
     if(sno == 0){

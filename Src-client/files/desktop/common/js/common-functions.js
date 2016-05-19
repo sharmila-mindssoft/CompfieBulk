@@ -33,7 +33,6 @@ function getCountryAutocomplete(textval, listval, callback){
     $('#ac-country ul').append(str);
     //$("#country").val('');
   }else{
-    alert('ent')
     $("#country").val('');
     $(".ac-textbox").hide();
   }

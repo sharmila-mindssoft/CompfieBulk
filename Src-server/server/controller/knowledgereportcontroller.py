@@ -4,7 +4,7 @@ from generalcontroller import (
     process_get_domains, process_get_countries
 )
 from server import logger
-
+from server.constants import RECORD_DISPLAY_COUNT
 __all__ = [
     "process_knowledge_report_request"
 ]
