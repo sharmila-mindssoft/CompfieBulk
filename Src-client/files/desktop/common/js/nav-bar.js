@@ -42,7 +42,8 @@ function initializeNavBar () {
     }
     var homeMenu = $("#cssmenu .menu-ul .home-menu");
     if ("Home" in navBarItems) {
-        homeMenu.attr("href", "/dashboard")
+        // homeMenu.attr("href", "/dashboard")
+        homeMenu.attr("href", "/home")
     }
     else {
         homeMenu.attr("href", "/home")
@@ -162,7 +163,7 @@ function initializeNavBar () {
         get_notification_count()
         setInterval(function() {
             get_notification_count();
-        }, 100000);
+        }, 1000000);
 
     }
 }

@@ -56,9 +56,9 @@ CREATE TABLE `tbl_compliances` (
   `compliance_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `frequency_id` int(11) NOT NULL,
-  `repeats_type_id` int(11) NOT NULL,
-  `duration_type_id` int(11) NOT NULL,
-  `statutory_mapping` varchar(500) NOT NULL,
+  `repeats_type_id` int(11) DEFAULT NULL,
+  `duration_type_id` int(11) DEFAULT NULL,
+  `statutory_mapping` longtext DEFAULT NULL,
   `statutory_provision` varchar(250) NOT NULL,
   `compliance_task` varchar(100) NOT NULL,
   `compliance_description` longtext NOT NULL,
@@ -67,8 +67,8 @@ CREATE TABLE `tbl_compliances` (
   `format_file_size` float DEFAULT NULL,
   `penal_consequences` longtext DEFAULT NULL,
   `statutory_dates` longtext NOT NULL,
-  `repeats_every` int(11)  NOT NULL,
-  `duration` int(11)  NOT NULL,
+  `repeats_every` int(11)  DEFAULT NULL,
+  `duration` int(11)  DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT 1,
   PRIMARY KEY (`compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
