@@ -6948,86 +6948,109 @@ class ClientDatabase(Database):
         return int(other_compliance_count) + int(on_occurrence_count)
 
     def get_current_compliances_list(self, current_start_count, to_count, session_user, client_id):
-        columns = "DISTINCT compliance_history_id, start_date, ch.due_date, " +\
-            "ch.validity_date, ch.next_due_date, document_name, compliance_task, " + \
-            "compliance_description, format_file, unit_code, unit_name," + \
-            "address, (select domain_name from %s d \
-            where d.domain_id = c.domain_id) as domain_name, \
-            (select frequency from tbl_compliance_frequency where frequency_id = c.frequency_id), ch.remarks,\
-            ch.compliance_id, duration_type_id" % (
-                self.tblDomains
-            )
-        tables = [
-            self.tblComplianceHistory, self.tblCompliances, self.tblUnits,
-            self.tblComplianceFrequency, self.tblAssignedCompliances
+        columns = [
+            "compliance_history_id", "start_date", "due_date", "validity_date",
+            "next_due_date", "document_name", "compliance_task", "description",
+            "format_file", "unit","domain_name", "frequency", "remarks", 
+            "compliance_id", "duration_type_id"
         ]
-        aliases = ["ch", "c" , "u", "cf", "ac"]
-        join_conditions = [
-            "ch.compliance_id = c.compliance_id",
-            "ch.unit_id = u.unit_id",
-            "c.frequency_id = cf.frequency_id",
-            "ac.unit_id = ch.unit_id AND ac.compliance_id = ch.compliance_id"
-        ]
-        join_type = "inner join"
-        where_condition = "ch.completed_by='%d' and is_closed = 0 and ac.is_active = 1" % (
-            session_user)
-        where_condition += " and IFNULL(ch.completed_on, 0) = 0 \
-            and IFNULL(ch.approve_status, 0) = 0 \
-            and IFNULL(ch.due_date, 0) != 0  "
-        where_condition += "ORDER BY due_date ASC LIMIT %s, %s " % (
-            current_start_count, to_count
+        query = '''
+            SELECT * FROM
+            (SELECT 
+            compliance_history_id,
+            start_date,
+            ch.due_date as due_date,
+            ch.validity_date,
+            ch.next_due_date,
+            document_name,
+            compliance_task,
+            compliance_description,
+            format_file,
+            (SELECT 
+                    concat(unit_code, '-', unit_name, ',', address)
+                FROM
+                    tbl_units tu
+                WHERE
+                    tu.unit_id = ch.unit_id) as unit,
+            (SELECT 
+                    domain_name
+                FROM
+                    tbl_domains td
+                WHERE
+                    td.domain_id = c.domain_id) as domain_name,
+            (SELECT 
+                    frequency
+                FROM
+                    tbl_compliance_frequency
+                WHERE
+                    frequency_id = c.frequency_id),
+            ch.remarks,
+            ch.compliance_id,
+            duration_type_id
+        FROM
+            tbl_compliance_history ch
+                INNER JOIN
+            tbl_assigned_compliances ac ON (ac.unit_id = ch.unit_id
+                AND ac.compliance_id = ch.compliance_id)
+                INNER JOIN
+            tbl_compliances c ON (ac.compliance_id = c.compliance_id)
+        WHERE
+            ch.completed_by = '%d'
+                and ac.is_active = 1
+                and IFNULL(ch.completed_on, 0) = 0
+                and IFNULL(ch.due_date, 0) != 0
+        LIMIT %s, %s ) a
+        ORDER BY due_date ASC
+        ''' % (
+            session_user, current_start_count, to_count
         )
-
-        current_compliances_row = self.get_data_from_multiple_tables(
-            columns,
-            tables, aliases, join_type, join_conditions, where_condition
-        )
+        rows = self.select_all(query)
+        current_compliances_row = self.convert_to_dict(rows, columns)
         current_compliances_list = []
         for compliance in current_compliances_row:
-            document_name = compliance[5]
-            compliance_task = compliance[6]
+            document_name = compliance["document_name"]
+            compliance_task = compliance["compliance_task"]
             compliance_name = compliance_task
             if document_name not in (None, "None", "") :
                 compliance_name = "%s - %s" % (
                     document_name, compliance_task
                 )
-
-            unit_code = compliance[9]
-            unit_name = compliance[10]
-            unit_name = "%s - %s" % (
-                unit_code, unit_name
-            )
+            unit_details = compliance["unit"].split(",")
+            unit_name = unit_details[0]
+            address = unit_details[1]
             no_of_days, ageing = self.calculate_ageing(
-                due_date=compliance[2], frequency_type=compliance[13], duration_type=compliance[16]
+                due_date=compliance["due_date"], 
+                frequency_type=compliance["frequency"], 
+                duration_type=compliance["duration_type_id"]
             )
             compliance_status = core.COMPLIANCE_STATUS("Inprogress")
             if "Overdue" in ageing:
                 compliance_status = core.COMPLIANCE_STATUS("Not Complied")
             format_files = None
-            if compliance[8] is not None and compliance[8].strip() != '':
+            if compliance["format_file"] is not None and compliance["format_file"].strip() != '':
                 format_files = [ "%s/%s" % (
                         FORMAT_DOWNLOAD_URL, x
-                    ) for x in compliance[8].split(",")]
-            remarks = compliance[14]
+                    ) for x in compliance["format_file"].split(",")]
+            remarks = compliance["remarks"]
             if remarks in ["None", None, ""]:
                 remarks = None
             current_compliances_list.append(
                 core.ActiveCompliance(
-                    compliance_history_id=compliance[0],
+                    compliance_history_id=compliance["compliance_history_id"],
                     compliance_name=compliance_name,
-                    compliance_frequency=core.COMPLIANCE_FREQUENCY(compliance[13]),
-                    domain_name=compliance[12],
-                    start_date=self.datetime_to_string(compliance[1]),
-                    due_date=self.datetime_to_string(compliance[2]),
+                    compliance_frequency=core.COMPLIANCE_FREQUENCY(compliance["frequency"]),
+                    domain_name=compliance["domain_name"],
+                    start_date=self.datetime_to_string(compliance["start_date"]),
+                    due_date=self.datetime_to_string(compliance["due_date"]),
                     compliance_status=compliance_status,
-                    validity_date=None if compliance[3] == None else self.datetime_to_string(compliance[3]),
-                    next_due_date=None if compliance[4] == None else self.datetime_to_string(compliance[4]),
+                    validity_date=None if compliance["validity_date"] == None else self.datetime_to_string(compliance["validity_date"]),
+                    next_due_date=None if compliance["next_due_date"] == None else self.datetime_to_string(compliance["next_due_date"]),
                     ageing=ageing,
                     format_file_name=format_files,
-                    unit_name=unit_name, address=compliance[11],
-                    compliance_description=compliance[7],
+                    unit_name=unit_name, address=address,
+                    compliance_description=compliance["description"],
                     remarks=remarks,
-                    compliance_id=compliance[15]
+                    compliance_id=compliance["compliance_id"]
                 )
             )
         return current_compliances_list
@@ -7044,68 +7067,65 @@ class ClientDatabase(Database):
 
 
     def get_upcoming_count(self, session_user):
-        columns = "count(*)"
-        tables = [
-            self.tblAssignedCompliances, self.tblUnits,  self.tblCompliances
-        ]
-        aliases = ["ac", "u", "c"]
-        join_conditions = [
-            "ac.unit_id = u.unit_id",
-            "ac.compliance_id = c.compliance_id"
-        ]
-        where_condition = " assignee = '%d' and frequency_id not in (4, 1)  and is_closed = 0" % session_user
-        where_condition += " and due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) "
-        where_condition += " and ac.is_active = 1"
-        join_type = "inner join"
-        rows = self.get_data_from_multiple_tables(
-            columns,
-            tables, aliases, join_type, join_conditions,
-            where_condition
+        all_compliance_query = '''
+            SELECT ac.compliance_id, ac.unit_id FROM tbl_assigned_compliances ac 
+            INNER JOIN tbl_compliances c ON (ac.compliance_id = c.compliance_id) 
+            WHERE 
+            assignee = '%d' AND frequency_id != 4  
+            AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) 
+            AND ac.is_active = 1;
+        ''' % (
+            session_user
         )
-        count = rows[0][0]
-        columns = "ac.compliance_id, u.unit_id"
-        where_condition = " assignee = '%d' and frequency_id = 1  and is_closed = 0" % session_user
-        where_condition += " and due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) "
-        where_condition += " and ac.is_active = 1"
-        rows = self.get_data_from_multiple_tables(
-            columns,
-            tables, aliases, join_type, join_conditions,
-            where_condition
+        all_compliace_rows = self.select_all(all_compliance_query)
+        onetime_query = '''
+            SELECT ch.compliance_id, ch.unit_id FROM tbl_compliance_history ch 
+            INNER JOIN tbl_compliances c on (ch.compliance_id =  c.compliance_id)
+            WHERE frequency_id = 1 and completed_by = '%d'; 
+        ''' % (
+            session_user
         )
-        for row in rows:
-            if self.is_already_started(
-                compliance_id=row[0], unit_id=row[1]
-            ):
-                continue
-            else:
-                count += 1
+        onetime_rows = self.select_all(onetime_query)
+        count = 0
+        combined_rows = []
+        if len(all_compliace_rows) == 1:
+            combined_rows.append(all_compliace_rows[0])
+        elif len(all_compliace_rows) != 0:
+            combined_rows = tuple(set(all_compliace_rows))
+        if len(onetime_rows) == 1:
+            combined_rows.insert(0, onetime_query[0])
+        elif len(onetime_rows) != 0:
+            onetime_rows = tuple(set(onetime_rows))
+            combined_rows = combined_rows + onetime_rows
+        count = len(list(set(combined_rows)))
         return count
 
-
     def get_upcoming_compliances_list(self, upcoming_start_count, to_count, session_user, client_id):
-        query = "SELECT ac.due_date, document_name, compliance_task, \
-                compliance_description, format_file, unit_code, unit_name,\
-                address, (select domain_name \
+        query = "SELECT * FROM (SELECT ac.due_date, document_name, compliance_task, \
+                compliance_description, format_file, \
+                (select concat(unit_code,'-' ,unit_name, ',',address) from %s tu  where\
+                tu.unit_id = ac.unit_id), \
+                (select domain_name \
                 FROM %s d where d.domain_id = c.domain_id) as domain_name, \
                 DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) \
                 as start_date\
-                FROM %s  ac INNER JOIN %s u ON (ac.unit_id = u.unit_id) \
+                FROM %s  ac \
                 INNER JOIN %s c ON (ac.compliance_id = c.compliance_id) WHERE \
-                assignee = '%d' AND frequency_id != 4  AND is_closed = 0\
+                assignee = '%d' AND frequency_id != 4 \
                 AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) \
                 AND ac.is_active = 1 AND IF ( (frequency_id = 1 AND ( \
                 select count(*) from tbl_compliance_history ch \
                 where ch.compliance_id = ac.compliance_id and \
                 ch.unit_id = ac.unit_id ) >0), 0,1) \
-                ORDER BY start_date ASC LIMIT %d, %d"  % (
-                    self.tblDomains, self.tblAssignedCompliances, self.tblUnits,
+                LIMIT %d, %d ) a ORDER BY start_date ASC"  % (
+                    self.tblUnits, self.tblDomains, self.tblAssignedCompliances,
                     self.tblCompliances, session_user, int(upcoming_start_count),
                     to_count
                 )
         upcoming_compliances_rows = self.select_all(query)
+
         columns = ["due_date", "document_name", "compliance_task", 
-        "description","format_file", "unit_code", "unit_name", "address",
-        "domain_name",  "start_date"]
+        "description","format_file", "unit", "domain_name",  "start_date"]
         upcoming_compliances_result = self.convert_to_dict(
             upcoming_compliances_rows, columns
         )
@@ -7117,9 +7137,9 @@ class ClientDatabase(Database):
             if document_name not in (None, "None", "") :
                 compliance_name = "%s - %s" % (document_name, compliance_task)
 
-            unit_code = compliance["unit_code"]
-            unit_name = compliance["unit_name"]
-            unit_name = "%s - %s" % (unit_code, unit_name)
+            unit_details = compliance["unit"].split(",")
+            unit_name = unit_details[0]
+            address = unit_details[1]
 
             start_date = compliance["start_date"]
             format_files = None
@@ -7135,7 +7155,7 @@ class ClientDatabase(Database):
                     due_date=self.datetime_to_string(compliance["due_date"]),
                     format_file_name=format_files,
                     unit_name=unit_name,
-                    address=compliance["address"],
+                    address=address,
                     compliance_description=compliance["description"]
                 ))
         return upcoming_compliances_list
@@ -8370,10 +8390,29 @@ class ClientDatabase(Database):
 
     # login trace
 
-    def get_login_trace(self, client_id, session_user, from_count, to_count, user_id):
-        user_condition = "1"
+    def get_login_trace(
+        self, client_id, session_user, from_count, to_count, user_id,
+        from_date, to_date
+    ):
+        from_date = self.string_to_datetime(from_date)
+        to_date = self.string_to_datetime(to_date)
+        condition = "1"
         if user_id is not None:
-            user_condition = " user_id = '%d' " % user_id
+            condition = " user_id = '%d' " % user_id
+        if from_date is not None and to_date is not None:
+            condition += " AND  al.created_on between '%s' AND '%s'" % (
+                from_date, to_date
+                
+            )
+        elif from_date is not None:
+            condition += " AND  al.created_on > '%s' " % (
+                from_date
+            )
+        elif to_date is not None:
+            condition += " AND al.created_on < '%s'" % (
+                to_date
+            )
+
         query = "SELECT al.created_on, al.action \
             FROM tbl_activity_log al \
             INNER JOIN \
@@ -10015,80 +10054,33 @@ class ClientDatabase(Database):
     def get_dashboard_notification_counts(
         self, session_user
     ):
-        current_date = self.get_date_time()
-        start_date = current_date - relativedelta.relativedelta(days = 10)
-
-        column = "notification_id"
-        # notification_condition = "notification_type_id = 1 and created_on > '{}' ORDER BY notification_id DESC".format(start_date)
-        # reminder_condition = "notification_type_id = 2 and created_on > '{}' ORDER BY notification_id DESC".format(start_date)
-        # escalation_condition = "notification_type_id = 3 and created_on > '{}' ORDER BY notification_id DESC".format(start_date)
-        notification_condition = "notification_type_id = 1  ORDER BY notification_id DESC"
-        reminder_condition = "notification_type_id = 2  ORDER BY notification_id DESC"
-        escalation_condition = "notification_type_id = 3  ORDER BY notification_id DESC"
-
-        notification_result = self.get_data(
-            self.tblNotificationsLog, column, notification_condition
+        query = '''
+            SELECT 
+                tnl.notification_id
+            FROM
+                %s tnl
+            INNER JOIN 
+                %s tnul
+            ON tnl.notification_id = tnul.notification_id
+            WHERE user_id = '%d' AND read_status = 0
+        ''' % (
+            self.tblNotificationsLog, self.tblNotificationUserLog, session_user
         )
-        notification_rows = ()
-        for row in notification_result:
-            notification_rows += row
-        notification_ids = None
-        if len(notification_rows) > 0:
-            notification_ids = ",".join(str(int(x)) for x in notification_rows)
+        notification_condition = " AND notification_type_id = 1"
+        escalation_condition = " AND notification_type_id = 3"
+        reminder_condition = " AND notification_type_id = 2"
 
-        reminder_result = self.get_data(
-            self.tblNotificationsLog, column, reminder_condition
-        )
-        reminder_rows = ()
-        for row in reminder_result:
-            reminder_rows += row
-        reminder_ids = None
-        if len(reminder_rows) > 0:
-            reminder_ids = ",".join(str(int(x)) for x in reminder_rows)
+        notification_query = "%s %s" % (query, notification_condition)
+        reminder_query = "%s %s" % (query, reminder_condition)
+        escalation_query = "%s %s" % (query, escalation_condition)
+        
+        notification_rows = self.select_all(notification_query)
+        reminder_rows = self.select_all(reminder_query)
+        escalation_rows = self.select_all(escalation_query)
 
-        escalation_result = self.get_data(
-            self.tblNotificationsLog, column, escalation_condition
-        )
-        escalation_rows = ()
-        for row in escalation_result:
-            escalation_rows += row
-        escalation_ids = None
-        if len(escalation_rows) > 0:
-            escalation_ids = ",".join(str(int(x)) for x in escalation_rows)
-
-        column = "count(*)"
-        notification_condition = None if notification_ids is None else "notification_id in (%s) AND read_status=0 AND user_id = '%d'" % (
-            notification_ids, session_user
-        )
-        reminder_condition = None if reminder_ids is None else "notification_id in (%s) AND read_status=0 AND user_id = '%d'" % (
-            reminder_ids, session_user
-        )
-        escalation_condition = None if escalation_ids is None else "notification_id in (%s) AND read_status=0 AND user_id = '%d'" % (
-            escalation_ids, session_user
-        )
-        notification_count = 0
-        reminder_count = 0
-        escalation_count = 0
-        if notification_condition is not None:
-            notification_count_rows = self.get_data(
-                self.tblNotificationUserLog, column, notification_condition
-            )
-            if notification_count_rows :
-                notification_count = notification_count_rows[0][0]
-
-        if reminder_condition is not None:
-            reminder_count_rows = self.get_data(
-                self.tblNotificationUserLog, column, reminder_condition
-            )
-            if reminder_count_rows :
-                reminder_count = reminder_count_rows[0][0]
-
-        if escalation_condition is not None:
-            escalation_count_rows = self.get_data(
-                self.tblNotificationUserLog, column, escalation_condition
-            )
-            if escalation_count_rows :
-                escalation_count = escalation_count_rows[0][0]
+        notification_count = len(notification_rows)
+        reminder_count = len(reminder_rows)
+        escalation_count = len(escalation_rows)
 
         ## Getting statutory notifications
         statutory_column = "count(*)"

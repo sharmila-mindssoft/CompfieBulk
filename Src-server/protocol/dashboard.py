@@ -507,7 +507,7 @@ class GetAssigneeWiseComplianceDrillDown(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "assignee_id", 
+        data = parse_dictionary(data, ["country_id", "assignee_id",
             "domain_id", "year", "start_count"])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
@@ -793,7 +793,7 @@ def _init_Request_class_map():
     GetComplianceStatusDrillDownData, GetEscalationsDrillDownData,
     GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown,
     GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus,
-    GetAssigneewiseComplianesFilters, CheckContractExpiration, 
+    GetAssigneewiseComplianesFilters, CheckContractExpiration,
     GetAssigneewiseYearwiseCompliances, GetAssigneewiseReassignedComplianes]
     class_map = {}
     for c in classes:
@@ -1570,8 +1570,8 @@ class DelayedCompliance(object):
 
 class DomainWise(object):
     def __init__(
-        self, domain_id, domain_name, total_compliances, complied_count, 
-        assigned_count, reassigned_count, inprogress_compliance_count, 
+        self, domain_id, domain_name, total_compliances, complied_count,
+        assigned_count, reassigned_count, inprogress_compliance_count,
         not_complied_count
     ):
         self.domain_id = domain_id
@@ -1585,8 +1585,8 @@ class DomainWise(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["domain_id", "domain_name", 
-        "total_compliances", "complied_count", "assigned_count", 
+        data = parse_dictionary(data, ["domain_id", "domain_name",
+        "total_compliances", "complied_count", "assigned_count",
         "reassigned_count", "inprogress_compliance_count", "not_complied_count"])
         domain_id = data.get("domain_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
@@ -1604,8 +1604,8 @@ class DomainWise(object):
         inprogress_compliance_count = parse_structure_UnsignedIntegerType_32(inprogress_compliance_count)
         not_complied_count = data.get("not_complied_count")
         not_complied_count = parse_structure_UnsignedIntegerType_32(not_complied_count)
-        return DomainWise(domain_id, domain_name, total_compliances, 
-            complied_count, assigned_count, reassigned_count, 
+        return DomainWise(domain_id, domain_name, total_compliances,
+            complied_count, assigned_count, reassigned_count,
             inprogress_compliance_count, not_complied_count
         )
 
@@ -1987,7 +1987,7 @@ class Notification(object):
         unit_name = data.get("unit_name")
         unit_name = parse_structure_OptionalType_CustomTextType_50(unit_name)
         unit_address = data.get("unit_address")
-        unit_address = parse_structure_OptionalType_CustomTextType_50(unit_address)
+        unit_address = parse_structure_OptionalType_CustomTextType_500(unit_address)
         assignee = data.get("assignee")
         assignee = parse_structure_OptionalType_CustomTextType_100(assignee)
         concurrence_person = data.get("concurrence_person")
@@ -2020,7 +2020,7 @@ class Notification(object):
             "updated_on" : to_structure_CustomTextType_20(self.updated_on),
             "level_1_statutory" : to_structure_OptionalType_CustomTextType_500(self.level_1_statutory),
             "unit_name" : to_structure_OptionalType_CustomTextType_50(self.unit_name),
-            "unit_address" : to_structure_OptionalType_CustomTextType_50(self.unit_address),
+            "unit_address" : to_structure_OptionalType_CustomTextType_100(self.unit_address),
             "assignee" : to_structure_OptionalType_CustomTextType_100(self.assignee),
             "concurrence_person" : to_structure_OptionalType_CustomTextType_100(self.concurrence_person),
             "approval_person" : to_structure_OptionalType_CustomTextType_100(self.approval_person),

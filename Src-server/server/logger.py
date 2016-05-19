@@ -100,8 +100,8 @@ def logWebfront(message):
 trace_log_format = logging.Formatter("%(asctime)s - %(name)s - %(message)s")
 trotateFileHandler = logging.handlers.RotatingFileHandler(
     trace_log_path,
-    maxBytes=102400,
-    backupCount=10
+    maxBytes=10240,
+    backupCount=20
 )
 trotateFileHandler.suffix = "%Y-%m-%d"
 trotateFileHandler.setFormatter(trace_log_format)
