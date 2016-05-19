@@ -14,7 +14,7 @@ from types import *
 
 from types import *
 from server.emailcontroller import EmailHandler
-from server.constants import KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME, RECORD_DISPLAY_COUNT
+from server.constants import KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 import logger
 
 __all__ = [
@@ -8412,6 +8412,7 @@ class ClientDatabase(Database):
             condition += " AND al.created_on < '%s'" % (
                 to_date
             )
+
         query = "SELECT al.created_on, al.action \
             FROM tbl_activity_log al \
             INNER JOIN \
@@ -8422,7 +8423,7 @@ class ClientDatabase(Database):
             AND %s\
             order by al.created_on desc \
             limit %s, %s" % (
-                "%", "password", "%", condition,
+                "%", "password", "%", user_condition,
                 from_count, to_count
             )
 
@@ -9569,7 +9570,7 @@ class ClientDatabase(Database):
         division_id = request.division_id
         unit = request.unit_id
         from_count = request.record_count
-        to_count = RECORD_DISPLAY_COUNT
+        to_count = 500
         statutory_name = request.statutory_name
         status = request.applicable_status
 

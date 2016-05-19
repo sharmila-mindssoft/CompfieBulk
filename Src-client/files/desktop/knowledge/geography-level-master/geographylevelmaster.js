@@ -219,13 +219,14 @@ $("#submit").click(function(){
 			}else{
 				displayMessage(message.record_updated);
 			}
-
 			jQuery('.btn-geographylevel-cancel').focus().click();
 			GetGeographyLevels();
 		}
 		function onFailure(error){
           if(error == "DuplicateGeographyLevelsExists"){
             displayMessage(message.geographylevel_exists);
+          }else if(error = "LevelShouldNotbeEmpty"){
+          	displayMessage("Level"+message.shouldnot_empty);
           }
         }
 		mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist,
