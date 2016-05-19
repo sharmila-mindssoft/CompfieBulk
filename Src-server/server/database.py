@@ -1544,10 +1544,8 @@ class KnowledgeDatabase(Database):
         q = "select count(*) from tbl_geographies where level_id = %s" % (level_id)
         row = self.select_one(q)
         if row[0] > 0 :
-            print "if"
             return True
         else :
-            print "else"
             self.execute("delete from tbl_geographies where level_id = %s " % (level_id))
             self.execute("delete from tbl_geography_levels where level_id = %s " % (level_id))
             return False
@@ -1556,12 +1554,10 @@ class KnowledgeDatabase(Database):
         table_name = "tbl_geography_levels"
         created_on = self.get_date_time()
         newlist = sorted(levels, key=lambda k: k.level_position, reverse=True)
-        print newlist
         result = False
         for n in newlist :
             if n.is_remove is True :
                 result = self.delete_grography_level(n.level_id)
-                print result
                 if result :
                     break
                 else :
@@ -4501,7 +4497,7 @@ class KnowledgeDatabase(Database):
 
     def _get_machine_details(self):
         columns = "machine_id, ip, port"
-        condition = "server_full = 0 limit 1"
+        condition = "server_full = 0 ORDER BY length(client_ids) limit 1"
         rows = self.get_data(self.tblMachines, columns, condition)
         return rows
 
@@ -4544,7 +4540,7 @@ class KnowledgeDatabase(Database):
         server_port = result[0][2]
         machine_columns = "client_ids"
         machine_value = client_id
-        machine_condition = "ip='%s'" % server_ip
+        machine_condition = "ip='%s' and port='%s'" % (server_ip, server_port)
         self.append(
             self.tblMachines, machine_columns, machine_value,
             machine_condition
