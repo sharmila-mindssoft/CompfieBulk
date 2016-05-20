@@ -866,16 +866,19 @@ class SaveAssignedComplianceSuccess(Response):
         }
 
 class InvalidDueDate(Response):
-    def __init__(self):
-        pass
+    def __init__(self, compliance_task):
+        self.compliance_task = compliance_task
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return InvalidDueDate()
+        data = parse_dictionary(data, ["compliance_task"])
+        compliance_task = data.get("compliance_task")
+        compliance_task = parse_structure_CustomTextType_100(compliance_task)
+        return InvalidDueDate(compliance_task)
 
     def to_inner_structure(self):
         return {
+            "compliance_task": to_structure_CustomTextType_100(self.compliance_task)
         }
 
 class AssigneeNotBelongToUnit(Response):

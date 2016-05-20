@@ -168,8 +168,9 @@ def process_get_compliance_for_units(db, request, session_user, client_id):
     )
 
 def process_save_assigned_compliance(db, request, session_user, client_id):
-    if (db.validate_compliance_due_date(request) is False) :
-        return clienttransactions.InvalidDueDate()
+    status, task = db.validate_compliance_due_date(request)
+    if (status is False) :
+        return clienttransactions.InvalidDueDate(task)
     else :
         return db.save_assigned_compliance(request, session_user, client_id)
 

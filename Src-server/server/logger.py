@@ -100,7 +100,7 @@ def logWebfront(message):
 trace_log_format = logging.Formatter("%(asctime)s - %(name)s - %(message)s")
 trotateFileHandler = logging.handlers.RotatingFileHandler(
     trace_log_path,
-    maxBytes=10240,
+    maxBytes=50000,
     backupCount=20
 )
 trotateFileHandler.suffix = "%Y-%m-%d"
@@ -118,7 +118,7 @@ def logClientApi(callername, message):
 know_trace_log_format = logging.Formatter("%(asctime)s - %(name)s - %(message)s")
 knowrotateFileHandler = logging.handlers.RotatingFileHandler(
     know_trace_log_path,
-    maxBytes=102400,
+    maxBytes=50000,
     backupCount=10
 )
 knowrotateFileHandler.suffix = "%Y-%m-%d"
