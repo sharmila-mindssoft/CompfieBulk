@@ -7118,27 +7118,28 @@ class ClientDatabase(Database):
             session_user
         )
         all_compliace_rows = self.select_all(all_compliance_query)
+        all_compliance_count =  len(all_compliace_rows)
         onetime_query = '''
             SELECT ch.compliance_id, ch.unit_id FROM tbl_compliance_history ch 
             INNER JOIN tbl_compliances c on (ch.compliance_id =  c.compliance_id)
-            WHERE frequency_id = 1 and completed_by = '%d' and approve_status != 1; 
+            WHERE frequency_id = 1 and completed_by = '%d' ; 
         ''' % (
             session_user
         )
         onetime_rows = self.select_all(onetime_query)
-        count = 0
-        combined_rows = ()
-        if len(all_compliace_rows) == 1:
-            combined_rows.insert(0, all_compliace_rows[0])
-        elif len(all_compliace_rows) != 0:
-            combined_rows = tuple(set(all_compliace_rows))
-        if len(onetime_rows) == 1:
-            combined_rows.insert(0, onetime_query[0])
-        elif len(onetime_rows) != 0:
-            onetime_rows = tuple(set(onetime_rows))
-            combined_rows = combined_rows + onetime_rows
-        count = len(tuple(set(combined_rows)))
-        return count
+        onetime_count =  len(onetime_rows)
+        
+        combined_rows = []
+        for combination in onetime_rows:
+            if combination in all_compliace_rows:
+                combined_rows.append(combination)
+            else:
+                continue
+                
+
+        count = len(combined_rows)
+        # count = len(tuple(set(combined_rows)))
+        return all_compliance_count - count
 
     def get_upcoming_compliances_list(self, upcoming_start_count, to_count, session_user, client_id):
         query = "SELECT * FROM (SELECT ac.due_date, document_name, compliance_task, \
