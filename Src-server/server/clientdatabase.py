@@ -7181,7 +7181,7 @@ class ClientDatabase(Database):
             if compliance["format_file"] is not None and compliance["format_file"].strip() != '':
                 format_files = [ "%s/%s" % (
                         FORMAT_DOWNLOAD_URL, x
-                    ) for x in compliance[4].split(",")]
+                    ) for x in compliance["format_file"].split(",")]
             upcoming_compliances_list.append(
                 core.UpcomingCompliance(
                     compliance_name=compliance_name,
