@@ -1688,6 +1688,11 @@ function initClientMirror() {
         callerName = "client_transaction";
         clientApiRequest(callerName, request, callback);
     }
+    function getContractExpireAndNotificationCount(){
+        $("#notification_count").text(window.localStorage["CLIENT_NOTIFICATION_COUNT"]);
+        $("#reminder_count").text(window.localStorage["CLIENT_REMINDER_COUNT"]);
+        $("#escalation_count").text(window.localStorage["CLIENT_ESCALATION_COUNT"] );    
+    }
 
     return {
         log: log,
@@ -1838,7 +1843,8 @@ function initClientMirror() {
         getAssigneewiseYearwiseComplianes: getAssigneewiseYearwiseComplianes,
         getAssigneewiseReassignedComplianes: getAssigneewiseReassignedComplianes,
         updateUserProfile: updateUserProfile,
-        updateUserInfo: updateUserInfo
+        updateUserInfo: updateUserInfo,
+        getContractExpireAndNotificationCount: getContractExpireAndNotificationCount
     }
 }
 var client_mirror = initClientMirror();
