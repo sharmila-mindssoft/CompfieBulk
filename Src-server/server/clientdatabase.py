@@ -6432,50 +6432,60 @@ class ClientDatabase(Database):
             notification_type_id = 2
         elif notification_type == "Escalation":
             notification_type_id = 3
-        columns = "nul.notification_id, notification_text, created_on, \
-            extra_details, statutory_provision, unit_code, unit_name, \
-            address, assignee, concurrence_person, approval_person, \
+        columns = '''nul.notification_id as notification_id, notification_text, created_on, \
+            extra_details, statutory_provision, \
+            assignee, concurrence_person, approval_person, \
             nl.compliance_id, compliance_task, document_name, \
             compliance_description, penal_consequences, read_status,\
-            due_date, completion_date, approve_status"
+            due_date, completion_date, approve_status'''
         subquery_columns = "(SELECT concat(IFNULL(employee_code, 'Administrator'), '-', employee_name,\
         ',','(' , IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE user_id = assignee), IF(\
         concurrence_person IS NULL, '', (SELECT concat(IFNULL(employee_code, 'Administrator'), '-', \
         employee_name,',','(' ,  IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE \
         user_id = concurrence_person)), (SELECT concat(IFNULL(employee_code, 'Administrator'), '-',\
         employee_name,',','(' ,  IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE \
-        user_id = approval_person)\
-        " % (self.tblUsers, self.tblUsers, self.tblUsers)
-        query = "SELECT %s,%s \
-                FROM %s nl \
-                INNER JOIN %s nul ON (nl.notification_id = nul.notification_id)\
-                LEFT JOIN %s tu ON (tu.unit_id = nl.unit_id) \
-                LEFT JOIN %s tc ON (tc.compliance_id = nl.compliance_id) \
-                LEFT JOIN %s tch ON (tch.compliance_id = nl.compliance_id AND \
+        user_id = approval_person),\
+        (select concat(unit_code, '-', unit_name, ',', address) \
+        FROM tbl_units tu WHERE tu.unit_id = nl.unit_id) " % (self.tblUsers, self.tblUsers, self.tblUsers)
+        query = " \
+                SELECT * FROM (\
+                SELECT %s,%s \
+                FROM %s nul \
+                LEFT JOIN %s nl ON (nul.notification_id = nl.notification_id)\
+                INNER JOIN %s tc ON (tc.compliance_id = nl.compliance_id) \
+                INNER JOIN %s tch ON (tch.compliance_id = nl.compliance_id AND \
                 tch.unit_id = nl.unit_id) \
-                WHERE notification_type_id = '%d' \
-                AND user_id = '%d' \
+                WHERE notification_type_id = '%s' \
+                AND user_id = '%s' \
                 AND read_status = 0\
                 AND (compliance_history_id is null \
                 OR  compliance_history_id = CAST(REPLACE(\
                 SUBSTRING_INDEX(extra_details, '-', 1),\
                 ' ','') AS UNSIGNED)) \
-                ORDER BY read_status ASC, nul.notification_id DESC \
-                LIMIT %d, %d" % (
-                    columns, subquery_columns, self.tblNotificationsLog,
+                LIMIT %s, %s ) as a \
+                ORDER BY a.notification_id DESC" % (
+                    columns, subquery_columns, 
                     self.tblNotificationUserLog,
-                    self.tblUnits, self.tblCompliances,
+                    self.tblNotificationsLog,
+                    self.tblCompliances,
                     self.tblComplianceHistory,
                     notification_type_id, session_user,
-                    int(start_count), to_count
+                    start_count, to_count
                 )
         rows = self.select_all(query)
-        columns_list = columns.replace(" ", "").split(",")
-        columns_list += ["assignee_details", "concurrence_details", "approver_details"]
+        columns_list = [
+            "notification_id", "notification_text", "created_on", 
+            "extra_details", "statutory_provision",
+            "assignee", "concurrence_person", "approval_person", 
+            "compliance_id", "compliance_task", "document_name", 
+            "compliance_description", "penal_consequences", "read_status",
+            "due_date", "completion_date", "approve_status"
+        ]
+        columns_list += ["assignee_details", "concurrence_details", "approver_details", "unit_details"]
         notifications = self.convert_to_dict(rows, columns_list)
         notifications_list = []
         for notification in notifications:
-            notification_id = notification["nul.notification_id"]
+            notification_id = notification["notification_id"]
             read_status = bool(int(notification["read_status"]))
             extra_details_with_history_id = notification["extra_details"].split("-")
             compliance_history_id = int(extra_details_with_history_id[0])
@@ -6502,11 +6512,9 @@ class ClientDatabase(Database):
 
                 notification_text = notification["notification_text"]
                 updated_on = self.datetime_to_string(notification["created_on"])
-                unit_name = "%s - %s" % (
-                    notification["unit_code"],
-                    notification["unit_name"]
-                )
-                unit_address = notification["address"]
+                unit_details = notification["unit_details"].split(",")
+                unit_name = unit_details[0]
+                unit_address = unit_details[1]
                 assignee = notification["assignee_details"]
                 concurrence_person = None if notification["concurrence_details"] in ['', None, "None"] else notification["concurrence_details"]
                 approval_person = notification["approver_details"]
