@@ -2532,34 +2532,40 @@ class ClientDatabase(Database):
             approval_user_ids += ",0"
 
         if self.is_two_levels_of_approval():
-            concurrence_condition = "IF ( (concurred_by = '%d' AND concurrence_status = 1), 0, 1)" % (session_user)
+            concurrence_condition = "IF ( (concurred_by = '%s' AND concurrence_status = 1), 0, 1)" % (session_user)
         else:
             concurrence_condition = "1"
-        query = "SELECT compliance_history_id, tch.compliance_id, start_date,\
-        tch.due_date, documents, completion_date, completed_on, next_due_date, \
+        query = "SELECT * FROM \
+        (SELECT compliance_history_id, tch.compliance_id, start_date,\
+        tch.due_date as due_date, documents, completion_date, completed_on, next_due_date, \
         concurred_by, remarks, datediff(tch.due_date, completion_date ), \
-        compliance_task, compliance_description, tc.frequency_id, frequency, \
+        compliance_task, compliance_description, tc.frequency_id, \
+        (SELECT frequency FROM %s tcf WHERE tcf.frequency_id = tc.frequency_id ), \
         document_name, concurrence_status, (select statutory_dates from \
         tbl_assigned_compliances tac where tac.compliance_id = tch.compliance_id \
         limit 1), tch.validity_date, approved_by, \
-        concat(unit_code, '-', tu.unit_name), completed_by, tus.employee_code, \
-        tus.employee_name, domain_name FROM %s tch \
+        (SELECT concat(unit_code, '-', tu.unit_name) FROM %s tu \
+        where tch.unit_id = tu.unit_id), \
+        completed_by, \
+        (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) FROM %s tu\
+        WHERE tu.user_id = tch.completed_by), \
+        (SELECT domain_name from %s td WHERE td.domain_id = tc.domain_id )\
+        FROM %s tch \
         INNER JOIN %s tc ON (tch.compliance_id = tc.compliance_id) \
-        INNER JOIN %s tcf ON (tc.frequency_id = tcf.frequency_id) \
-        INNER JOIN %s tu ON (tch.unit_id = tu.unit_id) \
-        INNER JOIN %s tus ON (tus.user_id = tch.completed_by) \
-        INNER JOIN %s td ON (td.domain_id = tc.domain_id) \
         WHERE IFNULL(completion_date, 0) != 0  \
         AND IFNULL(completed_on, 0) != 0  \
         AND IFNULL(approve_status, 0) = 0 \
-        AND (approved_by IN (%s) OR concurred_by = '%d') \
-        AND is_closed  = 0 AND %s\
-        ORDER BY completed_by, tch.due_date ASC LIMIT %d, %d" % (
-            self.tblComplianceHistory, self.tblCompliances,
-            self.tblComplianceFrequency, self.tblUnits, self.tblUsers,
-            self.tblDomains, approval_user_ids,
-            session_user, concurrence_condition, int(start_count), to_count
+        AND (approved_by IN (%s) OR concurred_by = '%s') \
+        AND %s\
+        LIMIT %s, %s) a \
+        ORDER BY completed_by, due_date ASC" % (
+            self.tblComplianceFrequency, self.tblUnits, self.tblUsers, self.tblDomains,  
+            self.tblComplianceHistory, self.tblCompliances, approval_user_ids, 
+            session_user, concurrence_condition, start_count, to_count
         )
+        # print 
+        # print "approval query=========>"
+        # print query
         rows = self.select_all(query)
         is_two_levels = self.is_two_levels_of_approval()
         compliances = []
@@ -2621,7 +2627,7 @@ class ClientDatabase(Database):
                 )
                 date_list.append(s_date)
 
-            domain_name = row[24]
+            domain_name = row[23]
             action = None
             if is_two_levels:
                 if concurred_by_id == session_user:
@@ -2636,11 +2642,8 @@ class ClientDatabase(Database):
                 action = "Approve"
             else:
                 continue
-            employee_code = row[22]
-            assignee = row[23]
+            assignee = row[22]
 
-            if employee_code is not None:
-                assignee = "%s - %s" % (employee_code, assignee)
             if assignee not in assignee_id_name_map:
                 assignee_id_name_map[assignee] = row[21]
             if assignee not in assignee_wise_compliances:
@@ -5178,27 +5181,44 @@ class ClientDatabase(Database):
         self, compliance_history_id, remarks, next_due_date,
         validity_date, client_id
     ):
-        columns = ["approve_status", "approved_on", "remarks"]
+        # Updating approval in compliance history
+        columns = ["approve_status", "approved_on"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
-        values = [1, self.get_date_time(), remarks]
+        values = [1, self.get_date_time()]
+        if remarks is not None:
+            columns.append("remarks")
+            values.append(remarks)
         if next_due_date is not None:
             columns.append("next_due_date")
             values.append(self.string_to_datetime(next_due_date))
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-        get_columns = "unit_id, compliance_id"
-        rows = self.get_data(
-            self.tblComplianceHistory, get_columns, condition
+        
+        # Getting compliance details from compliance history
+        query = '''
+            SELECT tch.unit_id, tch.compliance_id, 
+            (SELECT frequency_id FROM %s tc WHERE tch.compliance_id = tc.compliance_id ),
+            due_date, completion_date
+            FROM %s tch
+            WHERE compliance_history_id = '%d'
+        ''' % (
+            self.tblCompliances, self.tblComplianceHistory, compliance_history_id
         )
+        rows = self.select_all(query)
+        columns = ["unit_id", "compliance_id", "frequency_id", "due_date", "completion_date"]
+        rows = self.convert_to_dict(rows, columns)
 
-        comp_columns = "frequency_id"
-        comp_condition = "compliance_id = '%d'" % (rows[0][1])
-        comp_rows = self.get_data(self.tblCompliances, comp_columns, comp_condition)
-        frequency_id = str(int(comp_rows[0][0]))
+        unit_id = rows[0]["unit_id"]
+        compliance_id = rows[0]["compliance_id"]
+        due_date = rows[0]["due_date"]
+        completion_date = rows[0]["completion_date"]
+        frequency_id = rows[0]["frequency_id"]
 
+        # Updating next due date validity dates in assign compliance table
         as_columns = []
         as_values = []
         as_condition = " unit_id = '%d' and compliance_id = '%d'" % (
-                rows[0][0], rows[0][1])
+                unit_id, compliance_id
+        )
         if next_due_date is not None:
             as_columns.append("due_date")
             as_values.append(self.string_to_datetime(next_due_date))
@@ -5208,23 +5228,16 @@ class ClientDatabase(Database):
         if frequency_id in (1, "1"):
             as_columns.append("is_active")
             as_values.append(0)
-
         if len(as_columns) > 0 and len(as_values) > 0 and len(as_columns) == len(as_values):
-            self.update(self.tblAssignedCompliances, as_columns, as_values, as_condition, client_id)
-
-        get_columns = "unit_id, compliance_id, due_date, completion_date"
-        condition = "compliance_history_id = '%d'" % compliance_history_id
-        rows = self.get_data(
-            self.tblComplianceHistory, get_columns, condition
-        )
-        unit_id = rows[0][0]
-        compliance_id = rows[0][1]
-        due_date = rows[0][2]
-        completion_date = rows[0][3]
+            self.update(
+                self.tblAssignedCompliances, as_columns, as_values, as_condition, 
+                client_id
+            )
         status = "Complied"
         if due_date < completion_date:
             status = "Delayed Compliance"
 
+        # Saving in compliance activity
         ageing, remarks = self.calculate_ageing(
             due_date, frequency_type=frequency_id, completion_date=completion_date, duration_type=None
         )
@@ -5232,6 +5245,8 @@ class ClientDatabase(Database):
             unit_id, compliance_id, "Approved", status,
             remarks
         )
+
+
         self.notify_compliance_approved(compliance_history_id, "Approved")
         return True
 
@@ -5293,20 +5308,23 @@ class ClientDatabase(Database):
 
     def reject_compliance_approval(self, compliance_history_id, remarks,
         next_due_date, client_id):
-        columns = "unit_id, compliance_id, due_date, completion_date"
+        columns = "unit_id, ch.compliance_id, due_date, completion_date, completed_by,\
+        concurred_by, approved_by, \
+        (SELECT concat(IFNULL(document_name,''),'-',compliance_task) FROM tbl_compliances tc\
+        WHERE tc.compliance_id = ch.compliance_id)"
         condition = "compliance_history_id = '%d'" % compliance_history_id
         rows = self.get_data(
-            self.tblComplianceHistory, columns, condition
+            self.tblComplianceHistory+ " ch", columns, condition
         )
-        unit_id = rows[0][0]
-        compliance_id = rows[0][1]
-        due_date = rows[0][2]
-        completion_date = rows[0][3]
+        columns = ["unit_id", "compliance_id", "due_date", "completion_date",
+        "assignee_id", "concurrence_id", "approval_id", "compliance_name"]
+        rows = self.convert_to_dict(rows, columns)
+        unit_id = rows[0]["unit_id"]
+        compliance_id = rows[0]["compliance_id"]
+        due_date = rows[0]["due_date"]
+        completion_date = rows[0]["completion_date"]
         status = "Inprogress"
-        # due_date_parts = str(due_date).split("-")
-        # due_date = datetime.date(
-        #     int(due_date_parts[0]), int(due_date_parts[1]), int(due_date_parts[2])
-        # )
+
         if due_date is not None:
             if due_date < completion_date:
                 status = "Not Complied"
@@ -5324,17 +5342,17 @@ class ClientDatabase(Database):
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0, remarks, None, None, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-        self.notify_compliance_rejected(compliance_history_id, remarks, "RejectApproval")
+        self.notify_compliance_rejected(
+            compliance_history_id, remarks, "RejectApproval", rows[0]["assignee_id"],
+            rows[0]["concurrence_id"], rows[0]["approval_id"], rows[0]["compliance_name"],
+            due_date
+        )
         return True
 
     def notify_compliance_rejected(
-        self,  compliance_history_id, remarks, reject_status
+        self,  compliance_history_id, remarks, reject_status, assignee_id, 
+        concurrence_id,  approver_id, compliance_name, due_date
     ):
-        assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = self.get_compliance_history_details(
-            compliance_history_id
-        )
-        if document_name is not None and document_name != '' and document_name != "None":
-            compliance_name = "%s - %s" % (document_name, compliance_name)
         assignee_email, assignee_name = self.get_user_email_name(str(assignee_id))
         approver_email, approver_name = self.get_user_email_name(str(approver_id))
         concurrence_email, concurrence_name = (None, None)
@@ -5376,15 +5394,18 @@ class ClientDatabase(Database):
 
     def concur_compliance(self, compliance_history_id, remarks,
         next_due_date, validity_date, client_id):
-        columns = ["concurrence_status", "concurred_on", "remarks"]
+        columns = ["concurrence_status", "concurred_on"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
-        values = [1, self.get_date_time(), remarks]
+        values = [1, self.get_date_time()]
         if validity_date is not None:
             columns.append("validity_date")
             values.append(self.string_to_datetime(validity_date))
         if next_due_date is not None:
             columns.append("next_due_date")
             values.append(self.string_to_datetime(next_due_date))
+        if remarks is not None:
+            columns.append("remarks")
+            values.append(remarks)
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
 
         columns = "unit_id, compliance_id, due_date, completion_date"
@@ -5427,20 +5448,24 @@ class ClientDatabase(Database):
 
     def reject_compliance_concurrence(self, compliance_history_id, remarks,
         next_due_date, client_id):
-        columns = "unit_id, compliance_id, due_date, completion_date"
+        columns = "unit_id, ch.compliance_id, due_date, completion_date, completed_by,\
+        concurred_by, approved_by, \
+        (SELECT concat(IFNULL(document_name,''),'-',compliance_task) FROM tbl_compliances tc\
+        WHERE tc.compliance_id = ch.compliance_id)"
         condition = "compliance_history_id = '%d'" % compliance_history_id
+        # columns = "unit_id, compliance_id, due_date, completion_date"
+        # condition = "compliance_history_id = '%d'" % compliance_history_id
         rows = self.get_data(
-            self.tblComplianceHistory, columns, condition
+            self.tblComplianceHistory+ " ch", columns, condition
         )
-        unit_id = rows[0][0]
-        compliance_id = rows[0][1]
-        due_date = rows[0][2]
-        completion_date = rows[0][3]
+        columns = ["unit_id", "compliance_id", "due_date", "completion_date",
+        "assignee_id", "concurrence_id", "approval_id", "compliance_name"]
+        rows = self.convert_to_dict(rows, columns)
+        unit_id = rows[0]["unit_id"]
+        compliance_id = rows[0]["compliance_id"]
+        due_date = rows[0]["due_date"]
+        completion_date = rows[0]["completion_date"]
         status = "Inprogress"
-        # due_date_parts = str(due_date).split("-")
-        # due_date = datetime.date(
-        #     int(due_date_parts[0]), int(due_date_parts[1]), int(due_date_parts[2])
-        # )
         if due_date < completion_date:
             status = "Not Complied"
         ageing, ageing_remarks = self.calculate_ageing(
@@ -5454,7 +5479,11 @@ class ClientDatabase(Database):
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0,  remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-        self.notify_compliance_rejected(compliance_history_id, remarks, "RejectConcurrence")
+        self.notify_compliance_rejected(
+            compliance_history_id, remarks, "RejectConcurrence", rows[0]["assignee_id"],
+            rows[0]["concurrence_id"], rows[0]["approval_id"], rows[0]["compliance_name"],
+            due_date
+        )
         return True
 
     def get_client_level_1_statutoy(self, user_id, client_id=None) :
@@ -6941,6 +6970,14 @@ class ClientDatabase(Database):
         IFNULL(completed_on, 0) = 0 " % (
             condition
         )
+        # print
+        # print "Normal compliances overdue count=====>"
+        # print "%s %s" % (query, other_compliance_condition)
+
+        # print
+        # print "Onoccurrence compliances overdue count=====>"
+        # print "%s %s" % (query, on_occurrence_condition)
+
         other_compliance_count = self.select_all("%s %s" % (
             query, other_compliance_condition)
         )[0][0]
@@ -7006,6 +7043,9 @@ class ClientDatabase(Database):
         ''' % (
             session_user, current_start_count, to_count
         )
+        # print
+        # print "current compliances query========>"
+        # print query
         rows = self.select_all(query)
         current_compliances_row = self.convert_to_dict(rows, columns)
         current_compliances_list = []
@@ -7080,27 +7120,28 @@ class ClientDatabase(Database):
             session_user
         )
         all_compliace_rows = self.select_all(all_compliance_query)
+        all_compliance_count =  len(all_compliace_rows)
         onetime_query = '''
             SELECT ch.compliance_id, ch.unit_id FROM tbl_compliance_history ch
             INNER JOIN tbl_compliances c on (ch.compliance_id =  c.compliance_id)
-            WHERE frequency_id = 1 and completed_by = '%d';
+            WHERE frequency_id = 1 and completed_by = '%d' ; 
         ''' % (
             session_user
         )
         onetime_rows = self.select_all(onetime_query)
-        count = 0
+        onetime_count =  len(onetime_rows)
+        
         combined_rows = []
-        if len(all_compliace_rows) == 1:
-            combined_rows.append(all_compliace_rows[0])
-        elif len(all_compliace_rows) != 0:
-            combined_rows = tuple(set(all_compliace_rows))
-        if len(onetime_rows) == 1:
-            combined_rows.insert(0, onetime_query[0])
-        elif len(onetime_rows) != 0:
-            onetime_rows = tuple(set(onetime_rows))
-            combined_rows = combined_rows + onetime_rows
-        count = len(list(set(combined_rows)))
-        return count
+        for combination in onetime_rows:
+            if combination in all_compliace_rows:
+                combined_rows.append(combination)
+            else:
+                continue
+                
+
+        count = len(combined_rows)
+        # count = len(tuple(set(combined_rows)))
+        return all_compliance_count - count
 
     def get_upcoming_compliances_list(self, upcoming_start_count, to_count, session_user, client_id):
         query = "SELECT * FROM (SELECT ac.due_date, document_name, compliance_task, \
@@ -7124,6 +7165,9 @@ class ClientDatabase(Database):
                     self.tblCompliances, session_user, int(upcoming_start_count),
                     to_count
                 )
+        # print
+        # print "Upcoming compliances query"
+        # print query
         upcoming_compliances_rows = self.select_all(query)
 
         columns = ["due_date", "document_name", "compliance_task",
@@ -7148,7 +7192,7 @@ class ClientDatabase(Database):
             if compliance["format_file"] is not None and compliance["format_file"].strip() != '':
                 format_files = [ "%s/%s" % (
                         FORMAT_DOWNLOAD_URL, x
-                    ) for x in compliance[4].split(",")]
+                    ) for x in compliance["format_file"].split(",")]
             upcoming_compliances_list.append(
                 core.UpcomingCompliance(
                     compliance_name=compliance_name,
