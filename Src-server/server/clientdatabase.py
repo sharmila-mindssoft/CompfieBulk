@@ -2559,11 +2559,11 @@ class ClientDatabase(Database):
         AND %s\
         LIMIT %s, %s) a \
         ORDER BY completed_by, due_date ASC" % (
-            self.tblComplianceFrequency, self.tblUnits, self.tblUsers, self.tblDomains,  
-            self.tblComplianceHistory, self.tblCompliances, approval_user_ids, 
+            self.tblComplianceFrequency, self.tblUnits, self.tblUsers, self.tblDomains,
+            self.tblComplianceHistory, self.tblCompliances, approval_user_ids,
             session_user, concurrence_condition, start_count, to_count
         )
-        # print 
+        # print
         # print "approval query=========>"
         # print query
         rows = self.select_all(query)
@@ -3090,12 +3090,13 @@ class ClientDatabase(Database):
         c_ids = []
         for c in request.compliances :
             c_ids.append(c.compliance_id)
-            q = "SELECT compliance_id, statutory_dates, repeats_type_id from tbl_compliances \
+            q = "SELECT compliance_id, compliance_task, statutory_dates, repeats_type_id from tbl_compliances \
                 where compliance_id = %s" % int(c.compliance_id)
             row = self.select_one(q)
             comp_id = row[0]
-            s_dates = json.loads(row[1])
-            repeats_type_id = row[2]
+            task = row[1]
+            s_dates = json.loads(row[2])
+            repeats_type_id = row[3]
             due_date, due_date_list, date_list = self.set_new_due_date(s_dates, repeats_type_id, comp_id)
 
             if c.due_date not in [None, ""] and due_date not in [None, ""]:
@@ -3103,8 +3104,8 @@ class ClientDatabase(Database):
                 n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
                 if (n_due_date < t_due_date) :
                     # Due date should be lessthen statutory date
-                    return False
-        return True
+                    return False, task
+        return True, None
 
     def save_assigned_compliance(self, request, session_user, client_id):
         new_unit_settings = request.new_units
@@ -5192,10 +5193,10 @@ class ClientDatabase(Database):
             columns.append("next_due_date")
             values.append(self.string_to_datetime(next_due_date))
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-        
+
         # Getting compliance details from compliance history
         query = '''
-            SELECT tch.unit_id, tch.compliance_id, 
+            SELECT tch.unit_id, tch.compliance_id,
             (SELECT frequency_id FROM %s tc WHERE tch.compliance_id = tc.compliance_id ),
             due_date, completion_date
             FROM %s tch
@@ -5230,7 +5231,7 @@ class ClientDatabase(Database):
             as_values.append(0)
         if len(as_columns) > 0 and len(as_values) > 0 and len(as_columns) == len(as_values):
             self.update(
-                self.tblAssignedCompliances, as_columns, as_values, as_condition, 
+                self.tblAssignedCompliances, as_columns, as_values, as_condition,
                 client_id
             )
         status = "Complied"
@@ -5350,7 +5351,7 @@ class ClientDatabase(Database):
         return True
 
     def notify_compliance_rejected(
-        self,  compliance_history_id, remarks, reject_status, assignee_id, 
+        self,  compliance_history_id, remarks, reject_status, assignee_id,
         concurrence_id,  approver_id, compliance_name, due_date
     ):
         assignee_email, assignee_name = self.get_user_email_name(str(assignee_id))
@@ -7124,20 +7125,20 @@ class ClientDatabase(Database):
         onetime_query = '''
             SELECT ch.compliance_id, ch.unit_id FROM tbl_compliance_history ch
             INNER JOIN tbl_compliances c on (ch.compliance_id =  c.compliance_id)
-            WHERE frequency_id = 1 and completed_by = '%d' ; 
+            WHERE frequency_id = 1 and completed_by = '%d' ;
         ''' % (
             session_user
         )
         onetime_rows = self.select_all(onetime_query)
         onetime_count =  len(onetime_rows)
-        
+
         combined_rows = []
         for combination in onetime_rows:
             if combination in all_compliace_rows:
                 combined_rows.append(combination)
             else:
                 continue
-                
+
 
         count = len(combined_rows)
         # count = len(tuple(set(combined_rows)))

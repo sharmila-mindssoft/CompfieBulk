@@ -796,11 +796,15 @@ function submitcompliance(){
           load_firstwizard();
           hideLoader();
         }
-        function onFailure(error){
+        function onFailure(error, response){
           displayMessage(error);
           err_message = message.error;
           if (err_message == "undefined")
             displayMessage(error);
+          else if (error == "InvalidDueDate") {
+            task = response["compliance_task"];
+            displayMessage("Invalid due date in " + task);
+          }
           else
             displayMessage(err_message);
           hideLoader();
@@ -809,13 +813,13 @@ function submitcompliance(){
           assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
           assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
           function (error, response) {
-          if (error == null){
-            onSuccess(response);
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error, response);
+            }
           }
-          else {
-            onFailure(error);
-          }
-        }
         );
         }else{
           hideLoader();
@@ -836,11 +840,15 @@ function submitcompliance(){
           load_firstwizard();
           hideLoader();
         }
-        function onFailure(error){
+        function onFailure(error, response){
           displayMessage(error);
           err_message = message.error;
           if (err_message == "undefined")
             displayMessage(error);
+          else if (error == "InvalidDueDate") {
+            task = response["compliance_task"];
+            displayMessage("Invalid due date in " + task);
+          }
           else
             displayMessage(err_message);
           hideLoader();
@@ -849,12 +857,12 @@ function submitcompliance(){
           assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
           assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
           function (error, response) {
-          if (error == null){
-            onSuccess(response);
-          }
-          else {
-            onFailure(error);
-          }
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error, response);
+            }
         }
         );
       }
