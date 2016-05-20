@@ -264,6 +264,7 @@ $('#pagination').click(function(){
 
 // get statutory mapping report data from api
 $("#submit").click(function(){
+  $('#pagination').show();
   var country = $("#country").val();
   var domain = $("#domain").val();
   var industry = null;
@@ -323,7 +324,6 @@ $("#submit").click(function(){
      temp_act = act;
     }
 });
-
 //Autocomplete Script Starts
 
 //retrive country autocomplete value
