@@ -1462,11 +1462,12 @@ class ClientDatabase(Database):
             (select country_name from tbl_countries where country_id = t1.country_id )country_name, \
             (select domain_name from tbl_domains where domain_id = t1.domain_id)domain_name, \
             t2.is_closed,  \
-            (select is_new from tbl_client_statutories where unit_id = t1.unit_id order by is_new desc limit 1)\
+            (select is_new from tbl_client_statutories where unit_id = t1.unit_id order by is_new limit 1)\
             FROM tbl_client_statutories t1 \
             INNER JOIN tbl_units t2 \
             ON t1.unit_id = t2.unit_id %s \
             ORDER BY t1.unit_id " % (where_qry)
+        print query
         rows = self.select_all(query)
 
         columns = [
@@ -8403,7 +8404,6 @@ class ClientDatabase(Database):
         if from_date is not None and to_date is not None:
             condition += " AND  al.created_on between '%s' AND '%s'" % (
                 from_date, to_date
-
             )
         elif from_date is not None:
             condition += " AND  al.created_on > '%s' " % (

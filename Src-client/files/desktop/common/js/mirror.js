@@ -760,7 +760,7 @@ function initMirror() {
         apiRequest("knowledge_report", request, callback);
     }
 
-    function filterData(cId, dId, iId, sNId, gId, level1SId, rCount) {
+    function filterData(cId, dId, iId, sNId, gId, level1SId, fId, rCount) {
         var filter = {};
         filter["c_id"] = cId;
         filter["d_id"] = dId;
@@ -768,6 +768,7 @@ function initMirror() {
         filter["s_n_id"] = sNId;
         filter["g_id"] = gId;
         filter["level_1_s_id"] = level1SId;
+        filter["f_id"] = fId;
         filter["r_count"] = rCount
         return filter;
     }

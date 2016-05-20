@@ -8,6 +8,7 @@ function initializeUI () {
     $(".welcome-msg").css("margin-top", marginTop);
 }
 
+
 $(document).ready(function () {
     if (!mirror.verifyLoggedIn())
         return;

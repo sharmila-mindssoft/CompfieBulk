@@ -121,7 +121,7 @@ function onCountrySuccess(val){
 }
 
 //load country list in autocomplete text box
-$("#countryval").keyup(function(){
+$("#countryval").keyup(function(e){
   var textval = $(this).val();
   getCountryAutocomplete(textval, countriesList, function(val){
     onCountrySuccess(val);

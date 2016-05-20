@@ -2312,7 +2312,7 @@ class KnowledgeDatabase(Database):
     def get_statutory_mapping_report(
         self, country_id, domain_id, industry_id,
         statutory_nature_id, geography_id,
-        level_1_statutory_id, user_id, from_count, to_count
+        level_1_statutory_id, frequency_id, user_id, from_count, to_count
     ) :
         qry_where = ""
         if industry_id is not None :
@@ -2323,6 +2323,8 @@ class KnowledgeDatabase(Database):
             qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
         if level_1_statutory_id is not None :
             qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, '%s') from tbl_statutories where statutory_id = %s)" % (str("%"), level_1_statutory_id)
+        if frequency_id is not None :
+            qry_where += "AND t2.frequency_id = %s " % (frequency_id)
 
         q_count = "SELECT  count(distinct t2.compliance_id) \
             FROM tbl_statutory_mappings t1 \
