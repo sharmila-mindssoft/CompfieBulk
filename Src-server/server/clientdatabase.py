@@ -7108,7 +7108,7 @@ class ClientDatabase(Database):
 
     def get_upcoming_count(self, session_user):
         all_compliance_query = '''
-            SELECT count(*) FROM tbl_assigned_compliances ac 
+            SELECT ac.compliance_id, ac.unit_id FROM tbl_assigned_compliances ac 
             INNER JOIN tbl_compliances c ON (ac.compliance_id = c.compliance_id) 
             WHERE 
             assignee = '%d' AND frequency_id != 4  
@@ -7117,20 +7117,28 @@ class ClientDatabase(Database):
         ''' % (
             session_user
         )
-        all_compliance_rows = self.select_all(all_compliance_query)
-        all_compliance_count = all_compliance_rows[0][0]
-
-        onetime_inprogress_query = '''
-            SELECT count(*) FROM tbl_compliance_history ch 
+        all_compliace_rows = self.select_all(all_compliance_query)
+        onetime_query = '''
+            SELECT ch.compliance_id, ch.unit_id FROM tbl_compliance_history ch 
             INNER JOIN tbl_compliances c on (ch.compliance_id =  c.compliance_id)
-            WHERE frequency_id = 1 and completed_by = '%d' and approve_status = 1; 
+            WHERE frequency_id = 1 and completed_by = '%d' and approve_status != 1; 
         ''' % (
             session_user
         )
-        onetime_inprogress_rows = self.select_all(onetime_inprogress_query)
-        onetime_inprogress_count = onetime_inprogress_rows[0][0]
-        total_count = all_compliance_count - onetime_inprogress_count
-        return total_count
+        onetime_rows = self.select_all(onetime_query)
+        count = 0
+        combined_rows = ()
+        if len(all_compliace_rows) == 1:
+            combined_rows.insert(0, all_compliace_rows[0])
+        elif len(all_compliace_rows) != 0:
+            combined_rows = tuple(set(all_compliace_rows))
+        if len(onetime_rows) == 1:
+            combined_rows.insert(0, onetime_query[0])
+        elif len(onetime_rows) != 0:
+            onetime_rows = tuple(set(onetime_rows))
+            combined_rows = combined_rows + onetime_rows
+        count = len(tuple(set(combined_rows)))
+        return count
 
     def get_upcoming_compliances_list(self, upcoming_start_count, to_count, session_user, client_id):
         query = "SELECT * FROM (SELECT ac.due_date, document_name, compliance_task, \
