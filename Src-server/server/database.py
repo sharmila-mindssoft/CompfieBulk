@@ -306,6 +306,7 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
+        print query
         try:
             return self.execute(query)
         except Exception, e:
