@@ -1379,7 +1379,7 @@ class ClientDatabase(Database):
         )
         form_ids = rows[0][0]
         forms = self.return_forms(client_id, form_ids)
-        
+
         if not self.is_primary_admin(session_user) and not self.is_admin(session_user):
             unit_ids = self.get_user_unit_ids(session_user)
             query = "SELECT DISTINCT user_id FROM %s where unit_id in (%s)" % (
@@ -1404,7 +1404,7 @@ class ClientDatabase(Database):
         if from_date is not None and to_date is not None:
             where_qry += " AND  created_on between '%s' AND '%s'" % (
                 from_date, to_date
-                
+
             )
         elif from_date is not None:
             where_qry += " AND  created_on > '%s' " % (
@@ -1450,7 +1450,7 @@ class ClientDatabase(Database):
             AND t1.domain_id in (select domain_id from tbl_user_domains where user_id LIKE '%s')" % (
                 user_id, user_id
             )
-        query = "SELECT distinct t1.geography, \
+        query = "SELECT distinct  \
             t1.country_id, t1.domain_id, t1.unit_id,t2.unit_name, \
             (select business_group_name from tbl_business_groups \
                 where business_group_id = t2.business_group_id)business_group_name, \
@@ -1461,18 +1461,19 @@ class ClientDatabase(Database):
             t2.address, t2.postal_code, t2.unit_code, \
             (select country_name from tbl_countries where country_id = t1.country_id )country_name, \
             (select domain_name from tbl_domains where domain_id = t1.domain_id)domain_name, \
-            t2.is_closed \
+            t2.is_closed,  \
+            (select is_new from tbl_client_statutories where unit_id = t1.unit_id order by is_new desc limit 1)\
             FROM tbl_client_statutories t1 \
             INNER JOIN tbl_units t2 \
             ON t1.unit_id = t2.unit_id %s \
             ORDER BY t1.unit_id " % (where_qry)
         rows = self.select_all(query)
+
         columns = [
-            "geography",
             "country_id", "domain_id", "unit_id", "unit_name",
             "business_group_name", "legal_entity_name",
             "division_name", "address", "postal_code", "unit_code",
-            "country_name", 'domain_name', 'is_closed'
+            "country_name", 'domain_name', 'is_closed', 'is_new'
         ]
         result = self.convert_to_dict(rows, columns)
         return self.return_statutory_settings(result, client_id)
@@ -1587,9 +1588,8 @@ class ClientDatabase(Database):
             domain_name = d["domain_name"]
             unit_id = d["unit_id"]
             unit_name = "%s - %s" % (d["unit_code"], d["unit_name"])
-            address = "%s, %s, %s" % (
+            address = "%s, %s" % (
                 d["address"],
-                d["geography"],
                 d["postal_code"]
             )
 
@@ -1606,7 +1606,8 @@ class ClientDatabase(Database):
                     d["business_group_name"],
                     d["legal_entity_name"],
                     d["division_name"],
-                    bool(d["is_closed"])
+                    bool(d["is_closed"]),
+                    not bool(d["is_new"])
                 )
             else :
                 domain_list = unit_statutories.domain_names
@@ -5745,7 +5746,7 @@ class ClientDatabase(Database):
         from_date, to_date, compliance_status,
         session_user, from_count, to_count
     ) :
-        
+
         qry_where = self.get_where_query_for_compliance_details_report(
             country_id, domain_id, statutory_id,
             unit_id, compliance_id, assignee,
@@ -6951,12 +6952,12 @@ class ClientDatabase(Database):
         columns = [
             "compliance_history_id", "start_date", "due_date", "validity_date",
             "next_due_date", "document_name", "compliance_task", "description",
-            "format_file", "unit","domain_name", "frequency", "remarks", 
+            "format_file", "unit","domain_name", "frequency", "remarks",
             "compliance_id", "duration_type_id"
         ]
         query = '''
             SELECT * FROM
-            (SELECT 
+            (SELECT
             compliance_history_id,
             start_date,
             ch.due_date as due_date,
@@ -6966,19 +6967,19 @@ class ClientDatabase(Database):
             compliance_task,
             compliance_description,
             format_file,
-            (SELECT 
+            (SELECT
                     concat(unit_code, '-', unit_name, ',', address)
                 FROM
                     tbl_units tu
                 WHERE
                     tu.unit_id = ch.unit_id) as unit,
-            (SELECT 
+            (SELECT
                     domain_name
                 FROM
                     tbl_domains td
                 WHERE
                     td.domain_id = c.domain_id) as domain_name,
-            (SELECT 
+            (SELECT
                     frequency
                 FROM
                     tbl_compliance_frequency
@@ -7019,8 +7020,8 @@ class ClientDatabase(Database):
             unit_name = unit_details[0]
             address = unit_details[1]
             no_of_days, ageing = self.calculate_ageing(
-                due_date=compliance["due_date"], 
-                frequency_type=compliance["frequency"], 
+                due_date=compliance["due_date"],
+                frequency_type=compliance["frequency"],
                 duration_type=compliance["duration_type_id"]
             )
             compliance_status = core.COMPLIANCE_STATUS("Inprogress")
@@ -7068,20 +7069,20 @@ class ClientDatabase(Database):
 
     def get_upcoming_count(self, session_user):
         all_compliance_query = '''
-            SELECT ac.compliance_id, ac.unit_id FROM tbl_assigned_compliances ac 
-            INNER JOIN tbl_compliances c ON (ac.compliance_id = c.compliance_id) 
-            WHERE 
-            assignee = '%d' AND frequency_id != 4  
-            AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) 
+            SELECT ac.compliance_id, ac.unit_id FROM tbl_assigned_compliances ac
+            INNER JOIN tbl_compliances c ON (ac.compliance_id = c.compliance_id)
+            WHERE
+            assignee = '%d' AND frequency_id != 4
+            AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH)
             AND ac.is_active = 1;
         ''' % (
             session_user
         )
         all_compliace_rows = self.select_all(all_compliance_query)
         onetime_query = '''
-            SELECT ch.compliance_id, ch.unit_id FROM tbl_compliance_history ch 
+            SELECT ch.compliance_id, ch.unit_id FROM tbl_compliance_history ch
             INNER JOIN tbl_compliances c on (ch.compliance_id =  c.compliance_id)
-            WHERE frequency_id = 1 and completed_by = '%d'; 
+            WHERE frequency_id = 1 and completed_by = '%d';
         ''' % (
             session_user
         )
@@ -7124,7 +7125,7 @@ class ClientDatabase(Database):
                 )
         upcoming_compliances_rows = self.select_all(query)
 
-        columns = ["due_date", "document_name", "compliance_task", 
+        columns = ["due_date", "document_name", "compliance_task",
         "description","format_file", "unit", "domain_name",  "start_date"]
         upcoming_compliances_result = self.convert_to_dict(
             upcoming_compliances_rows, columns
@@ -7706,7 +7707,7 @@ class ClientDatabase(Database):
 
         result = self.get_not_complied_compliances(
             domain_id, country_id, where_qry
-        )        
+        )
         return self.return_risk_report_data(result, total)
 
     def return_risk_report_data(self, data, total) :
@@ -8402,7 +8403,7 @@ class ClientDatabase(Database):
         if from_date is not None and to_date is not None:
             condition += " AND  al.created_on between '%s' AND '%s'" % (
                 from_date, to_date
-                
+
             )
         elif from_date is not None:
             condition += " AND  al.created_on > '%s' " % (
@@ -8546,18 +8547,18 @@ class ClientDatabase(Database):
         ]
         rows = self.convert_to_dict(result, columns)
         return rows
-        
+
 
     def return_compliance_activity_report(
-        self, country_id, domain_id, user_type, user_id, 
+        self, country_id, domain_id, user_type, user_id,
         unit_id, compliance_id,
-        level_1_statutory_name, from_date, to_date, 
+        level_1_statutory_name, from_date, to_date,
         session_user, client_id
     ):
         rows = self. get_compliance_activity_report(
-            country_id, domain_id, user_type, user_id, 
+            country_id, domain_id, user_type, user_id,
             unit_id, compliance_id,
-            level_1_statutory_name, from_date, to_date, 
+            level_1_statutory_name, from_date, to_date,
             session_user, client_id
         )
         unit_wise_activities = {}
@@ -9065,7 +9066,7 @@ class ClientDatabase(Database):
         count = 0
         if rows:
             count = rows[0][0]
-        return count 
+        return count
 
     def get_client_details_report(
         self, country_id,  business_group_id, legal_entity_id, division_id,
@@ -9974,7 +9975,7 @@ class ClientDatabase(Database):
 
     def is_already_notified(self):
         query = '''
-            select count(*) from tbl_notifications_log 
+            select count(*) from tbl_notifications_log
             where notification_text like '%sYour contract with Compfie for%s'
             AND created_on > DATE_SUB(now(), INTERVAL 30 DAY);
         ''' % ('%', '%')
@@ -10001,7 +10002,7 @@ class ClientDatabase(Database):
         extra_details = "0 - Reminder : Contract Expiration"
         notification_id = self.get_new_id("notification_id", self.tblNotificationsLog)
         created_on = datetime.datetime.now()
-        columns = ["notification_id", "notification_type_id", "notification_text", 
+        columns = ["notification_id", "notification_type_id", "notification_text",
         "extra_details", "created_on"]
         values = [notification_id, 2, notification_text, extra_details, created_on]
         self.insert(self.tblNotificationsLog, columns, values)
@@ -10055,11 +10056,11 @@ class ClientDatabase(Database):
         self, session_user
     ):
         query = '''
-            SELECT 
+            SELECT
                 tnl.notification_id
             FROM
                 %s tnl
-            INNER JOIN 
+            INNER JOIN
                 %s tnul
             ON tnl.notification_id = tnul.notification_id
             WHERE user_id = '%d' AND read_status = 0
@@ -10073,7 +10074,7 @@ class ClientDatabase(Database):
         notification_query = "%s %s" % (query, notification_condition)
         reminder_query = "%s %s" % (query, reminder_condition)
         escalation_query = "%s %s" % (query, escalation_condition)
-        
+
         notification_rows = self.select_all(notification_query)
         reminder_rows = self.select_all(reminder_query)
         escalation_rows = self.select_all(escalation_query)
