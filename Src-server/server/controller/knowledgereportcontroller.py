@@ -75,7 +75,7 @@ def process_get_statutory_mapping_report_data(db, request_frame, user_id):
     to_count = RECORD_DISPLAY_COUNT
     report_data, total_record = db.get_statutory_mapping_report(
         country_id, domain_id, industry_id,
-        nature_id, geography_id, level_1_id, frequency_id,user_id,
+        nature_id, geography_id, level_1_id, frequency_id, user_id,
         from_count, to_count
     )
 
