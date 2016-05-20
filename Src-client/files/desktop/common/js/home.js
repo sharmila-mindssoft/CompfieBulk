@@ -6,11 +6,7 @@ function initializeUI () {
     var navBarHeight = $(".header-section").outerHeight();
     var marginTop = (getEmptySpace / 2) - navBarHeight - contentAreaTop;
     $(".welcome-msg").css("margin-top", marginTop);
-    get_notification_count();
-    $("#notification_count").text(window.localStorage["CLIENT_NOTIFICATION_COUNT"]);
-    $("#reminder_count").text(window.localStorage["CLIENT_REMINDER_COUNT"]);
-    $("#escalation_count").text(window.localStorage["CLIENT_ESCALATION_COUNT"] );
-
+    get_notification_count();   
 }
 
 

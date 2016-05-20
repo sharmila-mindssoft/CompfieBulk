@@ -27,7 +27,7 @@ function get_notification_count(){
 
                 $("#notification_count").text(window.localStorage["CLIENT_NOTIFICATION_COUNT"]);
                 $("#reminder_count").text(window.localStorage["CLIENT_REMINDER_COUNT"]);
-                $("#escalation_count").text(window.localStorage["CLIENT_ESCALATION_COUNT"] );
+                $("#escalation_count").text(window.localStorage["CLIENT_ESCALATION_COUNT"]);
 
                 if(show_popup){
                     console.log(notification_text);

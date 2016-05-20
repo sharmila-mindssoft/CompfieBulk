@@ -161,6 +161,7 @@ function initializeNavBar () {
         var liObject = $("#nav-bar-templates .escalations li").clone();
         $("#cssmenu .menu-ul").append(liObject);
        // get_notification_count()
+        client_mirror.getContractExpireAndNotificationCount();
         /*setInterval(function() {
             get_notification_count();
         }, 1000000);*/
