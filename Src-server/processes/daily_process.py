@@ -121,18 +121,17 @@ def get_compliance_to_start(db, client_id, current_date, country_id):
         t2.repeats_every, (t1.due_date - INTERVAL t1.trigger_before_days DAY) start_date,\
         t3.unit_id, t3.unit_code, t3.unit_name, t3.business_group_id,\
         t3.legal_entity_id, t3.division_id, t2.domain_id, \
-        t1.assignee, t1.concurrence_person, t1.approval_person\
+        t1.assignee, t1.concurrence_person, t1.approval_person, \
+        t4.compliance_id \
         from tbl_assigned_compliances t1\
         INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id\
         INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id\
-        WHERE\
-        t1.is_active = 1 AND t2.is_active = 1 AND \
-        t1.compliance_id not in (select t.compliance_id from tbl_compliance_history t \
-        inner join tbl_compliances t1 on t1.compliance_id = t.compliance_id  where \
-        t1.frequency_id = 1 and unit_id = t1.unit_id)\
-        AND\
-        (t1.due_date - INTERVAL t1.trigger_before_days DAY) <= '%s' \
-        AND t1.country_id = %s" % (current_date, country_id)
+        LEFT JOIN tbl_compliance_history t4 ON (t4.unit_id = t1.unit_id \
+            AND t4.compliance_id = t1.compliance_id AND t2.frequency_id = 1)\
+        WHERE (t1.due_date - INTERVAL t1.trigger_before_days DAY) <= '%s' \
+        AND t1.is_active = 1 AND t2.is_active = 1 \
+        AND t1.country_id = %s \
+        AND t4.compliance_id is null " % (current_date, country_id)
 
     cursor = db.cursor()
     cursor.execute(query)
@@ -144,7 +143,7 @@ def get_compliance_to_start(db, client_id, current_date, country_id):
         "unit_id", "unit_code", "unit_name",
         "business_group_id", "legal_entity_id", "division_id",
         "domain_id",
-        "assignee", "concurrence_person", "approval_person"
+        "assignee", "concurrence_person", "approval_person", "t4_compliance_id"
     ]
     result = convert_to_dict(rows, columns)
     # print '*' * 10
@@ -184,11 +183,7 @@ def calculate_next_due_date(
     if statutory_dates == []:
         statutory_dates = None
     if frequency == 2 or frequency == 3 :
-        print "periodical"
         if statutory_dates is None or len(statutory_dates) == 1 :
-            print "statutory_dates is None"
-            print "next Due_date ",  old_due_date
-            print "Repeat_every ", repeat_every, repeat_type
             if repeat_type == 1 :
                 new_due_date = addDays(repeat_every, old_due_date)
             elif repeat_type == 2 :
@@ -200,7 +195,6 @@ def calculate_next_due_date(
                 new_due_date = old_due_date
             return (new_due_date,  trigger_before_days)
         else :
-            print "due_date from next_due_date"
             temp_date = convert_string_to_date(str(old_due_date))
             old_month = temp_date.month
             if repeat_type == 2 :
