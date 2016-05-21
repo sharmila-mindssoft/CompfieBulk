@@ -145,7 +145,7 @@ def process_get_assign_compliance_form_data(db, session_user, client_id):
     )
     division_ids = row[1]
     divisions = db.get_divisions_for_user(division_ids)
-    units = db.get_units_for_assign_compliance(session_user)
+    units = db.get_units_to_assig(session_user)
     users = db.get_users_for_seating_units(session_user, client_id)
     two_level_approve = db.get_client_settings()
     client_admin = db.get_admin_info()

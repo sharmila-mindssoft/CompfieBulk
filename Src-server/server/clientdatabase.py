@@ -2707,16 +2707,45 @@ class ClientDatabase(Database):
             is_close = 0
         else:
             is_close = '%'
-        if session_user > 0  and session_user != self.get_admin_id() :
+        if session_user > 0 and session_user != self.get_admin_id() :
             qry = ' AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id = %s) ' % (int(session_user))
         else :
             qry = ""
-
         query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, \
             t1.division_id, t1.legal_entity_id, t1.business_group_id, \
             t1.address, t1.country_id, domain_ids\
             FROM tbl_units t1 WHERE t1.is_closed like '%s'" % is_close
         query += qry
+
+        rows = self.select_all(query)
+        columns = [
+            "unit_id", "unit_code", "unit_name",
+            "division_id", "legal_entity_id",
+            "business_group_id", "address", "country_id", "domain_ids"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_units_for_assign_compliance(result)
+
+    def get_units_to_assig(self, session_user) :
+        if session_user > 0 and session_user != self.get_admin_id() :
+            qry = ' AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id = %s) ' % (int(session_user))
+        else :
+            qry = ""
+        query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, \
+            t1.division_id, t1.legal_entity_id, t1.business_group_id, \
+            t1.address, t1.country_id, domain_ids\
+            FROM tbl_units t1 WHERE t1.is_closed = 0 \
+            AND (select count(distinct t1.compliance_id) from tbl_client_compliances t1 \
+                inner join tbl_client_statutories t2  \
+                on t1.client_statutory_id = t2.client_statutory_id \
+                left join tbl_assigned_compliances t3 \
+                on t3.unit_id = t2.unit_id and t3.compliance_id = t1.compliance_id \
+                inner join tbl_compliances t4 on t4.compliance_id = t1.compliance_id and t4.is_active = 1 \
+                where t3.compliance_id is null and t1.compliance_opted = 1 \
+                and t2.unit_id = t1.unit_id) > 0 "
+
+        query += qry
+
         rows = self.select_all(query)
         columns = [
             "unit_id", "unit_code", "unit_name",
@@ -2727,7 +2756,6 @@ class ClientDatabase(Database):
         return self.return_units_for_assign_compliance(result)
 
     def return_units_for_assign_compliance(self, result):
-
         unit_list = []
         for r in result :
             name = "%s - %s" % (r["unit_code"], r["unit_name"])

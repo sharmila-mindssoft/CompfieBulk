@@ -175,7 +175,7 @@ class ReplicationManager(object) :
         except Exception, e:
             pass
             print e
-            self._temp_count = changes[-1].audit_trail_id
+        self._temp_count = changes[-1].audit_trail_id
 
     def _execute_update_statement(self, change):
         auto_id = self._auto_id_columns.get(change.tbl_name)
