@@ -838,6 +838,10 @@ class KnowledgeDatabase(Database):
             results.append(change)
         return results
 
+    def remove_trail_log(self, client_id, received_count):
+        q = "delete from tbl_audit_log where audit_trail_id < %s and client_id = %s" % (received_count, client_id)
+        self.execute(q)
+
     def get_servers(self):
         query = "SELECT client_id, machine_id, database_ip, "
         query += "database_port, database_username, "
@@ -6208,7 +6212,7 @@ class KnowledgeDatabase(Database):
             where_qry += " AND  created_on between DATE_SUB('%s', INTERVAL 1 DAY) \
             AND DATE_ADD('%s', INTERVAL 1 DAY)" % (
                 from_date, to_date
-                
+
             )
         elif from_date is not None:
             where_qry += " AND  created_on > DATE_SUB('%s', INTERVAL 1 DAY) " % (
@@ -6222,7 +6226,7 @@ class KnowledgeDatabase(Database):
             where_qry += " AND user_id = '%s'" % (user_id)
         if form_id is not None:
             where_qry += " AND form_id = '%s'" % (form_id)
-        
+
         columns = "user_id, form_id, action, created_on"
         where_qry += " AND user_id in (%s)" % (user_ids)
         where_qry += " ORDER BY created_on DESC"
