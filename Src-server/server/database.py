@@ -6385,8 +6385,22 @@ class KnowledgeDatabase(Database):
         country_id = request_data.country_id
         domain_id = request_data.domain_id
         level_1_statutory_id = request_data.level_1_statutory_id
-        if level_1_statutory_id is None :
-            level_1_statutory_id = '%'
+        from_date = request_data.from_date
+        to_date = request_data.to_date
+        where_qry = ""
+
+        if level_1_statutory_id is not None :
+            where_qry += " AND tss.statutory_id IN \
+            (select statutory_id from tbl_statutories where FIND_IN_SET('%s', parent_ids)) \
+            " % (level_1_statutory_id)
+
+        if from_date is not None and to_date is not None :
+            from_date = self.string_to_datetime(from_date)
+            to_date = self.string_to_datetime(to_date)
+            where_qry += " AND tsnl.updated_on >= '%s' AND tsnl.updated_on <= '%s'" % (
+                from_date, to_date
+            )
+
         query = "SELECT  distinct tsm.country_id, tsm.domain_id\
              from `tbl_statutory_notifications_log` tsnl    \
             INNER JOIN `tbl_statutory_statutories` tss ON \
@@ -6402,6 +6416,7 @@ class KnowledgeDatabase(Database):
                 country_id, domain_id
             )
         rows = self.select_all(query)
+        print query
         country_wise_notifications = []
         for row in rows:
             query = "SELECT  ts.statutory_name, tsnl.statutory_provision,\
@@ -6416,9 +6431,10 @@ class KnowledgeDatabase(Database):
             WHERE  \
             tsm.country_id = %s and \
             tsm.domain_id = %s \
-            group by tsm.country_id, tsm.domain_id " % (
-                row[0], row[1]
+            %s " % (
+                row[0], row[1], where_qry
             )
+            print query
             notifications_rows = self.select_all(query)
             notification_columns = [
                 "statutory_name", "statutory_provision",
