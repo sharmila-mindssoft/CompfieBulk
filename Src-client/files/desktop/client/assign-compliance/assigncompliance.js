@@ -795,32 +795,32 @@ function submitcompliance(){
           $('#approval').empty();
           load_firstwizard();
           hideLoader();
-        }
-        function onFailure(error, response){
-          displayMessage(error);
-          err_message = message.error;
-          if (err_message == "undefined")
+          }
+          function onFailure(error, response){
             displayMessage(error);
-          else if (error == "InvalidDueDate") {
-            task = response["compliance_task"];
-            displayMessage("Invalid due date in " + task);
-          }
-          else
-            displayMessage(err_message);
-          hideLoader();
-        }
-        client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,
-          assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
-          assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
-          function (error, response) {
-            if (error == null){
-              onSuccess(response);
+            err_message = message.error;
+            if (err_message == "undefined")
+              displayMessage(error);
+            else if (error == "InvalidDueDate") {
+              task = response["compliance_task"];
+              displayMessage("Invalid due date in " + task);
             }
-            else {
-              onFailure(error, response);
-            }
+            else
+              displayMessage(err_message);
+            hideLoader();
           }
-        );
+          client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,
+            assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
+            assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
+            function (error, response) {
+              if (error == null){
+                onSuccess(response);
+              }
+              else {
+                onFailure(error, response);
+              }
+            }
+          );
         }else{
           hideLoader();
         }
