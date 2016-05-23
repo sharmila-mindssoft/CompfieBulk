@@ -7581,6 +7581,7 @@ class ClientDatabase(Database):
                     u.unit_id = '%d' " % (
                         country_name, domain_name, business_group_id, legal_entity_id, division_id, unit_id
                     )
+                print query
                 if from_date != '' and to_date != '':
                     conditiondate = " AND  snl.updated_on between '%s' and '%s' " % (from_date, to_date)
                     query = query + conditiondate

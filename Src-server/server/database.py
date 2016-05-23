@@ -4368,19 +4368,23 @@ class KnowledgeDatabase(Database):
         client_con = self._mysql_server_connect(host, username, password)
         client_cursor = client_con.cursor()
         query = "CREATE DATABASE %s" % database_name
+        logger.logKnowledge("info", "create", query)
         client_cursor.execute(query)
         query = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, REFERENCES, \
             TRIGGER, EVENT, CREATE ROUTINE, aLTER  on %s.* to %s@%s IDENTIFIED BY '%s';" % (
             database_name, db_username, host, db_password)
+        logger.logKnowledge("info", "create", query)
         client_cursor.execute(query)
         client_cursor.execute("FLUSH PRIVILEGES;")
         client_con.commit()
+        logger.logKnowledge("info", "create", "connect new db")
         client_db_con = self._db_connect(host, username, password, database_name)
         client_db_cursor = client_db_con.cursor()
         sql_script_path = os.path.join(
             os.path.join(os.path.split(__file__)[0]),
             "scripts/mirror-client.sql"
         )
+        logger.logKnowledge("info", "create", "before create tables")
         file_obj = open(sql_script_path, 'r')
         sql_file = file_obj.read()
         file_obj.close()
@@ -4391,9 +4395,11 @@ class KnowledgeDatabase(Database):
                 client_db_cursor.execute(command)
             else:
                 break
+        logger.logKnowledge("info", "create", "after create tables")
         encrypted_password, password = self.generate_and_return_password()
         query = "insert into tbl_admin (username, password) values ('%s', '%s')" % (
             email_id, encrypted_password)
+        logger.logKnowledge("info", "create", "save user")
         client_db_cursor.execute(query)
         query = "insert into tbl_users (user_id, employee_name, email_id, password, user_level,\
         is_primary_admin, is_service_provider, is_admin)\
@@ -4402,8 +4408,11 @@ class KnowledgeDatabase(Database):
         client_db_cursor.execute(query)
         self._save_client_countries(country_ids, client_db_cursor)
         self._save_client_domains(domain_ids, client_db_cursor)
+        logger.logKnowledge("info", "create", "create procedures")
         self._create_procedure(client_db_cursor)
+        logger.logKnowledge("info", "create", "after create triggers")
         self._create_trigger(client_db_cursor)
+        logger.logKnowledge("info", "create", "final commit")
         client_db_con.commit()
         return password
 
