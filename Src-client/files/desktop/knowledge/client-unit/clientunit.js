@@ -735,15 +735,15 @@ function clientunit_edit(clientunitId, businessgroupId, legalentityId, divisionI
     $("#clientunit-view").hide();
     $("#clientunit-add").show();
     $("#group-select").hide();
-    $("#businessgroup-text").hide();
+    $("#businessgroup-text").show();
     $("#businessgroup-select").hide();
     $("#businessgroup-new").hide();
     $("#businessgroup-existing").hide();
-    $("#entity-text").hide();
+    $("#entity-text").show();
     $("#entity-select").hide();
     $("#entity-new").hide();
     $("#entity-existing").hide();
-    $("#division-text").hide();
+    $("#division-text").show();
     $("#division-select").hide();
     $("#division-new").hide();
     $("#division-existing").hide();
@@ -797,28 +797,33 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, divisi
     if(businessgroupId != ''){
         loadBusinessGroups(clientunitId);
         $("#businessgroup-update-id").val(businessgroupId);
-        $(".labelbusinessgroup").text(getBusinessGroupName(businessgroupId));
+       // $(".labelbusinessgroup").text(getBusinessGroupName(businessgroupId));
+        $("#businessgroup-text").val(getBusinessGroupName(businessgroupId));
         //$('#businessgroup-select option[value = '+businessgroupId+']').attr('selected','selected');
     }
     if(businessgroupId == null){
-        $(".labelbusinessgroup").text('');
+        //$(".labelbusinessgroup").text('');
+        $("#businessgroup-text").hide();
         //$('#businessgroup-select').append($('<option value = "">select</option>'));
     }
     //legalentity
     loadLegalEntity(clientunitId, businessgroupId);
     $("#legalentity-update-id").val(legalEntityId);
-    $(".labelentity").text(getLegalEntityName(legalEntityId));
+    //$(".labelentity").text(getLegalEntityName(legalEntityId));
+    $("#entity-text").val(getLegalEntityName(legalEntityId));
 
     //$('#entity-select option[value = '+legalEntityId+']').attr('selected','selected');
     //Division
     if(divisionId != ''){
         loadDivision(legalEntityId);
         $("#division-update-id").val(divisionId);
-        $(".labeldivision").text(getDivisionName(divisionId));
+        $("#division-text").val(getDivisionName(divisionId));
+        //$(".labeldivision").text(getDivisionName(divisionId));
         //$('#division-select option[value = '+divisionId+']').attr('selected','selected');
     }
     if(divisionId == null){
-        $(".labeldivision").text('');
+        $("#division-text").hide();
+        //$(".labeldivision").text('');
         //$('#division-select').append($('<option value = "">select</option>'));
     }
     //Load Countries
@@ -1271,20 +1276,26 @@ $("#btn-clientunit-submit").click(function(){
                 displayMessage(error);
             }
         }
-        var businessgrouptextValue = $(".labelbusinessgroup").text().trim();
+        var businessgrouptextValue = $("#businessgroup-text").val().trim();
         var businessgroupidupdate = $("#businessgroup-update-id").val();
         var businessgrouptext = $("#businessgroup-select :selected").text().trim();
         var businessgroupid = $("#businessgroup-select").val();
-        var lentitytextValue = $(".labelentity").text().trim();
+
+        var lentitytextValue = $("#entity-text").val().trim();
         var legalentityidupdate = $("#legalentity-update-id").val();
         var legalentityid = $("#entity-select").val();
         var legalentitytext = $("#entity-select :selected").text();
-        var divisiontextValue = $(".labeldivision").text().trim();
+
+        var divisiontextValue = $("#division-text").val().trim();
         var divisionidupdate = $("#division-update-id").val();
         var divisionid = $("#division-select").val();
         var divisiontext = $("#division-select :selected").text();
 
-        if(businessgrouptextValue != "" && businessgroupidupdate != ""){
+        if(businessgrouptextValue == "" && businessgroupidupdate != ""){
+            displayMessage(message.businessgroup_required);
+            return;
+        }
+        else if(businessgrouptextValue != "" && businessgroupidupdate != ""){
             businessGroup = mirror.getBusinessGroupDict(parseInt(businessgroupidupdate), businessgrouptextValue);
         }
         else if(businessgrouptext != "" && businessgroupid != ""){
@@ -1293,7 +1304,11 @@ $("#btn-clientunit-submit").click(function(){
         else{
             businessGroup = null;
         }
-        if(lentitytextValue != ''  &&  legalentityidupdate != ""){
+        if(lentitytextValue == ''  &&  legalentityidupdate != ""){
+            displayMessage(message.legalentity_required);
+            return;   
+        }
+        else if(lentitytextValue != ''  &&  legalentityidupdate != ""){
             legalEntity = mirror.getLegalEntityDict(parseInt(legalentityidupdate), lentitytextValue);
         }
         else if(legalentityid != ''  &&  legalentitytext != ""){
@@ -1302,8 +1317,11 @@ $("#btn-clientunit-submit").click(function(){
         else{
             legalEntity = mirror.getLegalEntityDict(parseInt(legalentityid), legalentitytext);
         }
-
-        if(divisiontextValue != "" && divisionidupdate != ""){
+        if(divisiontextValue == "" && divisionidupdate != ""){
+            displayMessage(message.division_required);
+            return;
+        }
+        else if(divisiontextValue != "" && divisionidupdate != ""){
             division = mirror.getDivisionDict(parseInt(divisionidupdate), divisiontextValue);
         }
         else if(divisionid != "" && divisiontext != ""){
@@ -1617,7 +1635,7 @@ function loadlocation(textval, classval){
             str += '<li id="'+suggestions[i][0]+'" onclick="activate_unitlocaion(this,\''+countval+'\', \''+suggestions[i][2].replace(/"/gi,'##')+'\')">'+suggestions[i][1]+'</li>';
         }
         $('.unitlocationlist-text'+countval).append(str);
-        $('.unitlocation-ids'+countval).val('');
+        //$('.unitlocation-ids'+countval).val('');
     }
 }
 function activate_unitlocaion (element, ccount, mappingname) {
