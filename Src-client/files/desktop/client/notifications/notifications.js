@@ -1,5 +1,5 @@
 var notificationsList;
-var sno=0;
+var sno = 0;
 var notificationDict = [];
 
 
@@ -111,7 +111,7 @@ function changeStatus(notification_id, read_status){
         client_mirror.updateNotificationStatus(parseInt(notification_id), true,
             function (error, response) {
             if (error == null){
-                
+                get_notification_count();
             }
             else {
                displayMessage(error)

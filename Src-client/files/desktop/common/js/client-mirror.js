@@ -130,8 +130,6 @@ function initClientMirror() {
 
     function clientApiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
-        if (sessionToken == null)
-            sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
         var requestFrame = {
             "session_token": sessionToken,
             "request": request
@@ -162,7 +160,7 @@ function initClientMirror() {
                     if (status == "SavePastRecordsFailed"){
                         callback(data, null);
                     }else{
-                        callback(status, null);
+                        callback(status, response);
                     }
 
                 }
@@ -186,9 +184,9 @@ function initClientMirror() {
 
     function updateUserProfile(contact_no, address, callback){
         var request = [
-            sessionToken = getSessionToken(), 
+            sessionToken = getSessionToken(),
             [
-                "UpdateUserProfile", 
+                "UpdateUserProfile",
                 {
                     "contact_no" : contact_no,
                     "address" : address,
@@ -1688,6 +1686,11 @@ function initClientMirror() {
         callerName = "client_transaction";
         clientApiRequest(callerName, request, callback);
     }
+    function getContractExpireAndNotificationCount(){
+        $("#notification_count").text(window.localStorage["CLIENT_NOTIFICATION_COUNT"]);
+        $("#reminder_count").text(window.localStorage["CLIENT_REMINDER_COUNT"]);
+        $("#escalation_count").text(window.localStorage["CLIENT_ESCALATION_COUNT"] );
+    }
 
     return {
         log: log,
@@ -1838,7 +1841,8 @@ function initClientMirror() {
         getAssigneewiseYearwiseComplianes: getAssigneewiseYearwiseComplianes,
         getAssigneewiseReassignedComplianes: getAssigneewiseReassignedComplianes,
         updateUserProfile: updateUserProfile,
-        updateUserInfo: updateUserInfo
+        updateUserInfo: updateUserInfo,
+        getContractExpireAndNotificationCount: getContractExpireAndNotificationCount
     }
 }
 var client_mirror = initClientMirror();

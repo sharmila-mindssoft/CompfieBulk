@@ -504,6 +504,15 @@ function loadCountwiseStatutorySettings(assignedStatutoriesList){
   if(finalList.length > 0) $('.view-count-message').text("Showing " + (startCount+1) + " to " + endCount + " of " + finalList.length);
 
     for(var entity in assignedStatutoriesList) {
+
+      var isNew = assignedStatutoriesList[entity]["is_new"];
+      var openTag = '';
+      var closeTag = ''
+      if(isNew){
+        openTag = '<font color="#0404B4">';
+        closeTag = '</font>'
+      }
+
       unit_id = assignedStatutoriesList[entity]["unit_id"];
       var bGroup = assignedStatutoriesList[entity]["business_group_name"];
       if(bGroup == null){
@@ -519,13 +528,13 @@ function loadCountwiseStatutorySettings(assignedStatutoriesList){
 
       var tableRow=$('#templates .table-statutorysettings .table-row');
       var clone=tableRow.clone();
-      $('.tbl_sno', clone).text(j);
-      $('.tbl_country', clone).text(assignedStatutoriesList[entity]["country_name"]);
-      $('.tbl_businessgroup', clone).text(bGroup);
-      $('.tbl_legalentity', clone).text(lEntity);
-      $('.tbl_division', clone).text(dName);
-      $('.tbl_unit', clone).text(uName);
-      $('.tbl_domain', clone).text(assignedStatutoriesList[entity]["domain_names"]);
+      $('.tbl_sno', clone).html(openTag + j + closeTag);
+      $('.tbl_country', clone).html(openTag + assignedStatutoriesList[entity]["country_name"] + closeTag);
+      $('.tbl_businessgroup', clone).html(openTag + bGroup + closeTag);
+      $('.tbl_legalentity', clone).html(openTag + lEntity + closeTag);
+      $('.tbl_division', clone).html(openTag + dName + closeTag);
+      $('.tbl_unit', clone).html(openTag + uName + closeTag);
+      $('.tbl_domain', clone).html(openTag + assignedStatutoriesList[entity]["domain_names"] + closeTag);
       $('.tbl_edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+unit_id+',\''+
         bGroup+'\',\''+lEntity+'\',\''+dName+'\',\''+uName+'\','+isClosed+')"/>');
 

@@ -87,7 +87,7 @@ class GetStatutoryMappingReportFilters(Request):
 class GetStatutoryMappingReportData(Request):
     def __init__(
         self, country_id, domain_id, industry_id,
-        statutory_nature_id, geography_id, level_1_statutory_id,
+        statutory_nature_id, geography_id, level_1_statutory_id, frequency_id,
         record_count
     ):
         self.country_id = country_id
@@ -96,11 +96,12 @@ class GetStatutoryMappingReportData(Request):
         self.statutory_nature_id = statutory_nature_id
         self.geography_id = geography_id
         self.level_1_statutory_id = level_1_statutory_id
+        self.frequency_id = frequency_id
         self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_id", "d_id", "i_id", "s_n_id", "g_id", "level_1_s_id", "r_count"])
+        data = parse_dictionary(data, ["c_id", "d_id", "i_id", "s_n_id", "g_id", "level_1_s_id", "f_id", "r_count"])
         country_id = data.get("c_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("d_id")
@@ -113,9 +114,11 @@ class GetStatutoryMappingReportData(Request):
         geography_id = parse_structure_OptionalType_SignedIntegerType_8(geography_id)
         level_1_statutory_id = data.get("level_1_s_id")
         level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
+        frequency_id = data.get("f_id")
+        frequency_id = parse_structure_OptionalType_SignedIntegerType_8(frequency_id)
         record_count = data.get("r_count")
         record_count = parse_structure_UnsignedIntegerType_32(record_count)
-        return GetStatutoryMappingReportData(country_id, domain_id, industry_id, statutory_nature_id, geography_id, level_1_statutory_id, record_count)
+        return GetStatutoryMappingReportData(country_id, domain_id, industry_id, statutory_nature_id, geography_id, level_1_statutory_id, frequency_id, record_count)
 
     def to_inner_structure(self):
         return {
@@ -125,6 +128,7 @@ class GetStatutoryMappingReportData(Request):
             "s_n_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_nature_id),
             "g_id": to_structure_OptionalType_SignedIntegerType_8(self.geography_id),
             "level_1_s_id": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_id),
+            "f_id": to_structure_OptionalType_SignedIntegerType_8(self.frequency_id),
             "r_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 

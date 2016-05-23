@@ -174,7 +174,12 @@ class API(object):
         res = GetChangesSuccess(
             db.get_trail_log(client_id, received_count)
         )
-        res.to_structure()
+        s = "%s, %s, %s " % (client_id, received_count, actual_count)
+        logger.logKnowledge("info", "trail", s)
+        if actual_count > received_count :
+
+            db.remove_trail_log(client_id, received_count)
+        # res.to_structure()
         return res
 
     @api_request(login.Request)

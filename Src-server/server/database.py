@@ -838,6 +838,10 @@ class KnowledgeDatabase(Database):
             results.append(change)
         return results
 
+    def remove_trail_log(self, client_id, received_count):
+        q = "delete from tbl_audit_log where audit_trail_id < %s and client_id = %s" % (received_count, client_id)
+        self.execute(q)
+
     def get_servers(self):
         query = "SELECT client_id, machine_id, database_ip, "
         query += "database_port, database_username, "
@@ -2312,7 +2316,7 @@ class KnowledgeDatabase(Database):
     def get_statutory_mapping_report(
         self, country_id, domain_id, industry_id,
         statutory_nature_id, geography_id,
-        level_1_statutory_id, user_id, from_count, to_count
+        level_1_statutory_id, frequency_id, user_id, from_count, to_count
     ) :
         qry_where = ""
         if industry_id is not None :
@@ -2323,6 +2327,8 @@ class KnowledgeDatabase(Database):
             qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
         if level_1_statutory_id is not None :
             qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, '%s') from tbl_statutories where statutory_id = %s)" % (str("%"), level_1_statutory_id)
+        if frequency_id is not None :
+            qry_where += "AND t2.frequency_id = %s " % (frequency_id)
 
         q_count = "SELECT  count(distinct t2.compliance_id) \
             FROM tbl_statutory_mappings t1 \
@@ -2419,7 +2425,7 @@ class KnowledgeDatabase(Database):
     def get_compliance_list_report_techno(
         self, country_id, domain_id, industry_id,
         statutory_nature_id, geography_id,
-        level_1_statutory_id, user_id, from_count, to_count
+        level_1_statutory_id, frequency_id, user_id, from_count, to_count
     ) :
         qry_where = ""
         if industry_id is not None :
@@ -2430,6 +2436,8 @@ class KnowledgeDatabase(Database):
             qry_where += "AND t1.statutory_nature_id = %s " % (statutory_nature_id)
         if level_1_statutory_id is not None :
             qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, '%s') from tbl_statutories where statutory_id = %s)" % (str("%"), level_1_statutory_id)
+        if frequency_id is not None :
+            qry_where += "AND t2.frequency_id = %s " % (frequency_id)
 
         q_count = "SELECT  count(distinct t2.compliance_id) \
             FROM tbl_statutory_mappings t1 \
@@ -3583,6 +3591,10 @@ class KnowledgeDatabase(Database):
     def save_statutory_notification_units(self, statutory_notification_id, mapping_id, client_info):
 
         if client_info is not None:
+            column = [
+                "statutory_notification_unit_id", "statutory_notification_id", "client_id",
+                "legal_entity_id", "unit_id"
+            ]
             for r in client_info :
                 notification_unit_id = self.get_new_id(
                     "statutory_notification_unit_id",
@@ -3590,24 +3602,34 @@ class KnowledgeDatabase(Database):
                 )
                 business_group = r["business_group_id"]
                 division_id = r["division_id"]
-                if r["business_group_id"] is None :
-                    business_group = 'NULL'
-                if r["division_id"] is None :
-                    division_id = 'NULL'
+                values = [
+                    notification_unit_id, statutory_notification_id,
+                    int(r["client_id"]), int(r["legal_entity_id"]),
+                    int(r["unit_id"])
+                ]
+                if business_group is not None :
+                    column.append("business_group_id")
+                    values.append(business_group)
 
-                q = "INSERT INTO tbl_statutory_notifications_units \
-                    (statutory_notification_unit_id, statutory_notification_id, client_id, \
-                        business_group_id, legal_entity_id, division_id, unit_id) VALUES \
-                    (%s, %s, %s, '%s', %s, '%s', %s)" % (
-                        notification_unit_id,
-                        statutory_notification_id,
-                        int(r["client_id"]),
-                        business_group,
-                        int(r["legal_entity_id"]),
-                        division_id,
-                        int(r["unit_id"])
-                    )
-                self.execute(q)
+                if division_id is not None :
+                    column.append("division_id")
+                    values.append(division_id)
+
+                self.insert("tbl_statutory_notifications_units", column, values)
+
+                # q = "INSERT INTO tbl_statutory_notifications_units \
+                #     (statutory_notification_unit_id, statutory_notification_id, client_id, \
+                #         business_group_id, legal_entity_id, division_id, unit_id) VALUES \
+                #     (%s, %s, %s, '%s', %s, '%s', %s)" % (
+                #         notification_unit_id,
+                #         statutory_notification_id,
+                #         int(r["client_id"]),
+                #         business_group,
+                #         int(r["legal_entity_id"]),
+                #         division_id,
+                #         int(r["unit_id"])
+                #     )
+                # self.execute(q)
 
     #
     #   Forms
@@ -6204,7 +6226,7 @@ class KnowledgeDatabase(Database):
             where_qry += " AND  created_on between DATE_SUB('%s', INTERVAL 1 DAY) \
             AND DATE_ADD('%s', INTERVAL 1 DAY)" % (
                 from_date, to_date
-                
+
             )
         elif from_date is not None:
             where_qry += " AND  created_on > DATE_SUB('%s', INTERVAL 1 DAY) " % (
@@ -6218,7 +6240,7 @@ class KnowledgeDatabase(Database):
             where_qry += " AND user_id = '%s'" % (user_id)
         if form_id is not None:
             where_qry += " AND form_id = '%s'" % (form_id)
-        
+
         columns = "user_id, form_id, action, created_on"
         where_qry += " AND user_id in (%s)" % (user_ids)
         where_qry += " ORDER BY created_on DESC"
@@ -6380,7 +6402,6 @@ class KnowledgeDatabase(Database):
                 country_id, domain_id
             )
         rows = self.select_all(query)
-        columns = ["country_id", "domain_id"]
         country_wise_notifications = []
         for row in rows:
             query = "SELECT  ts.statutory_name, tsnl.statutory_provision,\
@@ -6399,18 +6420,25 @@ class KnowledgeDatabase(Database):
                 row[0], row[1]
             )
             notifications_rows = self.select_all(query)
-            notification_columns = ["statutory_name", "statutory_provision",
-            "notification_text", "updated_on" ]
+            notification_columns = [
+                "statutory_name", "statutory_provision",
+                "notification_text", "updated_on"
+            ]
             statutory_notifications = self.convert_to_dict(notifications_rows, notification_columns)
-            notifications =[]
+            notifications = []
             for notification in statutory_notifications:
                 notifications.append(technoreports.NOTIFICATIONS(
-                    statutory_provision = notification["statutory_provision"],
-                    notification_text = notification["notification_text"],
-                    date_and_time = self.datetime_to_string(notification["updated_on"])
+                    statutory_provision=notification["statutory_provision"],
+                    notification_text=notification["notification_text"],
+                    date_and_time=self.datetime_to_string(notification["updated_on"])
                 ))
             country_wise_notifications.append(
-            technoreports.COUNTRY_WISE_NOTIFICATIONS(country_id = row[0], domain_id = row[1], notifications = notifications))
+                technoreports.COUNTRY_WISE_NOTIFICATIONS(
+                    country_id=row[0],
+                    domain_id=row[1],
+                    notifications=notifications
+                )
+            )
         return country_wise_notifications
 
 #

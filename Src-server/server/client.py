@@ -111,7 +111,7 @@ class ReplicationManager(object) :
             )
             self._http_client.fetch(request, self._poll_response)
         self._io_loop.add_timeout(
-            time.time() + 1, on_timeout
+            time.time() + 10, on_timeout
         )
 
     def _poll_response(self, response) :
@@ -175,7 +175,7 @@ class ReplicationManager(object) :
         except Exception, e:
             pass
             print e
-            self._temp_count = changes[-1].audit_trail_id
+        self._temp_count = changes[-1].audit_trail_id
 
     def _execute_update_statement(self, change):
         auto_id = self._auto_id_columns.get(change.tbl_name)
