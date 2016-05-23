@@ -3591,6 +3591,10 @@ class KnowledgeDatabase(Database):
     def save_statutory_notification_units(self, statutory_notification_id, mapping_id, client_info):
 
         if client_info is not None:
+            column = [
+                "statutory_notification_unit_id", "statutory_notification_id", "client_id",
+                "legal_entity_id", "unit_id"
+            ]
             for r in client_info :
                 notification_unit_id = self.get_new_id(
                     "statutory_notification_unit_id",
@@ -3598,24 +3602,34 @@ class KnowledgeDatabase(Database):
                 )
                 business_group = r["business_group_id"]
                 division_id = r["division_id"]
-                if r["business_group_id"] is None :
-                    business_group = 'NULL'
-                if r["division_id"] is None :
-                    division_id = 'NULL'
+                values = [
+                    notification_unit_id, statutory_notification_id,
+                    int(r["client_id"]), int(r["legal_entity_id"]),
+                    int(r["unit_id"])
+                ]
+                if business_group is not None :
+                    column.append("business_group_id")
+                    values.append(business_group)
 
-                q = "INSERT INTO tbl_statutory_notifications_units \
-                    (statutory_notification_unit_id, statutory_notification_id, client_id, \
-                        business_group_id, legal_entity_id, division_id, unit_id) VALUES \
-                    (%s, %s, %s, '%s', %s, '%s', %s)" % (
-                        notification_unit_id,
-                        statutory_notification_id,
-                        int(r["client_id"]),
-                        business_group,
-                        int(r["legal_entity_id"]),
-                        division_id,
-                        int(r["unit_id"])
-                    )
-                self.execute(q)
+                if division_id is not None :
+                    column.append("division_id")
+                    values.append(division_id)
+
+                self.insert("tbl_statutory_notifications_units", column, values)
+
+                # q = "INSERT INTO tbl_statutory_notifications_units \
+                #     (statutory_notification_unit_id, statutory_notification_id, client_id, \
+                #         business_group_id, legal_entity_id, division_id, unit_id) VALUES \
+                #     (%s, %s, %s, '%s', %s, '%s', %s)" % (
+                #         notification_unit_id,
+                #         statutory_notification_id,
+                #         int(r["client_id"]),
+                #         business_group,
+                #         int(r["legal_entity_id"]),
+                #         division_id,
+                #         int(r["unit_id"])
+                #     )
+                # self.execute(q)
 
     #
     #   Forms
@@ -6388,7 +6402,6 @@ class KnowledgeDatabase(Database):
                 country_id, domain_id
             )
         rows = self.select_all(query)
-        columns = ["country_id", "domain_id"]
         country_wise_notifications = []
         for row in rows:
             query = "SELECT  ts.statutory_name, tsnl.statutory_provision,\
@@ -6407,18 +6420,25 @@ class KnowledgeDatabase(Database):
                 row[0], row[1]
             )
             notifications_rows = self.select_all(query)
-            notification_columns = ["statutory_name", "statutory_provision",
-            "notification_text", "updated_on" ]
+            notification_columns = [
+                "statutory_name", "statutory_provision",
+                "notification_text", "updated_on"
+            ]
             statutory_notifications = self.convert_to_dict(notifications_rows, notification_columns)
-            notifications =[]
+            notifications = []
             for notification in statutory_notifications:
                 notifications.append(technoreports.NOTIFICATIONS(
-                    statutory_provision = notification["statutory_provision"],
-                    notification_text = notification["notification_text"],
-                    date_and_time = self.datetime_to_string(notification["updated_on"])
+                    statutory_provision=notification["statutory_provision"],
+                    notification_text=notification["notification_text"],
+                    date_and_time=self.datetime_to_string(notification["updated_on"])
                 ))
             country_wise_notifications.append(
-            technoreports.COUNTRY_WISE_NOTIFICATIONS(country_id = row[0], domain_id = row[1], notifications = notifications))
+                technoreports.COUNTRY_WISE_NOTIFICATIONS(
+                    country_id=row[0],
+                    domain_id=row[1],
+                    notifications=notifications
+                )
+            )
         return country_wise_notifications
 
 #
