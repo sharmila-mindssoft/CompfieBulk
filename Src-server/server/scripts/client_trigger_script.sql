@@ -69,7 +69,7 @@ DELIMITER ;
 
 DROP TRIGGER IF EXISTS `after_tbl_compliance_history_update`;
 DELIMITER //
-CREATE TRIGGER `after_tbl_compliance_history_update` AFTER INSERT ON `tbl_compliance_history`
+CREATE TRIGGER `after_tbl_compliance_history_update` AFTER UPDATE ON `tbl_compliance_history`
 FOR EACH ROW BEGIN
 	CALL procedure_to_update_version("history");
 END
@@ -95,7 +95,9 @@ END
 //
 DELIMITER ;
 
-DELIMITER ;
+
+
+DELIMITER //
 CREATE PROCEDURE `procedure_to_update_version`(IN update_type VARCHAR(100))
 BEGIN
 	SET SQL_SAFE_UPDATES=0;

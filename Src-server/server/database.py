@@ -2344,7 +2344,7 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_countries t6 \
             ON t6.country_id = t1.country_id \
             and t6.user_id = %s \
-            WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
+            WHERE t1.approval_status in (1, 3) AND t2.is_active = 1 AND \
             t1.country_id = %s \
             and t1.domain_id = %s %s  \
             ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
@@ -2389,7 +2389,7 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_countries t6 \
             ON t6.country_id = t1.country_id \
             and t6.user_id = %s \
-            WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
+            WHERE t1.approval_status in (1, 3) AND t2.is_active = 1 AND \
             t1.country_id = %s \
             and t1.domain_id = %s \
             %s \
@@ -2453,7 +2453,7 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_countries t6 \
             ON t6.country_id = t1.country_id \
             and t6.user_id = %s \
-            WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
+            WHERE t1.approval_status in (1, 3) AND t2.is_active = 1 AND \
             t1.country_id = %s \
             and t1.domain_id = %s %s \
             ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
@@ -2470,7 +2470,7 @@ class KnowledgeDatabase(Database):
         else :
             r_count = 0
 
-        q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
+        q = "SELECT distinct t1.statutory_mapping_id, t2.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
             t1.domain_id, \
             (select domain_name from tbl_domains where domain_id = t1.domain_id) domain_name, \
@@ -2502,7 +2502,7 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_countries t6 \
             ON t6.country_id = t1.country_id \
             and t6.user_id = %s \
-            WHERE t1.approval_status in (1, 3) AND t1.is_active = 1 AND \
+            WHERE t1.approval_status in (1, 3) AND t2.is_active = 1 AND \
             t1.country_id = %s \
             and t1.domain_id = %s \
             %s \
