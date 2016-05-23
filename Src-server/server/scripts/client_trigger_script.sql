@@ -95,8 +95,8 @@ END
 //
 DELIMITER ;
 
-
 DELIMITER //
+
 CREATE PROCEDURE `procedure_to_update_version`(IN update_type VARCHAR(100))
 BEGIN
 	SET SQL_SAFE_UPDATES=0;

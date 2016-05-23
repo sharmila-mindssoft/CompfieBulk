@@ -838,6 +838,10 @@ class KnowledgeDatabase(Database):
             results.append(change)
         return results
 
+    def remove_trail_log(self, client_id, received_count):
+        q = "delete from tbl_audit_log where audit_trail_id < %s and client_id = %s" % (received_count, client_id)
+        self.execute(q)
+
     def get_servers(self):
         query = "SELECT client_id, machine_id, database_ip, "
         query += "database_port, database_username, "
@@ -3587,6 +3591,10 @@ class KnowledgeDatabase(Database):
     def save_statutory_notification_units(self, statutory_notification_id, mapping_id, client_info):
 
         if client_info is not None:
+            column = [
+                "statutory_notification_unit_id", "statutory_notification_id", "client_id",
+                "legal_entity_id", "unit_id"
+            ]
             for r in client_info :
                 notification_unit_id = self.get_new_id(
                     "statutory_notification_unit_id",
@@ -3594,24 +3602,34 @@ class KnowledgeDatabase(Database):
                 )
                 business_group = r["business_group_id"]
                 division_id = r["division_id"]
-                if r["business_group_id"] is None :
-                    business_group = 'NULL'
-                if r["division_id"] is None :
-                    division_id = 'NULL'
+                values = [
+                    notification_unit_id, statutory_notification_id,
+                    int(r["client_id"]), int(r["legal_entity_id"]),
+                    int(r["unit_id"])
+                ]
+                if business_group is not None :
+                    column.append("business_group_id")
+                    values.append(business_group)
 
-                q = "INSERT INTO tbl_statutory_notifications_units \
-                    (statutory_notification_unit_id, statutory_notification_id, client_id, \
-                        business_group_id, legal_entity_id, division_id, unit_id) VALUES \
-                    (%s, %s, %s, '%s', %s, '%s', %s)" % (
-                        notification_unit_id,
-                        statutory_notification_id,
-                        int(r["client_id"]),
-                        business_group,
-                        int(r["legal_entity_id"]),
-                        division_id,
-                        int(r["unit_id"])
-                    )
-                self.execute(q)
+                if division_id is not None :
+                    column.append("division_id")
+                    values.append(division_id)
+
+                self.insert("tbl_statutory_notifications_units", column, values)
+
+                # q = "INSERT INTO tbl_statutory_notifications_units \
+                #     (statutory_notification_unit_id, statutory_notification_id, client_id, \
+                #         business_group_id, legal_entity_id, division_id, unit_id) VALUES \
+                #     (%s, %s, %s, '%s', %s, '%s', %s)" % (
+                #         notification_unit_id,
+                #         statutory_notification_id,
+                #         int(r["client_id"]),
+                #         business_group,
+                #         int(r["legal_entity_id"]),
+                #         division_id,
+                #         int(r["unit_id"])
+                #     )
+                # self.execute(q)
 
     #
     #   Forms
@@ -4350,19 +4368,23 @@ class KnowledgeDatabase(Database):
         client_con = self._mysql_server_connect(host, username, password)
         client_cursor = client_con.cursor()
         query = "CREATE DATABASE %s" % database_name
+        logger.logKnowledge("info", "create", query)
         client_cursor.execute(query)
         query = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, REFERENCES, \
             TRIGGER, EVENT, CREATE ROUTINE, aLTER  on %s.* to %s@%s IDENTIFIED BY '%s';" % (
             database_name, db_username, host, db_password)
+        logger.logKnowledge("info", "create", query)
         client_cursor.execute(query)
         client_cursor.execute("FLUSH PRIVILEGES;")
         client_con.commit()
+        logger.logKnowledge("info", "create", "connect new db")
         client_db_con = self._db_connect(host, username, password, database_name)
         client_db_cursor = client_db_con.cursor()
         sql_script_path = os.path.join(
             os.path.join(os.path.split(__file__)[0]),
             "scripts/mirror-client.sql"
         )
+        logger.logKnowledge("info", "create", "before create tables")
         file_obj = open(sql_script_path, 'r')
         sql_file = file_obj.read()
         file_obj.close()
@@ -4373,9 +4395,11 @@ class KnowledgeDatabase(Database):
                 client_db_cursor.execute(command)
             else:
                 break
+        logger.logKnowledge("info", "create", "after create tables")
         encrypted_password, password = self.generate_and_return_password()
         query = "insert into tbl_admin (username, password) values ('%s', '%s')" % (
             email_id, encrypted_password)
+        logger.logKnowledge("info", "create", "save user")
         client_db_cursor.execute(query)
         query = "insert into tbl_users (user_id, employee_name, email_id, password, user_level,\
         is_primary_admin, is_service_provider, is_admin)\
@@ -4384,8 +4408,11 @@ class KnowledgeDatabase(Database):
         client_db_cursor.execute(query)
         self._save_client_countries(country_ids, client_db_cursor)
         self._save_client_domains(domain_ids, client_db_cursor)
+        logger.logKnowledge("info", "create", "create procedures")
         self._create_procedure(client_db_cursor)
+        logger.logKnowledge("info", "create", "after create triggers")
         self._create_trigger(client_db_cursor)
+        logger.logKnowledge("info", "create", "final commit")
         client_db_con.commit()
         return password
 
@@ -6208,7 +6235,7 @@ class KnowledgeDatabase(Database):
             where_qry += " AND  created_on between DATE_SUB('%s', INTERVAL 1 DAY) \
             AND DATE_ADD('%s', INTERVAL 1 DAY)" % (
                 from_date, to_date
-                
+
             )
         elif from_date is not None:
             where_qry += " AND  created_on > DATE_SUB('%s', INTERVAL 1 DAY) " % (
@@ -6222,7 +6249,7 @@ class KnowledgeDatabase(Database):
             where_qry += " AND user_id = '%s'" % (user_id)
         if form_id is not None:
             where_qry += " AND form_id = '%s'" % (form_id)
-        
+
         columns = "user_id, form_id, action, created_on"
         where_qry += " AND user_id in (%s)" % (user_ids)
         where_qry += " ORDER BY created_on DESC"
@@ -6367,8 +6394,22 @@ class KnowledgeDatabase(Database):
         country_id = request_data.country_id
         domain_id = request_data.domain_id
         level_1_statutory_id = request_data.level_1_statutory_id
-        if level_1_statutory_id is None :
-            level_1_statutory_id = '%'
+        from_date = request_data.from_date
+        to_date = request_data.to_date
+        where_qry = ""
+
+        if level_1_statutory_id is not None :
+            where_qry += " AND tss.statutory_id IN \
+            (select statutory_id from tbl_statutories where FIND_IN_SET('%s', parent_ids)) \
+            " % (level_1_statutory_id)
+
+        if from_date is not None and to_date is not None :
+            from_date = self.string_to_datetime(from_date)
+            to_date = self.string_to_datetime(to_date)
+            where_qry += " AND tsnl.updated_on >= '%s' AND tsnl.updated_on <= '%s'" % (
+                from_date, to_date
+            )
+
         query = "SELECT  distinct tsm.country_id, tsm.domain_id\
              from `tbl_statutory_notifications_log` tsnl    \
             INNER JOIN `tbl_statutory_statutories` tss ON \
@@ -6384,7 +6425,6 @@ class KnowledgeDatabase(Database):
                 country_id, domain_id
             )
         rows = self.select_all(query)
-        columns = ["country_id", "domain_id"]
         country_wise_notifications = []
         for row in rows:
             query = "SELECT  ts.statutory_name, tsnl.statutory_provision,\
@@ -6399,22 +6439,29 @@ class KnowledgeDatabase(Database):
             WHERE  \
             tsm.country_id = %s and \
             tsm.domain_id = %s \
-            group by tsm.country_id, tsm.domain_id " % (
-                row[0], row[1]
+            %s " % (
+                row[0], row[1], where_qry
             )
             notifications_rows = self.select_all(query)
-            notification_columns = ["statutory_name", "statutory_provision",
-            "notification_text", "updated_on" ]
+            notification_columns = [
+                "statutory_name", "statutory_provision",
+                "notification_text", "updated_on"
+            ]
             statutory_notifications = self.convert_to_dict(notifications_rows, notification_columns)
-            notifications =[]
+            notifications = []
             for notification in statutory_notifications:
                 notifications.append(technoreports.NOTIFICATIONS(
-                    statutory_provision = notification["statutory_provision"],
-                    notification_text = notification["notification_text"],
-                    date_and_time = self.datetime_to_string(notification["updated_on"])
+                    statutory_provision=notification["statutory_provision"],
+                    notification_text=notification["notification_text"],
+                    date_and_time=self.datetime_to_string(notification["updated_on"])
                 ))
             country_wise_notifications.append(
-            technoreports.COUNTRY_WISE_NOTIFICATIONS(country_id = row[0], domain_id = row[1], notifications = notifications))
+                technoreports.COUNTRY_WISE_NOTIFICATIONS(
+                    country_id=row[0],
+                    domain_id=row[1],
+                    notifications=notifications
+                )
+            )
         return country_wise_notifications
 
 #

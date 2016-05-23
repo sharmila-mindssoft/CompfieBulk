@@ -176,27 +176,44 @@ class GetStatutoryNotificationsFilters(Request):
         }
 
 class GetStatutoryNotificationsReportData(Request):
-    def __init__(self, country_id, domain_id, level_1_statutory_id):
+    def __init__(
+        self, country_id, domain_id, level_1_statutory_id,
+        from_date, to_date
+    ):
         self.country_id = country_id
         self.domain_id = domain_id
         self.level_1_statutory_id = level_1_statutory_id
+        self.from_date = from_date
+        self.to_date = to_date
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "level_1_statutory_id"])
+        data = parse_dictionary(data, [
+            "country_id", "domain_id", "level_1_statutory_id",
+            "from_date", "to_date"
+        ])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         level_1_statutory_id = data.get("level_1_statutory_id")
         level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
-        return GetStatutoryNotificationsReportData(country_id, domain_id, level_1_statutory_id)
+        from_date = data.get("from_date")
+        from_date = parse_structure_OptionalType_CustomTextType_50(from_date)
+        to_date = data.get("to_date")
+        to_date = parse_structure_OptionalType_CustomTextType_50(to_date)
+        return GetStatutoryNotificationsReportData(
+            country_id, domain_id, level_1_statutory_id,
+            from_date, to_date
+        )
 
     def to_inner_structure(self):
         return {
             "country_id" : to_structure_SignedIntegerType_8(self.country_id),
             "domain_id" : to_structure_SignedIntegerType_8(self.domain_id),
-            "level_1_statutory_id" : to_structure_OptionalType_UnsignedIntegerType_32(self.level_1_statutory_id)
+            "level_1_statutory_id" : to_structure_OptionalType_UnsignedIntegerType_32(self.level_1_statutory_id),
+            "from_date": to_structure_OptionalType_CustomTextType_50(self.from_date),
+            "to_date": to_structure_OptionalType_CustomTextType_50(self.from_date)
         }
 
 class GetAssignedStatutoryReportFilters(Request):

@@ -2,11 +2,11 @@
 
 import os
 import datetime
-from datetime import timedelta
-from dateutil import relativedelta
 import json
 import traceback
+import threading
 import MySQLdb as mysql
+from datetime import timedelta
 from expiry_report_generator import ExpiryReportGenerator as exp
 
 from server.constants import (
@@ -53,7 +53,7 @@ def get_countries():
     return convert_to_dict(rows, ["country_id", "country_name"])
 
 def get_client_db_list():
-    print "begin fetching client info"
+    # print "begin fetching client info"
     con = knowledge_db_connect()
     cursor = con.cursor()
     query = "SELECT T1.client_id, T1.database_ip, T1.database_port, \
@@ -77,7 +77,7 @@ def create_client_db_connection(data):
     if data is None :
         return None
 
-    print "begin client db connection"
+    # print "begin client db connection"
     client_connection = {}
     for d in data :
         try :
@@ -114,7 +114,6 @@ def get_contract_expiring_clients():
     return client_ids
 
 def get_compliance_to_start(db, client_id, current_date, country_id):
-    print "fetching task details to start compliance for client id - %s, %s" % (client_id, current_date)
     query = "SELECT t1.country_id, t1.unit_id, t1.compliance_id, t1.statutory_dates, \
         t1.trigger_before_days, t1.due_date, t1.validity_date,\
         t2.document_name, t2.compliance_task, t2.frequency_id, t2.repeats_type_id,\
@@ -146,9 +145,6 @@ def get_compliance_to_start(db, client_id, current_date, country_id):
         "assignee", "concurrence_person", "approval_person", "t4_compliance_id"
     ]
     result = convert_to_dict(rows, columns)
-    # print '*' * 10
-    # print result
-    # print '*' * 10
 
     return result
 
@@ -323,35 +319,12 @@ def save_in_notification(
             save_notification_users(notification_id, concurrence_person)
 
 def start_new_task(db, client_id, current_date, country_id):
-    print "begin process to start new task  - %s" % (current_date)
-    data = get_compliance_to_start(db, client_id, current_date, country_id)
-    count = 0
-    for d in data :
-        if d["division_id"] == 0 :
-            d["division_id"] = "NULL"
-        if d["concurrence_person"] == 0 :
-            d["concurrence_person"] = "NULL"
-        approval_person = d["approval_person"]
-        if d["frequency"] == 1 :
-            next_due_date = ""
-            compliance_history_id = save_in_compliance_history(
-                db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
-                d["due_date"], next_due_date, int(d["assignee"]),
-                d["concurrence_person"], int(approval_person)
-            )
-
-        else:
-            next_due_date, trigger_before = calculate_next_due_date(
-                d["frequency"], d["statutory_dates"], d["repeat_type_id"],
-                d["repeats_every"], d["due_date"]
-            )
-            compliance_history_id = save_in_compliance_history(
-                db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
-                d["due_date"], next_due_date, int(d["assignee"]), d["concurrence_person"], int(approval_person)
-            )
-            if trigger_before is None:
-                trigger_before = d["trigger_before_days"]
-            update_assign_compliance_due_date(db, trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
+    def notify(d, due_date, next_due_date, approval_person):
+        compliance_history_id = save_in_compliance_history(
+            db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
+            due_date, next_due_date, int(d["assignee"]),
+            d["concurrence_person"], int(approval_person)
+        )
 
         if d["document_name"] :
             compliance_name = d["document_name"] + " - " + d["compliance_task"]
@@ -368,13 +341,51 @@ def start_new_task(db, client_id, current_date, country_id):
             notification_text, extra_details, notification_type_id
         )
         a_name, assignee_email = get_email_id_for_users(db, d["assignee"])
-        email.notify_compliance_start(
-            a_name, compliance_name, unit_name,
-            d["due_date"], assignee_email
+        notify_new_task = threading.Thread(
+            target=email.notify_compliance_start,
+            args=[
+                a_name, compliance_name, unit_name,
+                d["due_date"], assignee_email
+            ]
         )
+        notify_new_task.start()
+
+    def start_next_due_date_task(d, due_date, approval_person) :
+        next_due_date, trigger_before = calculate_next_due_date(
+            d["frequency"], d["statutory_dates"], d["repeat_type_id"],
+            d["repeats_every"], due_date
+        )
+
+        if trigger_before is None:
+            trigger_before = int(d["trigger_before_days"])
+
+        notify(d, due_date, next_due_date, approval_person)
+        return next_due_date, trigger_before
+
+    data = get_compliance_to_start(db, client_id, current_date, country_id)
+    count = 0
+    for d in data :
+        if d["division_id"] == 0 :
+            d["division_id"] = "NULL"
+        if d["concurrence_person"] == 0 :
+            d["concurrence_person"] = "NULL"
+        approval_person = int(d["approval_person"])
+        if d["frequency"] == 1 :
+            next_due_date = "0000-00-00"
+            notify(d, d["due_date"], next_due_date, approval_person)
+        else:
+            next_due_date = trigger_before = None
+            due_date = d["due_date"]
+            next_due_date, trigger_before = start_next_due_date_task(d, due_date, approval_person)
+
+            while (next_due_date - timedelta(days=trigger_before)) <= current_date :
+                # start for next-due-date
+                next_due_date, trigger_before = start_next_due_date_task(d, next_due_date, approval_person)
+            update_assign_compliance_due_date(db, trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
+
         count += 1
 
-    print " %s compliances started for - %s" % (count, current_date)
+    print " %s compliances started for client_id %s - %s" % (count, client_id, current_date)
 
 def notify_before_contract_period(db, client_id):
     cursor = db.cursor()
@@ -386,7 +397,7 @@ def notify_before_contract_period(db, client_id):
     rows = cursor.fetchall()
     group_name = rows[0][0]
 
-    notification_text = '''Your contract with Compfie for the group '%s' is about to expire. \
+    notification_text = '''Your contract with Compfie for the group \"%s\" is about to expire. \
     Kindly renew your contract to avail the services continuously.'''  % group_name
     # Before contract expiration \
     # You can download documents of %s <a href="%s">here </a> ''' % (
@@ -403,7 +414,6 @@ def notify_before_contract_period(db, client_id):
             notification_id, 2,
             notification_text, extra_details, created_on
         )
-
     cursor.execute(query)
     cursor.close()
 
@@ -437,8 +447,6 @@ def is_already_notified(
 
 
 def run_daily_process(country_id, current_date):
-    print '--' * 20
-    print "begin daily_process"
     client_info = get_client_database()
     client_ids = get_contract_expiring_clients()
     if client_info is not None :
@@ -454,8 +462,6 @@ def run_daily_process(country_id, current_date):
                 print e
                 db.rollback()
                 print(traceback.format_exc())
-    print "end daily_process"
-    print '--' * 20
 
 def run_daily_process_country_wise():
     country_time_zones = sorted(countries)
@@ -469,10 +475,10 @@ def run_daily_process_country_wise():
             ct = ct.replace(" ", "")
             if name.lower() == ct.lower() :
                 info = countries.get(ct)
-                print info
+                # print info
                 break
         if info :
             current_date = return_date(time_convertion(info.get("timezones")[0]))
-            print "country -- ", c["country_name"]
+            # print "country -- ", c["country_name"]
             print
             run_daily_process(c["country_id"], current_date)

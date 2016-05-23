@@ -1282,14 +1282,16 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback);
     }
-    function getStatutoryNotificationsReportData(countryId, domainId, level1Id, callback){
+    function getStatutoryNotificationsReportData(countryId, domainId, level1Id, fromDate, toDate, callback){
         callerName = "techno_report"
         var request = [
             "GetStatutoryNotificationsReportData",
             {
                 "country_id": countryId,
                 "domain_id": domainId,
-                "level_1_statutory_id": level1Id
+                "level_1_statutory_id": level1Id,
+                "from_date": fromDate,
+                "to_date": toDate
             }
         ];
         apiRequest(callerName, request, callback);
