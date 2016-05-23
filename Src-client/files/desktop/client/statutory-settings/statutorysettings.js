@@ -365,6 +365,7 @@ $('.close').click(function(){
 
 //save assigned statutories data in assignedStatutories variable
 $("#submit").click(function() {
+  $('#password').focus();
   displayLoader();
   displayMessage("");
   assignedStatutories = [];
@@ -660,5 +661,4 @@ $(".listfilter").keyup(function() {
 //initialization
 $(document).ready(function () {
   getStatutorySettings ();
-
 });

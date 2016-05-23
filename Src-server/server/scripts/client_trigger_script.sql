@@ -18,7 +18,6 @@ CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON 
     	user_id, read_status)
         SELECT NEW.statutory_notification_id, t1.admin_id, 0 FROM
         tbl_admin t1 where t1.admin_id != 0;
-        END
 END
 //
 DELIMITER ;
@@ -70,7 +69,7 @@ DELIMITER ;
 
 DROP TRIGGER IF EXISTS `after_tbl_compliance_history_update`;
 DELIMITER //
-CREATE TRIGGER `after_tbl_compliance_history_update` AFTER INSERT ON `tbl_compliance_history`
+CREATE TRIGGER `after_tbl_compliance_history_update` AFTER UPDATE ON `tbl_compliance_history`
 FOR EACH ROW BEGIN
 	CALL procedure_to_update_version("history");
 END
@@ -96,16 +95,8 @@ END
 //
 DELIMITER ;
 
-DROP TRIGGER IF EXISTS `after_tbl_client_compliances_update`;
-DELIMITER //
-CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client_compliances`
-FOR EACH ROW BEGIN
-	CALL procedure_to_update_version("compliance");
-END
-//
-DELIMITER ;
 
-DELIMITER ;
+DELIMITER //
 CREATE PROCEDURE `procedure_to_update_version`(IN update_type VARCHAR(100))
 BEGIN
 	SET SQL_SAFE_UPDATES=0;
