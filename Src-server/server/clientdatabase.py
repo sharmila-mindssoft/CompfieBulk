@@ -6737,7 +6737,7 @@ class ClientDatabase(Database):
                 ' ','') AS UNSIGNED)) \
                 LIMIT %s, %s ) as a \
                 ORDER BY a.notification_id DESC" % (
-                    columns, subquery_columns, 
+                    columns, subquery_columns,
                     self.tblNotificationUserLog,
                     self.tblNotificationsLog,
                     self.tblCompliances,
@@ -6747,10 +6747,10 @@ class ClientDatabase(Database):
                 )
         rows = self.select_all(query)
         columns_list = [
-            "notification_id", "notification_text", "created_on", 
+            "notification_id", "notification_text", "created_on",
             "extra_details", "statutory_provision",
-            "assignee", "concurrence_person", "approval_person", 
-            "compliance_id", "compliance_task", "document_name", 
+            "assignee", "concurrence_person", "approval_person",
+            "compliance_id", "compliance_task", "document_name",
             "compliance_description", "penal_consequences", "read_status",
             "due_date", "completion_date", "approve_status"
         ]
@@ -7610,9 +7610,9 @@ class ClientDatabase(Database):
                                 notification_text=notification["notification_text"],
                                 date_and_time=self.datetime_to_string(notification["updated_on"])
                             ))
-            notifications.append(clientreport.STATUTORY_WISE_NOTIFICATIONS(
-                business_group_name, legal_entity_name, division_name, level_1_statutory_wise_notifications
-                    ))
+                    notifications.append(clientreport.STATUTORY_WISE_NOTIFICATIONS(
+                        business_group_name, legal_entity_name, division_name, level_1_statutory_wise_notifications
+                            ))
         return notifications
 
 #

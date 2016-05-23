@@ -6416,7 +6416,6 @@ class KnowledgeDatabase(Database):
                 country_id, domain_id
             )
         rows = self.select_all(query)
-        print query
         country_wise_notifications = []
         for row in rows:
             query = "SELECT  ts.statutory_name, tsnl.statutory_provision,\
@@ -6434,7 +6433,6 @@ class KnowledgeDatabase(Database):
             %s " % (
                 row[0], row[1], where_qry
             )
-            print query
             notifications_rows = self.select_all(query)
             notification_columns = [
                 "statutory_name", "statutory_provision",
