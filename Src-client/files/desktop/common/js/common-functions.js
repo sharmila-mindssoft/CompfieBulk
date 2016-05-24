@@ -195,7 +195,7 @@ function getStatutoryAutocomplete(textval, listval, callback){
     //$("#statutory").val('');
   }else{
     $("#statutory").val('');
-    $("#level1id").val('');
+    $("#level1id").val('');  
     $(".ac-textbox").hide();
   }
 }

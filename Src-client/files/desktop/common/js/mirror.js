@@ -573,24 +573,30 @@ function initMirror() {
         file_name = file.name
         file_size = file.size
         var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
-        if (file_size > max_limit) {
-            callback("File max limit exceeded");
-        }else if(file_extension == 'exe'){
-            callback("Invalid file format");
-        }else{
-            file_content = null
-            if (files && file) {
-            convert_to_base64(file, function(file_content) {
-                if (file_content == null) {
-                    callback("File content is empty")
+
+        if(file_name.contains('.')){
+            if (file_size > max_limit) {
+                callback("File max limit exceeded");
+            }else if(file_extension == 'exe'){
+                callback("Invalid file format");
+            }else{
+                file_content = null
+                if (files && file) {
+                convert_to_base64(file, function(file_content) {
+                    if (file_content == null) {
+                        callback("File content is empty")
+                    }
+                    result = uploadFileFormat(
+                        file_size, file_name, file_content
+                    )
+                    callback(result)
+                });
                 }
-                result = uploadFileFormat(
-                    file_size, file_name, file_content
-                )
-                callback(result)
-            });
             }
+        }else{
+            callback("Invalid file format"); 
         }
+        
         // file_extension = file_name.substr(
         //     file_name.lastIndexOf('.') + 1
         // );
