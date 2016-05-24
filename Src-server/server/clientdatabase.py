@@ -7114,9 +7114,30 @@ class ClientDatabase(Database):
                     assignee, approval, history_id
                 )
                 self.execute(update_history)
-
-        action = "%s Compliances reassigned to assignee %s" % (",".join(compliance_names), request.assignee_name)
-        self.save_activity(session_user, 8, action)
+        compliance_names = " <br> ".join(compliance_names)
+        if concurrence is None :
+            action = " Following compliances has reassigned to assignee - %s and approval-person - %s <br> %s" % (
+                request.assignee_name,
+                approval,
+                compliance_names
+            )
+        else :
+            action = " Following compliances has reassigned to assignee - %s concurrence-person - %s approval-person - %s <br> %s" % (
+                request.assignee_name,
+                concurrence,
+                approval,
+                compliance_names
+            )
+        activity_text = action.replace("<br>", " ")
+        self.save_activity(session_user, 8, json.dumps(activity_text))
+        receiver = self.get_email_id_for_users(assignee)[1]
+        notify_reassing_compliance = threading.Thread(
+            target=email.notify_assign_compliance,
+            args=[
+                receiver, request.assignee_name, action
+            ]
+        )
+        notify_reassing_compliance.start()
         return clienttransactions.ReassignComplianceSuccess()
 
 #
