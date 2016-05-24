@@ -3124,18 +3124,19 @@ class ClientDatabase(Database):
             q = "SELECT compliance_id, compliance_task, statutory_dates, repeats_type_id from tbl_compliances \
                 where compliance_id = %s" % int(c.compliance_id)
             row = self.select_one(q)
-            comp_id = row[0]
-            task = row[1]
-            s_dates = json.loads(row[2])
-            repeats_type_id = row[3]
-            due_date, due_date_list, date_list = self.set_new_due_date(s_dates, repeats_type_id, comp_id)
+            if row :
+                comp_id = row[0]
+                task = row[1]
+                s_dates = json.loads(row[2])
+                repeats_type_id = row[3]
+                due_date, due_date_list, date_list = self.set_new_due_date(s_dates, repeats_type_id, comp_id)
 
-            if c.due_date not in [None, ""] and due_date not in [None, ""]:
-                t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
-                n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
-                if (n_due_date < t_due_date) :
-                    # Due date should be lessthen statutory date
-                    return False, task
+                if c.due_date not in [None, ""] and due_date not in [None, ""]:
+                    t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+                    n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
+                    if (n_due_date < t_due_date) :
+                        # Due date should be lessthen statutory date
+                        return False, task
         return True, None
 
     # start current date compliances after assign-compliances
