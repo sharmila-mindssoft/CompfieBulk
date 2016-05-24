@@ -3180,6 +3180,7 @@ class KnowledgeDatabase(Database):
         is_format = False
         compliance_ids = []
         compliance_names = []
+        file_path = KNOWLEDGE_FORMAT_PATH
         for data in datas :
             compliance_id = data.compliance_id
 
@@ -3198,14 +3199,12 @@ class KnowledgeDatabase(Database):
             file_size = 0
             file_content = ""
             saved_file_name = saved_file[0]
-            if saved_file_name :
-                if len(saved_file_name) == 0 :
-                    saved_file_name = None
 
+            if len(saved_file_name) == 0 :
+                saved_file_name = None
             if file_list is None :
-                pass
-            elif file_list is None and saved_file_name is not None:
-                self.remove_uploaded_file(saved_file[0])
+                if saved_file_name is not None :
+                    self.remove_uploaded_file(file_path + "/" + saved_file_name)
             else :
                 if saved_file_name is None :
                     file_list = file_list[0]
@@ -3219,19 +3218,23 @@ class KnowledgeDatabase(Database):
                     is_format = True
                 else :
                     file_list = file_list[0]
-                    file_name = saved_file_name
+                    file_name = file_list.file_name
                     if len(file_name) == 0 :
                         file_name = None
 
-                    if file_name is None :
+                    file_size = file_list.file_size
+                    file_content = file_list.file_content
+                    if "compliance_format" in file_content :
+                        pass
+                    else :
+                        if saved_file_name is not None :
+                            self.remove_uploaded_file(file_path + "/" + saved_file_name)
                         file_name = file_list.file_name
                         name = file_list.file_name.split('.')[0]
                         exten = file_list.file_name.split('.')[1]
                         auto_code = self.new_uuid()
                         file_name = "%s-%s.%s" % (name, auto_code, exten)
                         is_format = True
-                    file_size = file_list.file_size
-                    file_content = file_list.file_content
 
             penal_consequences = data.penal_consequences
             compliance_frequency = data.frequency_id
