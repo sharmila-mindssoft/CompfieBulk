@@ -3231,7 +3231,7 @@ class ClientDatabase(Database):
                     new_due_date = addYears(repeat_every, old_due_date)
                 else :
                     "repeat_type not matched"
-                    new_due_date = old_due_date
+                    new_due_date = None
                 return (new_due_date,  trigger_before_days)
             else :
                 temp_date = convert_string_to_date(str(old_due_date))
@@ -3348,7 +3348,8 @@ class ClientDatabase(Database):
             if trigger_before is None:
                 trigger_before = int(d["trigger_before_days"])
 
-            notify(d, due_date, next_due_date, approval_person)
+            if next_due_date is not None :
+                notify(d, due_date, next_due_date, approval_person)
             return next_due_date, trigger_before
 
         # -- start_new_task
@@ -3367,10 +3368,10 @@ class ClientDatabase(Database):
                 next_due_date = trigger_before = None
                 due_date = d["due_date"]
                 next_due_date, trigger_before = start_next_due_date_task(d, due_date, approval_person)
-
-                while (next_due_date - timedelta(days=trigger_before)) <= current_date :
-                    # start for next-due-date
-                    next_due_date, trigger_before = start_next_due_date_task(d, next_due_date, approval_person)
+                if next_due_date is not None :
+                    while (next_due_date - timedelta(days=trigger_before)) <= current_date :
+                        # start for next-due-date
+                        next_due_date, trigger_before = start_next_due_date_task(d, next_due_date, approval_person)
 
                 self.update_assign_compliance_due_date(trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
 
