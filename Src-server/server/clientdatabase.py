@@ -7527,7 +7527,7 @@ class ClientDatabase(Database):
     #         next_start_date = due_date - timedelta(days=trigger_before)
     #     return next_start_date
 
-    def get_statutory_notifications_list_report(self, request_data, client_id):
+    def report_statutory_notifications_list(self, request_data):
         country_name = request_data.country_name
         domain_name = request_data.domain_name
         business_group_id = request_data.business_group_id
@@ -7537,107 +7537,91 @@ class ClientDatabase(Database):
         level_1_statutory_name = request_data.level_1_statutory_name
         from_date = request_data.from_date
         to_date = request_data.to_date
-        if from_date is None:
-            from_date = ''
-        else:
+        condition = ""
+        if from_date is not None and to_date is not None :
             from_date = self.string_to_datetime(from_date)
-        if to_date is None:
-            to_date = ''
-        else:
             to_date = self.string_to_datetime(to_date)
-        condition = "1"
+            condition += " AND snl.updated_on >= '%s' AND snl.updated_on <= '%s'" % (from_date, to_date)
         if business_group_id is not None:
-            condition += " AND business_group_id = '%d'" % business_group_id
+            condition += " AND u.business_group_id = '%s'" % business_group_id
         if legal_entity_id is not None:
-            condition += " AND legal_entity_id = '%d'" % legal_entity_id
+            condition += " AND u.legal_entity_id = '%s'" % legal_entity_id
         if division_id is not None:
-            condition += " AND division_id = '%d'" % division_id
+            condition += " AND u.division_id = '%s'" % division_id
         if unit_id is not None:
-            condition += " AND unit_id = '%d'" % unit_id
+            condition += " AND u.unit_id = '%s'" % unit_id
 
-        # Gettings distinct sets of bg_id, le_id, div_id, unit_id
-        columns = "business_group_id, legal_entity_id, division_id, group_concat(unit_id)"
-        where_condition = "1 AND %s" % condition
-        where_condition += " group by business_group_id, legal_entity_id, division_id"
-        rows = self.get_data(self.tblStatutoryNotificationsUnits, columns, where_condition)
-        columns = ["business_group_id", "legal_entity_id", "division_id", "unit_id"]
-        rows = self.convert_to_dict(rows, columns)
-        notifications = []
-        conditiondate = None
-        for row in rows:
-            business_group_id = row["business_group_id"]
-            legal_entity_id = row["legal_entity_id"]
-            division_id = row["division_id"]
-            unit_id_list = [int(x) for x in row["unit_id"].split(",")]
+        if level_1_statutory_name is not None :
+            condition += " AND snl.statutory_provision like '%s'" % str((level_1_statutory_name + '%'))
+
+        query = "SELECT \
+            (select business_group_name from tbl_business_groups where business_group_id = u.business_group_id), \
+            (select legal_entity_name from tbl_legal_entities where legal_entity_id = u.legal_entity_id), \
+            (select division_name from tbl_divisions where division_id = u.division_id), \
+            u.unit_code, \
+            u.unit_name, \
+            u.address, \
+            snl.statutory_provision, \
+            snl.notification_text, \
+            snl.updated_on \
+        from \
+            tbl_statutory_notifications_log snl \
+                INNER JOIN \
+            tbl_statutory_notifications_units snu \
+        ON snl.statutory_notification_id = snu.statutory_notification_id \
+                INNER JOIN \
+            tbl_units u ON snu.unit_id = u.unit_id \
+        where \
+            snl.country_name like '%s' \
+            and snl.domain_name like '%s' \
+            %s \
+            ORDER BY snl.updated_on" % (
+                    country_name, domain_name,
+                    condition
+                )
+        rows = self.select_all(query)
+        columns = [
+            "business_group", "legal_entity", "division", "unit_code", "unit_name",
+            "address", "statutory_provision", "notification_text", "updated_on"
+        ]
+        data = self.convert_to_dict(rows, columns)
+        legal_wise = {}
+        for d in data :
+            unit_name = "%s - %s" % (d["unit_code"], d["unit_name"])
+            statutories = d["statutory_provision"].split(">>")
+            level_1_statutory_name = statutories[0].strip()
+
             level_1_statutory_wise_notifications = {}
-            for unit_id in unit_id_list:
-                query = "SELECT bg.business_group_name, le.legal_entity_name, d.division_name, u.unit_code, u.unit_name, u.address,\
-                    snl.statutory_provision, snl.notification_text, snl.updated_on \
-                    from \
-                    tbl_statutory_notifications_log snl \
-                    INNER JOIN \
-                    tbl_statutory_notifications_units snu  ON \
-                    snl.statutory_notification_id = snu.statutory_notification_id \
-                    INNER JOIN \
-                    tbl_business_groups bg ON \
-                    snu.business_group_id = bg.business_group_id \
-                    INNER JOIN \
-                    tbl_legal_entities le ON \
-                    snu.legal_entity_id = le.legal_entity_id \
-                    INNER JOIN \
-                    tbl_divisions d ON \
-                    snu.division_id = d.division_id \
-                    INNER JOIN \
-                    tbl_units u ON \
-                    snu.unit_id = u.unit_id \
-                    where \
-                    snl.country_name = '%s' \
-                    and \
-                    snl.domain_name = '%s' \
-                    and \
-                    bg.business_group_id = '%d' \
-                    and \
-                    le.legal_entity_id = '%d' \
-                    and \
-                    d.division_id = '%d' \
-                    and \
-                    u.unit_id = '%d' " % (
-                        country_name, domain_name, business_group_id, legal_entity_id, division_id, unit_id
-                    )
-                print query
-                if from_date != '' and to_date != '':
-                    conditiondate = " AND  snl.updated_on between '%s' and '%s' " % (from_date, to_date)
-                    query = query + conditiondate
-                if level_1_statutory_name is not None:
-                    conditionlevel1 = "AND statutory_provision like '%s'" % str(level_1_statutory_name + "%")
-                    query = query + conditionlevel1
-                result_rows = self.select_all(query)
-                columns = [
-                    "business_group_name", "legal_entity_name", "division_name", "unit_code", "unit_name", "address",
-                    "statutory_provision", "notification_text", "updated_on"
-                ]
-                statutory_notifications = self.convert_to_dict(result_rows, columns)
-                if len(result_rows) > 0:
-                    business_group_name = result_rows[0][0]
-                    legal_entity_name = result_rows[0][1]
-                    division_name = result_rows[0][2]
-                    for notification in statutory_notifications:
-                        unit_name = "%s - %s" % (notification["unit_code"], notification["unit_name"])
-                        statutories = notification["statutory_provision"].split(">>")
-                        level_1_statutory_name = statutories[0]
-                        if level_1_statutory_name not in level_1_statutory_wise_notifications:
-                            level_1_statutory_wise_notifications[level_1_statutory_name] = []
-                        level_1_statutory_wise_notifications[level_1_statutory_name].append(
-                            clientreport.LEVEL_1_STATUTORY_NOTIFICATIONS(
-                                statutory_provision=notification["statutory_provision"],
-                                unit_name=unit_name,
-                                notification_text=notification["notification_text"],
-                                date_and_time=self.datetime_to_string(notification["updated_on"])
-                            ))
-                    notifications.append(clientreport.STATUTORY_WISE_NOTIFICATIONS(
-                        business_group_name, legal_entity_name, division_name, level_1_statutory_wise_notifications
-                            ))
-        return notifications
+            notify = clientreport.LEVEL_1_STATUTORY_NOTIFICATIONS(
+                d["statutory_provision"],
+                unit_name,
+                d["notification_text"],
+                self.datetime_to_string(d["updated_on"])
+            )
+            level_1_statutory_wise_notifications[level_1_statutory_name] = [notify]
+            legal_wise_data = legal_wise.get(d["legal_entity"])
+            if legal_wise_data is None :
+                legal_wise_data = clientreport.STATUTORY_WISE_NOTIFICATIONS(
+                    d["business_group"], d["legal_entity"], d["division"],
+                    level_1_statutory_wise_notifications
+                )
+            else :
+                dict_level_1 = legal_wise_data.level_1_statutory_wise_notifications
+                if dict_level_1 is None :
+                    dict_level_1 = {}
+                lst = dict_level_1.get(level_1_statutory_name)
+                if lst is None :
+                    lst = []
+                else :
+                    lst.append(notify)
+                dict_level_1[level_1_statutory_name] = lst
+                legal_wise_data.level_1_statutory_wise_notifications = dict_level_1
+            legal_wise[d["legal_entity"]] = legal_wise_data
+
+        notification_lst = []
+        for k in sorted(legal_wise):
+            notification_lst.append(legal_wise.get(k))
+        return notification_lst
 
 #
 #   Risk Report

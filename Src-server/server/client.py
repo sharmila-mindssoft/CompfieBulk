@@ -265,6 +265,7 @@ class ReplicationManager(object) :
 #
 
     def _poll_for_del(self):
+        print "poll for dell"
         assert self._stop is False
         assert self._received_count is not None
 

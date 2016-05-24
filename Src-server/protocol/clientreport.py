@@ -85,7 +85,9 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_CustomTextType_500,
     parse_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData,
     parse_structure_OptionalType_CustomTextType_250,
-    parse_structure_VectorType_RecordType_clientreport_Level1Compliance
+    parse_structure_VectorType_RecordType_clientreport_Level1Compliance,
+    parse_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_LEVEL_1_STATUTORY_NOTIFICATIONS
+
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
@@ -174,7 +176,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_CustomTextType_500,
     to_structure_MapType_CustomTextType_500_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ActivityData,
     to_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData,
-    to_structure_OptionalType_CustomTextType_250
+    to_structure_OptionalType_CustomTextType_250,
+
 )
 
 #
@@ -2770,20 +2773,20 @@ class STATUTORY_WISE_NOTIFICATIONS(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["business_group_name", "legal_entity_name", "division_name", "level_1_statutory_wise_notifications"])
         business_group_name = data.get("business_group_name")
-        business_group_name = parse_structure_CustomTextType_50(business_group_name)
+        business_group_name = parse_structure_OptionalType_CustomTextType_100(business_group_name)
         legal_entity_name = data.get("legal_entity_name")
-        legal_entity_name = parse_structure_CustomTextType_50(legal_entity_name)
+        legal_entity_name = parse_structure_OptionalType_CustomTextType_100(legal_entity_name)
         division_name = data.get("division_name")
-        division_name = parse_structure_CustomTextType_50(division_name)
+        division_name = parse_structure_OptionalType_CustomTextType_100(division_name)
         level_1_statutory_wise_notifications = data.get("level_1_statutory_wise_notifications")
-        level_1_statutory_wise_notifications = parse_structure_VectorType_RecordType_clientreport_LEVEL_1_STATUTORY_NOTIFICATIONS(level_1_statutory_wise_notifications)
+        level_1_statutory_wise_notifications = parse_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_LEVEL_1_STATUTORY_NOTIFICATIONS(level_1_statutory_wise_notifications)
         return STATUTORY_WISE_NOTIFICATIONS(business_group_name, legal_entity_name, division_name, level_1_statutory_wise_notifications)
 
     def to_structure(self):
         return {
-            "business_group_name": to_structure_CustomTextType_50(self.business_group_name),
-            "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
-            "division_name": to_structure_CustomTextType_50(self.division_name),
+            "business_group_name": to_structure_OptionalType_CustomTextType_100(self.business_group_name),
+            "legal_entity_name": to_structure_OptionalType_CustomTextType_100(self.legal_entity_name),
+            "division_name": to_structure_OptionalType_CustomTextType_100(self.division_name),
             "level_1_statutory_wise_notifications": to_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_LEVEL_1_STATUTORY_NOTIFICATIONS(self.level_1_statutory_wise_notifications),
         }
 
