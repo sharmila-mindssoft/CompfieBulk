@@ -3269,12 +3269,12 @@ class KnowledgeDatabase(Database):
                 pass
 
             elif compliance_frequency == 4 :
-                columns.extend(["duration", "duration_type_id"])
-                values.extend([duration, duration_type])
+                columns.extend(["duration", "duration_type_id", "repeats_every", "repeats_type_id"])
+                values.extend([duration, duration_type, 0, 0])
 
             else :
-                columns.extend(["repeats_every", "repeats_type_id"])
-                values.extend([repeats_every, repeats_type])
+                columns.extend(["repeats_every", "repeats_type_id", "duration", "duration_type_id"])
+                values.extend([repeats_every, repeats_type, 0, 0])
 
             where_condition = "compliance_id = %s" % (compliance_id)
             self.update(table_name, columns, values, where_condition)
