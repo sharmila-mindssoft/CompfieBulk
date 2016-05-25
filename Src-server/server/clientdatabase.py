@@ -7111,12 +7111,13 @@ class ClientDatabase(Database):
                     completed_by = '%s', approved_by = %s"
                 if concurrence not in [None, "None", "null", "Null", 0] :
                     update_qry += " ,concurred_by = %s " % (concurrence)
-                where_qry = " WHERE compliance_history_id = %s "
+                where_qry = " WHERE IFNULL(approve_status, 0) != 1 and compliance_id = %s  and unit_id = %s "
 
                 qry = update_history + where_qry
 
                 update_history = qry % (
-                    assignee, approval, history_id
+                    assignee, approval, compliance_id,
+                    unit_id
                 )
                 self.execute(update_history)
         compliance_names = " <br> ".join(compliance_names)
@@ -8461,6 +8462,7 @@ class ClientDatabase(Database):
             country_id, domain_id,
             qry_where,
         )
+        print qry_count
         rcount = self.select_one(qry_count)
         if rcount[0] :
             count = int(rcount[0])
@@ -8500,6 +8502,7 @@ class ClientDatabase(Database):
                 from_count, to_count
 
             )
+        print qry
         rows = self.select_all(qry)
         result = self.convert_to_dict(rows, columns)
         return result
