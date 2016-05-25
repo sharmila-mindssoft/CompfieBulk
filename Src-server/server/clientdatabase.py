@@ -8994,7 +8994,8 @@ class ClientDatabase(Database):
             employee_name = row["employee_name"]
             if row["employee_code"] not in ["None", None, ""]:
                 employee_name = "%s - %s" % (row["employee_code"], employee_name)
-
+            if row["activity_status"] == "Submited":
+                row["activity_status"] = "Submitted"
             unit_wise_activities[unit_name][level_1_statutory][compliance_name].append(
                 clientreport.ActivityData(
                     activity_date=self.datetime_to_string(row["activity_date"]),
