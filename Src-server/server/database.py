@@ -3594,11 +3594,11 @@ class KnowledgeDatabase(Database):
     def save_statutory_notification_units(self, statutory_notification_id, mapping_id, client_info):
 
         if client_info is not None:
-            column = [
-                "statutory_notification_unit_id", "statutory_notification_id", "client_id",
-                "legal_entity_id", "unit_id"
-            ]
             for r in client_info :
+                column = [
+                    "statutory_notification_unit_id", "statutory_notification_id", "client_id",
+                    "legal_entity_id", "unit_id"
+                ]
                 notification_unit_id = self.get_new_id(
                     "statutory_notification_unit_id",
                     "tbl_statutory_notifications_units"
@@ -3620,19 +3620,6 @@ class KnowledgeDatabase(Database):
 
                 self.insert("tbl_statutory_notifications_units", column, values)
 
-                # q = "INSERT INTO tbl_statutory_notifications_units \
-                #     (statutory_notification_unit_id, statutory_notification_id, client_id, \
-                #         business_group_id, legal_entity_id, division_id, unit_id) VALUES \
-                #     (%s, %s, %s, '%s', %s, '%s', %s)" % (
-                #         notification_unit_id,
-                #         statutory_notification_id,
-                #         int(r["client_id"]),
-                #         business_group,
-                #         int(r["legal_entity_id"]),
-                #         division_id,
-                #         int(r["unit_id"])
-                #     )
-                # self.execute(q)
 
     #
     #   Forms
