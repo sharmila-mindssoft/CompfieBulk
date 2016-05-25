@@ -8021,15 +8021,12 @@ class ClientDatabase(Database):
 
         q_count = "SELECT count(c.compliance_id) \
             FROM tbl_compliance_history ch \
-            INNER JOIN tbl_assigned_compliances ac \
-            ON ch.compliance_id = ac.compliance_id \
-            AND ch.unit_id = ac.unit_id \
             INNER JOIN tbl_compliances c \
             ON ch.compliance_id = c.compliance_id \
             INNER JOIN tbl_units u ON  \
             ch.unit_id = u.unit_id \
             WHERE c.domain_id = %s \
-            AND ac.country_id = %s \
+            AND u.country_id = %s \
             AND ((c.duration_type_id =2 AND ch.due_date < now()) or (c.duration_type_id != 2 AND ch.due_date < CURDATE()))  \
             AND IFNULL(ch.approve_status, 0) != 1 \
             %s " % (
