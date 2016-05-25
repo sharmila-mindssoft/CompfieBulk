@@ -2393,7 +2393,7 @@ class ComplianceList(object):
         description = data.get("description")
         description = parse_structure_Text(description)
         penal_consequences = data.get("penal_consequences")
-        penal_consequences = parse_structure_CustomTextType_500(penal_consequences)
+        penal_consequences = parse_structure_OptionalType_CustomTextType_500(penal_consequences)
         compliance_frequency = data.get("compliance_frequency")
         compliance_frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
         repeats = data.get("repeats")
@@ -2405,7 +2405,7 @@ class ComplianceList(object):
             "statutory_provision": to_structure_Text(self.statutory_provision),
             "compliance_name": to_structure_VectorType_Text(self.compliance_name),
             "description": to_structure_Text(self.description),
-            "penal_consequences": to_structure_CustomTextType_500(self.penal_consequences),
+            "penal_consequences": to_structure_OptionalType_CustomTextType_500(self.penal_consequences),
             "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
             "repeats": to_structure_CustomTextType_500(self.repeats),
         }
