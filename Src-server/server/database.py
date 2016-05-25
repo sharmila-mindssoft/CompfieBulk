@@ -621,7 +621,8 @@ class Database(object) :
         query = query % (session_id, user_id, session_type_id, updated_on)
         self.execute(query)
 
-        action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
+        # action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
+        action = "Log In by - \"%s\" " % (employee)
         self.save_activity(user_id, 0, action)
 
         return session_id
