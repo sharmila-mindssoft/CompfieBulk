@@ -3147,7 +3147,7 @@ class ClientDatabase(Database):
             t2.repeats_every, (t1.due_date - INTERVAL t1.trigger_before_days DAY) start_date,\
             t3.unit_id, t3.unit_code, t3.unit_name, t3.business_group_id,\
             t3.legal_entity_id, t3.division_id, t2.domain_id, \
-            t1.assignee, t1.concurrget_compliance_to_startence_person, t1.approval_person, \
+            t1.assignee, t1.concurrence_person, t1.approval_person, \
             t4.compliance_id \
             from tbl_assigned_compliances t1\
             INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id\
@@ -3288,8 +3288,8 @@ class ClientDatabase(Database):
         if concurrence_person is None:
             concurrence_person = "NULL"
         column = [
-            "notification_id", "country_id", "domain_id", "business_group_id",
-            "legal_entity_id", "division_id", "unit_id", "compliance_id",
+            "notification_id", "country_id", "domain_id",
+            "legal_entity_id", "unit_id", "compliance_id",
             "assignee", "concurrence_person", "approval_person", "notification_type_id",
             "notification_text", "extra_details", "created_on"
         ]
@@ -7843,7 +7843,7 @@ class ClientDatabase(Database):
         return self.return_risk_report_data(result, total)
 
     def get_delalyed_compliances(
-        domain_id, country_id, where_qry
+        self, domain_id, country_id, where_qry
     ):
         query = "SELECT distinct c.compliance_id, c.compliance_task, c.document_name, \
             ac.statutory_dates, c.compliance_description, c.penal_consequences, c.frequency_id, \
