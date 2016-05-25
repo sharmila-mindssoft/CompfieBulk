@@ -1982,7 +1982,7 @@ $('#activate-step-3').on('click', function(e) {
 if (validate_secondtab()){
 $('ul.setup-panel li:eq(2)').removeClass('disabled');
 $('ul.setup-panel li a[href="#step-3"]').trigger('click');
-
+$("#statutory_provision").focus();
 }
 })
 $('#activate-step-4').on('click', function(e) {

@@ -580,7 +580,7 @@ function initMirror() {
         if(file_name.contains('.')){
             if (file_size > max_limit) {
                 callback("File max limit exceeded");
-            }else if(file_extension == 'exe'){
+            }else if(file_extension == 'exe' || file_extension == 'xhtml' || file_extension == 'htm' || file_extension == 'html'){
                 callback("Invalid file format");
             }else{
                 file_content = null
