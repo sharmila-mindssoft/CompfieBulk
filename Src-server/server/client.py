@@ -112,7 +112,7 @@ class ReplicationManager(object) :
             )
             self._http_client.fetch(request, self._poll_response)
         self._io_loop.add_timeout(
-            time.time() + 10, on_timeout
+            time.time() + 1, on_timeout
         )
 
     def _poll_response(self, response) :

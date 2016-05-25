@@ -1,7 +1,7 @@
 
 function get_notification_count(){
     client_mirror.checkContractExpiration(function (status, data) {
-            if (data == null) {
+            if (data == null || Object.keys(data).length == 0) {
                 $("#notification_count").text('0');
                 $("#reminder_count").text('0');
                 $("#escalation_count").text('0');
