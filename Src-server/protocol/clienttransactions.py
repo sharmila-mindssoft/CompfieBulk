@@ -575,7 +575,7 @@ class GetStatutoriesByUnit(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["unit_id", "domain_id",
-            "level_1_statutory_name", "compliance_frequency", 
+            "level_1_statutory_name", "compliance_frequency",
             "country_id", "start_count"])
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
@@ -657,7 +657,7 @@ class Response(object):
         raise NotImplementedError
 
 class UnitStatutoryCompliances(object):
-    def __init__(self, unit_id, unit_name, address, country_name, domain_names, business_group_name, legal_entity_name, division_name, is_closed):
+    def __init__(self, unit_id, unit_name, address, country_name, domain_names, business_group_name, legal_entity_name, division_name, is_closed, is_new):
         self.unit_id = unit_id
         self.unit_name = unit_name
         self.address = address
@@ -667,10 +667,11 @@ class UnitStatutoryCompliances(object):
         self.legal_entity_name = legal_entity_name
         self.division_name = division_name
         self.is_closed = is_closed
+        self.is_new = is_new
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "unit_name", "address", "country_name", "domain_names", "business_group_name", "legal_entity_name", "division_name", "is_closed"])
+        data = parse_dictionary(data, ["unit_id", "unit_name", "address", "country_name", "domain_names", "business_group_name", "legal_entity_name", "division_name", "is_closed", "is_new"])
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
@@ -689,7 +690,9 @@ class UnitStatutoryCompliances(object):
         division_name = parse_structure_OptionalType_CustomTextType_100(division_name)
         is_closed = data.get("is_closed")
         is_closed = parse_structure_Bool(is_closed)
-        return UnitStatutoryCompliances(unit_id, unit_name, address, country_name, domain_names, business_group_name, legal_entity_name, division_name, is_closed)
+        is_new = data.get("is_new")
+        is_new = parse_structure_Bool(is_new)
+        return UnitStatutoryCompliances(unit_id, unit_name, address, country_name, domain_names, business_group_name, legal_entity_name, division_name, is_closed, is_new)
 
     def to_structure(self):
         return {
@@ -701,7 +704,8 @@ class UnitStatutoryCompliances(object):
             "business_group_name": to_structure_OptionalType_CustomTextType_100(self.business_group_name),
             "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
             "division_name": to_structure_OptionalType_CustomTextType_100(self.division_name),
-            "is_closed": to_structure_Bool(self.is_closed)
+            "is_closed": to_structure_Bool(self.is_closed),
+            "is_new": to_structure_Bool(self.is_new)
         }
 
 class GetStatutorySettingsSuccess(Response):
@@ -862,16 +866,19 @@ class SaveAssignedComplianceSuccess(Response):
         }
 
 class InvalidDueDate(Response):
-    def __init__(self):
-        pass
+    def __init__(self, compliance_task):
+        self.compliance_task = compliance_task
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return InvalidDueDate()
+        data = parse_dictionary(data, ["compliance_task"])
+        compliance_task = data.get("compliance_task")
+        compliance_task = parse_structure_CustomTextType_100(compliance_task)
+        return InvalidDueDate(compliance_task)
 
     def to_inner_structure(self):
         return {
+            "compliance_task": to_structure_CustomTextType_100(self.compliance_task)
         }
 
 class AssigneeNotBelongToUnit(Response):

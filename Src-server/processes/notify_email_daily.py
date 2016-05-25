@@ -44,7 +44,7 @@ def get_countries():
     return convert_to_dict(rows, ["country_id", "country_name"])
 
 def get_client_db_list():
-    print "begin fetching client info"
+    # print "begin fetching client info"
     con = knowledge_db_connect()
     cursor = con.cursor()
     query = "SELECT T1.client_id, T1.database_ip, T1.database_port, \
@@ -69,7 +69,7 @@ def create_client_db_connection(data):
     if data is None :
         return None
 
-    print "begin client db connection"
+    # print "begin client db connection"
     client_connection = {}
     for d in data :
         try :
@@ -158,7 +158,7 @@ def save_in_notification(
         )
     cursor = db.cursor()
     cursor.execute(query)
-    print "Notification saved"
+    # print "Notification saved"
     cursor.close()
     save_notification_users(notification_id, assignee)
     if notify_to_all:
@@ -191,9 +191,9 @@ def get_inprogress_compliances(db, country_id):
         "domain_id", "frequency_id"
     ]
     result = convert_to_dict(rows, columns)
-    print '*' * 10
+    # print '*' * 10
     # print result
-    print '*' * 10
+    # print '*' * 10
 
     return result
 
@@ -210,7 +210,7 @@ def get_client_settings(db):
 def reminder_to_assignee(db, client_info, compliance_info):
     current_date = get_current_date()
     try :
-        print "begin process to remind inprogress compliance task %s " % (current_date)
+        # print "begin process to remind inprogress compliance task %s " % (current_date)
         # client_info = get_client_settings(db)
         if client_info :
             reminder_interval = int(client_info[0]["assignee_reminder"])
@@ -232,8 +232,8 @@ def reminder_to_assignee(db, client_info, compliance_info):
                 if date_diff == 0:
                     continue
 
-                print date_diff
-                print (date_diff % reminder_interval)
+                # print date_diff
+                # print (date_diff % reminder_interval)
 
                 notification_text = "%s day(s) left to complete %s task" % (days_left, compliance_name)
                 extra_details = " %s - Reminder" % (c["compliance_history_id"])
@@ -257,7 +257,7 @@ def reminder_to_assignee(db, client_info, compliance_info):
 
 def reminder_before_due_date(db, client_info, compliance_info):
     current_date = get_current_date()
-    print "begin process to remind inprogress compliance task to all %s " % (current_date)
+    # print "begin process to remind inprogress compliance task to all %s " % (current_date)
     # client_info = get_client_settings(db)
     reminder_interval = int(client_info[0]["escalation_reminder_in_advance"])
     for c in compliance_info:
@@ -306,7 +306,7 @@ def reminder_before_due_date(db, client_info, compliance_info):
 
 def notify_escalation_to_all(db, client_info, compliance_info):
     current_date = get_current_date()
-    print "begin process to notify escalations to all %s" % (current_date)
+    # print "begin process to notify escalations to all %s" % (current_date)
     escalation_interval = int(client_info[0]["escalation_reminder"])
     for c in compliance_info :
         if c["due_date"] is None :
@@ -357,9 +357,9 @@ def notify_task_details(db, client_id, country_id):
         notify_escalation_to_all(db, client_info, compliance_info)
 
 def run_notify_email_process(country_id):
-    print '--' * 20
-    print "begin email_notification"
-    print "current_date datetime ", datetime.datetime.now()
+    # print '--' * 20
+    # print "begin email_notification"
+    # print "current_date datetime ", datetime.datetime.now()
     client_info = get_client_database()
     if client_info is not None :
         for client_id, db in client_info.iteritems() :
@@ -373,8 +373,8 @@ def run_notify_email_process(country_id):
                 print e
                 db.rollback()
                 print(traceback.format_exc())
-    print "end email_notifications"
-    print '--' * 20
+    # print "end email_notifications"
+    # print '--' * 20
 
 
 def is_notify_time_reached(time_zone, country_id):
@@ -384,7 +384,7 @@ def is_notify_time_reached(time_zone, country_id):
     # print current_country_time
     # print type(current_country_time)
     now = return_hour_minute(time_convertion(time_zone))
-    print now
+    # print now
     if now == NOTIFY_TIME :
         run_notify_email_process(country_id)
         pass
@@ -398,7 +398,7 @@ def run_email_process():
         for ct in country_time_zones :
             if name.lower() == ct.lower() :
                 info = countries.get(ct)
-                print info
+                # print info
                 break
         if info :
             is_notify_time_reached(info.get("timezones")[0], c["country_id"])

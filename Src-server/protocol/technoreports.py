@@ -176,27 +176,44 @@ class GetStatutoryNotificationsFilters(Request):
         }
 
 class GetStatutoryNotificationsReportData(Request):
-    def __init__(self, country_id, domain_id, level_1_statutory_id):
+    def __init__(
+        self, country_id, domain_id, level_1_statutory_id,
+        from_date, to_date
+    ):
         self.country_id = country_id
         self.domain_id = domain_id
         self.level_1_statutory_id = level_1_statutory_id
+        self.from_date = from_date
+        self.to_date = to_date
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "level_1_statutory_id"])
+        data = parse_dictionary(data, [
+            "country_id", "domain_id", "level_1_statutory_id",
+            "from_date", "to_date"
+        ])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         level_1_statutory_id = data.get("level_1_statutory_id")
         level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
-        return GetStatutoryNotificationsReportData(country_id, domain_id, level_1_statutory_id)
+        from_date = data.get("from_date")
+        from_date = parse_structure_OptionalType_CustomTextType_50(from_date)
+        to_date = data.get("to_date")
+        to_date = parse_structure_OptionalType_CustomTextType_50(to_date)
+        return GetStatutoryNotificationsReportData(
+            country_id, domain_id, level_1_statutory_id,
+            from_date, to_date
+        )
 
     def to_inner_structure(self):
         return {
             "country_id" : to_structure_SignedIntegerType_8(self.country_id),
             "domain_id" : to_structure_SignedIntegerType_8(self.domain_id),
-            "level_1_statutory_id" : to_structure_OptionalType_UnsignedIntegerType_32(self.level_1_statutory_id)
+            "level_1_statutory_id" : to_structure_OptionalType_UnsignedIntegerType_32(self.level_1_statutory_id),
+            "from_date": to_structure_OptionalType_CustomTextType_50(self.from_date),
+            "to_date": to_structure_OptionalType_CustomTextType_50(self.from_date)
         }
 
 class GetAssignedStatutoryReportFilters(Request):
@@ -277,7 +294,7 @@ class GetComplianceTaskFilter(Request):
 class GetComplianceTaskReport(Request):
     def __init__(
         self, country_id, domain_id, industry_id, statutory_nature_id,
-        geography_id, level_1_statutory_id, record_count
+        geography_id, level_1_statutory_id, frequency_id, record_count
     ):
         self.country_id = country_id
         self.domain_id = domain_id
@@ -285,13 +302,14 @@ class GetComplianceTaskReport(Request):
         self.statutory_nature_id = statutory_nature_id
         self.geography_id = geography_id
         self.level_1_statutory_id = level_1_statutory_id
+        self.frequency_id = frequency_id
         self.record_count = record_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "country_id", "domain_id", "industry_id", "statutory_nature_id",
-            "geography_id", "level_1_statutory_id", "record_count"
+            "geography_id", "level_1_statutory_id", "frequency_id", "record_count"
         ])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
@@ -305,11 +323,13 @@ class GetComplianceTaskReport(Request):
         geography_id = parse_structure_OptionalType_SignedIntegerType_8(geography_id)
         level_1_statutory_id = data.get("level_1_statutory_id")
         level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
+        frequency_id = data.get("frequency_id")
+        frequency_id = parse_structure_OptionalType_SignedIntegerType_8(frequency_id)
         record_count = data.get("record_count")
         record_count = parse_structure_UnsignedIntegerType_32(record_count)
         return GetComplianceTaskReport(
             country_id, domain_id, industry_id, statutory_nature_id,
-            geography_id, level_1_statutory_id, record_count
+            geography_id, level_1_statutory_id, frequency_id, record_count
         )
 
     def to_inner_structure(self):
@@ -320,6 +340,7 @@ class GetComplianceTaskReport(Request):
             "statutory_nature_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_nature_id),
             "geography_id": to_structure_OptionalType_SignedIntegerType_8(self.geography_id),
             "level_1_statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_id),
+            "frequency_id": to_structure_OptionalType_SignedIntegerType_8(self.frequency_id),
             "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 

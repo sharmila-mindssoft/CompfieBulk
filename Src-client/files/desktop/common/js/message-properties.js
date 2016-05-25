@@ -179,7 +179,7 @@ var message = {
 	'nextduedate_gt_current' : 'Next Due Date must be Greater than Current Date',
 	'validity_gt_nextduedate' : 'Validity Date must be Greater than or equal to Next Due Date',
 	'category_max50' : 'Category Name is not exceeded 50 Characters',
-	'shouldnot_empty' : ' Should not be Empty',
+	'shouldnot_empty' : ' should not be empty',
 	'invalid_levelone' : 'Invalid level one selection. ',
 	'selectin_firstlevel' : ' should select in first level.',
 	'compliancename_exists' : 'Compliance name already exists - ',

@@ -151,11 +151,12 @@ def process_get_compliance_task_report(db, request_frame, user_id):
     nature_id = request_frame.statutory_nature_id
     geography_id = request_frame.geography_id
     level_1_id = request_frame.level_1_statutory_id
+    frequency_id = request_frame.frequency_id
     from_count = request_frame.record_count
     to_count = RECORD_DISPLAY_COUNT
     report_data, total_count = db.get_compliance_list_report_techno(
         country_id, domain_id, industry_id,
-        nature_id, geography_id, level_1_id, user_id,
+        nature_id, geography_id, level_1_id, frequency_id, user_id,
         from_count, to_count
     )
 

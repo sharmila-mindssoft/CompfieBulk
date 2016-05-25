@@ -306,6 +306,7 @@ $("#submit").click(function(){
     filterdata["statutory_nature_id"]=parseInt(statutorynature);
     filterdata["geography_id"]=parseInt(geography);
     filterdata["level_1_statutory_id"]=parseInt(act);
+    filterdata["frequency_id"]=parseInt(c_frequency);
     filterdata["record_count"]=parseInt(s_endCount);
 
     function onSuccess(data){

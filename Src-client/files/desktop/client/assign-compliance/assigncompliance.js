@@ -227,7 +227,7 @@ function load_secondwizard(){
         if(frequency != 'On Occurrence'){
           if(triggerdate == ''){
           $('.triggerbefore', clone2).html(' <input type="text" value="" class="input-box trigger" id="triggerdate'+statutoriesCount+'" maxlength="3"/>');
-          $('.duedate', clone2).html('<input type="text" value="" class="input-box" id="duedate'+statutoriesCount+'" />');
+          $('.duedate', clone2).html('<input type="text" value="" class="input-box" readonly="readonly" id="duedate'+statutoriesCount+'" />');
           }
           else{
             $('.triggerbefore', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger'+statutoriesCount+'" value="'+statutoriesCount+'"><img src="/images/delete.png" width="12"></span>'+triggerdate +
@@ -795,28 +795,32 @@ function submitcompliance(){
           $('#approval').empty();
           load_firstwizard();
           hideLoader();
-        }
-        function onFailure(error){
-          displayMessage(error);
-          err_message = message.error;
-          if (err_message == "undefined")
+          }
+          function onFailure(error, response){
             displayMessage(error);
-          else
-            displayMessage(err_message);
-          hideLoader();
-        }
-        client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,
-          assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
-          assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
-          function (error, response) {
-          if (error == null){
-            onSuccess(response);
+            err_message = message.error;
+            if (err_message == "undefined")
+              displayMessage(error);
+            else if (error == "InvalidDueDate") {
+              task = response["compliance_task"];
+              displayMessage("Invalid due date in " + task);
+            }
+            else
+              displayMessage(err_message);
+            hideLoader();
           }
-          else {
-            onFailure(error);
-          }
-        }
-        );
+          client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,
+            assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
+            assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
+            function (error, response) {
+              if (error == null){
+                onSuccess(response);
+              }
+              else {
+                onFailure(error, response);
+              }
+            }
+          );
         }else{
           hideLoader();
         }
@@ -836,11 +840,15 @@ function submitcompliance(){
           load_firstwizard();
           hideLoader();
         }
-        function onFailure(error){
+        function onFailure(error, response){
           displayMessage(error);
           err_message = message.error;
           if (err_message == "undefined")
             displayMessage(error);
+          else if (error == "InvalidDueDate") {
+            task = response["compliance_task"];
+            displayMessage("Invalid due date in " + task);
+          }
           else
             displayMessage(err_message);
           hideLoader();
@@ -849,12 +857,12 @@ function submitcompliance(){
           assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
           assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
           function (error, response) {
-          if (error == null){
-            onSuccess(response);
-          }
-          else {
-            onFailure(error);
-          }
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error, response);
+            }
         }
         );
       }

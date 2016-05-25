@@ -269,7 +269,7 @@ def get_statutory_notifications_list_report(db, request, session_user, client_id
         converter = ConvertJsonToCSV(db, request, session_user, client_id, "StatutoryNotification")
         return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
     else:
-        result = db.get_statutory_notifications_list_report(request, client_id)
+        result = db.report_statutory_notifications_list(request)
         return clientreport.GetStatutoryNotificationsListReportSuccess(result)
 
 def get_compliancedetails_report(db, request, session_user, client_id):

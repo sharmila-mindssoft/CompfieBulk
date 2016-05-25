@@ -264,6 +264,7 @@ $('#pagination').click(function(){
 
 // get statutory mapping report data from api
 $("#submit").click(function(){
+  $('#pagination').show();
   var country = $("#country").val();
   var domain = $("#domain").val();
   var industry = null;
@@ -299,6 +300,7 @@ $("#submit").click(function(){
     filterdata["s_n_id"]=parseInt(statutorynature);
     filterdata["g_id"]=parseInt(geography);
     filterdata["level_1_s_id"]=parseInt(act);
+    filterdata["f_id"]=parseInt(c_frequency);
     filterdata["r_count"]=parseInt(s_endCount);
 
     function onSuccess(data){
@@ -323,7 +325,6 @@ $("#submit").click(function(){
      temp_act = act;
     }
 });
-
 //Autocomplete Script Starts
 
 //retrive country autocomplete value
