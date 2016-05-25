@@ -6732,8 +6732,8 @@ class ClientDatabase(Database):
                 SELECT %s,%s \
                 FROM %s nul \
                 LEFT JOIN %s nl ON (nul.notification_id = nl.notification_id)\
-                INNER JOIN %s tc ON (tc.compliance_id = nl.compliance_id) \
-                INNER JOIN %s tch ON (tch.compliance_id = nl.compliance_id AND \
+                LEFT JOIN %s tc ON (tc.compliance_id = nl.compliance_id) \
+                LEFT JOIN %s tch ON (tch.compliance_id = nl.compliance_id AND \
                 tch.unit_id = nl.unit_id) \
                 WHERE notification_type_id = '%s' \
                 AND user_id = '%s' \
@@ -6752,6 +6752,8 @@ class ClientDatabase(Database):
                     notification_type_id, session_user,
                     start_count, to_count
                 )
+        print 
+        print query
         rows = self.select_all(query)
         columns_list = [
             "notification_id", "notification_text", "created_on",
@@ -8998,8 +9000,10 @@ class ClientDatabase(Database):
             employee_name = row["employee_name"]
             if row["employee_code"] not in ["None", None, ""]:
                 employee_name = "%s - %s" % (row["employee_code"], employee_name)
+            print "activity status before: {}".format(row["activity_status"])
             if row["activity_status"] == "Submited":
                 row["activity_status"] = "Submitted"
+            print "activity status after: {}".format(row["activity_status"])
             unit_wise_activities[unit_name][level_1_statutory][compliance_name].append(
                 clientreport.ActivityData(
                     activity_date=self.datetime_to_string(row["activity_date"]),
