@@ -120,32 +120,54 @@ class ConvertJsonToCSV(object):
         is_header = False
         compliance_list = []
         if statutory_status == 1 :  # Delayed compliance
-            compliance_list = db.get_delayed_compliances(
+            where_qry = db.get_delayed_compliances_where_qry(
+                business_group_id, legal_entity_id, division_id, unit_id, 
+                level_1_statutory_name, session_user
+            ) 
+            total = db.get_delayed_compliances_count(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name,
                 session_user
+            )
+            compliance_list = db.get_delayed_compliances(
+                domain_id, country_id, where_qry, 0, total
             )
             status = "Delayed Compliance"
         if statutory_status == 2 :  # Not complied
+            where_qry = db.get_not_complied_where_qry(
+                business_group_id, legal_entity_id, division_id, unit_id, 
+                level_1_statutory_name
+            )
+            total = db.get_not_complied_compliances_count(
+                country_id, domain_id, where_qry
+            )
             compliance_list = db.get_not_complied_compliances(
-                country_id, domain_id, business_group_id,
-                legal_entity_id, division_id, unit_id, level_1_statutory_name,
-                session_user
+                domain_id, country_id, where_qry, 0, total
             )
             status = "Not Complied"
         if statutory_status == 3 :  # Not opted
+            where_qry = db.get_not_opted_compliances_where_qry(
+                business_group_id, legal_entity_id, division_id, unit_id, 
+                level_1_statutory_name,  session_user
+            ) 
+            total = db.get_not_opted_compliances_count(
+                country_id, domain_id, where_qry
+            ) 
             compliance_list = db.get_not_opted_compliances(
-                country_id, domain_id, business_group_id,
-                legal_entity_id, division_id, unit_id, level_1_statutory_name,
-                session_user
+                domain_id, country_id, where_qry, 0, total
             )
             status = "Not Opted"
         if statutory_status == 4 :  # Unassigned
-            compliance_list = db.get_unassigned_compliances(
-                country_id, domain_id, business_group_id,
-                legal_entity_id, division_id, unit_id,
+            where_qry = db.get_unassigned_compliances_where_qry(
+                business_group_id, legal_entity_id, division_id, unit_id, 
                 level_1_statutory_name, session_user
-            )               
+            ) 
+            total = db.get_unassigned_compliances_count(
+                country_id, domain_id, where_qry
+            ) 
+            compliance_list = db.get_unassigned_compliances(
+                domain_id, country_id, where_qry, 0, total
+            )          
             status = "Unassigned Compliance"
         csv_headers = [
             "Status", "Business Group Name", "Legal Entity Name", 
@@ -156,16 +178,16 @@ class ConvertJsonToCSV(object):
         if not is_header:
             self.write_csv(csv_headers, None)
             is_header = True
-        for compliance in compliance_list:
+        for d in compliance_list:
             unit_name = "%s - %s" % (
-                compliance["unit_code"], compliance["unit_name"]
+                d["unit_code"], d["unit_name"]
             )
-            compliance_name = compliance["compliance_name"]
-            if compliance["document_name"] not in [None, "None", ""]:
-                compliance_name = "%s - %s" % (compliance["document_name"], compliance_name)
+            compliance_name = d["compliance_task"]
+            if d["document_name"] not in [None, "None", ""]:
+                compliance_name = "%s - %s" % (d["document_name"], compliance_name)
 
             statutory_mapping = "%s >> %s" % (
-                compliance["statutory_mapping"], compliance["statutory_provision"]
+                d["statutory_mapping"], d["statutory_provision"]
             )
             repeats = ""
             trigger = "Trigger :"
@@ -195,7 +217,7 @@ class ConvertJsonToCSV(object):
                 statutory_date = statutory_dates[0]
                 if statutory_date["statutory_date"] is not None and statutory_date["statutory_month"] is not None:
                     repeats = "%s %s " % (
-                        statutory_date["statutory_date"], self.string_months[statutory_date["statutory_month"]]
+                        statutory_date["statutory_date"], db.string_months[statutory_date["statutory_month"]]
                     )
                 if statutory_date["trigger_before_days"] is not None:
                     trigger += "%s Days " % statutory_date["trigger_before_days"]
@@ -209,11 +231,11 @@ class ConvertJsonToCSV(object):
                         repeats = "Complete within %s Hour/s" % (d["duration"])
 
             csv_values = [
-                status, compliance["business_group"], compliance["legal_entity"],
-                compliance["division"], compliance["level_1"], unit_name, 
+                status, d["business_group"], d["legal_entity"],
+                d["division"], d["level_1"], unit_name, 
                 statutory_mapping, compliance_name,
-                compliance["compliance_description"], compliance["penal"],
-                compliance["frequency"], repeats
+                d["compliance_description"], d["penal_consequences"],
+                d["frequency"], repeats
             ]
             self.write_csv(None, csv_values)
 

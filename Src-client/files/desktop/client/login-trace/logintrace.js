@@ -89,7 +89,7 @@ $('#pagination').click(function(){
         console.log(error);
         hideLoader();
     }
-    client_mirror.getLoginTrace(sno, userid, fromdate, todate,
+    client_mirror.getLoginTrace(sno, parseInt(userid), fromdate, todate,
     function (error, response) {
       if (error == null){
         onSuccess(response);
@@ -142,7 +142,7 @@ function apipass(sno, userid, lastdate, todaydate){
     function onFailure(error){
         console.log(error);
     }
-    client_mirror.getLoginTrace(sno, userid, lastdate, todaydate,
+    client_mirror.getLoginTrace(sno, parseInt(userid), lastdate, todaydate,
         function (error, response){
             if(error == null){
                 onSuccess(response);

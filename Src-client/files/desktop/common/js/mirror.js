@@ -154,7 +154,10 @@ function initMirror() {
                     window.location.href = login_url;
                 }
                 else {
-                    callback(status, response)
+                    if (Object.keys(response).length == 0)
+                        callback(status, null)
+                    else
+                        callback(status, response)
                 }
             }
         )
@@ -574,10 +577,10 @@ function initMirror() {
         file_size = file.size
         var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
 
-        if(file_name.contains('.')){
+        if(file_name.indexOf('.') !== -1){
             if (file_size > max_limit) {
                 callback("File max limit exceeded");
-            }else if(file_extension == 'exe'){
+            }else if(file_extension == 'exe' || file_extension == 'xhtml' || file_extension == 'htm' || file_extension == 'html'){
                 callback("Invalid file format");
             }else{
                 file_content = null
@@ -594,9 +597,9 @@ function initMirror() {
                 }
             }
         }else{
-            callback("Invalid file format"); 
+            callback("Invalid file format");
         }
-        
+
         // file_extension = file_name.substr(
         //     file_name.lastIndexOf('.') + 1
         // );
