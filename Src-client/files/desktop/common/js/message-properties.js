@@ -69,6 +69,8 @@ var message = {
 	'action_selection_success' : 'Selected action has been saved successfully',
 	'group_required' : 'Group Required',
 	'legalentity_required' : 'Legal Entity Required',
+	'businessgroup_required': 'Business Group Required',
+	'division_required': 'Division Required',
 	'geographylevel_required' : 'Geography Level Required',
 	'location_required' : 'Location Required',
 	'unit_required' : 'Unit Required',
