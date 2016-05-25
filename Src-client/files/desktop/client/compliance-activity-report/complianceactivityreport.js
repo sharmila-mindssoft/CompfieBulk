@@ -53,6 +53,8 @@ function initialize(){
     );
 }
 $("#show-button").click(function(){
+    tRecord = 0;
+    $(".no-records").html("");
     loadcomplianceactivityreport("show");
 });
 $("#export-button").click(function(){
@@ -350,7 +352,10 @@ function loadComplianceActivityReportList(data){
 
     $(".grid-table-rpt").show();
     $('.table-compliance-activity-list').empty();
-    
+    $(".total-records").html("");
+    $(".no-records").html("");
+    $("#pagination").hide();
+
 
     $.each(data, function(key, value) {
         var level1list = data[key]['statutory_wise_compliances'];
@@ -361,7 +366,12 @@ function loadComplianceActivityReportList(data){
             });
         });
     });
-    loadresult(data);
+    if(tRecord == 0){
+        $(".no-records").html("No record Found");
+    }
+    else{
+        loadresult(data);    
+    }    
     $(".total-records").html("Total : "+tRecord+" records")
 }
 

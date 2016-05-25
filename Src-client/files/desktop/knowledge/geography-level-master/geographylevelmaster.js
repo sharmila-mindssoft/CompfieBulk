@@ -222,11 +222,12 @@ $("#submit").click(function(){
 			jQuery('.btn-geographylevel-cancel').focus().click();
 			GetGeographyLevels();
 		}
-		function onFailure(error){
+		function onFailure(error, response){
           if(error == "DuplicateGeographyLevelsExists"){
             displayMessage(message.geographylevel_exists);
           }else if(error = "LevelShouldNotbeEmpty"){
-          	displayMessage("Level"+message.shouldnot_empty);
+          	var levelValue = response['level'];
+          	displayMessage("Level "+ levelValue + " " +message.shouldnot_empty);
           }
         }
 		mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist,
@@ -235,7 +236,7 @@ $("#submit").click(function(){
               onSuccess(response);
             }
             else {
-              onFailure(error);
+              onFailure(error, response);
             }
           });
 	   }else{

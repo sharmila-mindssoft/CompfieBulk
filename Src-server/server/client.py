@@ -42,6 +42,7 @@ class ReplicationManager(object) :
         self._get_received_count()
         ip, port = self._knowledge_server_address
         self._poll_url = "http://%s:%s/replication" % (ip, port)
+        self._poll_old_data_url = "http://%s:%s/delreplicated" % (ip, port)
         # print "_received_count ================ " , self._received_count
 
     def _load_auto_id_columns(self):
@@ -111,7 +112,7 @@ class ReplicationManager(object) :
             )
             self._http_client.fetch(request, self._poll_response)
         self._io_loop.add_timeout(
-            time.time() + 10, on_timeout
+            time.time() + 1, on_timeout
         )
 
     def _poll_response(self, response) :
@@ -152,19 +153,22 @@ class ReplicationManager(object) :
                 return
         else:
             assert column_count == len(changes)
-        columns = [x.column_name for x in changes]
+        # columns = [x.column_name for x in changes]
+        i_column = []
         values = []
         for x in changes:
             if x.value is None:
-                values.append('')
+                # values.append('')
+                pass
             else:
+                i_column.append(x.column_name)
                 values.append(str(x.value))
             val = str(values)[1:-1]
 
         query = "INSERT INTO %s (%s, %s) VALUES(%s, %s);" % (
             tbl_name,
             auto_id,
-            ",".join(columns),
+            ",".join(i_column),
             changes[0].tbl_auto_id,
             val
         )
@@ -175,29 +179,29 @@ class ReplicationManager(object) :
         except Exception, e:
             pass
             print e
+            logger.logClient("client.py", "insert", e)
         self._temp_count = changes[-1].audit_trail_id
 
     def _execute_update_statement(self, change):
         auto_id = self._auto_id_columns.get(change.tbl_name)
         assert auto_id is not None
-        if change.value is None:
-            val = ""
-        else:
-            val = change.value
+        val = change.value
+        if val is not None :
             # val = "'" + change.value.replace("'", "\\'") + "'"
-        query = "UPDATE %s SET %s = '%s' WHERE %s = %s;" % (
-            change.tbl_name,
-            change.column_name,
-            val,
-            auto_id,
-            change.tbl_auto_id
-        )
-        try :
-            self._db.execute(query)
-        except Exception, e :
-            print e,
-            print query
-
+            query = "UPDATE %s SET %s = '%s' WHERE %s = %s;" % (
+                change.tbl_name,
+                change.column_name,
+                val,
+                auto_id,
+                change.tbl_auto_id
+            )
+            try :
+                self._db.execute(query)
+            except Exception, e :
+                print e,
+                logger.logClient("client.py", "update", e)
+                print query
+                # logger.logClient("client.py", "update", query)
         self._temp_count = change.audit_trail_id
 
     def _parse_data(self, changes):
@@ -256,9 +260,42 @@ class ReplicationManager(object) :
         assert self._received_count <= self._temp_count
         self._received_count = self._temp_count
 
+#
+# poll for delete
+#
+
+    def _poll_for_del(self):
+        # print "poll for dell"
+        assert self._stop is False
+        assert self._received_count is not None
+
+        def on_timeout():
+            if self._stop :
+                return
+            body = json.dumps(
+                GetChanges(
+                    self._client_id,
+                    self._received_count
+                ).to_structure()
+            )
+            request = HTTPRequest(
+                self._poll_old_data_url, method="POST",
+                body=body,
+                headers={"Content-Type": "application/json"},
+                request_timeout=10
+            )
+            self._http_client.fetch(request, self._poll_del_response)
+        self._io_loop.add_timeout(time.time() + 43200, on_timeout)
+
+    def _poll_del_response(self, response) :
+        if self._stop :
+            return
+        self._poll_for_del()
+
     def stop(self):
         self._stop = True
 
     def start(self):
         self._stop = False
         self._io_loop.add_callback(self._poll)
+        self._io_loop.add_callback(self._poll_for_del)

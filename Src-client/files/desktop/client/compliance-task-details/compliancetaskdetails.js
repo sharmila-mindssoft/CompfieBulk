@@ -360,16 +360,16 @@ function showSideBar(idval, data){
                 }
 
                 completion_date = $('.sideview-completion-date').val();
-                validity_date = $('.validity1_label abbr').html();
+                validity_date = $('.validity1-textbox-input').val();
                 if(validity_date == ''){
-                    validity_date = $('.validity1-textbox-input').val();
+                    validity_date = $('.validity1_label abbr').html();
                     if(validity_date == ''){
                         validity_date = null;
                     }
                 }
-                next_due_date = $('.duedate1_label').val();
+                next_due_date = $('.duedate1-textbox-input').val();
                 if(next_due_date == ''){
-                    next_due_date = $('.duedate1-textbox-input').val();
+                    next_due_date = $('.duedate1_label').val();
                     if(next_due_date == ''){
                         next_due_date = null;
                     }
@@ -422,7 +422,7 @@ function showSideBar(idval, data){
                 }
 
                 if(validity_date != null  && next_due_date != null){
-                    if(parseMyDate(next_due_date) <= parseMyDate(validity_date)){
+                    if(parseMyDate(validity_date) < parseMyDate(next_due_date)){
                         displayMessage(message.validity_gt_nextduedate);
                         return;
                     }

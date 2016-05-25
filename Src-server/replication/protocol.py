@@ -121,6 +121,19 @@ class GetChangesSuccess(Response):
             "changes": to_structure_VectorType_RecordType_protocol_Change(self.changes),
         }
 
+class GetDelReplicatedSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetDelReplicatedSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class InvalidReceivedCount(Response):
     def __init__(self):
         pass
@@ -136,11 +149,10 @@ class InvalidReceivedCount(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetChangesSuccess, InvalidReceivedCount]
+    classes = [GetChangesSuccess, InvalidReceivedCount, GetDelReplicatedSuccess]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
     return class_map
 
 _Response_class_map = _init_Response_class_map()
-

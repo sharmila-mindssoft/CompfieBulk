@@ -22,7 +22,7 @@ from distribution.protocol import (
     CompanyServerDetails
 )
 from replication.protocol import (
-    GetChanges, GetChangesSuccess, InvalidReceivedCount
+    GetChanges, GetChangesSuccess, InvalidReceivedCount, GetDelReplicatedSuccess
 )
 from server.constants import (
     TEMPLATE_PATHS,
@@ -174,13 +174,24 @@ class API(object):
         res = GetChangesSuccess(
             db.get_trail_log(client_id, received_count)
         )
-        s = "%s, %s, %s " % (client_id, received_count, actual_count)
-        logger.logKnowledge("info", "trail", s)
-        if actual_count > received_count :
+        return res
 
+    @api_request(
+        GetChanges
+    )
+    def handle_delreplicated(self, request, db):
+        actual_count = db.get_trail_id()
+        # print "actual_count ", actual_count
+
+        client_id = request.client_id
+        received_count = request.received_count
+        s = "%s, %s, %s " % (client_id, received_count, actual_count)
+        print s
+        logger.logKnowledge("info", "trail", s)
+        if actual_count >= received_count :
             db.remove_trail_log(client_id, received_count)
         # res.to_structure()
-        return res
+        return GetDelReplicatedSuccess()
 
     @api_request(login.Request)
     def handle_login(self, request, db):
@@ -334,6 +345,7 @@ def run_server(port):
         api_urls_and_handlers = [
             ("/server-list", api.handle_server_list),
             ("/replication", api.handle_replication),
+            ("/delreplicated", api.handle_delreplicated),
             ("/knowledge/api/login", api.handle_login),
             ("/knowledge/api/admin", api.handle_admin),
             ("/knowledge/api/techno", api.handle_techno),

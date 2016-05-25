@@ -894,7 +894,7 @@ $("#temp_addcompliance").click(function() {
       }
       statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
       statutory_dates.push(statutory_date);
-      }else if (compliance_frequency == "2" || compliance_frequency == "3"){
+    }else if (compliance_frequency == "2" || compliance_frequency == "3"){
         repeats_type = parseInt($('#repeats_type').val());
         repeats_every = parseInt($('#repeats_every').val());
         repeats_every_length = $('#repeats_every').val().trim().length;
@@ -974,10 +974,10 @@ $("#temp_addcompliance").click(function() {
             }
           }
         }
-  }else{
-    duration = parseInt($('#duration').val());
-    duration_type = parseInt($('#duration_type').val());
-  }
+    }else{
+      duration = parseInt($('#duration').val());
+      duration_type = parseInt($('#duration_type').val());
+    }
   var check_duplicate_status= true;
   var ccount = 0;
   $.each(compliances, function(index, value) {
@@ -1982,7 +1982,7 @@ $('#activate-step-3').on('click', function(e) {
 if (validate_secondtab()){
 $('ul.setup-panel li:eq(2)').removeClass('disabled');
 $('ul.setup-panel li a[href="#step-3"]').trigger('click');
-
+$("#statutory_provision").focus();
 }
 })
 $('#activate-step-4').on('click', function(e) {

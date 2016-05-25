@@ -621,7 +621,8 @@ class Database(object) :
         query = query % (session_id, user_id, session_type_id, updated_on)
         self.execute(query)
 
-        action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
+        # action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
+        action = "Log In by - \"%s\" " % (employee)
         self.save_activity(user_id, 0, action)
 
         return session_id
@@ -3180,6 +3181,7 @@ class KnowledgeDatabase(Database):
         is_format = False
         compliance_ids = []
         compliance_names = []
+        file_path = KNOWLEDGE_FORMAT_PATH
         for data in datas :
             compliance_id = data.compliance_id
 
@@ -3198,14 +3200,12 @@ class KnowledgeDatabase(Database):
             file_size = 0
             file_content = ""
             saved_file_name = saved_file[0]
-            if saved_file_name :
-                if len(saved_file_name) == 0 :
-                    saved_file_name = None
 
+            if len(saved_file_name) == 0 :
+                saved_file_name = None
             if file_list is None :
-                pass
-            elif file_list is None and saved_file_name is not None:
-                self.remove_uploaded_file(saved_file[0])
+                if saved_file_name is not None :
+                    self.remove_uploaded_file(file_path + "/" + saved_file_name)
             else :
                 if saved_file_name is None :
                     file_list = file_list[0]
@@ -3219,19 +3219,23 @@ class KnowledgeDatabase(Database):
                     is_format = True
                 else :
                     file_list = file_list[0]
-                    file_name = saved_file_name
+                    file_name = file_list.file_name
                     if len(file_name) == 0 :
                         file_name = None
 
-                    if file_name is None :
+                    file_size = file_list.file_size
+                    file_content = file_list.file_content
+                    if "compliance_format" in file_content :
+                        pass
+                    else :
+                        if saved_file_name is not None :
+                            self.remove_uploaded_file(file_path + "/" + saved_file_name)
                         file_name = file_list.file_name
                         name = file_list.file_name.split('.')[0]
                         exten = file_list.file_name.split('.')[1]
                         auto_code = self.new_uuid()
                         file_name = "%s-%s.%s" % (name, auto_code, exten)
                         is_format = True
-                    file_size = file_list.file_size
-                    file_content = file_list.file_content
 
             penal_consequences = data.penal_consequences
             compliance_frequency = data.frequency_id
@@ -3266,12 +3270,12 @@ class KnowledgeDatabase(Database):
                 pass
 
             elif compliance_frequency == 4 :
-                columns.extend(["duration", "duration_type_id"])
-                values.extend([duration, duration_type])
+                columns.extend(["duration", "duration_type_id", "repeats_every", "repeats_type_id"])
+                values.extend([duration, duration_type, 0, 0])
 
             else :
-                columns.extend(["repeats_every", "repeats_type_id"])
-                values.extend([repeats_every, repeats_type])
+                columns.extend(["repeats_every", "repeats_type_id", "duration", "duration_type_id"])
+                values.extend([repeats_every, repeats_type, 0, 0])
 
             where_condition = "compliance_id = %s" % (compliance_id)
             self.update(table_name, columns, values, where_condition)
@@ -3591,11 +3595,11 @@ class KnowledgeDatabase(Database):
     def save_statutory_notification_units(self, statutory_notification_id, mapping_id, client_info):
 
         if client_info is not None:
-            column = [
-                "statutory_notification_unit_id", "statutory_notification_id", "client_id",
-                "legal_entity_id", "unit_id"
-            ]
             for r in client_info :
+                column = [
+                    "statutory_notification_unit_id", "statutory_notification_id", "client_id",
+                    "legal_entity_id", "unit_id"
+                ]
                 notification_unit_id = self.get_new_id(
                     "statutory_notification_unit_id",
                     "tbl_statutory_notifications_units"
@@ -3617,19 +3621,6 @@ class KnowledgeDatabase(Database):
 
                 self.insert("tbl_statutory_notifications_units", column, values)
 
-                # q = "INSERT INTO tbl_statutory_notifications_units \
-                #     (statutory_notification_unit_id, statutory_notification_id, client_id, \
-                #         business_group_id, legal_entity_id, division_id, unit_id) VALUES \
-                #     (%s, %s, %s, '%s', %s, '%s', %s)" % (
-                #         notification_unit_id,
-                #         statutory_notification_id,
-                #         int(r["client_id"]),
-                #         business_group,
-                #         int(r["legal_entity_id"]),
-                #         division_id,
-                #         int(r["unit_id"])
-                #     )
-                # self.execute(q)
 
     #
     #   Forms
@@ -4368,19 +4359,23 @@ class KnowledgeDatabase(Database):
         client_con = self._mysql_server_connect(host, username, password)
         client_cursor = client_con.cursor()
         query = "CREATE DATABASE %s" % database_name
+        logger.logKnowledge("info", "create", query)
         client_cursor.execute(query)
         query = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, REFERENCES, \
             TRIGGER, EVENT, CREATE ROUTINE, aLTER  on %s.* to %s@%s IDENTIFIED BY '%s';" % (
             database_name, db_username, host, db_password)
+        logger.logKnowledge("info", "create", query)
         client_cursor.execute(query)
         client_cursor.execute("FLUSH PRIVILEGES;")
         client_con.commit()
+        logger.logKnowledge("info", "create", "connect new db")
         client_db_con = self._db_connect(host, username, password, database_name)
         client_db_cursor = client_db_con.cursor()
         sql_script_path = os.path.join(
             os.path.join(os.path.split(__file__)[0]),
             "scripts/mirror-client.sql"
         )
+        logger.logKnowledge("info", "create", "before create tables")
         file_obj = open(sql_script_path, 'r')
         sql_file = file_obj.read()
         file_obj.close()
@@ -4391,9 +4386,11 @@ class KnowledgeDatabase(Database):
                 client_db_cursor.execute(command)
             else:
                 break
+        logger.logKnowledge("info", "create", "after create tables")
         encrypted_password, password = self.generate_and_return_password()
         query = "insert into tbl_admin (username, password) values ('%s', '%s')" % (
             email_id, encrypted_password)
+        logger.logKnowledge("info", "create", "save user")
         client_db_cursor.execute(query)
         query = "insert into tbl_users (user_id, employee_name, email_id, password, user_level,\
         is_primary_admin, is_service_provider, is_admin)\
@@ -4402,8 +4399,11 @@ class KnowledgeDatabase(Database):
         client_db_cursor.execute(query)
         self._save_client_countries(country_ids, client_db_cursor)
         self._save_client_domains(domain_ids, client_db_cursor)
+        logger.logKnowledge("info", "create", "create procedures")
         self._create_procedure(client_db_cursor)
+        logger.logKnowledge("info", "create", "after create triggers")
         self._create_trigger(client_db_cursor)
+        logger.logKnowledge("info", "create", "final commit")
         client_db_con.commit()
         return password
 
@@ -6385,8 +6385,22 @@ class KnowledgeDatabase(Database):
         country_id = request_data.country_id
         domain_id = request_data.domain_id
         level_1_statutory_id = request_data.level_1_statutory_id
-        if level_1_statutory_id is None :
-            level_1_statutory_id = '%'
+        from_date = request_data.from_date
+        to_date = request_data.to_date
+        where_qry = ""
+
+        if level_1_statutory_id is not None :
+            where_qry += " AND tss.statutory_id IN \
+            (select statutory_id from tbl_statutories where FIND_IN_SET('%s', parent_ids)) \
+            " % (level_1_statutory_id)
+
+        if from_date is not None and to_date is not None :
+            from_date = self.string_to_datetime(from_date)
+            to_date = self.string_to_datetime(to_date)
+            where_qry += " AND tsnl.updated_on >= '%s' AND tsnl.updated_on <= '%s'" % (
+                from_date, to_date
+            )
+
         query = "SELECT  distinct tsm.country_id, tsm.domain_id\
              from `tbl_statutory_notifications_log` tsnl    \
             INNER JOIN `tbl_statutory_statutories` tss ON \
@@ -6416,8 +6430,8 @@ class KnowledgeDatabase(Database):
             WHERE  \
             tsm.country_id = %s and \
             tsm.domain_id = %s \
-            group by tsm.country_id, tsm.domain_id " % (
-                row[0], row[1]
+            %s " % (
+                row[0], row[1], where_qry
             )
             notifications_rows = self.select_all(query)
             notification_columns = [

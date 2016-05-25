@@ -1470,7 +1470,6 @@ class ClientDatabase(Database):
             INNER JOIN tbl_units t2 \
             ON t1.unit_id = t2.unit_id %s \
             ORDER BY t1.unit_id " % (where_qry)
-        print query
         rows = self.select_all(query)
 
         columns = [
@@ -3124,18 +3123,19 @@ class ClientDatabase(Database):
             q = "SELECT compliance_id, compliance_task, statutory_dates, repeats_type_id from tbl_compliances \
                 where compliance_id = %s" % int(c.compliance_id)
             row = self.select_one(q)
-            comp_id = row[0]
-            task = row[1]
-            s_dates = json.loads(row[2])
-            repeats_type_id = row[3]
-            due_date, due_date_list, date_list = self.set_new_due_date(s_dates, repeats_type_id, comp_id)
+            if row :
+                comp_id = row[0]
+                task = row[1]
+                s_dates = json.loads(row[2])
+                repeats_type_id = row[3]
+                due_date, due_date_list, date_list = self.set_new_due_date(s_dates, repeats_type_id, comp_id)
 
-            if c.due_date not in [None, ""] and due_date not in [None, ""]:
-                t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
-                n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
-                if (n_due_date < t_due_date) :
-                    # Due date should be lessthen statutory date
-                    return False, task
+                if c.due_date not in [None, ""] and due_date not in [None, ""]:
+                    t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+                    n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
+                    if (n_due_date < t_due_date) :
+                        # Due date should be lessthen statutory date
+                        return False, task
         return True, None
 
     # start current date compliances after assign-compliances
@@ -3231,7 +3231,7 @@ class ClientDatabase(Database):
                     new_due_date = addYears(repeat_every, old_due_date)
                 else :
                     "repeat_type not matched"
-                    new_due_date = old_due_date
+                    new_due_date = None
                 return (new_due_date,  trigger_before_days)
             else :
                 temp_date = convert_string_to_date(str(old_due_date))
@@ -3287,19 +3287,25 @@ class ClientDatabase(Database):
         created_on = datetime.datetime.now()
         if concurrence_person is None:
             concurrence_person = "NULL"
-        query = "INSERT INTO tbl_notifications_log \
-            (notification_id, country_id, domain_id, business_group_id, \
-            legal_entity_id, division_id, unit_id, compliance_id,\
-            assignee, concurrence_person, approval_person, notification_type_id,\
-            notification_text, extra_details, created_on\
-            ) VALUES (%s, %s, %s, %s, %s, %s, \
-            %s, %s, %s, %s, %s, %s, '%s', '%s', '%s')" % (
-                notification_id, country_id, domain_id, business_group_id,
-                legal_entity_id, division_id, unit_id, compliance_id,
-                assignee, concurrence_person, approval_person, notification_type_id,
-                notification_text, extra_details, created_on
-            )
-        self.execute(query)
+        column = [
+            "notification_id", "country_id", "domain_id",
+            "legal_entity_id", "unit_id", "compliance_id",
+            "assignee", "concurrence_person", "approval_person", "notification_type_id",
+            "notification_text", "extra_details", "created_on"
+        ]
+        values = [
+            notification_id, country_id, domain_id,
+            legal_entity_id, unit_id, compliance_id,
+            assignee, concurrence_person, approval_person, notification_type_id,
+            notification_text, extra_details, created_on
+        ]
+        if business_group_id is not None :
+            column.append("business_group_id")
+            values.append(business_group_id)
+        if division_id is not None :
+            column.append("division_id")
+            values.append(division_id)
+        self.insert("tbl_notifications_log", column, values)
         save_notification_users(notification_id, assignee)
         if notify_to_all:
             if approval_person is not None and assignee != approval_person:
@@ -3348,7 +3354,8 @@ class ClientDatabase(Database):
             if trigger_before is None:
                 trigger_before = int(d["trigger_before_days"])
 
-            notify(d, due_date, next_due_date, approval_person)
+            if next_due_date is not None :
+                notify(d, due_date, next_due_date, approval_person)
             return next_due_date, trigger_before
 
         # -- start_new_task
@@ -3367,10 +3374,10 @@ class ClientDatabase(Database):
                 next_due_date = trigger_before = None
                 due_date = d["due_date"]
                 next_due_date, trigger_before = start_next_due_date_task(d, due_date, approval_person)
-
-                while (next_due_date - timedelta(days=trigger_before)) <= current_date :
-                    # start for next-due-date
-                    next_due_date, trigger_before = start_next_due_date_task(d, next_due_date, approval_person)
+                if next_due_date is not None :
+                    while (next_due_date - timedelta(days=trigger_before)) <= current_date :
+                        # start for next-due-date
+                        next_due_date, trigger_before = start_next_due_date_task(d, next_due_date, approval_person)
 
                 self.update_assign_compliance_due_date(trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
 
@@ -6737,7 +6744,7 @@ class ClientDatabase(Database):
                 ' ','') AS UNSIGNED)) \
                 LIMIT %s, %s ) as a \
                 ORDER BY a.notification_id DESC" % (
-                    columns, subquery_columns, 
+                    columns, subquery_columns,
                     self.tblNotificationUserLog,
                     self.tblNotificationsLog,
                     self.tblCompliances,
@@ -6747,10 +6754,10 @@ class ClientDatabase(Database):
                 )
         rows = self.select_all(query)
         columns_list = [
-            "notification_id", "notification_text", "created_on", 
+            "notification_id", "notification_text", "created_on",
             "extra_details", "statutory_provision",
-            "assignee", "concurrence_person", "approval_person", 
-            "compliance_id", "compliance_task", "document_name", 
+            "assignee", "concurrence_person", "approval_person",
+            "compliance_id", "compliance_task", "document_name",
             "compliance_description", "penal_consequences", "read_status",
             "due_date", "completion_date", "approve_status"
         ]
@@ -7112,9 +7119,30 @@ class ClientDatabase(Database):
                     assignee, approval, history_id
                 )
                 self.execute(update_history)
-
-        action = "%s Compliances reassigned to assignee %s" % (",".join(compliance_names), request.assignee_name)
-        self.save_activity(session_user, 8, action)
+        compliance_names = " <br> ".join(compliance_names)
+        if concurrence is None :
+            action = " Following compliances has reassigned to assignee - %s and approval-person - %s <br> %s" % (
+                request.assignee_name,
+                approval,
+                compliance_names
+            )
+        else :
+            action = " Following compliances has reassigned to assignee - %s concurrence-person - %s approval-person - %s <br> %s" % (
+                request.assignee_name,
+                concurrence,
+                approval,
+                compliance_names
+            )
+        activity_text = action.replace("<br>", " ")
+        self.save_activity(session_user, 8, json.dumps(activity_text))
+        receiver = self.get_email_id_for_users(assignee)[1]
+        notify_reassing_compliance = threading.Thread(
+            target=email.notify_assign_compliance,
+            args=[
+                receiver, request.assignee_name, action
+            ]
+        )
+        notify_reassing_compliance.start()
         return clienttransactions.ReassignComplianceSuccess()
 
 #
@@ -7504,7 +7532,7 @@ class ClientDatabase(Database):
     #         next_start_date = due_date - timedelta(days=trigger_before)
     #     return next_start_date
 
-    def get_statutory_notifications_list_report(self, request_data, client_id):
+    def report_statutory_notifications_list(self, request_data):
         country_name = request_data.country_name
         domain_name = request_data.domain_name
         business_group_id = request_data.business_group_id
@@ -7514,106 +7542,91 @@ class ClientDatabase(Database):
         level_1_statutory_name = request_data.level_1_statutory_name
         from_date = request_data.from_date
         to_date = request_data.to_date
-        if from_date is None:
-            from_date = ''
-        else:
+        condition = ""
+        if from_date is not None and to_date is not None :
             from_date = self.string_to_datetime(from_date)
-        if to_date is None:
-            to_date = ''
-        else:
             to_date = self.string_to_datetime(to_date)
-        condition = "1"
+            condition += " AND snl.updated_on >= '%s' AND snl.updated_on <= '%s'" % (from_date, to_date)
         if business_group_id is not None:
-            condition += " AND business_group_id = '%d'" % business_group_id
+            condition += " AND u.business_group_id = '%s'" % business_group_id
         if legal_entity_id is not None:
-            condition += " AND legal_entity_id = '%d'" % legal_entity_id
+            condition += " AND u.legal_entity_id = '%s'" % legal_entity_id
         if division_id is not None:
-            condition += " AND division_id = '%d'" % division_id
+            condition += " AND u.division_id = '%s'" % division_id
         if unit_id is not None:
-            condition += " AND unit_id = '%d'" % unit_id
+            condition += " AND u.unit_id = '%s'" % unit_id
 
-        # Gettings distinct sets of bg_id, le_id, div_id, unit_id
-        columns = "business_group_id, legal_entity_id, division_id, group_concat(unit_id)"
-        where_condition = "1 AND %s" % condition
-        where_condition += " group by business_group_id, legal_entity_id, division_id"
-        rows = self.get_data(self.tblStatutoryNotificationsUnits, columns, where_condition)
-        columns = ["business_group_id", "legal_entity_id", "division_id", "unit_id"]
-        rows = self.convert_to_dict(rows, columns)
-        notifications = []
-        conditiondate = None
-        for row in rows:
-            business_group_id = row["business_group_id"]
-            legal_entity_id = row["legal_entity_id"]
-            division_id = row["division_id"]
-            unit_id_list = [int(x) for x in row["unit_id"].split(",")]
+        if level_1_statutory_name is not None :
+            condition += " AND snl.statutory_provision like '%s'" % str((level_1_statutory_name + '%'))
+
+        query = "SELECT \
+            (select business_group_name from tbl_business_groups where business_group_id = u.business_group_id), \
+            (select legal_entity_name from tbl_legal_entities where legal_entity_id = u.legal_entity_id), \
+            (select division_name from tbl_divisions where division_id = u.division_id), \
+            u.unit_code, \
+            u.unit_name, \
+            u.address, \
+            snl.statutory_provision, \
+            snl.notification_text, \
+            snl.updated_on \
+        from \
+            tbl_statutory_notifications_log snl \
+                INNER JOIN \
+            tbl_statutory_notifications_units snu \
+        ON snl.statutory_notification_id = snu.statutory_notification_id \
+                INNER JOIN \
+            tbl_units u ON snu.unit_id = u.unit_id \
+        where \
+            snl.country_name like '%s' \
+            and snl.domain_name like '%s' \
+            %s \
+            ORDER BY snl.updated_on" % (
+                    country_name, domain_name,
+                    condition
+                )
+        rows = self.select_all(query)
+        columns = [
+            "business_group", "legal_entity", "division", "unit_code", "unit_name",
+            "address", "statutory_provision", "notification_text", "updated_on"
+        ]
+        data = self.convert_to_dict(rows, columns)
+        legal_wise = {}
+        for d in data :
+            unit_name = "%s - %s" % (d["unit_code"], d["unit_name"])
+            statutories = d["statutory_provision"].split(">>")
+            level_1_statutory_name = statutories[0].strip()
+
             level_1_statutory_wise_notifications = {}
-            for unit_id in unit_id_list:
-                query = "SELECT bg.business_group_name, le.legal_entity_name, d.division_name, u.unit_code, u.unit_name, u.address,\
-                    snl.statutory_provision, snl.notification_text, snl.updated_on \
-                    from \
-                    tbl_statutory_notifications_log snl \
-                    INNER JOIN \
-                    tbl_statutory_notifications_units snu  ON \
-                    snl.statutory_notification_id = snu.statutory_notification_id \
-                    INNER JOIN \
-                    tbl_business_groups bg ON \
-                    snu.business_group_id = bg.business_group_id \
-                    INNER JOIN \
-                    tbl_legal_entities le ON \
-                    snu.legal_entity_id = le.legal_entity_id \
-                    INNER JOIN \
-                    tbl_divisions d ON \
-                    snu.division_id = d.division_id \
-                    INNER JOIN \
-                    tbl_units u ON \
-                    snu.unit_id = u.unit_id \
-                    where \
-                    snl.country_name = '%s' \
-                    and \
-                    snl.domain_name = '%s' \
-                    and \
-                    bg.business_group_id = '%d' \
-                    and \
-                    le.legal_entity_id = '%d' \
-                    and \
-                    d.division_id = '%d' \
-                    and \
-                    u.unit_id = '%d' " % (
-                        country_name, domain_name, business_group_id, legal_entity_id, division_id, unit_id
-                    )
-                if from_date != '' and to_date != '':
-                    conditiondate = " AND  snl.updated_on between '%s' and '%s' " % (from_date, to_date)
-                    query = query + conditiondate
-                if level_1_statutory_name is not None:
-                    conditionlevel1 = "AND statutory_provision like '%s'" % str(level_1_statutory_name + "%")
-                    query = query + conditionlevel1
-                result_rows = self.select_all(query)
-                columns = [
-                    "business_group_name", "legal_entity_name", "division_name", "unit_code", "unit_name", "address",
-                    "statutory_provision", "notification_text", "updated_on"
-                ]
-                statutory_notifications = self.convert_to_dict(result_rows, columns)
-                if len(result_rows) > 0:
-                    business_group_name = result_rows[0][0]
-                    legal_entity_name = result_rows[0][1]
-                    division_name = result_rows[0][2]
-                    for notification in statutory_notifications:
-                        unit_name = "%s - %s" % (notification["unit_code"], notification["unit_name"])
-                        statutories = notification["statutory_provision"].split(">>")
-                        level_1_statutory_name = statutories[0]
-                        if level_1_statutory_name not in level_1_statutory_wise_notifications:
-                            level_1_statutory_wise_notifications[level_1_statutory_name] = []
-                        level_1_statutory_wise_notifications[level_1_statutory_name].append(
-                            clientreport.LEVEL_1_STATUTORY_NOTIFICATIONS(
-                                statutory_provision=notification["statutory_provision"],
-                                unit_name=unit_name,
-                                notification_text=notification["notification_text"],
-                                date_and_time=self.datetime_to_string(notification["updated_on"])
-                            ))
-            notifications.append(clientreport.STATUTORY_WISE_NOTIFICATIONS(
-                business_group_name, legal_entity_name, division_name, level_1_statutory_wise_notifications
-                    ))
-        return notifications
+            notify = clientreport.LEVEL_1_STATUTORY_NOTIFICATIONS(
+                d["statutory_provision"],
+                unit_name,
+                d["notification_text"],
+                self.datetime_to_string(d["updated_on"])
+            )
+            level_1_statutory_wise_notifications[level_1_statutory_name] = [notify]
+            legal_wise_data = legal_wise.get(d["legal_entity"])
+            if legal_wise_data is None :
+                legal_wise_data = clientreport.STATUTORY_WISE_NOTIFICATIONS(
+                    d["business_group"], d["legal_entity"], d["division"],
+                    level_1_statutory_wise_notifications
+                )
+            else :
+                dict_level_1 = legal_wise_data.level_1_statutory_wise_notifications
+                if dict_level_1 is None :
+                    dict_level_1 = {}
+                lst = dict_level_1.get(level_1_statutory_name)
+                if lst is None :
+                    lst = []
+                else :
+                    lst.append(notify)
+                dict_level_1[level_1_statutory_name] = lst
+                legal_wise_data.level_1_statutory_wise_notifications = dict_level_1
+            legal_wise[d["legal_entity"]] = legal_wise_data
+
+        notification_lst = []
+        for k in sorted(legal_wise):
+            notification_lst.append(legal_wise.get(k))
+        return notification_lst
 
 #
 #   Risk Report

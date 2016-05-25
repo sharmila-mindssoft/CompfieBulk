@@ -35,6 +35,12 @@ $("#show-button").click(function(){
 	var domainNameVal = $("#domainval").val();
 	//Level 1 Statutories
 	var level1id = $("#level1id").val();
+	var fromDate = $("#from-date").val();
+	if (fromDate == '')
+		fromDate = null;
+	var toDate = $("#to-date").val();
+	if (toDate == '')
+		toDate = null;
 	if(level1id == ''){
 		level1id = null;
 	}
@@ -60,7 +66,9 @@ $("#show-button").click(function(){
 			console.log(error);
 		}
 
-		mirror.getStatutoryNotificationsReportData(parseInt(countries), parseInt(domain), level1id,
+		mirror.getStatutoryNotificationsReportData(
+			parseInt(countries), parseInt(domain), level1id,
+			fromDate, toDate,
 			function (error, response){
 				if(error == null){
 					onSuccess(response);
@@ -115,7 +123,7 @@ function onCountrySuccess(val){
   $("#country").val(val[0]);
 }
 
-//load country list in autocomplete text box  
+//load country list in autocomplete text box
 $("#countryval").keyup(function(){
   var textval = $(this).val();
   getCountryAutocomplete(textval, countriesList, function(val){
@@ -128,7 +136,7 @@ function onDomainSuccess(val){
   $("#domainval").val(val[1]);
   $("#domain").val(val[0]);
 }
-//load domain list in autocomplete textbox  
+//load domain list in autocomplete textbox
 $("#domainval").keyup(function(){
   var textval = $(this).val();
   getDomainAutocomplete(textval, domainsList, function(val){
@@ -141,7 +149,7 @@ function onStatutorySuccess(val){
   $("#level1val").val(val[1]);
   $("#level1id").val(val[0]);
 }
-//load statutory list in autocomplete textbox  
+//load statutory list in autocomplete textbox
 $("#level1val").keyup(function(){
   var textval = $(this).val();
   getStatutoryAutocomplete(textval, level1List[$("#country").val()][$("#domain").val()], function(val){

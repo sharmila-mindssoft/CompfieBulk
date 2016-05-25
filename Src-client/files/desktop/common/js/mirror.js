@@ -154,7 +154,10 @@ function initMirror() {
                     window.location.href = login_url;
                 }
                 else {
-                    callback(status, response)
+                    if (Object.keys(response).length == 0)
+                        callback(status, null)
+                    else
+                        callback(status, response)
                 }
             }
         )
@@ -573,24 +576,30 @@ function initMirror() {
         file_name = file.name
         file_size = file.size
         var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
-        if (file_size > max_limit) {
-            callback("File max limit exceeded");
-        }else if(file_extension == 'exe'){
-            callback("Invalid file format");
-        }else{
-            file_content = null
-            if (files && file) {
-            convert_to_base64(file, function(file_content) {
-                if (file_content == null) {
-                    callback("File content is empty")
+
+        if(file_name.contains('.')){
+            if (file_size > max_limit) {
+                callback("File max limit exceeded");
+            }else if(file_extension == 'exe' || file_extension == 'xhtml' || file_extension == 'htm' || file_extension == 'html'){
+                callback("Invalid file format");
+            }else{
+                file_content = null
+                if (files && file) {
+                convert_to_base64(file, function(file_content) {
+                    if (file_content == null) {
+                        callback("File content is empty")
+                    }
+                    result = uploadFileFormat(
+                        file_size, file_name, file_content
+                    )
+                    callback(result)
+                });
                 }
-                result = uploadFileFormat(
-                    file_size, file_name, file_content
-                )
-                callback(result)
-            });
             }
+        }else{
+            callback("Invalid file format");
         }
+
         // file_extension = file_name.substr(
         //     file_name.lastIndexOf('.') + 1
         // );
@@ -1282,14 +1291,16 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback);
     }
-    function getStatutoryNotificationsReportData(countryId, domainId, level1Id, callback){
+    function getStatutoryNotificationsReportData(countryId, domainId, level1Id, fromDate, toDate, callback){
         callerName = "techno_report"
         var request = [
             "GetStatutoryNotificationsReportData",
             {
                 "country_id": countryId,
                 "domain_id": domainId,
-                "level_1_statutory_id": level1Id
+                "level_1_statutory_id": level1Id,
+                "from_date": fromDate,
+                "to_date": toDate
             }
         ];
         apiRequest(callerName, request, callback);

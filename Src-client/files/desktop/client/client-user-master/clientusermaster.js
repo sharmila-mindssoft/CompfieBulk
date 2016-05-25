@@ -203,6 +203,7 @@ function user_edit(userId){
     $("#user-add").show();
     $("#user-view").hide();
     $("#client-user-id").val(userId);
+    clearMessage();
     function onSuccess(data){
         loadUserUpdate(userId);
     }

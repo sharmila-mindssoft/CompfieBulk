@@ -32,4 +32,5 @@ ALTER TABLE `tbl_statutory_notification_status` ADD INDEX `user_id_idx` (`user_i
 ALTER TABLE `tbl_statutory_notifications_units` ADD CONSTRAINT `fk_statutory_notify_unit_id` FOREIGN KEY (`statutory_notification_id`) REFERENCES `tbl_statutory_notifications_log` (`statutory_notification_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE `tbl_statutory_notifications_units` ADD CONSTRAINT `fk_notify_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-
+ALTER IGNORE TABLE tbl_compliance_history
+ADD UNIQUE INDEX idx2_compliancce_history (unit_id, compliance_id, start_date, due_date, next_due_date, completed_by);

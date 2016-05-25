@@ -52,6 +52,10 @@ function initClientMirror() {
     function clearSession() {
         delete window.localStorage["userInfo"];
         delete window.localStorage["shortName"];
+        delete window.localStorage["CLIENT_NOTIFICATION_COUNT"];
+        delete window.localStorage["CLIENT_REMINDER_COUNT"];
+        delete window.localStorage["CLIENT_ESCALATION_COUNT"];
+
     }
 
     function getUserInfo() {
@@ -941,23 +945,23 @@ function initClientMirror() {
             console.log("file.size : "+file.size);
             console.log("max_limit : "+max_limit);
             if (file_size > max_limit) {
-                callback("File max limit exceeded");
+                displayMessage("File max limit exceeded");
                 return;
             }
             else if(file_extension == 'exe'){
-                callback("Invalid file format");
+                displayMessage("Invalid file format");
                 return;
             }
             else if(file_extension == 'htm'){
-                callback("Invalid file format");
+                displayMessage("Invalid file format");
                 return;
             }
             else if(file_extension == 'xhtml'){
-                callback("Invalid file format");
+                displayMessage("Invalid file format");
                 return;
             }
             else if(file_extension == 'html'){
-                callback("Invalid file format");
+                displayMessage("Invalid file format");
                 return;
             }
             else{
@@ -1687,9 +1691,27 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
     function getContractExpireAndNotificationCount(){
-        $("#notification_count").text(window.localStorage["CLIENT_NOTIFICATION_COUNT"]);
-        $("#reminder_count").text(window.localStorage["CLIENT_REMINDER_COUNT"]);
-        $("#escalation_count").text(window.localStorage["CLIENT_ESCALATION_COUNT"] );
+        var clientNotificationCount = window.localStorage["CLIENT_NOTIFICATION_COUNT"];
+        var clientReminderCount = window.localStorage["CLIENT_REMINDER_COUNT"];
+        var clientEscalationCount = window.localStorage["CLIENT_ESCALATION_COUNT"];
+
+        if ((typeof(clientNotificationCount) != "undefined") && (clientNotificationCount != null) ){
+            $("#notification_count").text(clientNotificationCount);
+        }else{
+            $("#notification_count").text('0');
+        }
+        
+        if ((typeof(clientReminderCount) != "undefined") && (clientReminderCount != null) ){
+            $("#reminder_count").text(clientReminderCount);
+        }else{
+            $("#reminder_count").text('0');
+        }
+
+        if ((typeof(clientEscalationCount) != "undefined") && (clientEscalationCount != null) ){
+            $("#escalation_count").text(clientEscalationCount);
+        }else{
+            $("#escalation_count").text('0');
+        }
     }
 
     return {

@@ -1,9 +1,12 @@
 
 function get_notification_count(){
     client_mirror.checkContractExpiration(function (status, data) {
-            if (data == null) {
-                return
-                $(".contract_timer_container").hide()
+            if (data == null || Object.keys(data).length == 0) {
+                $("#notification_count").text('0');
+                $("#reminder_count").text('0');
+                $("#escalation_count").text('0');
+                $(".contract_timer_container").hide();
+                return;
             }else{
                 no_of_days_left = data.no_of_days_left
                 $(".contract_timer_container").show()
