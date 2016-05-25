@@ -154,7 +154,10 @@ function initMirror() {
                     window.location.href = login_url;
                 }
                 else {
-                    callback(status, response)
+                    if (Object.keys(response).length == 0)
+                        callback(status, null)
+                    else
+                        callback(status, response)
                 }
             }
         )
@@ -594,9 +597,9 @@ function initMirror() {
                 }
             }
         }else{
-            callback("Invalid file format"); 
+            callback("Invalid file format");
         }
-        
+
         // file_extension = file_name.substr(
         //     file_name.lastIndexOf('.') + 1
         // );
