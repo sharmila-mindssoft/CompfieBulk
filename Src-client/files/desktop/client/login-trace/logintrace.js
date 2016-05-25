@@ -125,11 +125,19 @@ function showrecord(){
 }
 function apipass(sno, userid, lastdate, todaydate){
     function onSuccess(data){
-        userList = data['users'];
-        logintraceList = data['login_trace'];        
-        console.log(JSON.stringify(logintraceList));
-        loadrecords(logintraceList);
-        $(".total-records").html("Total : "+sno+" records")
+        if(data['audit_trail_details'] != ''){
+            userList = data['users'];
+            logintraceList = data['login_trace'];        
+            console.log(JSON.stringify(logintraceList));
+            loadrecords(logintraceList);
+            $(".total-records").html("Total : "+sno+" records")
+        }
+        else{
+            $("#pagination").hide();
+            if(sno == 0){
+                $(".tbody-login-trace-list").html("<tr><td colspan='4' align='center'>No record found.</td></tr>");    
+            }   
+        }
     }
     function onFailure(error){
         console.log(error);
