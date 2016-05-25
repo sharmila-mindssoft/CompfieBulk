@@ -8813,7 +8813,7 @@ class ClientDatabase(Database):
         to_date = self.string_to_datetime(to_date)
         condition = "1"
         if user_id is not None:
-            condition = " user_id = '%d' " % user_id
+            condition = " al.user_id = '%d' " % user_id
         if from_date is not None and to_date is not None:
             condition += " AND  al.created_on between '%s' AND '%s'" % (
                 from_date, to_date
@@ -8837,7 +8837,7 @@ class ClientDatabase(Database):
             AND %s\
             order by al.created_on desc \
             limit %s, %s" % (
-                "%", "password", "%", user_condition,
+                "%", "password", "%", condition,
                 from_count, to_count
             )
 
