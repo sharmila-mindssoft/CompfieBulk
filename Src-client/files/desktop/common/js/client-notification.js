@@ -6,7 +6,7 @@ function get_notification_count(){
                 $("#reminder_count").text('0');
                 $("#escalation_count").text('0');
                 $(".contract_timer_container").hide();
-                return
+                return;
             }else{
                 no_of_days_left = data.no_of_days_left
                 $(".contract_timer_container").show()

@@ -4018,3 +4018,23 @@ def parse_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicab
 def parse_structure_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData(data):
     from protocol import clientreport
     return clientreport.GetComplianceTaskApplicabilityStatusReportData.parse_structure(data)
+
+def parse_structure_RecordType_clientreports_LEVEL_1_STATUTORY_NOTIFICATIONS(data):
+    from protocol import clientreport
+    return clientreport.LEVEL_1_STATUTORY_NOTIFICATIONS.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_clientreports_LEVEL_1_STATUTORY_NOTIFICATIONS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_clientreports_LEVEL_1_STATUTORY_NOTIFICATIONS(item))
+    return lst
+
+def parse_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_LEVEL_1_STATUTORY_NOTIFICATIONS(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items():
+        key = parse_structure_CustomTextType_500(key)
+        value = parse_structure_VectorType_RecordType_clientreports_LEVEL_1_STATUTORY_NOTIFICATIONS(value)
+        dict[key] = value
+    return dict

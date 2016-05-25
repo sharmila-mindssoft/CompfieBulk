@@ -175,36 +175,34 @@ class ReplicationManager(object) :
         try :
             pass
             self._db.execute(query)
-            self._temp_count = changes[-1].audit_trail_id
 
         except Exception, e:
             pass
             print e
-            logger.logKnowledge("client.py", "insert", e)
+            logger.logClient("client.py", "insert", e)
+        self._temp_count = changes[-1].audit_trail_id
 
     def _execute_update_statement(self, change):
         auto_id = self._auto_id_columns.get(change.tbl_name)
         assert auto_id is not None
-        if change.value is None:
-            val = ""
-        else:
-            val = change.value
+        val = change.value
+        if val is not None :
             # val = "'" + change.value.replace("'", "\\'") + "'"
-        query = "UPDATE %s SET %s = '%s' WHERE %s = %s;" % (
-            change.tbl_name,
-            change.column_name,
-            val,
-            auto_id,
-            change.tbl_auto_id
-        )
-        try :
-            self._db.execute(query)
-            self._temp_count = change.audit_trail_id
-        except Exception, e :
-            print e,
-            logger.logKnowledge("client.py", "update", e)
-            print query
-            logger.logKnowledge("client.py", "update", query)
+            query = "UPDATE %s SET %s = '%s' WHERE %s = %s;" % (
+                change.tbl_name,
+                change.column_name,
+                val,
+                auto_id,
+                change.tbl_auto_id
+            )
+            try :
+                self._db.execute(query)
+            except Exception, e :
+                print e,
+                logger.logClient("client.py", "update", e)
+                print query
+                # logger.logClient("client.py", "update", query)
+        self._temp_count = change.audit_trail_id
 
     def _parse_data(self, changes):
         # self._get_received_count()
@@ -267,6 +265,7 @@ class ReplicationManager(object) :
 #
 
     def _poll_for_del(self):
+        print "poll for dell"
         assert self._stop is False
         assert self._received_count is not None
 
