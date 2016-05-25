@@ -6732,8 +6732,8 @@ class ClientDatabase(Database):
                 SELECT %s,%s \
                 FROM %s nul \
                 LEFT JOIN %s nl ON (nul.notification_id = nl.notification_id)\
-                INNER JOIN %s tc ON (tc.compliance_id = nl.compliance_id) \
-                INNER JOIN %s tch ON (tch.compliance_id = nl.compliance_id AND \
+                LEFT JOIN %s tc ON (tc.compliance_id = nl.compliance_id) \
+                LEFT JOIN %s tch ON (tch.compliance_id = nl.compliance_id AND \
                 tch.unit_id = nl.unit_id) \
                 WHERE notification_type_id = '%s' \
                 AND user_id = '%s' \
