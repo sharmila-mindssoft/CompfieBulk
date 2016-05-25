@@ -127,7 +127,7 @@ def get_user_group_detailed_list(db):
         user_group_name = row[1]
         form_category_id = row[2]
         no_of_users = row[5]
-        if len(row[3]) > 1 :
+        if len(row[3]) >= 1 :
             form_ids = [int(x) for x in row[3].split(",")]
         else :
             form_ids = []
@@ -155,6 +155,7 @@ def get_user_groups(db, request_frame, session_user):
     forms = get_forms(db)
     form_categories = get_form_categories(db)
     user_group_list = get_user_group_detailed_list(db)
+
     result = admin.GetUserGroupsSuccess(
         form_categories=form_categories,
         forms=forms,
