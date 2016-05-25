@@ -1470,7 +1470,6 @@ class ClientDatabase(Database):
             INNER JOIN tbl_units t2 \
             ON t1.unit_id = t2.unit_id %s \
             ORDER BY t1.unit_id " % (where_qry)
-        print query
         rows = self.select_all(query)
 
         columns = [
@@ -3148,7 +3147,7 @@ class ClientDatabase(Database):
             t2.repeats_every, (t1.due_date - INTERVAL t1.trigger_before_days DAY) start_date,\
             t3.unit_id, t3.unit_code, t3.unit_name, t3.business_group_id,\
             t3.legal_entity_id, t3.division_id, t2.domain_id, \
-            t1.assignee, t1.concurrence_person, t1.approval_person, \
+            t1.assignee, t1.concurrget_compliance_to_startence_person, t1.approval_person, \
             t4.compliance_id \
             from tbl_assigned_compliances t1\
             INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id\
@@ -3288,19 +3287,25 @@ class ClientDatabase(Database):
         created_on = datetime.datetime.now()
         if concurrence_person is None:
             concurrence_person = "NULL"
-        query = "INSERT INTO tbl_notifications_log \
-            (notification_id, country_id, domain_id, business_group_id, \
-            legal_entity_id, division_id, unit_id, compliance_id,\
-            assignee, concurrence_person, approval_person, notification_type_id,\
-            notification_text, extra_details, created_on\
-            ) VALUES (%s, %s, %s, %s, %s, %s, \
-            %s, %s, %s, %s, %s, %s, '%s', '%s', '%s')" % (
-                notification_id, country_id, domain_id, business_group_id,
-                legal_entity_id, division_id, unit_id, compliance_id,
-                assignee, concurrence_person, approval_person, notification_type_id,
-                notification_text, extra_details, created_on
-            )
-        self.execute(query)
+        column = [
+            "notification_id", "country_id", "domain_id", "business_group_id",
+            "legal_entity_id", "division_id", "unit_id", "compliance_id",
+            "assignee", "concurrence_person", "approval_person", "notification_type_id",
+            "notification_text", "extra_details", "created_on"
+        ]
+        values = [
+            notification_id, country_id, domain_id,
+            legal_entity_id, unit_id, compliance_id,
+            assignee, concurrence_person, approval_person, notification_type_id,
+            notification_text, extra_details, created_on
+        ]
+        if business_group_id is not None :
+            column.append("business_group_id")
+            values.append(business_group_id)
+        if division_id is not None :
+            column.append("division_id")
+            values.append(division_id)
+        self.insert("tbl_notifications_log", column, values)
         save_notification_users(notification_id, assignee)
         if notify_to_all:
             if approval_person is not None and assignee != approval_person:
