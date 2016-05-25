@@ -1470,7 +1470,6 @@ class ClientDatabase(Database):
             INNER JOIN tbl_units t2 \
             ON t1.unit_id = t2.unit_id %s \
             ORDER BY t1.unit_id " % (where_qry)
-        print query
         rows = self.select_all(query)
 
         columns = [
@@ -3288,19 +3287,25 @@ class ClientDatabase(Database):
         created_on = datetime.datetime.now()
         if concurrence_person is None:
             concurrence_person = "NULL"
-        query = "INSERT INTO tbl_notifications_log \
-            (notification_id, country_id, domain_id, business_group_id, \
-            legal_entity_id, division_id, unit_id, compliance_id,\
-            assignee, concurrence_person, approval_person, notification_type_id,\
-            notification_text, extra_details, created_on\
-            ) VALUES (%s, %s, %s, %s, %s, %s, \
-            %s, %s, %s, %s, %s, %s, '%s', '%s', '%s')" % (
-                notification_id, country_id, domain_id, business_group_id,
-                legal_entity_id, division_id, unit_id, compliance_id,
-                assignee, concurrence_person, approval_person, notification_type_id,
-                notification_text, extra_details, created_on
-            )
-        self.execute(query)
+        column = [
+            "notification_id", "country_id", "domain_id",
+            "legal_entity_id", "unit_id", "compliance_id",
+            "assignee", "concurrence_person", "approval_person", "notification_type_id",
+            "notification_text", "extra_details", "created_on"
+        ]
+        values = [
+            notification_id, country_id, domain_id,
+            legal_entity_id, unit_id, compliance_id,
+            assignee, concurrence_person, approval_person, notification_type_id,
+            notification_text, extra_details, created_on
+        ]
+        if business_group_id is not None :
+            column.append("business_group_id")
+            values.append(business_group_id)
+        if division_id is not None :
+            column.append("division_id")
+            values.append(division_id)
+        self.insert("tbl_notifications_log", column, values)
         save_notification_users(notification_id, assignee)
         if notify_to_all:
             if approval_person is not None and assignee != approval_person:
@@ -7838,7 +7843,7 @@ class ClientDatabase(Database):
         return self.return_risk_report_data(result, total)
 
     def get_delalyed_compliances(
-        domain_id, country_id, where_qry
+        self, domain_id, country_id, where_qry
     ):
         query = "SELECT distinct c.compliance_id, c.compliance_task, c.document_name, \
             ac.statutory_dates, c.compliance_description, c.penal_consequences, c.frequency_id, \
