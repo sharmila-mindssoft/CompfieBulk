@@ -88,7 +88,7 @@ function apipass(lastdate, todaydate, userid, formid, sno){
         else{
             $("#pagination").hide();
             if(sno == 0){
-                $(".tbody-audittrail-list").val("No record found.");    
+                $(".tbody-audittrail-list").html("<tr><td colspan='4' align='center'>No record found.</td></tr>");    
             }            
         }
     }
@@ -233,8 +233,9 @@ $('#pagination').click(function(){
     
 
     function onSuccess(data){    
-        if(data['audit_trail_details'] ==''){
+        if(data['audit_trail_details'] == ''){
             $('#pagination').hide();
+            return;
         }
      
         loadrecord(data['audit_trail_details']);

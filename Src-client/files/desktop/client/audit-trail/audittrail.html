@@ -12,13 +12,13 @@
         <div class="input-row">
           <div class="field-label">From Date:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box" value="" readonly="readonly" id="from-date" placeholder="dd-Mon-yyyy">
+            <input type="text" class="input-box" value="" readonly="readonly" id="from-date" tabindex="1" placeholder="dd-Mon-yyyy">
           </div>
         </div>
         <div class="input-row">
           <div class="field-label">User:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="user" autofocus placeholder="Type User">
+            <input type="text" class="input-box icon-autocomplete" id="user" tabindex="3" autofocus placeholder="Type User">
             <input type="hidden" id="userid">
             <div id="ac-user" class="ac-textbox default-display-none">
               <ul style="width:85%;"></ul>
@@ -30,13 +30,13 @@
         <div class="input-row">
           <div class="field-label">To Date:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box" value="" readonly="readonly" id="to-date" placeholder="dd-Mon-yyyy">
+            <input type="text" class="input-box" value="" readonly="readonly" id="to-date" tabindex="2" placeholder="dd-Mon-yyyy">
           </div>
         </div>
         <div class="input-row">
           <div class="field-label">Form Name:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="formname" autofocus placeholder="Type Form name">
+            <input type="text" class="input-box icon-autocomplete" id="formname" tabindex="4" placeholder="Type Form name">
             <input type="hidden" id="formid">
             <div id="ac-form" class="ac-textbox default-display-none">
               <ul style="width:85%;"></ul>
@@ -45,7 +45,7 @@
         </div>
       </div>
       <div class="submit-button-container">
-        <input type="submit" name="cancel" value="Show" id="show" onclick="showaudittrailclick()" class="btn-submit">
+        <input type="submit" name="cancel" value="Show" id="show" onclick="showaudittrailclick()" tabindex="5" class="btn-submit">
       </div>
       <div class="clearfix"></div>
       <div class="grid-table default-display-none">
