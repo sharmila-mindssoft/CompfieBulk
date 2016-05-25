@@ -136,13 +136,14 @@ function loadcomplianceactivityreport(buttontype){
                 loadComplianceActivityReportList(data['activities']);
             }
             if(buttontype == "export"){
-                if (error == null){
-                    var download_url = data["link"];
-                    window.open(download_url, '_blank');
-                }
-                else {
-                    displayMessage(error);
-                }
+                var download_url = data["link"];
+                window.open(download_url, '_blank');
+                // if (error == null){
+                    
+                // }
+                // else {
+                //     displayMessage(error);
+                // }
             }
         }
         function onFailure(error){
