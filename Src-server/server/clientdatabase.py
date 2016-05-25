@@ -7880,7 +7880,7 @@ class ClientDatabase(Database):
     def get_delayed_compliances(
         self, domain_id, country_id, where_qry, from_count, to_count
     ):
-        query = "SELECT distinct c.compliance_id, c.compliance_task, c.document_name, \
+        query = "SELECT  c.compliance_id, c.compliance_task, c.document_name, \
             ac.statutory_dates, c.compliance_description, c.penal_consequences, c.frequency_id, \
             (select frequency from tbl_compliance_frequency where frequency_id = c.frequency_id ), \
             c.repeats_type_id, c.repeats_every, c.duration_type_id, c.duration, \
@@ -7909,6 +7909,8 @@ class ClientDatabase(Database):
                 where_qry,
                 from_count, to_count
             )
+        print
+        print query
         columns = [
             "compliance_id", "compliance_task", "document_name",
             "statutory_dates", "compliance_description", "penal_consequences",
@@ -7981,6 +7983,8 @@ class ClientDatabase(Database):
                 domain_id, country_id,
                 where_qry
             )
+        print
+        print q_count
         c_row = self.select_one(q_count)
         if c_row :
             total = int(c_row[0])
