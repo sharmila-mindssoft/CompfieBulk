@@ -283,6 +283,8 @@ function compliancealreadyexists(){
 }
 function showSideBar(idval, data){
     $('.half-width-task-details').empty();
+    file_list = [];
+    $('.uploaded-filename').html('');
     clearMessage();
     var d = new Date().toLocaleDateString('en-GB', {
         year: 'numeric',
@@ -433,8 +435,8 @@ function showSideBar(idval, data){
                 }
                 function onFailure(error){
                     hideLoader();
-                    displayMessage(message.unsupported_file);
-                    console.log(error);
+                    //displayMessage(message.unsupported_file);
+                    displayMessage(error);
                 }
                 displayLoader();
                 client_mirror.updateComplianceDetail(compliance_history_id, documents,
@@ -514,7 +516,7 @@ function uploadedfile(e){
                 var filename = data[i]['file_name']
                 fileclassname = filename.replace(/[^\w\s]/gi,"");
                 fileclassname = fileclassname.replace(/\s/g, "");
-                result += "<span class='"+fileclassname+"'>" + filename + "<img src='/images/delete.png' class='removeicon' style='width:16px;height:16px;' onclick='remove_temp_file(\""+fileclassname+"\")' /></span>";
+                result += "<span class='"+fileclassname+"'>" + filename + "<img src='/images/delete.png' class='removeicon' style='width:16px;height:16px;' onclick='remove_temp_file(\""+fileclassname+"\",\""+filename+"\")' /></span>";
             }
             $(".uploaded-filename").html(result);
         }
@@ -523,8 +525,13 @@ function uploadedfile(e){
         }
     });
 }
-function remove_temp_file(classnameval){
+function remove_temp_file(classnameval,filename){
     $('.'+classnameval).remove();
+    for(var i=0; i<file_list.length; i++){
+        if(file_list[i]['file_name'] == filename){
+            file_list.splice(i,1);
+        }
+    }
     $("#upload_file").val("");
 }
 $(function() {

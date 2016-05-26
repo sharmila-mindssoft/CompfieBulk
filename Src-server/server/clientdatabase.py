@@ -5981,7 +5981,7 @@ class ClientDatabase(Database):
 
         q = " SELECT  \
             ac.country_id, ac.unit_id, ac.compliance_id, ac.statutory_dates ,\
-            ac. trigger_before_days, ac.due_date, ac.validity_date, \
+            ac.trigger_before_days, ac.due_date, ac.validity_date, \
             c.compliance_task, c.document_name, c.compliance_description, c.frequency_id, \
             ac.assignee, \
             s.service_provider_id, s.service_provider_name, s.address, s.contract_from, s.contract_to, s.contact_person, s.contact_no,  \
