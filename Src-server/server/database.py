@@ -4583,7 +4583,7 @@ class KnowledgeDatabase(Database):
             server_ip, server_port
         ]
         length_rows = self.get_data(
-            self.tblDatabaseServer, "company_ids",
+            self.tblMachines, "client_ids",
             db_server_condition
         )
         if length_rows:
