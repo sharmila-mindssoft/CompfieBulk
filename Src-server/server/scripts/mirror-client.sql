@@ -508,6 +508,3 @@ INSERT INTO tbl_notification_types VALUES(2, "Reminder");
 INSERT INTO tbl_notification_types VALUES(3, "Escalation");
 DROP TRIGGER IF EXISTS `after_tbl_statutory_notifications_units_insert`;
 INSERT INTO tbl_mobile_sync_versions VALUES(0, 0, 0, 0, 0);
-SET GLOBAL connect_timeout=120000;
-SET GLOBAL wait_timeout=120000;
-SET GLOBAL max_connections = 5000;
