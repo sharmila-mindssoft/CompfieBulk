@@ -248,7 +248,7 @@ function getFormAutocomplete(textval, listval, callback){
       for(var i in forms){
         if (~forms[i]["form_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([forms[i]["form_id"],forms[i]["form_name"]]); 
       }
-      var str='<li id="0" onclick="activate_text(this,'+callback+')">Login</li>';
+      //var str='<li id="0" onclick="activate_text(this,'+callback+')">Login</li>';
       for(var i in suggestions){
         str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
       }
