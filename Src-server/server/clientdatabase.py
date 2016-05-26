@@ -853,17 +853,17 @@ class ClientDatabase(Database):
         db_con.begin()
         columns = "client_id, user_id, email_id, employee_name, \
         employee_code, contact_no, created_on, is_admin, is_active"
+        if user.seating_unit_id is not None:
+            columns += ", seating_unit_id"
         q = "INSERT INTO tbl_client_users ({}) values ('{}', '{}', '{}', '{}', \
         '{}', '{}', now(), 0, 1".format(
             columns, client_id, user_id, user.email_id, user.employee_name,
             user.employee_code, user.contact_no
         )
         if user.seating_unit_id is not None:
-            columns += ", seating_unit_id"
             q += ",'{}')".format(user.seating_unit_id)
         else:
             q += ")"
-
         db_con.execute(q)
         db_con.commit()
         db_con.close()
@@ -952,13 +952,17 @@ class ClientDatabase(Database):
         )
         db_con.connect()
         db_con.begin()
+        condition = "where client_id ='{}' and user_id = '{}'".format(client_id, user.user_id)
         q = "UPDATE tbl_client_users set \
         employee_name = '{}', employee_code = '{}', \
-        contact_no = '{}', seating_unit_id = '{}' where client_id ='{}' \
-        and user_id = '{}'".format(
+        contact_no = '{}' ".format(
              user.employee_name, user.employee_code, user.contact_no,
-             user.seating_unit_id, client_id, user.user_id
+             user.seating_unit_id
         )
+        if user.seating_unit_id is not None:
+            q += ", seating_unit_id = '{}' {}".format(user.seating_unit_id, condition)
+        else:
+            q += condition
         db_con.execute(q)
         db_con.commit()
         db_con.close()
