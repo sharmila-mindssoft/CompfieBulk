@@ -62,7 +62,12 @@ function loadEscalations(escalations){
     if(str == '' && sno == 0){
       str += '<li style="text-align:center">'+"No Escalations Found"+"</li>"
     }
-   $('#escalationList').append(str);      
+   $('#escalationList').append(str);   
+      if(window.localStorage["CLIENT_ESCALATION_COUNT"] > sno){
+        $('#pagination').show();
+    }else{
+        $('#pagination').hide();
+    }   
 }
 
 function changeStatus(notification_id, read_status){
@@ -83,7 +88,7 @@ function changeStatus(notification_id, read_status){
   
   if(read_status == false){
     function onSuccess(response){
-      get_notification_count();
+        get_notification_count();
     }
     function onFailure(error) {
         displayMessage = error
@@ -105,11 +110,7 @@ function get_escalations(sno){
     function onSuccess(data){
     escalationsList = data['notifications'];
     loadEscalations(escalationsList);
-    if(escalationsList.length == 0){
-        $('#pagination').hide();
-    }else{
-        $('#pagination').show();
-    }
+ 
     hideLoader();
   }
   function onFailure(error){
