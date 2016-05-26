@@ -214,20 +214,14 @@ def get_serviceproviderwise_compliance(db, request, session_user):
         from_count = request.record_count
         to_count = RECORD_DISPLAY_COUNT
 
-        
         data, total_count = db.report_serviceproviderwise_compliance(
-        country_id, domain_id, statutory_id,
-        unit_id, service_provider_id, session_user,
-        from_count, to_count
+            country_id, domain_id, statutory_id,
+            unit_id, service_provider_id, session_user,
+            from_count, to_count
         )
 
         serviceprovider_wise_compliances_list = db.return_serviceprovider_report_data(data)
         return clientreport.GetServiceProviderWiseComplianceSuccess(serviceprovider_wise_compliances_list, total_count)
-
-        # serviceprovider_wise_compliances_list = db.get_serviceproviderwise_compliance_report(
-        #     country_id, domain_id, statutory_id, unit_id, service_provider_id, client_id, session_user
-        # )
-        # return clientreport.GetServiceProviderWiseComplianceSuccess(serviceprovider_wise_compliances_list)
 
 def get_compliancedetails_report_filters(db, request, session_user, client_id):
     user_company_info = db.get_user_company_details(session_user)
