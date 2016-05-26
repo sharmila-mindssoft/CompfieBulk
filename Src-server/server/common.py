@@ -79,3 +79,16 @@ def return_hour_minute(current_time):
 
 def return_date(current_time):
     return current_time.date()
+
+def insert(table, columns, values) :
+    columns = ",".join(columns)
+    stringValue = ""
+    for index, value in enumerate(values):
+        if(index < len(values)-1):
+            stringValue = stringValue+"'"+str(value)+"',"
+        else:
+            stringValue = stringValue+"'"+str(value)+"'"
+    query = "INSERT INTO %s (%s) VALUES (%s)" % (
+        table, columns, stringValue
+    )
+    return query

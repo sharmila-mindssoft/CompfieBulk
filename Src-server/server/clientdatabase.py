@@ -3278,25 +3278,24 @@ class ClientDatabase(Database):
         notification_text, extra_details, notification_type_id, notify_to_all=True
     ):
         def save_notification_users(notification_id, user_id):
-            if user_id is not "NULL" :
+            if user_id is not "NULL" and user_id is not None :
                 q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
                     VALUES (%s, %s)" % (notification_id, user_id)
+                print q
                 self.execute(q)
 
         notification_id = self.get_new_id("notification_id", "tbl_notifications_log")
         created_on = datetime.datetime.now()
-        if concurrence_person is None:
-            concurrence_person = "NULL"
         column = [
             "notification_id", "country_id", "domain_id",
             "legal_entity_id", "unit_id", "compliance_id",
-            "assignee", "concurrence_person", "approval_person", "notification_type_id",
+            "assignee", "approval_person", "notification_type_id",
             "notification_text", "extra_details", "created_on"
         ]
         values = [
             notification_id, country_id, domain_id,
             legal_entity_id, unit_id, compliance_id,
-            assignee, concurrence_person, approval_person, notification_type_id,
+            assignee, approval_person, notification_type_id,
             notification_text, extra_details, created_on
         ]
         if business_group_id is not None :
@@ -3305,6 +3304,10 @@ class ClientDatabase(Database):
         if division_id is not None :
             column.append("division_id")
             values.append(division_id)
+        if concurrence_person is not None :
+            column.append("concurrence_person")
+            values.append(concurrence_person)
+
         self.insert("tbl_notifications_log", column, values)
         save_notification_users(notification_id, assignee)
         if notify_to_all:
@@ -3697,6 +3700,8 @@ class ClientDatabase(Database):
                 group_by_name
             )
 
+        print
+        print query
         rows = self.select_all(query)
         columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
         return filter_ids, self.convert_to_dict(rows, columns)
@@ -3739,8 +3744,8 @@ class ClientDatabase(Database):
 
         filter_ids = []
 
-        inprogress_qry = " AND ((T2.duration_type_id =2 AND T1.due_date >= now()) or (T2.duration_type_id != 2 and T1.due_date >= CURDATE())) \
-                AND IFNULL(T1.approve_status,0) <> 1"
+        inprogress_qry = " AND ((IFNULL(T2.duration_type_id, 0) = 2 AND T1.due_date >= now()) or (IFNULL(T2.duration_type_id, 0) != 2 and T1.due_date >= CURDATE())) \
+                AND IFNULL(T1.approve_status,0) != 1"
 
         complied_qry = " AND T1.due_date >= T1.completion_date \
                 AND IFNULL(T1.approve_status,0) = 1"
@@ -3748,8 +3753,8 @@ class ClientDatabase(Database):
         delayed_qry = " AND T1.due_date < T1.completion_date \
                 AND IFNULL(T1.approve_status,0) = 1"
 
-        not_complied_qry = " AND ((T2.duration_type_id =2 AND T1.due_date < now()) or (T2.duration_type_id != 2 and T1.due_date < CURDATE())) \
-                AND IFNULL(T1.approve_status,0) <> 1"
+        not_complied_qry = " AND ((IFNULL(T2.duration_type_id, 0) = 2 AND T1.due_date < now()) or (IFNULL(T2.duration_type_id, 0) != 2 and T1.due_date < CURDATE())) \
+                AND IFNULL(T1.approve_status,0) != 1"
 
         filter_ids, inprogress = self.get_compliance_status(
                 inprogress_qry, request, user_id
@@ -6752,7 +6757,7 @@ class ClientDatabase(Database):
                     notification_type_id, session_user,
                     start_count, to_count
                 )
-        print 
+        print
         print query
         rows = self.select_all(query)
         columns_list = [
@@ -7679,8 +7684,8 @@ class ClientDatabase(Database):
         return result
 
     def get_not_opted_compliances_where_qry(
-        self, business_group_id, legal_entity_id, division_id, unit_id, 
-        leval_1_statutory_name, session_user 
+        self, business_group_id, legal_entity_id, division_id, unit_id,
+        leval_1_statutory_name, session_user
     ) :
         where_qry = ""
         admin_id = self.get_admin_id()
@@ -7711,7 +7716,7 @@ class ClientDatabase(Database):
             where_qry += " AND c.statutory_mapping like '%s' " % (leval_1_statutory_name + '%')
 
         return where_qry
-    
+
     def get_not_opted_compliances_count(
         self, country_id, domain_id, where_qry
     ) :
@@ -7736,19 +7741,19 @@ class ClientDatabase(Database):
         else :
             total = 0
         return total
-    
+
     def get_not_opted_compliances_with_count(
         self, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, leval_1_statutory_name,
         session_user, from_count, to_count
     ) :
         where_qry = self.get_not_opted_compliances_where_qry(
-            business_group_id, legal_entity_id, division_id, unit_id, 
+            business_group_id, legal_entity_id, division_id, unit_id,
             leval_1_statutory_name,  session_user
-        ) 
+        )
         total = self.get_not_opted_compliances_count(
             country_id, domain_id, where_qry
-        ) 
+        )
         result = self.get_not_opted_compliances(
             domain_id, country_id, where_qry, from_count, to_count
         )
@@ -7803,7 +7808,7 @@ class ClientDatabase(Database):
 
 
     def get_unassigned_compliances_where_qry(
-        self, business_group_id, legal_entity_id, division_id, unit_id, 
+        self, business_group_id, legal_entity_id, division_id, unit_id,
         leval_1_statutory_name, session_user
     ) :
         where_qry = ""
@@ -7869,12 +7874,12 @@ class ClientDatabase(Database):
         session_user, from_count, to_count
     ) :
         where_qry = self.get_unassigned_compliances_where_qry(
-            business_group_id, legal_entity_id, division_id, unit_id, 
+            business_group_id, legal_entity_id, division_id, unit_id,
             leval_1_statutory_name, session_user
-        ) 
+        )
         total = self.get_unassigned_compliances_count(
             country_id, domain_id, where_qry
-        ) 
+        )
         result = self.get_unassigned_compliances(
             domain_id, country_id, where_qry, from_count, to_count
         )
@@ -7929,9 +7934,9 @@ class ClientDatabase(Database):
         return result
 
     def get_delayed_compliances_where_qry(
-        self, business_group_id, legal_entity_id, division_id, unit_id, 
+        self, business_group_id, legal_entity_id, division_id, unit_id,
         leval_1_statutory_name, session_user
-    ) : 
+    ) :
         where_qry = ""
         admin_id = self.get_admin_id()
         if session_user > 0 and session_user != admin_id :
@@ -7966,9 +7971,9 @@ class ClientDatabase(Database):
         session_user
     ) :
         where_qry = self.get_delayed_compliances_where_qry(
-            business_group_id, legal_entity_id, division_id, unit_id, 
+            business_group_id, legal_entity_id, division_id, unit_id,
             leval_1_statutory_name, session_user
-        ) 
+        )
         q_count = "SELECT count(distinct ch.compliance_history_id) \
             FROM tbl_compliance_history ch \
             INNER JOIN tbl_assigned_compliances ac \
@@ -7994,16 +7999,16 @@ class ClientDatabase(Database):
         else :
             total = 0
         return total
-    
+
     def get_delayed_compliances_with_count(
         self, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, leval_1_statutory_name,
         session_user, from_count, to_count
     ) :
         where_qry = self.get_delayed_compliances_where_qry(
-            business_group_id, legal_entity_id, division_id, unit_id, 
+            business_group_id, legal_entity_id, division_id, unit_id,
             leval_1_statutory_name, session_user
-        ) 
+        )
         total = self.get_delayed_compliances_count(
             country_id, domain_id, business_group_id,
             legal_entity_id, division_id, unit_id, leval_1_statutory_name,
@@ -8065,7 +8070,7 @@ class ClientDatabase(Database):
 
 
     def get_not_complied_where_qry(
-        self, business_group_id, legal_entity_id, division_id, unit_id, 
+        self, business_group_id, legal_entity_id, division_id, unit_id,
         leval_1_statutory_name
     ):
         where_qry = ""
@@ -8116,7 +8121,7 @@ class ClientDatabase(Database):
         session_user, from_count, to_count
     ):
         where_qry = self.get_not_complied_where_qry(
-            business_group_id, legal_entity_id, division_id, unit_id, 
+            business_group_id, legal_entity_id, division_id, unit_id,
             leval_1_statutory_name
         )
         total = self.get_not_complied_compliances_count(
