@@ -1,4 +1,3 @@
-
 var remindersList;
 var sno=0;
 var notificationDict = [];
@@ -113,7 +112,7 @@ function changeStatus(notification_id, read_status){
 
   if(read_status == false){
     function onSuccess(response){
-        
+      get_notification_count();
     }
     function onFailure(error) {
         displayMessage = error
@@ -122,6 +121,7 @@ function changeStatus(notification_id, read_status){
         function (error, response) {
           if (error == null){
             onSuccess(response);
+
           }
           else {
             onFailure(error);

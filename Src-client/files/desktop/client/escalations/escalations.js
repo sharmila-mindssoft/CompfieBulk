@@ -83,7 +83,7 @@ function changeStatus(notification_id, read_status){
   
   if(read_status == false){
     function onSuccess(response){
-        
+      get_notification_count();
     }
     function onFailure(error) {
         displayMessage = error
