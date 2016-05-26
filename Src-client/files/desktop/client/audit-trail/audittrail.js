@@ -234,6 +234,7 @@ $('#pagination').click(function(){
     function onSuccess(data){    
         if(data['audit_trail_details'] == ''){
             $('#pagination').hide();
+            hideLoader();
             return;
         }
      
