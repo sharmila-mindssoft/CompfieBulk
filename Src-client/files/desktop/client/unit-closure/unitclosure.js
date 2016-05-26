@@ -33,6 +33,7 @@ function showPopup(unitId){
 	$('.popup-error-msg').html("");	
 	$("#password").val("");
 	$('#password').focus();
+	window.scrollTo(0, 0);
 }
 $('.close').click(function(){
 	$('#unitidval').val("");
