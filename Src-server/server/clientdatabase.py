@@ -852,12 +852,18 @@ class ClientDatabase(Database):
         db_con.connect()
         db_con.begin()
         columns = "client_id, user_id, email_id, employee_name, \
-        employee_code, contact_no, created_on, is_admin, is_active, seating_unit_id"
+        employee_code, contact_no, created_on, is_admin, is_active"
         q = "INSERT INTO tbl_client_users ({}) values ('{}', '{}', '{}', '{}', \
-        '{}', '{}', now(), 0, 1, '{}')".format(
+        '{}', '{}', now(), 0, 1".format(
             columns, client_id, user_id, user.email_id, user.employee_name,
-            user.employee_code, user.contact_no, user.seating_unit_id
+            user.employee_code, user.contact_no
         )
+        if user.seating_unit_id is not None:
+            columns += ", seating_unit_id"
+            q += ",'{}')".format(user.seating_unit_id)
+        else:
+            q += ")"
+
         db_con.execute(q)
         db_con.commit()
         db_con.close()
