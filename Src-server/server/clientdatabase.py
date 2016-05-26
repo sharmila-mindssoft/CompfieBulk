@@ -5970,7 +5970,6 @@ class ClientDatabase(Database):
             qry_where
         )
 
-        print q_count
         row = self.select_one(q_count)
         if row :
             count = row[0]
@@ -6004,7 +6003,6 @@ class ClientDatabase(Database):
             qry_where, from_count, to_count
         )
 
-        print q
         rows = self.select_all(q)
         data = self.convert_to_dict(rows, columns)
         return data, count
