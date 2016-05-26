@@ -1,5 +1,10 @@
 {% extends "files/desktop/client/home/container.html" %}
 {% block content %}
+
+<div class='loading-indicator-spin'>
+  <span><img src='/files/desktop/common/images/loading-img.gif' alt=""></span>
+</div>
+
   <div class="content-container">
     <div class="content-area">
       <div class="add-container">
@@ -68,6 +73,9 @@
 
 </table>
 
+<div align="center" style="padding-top:10px;">
+  <input type="button" value="Show more records" class="btn-submit" id="pagination">
+</div>
 <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
 </div>
 </div>
@@ -162,5 +170,14 @@
 </tr>
 </table>
 </div>
+
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+  <tr align="left" class="table-row-no-content">
+  <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+  </tr>
+  </table>
+</div>
+
 <script type="text/javascript" src="/files/desktop/client/service-provider-wise-compliance/serviceproviderwisecompliance.js"></script>
 {% endblock %}

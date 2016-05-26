@@ -4539,12 +4539,15 @@ class KnowledgeDatabase(Database):
         # self.update(self.tblDatabaseServer, columns, values, db_server_condition)
         self.update(self.tblMachines, columns, values, db_server_condition)
 
-    def update_client_db_details(self, host, client_id, db_username,
-            db_password, short_name, database_name, db_port):
+    def update_client_db_details(
+        self, host, client_id, db_username,
+        db_password, short_name, database_name, db_port
+    ):
         db_server_column = "company_ids"
         db_server_value = client_id
 
-        db_server_condition = "ip = '%s'" % str(host)
+        db_server_condition = "ip = '%s' and port = '%s'" % (str(host), str(db_port))
+        print db_server_condition
 
         self.append(
             self.tblDatabaseServer, db_server_column, db_server_value,
@@ -4580,10 +4583,11 @@ class KnowledgeDatabase(Database):
             server_ip, server_port
         ]
         length_rows = self.get_data(
-            self.tblDatabaseServer, db_server_column,
+            self.tblDatabaseServer, "company_ids",
             db_server_condition
         )
         if length_rows:
+            print length_rows
             company_ids = length_rows[0][0].split(",")
             if company_ids >= 30:
                 self.set_server_full(db_server_condition)
@@ -5507,7 +5511,7 @@ class KnowledgeDatabase(Database):
     def execute_bulk_insert(self, value_list, submitted_on=None) :
         table = "tbl_client_compliances"
         column = [
-            "client_compliance_id", "client_statutory_id",
+            "client_statutory_id",
             "compliance_id", "statutory_id", "statutory_applicable",
             "statutory_opted", "not_applicable_remarks",
             "compliance_applicable", "compliance_opted",
@@ -5540,7 +5544,7 @@ class KnowledgeDatabase(Database):
                 compliance_id = int(key)
                 compliance_applicable_status = int(value)
                 values = (
-                    'null', client_statutory_id, compliance_id,
+                    client_statutory_id, compliance_id,
                     level_1_id, applicable_status, applicable_status,
                     not_applicable_remarks,
                     compliance_applicable_status,  compliance_applicable_status,

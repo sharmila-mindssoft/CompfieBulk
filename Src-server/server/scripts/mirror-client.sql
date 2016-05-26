@@ -370,7 +370,7 @@ CREATE TABLE `tbl_statutory_notifications_log` (
   `statutory_notification_id` int(11) NOT NULL,
   `country_name` VARCHAR(50) NOT NULL,
   `domain_name` VARCHAR(50) NOT NULL,
-  `industry_name` VARCHAR(50) NOT NULL,
+  `industry_name` longtext NOT NULL,
   `statutory_nature` VARCHAR(50) NOT NULL,
   `statutory_provision` longtext,
   `applicable_location` longtext,
@@ -381,12 +381,12 @@ CREATE TABLE `tbl_statutory_notifications_log` (
 DROP TABLE IF EXISTS `tbl_statutory_notifications_units`;
 CREATE TABLE `tbl_statutory_notifications_units` (
   `statutory_notification_unit_id` int(11) NOT NULL,
-  `statutory_notification_id` int(11) NOT NULL,
-  `business_group_id` int(11) NOT NULL,
-  `legal_entity_id` int(11) NOT NULL,
-  `division_id` int(11) NOT NULL,
+  `statutory_notification_id` int(11) DEFAULT NULL,
+  `business_group_id` int(11) DEFAULT NULL,
+  `legal_entity_id` int(11) DEFAULT NULL,
+  `division_id` int(11) DEFAULT NULL,
   `unit_id` int(11) NOT NULL,
-  PRIMARY KEY (`statutory_notification_id`, `business_group_id`, `legal_entity_id`, `division_id`, `unit_id`)
+  PRIMARY KEY (`statutory_notification_unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_statutory_notification_status`;
 CREATE TABLE `tbl_statutory_notification_status` (

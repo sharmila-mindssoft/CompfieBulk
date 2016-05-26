@@ -10,7 +10,7 @@ from server.countrytimestamp import countries
 from server.emailcontroller import EmailHandler
 from server.common import (
     convert_to_dict, time_convertion,
-    return_hour_minute
+    return_hour_minute, insert
 )
 
 mysqlHost = KNOWLEDGE_DB_HOST
@@ -19,7 +19,7 @@ mysqlPassword = KNOWLEDGE_DB_PASSWORD
 mysqlDatabase = KNOWLEDGE_DATABASE_NAME
 mysqlPort = KNOWLEDGE_DB_PORT
 
-NOTIFY_TIME = "00:00"  # 12 AM
+NOTIFY_TIME = "10:55"  # 12 AM
 
 email = EmailHandler()
 
@@ -135,7 +135,7 @@ def save_in_notification(
     notification_text, extra_details, notification_type_id, notify_to_all=True
 ):
     def save_notification_users(notification_id, user_id):
-        if user_id is not "NULL" :
+        if user_id is not "NULL" and user_id is not None :
             q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
                 VALUES (%s, %s)" % (notification_id, user_id)
             cur = db.cursor()
@@ -144,25 +144,37 @@ def save_in_notification(
 
     notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
     created_on = get_current_date()
-    query = "INSERT INTO tbl_notifications_log \
-        (notification_id, country_id, domain_id, business_group_id, \
-        legal_entity_id, division_id, unit_id, compliance_id,\
-        assignee, concurrence_person, approval_person, notification_type_id,\
-        notification_text, extra_details, created_on\
-        ) VALUES (%s, %s, %s, %s, %s, %s, \
-        %s, %s, %s, %s, %s, %s, '%s', '%s', '%s')" % (
-            notification_id, country_id, domain_id, business_group_id,
-            legal_entity_id, division_id, unit_id, compliance_id,
-            assignee, concurrence_person, approval_person, notification_type_id,
-            notification_text, extra_details, created_on
-        )
+    column = [
+            "notification_id", "country_id", "domain_id",
+            "legal_entity_id", "unit_id", "compliance_id",
+            "assignee", "approval_person", "notification_type_id",
+            "notification_text", "extra_details", "created_on"
+        ]
+    values = [
+        notification_id, country_id, domain_id,
+        legal_entity_id, unit_id, compliance_id,
+        assignee, approval_person, notification_type_id,
+        notification_text, extra_details, created_on
+    ]
+    if business_group_id is not None :
+        column.append("business_group_id")
+        values.append(business_group_id)
+    if division_id is not None :
+        column.append("division_id")
+        values.append(division_id)
+    if concurrence_person is not None :
+        column.append("concurrence_person")
+        values.append(concurrence_person)
+
+    query = insert("tbl_notifications_log", column, values)
+    print query
     cursor = db.cursor()
     cursor.execute(query)
     # print "Notification saved"
     cursor.close()
     save_notification_users(notification_id, assignee)
     if notify_to_all:
-        if approval_person is not None :
+        if approval_person is not None and assignee != approval_person :
             save_notification_users(notification_id, approval_person)
         if concurrence_person is not None or concurrence_person is not "NULL" :
             save_notification_users(notification_id, concurrence_person)

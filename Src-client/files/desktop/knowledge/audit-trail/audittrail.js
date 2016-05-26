@@ -88,7 +88,7 @@ function apipass(lastdate, todaydate, userid, formid, sno){
         else{
             $("#pagination").hide();
             if(sno == 0){
-                $(".tbody-audittrail-list").val("No record found.");    
+                $(".tbody-audittrail-list").html("<tr><td colspan='4' align='center'>No record found.</td></tr>");    
             }            
         }
     }

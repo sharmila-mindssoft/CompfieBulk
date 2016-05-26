@@ -577,7 +577,7 @@ function initMirror() {
         file_size = file.size
         var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
 
-        if(file_name.contains('.')){
+        if(file_name.indexOf('.') !== -1){
             if (file_size > max_limit) {
                 callback("File max limit exceeded");
             }else if(file_extension == 'exe' || file_extension == 'xhtml' || file_extension == 'htm' || file_extension == 'html'){

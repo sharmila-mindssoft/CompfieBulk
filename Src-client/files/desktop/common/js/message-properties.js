@@ -133,7 +133,7 @@ var message = {
 	'bgroup_exists' : 'Business Group Name Already Exists',
 	'lentity_exists' : 'Legal Entity Name Already Exists',
 	'division_exists' : 'Division Name Already Exists',
-	'unitcode_exists' : 'Unit Code Already Exists',
+	'unitcode_exists' : 'Unit Code Already Exists. Try Regenerate Unit Code!',
 	'unitlocation_required' : 'Unit Location Required',
 	'unitlocation_invalid' : 'Unit Location Name Invalid',
 	'unitcode_required' : 'Unit Code Required',
