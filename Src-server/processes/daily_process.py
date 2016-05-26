@@ -448,15 +448,15 @@ def is_already_notified(
 
 def run_daily_process(country_id, current_date):
     client_info = get_client_database()
-    client_ids = get_contract_expiring_clients()
+    # client_ids = get_contract_expiring_clients()
     if client_info is not None :
         for client_id, db in client_info.iteritems() :
             try :
                 start_new_task(db, client_id, current_date, country_id)
                 db.commit()
                 check_service_provider_contract_period(db, client_id)
-                if client_id in client_ids and not is_already_notified(client_id):
-                    notify_before_contract_period(db, client_id)
+                # if client_id in client_ids and not is_already_notified(client_id):
+                #     notify_before_contract_period(db, client_id)
                 db.commit()
             except Exception, e :
                 print e
