@@ -4869,6 +4869,7 @@ class ClientDatabase(Database):
         else :
             count = 0
 
+
         q = " SELECT  \
             ac.country_id, ac.unit_id, ac.compliance_id, ac.statutory_dates ,\
             ac. trigger_before_days, ac.due_date, ac.validity_date, \
@@ -4908,6 +4909,7 @@ class ClientDatabase(Database):
             country_id, domain_id,
             qry_where, from_count, to_count
         )
+
         rows = self.select_all(q)
         data = self.convert_to_dict(rows, columns)
         return data, count
@@ -5836,6 +5838,7 @@ class ClientDatabase(Database):
             contact_no = row[6]
 
             user_ids = self.get_service_provider_user_ids(row[0], client_id)
+
             if unit_id is None and user_ids is not None:
                 unit_ids = self.get_service_provider_user_unit_ids(user_ids, client_id)
             else:
@@ -5916,6 +5919,158 @@ class ClientDatabase(Database):
                     service_provider_name, address, contract_from, contract_to, contact_person, contact_no,
                     unit_wise_compliances))
         return service_provider_wise_compliances_list
+
+    # serviceproviderwise compliance report
+    def report_serviceproviderwise_compliance(
+        self, country_id, domain_id, statutory_id, unit_id,
+        service_provider_id, session_user, from_count, to_count
+    ):
+        columns = [
+            "country_id", "unit_id", "compliance_id", "statutory_dates",
+            "trigger_before_days", "due_date", "validity_date",
+            "compliance_task", "document_name", "description", "frequency_id", 
+            "assignee", "service_provider_id",
+            "service_provider_name", "address", "contract_from",
+            "contract_to", "contact_person", "contact_no",
+            "unit_code", "unit_name", "frequency",
+            "duration_type", "repeat_type", "duration",
+            "repeat_every"
+        ]
+        qry_where = ""
+        admin_id = self.get_admin_id()
+        
+        if unit_id is not None :
+            qry_where += " AND u.unit_id = %s" % (unit_id)
+        if service_provider_id is not None :
+            qry_where += " AND s.service_provider_id = %s" % (service_provider_id)
+        if session_user > 0 and session_user != admin_id :
+            qry_where += " AND u.unit_id in \
+                (select us.unit_id from tbl_user_units us where \
+                    us.user_id = %s\
+                )" % int(session_user)
+
+        q_count = " SELECT  \
+            count(ac.compliance_id) \
+        FROM tbl_assigned_compliances ac \
+            INNER JOIN tbl_units u on ac.unit_id = u.unit_id \
+            INNER JOIN tbl_compliances c on ac.compliance_id = c.compliance_id \
+            INNER JOIN tbl_users ur on ur.user_id = ac.assignee and ur.is_service_provider = 1 \
+            INNER JOIN tbl_service_providers s on s.service_provider_id = ur.service_provider_id \
+            WHERE c.is_active = 1 \
+            and ac.country_id = %s and c.domain_id = %s  \
+            AND c.statutory_mapping like '%s' \
+            %s \
+        " % (
+            country_id, domain_id, statutory_id,
+            qry_where
+        )
+        row = self.select_one(q_count)
+        if row :
+            count = row[0]
+        else :
+            count = 0
+
+
+        q = " SELECT  \
+            ac.country_id, ac.unit_id, ac.compliance_id, ac.statutory_dates ,\
+            ac. trigger_before_days, ac.due_date, ac.validity_date, \
+            c.compliance_task, c.document_name, c.compliance_description, c.frequency_id, \
+            ac.assignee, \
+            s.service_provider_id, s.service_provider_name, s.address, s.contract_from, s.contract_to, s.contact_person, s.contact_no,  \
+            u.unit_code, u.unit_name, \
+            (select f.frequency from tbl_compliance_frequency f where f.frequency_id = c.frequency_id) frequency, \
+            (select duration_type from tbl_compliance_duration_type where duration_type_id = c.duration_type_id) AS duration_type, \
+            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = c.repeats_type_id) AS repeat_type, \
+            c.duration, c.repeats_every \
+        FROM tbl_assigned_compliances ac \
+            INNER JOIN tbl_units u on ac.unit_id = u.unit_id \
+            INNER JOIN tbl_compliances c on ac.compliance_id = c.compliance_id \
+            INNER JOIN tbl_users ur on ur.user_id = ac.assignee and ur.is_service_provider = 1 \
+            INNER JOIN tbl_service_providers s on s.service_provider_id = ur.service_provider_id \
+            WHERE c.is_active = 1 \
+            and ac.country_id = %s and c.domain_id = %s \
+            AND c.statutory_mapping like '%s' \
+            %s \
+        ORDER BY ac.assignee, u.unit_id \
+        limit %s, %s" % (
+            country_id, domain_id, statutory_id,
+            qry_where, from_count, to_count
+        )
+        rows = self.select_all(q)
+        data = self.convert_to_dict(rows, columns)
+        return data, count
+
+    def return_serviceprovider_report_data(self, data):
+        serviceprovider_wise = {}
+        for d in data :
+            statutory_dates = json.loads(d["statutory_dates"])
+            date_list = []
+            for date in statutory_dates :
+                s_date = core.StatutoryDate(
+                    date["statutory_date"],
+                    date["statutory_month"],
+                    date["trigger_before_days"],
+                    date.get("repeat_by")
+                )
+                date_list.append(s_date)
+
+            compliance_frequency = core.COMPLIANCE_FREQUENCY(
+                d["frequency"]
+            )
+
+            due_date = None
+            if(d["due_date"] is not None):
+                due_date = self.datetime_to_string(d["due_date"])
+
+            validity_date = None
+            if(d["validity_date"] is not None):
+                validity_date = self.datetime_to_string(d["validity_date"])
+
+            if d["frequency_id"] in (2, 3) :
+                summary = "Repeats every %s - %s" % (d["repeat_every"], d["repeat_type"])
+            elif d["frequency_id"] == 4 :
+                summary = "To complete within %s - %s" % (d["duration"], d["duration_type"])
+            else :
+                summary = None
+
+            if d["document_name"] in ["None", None, ""] :
+                name = d["compliance_task"]
+            else :
+                name = d["document_name"] + " - " + d["compliance_task"]
+            uname = d["unit_code"] + " - " + d["unit_name"]
+            compliance = clientreport.ComplianceUnit(
+                name, uname,
+                compliance_frequency, d["description"],
+                date_list, due_date, validity_date,
+                summary
+            )
+
+            group_by_serviceprovider = serviceprovider_wise.get(d["service_provider_name"])
+            if group_by_serviceprovider is None :
+                unit_wise = {}
+                unit_wise[uname] = [compliance]
+                AC = clientreport.ServiceProviderCompliance(
+                    d["service_provider_name"], d["address"],
+                    self.datetime_to_string(d["contract_from"]),self.datetime_to_string(d["contract_to"]),
+                    d["contact_person"], d["contact_no"], unit_wise
+                )
+                AC.to_structure()
+                serviceprovider_wise[d["service_provider_name"]] = AC
+            else :
+                unit_wise_list = group_by_serviceprovider.unit_wise_compliance
+                if unit_wise_list is None :
+                    unit_wise_list = {}
+                    unit_wise_list[uname] = [compliance]
+                else :
+                    lst = unit_wise_list.get(uname)
+                    if lst is None :
+                        lst = []
+                    lst.append(compliance)
+                    unit_wise_list[uname] = lst
+
+                group_by_serviceprovider.unit_wise_compliances = unit_wise_list
+                serviceprovider_wise[d["service_provider_name"]] = group_by_serviceprovider
+        return serviceprovider_wise.values()
 
     def get_compliance_details(
         self, country_id, domain_id, statutory_id,

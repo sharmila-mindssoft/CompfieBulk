@@ -1128,7 +1128,7 @@ function initClientMirror() {
     }
 
     function getServiceProviderWiseCompliance(
-        country_id, domain_id, statutory_id, unit_id, service_provider_id, csv, callback) {
+        country_id, domain_id, statutory_id, unit_id, service_provider_id, record_count, csv, callback) {
         var request = [
             "GetServiceProviderWiseCompliance", {
                 "country_id": country_id,
@@ -1136,6 +1136,7 @@ function initClientMirror() {
                 "statutory_id": statutory_id,
                 "unit_id": unit_id,
                 "service_provider_id": service_provider_id,
+                "record_count": record_count,
                 "csv": csv
             }
         ];

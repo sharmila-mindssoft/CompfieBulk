@@ -37,7 +37,7 @@ def process_client_report_requests(request, db) :
 
     elif type(request) is clientreport.GetServiceProviderWiseCompliance:
         logger.logClientApi("GetServiceProviderWiseCompliance", "process begin")
-        result = get_serviceproviderwise_compliance(db, request, session_user, client_id)
+        result = get_serviceproviderwise_compliance(db, request, session_user)
         logger.logClientApi("GetServiceProviderWiseCompliance", "process end")
 
     elif type(request) is clientreport.GetComplianceDetailsReportFilters:
@@ -201,7 +201,7 @@ def get_serviceprovider_report_filters(db, request, session_user):
         service_providers=service_providers_list
     )
 
-def get_serviceproviderwise_compliance(db, request, session_user, client_id):
+def get_serviceproviderwise_compliance(db, request, session_user):
     if request.csv:
         converter = ConvertJsonToCSV(db, request, session_user, client_id, "ServiceProviderWise")
         return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
@@ -211,14 +211,23 @@ def get_serviceproviderwise_compliance(db, request, session_user, client_id):
         statutory_id = request.statutory_id
         unit_id = request.unit_id
         service_provider_id = request.service_provider_id
+        from_count = request.record_count
+        to_count = RECORD_DISPLAY_COUNT
 
-        if service_provider_id is None :
-            service_provider_id = '%'
-
-        serviceprovider_wise_compliances_list = db.get_serviceproviderwise_compliance_report(
-            country_id, domain_id, statutory_id, unit_id, service_provider_id, client_id, session_user
+        
+        data, total_count = db.report_serviceproviderwise_compliance(
+        country_id, domain_id, statutory_id,
+        unit_id, service_provider_id, session_user,
+        from_count, to_count
         )
-        return clientreport.GetServiceProviderWiseComplianceSuccess(serviceprovider_wise_compliances_list)
+
+        serviceprovider_wise_compliances_list = db.return_serviceprovider_report_data(data)
+        return clientreport.GetServiceProviderWiseComplianceSuccess(serviceprovider_wise_compliances_list, total_count)
+
+        # serviceprovider_wise_compliances_list = db.get_serviceproviderwise_compliance_report(
+        #     country_id, domain_id, statutory_id, unit_id, service_provider_id, client_id, session_user
+        # )
+        # return clientreport.GetServiceProviderWiseComplianceSuccess(serviceprovider_wise_compliances_list)
 
 def get_compliancedetails_report_filters(db, request, session_user, client_id):
     user_company_info = db.get_user_company_details(session_user)
