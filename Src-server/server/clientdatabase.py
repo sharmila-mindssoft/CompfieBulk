@@ -1423,8 +1423,10 @@ class ClientDatabase(Database):
             where_qry += " AND form_id = '%s'" % (form_id)
 
         columns = "user_id, form_id, action, created_on"
-        where_qry += " ORDER BY activity_log_id DESC \
-        limit %s, %s " % (from_count, to_count)
+        where_qry += ''' AND action not like "%sLog In by%s" 
+        ORDER BY activity_log_id DESC limit %s, %s ''' % (
+            "%", "%", from_count, to_count
+        )
         rows = self.get_data(
             self.tblActivityLog, columns, where_qry
         )
