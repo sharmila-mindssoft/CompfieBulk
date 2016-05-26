@@ -135,7 +135,7 @@ function loadresult(filterList){
     }    
   }  
 
-  /*if(totalRecord == 0){
+  if(totalRecord == 0){
     var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
     var clone4=tableRow4.clone();
     $('.no_records', clone4).text('No Compliance Found');
@@ -149,21 +149,7 @@ function loadresult(filterList){
     }else{
       $('#pagination').show();
     }
-  }*/
-
-  if(sno == 0){
-    var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
-    var clone4=tableRow4.clone();
-    $('.no_records', clone4).text('No Compliance Found');
-    $('.tbody-serviceprovider').append(clone4);
-    /*$('#pagination').hide();*/
-    $('.compliance_count').text('');
-  }else{
-    $('.compliance_count').text("Showing " + 1 + " to " + sno);
   }
-
-  
-
 }
 
 //get report data from api
@@ -219,12 +205,7 @@ function loadCompliance(reportType){
           var clone5=tableRow5.clone();
           $('.tbody-serviceprovider').append(clone5);
         }
-        if(Object.keys(data["compliance_list"]).length == 0){
-          $('#pagination').hide();
-        }else{
-          $('#pagination').show();
-        }
-
+        
         loadresult(serviceProviderWiseComplianceList);
 
         if(reportType == "export"){
