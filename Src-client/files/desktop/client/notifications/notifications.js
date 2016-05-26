@@ -56,6 +56,11 @@ function loadNotifications(notifications){
       str += '<li style="text-align:center">'+"No Notification Found"+"</li>"
     }
     $('#notificationsList').append(str);    
+     if(window.localStorage["CLIENT_NOTIFICATION_COUNT"] > sno){
+        $('#pagination').show();
+    }else{
+        $('#pagination').hide();
+    }
 }
 
 function changeStatus(notification_id, read_status){
@@ -125,11 +130,7 @@ function get_notifications(sno){
     function onSuccess(data){
         notificationsList = data['notifications'];
         loadNotifications(notificationsList);
-        if(notificationsList.length == 0){
-            $('#pagination').hide();
-        }else{
-            $('#pagination').show();
-        }
+
         hideLoader();
     }
     function onFailure(error){

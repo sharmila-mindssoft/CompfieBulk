@@ -201,7 +201,7 @@ function loadClientDetailsList(data){
     if(totalRecord == 0){   
         var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
         var clone4=tableRow4.clone();
-        $('.no_records', clone4).text('No Compliance Found');
+        $('.no_records', clone4).text('No record Found');
         $('.tbody-clientdetails-list').append(clone4);
         $('#pagination').hide();
         $('.compliance_count').text('');

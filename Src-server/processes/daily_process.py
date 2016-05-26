@@ -18,7 +18,8 @@ from server.emailcontroller import EmailHandler
 from server.common import (
     convert_to_dict, time_convertion, return_date,
     addMonth, addDays, addYears,
-    create_new_date, convert_string_to_date
+    create_new_date, convert_string_to_date,
+    insert
 )
 
 mysqlHost = KNOWLEDGE_DB_HOST
@@ -285,7 +286,7 @@ def save_in_notification(
     notification_text, extra_details, notification_type_id, notify_to_all=True
 ):
     def save_notification_users(notification_id, user_id):
-        if user_id is not "NULL" :
+        if user_id is not "NULL" and user_id is not None  :
             q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
                 VALUES (%s, %s)" % (notification_id, user_id)
             cur = db.cursor()
@@ -294,20 +295,30 @@ def save_in_notification(
 
     notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
     created_on = datetime.datetime.now()
-    if concurrence_person is None:
-        concurrence_person = "NULL"
-    query = "INSERT INTO tbl_notifications_log \
-        (notification_id, country_id, domain_id, business_group_id, \
-        legal_entity_id, division_id, unit_id, compliance_id,\
-        assignee, concurrence_person, approval_person, notification_type_id,\
-        notification_text, extra_details, created_on\
-        ) VALUES (%s, %s, %s, %s, %s, %s, \
-        %s, %s, %s, %s, %s, %s, '%s', '%s', '%s')" % (
-            notification_id, country_id, domain_id, business_group_id,
-            legal_entity_id, division_id, unit_id, compliance_id,
-            assignee, concurrence_person, approval_person, notification_type_id,
-            notification_text, extra_details, created_on
-        )
+    column = [
+            "notification_id", "country_id", "domain_id",
+            "legal_entity_id", "unit_id", "compliance_id",
+            "assignee", "approval_person", "notification_type_id",
+            "notification_text", "extra_details", "created_on"
+        ]
+    values = [
+        notification_id, country_id, domain_id,
+        legal_entity_id, unit_id, compliance_id,
+        assignee, approval_person, notification_type_id,
+        notification_text, extra_details, created_on
+    ]
+    if business_group_id is not None :
+        column.append("business_group_id")
+        values.append(business_group_id)
+    if division_id is not None :
+        column.append("division_id")
+        values.append(division_id)
+    if concurrence_person is not None :
+        column.append("concurrence_person")
+        values.append(concurrence_person)
+
+    query = insert("tbl_notifications_log", column, values)
+
     cursor = db.cursor()
     cursor.execute(query)
     cursor.close()
@@ -365,10 +376,6 @@ def start_new_task(db, client_id, current_date, country_id):
     data = get_compliance_to_start(db, client_id, current_date, country_id)
     count = 0
     for d in data :
-        if d["division_id"] == 0 :
-            d["division_id"] = "NULL"
-        if d["concurrence_person"] == 0 :
-            d["concurrence_person"] = "NULL"
         approval_person = int(d["approval_person"])
         if d["frequency"] == 1 :
             next_due_date = "0000-00-00"
@@ -377,10 +384,10 @@ def start_new_task(db, client_id, current_date, country_id):
             next_due_date = trigger_before = None
             due_date = d["due_date"]
             next_due_date, trigger_before = start_next_due_date_task(d, due_date, approval_person)
-
-            while (next_due_date - timedelta(days=trigger_before)) <= current_date :
-                # start for next-due-date
-                next_due_date, trigger_before = start_next_due_date_task(d, next_due_date, approval_person)
+            if next_due_date is not None :
+                while (next_due_date - timedelta(days=trigger_before)) <= current_date :
+                    # start for next-due-date
+                    next_due_date, trigger_before = start_next_due_date_task(d, next_due_date, approval_person)
             update_assign_compliance_due_date(db, trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
 
         count += 1
