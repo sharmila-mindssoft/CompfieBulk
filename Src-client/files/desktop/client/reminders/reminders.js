@@ -1,6 +1,5 @@
-
 var remindersList;
-var sno=0;
+var sno = 0;
 var notificationDict = [];
 
 function clearMessage() {
@@ -58,7 +57,13 @@ function loadReminders(reminders){
     if(str == '' && sno == 0){
       str += '<li style="text-align:center">'+"No Reminders Found"+"</li>"
     }
-   $('#reminderList').append(str);      
+   $('#reminderList').append(str);    
+    if(window.localStorage["CLIENT_REMINDER_COUNT"] > sno){
+      $('#pagination').show();
+    }
+    else{
+      $('#pagination').hide();
+    }
 }
 
 function changeStatus(notification_id, read_status){
@@ -113,7 +118,7 @@ function changeStatus(notification_id, read_status){
 
   if(read_status == false){
     function onSuccess(response){
-        
+      get_notification_count();
     }
     function onFailure(error) {
         displayMessage = error
@@ -122,6 +127,7 @@ function changeStatus(notification_id, read_status){
         function (error, response) {
           if (error == null){
             onSuccess(response);
+
           }
           else {
             onFailure(error);
@@ -135,11 +141,8 @@ function get_reminders(sno){
   function onSuccess(data){
     remindersList = data['notifications'];
     loadReminders(remindersList);
-    if(remindersList.length == 0){
-        $('#pagination').hide();
-    }else{
-        $('#pagination').show();
-    }
+console.log(window.localStorage["CLIENT_REMINDER_COUNT"]+"==="+sno);
+  
     hideLoader();
   }
   function onFailure(error){
