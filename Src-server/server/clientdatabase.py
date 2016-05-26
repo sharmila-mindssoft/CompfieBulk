@@ -5963,12 +5963,13 @@ class ClientDatabase(Database):
             INNER JOIN tbl_service_providers s on s.service_provider_id = ur.service_provider_id \
             WHERE c.is_active = 1 \
             and ac.country_id = %s and c.domain_id = %s  \
-            AND c.statutory_mapping like '%s' \
+            AND SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1),'>>',- 1) = '%s'\
             %s \
         " % (
             country_id, domain_id, statutory_id,
             qry_where
         )
+
         row = self.select_one(q_count)
         if row :
             count = row[0]
@@ -5994,13 +5995,14 @@ class ClientDatabase(Database):
             INNER JOIN tbl_service_providers s on s.service_provider_id = ur.service_provider_id \
             WHERE c.is_active = 1 \
             and ac.country_id = %s and c.domain_id = %s \
-            AND c.statutory_mapping like '%s' \
+            AND SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1),'>>',- 1) = '%s'\
             %s \
         ORDER BY ac.assignee, u.unit_id \
         limit %s, %s" % (
             country_id, domain_id, statutory_id,
             qry_where, from_count, to_count
         )
+
         rows = self.select_all(q)
         data = self.convert_to_dict(rows, columns)
         return data, count
