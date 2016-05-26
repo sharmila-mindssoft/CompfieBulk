@@ -130,7 +130,7 @@ function get_escalations(sno){
 }
 
 $('#pagination').click(function(){
-    get_notifications(sno);
+    get_escalations(sno);
 });
 
 function initialize(){
