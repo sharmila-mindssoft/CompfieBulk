@@ -125,15 +125,15 @@ function showrecord(){
 }
 function apipass(sno, userid, lastdate, todaydate){
     function onSuccess(data){
-        if(data['audit_trail_details'] != ''){
+        if(data['login_trace'] != ''){
             userList = data['users'];
             logintraceList = data['login_trace'];        
-            console.log(JSON.stringify(logintraceList));
             loadrecords(logintraceList);
             $(".total-records").html("Total : "+sno+" records")
         }
         else{
             $("#pagination").hide();
+            console.log(sno);
             if(sno == 0){
                 $(".tbody-login-trace-list").html("<tr><td colspan='4' align='center'>No record found.</td></tr>");    
             }   
