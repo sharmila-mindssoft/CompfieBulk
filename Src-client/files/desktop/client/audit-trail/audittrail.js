@@ -204,13 +204,12 @@ function loadaudittrail(tempadlist){
                 dispFormname = 'Change Password';
             }
         }        
-
         if(tempadlist['form_id'] != 0){
             dispFormname = getFormName(tempadlist['form_id']);
         }
         $('.formname', clone).text(dispFormname);
-        $('.action', clone).text(tempadlist['action']);
-        $('.tbody-audittrail-list').append(clone);    
+        $('.action', clone).text(tempadlist['action']);     
+        $('.tbody-audittrail-list').append(clone);     
     }
 }
 $('#pagination').click(function(){
@@ -235,6 +234,7 @@ $('#pagination').click(function(){
     function onSuccess(data){    
         if(data['audit_trail_details'] == ''){
             $('#pagination').hide();
+            hideLoader();
             return;
         }
      
