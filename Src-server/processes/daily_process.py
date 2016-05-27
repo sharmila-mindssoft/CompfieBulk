@@ -7,7 +7,6 @@ import traceback
 import threading
 import MySQLdb as mysql
 from datetime import timedelta
-from expiry_report_generator import ExpiryReportGenerator as exp
 
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
