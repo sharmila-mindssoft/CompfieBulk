@@ -932,19 +932,23 @@ class ApprovalPersonNotBelongToUnit(Response):
         }
 
 class GetUserwiseCompliancesSuccess(Response):
-    def __init__(self, user_wise_compliances, users, units, two_level_approve, client_admin):
+    def __init__(
+        self, user_wise_compliances, users, units,
+        two_level_approve, client_admin, domains
+    ):
         self.user_wise_compliances = user_wise_compliances
         self.users = users
         self.units = units
         self.two_level_approve = two_level_approve
         self.client_admin = client_admin
+        self.domains = domains
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
                 "user_wise_compliances", "users", "units",
-                "two_level_approve", "client_admin"
+                "two_level_approve", "client_admin", "domains"
             ]
         )
         user_wise_compliances = data.get("user_wise_compliances")
@@ -962,9 +966,12 @@ class GetUserwiseCompliancesSuccess(Response):
         two_level_approve = parse_structure_Bool(two_level_approve)
         client_admin = data.get("client_admin")
         client_admin = parse_structure_UnsignedIntegerType_32("client_admin")
+        domains = data.get("domains")
+        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         return GetUserwiseCompliancesSuccess(
             user_wise_compliances, users, units,
-            two_level_approve, client_admin
+            two_level_approve, client_admin,
+            domains
         )
 
     def to_inner_structure(self):
@@ -973,7 +980,8 @@ class GetUserwiseCompliancesSuccess(Response):
             "users": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users),
             "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units),
             "two_level_approve": to_structure_Bool(self.two_level_approve),
-            "client_admin": to_structure_UnsignedIntegerType_32(self.client_admin)
+            "client_admin": to_structure_UnsignedIntegerType_32(self.client_admin),
+            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains)
         }
         return result
 
@@ -1671,7 +1679,12 @@ class ASSIGN_COMPLIANCE_USER(object):
 #
 
 class STATUTORYWISECOMPLIANCE(object):
-    def __init__(self, compliance_history_id, compliance_id, compliance_name, description, compliance_frequency, statutory_date, due_date, validity_date, summary):
+    def __init__(
+        self, compliance_history_id, compliance_id,
+        compliance_name, description, compliance_frequency,
+        statutory_date, due_date, validity_date, summary,
+        domain_id, trigger_before_days
+    ):
         self.compliance_history_id = compliance_history_id
         self.compliance_id = compliance_id
         self.compliance_name = compliance_name
@@ -1681,6 +1694,8 @@ class STATUTORYWISECOMPLIANCE(object):
         self.due_date = due_date
         self.validity_date = validity_date
         self.summary = summary
+        self.domain_id = domain_id
+        self.trigger_before_days = trigger_before_days
 
     @staticmethod
     def parse_structure(data):
@@ -1690,7 +1705,8 @@ class STATUTORYWISECOMPLIANCE(object):
                 "compliance_history_id", "compliance_id",
                 "compliance_name", "description",
                 "compliance_frequency", "statutory_date",
-                "due_date", "validity_date", "summary"
+                "due_date", "validity_date", "summary",
+                "domain_id", "trigger_before_days"
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
@@ -1711,11 +1727,15 @@ class STATUTORYWISECOMPLIANCE(object):
         validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         summary = data.get("summary")
         summary = parse_structure_OptionalType_CustomTextType_500(summary)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        trigger_before_days = data.get("trigger_before_days")
+        trigger_before_days = parse_structure_OptionalType_UnsignedIntegerType_32(trigger_before_days)
         return STATUTORYWISECOMPLIANCE(
             compliance_history_id, compliance_id, compliance_name,
             description, compliance_frequency,
             statutory_date, due_date, validity_date,
-            summary
+            summary, domain_id, trigger_before_days
         )
 
     def to_structure(self):
@@ -1728,7 +1748,9 @@ class STATUTORYWISECOMPLIANCE(object):
             "statutory_date": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_date),
             "due_date": to_structure_CustomTextType_20(self.due_date),
             "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
-            "summary": to_structure_OptionalType_CustomTextType_500(self.summary)
+            "summary": to_structure_OptionalType_CustomTextType_500(self.summary),
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
+            "trigger_before_days": to_structure_OptionalType_UnsignedIntegerType_32(self.trigger_before_days)
         }
 
 #

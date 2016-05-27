@@ -318,13 +318,13 @@ def process_get_user_wise_compliances(db, session_user, client_id):
     units = db.get_units_for_assign_compliance(session_user)
     two_level_approve = db.get_client_settings()
     client_admin = db.get_admin_info()
-
+    domains = db.get_domains_for_user(session_user)
     compliance_count = db.get_assigneewise_complaince_count(session_user)
 
     result = clienttransactions.GetUserwiseCompliancesSuccess(
         compliance_count, users, units,
         two_level_approve,
-        client_admin
+        client_admin, domains
     )
 
     return result
