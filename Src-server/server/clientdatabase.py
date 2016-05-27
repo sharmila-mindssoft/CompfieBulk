@@ -7052,6 +7052,7 @@ class ClientDatabase(Database):
                 %s \
                 t02.is_active =1 and t01.is_active = 1 \
                 GROUP BY t01.assignee " % (user_qry)
+
         self.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
         rows = self.select_all(q)
         self.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
@@ -8471,6 +8472,20 @@ class ClientDatabase(Database):
             history_columns.append("approved_on")
             history_values.append(1)
             history_values.append(current_time_stamp)
+            query = "SELECT frequency_id FROM %s tc WHERE tc.compliance_id = '%s' " % (
+                self.tblCompliances, compliance_id
+            )
+            rows = self.select_all(query)
+            columns = ["frequency_id"]
+            rows = self.convert_to_dict(rows, columns)
+            as_condition = " unit_id = '%d' and compliance_id = '%d'" % (
+                unit_id, compliance_id
+            )
+            self.update(
+                self.tblAssignedCompliances, ["is_active"], [0], as_condition,
+                client_id
+            )
+
         self.update(
             self.tblComplianceHistory, history_columns, history_values,
             history_condition
