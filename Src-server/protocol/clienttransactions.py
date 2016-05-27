@@ -453,18 +453,23 @@ class GetAssigneeCompliances(Request):
         }
 
 class ReassignCompliance(Request):
-    def __init__(self, r_from, assignee, a_name, c_person, a_person, compliances, r_reason):
+    def __init__(self, r_from, assignee, a_name, c_person, a_person, compliances, r_reason, new_units):
         self.reassigned_from = r_from
         self.assignee = assignee
         self.assignee_name = a_name
         self.concurrence_person = c_person
         self.approval_person = a_person
         self.compliances = compliances
-        self.reassigned_reason = r_reason
+        self.reassigned_reason = r_reason,
+        self.new_units = new_units
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["r_from", "assignee", "a_name", "c_person", "a_person", "compliances", "r_reason"])
+        data = parse_dictionary(data, [
+            "r_from", "assignee", "a_name",
+            "c_person", "a_person", "compliances", "r_reason",
+            "n_units"
+        ])
         reassigned_from = data.get("r_from")
         reassigned_from = parse_structure_UnsignedIntegerType_32(reassigned_from)
         assignee = data.get("assignee")
@@ -479,7 +484,12 @@ class ReassignCompliance(Request):
         compliances = parse_structure_VectorType_RecordType_clienttransactions_REASSIGNED_COMPLIANCE(compliances)
         reassigned_reason = data.get("r_reason")
         reassigned_reason = parse_structure_CustomTextType_500(reassigned_reason)
-        return ReassignCompliance(reassigned_from, assignee, assignee_name, concurrence_person, approval_person, compliances, reassigned_reason)
+        new_units = data.get("n_units")
+        new_units = parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(new_units)
+        return ReassignCompliance(
+            reassigned_from, assignee, assignee_name, concurrence_person,
+            approval_person, compliances, reassigned_reason, new_units
+        )
 
     def to_inner_structure(self):
         return {
@@ -490,6 +500,7 @@ class ReassignCompliance(Request):
             "a_person": to_structure_SignedIntegerType_8(self.approval_person),
             "compliances": to_structure_VectorType_RecordType_clienttransactions_REASSIGNED_COMPLIANCE(self.compliances),
             "r_reason": to_structure_CustomTextType_500(self.reassigned_reason),
+            "n_units": to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(self.new_units)
         }
 
 class GetComplianceApprovalList(Request):

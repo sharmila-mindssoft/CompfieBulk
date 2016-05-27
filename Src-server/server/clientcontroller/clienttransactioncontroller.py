@@ -316,22 +316,6 @@ def process_get_user_wise_compliances(db, session_user, client_id):
         session_user, client_id
     )
     units = db.get_units_for_assign_compliance(session_user)
-    # result = db.get_user_wise_compliance(session_user, client_id)
-    # assignee_wise_compliance = result[0]
-    # assignee_compliance_count = result[1]
-    # final_dict = {}
-
-    # for key, value in assignee_wise_compliance.iteritems():
-    #     unit_list = []
-    #     for k, v in value.iteritems():
-    #         unit_list.append(v)
-    #     no_of_compliance = assignee_compliance_count[key]
-    #     user_data = clienttransactions.USER_WISE_COMPLIANCE(
-    #         no_of_compliance,
-    #         unit_list
-    #     )
-    #     final_dict[key] = [user_data]
-
     two_level_approve = db.get_client_settings()
     client_admin = db.get_admin_info()
 
