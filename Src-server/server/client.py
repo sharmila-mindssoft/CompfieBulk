@@ -145,14 +145,17 @@ class ReplicationManager(object) :
         # print changes
         tbl_name = changes[0].tbl_name
         auto_id = self._auto_id_columns.get(tbl_name)
+        print tbl_name
         column_count = self._columns_count.get(tbl_name)
+        print column_count
         column_count -= 1
         assert auto_id is not None
         if error_ok:
             if column_count != len(changes):
                 return
         else:
-            assert column_count == len(changes)
+            if column_count != len(changes):
+                return
         # columns = [x.column_name for x in changes]
         i_column = []
         values = []
@@ -173,7 +176,6 @@ class ReplicationManager(object) :
             val
         )
         try :
-            pass
             self._db.execute(query)
 
         except Exception, e:
