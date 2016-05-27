@@ -322,7 +322,7 @@ CREATE TABLE `tbl_statutories_backup` (
   `statutory_mapping_id` int(11) NOT NULL,
   `country_name` varchar(50) NOT NULL,
   `domain_name` varchar(50) NOT NULL,
-  `industry_name` varchar(50) NOT NULL,
+  `industry_name` longtext NOT NULL,
   `statutory_nature` varchar(50) NOT NULL,
   `statutory_provision` longtext,
   `applicable_location` longtext,
