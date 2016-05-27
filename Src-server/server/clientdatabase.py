@@ -3497,7 +3497,7 @@ class ClientDatabase(Database):
 
         return clienttransactions.SaveAssignedComplianceSuccess()
 
-    def update_user_settings(self, new_units, client_id):
+    def update_user_settings(self, new_units, client_id=None):
         for n in new_units :
             user_id = n.user_id
             unit_ids = n.unit_ids
@@ -7044,10 +7044,14 @@ class ClientDatabase(Database):
         q = "SELECT t01.assignee, count( t01.compliance_id ) AS cnt \
                 FROM tbl_assigned_compliances t01 \
                 INNER JOIN tbl_compliances t02 ON t01.compliance_id = t02.compliance_id \
-                LEFT JOIN tbl_compliance_history t03 ON t01.compliance_id = t03.compliance_id \
-                AND t01.assignee = t03.completed_by \
+                LEFT JOIN tbl_compliance_history t03 ON t01.assignee = t03.completed_by \
                 AND t01.unit_id = t03.unit_id \
+                AND t01.compliance_id = t03.compliance_id \
                 AND IFNULL( t03.approve_status, 0 ) !=1 \
+                INNER JOIN tbl_client_statutories t04 ON t01.unit_id = t04.unit_id \
+                INNER JOIN tbl_client_compliances t05 ON t04.client_statutory_id = t05.client_statutory_id \
+                AND t01.compliance_id = t05.compliance_id \
+                AND IFNULL(t05.compliance_opted, 0) = 1\
                 WHERE \
                 %s \
                 t02.is_active =1 and t01.is_active = 1 \
@@ -7097,8 +7101,12 @@ class ClientDatabase(Database):
                 INNER JOIN \
             tbl_units t3 ON t1.unit_id = t3.unit_id \
             LEFT JOIN tbl_compliance_history t4 on \
-            t4.compliance_id = t1.compliance_id and t4.completed_by = t1.assignee \
-            and t4.unit_id = t1.unit_id \
+            t4.unit_id = t1.unit_id \
+            and t4.compliance_id = t1.compliance_id and t4.completed_by = t1.assignee \
+            INNER JOIN tbl_client_statutories t5 ON t1.unit_id = t5.unit_id \
+                INNER JOIN tbl_client_compliances t6 ON t5.client_statutory_id = t6.client_statutory_id \
+                AND t1.compliance_id = t6.compliance_id \
+                AND IFNULL(t6.compliance_opted, 0) = 1 \
         WHERE \
             t1.assignee = %s %s \
             and t1.is_active = 1 and ifnull(t4.approve_status, 0) != 1 \
@@ -7242,10 +7250,13 @@ class ClientDatabase(Database):
         created_on = self.get_date_time()
         reassigned_date = created_on.strftime("%Y-%m-%d")
         created_by = int(session_user)
+        new_unit_settings = request.new_units
         compliance_names = []
+        compliance_ids = []
         for c in compliances :
             unit_id = c.unit_id
             compliance_id = c.compliance_id
+            compliance_ids.append(compliance_id)
             compliance_names.append(c.compliance_name)
             due_date = c.due_date
             if due_date is not None :
@@ -7290,6 +7301,9 @@ class ClientDatabase(Database):
                     unit_id
                 )
                 self.execute(update_history)
+        if new_unit_settings is not None :
+            self.update_user_settings(new_unit_settings, client_id)
+
         compliance_names = " <br> ".join(compliance_names)
         if concurrence is None :
             action = " Following compliances has reassigned to assignee - %s and approval-person - %s <br> %s" % (
