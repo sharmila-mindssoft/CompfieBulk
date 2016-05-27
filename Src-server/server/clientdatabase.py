@@ -860,6 +860,7 @@ class ClientDatabase(Database):
             columns, client_id, user_id, user.email_id, user.employee_name,
             user.employee_code, user.contact_no
         )
+
         if user.seating_unit_id is not None:
             q += ",'{}')".format(user.seating_unit_id)
         else:
@@ -901,8 +902,6 @@ class ClientDatabase(Database):
         )
         notify_user_thread.start()
         return (result1 and result2 and result3 and result4)
-
-
 
     def update_user(self, user, session_user, client_id):
         result1 = None
@@ -1433,7 +1432,7 @@ class ClientDatabase(Database):
             where_qry += " AND form_id = '%s'" % (form_id)
 
         columns = "user_id, form_id, action, created_on"
-        where_qry += ''' AND action not like "%sLog In by%s" 
+        where_qry += ''' AND action not like "%sLog In by%s"
         ORDER BY activity_log_id DESC limit %s, %s ''' % (
             "%", "%", from_count, to_count
         )
@@ -2577,9 +2576,6 @@ class ClientDatabase(Database):
             self.tblComplianceHistory, self.tblCompliances, approval_user_ids,
             session_user, concurrence_condition, start_count, to_count
         )
-        # print
-        # print "approval query=========>"
-        # print query
         rows = self.select_all(query)
         is_two_levels = self.is_two_levels_of_approval()
         compliances = []
@@ -3293,7 +3289,6 @@ class ClientDatabase(Database):
             if user_id is not "NULL" and user_id is not None :
                 q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
                     VALUES (%s, %s)" % (notification_id, user_id)
-                print q
                 self.execute(q)
 
         notification_id = self.get_new_id("notification_id", "tbl_notifications_log")
@@ -3712,8 +3707,6 @@ class ClientDatabase(Database):
                 group_by_name
             )
 
-        print
-        print query
         rows = self.select_all(query)
         columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
         return filter_ids, self.convert_to_dict(rows, columns)
@@ -4165,7 +4158,7 @@ class ClientDatabase(Database):
 
         status_qry = ""
         if compliance_status == "Inprogress" :
-            status_qry = " AND ((T4.duration_type_id =2 AND T1.due_date >= now()) or (T4.duration_type_id != 2 AND T1.due_date >= CURDATE())) \
+            status_qry = " AND ((IFNULL(T4.duration_type_id,0) = 2 AND T1.due_date >= now()) or (IFNULL(T4.duration_type_id, 0) != 2 AND T1.due_date >= CURDATE())) \
                     AND IFNULL(T1.approve_status, 0) != 1"
 
         elif compliance_status == "Complied" :
@@ -4177,7 +4170,7 @@ class ClientDatabase(Database):
                 AND T1.approve_status = 1"
 
         elif compliance_status == "Not Complied" :
-            status_qry = " AND ((T4.duration_type_id =2 AND T1.due_date < now()) or (T4.duration_type_id != 2 AND T1.due_date < CURDATE())) \
+            status_qry = " AND ((IFNULL(T4.duration_type_id,0) =2 AND T1.due_date < now()) or (IFNULL(T4.duration_type_id,0) != 2 AND T1.due_date < CURDATE())) \
                 AND IFNULL(T1.approve_status, 0) != 1 "
 
         if filter_type == "Group" :
@@ -4358,7 +4351,7 @@ class ClientDatabase(Database):
         delayed_qry = " AND T1.due_date < T1.completion_date \
                 AND T1.approve_status = 1"
 
-        not_complied_qry = " AND ((T2.duration_type_id =2 AND T1.due_date < now()) or (T2.duration_type_id != 2 and T1.due_date < CURDATE())) \
+        not_complied_qry = " AND ((IFNULL(T2.duration_type_id, 0) =2 AND T1.due_date < now()) or (IFNULL(T2.duration_type_id, 0) != 2 and T1.due_date < CURDATE())) \
                 AND IFNULL(T1.approve_status,0) <> 1"
 
         chart_type = "Escalation"
@@ -5415,7 +5408,7 @@ class ClientDatabase(Database):
                 )
                 date_list.append(s_date)
 
-            format_file = r["format_file"].strip()
+            format_file = r["format_file"]
             format_file_size = r["format_file_size"]
             file_list = None
             download_file_list = None
@@ -5689,8 +5682,10 @@ class ClientDatabase(Database):
             logger.logClient("error", "clientdatabase.py-notify-compliance", e)
             print "Error while sending email : {}".format(e)
 
-    def concur_compliance(self, compliance_history_id, remarks,
-        next_due_date, validity_date, client_id):
+    def concur_compliance(
+        self, compliance_history_id, remarks,
+        next_due_date, validity_date, client_id
+    ):
         columns = ["concurrence_status", "concurred_on"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [1, self.get_date_time()]
@@ -5945,7 +5940,7 @@ class ClientDatabase(Database):
         columns = [
             "country_id", "unit_id", "compliance_id", "statutory_dates",
             "trigger_before_days", "due_date", "validity_date",
-            "compliance_task", "document_name", "description", "frequency_id", 
+            "compliance_task", "document_name", "description", "frequency_id",
             "assignee", "service_provider_id",
             "service_provider_name", "address", "contract_from",
             "contract_to", "contact_person", "contact_no",
@@ -5955,7 +5950,7 @@ class ClientDatabase(Database):
         ]
         qry_where = ""
         admin_id = self.get_admin_id()
-        
+
         if unit_id is not None :
             qry_where += " AND u.unit_id = %s" % (unit_id)
         if service_provider_id is not None :
@@ -6926,8 +6921,6 @@ class ClientDatabase(Database):
                     notification_type_id, session_user,
                     start_count, to_count
                 )
-        print
-        print query
         rows = self.select_all(query)
         columns_list = [
             "notification_id", "notification_text", "created_on",
@@ -7454,14 +7447,6 @@ class ClientDatabase(Database):
         IFNULL(completed_on, 0) = 0 " % (
             condition
         )
-        # print
-        # print "Normal compliances overdue count=====>"
-        # print "%s %s" % (query, other_compliance_condition)
-
-        # print
-        # print "Onoccurrence compliances overdue count=====>"
-        # print "%s %s" % (query, on_occurrence_condition)
-
         other_compliance_count = self.select_all("%s %s" % (
             query, other_compliance_condition)
         )[0][0]
@@ -7527,9 +7512,6 @@ class ClientDatabase(Database):
         ''' % (
             session_user, current_start_count, to_count
         )
-        # print
-        # print "current compliances query========>"
-        # print query
         rows = self.select_all(query)
         current_compliances_row = self.convert_to_dict(rows, columns)
         current_compliances_list = []
@@ -7649,9 +7631,6 @@ class ClientDatabase(Database):
                     self.tblCompliances, session_user, int(upcoming_start_count),
                     to_count
                 )
-        # print
-        # print "Upcoming compliances query"
-        # print query
         upcoming_compliances_rows = self.select_all(query)
 
         columns = ["due_date", "document_name", "compliance_task",
@@ -8086,8 +8065,6 @@ class ClientDatabase(Database):
                 where_qry,
                 from_count, to_count
             )
-        print
-        print query
         columns = [
             "compliance_id", "compliance_task", "document_name",
             "statutory_dates", "compliance_description", "penal_consequences",
@@ -8160,8 +8137,6 @@ class ClientDatabase(Database):
                 domain_id, country_id,
                 where_qry
             )
-        print
-        print q_count
         c_row = self.select_one(q_count)
         if c_row :
             total = int(c_row[0])
@@ -8221,7 +8196,6 @@ class ClientDatabase(Database):
                 where_qry,
                 from_count, to_count
             )
-        print query
         columns = [
             "compliance_id", "compliance_task", "document_name",
             "statutory_dates", "compliance_description", "penal_consequences",
@@ -8276,7 +8250,6 @@ class ClientDatabase(Database):
                 domain_id, country_id,
                 where_qry
             )
-        print q_count
         c_row = self.select_one(q_count)
         if c_row :
             total = int(c_row[0])
@@ -8718,7 +8691,6 @@ class ClientDatabase(Database):
             country_id, domain_id,
             qry_where,
         )
-        print qry_count
         rcount = self.select_one(qry_count)
         if rcount[0] :
             count = int(rcount[0])
@@ -8758,7 +8730,6 @@ class ClientDatabase(Database):
                 from_count, to_count
 
             )
-        print qry
         rows = self.select_all(qry)
         result = self.convert_to_dict(rows, columns)
         return result
@@ -9177,10 +9148,8 @@ class ClientDatabase(Database):
             employee_name = row["employee_name"]
             if row["employee_code"] not in ["None", None, ""]:
                 employee_name = "%s - %s" % (row["employee_code"], employee_name)
-            print "activity status before: {}".format(row["activity_status"])
             if row["activity_status"] == "Submited":
                 row["activity_status"] = "Submitted"
-            print "activity status after: {}".format(row["activity_status"])
             unit_wise_activities[unit_name][level_1_statutory][compliance_name].append(
                 clientreport.ActivityData(
                     activity_date=self.datetime_to_string(row["activity_date"]),
