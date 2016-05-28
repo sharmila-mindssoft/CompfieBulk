@@ -336,24 +336,24 @@ class NewUnitSettings(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "user_id", "u_ids", "d_id", "c_id"
+            "user_id", "u_ids", "d_ids", "c_ids"
         ])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         unit_ids = data.get("u_ids")
         unit_ids = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(unit_ids)
-        domain_id = data.get("d_id")
-        domain_id = parse_structure_OptionalType_UnsignedIntegerType_32(domain_id)
-        country_id = data.get("c_id")
-        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        domain_id = data.get("d_ids")
+        domain_id = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(domain_id)
+        country_id = data.get("c_ids")
+        country_id = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(country_id)
         return NewUnitSettings(user_id, unit_ids, domain_id, country_id)
 
     def to_structure(self):
         return {
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
             "u_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.unit_ids),
-            "d_id": to_structure_OptionalType_UnsignedIntegerType_32(self.domain_id),
-            "c_id": to_structure_UnsignedIntegerType_32(self.country_id)
+            "d_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.domain_id),
+            "c_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.country_id)
         }
 
 class SaveAssignedCompliance(Request):

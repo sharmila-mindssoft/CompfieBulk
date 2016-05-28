@@ -3501,8 +3501,8 @@ class ClientDatabase(Database):
         for n in new_units :
             user_id = n.user_id
             unit_ids = n.unit_ids
-            domain_id = n.domain_id
-            country_id = n.country_id
+            domain_ids = n.domain_id
+            country_ids = n.country_id
 
             user_units = self.get_user_unit_ids(user_id)
             user_units = [int(x) for x in user_units.split(',')]
@@ -3522,25 +3522,50 @@ class ClientDatabase(Database):
                 # action = "New units %s added for user %s while assign compliance " % (new_units, user_id)
                 # self.save_activity(user_id, 7, action)
 
-            if domain_id is not None :
-                user_domain_ids = self.get_user_domains(user_id)
-                user_domain_ids = [int(x) for x in user_domain_ids.split(',')]
-                if domain_id not in user_domain_ids :
-                    domain_columns = ["user_id", "domain_id"]
-                    values = (user_id, domain_id)
-                    value_list = [values]
-                    self.bulk_insert(self.tblUserDomains, domain_columns, value_list, client_id)
-                    # action = "New domains %s added for user %s while assign compliance " % (domain_id, user_id)
-                    # self.save_activity(user_id, 7, action)
+            user_domain_ids = self.get_user_domains(user_id)
+            user_domain_ids = [int(x) for x in user_domain_ids.split(',')]
+            new_domains = []
+            if domain_ids is not None :
+                for d_id in domain_ids :
+                    if d_id not in user_domain_ids :
+                        new_domains.append(d_id)
 
-            if country_id is not None :
-                user_countries = self.get_user_countries(user_id)
-                user_countries = [int(x) for x in user_countries.split(',')]
-                if country_id not in user_countries :
-                    country_columns = ["user_id", "country_id"]
-                    values = (user_id, country_id)
-                    value_list = [values]
-                    self.bulk_insert(self.tblUserCountries, country_columns, value_list, client_id)
+            if len(new_domains) > 0 :
+                domain_values_list = []
+                domain_columns = ["user_id", "domain_id"]
+                for domain_id in new_domains :
+                    domain_value_tuple = (int(user_id), int(domain_id))
+                    domain_values_list.append(domain_value_tuple)
+                self.bulk_insert(self.tblUserDomains, domain_columns, domain_values_list)
+
+                # if domain_id not in user_domain_ids :
+                #     domain_columns = ["user_id", "domain_id"]
+                #     values = (user_id, domain_id)
+                #     value_list = [values]
+                #     self.bulk_insert(self.tblUserDomains, domain_columns, value_list, client_id)
+                #     # action = "New domains %s added for user %s while assign compliance " % (domain_id, user_id)
+                #     # self.save_activity(user_id, 7, action)
+
+            user_countries = self.get_user_countries(user_id)
+            user_countries = [int(x) for x in user_countries.split(',')]
+            new_countries = []
+            if country_ids is not None :
+                for c_id in country_ids :
+                    if c_id not in user_countries :
+                        new_countries.append(c_id)
+
+            if len(new_countries) > 0 :
+                country_values_list = []
+                country_columns = ["user_id", "country_id"]
+                for country_id in new_countries :
+                    country_value_tuple = (int(user_id), int(country_id))
+                    country_values_list.append(country_value_tuple)
+                self.bulk_insert(self.tblUserCountries, country_columns, country_values_list)
+                # if country_id not in user_countries :
+                #     country_columns = ["user_id", "country_id"]
+                #     values = (user_id, country_id)
+                #     value_list = [values]
+                #     self.bulk_insert(self.tblUserCountries, country_columns, value_list, client_id)
 
 #
 #   Chart Api
