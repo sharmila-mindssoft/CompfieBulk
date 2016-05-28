@@ -7082,7 +7082,7 @@ class ClientDatabase(Database):
             "unit_name", "unit_code", "address", "postal_code",
             "frequency", "frequency_id", "duration_type", "duration", "duration_type_id",
             "repeat_type", "repeats_every",
-            "compliance_history_id", "current_due_date"
+            "compliance_history_id", "current_due_date", "domain_id", "trigger_before_days"
         ]
         q = " SELECT distinct t1.compliance_id, t1.unit_id, t1.statutory_dates, t1.assignee, \
             t1.due_date, t1.validity_date, t2.compliance_task, t2.document_name, \
@@ -7092,7 +7092,7 @@ class ClientDatabase(Database):
             (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) duration_type, t2.duration, t2.duration_type_id, \
             (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t2.repeats_type_id) repeat_type, t2.repeats_every, \
             t4.compliance_history_id, \
-            t4.due_date \
+            t4.due_date, t2.domain_id, t1.trigger_before_days \
             FROM \
                 tbl_assigned_compliances t1 \
                 INNER JOIN \
@@ -7186,7 +7186,7 @@ class ClientDatabase(Database):
                 compliance_name,
                 d["compliance_description"], frequency,
                 date_list, due_date, validity_date,
-                summary
+                summary, int(d["domain_id"]), d["trigger_before_days"]
             )
             assignee_data = assignee_wise_compliances.get(assignee)
             if assignee_data is None :
@@ -7253,6 +7253,11 @@ class ClientDatabase(Database):
         new_unit_settings = request.new_units
         compliance_names = []
         compliance_ids = []
+        reassing_columns = [
+            "unit_id", "compliance_id", "assignee",
+            "reassigned_from", "reassigned_date", "remarks",
+            "created_by", "created_on"
+        ]
         for c in compliances :
             unit_id = c.unit_id
             compliance_id = c.compliance_id
@@ -7263,17 +7268,11 @@ class ClientDatabase(Database):
                 due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
 
             history_id = c.compliance_history_id
-
-            query = " INSERT INTO tbl_reassigned_compliances_history \
-                (unit_id, compliance_id, assignee, \
-                reassigned_from, reassigned_date, remarks, \
-                created_by, created_on) \
-                VALUES (%s, %s, %s, %s, '%s', '%s', %s, '%s') " % (
-                    unit_id, compliance_id, assignee,
-                    reassigned_from, reassigned_date, reassigned_reason,
-                    created_by, created_on
-                )
-            self.execute(query)
+            values = [
+                unit_id, compliance_id, assignee, reassigned_from,
+                reassigned_date, reassigned_reason, created_by,
+                created_on
+            ]
 
             update_qry = "UPDATE tbl_assigned_compliances SET assignee=%s, is_reassigned=1, approval_person=%s "
             if concurrence not in [None, "None", 0, "null", "Null"] :
