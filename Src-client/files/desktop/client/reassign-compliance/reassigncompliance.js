@@ -458,6 +458,8 @@ function saveReassign(userId, assignComplianceAssigneeId, assignComplianceAssign
 //save reassign compliances 
 function submitcompliance(){
   displayLoader();
+  var newSettingsList = [];
+  var newSetting = null;
   var acUnitArray = [];
   var acDomainArray = [];
   
@@ -563,6 +565,7 @@ function submitcompliance(){
         }
       }
 
+      console.log(acDomainArray +'==='+userDomains)
       for(var k=0; k<acDomainArray.length; k++){
         if($.inArray(acDomainArray[k], userDomains) == -1){
           assigneeInserDomain.push(acDomainArray[k]);
@@ -696,7 +699,7 @@ function submitcompliance(){
           }
 
           assigneeText = assigneeText + "not applicable for Assignee. "
-          newSetting = client_mirror.newUnitSettings(assignComplianceAssigneeId, assigneeInserUnits, approvalInserDomain, approvalInserCountry);
+          newSetting = client_mirror.newUnitSettings(assignComplianceAssigneeId, assigneeInserUnits, assigneeInserDomain, approvalInserCountry);
           newSettingsList.push(newSetting);
         }
         if(concurrenceInserUnits.length > 0 || concurrenceInserDomain.length > 0){
@@ -736,7 +739,7 @@ function submitcompliance(){
           if(approvalInserCountry.length == 0){
             approvalInserCountry = null;
           }
-          
+
           approvalText = approvalText + "not applicable for Approval. ";
           newSetting = client_mirror.newUnitSettings(assignComplianceApprovalId, approvalInserUnits, approvalInserDomain, approvalInserCountry);
           newSettingsList.push(newSetting);
@@ -753,13 +756,13 @@ function submitcompliance(){
         }else{
           hideLoader();
         }
-      }else{
-        newSettingsList = null;
-        saveReassign (userId, assignComplianceAssigneeId,
-            assignComplianceAssigneeName,
-            assignComplianceConcurrenceId,
-            assignComplianceApprovalId, reassignCompliance, reason, newSettingsList);
-      }  
+    }else{
+      newSettingsList = null;
+      saveReassign (userId, assignComplianceAssigneeId,
+          assignComplianceAssigneeName,
+          assignComplianceConcurrenceId,
+          assignComplianceApprovalId, reassignCompliance, reason, newSettingsList);
+    }  
   }else{
     hideLoader();
     displayMessage(message.nocompliance_selected_forassign);
