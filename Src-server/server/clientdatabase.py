@@ -3466,7 +3466,7 @@ class ClientDatabase(Database):
         # self.bulk_insert("tbl_assigned_compliances", columns, value_list)
         self.on_duplicate_key_update("tbl_assigned_compliances", ",".join(columns), value_list, update_column)
         if new_unit_settings is not None :
-            self.update_user_settings(new_unit_settings, client_id)
+            self.update_user_settings(new_unit_settings)
 
         compliance_names = " <br> ".join(compliance_names)
         if request.concurrence_person_name is None :
@@ -3497,7 +3497,7 @@ class ClientDatabase(Database):
 
         return clienttransactions.SaveAssignedComplianceSuccess()
 
-    def update_user_settings(self, new_units, client_id=None):
+    def update_user_settings(self, new_units):
         for n in new_units :
             user_id = n.user_id
             unit_ids = n.unit_ids
@@ -7326,7 +7326,7 @@ class ClientDatabase(Database):
                 )
                 self.execute(update_history)
         if new_unit_settings is not None :
-            self.update_user_settings(new_unit_settings, client_id)
+            self.update_user_settings(new_unit_settings)
 
         compliance_names = " <br> ".join(compliance_names)
         if concurrence is None :
