@@ -3,7 +3,7 @@ from tornado.httpclient import HTTPRequest
 import json
 import traceback
 from replication.protocol import (
-    Response, GetChanges, GetChangesSuccess, InvalidReceivedCount
+    Response, GetChanges, InvalidReceivedCount
 )
 
 import logger
@@ -44,6 +44,10 @@ class ReplicationManager(object) :
         self._poll_url = "http://%s:%s/replication" % (ip, port)
         self._poll_old_data_url = "http://%s:%s/delreplicated" % (ip, port)
         # print "_received_count ================ " , self._received_count
+        self._countries = []
+        self._domains = []
+        self._get_client_countries()
+        self._get_client_domains()
 
     def _load_auto_id_columns(self):
         self._auto_id_columns = {
@@ -78,6 +82,34 @@ class ReplicationManager(object) :
             "tbl_countries": 2,
             "tbl_domains": 2
         }
+
+    def _get_client_countries(self):
+        country_list = None
+        self._db.begin()
+        try:
+            country_list = self._db.get_countries()
+            for c in country_list :
+                self._countries.append(int(c.country_id))
+            self._db.commit()
+        except Exception, e :
+            print e,
+            self._countries = None
+            self._db.rollback()
+        assert self._countries is not None
+
+    def _get_client_domains(self):
+        domain_list = None
+        self._db.begin()
+        try:
+            domain_list = self._db.get_domains()
+            for d in domain_list :
+                self._domains.append(int(d.domain_id))
+            self._db.commit()
+        except Exception, e :
+            print e,
+            self._domains = None
+            self._db.rollback()
+        assert self._domains is not None
 
     def _get_received_count(self):
         # assert self._received_count is None
@@ -159,6 +191,7 @@ class ReplicationManager(object) :
         # columns = [x.column_name for x in changes]
         i_column = []
         values = []
+        domain_id = None
         for x in changes:
             if x.value is None:
                 # values.append('')
@@ -166,6 +199,8 @@ class ReplicationManager(object) :
             else:
                 i_column.append(x.column_name)
                 values.append(str(x.value))
+                if tbl_name == "tbl_compliances" and x.column_name == "domain_id" :
+                    domain_id = int(x.value)
             val = str(values)[1:-1]
 
         query = "INSERT INTO %s (%s, %s) VALUES(%s, %s);" % (
@@ -176,7 +211,13 @@ class ReplicationManager(object) :
             val
         )
         try :
-            self._db.execute(query)
+            print domain_id, self._domains
+            print tbl_name
+
+            if tbl_name != "tbl_compliances" :
+                self._db.execute(query)
+            elif tbl_name == "tbl_compliances" and domain_id in self._domains :
+                self._db.execute(query)
 
         except Exception, e:
             pass
