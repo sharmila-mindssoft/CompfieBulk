@@ -903,7 +903,7 @@ function unitview(){
     if($("#client-user-id").val() != ""){
         unitids = $("#units").val().split(",");
     }
-    var str = '';
+    var str = '<li id="0" onclick="activateUnit(this)" > Select All</li> ';
 
     $('#unitList ul li:gt(0)').remove();
     var countryid = $("#country").val();
@@ -1016,22 +1016,35 @@ function unitview(){
     }
 }
 function activateUnit(element){
+
     var chkstatus = $(element).attr('class');
     if(chkstatus == "active"){
         $(element).removeClass("active");
+        if($(element).attr('id') == 0){
+            $("#unitList li.active").each( function( index, el ) {
+                $(el).removeClass("active");
+            });
+        }
     }
     else{
         $(element).addClass("active");
+        if($(element).attr('id') == 0){
+            $("#unitList li").each( function( index, el ) {
+                if($(el).attr('class') == '' || $(el).attr('class') == undefined){
+                    $(el).addClass("active");
+                }
+            });
+        }
     }
+    
     var selids='';
     var totalcount =  $("#unitList li.active").length;
-
     $("#unitList li.active").each( function( index, el ) {
         if (index === totalcount - 1) {
-            selids = selids+el.id;
+            if(el.id != 0) selids = selids+el.id;
         }
         else{
-            selids = selids+el.id+",";
+            if(el.id != 0) selids = selids+el.id+",";
         }
     });
     $("#units").val(selids);

@@ -8475,10 +8475,10 @@ class ClientDatabase(Database):
         else:
             completion_date = self.string_to_datetime(completion_date).date()
         history_values = [
-            completion_date,
+            current_time_stamp,
             ",".join(document_names),
             remarks,
-            current_time_stamp
+            completion_date
         ]
         if validity_date not in ["", None, "None"]:
             history_columns.append("validity_date")

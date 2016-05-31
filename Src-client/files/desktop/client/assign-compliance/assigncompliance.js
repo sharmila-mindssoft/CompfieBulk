@@ -188,9 +188,9 @@ function load_secondwizard(){
           }
           statutorydate +=  sMonth +' '+ sDay + ' ';
           if(statutory_date.length > 1){
-            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'-'+j+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
+            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'-'+j+'" placeholder="Days" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
           }else{
-            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
+            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'" placeholder="Days" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
           }
         }
 
@@ -226,7 +226,7 @@ function load_secondwizard(){
         $('.statutorydate', clone2).text(statutorydate);
         if(frequency != 'On Occurrence'){
           if(triggerdate == ''){
-          $('.triggerbefore', clone2).html(' <input type="text" value="" class="input-box trigger" id="triggerdate'+statutoriesCount+'" maxlength="3"/>');
+          $('.triggerbefore', clone2).html(' <input type="text" value="" class="input-box trigger" placeholder="Days" id="triggerdate'+statutoriesCount+'" maxlength="3"/>');
           $('.duedate', clone2).html('<input type="text" value="" class="input-box" readonly="readonly" id="duedate'+statutoriesCount+'" />');
           }
           else{
