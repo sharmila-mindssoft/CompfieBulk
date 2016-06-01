@@ -860,11 +860,10 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
                              tbl_auto_id,
                              column_name,
                              value,
-                             tbl_name,
-                             domain_id)
+                             tbl_name)
   SELECT @action, 0, NEW.compliance_id,
   'statutory_mapping', statutory_mapping,
-  'tbl_compliances', NEW.domain_id  FROM tbl_statutory_mappings
+  'tbl_compliances' FROM tbl_statutory_mappings
   WHERE statutory_mapping_id=NEW.statutory_mapping_id;
 
    INSERT INTO tbl_audit_log(action,
@@ -872,8 +871,7 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
                              tbl_auto_id,
                              column_name,
                              value,
-                             tbl_name,
-                             domain_id)
+                             tbl_name)
         VALUES (@action,
                 0,
                 NEW.compliance_id,
@@ -1336,7 +1334,7 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 'tbl_compliances');
    END IF;
 
-   IF issave = 1 THEN
+   IF @issave = 1 THEN
     UPDATE tbl_client_replication_status set is_new_data = 1 where
     client_id in (select client_id from tbl_client_domains where domain_id = OLD.domain_id);
    END IF ;
