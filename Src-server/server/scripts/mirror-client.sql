@@ -89,7 +89,8 @@ CREATE TABLE `tbl_client_groups` (
   `assignee_reminder` int(11) DEFAULT 7,
   `escalation_reminder_in_advance` int(11) DEFAULT 7,
   `escalation_reminder` int(11) DEFAULT 7,
-  `updated_on` TIMESTAMP NOT NULL DEFAULT current_timestamp on update current_timestamp
+  `updated_on` TIMESTAMP NOT NULL DEFAULT current_timestamp on update current_timestamp,
+  PRIMARY KEY (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_client_configurations`;
 CREATE TABLE `tbl_client_configurations` (

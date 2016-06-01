@@ -587,19 +587,19 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                 NEW.url_short_name,
                 'tbl_client_groups');
 
-    UPDATE tbl_client_replication_status set is_new_data = 1
-    WHERE client_id = NEW.client_id;
-
+    INSERT INTO tbl_client_replication_status (client_id, is_new_data) VALUES(NEW.client_id, 1);
 END
 //
 DELIMITER ;
+
 DROP TRIGGER IF EXISTS `after_tbl_client_groups_update`;
 DELIMITER //
 CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_groups`
  FOR EACH ROW BEGIN
    SET @action = 1;
-
+   SET @save = 0;
    IF OLD.group_name <> NEW.group_name THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -616,6 +616,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.logo_url <> NEW.logo_url THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -632,6 +633,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.logo_size <> NEW.logo_size THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -648,6 +650,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.contract_from <> NEW.contract_from THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -664,6 +667,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.contract_to <> NEW.contract_to THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -680,6 +684,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.no_of_user_licence <> NEW.no_of_user_licence THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -696,6 +701,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.total_disk_space <> NEW.total_disk_space THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -712,6 +718,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.total_disk_space_used <> NEW.total_disk_space_used THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -728,6 +735,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.is_sms_subscribed <> NEW.is_sms_subscribed THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -744,6 +752,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.url_short_name <> NEW.url_short_name THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -758,8 +767,10 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
                 'tbl_client_groups');
    END IF;
 
-    UPDATE tbl_client_replication_status set is_new_data = 1
-    WHERE client_id = NEW.client_id;
+    IF @save = 1 THEN
+        UPDATE tbl_client_replication_status set is_new_data = 1
+        WHERE client_id = NEW.client_id;
+    END IF;
 
 END
 //
