@@ -48,3 +48,17 @@ def parse_structure_VectorType_RecordType_protocol_Change(data):
 def parse_structure_OptionalType_Text(data):
     if data is '' or data is None : return None
     return parse_structure_Text(data)
+
+def parse_structure_Bool(data):
+    return parse_bool(data)
+
+def parse_structure_RecordType_protocol_Client(data):
+    from replication import protocol
+    return protocol.Client.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_protocol_Client(data) :
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(parse_structure_RecordType_protocol_Client(item))
+    return lst

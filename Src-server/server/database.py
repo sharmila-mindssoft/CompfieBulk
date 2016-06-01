@@ -18,7 +18,9 @@ from protocol import (
 from distribution.protocol import (
     Company, IPAddress
 )
-from replication.protocol import Change
+from replication.protocol import (
+    Change, Client
+)
 from server.emailcontroller import EmailHandler as email
 
 
@@ -258,14 +260,14 @@ class Database(object) :
     # To form a insert query
     ########################################################
     def insert(self, table, columns, values, client_id=None) :
-        columns = ",".join(columns)
+        columns = ", ".join(columns)
         stringValue = ""
         for index, value in enumerate(values):
             if(index < len(values)-1):
                 stringValue = stringValue+"'"+str(value)+"',"
             else:
                 stringValue = stringValue+"'"+str(value)+"'"
-        query = "INSERT INTO %s (%s) VALUES (%s)" % (
+        query = """INSERT INTO %s (%s) VALUES (%s)""" % (
             table, columns, stringValue
         )
         try:
@@ -273,7 +275,7 @@ class Database(object) :
         except Exception, e:
             logger.logKnowledgeApi("insert", query)
             logger.logKnowledgeApi("insert", e)
-            return
+            return False
 
 
     ########################################################
@@ -822,6 +824,8 @@ class KnowledgeDatabase(Database):
                 "column_name", "value", "client_id", "action"
             ]
             results = self.convert_to_dict(rows, columns)
+        if len(results) == 0 :
+            self.update_client_replication_status(client_id)
         return self.return_changes(results)
 
     def return_changes(self, data):
@@ -882,6 +886,34 @@ class KnowledgeDatabase(Database):
                 company_server_ip
             ))
         return results
+
+    def get_client_replication_list(self) :
+        q = "select client_id, is_new_data, is_new_domain, domain_id from tbl_client_replication_status \
+            where is_new_data = 1"
+        rows = self.select_all(q)
+        results = []
+        if rows :
+            column = [
+                "client_id", "is_new_data", "is_new_domain", "domain_id"
+            ]
+            results = self.convert_to_dict(rows, column)
+            print results
+        return self._return_clients(results)
+
+    def _return_clients(self, data):
+        results = []
+        for d in data :
+            results.append(Client(
+                int(d["client_id"]),
+                bool(d["is_new_data"]),
+                bool(d["is_new_domain"]),
+                d["domain_id"]
+            ))
+        return results
+
+    def update_client_replication_status(self, client_id):
+        q = "update tbl_client_replication_status set is_new_data = 0 where client_id = %s" % (client_id)
+        self.execute(q)
 
     #
     # Domain
@@ -1148,7 +1180,9 @@ class KnowledgeDatabase(Database):
             table_name, field, str(data)
         )
         try :
+            print query
             self.execute(query)
+
             return True
         except Exception, e :
             print e
@@ -2229,6 +2263,7 @@ class KnowledgeDatabase(Database):
 
         q = q + " ORDER BY country_name, domain_name, statutory_nature_name"
         rows = self.select_all(q)
+        print q
         columns = [
             "statutory_mapping_id", "country_id",
             "country_name", "domain_id", "domain_name", "industry_ids",
@@ -3094,7 +3129,8 @@ class KnowledgeDatabase(Database):
                     repeats_type = ""
                 columns.extend(["repeats_every", "repeats_type_id"])
                 values.extend([repeats_every, repeats_type])
-            self.insert(table_name, columns, values)
+            if self.insert(table_name, columns, values) is False :
+                return
             if is_format :
                 self.convert_base64_to_file(file_name, file_content)
                 is_format = False

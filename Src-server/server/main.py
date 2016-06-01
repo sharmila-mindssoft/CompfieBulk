@@ -22,7 +22,9 @@ from distribution.protocol import (
     CompanyServerDetails
 )
 from replication.protocol import (
-    GetChanges, GetChangesSuccess, InvalidReceivedCount, GetDelReplicatedSuccess
+    GetChanges, GetChangesSuccess,
+    InvalidReceivedCount, GetDelReplicatedSuccess,
+    GetClientChanges, GetClientChangesSuccess
 )
 from server.constants import (
     TEMPLATE_PATHS,
@@ -158,9 +160,13 @@ class API(object):
             db.get_servers()
         )
 
-    @api_request(
-        GetChanges
-    )
+    @api_request(GetClientChanges)
+    def handle_client_list(self, request, db) :
+        return GetClientChangesSuccess(
+            db.get_client_replication_list()
+        )
+
+    @api_request(GetChanges)
     def handle_replication(self, request, db):
         actual_count = db.get_trail_id()
         # print "actual_count ", actual_count
@@ -344,6 +350,7 @@ def run_server(port):
 
         api_urls_and_handlers = [
             ("/server-list", api.handle_server_list),
+            ("/client-list", api.handle_client_list),
             ("/replication", api.handle_replication),
             ("/delreplicated", api.handle_delreplicated),
             ("/knowledge/api/login", api.handle_login),

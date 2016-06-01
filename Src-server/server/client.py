@@ -3,7 +3,8 @@ from tornado.httpclient import HTTPRequest
 import json
 import traceback
 from replication.protocol import (
-    Response, GetChanges, InvalidReceivedCount
+    Response, GetChanges, InvalidReceivedCount,
+    GetClientChanges
 )
 
 import logger
@@ -14,8 +15,77 @@ import logger
 #
 
 __all__ = [
-    "ReplicationManager"
+    "ReplicationManager", "ClientReplicationManager"
 ]
+
+
+class ClientReplicationManager(object) :
+    def __init__(
+        self, io_loop, knowledge_server_address,
+        http_client, timeout_seconds, replication_added_callback
+    ) :
+        self._io_loop = io_loop
+        self._knowledge_server_address = knowledge_server_address
+        self._http_client = http_client
+        self._timeout_seconds = timeout_seconds
+        self._first_time = True
+        self._replication_added_callback = replication_added_callback
+        self._clients = {}
+        ip, port = self._knowledge_server_address
+        self._poll_url = "http://%s:%s/client-list" % (ip, port)
+        print
+        print self._poll_url
+        body = json.dumps(
+            GetClientChanges().to_structure()
+        )
+        print body
+        request = HTTPRequest(
+            self._poll_url, method="POST", body=body,
+            headers={"Content-Type": "application/json"},
+            request_timeout=10
+        )
+        self._request_body = request
+        self._io_loop.add_callback(self._poll)
+
+    def _poll(self) :
+        print "client list call"
+        # self._http_client.fetch(self._request_body, self._poll_response)
+
+        def on_timeout():
+            self._http_client.fetch(self._request_body, self._poll_response)
+
+        if self._first_time:
+            self._first_time = False
+            on_timeout()
+            return
+        self._io_loop.add_timeout(
+            time.time() + self._timeout_seconds, on_timeout
+        )
+
+    def _poll_response(self, response) :
+        print response.error
+        print response.body
+        err = "knowledge server poll for client-list "
+        if not response.error :
+            r = None
+            try :
+                r = Response.parse_structure(
+                    json.loads(response.body)
+                )
+            except Exception, e :
+                print err, e
+                self._poll()
+                return
+            assert r is not None
+            self._clients = {}
+            for client in r.clients :
+                self._clients[client.client_id] = client
+            self._replication_added_callback(self._clients)
+
+        else :
+            pass
+
+        self._poll()
 
 
 #
@@ -126,7 +196,7 @@ class ReplicationManager(object) :
     def _poll(self) :
         assert self._stop is False
         assert self._received_count is not None
-        # print "ReplicationManager poll for client_id = %s, _received_count = %s " % (self._client_id, self._received_count)
+        print "ReplicationManager poll for client_id = %s, _received_count = %s " % (self._client_id, self._received_count)
 
         def on_timeout():
             if self._stop:
@@ -157,6 +227,7 @@ class ReplicationManager(object) :
                 r = Response.parse_structure(
                     json.loads(response.body)
                 )
+
             except Exception, e:
                 print err, e
                 self._poll()
@@ -170,7 +241,9 @@ class ReplicationManager(object) :
         else :
             pass
             # print err, response.error
-        self._poll()
+        print len(r.changes)
+        if len(r.changes) > 0 :
+            self._poll()
 
     def _execute_insert_statement(self, changes, error_ok=False):
         assert (len(changes)) > 0
@@ -213,7 +286,7 @@ class ReplicationManager(object) :
         try :
             print domain_id, self._domains
             print tbl_name
-
+            print query
             if tbl_name != "tbl_compliances" :
                 self._db.execute(query)
             elif tbl_name == "tbl_compliances" and domain_id in self._domains :
@@ -340,5 +413,6 @@ class ReplicationManager(object) :
 
     def start(self):
         self._stop = False
+        print "poll started for ", self._client_id
         self._io_loop.add_callback(self._poll)
         self._io_loop.add_callback(self._poll_for_del)

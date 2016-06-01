@@ -15,7 +15,7 @@ from server.clientdatabase import ClientDatabase
 import clientcontroller as controller
 import mobilecontroller as mobilecontroller
 from webfrontend.client import CompanyManager
-from server.client import ReplicationManager
+from server.client import ReplicationManager, ClientReplicationManager
 
 import logger
 
@@ -83,7 +83,7 @@ class API(object):
             pass
 
     def server_added(self, servers):
-        # print "server_added called"
+        print "server_added called"
         # self._databases = {}
         try:
             #
@@ -112,16 +112,16 @@ class API(object):
                         db.connect()
                         if db._connection is not None :
                             self._databases[company_id] = db
-                            rep_man = ReplicationManager(
-                                self._io_loop,
-                                self._knowledge_server_address,
-                                self._http_client,
-                                db,
-                                company_id
-                            )
-                            # print "replication started ", company_id
-                            rep_man.start()
-                            self._replication_managers[company_id] = rep_man
+                            # rep_man = ReplicationManager(
+                            #     self._io_loop,
+                            #     self._knowledge_server_address,
+                            #     self._http_client,
+                            #     db,
+                            #     company_id
+                            # )
+                            # # print "replication started ", company_id
+                            # rep_man.start()
+                            # self._replication_managers[company_id] = rep_man
                     except Exception, e:
                         print e
                         logger.logClientApi(ip, port)
@@ -130,6 +130,36 @@ class API(object):
                         logger.logClient("error", "clientmain.py-server-added", e)
                         logger.logClientApi("Client database not available to connect ", company_id + "-" + company.to_structure())
                         continue
+
+            # After database connection client poll
+            def client_added(clients):
+                print "client_added"
+                for c, client in clients.iteritems():
+                    print c
+                    print client
+                    print self._databases
+                    _client_id = client.client_id
+                    client_db = self._databases.get(_client_id)
+                    if client_db is not None :
+                        rep_man = ReplicationManager(
+                            self._io_loop,
+                            self._knowledge_server_address,
+                            self._http_client,
+                            client_db,
+                            _client_id
+                        )
+                        print rep_man
+                        rep_man.start()
+                        self._replication_managers[_client_id] = rep_man
+
+            _client_manager = ClientReplicationManager(
+                self._io_loop,
+                self._knowledge_server_address,
+                self._http_client,
+                10,
+                client_added
+            )
+            print _client_manager
 
         except Exception, e :
             logger.logClientApi(e, "Server added")

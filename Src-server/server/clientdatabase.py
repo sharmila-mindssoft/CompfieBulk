@@ -3457,7 +3457,7 @@ class ClientDatabase(Database):
                     country_id, unit_id, compliance_id,
                     str(date_list), assignee,
                     approval, trigger_before, str(due_date),
-                    validity_date, int(session_user), created_on
+                    str(validity_date), int(session_user), created_on
                 ]
                 if concurrence is not None :
                     value.append(concurrence)
