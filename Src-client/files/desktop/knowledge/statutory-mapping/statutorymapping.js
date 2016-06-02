@@ -781,7 +781,8 @@ function load_compliance(){
     var display_image = '';
     var complianceFrequency=null;
     var repeatsval = null;
-    if(compliances[entity]["r_every"] != null && compliances[entity]["r_type_id"] != null){
+    if(compliances[entity]["r_every"] != null && compliances[entity]["r_type_id"] != null && 
+      compliances[entity]["r_every"] != 0 && compliances[entity]["r_type_id"] != 0){
       for (var rtype in complianceRepeatTypeList) {
         if(complianceRepeatTypeList[rtype]["repeat_type_id"] == compliances[entity]["r_type_id"]){
           repeatsval = complianceRepeatTypeList[rtype]["repeat_type"];
@@ -892,8 +893,12 @@ $("#temp_addcompliance").click(function() {
           return false;
         }
       }
-      statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
-      statutory_dates.push(statutory_date);
+
+      if($('#statutory_date').val() != '' || $('#statutory_month').val() != '' || $('#triggerbefore').val().trim().length > 0){
+        statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
+        statutory_dates.push(statutory_date);
+      }
+
     }else if (compliance_frequency == "2" || compliance_frequency == "3"){
         repeats_type = parseInt($('#repeats_type').val());
         repeats_every = parseInt($('#repeats_every').val());
@@ -1094,9 +1099,12 @@ function temp_editcompliance(edit_id){
   var compliance_frequency = compliances[edit_id]["f_id"];
   statutory_dates = compliances[edit_id]["statu_dates"];
   if(compliance_frequency == "1"){
-    $('#statutory_date').val(statutory_dates[0]["statutory_date"]);
-    $('#statutory_month').val(statutory_dates[0]["statutory_month"]);
-    $('#triggerbefore').val(statutory_dates[0]["trigger_before_days"]);
+    if(statutory_dates.length > 0){
+      $('#statutory_date').val(statutory_dates[0]["statutory_date"]);
+      $('#statutory_month').val(statutory_dates[0]["statutory_month"]);
+      $('#triggerbefore').val(statutory_dates[0]["trigger_before_days"]);
+    }
+    
     $('#Recurring').hide();
     $('#Occasional').hide();
     $('#One_Time').show();

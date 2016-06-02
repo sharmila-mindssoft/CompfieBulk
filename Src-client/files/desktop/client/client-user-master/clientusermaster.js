@@ -159,44 +159,44 @@ function loadClientUserList(){
         var serviceProviderId = userList[i]['service_provider_id'];
         var userGroupId = userList[i]['user_group_id'];
 
-        if(users["user_group_id"] != null){
-            var tableRow = $('#templates .table-users-list .table-row');
-            var clone = tableRow.clone();
-            sno = sno + 1;
-            $('.sno', clone).text(sno);
-            if (isActive == false && isPrimaryAdmin == true){
-                $('.employee-code-name', clone).text("Old Administrator");
-            }
-            else if(isActive == true && isPrimaryAdmin == true){
-                $('.employee-code-name', clone).text("Administrator");
-            }
-            else if(userList[i]["is_service_provider"] == true){
-                $('.employee-code-name', clone).text(getServiceProviderName(userList[i]["service_provider_id"])+" - "+users["employee_name"]);
-            }
-            else{
-                $('.employee-code-name', clone).text(users["employee_code"]+" - "+users["employee_name"]);
-            }
-
-            $(".username", clone).text(username);
-            $('.group-name', clone).text(getUserGroupName(userGroupId));
-            $('.level-name', clone).text("Level "+users["user_level"]);
-            if(userList[i]["is_service_provider"] == true){
-                $('.seating-unit', clone).html("-");
-            }
-            else if (seatingUnitId != null){
-             $('.seating-unit', clone).html('<abbr class="page-load" title="'+getUnitNameAndAddress(seatingUnitId)['unitAddress']+'"><img src="/images/icon-info.png" style="margin-right:10px"/>'+getUnitNameAndAddress(seatingUnitId)['unitName']);
-            }
-            if (userId != 0){
-                $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
-            }
-            if (isPrimaryAdmin == false){
-                $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+')"/>');
-                if (is_session_user_primary_admin == true){
-                    $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="user_isadmin('+userId+', '+adminstatus+')" />');
-                }
-            }
-            $('.tbody-users-list').append(clone);
+        //if(users["user_group_id"] != null){
+        var tableRow = $('#templates .table-users-list .table-row');
+        var clone = tableRow.clone();
+        sno = sno + 1;
+        $('.sno', clone).text(sno);
+        if (isActive == false && isPrimaryAdmin == true){
+            $('.employee-code-name', clone).text("Old Administrator");
         }
+        else if(isActive == true && isPrimaryAdmin == true){
+            $('.employee-code-name', clone).text("Administrator");
+        }
+        else if(userList[i]["is_service_provider"] == true){
+            $('.employee-code-name', clone).text(getServiceProviderName(userList[i]["service_provider_id"])+" - "+users["employee_name"]);
+        }
+        else{
+            $('.employee-code-name', clone).text(users["employee_code"]+" - "+users["employee_name"]);
+        }
+
+        $(".username", clone).text(username);
+        $('.group-name', clone).text(getUserGroupName(userGroupId));
+        $('.level-name', clone).text("Level "+users["user_level"]);
+        if(userList[i]["is_service_provider"] == true){
+            $('.seating-unit', clone).html("-");
+        }
+        else if (seatingUnitId != null){
+         $('.seating-unit', clone).html('<abbr class="page-load" title="'+getUnitNameAndAddress(seatingUnitId)['unitAddress']+'"><img src="/images/icon-info.png" style="margin-right:10px"/>'+getUnitNameAndAddress(seatingUnitId)['unitName']);
+        }
+        if (userId != 0){
+            $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
+        }
+        if (isPrimaryAdmin == false){
+            $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+')"/>');
+            if (is_session_user_primary_admin == true){
+                $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="user_isadmin('+userId+', '+adminstatus+')" />');
+            }
+        }
+        $('.tbody-users-list').append(clone);
+        //}
     }
 }
 function user_edit(userId){
