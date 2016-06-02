@@ -7784,9 +7784,13 @@ class ClientDatabase(Database):
         ON snl.statutory_notification_id = snu.statutory_notification_id \
                 INNER JOIN \
             tbl_units u ON snu.unit_id = u.unit_id \
+            INNER JOIN tbl_countries tc ON \
+            tc.country_id = snl.country_name \
+            INNER JOIN tbl_domains td ON \
+            td.domain_id = snl.domain_name \
         where \
-            snl.country_name like '%s' \
-            and snl.domain_name like '%s' \
+            tc.country_name = '%s' \
+            and td.domain_name = '%s' \
             %s \
             ORDER BY snl.updated_on" % (
                     country_name, domain_name,

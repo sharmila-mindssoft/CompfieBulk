@@ -825,7 +825,7 @@ class KnowledgeDatabase(Database):
             ]
             results = self.convert_to_dict(rows, columns)
         if len(results) == 0 :
-            self.update_client_replication_status(client_id)
+            self.update_client_replication_status(client_id, received_count)
         return self.return_changes(results)
 
     def get_trail_log_for_domain(self, client_id, domain_id, received_count, actual_count):
@@ -862,7 +862,7 @@ class KnowledgeDatabase(Database):
             results = self.convert_to_dict(rows, columns)
         print len(results)
         if len(results) == 0 :
-            self.update_client_replication_status(client_id, "domain_trail_id")
+            self.update_client_replication_status(client_id, 0, type="domain_trail_id")
         return self.return_changes(results)
 
     def return_changes(self, data):
@@ -948,9 +948,10 @@ class KnowledgeDatabase(Database):
             ))
         return results
 
-    def update_client_replication_status(self, client_id, type=None):
+    def update_client_replication_status(self, client_id, received_count, type=None):
         if type is None :
             q = "update tbl_client_replication_status set is_new_data = 0 where client_id = %s" % (client_id)
+            self.remove_trail_log(client_id, received_count)
         else :
             q = "update tbl_client_replication_status set is_new_domain = 0, domain_id = '' where client_id = %s" % (client_id)
         print q
@@ -3638,12 +3639,13 @@ class KnowledgeDatabase(Database):
             mapping_id
         )
         industry_ids = [
-            int(x) for x in old_record["industry_ids"][:-1].split(',')
+            (x) for x in old_record["industry_ids"][:-1].split(',')
         ]
-        if len(industry_ids) == 1:
-            industry_name = self.get_industry_by_id(industry_ids[0])
-        else :
-            industry_name = self.get_industry_by_id(industry_ids)
+        industry_ids = ','.join(industry_ids)
+        # if len(industry_ids) == 1:
+        #     industry_name = self.get_industry_by_id(industry_ids[0])
+        # else :
+        #     industry_name = self.get_industry_by_id(industry_ids)
         # provision = []
         # for sid in old_record["statutory_ids"][:-1].split(',') :
         #     data = self.get_statutory_by_id(int(sid))
@@ -3671,8 +3673,8 @@ class KnowledgeDatabase(Database):
         ]
         values = [
             notification_id, int(mapping_id),
-            old_record["country_name"], old_record["domain_name"],
-            industry_name, old_record["statutory_nature_name"],
+            old_record["country_id"], old_record["domain_id"],
+            industry_ids, old_record["statutory_nature_id"],
             mappings, geo_mappings, notification_text
         ]
         self.insert(tbl_statutory_notification, columns, values)

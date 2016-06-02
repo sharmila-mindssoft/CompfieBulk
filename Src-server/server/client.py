@@ -36,12 +36,12 @@ class ClientReplicationManager(object) :
         self._clients = {}
         ip, port = self._knowledge_server_address
         self._poll_url = "http://%s:%s/client-list" % (ip, port)
-        print
-        print self._poll_url
+        # print
+        # print self._poll_url
         body = json.dumps(
             GetClientChanges().to_structure()
         )
-        print body
+        # print body
         request = HTTPRequest(
             self._poll_url, method="POST", body=body,
             headers={"Content-Type": "application/json"},
@@ -51,7 +51,7 @@ class ClientReplicationManager(object) :
         self._io_loop.add_callback(self._poll)
 
     def _poll(self) :
-        print "client list call"
+        # print "client list call"
         # self._http_client.fetch(self._request_body, self._poll_response)
 
         def on_timeout():
@@ -66,8 +66,8 @@ class ClientReplicationManager(object) :
         )
 
     def _poll_response(self, response) :
-        print response.error
-        print response.body
+        # print response.error
+        # print response.body
         err = "knowledge server poll for client-list "
         if not response.error :
             r = None
@@ -202,7 +202,7 @@ class ReplicationManager(object) :
         print "ReplicationManager poll for client_id = %s, _received_count = %s " % (self._client_id, self._received_count)
 
         def on_timeout():
-            print time.time()
+            # print time.time()
             if self._stop:
                 return
             body = json.dumps(
