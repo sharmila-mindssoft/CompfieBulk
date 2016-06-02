@@ -123,6 +123,38 @@ class GetClientChanges(object):
         return {
         }
 
+class GetDomainChanges(object):
+    def __init__(self, client_id, domain_id, received_count, actual_count):
+        self.client_id = client_id
+        self.domain_id = domain_id
+        self.received_count = received_count
+        self.actual_count = actual_count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "client_id", "domain_id", "received_count",
+            "actual_count"
+        ])
+        client_id = data.get("client_id")
+        client_id = parse_structure_SignedIntegerType_64(client_id)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_SignedIntegerType_64(domain_id)
+        received_count = data.get("received_count")
+        received_count = parse_structure_SignedIntegerType_64(received_count)
+        actual_count = data.get("actual_count")
+        actual_count = parse_structure_SignedIntegerType_64(actual_count)
+        return GetDomainChanges(client_id, domain_id, received_count, actual_count)
+
+    def to_structure(self):
+        return {
+            "client_id": to_structure_SignedIntegerType_64(self.client_id),
+            "domain_id": to_structure_SignedIntegerType_64(self.domain_id),
+            "received_count": to_structure_SignedIntegerType_64(self.received_count),
+            "actual_count": to_structure_SignedIntegerType_64(self.actual_count)
+        }
+
+
 
 #
 # Response

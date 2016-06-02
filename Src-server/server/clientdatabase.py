@@ -102,12 +102,25 @@ class ClientDatabase(Database):
     # Replication
     #
 
-    def update_traild_id(self, audit_trail_id):
-        query = "UPDATE tbl_audit_log SET audit_trail_id=%s;" % (audit_trail_id)
+    def update_traild_id(self, audit_trail_id, get_type=None):
+        if get_type is None :
+            query = "UPDATE tbl_audit_log SET audit_trail_id=%s;" % (audit_trail_id)
+        else :
+            query = "UPDATE tbl_audit_log SET domain_trail_id=%s;" % (audit_trail_id)
         self.execute(query)
 
-    def get_trail_id(self):
-        query = "select IFNULL(MAX(audit_trail_id), 0) as audit_trail_id from tbl_audit_log;"
+    def reset_domain_trail_id(self):
+        q = "update  tbl_audit_log set domain_trail_id=0";
+        self.execute(q)
+
+    def get_trail_id(self, type=None):
+        if type is None :
+            query = "select IFNULL(MAX(audit_trail_id), 0) as audit_trail_id from tbl_audit_log;"
+            # row = self.select_one(query)
+            # trail_id = row[0]
+            # return trail_id
+        else :
+            query = "select IFNULL(MAX(domain_trail_id), 0) as audit_trail_id from tbl_audit_log;"
         row = self.select_one(query)
         trail_id = row[0]
         return trail_id

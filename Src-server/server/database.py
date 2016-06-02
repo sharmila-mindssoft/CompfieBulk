@@ -828,6 +828,43 @@ class KnowledgeDatabase(Database):
             self.update_client_replication_status(client_id)
         return self.return_changes(results)
 
+    def get_trail_log_for_domain(self, client_id, domain_id, received_count, actual_count):
+        q = "SELECT tbl_auto_id from tbl_audit_log where audit_trail_id > %s and audit_trail_id < %s \
+            AND tbl_name = 'tbl_compliances' \
+            AND column_name = 'domain_id' \
+            AND value = %s limit 10" % (received_count, actual_count, domain_id)
+        q_rows = self.select_all(q)
+        auto_id = []
+        # print q
+        for r in q_rows :
+            auto_id.append(str(r[0]))
+
+        rows = None
+        if len(auto_id) > 0 :
+            query = "SELECT "
+            query += "  audit_trail_id, tbl_name, tbl_auto_id,"
+            query += "  column_name, value, client_id, action"
+            query += " from tbl_audit_log WHERE tbl_name = 'tbl_compliances' \
+                AND audit_trail_id>%s AND  \
+                tbl_auto_id IN (%s)  " % (
+                received_count,
+                ','.join(auto_id)
+            )
+            print "-"
+            # print query
+            rows = self.select_all(query)
+        results = []
+        if rows :
+            columns = [
+                "audit_trail_id", "tbl_name", "tbl_auto_id",
+                "column_name", "value", "client_id", "action"
+            ]
+            results = self.convert_to_dict(rows, columns)
+        print len(results)
+        if len(results) == 0 :
+            self.update_client_replication_status(client_id, "domain_trail_id")
+        return self.return_changes(results)
+
     def return_changes(self, data):
         results = []
         for d in data :
@@ -911,8 +948,21 @@ class KnowledgeDatabase(Database):
             ))
         return results
 
-    def update_client_replication_status(self, client_id):
-        q = "update tbl_client_replication_status set is_new_data = 0 where client_id = %s" % (client_id)
+    def update_client_replication_status(self, client_id, type=None):
+        if type is None :
+            q = "update tbl_client_replication_status set is_new_data = 0 where client_id = %s" % (client_id)
+        else :
+            q = "update tbl_client_replication_status set is_new_domain = 0, domain_id = '' where client_id = %s" % (client_id)
+        print q
+        self.execute(q)
+
+    def update_client_domain_status(self, client_id, domain_ids) :
+        q = "update tbl_client_replication_status set is_new_data =1, \
+            is_new_domain = 1, domain_id = '%s' where client_id = %s" % (
+                str((','.join(domain_ids))),
+                client_id
+            )
+        print q
         self.execute(q)
 
     #
@@ -4313,16 +4363,33 @@ class KnowledgeDatabase(Database):
         return self.bulk_insert(self.tblClientCountries, columns, values_list)
 
     def save_client_domains(self, client_id, domain_ids):
+        old_d = self.get_client_domains(client_id)
+        print "old_d"
+        print old_d
+        if old_d is not None :
+            old_d = old_d.split(',')
+            print old_d
+        else :
+            old_d = []
+        new_id = []
+
         values_list = []
         columns = ["client_id", "domain_id"]
         condition = "client_id = '%d'" % client_id
         self.delete(self.tblClientDomains, condition)
         for domain_id in domain_ids:
+            print "domain id not in old"
+            print domain_id, old_d
+            if str(domain_id) not in old_d :
+                new_id.append(str(domain_id))
             # client_domain_id = self.get_new_id(
             #     "client_domain_id", self.tblClientDomains
             # )
             values_tuple = (client_id, domain_id)
             values_list.append(values_tuple)
+        print new_id
+        if len(new_id) > 0 :
+            self.update_client_domain_status(client_id, new_id)
         return self.bulk_insert(self.tblClientDomains, columns, values_list)
 
     def replicate_client_countries_and_domains(self, client_id, country_ids, domain_ids):

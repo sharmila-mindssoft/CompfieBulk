@@ -22,7 +22,7 @@ from distribution.protocol import (
     CompanyServerDetails
 )
 from replication.protocol import (
-    GetChanges, GetChangesSuccess,
+    GetChanges, GetDomainChanges, GetChangesSuccess,
     InvalidReceivedCount, GetDelReplicatedSuccess,
     GetClientChanges, GetClientChangesSuccess
 )
@@ -179,6 +179,25 @@ class API(object):
         # print "replication client_id = %s, received_count = %s" % (client_id, received_count)
         res = GetChangesSuccess(
             db.get_trail_log(client_id, received_count)
+        )
+        return res
+
+    @api_request(GetDomainChanges)
+    def handle_domain_replication(self, request, db):
+        actual_count = db.get_trail_id()
+        client_id = request.client_id
+        domain_id = request.domain_id
+        received_count = request.received_count
+        actual_replica_count = request.actual_count
+
+        if received_count > actual_count :
+            return InvalidReceivedCount()
+
+        res = GetChangesSuccess(
+            db.get_trail_log_for_domain(
+                client_id, domain_id, received_count,
+                actual_replica_count
+            )
         )
         return res
 
@@ -352,6 +371,7 @@ def run_server(port):
             ("/server-list", api.handle_server_list),
             ("/client-list", api.handle_client_list),
             ("/replication", api.handle_replication),
+            ("/domain-replication", api.handle_domain_replication),
             ("/delreplicated", api.handle_delreplicated),
             ("/knowledge/api/login", api.handle_login),
             ("/knowledge/api/admin", api.handle_admin),
