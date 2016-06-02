@@ -903,7 +903,8 @@ function unitview(){
     if($("#client-user-id").val() != ""){
         unitids = $("#units").val().split(",");
     }
-    var str = '';
+    var isNoUnit = true;
+    var str = '<li id="0" onclick="activateUnit(this)" > Select All</li> ';
 
     $('#unitList ul li:gt(0)').remove();
     var countryid = $("#country").val();
@@ -939,6 +940,7 @@ function unitview(){
                                     }
                                     var unitId = parseInt(val["unit_id"]);
                                     var unitName = val["unit_name"];
+                                    isNoUnit = false;
                                     selectunitstatusd = '';
                                     for(var j=0; j<editunitvaldiv.length; j++){
                                         if(editunitvaldiv[j] == val["unit_id"]){
@@ -984,6 +986,7 @@ function unitview(){
                                 }
                                 var unitId = parseInt(val["unit_id"]);
                                 var unitName = val["unit_name"];
+                                isNoUnit = false;
                                 selectunitstatusl = "";
                                 for(var j=0; j<editunitvallegal.length; j++){
                                     if(editunitvallegal[j]==val["unit_id"]){
@@ -1010,28 +1013,43 @@ function unitview(){
         }
     }
 
+    if(isNoUnit) str = '';
+
     $('#unitList ul').append(str);
     for(var k = 0;  k < arrunits.length; k++){
         $("#"+arrunits[k]).addClass("active");
     }
 }
 function activateUnit(element){
+
     var chkstatus = $(element).attr('class');
     if(chkstatus == "active"){
         $(element).removeClass("active");
+        if($(element).attr('id') == 0){
+            $("#unitList li.active").each( function( index, el ) {
+                $(el).removeClass("active");
+            });
+        }
     }
     else{
         $(element).addClass("active");
+        if($(element).attr('id') == 0){
+            $("#unitList li").each( function( index, el ) {
+                if($(el).attr('class') == '' || $(el).attr('class') == undefined){
+                    $(el).addClass("active");
+                }
+            });
+        }
     }
+    
     var selids='';
     var totalcount =  $("#unitList li.active").length;
-
     $("#unitList li.active").each( function( index, el ) {
         if (index === totalcount - 1) {
-            selids = selids+el.id;
+            if(el.id != 0) selids = selids+el.id;
         }
         else{
-            selids = selids+el.id+",";
+            if(el.id != 0) selids = selids+el.id+",";
         }
     });
     $("#units").val(selids);
@@ -1115,7 +1133,7 @@ $("#seatingunitval").keyup(function(){
         displayMessage(message.usertype_required);
         return false;
     }
-    getUnitAutocomplete(textval, unitList, function(val){
+    getUnitNoConditionAutocomplete(textval, unitList, function(val){
         onUnitSuccess(val)
     })
 });

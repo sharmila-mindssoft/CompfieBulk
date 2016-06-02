@@ -2556,7 +2556,7 @@ class KnowledgeDatabase(Database):
         else :
             r_count = 0
 
-        q = "SELECT distinct t1.statutory_mapping_id, t2.country_id, \
+        q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
             t1.domain_id, \
             (select domain_name from tbl_domains where domain_id = t1.domain_id) domain_name, \

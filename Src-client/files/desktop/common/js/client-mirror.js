@@ -826,12 +826,12 @@ function initClientMirror() {
         }
     }
 
-    function newUnitSettings(userId, uIds, dId, cId) {
+    function newUnitSettings(userId, uIds, dIds, cIds) {
         return {
             "user_id": userId,
             "u_ids": uIds,
-            "d_id": dId,
-            "c_id": cId
+            "d_ids": dIds,
+            "c_ids": cIds
         }
     }
 
@@ -1674,7 +1674,7 @@ function initClientMirror() {
 
     function saveReassignCompliance(
         rFrom, rTo, aName, cPerson, aPerson,
-        cList, reason, callback
+        cList, reason, newUnits, callback
     ) {
         request = [
             "ReassignCompliance",
@@ -1685,7 +1685,8 @@ function initClientMirror() {
                 "c_person": cPerson,
                 "a_person": aPerson,
                 "compliances": cList,
-                "r_reason": reason
+                "r_reason": reason,
+                "n_units" : newUnits
             }
         ];
         callerName = "client_transaction";

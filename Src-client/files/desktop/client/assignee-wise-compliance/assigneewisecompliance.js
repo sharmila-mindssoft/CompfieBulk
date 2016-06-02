@@ -397,7 +397,9 @@ function onUnitSuccess(val){
 //load unit  form list in autocomplete text box  
 $("#unitval").keyup(function(){
   var textval = $(this).val();
-  getUnitAutocomplete(textval, unitsList, function(val){
+  var cId = $("#country").val();
+  var dId = $("#domain").val();
+  getUnitAutocomplete(textval, unitsList, cId, dId, function(val){
     onUnitSuccess(val)
   })
 });

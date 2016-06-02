@@ -3531,7 +3531,7 @@ class ClientDatabase(Database):
                 for unit_id in new_unit:
                     unit_value_tuple = (int(user_id), int(unit_id))
                     unit_values_list.append(unit_value_tuple)
-                self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
+                self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list)
                 # action = "New units %s added for user %s while assign compliance " % (new_units, user_id)
                 # self.save_activity(user_id, 7, action)
 
@@ -8488,10 +8488,10 @@ class ClientDatabase(Database):
         else:
             completion_date = self.string_to_datetime(completion_date).date()
         history_values = [
-            completion_date,
+            current_time_stamp,
             ",".join(document_names),
             remarks,
-            current_time_stamp
+            completion_date
         ]
         if validity_date not in ["", None, "None"]:
             history_columns.append("validity_date")
