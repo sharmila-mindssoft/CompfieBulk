@@ -903,6 +903,7 @@ function unitview(){
     if($("#client-user-id").val() != ""){
         unitids = $("#units").val().split(",");
     }
+    var isNoUnit = true;
     var str = '<li id="0" onclick="activateUnit(this)" > Select All</li> ';
 
     $('#unitList ul li:gt(0)').remove();
@@ -939,6 +940,7 @@ function unitview(){
                                     }
                                     var unitId = parseInt(val["unit_id"]);
                                     var unitName = val["unit_name"];
+                                    isNoUnit = false;
                                     selectunitstatusd = '';
                                     for(var j=0; j<editunitvaldiv.length; j++){
                                         if(editunitvaldiv[j] == val["unit_id"]){
@@ -984,6 +986,7 @@ function unitview(){
                                 }
                                 var unitId = parseInt(val["unit_id"]);
                                 var unitName = val["unit_name"];
+                                isNoUnit = false;
                                 selectunitstatusl = "";
                                 for(var j=0; j<editunitvallegal.length; j++){
                                     if(editunitvallegal[j]==val["unit_id"]){
@@ -1009,6 +1012,8 @@ function unitview(){
             });
         }
     }
+
+    if(isNoUnit) str = '';
 
     $('#unitList ul').append(str);
     for(var k = 0;  k < arrunits.length; k++){
@@ -1128,7 +1133,7 @@ $("#seatingunitval").keyup(function(){
         displayMessage(message.usertype_required);
         return false;
     }
-    getUnitAutocomplete(textval, unitList, function(val){
+    getUnitNoConditionAutocomplete(textval, unitList, function(val){
         onUnitSuccess(val)
     })
 });

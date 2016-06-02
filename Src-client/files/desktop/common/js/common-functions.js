@@ -376,27 +376,71 @@ function getDivisionAutocomplete(textval, listval, callback){
 //unit condition autocomplete function
 function getUnitConditionAutocomplete(textval, listval, callback){
   $("#ac-unit").show();
+
+  var le = '';
+  if($("#legalentityid").val() != undefined){
+    le = $("#legalentityid").val();
+  }else{
+    le = '';
+  }
+
+  var bg = '';
+  if($("#businessgroupid").val() != undefined){
+    bg = $("#businessgroupid").val();
+  }else{
+    bg = '';
+  }
+
+  var dv = '';
+  if($("#divisionid").val() != undefined){
+    dv = $("#divisionid").val();
+  }else{
+    dv = '';
+  }
+
+  var group = '';
+  if($("#group-id").val() != undefined){
+    group = $("#group-id").val();
+  }else{
+    group = '';
+  }
+
   var unit = listval;
     var suggestions = [];
     $('#ac-unit ul').empty();
-    if(textval.length>0){
+    if(textval.length>2){
         for(var i in unit){
-          var combineUnitName = unit[i]['unit_code']+"-"+unit[i]['unit_name'];
-          if($("#legalentityid").val() != ''){
-              if(unit[i]['legal_entity_id'] == $("#legalentityid").val()){
-                  if (~unit[i]['unit_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],combineUnitName ]);    
-              }       
+
+          var combineUnitName = '';
+          if(unit[i]['unit_code'] != undefined){
+            combineUnitName = unit[i]['unit_code']+"-"+unit[i]['unit_name'];
+          }else{
+            combineUnitName =unit[i]['unit_name'];
           }
-          else if($("#divisionid").val() != ''){
-              if(unit[i]['division_id']==$("#divisionid").val()){
-                  if (~unit[i]['unit_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],combineUnitName]);    
-              }       
+
+          if(dv != ''){
+            if(unit[i]['division_id'] == dv){
+                if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],combineUnitName]);    
+            }       
+          }
+          else if(le != ''){
+            if(unit[i]['legal_entity_id'] == le){
+                if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],combineUnitName ]);    
+            }       
+          }
+          else if(bg != ''){
+            if(unit[i]['business_group_id'] == bg){
+              if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],combineUnitName]);
+            }       
+          }
+          else if(group != ''){
+            if(unit[i]['client_id'] == group){
+              if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],combineUnitName]);
+            }       
           }
           else{
-              if(unit[i]['client_id'] == $("#group-id").val()){
-                  if (~unit[i]['unit_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],combineUnitName]);    
-              } 
-          }        
+              if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],combineUnitName]);    
+            }         
         }
         var str='';
         for(var i in suggestions){
@@ -406,6 +450,7 @@ function getUnitConditionAutocomplete(textval, listval, callback){
         //$("#unitid").val('');
     }
     else{
+      $("#seatingunit").val('');
       $("#unitid").val('');
       $(".ac-textbox").hide();
     }
@@ -413,36 +458,114 @@ function getUnitConditionAutocomplete(textval, listval, callback){
 
 
 //unit autocomplete function
-function getUnitAutocomplete(textval, listval, callback){
+function getUnitAutocomplete(textval, listval, cId, dId, callback){
   $("#ac-unit").show();
+  dId = parseInt(dId);
+  var le = '';
+  if($("#legalentity").val() != undefined){
+    le = $("#legalentity").val();
+  }else if($("#legalentityid").val() != undefined){
+    le = $("#legalentityid").val();
+  }else{
+    le = '';
+  }
+
+  var bg = '';
+  if($("#businessgroup").val() != undefined){
+    bg = $("#businessgroup").val();
+  }else if($("#businessgroupid").val() != undefined){
+    bg = $("#businessgroupid").val();
+  }else{
+    bg = '';
+  }
+
+  var dv = '';
+  if($("#division").val() != undefined){
+    dv = $("#division").val();
+  }else if($("#divisionid").val() != undefined){
+    dv = $("#divisionid").val();
+  }else{
+    dv = '';
+  }
   var units = listval;
-    var suggestions = [];
-    $('#ac-unit ul').empty();
-    if(textval.length>0){
-        for(var i in units){
-          var combineUnitName = '';
-          if(units[i]['unit_code'] != undefined){
-            combineUnitName = units[i]['unit_code']+"-"+units[i]['unit_name'];
-          }else{
-            combineUnitName =units[i]['unit_name'];
-          }
-          if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([units[i]["unit_id"],combineUnitName]);
-        }
-        var str='';
-        for(var i in suggestions){
-            str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
-        }
-        $('#ac-unit ul').append(str);
-        //$("#seatingunit").val('');
-        //$("#unit").val('');
-        //$("#unitid").val('');
-        
-    }else{
-      $("#seatingunit").val('');
-      $("#unit").val('');
-      $("#unitid").val('');
-      $(".ac-textbox").hide();
+  var suggestions = [];
+  $('#ac-unit ul').empty();
+  if(textval.length>2){
+    for(var i in units){
+      var combineUnitName = '';
+      if(units[i]['unit_code'] != undefined){
+        combineUnitName = units[i]['unit_code']+"-"+units[i]['unit_name'];
+      }else{
+        combineUnitName =units[i]['unit_name'];
+      }
+
+      if(dv != ''){
+        if(units[i]['division_id'] == dv){
+          if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase()) && cId == units[i]['country_id'] && 
+            ($.inArray(parseInt(dId), units[i]['domain_ids']) >= 0 || dId == 0) ) 
+            suggestions.push([units[i]["unit_id"],combineUnitName]);
+        }       
+      }
+      else if(le != ''){
+        if(units[i]['legal_entity_id'] == le){
+          if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase()) && cId == units[i]['country_id'] && 
+            ($.inArray(parseInt(dId), units[i]['domain_ids']) >= 0 || dId == 0) )
+            suggestions.push([units[i]["unit_id"],combineUnitName]);
+        }       
+      }
+      else if(bg != ''){
+        if(units[i]['business_group_id'] == bg){
+          if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase()) && cId == units[i]['country_id'] && 
+            ($.inArray(parseInt(dId), units[i]['domain_ids']) >= 0 || dId == 0) ) 
+            suggestions.push([units[i]["unit_id"],combineUnitName]);
+        }       
+      }
+      else{
+        if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase()) && cId == units[i]['country_id'] && 
+          ($.inArray(parseInt(dId), units[i]['domain_ids']) >= 0 || dId == 0) )
+          suggestions.push([units[i]["unit_id"],combineUnitName]);
+      }
     }
+    var str='';
+    for(var i in suggestions){
+      str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
+    }
+    $('#ac-unit ul').append(str);
+    //$("#seatingunit").val('');
+    //$("#unit").val('');
+    //$("#unitid").val('');
+    
+  }else{
+    $("#seatingunit").val('');
+    $("#unit").val('');
+    $("#unitid").val('');
+    $(".ac-textbox").hide();
+  }
+}
+
+
+//client master user creation unit autocomplete function
+function getUnitNoConditionAutocomplete(textval, listval, callback){
+  $("#ac-unit").show();
+  var unit = listval;
+  var suggestions = [];
+  $('#ac-unit ul').empty();
+  if(textval.length>2){
+      for(var i in unit){
+        var combineUnitName = combineUnitName = unit[i]['unit_code']+"-"+unit[i]['unit_name'];   
+         if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],combineUnitName]);            
+      }
+      var str='';
+      for(var i in suggestions){
+          str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
+      }
+      $('#ac-unit ul').append(str);
+      //$("#unitid").val('');
+  }
+  else{
+    $("#seatingunit").val('');
+    $(".ac-textbox").hide();
+  }
 }
 
 //reassignuser autocomplete function

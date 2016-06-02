@@ -806,7 +806,7 @@ function onUnitSuccess(val){
 //load unit with conditionform list in autocomplete text box  
 $("#seatingunitval").keyup(function(){
     var textval = $(this).val();
-    getUnitAutocomplete(textval, unitsList, function(val){
+    getUnitConditionAutocomplete(textval, unitsList, function(val){
         onUnitSuccess(val)
     })
 });

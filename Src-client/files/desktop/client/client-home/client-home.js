@@ -4155,7 +4155,7 @@ function ac_country_load(textval){
 //retrive legelentity form autocomplete value
 function onLegalEntitySuccess(val){
   $("#legalentityval").val(val[1]);
-  $("#legalentity").val(val[0]);
+  $("#legalentityid").val(val[0]);
 }
 
 //load legalentity form list in autocomplete text box
@@ -4173,7 +4173,9 @@ function onUnitSuccess(val){
 
 //load unit  form list in autocomplete text box
 function ac_unit_load(textval){
-  getUnitAutocomplete(textval, UNITLIST, function(val){
+  var cId = $("#country").val();
+  var dId = 0;
+  getUnitAutocomplete(textval, UNITLIST, cId, dId, function(val){
     onUnitSuccess(val)
   })
 }
