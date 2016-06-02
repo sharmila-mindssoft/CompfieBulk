@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS `tbl_audit_log`;
 CREATE TABLE `tbl_audit_log` (
-  `audit_trail_id` int(11) DEFAULT 0
+  `audit_trail_id` int(11) DEFAULT 0,
+  `domain_trail_id` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_form_type`;
 CREATE TABLE `tbl_form_type` (
@@ -459,7 +460,7 @@ ALTER TABLE `tbl_statutory_notification_status` ADD INDEX `user_id_idx` (`user_i
 ALTER TABLE `tbl_statutory_notifications_units` ADD CONSTRAINT `fk_statutory_notify_unit_id` FOREIGN KEY (`statutory_notification_id`) REFERENCES `tbl_statutory_notifications_log` (`statutory_notification_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE `tbl_statutory_notifications_units` ADD CONSTRAINT `fk_notify_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE tbl_compliance_history ADD UNIQUE INDEX `idx2_compliancce_history` (`unit_id`, `compliance_id`, `start_date`, `due_date`, `next_due_date`, `completed_by`);
-INSERT INTO tbl_audit_log VALUES(0);
+INSERT INTO tbl_audit_log VALUES(0, 0);
 INSERT INTO tbl_form_type VALUES(1, "Home");
 INSERT INTO tbl_form_type VALUES(2, "Master");
 INSERT INTO tbl_form_type VALUES(3, "Transaction");
