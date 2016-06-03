@@ -2476,7 +2476,7 @@ class ClientDatabase(Database):
         concurred_by = 0
         approved_by = 0
         if rows:
-            approved_by = rows [0][0]
+            approved_by = rows[0][0]
             if is_two_level:
                 concurred_by = rows[0][1]
         if validity_date is not None:
@@ -2549,7 +2549,6 @@ class ClientDatabase(Database):
         )[0][0]
         return concur_count + approve_count
 
-
     def get_compliance_approval_list(
         self, start_count, to_count, session_user, client_id
     ):
@@ -2591,7 +2590,6 @@ class ClientDatabase(Database):
         )
         rows = self.select_all(query)
         is_two_levels = self.is_two_levels_of_approval()
-        compliances = []
         assignee_wise_compliances = {}
         assignee_id_name_map = {}
         count = 0
@@ -2609,16 +2607,14 @@ class ClientDatabase(Database):
                         if len(file_extn_parts) > 1:
                             file_extn_part = file_extn_parts[len(file_extn_parts)-1]
                         if file_extn_part is not None:
-                            name  = "%s.%s" % (
+                            name = "%s.%s" % (
                                 file_name_part, file_extn_part
                             )
                             file_name.append(name)
                         else:
-                           file_name.append(file_name_part)
+                            file_name.append(file_name_part)
             concurred_by_id = None if row[8] is None else int(row[8])
-            approved_by_id = row[19]
             compliance_history_id = row[0]
-            compliance_id = row[1]
             start_date = self.datetime_to_string(row[2])
             due_date = self.datetime_to_string(row[3])
             documents = download_urls if len(download_urls) > 0 else None
@@ -2631,9 +2627,7 @@ class ClientDatabase(Database):
             delayed_by = None if row[10] < 0 else row[10]
             compliance_name = row[11]
             if row[15] not in (None, "None", "") :
-                compliance_name = "%s - %s"%(row[15], row[11])
-            compliance_description = row[12]
-            frequency_id = int(row[13])
+                compliance_name = "%s - %s" % (row[15], row[11])
             frequency = core.COMPLIANCE_FREQUENCY(row[14])
             description = row[12]
             concurrence_status = None if row[16] in [None, "None", ""] else bool(int(row[16]))
@@ -2676,7 +2670,7 @@ class ClientDatabase(Database):
                 clienttransactions.APPROVALCOMPLIANCE(
                     compliance_history_id, compliance_name, description, domain_name,
                     start_date, due_date, delayed_by, frequency, documents,
-                    file_names, completion_date, completed_on, next_due_date,
+                    file_names, completed_on, completion_date, next_due_date,
                     concurred_by, remarks, action, date_list, validity_date, unit_name
                 )
             )
@@ -2693,9 +2687,9 @@ class ClientDatabase(Database):
                 continue
         return approval_compliances, count
 
-    def get_user_name_by_id(self, user_id, client_id = None):
+    def get_user_name_by_id(self, user_id, client_id=None):
         employee_name = None
-        if user_id != None and user_id != 0:
+        if user_id is not None and user_id != 0:
             columns = "employee_code, employee_name"
             condition = "user_id ='{}'".format(user_id)
             rows = self.get_data(
@@ -3744,7 +3738,7 @@ class ClientDatabase(Database):
                 group_by_name,
                 group_by_name
             )
-
+        print query
         rows = self.select_all(query)
         columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
         return filter_ids, self.convert_to_dict(rows, columns)
@@ -7511,7 +7505,7 @@ class ClientDatabase(Database):
         columns = [
             "compliance_history_id", "start_date", "due_date", "validity_date",
             "next_due_date", "document_name", "compliance_task", "description",
-            "format_file", "unit","domain_name", "frequency", "remarks",
+            "format_file", "unit", "domain_name", "frequency", "remarks",
             "compliance_id", "duration_type_id"
         ]
         query = '''
@@ -9534,7 +9528,6 @@ class ClientDatabase(Database):
         rows = self.select_all(query)
         return rows[0][0]
 
-
     def get_assigneewise_compliances_drilldown_data(
         self, country_id, assignee_id, domain_id, client_id, year, unit_id,
         start_count, to_count, session_user
@@ -9566,11 +9559,11 @@ class ClientDatabase(Database):
                 '-', employee_name)'''
         subquery_columns = '''
             IF(
-                (approve_status = 1 and completed_on <= due_date),
+                (approve_status = 1 and completion_date <= due_date),
                 "Complied",
                 (
                     IF(
-                        (approve_status = 1 and completed_on > due_date),
+                        (approve_status = 1 and completion_date > due_date),
                         "Delayed",
                         (
                             IF (
@@ -9648,9 +9641,9 @@ class ClientDatabase(Database):
 
     def get_unit_user_ids(self, unit_id, client_id=None):
         columns = "group_concat(user_id)"
-        table = self.tblUnits
+        # table = self.tblUnits
         result = None
-        condition = " unit_id = '%d'"% unit_id
+        condition = " unit_id = '%d'" % unit_id
         rows = self.get_data(
             self.tblUserUnits, columns, condition
         )
