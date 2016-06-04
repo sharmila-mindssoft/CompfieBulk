@@ -850,7 +850,7 @@ class KnowledgeDatabase(Database):
                 received_count,
                 ','.join(auto_id)
             )
-            print "-"
+            # print "-"
             # print query
             rows = self.select_all(query)
         results = []
@@ -860,7 +860,7 @@ class KnowledgeDatabase(Database):
                 "column_name", "value", "client_id", "action"
             ]
             results = self.convert_to_dict(rows, columns)
-        print len(results)
+        # print len(results)
         if len(results) == 0 :
             self.update_client_replication_status(client_id, 0, type="domain_trail_id")
         return self.return_changes(results)
@@ -934,7 +934,7 @@ class KnowledgeDatabase(Database):
                 "client_id", "is_new_data", "is_new_domain", "domain_id"
             ]
             results = self.convert_to_dict(rows, column)
-            print results
+            # print results
         return self._return_clients(results)
 
     def _return_clients(self, data):
@@ -954,7 +954,7 @@ class KnowledgeDatabase(Database):
             self.remove_trail_log(client_id, received_count)
         else :
             q = "update tbl_client_replication_status set is_new_domain = 0, domain_id = '' where client_id = %s" % (client_id)
-        print q
+        # print q
         self.execute(q)
 
     def update_client_domain_status(self, client_id, domain_ids) :
@@ -963,7 +963,7 @@ class KnowledgeDatabase(Database):
                 str((','.join(domain_ids))),
                 client_id
             )
-        print q
+        # print q
         self.execute(q)
 
     #
@@ -1231,7 +1231,7 @@ class KnowledgeDatabase(Database):
             table_name, field, str(data)
         )
         try :
-            print query
+            # print query
             self.execute(query)
 
             return True
@@ -2314,7 +2314,7 @@ class KnowledgeDatabase(Database):
 
         q = q + " ORDER BY country_name, domain_name, statutory_nature_name"
         rows = self.select_all(q)
-        print q
+        # print q
         columns = [
             "statutory_mapping_id", "country_id",
             "country_name", "domain_id", "domain_name", "industry_ids",

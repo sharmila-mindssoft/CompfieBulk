@@ -2,7 +2,7 @@ from server.jsontocsvconverter import ConvertJsonToCSV
 from protocol import (core, clientreport, login)
 from server import logger
 from server.constants import RECORD_DISPLAY_COUNT
-
+import time
 __all__ = [
     "process_client_report_requests"
 ]
@@ -23,13 +23,17 @@ def process_client_report_requests(request, db) :
 
     elif type(request) is clientreport.GetUnitwisecomplianceReport:
         logger.logClientApi("GetUnitwisecomplianceReport", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = get_unitwise_compliance(db, request, session_user)
         logger.logClientApi("GetUnitwisecomplianceReport", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetAssigneewisecomplianceReport:
         logger.logClientApi("GetAssigneewisecomplianceReport", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = get_assigneewise_compliance(db, request, session_user)
         logger.logClientApi("GetAssigneewisecomplianceReport", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetServiceProviderReportFilters:
         logger.logClientApi("GetServiceProviderReportFilters", "process begin")
@@ -38,8 +42,10 @@ def process_client_report_requests(request, db) :
 
     elif type(request) is clientreport.GetServiceProviderWiseCompliance:
         logger.logClientApi("GetServiceProviderWiseCompliance", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = get_serviceproviderwise_compliance(db, request, session_user)
         logger.logClientApi("GetServiceProviderWiseCompliance", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetComplianceDetailsReportFilters:
         logger.logClientApi("GetComplianceDetailsReportFilters", "process begin")
@@ -48,8 +54,10 @@ def process_client_report_requests(request, db) :
 
     elif type(request) is clientreport.GetComplianceDetailsReport:
         logger.logClientApi("GetComplianceDetailsReport", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = get_compliancedetails_report(db, request, session_user, client_id)
         logger.logClientApi("GetComplianceDetailsReport", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetStatutoryNotificationsListFilters:
         logger.logClientApi("GetStatutoryNotificationsListFilters", "process begin")
@@ -58,8 +66,10 @@ def process_client_report_requests(request, db) :
 
     elif type(request) is clientreport.GetStatutoryNotificationsListReport:
         logger.logClientApi("GetStatutoryNotificationsListReport", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = get_statutory_notifications_list_report(db, request, session_user, client_id)
         logger.logClientApi("GetStatutoryNotificationsListReport", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetRiskReportFilters:
         logger.logClientApi("GetRiskReportFilters", "process begin")
@@ -68,8 +78,10 @@ def process_client_report_requests(request, db) :
 
     elif type(request) is clientreport.GetRiskReport:
         logger.logClientApi("GetRiskReport", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = get_risk_report(db, request, session_user, client_id)
         logger.logClientApi("GetRiskReport", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetReassignedHistoryReportFilters:
         logger.logClientApi("GetReassignedHistoryReportFilters", "process begin")
@@ -78,8 +90,10 @@ def process_client_report_requests(request, db) :
 
     elif type(request) is clientreport.GetReassignedHistoryReport:
         logger.logClientApi("GetReassignedHistoryReport", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = get_reassignedhistory_report(db, request, session_user, client_id)
         logger.logClientApi("GetReassignedHistoryReport", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetLoginTrace:
         logger.logClientApi("GetLoginTrace", "process begin")
@@ -93,8 +107,10 @@ def process_client_report_requests(request, db) :
 
     elif type(request) is clientreport.GetComplianceActivityReport:
         logger.logClientApi("GetComplianceActivityReport", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = get_compliance_activity_report(db, request, session_user, client_id)
         logger.logClientApi("GetComplianceActivityReport", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetTaskApplicabilityStatusFilters:
         logger.logClientApi("GetTaskApplicabilityStatusFilters", "process begin")
@@ -103,8 +119,10 @@ def process_client_report_requests(request, db) :
 
     elif type(request) is clientreport.GetComplianceTaskApplicabilityStatusReport:
         logger.logClientApi("GetComplianceTaskApplicabilityStatusReport", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_get_task_applicability_report_data(db, request, session_user, client_id)
         logger.logClientApi("GetComplianceTaskApplicabilityStatusReport", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetClientDetailsReportFilters:
         logger.logClientApi("GetClientDetailsReportFilters", "process begin")
@@ -113,8 +131,10 @@ def process_client_report_requests(request, db) :
 
     elif type(request) is clientreport.GetClientDetailsReportData:
         logger.logClientApi("GetClientDetailsReportData", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = get_client_details_report_data(db, request, session_user, client_id)
         logger.logClientApi("GetClientDetailsReportData", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.ExportToCSV:
         logger.logClientApi("ExportToCSV", "process begin")
