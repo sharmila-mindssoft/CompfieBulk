@@ -22,7 +22,9 @@ from distribution.protocol import (
     CompanyServerDetails
 )
 from replication.protocol import (
-    GetChanges, GetChangesSuccess, InvalidReceivedCount, GetDelReplicatedSuccess
+    GetChanges, GetDomainChanges, GetChangesSuccess,
+    InvalidReceivedCount, GetDelReplicatedSuccess,
+    GetClientChanges, GetClientChangesSuccess
 )
 from server.constants import (
     TEMPLATE_PATHS,
@@ -158,9 +160,13 @@ class API(object):
             db.get_servers()
         )
 
-    @api_request(
-        GetChanges
-    )
+    @api_request(GetClientChanges)
+    def handle_client_list(self, request, db) :
+        return GetClientChangesSuccess(
+            db.get_client_replication_list()
+        )
+
+    @api_request(GetChanges)
     def handle_replication(self, request, db):
         actual_count = db.get_trail_id()
         # print "actual_count ", actual_count
@@ -176,6 +182,25 @@ class API(object):
         )
         return res
 
+    @api_request(GetDomainChanges)
+    def handle_domain_replication(self, request, db):
+        actual_count = db.get_trail_id()
+        client_id = request.client_id
+        domain_id = request.domain_id
+        received_count = request.received_count
+        actual_replica_count = request.actual_count
+
+        if received_count > actual_count :
+            return InvalidReceivedCount()
+
+        res = GetChangesSuccess(
+            db.get_trail_log_for_domain(
+                client_id, domain_id, received_count,
+                actual_replica_count
+            )
+        )
+        return res
+
     @api_request(
         GetChanges
     )
@@ -186,7 +211,7 @@ class API(object):
         client_id = request.client_id
         received_count = request.received_count
         s = "%s, %s, %s " % (client_id, received_count, actual_count)
-        print s
+        # print s
         logger.logKnowledge("info", "trail", s)
         if actual_count >= received_count :
             db.remove_trail_log(client_id, received_count)
@@ -343,9 +368,11 @@ def run_server(port):
         api = API(io_loop, db)
 
         api_urls_and_handlers = [
-            ("/server-list", api.handle_server_list),
-            ("/replication", api.handle_replication),
-            ("/delreplicated", api.handle_delreplicated),
+            ("/knowledge/server-list", api.handle_server_list),
+            ("/knowledge/client-list", api.handle_client_list),
+            ("/knowledge/replication", api.handle_replication),
+            ("/knowledge/domain-replication", api.handle_domain_replication),
+            ("/knowledge/delreplicated", api.handle_delreplicated),
             ("/knowledge/api/login", api.handle_login),
             ("/knowledge/api/admin", api.handle_admin),
             ("/knowledge/api/techno", api.handle_techno),

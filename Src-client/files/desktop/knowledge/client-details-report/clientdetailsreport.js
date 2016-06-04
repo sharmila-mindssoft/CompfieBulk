@@ -289,7 +289,7 @@ function onUnitSuccess(val){
 //load unit wwith condition form list in autocomplete text box  
 $("#unitval").keyup(function(){
   var textval = $(this).val();
-  getUnitConditionAutocomplete(textval, unitList, function(val){
+  getUnitAutocomplete(textval, unitList, function(val){
     onUnitSuccess(val)
   })
 });

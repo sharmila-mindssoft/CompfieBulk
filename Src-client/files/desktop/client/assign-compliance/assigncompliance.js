@@ -188,9 +188,9 @@ function load_secondwizard(){
           }
           statutorydate +=  sMonth +' '+ sDay + ' ';
           if(statutory_date.length > 1){
-            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'-'+j+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
+            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'-'+j+'" placeholder="Days" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
           }else{
-            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
+            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'" placeholder="Days" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
           }
         }
 
@@ -226,7 +226,7 @@ function load_secondwizard(){
         $('.statutorydate', clone2).text(statutorydate);
         if(frequency != 'On Occurrence'){
           if(triggerdate == ''){
-          $('.triggerbefore', clone2).html(' <input type="text" value="" class="input-box trigger" id="triggerdate'+statutoriesCount+'" maxlength="3"/>');
+          $('.triggerbefore', clone2).html(' <input type="text" value="" class="input-box trigger" placeholder="Days" id="triggerdate'+statutoriesCount+'" maxlength="3"/>');
           $('.duedate', clone2).html('<input type="text" value="" class="input-box" readonly="readonly" id="duedate'+statutoriesCount+'" />');
           }
           else{
@@ -467,7 +467,8 @@ function submitcompliance(){
     var newSettingsList = [];
     var newSetting = null;
 
-    var assignComplianceCountryId = null;
+    var assignComplianceCountryId = [];
+    var acCountryId = null;
     var assignComplianceDomainId = null;
     var assignComplianceDomainVal = null;
     var assignComplianceAssigneeId = null;
@@ -482,7 +483,8 @@ function submitcompliance(){
     var output = d.getFullYear() + '/' + month + '/' + day;
     var currentDate = new Date(output);
 
-    assignComplianceCountryId = parseInt($('.countrylist.active').attr('id'));
+    assignComplianceCountryId.push(parseInt($('.countrylist.active').attr('id')));
+    acCountryId = parseInt($('.countrylist.active').attr('id'));
     assignComplianceDomainId = parseInt($('.domainlist.active').attr('id'));
     assignComplianceDomainVal = $('.domainlist.active').text();
 
@@ -649,7 +651,7 @@ function submitcompliance(){
     if(selectedStatus){
       var assigneeInserUnits = [];
       var assigneeInserUnitsVal = [];
-      var assigneeInserDomain = null;
+      var assigneeInserDomain = [];
       if(assignComplianceAssigneeName != 'Client Admin' && assignComplianceAssigneeId != null){
         var userUnits;
         var userDomains;
@@ -658,7 +660,7 @@ function submitcompliance(){
             userUnits = usersList[user]["unit_ids"];
             userDomains = usersList[user]["domain_ids"];
             if($.inArray(assignComplianceDomainId, userDomains) == -1){
-              assigneeInserDomain = assignComplianceDomainId;
+              assigneeInserDomain.push(assignComplianceDomainId);
             }
           }
         }
@@ -677,7 +679,7 @@ function submitcompliance(){
 
       var concurrenceInserUnits = [];
       var concurrenceInserUnitsVal = [];
-      var concurrenceInserDomain = null;
+      var concurrenceInserDomain = [];
 
       if(assignComplianceConcurrenceId != null){
         var userUnits;
@@ -687,7 +689,7 @@ function submitcompliance(){
             userUnits = usersList[user]["unit_ids"];
             userDomains = usersList[user]["domain_ids"];
             if($.inArray(assignComplianceDomainId, userDomains) == -1){
-              concurrenceInserDomain = assignComplianceDomainId;
+              concurrenceInserDomain.push(assignComplianceDomainId);
             }
           }
         }
@@ -706,7 +708,7 @@ function submitcompliance(){
 
       var approvalInserUnits = [];
       var approvalInserUnitsVal = [];
-      var approvalInserDomain = null;
+      var approvalInserDomain = [];
 
       if(assignComplianceApprovalName != 'Client Admin' && assignComplianceApprovalId != null){
         var userUnits;
@@ -716,7 +718,7 @@ function submitcompliance(){
             userUnits = usersList[user]["unit_ids"];
             userDomains = usersList[user]["domain_ids"];
             if($.inArray(assignComplianceDomainId, userDomains) == -1){
-              approvalInserDomain = assignComplianceDomainId;
+              approvalInserDomain.push(assignComplianceDomainId);
             }
           }
         }
@@ -734,13 +736,17 @@ function submitcompliance(){
       }
 
       if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalInserUnits.length >0 ||
-        assigneeInserDomain != null || concurrenceInserDomain != null || approvalInserDomain != null){
+        assigneeInserDomain.length > 0 || concurrenceInserDomain.length > 0 || approvalInserDomain.length > 0){
         var assigneeText = '';
         var concurrenceText = '';
         var approvalText = '';
-        if(assigneeInserUnits.length > 0 || assigneeInserDomain != null){
-          if(assigneeInserDomain != null)
-            assigneeText = assignComplianceDomainVal + " domain ";
+        if(assigneeInserUnits.length > 0 || assigneeInserDomain.length > 0){
+
+          if(assigneeInserDomain.length > 0){
+            assigneeText = assignComplianceDomainVal + " domain(s) ";
+          }else{
+            assigneeInserDomain = null;
+          }
 
           if(assigneeInserUnits.length > 0){
             assigneeText = assigneeText + assigneeInserUnitsVal + " unit(s) ";
@@ -748,12 +754,15 @@ function submitcompliance(){
             assigneeInserUnits = null;
           }
           assigneeText = assigneeText + "not applicable for Assignee. "
-          newSetting = client_mirror.newUnitSettings(assignComplianceAssigneeId, assigneeInserUnits, approvalInserDomain, assignComplianceCountryId);
+          newSetting = client_mirror.newUnitSettings(assignComplianceAssigneeId, assigneeInserUnits, assigneeInserDomain, assignComplianceCountryId);
           newSettingsList.push(newSetting);
         }
-        if(concurrenceInserUnits.length > 0 || concurrenceInserDomain != null){
-          if(concurrenceInserDomain != null)
+        if(concurrenceInserUnits.length > 0 || concurrenceInserDomain.length > 0){
+          if(concurrenceInserDomain.length > 0){
             concurrenceText = assignComplianceDomainVal + " domain ";
+          }else{
+            concurrenceInserDomain = null;
+          }
 
           if(concurrenceInserUnits.length > 0){
             concurrenceText = concurrenceText + concurrenceInserUnitsVal + " unit(s) "
@@ -764,9 +773,12 @@ function submitcompliance(){
           newSetting = client_mirror.newUnitSettings(assignComplianceConcurrenceId, concurrenceInserUnits, concurrenceInserDomain, assignComplianceCountryId);
           newSettingsList.push(newSetting);
         }
-        if(approvalInserUnits.length > 0 || approvalInserDomain != null){
-          if(approvalInserDomain != null)
+        if(approvalInserUnits.length > 0 || approvalInserDomain.length > 0){
+          if(approvalInserDomain.length > 0){
             approvalText = assignComplianceDomainVal + " domain ";
+          }else{
+            approvalInserDomain = null;
+          }
 
           if(approvalInserUnits.length > 0){
             approvalText = approvalText + approvalInserUnitsVal + " unit(s) "
@@ -809,7 +821,7 @@ function submitcompliance(){
               displayMessage(err_message);
             hideLoader();
           }
-          client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,
+          client_mirror.saveAssignedComplianceFormData(acCountryId, assignComplianceAssigneeId,
             assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
             assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
             function (error, response) {
@@ -853,7 +865,7 @@ function submitcompliance(){
             displayMessage(err_message);
           hideLoader();
         }
-        client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId,
+        client_mirror.saveAssignedComplianceFormData(acCountryId, assignComplianceAssigneeId,
           assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
           assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
           function (error, response) {

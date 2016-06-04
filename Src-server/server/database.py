@@ -18,7 +18,9 @@ from protocol import (
 from distribution.protocol import (
     Company, IPAddress
 )
-from replication.protocol import Change
+from replication.protocol import (
+    Change, Client
+)
 from server.emailcontroller import EmailHandler as email
 
 
@@ -258,14 +260,14 @@ class Database(object) :
     # To form a insert query
     ########################################################
     def insert(self, table, columns, values, client_id=None) :
-        columns = ",".join(columns)
+        columns = ", ".join(columns)
         stringValue = ""
         for index, value in enumerate(values):
             if(index < len(values)-1):
                 stringValue = stringValue+"'"+str(value)+"',"
             else:
                 stringValue = stringValue+"'"+str(value)+"'"
-        query = "INSERT INTO %s (%s) VALUES (%s)" % (
+        query = """INSERT INTO %s (%s) VALUES (%s)""" % (
             table, columns, stringValue
         )
         try:
@@ -273,7 +275,7 @@ class Database(object) :
         except Exception, e:
             logger.logKnowledgeApi("insert", query)
             logger.logKnowledgeApi("insert", e)
-            return
+            return False
 
 
     ########################################################
@@ -822,6 +824,45 @@ class KnowledgeDatabase(Database):
                 "column_name", "value", "client_id", "action"
             ]
             results = self.convert_to_dict(rows, columns)
+        if len(results) == 0 :
+            self.update_client_replication_status(client_id, received_count)
+        return self.return_changes(results)
+
+    def get_trail_log_for_domain(self, client_id, domain_id, received_count, actual_count):
+        q = "SELECT tbl_auto_id from tbl_audit_log where audit_trail_id > %s and audit_trail_id < %s \
+            AND tbl_name = 'tbl_compliances' \
+            AND column_name = 'domain_id' \
+            AND value = %s limit 10" % (received_count, actual_count, domain_id)
+        q_rows = self.select_all(q)
+        auto_id = []
+        # print q
+        for r in q_rows :
+            auto_id.append(str(r[0]))
+
+        rows = None
+        if len(auto_id) > 0 :
+            query = "SELECT "
+            query += "  audit_trail_id, tbl_name, tbl_auto_id,"
+            query += "  column_name, value, client_id, action"
+            query += " from tbl_audit_log WHERE tbl_name = 'tbl_compliances' \
+                AND audit_trail_id>%s AND  \
+                tbl_auto_id IN (%s)  " % (
+                received_count,
+                ','.join(auto_id)
+            )
+            # print "-"
+            # print query
+            rows = self.select_all(query)
+        results = []
+        if rows :
+            columns = [
+                "audit_trail_id", "tbl_name", "tbl_auto_id",
+                "column_name", "value", "client_id", "action"
+            ]
+            results = self.convert_to_dict(rows, columns)
+        # print len(results)
+        if len(results) == 0 :
+            self.update_client_replication_status(client_id, 0, type="domain_trail_id")
         return self.return_changes(results)
 
     def return_changes(self, data):
@@ -882,6 +923,48 @@ class KnowledgeDatabase(Database):
                 company_server_ip
             ))
         return results
+
+    def get_client_replication_list(self) :
+        q = "select client_id, is_new_data, is_new_domain, domain_id from tbl_client_replication_status \
+            where is_new_data = 1"
+        rows = self.select_all(q)
+        results = []
+        if rows :
+            column = [
+                "client_id", "is_new_data", "is_new_domain", "domain_id"
+            ]
+            results = self.convert_to_dict(rows, column)
+            # print results
+        return self._return_clients(results)
+
+    def _return_clients(self, data):
+        results = []
+        for d in data :
+            results.append(Client(
+                int(d["client_id"]),
+                bool(d["is_new_data"]),
+                bool(d["is_new_domain"]),
+                d["domain_id"]
+            ))
+        return results
+
+    def update_client_replication_status(self, client_id, received_count, type=None):
+        if type is None :
+            q = "update tbl_client_replication_status set is_new_data = 0 where client_id = %s" % (client_id)
+            self.remove_trail_log(client_id, received_count)
+        else :
+            q = "update tbl_client_replication_status set is_new_domain = 0, domain_id = '' where client_id = %s" % (client_id)
+        # print q
+        self.execute(q)
+
+    def update_client_domain_status(self, client_id, domain_ids) :
+        q = "update tbl_client_replication_status set is_new_data =1, \
+            is_new_domain = 1, domain_id = '%s' where client_id = %s" % (
+                str((','.join(domain_ids))),
+                client_id
+            )
+        # print q
+        self.execute(q)
 
     #
     # Domain
@@ -1148,7 +1231,9 @@ class KnowledgeDatabase(Database):
             table_name, field, str(data)
         )
         try :
+            # print query
             self.execute(query)
+
             return True
         except Exception, e :
             print e
@@ -2229,6 +2314,7 @@ class KnowledgeDatabase(Database):
 
         q = q + " ORDER BY country_name, domain_name, statutory_nature_name"
         rows = self.select_all(q)
+        # print q
         columns = [
             "statutory_mapping_id", "country_id",
             "country_name", "domain_id", "domain_name", "industry_ids",
@@ -2471,7 +2557,7 @@ class KnowledgeDatabase(Database):
         else :
             r_count = 0
 
-        q = "SELECT distinct t1.statutory_mapping_id, t2.country_id, \
+        q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
             (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
             t1.domain_id, \
             (select domain_name from tbl_domains where domain_id = t1.domain_id) domain_name, \
@@ -3094,7 +3180,8 @@ class KnowledgeDatabase(Database):
                     repeats_type = ""
                 columns.extend(["repeats_every", "repeats_type_id"])
                 values.extend([repeats_every, repeats_type])
-            self.insert(table_name, columns, values)
+            if self.insert(table_name, columns, values) is False :
+                return
             if is_format :
                 self.convert_base64_to_file(file_name, file_content)
                 is_format = False
@@ -3552,12 +3639,13 @@ class KnowledgeDatabase(Database):
             mapping_id
         )
         industry_ids = [
-            int(x) for x in old_record["industry_ids"][:-1].split(',')
+            (x) for x in old_record["industry_ids"][:-1].split(',')
         ]
-        if len(industry_ids) == 1:
-            industry_name = self.get_industry_by_id(industry_ids[0])
-        else :
-            industry_name = self.get_industry_by_id(industry_ids)
+        industry_ids = ','.join(industry_ids)
+        # if len(industry_ids) == 1:
+        #     industry_name = self.get_industry_by_id(industry_ids[0])
+        # else :
+        #     industry_name = self.get_industry_by_id(industry_ids)
         # provision = []
         # for sid in old_record["statutory_ids"][:-1].split(',') :
         #     data = self.get_statutory_by_id(int(sid))
@@ -3585,8 +3673,8 @@ class KnowledgeDatabase(Database):
         ]
         values = [
             notification_id, int(mapping_id),
-            old_record["country_name"], old_record["domain_name"],
-            industry_name, old_record["statutory_nature_name"],
+            old_record["country_id"], old_record["domain_id"],
+            industry_ids, old_record["statutory_nature_id"],
             mappings, geo_mappings, notification_text
         ]
         self.insert(tbl_statutory_notification, columns, values)
@@ -4277,16 +4365,33 @@ class KnowledgeDatabase(Database):
         return self.bulk_insert(self.tblClientCountries, columns, values_list)
 
     def save_client_domains(self, client_id, domain_ids):
+        old_d = self.get_client_domains(client_id)
+        print "old_d"
+        print old_d
+        if old_d is not None :
+            old_d = old_d.split(',')
+            print old_d
+        else :
+            old_d = []
+        new_id = []
+
         values_list = []
         columns = ["client_id", "domain_id"]
         condition = "client_id = '%d'" % client_id
         self.delete(self.tblClientDomains, condition)
         for domain_id in domain_ids:
+            print "domain id not in old"
+            print domain_id, old_d
+            if str(domain_id) not in old_d :
+                new_id.append(str(domain_id))
             # client_domain_id = self.get_new_id(
             #     "client_domain_id", self.tblClientDomains
             # )
             values_tuple = (client_id, domain_id)
             values_list.append(values_tuple)
+        print new_id
+        if len(new_id) > 0 :
+            self.update_client_domain_status(client_id, new_id)
         return self.bulk_insert(self.tblClientDomains, columns, values_list)
 
     def replicate_client_countries_and_domains(self, client_id, country_ids, domain_ids):

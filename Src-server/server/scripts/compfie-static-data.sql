@@ -101,7 +101,8 @@ CREATE TRIGGER `after_tbl_business_groups_insert` AFTER INSERT ON `tbl_business_
                 'business_group_name',
                 NEW.business_group_name,
                 'tbl_business_groups');
-
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
 END
 //
 DELIMITER ;
@@ -127,6 +128,8 @@ CREATE TRIGGER `after_tbl_business_groups_update` AFTER UPDATE ON `tbl_business_
                 'business_group_name',
                 NEW.business_group_name,
                 'tbl_business_groups');
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
    END IF;
 
 END
@@ -288,6 +291,12 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                 'tbl_client_compliances');
    END IF;
 
+   IF (@submission_type = 1) THEN
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = @client_id;
+   END IF;
+
+
 END
 //
 DELIMITER ;
@@ -302,7 +311,6 @@ CREATE TRIGGER `after_tbl_client_configurations_insert` AFTER INSERT ON `tbl_cli
  FOR EACH ROW BEGIN
    SET @action = 0;
 
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -315,7 +323,6 @@ CREATE TRIGGER `after_tbl_client_configurations_insert` AFTER INSERT ON `tbl_cli
                 'country_id',
                 NEW.country_id,
                 'tbl_client_configurations');
-
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
@@ -330,7 +337,6 @@ CREATE TRIGGER `after_tbl_client_configurations_insert` AFTER INSERT ON `tbl_cli
                 NEW.domain_id,
                 'tbl_client_configurations');
 
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -344,7 +350,6 @@ CREATE TRIGGER `after_tbl_client_configurations_insert` AFTER INSERT ON `tbl_cli
                 NEW.period_from,
                 'tbl_client_configurations');
 
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -357,6 +362,9 @@ CREATE TRIGGER `after_tbl_client_configurations_insert` AFTER INSERT ON `tbl_cli
                 'period_to',
                 NEW.period_to,
                 'tbl_client_configurations');
+
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
 
 END
 //
@@ -430,6 +438,8 @@ CREATE TRIGGER `after_tbl_client_configurations_update` AFTER UPDATE ON `tbl_cli
                 NEW.period_to,
                 'tbl_client_configurations');
    END IF;
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
 
 END
 //
@@ -444,8 +454,6 @@ DELIMITER //
 CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_groups`
  FOR EACH ROW BEGIN
    SET @action = 0;
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -458,8 +466,6 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                 'group_name',
                 NEW.group_name,
                 'tbl_client_groups');
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -472,8 +478,6 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                 'logo_url',
                 NEW.logo_url,
                 'tbl_client_groups');
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -486,8 +490,6 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                 'logo_size',
                 NEW.logo_size,
                 'tbl_client_groups');
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -585,17 +587,19 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                 NEW.url_short_name,
                 'tbl_client_groups');
 
+    INSERT INTO tbl_client_replication_status (client_id, is_new_data) VALUES(NEW.client_id, 1);
 END
 //
 DELIMITER ;
+
 DROP TRIGGER IF EXISTS `after_tbl_client_groups_update`;
 DELIMITER //
 CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_groups`
  FOR EACH ROW BEGIN
    SET @action = 1;
-
-
+   SET @save = 0;
    IF OLD.group_name <> NEW.group_name THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -612,6 +616,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.logo_url <> NEW.logo_url THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -628,6 +633,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.logo_size <> NEW.logo_size THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -644,6 +650,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.contract_from <> NEW.contract_from THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -660,6 +667,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.contract_to <> NEW.contract_to THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -676,6 +684,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.no_of_user_licence <> NEW.no_of_user_licence THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -692,6 +701,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.total_disk_space <> NEW.total_disk_space THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -708,6 +718,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.total_disk_space_used <> NEW.total_disk_space_used THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -724,6 +735,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.is_sms_subscribed <> NEW.is_sms_subscribed THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -740,6 +752,7 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
 
    IF OLD.url_short_name <> NEW.url_short_name THEN
+   SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -753,6 +766,11 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
                 NEW.url_short_name,
                 'tbl_client_groups');
    END IF;
+
+    IF @save = 1 THEN
+        UPDATE tbl_client_replication_status set is_new_data = 1
+        WHERE client_id = NEW.client_id;
+    END IF;
 
 END
 //
@@ -831,6 +849,9 @@ CREATE TRIGGER `after_tbl_client_statutories_update` AFTER UPDATE ON `tbl_client
                 'tbl_client_statutories');
    END IF;
 
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
+
 END
 //
 DELIMITER ;
@@ -845,18 +866,16 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
  FOR EACH ROW BEGIN
    SET @action = 0;
 
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
-  SELECT @action, 0, NEW.compliance_id, 'statutory_mapping', statutory_mapping, 'tbl_compliances'  FROM tbl_statutory_mappings WHERE statutory_mapping_id=NEW.statutory_mapping_id;
-
-
-
+  SELECT @action, 0, NEW.compliance_id,
+  'statutory_mapping', statutory_mapping,
+  'tbl_compliances' FROM tbl_statutory_mappings
+  WHERE statutory_mapping_id=NEW.statutory_mapping_id;
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
@@ -871,7 +890,6 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
                 NEW.domain_id,
                 'tbl_compliances');
 
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -884,7 +902,6 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
                 'frequency_id',
                 NEW.frequency_id,
                 'tbl_compliances');
-
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
@@ -1066,7 +1083,8 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
                 'is_active',
                 NEW.is_active,
                 'tbl_compliances');
-
+    UPDATE tbl_client_replication_status set is_new_data = 1 where
+    client_id in (select client_id from tbl_client_domains where domain_id = NEW.domain_id);
 END
 //
 DELIMITER ;
@@ -1076,10 +1094,9 @@ DELIMITER //
 CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
  FOR EACH ROW BEGIN
    SET @action = 1;
-
-
+   SET @issave = 0;
    IF OLD.statutory_mapping_id <> NEW.statutory_mapping_id THEN
-
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1088,11 +1105,8 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                              tbl_name)
   SELECT @action, 0, NEW.compliance_id, 'statutory_mapping', statutory_mapping, 'tbl_compliances'  FROM tbl_statutory_mappings WHERE statutory_mapping_id=NEW.statutory_mapping_id;
    END IF;
-
-
-
-
    IF OLD.domain_id <> NEW.domain_id THEN
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1107,8 +1121,8 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 'tbl_compliances');
    END IF;
 
-
    IF OLD.frequency_id <> NEW.frequency_id THEN
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1123,8 +1137,8 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 'tbl_compliances');
    END IF;
 
-
    IF OLD.repeats_type_id <> NEW.repeats_type_id THEN
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1139,8 +1153,8 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 'tbl_compliances');
    END IF;
 
-
    IF OLD.duration_type_id <> NEW.duration_type_id THEN
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1155,8 +1169,8 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 'tbl_compliances');
    END IF;
 
-
    IF OLD.statutory_provision <> NEW.statutory_provision THEN
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1171,8 +1185,8 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 'tbl_compliances');
    END IF;
 
-
    IF OLD.compliance_task <> NEW.compliance_task THEN
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1187,8 +1201,8 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 'tbl_compliances');
    END IF;
 
-
    IF OLD.compliance_description <> NEW.compliance_description THEN
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1203,8 +1217,8 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 'tbl_compliances');
    END IF;
 
-
    IF OLD.document_name <> NEW.document_name THEN
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1219,8 +1233,8 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 'tbl_compliances');
    END IF;
 
-
    IF OLD.format_file <> NEW.format_file THEN
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1235,8 +1249,8 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 'tbl_compliances');
    END IF;
 
-
    IF OLD.format_file_size <> NEW.format_file_size THEN
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1251,8 +1265,8 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 'tbl_compliances');
    END IF;
 
-
    IF OLD.penal_consequences <> NEW.penal_consequences THEN
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1267,8 +1281,8 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 'tbl_compliances');
    END IF;
 
-
    IF OLD.statutory_dates <> NEW.statutory_dates THEN
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1283,8 +1297,8 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 'tbl_compliances');
    END IF;
 
-
    IF OLD.repeats_every <> NEW.repeats_every THEN
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1299,8 +1313,8 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 'tbl_compliances');
    END IF;
 
-
    IF OLD.duration <> NEW.duration THEN
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1315,8 +1329,8 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 'tbl_compliances');
    END IF;
 
-
    IF OLD.is_active <> NEW.is_active THEN
+   set @issave = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1330,6 +1344,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
                 NEW.is_active,
                 'tbl_compliances');
    END IF;
+
+   IF @issave = 1 THEN
+    UPDATE tbl_client_replication_status set is_new_data = 1 where
+    client_id in (select client_id from tbl_client_domains where domain_id = OLD.domain_id);
+   END IF ;
+
+
 
 END
 //
@@ -1386,6 +1407,9 @@ CREATE TRIGGER `after_tbl_divisions_insert` AFTER INSERT ON `tbl_divisions`
                 NEW.legal_entity_id,
                 'tbl_divisions');
 
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
+
 END
 //
 DELIMITER ;
@@ -1409,6 +1433,8 @@ CREATE TRIGGER `after_tbl_divisions_update` AFTER UPDATE ON `tbl_divisions`
                 'division_name',
                 NEW.division_name,
                 'tbl_divisions');
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
    END IF;
 
 END
@@ -1431,7 +1457,9 @@ CREATE TRIGGER `after_tbl_geographies_update` AFTER UPDATE ON `tbl_geographies`
                              column_name,
                              value,
                              tbl_name)
-  SELECT @action, client_id, client_statutory_id, 'geography', NEW.parent_names, 'tbl_client_statutories'  FROM tbl_client_statutories WHERE geography_id=NEW.geography_id;
+  SELECT @action, @client_id := client_id, client_statutory_id, 'geography', NEW.parent_names, 'tbl_client_statutories'  FROM tbl_client_statutories WHERE geography_id=NEW.geography_id;
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = @client_id;
    END IF;
    IF OLD.parent_names <> NEW.parent_names THEN
    INSERT INTO tbl_audit_log(action,
@@ -1440,8 +1468,11 @@ CREATE TRIGGER `after_tbl_geographies_update` AFTER UPDATE ON `tbl_geographies`
                              column_name,
                              value,
                              tbl_name)
-  SELECT @action, client_id, unit_id, 'geography', NEW.parent_names, 'tbl_units'  FROM tbl_units WHERE geography_id=NEW.geography_id;
+  SELECT @action, @client_id := client_id, unit_id, 'geography', NEW.parent_names, 'tbl_units'  FROM tbl_units WHERE geography_id=NEW.geography_id;
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = @client_id;
    END IF;
+
 END
 //
 DELIMITER ;
@@ -1461,8 +1492,11 @@ CREATE TRIGGER `after_tbl_industries_update` AFTER UPDATE ON `tbl_industries`
                              column_name,
                              value,
                              tbl_name)
-  SELECT @action, client_id, unit_id, 'industry_name', NEW.industry_name, 'tbl_units'  FROM tbl_units WHERE industry_id=NEW.industry_id;
-   END IF;
+  SELECT @action, @client_id := client_id, unit_id, 'industry_name', NEW.industry_name, 'tbl_units'  FROM tbl_units WHERE industry_id=NEW.industry_id;
+  UPDATE tbl_client_replication_status set is_new_data = 1
+  WHERE client_id = @client_id;
+  END IF;
+
 END
 //
 DELIMITER ;
@@ -1504,6 +1538,9 @@ CREATE TRIGGER `after_tbl_legal_entities_insert` AFTER INSERT ON `tbl_legal_enti
                 NEW.business_group_id,
                 'tbl_legal_entities');
 
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
+
 END
 //
 DELIMITER ;
@@ -1527,6 +1564,8 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
                 'legal_entity_name',
                 NEW.legal_entity_name,
                 'tbl_legal_entities');
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
    END IF;
 
 END
@@ -1549,7 +1588,9 @@ CREATE TRIGGER `after_tbl_statutory_mappings_update` AFTER UPDATE ON `tbl_statut
                              value,
                              tbl_name)
   SELECT @action, 0, compliance_id, 'statutory_mapping', NEW.statutory_mapping, 'tbl_compliances'  FROM tbl_compliances WHERE statutory_mapping_id=NEW.statutory_mapping_id;
-   END IF;
+    UPDATE tbl_client_replication_status set is_new_data = 1 where
+    client_id in (select client_id from tbl_client_domains where domain_id = OLD.domain_id);
+  END IF;
 END
 //
 DELIMITER ;
@@ -1563,8 +1604,6 @@ DELIMITER //
 CREATE TRIGGER `after_tbl_statutory_notifications_log_insert` AFTER INSERT ON `tbl_statutory_notifications_log`
  FOR EACH ROW BEGIN
    SET @action = 0;
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1577,8 +1616,6 @@ CREATE TRIGGER `after_tbl_statutory_notifications_log_insert` AFTER INSERT ON `t
                 'country_name',
                 NEW.country_name,
                 'tbl_statutory_notifications_log');
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1591,8 +1628,6 @@ CREATE TRIGGER `after_tbl_statutory_notifications_log_insert` AFTER INSERT ON `t
                 'domain_name',
                 NEW.domain_name,
                 'tbl_statutory_notifications_log');
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1605,8 +1640,6 @@ CREATE TRIGGER `after_tbl_statutory_notifications_log_insert` AFTER INSERT ON `t
                 'industry_name',
                 NEW.industry_name,
                 'tbl_statutory_notifications_log');
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1619,8 +1652,6 @@ CREATE TRIGGER `after_tbl_statutory_notifications_log_insert` AFTER INSERT ON `t
                 'statutory_nature',
                 NEW.statutory_nature,
                 'tbl_statutory_notifications_log');
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1633,8 +1664,6 @@ CREATE TRIGGER `after_tbl_statutory_notifications_log_insert` AFTER INSERT ON `t
                 'statutory_provision',
                 NEW.statutory_provision,
                 'tbl_statutory_notifications_log');
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1647,8 +1676,6 @@ CREATE TRIGGER `after_tbl_statutory_notifications_log_insert` AFTER INSERT ON `t
                 'applicable_location',
                 NEW.applicable_location,
                 'tbl_statutory_notifications_log');
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1662,6 +1689,7 @@ CREATE TRIGGER `after_tbl_statutory_notifications_log_insert` AFTER INSERT ON `t
                 NEW.notification_text,
                 'tbl_statutory_notifications_log');
 
+
 END
 //
 DELIMITER ;
@@ -1670,8 +1698,6 @@ DELIMITER //
 CREATE TRIGGER `after_tbl_statutory_notifications_log_update` AFTER UPDATE ON `tbl_statutory_notifications_log`
  FOR EACH ROW BEGIN
    SET @action = 1;
-
-
    IF OLD.country_name <> NEW.country_name THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
@@ -1751,7 +1777,6 @@ CREATE TRIGGER `after_tbl_statutory_notifications_log_update` AFTER UPDATE ON `t
                 'tbl_statutory_notifications_log');
    END IF;
 
-
    IF OLD.applicable_location <> NEW.applicable_location THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
@@ -1766,7 +1791,6 @@ CREATE TRIGGER `after_tbl_statutory_notifications_log_update` AFTER UPDATE ON `t
                 NEW.applicable_location,
                 'tbl_statutory_notifications_log');
    END IF;
-
 
    IF OLD.notification_text <> NEW.notification_text THEN
    INSERT INTO tbl_audit_log(action,
@@ -1796,7 +1820,6 @@ DELIMITER //
 CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON `tbl_statutory_notifications_units`
  FOR EACH ROW BEGIN
    SET @action = 0;
-
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
@@ -1866,6 +1889,9 @@ CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON 
                 'unit_id',
                 NEW.unit_id,
                 'tbl_statutory_notifications_units');
+
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
 
 END
 //
@@ -1956,6 +1982,9 @@ CREATE TRIGGER `after_tbl_statutory_notifications_units_update` AFTER UPDATE ON 
                 'tbl_statutory_notifications_units');
    END IF;
 
+   UPDATE tbl_client_replication_status set is_new_data = 1
+   WHERE client_id = NEW.client_id;
+
 END
 //
 DELIMITER ;
@@ -1969,9 +1998,6 @@ DELIMITER //
 CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
  FOR EACH ROW BEGIN
    SET @action = 0;
-
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1980,10 +2006,6 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
                              tbl_name)
   SELECT @action, NEW.client_id, NEW.unit_id, 'industry_name', industry_name, 'tbl_units'  FROM tbl_industries WHERE industry_id=NEW.industry_id;
 
-
-
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -1991,9 +2013,6 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
                              value,
                              tbl_name)
   SELECT @action, NEW.client_id, NEW.unit_id, 'geography', parent_names, 'tbl_units'  FROM tbl_geographies WHERE geography_id=NEW.geography_id;
-
-
-
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
@@ -2007,8 +2026,6 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
                 'business_group_id',
                 NEW.business_group_id,
                 'tbl_units');
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -2021,7 +2038,6 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
                 'legal_entity_id',
                 NEW.legal_entity_id,
                 'tbl_units');
-
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
@@ -2036,7 +2052,6 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
                 NEW.division_id,
                 'tbl_units');
 
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -2049,8 +2064,6 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
                 'country_id',
                 NEW.country_id,
                 'tbl_units');
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -2063,8 +2076,6 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
                 'unit_code',
                 NEW.unit_code,
                 'tbl_units');
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -2077,8 +2088,6 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
                 'unit_name',
                 NEW.unit_name,
                 'tbl_units');
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -2092,7 +2101,6 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
                 NEW.address,
                 'tbl_units');
 
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -2105,8 +2113,6 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
                 'postal_code',
                 NEW.postal_code,
                 'tbl_units');
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -2119,8 +2125,6 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
                 'domain_ids',
                 NEW.domain_ids,
                 'tbl_units');
-
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -2134,6 +2138,9 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
                 NEW.is_active,
                 'tbl_units');
 
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
+
 END
 //
 DELIMITER ;
@@ -2143,10 +2150,7 @@ DELIMITER //
 CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
  FOR EACH ROW BEGIN
    SET @action = 1;
-
-
    IF OLD.industry_id <> NEW.industry_id THEN
-
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -2155,9 +2159,6 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
                              tbl_name)
   SELECT @action, NEW.client_id, NEW.unit_id, 'industry_name', industry_name, 'tbl_units'  FROM tbl_industries WHERE industry_id=NEW.industry_id;
    END IF;
-
-
-
 
    IF OLD.geography_id <> NEW.geography_id THEN
 
@@ -2169,9 +2170,6 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
                              tbl_name)
   SELECT @action, NEW.client_id, NEW.unit_id, 'geography', parent_names, 'tbl_units'  FROM tbl_geographies WHERE geography_id=NEW.geography_id;
    END IF;
-
-
-
 
    IF OLD.business_group_id <> NEW.business_group_id THEN
    INSERT INTO tbl_audit_log(action,
@@ -2188,7 +2186,6 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
                 'tbl_units');
    END IF;
 
-
    IF OLD.legal_entity_id <> NEW.legal_entity_id THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
@@ -2203,7 +2200,6 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
                 NEW.legal_entity_id,
                 'tbl_units');
    END IF;
-
 
    IF OLD.division_id <> NEW.division_id THEN
    INSERT INTO tbl_audit_log(action,
@@ -2220,7 +2216,6 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
                 'tbl_units');
    END IF;
 
-
    IF OLD.country_id <> NEW.country_id THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
@@ -2235,7 +2230,6 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
                 NEW.country_id,
                 'tbl_units');
    END IF;
-
 
    IF OLD.unit_code <> NEW.unit_code THEN
    INSERT INTO tbl_audit_log(action,
@@ -2252,7 +2246,6 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
                 'tbl_units');
    END IF;
 
-
    IF OLD.unit_name <> NEW.unit_name THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
@@ -2267,7 +2260,6 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
                 NEW.unit_name,
                 'tbl_units');
    END IF;
-
 
    IF OLD.address <> NEW.address THEN
    INSERT INTO tbl_audit_log(action,
@@ -2284,7 +2276,6 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
                 'tbl_units');
    END IF;
 
-
    IF OLD.postal_code <> NEW.postal_code THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
@@ -2299,7 +2290,6 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
                 NEW.postal_code,
                 'tbl_units');
    END IF;
-
 
    IF OLD.domain_ids <> NEW.domain_ids THEN
    INSERT INTO tbl_audit_log(action,
@@ -2316,7 +2306,6 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
                 'tbl_units');
    END IF;
 
-
    IF OLD.is_active <> NEW.is_active THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
@@ -2331,6 +2320,9 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
                 NEW.is_active,
                 'tbl_units');
    END IF;
+
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.client_id;
 
 END
 //
@@ -2362,6 +2354,8 @@ CREATE TRIGGER `after_tbl_countries_update` AFTER UPDATE ON `tbl_countries`
                 "tbl_countries"
                 );
     END IF;
+    UPDATE tbl_client_replication_status set is_new_data = 1 where
+    client_id in (select client_id from tbl_client_countries where country_id = NEW.country_id);
 END
 //
 DELIMITER ;
@@ -2390,6 +2384,8 @@ CREATE TRIGGER `after_tbl_domains_update` AFTER UPDATE ON `tbl_domains`
                 NEW.domain_name,
                 "tbl_domains"
                 );
+    UPDATE tbl_client_replication_status set is_new_data = 1 where
+    client_id in (select client_id from tbl_client_domains where domain_id = NEW.domain_id);
     END IF;
 END
 //

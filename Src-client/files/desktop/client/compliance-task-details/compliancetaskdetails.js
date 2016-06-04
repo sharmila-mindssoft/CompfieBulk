@@ -72,6 +72,7 @@ $('#pagination').click(function(){
   displayLoader();
   c_endCount = snoOverdue + snoInprogress - 2;
   clearMessage();
+  $('.js-filter').val('')
 
   function onSuccess(data){
         clearMessage();

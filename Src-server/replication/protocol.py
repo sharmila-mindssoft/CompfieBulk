@@ -1,14 +1,17 @@
-import json
-from replication.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+from replication.jsonvalidators import (parse_dictionary, parse_static_list)
 from replication.parse_structure import (
     parse_structure_VectorType_RecordType_protocol_Change,
     parse_structure_Text, parse_structure_SignedIntegerType_64,
-    parse_structure_OptionalType_Text
+    parse_structure_OptionalType_Text,
+    parse_structure_Bool,
+    parse_structure_VectorType_RecordType_protocol_Client
 )
 from replication.to_structure import (
     to_structure_VectorType_RecordType_protocol_Change,
     to_structure_Text, to_structure_SignedIntegerType_64,
-    to_structure_OptionalType_Text
+    to_structure_OptionalType_Text,
+    to_structure_Bool,
+    to_structure_VectorType_RecordType_protocol_Client
 )
 
 #
@@ -55,6 +58,34 @@ class Change(object):
             "action": to_structure_Text(self.action),
         }
 
+class Client(object):
+    def __init__(self, client_id, is_new_data, is_new_domain, domain_id):
+        self.client_id = client_id
+        self.is_new_data = is_new_data
+        self.is_new_domain = is_new_domain
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["client_id", "is_new_data", "is_new_domain", "domain_id"])
+        client_id = data.get("client_id")
+        client_id = parse_structure_SignedIntegerType_64(client_id)
+        is_new_data = data.get("is_new_data")
+        is_new_data = parse_structure_Bool(is_new_data)
+        is_new_domain = data.get("is_new_domain")
+        is_new_domain = parse_structure_Bool(is_new_domain)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_OptionalType_Text(domain_id)
+        return Client(client_id, is_new_data, is_new_domain, domain_id)
+
+    def to_structure(self):
+        return {
+            "client_id": to_structure_SignedIntegerType_64(self.client_id),
+            "is_new_data": to_structure_Bool(self.is_new_data),
+            "is_new_domain": to_structure_Bool(self.is_new_domain),
+            "domain_id": to_structure_OptionalType_Text(self.domain_id)
+        }
+
 #
 # GetChanges
 #
@@ -78,6 +109,52 @@ class GetChanges(object):
             "client_id": to_structure_SignedIntegerType_64(self.client_id),
             "received_count": to_structure_SignedIntegerType_64(self.received_count),
         }
+
+class GetClientChanges(object):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [])
+        return GetClientChanges()
+
+    def to_structure(self):
+        return {
+        }
+
+class GetDomainChanges(object):
+    def __init__(self, client_id, domain_id, received_count, actual_count):
+        self.client_id = client_id
+        self.domain_id = domain_id
+        self.received_count = received_count
+        self.actual_count = actual_count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "client_id", "domain_id", "received_count",
+            "actual_count"
+        ])
+        client_id = data.get("client_id")
+        client_id = parse_structure_SignedIntegerType_64(client_id)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_SignedIntegerType_64(domain_id)
+        received_count = data.get("received_count")
+        received_count = parse_structure_SignedIntegerType_64(received_count)
+        actual_count = data.get("actual_count")
+        actual_count = parse_structure_SignedIntegerType_64(actual_count)
+        return GetDomainChanges(client_id, domain_id, received_count, actual_count)
+
+    def to_structure(self):
+        return {
+            "client_id": to_structure_SignedIntegerType_64(self.client_id),
+            "domain_id": to_structure_SignedIntegerType_64(self.domain_id),
+            "received_count": to_structure_SignedIntegerType_64(self.received_count),
+            "actual_count": to_structure_SignedIntegerType_64(self.actual_count)
+        }
+
+
 
 #
 # Response
@@ -121,6 +198,23 @@ class GetChangesSuccess(Response):
             "changes": to_structure_VectorType_RecordType_protocol_Change(self.changes),
         }
 
+class GetClientChangesSuccess(Response):
+    def __init__(self, clients):
+        self.clients = clients
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["clients"])
+        clients = data.get("clients")
+        clients = parse_structure_VectorType_RecordType_protocol_Client(clients)
+        return GetClientChangesSuccess(clients)
+
+    def to_inner_structure(self):
+        return {
+            "clients": to_structure_VectorType_RecordType_protocol_Client(self.clients),
+        }
+
+
 class GetDelReplicatedSuccess(Response):
     def __init__(self):
         pass
@@ -149,7 +243,7 @@ class InvalidReceivedCount(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetChangesSuccess, InvalidReceivedCount, GetDelReplicatedSuccess]
+    classes = [GetChangesSuccess, GetClientChangesSuccess, InvalidReceivedCount, GetDelReplicatedSuccess]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

@@ -15,7 +15,10 @@ from server.clientdatabase import ClientDatabase
 import clientcontroller as controller
 import mobilecontroller as mobilecontroller
 from webfrontend.client import CompanyManager
-from server.client import ReplicationManager
+from server.client import (
+    ClientReplicationManager, ReplicationManagerWithBase,
+    DomainReplicationManager
+)
 
 import logger
 
@@ -83,7 +86,7 @@ class API(object):
             pass
 
     def server_added(self, servers):
-        # print "server_added called"
+        print "server_added called"
         # self._databases = {}
         try:
             #
@@ -99,8 +102,8 @@ class API(object):
             for company_id, company in servers.iteritems():
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
-                if company_server_ip.ip_address == ip and \
-                        company_server_ip.port == port:
+                # if company_server_ip.ip_address == ip and company_server_ip.port == port:
+                if company_server_ip.ip_address == ip :
                     try:
                         db = ClientDatabase(
                             company.db_ip.ip_address,
@@ -112,16 +115,6 @@ class API(object):
                         db.connect()
                         if db._connection is not None :
                             self._databases[company_id] = db
-                            rep_man = ReplicationManager(
-                                self._io_loop,
-                                self._knowledge_server_address,
-                                self._http_client,
-                                db,
-                                company_id
-                            )
-                            # print "replication started ", company_id
-                            rep_man.start()
-                            self._replication_managers[company_id] = rep_man
                     except Exception, e:
                         print e
                         logger.logClientApi(ip, port)
@@ -130,6 +123,53 @@ class API(object):
                         logger.logClient("error", "clientmain.py-server-added", e)
                         logger.logClientApi("Client database not available to connect ", company_id + "-" + company.to_structure())
                         continue
+
+            print self._databases
+            # After database connection client poll
+
+            def client_added(clients):
+                for c, client in clients.iteritems():
+                    _client_id = client.client_id
+                    is_new_data = client.is_new_data
+                    is_new_domain = client.is_new_domain
+                    _domain_id = client.domain_id
+                    client_db = self._databases.get(_client_id)
+                    if client_db is not None :
+                        if is_new_data is True and is_new_domain is False :
+                            rep_man = ReplicationManagerWithBase(
+                                self._io_loop,
+                                self._knowledge_server_address,
+                                self._http_client,
+                                client_db,
+                                _client_id
+                            )
+                            rep_man.start()
+                            self._replication_managers[_client_id] = rep_man
+                        elif is_new_domain is True and _domain_id is not None :
+                            d_rep_man = {}
+                            domain_lst = _domain_id.strip().split(",")
+                            for d in domain_lst :
+                                domain_id = int(d)
+                                domain_rep_man = DomainReplicationManager(
+                                    self._io_loop,
+                                    self._knowledge_server_address,
+                                    self._http_client,
+                                    client_db,
+                                    _client_id,
+                                    domain_id
+                                )
+                                domain_rep_man.start()
+                                d_rep_man[_client_id] = domain_rep_man
+
+            _client_manager = ClientReplicationManager(
+                self._io_loop,
+                self._knowledge_server_address,
+                self._http_client,
+                10,
+                client_added
+            )
+            print "client_manager"
+            print _client_manager
 
         except Exception, e :
             logger.logClientApi(e, "Server added")

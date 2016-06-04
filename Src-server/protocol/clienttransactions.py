@@ -1814,7 +1814,8 @@ class USER_WISE_COMPLIANCE(object):
 #
 
 class APPROVALCOMPLIANCE(object):
-    def __init__(self, compliance_history_id, compliance_name, description,
+    def __init__(
+        self, compliance_history_id, compliance_name, description,
         domain_name, start_date, due_date, delayed_by, compliance_frequency,
         documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
         remarks, action, statutory_dates, validity_date, unit_name

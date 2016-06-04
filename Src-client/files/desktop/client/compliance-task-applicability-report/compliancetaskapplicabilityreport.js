@@ -81,6 +81,15 @@ function initialize(){
     );
 }
 $("#show-button").click(function(){
+    laststatus = '';
+    lastcountry = '';
+    lastdomain = '';
+    lastbg = '';
+    lastle = '';
+    lastdivision = '';
+    lastlevel1 = '';
+    sno = 0;
+    fullArrayList = [];
     loadcompliancetaskapplicabilityreport("show");
 });
 $("#export-button").click(function(){
@@ -150,9 +159,7 @@ function loadcompliancetaskapplicabilityreport(buttontype){
         }
         function onSuccess(data){
             clearMessage();
-            $(".grid-table-rpt").show();
-            sno = 0;
-            fullArrayList = [];
+            $(".grid-table-rpt").show();            
             $('.tbody-task-applicability-list tr').remove();
             if(buttontype == "export"){
                 var download_url = data["link"];
@@ -493,7 +500,9 @@ function onUnitSuccess(val){
 //load unit  form list in autocomplete text box
 $("#unitval").keyup(function(){
   var textval = $(this).val();
-  getUnitAutocomplete(textval, unitList, function(val){
+  var cId = $("#country").val();
+  var dId = $("#domain").val();
+  getUnitAutocomplete(textval, unitList, cId, dId, function(val){
     onUnitSuccess(val)
   })
 });
