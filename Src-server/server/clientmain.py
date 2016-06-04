@@ -102,8 +102,10 @@ class API(object):
             for company_id, company in servers.iteritems():
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
-                # if company_server_ip.ip_address == ip and company_server_ip.port == port:
-                if company_server_ip.ip_address == ip :
+                if (
+                    (company_server_ip.ip_address == ip and company_server_ip.port == port) and
+                    (company_server_ip.ip_address == ip)
+                ):
                     try:
                         db = ClientDatabase(
                             company.db_ip.ip_address,
