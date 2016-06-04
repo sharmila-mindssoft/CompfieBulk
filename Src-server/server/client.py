@@ -35,7 +35,7 @@ class ClientReplicationManager(object) :
         self._replication_added_callback = replication_added_callback
         self._clients = {}
         ip, port = self._knowledge_server_address
-        self._poll_url = "http://%s:%s/client-list" % (ip, port)
+        self._poll_url = "http://%s:%s/knowledge/client-list" % (ip, port)
         # print
         # print self._poll_url
         body = json.dumps(
@@ -114,8 +114,8 @@ class ReplicationManager(object) :
         self._load_columns_count()
         self._get_received_count()
         ip, port = self._knowledge_server_address
-        self._poll_url = "http://%s:%s/replication" % (ip, port)
-        self._poll_old_data_url = "http://%s:%s/delreplicated" % (ip, port)
+        self._poll_url = "http://%s:%s/knowledge/replication" % (ip, port)
+        self._poll_old_data_url = "http://%s:%s/knowledge/delreplicated" % (ip, port)
         # print "_received_count ================ " , self._received_count
         self._countries = []
         self._domains = []
@@ -652,8 +652,8 @@ class ReplicationManagerWithBase(ReplicationBase):
         self._get_received_count()
         self._client_id = client_id
         ip, port = self._knowledge_server_address
-        self._poll_url = "http://%s:%s/replication" % (ip, port)
-        self._poll_old_data_url = "http://%s:%s/delreplicated" % (ip, port)
+        self._poll_url = "http://%s:%s/knowledge/replication" % (ip, port)
+        self._poll_old_data_url = "http://%s:%s/knowledge/delreplicated" % (ip, port)
 
     def _get_received_count(self):
         # assert self._received_count is None
@@ -781,7 +781,7 @@ class DomainReplicationManager(ReplicationBase):
         self._get_received_count()
         self._get_domain_received_count()
         ip, port = self._knowledge_server_address
-        self._poll_url = "http://%s:%s/domain-replication" % (ip, port)
+        self._poll_url = "http://%s:%s/knowledge/domain-replication" % (ip, port)
 
     def _get_received_count(self):
         self._db.begin()

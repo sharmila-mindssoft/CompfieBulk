@@ -211,7 +211,7 @@ class API(object):
         client_id = request.client_id
         received_count = request.received_count
         s = "%s, %s, %s " % (client_id, received_count, actual_count)
-        print s
+        # print s
         logger.logKnowledge("info", "trail", s)
         if actual_count >= received_count :
             db.remove_trail_log(client_id, received_count)
@@ -368,11 +368,11 @@ def run_server(port):
         api = API(io_loop, db)
 
         api_urls_and_handlers = [
-            ("/server-list", api.handle_server_list),
-            ("/client-list", api.handle_client_list),
-            ("/replication", api.handle_replication),
-            ("/domain-replication", api.handle_domain_replication),
-            ("/delreplicated", api.handle_delreplicated),
+            ("/knowledge/server-list", api.handle_server_list),
+            ("/knowledge/client-list", api.handle_client_list),
+            ("/knowledge/replication", api.handle_replication),
+            ("/knowledge/domain-replication", api.handle_domain_replication),
+            ("/knowledge/delreplicated", api.handle_delreplicated),
             ("/knowledge/api/login", api.handle_login),
             ("/knowledge/api/admin", api.handle_admin),
             ("/knowledge/api/techno", api.handle_techno),
