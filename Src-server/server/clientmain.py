@@ -126,7 +126,7 @@ class API(object):
                         logger.logClientApi("Client database not available to connect ", company_id + "-" + company.to_structure())
                         continue
 
-            print self._databases
+            # print self._databases
             # After database connection client poll
 
             def client_added(clients):
@@ -167,11 +167,11 @@ class API(object):
                 self._io_loop,
                 self._knowledge_server_address,
                 self._http_client,
-                10,
+                60,
                 client_added
             )
             print "client_manager"
-            print _client_manager
+            # print _client_manager
 
         except Exception, e :
             logger.logClientApi(e, "Server added")

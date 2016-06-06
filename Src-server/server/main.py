@@ -34,6 +34,7 @@ from server.constants import (
 )
 
 import logger
+import time
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
@@ -123,6 +124,7 @@ class API(object):
         request_data = self._parse_request(
             request_data_type, request, response
         )
+
         if request_data is None:
             return
 

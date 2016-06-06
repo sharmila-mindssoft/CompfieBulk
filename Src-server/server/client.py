@@ -584,6 +584,7 @@ class ReplicationBase(object):
                 # logger.logClient("client.py", "update", query)
         self._temp_count = change.audit_trail_id
         print self._temp_count
+
     def _parse_data(self, changes):
         # self._get_received_count()
         print self._temp_count
@@ -676,6 +677,7 @@ class ReplicationManagerWithBase(ReplicationBase):
             print time.time()
             if self._stop:
                 return
+
             body = json.dumps(
                 GetChanges(
                     self._client_id,
