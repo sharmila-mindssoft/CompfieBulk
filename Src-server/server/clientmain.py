@@ -147,7 +147,8 @@ class API(object):
                                 _client_id
                             )
                             rep_man.start()
-                            self._replication_managers[_client_id] = rep_man
+                            if self._replication_managers.get(_client_id) is None :
+                                self._replication_managers[_client_id] = rep_man
                         elif is_new_domain is True and _domain_id is not None :
                             d_rep_man = {}
                             domain_lst = _domain_id.strip().split(",")
