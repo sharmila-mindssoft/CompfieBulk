@@ -152,6 +152,7 @@ function datetonumber(datetime){
     $(".tbody-audittrail-list").find("tr").remove();
     $('.grid-table').show();
     sno = 0;
+    $('#pagination').show();
 
     fromDateValue = $("#from-date").val();
     toDateValue = $("#to-date").val();

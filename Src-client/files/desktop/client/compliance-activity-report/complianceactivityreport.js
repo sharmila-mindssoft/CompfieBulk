@@ -413,9 +413,9 @@ function onUnitSuccess(val){
 //load unit  form list in autocomplete text box
 $("#unitval").keyup(function(){
   var textval = $(this).val();
-  var cId = $("#country").val();
-  var dId = $("#domain").val();
-  getUnitAutocomplete(textval, unitList, cId, dId, function(val){
+  //var cId = $("#country").val();
+  //var dId = $("#domain").val();
+  getUnitAutocomplete(textval, unitList, function(val){
     onUnitSuccess(val)
   })
 });

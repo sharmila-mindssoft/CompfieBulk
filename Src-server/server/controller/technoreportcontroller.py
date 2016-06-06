@@ -1,3 +1,4 @@
+import time
 from protocol import login, technoreports, knowledgereport
 from generalcontroller import validate_user_session, validate_user_forms
 from server import logger
@@ -21,43 +22,59 @@ def process_techno_report_request(request, db):
 
     if type(request_frame) is technoreports.GetAssignedStatutoryReportFilters:
         logger.logKnowledgeApi("GetAssignedStatutoryReportFilters", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_assigned_statutory_report_filters(db, user_id)
         logger.logKnowledgeApi("GetAssignedStatutoryReportFilters", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetAssignedStatutoryReport:
         logger.logKnowledgeApi("GetAssignedStatutoryReport", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_assigned_statutory_report_data(db, request_frame, user_id)
         logger.logKnowledgeApi("GetAssignedStatutoryReport", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetClientDetailsReportFilters:
         logger.logKnowledgeApi("GetClientDetailsReportFilters", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_client_details_report_filters(db, request_frame, user_id)
         logger.logKnowledgeApi("GetClientDetailsReportFilters", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetClientDetailsReportData:
         logger.logKnowledgeApi("GetClientDetailsReportData", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_client_details_report_data(db, request_frame, user_id)
         logger.logKnowledgeApi("GetClientDetailsReportData", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetStatutoryNotificationsFilters:
         logger.logKnowledgeApi("GetStatutoryNotificationsFilters", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_statutory_notifications_filters(db, request_frame, user_id)
         logger.logKnowledgeApi("GetStatutoryNotificationsFilters", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetStatutoryNotificationsReportData:
         logger.logKnowledgeApi("GetStatutoryNotificationsReportData", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_statutory_notifications_report_data(db, request_frame, user_id)
         logger.logKnowledgeApi("GetStatutoryNotificationsReportData", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetComplianceTaskFilter :
         logger.logKnowledgeApi("GetComplianceTaskFilter", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_compliance_task_filter(db, request_frame, user_id)
         logger.logKnowledgeApi("GetComplianceTaskFilter", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetComplianceTaskReport :
         logger.logKnowledgeApi("GetComplianceTaskReport", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_compliance_task_report(db, request_frame, user_id)
         logger.logKnowledgeApi("GetComplianceTaskFilter", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     return result
 

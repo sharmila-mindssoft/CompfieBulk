@@ -4118,6 +4118,9 @@ $(document).ready(function () {
         initializeCharts();
 
         loadCharts();
+
+        get_notification_count(); 
+
     });
 
     $("#fromdate" ).datepicker({
@@ -4173,9 +4176,9 @@ function onUnitSuccess(val){
 
 //load unit  form list in autocomplete text box
 function ac_unit_load(textval){
-  var cId = $("#country").val();
-  var dId = 0;
-  getUnitAutocomplete(textval, UNITLIST, cId, dId, function(val){
+  //var cId = $("#country").val();
+  //var dId = 0;
+  getUnitAutocomplete(textval, UNITLIST, function(val){
     onUnitSuccess(val)
   })
 }

@@ -147,9 +147,11 @@ function loadcompliancetaskapplicabilityreport(buttontype){
     appstatus = $("#applicable-status").val();
     if(countries == ""){
         displayMessage(message.country_required);
+        $(".grid-table-rpt").hide();  
     }
     else if(domain == ""){
         displayMessage(message.domain_required);
+        $(".grid-table-rpt").hide();
     }
     else{
         
@@ -158,13 +160,14 @@ function loadcompliancetaskapplicabilityreport(buttontype){
             csv = true;
         }
         function onSuccess(data){
-            clearMessage();
-            $(".grid-table-rpt").show();            
+            clearMessage();            
             $('.tbody-task-applicability-list tr').remove();
             if(buttontype == "export"){
                 var download_url = data["link"];
                 window.open(download_url, '_blank');
+                $(".grid-table-rpt").hide();
             }else{
+                $(".grid-table-rpt").show();
                 loadTaskApplicabilityStatusList(data);
             }
         }
@@ -364,9 +367,9 @@ function filterheading(data){
         $('.filter-country', clonefilterHeading).text(countriesText);
         $('.filter-domain', clonefilterHeading).text(domainText);
 
-        $('.filter-businessgroup', clonefilterHeading).text(data["business_group_name"]);
-        $('.filter-legalentity', clonefilterHeading).text(data["legal_entity_name"]);
-        $('.filter-division', clonefilterHeading).text(data["division_name"]);
+        $('.filter-businessgroup', clonefilterHeading).text(bg);
+        $('.filter-legalentity', clonefilterHeading).text(le);
+        $('.filter-division', clonefilterHeading).text(dv);
         $('.tbody-task-applicability-list').append(clonefilterHeading);
 
     }
@@ -500,9 +503,9 @@ function onUnitSuccess(val){
 //load unit  form list in autocomplete text box
 $("#unitval").keyup(function(){
   var textval = $(this).val();
-  var cId = $("#country").val();
-  var dId = $("#domain").val();
-  getUnitAutocomplete(textval, unitList, cId, dId, function(val){
+  //var cId = $("#country").val();
+  //var dId = $("#domain").val();
+  getUnitAutocomplete(textval, unitList, function(val){
     onUnitSuccess(val)
   })
 });

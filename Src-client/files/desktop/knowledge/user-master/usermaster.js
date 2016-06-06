@@ -35,14 +35,18 @@ function displayEdit (userId) {
 			var userId = usersList[entity]["user_id"];
 			var employeeName = usersList[entity]["employee_name"];
 			var employeeId = usersList[entity]["employee_code"];
-			var address = usersList[entity]["address"];
+			var address = '';
+			if(usersList[entity]["address"] != null && usersList[entity]["address"] != 'None') address = usersList[entity]["address"];
+
 			var mergeContactNo = usersList[entity]["contact_no"].split("-");
 			var countryCode = mergeContactNo[0];
 			var areaCode = mergeContactNo[1];
 			var contactNo = mergeContactNo[2];
 			var userGroup = usersList[entity]["user_group_id"];
 			var userGroupval;
-			var designation = usersList[entity]["designation"];
+			var designation = '';
+			if(usersList[entity]["designation"] != null && usersList[entity]["designation"] != 'None') designation = usersList[entity]["designation"];
+
 			domainIds = usersList[entity]["domain_ids"]; 
 			countryIds = usersList[entity]["country_ids"];
 			var emailId = usersList[entity]["email_id"];

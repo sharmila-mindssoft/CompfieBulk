@@ -45,6 +45,7 @@ function initialize(){
 
 $('#pagination').click(function(){
     displayLoader();
+    $('.js-filter').val('');
     function onSuccess(data){
         closeicon();
         approvalList = data['approval_list'];

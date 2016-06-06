@@ -1,3 +1,4 @@
+import time
 from protocol import (clientuser, login)
 from server import logger
 from server.constants import RECORD_DISPLAY_COUNT
@@ -20,32 +21,42 @@ def process_client_user_request(request, db) :
 
     if type(request) is clientuser.GetCurrentComplianceDetail:
         logger.logClientApi("GetCurrentComplianceDetail", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_get_current_compliance_detail(db, request, session_user, client_id)
         logger.logClientApi("GetCurrentComplianceDetail", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     if type(request) is clientuser.GetUpcomingComplianceDetail:
         logger.logClientApi("GetUpcomingComplianceDetail", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_get_upcoming_compliance_detail(db, request, session_user, client_id)
         logger.logClientApi("GetUpcomingComplianceDetail", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     if type(request) is clientuser.UpdateComplianceDetail:
         logger.logClientApi("UpdateComplianceDetail", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_update_compliance_detail(db, request, session_user, client_id)
         logger.logClientApi("UpdateComplianceDetail", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientuser.GetOnOccurrenceCompliances:
         logger.logClientApi("GetOnOccurrenceCompliances", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_get_on_occurrence_compliances(
             db, request, session_user, client_id
         )
         logger.logClientApi("GetOnOccurrenceCompliances", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientuser.StartOnOccurrenceCompliance:
         logger.logClientApi("StartOnOccurrenceCompliance", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_start_on_occurrence_compliance(
             db, request, session_user, client_id
         )
         logger.logClientApi("StartOnOccurrenceCompliance", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     return result
 

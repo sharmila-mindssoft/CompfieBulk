@@ -1133,7 +1133,8 @@ $("#seatingunitval").keyup(function(){
         displayMessage(message.usertype_required);
         return false;
     }
-    getUnitNoConditionAutocomplete(textval, unitList, function(val){
+    //getUnitNoConditionAutocomplete(textval, unitList, function(val){
+    getUnitAutocomplete(textval, unitList, function(val){
         onUnitSuccess(val)
     })
 });

@@ -69,6 +69,7 @@ function initialize(){
     }
     $('.grid-table').show();
     $('.tbody-login-trace-list tr').remove();
+    $('#pagination').show();
     apipass(sno, userid, lastdate, todaydate);
    
 }
@@ -118,7 +119,7 @@ function showrecord(){
         $('.tbody-login-trace-list tr').remove();
         //loadrecords(logintraceList); 
         sno = 0;
-        
+        $('#pagination').show();
         apipass(sno, userid, fromdate, todate);
 
     }
