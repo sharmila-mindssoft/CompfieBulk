@@ -73,8 +73,8 @@ def process_get_current_compliance_detail(db, request, session_user, client_id):
     )
     current_date_time = db.get_date_time()
     str_current_date_time = db.datetime_to_string_time(current_date_time)
-    inprogress_count =db.get_inprogress_count(session_user)
-    overdue_count =db.get_overdue_count(session_user)
+    inprogress_count = db.get_inprogress_count(session_user)
+    overdue_count = db.get_overdue_count(session_user)
     return clientuser.GetCurrentComplianceDetailSuccess(
         current_compliances=current_compliances_list,
         current_date=str_current_date_time,
@@ -143,7 +143,7 @@ def process_get_on_occurrence_compliances(
     user_domain_ids = db.get_user_domains(session_user)
     user_unit_ids = db.get_user_unit_ids(session_user)
     compliances = db.get_on_occurrence_compliances_for_user(
-        session_user, user_domain_ids, user_unit_ids, 
+        session_user, user_domain_ids, user_unit_ids,
         request.start_count, to_count
     )
     total_count = db.get_on_occurrence_compliance_count(

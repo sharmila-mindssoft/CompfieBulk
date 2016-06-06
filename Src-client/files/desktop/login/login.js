@@ -23,8 +23,8 @@ function initSession(userProfile, shortName) {
 function setLandingPage(userProfile) {
     menus = userProfile["menu"]["menus"];
     if ("Home" in menus) {
-        // landingPage = "/dashboard";
-        landingPage = "/home";
+        landingPage = "/dashboard";
+        // landingPage = "/home";
     }
     else {
         landingPage = "/home";

@@ -4118,9 +4118,7 @@ $(document).ready(function () {
         initializeCharts();
 
         loadCharts();
-
         get_notification_count(); 
-
     });
 
     $("#fromdate" ).datepicker({
