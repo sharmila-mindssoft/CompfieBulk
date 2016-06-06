@@ -3648,7 +3648,10 @@ class ClientDatabase(Database):
                     year_range_qry = y
                 else :
                     year_range_qry += "OR %s" % (y)
-            year_range_qry = "AND (%s)" % year_range_qry
+            if len(year_condition) > 0 :
+                year_range_qry = "AND (%s)" % year_range_qry
+            else :
+                year_range_qry = ""
 
         else :
             from_date = None
@@ -3758,19 +3761,24 @@ class ClientDatabase(Database):
                 first_year = current_year
                 second_year = current_year + 1
                 years = [first_year, second_year]
+                print first_year, second_year, years
             elif current_month in [int(m) for m in range(1, month_to+1)] :
                 first_year = current_year - 1
                 second_year = current_year
+                print first_year, second_year
 
             for i in range(1, 8):
                 if i == 1 :
                     years = [first_year, second_year]
+                    print years
                 else :
                     first_year = current_year - i
                     second_year = first_year + 1
                     years = [first_year, second_year]
+                    print years
 
                 double_years.append(years)
+            print double_years
             return double_years
 
     def get_status_wise_compliances_count(self, request, session_user):
@@ -3850,7 +3858,10 @@ class ClientDatabase(Database):
                         year_condition.append(
                             cond % (country_id, domain_id, str(tuple(y)))
                         )
-            info["years"] = years_list
+            if len(years_list) == 0 :
+                info["years"] = []
+            else :
+                info["years"] = years_list
             info["period_from"] = int(d["period_from"])
             info["period_to"] = int(d["period_to"])
             years_range.append(info)

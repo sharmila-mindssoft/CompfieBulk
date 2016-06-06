@@ -103,10 +103,7 @@ class API(object):
 
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
-                if (
-                    (company_server_ip.ip_address == ip and company_server_ip.port == port) and
-                    (company_server_ip.ip_address == ip)
-                ):
+                if company_server_ip.ip_address == ip and company_server_ip.port == port :
                     try:
                         db = ClientDatabase(
                             company.db_ip.ip_address,
@@ -146,8 +143,8 @@ class API(object):
                                 client_db,
                                 _client_id
                             )
-                            rep_man.start()
                             if self._replication_managers.get(_client_id) is None :
+                                rep_man.start()
                                 self._replication_managers[_client_id] = rep_man
                         elif is_new_domain is True and _domain_id is not None :
                             d_rep_man = {}
