@@ -4467,8 +4467,8 @@ class KnowledgeDatabase(Database):
         logger.logKnowledge("info", "create", query)
         client_cursor.execute(query)
         query = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, REFERENCES, \
-            TRIGGER, EVENT, CREATE ROUTINE, ALTER  on %s.* to %s@%s IDENTIFIED BY '%s';" % (
-            database_name, db_username, host, db_password)
+            TRIGGER, EVENT, CREATE ROUTINE, ALTER  on %s.* to '%s'@'%' IDENTIFIED BY '%s';" % (
+            database_name, db_username, db_password)
         logger.logKnowledge("info", "create", query)
         client_cursor.execute(query)
         client_cursor.execute("FLUSH PRIVILEGES;")
