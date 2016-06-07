@@ -1,3 +1,4 @@
+import time
 from protocol import login, knowledgemaster
 from generalcontroller import validate_user_session, validate_user_forms
 from server import logger
@@ -32,93 +33,129 @@ def process_knowledge_master_request(request, db) :
 
     if type(request_frame) is knowledgemaster.GetGeographyLevels:
         logger.logKnowledgeApi("GetGeographyLevels", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_geography_level(db, user_id)
         logger.logKnowledgeApi("GetGeographyLevels", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.SaveGeographyLevel:
         logger.logKnowledgeApi("SaveGeographyLevel", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_geography_level(db, request_frame, user_id)
         logger.logKnowledgeApi("SaveGeographyLevel", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.GetGeographies:
         logger.logKnowledgeApi("GetGeographies", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_geographies(db, user_id)
         logger.logKnowledgeApi("GetGeographies", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.SaveGeography:
         logger.logKnowledgeApi("SaveGeography", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_geography(db, request_frame, user_id)
         logger.logKnowledgeApi("SaveGeography", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.UpdateGeography:
         logger.logKnowledgeApi("UpdateGeography", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_update_geography(db, request_frame, user_id)
         logger.logKnowledgeApi("UpdateGeography", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.ChangeGeographyStatus:
         logger.logKnowledgeApi("ChangeGeographyStatus", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_change_geography_status(db, request_frame, user_id)
         logger.logKnowledgeApi("ChangeGeographyStatus", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.GetIndustries:
         logger.logKnowledgeApi("GetIndustries", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_industry(db)
         logger.logKnowledgeApi("GetIndustries", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.SaveIndustry:
         logger.logKnowledgeApi("SaveIndustry", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_industry(db, request_frame, user_id)
         logger.logKnowledgeApi("SaveIndustry", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.UpdateIndustry:
         logger.logKnowledgeApi("UpdateIndustry", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_update_industry(db, request_frame, user_id)
         logger.logKnowledgeApi("UpdateIndustry", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.ChangeIndustryStatus:
         logger.logKnowledgeApi("ChangeIndustryStatus", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_change_industry_status(db, request_frame, user_id)
         logger.logKnowledgeApi("ChangeIndustryStatus", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.GetStatutoryNatures:
         logger.logKnowledgeApi("GetStatutoryNatures", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_statutory_nature(db)
         logger.logKnowledgeApi("GetStatutoryNatures", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.SaveStatutoryNature:
         logger.logKnowledgeApi("SaveStatutoryNature", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_statutory_nature(db, request_frame, user_id)
         logger.logKnowledgeApi("SaveStatutoryNature", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.UpdateStatutoryNature:
         logger.logKnowledgeApi("UpdateStatutoryNature", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_update_statutory_nature(db, request_frame, user_id)
         logger.logKnowledgeApi("UpdateStatutoryNature", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.ChangeStatutoryNatureStatus :
         logger.logKnowledgeApi("ChangeStatutoryNatureStatus", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_change_statutory_nature_status(db, request_frame, user_id)
         logger.logKnowledgeApi("ChangeStatutoryNatureStatus", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.GetStatutoryLevels:
         logger.logKnowledgeApi("GetStatutoryLevels", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_statutory_level(db, user_id)
         logger.logKnowledgeApi("GetStatutoryLevels", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.SaveStatutoryLevel:
         logger.logKnowledgeApi("SaveStatutoryLevel", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_statutory_level(db, request_frame, user_id)
         logger.logKnowledgeApi("SaveStatutoryLevel", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.SaveStatutory:
         logger.logKnowledgeApi("SaveStatutory", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_statutory(db, request_frame, user_id)
         logger.logKnowledgeApi("SaveStatutory", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgemaster.UpdateStatutory:
         logger.logKnowledgeApi("UpdateStatutory", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_update_statutory(db, request_frame, user_id)
         logger.logKnowledgeApi("UpdateStatutory", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     else :
         result = login.InvalidSessionToken()

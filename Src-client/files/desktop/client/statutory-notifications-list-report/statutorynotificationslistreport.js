@@ -117,17 +117,22 @@ function loadStatutoryNotificationsListreport(buttontype){
     }
     if(countries == ""){
         displayMessage(message.country_required);
+        $(".grid-table-rpt").hide();
     }
     else if(domain == ""){
         displayMessage(message.domain_required);
+        $(".grid-table-rpt").hide();
     }
     else if(fromdate != '' && todate ==''){
         displayMessage(message.todate_required);
+        $(".grid-table-rpt").hide();
     }
     else if(fromdate == '' && todate !=''){
         displayMessage(message.fromdate_required);
+        $(".grid-table-rpt").hide();
     }
     else{
+        clearMessage();
         function onSuccess(data){
             $(".grid-table-rpt").show();
             
@@ -385,9 +390,9 @@ function onUnitSuccess(val){
 //load unit  form list in autocomplete text box  
 $("#unitval").keyup(function(){
   var textval = $(this).val();
-  var cId = $("#country").val();
-  var dId = $("#domain").val();
-  getUnitAutocomplete(textval, unitList, cId, dId, function(val){
+  //var cId = $("#country").val();
+  //var dId = $("#domain").val();
+  getUnitAutocomplete(textval, unitList, function(val){
     onUnitSuccess(val)
   })
 });

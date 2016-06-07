@@ -264,18 +264,20 @@ $("#submit").click(function(){
   s_endCount = 0;
   fullArrayList = [];
   clearMessage();
-  $(".grid-table-rpt").show();
 
   if(country.length == 0){
     displayMessage(message.country_required);
+    $(".grid-table-rpt").hide();
     hideLoader();
   }
   else if(domain.length == 0){
     displayMessage(message.domain_required); 
+    $(".grid-table-rpt").hide();
     hideLoader(); 
   }
   else{
       function onSuccess(data){
+        $(".grid-table-rpt").show();
         unitWiseComplianceList = data["compliance_list"];
         totalRecord = data["total_count"];
         loadArray(unitWiseComplianceList);
@@ -379,9 +381,9 @@ function onUnitSuccess(val){
 //load unit  form list in autocomplete text box  
 $("#unitval").keyup(function(){
   var textval = $(this).val();
-  var cId = $("#country").val();
-  var dId = $("#domain").val();
-  getUnitAutocomplete(textval, unitsList, cId, dId, function(val){
+  //var cId = $("#country").val();
+  //var dId = $("#domain").val();
+  getUnitAutocomplete(textval, unitsList, function(val){
     onUnitSuccess(val)
   })
 });

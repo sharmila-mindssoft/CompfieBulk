@@ -122,19 +122,21 @@ function loadunitdetailsreport(buttontype){
 
 	if(countries == ""){
 		displayMessage(message.country_required);
+		$(".grid-table-rpt").hide();
 	}
 	else{
 		displayLoader();
 		function onSuccess(data){
-	        clearMessage();
-			$(".grid-table-rpt").show();         
+	        clearMessage();        
 		    if(buttontype == "export"){
 		        var download_url = data["link"];
-		        window.open(download_url, '_blank');    
+		        window.open(download_url, '_blank');  
+		        $(".grid-table-rpt").hide();  
 		    }
 		    else{
 		    	totalRecord = data["total_count"];
-		        loadUnitDetailsList(data['units']);  
+		        loadUnitDetailsList(data['units']); 
+		        $(".grid-table-rpt").show();  
 		    }
 		    hideLoader();
 		}
@@ -144,7 +146,8 @@ function loadunitdetailsreport(buttontype){
 		}
 	    csv = false
 	    if(buttontype == "export"){
-	        csv = true
+	        csv = true;
+	        
 	    }
 		client_mirror.getClientDetailsReportData(parseInt(countries), businessgroupid,	
 			lentityid, divisionid, unitid,  domainsVal, csv, sno, 
@@ -294,9 +297,9 @@ function onUnitSuccess(val){
 //load unit  form list in autocomplete text box  
 $("#unitval").keyup(function(){
   var textval = $(this).val();
-  var cId = $("#country").val();
-  var dId = 0;
-  getUnitAutocomplete(textval, unitList, cId, dId, function(val){
+  //var cId = $("#country").val();
+  //var dId = 0;
+  getUnitAutocomplete(textval, unitList, function(val){
     onUnitSuccess(val)
   })
 });

@@ -188,6 +188,7 @@ function loadCompliance(reportType){
       filterdata["service_provider_id"]=parseInt(serviceprovider);
 
       function onSuccess(data){
+        clearMessage();
         serviceProviderWiseComplianceList = data["compliance_list"];
         totalRecord = data["total_count"];
         $(".grid-table-rpt").show();
@@ -320,9 +321,9 @@ function onUnitSuccess(val){
 //load unit  form list in autocomplete text box  
 $("#unitval").keyup(function(){
   var textval = $(this).val();
-  var cId = $("#country").val();
-  var dId = $("#domain").val();
-  getUnitAutocomplete(textval, unitsList, cId, dId, function(val){
+  //var cId = $("#country").val();
+  //var dId = $("#domain").val();
+  getUnitAutocomplete(textval, unitsList, function(val){
     onUnitSuccess(val)
   })
 });

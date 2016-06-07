@@ -1,3 +1,4 @@
+import time
 from protocol import (clienttransactions, clientmasters, login, core)
 from server import logger
 from server.constants import RECORD_DISPLAY_COUNT
@@ -21,53 +22,69 @@ def process_client_transaction_requests(request, db) :
 
     if type(request) is clienttransactions.GetStatutorySettings :
         logger.logClientApi("GetStatutorySettings", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_get_statutory_settings(db, session_user, client_id)
         logger.logClientApi("GetStatutorySettings", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetSettingsCompliances :
         logger.logClientApi("GetSettingsCompliances", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_get_statutory_compliance(db, session_user, request)
         logger.logClientApi("GetSettingsCompliances", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.UpdateStatutorySettings :
         logger.logClientApi("UpdateStatutorySettings", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_update_statutory_settings(
             db, request, session_user, client_id
         )
         logger.logClientApi("UpdateStatutorySettings", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetAssignCompliancesFormData:
         logger.logClientApi("GetAssignCompliancesFormData", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_get_assign_compliance_form_data(
             db, session_user, client_id
         )
         logger.logClientApi("GetAssignCompliancesFormData", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetComplianceForUnits:
         logger.logClientApi("GetComplianceForUnits", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_get_compliance_for_units(
             db, request, session_user, client_id
         )
         logger.logClientApi("GetComplianceForUnits", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.SaveAssignedCompliance :
         logger.logClientApi("SaveAssignedCompliance", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_save_assigned_compliance(
             db, request, session_user, client_id
         )
         logger.logClientApi("SaveAssignedCompliance", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetUserwiseCompliances :
         logger.logClientApi("GetUserwiseCompliances", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_get_user_wise_compliances(
             db, session_user, client_id
         )
         logger.logClientApi("GetUserwiseCompliances", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetAssigneeCompliances :
         logger.logClientApi("GetAssigneeCompliances", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_get_assignee_compliances(db, request, session_user)
         logger.logClientApi("GetAssigneeCompliances", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.ReassignCompliance :
         result = process_reassign_compliance(
@@ -75,38 +92,48 @@ def process_client_transaction_requests(request, db) :
         )
     elif type(request) is clienttransactions.GetPastRecordsFormData :
         logger.logClientApi("GetPastRecordsFormData", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_get_past_records_form_data(
             db, request, session_user, client_id
         )
         logger.logClientApi("GetPastRecordsFormData", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetStatutoriesByUnit :
         logger.logClientApi("GetStatutoriesByUnit", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_get_statutories_by_unit(
             db, request, session_user, client_id
         )
         logger.logClientApi("GetStatutoriesByUnit", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.SavePastRecords :
         logger.logClientApi("SavePastRecords", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_save_past_records(
             db, request, session_user, client_id
         )
         logger.logClientApi("SavePastRecords", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetComplianceApprovalList :
         logger.logClientApi("GetComplianceApprovalList", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_get_compliance_approval_list(
             db, request, session_user, client_id
         )
         logger.logClientApi("GetComplianceApprovalList", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.ApproveCompliance:
         logger.logClientApi("ApproveCompliance", "process begin")
+        logger.logClientApi("------", str(time.time()))
         result = process_approve_compliance(
             db, request, session_user, client_id
         )
         logger.logClientApi("ApproveCompliance", "process end")
+        logger.logClientApi("------", str(time.time()))
 
     return result
 

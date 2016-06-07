@@ -50,13 +50,15 @@ $("#show-button").click(function(){
 	var level1NameVal = $("#level1idval").val();
 	if(countries == ""){
 		displayMessage(message.country_required);
+		$(".grid-table-rpt").hide();
 	}
 	else if(domain == ""){
 		displayMessage(message.domain_required);
+		$(".grid-table-rpt").hide();
 	}
 	else{
+		clearMessage();
 		function onSuccess(data){
-			console.log(data);
 			$(".grid-table-rpt").show();
 			$(".snCountryVal").text(countriesNameVal);
 			$(".snDomainVal").text(domainNameVal);

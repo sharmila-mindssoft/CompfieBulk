@@ -1,3 +1,4 @@
+import time
 from protocol import login, knowledgetransaction
 from generalcontroller import validate_user_session, validate_user_forms
 from server import logger
@@ -21,43 +22,59 @@ def process_knowledge_transaction_request(request, db) :
 
     if type(request_frame) is knowledgetransaction.GetStatutoryMappingsMaster:
         logger.logKnowledgeApi("GetStatutoryMappingsMaster", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_statutory_mapping_master(db, user_id)
         logger.logKnowledgeApi("GetStatutoryMappingsMaster", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgetransaction.GetStatutoryMappings :
         logger.logKnowledgeApi("GetStatutoryMappings", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_statutory_mappings(db, user_id)
         logger.logKnowledgeApi("GetStatutoryMappings", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgetransaction.CheckDuplicateStatutoryMapping :
         logger.logKnowledgeApi("CheckDuplicateStatutoryMapping", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_check_statutory_mapping(db, request_frame)
         logger.logKnowledgeApi("CheckDuplicateStatutoryMapping", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgetransaction.SaveStatutoryMapping :
         logger.logKnowledgeApi("SaveStatutoryMapping", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_save_statutory_mapping(db, request_frame, user_id)
         logger.logKnowledgeApi("SaveStatutoryMapping", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgetransaction.UpdateStatutoryMapping :
         logger.logKnowledgeApi("UpdateStatutoryMapping", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_update_statutory_mapping(db, request_frame, user_id)
         logger.logKnowledgeApi("UpdateStatutoryMapping", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgetransaction.ChangeStatutoryMappingStatus :
         logger.logKnowledgeApi("ChangeStatutoryMappingStatus", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_change_statutory_mapping_status(db, request_frame, user_id)
         logger.logKnowledgeApi("ChangeStatutoryMappingStatus", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgetransaction.GetApproveStatutoryMappings :
         logger.logKnowledgeApi("GetApproveStatutoryMappings", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_approve_statutory_mappings(db, user_id)
         logger.logKnowledgeApi("GetApproveStatutoryMappings", "process end")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is knowledgetransaction.ApproveStatutoryMapping :
         logger.logKnowledgeApi("ApproveStatutoryMapping", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
         result = process_approve_statutory_mapping(db, request_frame, user_id)
         logger.logKnowledgeApi("ApproveStatutoryMapping", "process begin")
+        logger.logKnowledgeApi("------", str(time.time()))
 
     return result
 

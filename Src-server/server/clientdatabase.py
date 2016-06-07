@@ -8277,10 +8277,10 @@ class ClientDatabase(Database):
         else:
             completion_date = self.string_to_datetime(completion_date).date()
         history_values = [
-            current_time_stamp,
+            completion_date,
             ",".join(document_names),
             remarks,
-            completion_date
+            current_time_stamp
         ]
         if validity_date not in ["", None, "None"]:
             history_columns.append("validity_date")
@@ -8303,10 +8303,6 @@ class ClientDatabase(Database):
         ageing, remarks = self.calculate_ageing(
             due_date, frequency_type=None, completion_date=completion_date, duration_type=None
         )
-        self.save_compliance_activity(
-            unit_id, compliance_id, "Submitted", "Inprogress",
-            remarks
-        )
         if assignee_id == approver_id:
             history_columns.append("approve_status")
             history_columns.append("approved_on")
@@ -8324,6 +8320,15 @@ class ClientDatabase(Database):
             self.update(
                 self.tblAssignedCompliances, ["is_active"], [0], as_condition,
                 client_id
+            )
+            self.save_compliance_activity(
+                unit_id, compliance_id, "Approved", "Complied",
+                remarks
+            )
+        else:
+            self.save_compliance_activity(
+                unit_id, compliance_id, "Submitted", "Inprogress",
+                remarks
             )
 
         self.update(
@@ -9504,7 +9509,7 @@ class ClientDatabase(Database):
                 LEFT JOIN %s d ON (d.division_id = u.division_id) \
                 WHERE %s \
                 ORDER BY u.business_group_id, u.legal_entity_id, u.division_id, \
-                u.unit_id DESC LIMIT %d, %d" % (
+                u.unit_id ASC LIMIT %d, %d" % (
                     columns, self.tblUnits, self.tblBusinessGroups,
                     self.tblLegalEntities, self.tblDivisions, condition,
                     int(start_count), to_count
@@ -9989,7 +9994,7 @@ class ClientDatabase(Database):
         division_id = request.division_id
         unit = request.unit_id
         from_count = request.record_count
-        to_count = 500
+        to_count = 100
         statutory_name = request.statutory_name
         status = request.applicable_status
 
