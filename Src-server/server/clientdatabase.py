@@ -3214,9 +3214,12 @@ class ClientDatabase(Database):
                 trigger_before = "0"
             if c.due_date is not None :
                 due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+                a_due_date = due_date
             else :
                 due_date = "0000-00-00"
-            compliance_names.append("Complaince Name:" + c.compliance_name + "- Due Date:" + str(c.due_date))
+                a_due_date = "Nil"
+
+            compliance_names.append("Complaince Name:" + c.compliance_name + "- Due Date:" + str(a_due_date))
             validity_date = c.validity_date
             if validity_date is not None :
                 validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")

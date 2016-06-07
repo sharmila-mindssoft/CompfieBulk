@@ -223,7 +223,7 @@ class ComplianceTask(Database):
                 d["concurrence_person"], int(approval_person)
             )
 
-            if d["document_name"] :
+            if d["document_name"] not in ["None", "", None] :
                 compliance_name = d["document_name"] + " - " + d["compliance_task"]
             else :
                 compliance_name = d["compliance_task"]
