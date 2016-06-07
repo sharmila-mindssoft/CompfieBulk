@@ -6330,22 +6330,13 @@ class KnowledgeDatabase(Database):
         condition = '''user_id in (%s)''' % user_ids
         users = self.return_users(condition)
 
-        from_date = self.string_to_datetime(from_date)
-        to_date = self.string_to_datetime(to_date)
+        from_date = self.string_to_datetime(from_date).date()
+        to_date = self.string_to_datetime(to_date).date()
         where_qry = "1"
         if from_date is not None and to_date is not None:
-            where_qry += " AND  created_on between DATE_SUB('%s', INTERVAL 1 DAY) \
-            AND DATE_ADD('%s', INTERVAL 1 DAY)" % (
+            where_qry += " AND  date(created_on) between '%s' AND '%s' " % (
                 from_date, to_date
 
-            )
-        elif from_date is not None:
-            where_qry += " AND  created_on > DATE_SUB('%s', INTERVAL 1 DAY) " % (
-                from_date
-            )
-        elif to_date is not None:
-            where_qry += " AND created_on < DATE_ADD('%s', INTERVAL 1 DAY)" % (
-                to_date
             )
         if user_id is not None:
             where_qry += " AND user_id = '%s'" % (user_id)
@@ -6506,9 +6497,9 @@ class KnowledgeDatabase(Database):
             " % (level_1_statutory_id)
 
         if from_date is not None and to_date is not None :
-            from_date = self.string_to_datetime(from_date)
-            to_date = self.string_to_datetime(to_date)
-            where_qry += " AND tsnl.updated_on >= '%s' AND tsnl.updated_on <= '%s'" % (
+            from_date = self.string_to_datetime(from_date).date()
+            to_date = self.string_to_datetime(to_date).date()
+            where_qry += " AND date(tsnl.updated_on) >= '%s' AND date(tsnl.updated_on) <= '%s'" % (
                 from_date, to_date
             )
 

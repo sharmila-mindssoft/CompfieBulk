@@ -195,7 +195,7 @@ class ClientDatabase(Database):
                         # result["client_id"] = client_id
                         return result
                     else:
-                        return False
+                        return "ContractExpired"
                 else:
                     return result
         else :
@@ -1423,27 +1423,20 @@ class ClientDatabase(Database):
         else:
             users = self.get_users(client_id)
 
-        from_date = self.string_to_datetime(from_date)
-        to_date = self.string_to_datetime(to_date)
+        from_date = self.string_to_datetime(from_date).date()
+        to_date = self.string_to_datetime(to_date).date()
         where_qry = "1"
         if from_date is not None and to_date is not None:
-            where_qry += " AND  created_on between '%s' AND '%s'" % (
+            where_qry += " AND  date(created_on) between '%s' AND '%s' " % (
                 from_date, to_date
 
             )
-        elif from_date is not None:
-            where_qry += " AND  created_on > '%s' " % (
-                from_date
-            )
-        elif to_date is not None:
-            where_qry += " AND created_on < '%s'" % (
-                to_date
-            )
+        
         if user_id is not None:
             where_qry += " AND user_id = '%s'" % (user_id)
         if form_id is not None:
             where_qry += " AND form_id = '%s'" % (form_id)
-
+       
         columns = "user_id, form_id, action, created_on"
         where_qry += ''' AND action not like "%sLog In by%s"
         ORDER BY activity_log_id DESC limit %s, %s ''' % (
@@ -7746,9 +7739,9 @@ class ClientDatabase(Database):
         to_date = request_data.to_date
         condition = ""
         if from_date is not None and to_date is not None :
-            from_date = self.string_to_datetime(from_date)
-            to_date = self.string_to_datetime(to_date)
-            condition += " AND snl.updated_on >= '%s' AND snl.updated_on <= '%s'" % (from_date, to_date)
+            from_date = self.string_to_datetime(from_date).date()
+            to_date = self.string_to_datetime(to_date).date()
+            condition += " AND date(snl.updated_on) >= '%s' AND date(snl.updated_on) <= '%s'" % (from_date, to_date)
         if business_group_id is not None:
             condition += " AND u.business_group_id = '%s'" % business_group_id
         if legal_entity_id is not None:
@@ -8719,7 +8712,7 @@ class ClientDatabase(Database):
         if from_date is not None and to_date is not None :
             start_date = self.string_to_datetime(from_date).date()
             end_date = self.string_to_datetime(to_date).date()
-            qry_where += " AND t1.reassigned_date between DATE_SUB('%s', INTERVAL 1 DAY) and '%s'" % (start_date, end_date)
+            qry_where += " AND t1.reassigned_date between '%s' and '%s' " % (start_date, end_date)
         elif from_date is not None:
             start_date = self.string_to_datetime(from_date).date()
             qry_where += " AND t1.reassigned_date > DATE_SUB('%s', INTERVAL 1 DAY)" % (start_date)
@@ -9028,24 +9021,16 @@ class ClientDatabase(Database):
         self, client_id, session_user, from_count, to_count, user_id,
         from_date, to_date
     ):
-        from_date = self.string_to_datetime(from_date)
-        to_date = self.string_to_datetime(to_date)
+        from_date = self.string_to_datetime(from_date).date()
+        to_date = self.string_to_datetime(to_date).date()
         condition = "1"
         if user_id is not None:
             condition = " al.user_id = '%d' " % user_id
         if from_date is not None and to_date is not None:
-            condition += " AND  al.created_on between '%s' AND '%s'" % (
+            condition += " AND  date(al.created_on) between '%s' AND '%s'" % (
                 from_date, to_date
             )
-        elif from_date is not None:
-            condition += " AND  al.created_on > '%s' " % (
-                from_date
-            )
-        elif to_date is not None:
-            condition += " AND al.created_on < '%s'" % (
-                to_date
-            )
-
+        
         query = "SELECT al.created_on, al.action \
             FROM tbl_activity_log al \
             INNER JOIN \
@@ -9059,7 +9044,6 @@ class ClientDatabase(Database):
                 "%", "password", "%", condition,
                 from_count, to_count
             )
-
         rows = self.select_all(query)
         columns = ["created_on", "action"]
         result = self.convert_to_dict(rows, columns)
@@ -9082,9 +9066,9 @@ class ClientDatabase(Database):
         conditions = []
         #user_type_condition
         if user_type == "Inhouse":
-            conditions.append("us.service_provider_id is null")
+            conditions.append("us.service_provider_id is null or us.service_provider_id = 0")
         else:
-            conditions.append("us.service_provider_id is not null")
+            conditions.append("us.service_provider_id = 1")
 
         #session_user_condition
         if session_user != 0:
@@ -9187,7 +9171,7 @@ class ClientDatabase(Database):
         level_1_statutory_name, from_date, to_date,
         session_user, client_id
     ):
-        rows = self. get_compliance_activity_report(
+        rows = self.get_compliance_activity_report(
             country_id, domain_id, user_type, user_id,
             unit_id, compliance_id,
             level_1_statutory_name, from_date, to_date,

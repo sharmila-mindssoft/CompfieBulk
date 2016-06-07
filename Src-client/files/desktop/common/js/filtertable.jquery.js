@@ -38,8 +38,9 @@
         };
 
         this.filter = function filter(index, matches) {
-        
-            var regex = new RegExp(matches, 'i');
+            var matches_replace = matches.replace(/[\(\)\[\]]/gi,'');
+                
+            var regex = new RegExp(matches_replace, 'i');
             
             filtertableCore.getRows().each(function () {
                 if(true !== regex.test(filtertableCore.getValue(index, $(this)))) {

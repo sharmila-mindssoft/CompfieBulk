@@ -79,23 +79,30 @@ def process_login(db, request, client_id, session_user_ip):
             logger.logLogin("info", user_ip, username, "Login process end")
             return admin_login_response(db, client_id, user_ip)
         else :
-            if type(response) is not bool:
-                logger.logLogin("info", user_ip, username, "Login process end")
-                return user_login_response(db, response, client_id, user_ip)
-            else :
+            if response is "ContractExpired":
+                logger.logLogin("info", user_ip, username, "ContractExpired")
+                return login.ContractExpired()
+            elif response is False:
                 logger.logLogin("info", user_ip, username, "Login process end")
                 return login.InvalidCredentials()
+            else :
+                logger.logLogin("info", user_ip, username, "Login process end")
+                return user_login_response(db, response, client_id, user_ip)
+                
     else :
         if response is True :
             logger.logLogin("info", user_ip, username, "Login process end")
             return mobile_user_admin_response(db, login_type, client_id, user_ip)
         else :
-            if type(response) is not bool:
-                logger.logLogin("info", user_ip, username, "Login process end")
-                return mobile_user_login_respone(db, response, login_type, client_id, user_ip)
-            else :
+            if response is "ContractExpired":
+                logger.logLogin("info", user_ip, username, "ContractExpired")
+                return login.ContractExpired()
+            elif response is False:
                 logger.logLogin("info", user_ip, username, "Login process end")
                 return login.InvalidCredentials()
+            else :
+                logger.logLogin("info", user_ip, username, "Login process end")
+                return mobile_user_login_respone(db, response, login_type, client_id, user_ip)
 
 
 def mobile_user_admin_response(db, login_type, client_id, ip):
