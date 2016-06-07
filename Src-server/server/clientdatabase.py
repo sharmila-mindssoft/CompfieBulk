@@ -3271,14 +3271,14 @@ class ClientDatabase(Database):
         )
         notify_assign_compliance.start()
 
-        bg_task_start = threading.Thread(
-            target=self.start_new_task,
-            args=[
-                current_date.date(), country_id
-            ]
-        )
-        print "bg_task_start begin"
-        bg_task_start.start()
+        # bg_task_start = threading.Thread(
+        #     target=self.start_new_task,
+        #     args=[
+        #         current_date.date(), country_id
+        #     ]
+        # )
+        # print "bg_task_start begin"
+        # bg_task_start.start()
         # self.start_new_task(current_date.date(), country_id)
 
         return clienttransactions.SaveAssignedComplianceSuccess()
@@ -6848,7 +6848,7 @@ class ClientDatabase(Database):
 
     def update_notification_status(self, notification_id, has_read, session_user, client_id):
         columns = ["read_status"]
-        values = [1 if has_read == True else 0]
+        values = [1 if has_read is True else 0]
         condition = "notification_id = '%d' and user_id='%d'" % (
             notification_id, session_user)
         self.update(self.tblNotificationUserLog , columns, values, condition, client_id)
@@ -6904,7 +6904,7 @@ class ClientDatabase(Database):
             "unit_name", "unit_code", "address", "postal_code",
             "frequency", "frequency_id", "duration_type", "duration", "duration_type_id",
             "repeat_type", "repeats_every",
-            "compliance_history_id", "current_due_date", "domain_id", "trigger_before_days"
+            "compliance_history_id", "current_due_date", "domain_id", "trigger_before_days", "approve_status"
         ]
         q = " SELECT distinct t1.compliance_id, t1.unit_id, t1.statutory_dates, t1.assignee, \
             t1.due_date, t1.validity_date, t2.compliance_task, t2.document_name, \
@@ -6914,7 +6914,8 @@ class ClientDatabase(Database):
             (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) duration_type, t2.duration, t2.duration_type_id, \
             (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t2.repeats_type_id) repeat_type, t2.repeats_every, \
             t4.compliance_history_id, \
-            t4.due_date, t2.domain_id, t1.trigger_before_days \
+            t4.due_date, t2.domain_id, t1.trigger_before_days, \
+            IFNULL(t4.approve_status, 0) \
             FROM \
                 tbl_assigned_compliances t1 \
                 INNER JOIN \
@@ -6931,7 +6932,7 @@ class ClientDatabase(Database):
                 AND IFNULL(t6.compliance_opted, 0) = 1 \
         WHERE \
             t1.assignee = %s %s \
-            and t1.is_active = 1 and ifnull(t4.approve_status, 0) != 1 \
+            and t1.is_active = 1  \
         ORDER BY t3.unit_id , t2.statutory_mapping , t2.frequency_id \
         limit %s, %s " % (
             assignee, user_qry,
@@ -6959,7 +6960,7 @@ class ClientDatabase(Database):
             )
             frequency = core.COMPLIANCE_FREQUENCY(d["frequency"])
             compliance_history_id = d["compliance_history_id"]
-            if compliance_history_id is not None :
+            if compliance_history_id is not None and d["approve_status"] == "0" :
                 compliance_history_id = int(compliance_history_id)
                 due_date = d["current_due_date"]
             else :
