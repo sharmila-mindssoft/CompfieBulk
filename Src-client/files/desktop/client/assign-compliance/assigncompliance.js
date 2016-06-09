@@ -19,6 +19,8 @@ var count = 1;
 var statutoriesCount = 1;
 var actCount = 1;
 var s_endCount = 0;
+var mUnit = 2;
+var mCompliances = 5;
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -411,7 +413,26 @@ function validate_firsttab(){
 }
 
 function validate_secondtab(){
-  return true;
+  var tCompliance = 1;
+  var maxCompliance = 0;
+  for(var i=1; i<=(actCount-1); i++){
+    var actComplianceCount = $('.statutoryclass'+i).length;
+    for(var j=1; j<=actComplianceCount; j++){
+      if($('#statutory'+tCompliance).is(":checked")){
+        maxCompliance++;
+      }
+      tCompliance++;
+    }
+  }
+
+  if(maxCompliance <= mCompliances){
+    displayMessage("");
+    return true;
+  }else{
+    displayMessage(message.maximum_compliances);
+    return false;
+  }
+  
 }
 
 //validation on third wizard
@@ -979,10 +1000,16 @@ $("#unit").click(function(event){
         assignStatutoryUnitIds.splice(removeid,1);
         var removename = assignStatutoryUnitValues.indexOf($(event.target).text());
         assignStatutoryUnitValues.splice(removename,1);
+        displayMessage("");
       }else{
-        $(event.target).addClass("active");
-        assignStatutoryUnitIds.push(parseInt(event.target.id));
-        assignStatutoryUnitValues.push($(event.target).text());
+        if(assignStatutoryUnitIds.length < mUnit){
+          displayMessage("");
+          $(event.target).addClass("active");
+          assignStatutoryUnitIds.push(parseInt(event.target.id));
+          assignStatutoryUnitValues.push($(event.target).text());
+        }else{
+          displayMessage(message.maximum_units);
+          }
       }
 
       var domainArray = [];
