@@ -180,6 +180,10 @@ function load_allcompliances(compliancesList){
           if(summary == null){
             summary = '';
           }
+
+          if(tbDays == 0){
+            tbDays = '';
+          }
           var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
           var clone2=complianceDetailtableRow.clone();
           $('.ckbox', clone2).html('<input type="checkbox" id="statutory'+statutoriesCount+'" class="statutoryclass'+(actCount-1)+'" onclick="compliancestatus(this)">');

@@ -10228,6 +10228,8 @@ class ClientDatabase(Database):
 
         where_qry = ""
 
+        admin_id = self.get_admin_id()
+        
         if status.lower() == "applicable" :
             where_qry += " AND T1.statutory_applicable = 1"
         elif status.lower() == "not applicable":
@@ -10249,6 +10251,12 @@ class ClientDatabase(Database):
 
         if statutory_name is not None :
             where_qry += " AND T2.statutory_mapping like '%s'" % (statutory_name + '%')
+
+        if session_user > 0 and session_user != admin_id :
+            where_qry += " AND T4.unit_id in \
+                (select us.unit_id from tbl_user_units us where \
+                    us.user_id = %s\
+                )" % int(session_user)
 
         act_wise = {}
 
