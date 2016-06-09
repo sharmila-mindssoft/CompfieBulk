@@ -21,21 +21,21 @@ def process_client_transaction_requests(request, db) :
         return login.InvalidSessionToken()
 
     if type(request) is clienttransactions.GetStatutorySettings :
-        logger.logClientApi("GetStatutorySettings", "process begin")
+        logger.logClientApi("GetStatutorySettings - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = process_get_statutory_settings(db, session_user, client_id)
         logger.logClientApi("GetStatutorySettings", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetSettingsCompliances :
-        logger.logClientApi("GetSettingsCompliances", "process begin")
+        logger.logClientApi("GetSettingsCompliances  - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = process_get_statutory_compliance(db, session_user, request)
         logger.logClientApi("GetSettingsCompliances", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.UpdateStatutorySettings :
-        logger.logClientApi("UpdateStatutorySettings", "process begin")
+        logger.logClientApi("UpdateStatutorySettings  - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = process_update_statutory_settings(
             db, request, session_user, client_id
@@ -44,7 +44,7 @@ def process_client_transaction_requests(request, db) :
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetAssignCompliancesFormData:
-        logger.logClientApi("GetAssignCompliancesFormData", "process begin")
+        logger.logClientApi("GetAssignCompliancesFormData  - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = process_get_assign_compliance_form_data(
             db, session_user, client_id
@@ -53,7 +53,7 @@ def process_client_transaction_requests(request, db) :
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetComplianceForUnits:
-        logger.logClientApi("GetComplianceForUnits", "process begin")
+        logger.logClientApi("GetComplianceForUnits  - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = process_get_compliance_for_units(
             db, request, session_user, client_id
@@ -62,7 +62,7 @@ def process_client_transaction_requests(request, db) :
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.SaveAssignedCompliance :
-        logger.logClientApi("SaveAssignedCompliance", "process begin")
+        logger.logClientApi("SaveAssignedCompliance  - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = process_save_assigned_compliance(
             db, request, session_user, client_id
@@ -71,7 +71,7 @@ def process_client_transaction_requests(request, db) :
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetUserwiseCompliances :
-        logger.logClientApi("GetUserwiseCompliances", "process begin")
+        logger.logClientApi("GetUserwiseCompliances  - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = process_get_user_wise_compliances(
             db, session_user, client_id
@@ -80,7 +80,7 @@ def process_client_transaction_requests(request, db) :
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetAssigneeCompliances :
-        logger.logClientApi("GetAssigneeCompliances", "process begin")
+        logger.logClientApi("GetAssigneeCompliances  - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = process_get_assignee_compliances(db, request, session_user)
         logger.logClientApi("GetAssigneeCompliances", "process end")
@@ -91,7 +91,7 @@ def process_client_transaction_requests(request, db) :
             db, request, session_user
         )
     elif type(request) is clienttransactions.GetPastRecordsFormData :
-        logger.logClientApi("GetPastRecordsFormData", "process begin")
+        logger.logClientApi("GetPastRecordsFormData  - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = process_get_past_records_form_data(
             db, request, session_user, client_id
@@ -100,7 +100,7 @@ def process_client_transaction_requests(request, db) :
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetStatutoriesByUnit :
-        logger.logClientApi("GetStatutoriesByUnit", "process begin")
+        logger.logClientApi("GetStatutoriesByUnit  - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = process_get_statutories_by_unit(
             db, request, session_user, client_id
@@ -109,7 +109,7 @@ def process_client_transaction_requests(request, db) :
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.SavePastRecords :
-        logger.logClientApi("SavePastRecords", "process begin")
+        logger.logClientApi("SavePastRecords  - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = process_save_past_records(
             db, request, session_user, client_id
@@ -118,7 +118,7 @@ def process_client_transaction_requests(request, db) :
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetComplianceApprovalList :
-        logger.logClientApi("GetComplianceApprovalList", "process begin")
+        logger.logClientApi("GetComplianceApprovalList  - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = process_get_compliance_approval_list(
             db, request, session_user, client_id
@@ -127,7 +127,7 @@ def process_client_transaction_requests(request, db) :
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.ApproveCompliance:
-        logger.logClientApi("ApproveCompliance", "process begin")
+        logger.logClientApi("ApproveCompliance  - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = process_approve_compliance(
             db, request, session_user, client_id
