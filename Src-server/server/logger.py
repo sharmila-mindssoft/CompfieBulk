@@ -1,4 +1,5 @@
 import logging
+import sys
 
 ROOTPATH = ""
 knowledge_log_path = "logs/knowledge/knowledge-log"
@@ -109,6 +110,10 @@ trotateFileHandler.setLevel(logging.INFO)
 
 traceLogger = logging.getLogger("trace_log")
 traceLogger.setLevel(logging.INFO)
+ch = logging.StreamHandler(sys.stdout)
+ch.setLevel(logging.DEBUG)
+ch.setFormatter(trace_log_format)
+traceLogger.addHandler(ch)
 traceLogger.addHandler(trotateFileHandler)
 
 def logClientApi(callername, message):
