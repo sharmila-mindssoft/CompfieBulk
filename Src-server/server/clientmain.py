@@ -86,7 +86,7 @@ class API(object):
             pass
 
     def server_added(self, servers):
-        print "server_added called"
+        # print "server_added called"
         # self._databases = {}
         try:
             #
@@ -103,7 +103,8 @@ class API(object):
 
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
-                if company_server_ip.ip_address == ip and company_server_ip.port == port :
+                # if company_server_ip.ip_address == ip and company_server_ip.port == port :
+                if port :
                     try:
                         db = ClientDatabase(
                             company.db_ip.ip_address,
@@ -169,7 +170,7 @@ class API(object):
                 60,
                 client_added
             )
-            print "client_manager"
+            # print "client_manager"
             # print _client_manager
 
         except Exception, e :
