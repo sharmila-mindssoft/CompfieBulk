@@ -3154,17 +3154,17 @@ class ClientDatabase(Database):
 
     # start current date compliances after assign-compliances
     def start_new_task(self, current_date, country_id):
-        print "bg task start begin"
+        # print "bg task start begin"
         try :
             self._compliance_task.begin()
             self._compliance_task.start(current_date, country_id)
             self._compliance_task.commit()
-            print "bg task start end"
+            # print "bg task start end"
         except Exception, e:
             print e
             logger.logClientApi("task-start", e)
             self._compliance_task.rollback()
-            print "bg task start rollback"
+            # print "bg task start rollback"
 
     def save_assigned_compliance(self, request, session_user, client_id):
         new_unit_settings = request.new_units
@@ -3277,7 +3277,7 @@ class ClientDatabase(Database):
         #         current_date.date(), country_id
         #     ]
         # )
-        # print "bg_task_start begin"
+        # # print "bg_task_start begin"
         # bg_task_start.start()
         # self.start_new_task(current_date.date(), country_id)
 
@@ -3520,7 +3520,7 @@ class ClientDatabase(Database):
                 group_by_name,
                 group_by_name
             )
-        print query
+        # # print query
         rows = self.select_all(query)
         columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
         return filter_ids, self.convert_to_dict(rows, columns)
@@ -3540,24 +3540,24 @@ class ClientDatabase(Database):
                 first_year = current_year
                 second_year = current_year + 1
                 years = [first_year, second_year]
-                print first_year, second_year, years
+                # print first_year, second_year, years
             elif current_month in [int(m) for m in range(1, month_to+1)] :
                 first_year = current_year - 1
                 second_year = current_year
-                print first_year, second_year
+                # print first_year, second_year
 
             for i in range(1, 8):
                 if i == 1 :
                     years = [first_year, second_year]
-                    print years
+                    # print years
                 else :
                     first_year = current_year - i
                     second_year = first_year + 1
                     years = [first_year, second_year]
-                    print years
+                    # print years
 
                 double_years.append(years)
-            print double_years
+            # print double_years
             return double_years
 
     def get_status_wise_compliances_count(self, request, session_user):
