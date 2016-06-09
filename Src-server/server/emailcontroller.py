@@ -180,7 +180,7 @@ class EmailHandler(Email):
             <p>%s</p>" % (
             assignee_name, compliance_info,
         )
-        print message
+        # print message
         self.send_email(receiver, subject, message, cc=None)
 
     def notify_task(
