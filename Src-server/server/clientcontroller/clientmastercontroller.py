@@ -21,28 +21,28 @@ def process_client_master_requests(request, db) :
         return login.InvalidSessionToken()
 
     if type(request) is clientmasters.GetServiceProviders:
-        logger.logClientApi("GetServiceProviders", "process begin")
+        logger.logClientApi("GetServiceProviders - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = get_service_providers(db, request, session_user, client_id)
         logger.logClientApi("GetServiceProviders", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.SaveServiceProvider:
-        logger.logClientApi("SaveServiceProvider", "process begin")
+        logger.logClientApi("SaveServiceProvider - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = save_service_provider(db, request, session_user, client_id)
         logger.logClientApi("SaveServiceProvider", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.UpdateServiceProvider:
-        logger.logClientApi("UpdateServiceProvider", "process begin")
+        logger.logClientApi("UpdateServiceProvider - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = update_service_provider(db, request, session_user, client_id)
         logger.logClientApi("UpdateServiceProvider", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.ChangeServiceProviderStatus:
-        logger.logClientApi("ChangeServiceProviderStatus", "process begin")
+        logger.logClientApi("ChangeServiceProviderStatus - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = change_service_provider_status(
             db, request, session_user, client_id
@@ -51,28 +51,28 @@ def process_client_master_requests(request, db) :
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.GetUserPrivileges:
-        logger.logClientApi("GetUserPrivileges", "process begin")
+        logger.logClientApi("GetUserPrivileges - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = get_user_privileges(db, request, session_user, client_id)
         logger.logClientApi("GetUserPrivileges", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.SaveUserPrivileges:
-        logger.logClientApi("SaveUserPrivileges", "process begin")
+        logger.logClientApi("SaveUserPrivileges - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = save_user_privileges(db, request, session_user, client_id)
         logger.logClientApi("SaveUserPrivileges", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.UpdateUserPrivileges:
-        logger.logClientApi("UpdateUserPrivileges", "process begin")
+        logger.logClientApi("UpdateUserPrivileges - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = update_user_privileges(db, request, session_user, client_id)
         logger.logClientApi("UpdateUserPrivileges", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.ChangeUserPrivilegeStatus:
-        logger.logClientApi("ChangeUserPrivilegeStatus", "process begin")
+        logger.logClientApi("ChangeUserPrivilegeStatus - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = change_user_privilege_status(
             db, request, session_user, client_id
@@ -81,56 +81,56 @@ def process_client_master_requests(request, db) :
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.GetClientUsers:
-        logger.logClientApi("GetClientUsers", "process begin")
+        logger.logClientApi("GetClientUsers - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = get_client_users(db, request, session_user, client_id)
         logger.logClientApi("GetClientUsers", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.SaveClientUser:
-        logger.logClientApi("SaveClientUser", "process begin")
+        logger.logClientApi("SaveClientUser - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = save_client_user(db, request, session_user, client_id)
         logger.logClientApi("SaveClientUser", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.UpdateClientUser:
-        logger.logClientApi("UpdateClientUser", "process begin")
+        logger.logClientApi("UpdateClientUser - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = update_client_user(db, request, session_user, client_id)
         logger.logClientApi("UpdateClientUser", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.ChangeClientUserStatus:
-        logger.logClientApi("ChangeClientUserStatus", "process begin")
+        logger.logClientApi("ChangeClientUserStatus - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = change_client_user_status(db, request, session_user, client_id)
         logger.logClientApi("ChangeClientUserStatus", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.ChangeAdminStatus:
-        logger.logClientApi("ChangeAdminStatus", "process begin")
+        logger.logClientApi("ChangeAdminStatus - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = change_admin_status(db, request, session_user, client_id)
         logger.logClientApi("ChangeAdminStatus", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.GetUnits:
-        logger.logClientApi("GetUnits", "process begin")
+        logger.logClientApi("GetUnits - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = get_units(db, request, session_user, client_id)
         logger.logClientApi("GetUnits", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.CloseUnit:
-        logger.logClientApi("CloseUnit", "process begin")
+        logger.logClientApi("CloseUnit - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = close_unit(db, request, session_user, client_id)
         logger.logClientApi("CloseUnit", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.GetAuditTrails:
-        logger.logClientApi("GetAuditTrails", "process begin")
+        logger.logClientApi("GetAuditTrails - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
         result = get_audit_trails(db, request, session_user, client_id)
         logger.logClientApi("GetAuditTrails", "process end")
