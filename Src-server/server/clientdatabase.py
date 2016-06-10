@@ -2910,7 +2910,7 @@ class ClientDatabase(Database):
         if session_user == 0 or session_user == self.get_admin_id() :
             session_user = '%'
 
-        qry_applicable = "SELECT distinct A.compliance_id, group_concat(distinct B.unit_id) units \
+        qry_applicable = "SELECT distinct A.compliance_id, B.unit_id units \
             FROM \
                 tbl_client_compliances A \
                 INNER JOIN tbl_client_statutories B ON A.client_statutory_id = B.client_statutory_id \
@@ -2923,7 +2923,6 @@ class ClientDatabase(Database):
                 AND C.is_active = 1 \
                 AND B.is_new = 1 \
                 AND AC.compliance_id is null \
-            group by A.compliance_id \
             ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(C.statutory_mapping, '>>', 1), \
                     '>>', \
                     - 1) , A.compliance_id \
@@ -2979,7 +2978,10 @@ class ClientDatabase(Database):
         applicable_units = {}
         for r in temp :
             c_id = int(r["compliance_id"])
-            applicable_units[c_id] = r["units"]
+            if applicable_units.get(c_id) is None :
+                applicable_units[c_id] = [int(r["units"])]
+            else :
+                applicable_units[c_id].append(int(r["units"]))
 
         columns = [
             "compliance_id", "domain_id",
@@ -3077,9 +3079,11 @@ class ClientDatabase(Database):
             c_units = applicable_units.get(c_id)
             if c_units is None :
                 continue
-            unit_ids = [
-                int(x) for x in c_units.split(',')
-            ]
+            print c_units
+            unit_ids = c_units
+            # unit_ids = [
+            #     int(x) for x in c_units.split(',')
+            # ]
             compliance_list = level_1_wise.get(level_1)
             if compliance_list is None :
                 compliance_list = []
