@@ -158,12 +158,16 @@ def process_trend_chart(db, request, session_user, client_id):
 
 def process_get_trend_chart_drilldown(db, request, session_user, client_id):
     drill_down_info = None
-    filter_ids = None if request.filter_ids == None else ",".join(str(x) for x in request.filter_ids)
-    drill_down_info = db.get_trend_chart_drill_down(request.country_ids,
-        request.domain_ids, filter_ids, request.filter_type, request.year,
-        client_id)
+    filter_ids = None if request.filter_ids is None else ",".join(str(x) for x in request.filter_ids)
+    drill_down_info = db.get_trend_chart_drill_down(
+        request.country_ids,
+        request.domain_ids, filter_ids,
+        request.filter_type, request.year,
+        client_id
+    )
     return dashboard.GetTrendChartDrillDownDataSuccess(
-        drill_down_data = drill_down_info)
+        drill_down_data=drill_down_info
+    )
 
 def process_compliance_status_chart_drilldown(db, request, session_user, client_id):
     unit_wise_data = db.get_compliances_details_for_status_chart(request, session_user, client_id)
@@ -199,8 +203,8 @@ def process_get_notifications(db, request, session_user, client_id):
     notifications = None
     to_count = 500
     notifications = db.get_notifications(
-        request.notification_type, 
-        # request.start_count, to_count, 
+        request.notification_type,
+        # request.start_count, to_count,
         session_user, client_id
     )
     return dashboard.GetNotificationsSuccess(notifications = notifications)
