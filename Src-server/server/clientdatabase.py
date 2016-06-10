@@ -7090,6 +7090,8 @@ class ClientDatabase(Database):
                 created_on
             ]
 
+            self.insert(self.tblReassignedCompliancesHistory, reassing_columns, values)
+
             update_qry = "UPDATE tbl_assigned_compliances SET assignee=%s, is_reassigned=1, approval_person=%s "
             if concurrence not in [None, "None", 0, "null", "Null"] :
                 update_qry += " ,concurrence_person = %s " % (concurrence)

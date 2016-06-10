@@ -19,8 +19,8 @@ var count = 1;
 var statutoriesCount = 1;
 var actCount = 1;
 var s_endCount = 0;
-var mUnit = 2;
-var mCompliances = 5;
+var mUnit = 50;
+var mCompliances = 500;
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -429,7 +429,7 @@ function validate_secondtab(){
     displayMessage("");
     return true;
   }else{
-    displayMessage(message.maximum_compliances);
+    displayMessage("Maximum("+ mCompliances + ") "  + message.maximum_compliances);
     return false;
   }
   
@@ -973,7 +973,8 @@ function loadunit(){
   var assignStatutoryCountryId = parseInt($('.countrylist.active').attr('id'));
 
   if(assignStatutoryLegalEntityId != null){
-      var str='';
+      /*var str='<li id="0" class="unitlist" > Select All</li>';*/
+      var str = '';
       $('#unit').empty();
       for(var unit in unitsList){
         if(unitsList[unit]["business_group_id"] == assignStatutoryBusinessGroupId &&
@@ -992,6 +993,19 @@ function loadunit(){
 $("#unit").click(function(event){
     var chkstatus = $(event.target).attr('class');
     $('#activate-step-3').show();
+
+    /*if($(event.target).attr('id') == 0){
+        assignStatutoryUnitIds = [];
+        $("#unit li").each( function( index, el ) {
+          if(assignStatutoryUnitIds.length < 300){
+            $(el).addClass("active");
+            if(parseInt(el.id) != 0){
+              assignStatutoryUnitIds.push(parseInt(el.id));
+            }
+          }
+            //assignStatutoryUnitValues.push($(event.target).text());
+        });
+    }*/
     if(chkstatus != undefined && chkstatus != 'active'){
       clearValues('unit');
       if(chkstatus == 'unitlist active'){
@@ -1008,8 +1022,8 @@ $("#unit").click(function(event){
           assignStatutoryUnitIds.push(parseInt(event.target.id));
           assignStatutoryUnitValues.push($(event.target).text());
         }else{
-          displayMessage(message.maximum_units);
-          }
+          displayMessage("Maximum("+ mUnit + ") "  + message.maximum_units);
+        }
       }
 
       var domainArray = [];

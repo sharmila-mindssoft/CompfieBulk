@@ -460,7 +460,7 @@ class ReassignCompliance(Request):
         self.concurrence_person = c_person
         self.approval_person = a_person
         self.compliances = compliances
-        self.reassigned_reason = r_reason,
+        self.reassigned_reason = r_reason
         self.new_units = new_units
 
     @staticmethod

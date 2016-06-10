@@ -17,6 +17,7 @@ var finalList;
 var pageSize = 100;
 var startCount;
 var endCount;
+var mUnit = 3;
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -469,15 +470,21 @@ $("#unit").click(function(event){
     if(chkstatus != undefined){
       clearValues('unit');
     if(chkstatus == 'unitlist active'){
+      displayMessage("");
       $(event.target).removeClass("active");
       var removeid = assignStatutoryUnitIds.indexOf(parseInt(event.target.id));
       assignStatutoryUnitIds.splice(removeid,1);
       var removename = assignStatutoryUnitValues.indexOf($(event.target).text());
       assignStatutoryUnitValues.splice(removename,1);
     }else{
-      $(event.target).addClass("active");
-      assignStatutoryUnitIds.push(parseInt(event.target.id));
-      assignStatutoryUnitValues.push($(event.target).text());
+      if(assignStatutoryUnitIds.length < mUnit){
+        displayMessage("");
+        $(event.target).addClass("active");
+        assignStatutoryUnitIds.push(parseInt(event.target.id));
+        assignStatutoryUnitValues.push($(event.target).text());
+      }else{
+        displayMessage("Maximum("+ mUnit + ") "  + message.maximum_units);
+      }
     }
 
     var domainArray = [];

@@ -16,6 +16,7 @@ var s_endCount = 0;
 var count=1;
 var statutoriesCount = 1;
 var actCount = 1;
+var mCompliances = 500;
 //var currentUser;
 
 function displayLoader() {
@@ -1085,7 +1086,25 @@ $('#reason').keyup(function(e)
   }
   });
 function validate_firsttab(){
-  return true;
+
+  var tCompliance = 1;
+  var maxCompliance = 0;
+  for(var i=1; i<=(actCount-1); i++){
+    var actComplianceCount = $('.statutoryclass'+i).length;
+    for(var j=1; j<=actComplianceCount; j++){
+      if($('#statutory'+tCompliance).is(":checked")){
+        maxCompliance++;
+      }
+      tCompliance++;
+    }
+  }
+  if(maxCompliance <= mCompliances){
+    displayMessage("");
+    return true;
+  }else{
+    displayMessage("Maximum("+ mCompliances + ") "  + message.maximum_compliances);
+    return false;
+  }
 }
 
 //validation in second tab

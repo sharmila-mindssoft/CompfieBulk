@@ -195,8 +195,8 @@ var message = {
 	'startdate_required': 'Start date Required',
 	'unsupported_file': 'Unsupported File',
 	'category_invalid': 'Category Name And Form List are Invalid.',
-	'maximum_compliances': 'Maximum (500) compliances selection reached.',
-	'maximum_units': 'Maximum (50) units selection reached.'
+	'maximum_compliances': 'compliances selection reached.',
+	'maximum_units': 'units selection reached.'
 };
 
 function clearMessage() {
