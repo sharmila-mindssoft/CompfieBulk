@@ -1,4 +1,3 @@
-from sets import Set
 from collections import OrderedDict
 from protocol.jsonvalidators import (
     parse_bool,
@@ -6,11 +5,8 @@ from protocol.jsonvalidators import (
     parse_point_numbers,
     parse_string,
     parse_custom_string,
-    parse_bytes,
     parse_list,
-    parse_dictionary,
-    parse_enum,
-    parse_date
+    parse_dictionary
 )
 
 def to_structure_VectorType_RecordType_clientreport_User(data):
@@ -1419,25 +1415,6 @@ def to_structure_RecordType_dashboard_Response_GetAssigneeWiseCompliancesChartSu
     from protocol import dashboard
     return dashboard.Response.to_structure(data)
 
-def to_structure_VectorType_RecordType_clientuser_ComplianceDetail(data):
-    data = parse_list(data, 0)
-    lst = []
-    for item in data:
-        lst.append(to_structure_RecordType_clientuser_ComplianceDetail(item))
-    return lst
-
-def to_structure_RecordType_technoreports_RequestFormat(data):
-    from protocol import technoreports
-    return technoreports.RequestFormat.to_structure(data)
-
-def to_structure_RecordType_clientreport_Response_GetClientReportFiltersSuccess(data):
-    from protocol import clientreport
-    return clientreport.Response.to_structure(data)
-
-def to_structure_RecordType_technomasters_Request_GetClients(data):
-    from protocol import technomasters
-    return technomasters.Request.to_structure(data)
-
 def to_structure_RecordType_dashboard_Level1Compliance(data):
     from protocol import dashboard
     return dashboard.Level1Compliance.to_structure(data)
@@ -1445,10 +1422,6 @@ def to_structure_RecordType_dashboard_Level1Compliance(data):
 def to_structure_RecordType_core_GroupCompanyDetail(data):
     from protocol import core
     return core.GroupCompanyDetail.to_structure(data)
-
-def to_structure_RecordType_knowledgemaster_Response_GetStatutoriesSuccess(data):
-    from protocol import knowledgemaster
-    return knowledgemaster.Response.to_structure(data)
 
 def to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance(data):
     data = parse_dictionary(data)
@@ -1459,49 +1432,11 @@ def to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level
         dict[key] = value
     return dict
 
-def to_structure_RecordType_knowledgemaster_Response_StatutoryNameAlreadyExists(data):
-    from protocol import knowledgemaster
-    return knowledgemaster.Response.to_structure(data)
-
-def to_structure_RecordType_knowledgemaster_Response_InvalidIndustryId(data):
-    from protocol import knowledgemaster
-    return knowledgemaster.Response.to_structure(data)
-
-def to_structure_RecordType_knowledgemaster_Response_DuplicateStatutoryLevelsExists(data):
-    from protocol import knowledgemaster
-    return knowledgemaster.Response.to_structure(data)
-
-def to_structure_RecordType_knowledgemaster_Request_GetGeographies(data):
-    from protocol import knowledgemaster
-    return knowledgemaster.Request.to_structure(data)
-
-def to_structure_VectorType_RecordType_dashboard_UnitCompliance(data):
-    data = parse_list(data, 0)
-    lst = []
-    for item in data:
-        lst.append(to_structure_RecordType_dashboard_UnitCompliance(item))
-    return lst
-
-def to_structure_RecordType_dashboard_Request_GetTrendChart(data):
-    from protocol import dashboard
-    return dashboard.Request.to_structure(data)
-
-def to_structure_RecordType_knowledgereport_Request_GetStatutoryMappingReportFilters(data):
-    from protocol import knowledgereport
-    return knowledgereport.Request.to_structure(data)
-
 def to_structure_VectorType_RecordType_clientreport_ComplianceUnit(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
         lst.append(to_structure_RecordType_clientreport_ComplianceUnit(item))
-    return lst
-
-def to_structure_VectorType_RecordType_clientreport_UnitWiseCompliance(data):
-    data = parse_list(data, 0)
-    lst = []
-    for item in data:
-        lst.append(to_structure_RecordType_clientreport_UnitWiseCompliance(item))
     return lst
 
 def to_structure_VariantType_general_Request(data):
@@ -1526,14 +1461,6 @@ def to_structure_VectorType_RecordType_technomasters_LICENCE_HOLDER_DETAILS(data
         lst.append(to_structure_RecordType_technomasters_LICENCE_HOLDER_DETAILS(item))
     return lst
 
-def to_structure_RecordType_knowledgereport_Request_GetStatutoryMappingReportData(data):
-    from protocol import knowledgereport
-    return knowledgereport.Request.to_structure(data)
-
-def to_structure_RecordType_technomasters_Response_ChangeClientStatusSuccess(data):
-    from protocol import technomasters
-    return technomasters.Response.to_structure(data)
-
 def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ActivityCompliance(data):
     data = parse_dictionary(data)
     dict = {}
@@ -1542,10 +1469,6 @@ def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Ac
         value = to_structure_VectorType_RecordType_clientreport_ActivityCompliance(value)
         dict[key] = value
     return dict
-
-def to_structure_RecordType_knowledgereport_Request_GetGeographyReport(data):
-    from protocol import knowledgereport
-    return knowledgereport.Request.to_structure(data)
 
 def to_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
     from protocol import clienttransactions
@@ -1591,27 +1514,12 @@ def to_structure_VectorType_RecordType_technomasters_Unit(data):
         lst.append(to_structure_RecordType_technomasters_Unit(item))
     return lst
 
-def to_structure_VectorType_RecordType_technomasters_CountryWiseUnits(data):
-    data = parse_list(data, 0)
-    lst = []
-    for item in data:
-        lst.append(to_structure_RecordType_technomasters_CountryWiseUnits(item))
-    return lst
-
 def to_structure_VectorType_RecordType_technotransactions_UNIT(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
         lst.append(to_structure_RecordType_technotransactions_UNIT(item))
     return lst
-
-def to_structure_RecordType_dashboard_Response_GetComplianceStatusDrillDownDataSuccess(data):
-    from protocol import dashboard
-    return dashboard.Response.to_structure(data)
-
-def to_structure_RecordType_knowledgereport_RequestFormat(data):
-    from protocol import knowledgereport
-    return knowledgereport.RequestFormat.to_structure(data)
 
 def to_structure_RecordType_clientreport_ServiceProviderCompliance(data):
     from protocol import clientreport
@@ -1635,18 +1543,6 @@ def to_structure_MapType_CustomTextType_500_VectorType_RecordType_clientreport_L
         dict[key] = value
     return dict
 
-def to_structure_RecordType_dashboard_Response_GetEscalationsDrillDownDataSuccess(data):
-    from protocol import dashboard
-    return dashboard.Response.to_structure(data)
-
-def to_structure_RecordType_clientreport_Request_GetServiceProviderWiseCompliance(data):
-    from protocol import clientreport
-    return clientreport.Request.to_structure(data)
-
-def to_structure_RecordType_clientreport_Response_GetComplianceDetailsReportFiltersSuccess(data):
-    from protocol import clientreport
-    return clientreport.Response.to_structure(data)
-
 def to_structure_RecordType_clientreport_DomainWiseCompliance(data):
     from protocol import clientreport
     return clientreport.DomainWiseCompliance.to_structure(data)
@@ -1662,41 +1558,9 @@ def to_structure_VectorType_RecordType_dashboard_ApplicableDrillDown(data):
         lst.append(to_structure_RecordType_dashboard_ApplicableDrillDown(item))
     return lst
 
-def to_structure_RecordType_clientreport_Request_GetComplianceDetailsReport(data):
-    from protocol import clientreport
-    return clientreport.Request.to_structure(data)
-
 def to_structure_OptionalType_VectorType_RecordType_core_Division(data):
     if data is None: return data
     return to_structure_VectorType_RecordType_core_Division(data)
-
-def to_structure_RecordType_dashboard_Response_GetComplianceApplicabilityStatusDrillDownSuccess(data):
-    from protocol import dashboard
-    return dashboard.Response.to_structure(data)
-
-def to_structure_EnumType_core_NOTIFICATION_TYPE(data):
-    from protocol import core
-    return core.NOTIFICATION_TYPE.to_structure(data)
-
-def to_structure_RecordType_technotransactions_Request_GetAssignedStatutoriesList(data):
-    from protocol import technotransactions
-    return technotransactions.Request.to_structure(data)
-
-def to_structure_RecordType_clientreport_Response_GetServiceProviderWiseComplianceSuccess(data):
-    from protocol import clientreport
-    return clientreport.Response.to_structure(data)
-
-def to_structure_RecordType_dashboard_Response_GetNotCompliedDrillDownSuccess(data):
-    from protocol import dashboard
-    return dashboard.Response.to_structure(data)
-
-def to_structure_RecordType_technotransactions_RequestFormat(data):
-    from protocol import technotransactions
-    return technotransactions.RequestFormat.to_structure(data)
-
-def to_structure_RecordType_clientmasters_Request_UpdateClientUserStatus(data):
-    from protocol import clientmasters
-    return clientmasters.Request.to_structure(data)
 
 def to_structure_RecordType_core_UnitDetails(data):
     from protocol import core
@@ -1722,33 +1586,9 @@ def to_structure_RecordType_technomasters_CountryWiseUnits(data):
     from protocol import technomasters
     return technomasters.CountryWiseUnits.to_structure(data)
 
-def to_structure_RecordType_knowledgemaster_Response_SaveGeographySuccess(data):
-    from protocol import knowledgemaster
-    return knowledgemaster.Response.to_structure(data)
-
-def to_structure_RecordType_clientreport_Request_GetAssigneewisecomplianceReport(data):
-    from protocol import clientreport
-    return clientreport.Request.to_structure(data)
-
 def to_structure_VariantType_clientreport_Request(data):
     from protocol import clientreport
     return clientreport.Request.to_structure(data)
-
-def to_structure_RecordType_clientuser_Request_GetOnOccurrenceCompliances(data):
-    from protocol import clientuser
-    return clientuser.Request.to_structure(data)
-
-def to_structure_RecordType_login_Request_Logout(data):
-    from protocol import login
-    return login.Request.to_structure(data)
-
-def to_structure_RecordType_clienttransactions_Response_SaveAssignedComplianceSuccess(data):
-    from protocol import clienttransactions
-    return clienttransactions.Response.to_structure(data)
-
-def to_structure_RecordType_clientreport_Response_GetActivityLogReportSuccess(data):
-    from protocol import clientreport
-    return clientreport.Response.to_structure(data)
 
 def to_structure_VectorType_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(data):
     data = parse_list(data, 0)
@@ -1765,29 +1605,12 @@ def to_structure_RecordType_technomasters_Response_ReactivateUnitSuccess(data):
     from protocol import technomasters
     return technomasters.Response.to_structure(data)
 
-def to_structure_RecordType_dashboard_Request_GetTrendChartDrillDownData(data):
-    from protocol import dashboard
-    return dashboard.Request.to_structure(data)
-
-def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping(data):
-    data = parse_dictionary(data)
-    dict = {}
-    for key, value in data.items():
-        key = to_structure_SignedIntegerType_8(key)
-        value = to_structure_VectorType_RecordType_core_StatutoryMapping(value)
-        dict[key] = value
-    return dict
-
 def to_structure_VectorType_RecordType_clientreport_LoginTrace(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
         lst.append(to_structure_RecordType_clientreport_LoginTrace(item))
     return lst
-
-def to_structure_RecordType_clientreport_Response_GetLoginTraceSuccess(data):
-    from protocol import clientreport
-    return clientreport.Response.to_structure(data)
 
 def to_structure_VectorType_RecordType_clientreport_ServiceProviderCompliance(data):
     data = parse_list(data, 0)
@@ -1796,41 +1619,9 @@ def to_structure_VectorType_RecordType_clientreport_ServiceProviderCompliance(da
         lst.append(to_structure_RecordType_clientreport_ServiceProviderCompliance(item))
     return lst
 
-def to_structure_VariantType_clientreport_Response(data):
-    from protocol import clientreport
-    return clientreport.Response.to_structure(data)
-
-def to_structure_RecordType_knowledgemaster_Response_SaveStatutorySuccess(data):
-    from protocol import knowledgemaster
-    return knowledgemaster.Response.to_structure(data)
-
-def to_structure_RecordType_knowledgemaster_Response_InvalidStatutoryId(data):
-    from protocol import knowledgemaster
-    return knowledgemaster.Response.to_structure(data)
-
-def to_structure_RecordType_login_Response_UserLoginSuccess(data):
-    from protocol import login
-    return login.Response.to_structure(data)
-
-def to_structure_RecordType_clientuser_RequestFormat(data):
-    from protocol import clientuser
-    return clientuser.RequestFormat.to_structure(data)
-
 def to_structure_RecordType_clientreport_Request_GetActivityLogReport(data):
     from protocol import clientreport
     return clientreport.Request.to_structure(data)
-
-def to_structure_RecordType_clientreport_RequestFormat(data):
-    from protocol import clientreport
-    return clientreport.RequestFormat.to_structure(data)
-
-def to_structure_RecordType_login_Response_AdminLoginSuccess(data):
-    from protocol import login
-    return login.Response.to_structure(data)
-
-def to_structure_RecordType_admin_Response_EmailIDAlreadyExists(data):
-    from protocol import admin
-    return admin.Response.to_structure(data)
 
 def to_structure_RecordType_core_UserGroup(data):
     from protocol import core
@@ -1840,10 +1631,6 @@ def to_structure_RecordType_client_masters_ClientUserGroup(data):
     from protocol import clientmasters
     return clientmasters.ClientUserGroup.to_structure(data)
 
-def to_structure_RecordType_login_Response_InvalidCredentials(data):
-    from protocol import login
-    return login.Response.to_structure(data)
-
 def to_structure_VectorType_RecordType_core_StatutoryNature(data):
     data = parse_list(data, 0)
     lst = []
@@ -1851,33 +1638,13 @@ def to_structure_VectorType_RecordType_core_StatutoryNature(data):
         lst.append(to_structure_RecordType_core_StatutoryNature(item))
     return lst
 
-def to_structure_RecordType_login_Response_ForgotPasswordSuccess(data):
-    from protocol import login
-    return login.Response.to_structure(data)
-
-def to_structure_RecordType_login_Response_InvalidUserName(data):
-    from protocol import login
-    return login.Response.to_structure(data)
-
 def to_structure_RecordType_core_GeographyLevel(data):
     from protocol import core
     return core.GeographyLevel.to_structure(data)
 
-def to_structure_RecordType_login_Response_ResetSessionTokenValidationSuccess(data):
-    from protocol import login
-    return login.Response.to_structure(data)
-
 def to_structure_RecordType_dashboard_UnitCompliance(data):
     from protocol import dashboard
     return dashboard.UnitCompliance.to_structure(data)
-
-def to_structure_RecordType_login_Response_InvalidResetToken(data):
-    from protocol import login
-    return login.Response.to_structure(data)
-
-def to_structure_RecordType_knowledgemaster_Request_ChangeStatutoryNatureStatus(data):
-    from protocol import knowledgemaster
-    return knowledgemaster.Request.to_structure(data)
 
 def to_structure_RecordType_login_Response_ResetPasswordSuccess(data):
     from protocol import login
@@ -1889,10 +1656,6 @@ def to_structure_VectorType_RecordType_knowledgereport_MappingReport(data):
     for item in data:
         lst.append(to_structure_RecordType_knowledgereport_MappingReport(item))
     return lst
-
-def to_structure_RecordType_login_Response_ChangePasswordSuccess(data):
-    from protocol import login
-    return login.Response.to_structure(data)
 
 def to_structure_RecordType_login_Response_InvalidCurrentPassword(data):
     from protocol import login
@@ -3457,15 +3220,6 @@ def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransac
         d[key] = value
     return d
 
-def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory(data):
-    data = parse_dictionary(data)
-    d = {}
-    for key, value in data.items():
-        key = to_structure_CustomTextType_50(key)
-        value = to_structure_VectorType_RecordType_clienttransactions_AssignedStatutory(value)
-        d[key] = value
-    return d
-
 # UnitStatutoryCompliances
 def to_structure_RecordType_clienttransactions_UnitStatutoryCompliances(data):
     from protocol import clienttransactions
@@ -3484,19 +3238,10 @@ def to_structure_RecordType_clienttransactions_ApplicableCompliance(data):
     from protocol import clienttransactions
     return clienttransactions.ApplicableCompliance.to_structure(data)
 
-
-def to_structure_VectorType_RecordType_clienttransactions_ApplicableCompliance(data):
-    data = parse_list(data, 0)
-    lst = []
-    for item in data :
-        lst.append(to_structure_RecordType_clienttransactions_ApplicableCompliance(item))
-    return lst
-
 # clienttransaction UpdateStatutoryCompliance
 def to_structure_RecordType_clienttransactions_UpdateStatutoryCompliance(data):
     from protocol import clienttransactions
     return clienttransactions.UpdateStatutoryCompliance.to_structure(data)
-
 
 def to_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance(data):
     data = parse_list(data, 0)
@@ -3504,7 +3249,6 @@ def to_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryComplia
     for item in data :
         lst.append(to_structure_RecordType_clienttransactions_UpdateStatutoryCompliance(item))
     return lst
-
 
 #clienttransaction getcompliancforunit
 def to_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
@@ -3518,15 +3262,6 @@ def to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(
         lst.append(to_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(item))
     return lst
 
-def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
-    data = parse_dictionary(data)
-    d = {}
-    for key, value in data.items():
-        key = to_structure_SignedIntegerType_8(key)
-        value = to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
-        d[key] = value
-    return d
-
 def to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
     data = parse_dictionary(data)
     d = {}
@@ -3535,23 +3270,6 @@ def to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransact
         value = to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
         d[key] = value
     return d
-
-def to_structure_VectorType_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
-    data = parse_list(data, 0)
-    lst = []
-    for item in data :
-        lst.append(to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(item))
-    return lst
-
-def to_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES(data):
-    data = parse_dictionary(data)
-    dict = {}
-    for key, value in data.iteritems():
-        key = to_structure_SignedIntegerType_8(key)
-        value = to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
-        dict[key] = value
-    return dict
-
 
 #
 #   Get Clients
@@ -3576,15 +3294,6 @@ def to_structure_VectorType_RecordType_core_GeographyWithMapping(data):
 def to_structure_RecordType_core_GeographyWithMapping(data):
     from protocol import core
     return core.GeographyWithMapping.to_structure(data)
-
-def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
-    data = parse_dictionary(data)
-    d = {}
-    for key, value in data.items():
-        key = to_structure_SignedIntegerType_8(key)
-        value = to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
-        d[key] = value
-    return d
 
 #
 # Trend Chart
@@ -3651,13 +3360,6 @@ def to_structure_RecordType_clientreport_ComplianceDetailsUnitWise(data):
     return clientreport.ComplianceDetailsUnitWise.to_structure(data)
 
 # Client Level One Statutory
-def to_structure_VectorType_RecordType_core_ClientLevelOneStatutory(data):
-    data = parse_list(data, 0)
-    lst = []
-    for item in data:
-        lst.append(to_structure_RecordType_core_ClientLevelOneStatutory(item))
-    return lst
-
 def to_structure_RecordType_core_ClientLevelOneStatutory(data):
     from protocol import core
     return core.ClientLevelOneStatutory.to_structure(data)
@@ -3673,10 +3375,6 @@ def to_structure_VectorType_RecordType_core_ComplianceFilter(data):
 def to_structure_RecordType_core_ComplianceFilter(data):
     from protocol import core
     return core.ComplianceFilter.to_structure(data)
-
-def to_structure_OptionalType_EnumType_core_COMPLIANCE_STATUS(data):
-    from protocol import core
-    return core.COMPLIANCE_STATUS.to_structure(data)
 
 # not complied enum type
 
@@ -3891,15 +3589,6 @@ def to_structure_RecordType_clienttransactions_PastRecordUnits(data):
     from protocol import clienttransactions
     return clienttransactions.PastRecordUnits.to_structure(data)
 
-def to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(data):
-    data = parse_dictionary(data)
-    dict = {}
-    for key, value in data.items():
-        key = to_structure_CustomTextType_50(key)
-        value = to_structure_VectorType_UnsignedIntegerType_32(value)
-        dict[key] = value
-    return dict
-
 def to_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500(data):
     data = parse_dictionary(data)
     dict = {}
@@ -3939,15 +3628,6 @@ def to_structure_VectorType_RecordType_dashboard_YearWise(data):
 def to_structure_RecordType_dashboard_YearWise(data):
     from protocol import dashboard
     return dashboard.YearWise.to_structure(data)
-
-def to_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWiseCompliance(data):
-    data = parse_dictionary(data)
-    d = {}
-    for key, value in data.items():
-        key = to_structure_UnsignedIntegerType_32(key)
-        value = to_structure_RecordType_dashboard_AssigneeWiseCompliance(value)
-        d[key] = value
-    return d
 
 def to_structure_RecordType_dashboard_AssigneeWiseCompliance(data):
     from protocol import dashboard
