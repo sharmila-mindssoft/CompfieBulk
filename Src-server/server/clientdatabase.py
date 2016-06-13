@@ -2701,10 +2701,9 @@ class ClientDatabase(Database):
             ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(C.statutory_mapping, '>>', 1), \
                     '>>', \
                     - 1) , A.compliance_id \
-            limit %s, %s" % (
+            " % (
                 str(tuple(unit_ids)),
-                domain_id,
-                from_count, to_count
+                domain_id
             )
         query = " SELECT distinct \
             t2.compliance_id, \

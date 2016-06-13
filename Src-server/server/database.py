@@ -117,8 +117,7 @@ class Database(object) :
             connection.autocommit(False)
             self._connection = connection
         except Exception, e :
-            logger.log
-            Knowledge("error", "database.py-connect", e)
+            logger.logKnowledge("error", "database.py-connect", e)
 
     ########################################################
     # To Close database connection
