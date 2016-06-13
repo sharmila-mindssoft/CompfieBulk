@@ -1402,12 +1402,12 @@ class ClientDatabase(Database):
                 from_date, to_date
 
             )
-        
+
         if user_id is not None:
             where_qry += " AND user_id = '%s'" % (user_id)
         if form_id is not None:
             where_qry += " AND form_id = '%s'" % (form_id)
-       
+
         columns = "user_id, form_id, action, created_on"
         where_qry += ''' AND action not like "%sLog In by%s"
         ORDER BY activity_log_id DESC limit %s, %s ''' % (
@@ -7407,7 +7407,8 @@ class ClientDatabase(Database):
             ch.unit_id = u.unit_id \
             WHERE c.domain_id = %s \
             AND ac.country_id = %s \
-            AND ((c.duration_type_id =2 AND ch.due_date < now()) or (c.duration_type_id != 2 AND ch.due_date < CURDATE()))  \
+            AND ((IFNULL(c.duration_type_id, 0) = 2 AND ch.due_date < now()) \
+            or (IFNULL(c.duration_type_id, 0) != 2 AND ch.due_date < CURDATE()))  \
             AND IFNULL(ch.approve_status, 0) != 1 \
             %s \
             order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1), u.unit_id \
@@ -7431,7 +7432,6 @@ class ClientDatabase(Database):
         rows = self.select_all(query)
         result = self.convert_to_dict(rows, columns)
         return result
-
 
     def get_not_complied_where_qry(
         self, business_group_id, legal_entity_id, division_id, unit_id,
@@ -7465,12 +7465,14 @@ class ClientDatabase(Database):
             ch.unit_id = u.unit_id \
             WHERE c.domain_id = %s \
             AND u.country_id = %s \
-            AND ((c.duration_type_id =2 AND ch.due_date < now()) or (c.duration_type_id != 2 AND ch.due_date < CURDATE()))  \
+            AND ((IFNULL(c.duration_type_id, 0) = 2 AND ch.due_date < now()) \
+            or (IFNULL(c.duration_type_id, 0) != 2 AND ch.due_date < CURDATE()))  \
             AND IFNULL(ch.approve_status, 0) != 1 \
             %s " % (
                 domain_id, country_id,
                 where_qry
             )
+        print q_count
         c_row = self.select_one(q_count)
         if c_row :
             total = int(c_row[0])
@@ -8075,7 +8077,7 @@ class ClientDatabase(Database):
             condition += " AND  date(al.created_on) between '%s' AND '%s'" % (
                 from_date, to_date
             )
-        
+
         query = "SELECT al.created_on, al.action \
             FROM tbl_activity_log al \
             INNER JOIN \
@@ -8953,7 +8955,7 @@ class ClientDatabase(Database):
         where_qry = ""
 
         admin_id = self.get_admin_id()
-        
+
         if status.lower() == "applicable" :
             where_qry += " AND T1.statutory_applicable = 1"
         elif status.lower() == "not applicable":
