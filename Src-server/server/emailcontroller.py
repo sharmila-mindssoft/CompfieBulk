@@ -164,16 +164,6 @@ class EmailHandler(Email):
         )
         self.send_email(receiver, subject, message, cc=None, is_credential=True)
 
-    def notify_task_assigned(
-        self, receiver, assignee_name, compliance_name, due_date
-    ):
-        subject = "Task Assigned"
-        message = "Dear %s, <br>  \
-            Compliance %s has assigned to you. Due date for the compliance is %s" % (
-            assignee_name, compliance_name, due_date
-        )
-        self.send_email(receiver, subject, message, cc=None)
-
     def notify_assign_compliance(self, receiver, assignee_name, compliance_info):
         subject = "New compliance task assigned "
         message = "Dear %s, <br> \
@@ -205,34 +195,6 @@ class EmailHandler(Email):
             message = "Dear %s, Compliance %s is delayed" % (
                 assignee_name, compliance_name, due_date
             )
-        self.send_email(receiver, subject, message, cc=None)
-
-    def notify_reassigned(self, receiver, reassigned_from, assignee, compliance_name, due_date):
-        assignee_id, concurrence_id, approver_id,  compliance_name, document_name,  due_date = db.get_compliance_history_details(
-            compliance_history_id
-        )
-        user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
-        receiver, employee_name = db.get_user_email_name(user_ids)
-        cc = receiver.split(",")[2]
-        if concurrence_id is not None or concurrence_id != 0:
-            cc += ","+receiver.split(",")[1]
-        if document_name not in [None, "None", ""]:
-            compliance_name = "%s - %s" % (document_name, compliance_name)
-        assignee_name = employee_name.split(",")[0]
-        subject = "Task Started"
-        message = "Dear %s,  compliance %s is reassigned to you from %s. Due date for the compliance is %s" % (
-        	assignee_name, compliance_name, reassigned_from, due_date
-        )
-        self.send_email(receiver, subject, message, cc)
-
-    def notify_service_provider_contract_expired(
-        self, db, service_provider_id
-    ):
-        receiver = db.get_admin_username()
-        service_provider_name = db.get_service_provider_name_by_id(service_provider_id)
-        subject = "Contract Expired"
-        message = "Dear Client, your contract with Service Provider %s has expired. \
-        Kindly renew the contract" % (service_provider_name)
         self.send_email(receiver, subject, message, cc=None)
 
     def notify_task_rejected(

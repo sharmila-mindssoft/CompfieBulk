@@ -27,7 +27,6 @@ from protocol.to_structure import (
     to_structure_CustomTextType_500,
     to_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence,
     to_structure_SignedIntegerType_8, to_structure_CustomTextType_50,
-    to_structure_VectorType_RecordType_clientuser_ComplianceDetail,
     to_structure_CustomTextType_20,
     to_structure_VariantType_clientuser_Request,
     to_structure_VectorType_CustomTextType_20,
@@ -207,8 +206,8 @@ class StartOnOccurrenceCompliance(Request):
 
 def _init_Request_class_map():
     classes = [
-        GetCurrentComplianceDetail, GetUpcomingComplianceDetail, CheckDiskSpace, 
-        UpdateComplianceDetail, GetOnOccurrenceCompliances, 
+        GetCurrentComplianceDetail, GetUpcomingComplianceDetail, CheckDiskSpace,
+        UpdateComplianceDetail, GetOnOccurrenceCompliances,
         StartOnOccurrenceCompliance
     ]
     class_map = {}
@@ -256,7 +255,7 @@ class GetCurrentComplianceDetailSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-                "current_compliances", "current_date", "overdue_count", 
+                "current_compliances", "current_date", "overdue_count",
                 "inprogress_count"
             ]
         )
@@ -398,7 +397,7 @@ class GetOnOccurrenceCompliancesSuccess(Response):
         compliances = data.get("compliances")
         compliances = parse_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence(compliances) #parse_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence(compliances)
         total_count = data.get("total_count")
-        total_count = parse_structure_UnsignedIntegerType_32(total_count) 
+        total_count = parse_structure_UnsignedIntegerType_32(total_count)
         return GetOnOccurrenceCompliancesSuccess(compliances, total_count)
 
     def to_inner_structure(self):
@@ -424,8 +423,8 @@ class StartOnOccurrenceComplianceSuccess(Response):
 def _init_Response_class_map():
     classes = [
         GetCurrentComplianceDetailSuccess, GetUpcomingComplianceDetailSuccess,
-        CheckDiskSpaceSuccess, UpdateComplianceDetailSuccess, 
-        NotEnoughDiskSpaceAvailable, GetOnOccurrenceCompliancesSuccess, 
+        CheckDiskSpaceSuccess, UpdateComplianceDetailSuccess,
+        NotEnoughDiskSpaceAvailable, GetOnOccurrenceCompliancesSuccess,
         StartOnOccurrenceComplianceSuccess, UnSupportedFile,
         NextDueDateMustBeWithIn90DaysBeforeValidityDate
     ]

@@ -346,15 +346,9 @@ def process_save_geography_level(db, request_frame, user_id):
     if len([p for p in level_positions if level_positions.count(p) > 1]) > 1 :
         return knowledgemaster.DuplicateGeographyLevelsExists()
 
-    # is_duplicate = db.check_duplicate_gepgrahy_levels(country_id, levels)
-    # if is_duplicate :
-    #     return knowledgemaster.LevelIdCannotBeNull(is_duplicate)
-
     return db.save_geography_levels(
         country_id, levels, user_id
     )
-
-
 
 #geography
 def process_get_geographies(db, user_id):

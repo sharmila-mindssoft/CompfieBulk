@@ -49,22 +49,6 @@ class Database(object) :
         self._connection = None
         self._cursor = None
 
-    # Used to get the integer value of a month by first 3 letters
-    integer_months = {
-        "Jan": 1,
-        "Feb": 2,
-        "Mar": 3,
-        "Apr": 4,
-        "May": 5,
-        "Jun": 6,
-        "Jul": 7,
-        "Aug": 8,
-        "Sep": 9,
-        "Oct": 10,
-        "Nov": 11,
-        "Dec": 12,
-    }
-
     # Used to get first three letters of month by the month's integer value
     string_months = {
         1 : "Jan",
@@ -133,7 +117,8 @@ class Database(object) :
             connection.autocommit(False)
             self._connection = connection
         except Exception, e :
-            logger.logKnowledge("error", "database.py-connect", e)
+            logger.log
+            Knowledge("error", "database.py-connect", e)
 
     ########################################################
     # To Close database connection
@@ -176,7 +161,7 @@ class Database(object) :
     # To execute select query
     # Used to fetch multiple rows
     ########################################################
-    def select_all(self, query) :
+    def select_all(self, query):
         cursor = self.cursor()
         assert cursor is not None
         try:
@@ -191,7 +176,7 @@ class Database(object) :
     # To execute select query
     # Used to fetch One row
     ########################################################
-    def select_one(self, query) :
+    def select_one(self, query):
         cursor = self.cursor()
         assert cursor is not None
         cursor.execute(query)
@@ -201,21 +186,10 @@ class Database(object) :
     ########################################################
     # To execute a query
     ########################################################
-    def execute(self, query) :
+    def execute(self, query):
         cursor = self.cursor()
         assert cursor is not None
         return cursor.execute(query)
-
-    ########################################################
-    # To execute a procedure
-    ########################################################
-    def call_proc(self, procedure_name, args):
-        # args is tuple e.g, (parm1, parm2)
-        cursor = self.cursor()
-        assert cursor is not None
-        cursor.callproc(procedure_name, args)
-        result = cursor.fetchall()
-        return result
 
     ########################################################
     # To form a select query
@@ -277,7 +251,6 @@ class Database(object) :
             logger.logKnowledgeApi("insert", e)
             return False
 
-
     ########################################################
     # To form a bulk insert query
     ########################################################
@@ -314,8 +287,6 @@ class Database(object) :
             logger.logKnowledgeApi("update", query)
             logger.logKnowledgeApi("update", e)
             return
-
-
 
     ########################################################
     # Insert a row If already key exists
@@ -378,7 +349,8 @@ class Database(object) :
     # passed value. This function can be used only for int,
     # float, double values
     ########################################################
-    def increment(self, table, column, condition, value = 1):
+
+    def increment(self, table, column, condition, value=1):
         rows = self.get_data(table, column, condition)
         currentValue = rows[0][0]
         if currentValue is not None:
@@ -424,14 +396,6 @@ class Database(object) :
 
     ########################################################
     # To generate random password encrypted with md5
-    # algorithm. This function return encrypted password
-    ########################################################
-    def generate_password(self) :
-        password = self.generate_random()
-        return self.encrypt(password)
-
-    ########################################################
-    # To generate random password encrypted with md5
     # algorithm. This function return encrypted password and
     # Original password
     ########################################################
@@ -467,16 +431,6 @@ class Database(object) :
         if string is not None:
             string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y %H:%M")
         return string_in_date
-
-    ########################################################
-    # Converts the given timestamp to UTC
-    ########################################################
-    def toUTC(self, time_stamp):
-        tz = pytz.timezone('UTC')
-        utc_time_stamp = tz.normalize(
-            tz.localize(time_stamp)
-        ).astimezone(pytz.utc)
-        return utc_time_stamp
 
     ########################################################
     # Localizes the given timestamp (Local Timezone is India)
@@ -753,12 +707,6 @@ class KnowledgeDatabase(Database):
         self.tblUserLoginHistory = "tbl_user_login_history"
         self.tblUserSessions = "tbl_user_sessions"
         self.tblUsers = "tbl_users"
-
-    def validate_short_name(self, short_name):
-        condition = "url_short_name ='%s'" % (
-            short_name
-        )
-        return self.is_already_exists(self.tblClientGroups, condition)
 
     def validate_session_token(self, session_token) :
         # query = "CALL sp_validate_session_token ('%s');"
@@ -1219,13 +1167,6 @@ class KnowledgeDatabase(Database):
         result = self.convert_to_dict(rows, row_columns)
         return result
 
-    def get_form_types(self) :
-        query = "SELECT form_type_id, form_type_name FROM tbl_form_type"
-        rows = self.select_all(query)
-        columns = ["form_type_id", "form_type_name"]
-        data_list = self.convert_to_dict(rows, columns)
-        return data_list
-
     def save_data(self, table_name, field, data):
         query = "INSERT INTO %s %s VALUES %s" % (
             table_name, field, str(data)
@@ -1499,36 +1440,6 @@ class KnowledgeDatabase(Database):
             statutory_levels[country_id] = country_wise
         return statutory_levels
 
-    def get_levels_for_country_domain(self, country_id, domain_id) :
-        query = "SELECT level_id, level_position, level_name \
-            FROM tbl_statutory_levels \
-            WHERE country_id = %s and domain_id = %s \
-            ORDER BY level_position" % (
-                country_id, domain_id
-            )
-        rows = self.select_all(query)
-        result = []
-        if rows :
-            columns = ["level_id", "level_position", "level_name"]
-            result = self.convert_to_dict(rows, columns)
-        return result
-
-    def check_duplicate_levels(
-        self, country_id, domain_id, levels
-    ) :
-        saved_names = [
-            row["level_name"] for row in self.get_levels_for_country_domain(
-                country_id, domain_id
-            )
-        ]
-
-        for level in levels :
-            name = level.level_name
-            if level.level_id is None :
-                if (saved_names.count(name) > 0) :
-                    return name
-        return None
-
     def save_statutory_levels(self, country_id, domain_id, levels, user_id) :
 
         table_name = "tbl_statutory_levels"
@@ -1604,31 +1515,6 @@ class KnowledgeDatabase(Database):
             ]
             result = self.convert_to_dict(rows, columns)
         return self.return_geography_levels(result)
-
-    def get_geography_levels_for_country(self, country_id) :
-        query = "SELECT level_id, level_position, level_name \
-            FROM tbl_geography_levels WHERE country_id = %s \
-            ORDER BY level_position" % country_id
-        rows = self.select_all(query)
-        columns = ["level_id", "level_position", "level_name"]
-        result = []
-        if rows :
-            result = self.convert_to_dict(rows, columns)
-        return result
-
-    def check_duplicate_gepgrahy_levels(self, country_id, levels) :
-        saved_names = [
-            row["level_name"] for row in self.get_geography_levels_for_country(
-                country_id
-            )
-        ]
-
-        for level in levels :
-            name = level.level_name
-            if level.level_id is None :
-                if (saved_names.count(name) > 0) :
-                    return name
-        return None
 
     def delete_grography_level(self, level_id):
         q = "select count(*) from tbl_geographies where level_id = %s" % (level_id)
@@ -1729,38 +1615,6 @@ class KnowledgeDatabase(Database):
             _list.append(geography)
             geographies[country_id] = _list
         return geographies
-
-    def get_geographies_for_user(self, user_id):
-        country_ids = None
-        if ((user_id is not None) and (user_id != 0)):
-            country_ids = self.get_user_countries(user_id)
-        columns = "t1.geography_id, t1.geography_name, "
-        columns += "t1.level_id,t1.parent_ids, t1.is_active, "
-        columns += "t2.country_id, t3.country_name"
-        tables = [
-            self.tblGeographies, self.tblGeographyLevels, self.tblCountries
-        ]
-        aliases = ["t1", "t2", "t3"]
-        join_type = " INNER JOIN"
-        join_conditions = [
-            "t1.level_id = t2.level_id", "t2.country_id = t3.country_id"
-        ]
-        where_condition = "1"
-        if country_ids is not None:
-            where_condition = "t2.country_id in (%s)" % country_ids
-        rows = self.get_data_from_multiple_tables(
-            columns, tables, aliases, join_type,
-            join_conditions, where_condition
-        )
-        result = []
-        if rows :
-            columns = [
-                "geography_id", "geography_name",
-                "level_id", "parent_ids", "is_active",
-                "country_id", "country_name"
-            ]
-            result = self.convert_to_dict(rows, columns)
-        return self.return_geographies(result)
 
     def get_geographies_for_user_with_mapping(self, user_id):
         # if bool(self.geography_parent_mapping) is False :
@@ -2622,24 +2476,6 @@ class KnowledgeDatabase(Database):
         return self.return_knowledge_report(
             report_data, r_count
         )
-
-    def get_mappings_id(self, statutory_id) :
-        query = "select distinct t1.statutory_mapping_id \
-            from tbl_statutory_statutories t1 \
-            where t1.statutory_id in ( \
-            select t.statutory_id from tbl_statutories t where \
-            t.statutory_id = %s OR t.parent_ids like '%s' \
-            )" % (
-                int(statutory_id),
-                str("" + str(statutory_id) + ",%")
-            )
-        rows = self.select_all(query)
-        result = []
-        if rows :
-            result = self.convert_to_dict(
-                rows, ["statutory_mapping_ids"]
-            )
-        return result
 
     def return_knowledge_report(self, report_data, total_count=None):
         if bool(self.geography_parent_mapping) is False :
@@ -3831,18 +3667,14 @@ class KnowledgeDatabase(Database):
             employee_code, user_id)
         return self.is_already_exists(self.tblUsers, condition)
 
-    def is_duplicate_contact_no(self, contact_no, user_id):
-        condition = "contact_no ='%s' AND user_id != '%d'" % (contact_no, user_id)
-        return self.is_already_exists(self.tblUsers, condition)
-
     def get_detailed_user_list(self):
-        columns = "user_id, email_id, user_group_id, employee_name, employee_code,"+\
-                "contact_no, address, designation, is_active"
+        columns = "user_id, email_id, user_group_id, employee_name, employee_code, \
+            contact_no, address, designation, is_active"
         condition = "1"
         rows = self.get_data(self.tblUsers, columns, condition)
         return rows
 
-    def get_users(self, condition = "1"):
+    def get_users(self, condition="1"):
         columns = "user_id, employee_name, employee_code, is_active"
         rows = self.get_data(self.tblUsers, columns, condition)
         return rows
@@ -4036,10 +3868,6 @@ class KnowledgeDatabase(Database):
 
     def is_duplicate_group_name(self, group_name, client_id):
         condition = "group_name ='%s' AND client_id != '%d'" % (group_name, client_id)
-        return self.is_already_exists(self.tblClientGroups, condition)
-
-    def is_duplicate_group_username(self, username, client_id):
-        condition = "email_id ='%s' AND client_id != '%d'" % (username, client_id)
         return self.is_already_exists(self.tblClientGroups, condition)
 
     def is_duplicate_short_name(self, short_name, client_id):
@@ -4628,16 +4456,6 @@ class KnowledgeDatabase(Database):
         rows = self.get_data(self.tblMachines, columns, condition)
         return rows
 
-    def create_and_save_client_database(
-        self, host, username, password, database_name, db_username,
-        db_password, email_id, client_id, short_name
-    ):
-        result = self._create_database(
-            host, username, password, database_name, db_username,
-            db_password, email_id, client_id, short_name
-        )
-        return result
-
     def set_server_full(self, db_server_condition):
         columns = ["server_full"]
         values = [1]
@@ -4862,11 +4680,6 @@ class KnowledgeDatabase(Database):
         condition = "division_name ='%s' AND division_id != '%d' and client_id = '%d'" % (
             division_name, division_id, client_id)
         return self.is_already_exists(self.tblDivisions, condition)
-
-    def is_duplicate_unit_name(self, unit_id, unit_name, client_id):
-        condition = "unit_name ='%s' AND unit_id != '%d' and client_id = '%d'" % (
-            unit_name, unit_id, client_id)
-        return self.is_already_exists(self.tblUnits, condition)
 
     def is_duplicate_unit_code(self, unit_id, unit_code, client_id):
         condition = "unit_code ='%s' AND unit_id != '%d' and client_id = '%d'" % (
@@ -5379,24 +5192,10 @@ class KnowledgeDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return return_unit_details(result)
 
-    def get_submited_statutory(self, unit_id, domain_id):
-        q = "select client_statutory_id from tbl_client_statutories \
-            where unit_id = %s and domain_id = %s and submission_type = 1" % (
-                int(unit_id), int(domain_id)
-            )
-        rows = self.select_all(q)
-        if rows :
-            result = self.convert_to_dict(rows, ["client_statutory_id"])
-            return result
-        else :
-            return None
-
     def get_assign_statutory_wizard_two(
         self, country_id, geography_id, industry_id,
         domain_id, unit_id, user_id
     ):
-        # save_statutos = self.get_submited_statutory(unit_id, domain_id)
-        # if save_statutos is not None :
         if unit_id is not None :
             return self.return_unassign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, unit_id)
 
@@ -5658,17 +5457,6 @@ class KnowledgeDatabase(Database):
                 value_list.append(values)
 
         return value_list
-
-    def get_compliance_ids(self, client_statutory_id):
-        query = "SELECT distinct compliance_id \
-            FROM tbl_client_compliances \
-            WHERE client_statutory_id = %s" % (client_statutory_id)
-        row = self.select_all(query)
-        compliance_ids = []
-        if row :
-            for r in row :
-                compliance_ids.append(int(r[0]))
-        return compliance_ids
 
     def submit_client_statutories_compliances(self, client_statutory_id, data, user_id) :
         submitted_on = str(self.get_date_time())
@@ -6609,19 +6397,21 @@ class KnowledgeDatabase(Database):
             ))
         return notifications
 
-    def update_notification_status(self, notification_id, has_read,
-        session_user, client_id=None):
+    def update_notification_status(
+        self, notification_id, has_read,
+        session_user, client_id=None
+    ):
         columns = ["read_status"]
-        values = [1 if has_read == True else 0]
-        condition = "notification_id = '%d' and user_id='%d'"% (
+        values = [1 if has_read is True else 0]
+        condition = "notification_id = '%d' and user_id='%d'" % (
             notification_id, session_user)
         self.update(self.tblNotificationsStatus, columns, values, condition)
 
     def get_user_name_by_id(
-        self, user_id, client_id = None
+        self, user_id, client_id=None
     ):
         employee_name = None
-        if user_id != None and user_id != 0:
+        if user_id is not None and user_id != 0:
             columns = "employee_code, employee_name"
             condition = "user_id ='{}'".format(user_id)
             rows = self.get_data(
@@ -6727,8 +6517,6 @@ class KnowledgeDatabase(Database):
             cursor.execute(query)
             rows = cursor.fetchall()
             old_admin_id = rows[0][0]
-            old_admin_username = rows[0][1]
-            old_admin_password = rows[0][2]
 
             query = "select count(*) from tbl_assigned_compliances \
             where assignee = '%d' or concurrence_person = '%d' or \
@@ -6776,7 +6564,7 @@ class KnowledgeDatabase(Database):
                 if rows:
                     query = "Insert into tbl_user_countries (country_id, user_id) values "
                     for index, row in enumerate(rows):
-                        q = "%s (%s, %s) " % ( query, row[0], new_admin_id)
+                        q = "%s (%s, %s) " % (query, row[0], new_admin_id)
                         cursor.execute(q)
 
                 # Adding all domains to new admin
@@ -6791,7 +6579,7 @@ class KnowledgeDatabase(Database):
                 if rows:
                     query = "Insert into tbl_user_domains (domain_id, user_id) values "
                     for index, row in enumerate(rows):
-                        q = "%s (%s, %s) " % ( query, row[0], new_admin_id)
+                        q = "%s (%s, %s) " % (query, row[0], new_admin_id)
                         cursor.execute(q)
 
                 # Adding all units to new admin
@@ -6807,9 +6595,8 @@ class KnowledgeDatabase(Database):
                 if rows:
                     query = "Insert into tbl_user_units (unit_id, user_id) values "
                     for row in rows:
-                        q = "%s (%s, %s) " % ( query, row[0], new_admin_id)
+                        q = "%s (%s, %s) " % (query, row[0], new_admin_id)
                         cursor.execute(q)
-
 
                 query = "update tbl_assigned_compliances set concurrence_person = null,\
                 approval_person = '%d' where assignee = '%d'" % (new_admin_id, new_admin_id)
