@@ -92,6 +92,10 @@ wrotateFileHandler.setLevel(logging.INFO)
 
 webfrontLogger = logging.getLogger("webfrontend_logger")
 webfrontLogger.setLevel(logging.INFO)
+ch = logging.StreamHandler(sys.stdout)
+ch.setLevel(logging.DEBUG)
+ch.setFormatter(webfront_log_format)
+webfrontLogger.addHandler(ch)
 webfrontLogger.addHandler(wrotateFileHandler)
 
 def logWebfront(message):
