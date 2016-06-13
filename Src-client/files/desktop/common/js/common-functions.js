@@ -422,7 +422,7 @@ function getReassignUserAutocomplete(textval, listval, callback){
       if (~assignees[i]["user_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["user_id"],assignees[i]["user_name"]]);
     }
     }
-    var str='';
+    var str='<li id="0"onclick="activate_text(this,'+callback+')">Client Admin</li>';
     for(var i in suggestions){
       str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
 

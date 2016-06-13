@@ -194,7 +194,9 @@ var message = {
 	'InvalidDueDate': 'Due date should not greater then statutory date',
 	'startdate_required': 'Start date Required',
 	'unsupported_file': 'Unsupported File',
-	'category_invalid': 'Category Name And Form List are Invalid.'
+	'category_invalid': 'Category Name And Form List are Invalid.',
+	'maximum_compliances': 'compliances selection reached.',
+	'maximum_units': 'units selection reached.'
 };
 
 function clearMessage() {
