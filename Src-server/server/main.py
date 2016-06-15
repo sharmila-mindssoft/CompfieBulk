@@ -58,9 +58,7 @@ def cors_handler(request, response):
 # api_request
 #
 
-def api_request(
-    request_data_type
-):
+def api_request(request_data_type):
     def wrapper(f):
         def wrapped(self, request, response):
             self.handle_api_request(

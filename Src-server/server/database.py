@@ -707,15 +707,22 @@ class KnowledgeDatabase(Database):
         self.tblUserSessions = "tbl_user_sessions"
         self.tblUsers = "tbl_users"
 
+    def update_session_time(self, session_token):
+        updated_on = self.get_date_time()
+        q = "update tbl_user_sessions set \
+        last_accessed_time='%s' where session_token = '%s' " % (
+            str(updated_on), str(session_token)
+        )
+        self.execute(q)
+
     def validate_session_token(self, session_token) :
-        # query = "CALL sp_validate_session_token ('%s');"
-        # % (session_token)
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
         row = self.select_one(query)
         user_id = None
         if row :
             user_id = row[0]
+            self.update_session_time(session_token)
         return user_id
 
     def get_user_form_ids(self, user_id) :
@@ -4294,8 +4301,8 @@ class KnowledgeDatabase(Database):
         logger.logKnowledge("info", "create", query)
         client_cursor.execute(query)
         query = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, REFERENCES, \
-            TRIGGER, EVENT, CREATE ROUTINE, ALTER  on %s.* to '%s'@'%' IDENTIFIED BY '%s';" % (
-            database_name, db_username, db_password)
+            TRIGGER, EVENT, CREATE ROUTINE, ALTER  on %s.* to '%s'@'%s' IDENTIFIED BY '%s';" % (
+            database_name, db_username, str('%'), db_password)
         logger.logKnowledge("info", "create", query)
         client_cursor.execute(query)
         client_cursor.execute("FLUSH PRIVILEGES;")

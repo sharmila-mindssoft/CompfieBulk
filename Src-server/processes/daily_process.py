@@ -20,6 +20,7 @@ from server.common import (
     create_new_date, convert_string_to_date,
     insert
 )
+from server import logger
 
 mysqlHost = KNOWLEDGE_DB_HOST
 mysqlUser = KNOWLEDGE_DB_USERNAME
@@ -87,10 +88,12 @@ def create_client_db_connection(data):
                 d["database_port"]
             )
             client_connection[d["client_id"]] = db_conn
-        except Exception, e :
-            print "unable to connect database %s", d
-            print e
+        except Exception:
+            # print "unable to connect database %s", d
+            # print e
             continue
+            logger.logProcessError("run_daily_process", "unable to connect database " + d)
+            logger.logProcessError("run_daily_process", str(traceback.format_exc()))
 
     return client_connection
 
@@ -375,21 +378,29 @@ def start_new_task(db, client_id, current_date, country_id):
     data = get_compliance_to_start(db, client_id, current_date, country_id)
     count = 0
     for d in data :
-        approval_person = int(d["approval_person"])
-        if d["frequency"] == 1 :
-            next_due_date = "0000-00-00"
-            notify(d, d["due_date"], next_due_date, approval_person)
-        else:
-            next_due_date = trigger_before = None
-            due_date = d["due_date"]
-            next_due_date, trigger_before = start_next_due_date_task(d, due_date, approval_person)
-            if next_due_date is not None :
-                while (next_due_date - timedelta(days=trigger_before)) <= current_date :
-                    # start for next-due-date
-                    next_due_date, trigger_before = start_next_due_date_task(d, next_due_date, approval_person)
-            update_assign_compliance_due_date(db, trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
+        try :
+            approval_person = int(d["approval_person"])
+            if d["frequency"] == 1 :
+                next_due_date = "0000-00-00"
+                notify(d, d["due_date"], next_due_date, approval_person)
+            else:
+                next_due_date = trigger_before = None
+                due_date = d["due_date"]
+                next_due_date, trigger_before = start_next_due_date_task(d, due_date, approval_person)
+                update_assign_compliance_due_date(db, trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
+                if next_due_date is not None :
+                    while (next_due_date - timedelta(days=trigger_before)) <= current_date :
+                        # start for next-due-date
+                        next_due_date, trigger_before = start_next_due_date_task(d, next_due_date, approval_person)
+                        update_assign_compliance_due_date(db, trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
 
-        count += 1
+            count += 1
+        except Exception, e :
+            # print e
+            continue
+            # print(traceback.format_exc())
+            logger.logProcessError("run_daily_process", e)
+            logger.logProcessError("run_daily_process", str(traceback.format_exc()))
 
     print " %s compliances started for client_id %s - %s" % (count, client_id, current_date)
 
@@ -465,9 +476,11 @@ def run_daily_process(country_id, current_date):
                 #     notify_before_contract_period(db, client_id)
                 db.commit()
             except Exception, e :
-                print e
+                # print e
                 db.rollback()
-                print(traceback.format_exc())
+                # print(traceback.format_exc())
+                logger.logProcessError("run_daily_process", e)
+                logger.logProcessError("run_daily_process", str(traceback.format_exc()))
 
 def run_daily_process_country_wise():
     country_time_zones = sorted(countries)
@@ -486,5 +499,5 @@ def run_daily_process_country_wise():
         if info :
             current_date = return_date(time_convertion(info.get("timezones")[0]))
             # print "country -- ", c["country_name"]
-            print
+            # print
             run_daily_process(c["country_id"], current_date)

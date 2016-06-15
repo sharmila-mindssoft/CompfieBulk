@@ -338,6 +338,14 @@ class ClientDatabase(Database):
         else:
             return None
 
+    def update_session_time(self, session_token):
+        updated_on = self.get_date_time()
+        q = "update tbl_user_sessions set \
+        last_accessed_time='%s' where session_token = '%s' " % (
+            str(updated_on), str(session_token)
+        )
+        self.execute(q)
+
     def validate_session_token(self, client_id, session_token) :
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
@@ -345,6 +353,7 @@ class ClientDatabase(Database):
         user_id = None
         if row :
             user_id = row[0]
+            self.update_session_time(session_token)
         return user_id
 
     def get_forms(self, client_id):
