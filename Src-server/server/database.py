@@ -117,8 +117,7 @@ class Database(object) :
             connection.autocommit(False)
             self._connection = connection
         except Exception, e :
-            logger.log
-            Knowledge("error", "database.py-connect", e)
+            logger.logKnowledge("error", "database.py-connect", e)
 
     ########################################################
     # To Close database connection
@@ -4293,10 +4292,12 @@ class KnowledgeDatabase(Database):
         client_cursor = client_con.cursor()
         query = "CREATE DATABASE %s" % database_name
         logger.logKnowledge("info", "create", query)
+        
         client_cursor.execute(query)
         query = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, REFERENCES, \
-            TRIGGER, EVENT, CREATE ROUTINE, ALTER  on %s.* to '%s'@'%' IDENTIFIED BY '%s';" % (
-            database_name, db_username, db_password)
+            TRIGGER, EVENT, CREATE ROUTINE, ALTER  on %s.* to '%s'@'%s' IDENTIFIED BY '%s';" % (
+            database_name, db_username, str('%'), db_password)
+
         logger.logKnowledge("info", "create", query)
         client_cursor.execute(query)
         client_cursor.execute("FLUSH PRIVILEGES;")
