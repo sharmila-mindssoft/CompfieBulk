@@ -24,13 +24,13 @@ function get_notification_count(){
                 var show_popup = data.show_popup;
                 var notification_text = data.notification_text;
 
-                window.localStorage["CLIENT_NOTIFICATION_COUNT"] =  notification_count;
-                window.localStorage["CLIENT_REMINDER_COUNT"] = reminder_count;
-                window.localStorage["CLIENT_ESCALATION_COUNT"] = escalation_count;
+                window.sessionStorage["CLIENT_NOTIFICATION_COUNT"] =  notification_count;
+                window.sessionStorage["CLIENT_REMINDER_COUNT"] = reminder_count;
+                window.sessionStorage["CLIENT_ESCALATION_COUNT"] = escalation_count;
 
-                $("#notification_count").text(window.localStorage["CLIENT_NOTIFICATION_COUNT"]);
-                $("#reminder_count").text(window.localStorage["CLIENT_REMINDER_COUNT"]);
-                $("#escalation_count").text(window.localStorage["CLIENT_ESCALATION_COUNT"]);
+                $("#notification_count").text(window.sessionStorage["CLIENT_NOTIFICATION_COUNT"]);
+                $("#reminder_count").text(window.sessionStorage["CLIENT_REMINDER_COUNT"]);
+                $("#escalation_count").text(window.sessionStorage["CLIENT_ESCALATION_COUNT"]);
 
                 if(show_popup){
                     console.log(notification_text);

@@ -19,7 +19,7 @@ function hideLoader() {
 }
 
 function loadReminders(reminders){
-    
+
     var str='';
     for(var reminder in reminders){
       sno++;
@@ -41,9 +41,9 @@ function loadReminders(reminders){
 
       if (reminders[reminder]["assignee"] != null){
         var assignee1 = reminders[reminder]["assignee"];
-        var assigneesplit = assignee1.split(',');  
+        var assigneesplit = assignee1.split(',');
       }
-      
+
       if(reminders[reminder]["read_status"]){
         readStatus = '';
       }
@@ -57,8 +57,8 @@ function loadReminders(reminders){
     if(str == '' && sno == 0){
       str += '<li style="text-align:center">'+"No Reminders Found"+"</li>"
     }
-   $('#reminderList').append(str);    
-    if(window.localStorage["CLIENT_REMINDER_COUNT"] > sno){
+   $('#reminderList').append(str);
+    if(window.sessionStorage["CLIENT_REMINDER_COUNT"] > sno){
       $('#pagination').show();
     }
     else{
@@ -98,14 +98,14 @@ function changeStatus(notification_id, read_status){
       concurrenceDetails = concurrence.substring(concurrence.indexOf(",")+1).trim().replace(/--, /gi,'');
     }else{
       concurrenceName = '-'
-      concurrenceDetails = '-' 
+      concurrenceDetails = '-'
     }
 
     if(approval != ''){
       approvalName = approval.split(',')[0];
       approvalDetails = approval.substring(approval.indexOf(",")+1).trim().replace(/--, /gi,'');
     }
-   
+
     $(".popup_act").text(act);
     $(".popup_unit").html('<abbr class="page-load tipso_style" title="'+ unitaddress +'"></abbr>'+unit);
     $(".popup_compliance").text(compliance);
@@ -141,8 +141,8 @@ function get_reminders(sno){
   function onSuccess(data){
     remindersList = data['notifications'];
     loadReminders(remindersList);
-console.log(window.localStorage["CLIENT_REMINDER_COUNT"]+"==="+sno);
-  
+console.log(window.sessionStorage["CLIENT_REMINDER_COUNT"]+"==="+sno);
+
     hideLoader();
   }
   function onFailure(error){
@@ -175,7 +175,7 @@ function initialize(){
   /*setInterval(function() {
       get_reminders();
   }, 10000);*/
-  
+
 }
 
 $(function() {

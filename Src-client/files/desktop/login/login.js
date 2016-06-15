@@ -15,9 +15,9 @@ function displayLoginLoader() {
 }
 function initSession(userProfile, shortName) {
     setLandingPage(userProfile);
-    window.localStorage["userInfo"] = JSON.stringify(userProfile, null, " ");
+    window.sessionStorage["userInfo"] = JSON.stringify(userProfile, null, " ");
     if (shortName !== null) {
-        window.localStorage["shortName"] = shortName;
+        window.sessionStorage["shortName"] = shortName;
     }
 }
 function setLandingPage(userProfile) {

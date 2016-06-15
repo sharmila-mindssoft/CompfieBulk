@@ -12,7 +12,7 @@ function initMirror() {
         }
     }
 
-    // if (window.localStorage["my_ip"] == null){
+    // if (window.sessionStorage["my_ip"] == null){
     //     get_ip();
     // }
 
@@ -25,7 +25,7 @@ function initMirror() {
     }
 
     function initSession(userProfile){
-        window.localStorage["userInfo"] = toJSON(userProfile);
+        window.sessionStorage["userInfo"] = toJSON(userProfile);
     }
 
     function getShortName(){
@@ -43,19 +43,19 @@ function initMirror() {
     }
 
     // function updateUser_Session(user) {
-    //     var info = parseJSON(window.localStorage["userInfo"])
-    //     delete window.localStorage["userInfo"];
+    //     var info = parseJSON(window.sessionStorage["userInfo"])
+    //     delete window.sessionStorage["userInfo"];
 
     //     info.userProfile = user;
-    //     window.localStorage["userInfo"] = toJSON(info);
+    //     window.sessionStorage["userInfo"] = toJSON(info);
     // }
 
     function clearSession() {
-        delete window.localStorage["userInfo"];
+        delete window.sessionStorage["userInfo"];
     }
 
     function getUserInfo() {
-        var info = window.localStorage["userInfo"];
+        var info = window.sessionStorage["userInfo"];
         if (typeof info === "undefined") {
             user = null;
         }
@@ -69,7 +69,7 @@ function initMirror() {
         var info = getUserInfo();
         info["contact_no"] = response["contact_no"]
         info["address"] = response["address"]
-        window.localStorage["userInfo"] = toJSON(info)
+        window.sessionStorage["userInfo"] = toJSON(info)
     }
 
     function getUserProfile() {
@@ -101,7 +101,7 @@ function initMirror() {
         if (info != null){
             return info["menu"]["menus"];
         }else{
-            window.location.href = window.localStorage["login_url"];
+            window.location.href = window.sessionStorage["login_url"];
         }
     }
 
@@ -123,7 +123,7 @@ function initMirror() {
 
     function get_ip(){
         $.getJSON("http://jsonip.com?callback=?", function (data) {
-            window.localStorage["my_ip"]  = data.ip;
+            window.sessionStorage["my_ip"]  = data.ip;
         });
     }
     function apiRequest(callerName, request, callback) {
@@ -149,7 +149,7 @@ function initMirror() {
                 }
                 else if (status == "InvalidSessionToken") {
                     login_url = "/knowledge/login"
-                    window.localStorage["login_url"] = login_url;
+                    window.sessionStorage["login_url"] = login_url;
                     clearSession();
                     window.location.href = login_url;
                 }
@@ -202,9 +202,9 @@ function initMirror() {
 
     // Login function
     function login(username, password, short_name, callback) {
-        if (window.localStorage["my_ip"] == null)
+        if (window.sessionStorage["my_ip"] == null)
             get_ip();
-        my_ip = window.localStorage["my_ip"]
+        my_ip = window.sessionStorage["my_ip"]
 
         var request = [
             "Login", {
@@ -260,7 +260,7 @@ function initMirror() {
                 matchString = 'success';
                 clearSession();
                 login_url = "/knowledge/login"
-                window.localStorage["login_url"] = login_url;
+                window.sessionStorage["login_url"] = login_url;
                 window.location.href = login_url;
 
             }

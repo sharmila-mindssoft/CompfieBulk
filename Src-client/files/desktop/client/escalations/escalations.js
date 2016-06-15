@@ -20,7 +20,7 @@ function hideLoader() {
 }
 
 function loadEscalations(escalations){
-    
+
     var str='';
     for(var reminder in escalations){
       sno++;
@@ -35,7 +35,7 @@ function loadEscalations(escalations){
       var compliance = escalations[reminder]["compliance_name"];
       var duedate = escalations[reminder]["due_date"];
       var delayedby = escalations[reminder]["delayed_days"];
-     
+
       notificationDict[notificationId] = [act,unit,unitaddress,compliance,duedate,delayedby];
 
       if(escalations[reminder]["read_status"]){
@@ -62,12 +62,12 @@ function loadEscalations(escalations){
     if(str == '' && sno == 0){
       str += '<li style="text-align:center">'+"No Escalations Found"+"</li>"
     }
-   $('#escalationList').append(str);   
-      if(window.localStorage["CLIENT_ESCALATION_COUNT"] > sno){
+   $('#escalationList').append(str);
+      if(window.sessionStorage["CLIENT_ESCALATION_COUNT"] > sno){
         $('#pagination').show();
     }else{
         $('#pagination').hide();
-    }   
+    }
 }
 
 function changeStatus(notification_id, read_status){
@@ -85,7 +85,7 @@ function changeStatus(notification_id, read_status){
   $(".popup_compliance").text(compliance);
   $(".popup_duedate").text(duedate);
   $(".popup_delayedby").text(delayedby);
-  
+
   if(read_status == false){
     function onSuccess(response){
         get_notification_count();
@@ -110,14 +110,14 @@ function get_escalations(sno){
     function onSuccess(data){
     escalationsList = data['notifications'];
     loadEscalations(escalationsList);
- 
+
     hideLoader();
   }
   function onFailure(error){
     console.log(error);
     hideLoader();
   }
-  client_mirror.getNotifications( 'Escalation', sno, 
+  client_mirror.getNotifications( 'Escalation', sno,
         function(error, response){
             if(error == null){
                 onSuccess(response);
@@ -142,7 +142,7 @@ function initialize(){
   /*setInterval(function() {
       get_escalations();
   }, 10000);*/
-  
+
 }
 
 $(function() {
