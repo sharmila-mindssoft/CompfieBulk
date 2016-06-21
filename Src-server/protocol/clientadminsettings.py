@@ -1,7 +1,6 @@
 import json
 from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
-    parse_structure_CustomIntegerType_1_7,
     parse_structure_VectorType_RecordType_clientadminsettings_LICENCE_HOLDER,
     parse_structure_CustomTextType_250,
     parse_structure_VectorType_RecordType_clientadminsettings_PROFILE_DETAIL,
@@ -15,10 +14,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_100
 )
 from protocol.to_structure import (
-    to_structure_CustomIntegerType_1_7,
     to_structure_VectorType_RecordType_clientadminsettings_LICENCE_HOLDER,
     to_structure_CustomTextType_250,
-    to_structure_VectorType_RecordType_clientadminsettings_PROFILE_DETAIL,
     to_structure_UnsignedIntegerType_32, to_structure_CustomTextType_100,
     to_structure_Bool, to_structure_CustomTextType_20,
     to_structure_CustomTextType_50,

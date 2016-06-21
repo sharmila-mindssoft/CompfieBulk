@@ -1,7 +1,6 @@
 from protocol.jsonvalidators import (parse_enum, parse_dictionary)
 from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_Compliance,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Form,
     parse_structure_EnumType_core_DURATION_TYPE,
     parse_structure_UnsignedIntegerType_32, parse_structure_Bool,
     parse_structure_VectorType_RecordType_core_ComplianceShortDescription,
@@ -30,7 +29,6 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form,
     parse_structure_UnsignedIntegerType_32,
-    parse_structure_OptionalType_VectorType_CustomTextType_50,
     parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
     parse_structure_OptionalType_VectorType_RecordType_core_FileList,
     parse_structure_OptionalType_CustomIntegerType_1_100,
@@ -43,7 +41,6 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_VectorType_CustomTextType_100,
     parse_structure_EnumType_core_NOT_COMPLIED_TYPE,
-    parse_structure_OptionalType_VectorType_CustomTextType_100,
     parse_structure_OptionalType_Text,
     parse_structure_VectorType_RecordType_core_Compliance_Download,
     parse_structure_CustomTextType_200,
@@ -58,7 +55,6 @@ from protocol.parse_structure import (
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Form,
     to_structure_EnumType_core_DURATION_TYPE,
     to_structure_SignedIntegerType_8, to_structure_Bool,
     to_structure_VectorType_RecordType_core_ComplianceShortDescription,
@@ -86,7 +82,6 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_500,
     to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form,
     to_structure_UnsignedIntegerType_32,
-    to_structure_OptionalType_VectorType_CustomTextType_50,
     to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
     to_structure_OptionalType_VectorType_RecordType_core_FileList,
     to_structure_OptionalType_CustomIntegerType_1_100,
@@ -105,7 +100,6 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_20,
     to_structure_VectorType_CustomTextType_100,
     to_structure_EnumType_core_NOT_COMPLIED_TYPE,
-    to_structure_OptionalType_VectorType_CustomTextType_100,
     to_structure_OptionalType_Text,
     to_structure_VectorType_RecordType_core_Compliance_Download,
     to_structure_CustomTextType_200,
@@ -125,10 +119,10 @@ from protocol.to_structure import (
 #
 
 class SESSION_TYPE(object):
-    Web = "Web"
-    Android = "Android"
-    IOS = "IOS"
-    BlackBerry = "BlackBerry"
+    # Web = "Web"
+    # Android = "Android"
+    # IOS = "IOS"
+    # BlackBerry = "BlackBerry"
 
     def __init__(self, value):
         self._value = value
@@ -152,8 +146,8 @@ class SESSION_TYPE(object):
 #
 
 class USER_TYPE(object):
-    Inhouse = "Inhouse"
-    ServiceProvider = "ServiceProvider"
+    # Inhouse = "Inhouse"
+    # ServiceProvider = "ServiceProvider"
 
     def __init__(self, value):
         self._value = value
@@ -176,10 +170,10 @@ class USER_TYPE(object):
 #
 
 class APPROVAL_STATUS(object):
-    Pending = "Pending"
-    Approve = "Approved"
-    Reject = "Rejected"
-    ApproveAndNotify = "Approved & Notified"
+    # Pending = "Pending"
+    # Approve = "Approved"
+    # Reject = "Rejected"
+    # ApproveAndNotify = "Approved & Notified"
 
     def __init__(self, value):
         self._value = value
@@ -203,10 +197,10 @@ class APPROVAL_STATUS(object):
 #
 
 class COMPLIANCE_APPROVAL_STATUS(object):
-    Concur = "Concur"
-    RejectConcurrence = "Reject Concurrence"
-    Approve = "Approve"
-    RejectApproval = "Reject Approval"
+    # Concur = "Concur"
+    # RejectConcurrence = "Reject Concurrence"
+    # Approve = "Approve"
+    # RejectApproval = "Reject Approval"
 
     def __init__(self, value):
         self._value = value
@@ -230,8 +224,8 @@ class COMPLIANCE_APPROVAL_STATUS(object):
 #
 
 class ASSIGN_STATUTORY_SUBMISSION_STATUS(object):
-    Submited = "Submited"
-    Pending = "Pending"
+    # Submited = "Submited"
+    # Pending = "Pending"
 
     def __init__(self, value):
         self._value = value
@@ -255,8 +249,8 @@ class ASSIGN_STATUTORY_SUBMISSION_STATUS(object):
 #
 
 class ASSIGN_STATUTORY_SUBMISSION_TYPE(object):
-    Submit = "Submit"
-    Save = "Save"
+    # Submit = "Submit"
+    # Save = "Save"
 
     def __init__(self, value):
         self._value = value
@@ -280,9 +274,9 @@ class ASSIGN_STATUTORY_SUBMISSION_TYPE(object):
 #
 
 class NOTIFICATION_TYPE(object):
-    Notification = "Notification"
-    Reminder = "Reminder"
-    Escalation = "Escalation"
+    # Notification = "Notification"
+    # Reminder = "Reminder"
+    # Escalation = "Escalation"
 
     def __init__(self, value):
         self._value = value
@@ -306,12 +300,12 @@ class NOTIFICATION_TYPE(object):
 #
 
 class FILTER_TYPE(object):
-    Group = "Group"
-    BusinessGroup = "BusinessGroup"
-    LegalEntity = "LegalEntity"
-    Division = "Division"
-    Unit = "Unit"
-    Consolidated = "Consolidated"
+    # Group = "Group"
+    # BusinessGroup = "BusinessGroup"
+    # LegalEntity = "LegalEntity"
+    # Division = "Division"
+    # Unit = "Unit"
+    # Consolidated = "Consolidated"
 
     def __init__(self, value):
         self._value = value
@@ -335,10 +329,10 @@ class FILTER_TYPE(object):
 #
 
 class COMPLIANCE_FREQUENCY(object):
-    OneTime = "One Time"
-    Periodical = "Periodical"
-    Review = "Review"
-    OnOccurrence = "On Occurrence"
+    # OneTime = "One Time"
+    # Periodical = "Periodical"
+    # Review = "Review"
+    # OnOccurrence = "On Occurrence"
 
     def __init__(self, value):
         self._value = value
@@ -362,10 +356,10 @@ class COMPLIANCE_FREQUENCY(object):
 #
 
 class COMPLIANCE_STATUS(object):
-    Complied = "Complied"
-    DelayedCompliance = "Delayed Compliance"
-    Inprogress = "Inprogress"
-    NotComplied = "Not Complied"
+    # Complied = "Complied"
+    # DelayedCompliance = "Delayed Compliance"
+    # Inprogress = "Inprogress"
+    # NotComplied = "Not Complied"
 
     def __init__(self, value):
         self._value = value
@@ -389,9 +383,9 @@ class COMPLIANCE_STATUS(object):
 #
 
 class APPLICABILITY_STATUS(object):
-    Applicable = "Applicable"
-    NotApplicable = "Not Applicable"
-    NotOpted = "Not Opted"
+    # Applicable = "Applicable"
+    # NotApplicable = "Not Applicable"
+    # NotOpted = "Not Opted"
 
     def __init__(self, value):
         self._value = value
@@ -415,11 +409,11 @@ class APPLICABILITY_STATUS(object):
 #
 
 class FORM_TYPE(object):
-    IT = "IT"
-    Knowledge = "Knowledge"
-    Techno = "Techno"
-    Client = "Client"
-    ServiceProvider = "ServiceProvider"
+    # IT = "IT"
+    # Knowledge = "Knowledge"
+    # Techno = "Techno"
+    # Client = "Client"
+    # ServiceProvider = "ServiceProvider"
 
     def __init__(self, value):
         self._value = value
@@ -443,9 +437,9 @@ class FORM_TYPE(object):
 #
 
 class REPEATS_TYPE(object):
-    Year = "Year(s)"
-    Month = "Month(s)"
-    Day = "Day(s)"
+    # Year = "Year(s)"
+    # Month = "Month(s)"
+    # Day = "Day(s)"
 
     def __init__(self, value):
         self._value = value
@@ -469,8 +463,8 @@ class REPEATS_TYPE(object):
 #
 
 class DURATION_TYPE(object):
-    Day = "Day(s)"
-    Hour = "Hour(s)"
+    # Day = "Day(s)"
+    # Hour = "Hour(s)"
 
     def __init__(self, value):
         self._value = value
@@ -494,10 +488,10 @@ class DURATION_TYPE(object):
 #
 
 class COMPLIANCE_ACTIVITY_STATUS(object):
-    Submitted = "Submitted"
-    Approved = "Approved"
-    Rejected = "Rejected"
-    Concurred = "Concurred"
+    # Submitted = "Submitted"
+    # Approved = "Approved"
+    # Rejected = "Rejected"
+    # Concurred = "Concurred"
 
     def __init__(self, value):
         self._value = value
@@ -521,10 +515,10 @@ class COMPLIANCE_ACTIVITY_STATUS(object):
 #
 
 class NOT_COMPLIED_TYPE(object) :
-    below_30 = "Below 30"
-    below_60 = "Below 60"
-    below_90 = "Below 90"
-    above_90 = "Above 90"
+    # below_30 = "Below 30"
+    # below_60 = "Below 60"
+    # below_90 = "Below 90"
+    # above_90 = "Above 90"
 
     def __init__(self, value):
         self._value = value

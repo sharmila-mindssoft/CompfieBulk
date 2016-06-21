@@ -957,9 +957,6 @@ class GetUserwiseCompliancesSuccess(Response):
         )
         users = data.get("users")
         users = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(users)
-        # users = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(
-        #     users
-        # )
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(units)
         two_level_approve = data.get("two_level_approve")

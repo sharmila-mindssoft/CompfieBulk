@@ -4,7 +4,6 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_100,
     parse_structure_RecordType_core_Menu,
     parse_structure_CustomTextType_250,
-    parse_structure_VectorType_RecordType_core_ClientUser,
     parse_structure_VectorType_RecordType_core_UserGroup,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_core_LegalEntity,

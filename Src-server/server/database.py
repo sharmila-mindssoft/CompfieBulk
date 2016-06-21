@@ -4299,6 +4299,7 @@ class KnowledgeDatabase(Database):
         client_cursor = client_con.cursor()
         query = "CREATE DATABASE %s" % database_name
         logger.logKnowledge("info", "create", query)
+
         client_cursor.execute(query)
         query = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, REFERENCES, \
             TRIGGER, EVENT, CREATE ROUTINE, ALTER  on %s.* to '%s'@'%s' IDENTIFIED BY '%s';" % (
