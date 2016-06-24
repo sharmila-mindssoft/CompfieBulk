@@ -71,6 +71,7 @@ function clearValues(levelvalue) {
 }
 
 function actstatus(element){
+  $('ul.setup-panel li:eq(2)').addClass('disabled');
   var changestatusStatutories = '.statutoryclass'+$(element).val();
   if ($(element).is(":checked"))
   {
@@ -86,6 +87,7 @@ function actstatus(element){
 }
 
 function compliancestatus(element){
+  $('ul.setup-panel li:eq(2)').addClass('disabled');
   var sClass = $(element).attr('class');
   var actSelect = sClass.substr(sClass.lastIndexOf("s") + 1);
 
@@ -146,6 +148,18 @@ function load_secondwizard(){
         actCount = actCount + 1;
         count++;
         lastActName = actname;
+
+        $(clone, '.actname').click(function(){
+          if(accordionstatus){
+            //Expand or collapse this panel
+            $(this).next().slideToggle('fast');
+            //Hide the other panels
+            $(".accordion-content").not($(this).next()).slideUp('fast');
+          }else{
+            accordionstatus = true;
+          }
+        });
+        
       }
 
       var actList = statutoriesList[actname];
@@ -309,19 +323,6 @@ function load_secondwizard(){
     if(totalRecord <= (statutoriesCount - 1) && statutoriesCount > 1){
       $('#pagination').hide();
       $('#activate-step-3').show();
-      $(document).ready(function($) {
-      $('#accordion').find('.accordion-toggle').click(function(){
-        if(accordionstatus){
-          //Expand or collapse this panel
-          $(this).next().slideToggle('fast');
-          //Hide the other panels
-          $(".accordion-content").not($(this).next()).slideUp('fast');
-        }else{
-          accordionstatus = true;
-        }
-
-      });
-    });
     }else{
       $('#pagination').show();
       $('#activate-step-3').show();
@@ -425,14 +426,17 @@ function validate_secondtab(){
     }
   }
 
-  if(maxCompliance <= mCompliances){
-    displayMessage("");
-    return true;
-  }else{
-    displayMessage("Maximum("+ mCompliances + ") "  + message.maximum_compliances);
+  if(maxCompliance == 0){
+    displayMessage(message.nocompliance_selected_forassign);
     return false;
   }
-  
+  else if(maxCompliance > mCompliances){
+    displayMessage("Maximum("+ mCompliances + ") "  + message.maximum_compliances);
+    return false;
+  }else{
+    displayMessage("");
+    return true;
+  }
 }
 
 //validation on third wizard
@@ -1165,6 +1169,7 @@ function loadUser(userType){
   var temp_assignee = null;
   var temp_concurrence = null;
   var temp_approval = null;
+  var sId = 0;
   //var temp_id = null;
 
   if(userType == 'assignee'){
@@ -1189,16 +1194,25 @@ function loadUser(userType){
   $('#'+userType).empty();
 
   var assigneeUserId = null;
-  if($('.assigneelist.active').attr('id') != undefined)
-    assigneeUserId = parseInt($('.assigneelist.active').attr('id'));
+  if($('.assigneelist.active').attr('id') != undefined){
+    var cIds = $('.assigneelist.active').attr('id').split('-')
+    assigneeUserId = parseInt(cIds[0]);
+    if(parseInt(cIds[1]) != 0) sId = cIds[1];
+  }
 
   var concurrenceUserId = null;
-  if($('.concurrencelist.active').attr('id') != undefined)
-    concurrenceUserId = parseInt($('.concurrencelist.active').attr('id'));
+  if($('.concurrencelist.active').attr('id') != undefined){
+    var cIds = $('.concurrencelist.active').attr('id').split('-')
+    concurrenceUserId = parseInt(cIds[0]);
+    if(parseInt(cIds[1]) != 0) sId = cIds[1];
+  }
 
   var approvalUserId = null;
-  if($('.approvallist.active').attr('id') != undefined)
-    approvalUserId = parseInt($('.approvallist.active').attr('id'));
+  if($('.approvallist.active').attr('id') != undefined){
+    var cIds = $('.approvallist.active').attr('id').split('-')
+    approvalUserId = parseInt(cIds[0]);
+    if(parseInt(cIds[1]) != 0) sId = cIds[1];
+  }
 
 
   var conditionResult = true;
@@ -1237,15 +1251,20 @@ function loadUser(userType){
       }else{
         str='<li id="'+client_admin+'" class="'+userClass+'" > Admin </li>';
       }*/
-      str='<li id="'+client_admin+'" class="'+userClass+'" > Client Admin </li>';
+      str='<li id="'+client_admin+'-0'+'" class="'+userClass+'" > Client Admin </li>';
     }
   }
   for(var user in usersList){
     var userUnits = usersList[user]["unit_ids"];
     if( selectedUnit == 'all' || $.inArray(parseInt(selectedUnit), userUnits) >= 0){
       var userId= usersList[user]["user_id"];
+      var serviceProviderId = 0;
+      if(usersList[user]["service_provider_id"] != null){
+        serviceProviderId = usersList[user]["service_provider_id"];
+      }
       var uLevel = usersList[user]["user_level"];
       var userName= usersList[user]["user_name"] + ' - Level ' + uLevel;
+      var combine = userId + '-' + serviceProviderId;
 
       var isAssignee = usersList[user]["is_assignee"];
       var isConcurrence = usersList[user]["is_concurrence"];
@@ -1277,11 +1296,12 @@ function loadUser(userType){
       if(userType == 'concurrence' && userLevel1 != null){
           conditionResult1 = (uLevel >= userLevel1);
       }
-
+      
       if(userPermission && conditionResult && conditionResult1 && (assigneeUserId == null || assigneeUserId != userId)
         && (approvalUserId == null || approvalUserId != userId)
-        && (concurrenceUserId == null || concurrenceUserId != userId)){
-          str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
+        && (concurrenceUserId == null || concurrenceUserId != userId)
+        && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0 )){
+          str += '<li id="'+combine+'" class="'+userClass+'" >'+userName+'</li>';
       }
     }
   }

@@ -2572,7 +2572,7 @@ class ClientDatabase(Database):
         where_condition = "WHERE t1.is_primary_admin = 0 AND t1.is_active = 1 AND t2.unit_id \
             IN \
             (select distinct unit_id from tbl_user_units where user_id = %s)" % (session_user)
-        query = "SELECT distinct t1.user_id, t1.employee_name, \
+        query = "SELECT distinct t1.user_id, t1.service_provider_id, t1.employee_name, \
             t1.employee_code, \
             t1.seating_unit_id, t1.user_level, \
             (select group_concat(distinct domain_id) from tbl_user_domains where user_id = t1.user_id) domain_ids, \
@@ -2590,7 +2590,7 @@ class ClientDatabase(Database):
             query = query + " AND t1.is_active = 1 "
         rows = self.select_all(query)
         columns = [
-            "user_id", "employee_name", "employee_code",
+            "user_id", "service_provider_id", "employee_name", "employee_code",
             "seating_unit_id", "user_level",
             "domain_ids", "unit_ids",
             "is_service_provider", "service_provider",
@@ -2631,6 +2631,7 @@ class ClientDatabase(Database):
 
             user = clienttransactions.ASSIGN_COMPLIANCE_USER(
                 r["user_id"],
+                r["service_provider_id"],
                 name,
                 r["user_level"],
                 unit_id,
@@ -6480,7 +6481,7 @@ class ClientDatabase(Database):
             compliance_names.append(c.compliance_name)
             due_date = c.due_date
             if due_date is not None :
-                due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
+                due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y").date()
 
             history_id = c.compliance_history_id
             values = [
@@ -6490,7 +6491,7 @@ class ClientDatabase(Database):
             ]
             self.insert(self.tblReassignedCompliancesHistory, reassing_columns, values)
 
-            update_qry = "UPDATE tbl_assigned_compliances SET assignee=%s, is_reassigned=1, approval_person=%s "
+            update_qry = "UPDATE tbl_assigned_compliances SET assignee=%s, is_reassigned=1, approval_person=%s, due_date='%s' "
             if concurrence not in [None, "None", 0, "null", "Null"] :
                 update_qry += " ,concurrence_person = %s " % (concurrence)
             where_qry = " WHERE unit_id = %s AND compliance_id = %s "
@@ -6498,7 +6499,7 @@ class ClientDatabase(Database):
             qry = update_qry + where_qry
 
             update_assign = qry % (
-                assignee, approval, unit_id, compliance_id
+                assignee, approval, due_date, unit_id, compliance_id
             )
             self.execute(update_assign)
 
@@ -6506,7 +6507,7 @@ class ClientDatabase(Database):
                 update_history = "UPDATE tbl_compliance_history SET  \
                     completed_by = '%s', approved_by = %s"
                 if concurrence not in [None, "None", "null", "Null", 0] :
-                    update_qry += " ,concurred_by = %s " % (concurrence)
+                    update_history += " ,concurred_by = %s " % (concurrence)
                 where_qry = " WHERE IFNULL(approve_status, 0) != 1 and compliance_id = %s  and unit_id = %s "
 
                 qry = update_history + where_qry

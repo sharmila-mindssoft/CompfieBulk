@@ -170,6 +170,24 @@ function load_statutory(sList){
 
       actCount = actCount + 1;
       count++;
+
+
+      $(".act-label").on("click", function(event){
+        accordionstatus = false;
+      });
+      
+      $(clone, '.actname').click(function(){
+
+        if(accordionstatus){
+          //Expand or collapse this panel
+          $(this).next().slideToggle('fast');
+          //Hide the other panels
+          $(".accordion-content").not($(this).next()).slideUp('fast');
+        }else{
+          accordionstatus = true;
+        }
+      });
+
     }
 
     if(applicable_status == false){
@@ -264,21 +282,21 @@ function load_statutory(sList){
     $('#submit').show();
     $('#cancel').show();
 
-    $(document).ready(function($) {
-    $(".act-label").on("click", function(event){
-      accordionstatus = false;
-    });
-    $("#accordion").find(".accordion-toggle").click(function(){
-      if(accordionstatus){
-        //Expand or collapse this panel
-        $(this).next('tbody').slideToggle('fast');
-        //Hide the other panels
-        $(".accordion-content").not($(this).next()).slideUp('fast');
-      }else{
-        accordionstatus = true;
-      }
-    });
-  });
+    /*$(document).ready(function($) {
+      $(".act-label").on("click", function(event){
+        accordionstatus = false;
+      });
+      $("#accordion").find(".accordion-toggle").click(function(){
+        if(accordionstatus){
+          //Expand or collapse this panel
+          $(this).next('tbody').slideToggle('fast');
+          //Hide the other panels
+          $(".accordion-content").not($(this).next()).slideUp('fast');
+        }else{
+          accordionstatus = true;
+        }
+      });
+    });*/
   }
   if($("#is_closed").val() == 'true'){
     $('#submit').hide();

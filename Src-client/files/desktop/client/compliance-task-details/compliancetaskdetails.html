@@ -63,35 +63,42 @@
           <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
             <tr>
               <td width="100%" class="full-width-list">
+                <div class="grid-table" style="padding-bottom:0px;">
+                  <table> 
+                    <thead>
+                      <tr align="left" style="background:#ccc;" >
+                        <td width="3%">
+                          <span style="font-weight:bold;">#</span>
+                        </td>
+                        <td width="32%">
+                          <span style="font-weight:bold;">Compliance Task</span>
+                        </td>
+                        <td width="15%">
+                          <span style="font-weight:bold;">Domain</span>
+                        </td>
+                        <td width="10%">
+                          <span style="font-weight:bold;">Start Date</span>
+                        </td>
+                        <td width="10%">
+                          <span style="font-weight:bold;">Due Date</span>
+                        </td>
+                        <td width="15%">
+                          <span style="font-weight:bold;">Days</span>
+                        </td>
+                        <td width="10%">
+                          <span style="font-weight:bold;">Status</span>
+                        </td>
+                        <td width="5%">
+                          <span style="font-weight:bold;padding-right:5px">Format</span>
+                        </td>
+                      </tr>
+                      </thead>
+                    </table>
+                </div>
+
                 <div class="grid-table" style="padding-bottom:0em;height:600px;overflow-y:scroll;">
                   <table class="js-filtertable">
                   <thead>
-                    <tr align="left" style="background:#ccc;" >
-                      <td width="3%">
-                        <span style="font-weight:bold;">#</span>
-                      </td>
-                      <td width="25%">
-                        <span style="font-weight:bold;">Compliance Task</span>
-                      </td>
-                      <td width="10%">
-                        <span style="font-weight:bold;">Domain</span>
-                      </td>
-                      <td width="8%">
-                        <span style="font-weight:bold;">Start Date</span>
-                      </td>
-                      <td width="8%">
-                        <span style="font-weight:bold;">Due Date</span>
-                      </td>
-                      <td width="14%">
-                        <span style="font-weight:bold;">Days</span>
-                      </td>
-                      <td width="5%">
-                        <span style="font-weight:bold;">Status</span>
-                      </td>
-                      <td width="3%" colspan="2">
-                        <span style="font-weight:bold;padding-right:5px">Format</span>
-                      </td>
-                    </tr>
                     <tr>
                       <td></td>
                       <td align="center">
@@ -106,7 +113,6 @@
                         <input type="text" class="filter-text-box js-filter"></td>
                       <td align="center">
                         <input type="text" class="filter-text-box js-filter"></td>
-                      <td></td>
                       <td></td>
                     </tr>
                     </thead>
@@ -132,31 +138,40 @@
           <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
             <tr>
               <td width="100%">
-                <div class="grid-table" style="padding-bottom:0em;height:600px;overflow-y:scroll;">
+
+                <div class="grid-table" style="padding-bottom:0px;">
                   <table class="js-filtertable-upcoming">
                   <thead>
 
                     <tr align="left" style="background:#ccc;">
-                      <td width="3%">
+                      <td width="5%">
                         <span style="font-weight:bold;">#</span>
                       </td>
-                      <td width="41%">
+                      <td width="50%">
                         <span style="font-weight:bold;">Compliance Task</span>
                       </td>
-                      <td>
+                      <td width="15%">
                         <span style="font-weight:bold;">Domain</span>
                       </td>
-                      <td >
+                      <td width="10%">
                         <span style="font-weight:bold;">Start Date</span>
                       </td>
-                      <td>
+                      <td width="10%">
                         <span style="font-weight:bold;">Due Date</span>
                       </td>
 
-                      <td>
+                      <td width="10%">
                         <span style="font-weight:bold;padding-right:5px">Format</span>
                       </td>
                     </tr>
+                    </thead>
+                    </table>
+                </div>
+
+
+                <div class="grid-table" style="padding-bottom:0em;height:600px;overflow-y:scroll;">
+                  <table class="js-filtertable-upcoming">
+                  <thead>
                     <tr>
                       <td></td>
                       <td align="center">
@@ -167,10 +182,10 @@
                         <input type="text" class="filter-text-box js-filter-upcoming"></td>
                       <td align="center">
                         <input type="text" class="filter-text-box js-filter-upcoming"></td>
-                      <td></td>
+                      
                     </tr>
-                    </thead>
-                    <tbody class="tbody-upcoming-compliances-list"></tbody>
+                  </thead>
+                  <tbody class="tbody-upcoming-compliances-list"></tbody>
                   </table>
                   <div align="center" style="padding-top:10px;">
                     <input type="button" value="Show more records" class="btn-submit default-display-none" id="pagination-upcoming">
@@ -192,34 +207,32 @@
       <th colspan="9" align="left" style="background:#ccc;color:black;font-weight:bold" class="compliance-types"></th>
     </tr>
     <tr style="background:#fff;" class="table-row-list expand-compliance" >
-      <td class="sno"></td>
-      <td> <abbr class="page-load compliance-task" title=""><img src="/images/icon-info.png">
+      <td class="sno" width="3%"></td>
+      <td width="32%"> <abbr class="page-load compliance-task" title=""><img src="/images/icon-info.png">
           <span></span></abbr>
       </td>
-      <td class="domain"></td>
-      <td class="startdate"></td>
-      <td class="duedate"></td>
-      <td class="days-text" style=""></td>
-      <td class="status"></td>
-      <td align="center"><span class=""></span>
+      <td class="domain" width="15%"></td>
+      <td class="startdate" width="10%"></td>
+      <td class="duedate" width="10%" ></td>
+      <td class="days-text" style="" width="15%"></td>
+      <td class="status" width="10%"></td>
+      <td align="center" width="5%"><span class=""></span>
         <a class="format-file" href="" target="new">
           <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></a>
       </td>
-      <td style="padding-right:5px;">
-        <img src="/images/right_arrow.png" class="visible-task"  style="visibility:hidden"></td>
     </tr >
   </table>
   <table class="table-upcoming-compliances-list">
     <tr style="background:#fff;" class="table-row-list">
-      <td class="uc-sno"></td>
-      <td > <abbr class="page-load uc-compliance-task" title=""><img src="/images/icon-info.png" style="margin-right:3px">
+      <td class="uc-sno" width="5%"></td>
+      <td width="50%"> <abbr class="page-load uc-compliance-task" title=""><img src="/images/icon-info.png" style="margin-right:3px">
           <span></span></abbr>
       </td>
-      <td class="uc-domain"></td>
-      <td class="uc-startdate"></td>
-      <td class="uc-duedate"></td>
+      <td class="uc-domain" width="15%"></td>
+      <td class="uc-startdate" width="10%"></td>
+      <td class="uc-duedate" width="10%"></td>
 
-      <td align="center">
+      <td align="center" width="10%"> 
         <a class="format-file" href="" target="new" style="text-align:center;">
           <img src="/images/download.png" style="width:16px;height:16px; text-align: center;" title="Download Format" align="center"></a>
       </td>
