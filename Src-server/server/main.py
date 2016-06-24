@@ -27,10 +27,12 @@ from replication.protocol import (
     GetClientChanges, GetClientChangesSuccess
 )
 from server.constants import (
-    TEMPLATE_PATHS,
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
     VERSION, IS_DEVELOPMENT
+)
+from server.templatepath import (
+    TEMPLATE_PATHS
 )
 
 import logger
@@ -59,6 +61,8 @@ def cors_handler(request, response):
 #
 
 def api_request(request_data_type):
+    print "exec method dec"
+
     def wrapper(f):
         def wrapped(self, request, response):
             self.handle_api_request(
@@ -205,16 +209,13 @@ class API(object):
     )
     def handle_delreplicated(self, request, db):
         actual_count = db.get_trail_id()
-        # print "actual_count ", actual_count
 
         client_id = request.client_id
         received_count = request.received_count
         s = "%s, %s, %s " % (client_id, received_count, actual_count)
-        # print s
         logger.logKnowledge("info", "trail", s)
         if actual_count >= received_count :
             db.remove_trail_log(client_id, received_count)
-        # res.to_structure()
         return GetDelReplicatedSuccess()
 
     @api_request(login.Request)
@@ -258,6 +259,9 @@ class API(object):
     @api_request(technoreports.RequestFormat)
     def handle_techno_report(self, request, db):
         return controller.process_techno_report_request(request, db)
+
+    def handle_format_file(self, request, db):
+        print request.files()
 
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
@@ -327,6 +331,7 @@ class TemplateHandler(tornado.web.RequestHandler) :
         self.set_status(204)
         self.write("")
 
+
 #
 # run_server
 #
@@ -381,7 +386,8 @@ def run_server(port):
                 "/knowledge/api/techno_transaction",
                 api.handle_techno_transaction
             ),
-            ("/knowledge/api/techno_report", api.handle_techno_report)
+            ("/knowledge/api/techno_report", api.handle_techno_report),
+            ("/knowledge/api/files", api.handle_format_file)
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)
@@ -410,6 +416,7 @@ def run_server(port):
         images_path = os.path.join(common_path, "images")
         css_path = os.path.join(common_path, "css")
         js_path = os.path.join(common_path, "js")
+        script_path = os.path.join(desktop_path, "knowledge")
 
         web_server.low_level_url(
             r"/images/(.*)",
@@ -431,6 +438,11 @@ def run_server(port):
             r"/knowledge/common/(.*)",
             StaticFileHandler,
             dict(path=common_path)
+        )
+        web_server.low_level_url(
+            r"/knowledge/script/(.*)",
+            StaticFileHandler,
+            dict(path=script_path)
         )
 
         api_design_path = os.path.join(

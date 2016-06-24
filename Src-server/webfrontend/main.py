@@ -14,7 +14,10 @@ from basics.webserver import WebServer
 from basics.ioloop import IOLoop
 from webfrontend.handlerequest import HandleRequest
 from webfrontend.client import CompanyManager
-from server.constants import CLIENT_TEMPLATE_PATHS, IS_DEVELOPMENT, VERSION
+from server.constants import IS_DEVELOPMENT, VERSION
+from server.templatepath import (
+    CLIENT_TEMPLATE_PATHS
+)
 from server import logger
 
 if IS_DEVELOPMENT :
