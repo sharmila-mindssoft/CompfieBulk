@@ -7,7 +7,6 @@ import random
 import datetime
 import uuid
 import json
-import pytz
 import logger
 from types import *
 from protocol import (
@@ -23,17 +22,14 @@ from replication.protocol import (
 )
 from server.emailcontroller import EmailHandler as email
 
+from server.constants import (
+    ROOT_PATH, KNOWLEDGE_FORMAT_PATH, FORMAT_DOWNLOAD_URL,
+    LOGO_URL, LOCAL_TIMEZONE
+)
 
 __all__ = [
     "KnowledgeDatabase", "Database"
 ]
-
-ROOT_PATH = os.path.join(os.path.split(__file__)[0])
-KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
-FORMAT_DOWNLOAD_URL = "compliance_format"
-CLIENT_LOGO_PATH = os.path.join(ROOT_PATH, "clientlogo")
-LOGO_URL = "knowledge/clientlogo"
-LOCAL_TIMEZONE = pytz.timezone("Asia/Kolkata")
 
 class Database(object) :
     def __init__(
@@ -326,7 +322,6 @@ class Database(object) :
             logger.logClientApi("delete", query)
             logger.logClientApi("delete", e)
             return
-
 
     ########################################################
     # To concate the value with the existing value in the
