@@ -14,7 +14,10 @@ from basics.webserver import WebServer
 from basics.ioloop import IOLoop
 from webfrontend.handlerequest import HandleRequest
 from webfrontend.client import CompanyManager
-from server.constants import CLIENT_TEMPLATE_PATHS, IS_DEVELOPMENT, VERSION
+from server.constants import IS_DEVELOPMENT, VERSION
+from server.templatepath import (
+    CLIENT_TEMPLATE_PATHS
+)
 from server import logger
 
 if IS_DEVELOPMENT :
@@ -79,6 +82,7 @@ class Controller(object):
                 send_invalid_json_format(response)
                 return
             token = data[0]
+            logger.logWebfront(str(token))
             actual_data = data[1]
             if type(token) is unicode :
                 token = token.encode("utf8")
@@ -101,6 +105,7 @@ class Controller(object):
             request.uri(), response, self._http_client,
             request.remote_ip(), self._company_manager
         )
+        logger.logWebfront("forward_request")
         handle_request.forward_request()
         request.set_close_callback(
             handle_request.connection_closed

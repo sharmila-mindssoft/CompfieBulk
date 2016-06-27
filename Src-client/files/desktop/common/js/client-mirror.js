@@ -5,7 +5,7 @@ var my_ip = null;
 function initClientMirror() {
     var DEBUG = true;
 
-    // if (window.localStorage["my_ip"] == null){
+    // if (window.sessionStorage["my_ip"] == null){
     //     get_ip();
     // }
 
@@ -25,8 +25,8 @@ function initClientMirror() {
 
     function initSession(userProfile, shortName) {
         // console.log(toJSON(userProfile))
-        window.localStorage["userInfo"] = toJSON(userProfile);
-        window.localStorage["shortName"] = shortName;
+        window.sessionStorage["userInfo"] = toJSON(userProfile);
+        window.sessionStorage["shortName"] = shortName;
     }
 
     function getShortName() {
@@ -39,27 +39,27 @@ function initClientMirror() {
 
     }
     // function updateUser_Session(user) {
-    //     var info = parseJSON(window.localStorage["userInfo"])
-    //     delete window.localStorage["userInfo"];
+    //     var info = parseJSON(window.sessionStorage["userInfo"])
+    //     delete window.sessionStorage["userInfo"];
 
     //     info.userProfile = user;
-    //     window.localStorage["userInfo"] = toJSON(info);
+    //     window.sessionStorage["userInfo"] = toJSON(info);
     // }
 
 
 
 
     function clearSession() {
-        delete window.localStorage["userInfo"];
-        delete window.localStorage["shortName"];
-        delete window.localStorage["CLIENT_NOTIFICATION_COUNT"];
-        delete window.localStorage["CLIENT_REMINDER_COUNT"];
-        delete window.localStorage["CLIENT_ESCALATION_COUNT"];
+        delete window.sessionStorage["userInfo"];
+        delete window.sessionStorage["shortName"];
+        delete window.sessionStorage["CLIENT_NOTIFICATION_COUNT"];
+        delete window.sessionStorage["CLIENT_REMINDER_COUNT"];
+        delete window.sessionStorage["CLIENT_ESCALATION_COUNT"];
 
     }
 
     function getUserInfo() {
-        var info = window.localStorage["userInfo"];
+        var info = window.sessionStorage["userInfo"];
         user = parseJSON(info)
         return user;
     }
@@ -68,13 +68,13 @@ function initClientMirror() {
         var info = getUserInfo();
         info["contact_no"] = response["contact_no"]
         info["address"] = response["address"]
-        window.localStorage["userInfo"] = toJSON(info)
+        window.sessionStorage["userInfo"] = toJSON(info)
     }
 
 
     function get_ip(){
         $.getJSON("http://jsonip.com?callback=?", function (data) {
-            window.localStorage["my_ip"] = data.ip;
+            window.sessionStorage["my_ip"] = data.ip;
         });
     }
 
@@ -104,7 +104,7 @@ function initClientMirror() {
         if (info != null){
             return info["menu"]["menus"];
         }else{
-            login_url = "/login/"+window.localStorage["recent_short_name"]
+            login_url = "/login/"+window.sessionStorage["recent_short_name"]
             window.location.href = login_url;
         }
     }
@@ -116,7 +116,7 @@ function initClientMirror() {
     }
 
     function getClientShortName(){
-        var name = window.localStorage["shortName"];
+        var name = window.sessionStorage["shortName"];
         if (typeof(name) == "undefined"){
             return null;
         }
@@ -127,7 +127,7 @@ function initClientMirror() {
         var short_name = getClientShortName();
         login_url = "/login/" + short_name;
         console.log(login_url);
-        window.localStorage["recent_short_name"] = short_name;
+        window.sessionStorage["recent_short_name"] = short_name;
         clearSession();
         window.location.href = login_url;
     }
@@ -226,7 +226,7 @@ function initClientMirror() {
 
     // Login function
     function login(username, password, short_name, callback) {
-        if (window.localStorage["my_ip"] == null)
+        if (window.sessionStorage["my_ip"] == null)
             get_ip();
         var request = [
             short_name, [
@@ -235,7 +235,7 @@ function initClientMirror() {
                     "username": username,
                     "password": password,
                     "short_name": short_name,
-                    "ip": window.localStorage["my_ip"]
+                    "ip": window.sessionStorage["my_ip"]
                 }
             ]
         ]
@@ -344,7 +344,7 @@ function initClientMirror() {
     function forgotPassword(username, callback) {
         callerName = "login"
         var short_name = getShortName();
-        window.localStorage["recent_short_name"] = short_name
+        window.sessionStorage["recent_short_name"] = short_name
         login_url = "/login/"+short_name
         var request = [
             short_name, [
@@ -377,7 +377,7 @@ function initClientMirror() {
 
     function validateResetToken(resetToken, short_name,
         callback) {
-        window.localStorage["recent_short_name"] = short_name
+        window.sessionStorage["recent_short_name"] = short_name
         login_url = "/login/"+short_name
         callerName = "login"
         var request = [
@@ -412,7 +412,7 @@ function initClientMirror() {
 
     function resetPassword(resetToken, newPassword, short_name,
         callback) {
-        window.localStorage["recent_short_name"] = short_name
+        window.sessionStorage["recent_short_name"] = short_name
         login_url = "/login/"+short_name
         callerName = "login"
         var request = [
@@ -1693,16 +1693,16 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
     function getContractExpireAndNotificationCount(){
-        var clientNotificationCount = window.localStorage["CLIENT_NOTIFICATION_COUNT"];
-        var clientReminderCount = window.localStorage["CLIENT_REMINDER_COUNT"];
-        var clientEscalationCount = window.localStorage["CLIENT_ESCALATION_COUNT"];
+        var clientNotificationCount = window.sessionStorage["CLIENT_NOTIFICATION_COUNT"];
+        var clientReminderCount = window.sessionStorage["CLIENT_REMINDER_COUNT"];
+        var clientEscalationCount = window.sessionStorage["CLIENT_ESCALATION_COUNT"];
 
         if ((typeof(clientNotificationCount) != "undefined") && (clientNotificationCount != null) ){
             $("#notification_count").text(clientNotificationCount);
         }else{
             $("#notification_count").text('0');
         }
-        
+
         if ((typeof(clientReminderCount) != "undefined") && (clientReminderCount != null) ){
             $("#reminder_count").text(clientReminderCount);
         }else{

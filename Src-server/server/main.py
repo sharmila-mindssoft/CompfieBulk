@@ -27,10 +27,13 @@ from replication.protocol import (
     GetClientChanges, GetClientChangesSuccess
 )
 from server.constants import (
-    TEMPLATE_PATHS,
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    VERSION, IS_DEVELOPMENT
+    VERSION, IS_DEVELOPMENT,
+    KNOWLEDGE_FORMAT_PATH
+)
+from server.templatepath import (
+    TEMPLATE_PATHS
 )
 
 import logger
@@ -58,9 +61,7 @@ def cors_handler(request, response):
 # api_request
 #
 
-def api_request(
-    request_data_type
-):
+def api_request(request_data_type):
     def wrapper(f):
         def wrapped(self, request, response):
             self.handle_api_request(
@@ -69,7 +70,6 @@ def api_request(
             )
         return wrapped
     return wrapper
-
 
 #
 # API
@@ -120,9 +120,12 @@ class API(object):
         response.set_default_header("Access-Control-Allow-Origin", "*")
         ip_address = str(request.remote_ip())
         self._ip_addess = ip_address
-        request_data = self._parse_request(
-            request_data_type, request, response
-        )
+        if request_data_type == "knowledgeformat" :
+            request_data = request
+        else :
+            request_data = self._parse_request(
+                request_data_type, request, response
+            )
 
         if request_data is None:
             return
@@ -202,21 +205,16 @@ class API(object):
         )
         return res
 
-    @api_request(
-        GetChanges
-    )
+    @api_request(GetChanges)
     def handle_delreplicated(self, request, db):
         actual_count = db.get_trail_id()
-        # print "actual_count ", actual_count
 
         client_id = request.client_id
         received_count = request.received_count
         s = "%s, %s, %s " % (client_id, received_count, actual_count)
-        # print s
         logger.logKnowledge("info", "trail", s)
         if actual_count >= received_count :
             db.remove_trail_log(client_id, received_count)
-        # res.to_structure()
         return GetDelReplicatedSuccess()
 
     @api_request(login.Request)
@@ -260,6 +258,24 @@ class API(object):
     @api_request(technoreports.RequestFormat)
     def handle_techno_report(self, request, db):
         return controller.process_techno_report_request(request, db)
+
+    @api_request("knowledgeformat")
+    def handle_format_file(self, request, db):
+        def validate_session_from_body(content):
+            content_list = content.split("\r\n\r\n")
+            session = content_list[-1].split("\r\n")[0]
+            user_id = db.validate_session_token(str(session))
+            if user_id is None :
+                return False
+            else :
+                return True
+
+        if (validate_session_from_body(request.body())) :
+            info = request.files()
+            response_data = controller.process_uploaded_file(info)
+            return response_data
+        else :
+            return login.InvalidSessionToken()
 
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
@@ -383,7 +399,8 @@ def run_server(port):
                 "/knowledge/api/techno_transaction",
                 api.handle_techno_transaction
             ),
-            ("/knowledge/api/techno_report", api.handle_techno_report)
+            ("/knowledge/api/techno_report", api.handle_techno_report),
+            ("/knowledge/api/files", api.handle_format_file)
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)
@@ -412,6 +429,7 @@ def run_server(port):
         images_path = os.path.join(common_path, "images")
         css_path = os.path.join(common_path, "css")
         js_path = os.path.join(common_path, "js")
+        script_path = os.path.join(desktop_path, "knowledge")
 
         web_server.low_level_url(
             r"/images/(.*)",
@@ -433,6 +451,11 @@ def run_server(port):
             r"/knowledge/common/(.*)",
             StaticFileHandler,
             dict(path=common_path)
+        )
+        web_server.low_level_url(
+            r"/knowledge/script/(.*)",
+            StaticFileHandler,
+            dict(path=script_path)
         )
 
         api_design_path = os.path.join(

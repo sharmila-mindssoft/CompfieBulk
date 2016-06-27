@@ -2,7 +2,6 @@ import time
 from protocol import (clienttransactions, clientmasters, login, core)
 from server import logger
 from server.constants import RECORD_DISPLAY_COUNT
-import threading
 __all__ = [
     "process_client_transaction_requests"
 ]

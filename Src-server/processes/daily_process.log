@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "run_daily_process.py", line 10, in <module>
+    from processes.daily_process import run_daily_process_country_wise
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/processes/daily_process.py", line 23, in <module>
+    from server import logger
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/logger.py", line 31, in <module>
+    knowledgeLogger = _get_time_rotate_file_obj("knowledge_logger", knowledge_log_path)
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/logger.py", line 15, in _get_time_rotate_file_obj
+    rotateFileHandler = logging.handlers.TimedRotatingFileHandler(
+AttributeError: 'module' object has no attribute 'handlers'

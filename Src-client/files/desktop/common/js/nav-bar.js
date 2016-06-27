@@ -27,7 +27,7 @@ function initializeNavBar () {
         return itemObject;
     }
     var navBarItems = null
-    if (window.localStorage["shortName"] != null){
+    if (window.sessionStorage["shortName"] != null){
         navBarItems = client_mirror.getUserMenu();
     }else{
         navBarItems = mirror.getUserMenu();
@@ -35,7 +35,7 @@ function initializeNavBar () {
     if (navBarItems === null)
         return;
     var menus = null
-    if (window.localStorage["shortName"] != null){
+    if (window.sessionStorage["shortName"] != null){
         menus = ["Master", "Transaction", "Report"];
     }else{
         menus = ["Master", "Transaction", "Report"];

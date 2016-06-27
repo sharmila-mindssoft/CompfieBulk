@@ -40,7 +40,7 @@ function loadNotifications(notifications){
         var approval = notifications[key]["approval_person"];
 
         notificationDict[notificationId] = [act,unit,unitaddress,compliance,duedate,delayedby,assignee,concurrence,approval];
-           
+
         if(notifications[key]["read_status"]){
             readStatus = '';
         }
@@ -49,14 +49,14 @@ function loadNotifications(notifications){
         }else{
             str += '<li id="notification'+notificationId+'" class="'+readStatus+'" onclick="changeStatus('+notificationId+','+notifications[key]["read_status"]+')"> '+notificationText+'<p class="subtext"><span class="time">'+updatedon+'</span><span class="notification-cat">Category: '+extraDetails+'</span></p> </li>';
         }
-        
+
     });
 
     if(str == '' && sno == 0){
       str += '<li style="text-align:center">'+"No Notification Found"+"</li>"
     }
-    $('#notificationsList').append(str);    
-     if(window.localStorage["CLIENT_NOTIFICATION_COUNT"] > sno){
+    $('#notificationsList').append(str);
+     if(window.sessionStorage["CLIENT_NOTIFICATION_COUNT"] > sno){
         $('#pagination').show();
     }else{
         $('#pagination').hide();
@@ -65,7 +65,7 @@ function loadNotifications(notifications){
 
 function changeStatus(notification_id, read_status){
     $('#notification'+notification_id).removeClass( "unread" );
-    
+
     if(notificationDict[notification_id][6] != null){
         $("#popup1").show();
         var act = notificationDict[notification_id][0];
@@ -94,7 +94,7 @@ function changeStatus(notification_id, read_status){
             concurrenceDetails = concurrence.substring(concurrence.indexOf(",")+1).trim().replace(/--, /gi,'');
         }else{
            concurrenceName = '-'
-           concurrenceDetails = '-' 
+           concurrenceDetails = '-'
         }
 
         if(approval != ''){
@@ -111,7 +111,7 @@ function changeStatus(notification_id, read_status){
         $(".popup_concurrence").html(concurrenceName +'<br>'+ concurrenceDetails);
         $(".popup_approval").html(approvalName +'<br>'+ approvalDetails);
     }
-    
+
     if(read_status == false){
         client_mirror.updateNotificationStatus(parseInt(notification_id), true,
             function (error, response) {

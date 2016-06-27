@@ -7,7 +7,6 @@ import random
 import datetime
 import uuid
 import json
-import pytz
 import logger
 from types import *
 from protocol import (
@@ -22,18 +21,14 @@ from replication.protocol import (
     Change, Client
 )
 from server.emailcontroller import EmailHandler as email
-
+from server.constants import (
+    KNOWLEDGE_FORMAT_PATH, FORMAT_DOWNLOAD_URL,
+    LOGO_URL, LOCAL_TIMEZONE
+)
 
 __all__ = [
     "KnowledgeDatabase", "Database"
 ]
-
-ROOT_PATH = os.path.join(os.path.split(__file__)[0])
-KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
-FORMAT_DOWNLOAD_URL = "compliance_format"
-CLIENT_LOGO_PATH = os.path.join(ROOT_PATH, "clientlogo")
-LOGO_URL = "knowledge/clientlogo"
-LOCAL_TIMEZONE = pytz.timezone("Asia/Kolkata")
 
 class Database(object) :
     def __init__(
@@ -326,7 +321,6 @@ class Database(object) :
             logger.logClientApi("delete", query)
             logger.logClientApi("delete", e)
             return
-
 
     ########################################################
     # To concate the value with the existing value in the
@@ -707,15 +701,22 @@ class KnowledgeDatabase(Database):
         self.tblUserSessions = "tbl_user_sessions"
         self.tblUsers = "tbl_users"
 
+    def update_session_time(self, session_token):
+        updated_on = self.get_date_time()
+        q = "update tbl_user_sessions set \
+        last_accessed_time='%s' where session_token = '%s' " % (
+            str(updated_on), str(session_token)
+        )
+        self.execute(q)
+
     def validate_session_token(self, session_token) :
-        # query = "CALL sp_validate_session_token ('%s');"
-        # % (session_token)
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
         row = self.select_one(query)
         user_id = None
         if row :
             user_id = row[0]
+            self.update_session_time(session_token)
         return user_id
 
     def get_user_form_ids(self, user_id) :
@@ -4292,12 +4293,11 @@ class KnowledgeDatabase(Database):
         client_cursor = client_con.cursor()
         query = "CREATE DATABASE %s" % database_name
         logger.logKnowledge("info", "create", query)
-        
+
         client_cursor.execute(query)
         query = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, REFERENCES, \
             TRIGGER, EVENT, CREATE ROUTINE, ALTER  on %s.* to '%s'@'%s' IDENTIFIED BY '%s';" % (
             database_name, db_username, str('%'), db_password)
-
         logger.logKnowledge("info", "create", query)
         client_cursor.execute(query)
         client_cursor.execute("FLUSH PRIVILEGES;")

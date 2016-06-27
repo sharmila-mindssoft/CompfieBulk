@@ -1,6 +1,8 @@
 import datetime
 import pytz
 
+from server.constants import FILE_TYPES
+
 def get_system_date():
     date = datetime.datetime.today()
     return date
@@ -92,3 +94,8 @@ def insert(table, columns, values) :
         table, columns, stringValue
     )
     return query
+
+def save_file_in_path(file_path, file_content, file_name):
+    with open(file_path, "wb") as fn :
+        fn.write(file_content)
+    return True
