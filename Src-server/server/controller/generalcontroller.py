@@ -6,7 +6,7 @@ from server.constants import (
     FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH,
     CLIENT_DOCS_BASE_PATH
 )
-from server.common import save_file_in_path
+from server.common import (save_file_in_path, new_uuid)
 
 __all__ = [
     "process_general_request",

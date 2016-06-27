@@ -2696,9 +2696,10 @@ class KnowledgeDatabase(Database):
                 os.chmod(file_path, 0777)
             file_path = "%s/%s" % (file_path, file_name)
         self.remove_uploaded_file(file_path)
-        new_file = open(file_path, "wb")
-        new_file.write(file_content.decode('base64'))
-        new_file.close()
+        if file_content is not None:
+            new_file = open(file_path, "wb")
+            new_file.write(file_content.decode('base64'))
+            new_file.close()
 
     def remove_uploaded_file(self, file_path):
         if os.path.exists(file_path) :

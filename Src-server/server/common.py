@@ -1,7 +1,6 @@
 import datetime
 import pytz
-
-from server.constants import FILE_TYPES
+import uuid
 
 def get_system_date():
     date = datetime.datetime.today()
@@ -99,3 +98,7 @@ def save_file_in_path(file_path, file_content, file_name):
     with open(file_path, "wb") as fn :
         fn.write(file_content)
     return True
+
+def new_uuid(self) :
+        s = str(uuid.uuid4())
+        return s.replace("-", "")
