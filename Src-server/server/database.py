@@ -21,9 +21,8 @@ from replication.protocol import (
     Change, Client
 )
 from server.emailcontroller import EmailHandler as email
-
 from server.constants import (
-    ROOT_PATH, KNOWLEDGE_FORMAT_PATH, FORMAT_DOWNLOAD_URL,
+    KNOWLEDGE_FORMAT_PATH, FORMAT_DOWNLOAD_URL,
     LOGO_URL, LOCAL_TIMEZONE
 )
 

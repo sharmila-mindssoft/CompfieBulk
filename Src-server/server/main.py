@@ -29,7 +29,8 @@ from replication.protocol import (
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    VERSION, IS_DEVELOPMENT
+    VERSION, IS_DEVELOPMENT,
+    KNOWLEDGE_FORMAT_PATH
 )
 from server.templatepath import (
     TEMPLATE_PATHS
@@ -61,8 +62,6 @@ def cors_handler(request, response):
 #
 
 def api_request(request_data_type):
-    print "exec method dec"
-
     def wrapper(f):
         def wrapped(self, request, response):
             self.handle_api_request(
@@ -71,7 +70,6 @@ def api_request(request_data_type):
             )
         return wrapped
     return wrapper
-
 
 #
 # API
@@ -122,9 +120,12 @@ class API(object):
         response.set_default_header("Access-Control-Allow-Origin", "*")
         ip_address = str(request.remote_ip())
         self._ip_addess = ip_address
-        request_data = self._parse_request(
-            request_data_type, request, response
-        )
+        if request_data_type == "knowledgeformat" :
+            request_data = request
+        else :
+            request_data = self._parse_request(
+                request_data_type, request, response
+            )
 
         if request_data is None:
             return
@@ -204,9 +205,7 @@ class API(object):
         )
         return res
 
-    @api_request(
-        GetChanges
-    )
+    @api_request(GetChanges)
     def handle_delreplicated(self, request, db):
         actual_count = db.get_trail_id()
 
@@ -260,8 +259,23 @@ class API(object):
     def handle_techno_report(self, request, db):
         return controller.process_techno_report_request(request, db)
 
+    @api_request("knowledgeformat")
     def handle_format_file(self, request, db):
-        print request.files()
+        def validate_session_from_body(content):
+            content_list = content.split("\r\n\r\n")
+            session = content_list[-1].split("\r\n")[0]
+            user_id = db.validate_session_token(str(session))
+            if user_id is None :
+                return False
+            else :
+                return True
+
+        if (validate_session_from_body(request.body())) :
+            info = request.files()
+            response_data = controller.process_uploaded_file(info)
+            return response_data
+        else :
+            return login.InvalidSessionToken()
 
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
@@ -330,7 +344,6 @@ class TemplateHandler(tornado.web.RequestHandler) :
         self.set_header("Access-Control-Allow-Methods", "GET, POST")
         self.set_status(204)
         self.write("")
-
 
 #
 # run_server

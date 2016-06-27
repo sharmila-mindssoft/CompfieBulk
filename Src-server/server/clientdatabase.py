@@ -109,7 +109,7 @@ class ClientDatabase(Database):
         self.execute(query)
 
     def reset_domain_trail_id(self):
-        q = "update  tbl_audit_log set domain_trail_id=0";
+        q = "update tbl_audit_log set domain_trail_id=0"
         self.execute(q)
 
     def get_trail_id(self, type=None):

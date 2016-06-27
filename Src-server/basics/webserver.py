@@ -65,14 +65,22 @@ class UploadedFile(object) :
         self._body = body
 
     def file_name(self) : return self._file_name
+
     def content_type(self) : return self._content_type
+
     def body(self) : return self._body
 
     def __repr__(self) :
-        return "UploadedFile(%s, %s, size=%s)" % (
-            repr(self._file_name), repr(self._content_type),
-            len(self._body)
-        )
+        # return "UploadedFile(%s, %s, size=%s)" % (
+        #     repr(self._file_name), repr(self._content_type),
+        #     len(self._body)
+        # )
+        res = {
+            "file_name": self._file_name,
+            "file_content_type": self._content_type,
+            "body": self._body
+        }
+        return str(res)
 
 class WebRequest(object) :
     def __init__(self, inner, arguments) :
@@ -213,8 +221,8 @@ class WebServer(object) :
         )
         self._http_server = tornado.httpserver.HTTPServer(
             self._application,
-            io_loop = self._io_loop.inner(),
-            xheaders = True
+            io_loop=self._io_loop.inner(),
+            xheaders=True
         )
 
         if type(port_or_address) in (tuple, list) :

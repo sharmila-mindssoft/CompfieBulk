@@ -12,7 +12,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_general_AuditTrailForm,
     parse_structure_VectorType_RecordType_core_Country,
     parse_structure_OptionalType_UnsignedIntegerType_32,
-    parse_structure_Text
+    parse_structure_Text,
+    parse_structure_VectorType_RecordType_core_FileLst
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_general_Notification,
@@ -28,7 +29,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_general_User,
     to_structure_VectorType_RecordType_general_AuditTrailForm,
     to_structure_OptionalType_UnsignedIntegerType_32,
-    to_structure_Text
+    to_structure_Text,
+    to_structure_VectorType_RecordType_core_FileLst
 )
 
 #
@@ -630,13 +632,30 @@ class TransactionJobId(Response):
             "job_id": to_structure_UnsignedIntegerType_32(self.job_id)
         }
 
+class FileUploadSuccess(Response):
+    def __init__(self, file_list):
+        self.file_list = file_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["file_list"])
+        file_list = data.get("file_list")
+        file_list = parse_structure_VectorType_RecordType_core_FileLst(file_list)
+        return FileUploadSuccess(file_list)
+
+    def to_inner_structure(self):
+        return {
+            "file_list": to_structure_VectorType_RecordType_core_FileLst(self.file_list)
+        }
+
 def _init_Response_class_map():
     classes = [
         UpdateUserProfileSuccess, ContactNumberAlreadyExists,
         GetDomainsSuccess, SaveDomainSuccess, DomainNameAlreadyExists,
         UpdateDomainSuccess, InvalidDomainId, ChangeDomainStatusSuccess,
         GetNotificationsSuccess, UpdateNotificationStatusSuccess, GetAuditTrailSuccess,
-        MasterDataNotAvailableForClient, TransactionExists, TransactionJobId
+        MasterDataNotAvailableForClient, TransactionExists, TransactionJobId,
+        FileUploadSuccess
     ]
     class_map = {}
     for c in classes:

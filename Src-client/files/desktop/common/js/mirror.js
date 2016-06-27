@@ -1479,6 +1479,25 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function uploadFormatFile(formdata, callback){
+        $.ajax({
+            url : "http://localhost:8080/knowledge/api/files",
+            type: "POST",
+            crossDomain: true,
+            data : formdata,
+            processData: false,
+            contentType: false,
+            success:function(data, textStatus, jqXHR){
+                callback(data)
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                //if fails
+            }
+        });
+
+
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -1623,7 +1642,8 @@ function initMirror() {
         getNotifications: getNotifications,
         updateNotificationStatus: updateNotificationStatus,
         createNewAdmin: createNewAdmin,
-        getNextUnitCode: getNextUnitCode
+        getNextUnitCode: getNextUnitCode,
+        uploadFormatFile: uploadFormatFile
     }
 }
 

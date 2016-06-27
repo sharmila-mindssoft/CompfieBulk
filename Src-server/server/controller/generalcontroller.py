@@ -1,6 +1,10 @@
-from protocol import login, general, core
+from protocol import core, login, general, possiblefailure
 from server import logger
-from server.constants import RECORD_DISPLAY_COUNT
+from server.constants import (
+    RECORD_DISPLAY_COUNT, FILE_TYPES,
+    FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH
+)
+from server.common import save_file_in_path
 
 __all__ = [
     "process_general_request",
@@ -12,7 +16,8 @@ __all__ = [
     "process_save_country", "process_update_country",
     "process_change_country_status", "process_get_countries",
     "process_get_notifications",
-    "process_update_notification_status"
+    "process_update_notification_status",
+    "process_uploaded_file"
 ]
 
 forms = [1, 2]
@@ -281,7 +286,9 @@ def process_get_audit_trails(db, request, session_user):
 def process_get_notifications(db, request, session_user):
     notifications = None
     notifications = db.get_notifications(request.notification_type, session_user)
-    return general.GetNotificationsSuccess(notifications = notifications)
+    return general.GetNotificationsSuccess(
+        notifications=notifications
+    )
 
 
 ########################################################
@@ -289,7 +296,56 @@ def process_get_notifications(db, request, session_user):
 # a notification
 ########################################################
 def process_update_notification_status(db, request, session_user):
-    notifications = None
-    db.update_notification_status(request.notification_id, request.has_read,
+    db.update_notification_status(
+        request.notification_id, request.has_read,
         session_user)
     return general.UpdateNotificationStatusSuccess()
+
+def process_uploaded_file(info):
+    info_keys = info.keys()
+    is_valid = True
+    # Validate
+    res = None
+    for k in info_keys :
+        try :
+            file_info = info[k][0]
+            file_name = file_info.file_name()
+            file_content = file_info.body()
+            f_name = file_name.split('.')
+            if len(f_name) == 1 :
+                res = possiblefailure.InvalidFile()
+                is_valid = False
+            else :
+                file_type = str(f_name[1].lower())
+                if file_type in FILE_TYPES :
+                    res = possiblefailure.InvalidFile()
+                    is_valid = False
+                elif len(file_content) == 0 :
+                    res = possiblefailure.FileIsEmpty()
+                    is_valid = False
+                elif len(file_content) > FILE_MAX_LIMIT :
+                    res = possiblefailure.FileMaxLimitExceed()
+                    is_valid = False
+
+        except Exception, e :
+            print e
+    if is_valid :
+        lst = []
+        for k in info_keys :
+            try :
+                file_info = info[k][0]
+                file_name = file_info.file_name()
+                print file_name
+                file_content = file_info.body()
+                file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
+                if save_file_in_path(file_path, file_content, file_name) :
+                    file_response = core.FileList(
+                        len(file_content),
+                        file_name,
+                        None
+                    )
+                    lst.append(file_response)
+            except Exception, e :
+                print e
+        res = general.FileUploadSuccess(lst)
+    return res

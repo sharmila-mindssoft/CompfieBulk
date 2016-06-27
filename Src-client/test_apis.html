@@ -803,7 +803,7 @@
 	<body>
 		<h1>Testing APIs</h1>
 		<div>
-			<button onclick="next_count()">Next unit code count</button>	
+			<button onclick="next_count()">Next unit code count</button>
 		</div>
 		<div>
 			<button onclick="yearwise()">Assigneewise Yearwise compliance count</button>
@@ -1177,25 +1177,44 @@
 			 });
 		});
 
-		$("#upload_file").on("change", function(e) {
-			  client_mirror.uploadFile(e, function result_data(data) {
-			    if(data != 'File max limit exceeded' || data != 'File content is empty'){
-			      uploadFile = data;
-			      file_list = data
-			      var result = ""
-			      console.log("result : "+data);
-			      console.log("result size : "+data.length);
-			      for(i = 0; i < data.length; i++){
-			      	console.log(data[i]["file_name"]);
-			      	result += data[i]["file_name"] + "    <img src='/images/delete.png' style='width:16px;height:16px;' onclick='remove_temp_file()' /> </br>";
-			      }
-			      $("#uploaded_filename").html("<span>"+result+"</span>");
-			    }
-			    else{
-			      alert(data);
-			    }
-			 });
+		// $("#upload_file").on("change", function(e) {
+		// 	  client_mirror.uploadFile(e, function result_data(data) {
+		// 	    if(data != 'File max limit exceeded' || data != 'File content is empty'){
+		// 	      uploadFile = data;
+		// 	      file_list = data
+		// 	      var result = ""
+		// 	      console.log("result : "+data);
+		// 	      console.log("result size : "+data.length);
+		// 	      for(i = 0; i < data.length; i++){
+		// 	      	console.log(data[i]["file_name"]);
+		// 	      	result += data[i]["file_name"] + "    <img src='/images/delete.png' style='width:16px;height:16px;' onclick='remove_temp_file()' /> </br>";
+		// 	      }
+		// 	      $("#uploaded_filename").html("<span>"+result+"</span>");
+		// 	    }
+		// 	    else{
+		// 	      alert(data);
+		// 	    }
+		// 	 });
 
+		// });
+		$("#upload_file").on("change", function(e) {
+			alert($("#upload_file").val());
+			// var file_data = this.files[0];
+			var form_data = new FormData();
+			var file_lst = e.target.files;
+
+			for (var i = 0; i <= file_lst.length; i++) {
+				var file_data = file_lst[i];
+				form_data.append("file" + i, file_data);
+			}
+			// var file_data = e.target.files[0];
+			// form_data.append("file1", file_data, file_data.name)
+			// form_data.append("file2", file_data, file_data.name)
+			form_data.append("session_token",
+				"d11a163de8834a4fbe0024c2d915407a")
+			mirror.uploadFormatFile(form_data, function result_data (data) {
+				console.log(data);
+			})
 		});
 	</script>
 </html>
