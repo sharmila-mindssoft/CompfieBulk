@@ -325,25 +325,35 @@ function userGroupEdit(userGroupId, userGroupName, catgid){
 	);
 }
 function userGroupActive(userGroupId, isActive){
-  	$("#userGroupId").val(userGroupId);
-  	function onSuccess(response){
-		initialize();
-	}
-	function onFailure(error){
-		if(error == "CannotDeactivateUserExists"){
-			displayMessage(message.cannot_deactivate_usergroup);
-		}
-	}
-	mirror.changeAdminUserGroupStatus(userGroupId, isActive,
-		function (error, response) {
-            if (error == null){
-                onSuccess(response);
-            }
-            else {
-                onFailure(error);
-            }
-        }
-	);
+
+	$("#userGroupId").val(userGroupId);
+	var msgstatus='deactivate';
+  	if(isActive){
+   		msgstatus='activate';
+  	}
+  	var answer = confirm('Are you sure want to '+msgstatus+ '?');
+  	if (answer)
+  	{
+	    function onSuccess(response){
+	      initialize();
+	    }
+	    function onFailure(error){
+	    	/*if(error == "CannotDeactivateUserExists"){
+				displayMessage(message.cannot_deactivate_usergroup);
+			}*/
+	      alert(error);
+	    }
+	    mirror.changeAdminUserGroupStatus(userGroupId, isActive,
+			function (error, response) {
+	            if (error == null){
+	                onSuccess(response);
+	            }
+	            else {
+	                onFailure(error);
+	            }
+	        }
+		);
+    }
 }
 
 $('.checkbox-full-check').click(function(event) {

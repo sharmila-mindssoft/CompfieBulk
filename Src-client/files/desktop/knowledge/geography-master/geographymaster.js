@@ -420,7 +420,7 @@ function updaterecord(j,e){
       displayMessage(message.levelselection_required);
     }else if(datavalue.length == 0){
       var msg = "Level-"+levelstage;
-      displayMessage(msg + message.shouldnot_empty);
+      displayMessage(msg+ message.shouldnot_empty);
     }else{
      function onSuccess(response){
           displayMessage(message.record_updated);
