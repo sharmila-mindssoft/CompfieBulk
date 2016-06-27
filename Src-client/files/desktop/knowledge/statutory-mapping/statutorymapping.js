@@ -576,7 +576,8 @@ function saverecord(j,e){
     if(map_statutory_id==0 && levelstage>1 ){
       displayMessage(message.levelselection_required);
     }else if(datavalue==""){
-      displayMessage("Level-" + levelstage + message.shouldnot_empty);
+      var msg = "Level-" + levelstage;
+      displayMessage(msg + message.shouldnot_empty);
     }else{
       if($("#statutoryid").val() != '' && editLevel == levelstage){
         function onSuccessUpdate(data){

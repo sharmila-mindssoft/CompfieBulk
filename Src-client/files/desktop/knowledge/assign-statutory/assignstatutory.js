@@ -18,6 +18,7 @@ var pageSize = 100;
 var startCount;
 var endCount;
 var mUnit = 3;
+var msg = '';
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -281,7 +282,6 @@ function load_secondwizard(){
     });
     
     $(clone, '.actname').click(function(){
-
       if(accordionstatus){
         //Expand or collapse this panel
         $(this).next().slideToggle('fast');
@@ -500,7 +500,8 @@ $("#unit").click(function(event){
         assignStatutoryUnitIds.push(parseInt(event.target.id));
         assignStatutoryUnitValues.push($(event.target).text());
       }else{
-        displayMessage("Maximum("+ mUnit + ") "  + message.maximum_units);
+        msg = "Maximum("+ mUnit + ") ";
+        displayMessage(msg + message.maximum_units);
       }
     }
 

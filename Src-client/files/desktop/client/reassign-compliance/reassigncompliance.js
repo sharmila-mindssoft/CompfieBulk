@@ -17,6 +17,7 @@ var count=1;
 var statutoriesCount = 1;
 var actCount = 1;
 var mCompliances = 500;
+var msg = '';
 //var currentUser;
 
 function displayLoader() {
@@ -1118,7 +1119,8 @@ function validate_firsttab(){
     return false;
   }
   else if(maxCompliance > mCompliances){
-    displayMessage("Maximum("+ mCompliances + ") "  + message.maximum_compliances);
+    msg = "Maximum("+ mCompliances + ") ";
+    displayMessage( msg + message.maximum_compliances);
     return false;
   }else{
     displayMessage("");

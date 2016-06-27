@@ -227,7 +227,8 @@ $("#submit").click(function(){
             displayMessage(message.geographylevel_exists);
           }else if(error = "LevelShouldNotbeEmpty"){
           	var levelValue = response['level'];
-          	displayMessage("Level "+ levelValue + " " +message.shouldnot_empty);
+          	var msg = "Level "+ levelValue + " ";
+          	displayMessage(msg+message.shouldnot_empty);
           }
         }
 		mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist,

@@ -21,6 +21,7 @@ var actCount = 1;
 var s_endCount = 0;
 var mUnit = 50;
 var mCompliances = 500;
+var msg = '';
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -431,7 +432,8 @@ function validate_secondtab(){
     return false;
   }
   else if(maxCompliance > mCompliances){
-    displayMessage("Maximum("+ mCompliances + ") "  + message.maximum_compliances);
+    msg = "Maximum("+ mCompliances + ") ";
+    displayMessage(msg + message.maximum_compliances);
     return false;
   }else{
     displayMessage("");
@@ -840,7 +842,7 @@ function submitcompliance(){
               displayMessage(error);
             else if (error == "InvalidDueDate") {
               task = response["compliance_task"];
-              displayMessage("Invalid due date in " + task);
+              displayMessage(message.invalid_duedate + task);
             }
             else
               displayMessage(err_message);
@@ -884,7 +886,7 @@ function submitcompliance(){
             displayMessage(error);
           else if (error == "InvalidDueDate") {
             task = response["compliance_task"];
-            displayMessage("Invalid due date in " + task);
+            displayMessage(message.invalid_duedate + task);
           }
           else
             displayMessage(err_message);
@@ -1026,7 +1028,8 @@ $("#unit").click(function(event){
           assignStatutoryUnitIds.push(parseInt(event.target.id));
           assignStatutoryUnitValues.push($(event.target).text());
         }else{
-          displayMessage("Maximum("+ mUnit + ") "  + message.maximum_units);
+          msg = "Maximum("+ mUnit + ") ";
+          displayMessage(msg + message.maximum_units);
         }
       }
 

@@ -1,4 +1,11 @@
 var message = {
+	'invalid_username_password' : 'Unable to login. Incorrect username / password!',
+	'contract_expired' : 'Contract Expired',
+	'accountconfiguration_underprogress' : 'Please Wait...Your account configuration is under progress..',
+	'contract_notstart' : 'Contract not yet started',
+	'connection_timeout' : 'Connection Timeout',
+	'username_password_required' : 'Enter username / password',
+
 	'domainname_required' : 'Domain Name Required',
 	'domainname_exists' : 'Domain Name Already Exists',
 	'invalid_domainid' : 'Invalid Domain Id',
@@ -196,7 +203,10 @@ var message = {
 	'unsupported_file': 'Unsupported File',
 	'category_invalid': 'Category Name And Form List are Invalid.',
 	'maximum_compliances': 'compliances selection reached.',
-	'maximum_units': 'units selection reached.'
+	'maximum_units': 'units selection reached.',
+	'password_reset_success' : 'Password Reset Successfully',
+	'invalid_reset_token' : 'Invalid Reset Token',
+	'password_already_used' : 'Password already used. Enter different password'
 };
 
 function clearMessage() {

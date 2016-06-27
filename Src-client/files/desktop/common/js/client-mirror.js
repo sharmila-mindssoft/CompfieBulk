@@ -945,23 +945,23 @@ function initClientMirror() {
             console.log("file.size : "+file.size);
             console.log("max_limit : "+max_limit);
             if (file_size > max_limit) {
-                displayMessage("File max limit exceeded");
+                displayMessage(message.file_maxlimit_exceed);
                 return;
             }
             else if(file_extension == 'exe'){
-                displayMessage("Invalid file format");
+                displayMessage("");
                 return;
             }
             else if(file_extension == 'htm'){
-                displayMessage("Invalid file format");
+                displayMessage(message.invalid_file_format);
                 return;
             }
             else if(file_extension == 'xhtml'){
-                displayMessage("Invalid file format");
+                displayMessage(message.invalid_file_format);
                 return;
             }
             else if(file_extension == 'html'){
-                displayMessage("Invalid file format");
+                displayMessage(message.invalid_file_format);
                 return;
             }
             else{
@@ -969,7 +969,7 @@ function initClientMirror() {
                 if (file) {
                     convert_to_base64(file, file_name, file_size, function(file_content, name, size) {
                         if (file_content == null) {
-                            callback("File content is empty")
+                            callback(message.file_content_empty)
                         }
                         result = uploadFileFormat(
                                 size, name, file_content
