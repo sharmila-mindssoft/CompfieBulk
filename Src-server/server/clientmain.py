@@ -248,9 +248,12 @@ class API(object):
         ip_address = str(request.remote_ip())
         self._ip_address = ip_address
         response.set_default_header("Access-Control-Allow-Origin", "*")
-        request_data = self._parse_request(
-            request_data_type, request, response
-        )
+        if request_data_type == "clientformat" :
+            request_data = request
+        else :
+            request_data = self._parse_request(
+                request_data_type, request, response
+            )
         if request_data is None:
             return
 
@@ -320,6 +323,28 @@ class API(object):
     def handle_mobile_request(self, request, db):
         return mobilecontroller.process_client_mobile_request(request, db)
 
+    @api_request("clientformat")
+    def handle_format_file(self, request, db):
+        def validate_session_from_body(content):
+            content_list = content.split("\r\n\r\n")
+            session = content_list[-1].split("\r\n")[0]
+            client_info = request.session.split("-")
+            client_id = int(client_info[0])
+
+            user_id = db.validate_session_token(client_id, str(session))
+            if user_id is None :
+                return False, client_id
+            else :
+                return True, client_id
+
+        is_valid, client_id = validate_session_from_body(request.body())
+        if is_valid :
+            info = request.files()
+            response_data = controller.process_uploaded_file(info, "client", client_id)
+            return response_data
+        else :
+            return login.InvalidSessionToken()
+
 #
 # run_server
 #
@@ -354,7 +379,8 @@ def run_server(address, knowledge_server_address):
             ("/api/client_admin_settings", api.handle_client_admin_settings),
             ("/api/general", api.handle_general),
             ("/api/client_user", api.handle_client_user),
-            ("/api/mobile", api.handle_mobile_request)
+            ("/api/mobile", api.handle_mobile_request),
+            ("/api/files", api.handle_client_format_file)
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

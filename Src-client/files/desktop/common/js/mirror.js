@@ -1481,7 +1481,7 @@ function initMirror() {
 
     function uploadFormatFile(formdata, callback){
         $.ajax({
-            url : "http://localhost:8080/knowledge/api/files",
+            url : "/knowledge/api/files",
             type: "POST",
             crossDomain: true,
             data : formdata,

@@ -29,8 +29,7 @@ from replication.protocol import (
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    VERSION, IS_DEVELOPMENT,
-    KNOWLEDGE_FORMAT_PATH
+    VERSION, IS_DEVELOPMENT
 )
 from server.templatepath import (
     TEMPLATE_PATHS
@@ -272,7 +271,7 @@ class API(object):
 
         if (validate_session_from_body(request.body())) :
             info = request.files()
-            response_data = controller.process_uploaded_file(info)
+            response_data = controller.process_uploaded_file(info, "knowledge")
             return response_data
         else :
             return login.InvalidSessionToken()

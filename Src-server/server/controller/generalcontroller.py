@@ -1,8 +1,10 @@
+import os
 from protocol import core, login, general, possiblefailure
 from server import logger
 from server.constants import (
     RECORD_DISPLAY_COUNT, FILE_TYPES,
-    FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH
+    FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH,
+    CLIENT_DOCS_BASE_PATH
 )
 from server.common import save_file_in_path
 
@@ -301,7 +303,7 @@ def process_update_notification_status(db, request, session_user):
         session_user)
     return general.UpdateNotificationStatusSuccess()
 
-def process_uploaded_file(info):
+def process_uploaded_file(info, type, client_id=None):
     info_keys = info.keys()
     is_valid = True
     # Validate
@@ -337,7 +339,13 @@ def process_uploaded_file(info):
                 file_name = file_info.file_name()
                 print file_name
                 file_content = file_info.body()
-                file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
+                if type == "knowledge" :
+                    file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
+                else :
+                    client_dir = "%s/%s" % (CLIENT_DOCS_BASE_PATH, client_id)
+                    file_path = "%s/%s" % (client_dir, file_name)
+                    if not os.path.exists(client_dir):
+                        os.makedirs(client_dir)
                 if save_file_in_path(file_path, file_content, file_name) :
                     file_response = core.FileList(
                         len(file_content),

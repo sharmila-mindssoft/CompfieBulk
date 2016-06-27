@@ -20,7 +20,6 @@ from server.common import (
     create_new_date, convert_string_to_date,
     insert
 )
-from server import logger
 
 mysqlHost = KNOWLEDGE_DB_HOST
 mysqlUser = KNOWLEDGE_DB_USERNAME
@@ -92,8 +91,6 @@ def create_client_db_connection(data):
             # print "unable to connect database %s", d
             # print e
             continue
-            logger.logProcessError("run_daily_process", "unable to connect database " + d)
-            logger.logProcessError("run_daily_process", str(traceback.format_exc()))
 
     return client_connection
 
@@ -396,11 +393,9 @@ def start_new_task(db, client_id, current_date, country_id):
 
             count += 1
         except Exception, e :
-            # print e
+            print e
             continue
             # print(traceback.format_exc())
-            logger.logProcessError("run_daily_process", e)
-            logger.logProcessError("run_daily_process", str(traceback.format_exc()))
 
     print " %s compliances started for client_id %s - %s" % (count, client_id, current_date)
 
@@ -476,11 +471,9 @@ def run_daily_process(country_id, current_date):
                 #     notify_before_contract_period(db, client_id)
                 db.commit()
             except Exception, e :
-                # print e
+                print e
                 db.rollback()
                 # print(traceback.format_exc())
-                logger.logProcessError("run_daily_process", e)
-                logger.logProcessError("run_daily_process", str(traceback.format_exc()))
 
 def run_daily_process_country_wise():
     country_time_zones = sorted(countries)

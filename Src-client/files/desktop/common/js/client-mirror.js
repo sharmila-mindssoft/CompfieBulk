@@ -1716,6 +1716,23 @@ function initClientMirror() {
         }
     }
 
+    function uploadFormatFile(formdata, callback){
+        $.ajax({
+            url : "/api/files",
+            type: "POST",
+            crossDomain: true,
+            data : formdata,
+            processData: false,
+            contentType: false,
+            success:function(data, textStatus, jqXHR){
+                callback(data)
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                //if fails
+            }
+        });
+
+
     return {
         log: log,
         toJSON: toJSON,
@@ -1866,7 +1883,9 @@ function initClientMirror() {
         getAssigneewiseReassignedComplianes: getAssigneewiseReassignedComplianes,
         updateUserProfile: updateUserProfile,
         updateUserInfo: updateUserInfo,
-        getContractExpireAndNotificationCount: getContractExpireAndNotificationCount
+        getContractExpireAndNotificationCount: getContractExpireAndNotificationCount,
+
+        uploadFormatFile: uploadFormatFile
     }
 }
 var client_mirror = initClientMirror();
