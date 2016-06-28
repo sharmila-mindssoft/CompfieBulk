@@ -2151,9 +2151,10 @@ class ClientDatabase(Database):
         if not os.path.exists(client_directory):
             os.makedirs(client_directory)
         self.remove_uploaded_file(file_path)
-        new_file = open(file_path, "wb")
-        new_file.write(file_content.decode('base64'))
-        new_file.close()
+        if file_content is not None :
+            new_file = open(file_path, "wb")
+            new_file.write(file_content.decode('base64'))
+            new_file.close()
 
     def remove_uploaded_file(self, file_path):
         if os.path.exists(file_path) :
@@ -7649,8 +7650,9 @@ class ClientDatabase(Database):
                                     name = file_name_part
                                 else:
                                     name += file_name_part
-                        auto_code = self.new_uuid()
-                        file_name = "%s-%s.%s" % (name, auto_code, exten)
+                        # auto_code = self.new_uuid()
+                        # file_name = "%s-%s.%s" % (name, auto_code, exten)
+                        file_name = doc.file_name
                         document_names.append(file_name)
                         self.convert_base64_to_file(file_name, doc.file_content, client_id)
                     self.update_used_space(file_size)

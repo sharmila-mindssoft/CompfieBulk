@@ -2964,10 +2964,10 @@ class KnowledgeDatabase(Database):
 
             if file_list is not None :
                 file_list = file_list[0]
-                name = file_list.file_name.split('.')[0]
-                exten = file_list.file_name.split('.')[1]
-                auto_code = self.new_uuid()
-                file_name = "%s-%s.%s" % (name, auto_code, exten)
+                file_name = file_list.file_name
+                # exten = file_list.file_name.split('.')[1]
+                # auto_code = self.new_uuid()
+                # file_name = "%s-%s.%s" % (name, auto_code, exten)
                 file_size = file_list.file_size
                 file_content = file_list.file_content
                 is_format = True
@@ -3134,10 +3134,10 @@ class KnowledgeDatabase(Database):
                 if saved_file_name is None :
                     file_list = file_list[0]
                     file_name = file_list.file_name
-                    name = file_list.file_name.split('.')[0]
-                    exten = file_list.file_name.split('.')[1]
-                    auto_code = self.new_uuid()
-                    file_name = "%s-%s.%s" % (name, auto_code, exten)
+                    # file_name = file_list.file_name.split('.')[0]
+                    # exten = file_list.file_name.split('.')[1]
+                    # auto_code = self.new_uuid()
+                    # file_name = "%s-%s.%s" % (name, auto_code, exten)
                     file_size = file_list.file_size
                     file_content = file_list.file_content
                     is_format = True
@@ -3155,10 +3155,10 @@ class KnowledgeDatabase(Database):
                         if saved_file_name is not None :
                             self.remove_uploaded_file(file_path + "/" + saved_file_name)
                         file_name = file_list.file_name
-                        name = file_list.file_name.split('.')[0]
-                        exten = file_list.file_name.split('.')[1]
-                        auto_code = self.new_uuid()
-                        file_name = "%s-%s.%s" % (name, auto_code, exten)
+                        # name = file_list.file_name.split('.')[0]
+                        # exten = file_list.file_name.split('.')[1]
+                        # auto_code = self.new_uuid()
+                        # file_name = "%s-%s.%s" % (name, auto_code, exten)
                         is_format = True
 
             penal_consequences = data.penal_consequences
