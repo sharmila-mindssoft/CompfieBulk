@@ -263,7 +263,9 @@ class API(object):
     def handle_format_file(self, request, db):
         def validate_session_from_body(content):
             content_list = content.split("\r\n\r\n")
+            print content_list[0].split("\r\n")[0]
             session = content_list[-1].split("\r\n")[0]
+            print session
             user_id = db.validate_session_token(str(session))
             if user_id is None :
                 return False
