@@ -324,7 +324,7 @@ class API(object):
         return mobilecontroller.process_client_mobile_request(request, db)
 
     @api_request("clientformat")
-    def handle_format_file(self, request, db):
+    def handle_client_format_file(self, request, db):
         def validate_session_from_body(content):
             content_list = content.split("\r\n\r\n")
             session = content_list[-1].split("\r\n")[0]

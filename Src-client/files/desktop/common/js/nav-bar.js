@@ -215,7 +215,27 @@ function showDeletionPopup(notification_text){
 //         }
 //     )
 // }
+function persistNavBar() {
+    frms = window.location.href.split("/");
+    if (frms.indexOf("/home") == -1) {
+        client_name = client_mirror.getClientShortName()
+        if ((client_name === null) || (client_name === undefined)) {
+            ac_menu = mirror.getPageUrl();
+            form_name = "/" + frms[frms.length - 2] + "/" + frms[frms.length - 1];
+            if (ac_menu.indexOf(form_name) == -1)
+                window.location.href = "/knowledge/login";
+        }
+        else {
+            ac_menu = client_mirror.getPageUrl();
+            form_name = "/" + frms[frms.length - 1];
+            if (ac_menu.indexOf(form_name) == -1)
+                window.location.href = "/login/" + client_name;
+        }
+    }
 
+
+}
 $(document).ready(function () {
     initializeNavBar();
+    persistNavBar();
 });

@@ -109,6 +109,29 @@ function initClientMirror() {
         }
     }
 
+    function getPageUrl(){
+        ac_menu = getUserMenu();
+        keys = Object.keys(ac_menu);
+        page_urls = []
+        for (var k = 0; k < keys.length; k++) {
+            key = keys[k];
+            objs = ac_menu[key]
+            for (var ob=0; ob<objs.length; ob++) {
+                data = objs[ob];
+                page_urls.push(data["form_url"]);
+            }
+        }
+        page_urls.push("/dashboard");
+        page_urls.push("/reminders");
+        page_urls.push("/notifications");
+        page_urls.push("/escalations");
+        page_urls.push("/change-password");
+        page_urls.push("/settings");
+        page_urls.push("/profile");
+
+        return page_urls;
+    }
+
     function getClientId() {
         var info = getUserInfo();
         // console.log(info)
@@ -1731,6 +1754,7 @@ function initClientMirror() {
                 //if fails
             }
         });
+    }
 
 
     return {
@@ -1753,6 +1777,7 @@ function initClientMirror() {
         getUserMenu: getUserMenu,
         clientApiRequest: clientApiRequest,
         getClientId: getClientId,
+        getPageUrl: getPageUrl,
 
         changePassword: changePassword,
         forgotPassword: forgotPassword,
