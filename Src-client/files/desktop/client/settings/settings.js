@@ -40,17 +40,18 @@ function initialize(){
 }
 function loadClientProfileList(profiles){
     $(".tbody-clientprofile-list").find("tr").remove();
-    var sno = 0;        
+    var sno = 0;
     var list=profiles;
     var contractFrom = list['contract_from'];
     var contractTo = list['contract_to'];
     var noLicence = list['no_of_user_licence'];
     var remaininglicence = list['remaining_licence'];
     var totaldiskspace = list["total_file_space"];
-    var useddiskspace = list["used_space"];    
+    var useddiskspace = list["used_space"];
+    var free_space = (totaldiskspace - useddiskspace).toFixed(2);
     $('.contract-start').html(contractFrom);
-    $('.contract-expires').html(contractTo);    
-    $('.space-summary').html(useddiskspace+" GB of "+totaldiskspace+" GB used");
+    $('.contract-expires').html(contractTo);
+    $('.space-summary').html(free_space + " GB free of "+totaldiskspace+" GB ");
     var calculate = ((useddiskspace/totaldiskspace)*100).toFixed(2);
 
     var balance = 100-calculate;
@@ -68,7 +69,7 @@ function loadClientProfileList(profiles){
     $('.remaining-licence').html(remaininglicence);
 
     var lists = list['licence_holders'];
-    $.each(lists, function(key, val) { 
+    $.each(lists, function(key, val) {
         var tableRow = $('#templates .table-clientprofile-list .table-row');
         var clone = tableRow.clone();
         sno = sno + 1;
@@ -77,26 +78,26 @@ function loadClientProfileList(profiles){
         if(lists[key]['seating_unit_name'] != null){
           seating_unit = lists[key]['seating_unit_name'];
           address = lists[key]['address'];
-        } 
+        }
         $('.sno', clone).text(sno);
         $('.employee', clone).text(lists[key]['user_name']);
         $('.email', clone).text(lists[key]['email_id']);
         if(lists[key]['contact_no'] == null){
-          $('.mobile-number', clone).text("-");  
+          $('.mobile-number', clone).text("-");
         }
         else{
           $('.mobile-number', clone).text(lists[key]['contact_no']);
         }
         $('.seating-unit span', clone).html(seating_unit);
         if(seating_unit != '-'){
-          $('.seating-unit abbr', clone).attr("title", lists[key]['address']);   
+          $('.seating-unit abbr', clone).attr("title", lists[key]['address']);
         }else{
-          $('.seating-unit abbr', clone).text(''); 
-        }  
-        $('.unit-address', clone).text(address);      
+          $('.seating-unit abbr', clone).text('');
+        }
+        $('.unit-address', clone).text(address);
         $('.tbody-clientprofile-list').append(clone);
     });
-        
+
 }
 
 function validate(){
@@ -144,7 +145,7 @@ if(validate()){
           }
       });
 }
-}); 
+});
 
 $(function() {
   initialize();
@@ -152,7 +153,7 @@ $(function() {
   $('#assigneeval').keyup('input', function (event) {
       this.value = this.value.replace(/[^0-9]/g, '');
   });
-  
+
   $('#concurrenceapprovalval').keyup('input', function (event) {
       this.value = this.value.replace(/[^0-9]/g, '');
   });

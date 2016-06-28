@@ -6041,7 +6041,7 @@ class ClientDatabase(Database):
             self.tblAdmin, admin_columns, admin_condition
         )
         admin_email = result[0][0]
-        is_admin_is_a_user= False
+        is_admin_is_a_user = False
 
         licence_holder_rows = self.get_licence_holder_details(client_id)
         licence_holders = []
@@ -6080,14 +6080,16 @@ class ClientDatabase(Database):
                 ))
             remaining_licence -= 1
 
+        used_space = round(total_disk_space_used/1000000000, 2)
+        total_space = total_disk_space/1000000000
         profile_detail = clientadminsettings.PROFILE_DETAIL(
             contract_from,
             contract_to,
             no_of_user_licence,
             remaining_licence,
             licence_holders,
-            total_disk_space/1000000000,
-            total_disk_space_used/1000000000
+            total_space,
+            used_space
         )
         return profile_detail
 

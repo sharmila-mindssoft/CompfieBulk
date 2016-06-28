@@ -33,14 +33,16 @@ def process_get_settings(db, request, session_user, client_id):
     no_of_user_licence = settings[6]
     total_disk_space = settings[7]
     used_space = settings[8]
-    profile_detail = db.get_profile(contract_from, contract_to, no_of_user_licence,
-        total_disk_space, used_space, client_id)
+    profile_detail = db.get_profile(
+        contract_from, contract_to, no_of_user_licence,
+        total_disk_space, used_space, client_id
+    )
     return clientadminsettings.GetSettingsSuccess(
-        is_two_levels_of_approval = bool(settings[0]),
-        assignee_reminder_days = settings[1],
-        escalation_reminder_In_advance_days = settings[2],
-        escalation_reminder_days = settings[3],
-        profile_detail = profile_detail
+        is_two_levels_of_approval=bool(settings[0]),
+        assignee_reminder_days=settings[1],
+        escalation_reminder_In_advance_days=settings[2],
+        escalation_reminder_days=settings[3],
+        profile_detail=profile_detail
     )
 
 

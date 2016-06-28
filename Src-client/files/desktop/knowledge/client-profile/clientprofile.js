@@ -44,9 +44,10 @@ function loadClientProfileList(groupId){
             var remaininglicence = list['remaining_licence'];
             var totaldiskspace = list["total_disk_space"];
             var useddiskspace = list["used_disk_space"];
+            var free_space = (totaldiskspace - useddiskspace).toFixed(2);
             $('.contract-start').html(contractFrom);
             $('.contract-expires').html(contractTo);
-            $('.space-summary').html(useddiskspace+" GB of "+totaldiskspace+" GB used");
+            $('.space-summary').html(free_space+" GB free of "+totaldiskspace+" GB");
             var calculate = ((useddiskspace/totaldiskspace)*100).toFixed(2);
 
             var balance = 100-calculate;
