@@ -3206,7 +3206,11 @@ class ClientDatabase(Database):
 
         if chart_type is None :
             from_date = request.from_date
+            if from_date == "" :
+                from_date = None
             to_date = request.to_date
+            if to_date == "" :
+                to_date = None
             chart_year = request.chart_year
             year_condition = self.get_client_domain_configuration(chart_year)[1]
 

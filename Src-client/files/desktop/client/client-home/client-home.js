@@ -3945,9 +3945,14 @@ function initializeFilters () {
     });
 
     $(".btn-date-filter").on("click", function () {
-        chartInput.setFromDate($("#fromdate").val());
-        chartInput.setToDate($("#todate").val());
-        loadCharts();
+        var from_date = $("#fromdate").val();
+        var to_date = $("#todate").val();
+        if (from_date.length > 0 && to_date.length > 0) {
+            chartInput.setFromDate(from_date);
+            chartInput.setToDate(to_date);
+            loadCharts();
+        }
+
     });
 
     $(".chart-filter").on("click", function () {
