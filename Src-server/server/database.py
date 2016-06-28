@@ -22,7 +22,7 @@ from replication.protocol import (
 )
 from server.emailcontroller import EmailHandler as email
 from server.constants import (
-    KNOWLEDGE_FORMAT_PATH, FORMAT_DOWNLOAD_URL,
+    KNOWLEDGE_FORMAT_PATH, KNOWLEDGE_FORMAT_DOWNLOAD_URL,
     LOGO_URL, LOCAL_TIMEZONE
 )
 
@@ -2504,7 +2504,7 @@ class KnowledgeDatabase(Database):
                 format_file_size = int(format_file_size)
             if format_file :
                 url = "%s/%s" % (
-                    FORMAT_DOWNLOAD_URL, format_file
+                    KNOWLEDGE_FORMAT_DOWNLOAD_URL, format_file
                 )
             else :
                 url = None
@@ -2649,7 +2649,7 @@ class KnowledgeDatabase(Database):
             file_list = []
             if format_file :
                 file_download = "%s/%s" % (
-                    FORMAT_DOWNLOAD_URL, format_file
+                    KNOWLEDGE_FORMAT_DOWNLOAD_URL, format_file
                 )
                 file_info = core.FileList(
                     format_file_size, format_file, file_download
@@ -3149,17 +3149,18 @@ class KnowledgeDatabase(Database):
 
                     file_size = file_list.file_size
                     file_content = file_list.file_content
-                    if "compliance_format" in file_content :
-                        pass
-                    else :
-                        if saved_file_name is not None :
-                            self.remove_uploaded_file(file_path + "/" + saved_file_name)
-                        file_name = file_list.file_name
-                        # name = file_list.file_name.split('.')[0]
-                        # exten = file_list.file_name.split('.')[1]
-                        # auto_code = self.new_uuid()
-                        # file_name = "%s-%s.%s" % (name, auto_code, exten)
-                        is_format = True
+
+                    # if file_content is None :
+                    #     pass
+                    # else :
+                    #     if saved_file_name is not None :
+                    #         self.remove_uploaded_file(file_path + "/" + saved_file_name)
+                    #     file_name = file_list.file_name
+                    #     # name = file_list.file_name.split('.')[0]
+                    #     # exten = file_list.file_name.split('.')[1]
+                    #     # auto_code = self.new_uuid()
+                    #     # file_name = "%s-%s.%s" % (name, auto_code, exten)
+                    #     is_format = True
 
             penal_consequences = data.penal_consequences
             compliance_frequency = data.frequency_id
