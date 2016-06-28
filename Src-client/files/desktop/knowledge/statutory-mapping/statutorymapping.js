@@ -32,7 +32,6 @@ var startCount;
 var endCount;
 var editLevel = '';
 var file_lst = [];
-var files_ = [];
 
 var f_Name = '';
 var f_Size = '';
@@ -537,8 +536,6 @@ function remove_temp_file(edit_id){
 //convert file to object on upload file
 $("#upload_file").on("change", function(e) {
 
-  
-
   var tFN = this.files[0].name;
   var fN = tFN.substring(0, tFN.indexOf('.'));
   var fE = tFN.substring(tFN.lastIndexOf('.') + 1);
@@ -546,11 +543,24 @@ $("#upload_file").on("change", function(e) {
   
   f_Name = fN+'-'+uniqueId+'.'+fE;
   f_Size = this.files[0].size;
-  file_lst = e.target.files;
 
-
-  
-
+  var max_limit =  1024 * 1024 * 50
+  if (f_Size > max_limit) {
+    displayMessage(message.file_maxlimit_exceed)
+    $("#uploaded_fileview").hide();
+    $("#uploaded_filename").html('');
+    $("#upload_file").val('');
+  }else if(fE == 'exe' || fE == 'xhtml' || fE == 'htm' || fE == 'html'){
+    displayMessage(message.invalid_file_format)
+    $("#uploaded_fileview").hide();
+    $("#uploaded_filename").html('');
+    $("#upload_file").val('');
+  }else{
+    file_lst = e.target.files;
+    displayMessage("");
+    $("#uploaded_fileview").show();
+    $("#uploaded_filename").html( tFN + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' />")
+  }
   /*mirror.uploadFile(e, function result_data(data) {
     if (data == "File max limit exceeded") {
       displayMessage(message.file_maxlimit_exceed)
@@ -860,7 +870,6 @@ make_breadcrumbs3();
 $("#temp_addcompliance").click(function() {
 
   var comp_id=$('#complianceid').val();
-
   if($("#upload_file").val() != ''){
     var fCId = '';
     if(comp_id == ''){
@@ -874,23 +883,13 @@ $("#temp_addcompliance").click(function() {
     form_data.append("session_token", mirror.getSessionToken())
   }
   
-
-
   /*for (var i = 0; i < file_lst.length; i++) {
     var file_data = file_lst[i];
    
     console.log(file_data);
     form_data.append("file" + i, file_data, f_Name);
   }*/
-  
-  
-  /*mirror.uploadFormatFile(form_data, function result_data (status, data) {
-    uploadFile = data['file_list'];
-    console.log(uploadFile)
-  })*/
 
-
-  
   var statutory_provision = $('#statutory_provision').val().trim();
   var compliance_task = $('#compliance_task').val().trim();
   var description = $('#compliance_description').val().trim();

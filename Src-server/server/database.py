@@ -3149,17 +3149,17 @@ class KnowledgeDatabase(Database):
 
                     file_size = file_list.file_size
                     file_content = file_list.file_content
-                    if "compliance_format" in file_content :
-                        pass
-                    else :
-                        if saved_file_name is not None :
-                            self.remove_uploaded_file(file_path + "/" + saved_file_name)
-                        file_name = file_list.file_name
-                        name = file_list.file_name.split('.')[0]
-                        exten = file_list.file_name.split('.')[1]
-                        auto_code = self.new_uuid()
-                        file_name = "%s-%s.%s" % (name, auto_code, exten)
-                        is_format = True
+                    # if "compliance_format" in file_content :
+                    #     pass
+                    # else :
+                    #     if saved_file_name is not None :
+                    #         self.remove_uploaded_file(file_path + "/" + saved_file_name)
+                    #     file_name = file_list.file_name
+                    #     name = file_list.file_name.split('.')[0]
+                    #     exten = file_list.file_name.split('.')[1]
+                    #     auto_code = self.new_uuid()
+                    #     file_name = "%s-%s.%s" % (name, auto_code, exten)
+                    #     is_format = True
 
             penal_consequences = data.penal_consequences
             compliance_frequency = data.frequency_id
