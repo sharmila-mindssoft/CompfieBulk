@@ -545,22 +545,30 @@ $("#upload_file").on("change", function(e) {
   f_Size = this.files[0].size;
 
   var max_limit =  1024 * 1024 * 50
-  if (f_Size > max_limit) {
-    displayMessage(message.file_maxlimit_exceed)
-    $("#uploaded_fileview").hide();
-    $("#uploaded_filename").html('');
-    $("#upload_file").val('');
-  }else if(fE == 'exe' || fE == 'xhtml' || fE == 'htm' || fE == 'html'){
+  if(tFN.indexOf('.') !== -1){
+    if (f_Size > max_limit) {
+      displayMessage(message.file_maxlimit_exceed)
+      $("#uploaded_fileview").hide();
+      $("#uploaded_filename").html('');
+      $("#upload_file").val('');
+    }else if(fE == 'exe' || fE == 'xhtml' || fE == 'htm' || fE == 'html'){
+      displayMessage(message.invalid_file_format)
+      $("#uploaded_fileview").hide();
+      $("#uploaded_filename").html('');
+      $("#upload_file").val('');
+    }else{
+      file_lst = e.target.files;
+      displayMessage("");
+      $("#uploaded_fileview").show();
+      $("#uploaded_filename").html( tFN + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' />")
+    }
+  }else{
     displayMessage(message.invalid_file_format)
     $("#uploaded_fileview").hide();
     $("#uploaded_filename").html('');
     $("#upload_file").val('');
-  }else{
-    file_lst = e.target.files;
-    displayMessage("");
-    $("#uploaded_fileview").show();
-    $("#uploaded_filename").html( tFN + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' />")
   }
+  
   /*mirror.uploadFile(e, function result_data(data) {
     if (data == "File max limit exceeded") {
       displayMessage(message.file_maxlimit_exceed)
@@ -881,11 +889,11 @@ $("#temp_addcompliance").click(function() {
     var file_data = file_lst[0];
     form_data.append("file" + fCId, file_data, f_Name);
     form_data.append("session_token", mirror.getSessionToken())
+    console.log(form_data)
   }
   
   /*for (var i = 0; i < file_lst.length; i++) {
     var file_data = file_lst[i];
-   
     console.log(file_data);
     form_data.append("file" + i, file_data, f_Name);
   }*/

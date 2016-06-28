@@ -105,6 +105,24 @@ function initMirror() {
         }
     }
 
+    function getPageUrl(){
+        ac_menu = getUserMenu();
+        keys = Object.keys(ac_menu);
+        page_urls = []
+        for (var k = 0; k < keys.length; k++) {
+            key = keys[k];
+            objs = ac_menu[key]
+            for (var ob=0; ob<objs.length; ob++) {
+                data = objs[ob];
+                page_urls.push(data["form_url"]);
+            }
+        }
+        page_urls.push("/knowledge/home");
+        page_urls.push("/knowledge/profile");
+        page_urls.push("/knowledge/change-password");
+        return page_urls;
+    }
+
     function getEmployeeName(){
         var info = getUserInfo();
         if (info !== null)
@@ -1525,6 +1543,7 @@ function initMirror() {
         getUserProfile: getUserProfile,
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,
+        getPageUrl: getPageUrl,
         apiRequest: apiRequest,
         LoginApiRequest : LoginApiRequest,
 

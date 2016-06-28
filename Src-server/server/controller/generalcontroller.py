@@ -1,10 +1,12 @@
+import os
 from protocol import core, login, general, possiblefailure
 from server import logger
 from server.constants import (
     RECORD_DISPLAY_COUNT, FILE_TYPES,
-    FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH
+    FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH,
+    CLIENT_DOCS_BASE_PATH
 )
-from server.common import save_file_in_path
+from server.common import (save_file_in_path, new_uuid)
 
 __all__ = [
     "process_general_request",
@@ -301,7 +303,8 @@ def process_update_notification_status(db, request, session_user):
         session_user)
     return general.UpdateNotificationStatusSuccess()
 
-def process_uploaded_file(info):
+def process_uploaded_file(info, f_type, client_id=None):
+    print info
     info_keys = info.keys()
     is_valid = True
     # Validate
@@ -329,15 +332,25 @@ def process_uploaded_file(info):
 
         except Exception, e :
             print e
+    print "general controller"
+    print is_valid
     if is_valid :
         lst = []
+        print info_keys
         for k in info_keys :
             try :
                 file_info = info[k][0]
                 file_name = file_info.file_name()
-                print file_name
                 file_content = file_info.body()
-                file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
+                if f_type == "knowledge" :
+                    file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
+                else :
+                    client_dir = "%s/%s" % (CLIENT_DOCS_BASE_PATH, client_id)
+                    print client_dir
+                    file_path = "%s/%s" % (client_dir, file_name)
+                    print file_path
+                    if not os.path.exists(client_dir):
+                        os.makedirs(client_dir)
                 if save_file_in_path(file_path, file_content, file_name) :
                     file_response = core.FileList(
                         len(file_content),
@@ -348,4 +361,6 @@ def process_uploaded_file(info):
             except Exception, e :
                 print e
         res = general.FileUploadSuccess(lst)
+    else :
+        print "is_valid ", is_valid
     return res

@@ -22,7 +22,7 @@ from replication.protocol import (
 )
 from server.emailcontroller import EmailHandler as email
 from server.constants import (
-    KNOWLEDGE_FORMAT_PATH, FORMAT_DOWNLOAD_URL,
+    KNOWLEDGE_FORMAT_PATH, KNOWLEDGE_FORMAT_DOWNLOAD_URL,
     LOGO_URL, LOCAL_TIMEZONE
 )
 
@@ -112,7 +112,8 @@ class Database(object) :
             connection.autocommit(False)
             self._connection = connection
         except Exception, e :
-            logger.logKnowledge("error", "database.py-connect", e)
+            pass
+            # logger.logKnowledge("error", "database.py-connect", e)
 
     ########################################################
     # To Close database connection
@@ -2504,7 +2505,7 @@ class KnowledgeDatabase(Database):
                 format_file_size = int(format_file_size)
             if format_file :
                 url = "%s/%s" % (
-                    FORMAT_DOWNLOAD_URL, format_file
+                    KNOWLEDGE_FORMAT_DOWNLOAD_URL, format_file
                 )
             else :
                 url = None
@@ -2649,7 +2650,7 @@ class KnowledgeDatabase(Database):
             file_list = []
             if format_file :
                 file_download = "%s/%s" % (
-                    FORMAT_DOWNLOAD_URL, format_file
+                    KNOWLEDGE_FORMAT_DOWNLOAD_URL, format_file
                 )
                 file_info = core.FileList(
                     format_file_size, format_file, file_download
@@ -3134,10 +3135,10 @@ class KnowledgeDatabase(Database):
                 if saved_file_name is None :
                     file_list = file_list[0]
                     file_name = file_list.file_name
-                    name = file_list.file_name.split('.')[0]
-                    exten = file_list.file_name.split('.')[1]
-                    auto_code = self.new_uuid()
-                    file_name = "%s-%s.%s" % (name, auto_code, exten)
+                    # file_name = file_list.file_name.split('.')[0]
+                    # exten = file_list.file_name.split('.')[1]
+                    # auto_code = self.new_uuid()
+                    # file_name = "%s-%s.%s" % (name, auto_code, exten)
                     file_size = file_list.file_size
                     file_content = file_list.file_content
                     is_format = True
@@ -6053,11 +6054,11 @@ class KnowledgeDatabase(Database):
                 if row[7] == None:
                     unit_name = "-"
                 else:
-                    unit_name =  "%s - %s" % (row[6], row[7])
+                    unit_name = "%s - %s" % (row[6], row[7])
                 user_id = row[0]
-                email_id= row[1]
+                email_id = row[1]
                 contact_no = None if row[4] is "" else row[4]
-                is_primary_admin= row[5]
+                is_primary_admin = row[5]
                 is_active = row[9]
                 is_admin = row[10]
                 if(row[3] == None):
@@ -6068,26 +6069,31 @@ class KnowledgeDatabase(Database):
                     employee_name = "Old Administrator"
                 else:
                     employee_name = "%s - %s" % (row[3], row[2])
-                address= row[8]
+                address = row[8]
                 is_service_provider = False
                 if unit_name == "-":
-                    if (is_primary_admin == 1 or is_admin == 1 ):
+                    if (is_primary_admin == 1 or is_admin == 1):
                         is_service_provider = False
                     else:
                         is_service_provider = True
                 licence_holders.append(
                     technomasters.LICENCE_HOLDER_DETAILS(
-                    user_id, employee_name, email_id, contact_no,
-                    unit_name, address,
-                    file_space/1000000000, used_space/1000000000,
-                    bool(is_active), bool(is_primary_admin),
-                    is_service_provider
-                ))
+                        user_id, employee_name, email_id, contact_no,
+                        unit_name, address,
+                        file_space/1000000000, used_space/1000000000,
+                        bool(is_active), bool(is_primary_admin),
+                        is_service_provider
+                    )
+                )
 
             remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
-            profile_detail = technomasters.PROFILE_DETAIL(str(contract_from),
+            total_free_space = file_space/1000000000
+            total_used_space = round(used_space/1000000000, 2)
+            profile_detail = technomasters.PROFILE_DETAIL(
+                str(contract_from),
                 str(contract_to), no_of_user_licence, remaining_licence,
-                file_space/1000000000, used_space/1000000000, licence_holders)
+                total_free_space, total_used_space, licence_holders
+            )
             profiles.append(technomasters.PROFILES(client_id, profile_detail))
         return profiles
 

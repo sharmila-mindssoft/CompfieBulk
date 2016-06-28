@@ -71,31 +71,49 @@ class Controller(object):
         data = None
         actual_data = None
         try:
-            data = json.loads(request.body())
-            if type(data) is not list:
-                send_bad_request(
-                    response,
-                    expectation_error("a list", type(data))
-                )
-                return
-            if len(data) != 2:
-                send_invalid_json_format(response)
-                return
-            token = data[0]
-            logger.logWebfront(str(token))
-            actual_data = data[1]
-            if type(token) is unicode :
-                token = token.encode("utf8")
-            elif type(token) is str :
-                pass
+            url = request.uri()
+            print url
+            if "/api/files" in url :
+                lst = url.split("/")
+                token = lst[-1]
+                # data = []
+                # info = request.files()
+                # info_keys = info.keys()
+                # for k in info_keys :
+                #     d = {}
+                #     file_info = info[k][0]
+                #     d["file_name"] = str(file_info.file_name())
+                #     d["file_content"] = str(file_info.body())
+                #     data.append(d)
+                # print data
+                actual_data = json.dumps(request.files())
             else :
-                send_bad_request(
-                    response,
-                    expectation_error("a string", type(token))
-                )
-                return
+                data = json.loads(request.body())
+                if type(data) is not list:
+                    send_bad_request(
+                        response,
+                        expectation_error("a list", type(data))
+                    )
+                    return
+                if len(data) != 2:
+                    send_invalid_json_format(response)
+                    return
+                token = data[0]
+                print token
+                logger.logWebfront(str(token))
+                actual_data = data[1]
+                if type(token) is unicode :
+                    token = token.encode("utf8")
+                elif type(token) is str :
+                    pass
+                else :
+                    send_bad_request(
+                        response,
+                        expectation_error("a string", type(token))
+                    )
+                    return
         except Exception:
-            logger.logWebfront(request.body())
+            # logger.logWebfront(request.body())
             logger.logWebfront(traceback.format_exc())
             send_invalid_json_format(response)
             return

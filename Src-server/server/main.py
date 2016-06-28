@@ -29,8 +29,7 @@ from replication.protocol import (
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    VERSION, IS_DEVELOPMENT,
-    KNOWLEDGE_FORMAT_PATH
+    VERSION, IS_DEVELOPMENT
 )
 from server.templatepath import (
     TEMPLATE_PATHS
@@ -101,12 +100,12 @@ class API(object):
                 data
             )
         except Exception, e:
-            print e
+            # print e
             logger.logKnowledgeApi(e, "_parse_request")
             logger.logKnowledgeApi(traceback.format_exc(), "")
 
             logger.logKnowledge("error", "main.py-parse-request", e)
-            print(traceback.format_exc())
+            # print(traceback.format_exc())
             logger.logKnowledge("error", "main.py", traceback.format_exc())
             response.set_status(400)
             response.send(str(e))
@@ -263,9 +262,7 @@ class API(object):
     def handle_format_file(self, request, db):
         def validate_session_from_body(content):
             content_list = content.split("\r\n\r\n")
-            print content_list[0].split("\r\n")[0]
             session = content_list[-1].split("\r\n")[0]
-            print session
             user_id = db.validate_session_token(str(session))
             if user_id is None :
                 return False
@@ -274,7 +271,7 @@ class API(object):
 
         if (validate_session_from_body(request.body())) :
             info = request.files()
-            response_data = controller.process_uploaded_file(info)
+            response_data = controller.process_uploaded_file(info, "knowledge")
             return response_data
         else :
             return login.InvalidSessionToken()

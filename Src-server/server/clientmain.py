@@ -11,7 +11,7 @@ from protocol import (
     login, general, clientuser, mobile
 )
 from server.clientdatabase import ClientDatabase
-
+from controller.generalcontroller import process_uploaded_file
 import clientcontroller as controller
 import mobilecontroller as mobilecontroller
 from webfrontend.client import CompanyManager
@@ -40,13 +40,13 @@ def cors_handler(request, response):
 #
 
 def api_request(
-    request_data_type, need_client_id=False
+    request_data_type, need_client_id=False, file_session=False
 ):
     def wrapper(f):
         def wrapped(self, request, response):
             self.handle_api_request(
                 f, request, response,
-                request_data_type, need_client_id
+                request_data_type, need_client_id, file_session
             )
         return wrapped
     return wrapper
@@ -204,31 +204,46 @@ class API(object):
         request_data = None
         db = None
         company_id = None
+        url = request.uri()
         try:
-            data = json.loads(request.body())
-            if type(data) is not list:
-                self.send_bad_request(
-                    response,
-                    self.expectation_error(
-                        "a list", type(data)
+            if "/api/files" not in url :
+                data = json.loads(request.body())
+                if type(data) is not list:
+                    self.send_bad_request(
+                        response,
+                        self.expectation_error(
+                            "a list", type(data)
+                        )
                     )
+                    return None
+                if len(data) != 2:
+                    self.send_invalid_json_format(
+                        response
+                    )
+                    return None
+                company_id = int(data[0])
+                session = None
+                actual_data = data[1]
+                request_data = request_data_type.parse_structure(
+                    actual_data
                 )
-                return None
-            if len(data) != 2:
-                self.send_invalid_json_format(
-                    response
-                )
-                return None
-            company_id = int(data[0])
+            else :
+                lst = url.split("/")
+                print '-' * 10
+                print lst
+                info = lst[-1].split("-")
+                company_id = int(info[0])
+                request_data = json.loads(request.body())
+                print request_data
+                session = lst[-1]
+
             db = self._databases.get(company_id)
             if db is None:
                 response.set_status(404)
                 response.send("Company not found")
                 return None
-            actual_data = data[1]
-            request_data = request_data_type.parse_structure(
-                actual_data
-            )
+            
+            
         except Exception, e:
             logger.logClientApi(e, "_parse_request")
             logger.logClientApi(traceback.format_exc(), "")
@@ -239,12 +254,13 @@ class API(object):
             response.set_status(400)
             response.send(str(e))
             return None
-        return (db, request_data, company_id)
+        return (db, request_data, company_id, session)
 
     def handle_api_request(
         self, unbound_method, request, response,
-        request_data_type, need_client_id
+        request_data_type, need_client_id, file_session
     ):
+        print unbound_method
         ip_address = str(request.remote_ip())
         self._ip_address = ip_address
         response.set_default_header("Access-Control-Allow-Origin", "*")
@@ -254,7 +270,7 @@ class API(object):
         if request_data is None:
             return
 
-        db, request_data, company_id = request_data
+        db, request_data, company_id, f_session = request_data
 
         def respond(response_data):
             self._send_response(
@@ -267,6 +283,8 @@ class API(object):
                 response_data = unbound_method(
                     self, request_data, db, company_id
                 )
+            elif file_session :
+                response_data = unbound_method(self, request_data, db, f_session)
             else :
                 response_data = unbound_method(self, request_data, db)
             db.commit()
@@ -281,6 +299,7 @@ class API(object):
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
             db.rollback()
+
 
     @api_request(login.Request, need_client_id=True)
     def handle_login(self, request, db, client_id):
@@ -320,6 +339,28 @@ class API(object):
     def handle_mobile_request(self, request, db):
         return mobilecontroller.process_client_mobile_request(request, db)
 
+    @api_request("clientformat", file_session=True)
+    def handle_client_format_file(self, request, db, session_token):
+        def validate_session_from_body(content):
+            client_info = session_token.split("-")
+            client_id = int(client_info[0])
+
+            user_id = db.validate_session_token(client_id, str(session_token))
+            if user_id is None :
+                return False, client_id
+            else :
+                return True, client_id
+
+        is_valid, client_id = validate_session_from_body(request.body())
+        if is_valid :
+            print is_valid
+            info = request.files()
+            print info
+            response_data = process_uploaded_file(info, "client", client_id)
+            return response_data
+        else :
+            return login.InvalidSessionToken()
+
 #
 # run_server
 #
@@ -354,7 +395,8 @@ def run_server(address, knowledge_server_address):
             ("/api/client_admin_settings", api.handle_client_admin_settings),
             ("/api/general", api.handle_general),
             ("/api/client_user", api.handle_client_user),
-            ("/api/mobile", api.handle_mobile_request)
+            ("/api/mobile", api.handle_mobile_request),
+            (r"/api/files/([a-zA-Z-0-9]+)", api.handle_client_format_file)
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

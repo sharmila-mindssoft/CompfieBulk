@@ -8,13 +8,16 @@ ROOT_PATH = os.path.join(os.path.split(__file__)[0])
 
 KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
 CLIENT_LOGO_PATH = os.path.join(ROOT_PATH, "clientlogo")
-
+CLIENT_DOCS_BASE_PATH = os.path.join(ROOT_PATH, "clientdocuments")
 #
 # File download url
 #
 
-FORMAT_DOWNLOAD_URL = "compliance_format"
+KNOWLEDGE_FORMAT_DOWNLOAD_URL = "compliance_format"
 LOGO_URL = "knowledge/clientlogo"
+CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
+FORMAT_DOWNLOAD_URL = "/client/compliance_format"
+
 
 #
 # Timezone

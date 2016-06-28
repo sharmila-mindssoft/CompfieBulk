@@ -12,6 +12,7 @@ var snoInprogress = 1;
 var countOverdue = 0;
 var countInprogress = 0;
 var sno = 0;
+var file_lst = [];
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -348,7 +349,7 @@ function showSideBar(idval, data){
             $('.btn-submit', cloneValSide).on("click", function(e){
                 var completion_date;
                 var compliance_history_id;
-                var documents;
+                var documents = [];
                 var validity_date;
                 var next_due_date;
                 var start_date;
@@ -357,7 +358,24 @@ function showSideBar(idval, data){
                     return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
                 }
 
-                documents = file_list;
+                var uploadFile = null;
+                var form_data = new FormData();
+                for (var i = 0; i < file_lst.length; i++) {
+                    var file_data = file_lst[i];
+                    var tFN = file_lst[i].name;
+                    var fN = tFN.substring(0, tFN.indexOf('.'));
+                    var fE = tFN.substring(tFN.lastIndexOf('.') + 1);
+                    var uniqueId = Math.floor(Math.random() * 90000) + 10000;
+                    var f_Name = fN+'-'+uniqueId+'.'+fE;
+                    var f_Size = file_lst[i].size;
+                    var f_Content = null;
+                    form_data.append("file" + i, file_data, f_Name);
+
+                    uploadFile = client_mirror.uploadFileFormat(f_Size, f_Name, f_Content)
+                    documents.push(uploadFile)
+                }
+
+                //documents = file_list;
                 if(documents.length == 0){
                     documents = null;
                 }
@@ -431,6 +449,11 @@ function showSideBar(idval, data){
                     }
                 }
                 function onSuccess(data){
+                    console.log(form_data)
+                    client_mirror.uploadFormatFile(form_data, function result_data (status, data) {
+                      console.log(status)
+                    })
+
                     initialize();
                     hideLoader();
                 }
@@ -501,7 +524,22 @@ function closeicon(){
 }
 
 function uploadedfile(e){
-    client_mirror.uploadFile(e, function result_data(data) {
+
+    file_lst = e.target.files;
+
+    file_list = file_lst;
+    var result = ""
+    for(i = 0; i < file_lst.length; i++){
+        var fileclassname; 
+        var filename = file_list[i].name
+        fileclassname = filename.replace(/[^\w\s]/gi,"");
+        fileclassname = fileclassname.replace(/\s/g, "");
+        result += "<span class='"+fileclassname+"'>" + filename + "<img src='/images/delete.png' class='removeicon' style='width:16px;height:16px;' onclick='remove_temp_file(\""+fileclassname+"\",\""+filename+"\")' /></span>";
+    }
+    $(".uploaded-filename").html(result);
+
+
+    /*client_mirror.uploadFile(e, function result_data(data) {
         if(data == "File max limit exceeded"){
             displayMessage(message.file_maxlimit_exceed);
             $(".uploaded_filename").html('');
@@ -524,7 +562,7 @@ function uploadedfile(e){
         else{
           alert(data);
         }
-    });
+    });*/
 }
 function remove_temp_file(classnameval,filename){
     $('.'+classnameval).remove();
