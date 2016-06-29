@@ -949,8 +949,6 @@ function initClientMirror() {
     }
 
     function convert_to_base64(file, name, size, callback) {
-        alert("enter")
-        console.log("enter")
         var reader = new FileReader();
         reader.onload = function(readerEvt) {
             var binaryString = readerEvt.target.result;
@@ -958,7 +956,6 @@ function initClientMirror() {
             callback(file_content, name, size)
         };
         reader.readAsBinaryString(file);
-        console.log("end")
     }
 
     function uploadFile(fileListener, callback) {
