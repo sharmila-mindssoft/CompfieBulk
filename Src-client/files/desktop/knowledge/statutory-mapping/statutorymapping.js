@@ -214,7 +214,6 @@ function loadCountwiseStatutoryMapping(keysList, statutoryMappingsList){
   if(endCount>Object.keys(finalList).length) endCount = Object.keys(finalList).length
   if(Object.keys(finalList).length > 0) $('.view-count-message').text("Showing " + (startCount+1) + " to " + endCount + " of " + Object.keys(finalList).length );
   for(var k=0; k<keysList.length; k++){
-    //console.log(entity)
     var entity = keysList[k];
     statutorymappingId = entity;
     industryName = statutoryMappingsList[entity]["industry_names"];
@@ -894,7 +893,6 @@ $("#temp_addcompliance").click(function() {
     var file_data = file_lst[0];
     form_data.append("file" + fCId, file_data, f_Name);
     form_data.append("session_token", mirror.getSessionToken())
-    console.log(form_data)
   }
   
   /*for (var i = 0; i < file_lst.length; i++) {
@@ -1552,11 +1550,9 @@ function savestatutorymapping(){
     mirror.saveStatutoryMapping(statutorymappingData,
       function (error, response) {
           if (error == null){
-            onSuccess(response);
             mirror.uploadFormatFile(form_data, function result_data (status, data) {
-              console.log(status)
             })
-
+            onSuccess(response);
           }
           else {
             onFailure(error, response);
@@ -1572,10 +1568,9 @@ function savestatutorymapping(){
     mirror.updateStatutoryMapping(statutorymappingData,
       function (error, response) {
           if (error == null){
-             onSuccess(response);
-             mirror.uploadFormatFile(form_data, function result_data (status, data) {
-              console.log(status)
+            mirror.uploadFormatFile(form_data, function result_data (status, data) {
             })
+            onSuccess(response);
           }
           else {
             onFailure(error, response);
