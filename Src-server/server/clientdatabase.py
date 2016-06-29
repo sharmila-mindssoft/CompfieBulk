@@ -9484,7 +9484,7 @@ class ClientDatabase(Database):
         return notification_count, reminder_count, escalation_count
 
     def is_primary_admin(self, user_id):
-        column = "count(*)"
+        column = "count(1)"
         condition = "user_id = '%d' and is_primary_admin = 1" % user_id
         rows = self.get_data(self.tblUsers, column, condition)
         if rows[0][0] > 0 or user_id == 0:
@@ -9493,7 +9493,7 @@ class ClientDatabase(Database):
             return False
 
     def is_service_proivder_user(self, user_id):
-        column = "count(*)"
+        column = "count(1)"
         condition = "user_id = '%d' and is_service_provider = 1" % user_id
         rows = self.get_data(self.tblUsers, column, condition)
         if rows[0][0] > 0:

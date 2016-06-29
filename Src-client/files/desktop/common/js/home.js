@@ -10,13 +10,11 @@ function initializeUI () {
 
 
 $(document).ready(function () {
-    console.log("home.js ready");
     if (!mirror.verifyLoggedIn())
         return;
 
     var user = mirror.getUserProfile();
     $(".welcome-msg").text("Welcome " + user["employee_name"] + "!");
-
     initializeUI();
 });
 

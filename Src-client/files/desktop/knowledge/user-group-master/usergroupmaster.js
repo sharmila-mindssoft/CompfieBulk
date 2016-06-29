@@ -190,9 +190,7 @@ function loadFormListUpdate(formList, userGroupList, catgid, userGroupId){
 	for(var userGroupDetails in userGroupList){
 		if(userGroupList[userGroupDetails]['user_group_id'] == userGroupId){
 			var formIds = userGroupList[userGroupDetails]['form_ids'];
-			console.log(formIds);
 			for(var i = 0; i < formIds.length; i++){
-				console.log(formIds[i]);
 				$('.checkedFormId[value = "'+formIds[i]+'"]').prop("checked", true);
 			}
 		}
@@ -216,7 +214,7 @@ $("#btnUserGroupSubmit").click(function(){
 		displayMessage(message.category_max50);
 	}
 	// else if(tempcategoryidVal != categoryNameVal){
-	// 	displayMessage(message.category_invalid);	
+	// 	displayMessage(message.category_invalid);
 	// }
 	else if(groupIdVal == ''){
 		$(".checkedFormId:checked").each(function() {
@@ -281,7 +279,7 @@ $("#btnUserGroupSubmit").click(function(){
 					displayMessage(message.groupname_exists);
 				}
 			}
-			var userGroupInsertDetails = mirror.getUpdateAdminUserGroupDict(parseInt(groupIdVal), groupNameVal, 
+			var userGroupInsertDetails = mirror.getUpdateAdminUserGroupDict(parseInt(groupIdVal), groupNameVal,
 				parseInt(categoryNameVal), chkArrayInt);
 	       	mirror.updateAdminUserGroup(userGroupInsertDetails,
 			    function (error, response) {

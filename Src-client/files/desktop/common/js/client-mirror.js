@@ -138,7 +138,6 @@ function initClientMirror() {
 
     function getClientId() {
         var info = getUserInfo();
-        // console.log(info)
         return info["client_id"];
     }
 
@@ -154,7 +153,6 @@ function initClientMirror() {
     function redirect_login(){
         var short_name = getClientShortName();
         login_url = "/login/" + short_name;
-        console.log(login_url);
         window.localStorage["recent_short_name"] = short_name;
         clearSession();
         window.location.href = login_url;
@@ -178,8 +176,6 @@ function initClientMirror() {
                 var response = data[1];
                 matchString = 'success';
                 log("API STATUS :" + status);
-                ///console.log(response)
-                ///console.log(status.toLowerCase().indexOf(matchString))
                 ///callback(null, response)
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
@@ -230,14 +226,11 @@ function initClientMirror() {
             CLIENT_BASE_URL + "login",
             toJSON(request),
             function(data) {
-                console.log("data:"+data);
                 var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
-                    console.log("status success");
-                    console.log(data);
                     updateUserInfo(response);
                     callback(null, response);
                 }
@@ -271,14 +264,11 @@ function initClientMirror() {
             CLIENT_BASE_URL + "login",
             toJSON(request),
             function(data) {
-                console.log("data:"+data);
                 var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
-                    console.log("status success");
-                    console.log(data);
                     initSession(response, short_name)
                     callback(null, response);
                 }
@@ -391,7 +381,6 @@ function initClientMirror() {
                 var response = data[1];
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
-                    console.log("status success");
                     // initSession(response, short_name)
                     callback(null, response);
 
@@ -425,7 +414,6 @@ function initClientMirror() {
                 var response = data[1];
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
-                    console.log("status success");
                     // initSession(response, short_name)
                     callback(null, response);
 
@@ -461,7 +449,6 @@ function initClientMirror() {
                 var response = data[1];
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
-                    console.log("status success");
                     // initSession(response, short_name)
                     callback(null, response);
 
@@ -542,7 +529,6 @@ function initClientMirror() {
         if (add  == ""){
             add = null;
         }
-        console.log(add)
         result = {
             "s_name": serviceProviderDetail[0],
             "add": add,
@@ -551,7 +537,6 @@ function initClientMirror() {
             "c_person": serviceProviderDetail[4],
             "c_no": serviceProviderDetail[5]
         }
-        console.log(result)
         return result
     }
 
@@ -639,7 +624,6 @@ function initClientMirror() {
     }
 
     function getUpdateClientUserDict(clientUserDetail) {
-        console.log("clientUserDetail[0]"+clientUserDetail[0]);
         result =  {
             "u_id": clientUserDetail[0],
             "ug_id": clientUserDetail[1],
@@ -970,8 +954,6 @@ function initClientMirror() {
             file_name = file.name
             file_size = file.size
             var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
-            console.log("file.size : "+file.size);
-            console.log("max_limit : "+max_limit);
             if (file_size > max_limit) {
                 displayMessage(message.file_maxlimit_exceed);
                 return;
@@ -1086,7 +1068,6 @@ function initClientMirror() {
                 "validity_date" : validity_date
             }
         ];
-        console.log(request)
         callerName = "client_transaction";
         clientApiRequest(callerName, request, callback);
     }
@@ -1362,7 +1343,6 @@ function initClientMirror() {
     function updateComplianceDetail(compliance_history_id, documents, completion_date,
         validity_date, next_due_date, remarks, callback) {
         callerName = "client_user"
-        console.log(validity_date);
         var request = [
             "UpdateComplianceDetail", {
                 "compliance_history_id": compliance_history_id,
@@ -1373,7 +1353,6 @@ function initClientMirror() {
                 "remarks": remarks
             }
         ];
-        console.log(request);
         clientApiRequest(callerName, request, callback);
     }
 

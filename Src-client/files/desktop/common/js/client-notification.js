@@ -33,7 +33,6 @@ function get_notification_count(){
                 $("#escalation_count").text(window.sessionStorage["CLIENT_ESCALATION_COUNT"]);
 
                 if(show_popup){
-                    console.log(notification_text);
                     showDeletionPopup(notification_text)
                 }
 

@@ -17,7 +17,6 @@ function hideLoader() {
 //check the url is client or knowledge
 function getShortName(){
     var pathArray = window.location.pathname.split( '/' );
-    console.log(pathArray)
     short_name = null;
     if(typeof pathArray[2] === 'undefined'){
         short_name = null;
@@ -94,7 +93,6 @@ function processForgotpassword(username, shortName, callback) {
 
 //submit forgot password process
 $("#submit").click(function(){
-  console.log("submit called");
   displayMessage("");
   var username = $("#username").val().trim();
   if(username.length == 0) {

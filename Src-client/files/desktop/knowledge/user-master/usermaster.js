@@ -47,7 +47,7 @@ function displayEdit (userId) {
 			var designation = '';
 			if(usersList[entity]["designation"] != null && usersList[entity]["designation"] != 'None') designation = usersList[entity]["designation"];
 
-			domainIds = usersList[entity]["domain_ids"]; 
+			domainIds = usersList[entity]["domain_ids"];
 			countryIds = usersList[entity]["country_ids"];
 			var emailId = usersList[entity]["email_id"];
 			for(var k in userGroupsList){
@@ -279,10 +279,8 @@ $("#submit").click(function(){
             displayMessage(message.invalid_userid);
         }
 			}
-			console.log("address:"+address);
 			userDetail = [userId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,countryIds,domainIds];
 			userDetailDict = mirror.getUpdateAdminUserDict(userDetail);
-			console.log(userDetailDict)
 			mirror.updateAdminUser(userDetailDict,
 				function (error, response) {
         if (error == null){
@@ -297,7 +295,7 @@ $("#submit").click(function(){
 });
 
 //filter process
-$(".filter-text-box").keyup(function() { 
+$(".filter-text-box").keyup(function() {
 	var employeenamefilter = $("#search-employee-name").val().toLowerCase();
 	var usergroupfilter = $("#search-usergroup").val().toLowerCase();
 	var designationfilter = $("#search-designation").val().toLowerCase();
@@ -319,10 +317,10 @@ $(".filter-text-box").keyup(function() {
 					break;
 				}
 			}
-			if (~concatName.toLowerCase().indexOf(employeenamefilter) && ~designation.toLowerCase().indexOf(designationfilter) && ~userGroup.toLowerCase().indexOf(usergroupfilter)) 
+			if (~concatName.toLowerCase().indexOf(employeenamefilter) && ~designation.toLowerCase().indexOf(designationfilter) && ~userGroup.toLowerCase().indexOf(usergroupfilter))
 			{
 				filteredList.push(usersList[entity]);
-			}		
+			}
 	}
 	loadUserList(filteredList);
 });
@@ -330,11 +328,11 @@ $(".filter-text-box").keyup(function() {
 //Autocomplete Script Starts
 //Hide list items after select
 $(".hidemenu").click(function(){
-  $("#autocompleteview").hide(); 
+  $("#autocompleteview").hide();
 });
 $(".hideselect").mouseleave(function(){
-  $("#selectboxview").hide(); 
-  $("#selectboxview-country").hide(); 
+  $("#selectboxview").hide();
+  $("#selectboxview-country").hide();
 });
 
 //load domain list in multi select box
@@ -364,7 +362,7 @@ function activate(element){
 	}else{
 		$(element).addClass("active_selectbox");
 		domainIds.push(parseInt(element.id));
-	}  
+	}
 	$("#domainselected").val(domainIds.length+" Selected");
  }
 
@@ -395,7 +393,7 @@ function activatecountry(element){
    }else{
     $(element).addClass("active_selectbox_country");
      countryIds.push(parseInt(element.id))
-   }  
+   }
    $("#countryselected").val(countryIds.length+" Selected");
   }
 
@@ -407,7 +405,7 @@ function onUserGroupSuccess(val){
   $("#usergroupval").focus();
 }
 
-//load usergroup list in autocomplete text box  
+//load usergroup list in autocomplete text box
 $("#usergroupval").keyup(function(){
   var textval = $(this).val();
   getUserGroupAutocomplete(textval, userGroupsList, function(val){

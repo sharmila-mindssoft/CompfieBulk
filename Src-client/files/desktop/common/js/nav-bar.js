@@ -18,8 +18,6 @@ function toUpperCamelCase (s) {
 }
 
 function initializeNavBar () {
-    console.log("initializeNavBar")
-    console.log(window.localStorage["shortName"])
     function getItemObject (form_url, form_name) {
         var itemObject = $("#nav-bar-templates .sub-menu-item li").clone();
         if (form_url !== null)
@@ -186,7 +184,6 @@ function showDeletionPopup(notification_text){
     $('.overlay-nav-bar').css("opacity","1");
     $("#msg").html(notification_text);
     $('.close').click(function(){
-        console.log("Close clicked");
         $('.overlay-nav-bar').css("visibility","hidden");
         $('.overlay-nav-bar').css("opacity","0");
     });
@@ -227,9 +224,8 @@ function showDeletionPopup(notification_text){
 // }
 function persistNavBar() {
     frms = window.location.href.split("/");
-    if (frms.indexOf("/home") == -1) {
+    if (frms.indexOf("home") == -1) {
         client_name = client_mirror.getClientShortName()
-        console.log(client_name)
         if ((client_name === null) || (client_name === undefined)) {
             ac_menu = mirror.getPageUrl();
             form_name = "/" + frms[frms.length - 2] + "/" + frms[frms.length - 1];

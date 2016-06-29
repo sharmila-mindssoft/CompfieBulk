@@ -7,7 +7,6 @@ var domainval;
 
 function initialize(){
 	function onSuccess(data){
-		console.log(data);
 		countriesList = data['countries'];
 		domainsList = data['domains'];
 		level1List = data['level_1_statutories'];
@@ -95,7 +94,6 @@ function getDomainName(domainId){
 function loadStatutoryNotificationsList(data){
 	$('.tbody-statutory-notifications-list tr').remove();
 	var sno = 0;
-	console.log(data);
 	$.each(data, function(key, value) {
 		var tableRowHeading = $('#templates .table-statutory-notifications-list .table-row-heading');
 		var cloneHeading = tableRowHeading.clone();
