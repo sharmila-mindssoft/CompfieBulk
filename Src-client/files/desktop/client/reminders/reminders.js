@@ -141,7 +141,6 @@ function get_reminders(sno){
   function onSuccess(data){
     remindersList = data['notifications'];
     loadReminders(remindersList);
-console.log(window.sessionStorage["CLIENT_REMINDER_COUNT"]+"==="+sno);
 
     hideLoader();
   }

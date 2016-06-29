@@ -584,13 +584,12 @@ function autoGenerateUnitCode(){
         client_id = $("#client-unit-id").val()
     }
     function  onSuccess(data){
-        console.log(data["next_unit_code"]);
         unitcodeautogenerate(data["next_unit_code"]);
     }
     function onFailure(error){
         console.log(error);
     }
-    mirror.getNextUnitCode(parseInt(client_id), 
+    mirror.getNextUnitCode(parseInt(client_id),
         function(error, response){
             if(error == null){
                 onSuccess(response);
@@ -610,7 +609,7 @@ function unitcodeautogenerate(auto_generate_initial_value){
         //         auto_generate_initial_value = value["next_unit_code"];
         //     }
         // });
-        //auto_generate_initial_value = 
+        //auto_generate_initial_value =
         unitcodeautogenerateids = auto_generate_initial_value;
         var sno = [];
         if($('.unitcode-checkbox').is(':checked')){
@@ -1306,7 +1305,7 @@ $("#btn-clientunit-submit").click(function(){
         }
         if(lentitytextValue == ''  &&  legalentityidupdate != ""){
             displayMessage(message.legalentity_required);
-            return;   
+            return;
         }
         else if(lentitytextValue != ''  &&  legalentityidupdate != ""){
             legalEntity = mirror.getLegalEntityDict(parseInt(legalentityidupdate), lentitytextValue);
@@ -1646,7 +1645,6 @@ function activate_unitlocaion (element, ccount, mappingname) {
     $('.full-location-list'+ccount).html('<br>'+mappingname.replace(/##/gi,'"'));
 }
 function domainunionclientdomainList(classval){
-    console.log(classval);
     var finalObj;
 
     var d = '';

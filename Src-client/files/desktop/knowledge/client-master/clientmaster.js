@@ -30,7 +30,7 @@ $(".btn-clientgroup-add").click(function(){
     $("#clientgroup-view").hide();
     $("#clientgroup-add").show();
     $("#clientgroup-name").focus();
-    
+
     function onSuccess(data){
         clearMessage();
 
@@ -43,17 +43,17 @@ $(".btn-clientgroup-add").click(function(){
         $("#clientgroup-name").val('');
         $("#clientgroup-id").val('');
         $("#short-name").removeAttr("readonly");
-        $("#upload-logo-img").hide();        
+        $("#upload-logo-img").hide();
         $(".shorturl").text('');
         $("#subscribe-sms").prop("checked", "false");
         $("#subscribe-sms").removeProp('checked');
-        
+
         var x=document.getElementsByTagName("input");
         for(i = 0; i<=x.length-1; i++){
            if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
         }
 
-        $("#username").show();            
+        $("#username").show();
         $("#labelusername").text('');
 
         loadautocountry();
@@ -75,8 +75,8 @@ $(".btn-clientgroup-add").click(function(){
             }
         }
     );
-   
-   
+
+
 });
 $("#btn-clientgroup-cancel").click(function(){
     clearMessage();
@@ -200,8 +200,8 @@ $("#btn-clientgroup-submit").click(function(){
                 for(var dcount = 0;dcount < arrayDomains.length; dcount++){
                     var configuration;
                     configuration = mirror.getDateConfigurations(
-                        parseInt(arrayCountries[ccount]), parseInt(arrayDomains[dcount]), 
-                        parseInt($(".tl-from-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val()), 
+                        parseInt(arrayCountries[ccount]), parseInt(arrayDomains[dcount]),
+                        parseInt($(".tl-from-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val()),
                         parseInt($(".tl-to-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val())
                     );
                     dateConfigurations.push(configuration);
@@ -226,7 +226,7 @@ $("#btn-clientgroup-submit").click(function(){
     var licenceVal =$("#no-of-user-licence").val().trim();
     var fileSpaceVal = $("#file-space").val().trim();
     var inchargePersonVal = $("#users").val().trim();
-    //var subscribeSmsVal = $("#subscribe-sms").val();    
+    //var subscribeSmsVal = $("#subscribe-sms").val();
     if ($('#subscribe-sms').is(":checked")){
         var subscribeSmsVal = true;
     }
@@ -268,17 +268,17 @@ $("#btn-clientgroup-submit").click(function(){
         displayMessage(message.invalid_contractto);
     }
     else if(usernameVal == '' && clientGroupIdVal == ''){
-        displayMessage(message.username_required);    
+        displayMessage(message.username_required);
     }
     else if(validateEmail(usernameVal) == ''){
         displayMessage(message.username_invalid);
     }
     else if(licenceVal == ''){
         displayMessage(message.licence_required);
-    } 
+    }
     else if(licenceVal == "0" || licenceVal == "1"){
         displayMessage(message.licence_invalid);
-    }    
+    }
     else if(isNaN(licenceVal)){
         displayMessage(message.licence_invalid);
     }
@@ -320,7 +320,7 @@ $("#btn-clientgroup-submit").click(function(){
         if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
             displayMessage(message.logo_invalid);
         }
-        
+
         function onSuccess(data){
             hideLoader();
             $("#clientgroup-add").hide();
@@ -398,19 +398,19 @@ $("#btn-clientgroup-submit").click(function(){
                 displayMessage(message.cannot_unselect_country);
             }
             else if(error == 'CannotDeactivateDomain'){
-                displayMessage(message.cannot_unselect_domain); 
+                displayMessage(message.cannot_unselect_domain);
             }
             else if(error == 'InvalidNoOfLicence'){
-                displayMessage(message.invalid_no_of_licence); 
+                displayMessage(message.invalid_no_of_licence);
             }
             else if(error == 'InvalidFileSpace'){
-                displayMessage(message.invalid_file_space); 
+                displayMessage(message.invalid_file_space);
             }
             else if(error == 'ServerIsFull'){
-                displayMessage(message.server_full); 
+                displayMessage(message.server_full);
             }
             else{
-                displayMessage(error);   
+                displayMessage(error);
             }
         }
         var clientGroupDetails = mirror.getUpdateClientGroupDict(
@@ -520,13 +520,13 @@ function loadFormListUpdate(clientListData, clientGroupId){
 
             $("#contract-from").val(clientListData[clientList]['contract_from']);
             $("#contract-to").val(clientListData[clientList]['contract_to']);
-            $("#username").val(clientListData[clientList]['username']); 
-            $("#username").hide();            
+            $("#username").val(clientListData[clientList]['username']);
+            $("#username").hide();
             $("#labelusername").text(clientListData[clientList]['username']);
             var logoimgsrc = clientListData[clientList]['logo'];
 
             $("#upload-logo-img").attr("src", logoimgsrc);
-            
+
             $("#no-of-user-licence").val(clientListData[clientList]['no_of_user_licence']);
             $("#file-space").val(clientListData[clientList]['total_disk_space']);
             if(clientListData[clientList]['is_sms_subscribed'] == true){
@@ -567,8 +567,7 @@ function dateConfigurations(dateconfigList){
     $.each(dl, function(k, val){
          domainarr.push(val["domain_id"]);
     });
-    console.log(countryarr+"--"+domainarr);
-    
+
     var countriesValue = $('#country').val();
     var domainsValue = $('#domain').val();
     if(countriesValue != '' && domainsValue != ''){
@@ -593,8 +592,8 @@ function dateConfigurations(dateconfigList){
                     $('.tl-from', clone1).addClass('tl-from-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]);
                     $('.tl-to', clone1).addClass('tl-to-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]);
                     $('.tbody-dateconfiguration-list').append(clone1);
-                    $('.tl-from-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]).attr('disabled', true); 
-                    $('.tl-to-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]).attr('disabled', true); 
+                    $('.tl-from-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]).attr('disabled', true);
+                    $('.tl-to-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]).attr('disabled', true);
                 }
             }
         }
@@ -610,9 +609,9 @@ function dateConfigurations(dateconfigList){
     for(var c = 0; c < countryarr.length; c++ ){
         for(var d = 0; d < domainarr.length; d++ ){
             if($.inArray(countryarr[c], usercountryarr) != -1 && $.inArray(domainarr[d], userdomainarr) != -1){
-                $('.tl-from-'+countryarr[c]+'-'+domainarr[d]).attr('disabled', false); 
-                $('.tl-to-'+countryarr[c]+'-'+domainarr[d]).attr('disabled', false);     
-            }            
+                $('.tl-from-'+countryarr[c]+'-'+domainarr[d]).attr('disabled', false);
+                $('.tl-to-'+countryarr[c]+'-'+domainarr[d]).attr('disabled', false);
+            }
         }
     }
 }
@@ -692,12 +691,12 @@ function loadauto() {
     }
 //if($("#domainselected").val() == ''){
     if($("#clientgroup-id").val() == ''){
-        var domains = domainsList;    
+        var domains = domainsList;
     }
     if($("#clientgroup-id").val() != ''){
-        var domains = domainunionclientdomain();    
-    } 
-    
+        var domains = domainunionclientdomain();
+    }
+
     $('#ulist').empty();
     var str = '';
     for(var i in domains){
@@ -718,21 +717,21 @@ function loadauto() {
                 str += '<li id = "'+domainId+'" class="active_selectbox" onclick="activate(this)" >'+domainName+'</li> ';
             }else{
                str += '<li id="'+domainId+'" onclick="activate(this)" >'+domainName+'</li> ';
-            }    
+            }
         }
         else if(ccdd != 1 && cdd == 1){
             str += '<li id="'+domainId+'" onclick="activate(this)" >'+domainName+'</li> ';
-            
+
         }
         else if(ccdd == 1 && cdd != 1){
             if(selectdomainstatus == 'checked'){
                 str += '<li id="'+domainId+'" class="active_selectbox deactivate" >'+domainName+'</li> ';
             }
             else{
-                str += '<li id="'+domainId+'" class="deactivate" >'+domainName+'</li> ';   
+                str += '<li id="'+domainId+'" class="deactivate" >'+domainName+'</li> ';
             }
         }
-     
+
     }
   $('#ulist').append(str);
   $("#domainselected").val(editdomainval.length+" Selected")
@@ -798,7 +797,7 @@ function getClientCountriesNameunion(countryid){
 
     c = countriesList;
     cc = clientcountriesList;
-    
+
     if($("#country").val() != ''){
         editcountryval = $("#country").val().split(",");
     }
@@ -807,14 +806,14 @@ function getClientCountriesNameunion(countryid){
     ccnew = [];
     var arrayCountries = [];
     for(var i = 0; i < editcountryval.length; i++){ arrayCountries[i] = parseInt(editcountryval[i]); }
-    
+
     $.each(cc, function(key){
         if($.inArray(cc[key]['country_id'], arrayCountries) != -1){
             ccnew[key] = cc[key];
         }
     });
     var finalObj1 = [];
-    
+
     finalObj1 = c.concat(ccnew);
     var dupes = {};
     var finalObj = [];
@@ -826,9 +825,9 @@ function getClientCountriesNameunion(countryid){
                     finalObj.push(el);
                 }
             }
-        });    
+        });
     }
-    
+
     $.each(finalObj, function(key, val){
         if(val['country_id'] == countryid){
             countryname = val['country_name'];
@@ -845,7 +844,7 @@ function countryunionclientcountry(){
 
     c = countriesList;
     cc = clientcountriesList;
-    
+
     if($("#country").val() != ''){
         editcountryval = $("#country").val().split(",");
     }
@@ -854,14 +853,14 @@ function countryunionclientcountry(){
     ccnew = [];
     var arrayCountries = [];
     for(var i = 0; i < editcountryval.length; i++){ arrayCountries[i] = parseInt(editcountryval[i]); }
-    
+
     $.each(cc, function(key){
         if($.inArray(cc[key]['country_id'], arrayCountries) != -1){
             ccnew[key] = cc[key];
         }
     });
     var finalObj1 = [];
-    
+
     finalObj1 = c.concat(ccnew);
     var dupes = {};
     var finalObj = [];
@@ -871,8 +870,8 @@ function countryunionclientcountry(){
                 if (!dupes[el['country_id']]) {
                     dupes[el['country_id']] = true;
                     finalObj.push(el);
-                }    
-            }            
+                }
+            }
         });
     }
     return finalObj;
@@ -885,7 +884,7 @@ function domainunionclientdomain(){
 
     d = domainsList;
     cd = clientdomainList;
-    
+
     if($("#domains").val() != ''){
         editdomainval = $("#domain").val().split(",");
     }
@@ -894,16 +893,16 @@ function domainunionclientdomain(){
     cdnew = [];
     var arrayDomains = [];
     for(var i = 0; i < editdomainval.length; i++){ arrayDomains[i] = parseInt(editdomainval[i]); }
-    
+
     $.each(cd, function(key){
         if($.inArray(cd[key]['domain_id'], arrayDomains) != -1){
             cdnew[key] = cd[key];
         }
     });
     var finalObj1 = [];
-    
+
     finalObj1 = d.concat(cdnew);
-    
+
     var dupes = {};
     var finalObj = [];
     if(finalObj1.length != 0){
@@ -927,7 +926,7 @@ function getdomainunionclientdomainname(domainid){
 
     d = domainsList;
     cd = clientdomainList;
-    
+
     if($("#domains").val() != ''){
         editdomainval = $("#domain").val().split(",");
     }
@@ -936,16 +935,16 @@ function getdomainunionclientdomainname(domainid){
     cdnew = [];
     var arrayDomains = [];
     for(var i = 0; i < editdomainval.length; i++){ arrayDomains[i] = parseInt(editdomainval[i]); }
-    
+
     $.each(cd, function(key){
         if($.inArray(cd[key]['domain_id'], arrayDomains) != -1){
             cdnew[key] = cd[key];
         }
     });
     var finalObj1 = [];
-    
+
     finalObj1 = d.concat(cdnew);
-    
+
     var dupes = {};
     var finalObj = [];
 
@@ -972,7 +971,7 @@ function checkclientcountry(countryid){
     editcountryval = $("#country").val().split(",");
     for(var i = 0; i < editcountryval.length; i++){ arrayCountries[i] = parseInt(editcountryval[i]); }
     if($.inArray(countryid, arrayCountries) != -1){
-        returnval = 1;        
+        returnval = 1;
     }
     return returnval;
 }
@@ -985,7 +984,7 @@ function checkclientdomain(domainid){
     editdomainval = $("#domain").val().split(",");
     for(var i = 0; i < editdomainval.length; i++){ arrayDomains[i] = parseInt(editdomainval[i]); }
     if($.inArray(domainid, arrayDomains) != -1){
-        returnval = 1;        
+        returnval = 1;
     }
     return returnval;
 }
@@ -1028,7 +1027,7 @@ function loadautocountry() {
     }
 
     if($("#clientgroup-id").val().trim() == ""){
-        var countries = countriesList; 
+        var countries = countriesList;
         $('#ulist-country').empty();
         var str = '';
         for(var i in countries){
@@ -1044,9 +1043,9 @@ function loadautocountry() {
                 str += '<li id="'+countryId+'" class="active_selectbox_country" onclick="activateCountry(this)" >'+countryName+'</li> ';
             }
             else{
-                str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';   
+                str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';
             }
-            
+
         }
 
     }
@@ -1072,25 +1071,25 @@ function loadautocountry() {
                    str += '<li id = "'+countryId+'" class="active_selectbox_country" onclick="activateCountry(this)" >'+countryName+'</li> ';
                 }else{
                    str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';
-                }    
+                }
             }
             else if(cclientc != 1 && ccc == 1){
                 str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';
-                
+
             }
             else if(cclientc == 1 && ccc != 1){
                 if(selectcountrystatus == 'checked'){
                     str += '<li id="'+countryId+'" class="active_selectbox_country deactivate" >'+countryName+'</li> ';
                 }
                 else{
-                    str += '<li id="'+countryId+'" class="deactivate" >'+countryName+'</li> ';   
+                    str += '<li id="'+countryId+'" class="deactivate" >'+countryName+'</li> ';
                 }
             }
-            
-        }
-    }  
 
-    
+        }
+    }
+
+
     $('#ulist-country').append(str);
     $("#countryselected").val(editcountryval.length+" Selected");
 }
@@ -1183,7 +1182,7 @@ function checkuser(userid, usercountryids, userdomainids){
             }
         }
     }
-    
+
     if(arrc.length > 0 && arrd.length >0){
         returnval = 1;
     }
@@ -1211,9 +1210,9 @@ function loadAutoUsers () {
                 str += '<li id="'+users[i]["user_id"]+'" class="active_selectbox_users" onclick="activateUsers(this)" >'+users[i]["employee_name"]+'</li> ';
             }else{
                 str += '<li id="'+users[i]["user_id"]+'" onclick="activateUsers(this)" >'+users[i]["employee_name"]+'</li> ';
-            }    
+            }
         }
-        
+
     }
   $('#selectboxview-users ul').append(str);
   $("#usersSelected").val(editusersval.length+" Selected")

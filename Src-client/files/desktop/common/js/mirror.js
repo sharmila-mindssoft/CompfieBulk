@@ -97,13 +97,11 @@ function initMirror() {
     }
 
     function getUserMenu(){
-        console.log("mirror")
         var info = getUserInfo();
         if (info != null){
             return info["menu"]["menus"];
         }else{
             frm = window.location.href;
-            console.log(frm);
             // if (frm.indexOf("knowledge") > -1)
             //     window.location.href = "/knowledge/login";
             // else
@@ -168,7 +166,6 @@ function initMirror() {
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
-                console.log("API STATUS :"+status)
                 if (status.toLowerCase().indexOf(matchString) != -1){
                     if(status == "UpdateUserProfileSuccess"){
                         updateUserInfo(response);
@@ -252,7 +249,6 @@ function initMirror() {
                 var response = data[1];
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1){
-                    console.log("mirror success");
                     initSession(response)
                     callback(null, response);
                 }

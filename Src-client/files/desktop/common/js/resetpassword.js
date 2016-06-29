@@ -1,11 +1,8 @@
 function displayMessage(message) {
-  console.log("inside displayMessage");
-  console.log("obj:"+$(".error-message"))
   $(".error-message").html(message);
   $(".error-message").show();
 }
 $("#submit").click(function(){
-    console.log("inside submit");
     $(".error-message").html("");
     url = window.location.href;
     url_parameters = url.split("/");
@@ -23,7 +20,6 @@ $("#submit").click(function(){
     } else {
       url = window.location.href;
       url_parameters = url.split("/");
-      console.log(url_parameters);
       reset_token = url_parameters[url_parameters.length - 1];
       if(url_parameters[url_parameters.length - 2] != "reset-password"){
           function onSuccess(data){
@@ -50,7 +46,7 @@ $("#submit").click(function(){
         }
         );
       }else{
-        
+
         function onSuccess(data){
             displayMessage(message.password_reset_success);
             $("#newpassword").val("");
@@ -88,7 +84,6 @@ $(document).ready(function(){
   });
 
   function onSuccess(data){
-    console.log("inside onSuccess" + data);
     // if (data[0] == "InvalidResetToken"){
     //   displayMessage("Invalid Reset Token");
     //   $(".error-message").html(status);
@@ -115,7 +110,7 @@ $(document).ready(function(){
         }
       );
   }else{
-      
+
       mirror.validateResetToken(reset_token,
           function (error, response) {
             if (error == null){
@@ -127,5 +122,5 @@ $(document).ready(function(){
         }
       );
   }
- 
+
 });

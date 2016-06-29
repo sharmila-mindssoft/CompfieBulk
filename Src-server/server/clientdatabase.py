@@ -354,7 +354,7 @@ class ClientDatabase(Database):
         return True
 
     def validate_session_token(self, client_id, session_token) :
-        query = "SELECT t1.user_id, t2.is_service_provider, IFNULL(t2.service_provider_id, 0) \
+        query = "SELECT t1.user_id, IFNULL(t2.is_service_provider, 0), IFNULL(t2.service_provider_id, 0) \
         FROM tbl_user_sessions t1 \
         INNER JOIN tbl_users t2 ON t1.user_id = t2.user_id AND t2.is_active = 1 \
             WHERE t1.session_token = '%s'" % (session_token)
@@ -9484,7 +9484,7 @@ class ClientDatabase(Database):
         return notification_count, reminder_count, escalation_count
 
     def is_primary_admin(self, user_id):
-        column = "count(*)"
+        column = "count(1)"
         condition = "user_id = '%d' and is_primary_admin = 1" % user_id
         rows = self.get_data(self.tblUsers, column, condition)
         if rows[0][0] > 0 or user_id == 0:
@@ -9493,7 +9493,7 @@ class ClientDatabase(Database):
             return False
 
     def is_service_proivder_user(self, user_id):
-        column = "count(*)"
+        column = "count(1)"
         condition = "user_id = '%d' and is_service_provider = 1" % user_id
         rows = self.get_data(self.tblUsers, column, condition)
         if rows[0][0] > 0:

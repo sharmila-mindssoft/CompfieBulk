@@ -570,7 +570,7 @@ function prepareComplianceStatusChartData (chart_data) {
     // var currentYear = (new Date()).getFullYear();
     var yearInput = chartInput.getCurrentYear()
     // var yearInput = currentYear - chartInput.getChartYear();
-    // console.log(yearInput)
+
     var chartTitle = getFilterTypeTitle()
     var domainsInput = chartInput.getDomains();
     var countriesInput = chartInput.getCountries();
@@ -580,7 +580,6 @@ function prepareComplianceStatusChartData (chart_data) {
     var yAxisDelayed = [];
     var yAxisInprogress = [];
     var yAxisNotComplied = [];
-    console.log(chart_data)
     for (var i = 0; i < chart_data.length; i++) {
         var chartData = chart_data[i];
         var filter_type_id = chartData["filter_type_id"];
@@ -673,7 +672,7 @@ function prepareComplianceStatusChartData (chart_data) {
         xAxisDrillDownSeries[xAxis[j]] = data_list
     }
     chartTitle =  chartTitle + " wise compliances";
-    //console.log(chartDataSeries)
+
     return [xAxisName, xAxis, chartDataSeries, chartTitle, xAxisDrillDownSeries];
 }
 
@@ -990,7 +989,6 @@ function showComplianceApplicabilityDrillDownRecord_set(data, type){
 //     return object.slice(start, end);
 // }
 function showmorerecords(){
-    console.log(chartInput.chart_type);
 
     var getcharttype =  chartInput.chart_type;
     // Possiblities: "compliance_status", "escalations", "not_complied", "compliance_report", "trend_chart", "applicability_status"
@@ -1119,7 +1117,7 @@ function showmorerecords(){
 }
 // $("#pagination").on("click", function(){
 //     alert("welcome to paginationrecord");
-//     console.log(chartInput.chartType);
+
 //     //if(chartInput.chartType)
 //         displayLoader();
 //         if($('.loading-indicator-spin').css('display') != 'none')
@@ -1281,7 +1279,6 @@ function showComplianceApplicabilityDrillDownRecord(data, type){
     });
 
     var totallist = FULLARRAYLIST.length;
-    console.log(totallist);
     // if(totallist > PAGESIZE){
     //     $('#pagination').show();
     // }
@@ -1291,7 +1288,6 @@ function showComplianceApplicabilityDrillDownRecord(data, type){
     //var sub_array_list = get_sub_array(FULLARRAYLIST, STARTCOUNT, ENDCOUNT);
 
     for(var y = 0;  y < totallist; y++){
-        console.log(Object.keys(FULLARRAYLIST[y])[0]);
             if(Object.keys(FULLARRAYLIST[y])[0] == "level1_name"){
                 ACCORDIONCOUNT++;
                 showComplianceApplicabilityDrillDownRecord_level1List(FULLARRAYLIST[y]);
@@ -2508,7 +2504,6 @@ function prepareEscalationChartdata(source_data) {
         }
         chartTitle = "Escalation of " + chartTitle + " " + filter_names;
     }
-    console.log(chartDataSeries)
     return [xAxis, chartDataSeries, chartTitle]
 }
 
@@ -2574,7 +2569,6 @@ function prepareTrendChartData(source_data) {
     var xAxisIds = [];
     var chartDataSeries = [];
     xAxis = source_data["years"];
-    console.log(xAxis)
     for (var i =0; i< source_data["data"].length; i++) {
         chartData = source_data["data"][i];
         var filter_type_id = chartData["filter_id"];
@@ -2586,7 +2580,6 @@ function prepareTrendChartData(source_data) {
         total_count = [];
         compliance_info = chartData["complied_compliance"];
         data = []
-        console.log(compliance_info)
         for (var j = 0; j < compliance_info.length; j++) {
             compliance_count.push(
                 compliance_info[j]["complied_compliances_count"]
@@ -2607,7 +2600,6 @@ function prepareTrendChartData(source_data) {
                 "total":total_count
             }
         );
-        console.log(chartDataSeries);
     }
     chartTitle = "Complied (" + xAxis[0] + " to " + xAxis[xAxis.length - 1] + ")";
     return [xAxis, chartTitle, chartDataSeries];
@@ -2615,13 +2607,10 @@ function prepareTrendChartData(source_data) {
 
 function updateTrendChart(data) {
     data = prepareTrendChartData(data);
-    console.log(data);
     print_data = JSON.stringify(data, null, " ");
-    console.log(print_data);
     xAxis = data[0];
     chartTitle = data[1];
     chartDataSeries = data[2];
-    console.log(chartDataSeries);
     var highchart;
     highchart = new Highcharts.Chart({
         chart: {
@@ -2761,9 +2750,6 @@ function prepareNotCompliedChart(source_data) {
         }
         chartTitle = "Over due compliance of " + chartTitle + " " + filter_names;
     }
-    console.log(chartDataSeries)
-    console.log(chartTitle)
-    console.log(count)
     return [chartDataSeries, chartTitle,  count];
 }
 
@@ -3305,11 +3291,11 @@ function loadComplianceStatusChart () {
                     data1.push(COMPLIANCE_STATUS_DATA[i]);
             }
             updateComplianceStatusChart(data1);
-            console.log(COMPLIANCE_STATUS_DATA.length)
+
             chartInput.resetRangeIndex()
             hideLoader();
             range = chartInput.getRangeIndex();
-            console.log(range)
+
             if (COMPLIANCE_STATUS_DATA.length <= range ){
                 hidePreviousNext();
             }
@@ -4091,7 +4077,7 @@ $(document).ready(function () {
     //                 // alert("Contract not expired yet"+no_of_days_left)
     //             }
     //             notification_count = data.notification_count;
-    //             console.log("notification_count"+notification_count);
+
     //             reminder_count = data.reminder_count;
     //             escalation_count = data.escalation_count;
     //             $("#notification_count").text(notification_count);

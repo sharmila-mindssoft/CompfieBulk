@@ -540,7 +540,7 @@ $("#upload_file").on("change", function(e) {
   var fN = tFN.substring(0, tFN.indexOf('.'));
   var fE = tFN.substring(tFN.lastIndexOf('.') + 1);
   var uniqueId = Math.floor(Math.random() * 90000) + 10000;
-  
+
   f_Name = fN+'-'+uniqueId+'.'+fE;
   f_Size = this.files[0].size;
 
@@ -568,7 +568,7 @@ $("#upload_file").on("change", function(e) {
     $("#uploaded_filename").html('');
     $("#upload_file").val('');
   }
-  
+
   /*mirror.uploadFile(e, function result_data(data) {
     if (data == "File max limit exceeded") {
       displayMessage(message.file_maxlimit_exceed)
@@ -823,7 +823,7 @@ function load_compliance(){
     var display_image = '';
     var complianceFrequency=null;
     var repeatsval = null;
-    if(compliances[entity]["r_every"] != null && compliances[entity]["r_type_id"] != null && 
+    if(compliances[entity]["r_every"] != null && compliances[entity]["r_type_id"] != null &&
       compliances[entity]["r_every"] != 0 && compliances[entity]["r_type_id"] != 0){
       for (var rtype in complianceRepeatTypeList) {
         if(complianceRepeatTypeList[rtype]["repeat_type_id"] == compliances[entity]["r_type_id"]){
@@ -889,9 +889,8 @@ $("#temp_addcompliance").click(function() {
     var file_data = file_lst[0];
     form_data.append("file" + fCId, file_data, f_Name);
     form_data.append("session_token", mirror.getSessionToken())
-    console.log(form_data)
   }
-  
+
   /*for (var i = 0; i < file_lst.length; i++) {
     var file_data = file_lst[i];
     console.log(file_data);
@@ -1171,7 +1170,7 @@ function temp_editcompliance(edit_id){
       $('#statutory_month').val(statutory_dates[0]["statutory_month"]);
       $('#triggerbefore').val(statutory_dates[0]["trigger_before_days"]);
     }
-    
+
     $('#Recurring').hide();
     $('#Occasional').hide();
     $('#One_Time').show();
@@ -2186,7 +2185,7 @@ $('.repeatlabelendday').click(function(){
     }else{
       $('#multiple_statutory_date'+i).val('31');
     }
-    
+
     $('#multiple_statutory_date'+i).hide();
   }
   $('#single_statutory_date').hide();
