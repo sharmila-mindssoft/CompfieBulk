@@ -209,7 +209,8 @@ var message = {
 	'password_already_used' : 'Password already used. Enter different password',
 	'reassign_compliance_before_user_deactivate' : 'Reassign compliances before deactivate',
 	'cant_deactivate_primaryadmin' : 'Only Techno team can change stauts of primary admin',
-	'trasaction_exists' : 'Transaction Exists'
+	'trasaction_exists' : 'Transaction Exists',
+	"NotEnoughSpaceAvailable": "Not enough space available"
 };
 
 function clearMessage() {
