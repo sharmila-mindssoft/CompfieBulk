@@ -120,7 +120,7 @@ class API(object):
                         print e
                         logger.logClientApi(ip, port)
                         logger.logClientApi(e, "Server added")
-                        logger.logClientApi(traceback.format_exc(), "")
+                        logger.logClient("error", "exception", str(traceback.format_exc()))
                         logger.logClient("error", "clientmain.py-server-added", e)
                         logger.logClientApi("Client database not available to connect ", company_id + "-" + company.to_structure())
                         continue

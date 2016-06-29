@@ -6107,8 +6107,15 @@ class ClientDatabase(Database):
                 ))
             remaining_licence -= 1
 
-        used_space = round(total_disk_space_used/1000000000, 2)
+        used_space = (total_disk_space_used/1000000000)
+        used_space = str(used_space)
+        tmp_s = used_space.split(".")
+        if len(tmp_s) > 0 :
+            val = tmp_s[0] + "." + tmp_s[1][:2]
+            used_space = float(val)
+
         total_space = total_disk_space/1000000000
+
         profile_detail = clientadminsettings.PROFILE_DETAIL(
             contract_from,
             contract_to,
