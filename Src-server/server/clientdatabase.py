@@ -125,7 +125,7 @@ class ClientDatabase(Database):
         return trail_id
 
     def is_configured(self):
-        columns = "count(*)"
+        columns = "count(1)"
         condition = "1"
         rows = self.get_data(
             self.tblClientGroups, columns, condition
@@ -136,7 +136,7 @@ class ClientDatabase(Database):
             return True
 
     def is_in_contract(self):
-        columns = "count(*)"
+        columns = "count(1)"
         condition = "now() between contract_from and DATE_ADD(contract_to, INTERVAL 1 DAY)"
         rows = self.get_data(
             self.tblClientGroups, columns, condition
@@ -147,7 +147,7 @@ class ClientDatabase(Database):
             return True
 
     def is_contract_not_started(self):
-        columns = "count(*)"
+        columns = "count(1)"
         condition = "now() < contract_from"
         rows = self.get_data(
             self.tblClientGroups, columns, condition
@@ -350,15 +350,32 @@ class ClientDatabase(Database):
         q = "delete from tbl_user_sessions where session_token = '%s'" % (session_token)
         self.execute(q)
 
+    def chack_client_contract():
+        return True
+
     def validate_session_token(self, client_id, session_token) :
-        query = "SELECT user_id FROM tbl_user_sessions \
-            WHERE session_token = '%s'" % (session_token)
+        query = "SELECT t1.user_id, t2.is_service_provider, IFNULL(t2.service_provider_id, 0) \
+        FROM tbl_user_sessions t1 \
+        INNER JOIN tbl_users t2 ON t1.user_id = t2.user_id AND t2.is_active = 1 \
+            WHERE t1.session_token = '%s'" % (session_token)
         row = self.select_one(query)
         user_id = None
         if row :
-            user_id = row[0]
-            self.update_session_time(session_token)
-        return user_id
+            user_id = int(row[0])
+            is_service_provider = int(row[1])
+            service_id = int(row[2])
+            if is_service_provider == 1 :
+                res = self.is_service_provider_in_contract(service_id)
+                if res :
+                    self.update_session_time(session_token)
+                    return user_id
+            else :
+                res = self.is_in_contract()
+                if res :
+                    self.update_session_time(session_token)
+                    return user_id
+
+        return None
 
     def get_forms(self, client_id):
         columns = "tf.form_id, tf.form_type_id, tft.form_type, "
@@ -7661,7 +7678,6 @@ class ClientDatabase(Database):
                                     name += file_name_part
                         auto_code = self.new_uuid()
                         file_name = "%s-%s.%s" % (name, auto_code, exten)
-                        file_name = doc.file_name
                         document_names.append(file_name)
                         self.convert_base64_to_file(file_name, doc.file_content, client_id)
                     self.update_used_space(file_size)
@@ -9485,7 +9501,7 @@ class ClientDatabase(Database):
             return False
 
     def is_service_provider_in_contract(self, service_provider_id):
-        column = "count(*)"
+        column = "count(1)"
         condition = "now() between contract_from and DATE_ADD(contract_to, INTERVAL 1 DAY)\
         and service_provider_id = '%d' and is_active = 1" % service_provider_id
         rows = self.get_data(self.tblServiceProviders, column, condition)
