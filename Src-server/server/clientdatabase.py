@@ -7659,8 +7659,8 @@ class ClientDatabase(Database):
                                     name = file_name_part
                                 else:
                                     name += file_name_part
-                        # auto_code = self.new_uuid()
-                        # file_name = "%s-%s.%s" % (name, auto_code, exten)
+                        auto_code = self.new_uuid()
+                        file_name = "%s-%s.%s" % (name, auto_code, exten)
                         file_name = doc.file_name
                         document_names.append(file_name)
                         self.convert_base64_to_file(file_name, doc.file_content, client_id)
