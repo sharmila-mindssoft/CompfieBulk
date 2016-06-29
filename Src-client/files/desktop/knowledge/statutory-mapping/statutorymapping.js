@@ -1551,8 +1551,8 @@ function savestatutorymapping(){
       function (error, response) {
           if (error == null){
             mirror.uploadFormatFile(form_data, function result_data (status, data) {
+              onSuccess(response);
             })
-            onSuccess(response);
           }
           else {
             onFailure(error, response);
@@ -1569,8 +1569,8 @@ function savestatutorymapping(){
       function (error, response) {
           if (error == null){
             mirror.uploadFormatFile(form_data, function result_data (status, data) {
+              onSuccess(response);
             })
-            onSuccess(response);
           }
           else {
             onFailure(error, response);

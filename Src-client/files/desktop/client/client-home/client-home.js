@@ -1491,40 +1491,29 @@ function notCompliedDrilldown(status, data){
 }
 
 function showEscalationDrillDownRecord(data, year){
+
     var filter_type = chartInput.getFilterType();
+    $(".table-thead-drilldown-list").empty();
+    $(".table-drilldown-list tbody").remove();
+    $(".escalation-drilldown-list .td-escalation").empty();
     $('.drilldown-title').text("Escalations of "+GROUP_NAME+" for the year "+year);
     if(filter_type == "group"){
-        $(".table-thead-drilldown-list").empty();
-        $(".table-drilldown-list tbody").remove();
-
         groupWiseEscalationDrillDown("delayed", data);
         groupWiseEscalationDrillDown("not_complied", data);
     }
     if(filter_type == "business_group"){
-        $(".table-thead-drilldown-list").empty();
-        $(".table-drilldown-list tbody").remove();
-
         businessgroupWiseEscalationDrillDown("delayed", data);
         businessgroupWiseEscalationDrillDown("not_complied", data);
     }
     if(filter_type == "legal_entity"){
-        $(".table-thead-drilldown-list").empty();
-        $(".table-drilldown-list tbody").remove();
-
         legalentityWiseEscalationDrillDown("delayed", data);
         legalentityWiseEscalationDrillDown("not_complied", data);
     }
     if(filter_type == "division"){
-        $(".table-thead-drilldown-list").empty();
-        $(".table-drilldown-list tbody").remove();
-
         divisionWiseEscalationDrillDown("delayed", data);
         divisionWiseEscalationDrillDown("not_complied", data);
     }
     if(filter_type == "unit"){
-        $(".table-thead-drilldown-list").empty();
-        $(".table-drilldown-list tbody").remove();
-
         unitWiseEscalationDrillDown("delayed", data);
         unitWiseEscalationDrillDown("not_complied", data);
     }
@@ -2160,6 +2149,8 @@ function trendChartDrilldown(status, data){
 
 function showDrillDownRecord(status, data, filterTypeName){
     //$("#pagination").hide();
+    //clear escalation data
+    $(".escalation-drilldown-list .td-escalation").empty();
     var data = data["drill_down_data"];
     var filter_type = chartInput.getFilterType();
     if(filter_type == "group"){
