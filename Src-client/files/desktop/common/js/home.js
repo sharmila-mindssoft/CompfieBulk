@@ -10,6 +10,7 @@ function initializeUI () {
 
 
 $(document).ready(function () {
+    console.log("home.js ready");
     if (!mirror.verifyLoggedIn())
         return;
 

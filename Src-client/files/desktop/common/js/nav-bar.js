@@ -18,7 +18,8 @@ function toUpperCamelCase (s) {
 }
 
 function initializeNavBar () {
-
+    console.log("initializeNavBar")
+    console.log(window.localStorage["shortName"])
     function getItemObject (form_url, form_name) {
         var itemObject = $("#nav-bar-templates .sub-menu-item li").clone();
         if (form_url !== null)
@@ -26,16 +27,25 @@ function initializeNavBar () {
         $(".menu-item", itemObject).text(form_name);
         return itemObject;
     }
+    var frm = window.location.href
     var navBarItems = null
-    if (window.sessionStorage["shortName"] != null){
-        navBarItems = client_mirror.getUserMenu();
-    }else{
+    if (frm.indexOf("knowledge") > -1) {
         navBarItems = mirror.getUserMenu();
     }
-    if (navBarItems === null)
+    else {
+        navBarItems = client_mirror.getUserMenu();
+    }
+    // if (window.localStorage["shortName"] != null){
+    //     navBarItems = client_mirror.getUserMenu();
+    // }else{
+    //     console.log("else")
+    //     navBarItems = mirror.getUserMenu();
+    //     console.log(navBarItems)
+    // }
+    if (navBarItems === null || navBarItems == undefined)
         return;
     var menus = null
-    if (window.sessionStorage["shortName"] != null){
+    if (window.localStorage["shortName"] != null){
         menus = ["Master", "Transaction", "Report"];
     }else{
         menus = ["Master", "Transaction", "Report"];
@@ -219,6 +229,7 @@ function persistNavBar() {
     frms = window.location.href.split("/");
     if (frms.indexOf("/home") == -1) {
         client_name = client_mirror.getClientShortName()
+        console.log(client_name)
         if ((client_name === null) || (client_name === undefined)) {
             ac_menu = mirror.getPageUrl();
             form_name = "/" + frms[frms.length - 2] + "/" + frms[frms.length - 1];

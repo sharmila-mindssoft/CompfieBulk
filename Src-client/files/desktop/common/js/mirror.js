@@ -97,18 +97,28 @@ function initMirror() {
     }
 
     function getUserMenu(){
+        console.log("mirror")
         var info = getUserInfo();
         if (info != null){
             return info["menu"]["menus"];
         }else{
-            window.location.href = window.sessionStorage["login_url"];
+            frm = window.location.href;
+            console.log(frm);
+            // if (frm.indexOf("knowledge") > -1)
+            //     window.location.href = "/knowledge/login";
+            // else
+            //     window.location.href = "/login/" + window.localStorage["recent_short_name"];
         }
     }
 
     function getPageUrl(){
-        ac_menu = getUserMenu();
-        keys = Object.keys(ac_menu);
         page_urls = []
+        ac_menu = getUserMenu();
+        if (ac_menu == undefined) {
+            return page_urls
+        }
+        keys = Object.keys(ac_menu);
+
         for (var k = 0; k < keys.length; k++) {
             key = keys[k];
             objs = ac_menu[key]

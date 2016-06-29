@@ -33,20 +33,19 @@ class HandleRequest(object):
                 callback(None, body)
             else:
                 callback(code, body)
-        print "url"
-        print body
-        if "/api/files" not in url:
+        if "/api/files" not in url :
             body = json.dumps([self._company_id, body])
-            request = HTTPRequest(
-                url,
-                method="POST",
-                body=body,
-                headers={
-                    "Content-Type": "application/json",
-                    "X-Real-Ip": self._remote_ip
-                },
-                request_timeout=100
-            )
+
+        request = HTTPRequest(
+            url,
+            method="POST",
+            body=body,
+            headers={
+                "Content-Type": "application/json",
+                "X-Real-Ip": self._remote_ip
+            },
+            request_timeout=100
+        )
         self._http_client.fetch(request, client_callback)
 
     def _respond(self, response_data):
