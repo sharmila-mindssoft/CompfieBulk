@@ -131,6 +131,7 @@ function initClientMirror() {
         page_urls.push("/change-password");
         page_urls.push("/settings");
         page_urls.push("/profile");
+        page_urls.push("/home");
 
         return page_urls;
     }

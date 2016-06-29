@@ -539,7 +539,12 @@ function user_active(userId, isActive){
         }
         function onFailure(error){
             if (error == "CannotChangePrimaryAdminStatus"){
-                alert("Only Techno team can change stauts of primary admin");
+                alert(message.cant_deactivate_primaryadmin);
+            }
+            else if(error == "ReassignCompliancesBeforeDeactivate"){
+                alert(message.reassign_compliance_before_user_deactivate)
+            }else{
+                alert(error)
             }
         }
         client_mirror.changeClientUserStatus(userId, isActive,

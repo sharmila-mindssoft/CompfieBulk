@@ -354,7 +354,7 @@ class ClientDatabase(Database):
         return True
 
     def validate_session_token(self, client_id, session_token) :
-        query = "SELECT t1.user_id, t2.is_service_provider, IFNULL(t2.service_provider_id, 0) \
+        query = "SELECT t1.user_id, IFNULL(t2.is_service_provider, 0), IFNULL(t2.service_provider_id, 0) \
         FROM tbl_user_sessions t1 \
         INNER JOIN tbl_users t2 ON t1.user_id = t2.user_id AND t2.is_active = 1 \
             WHERE t1.session_token = '%s'" % (session_token)

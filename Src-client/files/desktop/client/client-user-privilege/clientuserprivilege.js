@@ -257,9 +257,10 @@ function userPrivilegeActive(userGroupId, isActive){
 	   		initialize();
 	  	}
 	  	function onFailure(error){
-	  		if(error == "CannotDeactivateUserExists"){
+	  		/*if(error == "CannotDeactivateUserExists"){
 	  			displayMessage(message.cannot_deactivate_usergroup)
-	  		}
+	  		}*/
+	  		alert(message.cannot_deactivate_usergroup);
 	 	}
 	  	client_mirror.changeClientUserGroupStatus(userGroupId, isActive, 
 	  		function (error, response){
@@ -268,6 +269,7 @@ function userPrivilegeActive(userGroupId, isActive){
 				}
 				else{
 					onFailure(error);
+
 				}
 			}
 		);

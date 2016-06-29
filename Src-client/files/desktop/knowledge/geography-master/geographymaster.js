@@ -89,11 +89,16 @@ function changeStatus (geographyId,isActive) {
   if (answer)
   {
     function onSuccess(response){
-    GetGeographies();
-    $(".listfilter").val('');
-  }
-  function onFailure(error){
-  }
+      GetGeographies();
+      $(".listfilter").val('');
+    }
+    function onFailure(error){
+      if(error == "TransactionExists"){
+          alert(message.trasaction_exists)
+      }else{
+          alert(error)
+      }      
+    }
   mirror.changeGeographyStatus(geographyId, isActive,
     function (error, response) {
             if (error == null){

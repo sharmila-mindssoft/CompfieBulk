@@ -90,7 +90,7 @@ function changeStatus (userId,isActive) {
 			$(".filter-text-box").val('');
 		}
 		function onFailure(error){
-			displayMessage(error);
+			alert(error)
 		}
 		mirror.changeAdminUserStatus(userId, isActive,
 			function (error, response) {

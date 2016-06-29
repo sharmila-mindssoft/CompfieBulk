@@ -170,7 +170,11 @@ function changeStatus (domainId,isActive) {
       $("#search-domain-name").val('');
     }
     function onFailure(error){
-      alert(error);
+      if(error == "TransactionExists"){
+          alert(message.trasaction_exists)
+      }else{
+          alert(error)
+      }
     }
     mirror.changeDomainStatus(domainId, isActive,
       function (error, response) {
