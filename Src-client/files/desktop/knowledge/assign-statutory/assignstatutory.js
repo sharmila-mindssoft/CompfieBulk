@@ -18,6 +18,7 @@ var pageSize = 100;
 var startCount;
 var endCount;
 var mUnit = 3;
+var msg = '';
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -275,6 +276,22 @@ function load_secondwizard(){
 
     actCount = actCount + 1;
     count++;
+
+    $(".act-label").on("click", function(event){
+      accordionstatus = false;
+    });
+    
+    $(clone, '.actname').click(function(){
+      if(accordionstatus){
+        //Expand or collapse this panel
+        $(this).next().slideToggle('fast');
+        //Hide the other panels
+        $(".accordion-content").not($(this).next()).slideUp('fast');
+      }else{
+        accordionstatus = true;
+      }
+    });
+      
   }
 
   if(count <= 1){
@@ -284,7 +301,7 @@ function load_secondwizard(){
     $('#activate-step-finish').hide();
   }
 
-  $(document).ready(function($) {
+  /*$(document).ready(function($) {
     $(".act-label").on("click", function(event){
       accordionstatus = false;
     });
@@ -299,7 +316,7 @@ function load_secondwizard(){
         accordionstatus = true;
       }
     });
-  });
+  });*/
 }
 
 //load unit according to filter selection
@@ -483,7 +500,8 @@ $("#unit").click(function(event){
         assignStatutoryUnitIds.push(parseInt(event.target.id));
         assignStatutoryUnitValues.push($(event.target).text());
       }else{
-        displayMessage("Maximum("+ mUnit + ") "  + message.maximum_units);
+        msg = "Maximum("+ mUnit + ") ";
+        displayMessage(msg + message.maximum_units);
       }
     }
 

@@ -95,6 +95,14 @@ function loadCountwiseResult(filterList){
       }*/
       lastOccuranceid = 0;
       count++;
+
+      $(clone, '.actname').click(function(){
+        //Expand or collapse this panel
+        $(this).next().slideToggle('fast');
+        //Hide the other panels
+        $(".accordion-content").not($(this).next()).slideUp('fast');
+      });
+
     }
 
     var occurance = '';
@@ -122,7 +130,7 @@ function loadCountwiseResult(filterList){
     if(download_url == null){
       $('.tbl_compliancetask', clone1).html(compliance_name);
     }else{
-      $('.tbl_compliancetask', clone1).html('<a href= "'+ download_url +'" target="_new">'+compliance_name+'</a>');
+      $('.tbl_compliancetask', clone1).html('<a href= "'+ download_url +'" target="_blank" download>'+compliance_name+'</a>');
     }
 
     var sdateDesc = '';
@@ -199,15 +207,7 @@ function loadCountwiseResult(filterList){
     $('.compliance_count').text('');
   }
 
-   if(compliance_count >= totalRecord){
-    $(document).ready(function($) {
-      $('#accordion').find('.accordion-toggle').click(function(){
-        //Expand or collapse this panel
-        $(this).next().slideToggle('fast');
-        //Hide the other panels
-        $(".accordion-content").not($(this).next()).slideUp('fast');
-      });
-    });
+  if(compliance_count >= totalRecord){
     $('#pagination').hide();
   }
 

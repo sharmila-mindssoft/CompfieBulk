@@ -949,8 +949,6 @@ function initClientMirror() {
     }
 
     function convert_to_base64(file, name, size, callback) {
-        alert("enter")
-        console.log("enter")
         var reader = new FileReader();
         reader.onload = function(readerEvt) {
             var binaryString = readerEvt.target.result;
@@ -958,7 +956,6 @@ function initClientMirror() {
             callback(file_content, name, size)
         };
         reader.readAsBinaryString(file);
-        console.log("end")
     }
 
     function uploadFile(fileListener, callback) {
@@ -975,23 +972,23 @@ function initClientMirror() {
             console.log("file.size : "+file.size);
             console.log("max_limit : "+max_limit);
             if (file_size > max_limit) {
-                displayMessage("File max limit exceeded");
+                displayMessage(message.file_maxlimit_exceed);
                 return;
             }
             else if(file_extension == 'exe'){
-                displayMessage("Invalid file format");
+                displayMessage("");
                 return;
             }
             else if(file_extension == 'htm'){
-                displayMessage("Invalid file format");
+                displayMessage(message.invalid_file_format);
                 return;
             }
             else if(file_extension == 'xhtml'){
-                displayMessage("Invalid file format");
+                displayMessage(message.invalid_file_format);
                 return;
             }
             else if(file_extension == 'html'){
-                displayMessage("Invalid file format");
+                displayMessage(message.invalid_file_format);
                 return;
             }
             else{
@@ -999,7 +996,7 @@ function initClientMirror() {
                 if (file) {
                     convert_to_base64(file, file_name, file_size, function(file_content, name, size) {
                         if (file_content == null) {
-                            callback("File content is empty")
+                            callback(message.file_content_empty)
                         }
                         result = uploadFileFormat(
                                 size, name, file_content
@@ -1748,14 +1745,20 @@ function initClientMirror() {
 
     function uploadFormatFile(formdata, callback){
         $.ajax({
-            url : "/api/files",
+            url : "/api/files/" + getSessionToken(),
             type: "POST",
             crossDomain: true,
             data : formdata,
             processData: false,
             contentType: false,
             success:function(data, textStatus, jqXHR){
-                callback(data)
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                if (Object.keys(response).length == 0)
+                    callback(status, null)
+                else
+                    callback(status, response)
             },
             error: function(jqXHR, textStatus, errorThrown){
                 //if fails

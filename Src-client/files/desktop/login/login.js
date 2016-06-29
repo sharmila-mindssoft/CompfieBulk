@@ -51,13 +51,13 @@ function getShortName(){
 
 function isLoginValidated (e_email, e_password) {
     if (e_email.val() == "") {
-        displayLoginMessage("Enter username / password");
+        displayLoginMessage(message.username_password_required);
         e_email.focus();
         return false;
     }
 
     if (e_password.val() == "") {
-        displayLoginMessage("Enter username / password");
+        displayLoginMessage(message.username_password_required);
         e_password.focus();
         return false;
     }
@@ -126,17 +126,17 @@ function performLogin(e_button, e_email, e_password) {
     // e_password.attr("disabled", "disabled");
 
     function onFailure(status) {
-        console.log("status"+status);
-        message = "Unable to login. Incorrect username / password!";
+        //console.log("status"+status);
+        message = message.invalid_username_password;
         if(status == "ContractExpired"){
-            message = "Contract Expired"
+            message = message.contract_expired;
         }else if (status == "NotConfigured"){
-            message = "Please Wait...Your account configuration is under progress.."
+            message = message.accountconfiguration_underprogress;
         }else if (status == "ContractNotYetStarted"){
-            message = "Contract not yet started"
+            message = message.contract_notstart;
         }
         else if (status.indexOf("timeout") >= 0) {
-            message = "Connection Timeout"
+            message = message.connection_timeout
         }
         displayLoginMessage(message);
         $("input").val("");
@@ -211,7 +211,7 @@ function initializeLogin () {
 }
 
 $(document).ready(function () {
-    console.log("inside document ready");
+    //console.log("inside document ready");
     $("#txt-username").focus();
     short_name = getShortName()
     console.log("short name"+short_name);

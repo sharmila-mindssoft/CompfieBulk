@@ -274,7 +274,8 @@ function saverecord(j,e){
     if(map_gm_id==0 && levelstage>1 ){
       displayMessage(message.levelselection_required);
     }else if(datavalue.length == 0){
-     displayMessage("Level-"+levelstage+" Value Should not be Empty");
+      var msg = "Level-"+levelstage;
+      displayMessage(msg + message.shouldnot_empty);
     }else{
       function onSuccess(response){
         displayMessage(message.record_added);
@@ -418,7 +419,8 @@ function updaterecord(j,e){
     if(map_gm_id==0 && levelstage>1 ){
       displayMessage(message.levelselection_required);
     }else if(datavalue.length == 0){
-      displayMessage("Level-"+levelstage+" Value Should not be Empty");
+      var msg = "Level-"+levelstage;
+      displayMessage(msg+ message.shouldnot_empty);
     }else{
      function onSuccess(response){
           displayMessage(message.record_updated);

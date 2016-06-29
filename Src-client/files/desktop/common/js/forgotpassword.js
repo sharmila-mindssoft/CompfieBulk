@@ -98,19 +98,19 @@ $("#submit").click(function(){
   displayMessage("");
   var username = $("#username").val().trim();
   if(username.length == 0) {
-    displayMessage("Username required");
+    displayMessage(message.username_required);
   }else if(validateEmail(username) == ''){
-    displayMessage("Invalid email id");
+    displayMessage(message.invalid_emailid);
   }else {
       displayLoader();
       function onSuccess(data){
-        displayMessage("Password reset link has been sent to your email Id");
+        displayMessage(message.forgotpassword_success);
         $("#username").val("");
         hideLoader();
       }
       function onFailure(error){
         if(error == "InvalidUserName"){
-          displayMessage("No such user exists");
+          displayMessage(message.nouser_exists);
         }
         hideLoader();
       }

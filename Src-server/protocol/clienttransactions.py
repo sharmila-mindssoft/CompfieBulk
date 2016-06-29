@@ -1612,12 +1612,13 @@ class PastRecordUnits(object):
 
 class ASSIGN_COMPLIANCE_USER(object):
     def __init__(
-        self, user_id, user_name, user_level, seating_unit_id,
+        self, user_id, service_provider_id, user_name, user_level, seating_unit_id,
         unit_ids, domain_ids,
         is_assignee, is_approver,
         is_concurrence
     ):
         self.user_id = user_id
+        self.service_provider_id = service_provider_id
         self.user_name = user_name
         self.user_level = user_level
         self.seating_unit_id = seating_unit_id
@@ -1630,12 +1631,14 @@ class ASSIGN_COMPLIANCE_USER(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "user_id", "user_name", "user_level",
+            "user_id", "service_provider_id", "user_name", "user_level",
             "seating_unit_id", "unit_ids", "domain_ids",
             "is_assignee", "is_approver", "is_concurrence"
         ])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
+        service_provider_id = data.get("service_provider_id")
+        service_provider_id = parse_structure_OptionalType_SignedIntegerType_8(service_provider_id)
         user_name = data.get("user_name")
         user_name = parse_structure_CustomTextType_50(user_name)
         user_level = data.get("user_level")
@@ -1653,7 +1656,7 @@ class ASSIGN_COMPLIANCE_USER(object):
         is_concurrence = data.get("is_concurrence")
         is_concurrence = parse_structure_Bool(is_concurrence)
         return ASSIGN_COMPLIANCE_USER(
-            user_id, user_name, user_level, seating_unit_id,
+            user_id, service_provider_id, user_name, user_level, seating_unit_id,
             unit_ids, domain_ids,
             is_assignee, is_concurrence, is_approver
         )
@@ -1661,6 +1664,7 @@ class ASSIGN_COMPLIANCE_USER(object):
     def to_structure(self):
         return {
             "user_id": to_structure_SignedIntegerType_8(self.user_id),
+            "service_provider_id": to_structure_OptionalType_SignedIntegerType_8(self.service_provider_id),
             "user_name": to_structure_CustomTextType_50(self.user_name),
             "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
             "seating_unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.seating_unit_id),

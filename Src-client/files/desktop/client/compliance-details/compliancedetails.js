@@ -127,7 +127,7 @@ function complianceListArray(data){
     var documentsList = data["documents"];
     var url = '';
     for(var i=0; i<documentsList.length; i++){
-      url = url + '<a href="'+documentsList[i]+'" target="_new"> Download '+ (i+1) +' </a> ';
+      url = url + '<a href="'+documentsList[i]+'" target="_new" download> Download '+ (i+1) +' </a> ';
     }
     $('.tbl_document', clone3).html(url);
   }

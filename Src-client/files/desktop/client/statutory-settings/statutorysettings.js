@@ -138,7 +138,6 @@ function load_statutory(sList){
   if(statutoriesCount <= 1){
     $(".tbody-statutorysettings").find("tbody").remove();
   }
-
   for(var statutory in sList){
     var domainName = sList[statutory]["domain_name"];
     if(domainName != lastDomainName){
@@ -147,7 +146,6 @@ function load_statutory(sList){
       $('.heading', clone3).html(domainName);
       $('.tbody-statutorysettings').append(clone3);
     }
-
     var actname = sList[statutory]["level_1_statutory_name"];
     var applicable_status = sList[statutory]["opted_status"];
     var not_applicable_remarks = sList[statutory]["not_applicable_remarks"];
@@ -170,6 +168,21 @@ function load_statutory(sList){
 
       actCount = actCount + 1;
       count++;
+
+      $(".act-label").on("click", function(event){
+        accordionstatus = false;
+      });
+      
+      $(clone, '.actname').click(function(){
+        if(accordionstatus){
+          //Expand or collapse this panel
+          $(this).next().slideToggle('fast');
+          //Hide the other panels
+          $(".accordion-content").not($(this).next()).slideUp('fast');
+        }else{
+          accordionstatus = true;
+        }
+      });
     }
 
     if(applicable_status == false){
@@ -247,7 +260,6 @@ function load_statutory(sList){
         this.checked = false;
       });
     }
-
     statutoriesCount = statutoriesCount + 1;
     lastDomainName = domainName;
     lastActName = actname;
@@ -263,22 +275,21 @@ function load_statutory(sList){
     $('#pagination').hide();
     $('#submit').show();
     $('#cancel').show();
-
-    $(document).ready(function($) {
-    $(".act-label").on("click", function(event){
-      accordionstatus = false;
-    });
-    $("#accordion").find(".accordion-toggle").click(function(){
-      if(accordionstatus){
-        //Expand or collapse this panel
-        $(this).next('tbody').slideToggle('fast');
-        //Hide the other panels
-        $(".accordion-content").not($(this).next()).slideUp('fast');
-      }else{
-        accordionstatus = true;
-      }
-    });
-  });
+    /*$(document).ready(function($) {
+      $(".act-label").on("click", function(event){
+        accordionstatus = false;
+      });
+      $("#accordion").find(".accordion-toggle").click(function(){
+        if(accordionstatus){
+          //Expand or collapse this panel
+          $(this).next('tbody').slideToggle('fast');
+          //Hide the other panels
+          $(".accordion-content").not($(this).next()).slideUp('fast');
+        }else{
+          accordionstatus = true;
+        }
+      });
+    });*/
   }
   if($("#is_closed").val() == 'true'){
     $('#submit').hide();

@@ -57,8 +57,8 @@ class HandleRequest(object):
         self._connection_closed = True
 
     def _respond_error(self, code, response_data):
-        logger.logWebfront(code)
-        logger.logWebfront(response_data)
+        # logger.logWebfront(code)
+        # logger.logWebfront(response_data)
         self._http_response.set_status(code)
         self._http_response.send(response_data)
 
@@ -78,11 +78,12 @@ class HandleRequest(object):
         elif code == 599 :
             self._respond_connection_timeout()
         else:
-            print "error", code
+            # print "error", code
             # self._respond(login.ClientDatabaseNotExists().to_inner_structure())
             self._respond_error(code, response_data)
 
     def forward_request(self):
+        print self._security_token
         company = self._company_manager.locate_company_server(
             self._security_token
         )

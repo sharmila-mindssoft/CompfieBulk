@@ -348,7 +348,7 @@ function showSideBar(idval, data){
             $('.btn-submit', cloneValSide).on("click", function(e){
                 var completion_date;
                 var compliance_history_id;
-                var documents;
+                var documents = [];
                 var validity_date;
                 var next_due_date;
                 var start_date;

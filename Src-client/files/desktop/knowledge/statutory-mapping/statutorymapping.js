@@ -31,6 +31,13 @@ var pageSize = 50;
 var startCount;
 var endCount;
 var editLevel = '';
+var file_lst = [];
+
+var f_Name = '';
+var f_Size = '';
+var f_Content = null;
+var form_data = new FormData();
+var complianceid = 0;
 
 function displayLoader() {
     $(".loading-indicator-spin").show();
@@ -518,7 +525,8 @@ function load(id,level,country,domain){
 }
 
 //remove uploaded file
-function remove_temp_file(){
+function remove_temp_file(edit_id){
+  form_data.delete("file"+edit_id)
   uploadFile = null;
   $("#uploaded_fileview").hide();
   $("#uploaded_filename").html('');
@@ -527,7 +535,41 @@ function remove_temp_file(){
 
 //convert file to object on upload file
 $("#upload_file").on("change", function(e) {
-  mirror.uploadFile(e, function result_data(data) {
+
+  var tFN = this.files[0].name;
+  var fN = tFN.substring(0, tFN.indexOf('.'));
+  var fE = tFN.substring(tFN.lastIndexOf('.') + 1);
+  var uniqueId = Math.floor(Math.random() * 90000) + 10000;
+  
+  f_Name = fN+'-'+uniqueId+'.'+fE;
+  f_Size = this.files[0].size;
+
+  var max_limit =  1024 * 1024 * 50
+  if(tFN.indexOf('.') !== -1){
+    if (f_Size > max_limit) {
+      displayMessage(message.file_maxlimit_exceed)
+      $("#uploaded_fileview").hide();
+      $("#uploaded_filename").html('');
+      $("#upload_file").val('');
+    }else if(fE == 'exe' || fE == 'xhtml' || fE == 'htm' || fE == 'html'){
+      displayMessage(message.invalid_file_format)
+      $("#uploaded_fileview").hide();
+      $("#uploaded_filename").html('');
+      $("#upload_file").val('');
+    }else{
+      file_lst = e.target.files;
+      displayMessage("");
+      $("#uploaded_fileview").show();
+      $("#uploaded_filename").html( tFN + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' />")
+    }
+  }else{
+    displayMessage(message.invalid_file_format)
+    $("#uploaded_fileview").hide();
+    $("#uploaded_filename").html('');
+    $("#upload_file").val('');
+  }
+  
+  /*mirror.uploadFile(e, function result_data(data) {
     if (data == "File max limit exceeded") {
       displayMessage(message.file_maxlimit_exceed)
       $("#uploaded_fileview").hide();
@@ -549,8 +591,7 @@ $("#upload_file").on("change", function(e) {
       $("#uploaded_fileview").show();
       $("#uploaded_filename").html( data["file_name"] + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' />")
     }
-  });
-
+  });*/
 });
 
 //validate and insert records in statutory table
@@ -576,7 +617,8 @@ function saverecord(j,e){
     if(map_statutory_id==0 && levelstage>1 ){
       displayMessage(message.levelselection_required);
     }else if(datavalue==""){
-      displayMessage("Level-" + levelstage + message.shouldnot_empty);
+      var msg = "Level-" + levelstage;
+      displayMessage(msg + message.shouldnot_empty);
     }else{
       if($("#statutoryid").val() != '' && editLevel == levelstage){
         function onSuccessUpdate(data){
@@ -834,13 +876,35 @@ make_breadcrumbs3();
 
 //add compliances in third wizard
 $("#temp_addcompliance").click(function() {
+
   var comp_id=$('#complianceid').val();
+  if($("#upload_file").val() != ''){
+    var fCId = '';
+    if(comp_id == ''){
+      fCId = complianceid;
+    }else{
+      fCId = comp_id;
+    }
+    uploadFile = mirror.uploadFileFormat(f_Size, f_Name, f_Content)
+    var file_data = file_lst[0];
+    form_data.append("file" + fCId, file_data, f_Name);
+    form_data.append("session_token", mirror.getSessionToken())
+    console.log(form_data)
+  }
+  
+  /*for (var i = 0; i < file_lst.length; i++) {
+    var file_data = file_lst[i];
+    console.log(file_data);
+    form_data.append("file" + i, file_data, f_Name);
+  }*/
+
   var statutory_provision = $('#statutory_provision').val().trim();
   var compliance_task = $('#compliance_task').val().trim();
   var description = $('#compliance_description').val().trim();
   var compliance_document = null;
   if($('#compliance_document').val().trim().length > 0) compliance_document = $('#compliance_document').val().trim();
   var file_format = null;
+
   if(uploadFile != null){
     file_format = [];
     file_format.push(uploadFile);
@@ -1093,7 +1157,10 @@ function temp_editcompliance(edit_id){
       concatfilename = fullname;
     }
     $("#uploaded_fileview").show();
-    $("#uploaded_filename").html( concatfilename + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' />")
+    $("#uploaded_filename").html( concatfilename + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file("+edit_id+")' />")
+  }else{
+    $("#uploaded_fileview").hide();
+    $("#uploaded_filename").html("");
   }
 
   var compliance_frequency = compliances[edit_id]["f_id"];
@@ -1481,6 +1548,10 @@ function savestatutorymapping(){
       function (error, response) {
           if (error == null){
             onSuccess(response);
+            mirror.uploadFormatFile(form_data, function result_data (status, data) {
+              console.log(status)
+            })
+
           }
           else {
             onFailure(error, response);
@@ -1496,7 +1567,10 @@ function savestatutorymapping(){
     mirror.updateStatutoryMapping(statutorymappingData,
       function (error, response) {
           if (error == null){
-            onSuccess(response);
+             onSuccess(response);
+             mirror.uploadFormatFile(form_data, function result_data (status, data) {
+              console.log(status)
+            })
           }
           else {
             onFailure(error, response);
@@ -2097,10 +2171,22 @@ $('.repeatlabelday').click(function(){
 });
 $('.repeatlabelendday').click(function(){
   //resetvalues();
-  $('#single_statutory_date').val('31');
+  if($('#single_statutory_month').val() != ''){
+    var maxDate = load_date($('#single_statutory_month').val());
+    $('#single_statutory_date').val(maxDate);
+  }else{
+    $('#single_statutory_date').val('31');
+  }
   $('#statutory_date').val('31');
   for(i=1; i<=12; i++){
-    $('#multiple_statutory_date'+i).val('31');
+    var mMonth = $('#multiple_statutory_month'+i).val();
+    if(mMonth != '' || mMonth != undefined){
+      var maxDate = load_date(mMonth);
+      $('#multiple_statutory_date'+i).val(maxDate);
+    }else{
+      $('#multiple_statutory_date'+i).val('31');
+    }
+    
     $('#multiple_statutory_date'+i).hide();
   }
   $('#single_statutory_date').hide();

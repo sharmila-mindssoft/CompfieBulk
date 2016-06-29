@@ -15,11 +15,11 @@ $("#submit").click(function(){
     var confirmpassword = $("#confirmpassword").val().trim();
 
     if(newpassword.length == 0) {
-      $(".error-message").html("New Password Required");
+      $(".error-message").html(message.npassword_required);
     } else if(confirmpassword.length == 0) {
-      $(".error-message").html("Confirm Password Required");
+      $(".error-message").html(message.conpassword_required);
     } else if(confirmpassword != newpassword) {
-      $(".error-message").html("New Password & Confirm Password Do Not Match");
+      $(".error-message").html(message.password_notmatch);
     } else {
       url = window.location.href;
       url_parameters = url.split("/");
@@ -27,16 +27,16 @@ $("#submit").click(function(){
       reset_token = url_parameters[url_parameters.length - 1];
       if(url_parameters[url_parameters.length - 2] != "reset-password"){
           function onSuccess(data){
-          displayMessage("Password Reset Successfully");
+          displayMessage(message.password_reset_success);
           $("#newpassword").val("");
           $("#confirmpassword").val("");
         }
         function onFailure(error){
           if(error == "InvalidResetToken"){
-            displayMessage("Invalid Reset Token");
+            displayMessage(message.invalid_reset_token);
           }
           if(error == "EnterDifferentPassword"){
-            displayMessage("Password already used. Enter different password");
+            displayMessage(message.password_already_used);
           }
         }
         client_mirror.resetPassword(resetToken, newpassword,url_parameters[url_parameters.length - 2],
@@ -52,16 +52,16 @@ $("#submit").click(function(){
       }else{
         
         function onSuccess(data){
-            displayMessage("Password Reset Successfully");
+            displayMessage(message.password_reset_success);
             $("#newpassword").val("");
             $("#confirmpassword").val("");
           }
           function onFailure(error){
             if(error == "InvalidResetToken"){
-              displayMessage("Invalid Reset Token");
+              displayMessage(message.invalid_reset_token);
             }
             if(error == "EnterDifferentPassword"){
-              displayMessage("Password already used. Enter different password");
+              displayMessage(message.password_already_used);
             }
           }
         mirror.resetPassword(resetToken, newpassword,
