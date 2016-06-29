@@ -88,7 +88,7 @@ def process_login(db, request, client_id, session_user_ip):
             else :
                 logger.logLogin("info", user_ip, username, "Login process end")
                 return user_login_response(db, response, client_id, user_ip)
-                
+
     else :
         if response is True :
             logger.logLogin("info", user_ip, username, "Login process end")
@@ -285,6 +285,8 @@ def process_change_password(db, request):
 
 def process_logout(db, request):
     # save logout time
+    session = request.session_token
+    db.remove_session(session)
     return login.LogoutSuccess()
 
 def process_update_profile(db, request):
