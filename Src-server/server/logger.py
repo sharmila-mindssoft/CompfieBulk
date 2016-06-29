@@ -1,6 +1,8 @@
 import logging
 import sys
 
+from server.constants import ENABLE_INFO_LOG
+
 ROOTPATH = ""
 knowledge_log_path = "logs/knowledge/knowledge-log"
 client_log_path = "logs/client/client-log"
@@ -81,17 +83,20 @@ def logLogin(log_level, ip, user, message):
 webfrontLogger = _get_rotate_file_obj("webfrontend_logger", webfront_log_path)
 def logWebfront(message):
     log_message = "%s" % (message)
-    webfrontLogger.info(log_message)
+    if ENABLE_INFO_LOG :
+        webfrontLogger.info(log_message)
 
 traceLogger = _get_rotate_file_obj("trace_log", trace_log_path)
 def logClientApi(callername, message):
     log_message = "%s: %s" % (callername, message)
-    traceLogger.info(log_message)
+    if ENABLE_INFO_LOG :
+        traceLogger.info(log_message)
 
 knowtraceLogger = _get_rotate_file_obj("know_trace_log", know_trace_log_path)
 def logKnowledgeApi(callername, message):
     log_message = "%s: %s" % (callername, message)
-    knowtraceLogger.info(log_message)
+    if ENABLE_INFO_LOG :
+        knowtraceLogger.info(log_message)
 
 processErrorLogger = _get_rotate_file_obj("process_error_log", process_error_log_path)
 def logProcessError(callername, message):
