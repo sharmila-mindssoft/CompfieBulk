@@ -346,6 +346,10 @@ class ClientDatabase(Database):
         )
         self.execute(q)
 
+    def remove_session(self, session_token):
+        q = "delete from tbl_user_sessions where session_token = '%s'" % (session_token)
+        self.execute(q)
+
     def validate_session_token(self, client_id, session_token) :
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
@@ -1844,13 +1848,13 @@ class ClientDatabase(Database):
         condition = "1 "
         if frequency_name is not None:
             condition += "AND c.frequency_id = (SELECT frequency_id FROM %s WHERE \
-            frequency_name = '%s')" % (
+            frequency = '%s')" % (
                 self.tblComplianceFrequency, frequency_name
             )
         else:
             condition += "AND c.frequency_id in (2,3)"
         if level_1_statutory_name is not None:
-            condition += " AND statutory_mappig like '%s%s'" % (
+            condition += " AND statutory_mapping like '%s%s'" % (
                 level_1_statutory_name, "%"
             )
 
@@ -1884,8 +1888,9 @@ class ClientDatabase(Database):
         total_count = 0
         compliance_count = 0
         for compliance in client_compliance_rows:
+            statutories = compliance["statutory_mapping"].split(">>")
             if level_1_statutory_name is None:
-                statutories = compliance["statutory_mapping"].split(">>")
+
                 level_1 = statutories[0]
             else:
                 level_1 = level_1_statutory_name
