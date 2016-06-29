@@ -17,7 +17,7 @@ function initSession(userProfile, shortName) {
     setLandingPage(userProfile);
     window.sessionStorage["userInfo"] = JSON.stringify(userProfile, null, " ");
     if (shortName !== null) {
-        window.sessionStorage["shortName"] = shortName;
+        window.localStorage["shortName"] = shortName;
     }
 }
 function setLandingPage(userProfile) {

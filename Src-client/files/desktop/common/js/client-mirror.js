@@ -20,13 +20,16 @@ function initClientMirror() {
     }
 
     function parseJSON(data) {
-        return JSON.parse(data);
+        if (data == undefined)
+            redirect_login()
+        else
+            return JSON.parse(data);
     }
 
     function initSession(userProfile, shortName) {
         // console.log(toJSON(userProfile))
         window.sessionStorage["userInfo"] = toJSON(userProfile);
-        window.sessionStorage["shortName"] = shortName;
+        window.localStorage["shortName"] = shortName;
     }
 
     function getShortName() {
@@ -51,7 +54,7 @@ function initClientMirror() {
 
     function clearSession() {
         delete window.sessionStorage["userInfo"];
-        delete window.sessionStorage["shortName"];
+        delete window.localStorage["shortName"];
         delete window.sessionStorage["CLIENT_NOTIFICATION_COUNT"];
         delete window.sessionStorage["CLIENT_REMINDER_COUNT"];
         delete window.sessionStorage["CLIENT_ESCALATION_COUNT"];
@@ -104,7 +107,7 @@ function initClientMirror() {
         if (info != null){
             return info["menu"]["menus"];
         }else{
-            login_url = "/login/"+window.sessionStorage["recent_short_name"]
+            login_url = "/login/"+window.localStorage["recent_short_name"]
             window.location.href = login_url;
         }
     }
@@ -139,9 +142,10 @@ function initClientMirror() {
     }
 
     function getClientShortName(){
-        var name = window.sessionStorage["shortName"];
+        var name = window.localStorage["shortName"];
         if (typeof(name) == "undefined"){
-            return null;
+            l_name = window.localStorage["recent_short_name"];
+            return l_name;
         }
         return name;
     }
@@ -150,7 +154,7 @@ function initClientMirror() {
         var short_name = getClientShortName();
         login_url = "/login/" + short_name;
         console.log(login_url);
-        window.sessionStorage["recent_short_name"] = short_name;
+        window.localStorage["recent_short_name"] = short_name;
         clearSession();
         window.location.href = login_url;
     }
@@ -367,7 +371,7 @@ function initClientMirror() {
     function forgotPassword(username, callback) {
         callerName = "login"
         var short_name = getShortName();
-        window.sessionStorage["recent_short_name"] = short_name
+        window.localStorage["recent_short_name"] = short_name
         login_url = "/login/"+short_name
         var request = [
             short_name, [
@@ -400,7 +404,7 @@ function initClientMirror() {
 
     function validateResetToken(resetToken, short_name,
         callback) {
-        window.sessionStorage["recent_short_name"] = short_name
+        window.localStorage["recent_short_name"] = short_name
         login_url = "/login/"+short_name
         callerName = "login"
         var request = [
@@ -435,7 +439,7 @@ function initClientMirror() {
 
     function resetPassword(resetToken, newPassword, short_name,
         callback) {
-        window.sessionStorage["recent_short_name"] = short_name
+        window.localStorage["recent_short_name"] = short_name
         login_url = "/login/"+short_name
         callerName = "login"
         var request = [
@@ -945,6 +949,8 @@ function initClientMirror() {
     }
 
     function convert_to_base64(file, name, size, callback) {
+        alert("enter")
+        console.log("enter")
         var reader = new FileReader();
         reader.onload = function(readerEvt) {
             var binaryString = readerEvt.target.result;
@@ -952,6 +958,7 @@ function initClientMirror() {
             callback(file_content, name, size)
         };
         reader.readAsBinaryString(file);
+        console.log("end")
     }
 
     function uploadFile(fileListener, callback) {
