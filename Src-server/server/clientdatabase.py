@@ -3900,12 +3900,11 @@ class ClientDatabase(Database):
                 if r["frequency_id"] != 4 :
                     ageing = abs((due_date.date() - current_date.date()).days) + 1
                 else :
-                    diff = (due_date - current_date)
+                    diff = (completion_date - due_date)
                     if r["duration_type_id"] == 2 :
                         ageing = self.calculate_ageing_in_hours(diff)
                     else :
-
-                        ageing = diff
+                        ageing = diff.days
             elif compliance_status == "Complied" :
                 ageing = 0
             elif compliance_status == "Not Complied" :
@@ -3916,7 +3915,7 @@ class ClientDatabase(Database):
                     if r["duration_type_id"] == 2 :
                         ageing = self.calculate_ageing_in_hours(diff)
                     else :
-                        ageing = diff
+                        ageing = diff.days
             elif compliance_status == "Delayed Compliance" :
                 ageing = abs((completion_date - due_date).days) + 1
                 if r["frequency_id"] != 4 :
@@ -3926,7 +3925,7 @@ class ClientDatabase(Database):
                     if r["duration_type_id"] == 2 :
                         ageing = self.calculate_ageing_in_hours(diff)
                     else :
-                        ageing = diff
+                        ageing = diff.days
 
             if type(ageing) is int :
                 ageing = " %s Day(s)" % ageing
@@ -4292,7 +4291,7 @@ class ClientDatabase(Database):
                 if r["duration_type_id"] == 2 :
                     ageing = self.calculate_ageing_in_hours(diff)
                 else :
-                    ageing = diff
+                    ageing = diff.days
 
             if type(ageing) is int :
                 ageing = " %s Day(s)" % ageing
