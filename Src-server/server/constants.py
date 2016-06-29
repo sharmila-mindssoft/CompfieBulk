@@ -18,6 +18,10 @@ LOGO_URL = "knowledge/clientlogo"
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 FORMAT_DOWNLOAD_URL = "/client/compliance_format"
 
+#
+# Log flag
+#
+ENABLE_INFO_LOG = False
 
 #
 # Timezone
@@ -31,7 +35,7 @@ SEND_EMAIL = False
 RECORD_DISPLAY_COUNT = 100
 FILE_TYPES = ["exe", "xhtml", "htm", "html", "py", "js"]
 FILE_MAX_LIMIT = 1024 * 1024 * 50  # 50 MB
-ENABLE_INFO_LOG = False
+
 
 KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
