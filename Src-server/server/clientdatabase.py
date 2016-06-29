@@ -3900,7 +3900,7 @@ class ClientDatabase(Database):
                 if r["frequency_id"] != 4 :
                     ageing = abs((due_date.date() - current_date.date()).days) + 1
                 else :
-                    diff = (completion_date - due_date)
+                    diff = (due_date - current_date)
                     if r["duration_type_id"] == 2 :
                         ageing = self.calculate_ageing_in_hours(diff)
                     else :

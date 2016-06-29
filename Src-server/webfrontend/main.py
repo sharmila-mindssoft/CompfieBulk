@@ -72,8 +72,6 @@ class Controller(object):
         actual_data = None
         try:
             url = request.uri()
-            print url
-            
             data = json.loads(request.body())
             if type(data) is not list:
                 send_bad_request(
@@ -85,7 +83,6 @@ class Controller(object):
                 send_invalid_json_format(response)
                 return
             token = data[0]
-            print token
             logger.logWebfront(str(token))
             actual_data = data[1]
             if type(token) is unicode :
