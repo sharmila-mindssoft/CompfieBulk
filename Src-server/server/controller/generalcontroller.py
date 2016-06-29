@@ -337,7 +337,6 @@ def process_uploaded_file(info, type, client_id=None):
             try :
                 file_info = info[k][0]
                 file_name = file_info.file_name()
-                print file_name
                 file_content = file_info.body()
                 if type == "knowledge" :
                     file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)

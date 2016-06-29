@@ -709,6 +709,10 @@ class KnowledgeDatabase(Database):
         )
         self.execute(q)
 
+    def remove_session(self, session_token):
+        q = "delete from tbl_user_sessions where session_token = '%s'" % (session_token)
+        self.execute(q)
+
     def validate_session_token(self, session_token) :
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)

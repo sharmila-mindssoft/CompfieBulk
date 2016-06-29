@@ -33,7 +33,9 @@ class HandleRequest(object):
                 callback(None, body)
             else:
                 callback(code, body)
-        body = json.dumps([self._company_id, body])
+        if "/api/files" not in url :
+            body = json.dumps([self._company_id, body])
+
         request = HTTPRequest(
             url,
             method="POST",
