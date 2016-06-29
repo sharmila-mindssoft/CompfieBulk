@@ -146,14 +146,13 @@ function initializeNavBar () {
 
     var item = getItemObject(null, "Logout");
     item.on("click", function () {
-        client_name = client_mirror.getClientShortName()
-        if ((client_name === null) || (client_name === undefined)) {
-            mirror.logout();
-        }
-        else {
+        frms = window.location.href.split("/");
+        if (frms.indexOf("knowledge") == -1) {
             client_mirror.logout();
         }
-
+        else {
+            mirror.logout();
+        }
     });
 
     $("ul", settingsMenuObject).append(item);
@@ -189,58 +188,21 @@ function showDeletionPopup(notification_text){
     });
 }
 
-// function get_notification_count(){
-//     client_mirror.checkContractExpiration(function (status, data) {
-//             if (data == null) {
-//                 return
-//                 $(".contract_timer_container").hide()
-//             }else{
-//                 no_of_days_left = data.no_of_days_left
-//                 $(".contract_timer_container").show()
-//                 if (no_of_days_left <= 30){
-//                     $(".contract_timer").html(
-//                         "Contract Expires in "+no_of_days_left+" days"
-//                     )
-//                 }
-//                 else{
-//                     // alert("Contract not expired yet"+no_of_days_left)
-//                 }
-//                 notification_count = data.notification_count;
-//                 reminder_count = data.reminder_count;
-//                 escalation_count = data.escalation_count;
-//                 var show_popup = data.show_popup;
-//                 var notification_text = data.notification_text
-//                 $("#notification_count").text(notification_count);
-//                 $("#reminder_count").text(reminder_count);
-//                 $("#escalation_count").text(escalation_count);
-//                 if(show_popup){
-//                     console.log(notification_text);
-//                     showDeletionPopup(notification_text)
-//                 }
-
-//             }
-//         }
-//     )
-// }
 function persistNavBar() {
     frms = window.location.href.split("/");
-    if (frms.indexOf("home") == -1) {
-        client_name = client_mirror.getClientShortName()
-        if ((client_name === null) || (client_name === undefined)) {
-            ac_menu = mirror.getPageUrl();
-            form_name = "/" + frms[frms.length - 2] + "/" + frms[frms.length - 1];
-            if (ac_menu.indexOf(form_name) == -1)
-                window.location.href = "/knowledge/login";
-        }
-        else {
-            ac_menu = client_mirror.getPageUrl();
-            form_name = "/" + frms[frms.length - 1];
-            if (ac_menu.indexOf(form_name) == -1)
-                window.location.href = "/login/" + client_name;
-        }
+
+    if (frms.indexOf("knowledge") == -1) {
+        ac_menu = client_mirror.getPageUrl();
+        form_name = "/" + frms[frms.length - 1];
+        if (ac_menu.indexOf(form_name) == -1)
+            window.location.href = "/login/" + client_name;
     }
-
-
+    else {
+        ac_menu = mirror.getPageUrl();
+        form_name = "/" + frms[frms.length - 2] + "/" + frms[frms.length - 1];
+        if (ac_menu.indexOf(form_name) == -1)
+            window.location.href = "/knowledge/login";
+    }
 }
 $(document).ready(function () {
     initializeNavBar();
