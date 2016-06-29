@@ -33,8 +33,8 @@ class HandleRequest(object):
                 callback(None, body)
             else:
                 callback(code, body)
-        if "/api/files" not in url :
-            body = json.dumps([self._company_id, body])
+
+        body = json.dumps([self._company_id, body])
 
         request = HTTPRequest(
             url,
@@ -57,8 +57,8 @@ class HandleRequest(object):
         self._connection_closed = True
 
     def _respond_error(self, code, response_data):
-        # logger.logWebfront(code)
-        # logger.logWebfront(response_data)
+        logger.logWebfront(code)
+        logger.logWebfront(response_data)
         self._http_response.set_status(code)
         self._http_response.send(response_data)
 
@@ -78,7 +78,7 @@ class HandleRequest(object):
         elif code == 599 :
             self._respond_connection_timeout()
         else:
-            # print "error", code
+            print "error", code
             # self._respond(login.ClientDatabaseNotExists().to_inner_structure())
             self._respond_error(code, response_data)
 

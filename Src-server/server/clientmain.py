@@ -204,47 +204,35 @@ class API(object):
         request_data = None
         db = None
         company_id = None
-        url = request.uri()
         try:
-            if "/api/files" not in url :
-                data = json.loads(request.body())
-                if type(data) is not list:
-                    self.send_bad_request(
-                        response,
-                        self.expectation_error(
-                            "a list", type(data)
-                        )
+            data = json.loads(request.body())
+            if type(data) is not list:
+                self.send_bad_request(
+                    response,
+                    self.expectation_error(
+                        "a list", type(data)
                     )
-                    return None
-                if len(data) != 2:
-                    self.send_invalid_json_format(
-                        response
-                    )
-                    return None
-                company_id = int(data[0])
-                session = None
-                actual_data = data[1]
-                request_data = request_data_type.parse_structure(
-                    actual_data
                 )
-            else :
-                lst = url.split("/")
-                print '-' * 10
-                print lst
-                info = lst[-1].split("-")
-                company_id = int(info[0])
-                request_data = json.loads(request.body())
-                print request_data
-                session = lst[-1]
-
+                return None
+            if len(data) != 2:
+                self.send_invalid_json_format(
+                    response
+                )
+                return None
+            company_id = int(data[0])
+            session = None
+            actual_data = data[1]
+            request_data = request_data_type.parse_structure(
+                actual_data
+            )
             db = self._databases.get(company_id)
             if db is None:
                 response.set_status(404)
                 response.send("Company not found")
                 return None
 
-
         except Exception, e:
+            print e
             logger.logClientApi(e, "_parse_request")
             logger.logClientApi(traceback.format_exc(), "")
 
@@ -298,7 +286,6 @@ class API(object):
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
             db.rollback()
-
 
     @api_request(login.Request, need_client_id=True)
     def handle_login(self, request, db, client_id):
