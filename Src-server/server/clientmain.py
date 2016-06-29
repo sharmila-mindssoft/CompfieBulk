@@ -242,8 +242,8 @@ class API(object):
                 response.set_status(404)
                 response.send("Company not found")
                 return None
-            
-            
+
+
         except Exception, e:
             logger.logClientApi(e, "_parse_request")
             logger.logClientApi(traceback.format_exc(), "")
@@ -260,7 +260,6 @@ class API(object):
         self, unbound_method, request, response,
         request_data_type, need_client_id, file_session
     ):
-        print unbound_method
         ip_address = str(request.remote_ip())
         self._ip_address = ip_address
         response.set_default_header("Access-Control-Allow-Origin", "*")
