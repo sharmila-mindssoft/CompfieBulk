@@ -336,10 +336,11 @@ function userGroupActive(userGroupId, isActive){
 	      initialize();
 	    }
 	    function onFailure(error){
-	    	/*if(error == "CannotDeactivateUserExists"){
-				displayMessage(message.cannot_deactivate_usergroup);
-			}*/
-	      alert(error);
+		    if(error == "CannotDeactivateUserExists"){
+	            alert(message.cannot_deactivate_usergroup)
+	        }else{
+	            alert(error)
+	        }
 	    }
 	    mirror.changeAdminUserGroupStatus(userGroupId, isActive,
 			function (error, response) {

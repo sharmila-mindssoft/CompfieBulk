@@ -148,7 +148,8 @@ function statNature_active(statNatureId, isActive){
             $("#search-statutory-nature-name").val('');
             initialize();
         }
-        function failure(status, data){
+        function failure(error){
+            alert(error)
         }
         mirror.changeStatutoryNatureStatus(parseInt(statNatureId), isActive, success, failure);
     }

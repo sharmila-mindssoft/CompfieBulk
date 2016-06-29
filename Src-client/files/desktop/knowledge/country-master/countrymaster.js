@@ -159,7 +159,11 @@ function country_active(countryId, isActive){
             initialize();
         }
         function onFailure(error){
-            alert(error)
+            if(error == "TransactionExists"){
+                alert(message.trasaction_exists)
+            }else{
+                alert(error)
+            }
         }
         mirror.changeCountryStatus( parseInt(countryId), isActive,
             function (error, response) {

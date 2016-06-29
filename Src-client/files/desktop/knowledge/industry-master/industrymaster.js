@@ -162,6 +162,11 @@ function changeStatus (industryId,isActive) {
       getIndustries ();
     }
     function onFailure(error){
+      if(error == "TransactionExists"){
+          alert(message.trasaction_exists)
+      }else{
+          alert(error)
+      }
     }
     mirror.changeIndustryStatus(industryId, isActive,
       function (error, response) {

@@ -129,11 +129,11 @@ var message = {
 	'groupname_exists' : 'Group Name Already Exists',
 	'username_exists' : 'Username Already Exists',
 	'client_creation_failed' : 'Client Creation Failed. Check your server connection details',
-	'cannot_unselect_country' : 'Cannot unselect country. One or more units exists',
-	'cannot_unselect_domain' : 'Cannot unselect Domain. One or more units exists',
+	'cannot_unselect_country' : 'Unit(s) Exists. Cannot unselect country.',
+	'cannot_unselect_domain' : 'Unit(s) Exists.  Cannot unselect Domain.',
 	"invalid_no_of_licence" : 'Entered no of licence is less than active no of licences',
 	"invalid_file_space" : 'Entered file space is less than already used space',
-	'cannot_deactivate_client' : 'Cannot deactivate client, since client has one or more active units',
+	'cannot_deactivate_client' : 'Client has active unit(s). Cannot deactivate client.',
 	'legalentity_new' : 'Select Existing Legal Entity or Create New',
 	'exceeds_max_countries_user' : 'Exceeds Maximum Countries for this User',
 	'add_one_unit' : 'Add atleast one unit in a Group',
@@ -158,7 +158,7 @@ var message = {
 	'contractto_maxi_today' : 'To date must be greater than today',
 	'spname_exists' : 'Service Provider Name Already Exists',
 	'contactno_exists' : 'Contact Number Already Exists',
-	'cannot_deactivate_sp' : 'Cannot Deactivate Service Provider, One or More User Exists',
+	'cannot_deactivate_sp' : 'User(s) Exists. Cannot Deactivate Service Provider.',
 	'seatingunit_required' : 'Seating Unit Required',
 	'employeecode_required' : 'Employee Code Required',
 	'usergroup_required' : 'User Group Required',
@@ -166,7 +166,7 @@ var message = {
 	'usertype_required' : 'User Type Required',
 	'add_one_form' : 'Select atleast one form from list',
 	'usergroupname_exists' : 'User Group Name Already Exists',
-	'cannot_deactivate_usergroup' : 'Cannot Deactivate User group, One or More User Exists',
+	'cannot_deactivate_usergroup' : 'User(s) Exists. Cannot Deactivate User group.',
 	'todate_required' : 'To Date Required',
 	'fromdate_required' : 'From Date Required',
 	'catgname_required' : 'Category Name Required',
@@ -206,7 +206,10 @@ var message = {
 	'maximum_units': 'units selection reached.',
 	'password_reset_success' : 'Password Reset Successfully',
 	'invalid_reset_token' : 'Invalid Reset Token',
-	'password_already_used' : 'Password already used. Enter different password'
+	'password_already_used' : 'Password already used. Enter different password',
+	'reassign_compliance_before_user_deactivate' : 'Reassign compliances before deactivate',
+	'cant_deactivate_primaryadmin' : 'Only Techno team can change stauts of primary admin',
+	'trasaction_exists' : 'Transaction Exists'
 };
 
 function clearMessage() {
