@@ -2015,13 +2015,17 @@ class ClientDatabase(Database):
             result_due_date = []
             for current_due_date_index, due_date in enumerate(formated_date_list):
                 next_due_date = None
-                if len(due_dates_list)-1 < current_due_date_index+1:
+
+                if len(due_dates_list) < current_due_date_index + 1:
                     continue
                 else:
-                    next_due_date = due_dates_list[current_due_date_index+1]
+                    if current_due_date_index == len(formated_date_list)-1 :
+                        next_due_date = due_dates_list[current_due_date_index]
+                    else :
+                        next_due_date = due_dates_list[current_due_date_index+1]
                     columns = "count(*)"
                     condition = "unit_id = '{}' AND due_date < {} AND compliance_id = '{}' AND \
-                    approve_status = 1 and validity_date > {} and validity_date > '{}'".format(
+                    approve_status = 1 and validity_date > {} and validity_date < '{}'".format(
                         unit_id, due_date, compliance_id, due_date, next_due_date
                     )
                     rows = self.get_data(self.tblComplianceHistory, columns, condition)
@@ -2128,12 +2132,12 @@ class ClientDatabase(Database):
             summary += ")"
         elif repeat_by:
             date_details = ""
-            if statutory_dates not in  ["None", None, ""]:
+            if statutory_dates not in ["None", None, ""]:
                 statutory_date_json = json.loads(statutory_dates)
                 if len(statutory_date_json) > 0:
                     date_details += "({})".format(statutory_date_json[0]["statutory_date"])
             # For Compliances Recurring in days
-            if repeat_by == 1: # Days
+            if repeat_by == 1:  # Days
                 summary = "Every {} day(s)".format(repeat_every)
                 previous_year_due_date = datetime.date(
                     due_date.year - 1, due_date.month, due_date.day
@@ -2145,14 +2149,14 @@ class ClientDatabase(Database):
                     iter_due_date = iter_due_date + datetime.timedelta(days=repeat_every)
                     if from_date <= iter_due_date <= to_date:
                         due_dates.append(iter_due_date)
-            elif repeat_by == 2: # Months
+            elif repeat_by == 2:   # Months
                 summary = "Every {} month(s) {}".format(repeat_every, date_details)
                 iter_due_date = due_date
                 while iter_due_date > from_date:
                     iter_due_date = iter_due_date + relativedelta.relativedelta(months=-repeat_every)
                     if from_date <= iter_due_date <= to_date:
                         due_dates.append(iter_due_date)
-            elif repeat_by == 3: # Years
+            elif repeat_by == 3:   # Years
                 summary = "Every {} year(s) {}".format(repeat_every, date_details)
                 year = from_date.year
                 while year <= to_date.year:
@@ -2293,18 +2297,21 @@ class ClientDatabase(Database):
             approved_by = rows[0][0]
             if is_two_level:
                 concurred_by = rows[0][1]
-        if validity_date is not None:
-            validity_date = self.string_to_datetime(validity_date).date()
         columns = [
             "compliance_history_id", "unit_id", "compliance_id", "due_date", "completion_date",
-            "validity_date", "next_due_date", "completed_by", "completed_on",
+            "completed_by", "completed_on",
             "approve_status", "approved_by", "approved_on"
         ]
         values = [
             compliance_history_id, unit_id, compliance_id, self.string_to_datetime(due_date).date(),
-            completion_date, validity_date,
-            next_due_date, completed_by, completion_date, 1, approved_by, completion_date
+            completion_date,
+            completed_by, completion_date, 1, approved_by, completion_date
         ]
+        if validity_date is not None and validity_date != "":
+            validity_date = self.string_to_datetime(validity_date).date()
+            columns.append("validity_date")
+            values.append(validity_date)
+
         if is_two_level:
             columns.append("concurrence_status")
             columns.append("concurred_by")
@@ -2886,7 +2893,6 @@ class ClientDatabase(Database):
             c_units = applicable_units.get(c_id)
             if c_units is None :
                 continue
-            print c_units
             unit_ids = c_units
             # unit_ids = [
             #     int(x) for x in c_units.split(',')
@@ -6107,8 +6113,9 @@ class ClientDatabase(Database):
                 ))
             remaining_licence -= 1
 
-        used_space = round(total_disk_space_used/1000000000, 2)
+        used_space = round((total_disk_space_used/1000000000), 2)
         total_space = total_disk_space/1000000000
+
         profile_detail = clientadminsettings.PROFILE_DETAIL(
             contract_from,
             contract_to,
@@ -6886,7 +6893,7 @@ class ClientDatabase(Database):
                 select count(*) from tbl_compliance_history ch \
                 where ch.compliance_id = ac.compliance_id and \
                 ch.unit_id = ac.unit_id ) >0), 0,1) \
-                LIMIT %d, %d ) a ORDER BY start_date ASC"  % (
+                ) a ORDER BY start_date ASC LIMIT %d, %d "  % (
                     self.tblUnits, self.tblDomains, self.tblAssignedCompliances,
                     self.tblCompliances, session_user, int(upcoming_start_count),
                     to_count
@@ -7460,7 +7467,6 @@ class ClientDatabase(Database):
                 where_qry,
                 from_count, to_count
             )
-        print query
         columns = [
             "compliance_id", "compliance_task", "document_name",
             "statutory_dates", "compliance_description", "penal_consequences",
@@ -7515,7 +7521,6 @@ class ClientDatabase(Database):
                 domain_id, country_id,
                 where_qry
             )
-        print q_count
         c_row = self.select_one(q_count)
         if c_row :
             total = int(c_row[0])

@@ -55,11 +55,11 @@ function activate_assignee (element,checkval,checkname, clickvalue) {
 function load_thirdwizard(){
 
   var arrowimage = " <img src=\'/images/right_arrow.png\'/> ";
-    $(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + 
+    $(".breadcrumbs").html($('.countrylist.active').text() + arrowimage +
       $('.legalentitylist.active').text() + arrowimage + $('.unitlist.active').text() +
       arrowimage + $('.domainlist.active').text());
 
-    /*$(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + $('.businessgrouplist.active').text() + arrowimage + 
+    /*$(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + $('.businessgrouplist.active').text() + arrowimage +
       $('.legalentitylist.active').text() + arrowimage + $('.divisionlist.active').text() + arrowimage + $('.unitlist.active').text() +
       arrowimage + $('.domainlist.active').text());*/
 
@@ -67,7 +67,7 @@ function load_thirdwizard(){
   for(var entity in statutoriesList){
     var actname = statutoriesList[entity]["level_1_statutory_name"];;
     var actCompliances = statutoriesList[entity]["compliences"];
-      
+
       if(actCompliances.length > 0){
         if(lastAct != actname){
           var acttableRow=$('#act-templates .font1 .tableRow');
@@ -77,8 +77,8 @@ function load_thirdwizard(){
           lastAct = actname;
         }
       }
-      for(var ac in actCompliances){   
-        sno++; 
+      for(var ac in actCompliances){
+        sno++;
         var compliance_id = actCompliances[ac]["compliance_id"];
         var compliance_name = actCompliances[ac]["compliance_name"];
         var compliance_description = actCompliances[ac]["description"];
@@ -90,7 +90,7 @@ function load_thirdwizard(){
         var statutorydate = actCompliances[ac]["statutory_date"];
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
-        
+
         $('.sno', clone2).html(sno +
         '<input type="hidden" id="complianceid'+sno+'" value="'+compliance_id+'"/>' +
         '<input type="hidden" id="compliancename'+sno+'" value="'+compliance_name+'"/>' +
@@ -113,7 +113,7 @@ function load_thirdwizard(){
         $('.completedstatus', clone2).html('<input type="checkbox" id="completedstatus'+sno+'">');
         $('.tbody-assignstatutory').append(clone2);
 
-        
+
         $("#upload"+sno).on("change", function(e) {
         client_mirror.uploadFile(e, function result_data(data) {
           if(data != 'File max limit exceeded' || data != 'File content is empty'){
@@ -158,18 +158,18 @@ function load_thirdwizard(){
         var text = $(this).attr('id');
         var clickvalue = text.substring(text.lastIndexOf('l') + 1);
         $("#autocomplete_assignee"+clickvalue).show();
-        
+
         var assignees = usersList;
         var suggestions = [];
         $('#ulist_assignee'+clickvalue).empty();
         if(textval.length>0){
           for(var i in assignees){
-            if (~assignees[i]["employee_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["user_id"],assignees[i]["employee_name"]]); 
+            if (~assignees[i]["employee_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["user_id"],assignees[i]["employee_name"]]);
           }
           var str='';
           for(var i in suggestions){
                     str += '<li id="'+suggestions[i][0]+'"onclick="activate_assignee(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\','+clickvalue+')">'+suggestions[i][1]+'</li>';
-                    
+
           }
           $('#ulist_assignee'+clickvalue).append(str);
           $("#assignee"+clickvalue).val('');
@@ -178,14 +178,14 @@ function load_thirdwizard(){
             $("#autocomplete_assignee"+clickvalue).hide();
           }
       });
-      }  
+      }
   }
 
   $(".hidemenu").click(function(){
     $(".ac-textbox").hide();
   });
 
-  if(totalRecord == 0){ 
+  if(totalRecord == 0){
       var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
       var clone4=tableRow4.clone();
       $('.no_records', clone4).text('No Compliance Found');
@@ -216,7 +216,7 @@ function validate_firsttab(){
   }else{
     displayMessage("");
     return true;
-  }    
+  }
 }
 
 //validation in second wizard
@@ -258,7 +258,7 @@ function submitcompliance(){
     displayLoader();
     var unit_id = parseInt($('.unitlist.active').attr('id'));;
     compliance_list = [];
-    
+
     for(var i=1; i<=sno; i++){
         var complianceApplicable = false;
         if($('#completedstatus'+i).is(":checked")){
@@ -327,7 +327,7 @@ function submitcompliance(){
     displayMessage(error[1]["error"]);
     hideLoader();
   }
-  client_mirror.savePastRecords(compliance_list, 
+  client_mirror.savePastRecords(compliance_list,
     function (error, response) {
     if (error == null){
       onSuccess(response);
@@ -406,7 +406,7 @@ function getStatutories(){
   if($('.domainlist.active').attr('id') != undefined) assignComplianceDomainId = parseInt($('.domainlist.active').attr('id'));
   if($('.actlist.active').attr('id') != undefined) assignComplianceActId = $('.actlist.active').attr('id');
   if($('.frequencylist.active').attr('id') != undefined) assignComplianceFrequencyId = $('.frequencylist.active').attr('id');
-  
+
   if(assignComplianceUnitId != null && assignComplianceDomainId != null){
     function onSuccess(data){
       statutoriesList = data["statutory_wise_compliances"];
@@ -419,7 +419,7 @@ function getStatutories(){
       hideLoader();
     }
     client_mirror.getStatutoriesByUnit(
-      assignComplianceUnitId, assignComplianceDomainId, assignComplianceActId, 
+      assignComplianceUnitId, assignComplianceDomainId, assignComplianceActId,
       assignComplianceFrequencyId, assignComplianceCountryId, sno,
       function (error, response) {
             if (error == null){
@@ -464,12 +464,12 @@ function loadunit(){
         var iName = unitsList[industryunit]["industry_name"];
         splittext = '<h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">'+iName+'</h3>';
         for(var unit in iUnits){
-          if(iUnits[unit]["business_group_id"] == assignStatutoryBusinessGroupId && 
-            iUnits[unit]["division_id"] == assignStatutoryDivisionId && 
-            iUnits[unit]["legal_entity_id"] == assignStatutoryLegalEntityId && 
+          if(iUnits[unit]["business_group_id"] == assignStatutoryBusinessGroupId &&
+            iUnits[unit]["division_id"] == assignStatutoryDivisionId &&
+            iUnits[unit]["legal_entity_id"] == assignStatutoryLegalEntityId &&
             iUnits[unit]["country_id"] == assignStatutoryCountryId){
             str += splittext + '<li id="'+iUnits[unit]["unit_id"]+'" class="unitlist" > <abbr class="page-load" title="'+
-            iUnits[unit]["address"]+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+ 
+            iUnits[unit]["address"]+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+
             iUnits[unit]["unit_name"]+'</li>';
             splittext = '';
         }
@@ -512,7 +512,7 @@ $("#unit").click(function(event){
   $('#frequency').empty();
   for(var frequency in frequencyList){
       str += '<li id="'+frequencyList[frequency]["frequency"]+'" class="frequencylist" >'+frequencyList[frequency]["frequency"]+'</li>';
-    
+
   }
   $('#frequency').append(str);
   $('ul.setup-panel li:eq(2)').addClass('disabled');
@@ -584,7 +584,7 @@ $("#country").click(function(event){
   for(var businessgroup in businessgroupsList){
       str += '<li id="'+businessgroupsList[businessgroup]["business_group_id"]+'" class="businessgrouplist" >'+businessgroupsList[businessgroup]["business_group_name"]+'</li>';
   }
-  $('#businessgroup').append(str); 
+  $('#businessgroup').append(str);
 
   var str1='';
   $('#legalentity').empty();
@@ -715,7 +715,7 @@ function getPastRecords () {
   );
 }
 
-//initialization & master list filter 
+//initialization & master list filter
 $(document).ready(function () {
   getPastRecords ();
 
@@ -724,7 +724,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('domainlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (~name.toLowerCase().indexOf(filter)) 
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -736,7 +736,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('actlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (~name.toLowerCase().indexOf(filter)) 
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -748,7 +748,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('frequencylist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (~name.toLowerCase().indexOf(filter)) 
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -761,7 +761,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('countrylist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (~name.toLowerCase().indexOf(filter)) 
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -773,7 +773,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('businessgrouplist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (~name.toLowerCase().indexOf(filter)) 
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -785,7 +785,7 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('legalentitylist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (~name.toLowerCase().indexOf(filter)) 
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
@@ -797,20 +797,20 @@ $(document).ready(function () {
     var lis = document.getElementsByClassName('divisionlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (~name.toLowerCase().indexOf(filter)) 
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';
     }
   });
 
-  
+
   $("#filter_unit").keyup( function() {
     var filter = $("#filter_unit").val().toLowerCase();
     var lis = document.getElementsByClassName('unitlist');
     for (var i = 0; i < lis.length; i++) {
       var name = lis[i].innerHTML;
-      if (~name.toLowerCase().indexOf(filter)) 
+      if (~name.toLowerCase().indexOf(filter))
         lis[i].style.display = 'list-item';
       else
         lis[i].style.display = 'none';

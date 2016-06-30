@@ -40,13 +40,13 @@ def cors_handler(request, response):
 #
 
 def api_request(
-    request_data_type, need_client_id=False, file_session=False
+    request_data_type, need_client_id=False
 ):
     def wrapper(f):
         def wrapped(self, request, response):
             self.handle_api_request(
                 f, request, response,
-                request_data_type, need_client_id, file_session
+                request_data_type, need_client_id
             )
         return wrapped
     return wrapper
@@ -120,7 +120,7 @@ class API(object):
                         print e
                         logger.logClientApi(ip, port)
                         logger.logClientApi(e, "Server added")
-                        logger.logClientApi(traceback.format_exc(), "")
+                        logger.logClient("error", "exception", str(traceback.format_exc()))
                         logger.logClient("error", "clientmain.py-server-added", e)
                         logger.logClientApi("Client database not available to connect ", company_id + "-" + company.to_structure())
                         continue
@@ -178,6 +178,7 @@ class API(object):
             logger.logClientApi(traceback.format_exc(), "")
             logger.logClient("error", "clientmain.py-server-added", e)
             logger.logClient("error", "clientmain.py-server-added", traceback.format_exc())
+            return
 
     def _send_response(
         self, response_data, response
@@ -204,47 +205,34 @@ class API(object):
         request_data = None
         db = None
         company_id = None
-        url = request.uri()
         try:
-            if "/api/files" not in url :
-                data = json.loads(request.body())
-                if type(data) is not list:
-                    self.send_bad_request(
-                        response,
-                        self.expectation_error(
-                            "a list", type(data)
-                        )
+            data = json.loads(request.body())
+            if type(data) is not list:
+                self.send_bad_request(
+                    response,
+                    self.expectation_error(
+                        "a list", type(data)
                     )
-                    return None
-                if len(data) != 2:
-                    self.send_invalid_json_format(
-                        response
-                    )
-                    return None
-                company_id = int(data[0])
-                session = None
-                actual_data = data[1]
-                request_data = request_data_type.parse_structure(
-                    actual_data
                 )
-            else :
-                lst = url.split("/")
-                print '-' * 10
-                print lst
-                info = lst[-1].split("-")
-                company_id = int(info[0])
-                request_data = json.loads(request.body())
-                print request_data
-                session = lst[-1]
-
+                return None
+            if len(data) != 2:
+                self.send_invalid_json_format(
+                    response
+                )
+                return None
+            company_id = int(data[0])
+            actual_data = data[1]
+            request_data = request_data_type.parse_structure(
+                actual_data
+            )
             db = self._databases.get(company_id)
             if db is None:
                 response.set_status(404)
                 response.send("Company not found")
                 return None
 
-
         except Exception, e:
+            print e
             logger.logClientApi(e, "_parse_request")
             logger.logClientApi(traceback.format_exc(), "")
 
@@ -254,11 +242,11 @@ class API(object):
             response.set_status(400)
             response.send(str(e))
             return None
-        return (db, request_data, company_id, session)
+        return (db, request_data, company_id)
 
     def handle_api_request(
         self, unbound_method, request, response,
-        request_data_type, need_client_id, file_session
+        request_data_type, need_client_id
     ):
         ip_address = str(request.remote_ip())
         self._ip_address = ip_address
@@ -269,7 +257,7 @@ class API(object):
         if request_data is None:
             return
 
-        db, request_data, company_id, f_session = request_data
+        db, request_data, company_id = request_data
 
         def respond(response_data):
             self._send_response(
@@ -282,8 +270,6 @@ class API(object):
                 response_data = unbound_method(
                     self, request_data, db, company_id
                 )
-            elif file_session :
-                response_data = unbound_method(self, request_data, db, f_session)
             else :
                 response_data = unbound_method(self, request_data, db)
             db.commit()
@@ -298,7 +284,7 @@ class API(object):
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
             db.rollback()
-
+            return
 
     @api_request(login.Request, need_client_id=True)
     def handle_login(self, request, db, client_id):
@@ -338,27 +324,27 @@ class API(object):
     def handle_mobile_request(self, request, db):
         return mobilecontroller.process_client_mobile_request(request, db)
 
-    @api_request("clientformat", file_session=True)
-    def handle_client_format_file(self, request, db, session_token):
-        def validate_session_from_body(content):
-            client_info = session_token.split("-")
-            client_id = int(client_info[0])
+    # @api_request("clientformat", file_session=True)
+    # def handle_client_format_file(self, request, db, session_token):
+        # def validate_session_from_body(content):
+        #     client_info = session_token.split("-")
+        #     client_id = int(client_info[0])
 
-            user_id = db.validate_session_token(client_id, str(session_token))
-            if user_id is None :
-                return False, client_id
-            else :
-                return True, client_id
+        #     user_id = db.validate_session_token(client_id, str(session_token))
+        #     if user_id is None :
+        #         return False, client_id
+        #     else :
+        #         return True, client_id
 
-        is_valid, client_id = validate_session_from_body(request.body())
-        if is_valid :
-            print is_valid
-            info = request.files()
-            print info
-            response_data = process_uploaded_file(info, "client", client_id)
-            return response_data
-        else :
-            return login.InvalidSessionToken()
+        # is_valid, client_id = validate_session_from_body(request.body())
+        # if is_valid :
+        #     print is_valid
+        #     info = request.files()
+        #     print info
+        #     response_data = process_uploaded_file(info, "client", client_id)
+        #     return response_data
+        # else :
+        #     return login.InvalidSessionToken()
 
 #
 # run_server
@@ -395,7 +381,7 @@ def run_server(address, knowledge_server_address):
             ("/api/general", api.handle_general),
             ("/api/client_user", api.handle_client_user),
             ("/api/mobile", api.handle_mobile_request),
-            (r"/api/files/([a-zA-Z-0-9]+)", api.handle_client_format_file)
+            # (r"/api/files/([a-zA-Z-0-9]+)", api.handle_client_format_file)
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

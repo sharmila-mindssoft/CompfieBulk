@@ -130,7 +130,7 @@ def process_update_compliance_detail(db, request, session_user, client_id):
         elif result == "InvalidUser":
             return clientuser.InvalidUser()
         else:
-            return clientuser.NextDueDateMustBeWithIn90DaysBeforeValidityDate()
+            return result
 
 ########################################################
 # To get the list of all on occurrence compliances

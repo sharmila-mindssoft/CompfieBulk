@@ -6080,11 +6080,14 @@ class KnowledgeDatabase(Database):
                         is_service_provider = False
                     else:
                         is_service_provider = True
+
+                used_val = round((used_space/1000000000), 2)
+
                 licence_holders.append(
                     technomasters.LICENCE_HOLDER_DETAILS(
                         user_id, employee_name, email_id, contact_no,
                         unit_name, address,
-                        file_space/1000000000, used_space/1000000000,
+                        file_space/1000000000, used_val,
                         bool(is_active), bool(is_primary_admin),
                         is_service_provider
                     )
@@ -6092,7 +6095,7 @@ class KnowledgeDatabase(Database):
 
             remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
             total_free_space = file_space/1000000000
-            total_used_space = round(used_space/1000000000, 2)
+            total_used_space = float(used_val)
             profile_detail = technomasters.PROFILE_DETAIL(
                 str(contract_from),
                 str(contract_to), no_of_user_licence, remaining_licence,

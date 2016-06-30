@@ -71,7 +71,6 @@ class Controller(object):
         data = None
         actual_data = None
         try:
-            url = request.uri()
             data = json.loads(request.body())
             if type(data) is not list:
                 send_bad_request(
