@@ -6081,18 +6081,13 @@ class KnowledgeDatabase(Database):
                     else:
                         is_service_provider = True
 
-                used_val = used_space/1000000000
-                used_val = str(used_val)
-                tmp_s = used_val.split(".")
-                if len(tmp_s) > 0 :
-                    val = tmp_s[0] + "." + tmp_s[1][:2]
-                    used_val = val
+                used_val = round((used_space/1000000000), 2)
 
                 licence_holders.append(
                     technomasters.LICENCE_HOLDER_DETAILS(
                         user_id, employee_name, email_id, contact_no,
                         unit_name, address,
-                        file_space/1000000000, float(used_val),
+                        file_space/1000000000, used_val,
                         bool(is_active), bool(is_primary_admin),
                         is_service_provider
                     )
