@@ -127,18 +127,18 @@ function performLogin(e_button, e_email, e_password) {
 
     function onFailure(status) {
         //console.log("status"+status);
-        message = message.invalid_username_password;
+        var disp_message = message.invalid_username_password;
         if(status == "ContractExpired"){
-            message = message.contract_expired;
+            disp_message = message.contract_expired;
         }else if (status == "NotConfigured"){
-            message = message.accountconfiguration_underprogress;
+            disp_message = message.accountconfiguration_underprogress;
         }else if (status == "ContractNotYetStarted"){
-            message = message.contract_notstart;
+            disp_message = message.contract_notstart;
         }
         else if (status.indexOf("timeout") >= 0) {
-            message = message.connection_timeout
+            disp_message = message.connection_timeout
         }
-        displayLoginMessage(message);
+        displayLoginMessage(disp_message);
         $("input").val("");
         resetLoginUI(e_button, e_email, e_password);
     }

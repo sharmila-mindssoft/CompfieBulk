@@ -188,7 +188,7 @@ function changeStatus (statutorymappingId,isActive) {
             onFailure(error);
           }
       }
-  );
+    );
   }
 }
 

@@ -269,11 +269,10 @@ function submitcompliance(){
           var validity_date = $('#validitydate'+i).val();
           var due_date = $('#duedate'+i).val();
           var completion_date = $('#completiondate'+i).val();
-          var completed_by = $('#assignee'+i).val();
+          var completed_by = null;
           var frequency_ = $('#frequency'+i).val();
           var compliance_name = $('#complaincename'+i).val();
-
-          if(completed_by != '') completed_by = parseInt(completed_by);
+          if($('#assignee'+i).val() != '') completed_by = parseInt(completed_by);
 
           if(due_date == ''){
             displayMessage(message.duedate_required);
@@ -288,7 +287,7 @@ function submitcompliance(){
             displayMessage(message.validitydate_required);
             hideLoader();
             return false;
-          }else if(completed_by == ''){
+          }else if(completed_by == null){
             displayMessage(message.assignee_required);
             hideLoader();
             return false;
