@@ -74,6 +74,7 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_Text,
     parse_structure_VectorType_Text,
+    parse_structure_OptionalType_Text,
     parse_structure_Bool,
     parse_structure_OptionalType_VectorType_CustomTextType_500,
     parse_structure_VectorType_RecordType_clientreport_GetComplianceTaskApplicabilityStatusReportData,
@@ -158,6 +159,7 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_500,
     to_structure_Text,
     to_structure_VectorType_Text,
+    to_structure_OptionalType_Text,
     to_structure_Bool,
     to_structure_OptionalType_VectorType_CustomTextType_500,
     to_structure_MapType_CustomTextType_500_MapType_CustomTextType_500_VectorType_RecordType_clientreport_ActivityData,
@@ -2803,7 +2805,7 @@ class LEVEL_1_STATUTORY_NOTIFICATIONS(object):
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_250(unit_name)
         notification_text = data.get("notification_text")
-        notification_text = parse_structure_Text(notification_text)
+        notification_text = parse_structure_OptionalType_Text(notification_text)
         date_and_time = data.get("date_and_time")
         date_and_time = parse_structure_CustomTextType_20(date_and_time)
         return LEVEL_1_STATUTORY_NOTIFICATIONS(statutory_provision, notification_text, date_and_time)
@@ -2812,7 +2814,7 @@ class LEVEL_1_STATUTORY_NOTIFICATIONS(object):
         return {
             "statutory_provision": to_structure_Text(self.statutory_provision),
             "unit_name": to_structure_CustomTextType_250(self.unit_name),
-            "notification_text": to_structure_Text(self.notification_text),
+            "notification_text": to_structure_OptionalType_Text(self.notification_text),
             "date_and_time": to_structure_CustomTextType_20(self.date_and_time)
         }
 
