@@ -188,7 +188,7 @@ function changeStatus (statutorymappingId,isActive) {
             onFailure(error);
           }
       }
-  );
+    );
   }
 }
 
@@ -2162,6 +2162,25 @@ $('.repeatlabelday').click(function(){
   for(i=1; i<=12; i++){
     $('#multiple_statutory_date'+i).show();
     $('#multiple_statutory_date'+i).val('');
+
+    //load date based on month
+    /*$("#multiple_statutory_date"+i).empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("");
+    $("#multiple_statutory_date"+i).append(defaultoption);
+
+    var mMonth = $('#multiple_statutory_month'+i).val();
+    var maxDate = 31;
+    if(mMonth != '' || mMonth != undefined){
+      maxDate = load_date(mMonth);
+    }
+    for (var j=1; j<=maxDate; j++) {
+        var option = $("<option></option>");
+        option.val(j);
+        option.text(j)
+        $("#multiple_statutory_date"+i).append(option);
+    }*/
   }
   $('#single_statutory_date').val('');
   $('#statutory_date').val('');

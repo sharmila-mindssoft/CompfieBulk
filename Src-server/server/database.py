@@ -23,7 +23,7 @@ from replication.protocol import (
 from server.emailcontroller import EmailHandler as email
 from server.constants import (
     KNOWLEDGE_FORMAT_PATH, KNOWLEDGE_FORMAT_DOWNLOAD_URL,
-    LOGO_URL, LOCAL_TIMEZONE
+    LOGO_URL, CLIENT_LOGO_PATH, LOCAL_TIMEZONE
 )
 
 __all__ = [

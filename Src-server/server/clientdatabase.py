@@ -6680,18 +6680,21 @@ class ClientDatabase(Database):
 
     def get_inprogress_count(self, session_user):
         other_compliance_condition = "completed_by='{}' AND \
-        IFNULL(due_date, 0) >= current_date() \
-        AND IFNULL(completed_on, 0) = 0".format(
+        ac.is_active = 1 AND \
+        IFNULL(ch.due_date, 0) >= current_date() \
+        AND IFNULL(ch.completed_on, 0) = 0".format(
             session_user
         )
         on_occurrence_condition = "completed_by='{}' AND \
-        IFNULL(due_date, 0) >= now() \
-        AND IFNULL(completed_on, 0) = 0".format(
+        ac.is_active = 1 AND \
+        IFNULL(ch.due_date, 0) >= now() \
+        AND IFNULL(ch.completed_on, 0) = 0".format(
             session_user
         )
         query = "SELECT count(*) FROM %s ch INNER JOIN \
+        %s ac ON (ch.compliance_id = ac.compliance_id and ac.unit_id = ch.unit_id) INNER JOIN\
         %s c ON (ch.compliance_id = c.compliance_id ) " % (
-            self.tblComplianceHistory , self.tblCompliances
+            self.tblComplianceHistory , self.tblAssignedCompliances, self.tblCompliances
         )
 
         other_compliance_rows = self.select_all(
@@ -6707,19 +6710,22 @@ class ClientDatabase(Database):
 
     def get_overdue_count(self, session_user):
         query = "SELECT count(*) FROM %s ch INNER JOIN \
+        %s ac ON (ch.compliance_id = ac.compliance_id and ac.unit_id = ch.unit_id) INNER JOIN\
         %s c ON (ch.compliance_id = c.compliance_id) WHERE " % (
-            self.tblComplianceHistory, self.tblCompliances
+            self.tblComplianceHistory, self.tblAssignedCompliances, self.tblCompliances
         )
         condition = "completed_by ='%d'" % (session_user)
         other_compliance_condition = " %s AND frequency_id != 4 AND \
-        IFNULL(due_date, 0) < current_date() AND \
-        IFNULL(completed_on, 0) = 0 " % (
+        ac.is_active = 1 AND \
+        IFNULL(ch.due_date, 0) < current_date() AND \
+        IFNULL(ch.completed_on, 0) = 0 " % (
             condition
         )
 
         on_occurrence_condition = " %s AND frequency_id = 4 AND \
-        IFNULL(due_date, 0) < now() AND \
-        IFNULL(completed_on, 0) = 0 " % (
+        ac.is_active = 1 AND \
+        IFNULL(ch.due_date, 0) < now() AND \
+        IFNULL(ch.completed_on, 0) = 0 " % (
             condition
         )
         other_compliance_count = self.select_all("%s %s" % (

@@ -94,7 +94,6 @@ class HandleRequest(object):
         ip = company_server_ip.ip_address
         port = company_server_ip.port
         url = self._url_template % (ip, port, self._relative_url)
-        print url
         self._api_request(
             url, self._body, self._forward_request_callback
         )
