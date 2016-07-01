@@ -5373,7 +5373,9 @@ class ClientDatabase(Database):
 
     def get_compliance_details(
         self, country_id, domain_id, statutory_id,
-        qry_where, from_count, to_count    ):
+        qry_where, from_count, to_count
+    ):
+
         columns = [
             "compliance_history_id", "document_name",
             "compliance_description", "validity_date",
@@ -5456,6 +5458,19 @@ class ClientDatabase(Database):
         from_date, to_date, compliance_status,
         session_user
     ):
+        q_c = "SELECT t.period_from, t.period_to FROM tbl_client_configurations t \
+                where t.country_id = %s and t.domain_id = %s " % (country_id, domain_id)
+        r_c = self.select_one(q_c)
+        f_date = t_date = None
+        if r_c :
+            year_list = self.calculate_years(int(r_c[0]), int(r_c[1]))[0]
+
+            f_date = datetime.date(int(year_list[0]), int(r_c[0]), 1)
+            if int(r_c[1]) == 12 :
+                t_date = datetime.date(int(year_list[0]), int(r_c[1]), 31)
+            else :
+                t_date = datetime.date(int(year_list[0]), int(r_c[1])+1, 1) - datetime.timedelta(days=1)
+
         qry_where = ""
         admin_id = self.get_admin_id()
         if unit_id is not None :
@@ -5496,10 +5511,9 @@ class ClientDatabase(Database):
             qry_where += " AND ch.due_date between '%s' and '%s'" % (start_date, end_date)
 
         else :
-            qry_where += " AND MONTH(ch.due_date) >= (SELECT t.period_from FROM tbl_client_configurations t \
-                where t.country_id = ut.country_id and t.domain_id = c.domain_id ) \
-                AND MONTH(ch.due_date) <= (SELECT t.period_to FROM tbl_client_configurations t \
-                where t.country_id = ut.country_id and t.domain_id = c.domain_id )"
+
+            qry_where += " AND ch.due_date >= '%s' \
+                AND ch.due_date <= '%s'" % (f_date, t_date)
         return qry_where
 
     def report_compliance_details(
