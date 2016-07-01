@@ -46,6 +46,7 @@ function getStatutoryMappings(){
 
   }
   function onFailure(error){
+
   }
   mirror.getApproveStatutoryMapings(
     function (error, response) {
@@ -69,7 +70,7 @@ function onCountrySuccess(val){
   $("#countryval").focus();
 }
 
-//load country list in autocomplete text box  
+//load country list in autocomplete text box
 $("#countryval").keyup(function(){
   var textval = $(this).val();
   getCountryAutocomplete(textval, countriesList, function(val){
@@ -83,7 +84,7 @@ function onDomainSuccess(val){
   $("#domain").val(val[0]);
   $("#domainval").focus();
 }
-//load domain list in autocomplete textbox  
+//load domain list in autocomplete textbox
 $("#domainval").keyup(function(){
   var textval = $(this).val();
   getDomainAutocomplete(textval, domainsList, function(val){
@@ -97,7 +98,7 @@ function onIndustrySuccess(val){
   $("#industry").val(val[0]);
   $("#industryval").focus();
 }
-//load industry list in autocomplete textbox  
+//load industry list in autocomplete textbox
 $("#industryval").keyup(function(){
   var textval = $(this).val();
   getIndustryAutocomplete(textval, industriesList, function(val){
@@ -111,7 +112,7 @@ function onStatutoryNatureSuccess(val){
   $("#statutorynature").val(val[0]);
   $("#statutorynatureval").focus();
 }
-//load statutorynature list in autocomplete textbox  
+//load statutorynature list in autocomplete textbox
 $("#statutorynatureval").keyup(function(){
   var textval = $(this).val();
   getStatutoryNatureAutocomplete(textval, statutoryNaturesList, function(val){
@@ -288,7 +289,7 @@ function disppopup(sm_id,compliance_id,element){
     if(statutory_date[z]["statutory_month"] != null) sMonth = statutory_date[z]["statutory_month"];
 
     if(sMonth != '') sMonth = getMonth_IntegettoString(sMonth);
-    
+
     statutorydate +=  sMonth +' '+ sDay +' ';
     }
     if(sdateDesc != ''){
@@ -379,8 +380,13 @@ $("#saverecord").click(function(){
     displayMessage(message.action_selection_success);
     reloadStatutoryMapping();
   }
-  function onFailure(error){
-    displayMessage(error);
+  function onFailure(error, response){
+    if (error == "TransactionFailed") {
+      displayMessage(response["message"])
+    }
+    else {
+      displayMessage(error);
+    }
   }
   mirror.approveStatutoryMapping(approvelist,
     function (error, response) {
@@ -388,7 +394,7 @@ $("#saverecord").click(function(){
           onSuccess(response);
         }
         else {
-          onFailure(error);
+          onFailure(error, response);
         }
       });
 });

@@ -563,6 +563,26 @@ class InvalidStatutoryMappingId(Response):
         return {
         }
 
+class TransactionFailed(Response):
+    def __init__(self, message, extra_details):
+        self.message = message
+        self.extra_details = extra_details
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["message", "extra_details"])
+        message = data.get("message")
+        message = parse_structure_Text(message)
+        extra_details = data.get("extra_details")
+        extra_details = parse_structure_OptionalType_Text("extra_details")
+        return TransactionFailed(message, extra_details)
+
+    def to_inner_structure(self):
+        return {
+            "message": to_structure_Text(self.message),
+            "extra_details": to_structure_OptionalType_Text(self.extra_details)
+        }
+
 class ChangeStatutoryMappingStatusSuccess(Response):
     def __init__(self):
         pass

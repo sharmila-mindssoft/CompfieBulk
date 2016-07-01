@@ -146,14 +146,17 @@ def process_get_approve_statutory_mappings(db, user_id):
 
 def process_approve_statutory_mapping(db, request_frame, user_id):
     is_approved = False
+    message = value = None
     for data in request_frame.statutory_mappings :
-        if (db.change_approval_status(data, user_id)):
+        result = db.change_approval_status(data, user_id)
+        if result is True:
             is_approved = True
         else :
+            message, value = result
             is_approved = False
             break
 
     if is_approved :
         return knowledgetransaction.ApproveStatutoryMappingSuccess()
     else :
-        return knowledgetransaction.InvalidStatutoryMappingId()
+        return knowledgetransaction.TransactionFailed(message, value)

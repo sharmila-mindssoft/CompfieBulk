@@ -3349,16 +3349,18 @@ class KnowledgeDatabase(Database):
         where = "statutory_mapping_id=%s" % (statutory_mapping_id)
 
         q = "SELECT statutory_mapping, created_by, updated_by, domain_id, \
-            country_id from tbl_statutory_mappings \
+            country_id, IFNULL(approval_status,0) from tbl_statutory_mappings \
             where statutory_mapping_id = %s" % (
                 statutory_mapping_id
             )
         rows = self.select_one(q)
         users = self.convert_to_dict(rows, [
             "statutory_mapping", "created_by", "updated_by",
-            "domain_id", "country_id"
+            "domain_id", "country_id", "approval_status"
         ])
-
+        if int(users["approval_status"]) > 0 :
+            msg = """ Statutory mapping "%s" already approved or rejected. """ % (users["statutory_mapping"])
+            return msg,  None
         if approval_status == 2 :
             # Rejected
             columns.extend(["rejected_reason"])
