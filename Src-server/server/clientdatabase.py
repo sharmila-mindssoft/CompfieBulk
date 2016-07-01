@@ -7741,16 +7741,18 @@ class ClientDatabase(Database):
             query = "SELECT frequency_id FROM %s tc WHERE tc.compliance_id = '%s' " % (
                 self.tblCompliances, compliance_id
             )
-            rows = self.select_all(query)
+            rows = self.select_one(query)
             columns = ["frequency_id"]
             rows = self.convert_to_dict(rows, columns)
-            as_condition = " unit_id = '%d' and compliance_id = '%d'" % (
-                unit_id, compliance_id
-            )
-            self.update(
-                self.tblAssignedCompliances, ["is_active"], [0], as_condition,
-                client_id
-            )
+            frequency_id = int(rows["frequency_id"])
+            if frequency_id == 1:
+                as_condition = " unit_id = '%d' and compliance_id = '%d'" % (
+                    unit_id, compliance_id
+                )
+                self.update(
+                    self.tblAssignedCompliances, ["is_active"], [0], as_condition,
+                    client_id
+                )
             self.save_compliance_activity(
                 unit_id, compliance_id, "Approved", "Complied",
                 remarks
