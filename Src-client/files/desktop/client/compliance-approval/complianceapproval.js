@@ -114,6 +114,10 @@ function loadComplianceApprovalDetails(data){
     });
 
     if(totalRecord == 0){
+        var norecordtableRow=$('#no-record-templates .table-no-content .table-row-no-content');
+        var noclone=norecordtableRow.clone();
+        $('.no_records', noclone).text('No Compliance Available');
+        $('.tbody-compliance-approval-list').append(noclone);
         $('#pagination').hide();
         $('.compliance_count').text('');
     }else{

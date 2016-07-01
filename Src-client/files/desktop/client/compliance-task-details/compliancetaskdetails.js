@@ -169,6 +169,13 @@ function loadComplianceTaskDetails(data){
 
     var total = (snoOverdue - 1) + (snoInprogress - 1);
 
+    if( c_totalRecord1 == 0 && c_totalRecord2 == 0){
+        var norecordtableRow=$('#no-record-templates .table-no-content .table-row-no-content');
+        var noclone=norecordtableRow.clone();
+        $('.no_records', noclone).text('No Compliance Available');
+        $('.tbody-compliances-task-list-inprogress').append(noclone);
+    }
+
     if(c_totalRecord2 == 0){
         $('.compliance_count1').text('');
     }else{
@@ -182,9 +189,9 @@ function loadComplianceTaskDetails(data){
     }
 
     if(total >= c_totalRecord1 + c_totalRecord2){
-      $('#pagination').hide();
+        $('#pagination').hide();
     }else{
-      $('#pagination').show();
+        $('#pagination').show();
     }
     hideLoader();
 }
@@ -267,6 +274,10 @@ function loadUpcomingCompliancesDetails(data){
     });
 
     if(u_totalRecord == 0){
+        var norecordtableRow=$('#no-record-templates .table-no-content .table-row-no-content');
+        var noclone=norecordtableRow.clone();
+        $('.no_records', noclone).text('No Compliance Available');
+        $('.tbody-upcoming-compliances-list').append(noclone);
         $('#pagination-upcoming').hide();
         $('.compliance_count_upcoming').text('');
     }else{
