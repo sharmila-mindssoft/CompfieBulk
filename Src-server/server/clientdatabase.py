@@ -1758,15 +1758,19 @@ class ClientDatabase(Database):
                 return False
 
     def get_level_1_statutories_for_user_with_domain(self, session_user, client_id, domain_id=None):
-        columns = "group_concat(distinct compliance_id)"
+        columns = "distinct compliance_id "
         condition = "1"
         if not self.is_admin(session_user):
             condition = "assignee = '%d'" % session_user
         rows = self.get_data(self.tblAssignedCompliances, columns, condition)
-        compliance_ids = None
-        if rows:
-            compliance_ids = rows[0][0]
+        c_ids = []
+        for r in rows :
+            c_ids.append(str(r[0]))
 
+        if len(c_ids) == 1 :
+            compliance_ids = "(%s)" % c_ids[0]
+        else :
+            compliance_ids = ','.join(c_ids)
 
         domain_ids = domain_id
         if domain_ids is None :
@@ -2025,7 +2029,7 @@ class ClientDatabase(Database):
                         next_due_date = due_dates_list[current_due_date_index+1]
                     columns = "count(*)"
                     condition = "unit_id = '{}' AND due_date < {} AND compliance_id = '{}' AND \
-                    approve_status = 1 and validity_date > {} and validity_date < '{}'".format(
+                    approve_status = 1 and validity_date > {} and validity_date > '{}'".format(
                         unit_id, due_date, compliance_id, due_date, next_due_date
                     )
                     rows = self.get_data(self.tblComplianceHistory, columns, condition)
@@ -2054,10 +2058,14 @@ class ClientDatabase(Database):
             if due_dates_list is not None:
                 next_due_date = None
                 current_due_date_index = due_dates_list.index(due_date)
-                if len(due_dates_list)-1 < current_due_date_index+1:
+                if len(due_dates_list) < current_due_date_index + 1:
                     return False
                 else:
-                    next_due_date = due_dates_list[current_due_date_index+1]
+                    if current_due_date_index == len(due_dates_list)-1 :
+                        next_due_date = due_dates_list[current_due_date_index]
+                    else :
+                        next_due_date = due_dates_list[current_due_date_index+1]
+
                     columns = "count(*)"
                     condition = "unit_id = '{}' AND due_date < '{}' AND compliance_id = '{}' AND \
                     approve_status = 1 and validity_date > '{}' and validity_date > '{}'".format(
@@ -2226,7 +2234,7 @@ class ClientDatabase(Database):
     ):
         # Checking whether compliance already completed
         if self.is_already_completed_compliance(
-            self.string_to_datetime(due_date), compliance_id, unit_id
+            self.string_to_datetime(due_date), compliance_id, unit_id, [self.string_to_datetime(due_date)]
         ):
             return False
         else:
@@ -2240,7 +2248,7 @@ class ClientDatabase(Database):
 
         # Checking whether compliance already completed
         if self.is_already_completed_compliance(
-            self.string_to_datetime(due_date), compliance_id, unit_id
+            self.string_to_datetime(due_date), compliance_id, unit_id, [self.string_to_datetime(due_date)]
         ):
             return False
 
@@ -7741,16 +7749,32 @@ class ClientDatabase(Database):
             query = "SELECT frequency_id FROM %s tc WHERE tc.compliance_id = '%s' " % (
                 self.tblCompliances, compliance_id
             )
-            rows = self.select_all(query)
+            rows = self.select_one(query)
             columns = ["frequency_id"]
             rows = self.convert_to_dict(rows, columns)
+            frequency_id = int(rows["frequency_id"])
+            as_columns = []
+            as_values = []
+            print next_due_date
+            if next_due_date is not None:
+                as_columns.append("due_date")
+                as_values.append(next_due_date)
+            if validity_date is not None:
+                as_columns.append("validity_date")
+                as_values.append(validity_date)
+            if frequency_id in (1, "1"):
+                as_columns.append("is_active")
+                as_values.append(0)
+
             as_condition = " unit_id = '%d' and compliance_id = '%d'" % (
                 unit_id, compliance_id
             )
-            self.update(
-                self.tblAssignedCompliances, ["is_active"], [0], as_condition,
-                client_id
-            )
+            if len(as_columns) > 0 and len(as_values) > 0 and len(as_columns) == len(as_values):
+                self.update(
+                    self.tblAssignedCompliances, as_columns, as_values, as_condition,
+                    client_id
+                )
+
             self.save_compliance_activity(
                 unit_id, compliance_id, "Approved", "Complied",
                 remarks
@@ -9864,7 +9888,10 @@ class ClientDatabase(Database):
         rows = self.get_data(self.tblCompliances, column, condition)
         compliance_name = ""
         if rows[0][0] is not None:
-            compliance_name += rows[0][0]+" - "+rows[0][1]
+            if str(rows[0][0])  == "None" :
+                compliance_name = rows[0][1]
+            else :
+                compliance_name += rows[0][0]+" - "+rows[0][1]
         else:
             compliance_name = rows[0][1]
         return compliance_name
