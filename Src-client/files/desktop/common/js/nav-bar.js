@@ -118,11 +118,8 @@ function initializeNavBar () {
     var client_name = client_mirror.getClientShortName();
     var employee_name = mirror.getEmployeeName();
 
-    if ((typeof(client_name) == "undefined") || (client_name == null) ){
-        profile_url = "/knowledge/profile";
-        change_password_url = "/knowledge/change-password";
-    }
-    else {
+    frms = window.location.href.split("/");
+    if (frms.indexOf("knowledge") == -1) {
         profile_url = "/profile";
         change_password_url = "/change-password";
         if (
@@ -133,6 +130,25 @@ function initializeNavBar () {
             $("ul", settingsMenuObject).append(item);
         }
     }
+    else {
+        profile_url = "/knowledge/profile";
+        change_password_url = "/knowledge/change-password";
+    }
+    // if ((typeof(client_name) == "undefined") || (client_name == null) ){
+    //     profile_url = "/knowledge/profile";
+    //     change_password_url = "/knowledge/change-password";
+    // }
+    // else {
+    //     profile_url = "/profile";
+    //     change_password_url = "/change-password";
+    //     if (
+    //         (employee_name == "Administrator")
+    //     ){
+    //         settings_url = "/settings"
+    //         var item = getItemObject(settings_url, "Settings");
+    //         $("ul", settingsMenuObject).append(item);
+    //     }
+    // }
 
     if (
         (typeof(employee_name) == "undefined") ||
