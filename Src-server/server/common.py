@@ -1,6 +1,12 @@
 import datetime
 import pytz
 import uuid
+import random
+import string
+import hashlib
+from server.constants import (
+    LOCAL_TIMEZONE
+)
 
 def get_system_date():
     date = datetime.datetime.today()
@@ -99,6 +105,92 @@ def save_file_in_path(file_path, file_content, file_name):
         fn.write(file_content)
     return True
 
-def new_uuid(self) :
+def new_uuid() :
         s = str(uuid.uuid4())
         return s.replace("-", "")
+
+
+########################################################
+# To check generate a random string with alpahbets
+# and numbers
+########################################################
+def generate_random(self):
+    characters = string.ascii_uppercase + string.digits
+    return ''.join(
+        random.SystemRandom().choice(characters) for _ in range(7)
+    )
+
+########################################################
+# To generate random password encrypted with md5
+# algorithm. This function return encrypted password and
+# Original password
+########################################################
+def generate_and_return_password(self):
+    password = self.generate_random()
+    return self.encrypt(password), password
+
+########################################################
+# Encrypts the passed argument with md5 algorithm and
+# returns the encrypted value
+########################################################
+def encrypt(self, value):
+    m = hashlib.md5()
+    m.update(value)
+    return m.hexdigest()
+
+########################################################
+# Converts the passed date in string format to localized
+# datetime format (Time zone is India)
+########################################################
+def string_to_datetime(self, string):
+    string_in_date = string
+    if string is not None:
+        string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y")
+    return self.localize(string_in_date)
+
+########################################################
+# Coverts datetime passed in string format to datetime
+# format
+########################################################
+def string_to_datetime_with_time(self, string):
+    string_in_date = string
+    if string is not None:
+        string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y %H:%M")
+    return string_in_date
+
+########################################################
+# Localizes the given timestamp (Local Timezone is India)
+########################################################
+def localize(self, time_stamp):
+    local_dt = LOCAL_TIMEZONE.localize(
+        time_stamp
+    )
+    tzoffseet = local_dt.utcoffset()
+    local_dt = local_dt.replace(tzinfo=None)
+    local_dt = local_dt+tzoffseet
+    return local_dt
+
+########################################################
+# Converts given datetime value to string (DATE format)
+########################################################
+def datetime_to_string(self, datetime_val):
+    date_in_string = datetime_val
+    if datetime_val is not None:
+        date_in_string = datetime_val.strftime("%d-%b-%Y")
+    return date_in_string
+
+########################################################
+# converts given datetime val to string (DATETIME format)
+########################################################
+def datetime_to_string_time(self, datetime_val):
+    datetime_in_string = datetime_val
+    if datetime_val is not None:
+        datetime_in_string = datetime_val.strftime("%d-%b-%Y %H:%M")
+    return datetime_in_string
+
+########################################################
+# Returns the database information of clients
+# If client id is given, client specific info will be
+# returned
+# Other wise Info of all clients will be returned
+########################################################
