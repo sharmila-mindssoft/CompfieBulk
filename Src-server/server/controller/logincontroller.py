@@ -155,13 +155,15 @@ def admin_login_response(db, ip):
 
 
 def process_forgot_password(db, request):
-    email_id = request.username
-    user_type = request.login_type
-    user_id, employee_name = verify_username(
-        db, email_id, user_type
-    )
+    login_type = request.login_type.lower()
+    if login_type != "web" :
+        is_mobile = True
+    else :
+        is_mobile = False
+    user_id = db.verify_username(request.username, is_mobile)
+
     if user_id is not None:
-        send_reset_link(db, user_id, email_id, employee_name)
+        send_reset_link(db, user_id, request.username)
         return login.ForgotPasswordSuccess()
     else:
         return login.InvalidUserName()
