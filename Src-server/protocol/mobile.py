@@ -526,8 +526,7 @@ class ClientUserLoginResponseSuccess(Response):
         group_name = data.get("group_name")
         group_name = parse_structure_CustomTextType_100(group_name)
         configuration = data.get("configuration")
-        configuration = parse_structure_VectorType_RecordType_core_ClientConfiguration(
-            configuration)
+        configuration = parse_structure_VectorType_RecordType_core_ClientConfiguration(configuration)
         dashboard = data.get("dashboard")
         dashboard = parse_structure_Bool(dashboard)
         compliance_task_list = data.get("compliance_task_list")
@@ -548,13 +547,10 @@ class ClientUserLoginResponseSuccess(Response):
                 self.session_token),
             "group_id": to_structure_UnsignedIntegerType_32(self.group_id),
             "group_name": to_structure_CustomTextType_100(self.group_name),
-            "configuration": to_structure_VectorType_RecordType_core_ClientConfiguration(
-                self.configuration),
+            "configuration": to_structure_VectorType_RecordType_core_ClientConfiguration(self.configuration),
             "dashboard": to_structure_Bool(self.dashboard),
-            "compliance_task_list": to_structure_Bool(
-                self.compliance_task_list),
-            "compliance_approvals": to_structure_Bool(
-                self.compliance_approvals)
+            "compliance_task_list": to_structure_Bool(self.compliance_task_list),
+            "compliance_approvals": to_structure_Bool(self.compliance_approvals)
         }
 
 

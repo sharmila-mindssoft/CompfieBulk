@@ -162,7 +162,6 @@ def mobile_user_admin_response(db, login_type, client_id, ip):
     session_token = add_session(
         db, user_id, session_type, ip, "Administrator", client_id
     )
-    # form_ids = get_form_ids_for_admin(db)
     # menu = process_user_forms(db, form_ids, client_id, 1)
     employee_name = "Administrator"
     client_info = get_client_group(db)
