@@ -153,26 +153,24 @@ CREATE TABLE `tbl_user_sessions` (
 
 DROP TABLE IF EXISTS `tbl_industries`;
 CREATE TABLE `tbl_industries` (
-  `industry_id` int(11) NOT NULL,
+  `industry_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `industry_name` varchar(50) NOT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`industry_id`)
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_statutory_natures`;
 CREATE TABLE `tbl_statutory_natures` (
-  `statutory_nature_id` int(11) NOT NULL,
+  `statutory_nature_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `statutory_nature_name` varchar(50) NOT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`statutory_nature_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_statutory_levels`;
