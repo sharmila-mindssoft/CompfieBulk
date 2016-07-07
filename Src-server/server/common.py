@@ -8,6 +8,13 @@ from server.constants import (
     LOCAL_TIMEZONE
 )
 
+########################################################
+# Returns current date and time localized to Indian time
+########################################################
+def get_date_time() :
+    time_stamp = datetime.datetime.utcnow()
+    return localize(time_stamp)
+
 def get_system_date():
     date = datetime.datetime.today()
     return date
@@ -114,7 +121,7 @@ def new_uuid() :
 # To check generate a random string with alpahbets
 # and numbers
 ########################################################
-def generate_random(self):
+def generate_random():
     characters = string.ascii_uppercase + string.digits
     return ''.join(
         random.SystemRandom().choice(characters) for _ in range(7)
@@ -125,15 +132,15 @@ def generate_random(self):
 # algorithm. This function return encrypted password and
 # Original password
 ########################################################
-def generate_and_return_password(self):
-    password = self.generate_random()
-    return self.encrypt(password), password
+def generate_and_return_password():
+    password = generate_random()
+    return encrypt(password), password
 
 ########################################################
 # Encrypts the passed argument with md5 algorithm and
 # returns the encrypted value
 ########################################################
-def encrypt(self, value):
+def encrypt(value):
     m = hashlib.md5()
     m.update(value)
     return m.hexdigest()
@@ -142,17 +149,17 @@ def encrypt(self, value):
 # Converts the passed date in string format to localized
 # datetime format (Time zone is India)
 ########################################################
-def string_to_datetime(self, string):
+def string_to_datetime(string):
     string_in_date = string
     if string is not None:
         string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y")
-    return self.localize(string_in_date)
+    return localize(string_in_date)
 
 ########################################################
 # Coverts datetime passed in string format to datetime
 # format
 ########################################################
-def string_to_datetime_with_time(self, string):
+def string_to_datetime_with_time(string):
     string_in_date = string
     if string is not None:
         string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y %H:%M")
@@ -161,7 +168,7 @@ def string_to_datetime_with_time(self, string):
 ########################################################
 # Localizes the given timestamp (Local Timezone is India)
 ########################################################
-def localize(self, time_stamp):
+def localize(time_stamp):
     local_dt = LOCAL_TIMEZONE.localize(
         time_stamp
     )
@@ -173,7 +180,7 @@ def localize(self, time_stamp):
 ########################################################
 # Converts given datetime value to string (DATE format)
 ########################################################
-def datetime_to_string(self, datetime_val):
+def datetime_to_string(datetime_val):
     date_in_string = datetime_val
     if datetime_val is not None:
         date_in_string = datetime_val.strftime("%d-%b-%Y")
@@ -182,7 +189,7 @@ def datetime_to_string(self, datetime_val):
 ########################################################
 # converts given datetime val to string (DATETIME format)
 ########################################################
-def datetime_to_string_time(self, datetime_val):
+def datetime_to_string_time(datetime_val):
     datetime_in_string = datetime_val
     if datetime_val is not None:
         datetime_in_string = datetime_val.strftime("%d-%b-%Y %H:%M")
