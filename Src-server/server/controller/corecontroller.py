@@ -2,6 +2,7 @@ import collections
 
 from protocol import core
 
+from server.database.general import get_user_forms
 __all__ = [
     "process_user_forms", "process_user_menus",
 ]
@@ -11,9 +12,9 @@ def process_user_forms(
 ):
     forms = None
     if client_id is not None:
-        forms = db.get_user_forms(form_ids, client_id, is_admin)
+        forms = get_user_forms(db, form_ids, client_id, is_admin)
     else:
-        forms = db.get_user_forms(form_ids)
+        forms = get_user_forms(db, form_ids)
     form_list = []
     for f in forms :
         form_id = int(f["form_id"])
