@@ -1,5 +1,7 @@
 import MySQLdb as mysql
-import logger
+from server import logger
+
+from server.common import (convert_to_dict, get_date_time)
 
 class Database(object):
     def __init__(
@@ -148,32 +150,42 @@ class Database(object):
 # select_one : query is string and param is typle which return result in tuple
 ########################################################
     def select_all(self, query, param=None):
+        print query
+        print param
         cursor = self.cursor()
         assert cursor is not None
-        assert type(query) is not str
         try:
             if param is None :
                 cursor.execute(query)
             else :
+                print type(param)
+                assert type(param) is tuple
                 cursor.execute(query, param)
-            return cursor.fetchall()
-        except Exception, e:
+            res = cursor.fetchall()
+            print res
+            return res
+        except mysql.Error, e:
             logger.logClientApi("select_all", query)
             logger.logClientApi("select_all", e)
             return
 
     def select_one(self, query, param=None):
         cursor = self.cursor()
+        print query
+        print param
         assert cursor is not None
-        assert type(param) is not tuple
-        assert type(query) is not str
         try:
             if param is None :
                 cursor.execute(query)
             else :
+                assert type(param) is tuple
                 cursor.execute(query, param)
-            return cursor.fetchone()
-        except Exception, e:
+            res = cursor.fetchone()
+            print res
+            return res
+        except mysql.Error, e:
+            print "Exception"
+            print e
             logger.logClientApi("select_one", query)
             logger.logClientApi("select_one", e)
             return
@@ -184,7 +196,7 @@ class Database(object):
     # returns result in list of dictionary
     ########################################################
     def get_data(
-        self, table, columns, condition
+        self, table, columns, condition, condition_val=None
     ):
         assert type(columns) in (list, str)
         param = []
@@ -195,15 +207,15 @@ class Database(object):
             columns = ", ".join(columns)
 
         query = "SELECT %s FROM %s " % (columns, table)
-        if condition is not None :
-            query += " WHERE %s"
-            rows = self.select_all(query, condition)
+        if condition is not None and condition_val is not None :
+            query += " WHERE %s" % condition
+            rows = self.select_all(query, condition_val)
         else :
             rows = self.select_all(query)
 
         result = []
         if rows :
-            result = self.convert_to_dict(rows, param)
+            result = convert_to_dict(rows, param)
         return result
 
     ########################################################
@@ -213,6 +225,21 @@ class Database(object):
         self, columns, tables, aliases, join_type,
         join_conditions, where_condition
     ):
+        assert type(columns) in (list, str)
+        param = []
+        if type(columns) is str :
+            param = columns.split(',')
+            params = []
+            for p in param :
+                if '.' in p :
+                    params.append(p.split('.')[1])
+                else :
+                    params.append(p)
+            param = params
+        elif type(columns) is list :
+            param = columns
+            columns = ", ".join(columns)
+
         query = "SELECT %s FROM " % columns
 
         for index, table in enumerate(tables):
@@ -231,8 +258,16 @@ class Database(object):
                     join_conditions[index-1]
                 )
 
-        query += " where %s" % where_condition
-        return self.select_all(query)
+        if where_condition is not None :
+            query += " WHERE %s " % (where_condition)
+            rows = self.select_all(query)
+        else :
+            rows = self.select_all(query)
+
+        result = []
+        if rows :
+            result = convert_to_dict(rows, param)
+        return result
 
     ########################################################
     # To form a insert query
@@ -388,3 +423,43 @@ class Database(object):
     def is_invalid_id(self, table, field, value, client_id=None):
         condition = "%s = '%d'" % (field, value)
         return not self.is_already_exists(table, condition)
+
+    ########################################################
+    # To generate a new Id for the given table and given
+    # field
+    ########################################################
+    def get_new_id(self, field , table_name, client_id=None) :
+        newId = 1
+        query = "SELECT max(%s) from %s " % (field, table_name)
+        row = None
+        row = self.select_one(query)
+        if row[0] is not None :
+            newId = int(row[0]) + 1
+        return newId
+
+    def save_activity(self, user_id, form_id, action):
+        created_on = get_date_time()
+        activityId = self.get_new_id("activity_log_id", "tbl_activity_log")
+        query = "INSERT INTO tbl_activity_log \
+            (activity_log_id, user_id, form_id, action, created_on) \
+            VALUES (%s, %s, %s, %s, %s)"
+        self.execute(query, (
+                activityId, user_id, form_id, action, created_on
+        ))
+        return True
+
+    def validate_session_token(self, session_token) :
+        query = "SELECT user_id FROM tbl_user_sessions \
+            WHERE session_token = '%s'" % (session_token)
+        row = self.select_one(query)
+        user_id = None
+        if row :
+            user_id = row[0]
+            self.update_session_time(session_token)
+        return user_id
+
+    def update_session_time(self, session_token):
+        updated_on = get_date_time()
+        q = "update tbl_user_sessions set \
+        last_accessed_time=%s where session_token = %s "
+        self.execute(q, (str(updated_on), str(session_token)))
