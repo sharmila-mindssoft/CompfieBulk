@@ -14,9 +14,8 @@ CREATE TABLE `tbl_audit_log` (
 
 DROP TABLE IF EXISTS `tbl_form_category`;
 CREATE TABLE `tbl_form_category` (
-  `form_category_id` int(11) NOT NULL,
+  `form_category_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `form_category` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`form_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_form_type`;
@@ -44,7 +43,7 @@ CREATE TABLE `tbl_forms` (
 
 DROP TABLE IF EXISTS `tbl_user_groups`;
 CREATE TABLE `tbl_user_groups` (
-  `user_group_id` int(11) NOT NULL,
+  `user_group_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `form_category_id` int(11) DEFAULT NULL,
   `user_group_name` varchar(50) NOT NULL,
   `form_ids` varchar(250) NOT NULL,
@@ -53,7 +52,6 @@ CREATE TABLE `tbl_user_groups` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`user_group_id`),
   CONSTRAINT `fk_tbl_user_groups_1` FOREIGN KEY (`form_category_id`) REFERENCES `tbl_form_category` (`form_category_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -65,7 +63,7 @@ CREATE TABLE `tbl_admin` (
 
 DROP TABLE IF EXISTS `tbl_countries`;
 CREATE TABLE `tbl_countries` (
-  `country_id` int(11) NOT NULL,
+  `country_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `country_name` varchar(50) NOT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
@@ -77,7 +75,7 @@ CREATE TABLE `tbl_countries` (
 
 DROP TABLE IF EXISTS `tbl_domains`;
 CREATE TABLE `tbl_domains` (
-  `domain_id` int(11) NOT NULL,
+  `domain_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `domain_name` varchar(50) NOT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
@@ -89,7 +87,7 @@ CREATE TABLE `tbl_domains` (
 
 DROP TABLE IF EXISTS `tbl_users`;
 CREATE TABLE `tbl_users` (
-  `user_id` int(11) NOT NULL,
+  `user_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `user_group_id` int(11) NOT NULL,
   `email_id` varchar(100) NOT NULL,
   `password` varchar(50) DEFAULT NULL,
@@ -175,7 +173,7 @@ CREATE TABLE `tbl_statutory_natures` (
 
 DROP TABLE IF EXISTS `tbl_statutory_levels`;
 CREATE TABLE `tbl_statutory_levels` (
-  `level_id` int(11) NOT NULL,
+  `level_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `level_position` int(11) NOT NULL,
@@ -185,14 +183,13 @@ CREATE TABLE `tbl_statutory_levels` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`level_id`),
   CONSTRAINT `fk_statutory_levels_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `fk_statutory_levels_domains` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_geography_levels`;
 CREATE TABLE `tbl_geography_levels` (
-  `level_id` int(11) NOT NULL,
+  `level_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `country_id` int(11) NOT NULL,
   `level_position` int(11) NOT NULL,
   `level_name` varchar(50) NOT NULL,
@@ -201,13 +198,12 @@ CREATE TABLE `tbl_geography_levels` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`level_id`),
   CONSTRAINT `fk_geography_levels_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_geographies`;
 CREATE TABLE `tbl_geographies` (
-  `geography_id` int(11) NOT NULL,
+  `geography_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `geography_name` varchar(50) NOT NULL,
   `level_id` int(11) NOT NULL,
   `parent_ids` varchar(50) DEFAULT NULL,
@@ -217,13 +213,12 @@ CREATE TABLE `tbl_geographies` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`geography_id`),
   CONSTRAINT `fk_geographies_geography_levels` FOREIGN KEY (`level_id`) REFERENCES `tbl_geography_levels` (`level_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_statutory_mappings`;
 CREATE TABLE `tbl_statutory_mappings` (
-  `statutory_mapping_id` int(11) NOT NULL,
+  `statutory_mapping_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `industry_ids` varchar(50) NOT NULL,
@@ -239,7 +234,6 @@ CREATE TABLE `tbl_statutory_mappings` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`statutory_mapping_id`),
   CONSTRAINT `fk_statutory_mappings_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `fk_statutory_mappings_domains` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
   CONSTRAINT `fk_statutory_mappings_statutory_natures` FOREIGN KEY (`statutory_nature_id`) REFERENCES `tbl_statutory_natures` (`statutory_nature_id`)
@@ -247,7 +241,7 @@ CREATE TABLE `tbl_statutory_mappings` (
 
 DROP TABLE IF EXISTS `tbl_statutories`;
 CREATE TABLE `tbl_statutories` (
-  `statutory_id` int(11) NOT NULL,
+  `statutory_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `level_id` int(11) NOT NULL,
   `statutory_name` varchar(100) NOT NULL,
   `parent_ids` varchar(50) DEFAULT NULL,
@@ -257,7 +251,6 @@ CREATE TABLE `tbl_statutories` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`statutory_id`),
   CONSTRAINT `fk_statutories_statutory_levels` FOREIGN KEY (`level_id`) REFERENCES `tbl_statutory_levels` (`level_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -285,7 +278,7 @@ CREATE TABLE `tbl_compliance_duration_type` (
 
 DROP TABLE IF EXISTS `tbl_compliances`;
 CREATE TABLE `tbl_compliances` (
-  `compliance_id` int(11) NOT NULL,
+  `compliance_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `statutory_mapping_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `frequency_id` int(11) NOT NULL,
@@ -306,7 +299,6 @@ CREATE TABLE `tbl_compliances` (
   `created_on` timestamp DEFAULT '0000-00-00 00:00:00',
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`compliance_id`),
   KEY `fk_compliances_statutory_mappings` (`statutory_mapping_id`),
   KEY `fk_compliance_duration_id_1` (`duration_type_id`),
   KEY `fk_compliance_frequency_id` (`frequency_id`),
@@ -320,7 +312,7 @@ CREATE TABLE `tbl_compliances` (
 
 DROP TABLE IF EXISTS `tbl_statutories_backup`;
 CREATE TABLE `tbl_statutories_backup` (
-  `statutory_backup_id` int(11) NOT NULL,
+  `statutory_backup_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `statutory_mapping_id` int(11) NOT NULL,
   `country_name` varchar(50) NOT NULL,
   `domain_name` varchar(50) NOT NULL,
@@ -330,7 +322,6 @@ CREATE TABLE `tbl_statutories_backup` (
   `applicable_location` longtext,
   `created_by` int(11) NOT NULL,
   `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`statutory_backup_id`),
   CONSTRAINT `fk_statutories_backup` FOREIGN KEY (`statutory_mapping_id`) REFERENCES `tbl_statutory_mappings` (`statutory_mapping_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -355,7 +346,7 @@ CREATE TABLE `tbl_compliances_backup` (
 
 DROP TABLE IF EXISTS `tbl_client_groups`;
 CREATE TABLE `tbl_client_groups` (
-  `client_id` int(11) NOT NULL,
+  `client_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `group_name` varchar(50) NOT NULL,
   `email_id` varchar(50) NOT NULL,
   `logo_url` varchar(200) DEFAULT NULL,
@@ -373,7 +364,6 @@ CREATE TABLE `tbl_client_groups` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_client_countries`;
@@ -422,27 +412,25 @@ CREATE TABLE `tbl_client_configurations` (
 DROP TABLE IF EXISTS `tbl_business_groups`;
 CREATE TABLE `tbl_business_groups` (
   `client_id` int(11) NOT NULL,
-  `business_group_id` int(11) NOT NULL,
+  `business_group_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `business_group_name` varchar(100) NOT NULL,
   `created_by` int(11) NOT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`business_group_id`),
   CONSTRAINT `fk_tbl_cg_bg` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_legal_entities`;
 CREATE TABLE `tbl_legal_entities` (
   `client_id` int(11) NOT NULL,
-  `legal_entity_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `legal_entity_name` varchar(100) DEFAULT NULL,
   `business_group_id` int(11) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`legal_entity_id`),
   CONSTRAINT `fk_legal_entities_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
   CONSTRAINT `fk_tbl_cg_le` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -451,7 +439,7 @@ CREATE TABLE `tbl_legal_entities` (
 DROP TABLE IF EXISTS `tbl_divisions`;
 CREATE TABLE `tbl_divisions` (
   `client_id` int(11) NOT NULL,
-  `division_id` int(11) NOT NULL,
+  `division_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `division_name` varchar(100) DEFAULT NULL,
   `legal_entity_id` int(11) DEFAULT NULL,
   `business_group_id` int(11) DEFAULT NULL,
@@ -459,7 +447,6 @@ CREATE TABLE `tbl_divisions` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`division_id`),
   CONSTRAINT `fk_divisions_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
   CONSTRAINT `fk_divisions_legal_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `fk_tbl_cg_div` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)
@@ -467,7 +454,7 @@ CREATE TABLE `tbl_divisions` (
 
 DROP TABLE IF EXISTS `tbl_units`;
 CREATE TABLE `tbl_units` (
-  `unit_id` int(11) NOT NULL,
+  `unit_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `client_id` int(11) NOT NULL,
   `business_group_id` int(11) NULL,
   `legal_entity_id` int(11) NOT NULL,
@@ -485,7 +472,6 @@ CREATE TABLE `tbl_units` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`unit_id`),
   CONSTRAINT `fk_business_group_id` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
   CONSTRAINT `fk_divisions_id` FOREIGN KEY (`division_id`) REFERENCES `tbl_divisions` (`division_id`),
   CONSTRAINT `fk_legal_entities_id` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
@@ -516,7 +502,7 @@ CREATE TABLE `tbl_client_users` (
 
 DROP TABLE IF EXISTS `tbl_statutory_notifications_log`;
 CREATE TABLE `tbl_statutory_notifications_log` (
-  `statutory_notification_id` int(11) NOT NULL,
+  `statutory_notification_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `statutory_mapping_id` int(11) NOT NULL,
   `country_name` varchar(50) NOT NULL,
   `domain_name` varchar(50) NOT NULL,
@@ -526,7 +512,6 @@ CREATE TABLE `tbl_statutory_notifications_log` (
   `applicable_location` longtext,
   `notification_text` longtext,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`statutory_notification_id`),
   CONSTRAINT `fk_statutory_notifications_log_statutory_mapping` FOREIGN KEY (`statutory_mapping_id`) REFERENCES `tbl_statutory_mappings` (`statutory_mapping_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -543,21 +528,19 @@ CREATE TABLE `tbl_statutory_notifications_units` (
 
 DROP TABLE IF EXISTS `tbl_activity_log`;
 CREATE TABLE `tbl_activity_log` (
-  `activity_log_id` int(11) NOT NULL,
+  `activity_log_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `form_id` int(11) NOT NULL,
   `action` varchar(500) NOT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`activity_log_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_notifications`;
 CREATE TABLE `tbl_notifications` (
-  `notification_id` int(11) NOT NULL,
+  `notification_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `notification_text` longtext DEFAULT NULL,
   `link` varchar(500) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`notification_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -571,15 +554,10 @@ CREATE TABLE `tbl_notifications_status` (
   CONSTRAINT `fk_tbl_notifications_ns` FOREIGN KEY (`notification_id`) REFERENCES `tbl_notifications` (`notification_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `tbl_statutory_notification_status`;
-
-DROP TABLE IF EXISTS `tbl_activity_log_ticker_status`;
-
-DROP TABLE IF EXISTS `tbl_client_saved_compliances`;
 
 DROP TABLE IF EXISTS `tbl_client_statutories`;
 CREATE TABLE `tbl_client_statutories` (
-  `client_statutory_id` int(11) NOT NULL,
+  `client_statutory_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `client_id` int(11) NOT NULL,
   `geography_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
