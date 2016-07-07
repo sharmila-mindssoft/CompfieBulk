@@ -15,8 +15,10 @@ from protocol import (
     general, knowledgemaster, knowledgereport, knowledgetransaction,
     login, technomasters, technoreports, technotransactions
 )
-from server.database import KnowledgeDatabase
+# from server.database import KnowledgeDatabase
 import controller
+from server.database.dbase import Database
+from server.database import general as gen
 from distribution.protocol import (
     Request as DistributionRequest,
     CompanyServerDetails
@@ -31,6 +33,7 @@ from server.constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
     VERSION, IS_DEVELOPMENT
 )
+
 from server.templatepath import (
     TEMPLATE_PATHS
 )
@@ -160,18 +163,18 @@ class API(object):
     )
     def handle_server_list(self, request, db):
         return CompanyServerDetails(
-            db.get_servers()
+            gen.get_servers(db)
         )
 
     @api_request(GetClientChanges)
     def handle_client_list(self, request, db) :
         return GetClientChangesSuccess(
-            db.get_client_replication_list()
+            gen.get_client_replication_list(db)
         )
 
     @api_request(GetChanges)
     def handle_replication(self, request, db):
-        actual_count = db.get_trail_id()
+        actual_count = gen.get_trail_id(db)
         # print "actual_count ", actual_count
 
         client_id = request.client_id
@@ -181,13 +184,13 @@ class API(object):
             return InvalidReceivedCount()
         # print "replication client_id = %s, received_count = %s" % (client_id, received_count)
         res = GetChangesSuccess(
-            db.get_trail_log(client_id, received_count)
+            gen.get_trail_log(db, client_id, received_count)
         )
         return res
 
     @api_request(GetDomainChanges)
     def handle_domain_replication(self, request, db):
-        actual_count = db.get_trail_id()
+        actual_count = gen.get_trail_id()
         client_id = request.client_id
         domain_id = request.domain_id
         received_count = request.received_count
@@ -197,7 +200,7 @@ class API(object):
             return InvalidReceivedCount()
 
         res = GetChangesSuccess(
-            db.get_trail_log_for_domain(
+            gen.get_trail_log_for_domain(
                 client_id, domain_id, received_count,
                 actual_replica_count
             )
@@ -206,14 +209,14 @@ class API(object):
 
     @api_request(GetChanges)
     def handle_delreplicated(self, request, db):
-        actual_count = db.get_trail_id()
+        actual_count = gen.get_trail_id()
 
         client_id = request.client_id
         received_count = request.received_count
         s = "%s, %s, %s " % (client_id, received_count, actual_count)
         logger.logKnowledge("info", "trail", s)
         if actual_count >= received_count :
-            db.remove_trail_log(client_id, received_count)
+            gen.remove_trail_log(client_id, received_count)
         return GetDelReplicatedSuccess()
 
     @api_request(login.Request)
@@ -352,7 +355,7 @@ def run_server(port):
     io_loop = IOLoop()
 
     def delay_initialize():
-        db = KnowledgeDatabase(
+        db = Database(
             KNOWLEDGE_DB_HOST,
             KNOWLEDGE_DB_PORT,
             KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
