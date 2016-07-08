@@ -165,12 +165,11 @@ def update_password(db, password, user_id):
 # Deletes a reset token, once it is used
 ########################################################
 def delete_used_token(db, reset_token):
-    condition = " verification_code='%s'" % reset_token
-    if db.delete(tblEmailVerification, condition):
+    condition = " verification_code=%s"
+    if db.delete(tblEmailVerification, condition, [reset_token]):
         return True
     else:
         return False
 
 def remove_session(db, session_token):
-        q = "delete from tbl_user_sessions where session_token = '%s'"
-        db.execute(q, (session_token))
+    db.delete(tblUserSessions, "session_token=%s", [session_token])
