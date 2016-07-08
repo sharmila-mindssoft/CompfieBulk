@@ -13,7 +13,7 @@ from server.constants import (
 ########################################################
 def get_date_time() :
     time_stamp = datetime.datetime.utcnow()
-    return localize(time_stamp)
+    return str(localize(time_stamp))
 
 def get_system_date():
     date = datetime.datetime.today()

@@ -19,7 +19,8 @@ __all__ = [
     "remove_trail_log", "get_servers",
     "get_client_replication_list",
     "update_client_replication_status",
-    "update_client_domain_status", "get_user_forms"
+    "update_client_domain_status", "get_user_forms",
+    "get_user_form_ids"
 
 ]
 
@@ -205,3 +206,19 @@ def get_user_forms(db, form_ids):
         join_conditions, where_condition
     )
     return rows
+
+#
+# general controllers methods
+#
+
+def get_user_form_ids(self, user_id) :
+    if user_id == 0 :
+        return "1, 2, 3, 4"
+    q = "select t1.form_ids from tbl_user_groups t1 \
+        INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id \
+        AND t2.user_id = %s"
+    row = self.select_one(q, (user_id))
+    if row :
+        return row[0]
+    else :
+        return None

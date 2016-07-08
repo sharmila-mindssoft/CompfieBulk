@@ -6,8 +6,9 @@ from server.constants import (
     FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH,
     CLIENT_DOCS_BASE_PATH
 )
-from server.common import (save_file_in_path, new_uuid)
-
+from server.common import (save_file_in_path)
+from server.database.admin import *
+from server.database.general import get_user_form_ids
 __all__ = [
     "process_general_request",
     "validate_user_session", "process_save_domain",
@@ -124,7 +125,7 @@ def validate_user_forms(db, user_id, form_ids, requet):
     ] :
         valid = 0
         if user_id is not None :
-            alloted_forms = db.get_user_form_ids(user_id)
+            alloted_forms = get_user_form_ids(db, user_id)
             alloted_forms = [int(x) for x in alloted_forms.split(",")]
             for i in alloted_forms :
                 if i in form_ids :
@@ -141,12 +142,12 @@ def validate_user_forms(db, user_id, form_ids, requet):
 ########################################################
 def process_save_domain(db, request, user_id):
     domain_name = request.domain_name
-    isDuplicate = db.check_duplicate_domain(domain_name, domain_id=None)
+    isDuplicate = check_duplicate_domain(db, domain_name, domain_id=None)
 
     if isDuplicate :
         return general.DomainNameAlreadyExists()
 
-    if (db.save_domain(domain_name, user_id)) :
+    if (save_domain(db, domain_name, user_id)) :
         return general.SaveDomainSuccess()
 
 ########################################################
@@ -155,12 +156,12 @@ def process_save_domain(db, request, user_id):
 def process_update_domain(db, request, user_id):
     domain_name = request.domain_name
     domain_id = request.domain_id
-    isDuplicate = db.check_duplicate_domain(domain_name, domain_id)
+    isDuplicate = check_duplicate_domain(db, domain_name, domain_id)
 
     if isDuplicate :
         return general.DomainNameAlreadyExists()
 
-    if (db.update_domain(domain_id, domain_name, user_id)) :
+    if (update_domain(db, domain_id, domain_name, user_id)) :
         return general.UpdateDomainSuccess()
     else :
         return general.InvalidDomainId()
@@ -172,15 +173,15 @@ def process_change_domain_status(db, request, user_id):
     is_active = request.is_active
     domain_id = int(request.domain_id)
     if is_active is False :
-        if db.check_domain_id_to_deactivate(domain_id) :
-            if (db.update_domain_status(domain_id, is_active, user_id)) :
+        if check_domain_id_to_deactivate(db, domain_id) :
+            if (update_domain_status(db, domain_id, is_active, user_id)) :
                 return general.ChangeDomainStatusSuccess()
             else :
                 return general.InvalidDomainId()
         else :
             return general.TransactionExists()
     else :
-        if (db.update_domain_status(domain_id, is_active, user_id)) :
+        if (update_domain_status(db, domain_id, is_active, user_id)) :
             return general.ChangeDomainStatusSuccess()
         else :
             return general.InvalidDomainId()
@@ -189,7 +190,7 @@ def process_change_domain_status(db, request, user_id):
 # To get list of all domains
 ########################################################
 def process_get_domains(db, user_id):
-    results = db.get_domains_for_user(0)
+    results = get_domains_for_user(db, 0)
     success = general.GetDomainsSuccess(domains=results)
     return success
 
@@ -197,7 +198,7 @@ def process_get_domains(db, user_id):
 # To update the profile of the given user
 ########################################################
 def procees_update_user_profile(db, request, session_user):
-    db.update_profile(request.contact_no, request.address, session_user)
+    update_profile(db, request.contact_no, request.address, session_user)
     return general.UpdateUserProfileSuccess(request.contact_no, request.address)
 
 ########################################################
@@ -205,12 +206,12 @@ def procees_update_user_profile(db, request, session_user):
 ########################################################
 def process_save_country(db, request, user_id):
     country_name = request.country_name
-    isDuplicate = db.check_duplicate_country(country_name, country_id = None)
+    isDuplicate = check_duplicate_country(db, country_name, country_id=None)
 
     if isDuplicate :
         return general.CountryNameAlreadyExists()
 
-    if (db.save_country(country_name, user_id)) :
+    if (save_country(db, country_name, user_id)) :
         return general.SaveCountrySuccess()
 
 ########################################################
@@ -219,12 +220,12 @@ def process_save_country(db, request, user_id):
 def process_update_country(db, request, user_id):
     country_name = request.country_name
     country_id = request.country_id
-    isDuplicate = db.check_duplicate_country(country_name, country_id)
+    isDuplicate = check_duplicate_country(db, country_name, country_id)
 
     if isDuplicate :
         return general.CountryNameAlreadyExists()
 
-    if (db.update_country(country_id, country_name, user_id)) :
+    if (update_country(db, country_id, country_name, user_id)) :
         return general.UpdateCountrySuccess()
     else :
         return general.InvalidCountryId()
@@ -237,15 +238,15 @@ def process_change_country_status(db, request, user_id):
     is_active = request.is_active
     country_id = int(request.country_id)
     if is_active is False :
-        if db.check_country_id_to_deactivate(country_id) :
-            if (db.update_country_status(country_id, int(is_active), user_id)) :
+        if check_country_id_to_deactivate(db, country_id) :
+            if (update_country_status(db, country_id, int(is_active), user_id)) :
                 return general.ChangeCountryStatusSuccess()
             else :
                 return general.InvalidCountryId()
         else :
             return general.TransactionExists()
     else :
-        if (db.update_country_status(country_id, int(is_active), user_id)) :
+        if (update_country_status(db, country_id, int(is_active), user_id)) :
             return general.ChangeCountryStatusSuccess()
         else :
             return general.InvalidCountryId()
@@ -254,7 +255,7 @@ def process_change_country_status(db, request, user_id):
 # To get the list of countries under the given user
 ########################################################
 def process_get_countries_for_user(db, user_id):
-    results = db.get_countries_for_user(user_id)
+    results = get_countries_for_user(db, user_id)
     success = general.GetCountriesSuccess(countries=results)
     return success
 
@@ -262,7 +263,7 @@ def process_get_countries_for_user(db, user_id):
 # To get the list of all countries
 ########################################################
 def process_get_countries(db, user_id):
-    results = db.get_countries_for_user(0)
+    results = get_countries_for_user(db, 0)
     success = general.GetCountriesSuccess(countries=results)
     return success
 
@@ -276,7 +277,8 @@ def process_get_audit_trails(db, request, session_user):
     to_date = request.to_date
     user_id = request.user_id
     form_id = request.form_id
-    audit_trails = db.get_audit_trails(
+    audit_trails = get_audit_trails(
+        db,
         session_user, from_count, to_count,
         from_date, to_date, user_id, form_id
     )
@@ -287,7 +289,7 @@ def process_get_audit_trails(db, request, session_user):
 ########################################################
 def process_get_notifications(db, request, session_user):
     notifications = None
-    notifications = db.get_notifications(request.notification_type, session_user)
+    notifications = get_notifications(db, request.notification_type, session_user)
     return general.GetNotificationsSuccess(
         notifications=notifications
     )
@@ -298,8 +300,8 @@ def process_get_notifications(db, request, session_user):
 # a notification
 ########################################################
 def process_update_notification_status(db, request, session_user):
-    db.update_notification_status(
-        request.notification_id, request.has_read,
+    update_notification_status(
+        db, request.notification_id, request.has_read,
         session_user)
     return general.UpdateNotificationStatusSuccess()
 

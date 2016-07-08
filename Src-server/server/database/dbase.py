@@ -128,10 +128,23 @@ class Database(object):
     ########################################################
     # To execute a query
     ########################################################
-    def execute(self, query, param):
+    def execute(self, query, param=None):
         cursor = self.cursor()
         assert cursor is not None
-        return cursor.execute(query, param)
+
+        print query
+        print param
+        try :
+            if type(param) is tuple :
+                cursor.execute(query, param)
+            elif type(param) is list :
+                cursor.execute(query, param)
+            else :
+                cursor.execute(query, (param))
+            return True
+        except mysql.Error, e :
+            print e
+            return False
 
     ########################################################
     # To execute a query
@@ -139,9 +152,17 @@ class Database(object):
     def execute_insert(self, query, param):
         cursor = self.cursor()
         assert cursor is not None
-        cursor.execute(query, param)
-        return int(cursor.lastrowid)
-
+        try :
+            if type(param) is tuple :
+                cursor.execute(query, param)
+            elif type(param) is list :
+                cursor.execute(query, param)
+            else :
+                cursor.execute(query, (param))
+            return int(cursor.lastrowid)
+        except mysql.Error, e :
+            print e
+            return False
 
 ########################################################
 # To execute select query
@@ -150,19 +171,20 @@ class Database(object):
 # select_one : query is string and param is typle which return result in tuple
 ########################################################
     def select_all(self, query, param=None):
-        print query
-        print param
         cursor = self.cursor()
         assert cursor is not None
+        print query, param
         try:
             if param is None :
                 cursor.execute(query)
             else :
-                print type(param)
-                assert type(param) is tuple
-                cursor.execute(query, param)
+                if type(param) is tuple :
+                    cursor.execute(query, param)
+                elif type(param) is list :
+                    cursor.execute(query, param)
+                else :
+                    cursor.execute(query, (param))
             res = cursor.fetchall()
-            print res
             return res
         except mysql.Error, e:
             logger.logClientApi("select_all", query)
@@ -171,17 +193,18 @@ class Database(object):
 
     def select_one(self, query, param=None):
         cursor = self.cursor()
-        print query
-        print param
         assert cursor is not None
         try:
             if param is None :
                 cursor.execute(query)
             else :
-                assert type(param) is tuple
-                cursor.execute(query, param)
+                if type(param) is tuple :
+                    cursor.execute(query, param)
+                elif type(param) is list :
+                    cursor.execute(query, param)
+                else :
+                    cursor.execute(query, (str(param)))
             res = cursor.fetchone()
-            print res
             return res
         except mysql.Error, e:
             print "Exception"
@@ -202,6 +225,15 @@ class Database(object):
         param = []
         if type(columns) is str :
             param = columns.split(',')
+            params = []
+            for p in param :
+                if "as " in p :
+                    params.append(p.split('as ')[1].strip())
+                elif '.' in p :
+                    params.append(p.split('.')[1].strip())
+                else :
+                    params.append(p.strip())
+            param = params
         elif type(columns) is list :
             param = columns
             columns = ", ".join(columns)
@@ -212,7 +244,7 @@ class Database(object):
             rows = self.select_all(query, condition_val)
         else :
             rows = self.select_all(query)
-
+        print "get_data", rows
         result = []
         if rows :
             result = convert_to_dict(rows, param)
@@ -232,9 +264,9 @@ class Database(object):
             params = []
             for p in param :
                 if '.' in p :
-                    params.append(p.split('.')[1])
+                    params.append(p.split('.')[1].strip())
                 else :
-                    params.append(p)
+                    params.append(p.strip())
             param = params
         elif type(columns) is list :
             param = columns
@@ -272,20 +304,24 @@ class Database(object):
     ########################################################
     # To form a insert query
     ########################################################
-    def insert(self, table, columns, values, client_id=None) :
-        columns = ", ".join(columns)
+    def insert(self, table, columns, values) :
+        # columns = ", ".join(columns)
         stringValue = []
-        for i in values :
+        for i in range(len(values)) :
             stringValue.append('%s')
 
-        query = """INSERT INTO %s (%s) VALUES (%s) """
-        params = []
-        params.append(table)
-        params.append(columns)
-        params.append(",".join(stringValue))
+        if type(columns) is list :
+            columns = ", ".join(columns)
+            columns = "(%s)" % columns
+
+        query = """INSERT INTO %s %s """ % (table, columns)
+        query += " VALUES (%s) " % (",".join(stringValue))
+        print query
+        print values
         try:
-            return self.execute_insert(query, params)
-        except Exception, e:
+            return self.execute_insert(query, values)
+        except mysql.Error, e:
+            print e
             logger.logKnowledgeApi("insert", query)
             logger.logKnowledgeApi("insert", e)
             return False
@@ -294,20 +330,27 @@ class Database(object):
     # To form a bulk insert query
     ########################################################
     def bulk_insert(self, table, columns, valueList, client_id=None) :
-        query = "INSERT INTO %s (%s)  VALUES" % (
-            table, ",".join(str(x) for x in columns)
-        )
-        for index, value in enumerate(valueList):
-            if index < len(valueList)-1:
-                query += "%s," % str(value)
-            else:
-                query += str(value)
+
+        stringValue = []
+        for i in range(len(columns)) :
+            stringValue.append('%s')
+
+        if type(columns) is list :
+            columns = ", ".join(columns)
+        query = "INSERT INTO %s (%s) " % (table, columns)
+        query += " VALUES (%s) " % (",".join(stringValue))
+
         try:
-            return self.execute(query)
-        except Exception, e:
+            cursor = self.cursor()
+            assert cursor is not None
+            print query
+            cursor.executemany(query, valueList)
+            return True
+        except mysql.Error, e:
+            print e
             logger.logKnowledgeApi("bulk_insert", query)
             logger.logKnowledgeApi("bulk_insert", e)
-            return
+            return False
 
     ########################################################
     # To form a update query
@@ -316,17 +359,19 @@ class Database(object):
         query = "UPDATE "+table+" set "
         for index, column in enumerate(columns):
             if index < len(columns)-1:
-                query += column+" = '%s', "
+                query += column+" = %s, "
             else:
-                query += column+" = '%s' "
+                query += column+" = %s "
 
         query += " WHERE " + condition
         try:
-            return self.execute(query, values)
-        except Exception, e:
+            res = self.execute(query, values)
+            print res
+            return True
+        except mysql.Error, e:
             logger.logKnowledgeApi("update", query)
             logger.logKnowledgeApi("update", e)
-            return
+            return False
 
     ########################################################
     # Insert a row If already key exists
@@ -359,11 +404,13 @@ class Database(object):
     ########################################################
     # To form a delete query
     ########################################################
-    def delete(self, table, condition, client_id=None):
+    def delete(self, table, condition, condition_val):
         query = "DELETE from "+table+" WHERE "+condition
         try:
-            return self.execute(query)
-        except Exception, e:
+            print query
+            return self.execute(query, condition_val)
+        except mysql.Error, e:
+            print e
             logger.logClientApi("delete", query)
             logger.logClientApi("delete", e)
             return
@@ -406,12 +453,17 @@ class Database(object):
     # True otherwise returns false
     ########################################################
 
-    def is_already_exists(self, table, condition, client_id=None) :
-        query = "SELECT count(*) FROM "+table+" WHERE "+condition
+    def is_already_exists(self, table, condition, condition_val) :
+        query = "SELECT count(0) FROM %s WHERE %s " % (table, condition)
         rows = None
-        rows = self.select_all(query)
-        if rows[0][0] > 0:
-            return True
+        print query
+        rows = self.select_all(query, condition_val)
+        print rows
+        if rows :
+            if rows[0][0] > 0:
+                return True
+            else :
+                return False
         else :
             return False
 
@@ -421,8 +473,9 @@ class Database(object):
     # will return True otherwise return false
     ########################################################
     def is_invalid_id(self, table, field, value, client_id=None):
-        condition = "%s = '%d'" % (field, value)
-        return not self.is_already_exists(table, condition)
+        condition = field + "= %s"
+        condition_val = [value]
+        return not self.is_already_exists(table, condition, condition_val)
 
     ########################################################
     # To generate a new Id for the given table and given
@@ -460,6 +513,5 @@ class Database(object):
 
     def update_session_time(self, session_token):
         updated_on = get_date_time()
-        q = "update tbl_user_sessions set \
-        last_accessed_time=%s where session_token = %s "
+        q = "update tbl_user_sessions set last_accessed_time=%s where session_token = %s "
         self.execute(q, (str(updated_on), str(session_token)))

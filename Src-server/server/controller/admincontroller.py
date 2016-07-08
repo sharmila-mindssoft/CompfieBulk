@@ -38,12 +38,12 @@ def process_admin_request(request, db) :
 
     if type(request_frame) is admin.SaveUserGroup:
         logger.logKnowledgeApi("SaveUserGroup", "process begin")
-        result = save_user_group(db, request_frame, session_user)
+        result = save_user_group_record(db, request_frame, session_user)
         logger.logKnowledgeApi("SaveUserGroup", "process end")
 
     if type(request_frame) is admin.UpdateUserGroup:
         logger.logKnowledgeApi("UpdateUserGroup", "process begin")
-        result = update_user_group(db, request_frame, session_user)
+        result = update_user_groups(db, request_frame, session_user)
         logger.logKnowledgeApi("UpdateUserGroup", "process end")
 
     if type(request_frame) is admin.ChangeUserGroupStatus:
@@ -58,12 +58,12 @@ def process_admin_request(request, db) :
 
     if type(request_frame) is admin.SaveUser:
         logger.logKnowledgeApi("SaveUser", "process begin")
-        result = save_user(db, request_frame, session_user)
+        result = save_user_record(db, request_frame, session_user)
         logger.logKnowledgeApi("SaveUser", "process end")
 
     if type(request_frame) is admin.UpdateUser:
         logger.logKnowledgeApi("UpdateUser", "process begin")
-        result = update_user(db, request_frame, session_user)
+        result = update_user_record(db, request_frame, session_user)
         logger.logKnowledgeApi("UpdateUser", "process end")
 
     if type(request_frame) is admin.ChangeUserStatus:
@@ -81,32 +81,32 @@ def get_forms_list(db) :
     knowledge_forms = []
     techno_forms = []
     for row in result_rows:
-        parent_menu = None if row[8] == None else row[8]
-        if int(row[1]) == 2:
+        parent_menu = None if row["parent_menu"] == None else row["parent_menu"]
+        if int(row["form_category_id"]) == 2:
             form = core.Form(
-                form_id=row[0],
-                form_name=row[5],
-                form_url=row[6],
+                form_id=row["form_id"],
+                form_name=row["form_name"],
+                form_url=row["form_url"],
                 parent_menu=parent_menu,
-                form_type=row[4]
+                form_type=row["form_type"]
             )
             knowledge_forms.append(form)
-        elif int(row[1]) == 3:
+        elif int(row["form_category_id"]) == 3:
             form = core.Form(
-                form_id=row[0],
-                form_name=row[5],
-                form_url=row[6],
+                form_id=row["form_id"],
+                form_name=row["form_name"],
+                form_url=row["form_url"],
                 parent_menu=parent_menu,
-                form_type=row[4]
+                form_type=row["form_type"]
             )
             techno_forms.append(form)
         else:
             form = core.Form(
-                form_id=row[0],
-                form_name=row[5],
-                form_url=row[6],
+                form_id=row["form_id"],
+                form_name=row["form_name"],
+                form_url=row["form_url"],
                 parent_menu=parent_menu,
-                form_type=row[4]
+                form_type=row["form_type"]
             )
             knowledge_forms.append(form)
             if form.form_name == "Audit Trail":
@@ -125,15 +125,15 @@ def process_user_group_detailed_list(db):
     user_group_list = []
     rows = get_user_group_detailed_list(db)
     for row in rows:
-        user_group_id = int(row[0])
-        user_group_name = row[1]
-        form_category_id = row[2]
-        no_of_users = row[5]
-        if len(row[3]) >= 1 :
-            form_ids = [int(x) for x in row[3].split(",")]
+        user_group_id = int(row["user_group_id"])
+        user_group_name = row["user_group_name"]
+        form_category_id = row["form_category_id"]
+        no_of_users = row["count"]
+        if len(row["form_ids"]) >= 1 :
+            form_ids = [int(x) for x in row["form_ids"].split(",")]
         else :
             form_ids = []
-        is_active = False if row[4] == 0 else True
+        is_active = False if row["is_active"] == 0 else True
         user_group_list.append(admin.UserGroup(
             user_group_id, user_group_name,
             form_category_id, form_ids, is_active, no_of_users
@@ -143,11 +143,11 @@ def process_user_group_detailed_list(db):
 ########################################################
 # To get form categories list
 ########################################################
-def get_form_categories(db):
+def get_form_categories_db(db):
     formCategoryList = []
     rows = get_form_categories(db)
     for row in rows:
-        formCategoryList.append(core.FormCategory(row[0], row[1]))
+        formCategoryList.append(core.FormCategory(row["form_category_id"], row["form_category"]))
     return formCategoryList
 
 ########################################################
@@ -155,7 +155,7 @@ def get_form_categories(db):
 ########################################################
 def get_user_groups(db, request_frame, session_user):
     forms = get_forms_list(db)
-    form_categories = get_form_categories(db)
+    form_categories = get_form_categories_db(db)
     user_group_list = process_user_group_detailed_list(db)
 
     result = admin.GetUserGroupsSuccess(
@@ -168,11 +168,11 @@ def get_user_groups(db, request_frame, session_user):
 ########################################################
 # To Handle Save user group request
 ########################################################
-def save_user_group(db, request, session_user):
+def save_user_group_record(db, request, session_user):
     user_group_name = request.user_group_name
     form_category_id = request.form_category_id
     form_ids = request.form_ids
-    if is_duplicate_user_group_name(db, user_group_name, user_group_id) :
+    if is_duplicate_user_group_name(db, user_group_name) :
         return admin.GroupNameAlreadyExists()
     elif save_user_group(
         db,
@@ -184,7 +184,7 @@ def save_user_group(db, request, session_user):
 ########################################################
 # To Handle Update user group request
 ########################################################
-def update_user_group(db, request, session_user):
+def update_user_groups(db, request, session_user):
     user_group_id = request.user_group_id
     user_group_name = request.user_group_name
     form_category_id = request.form_category_id
@@ -224,26 +224,26 @@ def get_users(db, request_frame, session_user):
     user_group_list = []
     user_list = []
 
-    user_group_rows = get_user_groups(db)
+    user_group_rows = get_user_groups_from_db(db)
     for user_group_row in user_group_rows:
-        user_group_id = user_group_row[0]
-        user_group_name = user_group_row[1]
-        is_active = True if user_group_row[2] == 1 else False
+        user_group_id = user_group_row["user_group_id"]
+        user_group_name = user_group_row["user_group_name"]
+        is_active = True if user_group_row["is_active"] == 1 else False
         user_group_list.append(core.UserGroup(user_group_id, user_group_name, is_active))
 
     user_rows = get_detailed_user_list(db)
     # columns = "user_id, email_id, user_group_id, employee_name, employee_code, " + \
     #         "contact_no, address, designation, is_active"
     for user_row in user_rows:
-        user_id = user_row[0]
-        email_id = user_row[1]
-        user_group_id = user_row[2]
-        employee_name = user_row[3]
-        employee_code = user_row[4]
-        contact_no = user_row[5]
-        address = None if user_row[6] == "" else user_row[6]
-        designation = None if user_row[7] == "" else user_row[7]
-        is_active = True if user_row[8] == 1 else False
+        user_id = user_row["user_id"]
+        email_id = user_row["email_id"]
+        user_group_id = user_row["user_group_id"]
+        employee_name = user_row["employee_name"]
+        employee_code = user_row["employee_code"]
+        contact_no = user_row["contact_no"]
+        address = None if user_row["address"] == "" else user_row["address"]
+        designation = None if user_row["designation"] == "" else user_row["designation"]
+        is_active = True if user_row["is_active"] == 1 else False
         country_ids = [int(x) for x in get_user_countries(db, user_id).split(",")]
         domain_ids = [int(x) for x in get_user_domains(db, user_id).split(",")]
         user_list.append(
@@ -264,7 +264,7 @@ def get_users(db, request_frame, session_user):
 ########################################################
 # To Handle Save user request
 ########################################################
-def save_user(db, request, session_user):
+def save_user_record(db, request, session_user):
     # user_id = db.generate_new_user_id()
     email_id = request.email_id
     user_group_id = request.user_group_id
@@ -275,9 +275,9 @@ def save_user(db, request, session_user):
     designation = None if request.designation == "" else request.designation
     country_ids = request.country_ids
     domain_ids = request.domain_ids
-    if is_duplicate_email(db, email_id, user_id) :
+    if is_duplicate_email(db, email_id) :
         return admin.EmailIDAlreadyExists()
-    elif is_duplicate_employee_code(db, employee_code, user_id) :
+    elif is_duplicate_employee_code(db, employee_code) :
         return admin.EmployeeCodeAlreadyExists()
     elif save_user(
         db, email_id, user_group_id, employee_name,
@@ -288,7 +288,7 @@ def save_user(db, request, session_user):
 ########################################################
 # To Handle Update user request
 ########################################################
-def update_user(db, request, session_user):
+def update_user_record(db, request, session_user):
     user_id = request.user_id
     user_group_id = request.user_group_id
     employee_name = request.employee_name
