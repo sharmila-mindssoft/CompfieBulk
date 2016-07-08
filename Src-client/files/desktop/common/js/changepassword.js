@@ -15,20 +15,20 @@ $("#submit").click(function(){
   } else {
       function onSuccess(data){
         alert("Password Changed Successfully.");
-        client_name = client_mirror.getClientShortName()
-        if ((client_name === null) || (client_name === undefined)) {
-            mirror.logout();
+        frms = window.location.href.split("/");
+        if (frms.indexOf("knowledge") == -1) {
+          client_mirror.logout();
         }
         else {
-            client_mirror.logout();
-        }     
+          mirror.logout();
+        }
       }
       function onFailure(error){
         if(error == "InvalidCurrentPassword"){
           displayMessage(message.invalid_cpassword);
         }
       }
-      mirror.changePassword(currentpassword, newpassword, 
+      mirror.changePassword(currentpassword, newpassword,
         function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -58,13 +58,13 @@ $("#submit-client").click(function(){
   } else {
       function onSuccess(data){
         alert("Password Changed Successfully.");
-        client_name = client_mirror.getClientShortName()
-        if ((client_name === null) || (client_name === undefined)) {
-            mirror.logout();
+        frms = window.location.href.split("/");
+        if (frms.indexOf("knowledge") == -1) {
+          client_mirror.logout();
         }
         else {
-            client_mirror.logout();
-        }     
+          mirror.logout();
+        }
       }
       function onFailure(error){
         if(error == "InvalidCurrentPassword"){
@@ -72,7 +72,7 @@ $("#submit-client").click(function(){
         }
       }
 
-      client_mirror.changePassword(currentpassword, newpassword, 
+      client_mirror.changePassword(currentpassword, newpassword,
         function (error, response) {
           if (error == null){
             onSuccess(response);
