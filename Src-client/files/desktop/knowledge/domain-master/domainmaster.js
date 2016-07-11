@@ -72,11 +72,14 @@ function loadDomainList (domainsList) {
 
 //validation
 function validate(){
-  if($("#domainname").val().trim().length==0){
-    displayMessage(message.domainname_required);
-  }else{
-    displayMessage('');
-    return true
+  var checkLength = domainValidate();
+  if(checkLength){
+    if($("#domainname").val().trim().length==0){
+      displayMessage(message.domainname_required);
+    }else{
+      displayMessage('');
+      return true
+    }
   }
 }
 

@@ -1,5 +1,5 @@
 function initialize(){
-    var userprofile = mirror.getUserProfile();
+    var userprofile = client_mirror.getUserProfile();
     clearMessage();
     var contactNo = (userprofile['contact_no']).split('-');
     $('.employee-name').text(userprofile['employee_name']);
@@ -35,30 +35,13 @@ $('.mobile').on('input', function (event) {
     this.value = this.value.replace(/[^0-9]/g, '');
 });
 $("#submit").click(function(){
-    var countrycode = $(".countrycode").val().trim();
-    var areacode = $(".areacode").val().trim();
-    var mobile = $(".mobile").val().trim();
-    var address = $(".address").val().trim();
-    path = window.location.pathname
-    if (path == "/knowledge/profile"){
-        function onSuccess(data){
-            initialize();
-            displayMessage(message.updated_success);
-        }
-        function onFailure(error){
-            console.log(error);
-        }
-        mirror.updateUserProfile( countrycode+"-"+areacode+"-"+mobile, address,
-            function(error, response){
-                if(error == null){
-                    onSuccess(response);
-                }
-                else{
-                    onFailure(error);
-                }
-            }
-        );
-    }else{
+    var checkLength = profileValidate();
+    if(checkLength){
+        var countrycode = $(".countrycode").val().trim();
+        var areacode = $(".areacode").val().trim();
+        var mobile = $(".mobile").val().trim();
+        var address = $(".address").val().trim();
+       
         function onSuccess(data){
             initialize();
             displayMessage(message.updated_success);

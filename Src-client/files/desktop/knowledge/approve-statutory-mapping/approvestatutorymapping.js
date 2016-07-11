@@ -363,11 +363,30 @@ $("#saverecord").click(function(){
     var statutory_mapping_id = parseInt($("#mapping_id"+i).val());
     var statutory_provision = $("#statutoryprovision"+i).val().replace(/##/gi,'"');
     var approval_status = parseInt($("#action"+i).val());
-    var rejected_reason = $("#reason"+i).val();
-    var notification_text = $("#notifyreason"+i).val();
+    var rejected_reason = $("#reason"+i).val().trim();
+    var notification_text = $("#notifyreason"+i).val().trim();
     if(approval_status != '0'){
-      approveStatutoryList = mirror.approveStatutoryList(statutory_mapping_id, statutory_provision, approval_status, rejected_reason, notification_text);
-      approvelist.push(approveStatutoryList);
+      var reason = '';
+      if(approval_status == 2){
+        reason = rejected_reason;
+      }else if(approval_status == 3){
+        reason = notification_text;
+      }
+      var checkLength = approveMappingValidate(reason);
+      if(checkLength){
+        if(approval_status == 2 && rejected_reason.length == 0){
+          displayMessage(message.reason_required);
+          return false;
+        }else if(approval_status == 3 && notification_text.length == 0){
+          displayMessage(message.reason_required);
+          return false;
+        }else{
+          approveStatutoryList = mirror.approveStatutoryList(statutory_mapping_id, statutory_provision, approval_status, rejected_reason, notification_text);
+          approvelist.push(approveStatutoryList);
+        }
+      }else{
+        return false;
+      }
     }
   }
 

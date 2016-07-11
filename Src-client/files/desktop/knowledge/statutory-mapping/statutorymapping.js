@@ -602,86 +602,89 @@ $("#upload_file").on("change", function(e) {
 function saverecord(j,e){
   var data = e.keyCode;
   if(data==13 || data ==undefined){
-    displayMessage("");
-    var levelstage = $('#level'+j).val();
-    var statutorylevel_id = $('#statutorylevelid'+j).val();
-    var datavalue = $('#datavalue'+j).val().trim();
-    var map_statutory_id=[];
-    var map_statutory_names = [];
-    var last_statutory_id=0;
-    var last_level = 0;
-    for(k=1;k<j;k++){
-      $(".slist"+k+".active").each( function( index, el ) {
-        map_statutory_id.push(parseInt(el.id));
-        map_statutory_names.push(el.innerHTML);
-        last_statutory_id = el.id;
-        last_level = k;
-        });
-    }
-    if(map_statutory_id==0 && levelstage>1 ){
-      displayMessage(message.levelselection_required);
-    }else if(datavalue==""){
-      var msg = "Level-" + levelstage;
-      displayMessage(msg + message.shouldnot_empty);
-    }else{
-      if($("#statutoryid").val() != '' && editLevel == levelstage){
-        function onSuccessUpdate(data){
-          $("#statutoryid").val('');
-          $('.addleft').val('');
-          editLevel = '';
-          displayMessage(message.record_updated);
-          reload(last_statutory_id,last_level,sm_countryid,sm_domainid);
-        }
-        function onFailureUpdate(error){
-          if(error == "StatutoryNameAlreadyExists"){
-            displayMessage(message.statutoryname_exists);
-          }else{
-            displayMessage(error);
-          }
-        }
-        if(map_statutory_id.length == 0){
-          map_statutory_id.push(0);
-          map_statutory_names.push(datavalue);
-        }
-        mirror.updateStatutory(parseInt($("#statutoryid").val()), parseInt(statutorylevel_id), datavalue, map_statutory_id, map_statutory_names,
-        function (error, response) {
-          if (error == null){
-            onSuccessUpdate(response);
-          }
-          else {
-            onFailureUpdate(error);
-          }
-        }
-        );
+    var checkLength = statutoryValidate($('#datavalue'+j).val().trim());
+    if(checkLength){
+      displayMessage("");
+      var levelstage = $('#level'+j).val();
+      var statutorylevel_id = $('#statutorylevelid'+j).val();
+      var datavalue = $('#datavalue'+j).val().trim();
+      var map_statutory_id=[];
+      var map_statutory_names = [];
+      var last_statutory_id=0;
+      var last_level = 0;
+      for(k=1;k<j;k++){
+        $(".slist"+k+".active").each( function( index, el ) {
+          map_statutory_id.push(parseInt(el.id));
+          map_statutory_names.push(el.innerHTML);
+          last_statutory_id = el.id;
+          last_level = k;
+          });
+      }
+      if(map_statutory_id==0 && levelstage>1 ){
+        displayMessage(message.levelselection_required);
+      }else if(datavalue==""){
+        var msg = "Level-" + levelstage;
+        displayMessage(msg + message.shouldnot_empty);
       }else{
-        function onSuccess(data){
-          $("#statutoryid").val('');
-          $('.addleft').val('');
-          editLevel = '';
-          displayMessage(message.record_added);
-          reload(last_statutory_id,last_level,sm_countryid,sm_domainid);
-        }
-        function onFailure(error){
-          if(error == "StatutoryNameAlreadyExists"){
-            displayMessage(message.statutoryname_exists);
-          }else{
-            displayMessage(error);
+        if($("#statutoryid").val() != '' && editLevel == levelstage){
+          function onSuccessUpdate(data){
+            $("#statutoryid").val('');
+            $('.addleft').val('');
+            editLevel = '';
+            displayMessage(message.record_updated);
+            reload(last_statutory_id,last_level,sm_countryid,sm_domainid);
           }
-        }
-        if(map_statutory_id.length == 0){
-          map_statutory_id.push(0);
-          map_statutory_names.push(datavalue)
-        }
-        mirror.saveStatutory(sm_domainid, parseInt(statutorylevel_id), datavalue, map_statutory_id, map_statutory_names,
+          function onFailureUpdate(error){
+            if(error == "StatutoryNameAlreadyExists"){
+              displayMessage(message.statutoryname_exists);
+            }else{
+              displayMessage(error);
+            }
+          }
+          if(map_statutory_id.length == 0){
+            map_statutory_id.push(0);
+            map_statutory_names.push(datavalue);
+          }
+          mirror.updateStatutory(parseInt($("#statutoryid").val()), parseInt(statutorylevel_id), datavalue, map_statutory_id, map_statutory_names,
           function (error, response) {
-          if (error == null){
-            onSuccess(response);
+            if (error == null){
+              onSuccessUpdate(response);
+            }
+            else {
+              onFailureUpdate(error);
+            }
           }
-          else {
-            onFailure(error);
+          );
+        }else{
+          function onSuccess(data){
+            $("#statutoryid").val('');
+            $('.addleft').val('');
+            editLevel = '';
+            displayMessage(message.record_added);
+            reload(last_statutory_id,last_level,sm_countryid,sm_domainid);
           }
+          function onFailure(error){
+            if(error == "StatutoryNameAlreadyExists"){
+              displayMessage(message.statutoryname_exists);
+            }else{
+              displayMessage(error);
+            }
+          }
+          if(map_statutory_id.length == 0){
+            map_statutory_id.push(0);
+            map_statutory_names.push(datavalue)
+          }
+          mirror.saveStatutory(sm_domainid, parseInt(statutorylevel_id), datavalue, map_statutory_id, map_statutory_names,
+            function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
+          }
+          );
         }
-        );
       }
     }
   }
@@ -881,138 +884,159 @@ make_breadcrumbs3();
 //add compliances in third wizard
 $("#temp_addcompliance").click(function() {
 
-  var comp_id=$('#complianceid').val();
-  if($("#upload_file").val() != ''){
-    var fCId = '';
-    if(comp_id == ''){
-      fCId = complianceid;
-    }else{
-      fCId = comp_id;
+  var checkLength = complianceValidate();
+  if(checkLength){
+    var comp_id=$('#complianceid').val();
+    if($("#upload_file").val() != ''){
+      var fCId = '';
+      if(comp_id == ''){
+        fCId = complianceid;
+      }else{
+        fCId = comp_id;
+      }
+      uploadFile = mirror.uploadFileFormat(f_Size, f_Name, f_Content)
+      var file_data = file_lst[0];
+      form_data.append("file" + fCId, file_data, f_Name);
+      form_data.append("session_token", mirror.getSessionToken())
     }
-    uploadFile = mirror.uploadFileFormat(f_Size, f_Name, f_Content)
-    var file_data = file_lst[0];
-    form_data.append("file" + fCId, file_data, f_Name);
-    form_data.append("session_token", mirror.getSessionToken())
-  }
 
-  /*for (var i = 0; i < file_lst.length; i++) {
-    var file_data = file_lst[i];
-    console.log(file_data);
-    form_data.append("file" + i, file_data, f_Name);
-  }*/
+    /*for (var i = 0; i < file_lst.length; i++) {
+      var file_data = file_lst[i];
+      console.log(file_data);
+      form_data.append("file" + i, file_data, f_Name);
+    }*/
 
-  var statutory_provision = $('#statutory_provision').val().trim();
-  var compliance_task = $('#compliance_task').val().trim();
-  var description = $('#compliance_description').val().trim();
-  var compliance_document = null;
-  if($('#compliance_document').val().trim().length > 0) compliance_document = $('#compliance_document').val().trim();
-  var file_format = null;
+    var statutory_provision = $('#statutory_provision').val().trim();
+    var compliance_task = $('#compliance_task').val().trim();
+    var description = $('#compliance_description').val().trim();
+    var compliance_document = null;
+    if($('#compliance_document').val().trim().length > 0) compliance_document = $('#compliance_document').val().trim();
+    var file_format = null;
 
-  if(uploadFile != null){
-    file_format = [];
-    file_format.push(uploadFile);
-  }
-  var penal_consequences = $('#penal_consequences').val().trim();
-  var compliance_frequency = $('#compliance_frequency').val().trim();
-  var repeats_type = null;
-  var repeats_every = null;
-  var duration = null;
-  var duration_type= null;
-  var statutory_date = null;
-  var statutory_day = null;
-  var statutory_month = null;
-  var trigger_before_days = null;
-  var is_active = true;
-  statutory_dates = [];
-
-  if(statutory_provision.length == 0){
-    displayMessage(message.statutoryprovision_required);
-  }else if (compliance_task.length == 0){
-    displayMessage(message.compliancetask_required);
-  }else if (description.length == 0){
-    displayMessage(message.compliancedescription_required);
-  }else if (compliance_frequency.length == 0){
-    displayMessage(message.compliancefrequency_required);
-  }else if ((compliance_frequency == "2" || compliance_frequency == "3") && $('#repeats_type').val() == ''){
-    displayMessage(message.repeatstype_required);
-  }else if ((compliance_frequency == "2" || compliance_frequency == "3") && $('#repeats_every').val().trim() == ''){
-    displayMessage(message.repeatsevery_required);
-  }else if (compliance_frequency == "4" && $('#duration').val().trim() == ''){
-    displayMessage(message.duration_required);
-  }else if (compliance_frequency == "4" && $('#duration_type').val() == ''){
-    displayMessage(message.durationtype_required);
-  }else{
-    displayMessage("");
-    var repeatBy = $('input[name="repeatby"]:checked').val();
-    if(compliance_frequency == "1"){
-      if($('#statutory_date').val() != '')
-        statutory_day = parseInt($('#statutory_date').val());
-      if($('#statutory_month').val() != '')
-        statutory_month = parseInt($('#statutory_month').val());
-      if($('#triggerbefore').val().trim().length > 0){
-        trigger_before_days = parseInt($('#triggerbefore').val());
-        if(trigger_before_days > 100){
-          displayMessage(message.triggerbefore_exceed);
-          return false;
+    if(uploadFile != null){
+      file_format = [];
+      file_format.push(uploadFile);
+    }
+    var penal_consequences = $('#penal_consequences').val().trim();
+    var compliance_frequency = $('#compliance_frequency').val().trim();
+    var repeats_type = null;
+    var repeats_every = null;
+    var duration = null;
+    var duration_type= null;
+    var statutory_date = null;
+    var statutory_day = null;
+    var statutory_month = null;
+    var trigger_before_days = null;
+    var is_active = true;
+    statutory_dates = [];
+    if(statutory_provision.length == 0){
+      displayMessage(message.statutoryprovision_required);
+    }else if (compliance_task.length == 0){
+      displayMessage(message.compliancetask_required);
+    }else if (description.length == 0){
+      displayMessage(message.compliancedescription_required);
+    }else if (compliance_frequency.length == 0){
+      displayMessage(message.compliancefrequency_required);
+    }else if ((compliance_frequency == "2" || compliance_frequency == "3") && $('#repeats_type').val() == ''){
+      displayMessage(message.repeatstype_required);
+    }else if ((compliance_frequency == "2" || compliance_frequency == "3") && $('#repeats_every').val().trim() == ''){
+      displayMessage(message.repeatsevery_required);
+    }else if (compliance_frequency == "4" && $('#duration').val().trim() == ''){
+      displayMessage(message.duration_required);
+    }else if (compliance_frequency == "4" && $('#duration_type').val() == ''){
+      displayMessage(message.durationtype_required);
+    }else{
+      displayMessage("");
+      var repeatBy = $('input[name="repeatby"]:checked').val();
+      if(compliance_frequency == "1"){
+        if($('#statutory_date').val() != '')
+          statutory_day = parseInt($('#statutory_date').val());
+        if($('#statutory_month').val() != '')
+          statutory_month = parseInt($('#statutory_month').val());
+        if($('#triggerbefore').val().trim().length > 0){
+          trigger_before_days = parseInt($('#triggerbefore').val());
+          if(trigger_before_days > 100){
+            displayMessage(message.triggerbefore_exceed);
+            return false;
+          }
+          if(trigger_before_days == 0){
+            displayMessage(message.triggerbefore_iszero);
+            return false;
+          }
         }
-        if(trigger_before_days == 0){
-          displayMessage(message.triggerbefore_iszero);
-          return false;
-        }
-      }
 
-      if($('#statutory_date').val() != '' || $('#statutory_month').val() != '' || $('#triggerbefore').val().trim().length > 0){
-        statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
-        statutory_dates.push(statutory_date);
-      }
-
-    }else if (compliance_frequency == "2" || compliance_frequency == "3"){
-        repeats_type = parseInt($('#repeats_type').val());
-        repeats_every = parseInt($('#repeats_every').val());
-        repeats_every_length = $('#repeats_every').val().trim().length;
-
-        if(repeats_every == 0){
-          displayMessage(message.invalid_repeatsevery);
-          return false;
+        if($('#statutory_date').val() != '' || $('#statutory_month').val() != '' || $('#triggerbefore').val().trim().length > 0){
+          statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
+          statutory_dates.push(statutory_date);
         }
-        else if(repeats_type == '1' && repeats_every_length > 3){
-          displayMessage(message.days_maximum);
-          return false;
-        }else if(repeats_type == '2' && repeats_every_length > 2){
-          displayMessage(message.months_maximum);
-          return false;
-        }else if(repeats_type == '3'  && repeats_every_length > 1){
-          displayMessage(message.years_maximum);
-          return false;
-        }
-        else{
-          if(repeats_type == '2' && $('.multipleinput').prop("checked") == true){
-            var rep_every = parseInt($('#repeats_every').val());
-            var maxCount = 0;
-            if(rep_every == 1){
-              maxCount = 12;
-            }else if (rep_every == 2){
-              maxCount = 6;
-            }else if (rep_every == 3){
-              maxCount = 4;
-            }else if (rep_every == 4){
-              maxCount = 3;
-            }else if (rep_every == 12){
-              maxCount = 1;
-            }else{
-              maxCount = 2;
-            }
-            for(var i=1;i<=maxCount;i++){
-              statutory_day = null;
-              statutory_month = null;
-              trigger_before_days = null;
-              if($('#multiple_statutory_date'+i).val() == '' || $('#multiple_statutory_month'+i).val() == '' || $('#multiple_triggerbefore'+i).val().trim().length == 0){
-                displayMessage(message.statutorydate_triggerdte_mandatory_multipleinputs);
-                return false;
+
+      }else if (compliance_frequency == "2" || compliance_frequency == "3"){
+          repeats_type = parseInt($('#repeats_type').val());
+          repeats_every = parseInt($('#repeats_every').val());
+          repeats_every_length = $('#repeats_every').val().trim().length;
+
+          if(repeats_every == 0){
+            displayMessage(message.invalid_repeatsevery);
+            return false;
+          }
+          else if(repeats_type == '1' && repeats_every_length > 3){
+            displayMessage(message.days_maximum);
+            return false;
+          }else if(repeats_type == '2' && repeats_every_length > 2){
+            displayMessage(message.months_maximum);
+            return false;
+          }else if(repeats_type == '3'  && repeats_every_length > 1){
+            displayMessage(message.years_maximum);
+            return false;
+          }
+          else{
+            if(repeats_type == '2' && $('.multipleinput').prop("checked") == true){
+              var rep_every = parseInt($('#repeats_every').val());
+              var maxCount = 0;
+              if(rep_every == 1){
+                maxCount = 12;
+              }else if (rep_every == 2){
+                maxCount = 6;
+              }else if (rep_every == 3){
+                maxCount = 4;
+              }else if (rep_every == 4){
+                maxCount = 3;
+              }else if (rep_every == 12){
+                maxCount = 1;
               }else{
-                statutory_day = parseInt($('#multiple_statutory_date'+i).val());
-                statutory_month = parseInt($('#multiple_statutory_month'+i).val());
-                trigger_before_days = parseInt($('#multiple_triggerbefore'+i).val());
+                maxCount = 2;
+              }
+              for(var i=1;i<=maxCount;i++){
+                statutory_day = null;
+                statutory_month = null;
+                trigger_before_days = null;
+                if($('#multiple_statutory_date'+i).val() == '' || $('#multiple_statutory_month'+i).val() == '' || $('#multiple_triggerbefore'+i).val().trim().length == 0){
+                  displayMessage(message.statutorydate_triggerdte_mandatory_multipleinputs);
+                  return false;
+                }else{
+                  statutory_day = parseInt($('#multiple_statutory_date'+i).val());
+                  statutory_month = parseInt($('#multiple_statutory_month'+i).val());
+                  trigger_before_days = parseInt($('#multiple_triggerbefore'+i).val());
+                  if(trigger_before_days > 100){
+                    displayMessage(message.triggerbefore_exceed);
+                    return false;
+                  }
+                  if(trigger_before_days == 0){
+                    displayMessage(message.triggerbefore_iszero);
+                    return false;
+                  }
+                  statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
+                  statutory_dates.push(statutory_date);
+                }
+              }
+            }else{
+              if($('#single_statutory_date').val() != '' || $('#single_statutory_month').val() != '' || $('#single_triggerbefore').val().trim().length > 0){
+                if($('#single_statutory_date').val() != '')
+                   statutory_day = parseInt($('#single_statutory_date').val());
+                if($('#single_statutory_month').val() != '')
+                  statutory_month = parseInt($('#single_statutory_month').val());
+                if($('#single_triggerbefore').val().trim().length > 0)
+                  trigger_before_days = parseInt($('#single_triggerbefore').val());
                 if(trigger_before_days > 100){
                   displayMessage(message.triggerbefore_exceed);
                   return false;
@@ -1021,112 +1045,94 @@ $("#temp_addcompliance").click(function() {
                   displayMessage(message.triggerbefore_iszero);
                   return false;
                 }
-                statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
-                statutory_dates.push(statutory_date);
+              statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
+              statutory_dates.push(statutory_date);
               }
-            }
-          }else{
-            if($('#single_statutory_date').val() != '' || $('#single_statutory_month').val() != '' || $('#single_triggerbefore').val().trim().length > 0){
-              if($('#single_statutory_date').val() != '')
-                 statutory_day = parseInt($('#single_statutory_date').val());
-              if($('#single_statutory_month').val() != '')
-                statutory_month = parseInt($('#single_statutory_month').val());
-              if($('#single_triggerbefore').val().trim().length > 0)
-                trigger_before_days = parseInt($('#single_triggerbefore').val());
-              if(trigger_before_days > 100){
-                displayMessage(message.triggerbefore_exceed);
-                return false;
-              }
-              if(trigger_before_days == 0){
-                displayMessage(message.triggerbefore_iszero);
-                return false;
-              }
-            statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
-            statutory_dates.push(statutory_date);
             }
           }
-        }
-    }else{
-      duration = parseInt($('#duration').val());
-      duration_type = parseInt($('#duration_type').val());
+      }else{
+        duration = parseInt($('#duration').val());
+        duration_type = parseInt($('#duration_type').val());
+      }
+    var check_duplicate_status= true;
+    var ccount = 0;
+    $.each(compliances, function(index, value) {
+    if (
+      (value.s_provision == statutory_provision) &&
+      (value.c_task == compliance_task) &&
+      (comp_id == '' || comp_id != ccount )) {
+      if(value.s_provision == statutory_provision){
+        displayMessage(message.statutoryprovision_duplicate);
+      }
+      if(value.c_task == compliance_task){
+        displayMessage(message.compliancetask_duplicate);
+      }
+      check_duplicate_status = false;
     }
-  var check_duplicate_status= true;
-  var ccount = 0;
-  $.each(compliances, function(index, value) {
-  if (
-    (value.s_provision == statutory_provision) &&
-    (value.c_task == compliance_task) &&
-    (comp_id == '' || comp_id != ccount )) {
-    if(value.s_provision == statutory_provision){
-      displayMessage(message.statutoryprovision_duplicate);
-    }
-    if(value.c_task == compliance_task){
-      displayMessage(message.compliancetask_duplicate);
-    }
-    check_duplicate_status = false;
-  }
-  ccount = ccount + 1;
-  });
+    ccount = ccount + 1;
+    });
 
-  if(check_duplicate_status){
-    if(comp_id == ''){
-      compliance = mirror.complianceDetails(statutory_provision, compliance_task, description, compliance_document, file_format, penal_consequences, parseInt(compliance_frequency),
-        statutory_dates, repeats_type, repeats_every, duration_type, duration, is_active, comp_id);
-      compliances.push(compliance);
-    }else{
-      compliances[comp_id]["s_provision"] = statutory_provision;
-      compliances[comp_id]["c_task"] = compliance_task;
-      compliances[comp_id]["description"] = description;
-      compliances[comp_id]["doc_name"] = compliance_document;
-      compliances[comp_id]["f_f_list"] = file_format;
-      compliances[comp_id]["p_consequences"] = penal_consequences;
-      compliances[comp_id]["f_id"] = parseInt(compliance_frequency);
-      compliances[comp_id]["statu_dates"] = statutory_dates;
-      compliances[comp_id]["r_type_id"] = repeats_type;
-      compliances[comp_id]["r_every"] = repeats_every;
-      compliances[comp_id]["d_type_id"] = duration_type;
-      compliances[comp_id]["duration"] = duration;
-      compliances[comp_id]["is_active"] = true;
-      compliances[comp_id]["download_file_list"] = null;
+    if(check_duplicate_status){
+      if(comp_id == ''){
+        compliance = mirror.complianceDetails(statutory_provision, compliance_task, description, compliance_document, file_format, penal_consequences, parseInt(compliance_frequency),
+          statutory_dates, repeats_type, repeats_every, duration_type, duration, is_active, comp_id);
+        compliances.push(compliance);
+      }else{
+        compliances[comp_id]["s_provision"] = statutory_provision;
+        compliances[comp_id]["c_task"] = compliance_task;
+        compliances[comp_id]["description"] = description;
+        compliances[comp_id]["doc_name"] = compliance_document;
+        compliances[comp_id]["f_f_list"] = file_format;
+        compliances[comp_id]["p_consequences"] = penal_consequences;
+        compliances[comp_id]["f_id"] = parseInt(compliance_frequency);
+        compliances[comp_id]["statu_dates"] = statutory_dates;
+        compliances[comp_id]["r_type_id"] = repeats_type;
+        compliances[comp_id]["r_every"] = repeats_every;
+        compliances[comp_id]["d_type_id"] = duration_type;
+        compliances[comp_id]["duration"] = duration;
+        compliances[comp_id]["is_active"] = true;
+        compliances[comp_id]["download_file_list"] = null;
+      }
+      $('#statutory_provision').val('');
+      $('#compliance_task').val('');
+      $('#compliance_description').val('');
+      $('#compliance_frequency').val('');
+      $('#compliance_document').val('');
+      $('#upload_file').val('');
+      $('#penal_consequences').val('');
+      $('#Recurring').hide();
+      $('#Occasional').hide();
+      $('#One_Time').hide();
+      $('#repeats_every').val('');
+      $('#repeats_type').val('');
+      $('#duration').val('');
+      $('#statutory_date').val('');
+      $('#statutory_month').val('');
+      $('#triggerbefore').val('');
+      $('#complianceid').val('');
+      uploadFile = null;
+      $("#uploaded_fileview").hide();
+      $("#uploaded_filename").html('');
+      $('.multipleinput').prop("checked",false);
+      $('.multipleselectnone').show();
+      $('.multipleselect').hide();
+      $('#multipleview').hide();
+      $('#dayofmonth').prop("checked", true);
+      $('.repeatby-view').show();
+      $('#counter').html('');
+      $('#counter1').html('');
+      $('#counter2').html('');
+      $('#duration_type').val('');
+      $("#summary").html("");
+      for(i=1; i<=12; i++){
+        $('#multiple_statutory_date'+i).show();
+      }
+      resetvalues();
+      load_compliance();
+      $("#statutory_provision").focus();
+      }
     }
-    $('#statutory_provision').val('');
-    $('#compliance_task').val('');
-    $('#compliance_description').val('');
-    $('#compliance_frequency').val('');
-    $('#compliance_document').val('');
-    $('#upload_file').val('');
-    $('#penal_consequences').val('');
-    $('#Recurring').hide();
-    $('#Occasional').hide();
-    $('#One_Time').hide();
-    $('#repeats_every').val('');
-    $('#repeats_type').val('');
-    $('#duration').val('');
-    $('#statutory_date').val('');
-    $('#statutory_month').val('');
-    $('#triggerbefore').val('');
-    $('#complianceid').val('');
-    uploadFile = null;
-    $("#uploaded_fileview").hide();
-    $("#uploaded_filename").html('');
-    $('.multipleinput').prop("checked",false);
-    $('.multipleselectnone').show();
-    $('.multipleselect').hide();
-    $('#multipleview').hide();
-    $('#dayofmonth').prop("checked", true);
-    $('.repeatby-view').show();
-    $('#counter').html('');
-    $('#counter1').html('');
-    $('#counter2').html('');
-    $('#duration_type').val('');
-    $("#summary").html("");
-    for(i=1; i<=12; i++){
-      $('#multiple_statutory_date'+i).show();
-    }
-    resetvalues();
-    load_compliance();
-    $("#statutory_provision").focus();
-    }
+
   }
 });
 

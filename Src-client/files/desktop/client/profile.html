@@ -20,7 +20,7 @@
 
           <div class="input-row" style="padding-bottom:0px;">
             <div class="field-label">Contact No.:</div>
-            <div class="field-input"><input type="text" class="input-box countrycode" maxlength="4"  value=""> <input type="text" class="input-box areacode" maxlength="4" value=""> <input type="text" class="input-box mobile"  maxlength="10" value=""></div>
+            <div class="field-input"><input type="text" class="input-box countrycode" maxlength="4" id="countrycode"  value=""> <input type="text" class="input-box areacode" id="areacode" maxlength="4" value=""> <input type="text" class="input-box mobile"  maxlength="10" id="mobile" value=""></div>
           </div>
           <div class="input-row">
             <div class="field-label">&nbsp;</div>
@@ -40,7 +40,7 @@
           </div>
           <div class="input-row">
             <div class="field-label">Address:</div>
-            <div class="field-input"><textarea class="input-box address" style="height:70px;"   ></textarea></div>
+            <div class="field-input"><textarea class="input-box address" style="height:70px;" id="address" ></textarea></div>
           </div>
         </div>
         <input type="hidden" class="userid">
@@ -53,5 +53,5 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript" src="/files/desktop/common/js/profile.js"></script>
+  <script type="text/javascript" src="/script/js/profile.js"></script>
 {% endblock %}

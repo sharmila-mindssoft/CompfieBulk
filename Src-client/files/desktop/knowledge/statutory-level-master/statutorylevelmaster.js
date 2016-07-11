@@ -90,6 +90,8 @@ function loadstatutoryLevelsList() {
 
 //validation
 function validate(){
+  var checkLength = statutoryLevelValidate();
+  if(checkLength){
     if($("#country").val().trim().length==0){
       displayMessage(message.country_required);
     } else if($("#domain").val().trim().length==0) {
@@ -101,6 +103,7 @@ function validate(){
       displayMessage('');
       return true
     }
+  }
 }
 
 //save/update statutory level master

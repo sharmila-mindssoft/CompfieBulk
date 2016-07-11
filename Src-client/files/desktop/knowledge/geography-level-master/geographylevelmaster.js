@@ -155,15 +155,18 @@ function loadGeographyLevelsList(countryval) {
 
 //validation
 function validate(){
-    if($("#country").val().trim().length==0){
-      displayMessage(message.country_required);
-    }else if($("#level1").val().trim().length==0){
-      displayMessage(message.levelone_title_required);
-    }
-    else {
-      displayMessage('');
-      return true
-    }
+	var checkLength = geographyLevelValidate();
+	if(checkLength){
+		if($("#country").val().trim().length==0){
+	      displayMessage(message.country_required);
+	    }else if($("#level1").val().trim().length==0){
+	      displayMessage(message.levelone_title_required);
+	    }
+	    else {
+	      displayMessage('');
+	      return true
+	    }
+	}
 }
 
 //save or update geography level master

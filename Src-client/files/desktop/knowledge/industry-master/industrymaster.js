@@ -69,11 +69,14 @@ function loadIndustryList (industriesList) {
 
 // validation
 function validate(){
-  if($("#industryname").val().trim().length==0){
-    displayMessage(message.industryname_required);
-  }else{
-    displayMessage('');
-    return true
+  var checkLength = industryValidate();
+  if(checkLength){
+    if($("#industryname").val().trim().length==0){
+      displayMessage(message.industryname_required);
+    }else{
+      displayMessage('');
+      return true
+    }
   }
 }
 

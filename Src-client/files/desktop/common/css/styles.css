@@ -1517,43 +1517,43 @@ list-style-type:none; line-height:25px;
   padding-left: 2em;
   vertical-align: center;
   cursor: pointer;
-  background: url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+  background: url(../images/tick_1_inactive.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.active {
-  background: url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+  background: url(../images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active:hover {
-  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+  background: #f1e9f6 url(../images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li:hover{
-  background:  #EAE8E8 url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+  background:  #EAE8E8 url(../images/tick_1_inactive.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox {
-  background: url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+  background: url(../images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox:hover {
-  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+  background: #f1e9f6 url(../images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox_country {
-  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+  background: #f1e9f6 url(../images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.active_selectbox_bgroups {
-  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+  background: #f1e9f6 url(../images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox_legal_entities{
-  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+  background: #f1e9f6 url(../images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox_division{
-  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+  background: #f1e9f6 url(../images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox_domains{
-  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+  background: #f1e9f6 url(../images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.active_selectbox_users {
-  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+  background: #f1e9f6 url(../images/tick_1.png) no-repeat left 5px center;
 }
 .date-configuration{
   max-height: 270px;
@@ -3016,7 +3016,7 @@ ul.pagination li:hover:not(.active) {background-color: #ddd;}
 	text-align: center;
 }
 .loading-indicator-spin {
-	background: url("/files/desktop/common/images/transparent-bg-light.png") repeat scroll 0 0 rgba(0, 0, 0, 0);
+	background: url("../images/transparent-bg-light.png") repeat scroll 0 0 rgba(0, 0, 0, 0);
     display: none;
     height: 100%;
     left: 0;
@@ -3049,4 +3049,29 @@ div.scrollable {
     margin: 0;
     padding: 0;
     overflow: auto;
+}
+
+/*Password Indicator
+*/
+#pw-result{
+	margin-left:5px;
+	font-family: Helvetica, Arial, FreeSans, san-serif;
+    font-size: 13px;
+    font-weight: :bold;
+}
+
+.pw-short{
+	color:#FF0000;
+}
+
+.pw-weak{
+	color:#E66C2C;
+}
+
+.pw-good{
+	color:#2D98F3;
+}
+
+.pw-strong{
+	color:#006400;
 }

@@ -432,6 +432,7 @@ def run_server(port):
         css_path = os.path.join(common_path, "css")
         js_path = os.path.join(common_path, "js")
         script_path = os.path.join(desktop_path, "knowledge")
+        login_path = os.path.join(desktop_path, "login")
 
         web_server.low_level_url(
             r"/images/(.*)",
@@ -458,6 +459,11 @@ def run_server(port):
             r"/knowledge/script/(.*)",
             StaticFileHandler,
             dict(path=script_path)
+        )
+        web_server.low_level_url(
+            r"/knowledge/login/(.*)",
+            StaticFileHandler,
+            dict(path=login_path)
         )
 
         api_design_path = os.path.join(

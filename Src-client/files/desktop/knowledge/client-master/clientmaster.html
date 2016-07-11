@@ -1,9 +1,9 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
 <div class='loading-indicator-spin'>
-  <span><img src='/files/desktop/common/images/loading-img.gif' alt=""></span>
+  <span><img src='/images/loading-img.gif' alt=""></span>
 </div>
-<link href="/files/desktop/common/css/jquery-ui/jquery-ui.css" rel="stylesheet">
+<link href="/css/jquery-ui/jquery-ui.css" rel="stylesheet">
   <div class="content-container width50" id="clientgroup-view">
     <div class="content-area">
       <h1>Clients</h1>
@@ -95,7 +95,7 @@
           <div class="single-column-field-label">Username:<span class="mandatory">*</span></div>
           <div class="field-input">
             <span id="labelusername"></span>
-            <input type="text" class="input-box" placeholder="user@domain.com" id="username" value="" tabindex="5"><br>
+            <input type="text" class="input-box" placeholder="user@domain.com" id="username" value="" maxlength="100" tabindex="5"><br>
             <span style="font-size:10px;">[&#9658;This will be used as the username for user acc.<br>&#9658;
             Password will be auto-generated]</span>
           </div>
@@ -223,7 +223,7 @@
     </tr>
   </table>
 </div>
-<script type="text/javascript" src="/files/desktop/knowledge/client-master/clientmaster.js"></script>
+<script type="text/javascript" src="/script/client-master/clientmaster.js"></script>
 
 <script type="text/javascript">
 $(function() {

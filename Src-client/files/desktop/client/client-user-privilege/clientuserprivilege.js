@@ -127,6 +127,9 @@ $("#submit").click(function(){
 	if(groupNameVal == ''){
 	  	displayMessage(message.group_required);  	
 	}
+	else if(groupNameVal.length > 50){
+		displayMessage("User Group Name" + message.should_not_exceed + " 50 characters");
+	}
 	else if(chkArray.length == 0){
 		displayMessage(message.add_one_form);  	 	
 	}

@@ -336,195 +336,201 @@ function isEmail(email) {
   return regex.test(email);
 }
 $("#submit").click(function(){
-    var userId = $("#user-id").val();
-	var usertype = $('#usertype').val().trim();
-	var employeename = $('#employee-name').val().trim();
-	var employeeid = $('#employee-id').val().trim();
-	var countrycode = $('#country-code').val().trim();
-	var areacode = $('#area-code').val().trim();
-	var mobilenumber = $('#mobile-number').val().trim();
-	var usergroup = $('#usergroup').val().trim();
-	var userlevel = $('#user-level').val().trim();
-	var emailid = $('#email-id').val().trim();
-	var country = $('#country').val().trim();
-	var businessgroups = $('#business-groups').val().trim();
-	var legalentities = $('#legal-entities').val().trim();
-	var division = $('#division').val().trim();
-	var domains = $('#domains').val().trim();
-	var units = $('#units').val().trim();
-	var isserviceprovider, serviceprovider;
 
-	if(usertype == "Inhouse"){
-		isserviceprovider = false;
-		serviceprovider = null;
-		var seatingunit = $('#seatingunit').val().trim();
-		var seatingunitname = $('#seatingunitval').val().trim();
-		if(seatingunit == ""){
-			displayMessage(message.seatingunit_required);
-            return;
-		}
-        if(seatingunitname == ""){
-            displayMessage(message.seatingunit_required);
+    var checkLength = clientUserValidate();
+
+    if(checkLength){
+        var userId = $("#user-id").val();
+        var usertype = $('#usertype').val().trim();
+        var employeename = $('#employee-name').val().trim();
+        var employeeid = $('#employee-id').val().trim();
+        var countrycode = $('#country-code').val().trim();
+        var areacode = $('#area-code').val().trim();
+        var mobilenumber = $('#mobile-number').val().trim();
+        var usergroup = $('#usergroup').val().trim();
+        var userlevel = $('#user-level').val().trim();
+        var emailid = $('#email-id').val().trim();
+        var country = $('#country').val().trim();
+        var businessgroups = $('#business-groups').val().trim();
+        var legalentities = $('#legal-entities').val().trim();
+        var division = $('#division').val().trim();
+        var domains = $('#domains').val().trim();
+        var units = $('#units').val().trim();
+        var isserviceprovider, serviceprovider;
+
+        if(usertype == "Inhouse"){
+            isserviceprovider = false;
+            serviceprovider = null;
+            var seatingunit = $('#seatingunit').val().trim();
+            var seatingunitname = $('#seatingunitval').val().trim();
+            if(seatingunit == ""){
+                displayMessage(message.seatingunit_required);
+                return;
+            }
+            if(seatingunitname == ""){
+                displayMessage(message.seatingunit_required);
+                return;
+            }
+            if(employeeid == ""){
+                displayMessage(message.employeecode_required);
+                return;
+            }
+        }
+        if(usertype == "Service Provider"){
+            isserviceprovider = true;
+            serviceprovider = parseInt($('#serviceprovider').val());
+            if(serviceprovider.length == 0){
+                displayMessage(message.spname_required);
+                return;
+            }
+        }
+
+        if(usertype == ""){
+            displayMessage(message.usertype_required);
             return;
         }
-		if(employeeid == ""){
-			displayMessage(message.employeecode_required);
-            return;
-		}
-	}
-	if(usertype == "Service Provider"){
-		isserviceprovider = true;
-		serviceprovider = parseInt($('#serviceprovider').val());
-		if(serviceprovider.length == 0){
-			displayMessage(message.spname_required);
-            return;
-		}
-	}
+        else if(employeename == ''){
+            displayMessage(message.employeename_required);
+        }
+        else if(usergroup == ''){
+            displayMessage(message.usergroup_required);
+        }
+        else if(userlevel == ''){
+            displayMessage(message.userlevel_required);
+        }
+        else if(emailid == ''){
+            displayMessage(message.emailid_required);
+        }
+        else if(!isEmail(emailid)){
+            displayMessage(message.invalid_emailid);
+        }
+        else if(country == ''){
+            displayMessage(message.country_required);
+        }
+        else if(legalentities == ''){
+            displayMessage(message.legalentity_required);
+        }
+        else if(domains == ''){
+            displayMessage(message.domain_required);
+        }
+        else if(units == ''){
+            displayMessage(message.unit_required)
+        }
+        else if($('#client-user-id').val() == ''){
+            var isAdmin = false;
 
-    if(usertype == ""){
-        displayMessage(message.usertype_required);
-        return;
-    }
-	else if(employeename == ''){
-		displayMessage(message.employeename_required);
-	}
-	else if(usergroup == ''){
-		displayMessage(message.usergroup_required);
-	}
-	else if(userlevel == ''){
-		displayMessage(message.userlevel_required);
-	}
-	else if(emailid == ''){
-		displayMessage(message.emailid_required);
-	}
-    else if(!isEmail(emailid)){
-        displayMessage(message.invalid_emailid);
-    }
-	else if(country == ''){
-		displayMessage(message.country_required);
-	}
-	else if(legalentities == ''){
-		displayMessage(message.legalentity_required);
-	}
-	else if(domains == ''){
-		displayMessage(message.domain_required);
-	}
-	else if(units == ''){
-		displayMessage(message.unit_required)
-	}
-	else if($('#client-user-id').val() == ''){
-		var isAdmin = false;
-
-		var arrayCountriesVal = country.split(",");
-		var arrayCountries = [];
-		for(var i = 0; i<arrayCountriesVal.length; i++){
-			arrayCountries[i] = parseInt(arrayCountriesVal[i]);
-		}
-
-		var arrayDomainsVal = domains.split(",");
-		var arrayDomains = [];
-		for(var j = 0; j<arrayDomainsVal.length; j++){
-			arrayDomains[j] = parseInt(arrayDomainsVal[j]);
-		}
-
-		var arrayUnitVal = units.split(",");
-
-		var arrayUnits = [];
-		for(var k = 0; k<arrayUnitVal.length; k++){
-			if(arrayUnitVal[k]){
-				arrayUnits[k] = parseInt(arrayUnitVal[k]);
-			}
-		}
-		arrayUnits = arrayUnits.filter(function(n){ return n != undefined });
-
-		var clientUserDetail = [];
-		var contactNo = countrycode+"-"+areacode+"-"+mobilenumber;
-
-		clientUserDetail = [emailid, parseInt(usergroup), employeename,
-		        employeeid, contactNo, parseInt(seatingunit), parseInt(userlevel),
-		        arrayCountries, arrayDomains, arrayUnits, isAdmin, isserviceprovider,
-		        serviceprovider];
-		var clientUserDetailDict = client_mirror.getSaveClientUserDict(clientUserDetail);
-
-		function onSuccess(data){
-	    	$("#user-add").hide();
-  			$("#user-view").show();
-            $(".filter-text-box").val('');
-  			initialize();
-  	    }
-		function onFailure(error){
-            if(error == "EmailIdAlreadyExists"){
-                displayMessage(message.emailid_exists);
-            }
-            else{
-                displayMessage(error);
+            var arrayCountriesVal = country.split(",");
+            var arrayCountries = [];
+            for(var i = 0; i<arrayCountriesVal.length; i++){
+                arrayCountries[i] = parseInt(arrayCountriesVal[i]);
             }
 
-		}
-		client_mirror.saveClientUser(clientUserDetailDict,
-			function(error, response){
-				if(error == null){
-					onSuccess(response);
-				}
-				else{
-					onFailure(error);
-				}
-			}
-		);
-	}
-	else if($('#client-user-id').val() != ''){
-        var userId = $('#client-user-id').val();
-		var isAdmin = false;
+            var arrayDomainsVal = domains.split(",");
+            var arrayDomains = [];
+            for(var j = 0; j<arrayDomainsVal.length; j++){
+                arrayDomains[j] = parseInt(arrayDomainsVal[j]);
+            }
 
-		var arrayCountriesVal = country.split(",");
-		var arrayCountries = [];
-		for(var i=0; i<arrayCountriesVal.length; i++){ arrayCountries[i] = parseInt(arrayCountriesVal[i]); }
+            var arrayUnitVal = units.split(",");
 
-		var arrayDomainsVal = domains.split(",");
-		var arrayDomains = [];
-		for(var j=0; j<arrayDomainsVal.length; j++){ arrayDomains[j] = parseInt(arrayDomainsVal[j]); }
+            var arrayUnits = [];
+            for(var k = 0; k<arrayUnitVal.length; k++){
+                if(arrayUnitVal[k]){
+                    arrayUnits[k] = parseInt(arrayUnitVal[k]);
+                }
+            }
+            arrayUnits = arrayUnits.filter(function(n){ return n != undefined });
 
-		var arrayUnitVal = units.split(",");
+            var clientUserDetail = [];
+            var contactNo = countrycode+"-"+areacode+"-"+mobilenumber;
 
-		var arrayUnits = [];
-		for(var k=0; k<arrayUnitVal.length; k++){
-			if(arrayUnitVal[k]){
-				arrayUnits[k] = parseInt(arrayUnitVal[k]);
-			}
-		}
-		arrayUnits = arrayUnits.filter(function(n){ return n != undefined });
-		var contactNo = countrycode+"-"+areacode+"-"+mobilenumber;
+            clientUserDetail = [emailid, parseInt(usergroup), employeename,
+                    employeeid, contactNo, parseInt(seatingunit), parseInt(userlevel),
+                    arrayCountries, arrayDomains, arrayUnits, isAdmin, isserviceprovider,
+                    serviceprovider];
+            var clientUserDetailDict = client_mirror.getSaveClientUserDict(clientUserDetail);
 
-		function onSuccess(data){
-            $("#usergroupval").removeAttr("disabled", "disabled");
-			$("#user-add").hide();
-			$("#user-view").show();
-            $(".filter-text-box").val('');
-			initialize();
-    	}
-		function onFailure(status, data){
-			displayMessage(status);
-		}
-		var clientUserDetail = [parseInt(userId),  parseInt(usergroup), employeename,
-			      employeeid, contactNo, parseInt(seatingunit), parseInt(userlevel),
-			      arrayCountries, arrayDomains, arrayUnits, isAdmin, isserviceprovider,
-			      serviceprovider];
+            function onSuccess(data){
+                $("#user-add").hide();
+                $("#user-view").show();
+                $(".filter-text-box").val('');
+                initialize();
+            }
+            function onFailure(error){
+                if(error == "EmailIdAlreadyExists"){
+                    displayMessage(message.emailid_exists);
+                }
+                else{
+                    displayMessage(error);
+                }
 
-		var clientUserDetailDict = client_mirror.getUpdateClientUserDict(clientUserDetail);
-		client_mirror.updateClientUser(clientUserDetailDict,
-			function(error, response){
-				if(error == null){
-					onSuccess(response);
-				}
-				else{
-					onFailure(error);
-				}
-			}
-		);
-	}
-	else{
-		console.log("All fails.. Something Wrong");
-	}
+            }
+            client_mirror.saveClientUser(clientUserDetailDict,
+                function(error, response){
+                    if(error == null){
+                        onSuccess(response);
+                    }
+                    else{
+                        onFailure(error);
+                    }
+                }
+            );
+        }
+        else if($('#client-user-id').val() != ''){
+            var userId = $('#client-user-id').val();
+            var isAdmin = false;
+
+            var arrayCountriesVal = country.split(",");
+            var arrayCountries = [];
+            for(var i=0; i<arrayCountriesVal.length; i++){ arrayCountries[i] = parseInt(arrayCountriesVal[i]); }
+
+            var arrayDomainsVal = domains.split(",");
+            var arrayDomains = [];
+            for(var j=0; j<arrayDomainsVal.length; j++){ arrayDomains[j] = parseInt(arrayDomainsVal[j]); }
+
+            var arrayUnitVal = units.split(",");
+
+            var arrayUnits = [];
+            for(var k=0; k<arrayUnitVal.length; k++){
+                if(arrayUnitVal[k]){
+                    arrayUnits[k] = parseInt(arrayUnitVal[k]);
+                }
+            }
+            arrayUnits = arrayUnits.filter(function(n){ return n != undefined });
+            var contactNo = countrycode+"-"+areacode+"-"+mobilenumber;
+
+            function onSuccess(data){
+                $("#usergroupval").removeAttr("disabled", "disabled");
+                $("#user-add").hide();
+                $("#user-view").show();
+                $(".filter-text-box").val('');
+                initialize();
+            }
+            function onFailure(status, data){
+                displayMessage(status);
+            }
+            var clientUserDetail = [parseInt(userId),  parseInt(usergroup), employeename,
+                      employeeid, contactNo, parseInt(seatingunit), parseInt(userlevel),
+                      arrayCountries, arrayDomains, arrayUnits, isAdmin, isserviceprovider,
+                      serviceprovider];
+
+            var clientUserDetailDict = client_mirror.getUpdateClientUserDict(clientUserDetail);
+            client_mirror.updateClientUser(clientUserDetailDict,
+                function(error, response){
+                    if(error == null){
+                        onSuccess(response);
+                    }
+                    else{
+                        onFailure(error);
+                    }
+                }
+            );
+        }
+        else{
+            console.log("All fails.. Something Wrong");
+        }
+    }
+    
 });
 function user_active(userId, isActive){
     var msgstatus='deactivate';

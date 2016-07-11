@@ -1142,6 +1142,9 @@ function validate_secondtab(){
   }else if ($('#reason').val().trim() == ''){
     displayMessage(message.reason_required);
     return false;
+  }else if ($('#reason').val().trim().length > 500){
+    displayMessage("Reason" + message.should_not_exceed + " 500 characters");
+    return false;
   }else{
     displayMessage("");
     return true;

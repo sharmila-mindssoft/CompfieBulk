@@ -34,13 +34,7 @@ function getShortName(){
 }
 
 $(".btn-forgotpassword-cancel").click(function(){
-  var pathArray = window.location.pathname.split( '/' );
-  if (pathArray[1] === 'knowledge'){
-    window.location.href='/knowledge/login';
-  }else{
-    window.location.href='/login/'+getShortName();
-  }
-
+  window.location.href='/login/'+getShortName();
 });
 
 //validation email
@@ -50,29 +44,19 @@ function validateEmail($email) {
 }
 
 function processForgotpassword(username, shortName, callback) {
-  if (shortName == null) {
-      var request = [
-        "ForgotPassword", {
-            "username": username,
-            "short_name": null
-        }
-      ];
-      var requestFrame = request;
-      BASE_URL = "/knowledge/api/"
-  }
-  else {
-      var request = [
-        "ForgotPassword", {
-            "username": username,
-            "short_name": shortName
-        }
-      ];
-      var requestFrame = [
-          shortName,
-          request
-      ];
-      BASE_URL = "/api/"
-  }
+
+  var request = [
+    "ForgotPassword", {
+        "username": username,
+        "short_name": shortName
+    }
+  ];
+  var requestFrame = [
+      shortName,
+      request
+  ];
+  BASE_URL = "/api/"
+  
   jQuery.post(
       BASE_URL + "login",
       JSON.stringify(requestFrame, null, " "),
@@ -97,7 +81,8 @@ $("#submit").click(function(){
   var username = $("#username").val().trim();
   if(username.length == 0) {
     displayMessage(message.username_required);
-  }else if(validateEmail(username) == ''){
+  }
+  else if(validateEmail(username) == ''){
     displayMessage(message.invalid_emailid);
   }else {
       displayLoader();
@@ -113,36 +98,21 @@ $("#submit").click(function(){
         hideLoader();
       }
 
-      if(getShortName() == null  || getShortName() == "forgot-password"){
-          processForgotpassword(username,
-            null,
-            function (error, response) {
-              if (error == null){
-                onSuccess(response);
-              }
-              else {
-                onFailure(error);
-              }
-          }
-        );
-      }else{
-          processForgotpassword(username,
-              getShortName(),
-              function (error, response) {
-                if (error == null){
-                  onSuccess(response);
-                }
-                else {
-                  onFailure(error);
-                }
+      processForgotpassword(username,
+          getShortName(),
+          function (error, response) {
+            if (error == null){
+              onSuccess(response);
             }
-          );
-      }
+            else {
+              onFailure(error);
+            }
+        }
+      );
   }
 });
 
 //initialization
 $(document).ready(function () {
   $("#username").focus();
-
 });

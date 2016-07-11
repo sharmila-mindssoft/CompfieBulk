@@ -30,7 +30,7 @@
   margin: 0;
   width: 20px;
   height: 20px;
-  background: url("/files/desktop/common/images/close-icon-black.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+  background: url("../images/close-icon-black.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
 }
 .content {
  color:#000;
