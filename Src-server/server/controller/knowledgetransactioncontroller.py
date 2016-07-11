@@ -2,6 +2,19 @@ import time
 from protocol import login, knowledgetransaction
 from generalcontroller import validate_user_session, validate_user_forms
 from server import logger
+from server.database.general import (
+    get_compliance_duration, get_compliance_repeat,
+    get_compliance_frequency, get_approval_status
+)
+from server.database.admin import (
+    get_domains_for_user, get_countries_for_user
+)
+from server.database.knowledgemaster import (
+    get_industries, get_statutory_nature,
+    get_statutory_levels, get_geograhpy_levels_for_user,
+    get_geographies, get_statutory_master
+
+)
 __all__ = [
     "process_knowledge_transaction_request"
 ]
@@ -79,18 +92,18 @@ def process_knowledge_transaction_request(request, db) :
     return result
 
 def process_get_statutory_mapping_master(db, user_id):
-    countries = db.get_countries_for_user(user_id)
-    domains = db.get_domains_for_user(user_id)
-    industries = db.get_industries()
-    statutory_natures = db.get_statutory_nature()
-    statutory_levels = db.get_statutory_levels()
-    statutories = db.get_statutory_master()
-    geography_levels = db.get_geograhpy_levels_for_user(user_id)
-    geographies = db.get_geographies(user_id)
-    compliance_frequency = db.get_compliance_frequency()
-    compliance_repeat_type = db.get_compliance_repeat()
-    compliance_duration_type = db.get_compliance_duration()
-    compliance_approval_status = db.get_approval_status()
+    countries = get_countries_for_user(db, user_id)
+    domains = get_domains_for_user(db, user_id)
+    industries = get_industries(db)
+    statutory_natures = get_statutory_nature(db)
+    statutory_levels = get_statutory_levels(db)
+    statutories = get_statutory_master(db)
+    geography_levels = get_geograhpy_levels_for_user(db, user_id)
+    geographies = get_geographies(db, user_id)
+    compliance_frequency = get_compliance_frequency(db)
+    compliance_repeat_type = get_compliance_repeat(db)
+    compliance_duration_type = get_compliance_duration(db)
+    compliance_approval_status = get_approval_status(db)
     return knowledgetransaction.GetStatutoryMappingsMasterSuccess(
         countries, domains, industries, statutory_natures,
         statutory_levels, statutories, geography_levels,
