@@ -63,6 +63,10 @@ CHANGE COLUMN `unit_id` `unit_id` INT(11) NOT NULL AUTO_INCREMENT ;
 ALTER TABLE `compfie_knowledge`.`tbl_statutory_notifications_log`
 CHANGE COLUMN `statutory_notification_id` `statutory_notification_id` INT(11) NOT NULL AUTO_INCREMENT ;
 
+ALTER TABLE `compfie_knowledge`.`tbl_statutory_notifications_units`
+CHANGE COLUMN `statutory_notification_unit_id` `statutory_notification_unit_id` INT(11) NOT NULL AUTO_INCREMENT ,
+ADD PRIMARY KEY (`statutory_notification_unit_id`);
+
 ALTER TABLE `compfie_knowledge`.`tbl_activity_log`
 CHANGE COLUMN `activity_log_id` `activity_log_id` INT(11) NOT NULL AUTO_INCREMENT ;
 
