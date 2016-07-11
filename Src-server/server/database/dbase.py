@@ -219,7 +219,7 @@ class Database(object):
     # returns result in list of dictionary
     ########################################################
     def get_data(
-        self, table, columns, condition, condition_val=None
+        self, table, columns, condition, condition_val=None, order=None
     ):
         assert type(columns) in (list, str)
         param = []
@@ -241,8 +241,12 @@ class Database(object):
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None and condition_val is not None :
             query += " WHERE %s" % condition
+            if order is not None :
+                query += order
             rows = self.select_all(query, condition_val)
         else :
+            if order is not None :
+                query += order
             rows = self.select_all(query)
         print "get_data", rows
         result = []
@@ -355,7 +359,7 @@ class Database(object):
     ########################################################
     # To form a update query
     ########################################################
-    def update(self, table, columns, values, condition, client_id=None) :
+    def update(self, table, columns, values, condition) :
         query = "UPDATE "+table+" set "
         for index, column in enumerate(columns):
             if index < len(columns)-1:

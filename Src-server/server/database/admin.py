@@ -45,7 +45,7 @@ def get_domains_for_user(db, user_id) :
             AND t1.is_active=1 "
     query = query + " ORDER BY t1.domain_name"
     if user_id > 0 :
-        rows = db.select_all(query, (user_id))
+        rows = db.select_all(query, [user_id])
     else :
         rows = db.select_all(query)
     result = []
@@ -165,12 +165,10 @@ def get_countries_for_user(db, user_id) :
     if user_id > 0 :
         query = query + " INNER JOIN tbl_user_countries t2 \
             ON t1.country_id = t2.country_id WHERE t2.user_id = %s \
-            AND t1.is_active = 1 " % (
-                user_id
-            )
+            AND t1.is_active = 1 "
     query = query + " ORDER BY t1.country_name"
     if user_id > 0 :
-        rows = db.select_all(query, (user_id))
+        rows = db.select_all(query, [user_id])
     else :
         rows = db.select_all(query)
     result = []

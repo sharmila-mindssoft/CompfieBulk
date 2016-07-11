@@ -5,6 +5,9 @@ from server.common import (
     convert_to_dict, get_date_time
 )
 from server.database.tables import *
+from server.database.admin import (
+    get_user_countries
+)
 
 __all__ = [
     "get_industries", "get_active_industries",
@@ -26,13 +29,15 @@ __all__ = [
     "get_geographies_for_user_with_mapping", "get_geography_by_id",
     "check_duplicate_geography", "save_geography",
     "update_geography", "change_geography_status",
-    "save_statutory", "update_statutory",
+    "save_statutory", "update_statutory", "get_statutory_master"
 
 ]
+STATUTORY_PARENTS = {}
+
 def get_industries(db) :
     columns = ["industry_id", "industry_name", "is_active"]
-    condition = " 1 ORDER BT industry_name"
-    result = db.get_data("tbl_industries", columns, condition)
+    order = "  ORDER BY industry_name"
+    result = db.get_data("tbl_industries", columns, condition=None, condition_val=None, order=order)
 
     return return_industry(result)
 
@@ -57,8 +62,9 @@ def get_industry_by_id(db, industry_id) :
 
 def get_active_industries(db) :
     columns = ["industry_id", "industry_name", "is_active"]
-    condition = " is_active = 1 ORDER BT industry_name"
-    result = db.get_data("tbl_industries", columns, condition)
+    condition = " is_active = %s "
+    order = "ORDER BY industry_name"
+    result = db.get_data("tbl_industries", columns, condition, condition_val=[1], order=order)
 
     return return_industry(result)
 
@@ -80,9 +86,9 @@ def check_duplicate_industry(db, industry_name, industry_id) :
 
     if industry_id is not None :
         query = query + " AND industry_id != %s"
-        param = (industry_name, industry_id)
+        param = [industry_name, industry_id]
     else :
-        param = (industry_name)
+        param = [industry_name]
 
     row = db.select_one(query, param)
 
@@ -153,7 +159,7 @@ def get_nature_by_id(db, nature_id) :
     q = "SELECT statutory_nature_name \
         FROM tbl_statutory_natures \
         WHERE statutory_nature_id=%s"
-    param = (nature_id)
+    param = [nature_id]
     row = db.select_one(q, param)
     nature_name = None
     if row :
@@ -165,8 +171,8 @@ def get_statutory_nature(db) :
         "statutory_nature_id", "statutory_nature_name",
         "is_active"
     ]
-    condition = " 1 ORDER BT statutory_nature_name"
-    result = db.get_data("tbl_statutory_natures", columns, condition)
+    order = "ORDER BY statutory_nature_name"
+    result = db.get_data("tbl_statutory_natures", columns, condition=None, condition_val=None, order=order)
     return return_statutory_nature(result)
 
 def return_statutory_nature(data) :
@@ -186,9 +192,9 @@ def check_duplicate_statutory_nature(db, nature_name, nature_id) :
 
     if nature_id is not None :
         query = query + " AND statutory_nature_id != %s"
-        param = (nature_name, nature_id)
+        param = [nature_name, nature_id]
     else :
-        param = (nature_name)
+        param = [nature_name]
 
     row = db.select_one(query, param)
 
@@ -224,8 +230,9 @@ def update_statutory_nature(db, nature_id, nature_name, user_id):
     param.append(nature_id)
 
     if (db.update(table_name, columns, param, where_condition)) :
-        action = "Statutory Nature %s updated" % (nature_name)
+        action = "Statutory Nature '%s' updated" % (nature_name)
         db.save_activity(user_id, 8, action)
+        return True
     else :
         return False
 
@@ -233,11 +240,11 @@ def update_statutory_nature_status(db, nature_id, is_active, user_id) :
     oldData = get_nature_by_id(db, nature_id)
     if oldData is None:
         return False
-
+    print is_active
     table_name = "tbl_statutory_natures"
     columns = ["is_active", "updated_by"]
     values = [is_active, user_id]
-    where_condition = " nature_id = %s"
+    where_condition = " statutory_nature_id = %s"
     param = []
     param.extend(values)
     param.append(nature_id)
@@ -250,7 +257,7 @@ def update_statutory_nature_status(db, nature_id, is_active, user_id) :
 
         action = "Statutory nature %s status  - %s" % (oldData, status)
         db.save_activity(user_id, 8, action)
-
+        return True
     else :
         return False
 
@@ -289,33 +296,34 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id) :
 
     table_name = "tbl_statutory_levels"
     created_on = get_date_time()
-    columns = [
-        "level_position", "level_name"
-    ]
 
     for level in levels :
         name = level.level_name
         position = level.level_position
-        values = [position, name]
+        values = []
         if level.level_id is None :
-            columns.extend(["country_id", "domain_id", "created_by", "created_on"])
-            values.extend([
+            columns = [
+                "level_position", "level_name",
+                "country_id", "domain_id", "created_by", "created_on"]
+            values = [
+                position, name,
                 int(country_id),
                 int(domain_id), int(user_id), str(created_on)
-            ])
+            ]
             new_id = db.insert(table_name, columns, values)
             if new_id is not False :
                 action = "New Statutory levels added"
                 db.save_activity(user_id, 9, action)
         else :
-            columns.append("updated_by")
+            columns = ["level_position", "level_name", "updated_by"]
+            values = [position, name, user_id]
             where_condition = "level_id=%s"
             param = []
             param.extend(values)
             param.append(level.level_id)
             if (
                 db.update(
-                    table_name, columns, values, where_condition
+                    table_name, columns, param, where_condition
                 )
             ) :
                 action = "Statutory levels updated"
@@ -385,33 +393,35 @@ def save_geography_levels(db, country_id, levels, user_id):
     if result :
         return knowledgemaster.LevelShouldNotbeEmpty(n.level_position)
 
-    columns = [
-        "level_position", "level_name"
-    ]
-
     for level in levels :
         name = level.level_name
         position = level.level_position
-        values = [position, name]
         if level.level_id is None :
-            columns.extend(["country_id", "created_by", "created_on"])
-            values.extend([
-                int(country_id), int(user_id), str(created_on)
-            ])
+            columns = [
+                "level_position", "level_name", "country_id",
+                "created_by", "created_on"
+            ]
+            values = [
+                position, name, int(country_id),
+                int(user_id), str(created_on)
+            ]
             new_id = db.insert(table_name, columns, values)
             if new_id is not False :
                 action = "New Geography levels added"
                 db.save_activity(user_id, 5, action)
 
         else :
-            columns.append("updated_by")
+            columns = [
+                "level_position", "level_name", "updated_by",
+            ]
+            values = [position, name, user_id]
             where_condition = "level_id=%s"
             param = []
             param.extend(values)
             param.append(level.level_id)
             if (
                 db.update(
-                    table_name, columns, values, where_condition
+                    table_name, columns, param, where_condition
                 )
             ) :
                 action = "Geography levels updated"
@@ -441,10 +451,10 @@ def get_geographies(db, user_id=None, country_id=None) :
         param.append(country_id)
 
     query = query + " ORDER BY country_name, level_position, geography_name"
-    if len(param) == 1 :
-        rows = db.select_all(query, (param[0]))
+    if len(param) > 0 :
+        rows = db.select_all(query, param)
     else :
-        rows = db.select_all(query, tuple(param))
+        rows = db.select_all(query)
 
     result = []
     if rows :
@@ -478,7 +488,7 @@ def get_geographies_for_user_with_mapping(db, user_id):
 
     country_ids = None
     if ((user_id is not None) and (user_id != 0)):
-        country_ids = db.get_user_countries(user_id)
+        country_ids = get_user_countries(user_id)
     columns = "t1.geography_id, t1.geography_name, t1.parent_names,"
     columns += "t1.level_id,t1.parent_ids, t1.is_active,"
     columns += " t2.country_id, t3.country_name"
@@ -573,7 +583,7 @@ def save_geography(
         return True
 
 def update_geography(db, geography_id, name, parent_ids, parent_names, updated_by) :
-    oldData = get_geography_by_id(geography_id)
+    oldData = get_geography_by_id(db, geography_id)
     if bool(oldData) is False:
         return False
 
@@ -594,8 +604,8 @@ def update_geography(db, geography_id, name, parent_ids, parent_names, updated_b
         db.save_activity(updated_by, 6, action)
         qry = "SELECT geography_id, geography_name, parent_ids, level_id \
           from tbl_geographies \
-            WHERE parent_ids like '%s'"
-        rows = db.select_all(qry, (str("%" + str(geography_id) + ",%")))
+            WHERE parent_ids like %s"
+        rows = db.select_all(qry, [str("%" + str(geography_id) + ",%")])
         columns = ["geography_id", "geography_name", "parent_ids", "level_id"]
         result = convert_to_dict(rows, columns)
 
@@ -624,7 +634,7 @@ def update_geography(db, geography_id, name, parent_ids, parent_names, updated_b
 
 
 def change_geography_status(db, geography_id, is_active, updated_by) :
-    oldData = db.get_geography_by_id(geography_id)
+    oldData = get_geography_by_id(db, geography_id)
     if bool(oldData) is False:
         return False
     table_name = "tbl_geographies"
@@ -714,3 +724,106 @@ def update_statutory(db, statutory_id, name, parent_ids, parent_names, updated_b
         return True
     else :
         return False
+
+def get_statutory_master(db, statutory_id=None):
+    columns = [
+        "statutory_id", "statutory_name",
+        "level_id", "parent_ids",
+        "country_id", "country_name",
+        "domain_id", "domain_name"
+    ]
+    query = "SELECT t1.statutory_id, t1.statutory_name, \
+        t1.level_id, t1.parent_ids, t2.country_id, \
+        t3.country_name, t2.domain_id, t4.domain_name \
+        FROM tbl_statutories t1 \
+        INNER JOIN tbl_statutory_levels t2 \
+        on t1.level_id = t2.level_id \
+        INNER JOIN tbl_countries t3 \
+        on t2.country_id = t3.country_id \
+        INNER JOIN tbl_domains t4 \
+        on t2.domain_id = t4.domain_id"
+    if statutory_id is not None :
+        query = query + " WHERE t1.statutory_id = %s"
+        rows = db.select_all(query, [statutory_id])
+    else :
+        rows = db.select_all(query)
+    result = []
+    if rows :
+        result = convert_to_dict(rows, columns)
+        frame_parent_mappings(result)
+        # self.set_statutory_parent_mappings(result)
+    return return_statutory_master(result)
+
+def frame_parent_mappings(db):
+    columns = [
+        "statutory_id", "statutory_name",
+        "level_id", "parent_ids",
+        "country_id", "country_name",
+        "domain_id", "domain_name"
+    ]
+    query = "SELECT t1.statutory_id, t1.statutory_name, \
+        t1.level_id, t1.parent_ids, t2.country_id, \
+        t3.country_name, t2.domain_id, t4.domain_name \
+        FROM tbl_statutories t1 \
+        INNER JOIN tbl_statutory_levels t2 \
+        on t1.level_id = t2.level_id \
+        INNER JOIN tbl_countries t3 \
+        on t2.country_id = t3.country_id \
+        INNER JOIN tbl_domains t4 \
+        on t2.domain_id = t4.domain_id"
+    if statutory_id is not None :
+        query = query + " WHERE t1.statutory_id = %s"
+        rows = db.select_all(query, [statutory_id])
+    else :
+        rows = db.select_all(query)
+    data = []
+    if rows :
+        data = convert_to_dict(rows, columns)
+
+    statu_names = {}
+    for d in data :
+        statu_names[d["statutory_id"]] = d["statutory_name"]
+
+    for d in data :
+        p_ids = d["parent_ids"]
+        p_ids = [
+            int(x) for x in d["parent_ids"][:-1].split(',')
+        ]
+        names = []
+        for pid in p_ids :
+            if pid > 0 :
+                names.append(statu_names.get(pid))
+        names.append(d["statutory_name"])
+        STATUTORY_PARENTS[d["statutory_id"]] = ">> ".join(names)
+
+def return_statutory_master(data):
+    statutories = {}
+    for d in data :
+        country_id = d["country_id"]
+        domain_id = d["domain_id"]
+        statutory_id = int(d["statutory_id"])
+        mappings = STATUTORY_PARENTS.get(
+            statutory_id
+        )
+        parent_ids = [
+            int(x) for x in d["parent_ids"][:-1].split(',')
+        ]
+
+        statutory = core.Statutory(
+            statutory_id, d["statutory_name"],
+            d["level_id"], parent_ids, parent_ids[-1],
+            mappings
+        )
+
+        country_wise = statutories.get(country_id)
+        _list = []
+        if country_wise is None :
+            country_wise = {}
+        else :
+            _list = country_wise.get(domain_id)
+            if _list is None :
+                _list = []
+        _list.append(statutory)
+        country_wise[domain_id] = _list
+        statutories[country_id] = country_wise
+    return statutories

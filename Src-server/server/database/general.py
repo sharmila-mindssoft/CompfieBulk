@@ -7,8 +7,10 @@ from distribution.protocol import (
 )
 
 from server.common import (
-    convert_to_dict
+    convert_to_dict, datetime_to_string
 )
+from server.database.tables import *
+from protocol import (general, core)
 #
 # Companies
 #
@@ -20,8 +22,10 @@ __all__ = [
     "get_client_replication_list",
     "update_client_replication_status",
     "update_client_domain_status", "get_user_forms",
-    "get_user_form_ids"
-
+    "get_user_form_ids", "get_notifications",
+    "get_user_type",
+    "get_compliance_duration", "get_compliance_repeat",
+    "get_compliance_frequency", "get_approval_status"
 ]
 
 def get_trail_id(db):
@@ -222,3 +226,135 @@ def get_user_form_ids(self, user_id) :
         return row[0]
     else :
         return None
+
+#
+#   Notifications
+#
+
+def get_user_type(db, user_id):
+    columns = "user_group_id"
+    condition = "user_id = %s"
+    condition_val = [user_id]
+    result = db.get_data(tblUsers, columns, condition, condition_val)
+    user_group_id = result[0]["user_group_id"]
+
+    columns = "form_category_id"
+    condition = "user_group_id = %s"
+    result = db.get_data(tblUserGroups, columns, condition, [user_group_id])
+    if result[0]["form_category_id"] in [2, "2"]:
+        return "Knowledge"
+    else:
+        return "Techno"
+
+def get_notifications(
+    db, notification_type, session_user, client_id=None
+):
+    user_type = None
+    if session_user != 0 :
+        user_type = get_user_type(db, session_user)
+
+    columns = "tn.notification_id, notification_text, link, " + \
+        "created_on, read_status"
+    join_type = "left join"
+    tables = [tblNotifications, tblNotificationsStatus]
+    aliases = ["tn", "tns"]
+    join_conditions = ["tn.notification_id = tns.notification_id"]
+    where_condition = " tns.user_id ='%d' " % (
+        session_user
+    )
+    if user_type == "Techno":
+        where_condition += " AND link not like '%sstatutory%s' " % ("%" , "%")
+    elif user_type == "Knowledge":
+        where_condition += " AND link not like '%sclient%s'" % ("%" , "%")
+    where_condition += "order by created_on DESC limit 30"
+    rows = db.get_data_from_multiple_tables(
+        columns, tables,
+        aliases, join_type, join_conditions, where_condition
+    )
+    notifications = []
+    for row in rows:
+        notifications.append(general.Notification(
+            row["notification_id"], row["notification_text"], row["link"],
+            bool(row["created_on"]), datetime_to_string(row["created_on"])
+        ))
+    return notifications
+
+def get_compliance_duration(db):
+
+    def return_compliance_duration(data):
+        duration_list = []
+        for d in data :
+            duration = core.DURATION_TYPE(d["duration_type"])
+            duration_list.append(
+                core.ComplianceDurationType(
+                    d["duration_type_id"], duration
+                )
+            )
+        return duration_list
+
+    columns = ["duration_type_id", "duration_type"]
+    rows = db.get_data("tbl_compliance_duration_type", "*", None)
+    result = []
+    if rows :
+        result = convert_to_dict(rows, columns)
+    return return_compliance_duration(result)
+
+def get_compliance_repeat(db):
+
+    def return_compliance_repeat(data):
+        repeat_list = []
+        for d in data :
+            repeat = core.REPEATS_TYPE(d["repeat_type"])
+            repeat_list.append(
+                core.ComplianceRepeatType(
+                    d["repeat_type_id"], repeat
+                )
+            )
+        return repeat_list
+
+    columns = ["repeat_type_id", "repeat_type"]
+    rows = db.get_data("tbl_compliance_repeat_type", "*", None)
+    result = []
+    if rows :
+        result = convert_to_dict(rows, columns)
+    return return_compliance_repeat(result)
+
+def get_compliance_frequency(db):
+
+    def return_compliance_frequency(data) :
+        frequency_list = []
+        for d in data :
+            frequency = core.COMPLIANCE_FREQUENCY(
+                d["frequency"]
+            )
+            c_frequency = core.ComplianceFrequency(
+                d["frequency_id"], frequency
+            )
+            frequency_list.append(c_frequency)
+        return frequency_list
+
+    columns = ["frequency_id", "frequency"]
+    rows = db.get_data("tbl_compliance_frequency", "*", None)
+    result = []
+    if rows :
+        result = convert_to_dict(rows, columns)
+    return return_compliance_frequency(result)
+
+def get_approval_status(db, approval_id=None):
+
+    def return_approval_status(data):
+        approval_list = []
+        for sts in enumerate(data) :
+            approve = core.APPROVAL_STATUS(sts[1])
+            c_approval = core.StatutoryApprovalStatus(
+                sts[0], approve
+            )
+            approval_list.append(c_approval)
+        return approval_list
+
+    status = ("Pending", "Approved", "Rejected", "Approved & Notified")
+
+    if approval_id is None :
+        return return_approval_status(status)
+    else :
+        return status[int(approval_id)]

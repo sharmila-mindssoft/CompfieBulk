@@ -2,6 +2,7 @@ import time
 from protocol import login, knowledgemaster
 from generalcontroller import validate_user_session, validate_user_forms
 from server import logger
+from server.database.admin import get_countries_for_user, get_domains_for_user
 from server.database.knowledgemaster import *
 __all__ = [
     "process_knowledge_master_request",

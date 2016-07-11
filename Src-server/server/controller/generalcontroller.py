@@ -8,7 +8,10 @@ from server.constants import (
 )
 from server.common import (save_file_in_path)
 from server.database.admin import *
-from server.database.general import get_user_form_ids
+from server.database.general import (
+    get_user_form_ids,
+    get_notifications
+)
 __all__ = [
     "process_general_request",
     "validate_user_session", "process_save_domain",
