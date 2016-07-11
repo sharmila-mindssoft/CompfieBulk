@@ -686,8 +686,6 @@ function saverecord(j,e){
           );
         }
       }
-
-
     }
   }
 }
