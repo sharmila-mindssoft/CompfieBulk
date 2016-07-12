@@ -1,3 +1,8 @@
+from server.common import (
+    string_to_datetime
+    )
+
+
 def get_last_7_years():
     seven_years_list = []
     end_year = datetime.datetime.now().year - 1
@@ -32,16 +37,16 @@ def get_country_domain_timelines(
                     start_date_string = None
                     end_date_string = None
                     start_date_string = "1-{}-{}".format(
-                        self.string_months[period_from],
+                        db.string_months[period_from],
                         start_year
                     )
-                    start_date = self.string_to_datetime(start_date_string)
+                    start_date = string_to_datetime(start_date_string)
                     end_date_string = "{}-{}-{}".format(
-                        self.end_day_of_month[period_to],
-                        self.string_months[period_to],
+                        db.end_day_of_month[period_to],
+                        db.string_months[period_to],
                         end_year
                     )
-                    end_date = self.string_to_datetime(end_date_string)
+                    end_date = string_to_datetime(end_date_string)
                     r = relativedelta.relativedelta(end_date, start_date)
                     if r.years > 0:
                         end_date = end_date - relativedelta.relativedelta(years=1)

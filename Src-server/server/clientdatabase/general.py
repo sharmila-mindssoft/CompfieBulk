@@ -1,3 +1,6 @@
+from server.common import (
+    encrypt
+    )
 
 all__ = [
     "get_countries_for_user",
@@ -9,7 +12,15 @@ all__ = [
     "get_country_wise_domain_month_range",
     "get_units_for_user",
     "get_client_users",
-    "get_user_domains"
+    "get_user_domains",
+    "validate_session_token",
+    "verify_password",
+    "get_countries",
+    "get_domains",
+    "is_primary_admin",
+    "have_compliances",
+    "is_seating_unit",
+    "is_admin"
 ]
 
 
@@ -248,3 +259,135 @@ def get_user_domains(db, user_id, client_id=None):
             else:
                 result += ", %s" % str(row[0])
     return result
+
+def validate_session_token(db, client_id, session_token) :
+    query = "SELECT t1.user_id, IFNULL(t2.is_service_provider, 0), IFNULL(t2.service_provider_id, 0) \
+    FROM tbl_user_sessions t1 \
+    INNER JOIN tbl_users t2 ON t1.user_id = t2.user_id AND t2.is_active = 1 \
+        WHERE t1.session_token = '%s'" % (session_token)
+    row = db.select_one(query)
+    user_id = None
+    if row :
+        user_id = int(row[0])
+        is_service_provider = int(row[1])
+        service_id = int(row[2])
+        if is_service_provider == 1 :
+            res = is_service_provider_in_contract(db, service_id)
+            if res :
+                update_session_time(db, session_token)
+                return user_id
+        else :
+            res = is_in_contract(db)
+            if res :
+                update_session_time(db, session_token)
+                return user_id
+
+    return None
+
+def is_service_provider_in_contract(db, service_provider_id):
+    column = "count(1)"
+    condition = "now() between contract_from and DATE_ADD(contract_to, INTERVAL 1 DAY)\
+    and service_provider_id = '%d' and is_active = 1" % service_provider_id
+    rows = db.get_data(tblServiceProviders, column, condition)
+    if rows[0][0] > 0:
+        return True
+    else:
+        return False
+
+def update_session_time(db, session_token):
+    updated_on = db.get_date_time()
+    q = "update tbl_user_sessions set \
+    last_accessed_time='%s' where session_token = '%s' " % (
+        str(updated_on), str(session_token)
+    )
+    db.execute(q)
+
+def is_in_contract(db):
+    columns = "count(1)"
+    condition = "now() between contract_from and DATE_ADD(contract_to, INTERVAL 1 DAY)"
+    rows = db.get_data(
+        tblClientGroups, columns, condition
+    )
+    if rows[0][0] <= 0:
+        return False
+    else:
+        return True
+
+def verify_password(db, password, user_id, client_id=None):
+    columns = "count(*)"
+    encrypted_password = encrypt(password)
+    condition = "1"
+    rows = None
+    if user_id == 0:
+        condition = "password='%s'" % (encrypted_password)
+        rows = db.get_data(
+           tblAdmin, columns, condition
+        )
+    else:
+        condition = "password='%s' and user_id='%d'" % (
+            encrypted_password, user_id
+        )
+        rows = db.get_data(
+            tblUsers, columns, condition
+        )
+    if(int(rows[0][0]) <= 0):
+        return False
+    else:
+        return True
+
+def get_countries(db):
+    query = "SELECT distinct t1.country_id, t1.country_name, \
+        t1.is_active FROM tbl_countries t1 "
+    rows = db.select_all(query)
+    columns = ["country_id", "country_name", "is_active"]
+    result = db.convert_to_dict(rows, columns)
+    return return_countries(result)
+
+def get_domains(db):
+    query = "SELECT distinct t1.domain_id, t1.domain_name, \
+        t1.is_active FROM tbl_domains t1 "
+    rows = db.select_all(query)
+    columns = ["domain_id", "domain_name", "is_active"]
+    result = db.convert_to_dict(rows, columns)
+    return return_domains(result)
+
+def is_primary_admin(db, user_id):
+    column = "count(1)"
+    condition = "user_id = '%d' and is_primary_admin = 1" % user_id
+    rows = db.get_data(tblUsers, column, condition)
+    if rows[0][0] > 0 or user_id == 0:
+        return True
+    else:
+        return False
+
+def have_compliances(db, user_id):
+        column = "count(*)"
+        condition = "assignee = '%d' and is_active = 1" % user_id
+        rows = db.get_data(tblAssignedCompliances, column, condition)
+        no_of_compliances = rows[0][0]
+        if no_of_compliances > 0:
+            return True
+        else:
+            return False
+
+def is_seating_unit(db, unit_id):
+    column = "count(*)"
+    condition = "seating_unit_id ='%d'" % unit_id
+    rows = db.get_data(tblUsers, column, condition)
+    user_count = rows[0][0]
+    if user_count > 0:
+        return True
+    else:
+        return False
+
+def is_admin(db, user_id):
+    if user_id == 0:
+        return True
+    else:
+        columns = "count(*)"
+        condition = "(is_admin = 1 or is_primary_admin = 1) and user_id = '%d'" % user_id
+        rows = db.get_data(tblUsers, columns, condition)
+        if rows[0][0] > 0:
+            return True
+        else:
+            return False
