@@ -2,7 +2,9 @@ from server.clientdatabase.common import (
 	get_last_7_years, get_country_domain_timelines,
 	calculate_ageing_in_hours, calculate_years
 	)
-
+from server.clientdatabase.general import (
+    get_user_unit_ids
+    )
 __all__ = [
     "get_units_for_dashboard_filters", 
     "get_compliance_status_chart",
@@ -877,26 +879,6 @@ def get_compliance_status(
     rows = db.select_all(query)
     columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
     return filter_ids, db.convert_to_dict(rows, columns)
-
-def get_user_unit_ids(db, user_id, client_id=None):
-    columns = "unit_id"
-    table = tblUnits
-    result = None
-    condition = 1
-    if user_id > 0:
-        table = tblUserUnits
-        condition = " user_id = '%d'" % user_id
-    rows = db.get_data(
-        table, columns, condition
-    )
-    if rows :
-        result = ""
-        for index, row in enumerate(rows):
-            if index == 0:
-                result += str(row[0])
-            else:
-                result += ",%s" % str(row[0])
-    return result
 
 def get_user_business_group_ids(db, user_id):
     columns = "group_concat(distinct business_group_id)"

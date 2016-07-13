@@ -20,7 +20,9 @@ all__ = [
     "is_primary_admin",
     "have_compliances",
     "is_seating_unit",
-    "is_admin"
+    "is_admin",
+    "get_user_unit_ids",
+    "is_two_levels_of_approval"
 ]
 
 
@@ -391,3 +393,28 @@ def is_admin(db, user_id):
             return True
         else:
             return False
+
+def get_user_unit_ids(db, user_id, client_id=None):
+    columns = "unit_id"
+    table = tblUnits
+    result = None
+    condition = 1
+    if user_id > 0:
+        table = tblUserUnits
+        condition = " user_id = '%d'" % user_id
+    rows = db.get_data(
+        table, columns, condition
+    )
+    if rows :
+        result = ""
+        for index, row in enumerate(rows):
+            if index == 0:
+                result += str(row[0])
+            else:
+                result += ",%s" % str(row[0])
+    return result
+
+def is_two_levels_of_approval(db):
+        columns = "two_levels_of_approval"
+        rows = db.get_data(tblClientGroups, columns, "1")
+        return rows[0][0]

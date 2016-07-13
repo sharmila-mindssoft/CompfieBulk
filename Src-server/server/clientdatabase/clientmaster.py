@@ -1,5 +1,5 @@
 from server.clientdatabase.general import (
-    is_primary_admin, is_admin
+    is_primary_admin, is_admin, get_user_unit_ids
     )
 
 from server.common import (
@@ -837,26 +837,6 @@ def return_forms(db, client_id, form_ids=None):
     for form in forms:
         results.append(general.AuditTrailForm(form[0], form[1]))
     return results
-
-def get_user_unit_ids(db, user_id, client_id=None):
-    columns = "unit_id"
-    table = tblUnits
-    result = None
-    condition = 1
-    if user_id > 0:
-        table = tblUserUnits
-        condition = " user_id = '%d'" % user_id
-    rows = db.get_data(
-        table, columns, condition
-    )
-    if rows :
-        result = ""
-        for index, row in enumerate(rows):
-            if index == 0:
-                result += str(row[0])
-            else:
-                result += ",%s" % str(row[0])
-    return result
 
 def get_user_countries(db, user_id, client_id=None):
     columns = "group_concat(country_id)"

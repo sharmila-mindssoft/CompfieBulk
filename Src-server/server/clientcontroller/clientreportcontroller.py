@@ -4,6 +4,16 @@ from protocol import (core, clientreport, login)
 from server import logger
 from server.constants import RECORD_DISPLAY_COUNT
 
+from server.clientdatabase.clientreport import *
+
+from server.common import (
+    
+    )
+
+from server.clientdatabase.general import (
+    validate_session_token
+    )
+
 __all__ = [
     "process_client_report_requests"
 ]
@@ -13,7 +23,7 @@ def process_client_report_requests(request, db) :
     client_info = request.session_token.split("-")
     request = request.request
     client_id = int(client_info[0])
-    session_user = db.validate_session_token(client_id, session_token)
+    session_user = validate_session_token(db, client_id, session_token)
     if session_user is None:
         return login.InvalidSessionToken()
 
