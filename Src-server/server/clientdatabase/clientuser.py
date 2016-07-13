@@ -3,7 +3,7 @@ from server.common import (
     string_to_datetime_with_time
     )
 from server.clientdatabase.general import (
-    is_two_levels_of_approval
+    is_two_levels_of_approval, calculate_ageing
     )
 
 all__ = [
@@ -612,91 +612,6 @@ def is_space_available(db, upload_size):
             return True
         else:
             return False
-
-def calculate_ageing(due_date, frequency_type=None, completion_date=None, duration_type=None):
-    current_time_stamp = get_date_time()
-    compliance_status = "-"
-    # due_date = self.localize(due_date)
-    if frequency_type == "On Occurrence":
-        r = relativedelta.relativedelta(due_date, current_time_stamp)
-        if completion_date is not None:
-            r = relativedelta.relativedelta(due_date, completion_date)
-            if r.days < 0 and r.hours < 0 and r.minutes < 0:
-                compliance_status = "On Time"
-            else:
-                if r.days == 0:
-                    if duration_type in ["2", 2]:
-                        compliance_status = "Delayed by %d.%d hour(s) " % (
-                            abs(r.hours), abs(r.minutes)
-                        )
-                    else:
-                        compliance_status = "Delayed by 1 day "
-                else:
-                    if duration_type in ["2", 2]:
-                        compliance_status = "Delayed by %d.%d hour(s)" % (
-                           ( abs(r.days) * 4 + abs(r.hours)), abs(r.minutes)
-                        )
-                    else:
-                        compliance_status = "Delayed by %d day(s)" % (
-                            abs(r.days)
-                        )
-                return r.days, compliance_status
-        else:
-            if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
-                if r.days == 0:
-                    if duration_type in ["2", 2]:
-                        compliance_status = " %d.%d hour(s) left" % (
-                            abs(r.hours), abs(r.minutes)
-                        )
-                    else:
-                        compliance_status = "1 Day left"
-                else:
-                    if duration_type in ["2", 2]:
-                        compliance_status = "%d.%d hour(s) left" % (
-                           ( abs(r.days) * 24 + abs(r.hours)), abs(r.minutes)
-                        )
-                    else:
-                        compliance_status = " %d day(s) left" % (
-                            abs(r.days)
-                        )
-            else:
-                if r.days == 0:
-                    if duration_type in ["2", 2]:
-                        compliance_status = "Overdue by %d.%d hour(s) " % (
-                            abs(r.hours), abs(r.minutes)
-                        )
-                    else:
-                        compliance_status = "Overdue by 1 day "
-                else:
-                    if duration_type in ["2", 2]:
-                        compliance_status = "Overdue by %d.%d hours" % (
-                           (abs(r.days) * 24 + abs(r.hours)), abs(r.minutes)
-                        )
-                    else:
-                        compliance_status = "Overdue by %d day(s)" %(
-                            abs(r.days)
-                        )
-            return r.days, compliance_status
-    else:
-        if completion_date is not None:
-            compliance_status = "On Time"
-            if due_date not in [None, "None", 0]:
-                if type(due_date) == datetime.datetime:
-                    due_date = due_date.date()
-                if type(completion_date) == datetime.datetime:
-                    completion_date = completion_date.date()
-                r = relativedelta.relativedelta(due_date, completion_date)
-                if r.days < 0:
-                    compliance_status = "Delayed by %d day(s)" % abs(r.days)
-                return r.days, compliance_status
-        else:
-            if due_date not in [None, "None", 0]:
-                r = relativedelta.relativedelta(due_date.date(), current_time_stamp.date())
-                compliance_status = " %d days left" % abs(r.days+1)
-                if r.days < 0:
-                    compliance_status = "Overdue by %d day(s)" % abs(r.days)
-                    return r.days, compliance_status
-    return 0, compliance_status
 
 def convert_base64_to_file(file_name, file_content, client_id):
     client_directory = "%s/%d" % (CLIENT_DOCS_BASE_PATH, client_id)
