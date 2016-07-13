@@ -11,7 +11,12 @@ from server.common import (
     )
 
 from server.clientdatabase.general import (
-    validate_session_token
+    validate_session_token, get_user_company_details,
+    get_countries_for_user, get_domains_for_user, 
+    get_business_groups_for_user, get_legal_entities_for_user,
+    get_divisions_for_user, get_units_for_user,
+    get_client_users, get_client_level_1_statutoy,
+    get_service_providers, get_client_compliances
     )
 
 __all__ = [
@@ -178,18 +183,18 @@ def process_client_report_requests(request, db) :
 
 
 def get_client_report_filters(db, request, session_user):
-    user_company_info = db.get_user_company_details(session_user)
+    user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
     business_group_ids = user_company_info[3]
-    country_list = db.get_countries_for_user(session_user)
-    domain_list = db.get_domains_for_user(session_user)
-    business_group_list = db.get_business_groups_for_user(business_group_ids)
-    legal_entity_list = db.get_legal_entities_for_user(legal_entity_ids)
-    division_list = db.get_divisions_for_user(division_ids)
-    unit_list = db.get_units_for_user(unit_ids)
-    users_list = db.get_client_users()
+    country_list = get_countries_for_user(db, session_user)
+    domain_list = get_domains_for_user(db, session_user)
+    business_group_list = get_business_groups_for_user(db, business_group_ids)
+    legal_entity_list = get_legal_entities_for_user(db, legal_entity_ids)
+    division_list = get_divisions_for_user(db, division_ids)
+    unit_list = get_units_for_user(db, unit_ids)
+    users_list = get_client_users(db)
     return clientreport.GetClientReportFiltersSuccess(
         countries=country_list,
         domains=domain_list,
@@ -211,12 +216,12 @@ def get_unitwise_compliance(db, request, session_user):
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
 
-    data, total = db.report_unitwise_compliance(
-        country_id, domain_id, business_group_id,
+    data, total = report_unitwise_compliance(
+        db, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, user_id, session_user,
         from_count, to_count
     )
-    unit_wise_compliances_list = db.return_unitwise_report(data)
+    unit_wise_compliances_list = return_unitwise_report(data)
     return clientreport.GetUnitwisecomplianceReportSuccess(unit_wise_compliances_list, total)
 
 def get_assigneewise_compliance(db, request, session_user):
@@ -230,22 +235,22 @@ def get_assigneewise_compliance(db, request, session_user):
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
 
-    data, total_count = db.report_assigneewise_compliance(
-        country_id, domain_id, business_group_id,
+    data, total_count = report_assigneewise_compliance(
+        db, country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id, user_id, session_user,
         from_count, to_count
     )
-    assignee_wise_compliances_list = db.return_assignee_report_data(data)
+    assignee_wise_compliances_list = return_assignee_report_data(data)
     return clientreport.GetAssigneewisecomplianceReportSuccess(assignee_wise_compliances_list, total_count)
 
 def get_serviceprovider_report_filters(db, request, session_user):
-    user_company_info = db.get_user_company_details(session_user)
+    user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
-    country_list = db.get_countries_for_user(session_user)
-    domain_list = db.get_domains_for_user(session_user)
-    unit_list = db.get_units_for_user(unit_ids)
-    level_1_statutories_list = db.get_client_level_1_statutoy(session_user)
-    service_providers_list = db.get_service_providers()
+    country_list = get_countries_for_user(db, session_user)
+    domain_list = get_domains_for_user(db, session_user)
+    unit_list = get_units_for_user(db, unit_ids)
+    level_1_statutories_list = get_client_level_1_statutoy(db, session_user)
+    service_providers_list = get_service_providers(db)
 
     return clientreport.GetServiceProviderReportFiltersSuccess(
         countries=country_list,
@@ -268,24 +273,24 @@ def get_serviceproviderwise_compliance(db, request, session_user):
         from_count = request.record_count
         to_count = RECORD_DISPLAY_COUNT
 
-        data, total_count = db.report_serviceproviderwise_compliance(
-            country_id, domain_id, statutory_id,
+        data, total_count = report_serviceproviderwise_compliance(
+            db, country_id, domain_id, statutory_id,
             unit_id, service_provider_id, session_user,
             from_count, to_count
         )
 
-        serviceprovider_wise_compliances_list = db.return_serviceprovider_report_data(data)
+        serviceprovider_wise_compliances_list = return_serviceprovider_report_data(data)
         return clientreport.GetServiceProviderWiseComplianceSuccess(serviceprovider_wise_compliances_list, total_count)
 
 def get_compliancedetails_report_filters(db, request, session_user, client_id):
-    user_company_info = db.get_user_company_details(session_user)
+    user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
-    country_list = db.get_countries_for_user(session_user)
-    domain_list = db.get_domains_for_user(session_user)
-    unit_list = db.get_units_for_user(unit_ids)
-    level_1_statutories_list = db.get_client_level_1_statutoy(session_user)
-    compliances_list = db.get_client_compliances(session_user)
-    users_list = db.get_client_users()
+    country_list = get_countries_for_user(db, session_user)
+    domain_list = get_domains_for_user(db, session_user)
+    unit_list = get_units_for_user(db, unit_ids)
+    level_1_statutories_list = get_client_level_1_statutoy(db, session_user)
+    compliances_list = get_client_compliances(db, session_user)
+    users_list = get_client_users(db)
     return clientreport.GetComplianceDetailsReportFiltersSuccess(
         countries=country_list,
         domains=domain_list,
@@ -296,19 +301,19 @@ def get_compliancedetails_report_filters(db, request, session_user, client_id):
     )
 
 def get_statutory_notifications_list_filters(db, request, session_user, client_id):
-    user_company_info = db.get_user_company_details(session_user)
+    user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
     business_group_ids = user_company_info[3]
-    country_list = db.get_countries_for_user(session_user)
-    domain_list = db.get_domains_for_user(session_user)
-    business_group_list = db.get_business_groups_for_user(business_group_ids)
-    legal_entity_list = db.get_legal_entities_for_user(legal_entity_ids)
-    division_list = db.get_divisions_for_user(division_ids)
-    unit_list = db.get_units_for_user(unit_ids)
-    level_1_statutories_list = db.get_client_level_1_statutoy(session_user)
-    users_list = db.get_client_users()
+    country_list = get_countries_for_user(db, session_user)
+    domain_list = get_domains_for_user(db, session_user)
+    business_group_list = get_business_groups_for_user(db, business_group_ids)
+    legal_entity_list = get_legal_entities_for_user(db, legal_entity_ids)
+    division_list = get_divisions_for_user(db, division_ids)
+    unit_list = get_units_for_user(db, unit_ids)
+    level_1_statutories_list = get_client_level_1_statutoy(db, session_user)
+    users_list = get_client_users(db)
 
     return clientreport.GetStatutoryNotificationsListFiltersSuccess(
         countries=country_list,
@@ -326,7 +331,7 @@ def get_statutory_notifications_list_report(db, request, session_user, client_id
         converter = ConvertJsonToCSV(db, request, session_user, client_id, "StatutoryNotification")
         return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
     else:
-        result = db.report_statutory_notifications_list(request)
+        result = report_statutory_notifications_list(db, request)
         return clientreport.GetStatutoryNotificationsListReportSuccess(result)
 
 def get_compliancedetails_report(db, request, session_user, client_id):
@@ -346,8 +351,8 @@ def get_compliancedetails_report(db, request, session_user, client_id):
         from_count = request.record_count
         to_count = RECORD_DISPLAY_COUNT
 
-        compliance_details_list, total = db.report_compliance_details(
-            client_id,
+        compliance_details_list, total = report_compliance_details(
+            db, client_id,
             country_id, domain_id, statutory_id, unit_id, compliance_id,
             assignee_id, from_date, to_date, compliance_status, session_user,
             from_count, to_count
@@ -357,18 +362,18 @@ def get_compliancedetails_report(db, request, session_user, client_id):
         )
 
 def get_risk_report_filters(db, request, session_user, client_id):
-    user_company_info = db.get_user_company_details(session_user)
+    user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
     business_group_ids = user_company_info[3]
-    country_list = db.get_countries_for_user(session_user)
-    domain_list = db.get_domains_for_user(session_user)
-    business_group_list = db.get_business_groups_for_user(business_group_ids)
-    legal_entity_list = db.get_legal_entities_for_user(legal_entity_ids)
-    division_list = db.get_divisions_for_user(division_ids)
-    unit_list = db.get_units_for_user(unit_ids)
-    level_1_statutories_list = db.get_client_level_1_statutoy(session_user)
+    country_list = get_countries_for_user(db, session_user)
+    domain_list = get_domains_for_user(db, session_user)
+    business_group_list = get_business_groups_for_user(db, business_group_ids)
+    legal_entity_list = get_legal_entities_for_user(db, legal_entity_ids)
+    division_list = get_divisions_for_user(db, division_ids)
+    unit_list = get_units_for_user(db, unit_ids)
+    level_1_statutories_list = get_client_level_1_statutoy(db, session_user)
     return clientreport.GetRiskReportFiltersSuccess(
         countries=country_list,
         domains=domain_list,
@@ -380,14 +385,14 @@ def get_risk_report_filters(db, request, session_user, client_id):
     )
 
 def get_reassignedhistory_report_filters(db, request, session_user, client_id):
-    user_company_info = db.get_user_company_details(session_user)
+    user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
-    country_list = db.get_countries_for_user(session_user)
-    domain_list = db.get_domains_for_user(session_user)
-    unit_list = db.get_units_for_user(unit_ids)
-    level_1_statutories_list = db.get_client_level_1_statutoy(session_user)
-    compliances_list = db.get_client_compliances(session_user)
-    users_list = db.get_client_users()
+    country_list = get_countries_for_user(db, session_user)
+    domain_list = get_domains_for_user(db, session_user)
+    unit_list = get_units_for_user(db, unit_ids)
+    level_1_statutories_list = get_client_level_1_statutoy(db, session_user)
+    compliances_list = get_client_compliances(db, session_user)
+    users_list = get_client_users(db)
 
     return clientreport.GetReassignedHistoryReportFiltersSuccess(
         countries=country_list,
@@ -411,8 +416,8 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
         to_date = request.to_date
         from_count = request.record_count
         to_count = 200
-        reassigned_history_list, total = db.report_reassigned_history(
-            country_id, domain_id, level_1_statutory_id,
+        reassigned_history_list, total = report_reassigned_history(
+            db, country_id, domain_id, level_1_statutory_id,
             unit_id, compliance_id, user_id, from_date, to_date, session_user,
             from_count, to_count
         )
@@ -469,7 +474,7 @@ def get_risk_report(db, request, session_user, client_id):
         return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
 
 def get_login_trace(db, request, session_user, client_id):
-    users_list = db.get_client_users()
+    users_list = get_client_users(db)
     from_count = request.record_count
     user_id = request.user_id
     to_count = RECORD_DISPLAY_COUNT
@@ -485,14 +490,14 @@ def get_login_trace(db, request, session_user, client_id):
     )
 
 def get_compliance_activity_report_filters(db, request, session_user, client_id):
-    user_company_info = db.get_user_company_details(session_user)
+    user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
-    domain_list = db.get_domains_for_user(session_user)
-    unit_list = db.get_units_for_user(unit_ids)
-    level_1_statutories_list = db.get_client_level_1_statutoy(session_user)
-    compliances_list = db.get_client_compliances(session_user)
-    country_list = db.get_countries_for_user(session_user)
-    users_list = db.get_client_users()
+    domain_list = get_domains_for_user(db, session_user)
+    unit_list = get_units_for_user(db, unit_ids)
+    level_1_statutories_list = get_client_level_1_statutoy(db, session_user)
+    compliances_list = get_client_compliances(db, session_user)
+    country_list = get_countries_for_user(db, session_user)
+    users_list = get_client_users(db)
     return clientreport.GetComplianceActivityReportFiltersSuccess(
         users=users_list,
         domains=domain_list,
@@ -527,19 +532,19 @@ def get_compliance_activity_report(db, request, session_user, client_id):
 
 
 def process_get_task_applicability_status_filters(db, request, session_user):
-    user_company_info = db.get_user_company_details(session_user)
+    user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
     business_group_ids = user_company_info[3]
 
-    countries = db.get_countries_for_user(session_user)
-    domains = db.get_domains_for_user(session_user)
-    business_groups = db.get_business_groups_for_user(business_group_ids)
-    legal_entities = db.get_legal_entities_for_user(legal_entity_ids)
-    divisions = db.get_divisions_for_user(division_ids)
-    units = db.get_units_for_user(unit_ids)
-    level1_statutories = db.get_client_level_1_statutoy(session_user)
+    countries = get_countries_for_user(db, session_user)
+    domains = get_domains_for_user(db, session_user)
+    business_groups = get_business_groups_for_user(db, business_group_ids)
+    legal_entities = get_legal_entities_for_user(db, legal_entity_ids)
+    divisions = get_divisions_for_user(db, division_ids)
+    units = get_units_for_user(db, unit_ids)
+    level1_statutories = get_client_level_1_statutoy(db, session_user)
     applicable_status = core.APPLICABILITY_STATUS.values()
     return clientreport.GetTaskApplicabilityStatusFiltersSuccess(
         countries, domains, business_groups, legal_entities,
@@ -555,18 +560,18 @@ def process_get_task_applicability_report_data(db, request, session_user, client
         return result
 
 def get_client_details_report_filters(db, request, session_user, client_id):
-    countries = db.get_countries_for_user(session_user, client_id)
-    domains = db.get_domains_for_user(session_user, client_id)
-    user_company_info = db.get_user_company_details(session_user)
+    countries = get_countries_for_user(db, session_user, client_id)
+    domains = get_domains_for_user(db, session_user, client_id)
+    user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
     business_group_ids = user_company_info[3]
 
-    business_groups = db.get_business_groups_for_user(business_group_ids)
-    legal_entities = db.get_legal_entities_for_user(legal_entity_ids)
-    divisions = db.get_divisions_for_user(division_ids)
-    units = db.get_units_for_user(unit_ids)
+    business_groups = get_business_groups_for_user(db, business_group_ids)
+    legal_entities = get_legal_entities_for_user(db, legal_entity_ids)
+    divisions = get_divisions_for_user(db, division_ids)
+    units = get_units_for_user(db, unit_ids)
     return clientreport.GetClientDetailsReportFiltersSuccess(
         countries=countries,
         domains=domains,

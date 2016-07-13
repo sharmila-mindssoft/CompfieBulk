@@ -22,7 +22,12 @@ all__ = [
     "is_seating_unit",
     "is_admin",
     "get_user_unit_ids",
-    "is_two_levels_of_approval"
+    "is_two_levels_of_approval",
+    "get_user_company_details",
+    "get_client_level_1_statutoy",
+    "get_service_providers",
+    "get_client_compliances",
+    ""
 ]
 
 
@@ -415,6 +420,105 @@ def get_user_unit_ids(db, user_id, client_id=None):
     return result
 
 def is_two_levels_of_approval(db):
-        columns = "two_levels_of_approval"
-        rows = db.get_data(tblClientGroups, columns, "1")
-        return rows[0][0]
+    columns = "two_levels_of_approval"
+    rows = db.get_data(tblClientGroups, columns, "1")
+    return rows[0][0]
+
+def get_user_company_details(db, user_id, client_id=None):
+    admin_id = get_admin_id(db)
+    columns = "unit_id"
+    condition = " 1 "
+    rows = None
+    if user_id > 0 and user_id != admin_id:
+        condition = "  user_id = '%d'" % user_id
+        rows = db.get_data(
+            tblUserUnits, columns, condition
+        )
+    else:
+        rows = db.get_data(
+            tblUnits, columns, condition
+        )
+    unit_ids = None
+    division_ids = None
+    legal_entity_ids = None
+    business_group_ids = None
+    if len(rows) > 0:
+        result = []
+        for row in rows:
+            result.append(row[0])
+        unit_ids = ",".join(str(x) for x in result)
+
+    if unit_ids not in [None, "None", ""]:
+        columns = "group_concat(distinct division_id), group_concat(distinct legal_entity_id), \
+        group_concat(distinct business_group_id)"
+        unit_condition = "1"
+        if unit_ids is not None :
+            unit_condition = "unit_id in (%s)" % unit_ids
+        rows = db.get_data(
+            tblUnits , columns, unit_condition
+        )
+        division_ids = rows[0][0]
+        legal_entity_ids = rows[0][1]
+        business_group_ids = rows[0][2]
+
+    return unit_ids, division_ids, legal_entity_ids, business_group_ids
+
+def get_client_level_1_statutoy(db, user_id, client_id=None) :
+    query = "SELECT (case when (LEFT(statutory_mapping,INSTR(statutory_mapping,'>>')-1) = '') \
+            THEN \
+            statutory_mapping \
+            ELSE \
+            LEFT (statutory_mapping,INSTR(statutory_mapping,'>>')-1) \
+            END ) as statutory \
+            FROM tbl_compliances GROUP BY statutory"
+    rows = db.select_all(query)
+    columns = ["statutory"]
+    result = db.convert_to_dict(rows, columns)
+    return return_client_level_1_statutories(result)
+
+def return_client_level_1_statutories(data) :
+    results = []
+    for d in data :
+        results.append(
+            d["statutory"]
+        )
+    return results
+
+def get_service_providers(db, client_id=None):
+    columns = "service_provider_id, service_provider_name, is_active"
+    condition = "1"
+    rows = db.get_data(
+        tblServiceProviders, columns, condition
+    )
+    columns = ["service_provider_id", "service_provider_name", "is_active"]
+    result = db.convert_to_dict(rows, columns)
+    return return_service_providers(result)
+
+def return_service_providers(service_providers):
+    results = []
+    for service_provider in service_providers :
+        service_provider_obj = core.ServiceProvider(
+            service_provider["service_provider_id"],
+            service_provider["service_provider_name"],
+            bool(service_provider["is_active"]))
+        results.append(service_provider_obj)
+    return results
+
+def get_client_compliances(db, user_id, client_id=None) :
+    query = "SELECT compliance_id, document_name ,compliance_task \
+            FROM tbl_compliances"
+    rows = db.select_all(query, client_id)
+    columns = ["compliance_id", "document_name", "compliance_name"]
+    result = db.convert_to_dict(rows, columns)
+    return return_client_compliances(result)
+
+def return_client_compliances(data) :
+    results = []
+    for d in data :
+        compliance_name = d["compliance_name"]
+        if d["document_name"] not in ["None", None, ""]:
+            compliance_name = "%s - %s" % (d["document_name"], compliance_name)
+        results.append(core.ComplianceFilter(
+            d["compliance_id"], compliance_name
+        ))
+    return results
