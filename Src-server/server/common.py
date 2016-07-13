@@ -1,3 +1,5 @@
+import os
+import io
 import datetime
 import pytz
 import uuid
@@ -5,8 +7,9 @@ import random
 import string
 import hashlib
 from server.constants import (
-    LOCAL_TIMEZONE
+    LOCAL_TIMEZONE, KNOWLEDGE_FORMAT_PATH
 )
+
 
 ########################################################
 # Returns current date and time localized to Indian time
@@ -108,7 +111,7 @@ def insert(table, columns, values) :
     return query
 
 def save_file_in_path(file_path, file_content, file_name):
-    with open(file_path, "wb") as fn :
+    with io.FileIO(file_path, "wb") as fn :
         fn.write(file_content)
     return True
 
@@ -195,9 +198,20 @@ def datetime_to_string_time(datetime_val):
         datetime_in_string = datetime_val.strftime("%d-%b-%Y %H:%M")
     return datetime_in_string
 
-########################################################
-# Returns the database information of clients
-# If client id is given, client specific info will be
-# returned
-# Other wise Info of all clients will be returned
-########################################################
+def remove_uploaded_file(file_path):
+    if os.path.exists(file_path) :
+        os.remove(file_path)
+
+def convert_base64_to_file(file_name, file_content, file_path=None):
+    if file_path is None :
+        file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
+    else:
+        if not os.path.exists(file_path):
+            os.makedirs(file_path)
+            os.chmod(file_path, 0777)
+        file_path = "%s/%s" % (file_path, file_name)
+    remove_uploaded_file(file_path)
+    if file_content is not None:
+        new_file = open(file_path, "wb")
+        new_file.write(file_content.decode('base64'))
+        new_file.close()

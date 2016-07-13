@@ -239,15 +239,21 @@ class Database(object):
             columns = ", ".join(columns)
 
         query = "SELECT %s FROM %s " % (columns, table)
-        if condition is not None and condition_val is not None :
+        if condition is not None:
             query += " WHERE %s" % condition
             if order is not None :
                 query += order
-            rows = self.select_all(query, condition_val)
+
+            if condition_val is None :
+                rows = self.select_all(query)
+            else :
+                rows = self.select_all(query, condition_val)
+
         else :
             if order is not None :
                 query += order
             rows = self.select_all(query)
+
         print "get_data", rows
         result = []
         if rows :
