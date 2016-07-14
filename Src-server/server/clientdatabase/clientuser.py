@@ -3,7 +3,9 @@ from server.common import (
     string_to_datetime_with_time
     )
 from server.clientdatabase.general import (
-    is_two_levels_of_approval, calculate_ageing
+    is_two_levels_of_approval, calculate_ageing, is_space_available,
+    save_compliance_activity, save_compliance_notification, get_user_email_name,
+    convert_base64_to_file
     )
 
 all__ = [
@@ -339,7 +341,7 @@ def update_compliances(
                     file_name = "%s-%s.%s" % (name, auto_code, exten)
                     document_names.append(file_name)
                     convert_base64_to_file(file_name, doc.file_content, client_id)
-                db.update_used_space(file_size)
+                update_used_space(db, file_size)
             else:
                 return clienttransactions.NotEnoughSpaceAvailable()
 
@@ -604,26 +606,6 @@ def start_on_occurrence_task(
         print "Error sending email :{}".format(e)
     return True
 
-def is_space_available(db, upload_size):
-        columns = "total_disk_space - total_disk_space_used"
-        rows = db.get_data(tblClientGroups, columns, "1")
-        remaining_space = rows[0][0]
-        if upload_size < remaining_space:
-            return True
-        else:
-            return False
-
-def convert_base64_to_file(file_name, file_content, client_id):
-    client_directory = "%s/%d" % (CLIENT_DOCS_BASE_PATH, client_id)
-    file_path = "%s/%s" % (client_directory, file_name)
-    if not os.path.exists(client_directory):
-        os.makedirs(client_directory)
-    remove_uploaded_file(file_path)
-    if file_content is not None :
-        new_file = open(file_path, "wb")
-        new_file.write(file_content.decode('base64'))
-        new_file.close()
-
 def remove_uploaded_file(file_path):
     if os.path.exists(file_path) :
         os.remove(file_path)
@@ -655,142 +637,3 @@ def is_onOccurrence_with_hours(db, compliance_history_id):
         return True
     else:
         return False
-
-def save_compliance_activity(
-    db, unit_id, compliance_id, activity_status, compliance_status,
-    remarks
-):
-    compliance_activity_id = db.get_new_id(
-        "compliance_activity_id", tblComplianceActivityLog,
-    )
-    date = get_date_time()
-    columns = [
-        "compliance_activity_id", "unit_id", "compliance_id",
-        "activity_date", "activity_status", "compliance_status",
-        "updated_on"
-    ]
-    values = [
-        compliance_activity_id, unit_id, compliance_id, date, activity_status,
-        compliance_status,  date
-    ]
-    if remarks:
-        columns.append("remarks")
-        values.append(remarks)
-    db.insert(
-       tblComplianceActivityLog, columns, values
-    )
-
-def get_user_email_name(db, user_ids):
-    user_id_list = [int(x) for x in user_ids.split(",")]
-    admin_email = None
-    index = None
-    if 0 in user_id_list:
-        index = user_id_list.index(0)
-        column = "username"
-        admin_rows = db.get_data(tblAdmin, column, "1")
-        user_id_list.remove(0)
-        admin_email = admin_rows[0][0]
-    column = "email_id, employee_name"
-    condition = "user_id in (%s)" % ",".join(str(x) for x in user_ids)
-    rows = db.get_data(
-        tblUsers, column, condition
-    )
-    email_ids = ""
-    employee_name = ""
-    for index, row in enumerate(rows):
-        if index == 0:
-            if row[1] is not None:
-                employee_name += "%s" % row[1]
-            email_ids += "%s" % row[0]
-        else:
-            if row[1] is not None:
-                employee_name += ", %s" % row[1]
-            email_ids += ", %s" % row[0]
-    if admin_email is not None:
-        employee_name += "Administrator"
-        email_ids += admin_email
-
-    return email_ids, employee_name
-
-def save_compliance_notification(
-    db, compliance_history_id, notification_text, category, action
-):
-    notification_id = db.get_new_id(
-        "notification_id", tblNotificationsLog
-    )
-    current_time_stamp = get_date_time()
-
-    # Get history details from compliance history id
-    history_columns = "unit_id, compliance_id, completed_by, concurred_by, \
-    approved_by"
-    history_condition = "compliance_history_id = '%d'" % compliance_history_id
-    history_rows = db.get_data(
-        tblComplianceHistory, history_columns, history_condition
-    )
-    history_columns_list = [
-        "unit_id", "compliance_id", "completed_by",
-        "concurred_by", "approved_by"
-    ]
-    history = db.convert_to_dict(history_rows[0], history_columns_list)
-    unit_id = history["unit_id"]
-    compliance_id = history["compliance_id"]
-
-    # Getting Unit details from unit_id
-    unit_columns = "country_id, business_group_id, legal_entity_id, division_id"
-    unit_condition = "unit_id = '%d'" % int(unit_id)
-    unit_rows = db.get_data(tblUnits, unit_columns, unit_condition)
-    unit_columns_list = [
-        "country_id", "business_group_id", "legal_entity_id", "division_id"
-    ]
-    unit = db.convert_to_dict(unit_rows[0], unit_columns_list)
-
-    # Getting compliance_details from compliance_id
-    compliance_columns = "domain_id"
-    compliance_condition = "compliance_id = '%d'" % compliance_id
-    compliance_rows = db.get_data(
-        tblCompliances, compliance_columns, compliance_condition
-    )
-    domain_id = compliance_rows[0][0]
-
-    # Saving notification
-    columns = [
-        "notification_id", "country_id", "domain_id", "business_group_id",
-        "legal_entity_id", "division_id", "unit_id", "compliance_id",
-        "assignee", "concurrence_person", "approval_person", "notification_type_id",
-        "notification_text", "extra_details", "created_on"
-    ]
-    extra_details = "%d-%s" % (compliance_history_id, category)
-    values = [
-        notification_id, unit["country_id"], domain_id, unit["business_group_id"],
-        unit["legal_entity_id"], unit["division_id"], unit_id, compliance_id,
-        history["completed_by"], history["concurred_by"], history["approved_by"],
-        1, notification_text, extra_details, current_time_stamp
-    ]
-    db.insert(tblNotificationsLog, columns, values)
-
-    # Saving in user log
-    columns = [
-        "notification_id", "read_status", "updated_on", "user_id"
-    ]
-    values = [
-        notification_id, 0, current_time_stamp
-    ]
-    if action.lower() == "concur":
-        values.append(int(history["concurred_by"]))
-    elif action.lower() == "approve":
-        values.append(int(history["approved_by"]))
-    elif action.lower() == "concurred":
-        values.append(int(history["completed_by"]))
-    elif action.lower() == "approvedtoassignee":
-        values.append(int(history["completed_by"]))
-    elif action.lower() == "approvedtoconcur":
-        values.append(int(history["concurred_by"]))
-    elif action.lower() == "concurrejected":
-        values.append(int(history["completed_by"]))
-    elif action.lower() == "approverejectedtoassignee":
-        values.append(int(history["completed_by"]))
-    elif action.lower() == "approverejectedtoconcur":
-        values.append(int(history["concurred_by"]))
-    elif action.lower() == "started":
-        values.append(int(history["completed_by"]))
-    return db.insert(tblNotificationUserLog, columns, values)

@@ -6,10 +6,6 @@ from server.constants import RECORD_DISPLAY_COUNT
 
 from server.clientdatabase.clientreport import *
 
-from server.common import (
-    
-    )
-
 from server.clientdatabase.general import (
     validate_session_token, get_user_company_details,
     get_countries_for_user, get_domains_for_user, 

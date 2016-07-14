@@ -1,5 +1,7 @@
 from server.clientdatabase.general import (
-    is_primary_admin, is_admin, get_user_unit_ids
+    is_primary_admin, is_admin, get_user_unit_ids,
+    get_users, get_users_by_id, get_user_company_details,
+    get_user_countries, get_user_domains
     )
 
 from server.common import (
@@ -25,7 +27,6 @@ __all__ = [
     "update_user_privilege",
     "is_user_exists_under_user_group",
     "update_user_privilege_status",
-    "get_user_company_details",
     "get_user_details",
     "get_service_providers",
     "get_no_of_remaining_licence",
@@ -38,8 +39,6 @@ __all__ = [
     "get_units_closure_for_user",
     "close_unit",
     "get_audit_trails",
-    "get_users_by_id",
-    "get_users"
 ]
 
 def get_service_provider_details_list(db, client_id):
@@ -294,45 +293,6 @@ def update_user_privilege_status(db, user_group_id, is_active, session_user, cli
         action = "Activated user group \"%s\"" % user_group_name
     db.save_activity(session_user, 3, action, client_id)
     return result
-
-def get_user_company_details(db, user_id, client_id=None):
-    admin_id = get_admin_id(db)
-    columns = "unit_id"
-    condition = " 1 "
-    rows = None
-    if user_id > 0 and user_id != admin_id:
-        condition = "  user_id = '%d'" % user_id
-        rows = db.get_data(
-            tblUserUnits, columns, condition
-        )
-    else:
-        rows = db.get_data(
-            tblUnits, columns, condition
-        )
-    unit_ids = None
-    division_ids = None
-    legal_entity_ids = None
-    business_group_ids = None
-    if len(rows) > 0:
-        result = []
-        for row in rows:
-            result.append(row[0])
-        unit_ids = ",".join(str(x) for x in result)
-
-    if unit_ids not in [None, "None", ""]:
-        columns = "group_concat(distinct division_id), group_concat(distinct legal_entity_id), \
-        group_concat(distinct business_group_id)"
-        unit_condition = "1"
-        if unit_ids is not None :
-            unit_condition = "unit_id in (%s)" % unit_ids
-        rows = db.get_data(
-            tblUnits , columns, unit_condition
-        )
-        division_ids = rows[0][0]
-        legal_entity_ids = rows[0][1]
-        business_group_ids = rows[0][2]
-
-    return unit_ids, division_ids, legal_entity_ids, business_group_ids
 
 def get_user_details(db, client_id, session_user):
     unit_ids = None
@@ -838,41 +798,6 @@ def return_forms(db, client_id, form_ids=None):
         results.append(general.AuditTrailForm(form[0], form[1]))
     return results
 
-def get_user_countries(db, user_id, client_id=None):
-    columns = "group_concat(country_id)"
-    table = tblCountries
-    result = None
-    condition = 1
-    if user_id > 0:
-        table = tblUserCountries
-        condition = " user_id = '%d'" % user_id
-    rows = db.get_data(
-        table, columns, condition
-    )
-    if rows :
-        result = rows[0][0]
-    return result
-
-def get_user_domains(db, user_id, client_id=None):
-    columns = "domain_id"
-    table = tblDomains
-    result = None
-    condition = 1
-    if user_id > 0:
-        table  = tblUserDomains
-        condition = " user_id = '%d'" % user_id
-    rows = db.get_data(
-        table, columns, condition
-    )
-    result = ""
-    if rows:
-        for index, row in enumerate(rows):
-            if index == 0:
-                result += str(row[0])
-            else:
-                result += ", %s" % str(row[0])
-    return result
-
 def get_short_name_from_client_id(db, client_id):
     columns = "url_short_name"
     rows = db.get_data(
@@ -891,38 +816,6 @@ def is_admin(db, user_id):
             return True
         else:
             return False
-
-def get_users(db, client_id):
-        columns = "user_id, employee_name, employee_code, is_active"
-        condition = "1"
-        rows = db.get_data(
-            tblUsers, columns, condition
-        )
-        columns = ["user_id", "employee_name", "employee_code", "is_active"]
-        result = db.convert_to_dict(rows, columns)
-        return return_users(result)
-
-def get_users_by_id(db, user_ids, client_id):
-    columns = "user_id, employee_name, employee_code, is_active"
-    condition = " user_id in (%s)" % user_ids
-    rows = db.get_data(
-        tblUsers, columns, condition
-    )
-    columns = ["user_id", "employee_name", "employee_code", "is_active"]
-    result = db.convert_to_dict(rows, columns)
-    return return_users(result)
-
-def return_users(users):
-    results = []
-    for user in users :
-        if user["employee_code"] is not None:
-            employee_name = "%s - %s" % (user["employee_code"],user["employee_name"])
-        else:
-            employee_name = "Administrator"
-        results.append(core.User(
-            user["user_id"], employee_name, bool(user["is_active"])
-        ))
-    return results
 
 def notify_user(
     short_name, email_id, password, employee_name, employee_code
