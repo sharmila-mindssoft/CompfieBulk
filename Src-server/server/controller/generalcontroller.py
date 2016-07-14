@@ -12,6 +12,11 @@ from server.database.general import (
     get_user_form_ids,
     get_notifications
 )
+
+from server.clientdatabase.general import (
+    validate_session_token
+)
+
 __all__ = [
     "process_general_request",
     "validate_user_session", "process_save_domain",
@@ -108,9 +113,9 @@ def process_general_request(request, db) :
 
 def validate_user_session(db, session_token, client_id=None):
     if client_id:
-        return db.validate_session_token(client_id, session_token)
+        return validate_session_token(db, client_id, session_token)
     else:
-        return db.validate_session_token(session_token)
+        return validate_session_token(db, session_token)
 
 def validate_user_forms(db, user_id, form_ids, requet):
     if user_id == 0 and type(requet) in [
