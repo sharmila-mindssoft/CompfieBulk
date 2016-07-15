@@ -5,7 +5,7 @@ from server.constants import RECORD_DISPLAY_COUNT
 from server import logger
 from server.clientdatabase.clientmaster import *
 from server.clientdatabase.general import (
-    validate_session_token, get_domains_for_user,
+    get_domains_for_user,
     get_countries_for_user, get_countries, get_domains
     get_business_groups_for_user, get_legal_entities_for_user,
     get_divisions_for_user, get_units_for_user, have_compliances,
@@ -25,7 +25,7 @@ def process_client_master_requests(request, db) :
     client_info = session_token.split("-")
     request = request.request
     client_id = int(client_info[0])
-    session_user = validate_session_token(db, client_id, session_token)
+    session_user = db.validate_session_token(client_id, session_token)
     if session_user is None:
         return login.InvalidSessionToken()
 

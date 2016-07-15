@@ -1,10 +1,6 @@
 from protocol import (clientadminsettings, login, core)
 from server.clientdatabase.clientadminsettings import *
 
-from server.clientdatabase.general import (
-    validate_session_token,
-    )
-
 __all__ = [
     "process_client_admin_settings_requests"
 ]
@@ -19,7 +15,7 @@ def process_client_admin_settings_requests(request, db) :
 
     request = request.request
     client_id = int(client_info[0])
-    session_user = validate_session_token(db, client_id, session_token)
+    session_user = db.validate_session_token(client_id, session_token)
     if session_user is None:
         return login.InvalidSessionToken()
     if type(request) is clientadminsettings.GetSettings :

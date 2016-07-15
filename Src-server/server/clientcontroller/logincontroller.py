@@ -5,6 +5,17 @@ from server.constants import (
     CLIENT_URL
 )
 from server import logger
+from server.clientdatabase.login import *
+
+from server.common import (
+    encrypt
+    )
+from server.clientdatabase.general import (
+    get_form_ids_for_admin, get_report_form_ids,
+    verify_username, get_client_id_from_short_name,
+    validate_reset_token, update_password, delete_used_token,
+    remove_session, update_profile
+    )
 
 __all__ = [
     "process_login_request",
@@ -57,23 +68,23 @@ def process_login(db, request, client_id, session_user_ip):
     login_type = request.login_type
     username = request.username
     password = request.password
-    encrypt_password = db.encrypt(password)
+    encrypt_password = encrypt(password)
     user_ip = session_user_ip
     logger.logLogin("info", user_ip, username, "Login process begin")
-    if db.is_contract_not_started():
+    if is_contract_not_started(db):
         print "inside contract not startd"
         return login.ContractNotYetStarted()
-    elif not db.is_configured():
+    elif not is_configured(db):
         logger.logLogin("info", user_ip, username, "NotConfigured")
         return login.NotConfigured()
-    elif not db.is_in_contract():
+    elif not is_in_contract(db):
         logger.logLogin("info", user_ip, username, "ContractExpired")
         return login.ContractExpired()
-    elif not db.is_client_active(client_id):
+    elif not is_client_active(client_id):
         logger.logLogin("info", user_ip, username, "InvalidCredentials")
         return login.InvalidCredentials()
     else:
-        response = db.verify_login(username, encrypt_password)
+        response = verify_login(db, username, encrypt_password)
     if login_type.lower() == "web":
         if response is True:
             logger.logLogin("info", user_ip, username, "Login process end")
@@ -117,18 +128,18 @@ def mobile_user_admin_response(db, login_type, client_id, ip):
 
     column = "admin_id"
     condition = "1"
-    rows = db.get_data(db.tblAdmin, column, condition)
+    rows = db.get_data(tblAdmin, column, condition)
     user_id = rows[0][0]
-    session_token = db.add_session(
-        user_id, session_type, ip, "Administrator", client_id
+    session_token = add_session(
+        db, user_id, session_type, ip, "Administrator", client_id
     )
-    form_ids = db.get_form_ids_for_admin()
+    form_ids = get_form_ids_for_admin(db)
     menu = process_user_forms(db, form_ids, client_id, 1)
     employee_name = "Administrator"
-    client_info = db.get_client_group()
+    client_info = get_client_group(db)
     group_name = client_info["group_name"]
     group_id = client_info["client_id"]
-    configuration = db.get_client_configuration()
+    configuration = get_client_configuration(db)
 
     return mobile.ClientUserLoginResponseSuccess(
         user_id,
@@ -153,11 +164,11 @@ def mobile_user_login_respone(db, data, login_type, client_id, ip):
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
     employee = "%s - %s" % (employee_code, employee_name)
-    session_token = db.add_session(user_id, session_type, ip, employee, client_id)
-    client_info = db.get_client_group()
+    session_token = add_session(db, user_id, session_type, ip, employee, client_id)
+    client_info = get_client_group(db)
     group_name = client_info["group_name"]
     group_id = client_info["client_id"]
-    configuration = db.get_client_configuration()
+    configuration = get_client_configuration(db)
     form_ids = data["form_ids"]
     is_promoted_admin = int(data["is_admin"])
     if is_promoted_admin == 1:
@@ -165,7 +176,7 @@ def mobile_user_login_respone(db, data, login_type, client_id, ip):
         form_ids_list = form_ids.split(",")
         if 1 not in form_ids_list:
             form_ids_list.append(1)
-        report_form_ids = db.get_report_form_ids().split(",")
+        report_form_ids = get_report_form_ids(db).split(",")
         for form_id in report_form_ids:
             if form_id not in form_ids_list:
                 form_ids_list.append(form_id)
@@ -188,7 +199,7 @@ def user_login_response(db, data, client_id, ip):
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
     employee = "%s - %s" % (employee_code, employee_name)
-    session_token = db.add_session(user_id, session_type, ip, employee, client_id)
+    session_token = add_session(db, user_id, session_type, ip, employee, client_id)
     contact_no = data["contact_no"]
     user_group_name = data["user_group_name"]
     form_ids = data["form_ids"]
@@ -198,7 +209,7 @@ def user_login_response(db, data, client_id, ip):
         form_ids_list = form_ids.split(",")
         if 1 not in form_ids_list:
             form_ids_list.append(1)
-        report_form_ids = db.get_report_form_ids().split(",")
+        report_form_ids = get_report_form_ids(db).split(",")
         for form_id in report_form_ids:
             if form_id not in form_ids_list:
                 form_ids_list.append(form_id)
@@ -213,14 +224,14 @@ def user_login_response(db, data, client_id, ip):
 def admin_login_response(db, client_id, ip):
     column = "admin_id"
     condition = "1"
-    rows = db.get_data(db.tblAdmin, column, condition)
+    rows = db.get_data(tblAdmin, column, condition)
     user_id = rows[0][0]
     email_id = None
     session_type = 1  # web
-    session_token = db.add_session(
-        user_id, session_type, ip, "Administrator", client_id
+    session_token = add_session(
+        db, user_id, session_type, ip, "Administrator", client_id
     )
-    form_ids = db.get_form_ids_for_admin()
+    form_ids = get_form_ids_for_admin(db)
     menu = process_user_forms(db, form_ids, client_id, 1)
     employee_name = "Administrator"
     return login.AdminLoginSuccess(
@@ -228,7 +239,7 @@ def admin_login_response(db, client_id, ip):
     )
 
 def process_forgot_password(db, request):
-    user_id = db.verify_username(request.username)
+    user_id = verify_username(db, request.username)
     if user_id is not None:
         send_reset_link(db, user_id, request.username, request.short_name)
         return login.ForgotPasswordSuccess()
@@ -236,7 +247,7 @@ def process_forgot_password(db, request):
         return login.InvalidUserName()
 
 def send_reset_link(db, user_id, username, short_name):
-    reset_token = db.new_uuid()
+    reset_token = new_uuid()
     reset_link = "%sreset_password/%s/%s" % (
         CLIENT_URL, short_name, reset_token)
 
@@ -254,19 +265,19 @@ def send_reset_link(db, user_id, username, short_name):
         print "Saving reset token failed"
 
 def process_reset_token(db, request):
-    client_id = db.get_client_id_from_short_name(request.short_name)
-    user_id = db.validate_reset_token(request.reset_token, client_id)
+    client_id = get_client_id_from_short_name(db, request.short_name)
+    user_id = validate_reset_token(db, request.reset_token, client_id)
     if user_id is not None:
         return login.ResetSessionTokenValidationSuccess()
     else:
         return login.InvalidResetToken()
 
 def process_reset_password(db, request):
-    client_id = db.get_client_id_from_short_name(request.short_name)
-    user_id = db.validate_reset_token(request.reset_token, client_id)
+    client_id = get_client_id_from_short_name(db, request.short_name)
+    user_id = validate_reset_token(db, request.reset_token, client_id)
     if user_id is not None:
-        db.update_password(request.new_password, user_id, client_id)
-        db.delete_used_token(request.reset_token, client_id)
+        update_password(db, request.new_password, user_id, client_id)
+        delete_used_token(db, request.reset_token, client_id)
         return login.ResetPasswordSuccess()
     else:
         return login.InvalidResetToken()
@@ -276,17 +287,16 @@ def process_change_password(db, request):
     session_token = "{}-{}".format(client_info[0],client_info[2])
     client_id = int(client_info[0])
     session_user = db.validate_session_token(client_id, session_token)
-    if db.verify_password(request.current_password, session_user, client_id):
-        db.update_password(request.new_password, session_user, client_id)
+    if verify_password(db, request.current_password, session_user, client_id):
+        update_password(db, request.new_password, session_user, client_id)
         return login.ChangePasswordSuccess()
     else :
         return login.InvalidCurrentPassword()
 
-
 def process_logout(db, request):
     # save logout time
     session = request.session_token
-    db.remove_session(session)
+    remove_session(db, session)
     return login.LogoutSuccess()
 
 def process_update_profile(db, request):
@@ -294,5 +304,5 @@ def process_update_profile(db, request):
     session_token = "{}-{}".format(client_info[0],client_info[1])
     client_id = int(client_info[0])
     session_user = db.validate_session_token(client_id, session_token)
-    db.update_profile(request.contact_no, request.address, session_user)
+    update_profile(db, request.contact_no, request.address, session_user)
     return login.UpdateUserProfileSuccess(request.contact_no, request.address)

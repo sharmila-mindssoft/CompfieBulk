@@ -14,7 +14,7 @@ all__ = [
     "get_client_users",
     "get_user_domains",
     "get_user_countries",
-    "validate_session_token",
+    "verify_username",
     "verify_password",
     "get_countries",
     "get_domains",
@@ -45,7 +45,14 @@ all__ = [
     "calculate_due_date",
     "filter_out_due_dates",
     "convert_base64_to_file",
-    "get_user_name_by_id"
+    "get_user_name_by_id",
+    "get_form_ids_for_admin",
+    "get_report_form_ids",
+    "get_client_id_from_short_name",
+    "validate_reset_token",
+    "remove_session",
+    "update_profile",
+    "is_service_proivder_user"
 
 ]
 
@@ -286,30 +293,6 @@ def get_user_domains(db, user_id, client_id=None):
                 result += ", %s" % str(row[0])
     return result
 
-def validate_session_token(db, client_id, session_token) :
-    query = "SELECT t1.user_id, IFNULL(t2.is_service_provider, 0), IFNULL(t2.service_provider_id, 0) \
-    FROM tbl_user_sessions t1 \
-    INNER JOIN tbl_users t2 ON t1.user_id = t2.user_id AND t2.is_active = 1 \
-        WHERE t1.session_token = '%s'" % (session_token)
-    row = db.select_one(query)
-    user_id = None
-    if row :
-        user_id = int(row[0])
-        is_service_provider = int(row[1])
-        service_id = int(row[2])
-        if is_service_provider == 1 :
-            res = is_service_provider_in_contract(db, service_id)
-            if res :
-                update_session_time(db, session_token)
-                return user_id
-        else :
-            res = is_in_contract(db)
-            if res :
-                update_session_time(db, session_token)
-                return user_id
-
-    return None
-
 def is_service_provider_in_contract(db, service_provider_id):
     column = "count(1)"
     condition = "now() between contract_from and DATE_ADD(contract_to, INTERVAL 1 DAY)\
@@ -319,14 +302,6 @@ def is_service_provider_in_contract(db, service_provider_id):
         return True
     else:
         return False
-
-def update_session_time(db, session_token):
-    updated_on = db.get_date_time()
-    q = "update tbl_user_sessions set \
-    last_accessed_time='%s' where session_token = '%s' " % (
-        str(updated_on), str(session_token)
-    )
-    db.execute(q)
 
 def is_in_contract(db):
     columns = "count(1)"
@@ -338,6 +313,27 @@ def is_in_contract(db):
         return False
     else:
         return True
+
+def verify_username(db, username):
+    columns = "count(*), user_id"
+    condition = "email_id='%s' and is_active = 1" % (username)
+    rows = db.get_data(
+        tblUsers, columns, condition
+    )
+    count = rows[0][0]
+    if count == 1:
+        return rows[0][1]
+    else:
+        condition = "username='%s'" % username
+        columns = "count(*)"
+        rows = db.get_data(
+            tblAdmin, columns, condition
+        )
+        count = rows[0][0]
+        if count == 1:
+            return 0
+        else:
+            return None
 
 def verify_password(db, password, user_id, client_id=None):
     columns = "count(*)"
@@ -1139,3 +1135,103 @@ def get_user_name_by_id(db, user_id, client_id=None):
     else:
         employee_name = "Administrator"
     return employee_name
+
+def get_form_ids_for_admin(db):
+    columns = "group_concat(form_id)"
+    condition = "is_admin = 1 OR form_type_id in (4,5) OR form_id in (1, 9,11,10,12)"
+    rows = db.get_data(
+        tblForms, columns, condition
+    )
+    return rows[0][0]
+
+def get_report_form_ids(db):
+    columns = "group_concat(form_id)"
+    condition = " form_type_id = 3"
+    rows = db.get_data(
+        tblForms, columns, condition
+    )
+    return rows[0][0]
+
+def get_client_id_from_short_name(db, short_name):
+    columns = "client_id"
+    condition = "url_short_name = '%s'" % short_name
+    rows = db.get_data(
+        "tbl_client_groups", columns, condition
+    )
+    return rows[0][0]
+
+def validate_reset_token(db, reset_token, client_id):
+    column = "count(*), user_id"
+    condition = " verification_code='%s'" % reset_token
+    rows = db.get_data(
+        tblEmailVerification, column, condition
+    )
+    count = rows[0][0]
+    user_id = rows[0][1]
+    if count == 1:
+        column = "count(*)"
+        condition = "user_id = '%d' and is_active = 1" % user_id
+        rows = db.get_data(tblUsers, column, condition)
+        if rows[0][0] > 0 or user_id == 0:
+            return user_id
+        else:
+            return None
+    else:
+        return None
+
+def update_password(db, password, user_id, client_id):
+    columns = ["password"]
+    values = [encrypt(password)]
+    condition = "1"
+    result = False
+    condition = " user_id='%d'" % user_id
+    result = db.update(
+        tblUsers, columns, values, condition, client_id
+    )
+    if is_primary_admin(db, user_id) or user_id == 0:
+        result = db.update(
+            tblAdmin, columns, values, "1", client_id
+        )
+    if user_id != 0:
+        columns = "employee_code, employee_name"
+        condition = "user_id = '%d'" % user_id
+        rows = db.get_data(self.tblUsers, columns, condition)
+        employee_name = rows[0][1]
+        if rows[0][0] is not None:
+            employee_name = "%s - %s" % (rows[0][0], rows[0][1])
+    else:
+        employee_name = "Administrator"
+
+    action = "\"%s\" has updated his/her password" % ( employee_name)
+    db.save_activity(user_id, 0, action)
+
+    if result:
+        return True
+    else:
+        return False
+
+def delete_used_token(self, reset_token, client_id):
+    condition = " verification_code='%s'" % reset_token
+    if db.delete(tblEmailVerification, condition, client_id):
+        return True
+    else:
+        return False
+
+def remove_session(db, session_token):
+        q = "delete from tbl_user_sessions where session_token = '%s'" % (session_token)
+        db.execute(q)
+
+def update_profile(db, contact_no, address, session_user):
+    columns = ["contact_no", "address"]
+    values = [contact_no, address]
+    condition = "user_id= '%d'" % session_user
+    db.update(tblUsers, columns, values, condition)
+
+def is_service_proivder_user(db, user_id):
+    column = "count(1)"
+    condition = "user_id = '%d' and is_service_provider = 1" % user_id
+    rows = db.get_data(tblUsers, column, condition)
+    if rows[0][0] > 0:
+        return True
+    else:
+        return False
