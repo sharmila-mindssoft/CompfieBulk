@@ -1,5 +1,5 @@
 import time
-from protocol import login, core, technomasters
+from protocol import login, technomasters
 from generalcontroller import validate_user_session, validate_user_forms
 from technomastercontroller import (
     get_client_groups,
@@ -9,14 +9,14 @@ from technomastercontroller import (
     save_client,
     update_client,
     get_clients,
-    change_client_status,
     reactivate_unit,
     get_client_profile,
     create_new_admin,
     get_next_unit_code
 )
 from server import logger
-__all__=[
+
+__all__ = [
     "process_techno_request",
 ]
 
@@ -83,12 +83,12 @@ def process_techno_request(request, db) :
         logger.logKnowledgeApi("UpdateClient", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
-    if type(request_frame) is technomasters.ChangeClientStatus:
-        logger.logKnowledgeApi("ChangeClientStatus", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
-        result = change_client_status(db, request_frame, session_user)
-        logger.logKnowledgeApi("ChangeClientStatus", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
+    # if type(request_frame) is technomasters.ChangeClientStatus:
+    #     logger.logKnowledgeApi("ChangeClientStatus", "process begin")
+    #     logger.logKnowledgeApi("------", str(time.time()))
+    #     result = change_client_status(db, request_frame, session_user)
+    #     logger.logKnowledgeApi("ChangeClientStatus", "process end")
+    #     logger.logKnowledgeApi("------", str(time.time()))
 
     if type(request_frame) is technomasters.ReactivateUnit:
         logger.logKnowledgeApi("ReactivateUnit", "process begin")
