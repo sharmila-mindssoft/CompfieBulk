@@ -2,3 +2,8 @@ from general import *
 from login import *
 from admin import *
 from knowledgemaster import *
+from knowledgetransaction import *
+from knowledgereport import *
+from technomaster import *
+from technotransaction import *
+from technoreport import *
