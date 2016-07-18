@@ -17,7 +17,7 @@ from protocol import (
 )
 # from server.database import KnowledgeDatabase
 import controller
-from server.database.dbase import Database
+from server.dbase import Database
 from server.database import general as gen
 from distribution.protocol import (
     Request as DistributionRequest,
