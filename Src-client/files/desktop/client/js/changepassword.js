@@ -64,12 +64,23 @@ $(document).ready(function(){
         so everytime user type code will execute
       */
       passwordStrength = checkStrength($('#newpassword').val());
+      if(passwordStrength == 'Strong'){
+        $("#password-hint").css('display', 'none');
+      }else{
+        $("#password-hint").css('display', 'inline-block');
+      }
       $('#pw-result').html(passwordStrength);
 
   });
   $('#confirmpassword').keyup('input', function (event) {
       this.value = this.value.replace(/\s/g, '');
   });
+});
 
+$("#newpassword").focus(function(){
+  $("#password-hint").css('display', 'inline-block');
+});
 
+$("#newpassword").focusout(function(){
+  $("#password-hint").css('display', 'none');
 });
