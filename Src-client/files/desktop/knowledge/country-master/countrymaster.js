@@ -83,59 +83,65 @@ $('#country-name').keypress(function (e) {
 $("#submit").click(function(){
     var countryIdValue = $("#country-id").val();
     var countryNameValue = $("#country-name").val().trim();
-    if(countryNameValue.length == 0){
-        displayMessage(message.country_required);
-    }
-    else{
-        if(countryIdValue == ''){
-            function onSuccess(response){
-                $("#country-add").hide();
-                $("#country-view").show();
-                $("#search-country-name").val("");
-                initialize();
-            }
-            function onFailure(error){
-                if(error == 'CountryNameAlreadyExists'){
-                    displayMessage(message.countryname_exists);
-                }
-            }
-            mirror.saveCountry(countryNameValue,
-                function (error, response) {
-                    if (error == null){
-                        onSuccess(response);
-                    }
-                    else {
-                        onFailure(error);
-                    }
-                }
-            );
+
+    var checkLength = countryValidate();
+
+    if(checkLength){
+        if(countryNameValue.length == 0){
+            displayMessage(message.country_required);
         }
         else{
-            function onSuccess(response){
-                $("#country-add").hide();
-                $("#country-view").show();
-                initialize();
-            }
-            function onFailure(error){
-                if(error == 'InvalidCountryId') {
-                    displayMessage(message.countryname_invalid);
+            if(countryIdValue == ''){
+                function onSuccess(response){
+                    $("#country-add").hide();
+                    $("#country-view").show();
+                    $("#search-country-name").val("");
+                    initialize();
                 }
-                if(error == 'CountryNameAlreadyExists'){
-                    displayMessage(message.countryname_exists);
-                }
-            }
-            mirror.updateCountry(parseInt(countryIdValue), countryNameValue,
-                function (error, response) {
-                    if (error == null){
-                        onSuccess(response);
-                    }
-                    else {
-                        onFailure(error);
+                function onFailure(error){
+                    if(error == 'CountryNameAlreadyExists'){
+                        displayMessage(message.countryname_exists);
                     }
                 }
-            );
+                mirror.saveCountry(countryNameValue,
+                    function (error, response) {
+                        if (error == null){
+                            onSuccess(response);
+                        }
+                        else {
+                            onFailure(error);
+                        }
+                    }
+                );
+            }
+            else{
+                function onSuccess(response){
+                    $("#country-add").hide();
+                    $("#country-view").show();
+                    initialize();
+                }
+                function onFailure(error){
+                    if(error == 'InvalidCountryId') {
+                        displayMessage(message.countryname_invalid);
+                    }
+                    if(error == 'CountryNameAlreadyExists'){
+                        displayMessage(message.countryname_exists);
+                    }
+                }
+                mirror.updateCountry(parseInt(countryIdValue), countryNameValue,
+                    function (error, response) {
+                        if (error == null){
+                            onSuccess(response);
+                        }
+                        else {
+                            onFailure(error);
+                        }
+                    }
+                );
+            }
         }
     }
+
 });
 //edit country
 function country_edit(countryId, countryName){

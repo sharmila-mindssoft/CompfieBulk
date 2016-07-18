@@ -55,13 +55,12 @@ function isLoginValidated (e_email, e_password) {
         e_email.focus();
         return false;
     }
-
     if (e_password.val() == "") {
         displayLoginMessage(message.username_password_required);
         e_password.focus();
         return false;
     }
-
+    
     return true;
 }
 

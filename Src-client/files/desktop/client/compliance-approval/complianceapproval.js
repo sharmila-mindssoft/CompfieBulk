@@ -93,11 +93,11 @@ function loadComplianceApprovalDetails(data){
             $('.domain', clonelist).html(val['domain_name']);
             $('.startdate', clonelist).html(val['start_date']);
             $('.duedate', clonelist).html(val['due_date']);
-            if(val['delayedby'] == null){
+            if(val['delayed_by'] == null){
                 $('.delayedby', clonelist).html('');
             }
-            if(val['delayedby'] != null){
-                $('.delayedby', clonelist).html(val['delayedby']+" days");
+            if(val['delayed_by'] != null){
+                $('.delayedby', clonelist).html(val['delayed_by']+" days");
             }
             var compliance_history_id = val['compliance_history_id'];
 
@@ -192,10 +192,10 @@ function showSideBar(idval, data){
     }
 
 
-    if(data['delayedby'] != null){
+    if(data['delayed_by'] != null){
         $(".sidebar-status", cloneValSide).html("Not Complied");
     }
-    if(data['delayedby'] == null){
+    if(data['delayed_by'] == null){
         $(".sidebar-status", cloneValSide).html("InProgress");
     }
     if(data["remarks"] != "None"){
@@ -356,6 +356,11 @@ function showSideBar(idval, data){
             if(next_due_date == ''){
                 next_due_date = null;
             }
+        }
+
+        if($(".remarks-textarea", cloneValSide).val().trim().length > 500){
+            displayMessage("Remarks" + message.should_not_exceed  + " 500 characters");
+            return false;
         }
 
         if(remarks == ''){

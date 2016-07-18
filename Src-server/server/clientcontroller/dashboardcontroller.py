@@ -1,6 +1,14 @@
 from protocol import (dashboard, login, general)
 from server import logger
 from server.constants import RECORD_DISPLAY_COUNT
+from server.clientdatabase.dashboard import *
+from server.clientdatabase.general import (
+    get_countries_for_user, get_domains_for_user,
+    get_business_groups_for_user, get_legal_entities_for_user,
+    get_divisions_for_user, get_group_name,
+    get_country_wise_domain_month_range, get_country_wise_domain_month_range,
+    get_client_users, get_user_domains, get_client_compliance_count
+    )
 __all__ = [
     "process_client_dashboard_requests"
 ]
@@ -21,7 +29,7 @@ def process_client_dashboard_requests(request, db) :
     if session_user is None:
         return login.InvalidSessionToken()
 
-    if db.get_client_compliance_count() == 0:
+    if get_client_compliance_count(db) == 0:
         logger.logClientApi("CheckMasterDataDashboard", "process begin")
         result = general.MasterDataNotAvailableForClient()
         logger.logClientApi("CheckMasterDataDashboard", "process end")
@@ -124,17 +132,18 @@ def process_client_dashboard_requests(request, db) :
     return result
 
 def process_get_chart_filters(db, session_user, client_id):
-    countries = db.get_countries_for_user(session_user, client_id)
-    domains = db.get_domains_for_user(session_user, client_id)
+    #import from general.py except get_units_for_dashboard_filters
+    countries = get_countries_for_user(db, session_user, client_id)
+    domains = get_domains_for_user(db, session_user, client_id)
     business_group_ids = None
-    business_groups = db.get_business_groups_for_user(business_group_ids)
+    business_groups = get_business_groups_for_user(db, business_group_ids)
     legal_entity_ids = None
-    legal_entities = db.get_legal_entities_for_user(legal_entity_ids)
+    legal_entities = get_legal_entities_for_user(db, legal_entity_ids)
     division_ids = None
-    divisions = db.get_divisions_for_user(division_ids)
-    units = db.get_units_for_dashboard_filters(session_user)
-    domain_info = db.get_country_wise_domain_month_range()
-    group_name = db.get_group_name()
+    divisions = get_divisions_for_user(db, division_ids)
+    units = get_units_for_dashboard_filters(db, session_user)
+    domain_info = get_country_wise_domain_month_range(db)
+    group_name = get_group_name(db)
     return dashboard.GetChartFiltersSuccess(
         countries, domains, business_groups,
         legal_entities, divisions, units,
@@ -142,17 +151,20 @@ def process_get_chart_filters(db, session_user, client_id):
     )
 
 def process_compliance_status_chart(db, request, session_user, client_id):
-    return db.get_compliance_status_chart(request, session_user, client_id)
+    #import from dashboard.py
+    return get_compliance_status_chart(db, request, session_user, client_id)
 
 def process_trend_chart(db, request, session_user, client_id):
     trend_chart_info = None
     if request.filter_type == "Group":
-        trend_chart_info = db.get_trend_chart(
+        #import from dashboard.py
+        trend_chart_info = get_trend_chart(db,
             request.country_ids, request.domain_ids,
             client_id
         )
     else:
-        trend_chart_info = db.get_filtered_trend_data(
+        #import from dashboard.py
+        trend_chart_info = get_filtered_trend_data(db, 
             request.country_ids, request.domain_ids,
             request.filter_type, request.filter_ids, client_id
         )
@@ -169,7 +181,8 @@ def process_trend_chart(db, request, session_user, client_id):
 def process_get_trend_chart_drilldown(db, request, session_user, client_id):
     drill_down_info = None
     filter_ids = None if request.filter_ids is None else ",".join(str(x) for x in request.filter_ids)
-    drill_down_info = db.get_trend_chart_drill_down(
+    #import from dashboard.py
+    drill_down_info = get_trend_chart_drill_down(db, 
         request.country_ids,
         request.domain_ids, filter_ids,
         request.filter_type, request.year,
@@ -182,7 +195,7 @@ def process_get_trend_chart_drilldown(db, request, session_user, client_id):
 def process_compliance_status_chart_drilldown(db, request, session_user, client_id):
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
-    unit_wise_data = db.get_compliances_details_for_status_chart(
+    unit_wise_data = get_compliances_details_for_status_chart(db, 
         request, session_user, client_id,
         from_count, to_count
     )
@@ -191,12 +204,12 @@ def process_compliance_status_chart_drilldown(db, request, session_user, client_
     )
 
 def process_escalation_chart(db, request, session_user, client_id):
-    return db.get_escalation_chart(request, session_user, client_id)
+    return get_escalation_chart(db, request, session_user, client_id)
 
 def process_escalation_chart_drilldown(db, request, session_user, client_id) :
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
-    result_list = db.get_escalation_drill_down_data(
+    result_list = get_escalation_drill_down_data(db, 
         request, session_user, client_id,
         from_count, to_count
     )
@@ -206,24 +219,24 @@ def process_escalation_chart_drilldown(db, request, session_user, client_id) :
     )
 
 def process_not_complied_chart(db, request, session_user, client_id):
-    return db.get_not_complied_chart(request, session_user, client_id)
+    return get_not_complied_chart(db, request, session_user, client_id)
 
 def  process_not_complied_drill_down(db, request, session_user, client_id):
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
-    result_list = db.get_not_complied_drill_down(
+    result_list = get_not_complied_drill_down(db, 
         request, session_user, client_id,
         from_count, to_count
     )
     return dashboard.GetNotCompliedDrillDownSuccess(result_list.values())
 
 def process_compliance_applicability_chat(db, request, session_user, client_id):
-    return db.get_compliance_applicability_chart(request, session_user, client_id)
+    return get_compliance_applicability_chart(db, request, session_user, client_id)
 
 def process_compliance_applicability_drill_down(db, request, session_user, client_id) :
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
-    result_list = db.get_compliance_applicability_drill_down(
+    result_list = get_compliance_applicability_drill_down(db, 
         request, session_user, client_id,
         from_count, to_count
     )
@@ -232,7 +245,7 @@ def process_compliance_applicability_drill_down(db, request, session_user, clien
 def process_get_notifications(db, request, session_user, client_id):
     notifications = None
     to_count = RECORD_DISPLAY_COUNT
-    notifications = db.get_notifications(
+    notifications = get_notifications(db, 
         request.notification_type,
         request.start_count, to_count,
         session_user, client_id
@@ -241,7 +254,7 @@ def process_get_notifications(db, request, session_user, client_id):
 
 def process_update_notification_status(db, request, session_user, client_id):
     notifications = None
-    db.update_notification_status(request.notification_id, request.has_read,
+    update_notification_status(db, request.notification_id, request.has_read,
         session_user, client_id)
     return dashboard.UpdateNotificationStatusSuccess()
 
@@ -251,18 +264,20 @@ def process_update_notification_status(db, request, session_user, client_id):
 # chart filters
 ########################################################
 def process_assigneewise_compliances_filters(db, request, session_user, client_id):
-    user_company_info = db.get_user_company_details( session_user, client_id)
+    #import from dashboard.py
+    user_company_info = get_user_company_details(db, session_user, client_id)
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
     business_group_ids = user_company_info[3]
-    country_list = db.get_countries_for_user(session_user, client_id)
-    domain_list = db.get_domains_for_user(session_user, client_id)
-    business_group_list = db.get_business_groups_for_user(business_group_ids)
-    legal_entity_list = db.get_legal_entities_for_user(legal_entity_ids)
-    division_list =  db.get_divisions_for_user(division_ids)
-    unit_list = db.get_units_for_user(unit_ids, client_id)
-    users_list = db.get_client_users(client_id, unit_ids);
+    #import from general.py
+    country_list = get_countries_for_user(db, session_user, client_id)
+    domain_list = get_domains_for_user(db, session_user, client_id)
+    business_group_list = get_business_groups_for_user(db, business_group_ids)
+    legal_entity_list = get_legal_entities_for_user(db, legal_entity_ids)
+    division_list =  get_divisions_for_user(db, division_ids)
+    unit_list = get_units_for_user(db, unit_ids, client_id)
+    users_list = get_client_users(db, client_id, unit_ids);
     return dashboard.GetAssigneewiseComplianesFiltersSuccess(
         countries=country_list, business_groups=business_group_list,
         legal_entities=legal_entity_list, divisions=division_list,
@@ -281,7 +296,7 @@ def process_assigneewise_compliances(db, request, session_user, client_id):
     division_id = request.division_id
     unit_id = request.unit_id
     user_id = request.user_id
-    chart_data = db.get_assigneewise_compliances_list(
+    chart_data = get_assigneewise_compliances_list(db, 
         country_id, business_group_id, legal_entity_id, division_id, unit_id,
         session_user, client_id, user_id
     )
@@ -293,7 +308,7 @@ def process_assigneewise_yearwise_compliances(db, request, session_user, client_
     country_id = request.country_id
     unit_id = request.unit_id
     user_id = request.user_id
-    chart_data = db.get_assigneewise_yearwise_compliances(
+    chart_data = get_assigneewise_yearwise_compliances(db, 
         country_id, unit_id, user_id, client_id
     )
     return dashboard.GetAssigneewiseYearwiseCompliancesSuccess(
@@ -305,7 +320,7 @@ def process_get_assigneewise_reassigned_compliances(db, request, session_user, c
     unit_id = request.unit_id
     user_id = request.user_id
     domain_id = request.domain_id
-    chart_data = db.get_assigneewise_reassigned_compliances(
+    chart_data = get_assigneewise_reassigned_compliances(db, 
         country_id, unit_id, user_id, domain_id, client_id
     )
     return dashboard.GetAssigneewiseReassignedComplianesSuccess(
@@ -329,11 +344,11 @@ def process_assigneewise_compliances_drilldown(
     to_count = RECORD_DISPLAY_COUNT
 
     drill_down_data = {}
-    complied, delayed, inprogress, not_complied = db.get_assigneewise_compliances_drilldown_data(
+    complied, delayed, inprogress, not_complied = get_assigneewise_compliances_drilldown_data(db, 
         country_id, assignee_id, domain_id, client_id, year, unit_id, start_count,
         to_count, session_user
     )
-    total_count = db.get_assigneewise_compliances_drilldown_data_count(
+    total_count = get_assigneewise_compliances_drilldown_data_count(db, 
         country_id, assignee_id, domain_id, client_id, year, unit_id, session_user
     )
     
@@ -356,13 +371,13 @@ def process_assigneewise_compliances_drilldown(
 def check_contract_expiration(
     db, request, session_user, client_id
 ):
-    no_of_days_left = db.get_no_of_days_left_for_contract_expiration()
+    no_of_days_left = get_no_of_days_left_for_contract_expiration(db)
     if no_of_days_left < 0:
         no_of_days_left = 0
-    notification_count, reminder_count, escalation_count = db.get_dashboard_notification_counts(
+    notification_count, reminder_count, escalation_count = get_dashboard_notification_counts(db, 
         session_user
     )
-    show_popup, notification_text = db.need_to_display_deletion_popup()
+    show_popup, notification_text = need_to_display_deletion_popup(db)
     return dashboard.CheckContractExpirationSuccesss(
         no_of_days_left=no_of_days_left,
         notification_count=notification_count,

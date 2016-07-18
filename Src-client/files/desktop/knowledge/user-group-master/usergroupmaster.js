@@ -204,95 +204,103 @@ $("#btnUserGroupSubmit").click(function(){
 	// var tempcategoryidVal = $("#tempcatgid").val().trim();
 	var chkArray = [];
 	var chkArrayInt = [];
-	if(groupNameVal == ''){
-		displayMessage(message.group_required);
-	}
-	else if(categoryNameVal == ''){
-		displayMessage(message.catgname_required);
-	}
-	else if(categoryNameVal.length > 50){
-		displayMessage(message.category_max50);
-	}
-	// else if(tempcategoryidVal != categoryNameVal){
-	// 	displayMessage(message.category_invalid);
-	// }
-	else if(groupIdVal == ''){
-		$(".checkedFormId:checked").each(function() {
-			chkArray.push($(this).val());
-		});
-		if(chkArray.length == 0){
-			displayMessage(message.add_one_form);
+
+
+	var checkLength = userGroupValidate();
+
+    if(checkLength){
+    	if(groupNameVal == ''){
+			displayMessage(message.group_required);
 		}
-		else{
+		else if(categoryNameVal == ''){
+			displayMessage(message.catgname_required);
+		}
+		else if(categoryNameVal.length > 50){
+			displayMessage(message.category_max50);
+		}
+		// else if(tempcategoryidVal != categoryNameVal){
+		// 	displayMessage(message.category_invalid);
+		// }
+		else if(groupIdVal == ''){
+			$(".checkedFormId:checked").each(function() {
+				chkArray.push($(this).val());
+			});
+			if(chkArray.length == 0){
+				displayMessage(message.add_one_form);
+			}
+			else{
+				clearMessage();
+				chkArrayInt = chkArray.map(function(item) {
+				    return parseInt(item, 10);
+				});
+				function onSuccess(response){
+					$("#userGroupAdd").hide();
+				  	$("#userGroupView").show();
+					initialize();
+				}
+				function onFailure(error){
+					if(error == "GroupNameAlreadyExists"){
+						displayMessage(message.groupname_exists);
+					}
+				}
+
+				var userGroupInsertDetails = mirror.getSaveAdminUserGroupDict(groupNameVal, parseInt(categoryNameVal), chkArrayInt);
+
+				mirror.saveAdminUserGroup(userGroupInsertDetails,
+				   function (error, response) {
+		                if (error == null){
+		                  onSuccess(response);
+		                }
+		                else {
+		                  onFailure(error);
+		                }
+		            }
+		        );
+			}
+		}
+		else if(groupIdVal != ''){
 			clearMessage();
-			chkArrayInt = chkArray.map(function(item) {
-			    return parseInt(item, 10);
+			$(".checkedFormId:checked").each(function() {
+				chkArray.push($(this).val());
 			});
-			function onSuccess(response){
-				$("#userGroupAdd").hide();
-			  	$("#userGroupView").show();
-				initialize();
+			if(chkArray.length == 0){
+				displayMessage(message.add_one_form);
 			}
-			function onFailure(error){
-				if(error == "GroupNameAlreadyExists"){
-					displayMessage(message.groupname_exists);
+			else{
+			// $(".checkedFormId:checked").each(function() {
+			// 	chkArray.push($(this).val());
+			// });
+			// /* join array separated by comma*/
+				chkArrayInt = chkArray.map(function(item) {
+				    return parseInt(item, 10);
+				});
+				function onSuccess(status){
+					$("#userGroupAdd").hide();
+			  		$("#userGroupView").show();
+					initialize();
 				}
-			}
-
-			var userGroupInsertDetails = mirror.getSaveAdminUserGroupDict(groupNameVal, parseInt(categoryNameVal), chkArrayInt);
-
-			mirror.saveAdminUserGroup(userGroupInsertDetails,
-			   function (error, response) {
-	                if (error == null){
-	                  onSuccess(response);
-	                }
-	                else {
-	                  onFailure(error);
-	                }
-	            }
-	        );
-		}
-	}
-	else if(groupIdVal != ''){
-		clearMessage();
-		$(".checkedFormId:checked").each(function() {
-			chkArray.push($(this).val());
-		});
-		if(chkArray.length == 0){
-			displayMessage(message.add_one_form);
-		}
-		else{
-		// $(".checkedFormId:checked").each(function() {
-		// 	chkArray.push($(this).val());
-		// });
-		// /* join array separated by comma*/
-			chkArrayInt = chkArray.map(function(item) {
-			    return parseInt(item, 10);
-			});
-			function onSuccess(status){
-				$("#userGroupAdd").hide();
-		  		$("#userGroupView").show();
-				initialize();
-			}
-			function onFailure(error){
-				if(error == "GroupNameAlreadyExists"){
-					displayMessage(message.groupname_exists);
+				function onFailure(error){
+					if(error == "GroupNameAlreadyExists"){
+						displayMessage(message.groupname_exists);
+					}
 				}
-			}
-			var userGroupInsertDetails = mirror.getUpdateAdminUserGroupDict(parseInt(groupIdVal), groupNameVal,
-				parseInt(categoryNameVal), chkArrayInt);
-	       	mirror.updateAdminUserGroup(userGroupInsertDetails,
-			    function (error, response) {
-	                if (error == null){
-	                  onSuccess(response);
-	                }
-	                else {
-	                  onFailure(error);
-	                }
-	            }
-	        );
-	    }
-	}
+				var userGroupInsertDetails = mirror.getUpdateAdminUserGroupDict(parseInt(groupIdVal), groupNameVal,
+					parseInt(categoryNameVal), chkArrayInt);
+		       	mirror.updateAdminUserGroup(userGroupInsertDetails,
+				    function (error, response) {
+		                if (error == null){
+		                  onSuccess(response);
+		                }
+		                else {
+		                  onFailure(error);
+		                }
+		            }
+		        );
+		    }
+		}
+
+    }
+
 });
 function userGroupEdit(userGroupId, userGroupName, catgid){
 	clearMessage();

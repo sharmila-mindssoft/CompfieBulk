@@ -12,6 +12,7 @@ from server.database.general import (
     get_user_form_ids,
     get_notifications
 )
+
 __all__ = [
     "process_general_request",
     "validate_user_session", "process_save_domain",

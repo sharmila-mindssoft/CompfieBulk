@@ -187,250 +187,254 @@ function convert_date (data){
 }
 
 $("#btn-clientgroup-submit").click(function(){
-    var dateConfigurations = [];
-    var countryList = $('#country').val();
-    var domainsList = $('#domain').val();
-    if(countryList != '' && domainsList != ''){
-        if(countryList != ''){
-            var arrayCountries = countryList.split(",");
-            if(domainsList != ''){
-                var arrayDomains = domainsList.split(",");
-            }
-            for(var ccount = 0;ccount < arrayCountries.length; ccount++){
-                for(var dcount = 0;dcount < arrayDomains.length; dcount++){
-                    var configuration;
-                    configuration = mirror.getDateConfigurations(
-                        parseInt(arrayCountries[ccount]), parseInt(arrayDomains[dcount]),
-                        parseInt($(".tl-from-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val()),
-                        parseInt($(".tl-to-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val())
-                    );
-                    dateConfigurations.push(configuration);
+    var checkLength = clientMasterValidate();
+    if(checkLength){
+        var dateConfigurations = [];
+        var countryList = $('#country').val();
+        var domainsList = $('#domain').val();
+        if(countryList != '' && domainsList != ''){
+            if(countryList != ''){
+                var arrayCountries = countryList.split(",");
+                if(domainsList != ''){
+                    var arrayDomains = domainsList.split(",");
+                }
+                for(var ccount = 0;ccount < arrayCountries.length; ccount++){
+                    for(var dcount = 0;dcount < arrayDomains.length; dcount++){
+                        var configuration;
+                        configuration = mirror.getDateConfigurations(
+                            parseInt(arrayCountries[ccount]), parseInt(arrayDomains[dcount]),
+                            parseInt($(".tl-from-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val()),
+                            parseInt($(".tl-to-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val())
+                        );
+                        dateConfigurations.push(configuration);
+                    }
                 }
             }
         }
-    }
-    var clientGroupIdVal = $("#clientgroup-id").val();
-    var clientGroupNameVal = $("#clientgroup-name").val().trim();
-    var arrayCountriesVal = $("#country").val().split(",");
-    var arrayCountries = [];
-    for(var i = 0; i < arrayCountriesVal.length; i++){ arrayCountries[i] = parseInt(arrayCountriesVal[i]); }
-    var countriesVal = arrayCountries;
-    var arrayDomainsVal = $("#domain").val().split(",");
-    var arrayDomains = [];
-    for(var j = 0; j < arrayDomainsVal.length; j++){ arrayDomains[j] = parseInt(arrayDomainsVal[j]); }
-    var domainsVal = arrayDomains;
-    var contractFromVal = $("#contract-from").val().trim();
-    var contractToVal = $("#contract-to").val().trim();
-    var usernameVal = $("#username").val().trim();
-    var uploadLogoVal = $("#upload-logo").val().trim();
-    var licenceVal =$("#no-of-user-licence").val().trim();
-    var fileSpaceVal = $("#file-space").val().trim();
-    var inchargePersonVal = $("#users").val().trim();
-    //var subscribeSmsVal = $("#subscribe-sms").val();
-    if ($('#subscribe-sms').is(":checked")){
-        var subscribeSmsVal = true;
-    }
-    else{
-        var subscribeSmsVal = false;
-    }
-    var shortname = $("#short-name").val().trim();
-
-    var d = new Date();
-    var month = d.getMonth()+1;
-    var day = d.getDate();
-    var output = d.getFullYear() + '/' + month + '/' + day;
-    var currentDate = new Date(output);
-    var convertDate = null;
-
-    if(contractToVal != ''){
-      convertDate = convert_date(contractToVal);
-    }
-
-    if(clientGroupNameVal == ''){
-        displayMessage(message.group_required);
-    }
-    else if(clientGroupNameVal.length > 50){
-        displayMessage(message.group_50);
-    }
-    else if(countryList == ''){
-        displayMessage(message.country_required);
-    }
-    else if(domainsList == ''){
-        displayMessage(message.domain_required);
-    }
-    else if(contractFromVal == ''){
-        displayMessage(message.contractfrom_required);
-    }
-    else if(contractToVal == ''){
-        displayMessage(message.contractto_required);
-    }
-    else if (convertDate != null && convertDate < currentDate) {
-        displayMessage(message.invalid_contractto);
-    }
-    else if(usernameVal == '' && clientGroupIdVal == ''){
-        displayMessage(message.username_required);
-    }
-    else if(validateEmail(usernameVal) == ''){
-        displayMessage(message.username_invalid);
-    }
-    else if(licenceVal == ''){
-        displayMessage(message.licence_required);
-    }
-    else if(licenceVal == "0" || licenceVal == "1"){
-        displayMessage(message.licence_invalid);
-    }
-    else if(isNaN(licenceVal)){
-        displayMessage(message.licence_invalid);
-    }
-    else if(licenceVal.length > 3){
-        displayMessage(message.licence_max3);
-    }
-    else if(fileSpaceVal == ''){
-        displayMessage(message.filespace_required);
-    }
-    else if(fileSpaceVal == '0'){
-        displayMessage(message.filespace_invalid);
-    }
-    else if(!$.isNumeric(fileSpaceVal)){
-        displayMessage(message.filespace_invalid);
-    }
-    else if(fileSpaceVal.length > 3){
-        displayMessage(message.filespace_max3);
-    }
-    else if(inchargePersonVal == ''){
-        displayMessage(message.inchargeperson_required);
-    }
-    else if(shortname == ''){
-        displayMessage(message.shortname_required);
-        gototop();
-    }
-    else if(dataconfigurationvalidate() == 1){
-        displayMessage(message.dateconfig_required);
-    }
-    else if(clientGroupIdVal == ''){
-        var arrayinchargePersonVal = inchargePersonVal.split(",");
-        var arrayinchargePerson = [];
-        for(var k = 0; k < arrayinchargePersonVal.length; k++) { arrayinchargePerson[k] = parseInt(arrayinchargePersonVal[k]); }
-        inchargePersonVal = arrayinchargePerson;
-        if($("#upload-logo").val() == ''){
-            displayMessage(message.logo_required);
-            return false;
+        var clientGroupIdVal = $("#clientgroup-id").val();
+        var clientGroupNameVal = $("#clientgroup-name").val().trim();
+        var arrayCountriesVal = $("#country").val().split(",");
+        var arrayCountries = [];
+        for(var i = 0; i < arrayCountriesVal.length; i++){ arrayCountries[i] = parseInt(arrayCountriesVal[i]); }
+        var countriesVal = arrayCountries;
+        var arrayDomainsVal = $("#domain").val().split(",");
+        var arrayDomains = [];
+        for(var j = 0; j < arrayDomainsVal.length; j++){ arrayDomains[j] = parseInt(arrayDomainsVal[j]); }
+        var domainsVal = arrayDomains;
+        var contractFromVal = $("#contract-from").val().trim();
+        var contractToVal = $("#contract-to").val().trim();
+        var usernameVal = $("#username").val().trim();
+        var uploadLogoVal = $("#upload-logo").val().trim();
+        var licenceVal =$("#no-of-user-licence").val().trim();
+        var fileSpaceVal = $("#file-space").val().trim();
+        var inchargePersonVal = $("#users").val().trim();
+        //var subscribeSmsVal = $("#subscribe-sms").val();
+        if ($('#subscribe-sms').is(":checked")){
+            var subscribeSmsVal = true;
         }
-        var ext = $('#upload-logo').val().split('.').pop().toLowerCase();
-        if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
-            displayMessage(message.logo_invalid);
+        else{
+            var subscribeSmsVal = false;
+        }
+        var shortname = $("#short-name").val().trim();
+
+        var d = new Date();
+        var month = d.getMonth()+1;
+        var day = d.getDate();
+        var output = d.getFullYear() + '/' + month + '/' + day;
+        var currentDate = new Date(output);
+        var convertDate = null;
+
+        if(contractToVal != ''){
+          convertDate = convert_date(contractToVal);
         }
 
-        function onSuccess(data){
-            hideLoader();
-            $("#clientgroup-add").hide();
-            $("#clientgroup-view").show();
-            initialize();
+        if(clientGroupNameVal == ''){
+            displayMessage(message.group_required);
         }
-        function onFailure(error){
-            hideLoader();
-            if(error == 'GroupNameAlreadyExists'){
-                displayMessage(message.groupname_exists);
-            }
-            else if(error == 'UsernameAlreadyExists'){
-                displayMessage(message.username_exists);
-            }
-            else if(error == 'ClientCreationFailed'){
-                displayMessage(message.client_creation_failed);
-            }
-            else if(error == "NotAnImageFile"){
-                displayMessage(message.logo_invalid);
-            }
-            else if(error == "ServerIsFull"){
-                displayMessage(message.server_full);
-            }
-            else{
-                displayMessage(error);
-            }
-
+        else if(clientGroupNameVal.length > 50){
+            displayMessage(message.group_50);
         }
-
-        var clientGroupDetails = mirror.getSaveClientGroupDict(
-            clientGroupNameVal, countriesVal, domainsVal, logo_file,
-            contractFromVal, contractToVal, inchargePersonVal,  parseInt(licenceVal),
-            parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal,
-            usernameVal, dateConfigurations, shortname);
-        displayLoader();
-        mirror.saveClientGroup(clientGroupDetails,
-            function (error, response) {
-                if (error == null){
-                    onSuccess(response);
-                }
-                else {
-                    onFailure(error);
-                }
-            }
-        );
-    }
-    else if(clientGroupIdVal!=''){
-        var arrayinchargePersonVal = inchargePersonVal.split(",");
-        var arrayinchargePerson = [];
-        for(var k = 0; k < arrayinchargePersonVal.length; k++) { arrayinchargePerson[k] = parseInt(arrayinchargePersonVal[k]); }
-        inchargePersonVal = arrayinchargePerson;
-        if($("#upload-logo").val() == ''){
-            logo_file = null;
+        else if(countryList == ''){
+            displayMessage(message.country_required);
         }
-        if($("#upload-logo").val() != ''){
+        else if(domainsList == ''){
+            displayMessage(message.domain_required);
+        }
+        else if(contractFromVal == ''){
+            displayMessage(message.contractfrom_required);
+        }
+        else if(contractToVal == ''){
+            displayMessage(message.contractto_required);
+        }
+        else if (convertDate != null && convertDate < currentDate) {
+            displayMessage(message.invalid_contractto);
+        }
+        else if(usernameVal == '' && clientGroupIdVal == ''){
+            displayMessage(message.username_required);
+        }
+        else if(validateEmail(usernameVal) == ''){
+            displayMessage(message.username_invalid);
+        }
+        else if(licenceVal == ''){
+            displayMessage(message.licence_required);
+        }
+        else if(licenceVal == "0" || licenceVal == "1"){
+            displayMessage(message.licence_invalid);
+        }
+        else if(isNaN(licenceVal)){
+            displayMessage(message.licence_invalid);
+        }
+        else if(licenceVal.length > 3){
+            displayMessage(message.licence_max3);
+        }
+        else if(fileSpaceVal == ''){
+            displayMessage(message.filespace_required);
+        }
+        else if(fileSpaceVal == '0'){
+            displayMessage(message.filespace_invalid);
+        }
+        else if(!$.isNumeric(fileSpaceVal)){
+            displayMessage(message.filespace_invalid);
+        }
+        else if(fileSpaceVal.length > 3){
+            displayMessage(message.filespace_max3);
+        }
+        else if(inchargePersonVal == ''){
+            displayMessage(message.inchargeperson_required);
+        }
+        else if(shortname == ''){
+            displayMessage(message.shortname_required);
+            gototop();
+        }
+        else if(dataconfigurationvalidate() == 1){
+            displayMessage(message.dateconfig_required);
+        }
+        else if(clientGroupIdVal == ''){
+            var arrayinchargePersonVal = inchargePersonVal.split(",");
+            var arrayinchargePerson = [];
+            for(var k = 0; k < arrayinchargePersonVal.length; k++) { arrayinchargePerson[k] = parseInt(arrayinchargePersonVal[k]); }
+            inchargePersonVal = arrayinchargePerson;
+            if($("#upload-logo").val() == ''){
+                displayMessage(message.logo_required);
+                return false;
+            }
             var ext = $('#upload-logo').val().split('.').pop().toLowerCase();
             if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
                 displayMessage(message.logo_invalid);
-                return false;
             }
-        }
-        function onUpdateSuccess(data){
-            $("#clientgroup-add").hide();
-            $("#clientgroup-view").show();
-            initialize();
-        }
-        function onUpdateFailure(error){
-            if(error == 'GroupNameAlreadyExists'){
-                displayMessage(message.groupname_exists);
-            }
-            else if(error == 'UsernameAlreadyExists'){
-                displayMessage(message.username_exists);
-            }
-            else if(error == 'CannotDeactivateCountry'){
-                displayMessage(message.cannot_unselect_country);
-            }
-            else if(error == 'CannotDeactivateDomain'){
-                displayMessage(message.cannot_unselect_domain);
-            }
-            else if(error == 'InvalidNoOfLicence'){
-                displayMessage(message.invalid_no_of_licence);
-            }
-            else if(error == 'InvalidFileSpace'){
-                displayMessage(message.invalid_file_space);
-            }
-            else if(error == 'ServerIsFull'){
-                displayMessage(message.server_full);
-            }
-            else{
-                displayMessage(error);
-            }
-        }
-        var clientGroupDetails = mirror.getUpdateClientGroupDict(
-            parseInt(clientGroupIdVal), clientGroupNameVal, countriesVal, domainsVal, logo_file,
-            contractFromVal, contractToVal,inchargePersonVal, parseInt(licenceVal),
-            parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal, dateConfigurations);
 
-        mirror.updateClientGroup( clientGroupDetails,
-            function (error, response) {
-                if (error == null){
-                    onUpdateSuccess(response);
+            function onSuccess(data){
+                hideLoader();
+                $("#clientgroup-add").hide();
+                $("#clientgroup-view").show();
+                initialize();
+            }
+            function onFailure(error){
+                hideLoader();
+                if(error == 'GroupNameAlreadyExists'){
+                    displayMessage(message.groupname_exists);
                 }
-                else {
-                    onUpdateFailure(error);
+                else if(error == 'UsernameAlreadyExists'){
+                    displayMessage(message.username_exists);
+                }
+                else if(error == 'ClientCreationFailed'){
+                    displayMessage(message.client_creation_failed);
+                }
+                else if(error == "NotAnImageFile"){
+                    displayMessage(message.logo_invalid);
+                }
+                else if(error == "ServerIsFull"){
+                    displayMessage(message.server_full);
+                }
+                else{
+                    displayMessage(error);
+                }
+
+            }
+
+            var clientGroupDetails = mirror.getSaveClientGroupDict(
+                clientGroupNameVal, countriesVal, domainsVal, logo_file,
+                contractFromVal, contractToVal, inchargePersonVal,  parseInt(licenceVal),
+                parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal,
+                usernameVal, dateConfigurations, shortname);
+            displayLoader();
+            mirror.saveClientGroup(clientGroupDetails,
+                function (error, response) {
+                    if (error == null){
+                        onSuccess(response);
+                    }
+                    else {
+                        onFailure(error);
+                    }
+                }
+            );
+        }
+        else if(clientGroupIdVal!=''){
+            var arrayinchargePersonVal = inchargePersonVal.split(",");
+            var arrayinchargePerson = [];
+            for(var k = 0; k < arrayinchargePersonVal.length; k++) { arrayinchargePerson[k] = parseInt(arrayinchargePersonVal[k]); }
+            inchargePersonVal = arrayinchargePerson;
+            if($("#upload-logo").val() == ''){
+                logo_file = null;
+            }
+            if($("#upload-logo").val() != ''){
+                var ext = $('#upload-logo').val().split('.').pop().toLowerCase();
+                if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+                    displayMessage(message.logo_invalid);
+                    return false;
                 }
             }
-        );
-    }
-    else{
-        console.log("all fails");
+            function onUpdateSuccess(data){
+                $("#clientgroup-add").hide();
+                $("#clientgroup-view").show();
+                initialize();
+            }
+            function onUpdateFailure(error){
+                if(error == 'GroupNameAlreadyExists'){
+                    displayMessage(message.groupname_exists);
+                }
+                else if(error == 'UsernameAlreadyExists'){
+                    displayMessage(message.username_exists);
+                }
+                else if(error == 'CannotDeactivateCountry'){
+                    displayMessage(message.cannot_unselect_country);
+                }
+                else if(error == 'CannotDeactivateDomain'){
+                    displayMessage(message.cannot_unselect_domain);
+                }
+                else if(error == 'InvalidNoOfLicence'){
+                    displayMessage(message.invalid_no_of_licence);
+                }
+                else if(error == 'InvalidFileSpace'){
+                    displayMessage(message.invalid_file_space);
+                }
+                else if(error == 'ServerIsFull'){
+                    displayMessage(message.server_full);
+                }
+                else{
+                    displayMessage(error);
+                }
+            }
+            var clientGroupDetails = mirror.getUpdateClientGroupDict(
+                parseInt(clientGroupIdVal), clientGroupNameVal, countriesVal, domainsVal, logo_file,
+                contractFromVal, contractToVal,inchargePersonVal, parseInt(licenceVal),
+                parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal, dateConfigurations);
+
+            mirror.updateClientGroup( clientGroupDetails,
+                function (error, response) {
+                    if (error == null){
+                        onUpdateSuccess(response);
+                    }
+                    else {
+                        onUpdateFailure(error);
+                    }
+                }
+            );
+        }
+        else{
+            console.log("all fails");
+        }
+
     }
 });
 function validateEmail($email) {

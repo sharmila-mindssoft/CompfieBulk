@@ -81,6 +81,14 @@ function initClientMirror() {
         });
     }
 
+    function getEmployeeName(){
+        var info = getUserInfo();
+        if (info !== null)
+            return info["employee_name"];
+        else
+            return null;
+    }
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -1761,6 +1769,7 @@ function initClientMirror() {
         getClientShortName: getClientShortName,
         redirect_login : redirect_login,
 
+        getEmployeeName: getEmployeeName,
         getUserInfo: getUserInfo,
         getUserProfile: getUserProfile,
         getSessionToken: getSessionToken,

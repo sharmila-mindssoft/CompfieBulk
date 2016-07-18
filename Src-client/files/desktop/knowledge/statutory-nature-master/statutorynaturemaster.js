@@ -75,57 +75,61 @@ $("#btn-statutory-nature-submit").click(function(){
     clearMessage();
     var statutoryNatureIdVal = $("#statutory-nature-id").val();
     var statutoryNatureNameVal = $("#statutory-nature-name").val().trim();
-    if(statutoryNatureNameVal == ""){
-        displayMessage(message.statutorynature_required);
-    }
     
-    else if(statutoryNatureIdVal == ''){
-        function onSuccess(data){
-            $("#statutory-nature-add").hide();
-            $("#statutory-nature-view").show();
-            $("#search-statutory-nature-name").val('');
-            initialize();
+    var checkLength = statutoryNatureValidate();
+    if(checkLength){
+        if(statutoryNatureNameVal == ""){
+            displayMessage(message.statutorynature_required);
         }
-        function onFailure(error){
-            if(error == 'StatutoryNatureNameAlreadyExists'){
-                displayMessage(message.statutoryname_exists);
+        else if(statutoryNatureIdVal == ''){
+            function onSuccess(data){
+                $("#statutory-nature-add").hide();
+                $("#statutory-nature-view").show();
+                $("#search-statutory-nature-name").val('');
+                initialize();
             }
-        }
-        mirror.saveStatutoryNature(statutoryNatureNameVal, function (error, response){
-            if(error == null){
-                onSuccess(response);
+            function onFailure(error){
+                if(error == 'StatutoryNatureNameAlreadyExists'){
+                    displayMessage(message.statutoryname_exists);
+                }
             }
-            else{
-                onFailure(error);
-            }
-        });
-    }
-    else{
-        function onSuccess(data){
-            $("#statutory-nature-add").hide();
-            $("#statutory-nature-view").show();
-            $("#search-statutory-nature-name").val('');
-            initialize();
-            clearMessage();
-        }
-        function onFailure(error){
-            if(error == 'InvalidStatutoryNatureId'){
-                displayMessage(message.stat_nature_invalid);
-            }
-            if(error == 'StatutoryNatureNameAlreadyExists'){
-                displayMessage(message.statutoryname_exists);
-            }
-        }
-        mirror.updateStatutoryNature(parseInt(statutoryNatureIdVal), statutoryNatureNameVal,
-            function(error, response){
+            mirror.saveStatutoryNature(statutoryNatureNameVal, function (error, response){
                 if(error == null){
                     onSuccess(response);
                 }
                 else{
                     onFailure(error);
                 }
+            });
+        }
+        else{
+            function onSuccess(data){
+                $("#statutory-nature-add").hide();
+                $("#statutory-nature-view").show();
+                $("#search-statutory-nature-name").val('');
+                initialize();
+                clearMessage();
             }
-        );
+            function onFailure(error){
+                if(error == 'InvalidStatutoryNatureId'){
+                    displayMessage(message.stat_nature_invalid);
+                }
+                if(error == 'StatutoryNatureNameAlreadyExists'){
+                    displayMessage(message.statutoryname_exists);
+                }
+            }
+            mirror.updateStatutoryNature(parseInt(statutoryNatureIdVal), statutoryNatureNameVal,
+                function(error, response){
+                    if(error == null){
+                        onSuccess(response);
+                    }
+                    else{
+                        onFailure(error);
+                    }
+                }
+            );
+        }
+
     }
 });
 function statNature_edit(statNatureId, statNatureName){

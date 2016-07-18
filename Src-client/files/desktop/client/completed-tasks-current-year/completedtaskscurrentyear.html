@@ -1,7 +1,7 @@
 {% extends "files/desktop/client/home/container.html" %}
 {% block content %}
 <div class='loading-indicator-spin'>
-  <span><img src='/files/desktop/common/images/loading-img.gif' alt=""></span>
+  <span><img src='/images/loading-img.gif' alt=""></span>
 </div>
   <div class="content-container width100" >
     <div class="content-area">
@@ -80,10 +80,10 @@
           </div>
           <table width="100%">
             <tr>
-              <td width="50%" valign="middle">
+              <td width="75%" valign="middle">
                 <span class="error-message" style="text-align:left;float:left;color:red;font-size: 0.8em;margin:10px;"></span>
               </td>
-              <td align="right" width="50%">
+              <td align="right" width="25%">
                 <button id="activate-step-2" class="btn-right">Next</button>
               </td>
             </tr>
@@ -135,11 +135,11 @@
 
           <table width="100%">
             <tr>
-              <td width="50%" valign="middle">
-                <span class="error-message" style="float:left;color:red;font-size: 0.8em;margin:10px;"></span>
+              <td width="75%" valign="middle">
+                <span class="error-message" style="text-align:left;float:left;color:red;font-size: 0.8em;margin:10px;"></span>
               </td>
               
-              <td align="right" width="50%">
+              <td align="right" width="25%">
                 <button id="activate-step-3" class="btn-right">Next</button>
                 <button id="backward-step-1" class="btn-right">Previous</button>
               </td>
@@ -180,11 +180,11 @@
 
           <table width="100%">
             <tr>
-              <td width="50%" valign="middle">
-                <span class="error-message" style="float:left;color:red;font-size: 0.8em;margin:10px;"></span>
+              <td width="75%" valign="middle">
+                <span class="error-message" style="text-align:left;float:left;color:red;font-size: 0.8em;margin:10px;"></span>
               </td>
               
-              <td align="right" width="50%">
+              <td align="right" width="25%">
                 <button id="activate-step-finish" class="btn-right">Submit</button>
                 <button id="backward-step-2" class="btn-right">Previous</button>
               </td>
@@ -231,6 +231,6 @@
 </table>
 </div>
 
-<script type="text/javascript" src="/files/desktop/client/completed-tasks-current-year/completedtaskscurrentyear.js"></script>
+<script type="text/javascript" src="/script/completed-tasks-current-year/completedtaskscurrentyear.js"></script>
 
 {% endblock %}

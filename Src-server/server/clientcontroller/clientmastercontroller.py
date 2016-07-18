@@ -3,6 +3,15 @@ from protocol import (clientmasters, core, login)
 from server.controller.corecontroller import process_user_menus
 from server.constants import RECORD_DISPLAY_COUNT
 from server import logger
+from server.clientdatabase.clientmaster import *
+from server.clientdatabase.general import (
+    get_domains_for_user,
+    get_countries_for_user, get_countries, get_domains
+    get_business_groups_for_user, get_legal_entities_for_user,
+    get_divisions_for_user, get_units_for_user, have_compliances,
+    is_seating_unit
+
+    )
 __all__ = [
     "process_client_master_requests"
 ]
@@ -23,28 +32,28 @@ def process_client_master_requests(request, db) :
     if type(request) is clientmasters.GetServiceProviders:
         logger.logClientApi("GetServiceProviders - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = get_service_providers(db, request, session_user, client_id)
+        result = process_get_service_providers(db, request, session_user, client_id)
         logger.logClientApi("GetServiceProviders", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.SaveServiceProvider:
         logger.logClientApi("SaveServiceProvider - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = save_service_provider(db, request, session_user, client_id)
+        result = process_save_service_provider(db, request, session_user, client_id)
         logger.logClientApi("SaveServiceProvider", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.UpdateServiceProvider:
         logger.logClientApi("UpdateServiceProvider - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = update_service_provider(db, request, session_user, client_id)
+        result = process_update_service_provider(db, request, session_user, client_id)
         logger.logClientApi("UpdateServiceProvider", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.ChangeServiceProviderStatus:
         logger.logClientApi("ChangeServiceProviderStatus - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = change_service_provider_status(
+        result = process_change_service_provider_status(
             db, request, session_user, client_id
         )
         logger.logClientApi("ChangeServiceProviderStatus", "process end")
@@ -53,28 +62,28 @@ def process_client_master_requests(request, db) :
     elif type(request) is clientmasters.GetUserPrivileges:
         logger.logClientApi("GetUserPrivileges - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = get_user_privileges(db, request, session_user, client_id)
+        result = process_get_user_privileges(db, request, session_user, client_id)
         logger.logClientApi("GetUserPrivileges", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.SaveUserPrivileges:
         logger.logClientApi("SaveUserPrivileges - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = save_user_privileges(db, request, session_user, client_id)
+        result = process_save_user_privileges(db, request, session_user, client_id)
         logger.logClientApi("SaveUserPrivileges", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.UpdateUserPrivileges:
         logger.logClientApi("UpdateUserPrivileges - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = update_user_privileges(db, request, session_user, client_id)
+        result = process_update_user_privileges(db, request, session_user, client_id)
         logger.logClientApi("UpdateUserPrivileges", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.ChangeUserPrivilegeStatus:
         logger.logClientApi("ChangeUserPrivilegeStatus - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = change_user_privilege_status(
+        result = process_change_user_privilege_status(
             db, request, session_user, client_id
         )
         logger.logClientApi("ChangeUserPrivilegeStatus", "process end")
@@ -83,56 +92,56 @@ def process_client_master_requests(request, db) :
     elif type(request) is clientmasters.GetClientUsers:
         logger.logClientApi("GetClientUsers - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = get_client_users(db, request, session_user, client_id)
+        result = process_get_client_users(db, request, session_user, client_id)
         logger.logClientApi("GetClientUsers", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.SaveClientUser:
         logger.logClientApi("SaveClientUser - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = save_client_user(db, request, session_user, client_id)
+        result = process_save_client_user(db, request, session_user, client_id)
         logger.logClientApi("SaveClientUser", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.UpdateClientUser:
         logger.logClientApi("UpdateClientUser - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = update_client_user(db, request, session_user, client_id)
+        result = process_update_client_user(db, request, session_user, client_id)
         logger.logClientApi("UpdateClientUser", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.ChangeClientUserStatus:
         logger.logClientApi("ChangeClientUserStatus - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = change_client_user_status(db, request, session_user, client_id)
+        result = process_change_client_user_status(db, request, session_user, client_id)
         logger.logClientApi("ChangeClientUserStatus", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.ChangeAdminStatus:
         logger.logClientApi("ChangeAdminStatus - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = change_admin_status(db, request, session_user, client_id)
+        result = process_change_admin_status(db, request, session_user, client_id)
         logger.logClientApi("ChangeAdminStatus", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.GetUnits:
         logger.logClientApi("GetUnits - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = get_units(db, request, session_user, client_id)
+        result = process_get_units(db, request, session_user, client_id)
         logger.logClientApi("GetUnits", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.CloseUnit:
         logger.logClientApi("CloseUnit - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = close_unit(db, request, session_user, client_id)
+        result = process_close_unit(db, request, session_user, client_id)
         logger.logClientApi("CloseUnit", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.GetAuditTrails:
         logger.logClientApi("GetAuditTrails - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = get_audit_trails(db, request, session_user, client_id)
+        result = process_get_audit_trails(db, request, session_user, client_id)
         logger.logClientApi("GetAuditTrails", "process end")
         logger.logClientApi("------", str(time.time()))
 
@@ -141,22 +150,22 @@ def process_client_master_requests(request, db) :
 ########################################################
 # To get the list of all service providers
 ########################################################
-def get_service_providers(db, request, session_user, client_id):
-    service_provider_list = db.get_service_provider_details_list(client_id)
+def process_get_service_providers(db, request, session_user, client_id):
+    service_provider_list = get_service_provider_details_list(db, client_id)
     return clientmasters.GetServiceProvidersSuccess(
         service_providers=service_provider_list)
 
 ########################################################
 # To validate and Save service provider
 ########################################################
-def save_service_provider(db, request, session_user, client_id):
-    service_provider_id = db.generate_new_service_provider_id(client_id)
-    if db.is_duplicate_service_provider(
+def process_save_service_provider(db, request, session_user, client_id):
+    service_provider_id = generate_new_service_provider_id(db, client_id)
+    if is_duplicate_service_provider(db,
         service_provider_id,
         request.service_provider_name, client_id
     ) :
         return clientmasters.ServiceProviderNameAlreadyExists()
-    elif db.save_service_provider(
+    elif save_service_provider(db, 
         service_provider_id, request, session_user, client_id
     ) :
         return clientmasters.SaveServiceProviderSuccess()
@@ -165,39 +174,39 @@ def save_service_provider(db, request, session_user, client_id):
 ########################################################
 # To validate and Update service provider
 ########################################################
-def update_service_provider(db, request, session_user, client_id):
+def process_update_service_provider(db, request, session_user, client_id):
     if db.is_invalid_id(
-        db.tblServiceProviders,
+        tblServiceProviders,
         "service_provider_id",
         request.service_provider_id, client_id
     ):
         return clientmasters.InvalidServiceProviderId()
-    elif db.is_duplicate_service_provider(
+    elif is_duplicate_service_provider(db, 
         request.service_provider_id,
         request.service_provider_name, client_id
     ) :
         return clientmasters.ServiceProviderNameAlreadyExists()
-    elif db.update_service_provider(request, session_user, client_id) :
+    elif update_service_provider(db, request, session_user, client_id) :
         return clientmasters.UpdateServiceProviderSuccess()
 
 ########################################################
 # To validate and change the status of service provider
 ########################################################
-def change_service_provider_status(db, request, session_user, client_id):
+def process_change_service_provider_status(db, request, session_user, client_id):
     is_active = 0 if request.is_active is False else 1
     if db.is_invalid_id(
-        db.tblServiceProviders,
+        tblServiceProviders,
         "service_provider_id",
         request.service_provider_id, client_id
     ):
         return clientmasters.InvalidServiceProviderId()
-    elif not db.is_service_provider_in_contract(request.service_provider_id):
+    elif not is_service_provider_in_contract(db, request.service_provider_id):
         return clientmasters.CannotChangeStatusOfContractExpiredSP()
-    elif db.is_user_exists_under_service_provider(
+    elif is_user_exists_under_service_provider(db, 
         request.service_provider_id
     ):
         return clientmasters.CannotDeactivateUserExists()
-    elif db.update_service_provider_status(
+    elif update_service_provider_status(db, 
         request.service_provider_id,
         is_active, session_user, client_id
     ):
@@ -206,8 +215,8 @@ def change_service_provider_status(db, request, session_user, client_id):
 ########################################################
 # To get all client forms to load in User privilege form
 ########################################################
-def get_forms(db, client_id) :
-    result_rows = db.get_forms(client_id)
+def process_get_forms(db, client_id) :
+    result_rows = get_forms(db, client_id)
     forms = []
     for row in result_rows:
         parent_menu = None if row[6] == None else row[6]
@@ -224,9 +233,9 @@ def get_forms(db, client_id) :
 ########################################################
 # To get all user groups with details
 ########################################################
-def get_user_privilege_details_list(db, client_id):
+def process_get_user_privilege_details_list(db, client_id):
     user_group_list = []
-    rows = db.get_user_privilege_details_list(client_id)
+    rows = get_user_privilege_details_list(db, client_id)
     for row in rows:
         user_group_id = int(row[0])
         user_group_name = row[1]
@@ -243,9 +252,9 @@ def get_user_privilege_details_list(db, client_id):
 ########################################################
 # To get all user groups list
 ########################################################
-def get_user_privileges(db, request, session_user, client_id):
-    forms = get_forms(db, client_id)
-    user_group_list = get_user_privilege_details_list(db, client_id)
+def process_get_user_privileges(db, request, session_user, client_id):
+    forms = process_get_forms(db, client_id)
+    user_group_list = process_get_user_privilege_details_list(db, client_id)
     return clientmasters.GetUserPrivilegesSuccess(
         forms=forms,
         user_groups=user_group_list
@@ -254,14 +263,14 @@ def get_user_privileges(db, request, session_user, client_id):
 ########################################################
 # To save User privileges
 ########################################################
-def save_user_privileges(db, request, session_user, client_id):
-    user_group_id = db.generate_new_user_privilege_id(client_id)
-    if db.is_duplicate_user_privilege(
+def process_save_user_privileges(db, request, session_user, client_id):
+    user_group_id = generate_new_user_privilege_id(db, client_id)
+    if is_duplicate_user_privilege(db, 
         user_group_id,
         request.user_group_name, client_id
     ) :
         return clientmasters.UserGroupNameAlreadyExists()
-    elif db.save_user_privilege(
+    elif save_user_privilege(db, 
         user_group_id, request, session_user, client_id
     ) :
         return clientmasters.SaveUserPrivilegesSuccess()
@@ -269,34 +278,34 @@ def save_user_privileges(db, request, session_user, client_id):
 ########################################################
 # To update user privileges
 ########################################################
-def update_user_privileges(db, request, session_user, client_id):
+def process_update_user_privileges(db, request, session_user, client_id):
     if db.is_invalid_id(
-        db.tblUserGroups, "user_group_id",
+        tblUserGroups, "user_group_id",
         request.user_group_id, client_id
     ):
         return clientmasters.InvalidUserGroupId()
-    elif db.is_duplicate_user_privilege(
+    elif is_duplicate_user_privilege(db, 
         request.user_group_id,
         request.user_group_name, client_id
     ) :
         return clientmasters.UserGroupNameAlreadyExists()
-    elif db.update_user_privilege(request, session_user, client_id) :
+    elif update_user_privilege(db, request, session_user, client_id) :
         return clientmasters.UpdateUserPrivilegesSuccess()
 
 ########################################################
 # To change the status of user privilege
 ########################################################
-def change_user_privilege_status(db, request, session_user, client_id):
+def process_change_user_privilege_status(db, request, session_user, client_id):
     if db.is_invalid_id(
-        db.tblUserGroups, "user_group_id",
+        tblUserGroups, "user_group_id",
         request.user_group_id, client_id
     ):
         return clientmasters.InvalidUserGroupId()
-    elif db.is_user_exists_under_user_group(
+    elif is_user_exists_under_user_group(db, 
         request.user_group_id
     ):
         return clientmasters.CannotDeactivateUserExists()
-    elif db.update_user_privilege_status(
+    elif update_user_privilege_status(db, 
         request.user_group_id, request.is_active,
         session_user, client_id
     ):
@@ -305,34 +314,35 @@ def change_user_privilege_status(db, request, session_user, client_id):
 ########################################################
 # To get the list of all users with details
 ########################################################
-def get_client_users(db, request, session_user, client_id):
-    user_company_info = db.get_user_company_details(
+def process_get_client_users(db, request, session_user, client_id):
+    user_company_info = get_user_company_details(db,
         session_user, client_id
     )
+    #import from general.py
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
     business_group_ids = user_company_info[3]
-    user_country_list = db.get_countries_for_user(session_user, client_id)
-    user_domain_list = db.get_domains_for_user(session_user, client_id)
-    country_list = db.get_countries()
-    domain_list = db.get_domains()
-    business_group_list = db.get_business_groups_for_user(
+    user_country_list = get_countries_for_user(db, session_user, client_id)
+    user_domain_list = get_domains_for_user(db, session_user, client_id)
+    country_list = get_countries(db)
+    domain_list = get_domains(db)
+    business_group_list = get_business_groups_for_user(db, 
         business_group_ids
     )
-    legal_entity_list = db.get_legal_entities_for_user(
+    legal_entity_list = get_legal_entities_for_user(db, 
         legal_entity_ids
     )
-    division_list = db.get_divisions_for_user(
+    division_list = get_divisions_for_user(db,
         division_ids
     )
-    unit_list = db.get_units_for_user(None)
-    session_user_unit_list = db.get_units_for_user(unit_ids)
-    user_group_list = db.get_user_privileges(client_id)
-    user_list = db.get_user_details(client_id, session_user)
-    service_provider_list = db.get_service_providers(client_id)
-    remaining_licence = db.get_no_of_remaining_licence()
-    is_primary_admin = True if session_user == 0 else db.is_primary_admin(session_user)
+    unit_list = get_units_for_user(db, None)
+    session_user_unit_list = get_units_for_user(db, unit_ids)
+    user_group_list = get_user_privileges(db, client_id)
+    user_list = get_user_details(db, client_id, session_user)
+    service_provider_list = get_service_providers(db, client_id)
+    remaining_licence = get_no_of_remaining_licence(db)
+    is_primary_admin = True if session_user == 0 else is_primary_admin(db, session_user)
     return clientmasters.GetClientUsersSuccess(
         user_countries=user_country_list,
         user_domains=user_domain_list,
@@ -353,7 +363,7 @@ def get_client_users(db, request, session_user, client_id):
 ########################################################
 # To validate and save a user
 ########################################################
-def save_client_user(db, request, session_user, client_id):
+def process_save_client_user(db, request, session_user, client_id):
     user_id = db.generate_new_user_id(client_id)
     if (db.get_no_of_remaining_licence() <= 0):
         return clientmasters.UserLimitExceeds()
@@ -370,28 +380,28 @@ def save_client_user(db, request, session_user, client_id):
 ########################################################
 # To validate and update user
 ########################################################
-def update_client_user(db, request, session_user, client_id):
-    if db.is_invalid_id(db.tblUsers, "user_id", request.user_id, client_id) :
+def process_update_client_user(db, request, session_user, client_id):
+    if db.is_invalid_id(tblUsers, "user_id", request.user_id, client_id) :
         return clientmasters.InvalidUserId()
-    elif db.is_duplicate_employee_code(
+    elif is_duplicate_employee_code(db, 
         request.user_id,
         request.employee_code.replace(" ",""), client_id
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
-    elif db.update_user(request, session_user, client_id) :
+    elif update_user(db, request, session_user, client_id) :
         return clientmasters.UpdateClientUserSuccess()
 
 ########################################################
 # To change the status of a user
 ########################################################
-def change_client_user_status(db, request, session_user, client_id):
-    if db.is_invalid_id(db.tblUsers, "user_id", request.user_id, client_id) :
+def process_change_client_user_status(db, request, session_user, client_id):
+    if db.is_invalid_id(tblUsers, "user_id", request.user_id, client_id) :
         return clientmasters.InvalidUserId()
-    elif db.is_primary_admin(request.user_id):
+    elif is_primary_admin(db, request.user_id):
         return clientmasters.CannotChangePrimaryAdminStatus()
-    elif db.have_compliances(request.user_id) and request.is_active in [False, 0]:
+    elif have_compliances(db, request.user_id) and request.is_active in [False, 0]:
         return clientmasters.ReassignCompliancesBeforeDeactivate()
-    elif db.update_user_status(
+    elif update_user_status(db, 
         request.user_id,
         request.is_active, session_user, client_id
     ):
@@ -400,14 +410,14 @@ def change_client_user_status(db, request, session_user, client_id):
 ########################################################
 # To promote or demote a user from promoted admin status
 ########################################################
-def change_admin_status(db, request, session_user, client_id):
-    if db.is_invalid_id(db.tblUsers, "user_id", request.user_id, client_id) :
+def process_change_admin_status(db, request, session_user, client_id):
+    if db.is_invalid_id(tblUsers, "user_id", request.user_id, client_id) :
         return clientmasters.InvalidUserId()
-    elif db.is_primary_admin(request.user_id):
+    elif is_primary_admin(db, request.user_id):
         return clientmasters.CannotChangePrimaryAdminStatus()
-    elif db.is_service_proivder_user(request.user_id):
+    elif is_service_proivder_user(db, request.user_id):
         return clientmasters.CannotPromoteServiceProvider()
-    elif db.update_admin_status(
+    elif update_admin_status(db, 
         request.user_id,
         request.is_admin, session_user, client_id
     ):
@@ -416,24 +426,25 @@ def change_admin_status(db, request, session_user, client_id):
 ########################################################
 # To get all the units under the given client
 ########################################################
-def get_units(db, request, session_user, client_id):
-    user_company_info = db.get_user_company_details(
+def process_get_units(db, request, session_user, client_id):
+    user_company_info = get_user_company_details(db, 
         session_user, client_id
     )
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
     business_group_ids = user_company_info[3]
-    business_group_list = db.get_business_groups_for_user(
-        business_group_ids
+    #import from general.py
+    business_group_list = get_business_groups_for_user(
+        db, business_group_ids
     )
-    legal_entity_list = db.get_legal_entities_for_user(
-        legal_entity_ids
+    legal_entity_list = get_legal_entities_for_user(
+        db, legal_entity_ids
     )
-    division_list = db.get_divisions_for_user(
-        division_ids
+    division_list = get_divisions_for_user(
+        db, division_ids
     )
-    unit_list = db.get_units_closure_for_user(unit_ids)
+    unit_list = get_units_closure_for_user(db, unit_ids)
     return clientmasters.GetUnitsSuccess(
         business_groups=business_group_list,
         legal_entities=legal_entity_list,
@@ -444,15 +455,15 @@ def get_units(db, request, session_user, client_id):
 ########################################################
 # To close a unit
 ########################################################
-def close_unit(db, request, session_user, client_id):
+def process_close_unit(db, request, session_user, client_id):
     session_user = session_user
     password = request.password
-
-    if db.verify_password(password, session_user, client_id):
-        if db.is_seating_unit(request.unit_id):
+    #import from general.py
+    if verify_password(db, password, session_user, client_id):
+        if is_seating_unit(db, request.unit_id):
             return clientmasters.CannotCloseUnit()
         else:
-            db.close_unit(request.unit_id, session_user)
+            close_unit(db, request.unit_id, session_user)
             return clientmasters.CloseUnitSuccess()
     else:
         return clientmasters.InvalidPassword()
@@ -460,15 +471,15 @@ def close_unit(db, request, session_user, client_id):
 ########################################################
 # To get audit trails related to the given user
 ########################################################
-def get_audit_trails(db, request, session_user, client_id):
+def process_get_audit_trails(db, request, session_user, client_id):
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
     from_date = request.from_date
     to_date = request.to_date
     user_id = request.user_id
     form_id = request.form_id
-    audit_trails = db.get_audit_trails(
-        session_user, client_id, from_count, to_count,
+    audit_trails = get_audit_trails(
+        db, session_user, client_id, from_count, to_count,
         from_date, to_date, user_id, form_id
     )
     return audit_trails

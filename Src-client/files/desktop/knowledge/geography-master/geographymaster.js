@@ -177,11 +177,6 @@ function activate(element, id, type,country, level){
    $(element).addClass("active");
      load(id,level,country);
   }
-  /*$(type).each( function( index, el ) {
-    $(el).removeClass( "active" );
-      });
-   $(element).addClass("active");
-     load(id,level,country);*/
 }
 
 //load geographymapping sub level data dynamically
@@ -259,54 +254,57 @@ function load(id,level,country){
 function saverecord(j,e){
   var data = e.keyCode;
   if(data==13 || data ==undefined){
-    displayMessage("");
-    var levelstage = $('#level'+j).val();
-    var glm_id = $('#glmid'+j).val();
-    var datavalue = $('#datavalue'+j).val().trim();
-    var map_gm_id=[];
-    var map_gm_name = [];
-    map_gm_name.push($("#countryval").val());
-    var last_geography_id=0;
-    var last_level = 0;
-    for(k=1;k<j;k++){
-      $(".list"+k+".active").each( function( index, el ) {
-        map_gm_id.push(parseInt(el.id));
-        map_gm_name.push(el.innerHTML)
-        last_geography_id = el.id;
-        last_level = k;
-        });
-    }
-    if(map_gm_id==0 && levelstage>1 ){
-      displayMessage(message.levelselection_required);
-    }else if(datavalue.length == 0){
-      var msg = "Level-"+levelstage;
-      displayMessage(msg + message.shouldnot_empty);
-    }else{
-      function onSuccess(response){
-        displayMessage(message.record_added);
-        $('#datavalue'+j).val('');
-        reload(last_geography_id,last_level,$('#country').val());
+  var checkLength = geographyValidate($('#datavalue'+j).val().trim());
+  if(checkLength){
+      displayMessage("");
+      var levelstage = $('#level'+j).val();
+      var glm_id = $('#glmid'+j).val();
+      var datavalue = $('#datavalue'+j).val().trim();
+      var map_gm_id=[];
+      var map_gm_name = [];
+      map_gm_name.push($("#countryval").val());
+      var last_geography_id=0;
+      var last_level = 0;
+      for(k=1;k<j;k++){
+        $(".list"+k+".active").each( function( index, el ) {
+          map_gm_id.push(parseInt(el.id));
+          map_gm_name.push(el.innerHTML)
+          last_geography_id = el.id;
+          last_level = k;
+          });
       }
-      function onFailure(error){
-        if(error == 'GeographyNameAlreadyExists'){
-            displayMessage(message.geographyname_exists);
+      if(map_gm_id==0 && levelstage>1 ){
+        displayMessage(message.levelselection_required);
+      }else if(datavalue.length == 0){
+        var msg = "Level-"+levelstage;
+        displayMessage(msg + message.shouldnot_empty);
+      }else{
+        function onSuccess(response){
+          displayMessage(message.record_added);
+          $('#datavalue'+j).val('');
+          reload(last_geography_id,last_level,$('#country').val());
         }
-      }
-      countryId = parseInt($("#country").val());
-      if(map_gm_id.length == 0){
-        map_gm_id.push(0);
-      }
-      mirror.saveGeography(parseInt(glm_id), datavalue, map_gm_id, map_gm_name, countryId,
-        function (error, response) {
-          if (error == null){
-            onSuccess(response);
-            $(".listfilter").val('');
-          }
-          else {
-            onFailure(error);
+        function onFailure(error){
+          if(error == 'GeographyNameAlreadyExists'){
+              displayMessage(message.geographyname_exists);
           }
         }
-    );
+        countryId = parseInt($("#country").val());
+        if(map_gm_id.length == 0){
+          map_gm_id.push(0);
+        }
+        mirror.saveGeography(parseInt(glm_id), datavalue, map_gm_id, map_gm_name, countryId,
+          function (error, response) {
+            if (error == null){
+              onSuccess(response);
+              $(".listfilter").val('');
+            }
+            else {
+              onFailure(error);
+            }
+          }
+        );
+      }
     }
   }
 }
@@ -403,58 +401,61 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
 function updaterecord(j,e){
   var data = e.keyCode;
   if(data==13 || data ==undefined){
-    $(".error-message").html("");
-    var levelstage = $('#level'+j).val();
-    var glm_id = $('#glmid'+j).val();
-    var geographyid = $('#geographyid').val();
-    var datavalue = $('#datavalue'+j).val().trim();
-    var map_gm_id=[];
-    var map_gm_name = [];
-    map_gm_name.push($("#countryval").val());
-    var last_geography_id=0;
-    var last_level = 0;
-    for(k=1;k<j;k++){
-      $(".list"+k+".active").each( function( index, el ) {
-        map_gm_id.push(parseInt(el.id));
-        map_gm_name.push(el.innerHTML);
-        last_geography_id = el.id;
-        last_level = k;
-        });
-    }
-    if(map_gm_id==0 && levelstage>1 ){
-      displayMessage(message.levelselection_required);
-    }else if(datavalue.length == 0){
-      var msg = "Level-"+levelstage;
-      displayMessage(msg+ message.shouldnot_empty);
-    }else{
-     function onSuccess(response){
-          displayMessage(message.record_updated);
-          GetGeographies();
-          $("#geography-view").show();
-          $("#geography-add").hide();
+    var checkLength = geographyValidate($('#datavalue'+j).val().trim());
+    if(checkLength){
+      $(".error-message").html("");
+      var levelstage = $('#level'+j).val();
+      var glm_id = $('#glmid'+j).val();
+      var geographyid = $('#geographyid').val();
+      var datavalue = $('#datavalue'+j).val().trim();
+      var map_gm_id=[];
+      var map_gm_name = [];
+      map_gm_name.push($("#countryval").val());
+      var last_geography_id=0;
+      var last_level = 0;
+      for(k=1;k<j;k++){
+        $(".list"+k+".active").each( function( index, el ) {
+          map_gm_id.push(parseInt(el.id));
+          map_gm_name.push(el.innerHTML);
+          last_geography_id = el.id;
+          last_level = k;
+          });
       }
-      function onFailure(error) {
-        if(error == 'GeographyNameAlreadyExists'){
-            displayMessage(message.geographyname_exists);
+      if(map_gm_id==0 && levelstage>1 ){
+        displayMessage(message.levelselection_required);
+      }else if(datavalue.length == 0){
+        var msg = "Level-"+levelstage;
+        displayMessage(msg+ message.shouldnot_empty);
+      }else{
+       function onSuccess(response){
+            displayMessage(message.record_updated);
+            GetGeographies();
+            $("#geography-view").show();
+            $("#geography-add").hide();
         }
-        if(error == 'InvalidGeographyId'){
-            displayMessage(message.invalid_geographyid);
-        }
+        function onFailure(error) {
+          if(error == 'GeographyNameAlreadyExists'){
+              displayMessage(message.geographyname_exists);
+          }
+          if(error == 'InvalidGeographyId'){
+              displayMessage(message.invalid_geographyid);
+          }
 
+        }
+        if(map_gm_id.length == 0){
+          map_gm_id.push(0);
+        }
+        mirror.updateGeography(parseInt(geographyid), parseInt(glm_id), datavalue, map_gm_id, map_gm_name, parseInt($("#country").val()),
+          function (error, response) {
+            if (error == null){
+              onSuccess(response);
+              $(".listfilter").val('');
+            }
+            else {
+              onFailure(error);
+            }
+        });
       }
-      if(map_gm_id.length == 0){
-        map_gm_id.push(0);
-      }
-      mirror.updateGeography(parseInt(geographyid), parseInt(glm_id), datavalue, map_gm_id, map_gm_name, parseInt($("#country").val()),
-        function (error, response) {
-          if (error == null){
-            onSuccess(response);
-            $(".listfilter").val('');
-          }
-          else {
-            onFailure(error);
-          }
-      });
     }
   }
 }

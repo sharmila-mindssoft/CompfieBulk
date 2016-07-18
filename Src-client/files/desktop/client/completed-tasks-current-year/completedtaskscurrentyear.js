@@ -225,11 +225,13 @@ function validate_secondtab(){
     displayMessage(message.domain_required);
     return false;
   }else{
+    displayMessage("");
     return true;
   }
 }
 
 function validate_thirdtab(){
+  displayMessage("");
   return true;
 }
 

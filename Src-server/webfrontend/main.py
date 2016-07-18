@@ -269,11 +269,40 @@ def run_web_front_end(port, knowledge_server_address):
         desktop_path = os.path.join(files_path, "desktop")
         common_path = os.path.join(desktop_path, "common")
         images_path = os.path.join(common_path, "images")
+        css_path = os.path.join(common_path, "css")
+        js_path = os.path.join(common_path, "js")
+        script_path = os.path.join(desktop_path, "client")
+        login_path = os.path.join(desktop_path, "login")
 
         web_server.low_level_url(
             r"/images/(.*)",
             StaticFileHandler,
             dict(path=images_path)
+        )
+        web_server.low_level_url(
+            r"/css/(.*)",
+            StaticFileHandler, 
+            dict(path=css_path)
+        )
+        web_server.low_level_url(
+            r"/js/(.*)",
+            StaticFileHandler, 
+            dict(path=js_path)
+        )
+        web_server.low_level_url(
+            r"/common/(.*)",
+            StaticFileHandler,
+            dict(path=common_path)
+        )
+        web_server.low_level_url(
+            r"/script/(.*)",
+            StaticFileHandler,
+            dict(path=script_path)
+        )
+        web_server.low_level_url(
+            r"/login/(.*)",
+            StaticFileHandler,
+            dict(path=login_path)
         )
 
         api_design_path = os.path.join(

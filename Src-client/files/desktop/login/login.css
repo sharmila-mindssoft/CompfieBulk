@@ -1,12 +1,12 @@
 .login-main-bg {
-	background: #000 url(/files/desktop/login/images/login-bg.jpg) center center;
+	background: #000 url(../login/images/login-bg.jpg) center center;
 	background-size: cover;
 	width: 100%;
 	height: 100%;
 	position: fixed;
 }
 .login-transparent-bg {
-	background: url(/files/desktop/login/images/transparent-bg-main.png) repeat;
+	background: url(../login/images/transparent-bg-main.png) repeat;
 	width: 100%;
 	height: 100%;
 	position: fixed;
@@ -46,7 +46,7 @@
 	width: 100%;
 	padding: 2em 0 1em 0;
 	float: left;
-	background: url(/files/desktop/login/images/login-transparent-bg.png) repeat;
+	background: url(../login/images/login-transparent-bg.png) repeat;
 }
 .login-icon {
 	width: 30%;
@@ -79,10 +79,10 @@
 	border-radius: 0.3em;
 }
 .login-username-textbox {
-	background: #fff url(/files/desktop/login/images/icon-user.png) no-repeat 1em center;
+	background: #fff url(../login/images/icon-user.png) no-repeat 1em center;
 }
 .login-password-textbox {
-	background: #fff url(/files/desktop/login/images/icon-lock.png) no-repeat 1em center;
+	background: #fff url(../login/images/icon-lock.png) no-repeat 1em center;
 }
 .text-forgot-password {
 	float: left;

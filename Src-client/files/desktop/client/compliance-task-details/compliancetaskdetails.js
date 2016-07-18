@@ -394,6 +394,12 @@ function showSideBar(idval, data){
                 if(remarks == ''){
                     remarks = null;
                 }
+
+                if($('.sideview-remarks').val().trim().length > 500){
+                    displayMessage("Remarks" + message.should_not_exceed  + " 500 characters");
+                    return false;
+                }
+
                 if(completion_date == ''){
                     displayMessage(message.completiondate_required);
                     return;

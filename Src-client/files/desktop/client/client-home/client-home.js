@@ -1714,9 +1714,9 @@ function escalationDrilldownnotcomplied(status, data){
                 var cloneUnit = tableUnit.clone();
                 $(".unit-heading", cloneUnit).html(value["unit_name"]);
                 $(".inner-table-notcomplied-escalation-list").append(cloneUnit);
-                $('.inner-table-notcomplied-escalation-list').append('<tbody class="accordion-content accordion-content'+ACCORDIONCOUNTNC+'"></tbody>');
+                $('.inner-table-notcomplied-escalation-list').append('<tbody class="accordion-content accordion-nc-content'+ACCORDIONCOUNTNC+'"></tbody>');
                 if(ACCORDIONCOUNTNC == 1){
-                    $('.accordion-content'+ACCORDIONCOUNTNC).addClass("default");
+                    $('.accordion-nc-content'+ACCORDIONCOUNTNC).addClass("default");
                 }
                 ES_NC_UNITNAME = value["unit_name"];
             }
@@ -1727,7 +1727,7 @@ function escalationDrilldownnotcomplied(status, data){
                     var tableLevel1 = $('#templates .escalation-status .tr-level1');
                     var cloneLevel1 = tableLevel1.clone();
                     $(".heading", cloneLevel1).html(ke);
-                    $('.accordion-content'+ACCORDIONCOUNTNC).append(cloneLevel1);
+                    $('.accordion-nc-content'+ACCORDIONCOUNTNC).append(cloneLevel1);
                     ES_NC_LEVEL1 = ke;
                 }
                 $.each(valu, function(k, val){
@@ -1748,7 +1748,7 @@ function escalationDrilldownnotcomplied(status, data){
                     if(val['status'] == "Not Complied"){
                         $(".over-due", clone).html(val['ageing']);
                     }
-                    $('.accordion-content'+ACCORDIONCOUNTNC).append(clone);
+                    $('.accordion-nc-content'+ACCORDIONCOUNTNC).append(clone);
                 });
             });
 
@@ -1761,7 +1761,7 @@ function escalationDrilldownnotcomplied(status, data){
     //     $('.norecord', clone).html("No Record Found");
     //     $('.inner-table-notcomplied-escalation-list').append(clone);
     // }
-    accordianTypenotcomplied('accordionNC', 'accordion-toggle', 'accordion-content');
+    accordianTypenotcomplied('accordionNC', 'accordion-toggle', 'accordion-nc-content');
     $('.js-filtertable_not_c').on('keyup', function () {
         $(this).filtertable().addFilter('.js-filter_not_c');
     });
@@ -1782,9 +1782,9 @@ function escalationDrilldowndelayed(status, data){
                 var cloneUnit = tableUnit.clone();
                 $(".unit-heading", cloneUnit).html(value["unit_name"]);
                 $(".inner-table-delayed-escalation-list").append(cloneUnit);
-                $('.inner-table-delayed-escalation-list').append('<tbody class="accordion-content accordion-content'+ACCORDIONCOUNTD+'"></tbody>');
+                $('.inner-table-delayed-escalation-list').append('<tbody class="accordion-content accordion-delayed-content'+ACCORDIONCOUNTD+'"></tbody>');
                 if(ACCORDIONCOUNTD == 1){
-                    $('.accordion-content'+ACCORDIONCOUNTD).addClass("default");
+                    $('.accordion-delayed-content'+ACCORDIONCOUNTD).addClass("default");
                 }
                 ES_D_UNITNAME = value["unit_name"];
             }
@@ -1796,7 +1796,7 @@ function escalationDrilldowndelayed(status, data){
                     var tableLevel1 = $('#templates .escalation-status .tr-level1');
                     var cloneLevel1 = tableLevel1.clone();
                     $(".heading", cloneLevel1).html(ke);
-                    $('.accordion-content'+ACCORDIONCOUNTD).append(cloneLevel1);
+                    $('.accordion-delayed-content'+ACCORDIONCOUNTD).append(cloneLevel1);
                     ES_D_LEVEL1 = ke;
                 }
                 $.each(valu, function(k, val){
@@ -1817,7 +1817,7 @@ function escalationDrilldowndelayed(status, data){
                     if(val['status'] == "Not Complied"){
                         $(".over-due", clone).html(val['ageing']);
                     }
-                    $('.accordion-content'+ACCORDIONCOUNTD).append(clone);
+                    $('.accordion-delayed-content'+ACCORDIONCOUNTD).append(clone);
                 });
             });
 
@@ -1829,7 +1829,7 @@ function escalationDrilldowndelayed(status, data){
     //     $('.norecord', clone).html("No Record Found");
     //     $('.inner-table-delayed-escalation-list').append(clone);
     // }
-    accordianTypedelayed('accordionD', 'accordion-toggle', 'accordion-content');
+    accordianTypedelayed('accordionD', 'accordion-toggle', 'accordion-delayed-content');
     $('.js-filtertable_delayed').on('keyup', function () {
         $(this).filtertable().addFilter('.js-filter_delayed');
     });

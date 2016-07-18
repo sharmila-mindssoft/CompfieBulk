@@ -399,6 +399,12 @@ $("#submit").click(function() {
         hideLoader();
         return false;
       }
+      else if(notApplicableRemarks.length > 500){
+        displayMessage("Act Remarks" + message.should_not_exceed + " 500 characters");
+        saveflag = false;
+        hideLoader();
+        return false;
+      }
     }
     var actComplianceCount = $('.statutoryclass'+i).length;
     for(var j=1; j<=actComplianceCount; j++){
@@ -435,6 +441,12 @@ $("#submit").click(function() {
         }
         if(compliancenotApplicableRemarks == '' && compliance_remarks == '' && applicableStatus == true){
           displayMessage(message.compliance_remarks_opted_required);
+          saveflag = false;
+          hideLoader();
+          return false;
+        }
+        else if(compliancenotApplicableRemarks.length > 500 && applicableStatus == true){
+          displayMessage("Compliance Remarks" + message.should_not_exceed + " 500 characters");
           saveflag = false;
           hideLoader();
           return false;

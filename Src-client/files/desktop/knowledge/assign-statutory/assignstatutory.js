@@ -830,8 +830,11 @@ function saveorsubmit(submissionType){
       else{
         applicableStatus = false;
         notApplicableRemarks = $('#remarkvalue'+actCount).val();
-        if(notApplicableRemarks.length==0){
+        if(notApplicableRemarks.length == 0){
           displayMessage(message.act_remarks_required);
+          return false;
+        }else if(notApplicableRemarks.length > 500){
+          displayMessage("Remarks" + message.should_not_exceed + " 500 characters");
           return false;
         }
       }

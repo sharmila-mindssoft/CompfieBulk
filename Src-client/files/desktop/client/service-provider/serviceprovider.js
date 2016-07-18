@@ -134,124 +134,132 @@ $('#mobile-number').on('input', function (event) {
 });
 
 $("#submit").click(function(){
-    function parseMyDate(s) {
-        return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
-    }
-    var serviceProviderIdValue = $("#service-provider-id").val().trim();
-    var serviceProviderNameValue = $("#service-provider-name").val().trim();
-    var contactPersonValue = $("#contact-person").val().trim();
-    var countryCodeValue = $("#country-code").val().trim();
-    var areaCodeValue = $("#area-code").val().trim();
-    var mobileNumberValue = $("#mobile-number").val().trim();
-    var addressValue = $("#address").val().trim();
-    var contractFromValue = $("#contract-from").val().trim();
-    var contractToValue = $("#contract-to").val().trim();
-    var todaydate = new Date();
 
-    if(serviceProviderNameValue == ''){
-        displayMessage(message.spname_required);
-    }
-    else if(serviceProviderNameValue.length > 50){
-        displayMessage(message.spname_max50);
-    }
-    else if(contactPersonValue == ''){
-        displayMessage(message.contactpersonname_required);
-    }
-    else if(contactPersonValue.length > 50){
-        displayMessage(message.contactpersonname_max50);
-    }
-    // else if(countryCodeValue == ''){
-    //     displayMessage('Enter Contact No. Country Code');
-    // }
-    else if(countryCodeValue.length > 4){
-        displayMessage(message.countrycode_max4);
-    }
-    else if(areaCodeValue.length > 4){
-        displayMessage(message.areacode_max4);
-    }
-    // else if(mobileNumberValue == ''){
-    //     displayMessage('Enter Contact No.');
-    // }
-    else if(mobileNumberValue.length > 10){
-        displayMessage(message.contactno_max10);
-    }
-    else if(addressValue.length > 250){
-        displayMessage(message.address_max250);
-    }
-    else if(contractFromValue == ''){
-        displayMessage(message.contractfrom_required);
-    }
-    else if(contractToValue == ''){
-        displayMessage(message.contractto_required);
-    }
-    else if (todaydate > parseMyDate(contractToValue)){
-        displayMessage(message.contractto_maxi_today);
-    }
-    else if(serviceProviderIdValue == ''){
-        function onSuccess(data){
-            $("#service-provider-add").hide();
-            $("#service-provider-view").show();
-            initialize();
-        }
-        function onFailure(error){
-            if(error == 'ServiceProviderNameAlreadyExists') {
-                displayMessage(message.spname_exists);
-            }   
-            if(error == 'ContactNumberAlreadyExists') {
-                displayMessage(message.contactno_exists);
-            }   
-     
-        }
-        var serviceProviderDetail;
-        var contactNo = countryCodeValue+'-'+areaCodeValue+'-'+mobileNumberValue;
-        serviceProviderDetail = [serviceProviderNameValue, addressValue, contractFromValue, 
-        contractToValue, contactPersonValue, contactNo];
-        serviceProviderDetail = client_mirror.getSaveServiceProviderDict(serviceProviderDetail);
+    var checkLength = serviceProviderValidate();
 
-        client_mirror.saveServiceProvider( serviceProviderDetail, 
-            function (error, response){
-                if(error == null){
-                    onSuccess(response);
+    if(checkLength){
+
+        function parseMyDate(s) {
+            return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
+        }
+        var serviceProviderIdValue = $("#service-provider-id").val().trim();
+        var serviceProviderNameValue = $("#service-provider-name").val().trim();
+        var contactPersonValue = $("#contact-person").val().trim();
+        var countryCodeValue = $("#country-code").val().trim();
+        var areaCodeValue = $("#area-code").val().trim();
+        var mobileNumberValue = $("#mobile-number").val().trim();
+        var addressValue = $("#address").val().trim();
+        var contractFromValue = $("#contract-from").val().trim();
+        var contractToValue = $("#contract-to").val().trim();
+        var todaydate = new Date();
+
+        if(serviceProviderNameValue == ''){
+            displayMessage(message.spname_required);
+        }
+        else if(serviceProviderNameValue.length > 50){
+            displayMessage(message.spname_max50);
+        }
+        else if(contactPersonValue == ''){
+            displayMessage(message.contactpersonname_required);
+        }
+        else if(contactPersonValue.length > 50){
+            displayMessage(message.contactpersonname_max50);
+        }
+        // else if(countryCodeValue == ''){
+        //     displayMessage('Enter Contact No. Country Code');
+        // }
+        else if(countryCodeValue.length > 4){
+            displayMessage(message.countrycode_max4);
+        }
+        else if(areaCodeValue.length > 4){
+            displayMessage(message.areacode_max4);
+        }
+        // else if(mobileNumberValue == ''){
+        //     displayMessage('Enter Contact No.');
+        // }
+        else if(mobileNumberValue.length > 10){
+            displayMessage(message.contactno_max10);
+        }
+        else if(addressValue.length > 250){
+            displayMessage(message.address_max250);
+        }
+        else if(contractFromValue == ''){
+            displayMessage(message.contractfrom_required);
+        }
+        else if(contractToValue == ''){
+            displayMessage(message.contractto_required);
+        }
+        else if (todaydate > parseMyDate(contractToValue)){
+            displayMessage(message.contractto_maxi_today);
+        }
+        else if(serviceProviderIdValue == ''){
+            function onSuccess(data){
+                $("#service-provider-add").hide();
+                $("#service-provider-view").show();
+                initialize();
+            }
+            function onFailure(error){
+                if(error == 'ServiceProviderNameAlreadyExists') {
+                    displayMessage(message.spname_exists);
+                }   
+                if(error == 'ContactNumberAlreadyExists') {
+                    displayMessage(message.contactno_exists);
+                }   
+         
+            }
+            var serviceProviderDetail;
+            var contactNo = countryCodeValue+'-'+areaCodeValue+'-'+mobileNumberValue;
+            serviceProviderDetail = [serviceProviderNameValue, addressValue, contractFromValue, 
+            contractToValue, contactPersonValue, contactNo];
+            serviceProviderDetail = client_mirror.getSaveServiceProviderDict(serviceProviderDetail);
+
+            client_mirror.saveServiceProvider( serviceProviderDetail, 
+                function (error, response){
+                    if(error == null){
+                        onSuccess(response);
+                    }
+                    else{
+                        onFailure(error);
+                    }
                 }
-                else{
-                    onFailure(error);
+            );
+        }
+        else{       
+            function onSuccess(data){   
+                $("#service-provider-add").hide();
+                $("#service-provider-view").show();
+                initialize();
+            }
+                
+            function onFailure(error){
+                if(error == 'ServiceProviderNameAlreadyExists') {
+                    displayMessage(message.spname_exists);
+                }   
+                if(error == 'ContactNumberAlreadyExists') {
+                    displayMessage(message.contactno_exists);
                 }
             }
-        );
-    }
-    else{       
-        function onSuccess(data){   
-            $("#service-provider-add").hide();
-            $("#service-provider-view").show();
-            initialize();
-        }
-            
-        function onFailure(error){
-            if(error == 'ServiceProviderNameAlreadyExists') {
-                displayMessage(message.spname_exists);
-            }   
-            if(error == 'ContactNumberAlreadyExists') {
-                displayMessage(message.contactno_exists);
-            }
-        }
-        var serviceProviderDetail;
-        var contactNo = countryCodeValue+'-'+areaCodeValue+'-'+mobileNumberValue;
+            var serviceProviderDetail;
+            var contactNo = countryCodeValue+'-'+areaCodeValue+'-'+mobileNumberValue;
 
-        serviceProviderDetail = [parseInt(serviceProviderIdValue), serviceProviderNameValue, addressValue, 
-        contractFromValue, contractToValue, contactPersonValue, contactNo]
-        serviceProviderDetail = client_mirror.getUpdateServiceProviderDict(serviceProviderDetail)
+            serviceProviderDetail = [parseInt(serviceProviderIdValue), serviceProviderNameValue, addressValue, 
+            contractFromValue, contractToValue, contactPersonValue, contactNo]
+            serviceProviderDetail = client_mirror.getUpdateServiceProviderDict(serviceProviderDetail)
 
-        client_mirror.updateServiceProvider(serviceProviderDetail, 
-            function (error, response){
-                if(error == null){
-                    onSuccess(response);
+            client_mirror.updateServiceProvider(serviceProviderDetail, 
+                function (error, response){
+                    if(error == null){
+                        onSuccess(response);
+                    }
+                    else{
+                        onFailure(error);
+                    }
                 }
-                else{
-                    onFailure(error);
-                }
-            }
-        );
+            );
+        }
+
     }
+
 });
 function serviceprovider_edit(serviceProviderId){
     $("#service-provider-view").hide();

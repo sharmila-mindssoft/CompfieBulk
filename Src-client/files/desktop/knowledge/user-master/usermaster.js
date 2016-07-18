@@ -179,41 +179,43 @@ function getUsers(){
 
 //validation
 function validate(){
-	var employeeName = $("#employeename").val().trim();
-	var employeeId = $("#employeeid").val().trim();
-	var contactNo = $("#contactno").val().trim();
-	var userGroup = '';
-	if($("#usergroup").val()!='')
-		userGroup = parseInt($("#usergroup").val());
+	var checkLength = userValidate();
+  	if(checkLength){
+  		var employeeName = $("#employeename").val().trim();
+		var employeeId = $("#employeeid").val().trim();
+		var contactNo = $("#contactno").val().trim();
+		var userGroup = '';
+		if($("#usergroup").val()!='')
+			userGroup = parseInt($("#usergroup").val());
+		var emailId = $("#emailid").val().trim();
+		var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 
-	var emailId = $("#emailid").val().trim();
-	var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-
-	if(employeeName.length == 0) {
-		displayMessage(message.employeename_required);
-		$("#employeename").focus();
-	} else if(employeeId.length == 0) {
-		displayMessage(message.employeeid_required);
-		$("#employeeid").focus();
-	} else if(emailId.length == 0) {
-		displayMessage(message.emailid_required);
-		$("#emailid").focus();
-	} else if(userGroup.length == 0) {
-		displayMessage(message.usergroup_required);
-		$("#usergroupval").focus();
-	} else if(reg.test(emailId) == false) {
-		displayMessage(message.invalid_emailid);
-		$("#emailid").focus();
-	} else if(countryIds.length == 0) {
-		displayMessage(message.country_required);
-		$("#countryselected").focus().click();
-	} else if(domainIds.length == 0) {
-		displayMessage(message.domain_required);
-		$("#domainselected").focus().click();
-  	}else{
-    	displayMessage('');
-    	return true
-  }
+		if(employeeName.length == 0) {
+			displayMessage(message.employeename_required);
+			$("#employeename").focus();
+		} else if(employeeId.length == 0) {
+			displayMessage(message.employeeid_required);
+			$("#employeeid").focus();
+		} else if(emailId.length == 0) {
+			displayMessage(message.emailid_required);
+			$("#emailid").focus();
+		} else if(userGroup.length == 0) {
+			displayMessage(message.usergroup_required);
+			$("#usergroupval").focus();
+		} else if(reg.test(emailId) == false) {
+			displayMessage(message.invalid_emailid);
+			$("#emailid").focus();
+		} else if(countryIds.length == 0) {
+			displayMessage(message.country_required);
+			$("#countryselected").focus().click();
+		} else if(domainIds.length == 0) {
+			displayMessage(message.domain_required);
+			$("#domainselected").focus().click();
+	  	}else{
+	    	displayMessage('');
+	    	return true
+	  	}
+  	}
 }
 
 // save or update user details
