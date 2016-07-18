@@ -13,8 +13,8 @@ from server.database.knowledgemaster import (
     get_industries, get_statutory_nature,
     get_statutory_levels, get_geograhpy_levels_for_user,
     get_geographies, get_statutory_master
-
 )
+from server.database.knowledgetransaction import *
 __all__ = [
     "process_knowledge_transaction_request"
 ]
@@ -113,13 +113,13 @@ def process_get_statutory_mapping_master(db, user_id):
     )
 
 def process_get_statutory_mappings(db, user_id):
-    statutory_mappings = db.get_statutory_mappings(user_id, for_approve=False)
+    statutory_mappings = get_statutory_mappings(db, user_id, for_approve=False)
     return knowledgetransaction.GetStatutoryMappingsSuccess(
         statutory_mappings
     )
 
 def process_check_statutory_mapping(db, request_frame):
-    is_duplicate = db.check_duplicate_statutory_mapping(request_frame)
+    is_duplicate = check_duplicate_statutory_mapping(db, request_frame)
     if is_duplicate is None :
         is_duplicate = False
     else :
@@ -127,18 +127,18 @@ def process_check_statutory_mapping(db, request_frame):
     return knowledgetransaction.CheckDuplicateStatutoryMappingSuccess(is_duplicate)
 
 def process_save_statutory_mapping(db, request_frame, user_id):
-    is_duplicate = db.check_duplicate_compliance_name(request_frame)
+    is_duplicate = check_duplicate_compliance_name(db, request_frame)
     if is_duplicate is False:
-        if (db.save_statutory_mapping(request_frame, user_id)) :
+        if (save_statutory_mapping(db, request_frame, user_id)) :
             return knowledgetransaction.SaveStatutoryMappingSuccess()
     else :
         return knowledgetransaction.ComplianceNameAlreadyExists(is_duplicate)
 
 
 def process_update_statutory_mapping(db, request_frame, user_id):
-    is_duplicate = db.check_duplicate_compliance_name(request_frame)
+    is_duplicate = check_duplicate_compliance_name(db, request_frame)
     if is_duplicate is False:
-        if (db.update_statutory_mapping(request_frame, user_id)):
+        if (update_statutory_mapping(db, request_frame, user_id)):
             return knowledgetransaction.UpdateStatutoryMappingSuccess()
         else :
             return knowledgetransaction.InvalidStatutoryMappingId()
@@ -146,13 +146,13 @@ def process_update_statutory_mapping(db, request_frame, user_id):
         return knowledgetransaction.ComplianceNameAlreadyExists(is_duplicate)
 
 def process_change_statutory_mapping_status(db, request_frame, user_id):
-    if (db.change_statutory_mapping_status(request_frame, user_id)) :
+    if (change_statutory_mapping_status(db, request_frame, user_id)) :
         return knowledgetransaction.ChangeStatutoryMappingStatusSuccess()
     else :
         return knowledgetransaction.InvalidStatutoryMappingId()
 
 def process_get_approve_statutory_mappings(db, user_id):
-    statutory_mappings = db.get_statutory_mappings(user_id, for_approve=True)
+    statutory_mappings = get_statutory_mappings(db, user_id, for_approve=True)
     return knowledgetransaction.GetStatutoryMappingsSuccess(
         statutory_mappings
     )
@@ -161,7 +161,7 @@ def process_approve_statutory_mapping(db, request_frame, user_id):
     is_approved = False
     message = value = None
     for data in request_frame.statutory_mappings :
-        result = db.change_approval_status(data, user_id)
+        result = change_approval_status(db, data, user_id)
         if result is True:
             is_approved = True
         else :

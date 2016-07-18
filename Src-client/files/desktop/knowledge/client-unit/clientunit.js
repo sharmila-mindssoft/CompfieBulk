@@ -139,23 +139,23 @@ function loadClientsList(clientunitsList){
         max[groupList[i]["client_id"]] = groupList[i]["no_of_units"];
     }
     $.each(unitList, function (key, value){
-        var isActive = value['is_active'];
-        var unitId = value['unit_id'];
-        var unitVal = {};
+        // var isActive = value['is_active'];
+        // var unitId = value['unit_id'];
+        // var unitVal = {};
         clientId = value['client_id'];
         bgroupId = value['business_group_id'];
         lentitiesId = value['legal_entity_id'];
         divisionId = value['division_id'];
-        if(isActive == true){
-            imageName = "icon-active.png";
-            title = "Click here to deactivate"
-            statusVal = false;
-        }
-        else{
-            imageName = "icon-inactive.png";
-            title = "Click here to Activate"
-            statusVal = true;
-        }
+        // if(isActive == true){
+        //     imageName = "icon-active.png";
+        //     title = "Click here to deactivate"
+        //     statusVal = false;
+        // }
+        // else{
+        //     imageName = "icon-inactive.png";
+        //     title = "Click here to Activate"
+        //     statusVal = true;
+        // }
         var tableRow = $('#templates .table-clientunit-list .table-row');
         var clone = tableRow.clone();
         sno = sno + 1;

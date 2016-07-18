@@ -11,7 +11,7 @@ from server.database.admin import (
 
 __all__ = [
     "get_industries", "get_active_industries",
-    "check_duplicate_industry",
+    "check_duplicate_industry", "get_industry_by_id",
     "save_industry", "update_industry",
     "update_industry_status",
     "get_statutory_nature",
@@ -29,10 +29,12 @@ __all__ = [
     "get_geographies_for_user_with_mapping", "get_geography_by_id",
     "check_duplicate_geography", "save_geography",
     "update_geography", "change_geography_status",
-    "save_statutory", "update_statutory", "get_statutory_master"
-
+    "save_statutory", "update_statutory", "get_statutory_master",
+    "get_statutory_by_id", "get_country_wise_level_1_statutoy"
 ]
+
 STATUTORY_PARENTS = {}
+GEOGRAPHY_PARENTS = {}
 
 def get_industries(db) :
     columns = ["industry_id", "industry_name", "is_active"]
@@ -436,7 +438,7 @@ def get_geographies(db, user_id=None, country_id=None) :
         t1.parent_ids, t1.is_active, \
         t2.country_id, \
         (select country_name from tbl_countries where country_id = t2.country_id)as country_name, \
-        t2.level_position \
+        t2.level_position, t1.parent_names \
         FROM tbl_geographies t1 \
         INNER JOIN tbl_geography_levels t2 \
         on t1.level_id = t2.level_id \
@@ -461,10 +463,10 @@ def get_geographies(db, user_id=None, country_id=None) :
         columns = [
             "geography_id", "geography_name", "level_id",
             "parent_ids", "is_active", "country_id", "country_name",
-            "level_position"
+            "level_position", "parent_names"
         ]
         result = convert_to_dict(rows, columns)
-        # db.set_geography_parent_mapping(result)
+        frame_geography_parent_mapping(result)
     return return_geographies(result)
 
 def return_geographies(data):
@@ -658,6 +660,20 @@ def change_geography_status(db, geography_id, is_active, updated_by) :
     else :
         return False
 
+def get_statutory_by_id(db, statutory_id):
+    query = "SELECT statutory_id, statutory_name, \
+        level_id, parent_ids, parent_names \
+        FROM tbl_statutories WHERE statutory_id = %s"
+    rows = db.select_one(query, [statutory_id])
+    result = []
+    if rows :
+        columns = [
+            "statutory_id", "statutory_name",
+            "level_id", "parent_ids", "parent_names"
+        ]
+        result = convert_to_dict(rows, columns)
+    return result
+
 def save_statutory(db, name, level_id, parent_ids, parent_names, user_id) :
     table_name = "tbl_statutories"
     created_on = get_date_time()
@@ -754,7 +770,7 @@ def get_statutory_master(db, statutory_id=None):
         # self.set_statutory_parent_mappings(result)
     return return_statutory_master(result)
 
-def frame_parent_mappings(db):
+def frame_parent_mappings(data):
     columns = [
         "statutory_id", "statutory_name",
         "level_id", "parent_ids",
@@ -827,3 +843,41 @@ def return_statutory_master(data):
         country_wise[domain_id] = _list
         statutories[country_id] = country_wise
     return statutories
+
+def get_country_wise_level_1_statutoy(db) :
+    if bool(STATUTORY_PARENTS) is False:
+        get_statutory_master()
+    query = "SELECT t1.statutory_id, t1.statutory_name, \
+        t1.level_id, t1.parent_ids, t2.country_id, \
+        t3.country_name, t2.domain_id, t4.domain_name \
+        FROM tbl_statutories t1 \
+        INNER JOIN tbl_statutory_levels t2 \
+        on t1.level_id = t2.level_id \
+        INNER JOIN tbl_countries t3 \
+        on t2.country_id = t3.country_id \
+        INNER JOIN tbl_domains t4 \
+        on t2.domain_id = t4.domain_id \
+        WHERE t2.level_position=1"
+    rows = db.select_all(query)
+    result = []
+    if rows :
+        columns = [
+            "statutory_id", "statutory_name", "level_id",
+            "parent_ids", "country_id", "country_name",
+            "domain_id", "domain_name"
+        ]
+        result = convert_to_dict(rows, columns)
+    return return_statutory_master(result)
+
+#
+# frame geography parent mapping
+#
+def frame_geography_parent_mapping(rows):
+    for row in rows :
+        country_id = int(row["country_id"])
+        geography_id = int(row["geography_id"])
+        is_active = bool(row["is_active"])
+        mappings = row["parent_names"]
+        GEOGRAPHY_PARENTS[geography_id] = [
+            mappings, is_active, country_id
+        ]
