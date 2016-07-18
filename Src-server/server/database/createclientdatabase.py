@@ -3,7 +3,7 @@ import io
 import Queue
 import threading
 import MySQLdb as mysql
-from protocol import (technomaster)
+from protocol import technomasters
 from server import logger
 from server.database.tables import *
 
