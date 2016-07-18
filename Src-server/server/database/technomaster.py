@@ -1,5 +1,5 @@
 from protocol import (
-    core
+    core, technomasters
 )
 from server.constants import (CLIENT_LOGO_PATH)
 from server.common import (
@@ -516,7 +516,7 @@ def update_client_group_status(db, client_id, is_active, session_user):
 def is_duplicate_business_group(db, business_group_id, business_group_name, client_id):
     condition = "business_group_name = %s AND business_group_id != %s and client_id = %s "
     condition_val = [business_group_name, business_group_id, client_id]
-    return self.is_already_exists(self.tblBusinessGroups, condition, condition_val)
+    return db.is_already_exists(tblBusinessGroups, condition, condition_val)
 
 def save_business_group(db, client_id, b_name, user_id):
     current_time_stamp = get_date_time()
@@ -605,7 +605,7 @@ def update_legal_entity(
 def is_duplicate_division(db, division_id, division_name, client_id):
     condition = "division_name = %s AND division_id != %s and client_id = %s "
     condition_val = [division_name, division_id, client_id]
-    return db.is_already_exists(self.tblDivisions, condition, condition_val)
+    return db.is_already_exists(tblDivisions, condition, condition_val)
 
 def save_division(
     db, client_id, division_name, business_group_id,
@@ -627,12 +627,12 @@ def save_division(
         columns.append("business_group_id")
         values.append(business_group_id)
 
-    new_id = self.insert(self.tblDivisions, columns, values)
+    new_id = db.insert(tblDivisions, columns, values)
     if new_id is False :
         return False
     else :
         action = "Created Division \"%s\"" % division_name
-        self.save_activity(session_user, 19, action)
+        db.save_activity(session_user, 19, action)
 
         return new_id
 
@@ -645,7 +645,7 @@ def update_division(db, client_id, division_id, division_name, session_user):
     result = db.update(tblDivisions, columns, values, condition)
     if result :
         action = "Updated Division \"%s\"" % division_name
-        self.save_activity(session_user, 19, action)
+        db.save_activity(session_user, 19, action)
 
     return result
 
@@ -698,7 +698,7 @@ def save_unit(db, client_id,  units, business_group_id, legal_entity_id, divisio
     return result
 
 def update_unit(db, client_id,  units, session_user):
-    current_time_stamp = str(self.get_date_time())
+    current_time_stamp = str(get_date_time())
     columns = [
         "country_id", "geography_id", "industry_id", "domain_ids", "unit_code", "unit_name",
         "address", "postal_code", "updated_by", "updated_on"
@@ -738,7 +738,7 @@ def get_user_clients(db, user_id):
         if rows[0]["clients"] is not None:
             columns = "group_concat(client_id) as clients"
             condition = "client_id in (%s) and is_active = 1" % (rows[0]["clients"])
-            rows1 = db.get_data(self.tblClientGroups, columns, condition)
+            rows1 = db.get_data(tblClientGroups, columns, condition)
             if rows1:
                 result = rows1[0]["clients"]
     return result
@@ -805,7 +805,7 @@ def get_divisions_for_user(db, user_id):
     if client_ids is not None:
         condition = "client_id in (%s) order by division_name ASC"
         result = db.get_data(tblDivisions, columns, condition, [client_ids])
-    return self.return_divisions(result)
+    return return_divisions(result)
 
 def return_divisions(divisions):
     results = []
@@ -853,9 +853,9 @@ def get_unit_details_for_user(db, user_id):
         "t1.geography_id", "t1.industry_id", "t1.unit_code",
         "t1.unit_name", "t1.address", "t1.postal_code",
         "t1.domain_ids", "t1.is_active",
-        "(select concat(business_group_id, '--', business_group_name)from tbl_business_groups where business_group_id = t1.business_group_id) as b_group",
-        "(select concat(legal_entity_id, '--', legal_entity_name)from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as l_entity",
-        "(select concat(division_id, '--', division_name) from tbl_divisions where division_id = t1.division_id) as l_entity",
+        "(select business_group_name from tbl_business_groups where business_group_id = t1.business_group_id) as b_group",
+        "(select legal_entity_name from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as l_entity",
+        "(select division_name from tbl_divisions where division_id = t1.division_id) as division",
         "(select group_name from tbl_client_groups where client_id = t1.client_id) as group_name "
     ]
     tables = [tblUnits, tblUserClients, tblUserCountries]
@@ -866,12 +866,459 @@ def get_unit_details_for_user(db, user_id):
         "t1.country_id = t3.country_id and t2.user_id = t3.user_id",
     ]
     where_condition = "t2.user_id = %s " % (user_id)
-    where_condition += " order by group_name, business_group_name, legal_entity_name, division_name"
+    where_condition += " order by group_name, b_group, l_entity, division"
 
     result = db.get_data_from_multiple_tables(
         columns, tables, aliases, join_type,
         join_condition, where_condition
     )
+    return_unit_details(result)
 
 def return_unit_details(result):
-    pass
+    legal_entity_wise = {}
+    for r in result :
+        unit = technomasters.UnitDetails(
+            r["unit_id"], r["geography_id"],
+            r["unit_code"], r["unit_name"],
+            r["industry_id"], r["address"],
+            r["postal_code"], r["domain_ids"],
+            [int(x) for x in r["domain_ids"].split(",")],
+            bool(r["is_active"])
+        )
+
+        legal_wise = legal_entity_wise.get(r["legal_entity_id"])
+        if legal_wise is None :
+            legal_wise = technomasters.Unit(
+                r["business_group_id"], r["legal_entity_id"],
+                r["division_id"], r["client_id"],
+                {r["country_id"] : [unit]},
+                bool(1)
+            )
+        else :
+            country_wise_units = legal_wise.units
+
+            if country_wise_units is None :
+                country_wise_units = {}
+
+            units = country_wise_units.get(r["country_id"])
+            if units is None :
+                units = []
+            units.append(unit)
+
+            country_wise_units[r["country_id"]] = units
+
+            legal_wise.units = country_wise_units
+
+        legal_entity_wise[r["legal_entity_id"]] = legal_wise
+
+    data = legal_entity_wise.values()
+    return data
+
+def get_group_companies_for_user_with_max_unit_count(db, user_id):
+    result = {}
+    client_ids = None
+    if user_id is not None:
+        client_ids = get_user_clients(db, user_id)
+    columns = ["client_id", "group_name", "is_active"]
+    condition = "is_active=1"
+    if client_ids is not None:
+        condition = "client_id in (%s) order by group_name ASC" % client_ids
+        result = db.get_data(tblClientGroups, columns, condition)
+    return return_group_companies_with_max_unit_count(db, result)
+
+def return_group_companies_with_max_unit_count(db, group_companies):
+    results = []
+    for group_company in group_companies :
+        client_countries = get_client_countries(db, group_company["client_id"])
+        countries = None if client_countries is None else [int(x) for x in client_countries.split(",")]
+        client_domains = get_client_domains(db, group_company["client_id"])
+        domains = None if client_domains is None else [int(x) for x in client_domains.split(",")]
+        next_auto_gen_no = get_next_auto_gen_number(
+            db, group_company["group_name"], group_company["client_id"]
+        )
+        results.append(core.GroupCompanyForUnitCreation(
+            group_company["client_id"], group_company["group_name"],
+            bool(group_company["is_active"]), countries, domains,
+            next_auto_gen_no
+        ))
+    return results
+
+def get_next_auto_gen_number(db, group_name=None, client_id=None):
+    if group_name is None:
+        columns = ["group_name"]
+        condition = "client_id = %s " % client_id
+        rows = db.get_data(tblClientGroups, columns, condition)
+        if rows:
+            group_name = rows[0]["group_name"]
+
+    columns = ["count(*) as units"]
+    condition = "client_id = %s " % client_id
+    rows = db.get_data(tblUnits, columns, condition)
+    if rows:
+        no_of_units = rows[0]["units"]
+    group_name = group_name.replace(" ", "")
+    unit_code_start_letters = group_name[:2].upper()
+
+    columns = "TRIM(LEADING '%s' FROM unit_code)" % unit_code_start_letters
+    condition = "unit_code like binary '%s%s' and CHAR_LENGTH(unit_code) = 7 and client_id= %s "
+    condition_val = [
+        unit_code_start_letters, str('%'), client_id
+    ]
+    rows = db.get_data(tblUnits, columns, condition, condition_val)
+    auto_generated_unit_codes = []
+    for row in rows:
+        try:
+            auto_generated_unit_codes.append(int(row[0]))
+        except Exception, ex:
+            print ex
+            continue
+    next_auto_gen_no = 1
+    if len(auto_generated_unit_codes) > 0:
+        existing_max_unit_code = max(auto_generated_unit_codes)
+        if existing_max_unit_code == no_of_units:
+            next_auto_gen_no = no_of_units + 1
+        else:
+            next_auto_gen_no = existing_max_unit_code + 1
+    return next_auto_gen_no
+
+def reactivate_unit_data(db, client_id, unit_id, session_user):
+    action_column = [
+        "business_group_id", "legal_entity_id", "division_id",
+        "country_id", "geography_id", "industry_id",
+        "unit_code", "unit_name" , "address" ,
+        "postal_code", "domain_ids"
+    ]
+    condition = "unit_id = %s "
+    condition_val = [unit_id]
+    result = db.get_data(tblUnits, action_column, condition, condition_val)
+
+    action = "Reactivated Unit \"%s-%s\"" % (rows[0][0], rows[0][1])
+    db.save_activity(session_user, 19, action)
+
+    new_unit_id = db.get_new_id("unit_id", tblUnits)
+    result = result[0]
+    unit_code = get_next_unit_auto_gen_no(db, client_id)
+    unit_columns = [
+        "client_id", "unit_id", "is_active", "legal_entity_id",
+        "country_id", "geography_id", "industry_id", "unit_code", "unit_name",
+        "address", "postal_code", "domain_ids"
+    ]
+    values = [
+        client_id, new_unit_id, 1, result["legal_entity_id"],
+        result["country_id"], result["geography_id"],
+        result["industry_id"], unit_code, result["unit_name"],
+        result["address"], result["postal_code"], result["domain_ids"]
+    ]
+    if result["business_group_id"] not in ["Null", "None", None, ""]:
+        unit_columns.append("business_group_id")
+        values.append(result["business_group_id"])
+    if result["division_id"] not in ["Null", "None", None, ""]:
+        unit_columns.append("division_id")
+        values.append(result["division_id"])
+    db.insert(tblUnits, unit_columns, values)
+    return unit_code, result["unit_name"]
+
+def get_next_unit_auto_gen_no(db, client_id):
+    columns = "count(*) units"
+    condition = "client_id = '%d'" % client_id
+    rows = db.get_data(tblUnits, columns, condition)
+    no_of_units = rows[0]["units"]
+
+    group_columns = "group_name"
+    group_condition = "client_id = %s" % client_id
+    group_company = db.get_data(tblClientGroups, group_columns, group_condition)
+
+    group_name = group_company[0]["group_name"].replace(" ", "")
+    unit_code_start_letters = group_name[:2].upper()
+
+    columns = "TRIM(LEADING '%s' FROM unit_code)" % unit_code_start_letters
+    condition = "unit_code like binary '%s%s' and CHAR_LENGTH(unit_code) = 7 and client_id= %s"
+    condition_val = [unit_code_start_letters, "%", client_id]
+    rows = db.get_data(tblUnits, columns, condition, condition_val)
+    auto_generated_unit_codes = []
+    for row in rows:
+        try:
+            auto_generated_unit_codes.append(int(row[0]))
+        except Exception, ex:
+            print ex
+            continue
+    next_auto_gen_no = 1
+    if len(auto_generated_unit_codes) > 0:
+        existing_max_unit_code = max(auto_generated_unit_codes)
+        if existing_max_unit_code == no_of_units:
+            next_auto_gen_no = no_of_units + 1
+        else:
+            next_auto_gen_no = existing_max_unit_code + 1
+    unit_code = group_name[:2].upper()
+    if len(str(next_auto_gen_no)) == 1:
+        unit_code += "0000"
+    elif len(str(next_auto_gen_no)) == 2:
+        unit_code += "000"
+    elif len(str(next_auto_gen_no)) == 3:
+        unit_code += "00"
+    elif len(str(next_auto_gen_no)) == 4:
+        unit_code += "0"
+    unit_code += "%d" % (next_auto_gen_no)
+    return unit_code
+
+def get_profiles(db, client_ids):
+    client_ids_list = [int(x) for x in client_ids.split(",")]
+    profiles = []
+    for client_id in client_ids_list:
+        settings_rows = get_settings(db, client_id)
+        contract_from = datetime_to_string(settings_rows[0]["contract_from"])
+        contract_to = datetime_to_string(settings_rows[0]["contract_to"])
+        no_of_user_licence = settings_rows[0]["no_of_user_licence"]
+        file_space = settings_rows[0]["total_disk_space"]
+        used_space = settings_rows[0]["total_disk_space_used"]
+        licence_holder_rows = get_licence_holder_details(db, client_id)
+        licence_holders = []
+        for row in licence_holder_rows:
+            employee_name = None
+            unit_name = None
+            if row["unit_name"] == None:
+                unit_name = "-"
+            else:
+                unit_name = "%s - %s" % (row["unit_code"], row["unit_name"])
+            user_id = row["user_id"]
+            email_id = row["email_id"]
+            contact_no = None if row["contact_no"] is "" else row["contact_no"]
+            is_primary_admin = row["is_primary_admin"]
+            is_active = row["is_active"]
+            is_admin = row["is_admin"]
+            if(row["employee_code"] == None):
+                employee_name = row["employee_name"]
+            elif (is_primary_admin == 1 and is_active == 1):
+                employee_name = "Administrator"
+            elif (is_primary_admin == 1 and is_active == 0):
+                employee_name = "Old Administrator"
+            else:
+                employee_name = "%s - %s" % (row["employee_code"], row["employee_name"])
+            address = row["address"]
+            is_service_provider = False
+            if unit_name == "-":
+                if (is_primary_admin == 1 or is_admin == 1):
+                    is_service_provider = False
+                else:
+                    is_service_provider = True
+
+            used_val = round((used_space/1000000000), 2)
+
+            licence_holders.append(
+                technomasters.LICENCE_HOLDER_DETAILS(
+                    user_id, employee_name, email_id, contact_no,
+                    unit_name, address,
+                    file_space/1000000000, used_val,
+                    bool(is_active), bool(is_primary_admin),
+                    is_service_provider
+                )
+            )
+
+        remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
+        total_free_space = file_space/1000000000
+        total_used_space = float(used_val)
+        profile_detail = technomasters.PROFILE_DETAIL(
+            str(contract_from),
+            str(contract_to), no_of_user_licence, remaining_licence,
+            total_free_space, total_used_space, licence_holders
+        )
+        profiles.append(technomasters.PROFILES(client_id, profile_detail))
+    return profiles
+
+def get_settings(db, client_id):
+    settings_columns = [
+        "contract_from", "contract_to", "no_of_user_licence",
+        "total_disk_space", "total_disk_space_used"
+    ]
+    condition = "client_id = %s"
+    condition_val = [client_id]
+    return db.get_data(tblClientGroups, settings_columns, condition, condition_val)
+
+def get_licence_holder_details(db, client_id):
+    columns = [
+        "tcu.user_id", "tcu.email_id", "tcu.employee_name", "tcu.employee_code", "tcu.contact_no",
+        "tcu.is_primary_admin", "tu.unit_code", "tu.unit_name", "tu.address", "tcu.is_active", "tcu.is_admin"
+    ]
+    tables = [tblClientUsers, tblUnits]
+    aliases = ["tcu", "tu"]
+    join_type = "left join"
+    join_conditions = ["tcu.seating_unit_id = tu.unit_id"]
+    where_condition = "tcu.client_id = '%d'" % client_id
+    return db.get_data_from_multiple_tables(columns, tables, aliases, join_type, join_conditions, where_condition)
+
+def get_group_companies_for_user(db, user_id):
+    result = {}
+    client_ids = None
+    if user_id is not None:
+        client_ids = get_user_clients(db, user_id)
+    columns = ["client_id", "group_name", "is_active"]
+    condition = "is_active = 1"
+    if client_ids is not None:
+        condition = "client_id in (%s) order by group_name ASC" % client_ids
+        result = db.get_data(tblClientGroups, columns, condition)
+    return return_group_companies(db, result)
+
+def return_group_companies(db, group_companies):
+    results = []
+    for group_company in group_companies :
+        client_countries = get_client_countries(db, group_company["client_id"])
+        countries = None if client_countries is None else [int(x) for x in client_countries.split(",")]
+        client_domains = get_client_domains(db, group_company["client_id"])
+        domains = None if client_domains is None else [int(x) for x in client_domains.split(",")]
+        results.append(
+            core.GroupCompany(
+                group_company["client_id"], group_company["group_name"],
+                bool(group_company["is_active"]), countries, domains
+            )
+        )
+    return results
+
+
+def create_new_admin(db, new_admin_id, client_id, session_user):
+    columns = [
+        "database_ip", "database_username", "database_password",
+        "database_name"
+    ]
+    condition = "client_id = %s" % client_id
+    rows = db.get_data(
+        tblClientDatabase, columns, condition
+    )
+    if rows:
+        host = rows[0]["database_ip"]
+        username = rows[0]["database_username"]
+        password = rows[0]["database_password"]
+        database = rows[0]["database_name"]
+        conn = db._db_connect(host, username, password, database)
+        cursor = conn.cursor()
+
+        # Getting old admin details
+        query = "select admin_id, username, password from tbl_admin"
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        old_admin_id = rows[0][0]
+
+        query = "select count(*) from tbl_assigned_compliances \
+        where assignee = %s or concurrence_person = %s or \
+        approval_person = %s " % (old_admin_id, old_admin_id, old_admin_id)
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        compliance_count = rows[0][0]
+        if compliance_count > 0:
+            return "Reassign"
+        else:
+            # Getting new admin details
+            query = "select email_id, password from tbl_users where \
+            user_id = %s " % (new_admin_id)
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            admin_email = rows[0][0]
+            admin_password = rows[0][1]
+
+            # Promoting to new admin in Client db
+            query = "update tbl_admin set admin_id= %s , username = '%s', password= '%s'" % (
+                new_admin_id, admin_email, admin_password
+            )
+            cursor.execute(query)
+            query = "update tbl_users set is_primary_admin = 1 where user_id = %s" % (
+                new_admin_id
+            )
+            cursor.execute(query)
+
+            # Deactivating old admin in Client db
+            query = "update tbl_users set is_active = 0 \
+            where user_id = %s " % (
+                old_admin_id
+            )
+            cursor.execute(query)
+
+            # Adding all countries to new admin
+            query = "select country_id from tbl_countries"
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+            query = "delete from tbl_user_countries where user_id = '%d'" % (
+                new_admin_id
+            )
+            cursor.execute(query)
+            if rows:
+                query = "Insert into tbl_user_countries (country_id, user_id) values "
+                for index, row in enumerate(rows):
+                    q = "%s (%s, %s) " % (query, row[0], new_admin_id)
+                    cursor.execute(q)
+
+            # Adding all domains to new admin
+            query = "select domain_id from tbl_domains"
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+            query = "delete from tbl_user_domains where user_id = %s" % (
+                new_admin_id
+            )
+            cursor.execute(query)
+            if rows:
+                query = "Insert into tbl_user_domains (domain_id, user_id) values "
+                for index, row in enumerate(rows):
+                    q = "%s (%s, %s) " % (query, row[0], new_admin_id)
+                    cursor.execute(q)
+
+            # Adding all units to new admin
+            query = "select unit_id from tbl_units"
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+            query = "delete from tbl_user_units where user_id = %s" % (
+                new_admin_id
+            )
+            cursor.execute(query)
+
+            if rows:
+                query = "Insert into tbl_user_units (unit_id, user_id) values "
+                for row in rows:
+                    q = "%s (%s, %s) " % (query, row[0], new_admin_id)
+                    cursor.execute(q)
+
+            query = "update tbl_assigned_compliances set concurrence_person = null,\
+            approval_person = '%s' where assignee = '%s'" % (new_admin_id, new_admin_id)
+            cursor.execute(query)
+
+            query = "update tbl_compliance_history set concurred_by = null,\
+            approved_by = '%s' where completed_by = '%s' and completed_on is null\
+            or completed_on = 0 " % (new_admin_id, new_admin_id)
+            cursor.execute(query)
+
+            query = "update tbl_compliance_history set approve_status = 1, \
+            approved_on=now(), approved_by='%s' where completed_by = '%s' and \
+            completed_on is not null and completed_on != 0 and approve_status \
+            is null or approve_status = 0" % (new_admin_id, new_admin_id)
+            cursor.execute(query)
+
+            query = "SELECT employee_name, employee_code FROM tbl_users \
+            WHERE user_id='%s'" % new_admin_id
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            if rows[0][1] is not None:
+                employee_name = "%s - %s" % (rows[0][1], rows[0][0])
+            else:
+                employee_name = rows[0][0]
+
+            conn.commit()
+
+            # Promoting to new admin in Knowledge db
+            query = "update tbl_client_users set is_primary_admin = 1 \
+            where user_id = %s and client_id = %s"
+            db.execute(query, [new_admin_id, client_id])
+
+            # Deactivating old admin in Knowledge db
+            query = "update tbl_client_users set is_active = 0 \
+            where user_id = %s and client_id = %s"
+            db.execute(query, [old_admin_id, client_id])
+
+            query = "update tbl_client_groups set email_id = %s where client_id = %s"
+            db.execute(query, [admin_email, client_id])
+
+            action = None
+            action = "User \"%s\" was promoted to Primary Admin status" % (employee_name)
+            db.save_activity(session_user, 20, action)
+            return True
+    else:
+        return "ClientDatabaseNotExists"

@@ -88,6 +88,9 @@ class Database(object):
             pass
             # logger.logKnowledge("error", "database.py-connect", e)
 
+    def _db_connect(self, host, username, password, database):
+        return mysql.connect(host, username, password, database)
+
     ########################################################
     # To Close database connection
     ########################################################
