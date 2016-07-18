@@ -1,11 +1,6 @@
-from server.common import (
-    )
-from server.clientdatabase.general import (
-    get_user_company_details, get_countries_for_user,
-    )
 
-all__ = [
-	"is_configured",
+__all__ = [
+    "is_configured",
     "is_in_contract",
     "is_client_active",
     "verify_login",
