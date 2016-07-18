@@ -1,3 +1,4 @@
+from server.clientdatabase.tables import *
 
 __all__ = [
     "is_configured",
