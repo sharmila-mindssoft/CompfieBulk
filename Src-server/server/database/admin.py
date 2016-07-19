@@ -211,9 +211,9 @@ def save_country(db, country_name, created_by) :
     is_active = 1
 
     query = "INSERT INTO tbl_countries(country_name, created_by, created_on) \
-        VALUES (%s, %s, %s, %s, %s) "
+        VALUES (%s, %s, %s) "
     db.execute(query, (
-        country_id, country_name, is_active, created_by, created_on
+        country_name, created_by, created_on
     ))
     action = "Add Country - \"%s\"" % country_name
     db.save_activity(created_by, 1, action)

@@ -19,7 +19,7 @@ mysqlPassword = KNOWLEDGE_DB_PASSWORD
 mysqlDatabase = KNOWLEDGE_DATABASE_NAME
 mysqlPort = KNOWLEDGE_DB_PORT
 
-NOTIFY_TIME = "10:55"  # 12 AM
+NOTIFY_TIME = "11:10"  # 12 AM
 
 email = EmailHandler()
 
@@ -396,6 +396,7 @@ def is_notify_time_reached(time_zone, country_id):
     # print current_country_time
     # print type(current_country_time)
     now = return_hour_minute(time_convertion(time_zone))
+    print now
     # print now
     if now == NOTIFY_TIME :
         run_notify_email_process(country_id)

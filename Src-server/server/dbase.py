@@ -238,7 +238,14 @@ class Database(object):
                     params.append(p.strip())
             param = params
         elif type(columns) is list :
-            param = columns
+            param = []
+            for c in columns :
+                if "as " in c :
+                    param.append(c.split('as ')[1].strip())
+                elif '.' in c :
+                    param.append(c.split('.')[1].strip())
+                else :
+                    param.append(c.strip())
             columns = ", ".join(columns)
 
         query = "SELECT %s FROM %s " % (columns, table)
@@ -377,6 +384,8 @@ class Database(object):
                 query += column+" = %s "
 
         query += " WHERE " + condition
+        print query
+        print values
         try:
             res = self.execute(query, values)
             print res
@@ -433,15 +442,21 @@ class Database(object):
     # specified column
     ########################################################
     def append(self, table, column, value, condition):
-        rows = self.get_data(table, column, condition)
-        currentValue = rows[0][0]
-        if currentValue is not None:
-            newValue = currentValue+","+str(value)
-        else:
-            newValue = str(value)
-        columns = [column]
-        values = [newValue]
-        return self.update(table, columns, values, condition)
+        try :
+            rows = self.get_data(table, column, condition)
+            print column
+            currentValue = rows[0][column]
+            if currentValue is not None:
+                newValue = currentValue+","+str(value)
+            else:
+                newValue = str(value)
+            columns = [column]
+            values = [newValue]
+            res = self.update(table, columns, values, condition)
+            return res
+        except mysql.Error, e :
+            print e
+            return False
 
     ########################################################
     # To increment value in the specified column by the
@@ -451,7 +466,7 @@ class Database(object):
 
     def increment(self, table, column, condition, value=1):
         rows = self.get_data(table, column, condition)
-        currentValue = rows[0][0]
+        currentValue = rows[0][column]
         if currentValue is not None:
             newValue = int(currentValue) + value
         else:

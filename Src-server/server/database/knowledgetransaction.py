@@ -2,7 +2,9 @@ import os
 import json
 from server.database.tables import *
 from protocol import (core)
-from server.constants import KNOWLEDGE_FORMAT_DOWNLOAD_URL
+from server.constants import (
+    KNOWLEDGE_FORMAT_DOWNLOAD_URL, KNOWLEDGE_FORMAT_PATH
+)
 from server.common import (
     convert_to_dict, get_date_time
 )
@@ -12,37 +14,25 @@ from server.database.knowledgemaster import (
     get_statutory_by_id, get_geography_by_id
 )
 
-__all__ = [
-
-    "get_statutory_mappings",
-    "check_duplicate_statutory_mapping",
-    "check_duplicate_compliance_name",
-    "save_statutory_mapping",
-    "update_statutory_mapping",
-    "change_statutory_mapping_status",
-    "change_approval_status",
-    "save_notifications"
-]
-
 APPROVAL_STATUS = ["Pending", "Approved", "Rejected", "Approved & Notified"]
 def get_compliance_by_id(db, compliance_id, is_active=None):
     q = ""
     if is_active is None :
-        if type(compliance_id) == IntType :
+        if type(compliance_id) == int :
             q = " WHERE t1.compliance_id = %s"
             value = [compliance_id]
         else :
             q = " WHERE t1.compliance_id in %s"
-            value = [str(tuple(compliance_id))]
+            value = [tuple(compliance_id)]
     else :
         is_active = int(is_active)
 
-        if type(compliance_id) == IntType :
+        if type(compliance_id) == int :
             q = " WHERE t1.is_active = %s AND t1.compliance_id = %s"
             value = [is_active, compliance_id]
         else :
             q = " WHERE t1.is_active = %s AND t1.compliance_id in %s"
-            value = [is_active, str(tuple(compliance_id))]
+            value = [is_active, tuple(compliance_id)]
 
     qry = "SELECT t1.compliance_id, t1.statutory_provision, \
         t1.compliance_task, t1.compliance_description, \
@@ -56,6 +46,8 @@ def get_compliance_by_id(db, compliance_id, is_active=None):
         (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t1.repeats_type_id) repeat_type \
         FROM tbl_compliances t1 %s ORDER BY t1.frequency_id" % q
     rows = db.select_all(qry, value)
+    print rows
+    print '*' * 50
     columns = [
         "compliance_id", "statutory_provision",
         "compliance_task", "compliance_description",
@@ -138,7 +130,7 @@ def return_compliance(data):
         compalinaces.append(compliance)
     return [compliance_names, compalinaces]
 
-def get_statutory_mappings(db, user_id) :
+def get_statutory_mappings(db, user_id, for_approve=False) :
 
     q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
         (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
@@ -159,6 +151,9 @@ def get_statutory_mappings(db, user_id) :
         ON t6.country_id = t1.country_id \
         and t6.user_id = %s"
 
+    if for_approve is True :
+        q = q + " WHERE t1.approval_status in (0)"
+
     q = q + " ORDER BY country_name, domain_name, statutory_nature_name"
     rows = db.select_all(q, [user_id, user_id])
     # print q
@@ -173,9 +168,9 @@ def get_statutory_mappings(db, user_id) :
     result = []
     if rows :
         result = convert_to_dict(rows, columns)
-    return return_statutory_mappings(result)
+    return return_statutory_mappings(db, result)
 
-def return_statutory_mappings(data, is_report=None):
+def return_statutory_mappings(db, data, is_report=None):
     if bool(STATUTORY_PARENTS) is False :
         get_statutory_master(db)
     if bool(GEOGRAPHY_PARENTS) is False :
@@ -302,11 +297,7 @@ def check_duplicate_compliance_name(db, request_frame):
                 WHERE t2.country_id = %s AND t2.domain_id = %s AND \
                 t1.compliance_task = %s \
                 AND t1.statutory_provision = %s \
-                AND t2.statutory_mapping LIKE %s" % (
-                    country_id, domain_id, compliance_name,
-                    statutory_provision,
-                    str("%" + statutory_mappings + "%")
-                )
+                AND t2.statutory_mapping LIKE %s"
             val = [
                 country_id, domain_id, compliance_name,
                 statutory_provision,
@@ -439,7 +430,7 @@ def save_compliance(db, mapping_id, domain_id, datas, created_by) :
 
         table_name = "tbl_compliances"
         columns = [
-            "compliance_id", "statutory_provision",
+            "statutory_provision",
             "compliance_task", "compliance_description",
             "document_name", "format_file", "format_file_size",
             "penal_consequences", "frequency_id",
@@ -447,7 +438,7 @@ def save_compliance(db, mapping_id, domain_id, datas, created_by) :
             "is_active", "created_by", "created_on", "domain_id"
         ]
         values = [
-            compliance_id, provision, compliance_task,
+            provision, compliance_task,
             compliance_description, document_name,
             file_name, file_size, penal_consequences,
             compliance_frequency, statutory_dates,
@@ -765,7 +756,7 @@ def update_compliance(db, mapping_id, domain_id, datas, updated_by) :
     return compliance_ids, compliance_names
 
 def get_industry_by_id(db, industry_id) :
-    if type(industry_id) is IntType :
+    if type(industry_id) is int :
         q = "SELECT industry_name FROM tbl_industries \
             WHERE industry_id=%s"
         value = [industry_id]
@@ -800,7 +791,7 @@ def save_statutory_backup(db, statutory_mapping_id, created_by):
     #     data = self.statutory_parent_mapping.get(int(sid))
     #     provision.append(data[1])
     for sid in old_record["statutory_ids"][:-1].split(',') :
-        data = get_statutory_by_id(sid)
+        data = get_statutory_by_id(db, sid)
         provision.append(data["parent_names"])
     mappings = ','.join(provision)
 
@@ -814,20 +805,22 @@ def save_statutory_backup(db, statutory_mapping_id, created_by):
 
     tbl_statutory_backup = "tbl_statutories_backup"
     columns = [
-        "statutory_backup_id", "statutory_mapping_id",
+        "statutory_mapping_id",
         "country_name", "domain_name", "industry_name",
         "statutory_nature", "statutory_provision",
         "applicable_location", "created_by",
         "created_on"
     ]
     values = [
-        backup_id, statutory_mapping_id,
+        statutory_mapping_id,
         old_record["country_name"], old_record["domain_name"],
         industry_name, old_record["statutory_nature_name"],
         mappings,
         geo_mappings, int(created_by), created_on
     ]
-    db.insert(tbl_statutory_backup, columns, values)
+    backup_id = db.insert(tbl_statutory_backup, columns, values)
+    if backup_id is False :
+        return False
 
     qry = " INSERT INTO tbl_compliances_backup \
         (statutory_backup_id, statutory_provision, \

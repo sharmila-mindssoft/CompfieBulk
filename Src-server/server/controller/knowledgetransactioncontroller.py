@@ -14,7 +14,15 @@ from server.database.knowledgemaster import (
     get_statutory_levels, get_geograhpy_levels_for_user,
     get_geographies, get_statutory_master
 )
-from server.database.knowledgetransaction import *
+from server.database.knowledgetransaction import (
+    get_statutory_mappings,
+    check_duplicate_compliance_name,
+    check_duplicate_statutory_mapping,
+    save_statutory_mapping,
+    update_statutory_mapping,
+    change_statutory_mapping_status,
+    change_approval_status
+)
 __all__ = [
     "process_knowledge_transaction_request"
 ]
@@ -133,7 +141,6 @@ def process_save_statutory_mapping(db, request_frame, user_id):
             return knowledgetransaction.SaveStatutoryMappingSuccess()
     else :
         return knowledgetransaction.ComplianceNameAlreadyExists(is_duplicate)
-
 
 def process_update_statutory_mapping(db, request_frame, user_id):
     is_duplicate = check_duplicate_compliance_name(db, request_frame)

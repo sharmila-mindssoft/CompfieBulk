@@ -7,7 +7,8 @@ from distribution.protocol import (
 )
 
 from server.common import (
-    convert_to_dict, datetime_to_string
+    convert_to_dict, datetime_to_string,
+    string_to_datetime, datetime_to_string_time
 )
 from server.database.tables import *
 from protocol import (general, core)
@@ -25,7 +26,9 @@ __all__ = [
     "get_user_form_ids", "get_notifications",
     "get_user_type",
     "get_compliance_duration", "get_compliance_repeat",
-    "get_compliance_frequency", "get_approval_status"
+    "get_compliance_frequency", "get_approval_status",
+    "get_audit_trails",
+    "update_profile"
 ]
 
 def get_trail_id(db):
@@ -215,13 +218,13 @@ def get_user_forms(db, form_ids):
 # general controllers methods
 #
 
-def get_user_form_ids(self, user_id) :
+def get_user_form_ids(db, user_id) :
     if user_id == 0 :
         return "1, 2, 3, 4"
     q = "select t1.form_ids from tbl_user_groups t1 \
         INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id \
         AND t2.user_id = %s"
-    row = self.select_one(q, (user_id))
+    row = db.select_one(q, (user_id))
     if row :
         return row[0]
     else :
@@ -292,11 +295,7 @@ def get_compliance_duration(db):
             )
         return duration_list
 
-    columns = ["duration_type_id", "duration_type"]
-    rows = db.get_data("tbl_compliance_duration_type", "*", None)
-    result = []
-    if rows :
-        result = convert_to_dict(rows, columns)
+    result = db.get_data("tbl_compliance_duration_type", ["duration_type_id", "duration_type"], None)
     return return_compliance_duration(result)
 
 def get_compliance_repeat(db):
@@ -312,11 +311,7 @@ def get_compliance_repeat(db):
             )
         return repeat_list
 
-    columns = ["repeat_type_id", "repeat_type"]
-    rows = db.get_data("tbl_compliance_repeat_type", "*", None)
-    result = []
-    if rows :
-        result = convert_to_dict(rows, columns)
+    result = db.get_data("tbl_compliance_repeat_type", ["repeat_type_id", "repeat_type"], None)
     return return_compliance_repeat(result)
 
 def get_compliance_frequency(db):
@@ -333,11 +328,8 @@ def get_compliance_frequency(db):
             frequency_list.append(c_frequency)
         return frequency_list
 
-    columns = ["frequency_id", "frequency"]
-    rows = db.get_data("tbl_compliance_frequency", "*", None)
-    result = []
-    if rows :
-        result = convert_to_dict(rows, columns)
+    result = db.get_data("tbl_compliance_frequency", ["frequency_id", "frequency"], None)
+    print result
     return return_compliance_frequency(result)
 
 def get_approval_status(db, approval_id=None):
@@ -358,3 +350,96 @@ def get_approval_status(db, approval_id=None):
         return return_approval_status(status)
     else :
         return status[int(approval_id)]
+
+#
+#   Audit Trail
+#
+
+def return_forms(db, form_ids=None):
+    columns = "form_id, form_name"
+    condition = " form_id != '26' "
+    if form_ids is not None:
+        condition += " AND form_id in (%s) " % form_ids
+    forms = db.get_data(tblForms, columns, condition)
+    results = []
+    for form in forms:
+        results.append(general.AuditTrailForm(form["form_id"], form["form_name"]))
+    return results
+
+def get_users(db, condition="1"):
+    columns = "user_id, employee_name, employee_code, is_active"
+    rows = db.get_data(tblUsers, columns, condition)
+    return rows
+
+def return_users(db, condition="1"):
+    user_rows = get_users(db, condition)
+    results = []
+    for user in user_rows :
+        employee_name = "%s - %s" % (user["employee_code"], user["employee_name"])
+        results.append(core.User(
+            user["user_id"], employee_name, bool(user["is_active"])
+        ))
+    return results
+
+def get_audit_trails(
+    db, session_user, from_count, to_count,
+    from_date, to_date, user_id, form_id
+):
+    form_column = "group_concat(form_id) as form_ids"
+    form_condition = "form_type_id != 3"
+    rows = db.get_data(
+        tblForms, form_column, form_condition
+    )
+    forms = None
+    if rows:
+        form_ids = rows[0]["form_ids"]
+        forms = return_forms(db, form_ids)
+
+    users = None
+    user_ids = None
+    query = '''
+    SELECT group_concat(user_id) from tbl_users where user_group_id = (
+    SELECT user_group_id from tbl_users where user_id = '%d')''' % session_user
+    rows = db.select_all(query)
+    if rows:
+        user_ids = rows[0][0]
+    condition = '''user_id in (%s)''' % user_ids
+    users = return_users(db, condition)
+
+    from_date = string_to_datetime(from_date).date()
+    to_date = string_to_datetime(to_date).date()
+    where_qry = "1"
+    if from_date is not None and to_date is not None:
+        where_qry += " AND  date(created_on) between '%s' AND '%s' " % (
+            from_date, to_date
+
+        )
+    if user_id is not None:
+        where_qry += " AND user_id = '%s'" % (user_id)
+    if form_id is not None:
+        where_qry += " AND form_id = '%s'" % (form_id)
+
+    columns = "user_id, form_id, action, created_on"
+    where_qry += " AND user_id in (%s)" % (user_ids)
+    where_qry += " ORDER BY created_on DESC"
+    where_qry += " LIMIT %d, %d" % (from_count, to_count)
+    rows = db.get_data(tblActivityLog, columns, where_qry)
+    audit_trail_details = []
+    for row in rows:
+        user_id = row["user_id"]
+        form_id = row["form_id"]
+        action = row["action"]
+        date = datetime_to_string_time(row["created_on"])
+        audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
+    return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
+
+#
+#   Update Profile
+#
+
+def update_profile(db, contact_no, address, session_user):
+    columns = ["contact_no", "address"]
+    values = [contact_no, address]
+    condition = "user_id= '%s'" % session_user
+    db.update(tblUsers, columns, values, condition)
+

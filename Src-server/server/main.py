@@ -103,7 +103,8 @@ class API(object):
                 data
             )
         except Exception, e:
-            # print e
+            print e
+            print "----------------"
             logger.logKnowledgeApi(e, "_parse_request")
             logger.logKnowledgeApi(traceback.format_exc(), "")
 
@@ -133,6 +134,7 @@ class API(object):
             return
 
         def respond(response_data):
+            print response_data
             self._send_response(
                 response_data, response
             )
@@ -307,6 +309,7 @@ class TemplateHandler(tornado.web.RequestHandler) :
                 new_url += "?v=%s" % (FILE_VERSION)
             if node.tag == "img" :
                 new_url += "?v=%s" % (FILE_VERSION)
+                print new_url
             node.set('src', new_url)
         for node in tree.xpath('//*[@href]'):
             url = node.get('href')

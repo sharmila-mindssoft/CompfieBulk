@@ -3,7 +3,6 @@ import io
 import Queue
 import threading
 import MySQLdb as mysql
-from protocol import technomasters
 from server import logger
 from server.database.tables import *
 
@@ -42,7 +41,8 @@ class ClientDBCreate(object):
         if result is False :
             raise self.process_error("Prepare db_constrsains failed")
         if result is True :
-            self.process_db_creation()
+            res = self.process_db_creation()
+            return res
         else :
             return result
 
@@ -63,7 +63,7 @@ class ClientDBCreate(object):
             self._host = data[0]["ip"]
             self._username = data[0]["server_username"]
             self._password = data[0]["server_password"]
-            self._port = data[0]["port"]
+            self._port = int(data[0]["port"])
             self._db_name = self.db_name()
             self._db_username = self.db_username()
             self._db_password = self.db_password()
@@ -75,13 +75,7 @@ class ClientDBCreate(object):
 
             def wrapper():
                 q.put(
-                    self._create_database(
-                        self._host, self._username,
-                        self._password, self._db_username,
-                        self._db_password, self._email_id,
-                        self._client_id, self._short_name,
-                        self._db, self._country_ids, self._domain_ids
-                    )
+                    self._create_database()
                 )
             create_database_thread = threading.Thread(target=wrapper)
             create_database_thread.start()
@@ -104,19 +98,27 @@ class ClientDBCreate(object):
 
     def delete_database(self):
         con = self._mysql_server_connect(
-            self._host, self._username, self._password,
+            self._host, self._username, self._password, self._port
         )
-        cursor = con.cursor()
-        query = "DROP DATABASE IF EXISTS %s"
-        cursor.execute(query, [self._db_name])
-        # drop created user here.
-        con.commit()
+        try :
+            cursor = con.cursor()
+            query = "DROP DATABASE IF EXISTS %s" % self._db_name
+            cursor.execute(query)
+            # drop created user here.
+            con.commit()
+        except mysql.Error, e :
+            print e
+            con.rollback()
 
     def _create_database(self):
+        db_con = None
+        main_con = None
         try :
+            print self._host, self._username, self._password
             main_con = self._mysql_server_connect(
                 self._host, self._username, self._password, self._port
             )
+            print "main_con success"
             main_cursor = main_con.cursor()
             self._create_db(main_cursor)
             self._grant_privileges(main_cursor)
@@ -126,6 +128,7 @@ class ClientDBCreate(object):
                 self._host, self._username, self._password, self._db_name,
                 self._port
             )
+            print "connection success"
             self._create_tables(db_con)
             self._create_admin_user(db_con)
             self._create_procedure(db_con)
@@ -134,8 +137,12 @@ class ClientDBCreate(object):
             self._save_client_countries(self._country_ids, db_con)
             db_con.commit()
             return True
-        except Exception :
-            raise self.process_error("create_database failed")
+        except Exception, e :
+            if db_con is not None :
+                db_con.rollback()
+            if main_con is not None :
+                main_con.rollback()
+            return e
 
     def _save_client_countries(self, country_ids, cursor):
         try :
@@ -165,20 +172,26 @@ class ClientDBCreate(object):
 
     def _create_db(self, cursor):
         try :
-            query = "CREATE DATABASE %s"
-            cursor.execute(query, [self._db_name])
-        except Exception :
-            raise self.process_error("client db creation failed")
+            query = "CREATE DATABASE %s" % self._db_name
+            print query
+            cursor.execute(query)
+        except mysql.Error, ex:
+            print ex
+            e = "client db creation failed"
+            print e
+            raise self.process_error(e)
 
     def _grant_privileges(self, cursor):
         try :
-            query = "GRANT SELECT, INSERT, UPDATE, DELETE ON %s.* to '%s'@'%s' IDENTIFIED BY '%s';"
-            self.execute(query, [
+            query = "GRANT SELECT, INSERT, UPDATE, DELETE ON %s.* to %s@%s IDENTIFIED BY %s;"
+            cursor.execute(query, [
                 self._db_name, self._db_username, str('%'), self._db_password
             ])
             cursor.execute("FLUSH PRIVILEGES;")
-        except Exception :
-            raise self.process_error("client database user grant_privileges failed")
+        except mysql.Error, ex :
+            print ex
+            e = "client database user grant_privileges failed"
+            raise self.process_error(e)
 
     def _create_admin_user(self, cursor):
         try :
@@ -313,7 +326,7 @@ class ClientDBCreate(object):
         db_server_column = "company_ids"
         db_server_value = self._client_id
 
-        db_server_condition = "ip = '%s' and port = '%s'" % (str(host), str(db_port))
+        db_server_condition = "ip = '%s' and port = '%s'" % (str(self._host), str(self._port))
         print db_server_condition
 
         self._db.append(
@@ -345,19 +358,19 @@ class ClientDBCreate(object):
             "server_ip", "server_port"
         ]
         client_dB_values = [
-            client_id, machine_id, host, db_port, db_username,
-            db_password, short_name, database_name,
+            self._client_id, machine_id, self._host, self._port, self._db_username,
+            self._db_password, self._short_name, self._db_name,
             server_ip, server_port
         ]
         length_rows = self._db.get_data(
             tblMachines, "client_ids",
-            db_server_condition
+            machine_condition
         )
         if length_rows:
             print length_rows
-            company_ids = length_rows[0][0].split(",")
+            company_ids = length_rows[0]["client_ids"].split(",")
             if company_ids >= 30:
-                self.set_server_full(db_server_condition)
+                self.set_server_full(machine_condition)
         return self._db.insert(
             tblClientDatabase, client_db_columns,
             client_dB_values
