@@ -1,15 +1,23 @@
-from server.common import (
-   get_date_time, string_to_datetime, datetime_to_string
-    )
-from server.clientdatabase.general import (
-    get_user_company_details, get_countries_for_user,
-    get_domains_for_user, calculate_ageing, get_user_unit_ids,
-    get_user_domains, get_email_id_for_users, 
-    get_user_name_by_id, convert_base64_to_file
-    )
+import json
+from server import logger
+from server.clientdatabase.tables import *
+from protocol import (
+    clienttransactions, core
+)
 
-all__ = [
-	"get_statutory_settings",
+from server.common import (
+   get_date_time, string_to_datetime, datetime_to_string,
+   convert_to_dict
+)
+
+from server.clientdatabase.general import (
+    calculate_ageing, get_user_unit_ids, get_admin_id,
+    get_user_domains, get_email_id_for_users,
+    get_user_name_by_id, convert_base64_to_file,
+)
+
+__all__ = [
+    "get_statutory_settings",
     "update_statutory_settings",
     "return_compliance_for_statutory_settings",
     "get_units_for_assign_compliance",
@@ -28,7 +36,7 @@ all__ = [
     "get_assigneewise_complaince_count",
     "get_compliance_for_assignee",
     "reassign_compliance"
-    ]
+]
 
 def get_statutory_settings(db, session_user, client_id):
     admin_id = get_admin_id(db)
@@ -65,7 +73,7 @@ def get_statutory_settings(db, session_user, client_id):
         "division_name", "address", "postal_code", "unit_code",
         "country_name", 'domain_name', 'is_closed', 'is_new'
     ]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_statutory_settings(result, client_id)
 
 def return_compliance_for_statutory_settings(
@@ -109,7 +117,7 @@ def return_compliance_for_statutory_settings(
         "statutory_provision", "compliance_description",
         "is_new", "domain", "total"
     ]
-    results = db.convert_to_dict(rows, columns)
+    results = convert_to_dict(rows, columns)
     statutory_wise_compliances = []
     total = 0
     for r in results :
@@ -335,7 +343,7 @@ def get_units_for_assign_compliance(db, session_user, is_closed=None):
         "division_id", "legal_entity_id",
         "business_group_id", "address", "country_id", "domain_ids"
     ]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_units_for_assign_compliance(result)
 
 
@@ -365,7 +373,7 @@ def get_units_to_assig(db, session_user) :
         "division_id", "legal_entity_id",
         "business_group_id", "address", "country_id", "domain_ids"
     ]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_units_for_assign_compliance(result)
 
 def return_units_for_assign_compliance(result):
@@ -421,12 +429,12 @@ def get_users_for_seating_units(db, session_user, client_id):
         "is_service_provider", "service_provider",
         "form_ids"
     ]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     user_list = []
     for r in result :
         q = "select distinct unit_id from tbl_user_units where user_id = %s" % (int(r["user_id"]))
         r_rows = db.select_all(q)
-        r_unit_ids = db.convert_to_dict(r_rows, ["unit_id"])
+        r_unit_ids = convert_to_dict(r_rows, ["unit_id"])
         unit_ids = []
         for u in r_unit_ids :
             unit_ids.append(u["unit_id"])
@@ -649,7 +657,7 @@ def get_assign_compliance_statutories_for_units(
     rows = db.select_all(query)
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
 
-    temp = db.convert_to_dict(c_rows, ["compliance_id", "units"])
+    temp = convert_to_dict(c_rows, ["compliance_id", "units"])
     applicable_units = {}
     for r in temp :
         c_id = int(r["compliance_id"])
@@ -666,7 +674,7 @@ def get_assign_compliance_statutories_for_units(
         "statutory_dates", "frequency", "frequency_id", "duration_type", "duration",
         "repeat_type", "repeats_every", "repeats_type_id"
     ]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_assign_compliance_data(result, applicable_units, total)
 
 def return_assign_compliance_data(db, result, applicable_units, total):
@@ -844,9 +852,9 @@ def get_units_for_user_grouped_by_industry(db, unit_ids):
         tblUnits, industry_column, industry_condition
     )
 
-    columns = "unit_id, concat(unit_code,'-',unit_name), address, division_id,"+\
-    " legal_entity_id, business_group_id, country_id, domain_ids"
-    industry_wise_units =[]
+    columns = "unit_id, concat(unit_code,'-',unit_name), address, division_id," + \
+        "legal_entity_id, business_group_id, country_id, domain_ids"
+    industry_wise_units = []
     for industry in industry_rows:
         industry_name = industry[0]
         units = []
@@ -960,7 +968,7 @@ def get_statutory_wise_compliances(
         "repeats_type_id",  "repeat_type", "repeat_every", "frequency",
         "frequency_id"
     ]
-    client_compliance_rows = db.convert_to_dict(rows, columns)
+    client_compliance_rows = convert_to_dict(rows, columns)
     level_1_statutory_wise_compliances = {}
     total_count = 0
     compliance_count = 0
@@ -989,7 +997,7 @@ def get_statutory_wise_compliances(
         summary = ""
         if compliance["repeats_type_id"] == 1:  # Days
             due_dates, summary = calculate_due_date(
-            	db, 
+                db,
                 repeat_by=1,
                 repeat_every=compliance["repeat_every"],
                 due_date=compliance["due_date"],
@@ -998,7 +1006,7 @@ def get_statutory_wise_compliances(
             )
         elif compliance["repeats_type_id"] == 2:  # Months
             due_dates, summary = calculate_due_date(
-            	db,
+                db,
                 statutory_dates=compliance["statutory_dates"],
                 repeat_by=2,
                 repeat_every=compliance["repeat_every"],
@@ -1008,7 +1016,7 @@ def get_statutory_wise_compliances(
             )
         elif compliance["repeats_type_id"] == 3:  # years
             due_dates, summary = calculate_due_date(
-            	db, 
+                db,
                 repeat_by=3,
                 statutory_dates=compliance["statutory_dates"],
                 repeat_every=compliance["repeat_every"],
@@ -1022,7 +1030,7 @@ def get_statutory_wise_compliances(
         total_count += len(final_due_dates)
         for due_date in final_due_dates:
             if int(start_count) <= compliance_count and compliance_count < (int(start_count)+to_count):
-                due_date_parts = due_date.replace("'","").split("-")
+                due_date_parts = due_date.replace("'", "").split("-")
                 year = due_date_parts[0]
                 month = due_date_parts[1]
                 day = due_date_parts[2]
@@ -1106,7 +1114,7 @@ def validate_before_save(
 def save_past_record(
         db, unit_id, compliance_id, due_date, completion_date, documents,
         validity_date, completed_by, client_id
-    ):
+):
     is_uploading_file = False
 
     # Checking whether compliance already completed
@@ -1148,9 +1156,9 @@ def save_past_record(
     is_two_level = is_two_levels_of_approval(db)
     compliance_history_id = db.get_new_id("compliance_history_id", tblComplianceHistory)
     completion_date = string_to_datetime(completion_date).date()
-    next_due_date = None
-    if validity_date:
-        next_due_date = string_to_datetime(validity_date).date()
+    # next_due_date = None
+    # if validity_date:
+    #   next_due_date = string_to_datetime(validity_date).date()
 
     # Getting Approval and Concurrence Persons
     concur_approve_columns = "approval_person"
@@ -1398,7 +1406,7 @@ def approve_compliance(
     )
     rows = db.select_all(query)
     columns = ["unit_id", "compliance_id", "frequency_id", "due_date", "completion_date"]
-    rows = db.convert_to_dict(rows, columns)
+    rows = convert_to_dict(rows, columns)
 
     unit_id = rows[0]["unit_id"]
     compliance_id = rows[0]["compliance_id"]
@@ -1438,8 +1446,6 @@ def approve_compliance(
         db, unit_id, compliance_id, "Approved", status,
         remarks
     )
-
-
     notify_compliance_approved(db, compliance_history_id, "Approved")
     return True
 
@@ -1511,19 +1517,20 @@ def notify_compliance_approved(
         logger.logClient("error", "clientdatabase.py-notifycomplianceapproved", e)
         print "Error while sending email : {}".format(e)
 
-def reject_compliance_approval(db, compliance_history_id, remarks,
-    next_due_date, client_id):
+def reject_compliance_approval(db, compliance_history_id, remarks, next_due_date, client_id):
     columns = "unit_id, ch.compliance_id, due_date, completion_date, completed_by,\
     concurred_by, approved_by, \
     (SELECT concat(IFNULL(document_name,''),'-',compliance_task) FROM tbl_compliances tc\
     WHERE tc.compliance_id = ch.compliance_id)"
     condition = "compliance_history_id = '%d'" % compliance_history_id
     rows = db.get_data(
-        tblComplianceHistory+ " ch", columns, condition
+        tblComplianceHistory + " ch", columns, condition
     )
-    columns = ["unit_id", "compliance_id", "due_date", "completion_date",
-    "assignee_id", "concurrence_id", "approval_id", "compliance_name"]
-    rows = db.convert_to_dict(rows, columns)
+    columns = [
+        "unit_id", "compliance_id", "due_date", "completion_date",
+        "assignee_id", "concurrence_id", "approval_id", "compliance_name"
+    ]
+    rows = convert_to_dict(rows, columns)
     unit_id = rows[0]["unit_id"]
     compliance_id = rows[0]["compliance_id"]
     due_date = rows[0]["due_date"]
@@ -1542,8 +1549,10 @@ def reject_compliance_approval(db, compliance_history_id, remarks,
         ageing_remarks
     )
 
-    columns = ["approve_status", "remarks", "completion_date", "completed_on",
-    "concurred_on", "concurrence_status"]
+    columns = [
+        "approve_status", "remarks", "completion_date", "completed_on",
+        "concurred_on", "concurrence_status"
+    ]
     condition = "compliance_history_id = '%d'" % compliance_history_id
     values = [0, remarks, None, None, None, None]
     db.update(tblComplianceHistory, columns, values, condition, client_id)
@@ -1653,8 +1662,7 @@ def concur_compliance(
     notify_compliance_approved(db, compliance_history_id, "Concurred")
     return True
 
-def reject_compliance_concurrence(db, compliance_history_id, remarks,
-    next_due_date, client_id):
+def reject_compliance_concurrence(db, compliance_history_id, remarks, next_due_date, client_id):
     columns = "unit_id, ch.compliance_id, due_date, completion_date, completed_by,\
     concurred_by, approved_by, \
     (SELECT concat(IFNULL(document_name,''),'-',compliance_task) FROM tbl_compliances tc\
@@ -1663,11 +1671,13 @@ def reject_compliance_concurrence(db, compliance_history_id, remarks,
     # columns = "unit_id, compliance_id, due_date, completion_date"
     # condition = "compliance_history_id = '%d'" % compliance_history_id
     rows = db.get_data(
-        tblComplianceHistory+ " ch", columns, condition
+        tblComplianceHistory + " ch", columns, condition
     )
-    columns = ["unit_id", "compliance_id", "due_date", "completion_date",
-    "assignee_id", "concurrence_id", "approval_id", "compliance_name"]
-    rows = db.convert_to_dict(rows, columns)
+    columns = [
+        "unit_id", "compliance_id", "due_date", "completion_date",
+        "assignee_id", "concurrence_id", "approval_id", "compliance_name"
+    ]
+    rows = convert_to_dict(rows, columns)
     unit_id = rows[0]["unit_id"]
     compliance_id = rows[0]["compliance_id"]
     due_date = rows[0]["due_date"]
@@ -1719,7 +1729,7 @@ def get_assigneewise_complaince_count(db, session_user):
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
     rows = db.select_all(q)
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
-    result = db.convert_to_dict(rows, columns=["assignee", "count"])
+    result = convert_to_dict(rows, columns=["assignee", "count"])
     data = {}
     for r in result :
         data[int(r["assignee"])] = int(r["count"])
@@ -1778,7 +1788,7 @@ def get_compliance_for_assignee(db, session_user, assignee, from_count, to_count
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
     rows = db.select_all(q)
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
-    result.extend(db.convert_to_dict(rows, columns))
+    result.extend(convert_to_dict(rows, columns))
     return return_compliance_to_reassign(result)
 
 def return_compliance_to_reassign(data):

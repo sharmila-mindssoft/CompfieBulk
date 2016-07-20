@@ -109,7 +109,7 @@ def process_general_request(request, db) :
 
 def validate_user_session(db, session_token, client_id=None):
     if client_id:
-        return db.validate_session_token(client_id, session_token)
+        return db.validate_session_token(session_token)
     else:
         return db.validate_session_token(session_token)
 

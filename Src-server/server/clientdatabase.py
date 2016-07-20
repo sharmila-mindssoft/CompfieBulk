@@ -304,7 +304,7 @@ class ClientDatabase(Database):
         else:
             employee_name = "Administrator"
 
-        action = "\"%s\" has updated his/her password" % ( employee_name)
+        action = "\"%s\" has updated his/her password" % (employee_name)
         self.save_activity(user_id, 0, action)
 
         if result:
@@ -551,7 +551,7 @@ class ClientDatabase(Database):
             self.tblUnits, columns, condition
         )
         columns = [
-            "unit_id", "unit_code", "unit_name", "unit_address", "division_id","domain_ids", "country_id",
+            "unit_id", "unit_code", "unit_name", "unit_address", "division_id", "domain_ids", "country_id",
             "legal_entity_id", "business_group_id", "is_active", "is_closed"
         ]
         result = self.convert_to_dict(rows, columns)
@@ -567,7 +567,7 @@ class ClientDatabase(Database):
             self.tblUnits, columns, condition
         )
         columns = [
-            "unit_id", "unit_code", "unit_name", "unit_address", "division_id","domain_ids", "country_id",
+            "unit_id", "unit_code", "unit_name", "unit_address", "division_id", "domain_ids", "country_id",
             "legal_entity_id", "business_group_id", "is_active", "is_closed"
         ]
 
@@ -584,9 +584,9 @@ class ClientDatabase(Database):
             self.tblUnits, industry_column, industry_condition
         )
 
-        columns = "unit_id, concat(unit_code,'-',unit_name), address, division_id,"+\
-        " legal_entity_id, business_group_id, country_id, domain_ids"
-        industry_wise_units =[]
+        columns = "unit_id, concat(unit_code, '-', unit_name), address, division_id,+\
+        legal_entity_id, business_group_id, country_id, domain_ids"
+        industry_wise_units = []
         for industry in industry_rows:
             industry_name = industry[0]
             units = []
@@ -647,9 +647,8 @@ class ClientDatabase(Database):
     def generate_new_user_privilege_id(self, client_id) :
         return self.get_new_id("user_group_id", self.tblUserGroups, client_id)
 
-    def is_duplicate_user_privilege(self, user_group_id, user_privilege_name,
-        client_id):
-        condition = "user_group_name ='%s' AND user_group_id != '%d'" %(
+    def is_duplicate_user_privilege(self, user_group_id, user_privilege_name, client_id):
+        condition = "user_group_name ='%s' AND user_group_id != '%d'" % (
             user_privilege_name, user_group_id)
         return self.is_already_exists(self.tblUserGroups, condition)
 
@@ -680,8 +679,9 @@ class ClientDatabase(Database):
         return results
 
     def save_user_privilege(self, user_group_id, user_privilege, session_user, client_id):
-        columns = ["user_group_id", "user_group_name","form_ids", "is_active",
-                  "created_on", "created_by", "updated_on", "updated_by"]
+        columns = ["user_group_id", "user_group_name", "form_ids", "is_active",
+        "created_on", "created_by", "updated_on", "updated_by"
+        ]
         values_list =  [user_group_id, user_privilege.user_group_name,
                         ",".join(str(x) for x in user_privilege.form_ids), 1,
                         self.get_date_time(), session_user,self.get_date_time(),
@@ -706,7 +706,7 @@ class ClientDatabase(Database):
         return result
 
     def update_user_privilege_status(self, user_group_id, is_active, session_user, client_id):
-        is_active = 0 if is_active != True else 1
+        is_active = 0 if is_active is not True else 1
         columns = ["is_active", "updated_by", "updated_on"]
         values = [is_active, session_user, self.get_date_time()]
         condition = "user_group_id='%d'" % user_group_id
@@ -730,7 +730,7 @@ class ClientDatabase(Database):
 #
 
     def generate_new_user_id(self, client_id):
-        return self.get_new_id("user_id",self.tblUsers, client_id)
+        return self.get_new_id("user_id", self.tblUsers, client_id)
 
     def is_duplicate_user_email(self, user_id, email_id, client_id):
         flag1 = False

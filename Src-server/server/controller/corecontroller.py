@@ -3,6 +3,8 @@ import collections
 from protocol import core
 
 from server.database.general import get_user_forms
+from server.clientdatabase.general import get_client_user_forms
+
 __all__ = [
     "process_user_forms", "process_user_menus",
 ]
@@ -12,7 +14,7 @@ def process_user_forms(
 ):
     forms = None
     if client_id is not None:
-        forms = get_user_forms(db, form_ids, client_id, is_admin)
+        forms = get_client_user_forms(db, form_ids, client_id, is_admin)
     else:
         forms = get_user_forms(db, form_ids)
     form_list = []

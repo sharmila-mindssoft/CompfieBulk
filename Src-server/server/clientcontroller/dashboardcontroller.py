@@ -7,7 +7,7 @@ from server.clientdatabase.general import (
     get_business_groups_for_user, get_legal_entities_for_user,
     get_divisions_for_user, get_group_name,
     get_country_wise_domain_month_range, get_country_wise_domain_month_range,
-    get_client_users, get_user_domains, get_client_compliance_count
+    get_client_users, get_user_domains
     )
 __all__ = [
     "process_client_dashboard_requests"
@@ -24,7 +24,7 @@ def process_client_dashboard_requests(request, db) :
 
     request = request.request
     client_id = int(client_info[0])
-    session_user = db.validate_session_token(client_id, session_token)
+    session_user = db.validate_session_token(session_token)
 
     if session_user is None:
         return login.InvalidSessionToken()

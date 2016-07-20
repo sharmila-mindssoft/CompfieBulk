@@ -256,8 +256,6 @@ class Database(object):
             if order is not None :
                 query += order
             rows = self.select_all(query)
-
-        print "get_data", rows
         result = []
         if rows :
             result = convert_to_dict(rows, param)
@@ -329,8 +327,6 @@ class Database(object):
 
         query = """INSERT INTO %s %s """ % (table, columns)
         query += " VALUES (%s) " % (",".join(stringValue))
-        print query
-        print values
         try:
             return self.execute_insert(query, values)
         except mysql.Error, e:
@@ -356,7 +352,6 @@ class Database(object):
         try:
             cursor = self.cursor()
             assert cursor is not None
-            print query
             cursor.executemany(query, valueList)
             return True
         except mysql.Error, e:
@@ -379,7 +374,6 @@ class Database(object):
         query += " WHERE " + condition
         try:
             res = self.execute(query, values)
-            print res
             return True
         except mysql.Error, e:
             logger.logKnowledgeApi("update", query)

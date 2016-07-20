@@ -8,7 +8,7 @@ from server.clientdatabase.clientreport import *
 
 from server.clientdatabase.general import (
     get_user_company_details,
-    get_countries_for_user, get_domains_for_user, 
+    get_countries_for_user, get_domains_for_user,
     get_business_groups_for_user, get_legal_entities_for_user,
     get_divisions_for_user, get_units_for_user,
     get_client_users, get_client_level_1_statutoy,
@@ -24,7 +24,7 @@ def process_client_report_requests(request, db) :
     client_info = request.session_token.split("-")
     request = request.request
     client_id = int(client_info[0])
-    session_user = db.validate_session_token(client_id, session_token)
+    session_user = db.validate_session_token(session_token)
     if session_user is None:
         return login.InvalidSessionToken()
 

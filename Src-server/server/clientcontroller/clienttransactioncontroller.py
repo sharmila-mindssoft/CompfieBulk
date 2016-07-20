@@ -28,7 +28,7 @@ def process_client_transaction_requests(request, db) :
     session_token = request.session_token
     request = request.request
     client_id = int(client_info[0])
-    session_user = db.validate_session_token(client_id, session_token)
+    session_user = db.validate_session_token(session_token)
     if session_user is None:
         return login.InvalidSessionToken()
 

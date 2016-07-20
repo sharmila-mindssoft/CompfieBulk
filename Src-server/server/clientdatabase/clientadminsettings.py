@@ -1,9 +1,14 @@
+from server.clientdatabase.tables import *
+
+from protocol import (
+  clientadminsettings
+)
 
 from server.common import (
     datetime_to_string
     )
 
-all__ = [
+__all__ = [
     "get_settings",
     "get_profile",
     "updateSettings"
@@ -57,7 +62,7 @@ def get_profile(
     result = db.get_data(
         tblAdmin, admin_columns, admin_condition
     )
-    admin_email = result[0][0]
+    admin_email = result[0]["username"]
     is_admin_is_a_user = False
 
     licence_holder_rows = get_licence_holder_details(db, client_id)
@@ -65,24 +70,24 @@ def get_profile(
     for row in licence_holder_rows:
         employee_name = None
         unit_name = None
-        if(row[3] == None):
-            employee_name = row[2]
+        if(row["employee_code"] == None):
+            employee_name = row["employee_name"]
         else:
-            employee_name = "%s - %s" % (row[3], row[2])
+            employee_name = "%s - %s" % (row["employee_code"], row["employee_name"])
 
-        if row[7] == None:
-            unit_name = row[10]
+        if row["unit_name"] == None:
+            unit_name = row["service_provider_name"]
         else:
-            unit_name = "%s - %s" % (row[6], row[7])
-        user_id = row[0]
-        email_id = row[1]
+            unit_name = "%s - %s" % (row["unit_code"], row["unit_name"])
+        user_id = row["user_id"]
+        email_id = row["email_id"]
         if email_id == admin_email:
             is_admin_is_a_user = True
             employee_name = "Administrator: %s" % employee_name
-        contact_no = row[4]
-        is_admin = row[5]
-        address = row[8]
-        is_active = row[9]
+        contact_no = row["contact_no"]
+        # is_admin = row[5]
+        address = row["address"]
+        # is_active = row[9]
         licence_holders.append(
             clientadminsettings.LICENCE_HOLDER(
                 user_id, employee_name, email_id, contact_no,
@@ -119,13 +124,13 @@ def updateSettings(
         "two_levels_of_approval", "assignee_reminder",
         "escalation_reminder_in_advance", "escalation_reminder"
     ]
-    is_two_levels_of_approval = 1 if is_two_levels_of_approval == True else 0
+    is_two_levels_of_approval = 1 if is_two_levels_of_approval is True else 0
     values = [
         is_two_levels_of_approval, assignee_reminder_days,
         escalation_reminder_In_advance_days, escalation_reminder_days
     ]
     condition = "1"
-    db.update(tblClientGroups, columns, values, condition, client_id)
+    db.update(tblClientGroups, columns, values, condition)
 
     action = "Settings Updated"
     db.save_activity(0, 25, action)

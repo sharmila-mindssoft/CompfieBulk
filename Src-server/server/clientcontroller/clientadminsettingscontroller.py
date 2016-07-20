@@ -15,7 +15,7 @@ def process_client_admin_settings_requests(request, db) :
 
     request = request.request
     client_id = int(client_info[0])
-    session_user = db.validate_session_token(client_id, session_token)
+    session_user = db.validate_session_token(session_token)
     if session_user is None:
         return login.InvalidSessionToken()
     if type(request) is clientadminsettings.GetSettings :
@@ -29,20 +29,20 @@ def process_client_admin_settings_requests(request, db) :
 ########################################################
 def process_get_settings(db, request, session_user, client_id):
     settings = get_settings(db, client_id)
-    contract_from = settings[4]
-    contract_to = settings[5]
-    no_of_user_licence = settings[6]
-    total_disk_space = settings[7]
-    used_space = settings[8]
-    profile_detail = get_profile(db, 
-        contract_from, contract_to, no_of_user_licence,
+    contract_from = settings["contract_from"]
+    contract_to = settings["contract_to"]
+    no_of_user_licence = settings["no_of_user_licence"]
+    total_disk_space = settings["total_disk_space"]
+    used_space = settings["total_disk_space_used"]
+    profile_detail = get_profile(
+        db, contract_from, contract_to, no_of_user_licence,
         total_disk_space, used_space, client_id
     )
     return clientadminsettings.GetSettingsSuccess(
-        is_two_levels_of_approval=bool(settings[0]),
-        assignee_reminder_days=settings[1],
-        escalation_reminder_In_advance_days=settings[2],
-        escalation_reminder_days=settings[3],
+        is_two_levels_of_approval=bool(settings["two_levels_of_approval"]),
+        assignee_reminder_days=settings["assignee_reminder"],
+        escalation_reminder_In_advance_days=settings["escalation_reminder_in_advance"],
+        escalation_reminder_days=settings["escalation_reminder"],
         profile_detail=profile_detail
     )
 

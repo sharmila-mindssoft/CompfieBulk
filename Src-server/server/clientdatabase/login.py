@@ -1,4 +1,17 @@
 from server.clientdatabase.tables import *
+from server.dbase import Database
+
+from server.common import (
+   convert_to_dict, new_uuid, get_date_time
+)
+
+from server.clientdatabase.general import (
+    is_service_proivder_user
+)
+from server.constants import (
+    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
+)
 
 __all__ = [
     "is_configured",
@@ -13,34 +26,34 @@ __all__ = [
     ]
 
 def is_configured(db):
-    columns = "count(1)"
+    columns = "count(1) as configure"
     condition = "1"
     rows = db.get_data(
         tblClientGroups, columns, condition
     )
-    if rows[0][0] <= 0:
+    if rows[0]["configure"] <= 0:
         return False
     else:
         return True
 
 def is_in_contract(db):
-    columns = "count(1)"
+    columns = "count(1)  as contract"
     condition = "now() between contract_from and DATE_ADD(contract_to, INTERVAL 1 DAY)"
     rows = db.get_data(
         tblClientGroups, columns, condition
     )
-    if rows[0][0] <= 0:
+    if rows[0]["contract"] <= 0:
         return False
     else:
         return True
 
 def is_contract_not_started(db):
-    columns = "count(1)"
+    columns = "count(1) as contract"
     condition = "now() < contract_from"
     rows = db.get_data(
         tblClientGroups, columns, condition
     )
-    if rows[0][0] <= 0:
+    if rows[0]["contract"] <= 0:
         return False
     else:
         return True
@@ -65,11 +78,11 @@ def is_client_active(client_id):
         return False
 
 def verify_login(db, username, password):
-    tblAdminCondition = "password='%s' and username='%s'" % (
-        password, username
-    )
+    tblAdminCondition = "password=%s and username=%s"
     admin_details = db.get_data(
-        "tbl_admin", "*", tblAdminCondition
+        "tbl_admin", ["username", "password"],
+        tblAdminCondition,
+        (password, username)
     )
     if (len(admin_details) == 0) :
         data_columns = [
@@ -91,7 +104,7 @@ def verify_login(db, username, password):
         if data_list is None :
             return False
         else :
-            result = db.convert_to_dict(data_list, data_columns)
+            result = convert_to_dict(data_list, data_columns)
             if is_service_proivder_user(db, result["user_id"]):
                 if (
                     is_service_provider_in_contract(
@@ -139,7 +152,7 @@ def get_client_group(db):
     row = db.select_one(q)
     result = []
     if row :
-        result = db.convert_to_dict(row, ["client_id", "group_name"])
+        result = convert_to_dict(row, ["client_id", "group_name"])
     return result
 
 def get_client_configuration(db):
@@ -147,7 +160,7 @@ def get_client_configuration(db):
     rows = db.select_all(q)
     result = []
     if rows :
-        result = db.convert_to_dict(rows, ["country_id", "domain_id", "period_from", "period_to"])
+        result = convert_to_dict(rows, ["country_id", "domain_id", "period_from", "period_to"])
     c_list = []
     for r in result :
         info = core.ClientConfiguration(
@@ -159,3 +172,11 @@ def get_client_configuration(db):
         c_list.append(info)
 
     return c_list
+
+def clear_old_session(db, user_id, session_type_id, client_id=None) :
+    query = "DELETE FROM tbl_user_sessions \
+        WHERE user_id=%s and session_type_id=%s"
+
+    db.execute(query, (
+        user_id, session_type_id
+    ))

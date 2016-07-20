@@ -1,6 +1,7 @@
+from server.clientdatabase.tables import *
 from server.common import (
     string_to_datetime
-    )
+)
 
 def get_last_7_years():
     seven_years_list = []

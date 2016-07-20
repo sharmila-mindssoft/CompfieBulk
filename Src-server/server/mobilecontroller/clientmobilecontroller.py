@@ -10,7 +10,7 @@ def process_client_mobile_request(request, db):
     session_token = request.session_token
     request_frame = request.request
     client_id = int(client_info[0])
-    session_user = db.validate_session_token(client_id, session_token)
+    session_user = db.validate_session_token(session_token)
 
     if session_user is None:
         return login.InvalidSessionToken()
