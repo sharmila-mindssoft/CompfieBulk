@@ -143,7 +143,7 @@ class Database(object):
             elif type(param) is list :
                 cursor.execute(query, param)
             else :
-                cursor.execute(query, (param))
+                cursor.execute(query)
             return True
         except mysql.Error, e :
             print e
@@ -190,6 +190,7 @@ class Database(object):
             res = cursor.fetchall()
             return res
         except mysql.Error, e:
+            print e
             logger.logClientApi("select_all", query)
             logger.logClientApi("select_all", e)
             return
