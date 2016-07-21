@@ -167,8 +167,8 @@ class SaveClientGroup(Request):
     def parse_inner_structure(data):
         print "inside save client group  parse structure"
         data = parse_dictionary(data, [
-            "g_name", "c_ids", "d_ids", "logo", "c_from", "c_to", 
-            "incharge", "licence", "f_space", "sms", "email", "config", 
+            "g_name", "c_ids", "d_ids", "logo", "c_from", "c_to",
+            "incharge", "licence", "f_space", "sms", "email", "config",
             "s_name"
         ])
         group_name = data.get("g_name")
@@ -198,8 +198,8 @@ class SaveClientGroup(Request):
         short_name = data.get("s_name")
         short_name = parse_structure_CustomTextType_20(short_name)
         return SaveClientGroup(
-            group_name, country_ids, domain_ids, logo, contract_from, contract_to, 
-            incharge_persons, no_of_user_licence, file_space, is_sms_subscribed, 
+            group_name, country_ids, domain_ids, logo, contract_from, contract_to,
+            incharge_persons, no_of_user_licence, file_space, is_sms_subscribed,
             email_id, date_configurations, short_name
         )
 
@@ -238,9 +238,9 @@ class UpdateClientGroup(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-                "c_id", "g_name", "c_ids", "d_ids", "logo", 
-                "c_from", "c_to", "incharge", 
-                "licence", "f_space", "sms", 
+                "c_id", "g_name", "c_ids", "d_ids", "logo",
+                "c_from", "c_to", "incharge",
+                "licence", "f_space", "sms",
                 "config"
             ]
         )
@@ -269,8 +269,8 @@ class UpdateClientGroup(Request):
         date_configurations = data.get("config")
         date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
         return UpdateClientGroup(
-            client_id, group_name, country_ids, domain_ids, logo, contract_from, 
-            contract_to, incharge_persons, no_of_user_licence, file_space, 
+            client_id, group_name, country_ids, domain_ids, logo, contract_from,
+            contract_to, incharge_persons, no_of_user_licence, file_space,
             is_sms_subscribed, date_configurations
         )
 
@@ -408,8 +408,8 @@ class UNIT(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-                "u_id", "geo_id", "u_code", "u_name", "i_id", 
-                "i_name", "u_add", "u_loc", "p_code", 
+                "u_id", "geo_id", "u_code", "u_name", "i_id",
+                "i_name", "u_add", "u_loc", "p_code",
                 "d_ids"
             ]
         )
@@ -627,8 +627,8 @@ class GetNextUnitCode(Request):
 
 def _init_Request_class_map():
     classes = [
-        GetClientGroups, SaveClientGroup, UpdateClientGroup, 
-        ChangeClientGroupStatus, GetClients, SaveClient, UpdateClient, 
+        GetClientGroups, SaveClientGroup, UpdateClientGroup,
+        ChangeClientGroupStatus, GetClients, SaveClient, UpdateClient,
         ChangeClientStatus, ReactivateUnit, GetClientProfile, CreateNewAdmin,
         GetNextUnitCode
     ]
@@ -680,7 +680,7 @@ class GetClientGroupsSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "countries", "domains", "users", "client_list", 
+                "countries", "domains", "users", "client_list",
                 "client_countries", "client_domains"
             ]
         )
@@ -948,14 +948,12 @@ class UnitDetails(object):
             "is_active": to_structure_Bool(self.is_active),
         }
 
-
-
-
-
 class GetClientsSuccess(Response):
-    def __init__(self, countries, domains, group_companies, business_groups, 
-        legal_entities, divisions, units, geography_levels, geographies, 
-        industries, client_domains):
+    def __init__(
+        self, countries, domains, group_companies, business_groups,
+        legal_entities, divisions, units, geography_levels, geographies,
+        industries, client_domains
+    ):
         self.countries = countries
         self.domains = domains
         self.group_companies = group_companies
@@ -970,9 +968,11 @@ class GetClientsSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "group_companies", 
-            "business_groups", "legal_entities", "divisions", "units", 
-            "geography_levels", "geographies", "industries", "client_domains"])
+        data = parse_dictionary(data, [
+            "countries", "domains", "group_companies",
+            "business_groups", "legal_entities", "divisions", "units",
+            "geography_levels", "geographies", "industries", "client_domains"
+        ])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
@@ -996,8 +996,8 @@ class GetClientsSuccess(Response):
         industries = data.get("industries")
         industries = parse_structure_VectorType_RecordType_core_Industry(industries)
         return GetClientsSuccess(
-            countries, domains, group_companies, 
-            business_groups, legal_entities, divisions, units, geography_levels, 
+            countries, domains, group_companies,
+            business_groups, legal_entities, divisions, units, geography_levels,
             geographies, industries, client_domains
         )
 
@@ -1387,7 +1387,7 @@ def _init_Response_class_map():
         LegalEntityNameAlreadyExists, DivisionNameAlreadyExists, UnitNameAlreadyExists,
         UnitCodeAlreadyExists, LogoSizeLimitExceeds, UpdateClientSuccess,
         ChangeClientStatusSuccess, ReactivateUnitSuccess, GetClientProfileSuccess,
-        InvalidBusinessGroupId, InvalidLegalEntityId, InvalidDivisionId, 
+        InvalidBusinessGroupId, InvalidLegalEntityId, InvalidDivisionId,
         InvalidUnitId, UserIsNotResponsibleForAnyClient, ClientCreationFailed,
         CannotDeactivateCountry, CannotDeactivateDomain, CreateNewAdminSuccess,
         ClientDatabaseNotExists, CannotDeactivateClient, ReassignFirst,
@@ -1431,7 +1431,7 @@ class RequestFormat(object):
 
 class LICENCE_HOLDER_DETAILS(object):
     def __init__(
-        self, user_id, user_name, email_id, contact_no, 
+        self, user_id, user_name, email_id, contact_no,
         seating_unit_name, address, total_disk_space, used_disk_space,
         is_active, is_admin, is_service_provider
     ):
@@ -1450,8 +1450,8 @@ class LICENCE_HOLDER_DETAILS(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-                "user_id", "user_name", "email_id", "contact_no", 
-                "seating_unit_name", "address", "total_disk_space", 
+                "user_id", "user_name", "email_id", "contact_no",
+                "seating_unit_name", "address", "total_disk_space",
                 "used_disk_space", "is_active", "is_admin", "is_service_provider"
             ]
         )
@@ -1478,7 +1478,7 @@ class LICENCE_HOLDER_DETAILS(object):
         is_service_provider = data.get("is_service_provider")
         is_service_provider = parse_structure_Bool(is_service_provider)
         return LICENCE_HOLDER_DETAILS(
-            user_id, user_name, email_id, contact_no, seating_unit_name, 
+            user_id, user_name, email_id, contact_no, seating_unit_name,
             address, total_disk_space, used_disk_space, is_active, is_admin,
             is_service_provider
         )

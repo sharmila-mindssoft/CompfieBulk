@@ -289,7 +289,14 @@ class Database(object):
                     params.append(p.strip())
             param = params
         elif type(columns) is list :
-            param = columns
+            param = []
+            for c in columns :
+                if "as " in c :
+                    param.append(c.split('as ')[1].strip())
+                elif '.' in c :
+                    param.append(c.split('.')[1].strip())
+                else :
+                    param.append(c.strip())
             columns = ", ".join(columns)
 
         query = "SELECT %s FROM " % columns

@@ -104,7 +104,7 @@ def get_assigned_statutories_by_id(db, client_statutory_id):
         "division_name", "industry_name", "industry_id"
     ]
     result = convert_to_dict(rows, columns)
-    return return_assigned_statutories_by_id(result)
+    return return_assigned_statutories_by_id(db, result)
 
 def return_assigned_compliances_by_id(db, client_statutory_id, statutory_id=None, applicable_status=None):
     if bool(STATUTORY_PARENTS) is False:
@@ -134,8 +134,8 @@ def return_assigned_compliances_by_id(db, client_statutory_id, statutory_id=None
         ON t3.compliance_id = t1.compliance_id \
         WHERE \
         t1.client_statutory_id = %s \
-        AND t1.statutory_id like '%s' \
-        AND  t1.compliance_applicable like '%s' \
+        AND t1.statutory_id like %s \
+        AND  t1.compliance_applicable like %s \
         ORDER BY level, statutory_name, compliance_id"
     rows = db.select_all(query, [
         client_statutory_id, statutory_id,
@@ -255,7 +255,7 @@ def get_unassigned_compliances(
             SELECT g.geography_id \
             FROM tbl_geographies g \
             WHERE g.geography_id = %s \
-            OR g.parent_ids LIKE '%s' OR t4.geography_id IN %s )\
+            OR g.parent_ids LIKE %s OR t4.geography_id IN %s )\
         AND t2.compliance_id NOT IN ( \
             SELECT distinct c.compliance_id \
             FROM tbl_client_compliances c \
@@ -268,9 +268,10 @@ def get_unassigned_compliances(
     rows = db.select_all(query, [
         domain_id, country_id, industry_id, geography_id,
         str("%" + str(geography_id) + ",%"),
-        (str(tuple(parent_ids))),
+        tuple(parent_ids),
         domain_id, unit_id
     ])
+    print rows
     columns = [
         "compliance_id", "compliance_task",
         "document_name", "statutory_provision",
@@ -294,8 +295,7 @@ def get_unassigned_compliances(
         statutory_id = int(d["statutory_id"])
         statutory_data = STATUTORY_PARENTS.get(statutory_id)
         s_mapping = statutory_data[1]
-        statutory_parents = statutory_data[2]
-        level_1 = statutory_parents[0]
+        level_1 = statutory_data[2][0]
         if level_1 == 0 :
             level_1 = statutory_id
         compliance_applicable_status = bool(1)
@@ -541,7 +541,7 @@ def get_assign_statutory_wizard_two(
     domain_id, unit_id, user_id
 ):
     if unit_id is not None :
-        return return_unassign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, unit_id)
+        return return_unassign_statutory_wizard_two(db, country_id, geography_id, industry_id, domain_id, unit_id)
 
     q = "select parent_ids from tbl_geographies where geography_id = %s"
     row = db.select_one(q, [int(geography_id)])
@@ -579,6 +579,7 @@ def get_assign_statutory_wizard_two(
         str("%" + str(geography_id) + ",%"),
         (str(tuple(parent_ids)))
     ])
+    print rows
     columns = [
         "statutory_mapping_id", "statutory_nature_id",
         "statutory_nature_name", "statutory_id"
@@ -619,8 +620,11 @@ def return_unassign_statutory_wizard_two(
         db, country_id, domain_id, industry_id,
         geography_id, unit_id
     )
+    print new_compliance
     assigned_statutory_list = []
+    print STATUTORY_PARENTS
     for key, value in new_compliance.items() :
+        print key
         name = STATUTORY_PARENTS.get(int(key))[0]
         compliances = value
         applicable_status = bool(1)
@@ -738,18 +742,22 @@ def save_client_statutories(db, data, user_id):
     domain_id = data.domain_id
     submission_type = 0
 
-    field = "(client_statutory_id, client_id, geography_id,\
-        country_id, domain_id, unit_id, submission_type,\
-        created_by, created_on)"
+    field = [
+        "client_id", "geography_id",
+        "country_id", "domain_id", "unit_id", "submission_type",
+        "created_by", "created_on"
+    ]
     value_list = []
     for unit_id in unit_ids :
-        client_statutory_id = db.get_new_id("client_statutory_id", tblClientStatutories)
+        # client_statutory_id = db.get_new_id("client_statutory_id", tblClientStatutories)
         created_on = get_date_time()
         values = (
-            client_statutory_id, client_id, geography_id, country_id,
+            client_id, geography_id, country_id,
             domain_id, int(unit_id) , submission_type, int(user_id), created_on
         )
-        if (db.save_data(tblClientStatutories, field, values)) :
+        client_statutory_id = db.insert(tblClientStatutories, field, values)
+        print client_statutory_id
+        if (client_statutory_id is not False) :
             assigned_statutories = data.assigned_statutories
             value_list.extend(save_update_client_complainces(db, client_statutory_id, assigned_statutories, user_id, created_on))
     execute_bulk_insert(db, value_list)

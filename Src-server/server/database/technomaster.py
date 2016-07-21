@@ -133,9 +133,9 @@ def get_user_client_domains(db, session_user):
         for client_id in client_ids_list:
             domain_ids += get_client_domains(db, int(client_id)).split(",")
         columns = ["domain_id", "domain_name", "is_active"]
-        condition = "domain_id in (%s) and is_active = 1 ORDER BY domain_name "
+        condition = "domain_id in (%s) and is_active = 1 ORDER BY domain_name " % ",".join(str(x) for x in domain_ids)
         result = db.get_data(
-            tblDomains, columns, condition, [",".join(str(x) for x in domain_ids)]
+            tblDomains, columns, condition
         )
         return return_domains(result)
     else :
@@ -833,8 +833,8 @@ def get_business_groups_for_user(db, user_id):
     ]
     condition = "1"
     if client_ids is not None:
-        condition = "client_id in (%s) order by business_group_name ASC"
-        result = db.get_data(tblBusinessGroups, columns, condition, [client_ids])
+        condition = "client_id in (%s) order by business_group_name ASC" % client_ids
+        result = db.get_data(tblBusinessGroups, columns, condition)
     return return_business_groups(result)
 
 def return_business_groups(business_groups):
@@ -858,8 +858,8 @@ def get_legal_entities_for_user(db, user_id):
         ]
     condition = "1"
     if client_ids is not None:
-        condition = "client_id in (%s) order by legal_entity_name ASC"
-        result = db.get_data(tblLegalEntities, columns, condition, [client_ids])
+        condition = "client_id in (%s) order by legal_entity_name ASC" % client_ids
+        result = db.get_data(tblLegalEntities, columns, condition)
 
     return return_legal_entities(result)
 
@@ -883,8 +883,8 @@ def get_divisions_for_user(db, user_id):
     ]
     condition = "1"
     if client_ids is not None:
-        condition = "client_id in (%s) order by division_name ASC"
-        result = db.get_data(tblDivisions, columns, condition, [client_ids])
+        condition = "client_id in (%s) order by division_name ASC" % client_ids
+        result = db.get_data(tblDivisions, columns, condition)
     return return_divisions(result)
 
 def return_divisions(divisions):
@@ -905,15 +905,17 @@ def get_units_for_user(db, user_id):
         client_ids = get_user_clients(db, user_id)
     columns = [
         "unit_id", "unit_code", "unit_name",
-        "unit_address", "division_id",
+        "address", "division_id",
         "legal_entity_id", "business_group_id",
         "client_id", "is_active", "geography_id",
         "industry_id", "domain_ids"
     ]
     condition = "1"
     if client_ids is not None:
-        condition = "client_id in (%s) order by unit_name ASC"
-        result = db.get_data(tblUnits, columns, condition, [client_ids])
+        condition = "client_id in (%s) order by unit_name ASC" % client_ids
+        result = db.get_data(tblUnits, columns, condition)
+        print '*' * 50
+        print result
     return return_units(result)
 
 def return_units(units):
@@ -922,7 +924,7 @@ def return_units(units):
         results.append(core.Unit(
             unit["unit_id"], unit["division_id"], unit["legal_entity_id"],
             unit["business_group_id"], unit["client_id"], unit["unit_code"],
-            unit["unit_name"], unit["unit_address"], bool(unit["is_active"])
+            unit["unit_name"], unit["address"], bool(unit["is_active"])
         ))
     return results
 
@@ -952,7 +954,7 @@ def get_unit_details_for_user(db, user_id):
         columns, tables, aliases, join_type,
         join_condition, where_condition
     )
-    return_unit_details(result)
+    return return_unit_details(result)
 
 def return_unit_details(result):
     legal_entity_wise = {}
@@ -961,7 +963,7 @@ def return_unit_details(result):
             r["unit_id"], r["geography_id"],
             r["unit_code"], r["unit_name"],
             r["industry_id"], r["address"],
-            r["postal_code"], r["domain_ids"],
+            r["postal_code"],
             [int(x) for x in r["domain_ids"].split(",")],
             bool(r["is_active"])
         )

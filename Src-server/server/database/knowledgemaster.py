@@ -493,12 +493,12 @@ def get_geographies_for_user_with_mapping(db, user_id):
 
     country_ids = None
     if ((user_id is not None) and (user_id != 0)):
-        country_ids = get_user_countries(user_id)
+        country_ids = get_user_countries(db, user_id)
     columns = "t1.geography_id, t1.geography_name, t1.parent_names,"
     columns += "t1.level_id,t1.parent_ids, t1.is_active,"
     columns += " t2.country_id, t3.country_name"
     tables = [
-        db.tblGeographies, db.tblGeographyLevels, db.tblCountries
+        tblGeographies, tblGeographyLevels, tblCountries
     ]
     aliases = ["t1", "t2", "t3"]
     join_type = " INNER JOIN"
@@ -763,7 +763,7 @@ def get_statutory_master(db, statutory_id=None):
         on t2.domain_id = t4.domain_id"
     if statutory_id is not None :
         query = query + " WHERE t1.statutory_id = %s"
-        rows = db.select_all(query, [statutory_id])
+        rows = db.select_all(query, [int(statutory_id)])
     else :
         rows = db.select_all(query)
     result = []
@@ -813,7 +813,9 @@ def frame_parent_mappings(db, data, statutory_id=None):
             if pid > 0 :
                 names.append(statu_names.get(pid))
         names.append(d["statutory_name"])
-        STATUTORY_PARENTS[d["statutory_id"]] = ">> ".join(names)
+        STATUTORY_PARENTS[d["statutory_id"]] = [
+            d["statutory_name"], ">> ".join(names), p_ids
+        ]
 
 def return_statutory_master(data):
     statutories = {}
@@ -831,7 +833,7 @@ def return_statutory_master(data):
         statutory = core.Statutory(
             statutory_id, d["statutory_name"],
             d["level_id"], parent_ids, parent_ids[-1],
-            mappings
+            mappings[1]
         )
 
         country_wise = statutories.get(country_id)
@@ -869,7 +871,7 @@ def check_duplicate_statutory(db, parent_ids, statutory_id, domain_id=None) :
 
 def get_country_wise_level_1_statutoy(db) :
     if bool(STATUTORY_PARENTS) is False:
-        get_statutory_master()
+        get_statutory_master(db)
     query = "SELECT t1.statutory_id, t1.statutory_name, \
         t1.level_id, t1.parent_ids, t2.country_id, \
         t3.country_name, t2.domain_id, t4.domain_name \

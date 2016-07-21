@@ -1,4 +1,5 @@
 import json
+from protocol import (technoreports, core, knowledgereport)
 from server.database.tables import *
 from server.constants import (
     KNOWLEDGE_FORMAT_DOWNLOAD_URL
@@ -83,7 +84,7 @@ def get_assigned_statutories_report(db, request_data, user_id):
         "division_name", "address", "postal_code", "unit_code"
     ]
     result = convert_to_dict(rows, columns)
-    return return_assigned_statutory_report(result, level_1_statutory_id, applicable_status)
+    return return_assigned_statutory_report(db, result, level_1_statutory_id, applicable_status)
 
 def return_assigned_statutory_report(db, report_data, level_1_statutory_id, applicable_status):
     if bool(GEOGRAPHY_PARENTS) is False:
@@ -103,7 +104,8 @@ def return_assigned_statutory_report(db, report_data, level_1_statutory_id, appl
             unit_address = "%s, %s, %s" % (
                 data["address"], ', '.join(ordered), data["postal_code"]
             )
-            statutories = return_assigned_compliances_by_id(client_statutory_id, level_1_statutory_id, applicable_status)
+            statutories = return_assigned_compliances_by_id(db, client_statutory_id, level_1_statutory_id, applicable_status)
+            print '*' * 50
             unit_statutories = technoreports.UNIT_WISE_ASSIGNED_STATUTORIES(
                 data["unit_id"],
                 unit_name,
@@ -116,7 +118,8 @@ def return_assigned_statutory_report(db, report_data, level_1_statutory_id, appl
             )
         else :
             statutories = unit_statutories.assigned_statutories
-            new_stautory = return_assigned_compliances_by_id(client_statutory_id, None, applicable_status)
+            new_stautory = return_assigned_compliances_by_id(db, client_statutory_id, None, applicable_status)
+            print '*' * 50
             for new_s in new_stautory :
                 new_id = new_s.level_1_statutory_id
                 is_exists = False
@@ -148,7 +151,7 @@ def get_statutory_notifications_report_data(db, request_data):
     where_qry = ""
     if level_1_statutory_id is not None :
         where_qry += " AND tss.statutory_id IN \
-        (select statutory_id from tbl_statutories where FIND_IN_SET('%s', parent_ids)) \
+        (select statutory_id from tbl_statutories where FIND_IN_SET(%s, parent_ids)) \
         " % (level_1_statutory_id)
 
     if from_date is not None and to_date is not None :
@@ -184,9 +187,9 @@ def get_statutory_notifications_report_data(db, request_data):
         tss.statutory_id = ts.statutory_id \
         WHERE  \
         tsm.country_id = %s and \
-        tsm.domain_id = %s \
-        %s "
-        notifications_rows = db.select_all(query, [row[0], row[1], where_qry])
+        tsm.domain_id = %s "
+        query += where_qry
+        notifications_rows = db.select_all(query, [row[0], row[1]])
         notification_columns = [
             "statutory_name", "statutory_provision",
             "notification_text", "updated_on"
@@ -215,37 +218,51 @@ def get_client_details_report_condition(
     country_id, client_id, business_group_id,
     legal_entity_id, division_id, unit_id, domain_ids
 ):
-    condition = "tu.country_id = %s AND tu.client_id = %s " % (
-        country_id, client_id
-    )
+    condition = "tu.country_id = %s AND tu.client_id = %s "
+    param = [country_id, client_id]
     if business_group_id is not None:
-        condition += " AND tu.business_group_id = %s " % business_group_id
+        condition += " AND tu.business_group_id = %s "
+        param.append(business_group_id)
+
     if legal_entity_id is not None:
-        condition += " AND tu.legal_entity_id = %s " % legal_entity_id
+        condition += " AND tu.legal_entity_id = %s "
+        param.append(legal_entity_id)
+
     if division_id is not None:
-        condition += " AND tu.division_id = %s " % division_id
+        condition += " AND tu.division_id = %s "
+        param.append(division_id)
+
     if unit_id is not None:
-        condition += " AND tu.unit_id = %s " % unit_id
+        condition += " AND tu.unit_id = %s "
+        param.append(unit_id)
+
     if domain_ids is not None:
         for i, domain_id in enumerate(domain_ids):
             if i == 0 :
-                condition += " AND FIND_IN_SET('%s', tu.domain_ids)" % (domain_id)
-            elif i > 0 :
-                condition += " OR FIND_IN_SET('%s', tu.domain_ids)" % (domain_id)
-    return condition
+                condition += "  AND (FIND_IN_SET(%s, tu.domain_ids)"
+                param.append(domain_id)
+            elif i == len(domain_ids) - 1 :
+                condition += " OR FIND_IN_SET(%s, tu.domain_ids) )"
+                param.append(domain_id)
+            else :
+                condition += " OR FIND_IN_SET(%s, tu.domain_ids)"
+                param.append(domain_id)
+        if len(domain_ids) == 1 :
+            condition += " )"
+    return condition, param
 
 def get_client_details_report_count(
     db, country_id, client_id, business_group_id,
     legal_entity_id, division_id, unit_id, domain_ids
 ):
-    condition = get_client_details_report_condition(
+    condition, param = get_client_details_report_condition(
         country_id, client_id, business_group_id,
         legal_entity_id, division_id, unit_id, domain_ids
     )
     query = "SELECT count(*) \
     FROM %s tu \
-    WHERE %s "
-    rows = db.select_all(query, [tblUnits, condition])
+    WHERE %s " % (tblUnits, condition)
+    rows = db.select_all(query, param)
     return rows[0][0]
 
 def get_client_details_report(
@@ -253,7 +270,7 @@ def get_client_details_report(
     legal_entity_id, division_id, unit_id, domain_ids,
     start_count, to_count
 ):
-    condition = get_client_details_report_condition(
+    condition, params = get_client_details_report_condition(
         country_id, client_id, business_group_id,
         legal_entity_id, division_id, unit_id, domain_ids
     )
@@ -265,15 +282,15 @@ def get_client_details_report(
     INNER JOIN %s tg ON (tu.geography_id = tg.geography_id) \
     LEFT JOIN %s tb ON (tb.business_group_id = tu.business_group_id) \
     INNER JOIN %s tl ON (tl.legal_entity_id = tu.legal_entity_id) \
-    LEFT JOIN %s td ON (td.division_id = tu.division_id) \
+    LEFT JOIN %s td ON (td.division_id = tu.division_id)\
     WHERE %s \
     ORDER BY tu.business_group_id, tu.legal_entity_id, tu.division_id, \
-    tu.unit_id ASC LIMIT %s, %s"
-    rows = db.select_all(query, [
-        columns, tblUnits, tblGeographies,  tblBusinessGroups,
-        tblLegalEntities, tblDivisions, condition,
-        int(start_count), to_count
-    ])
+    tu.unit_id ASC LIMIT %s, %s" % (
+        columns, tblUnits, tblGeographies, tblBusinessGroups,
+        tblLegalEntities, tblDivisions, condition, int(start_count), int(to_count)
+    )
+    rows = db.select_all(query, params)
+    print rows
     columns_list = columns.replace(" ", "").split(",")
     unit_rows = convert_to_dict(rows, columns_list)
     grouped_units = {}
@@ -345,7 +362,7 @@ def get_compliance_list_report_techno(
         (select industry_id from tbl_statutory_industry where statutory_mapping_id = t1.statutory_mapping_id)), \
             t2.frequency_id "
     param_list = [
-        user_id, user_id, country_id, domain_id
+        int(user_id), int(user_id), country_id, domain_id
     ]
 
     qry_where = ""
@@ -362,11 +379,11 @@ def get_compliance_list_report_techno(
         param_list.append(statutory_nature_id)
 
     if level_1_statutory_id is not None :
-        qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, '%s') from tbl_statutories where statutory_id = %s)"
+        qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, %s) from tbl_statutories where statutory_id = %s)"
         param_list.extend([str("%"), level_1_statutory_id])
 
     if frequency_id is not None :
-        qry_where += "AND t2.frequency_id = %s " % (frequency_id)
+        qry_where += "AND t2.frequency_id = %s "
         param_list.append(frequency_id)
 
     query = q_count + qry_where + q_order
@@ -414,14 +431,10 @@ def get_compliance_list_report_techno(
 
     q_order = "ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
             industry, t2.frequency_id \
-            limit %s, %s"
+            limit %s, %s" % (from_count, to_count)
 
-    param_list = [
-        user_id, user_id, country_id, domain_id,
-        from_count, to_count
-    ]
     q += qry_where + q_order
-    rows = db.select_all(q, [param_list])
+    rows = db.select_all(q, param_list)
     columns = [
         "statutory_mapping_id", "country_id",
         "country_name", "domain_id", "domain_name", "industry_ids",
@@ -435,12 +448,13 @@ def get_compliance_list_report_techno(
         "frequency_id", "statutory_dates", "repeats_every",
         "repeats_type_id", "duration", "duration_type_id", "industry"
     ]
+    print rows
     report_data = []
     if rows :
         report_data = convert_to_dict(rows, columns)
 
     return return_knowledge_report(
-        report_data, r_count
+        db, report_data, r_count
     )
 
 def return_knowledge_report(db, report_data, total_count=None):

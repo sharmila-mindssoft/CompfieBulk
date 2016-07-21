@@ -210,7 +210,7 @@ def return_statutory_mappings(db, data, is_report=None):
             # if s_map_data is not None :
             #     s_map_data = s_map_data[1]
             statutory_mapping_list.append(
-                s_map_data
+                s_map_data[1]
             )
         industry_ids = [
             int(x) for x in d["industry_ids"][:-1].split(',')
