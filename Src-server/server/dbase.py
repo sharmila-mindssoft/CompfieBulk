@@ -263,7 +263,6 @@ class Database(object):
             if order is not None :
                 query += order
             rows = self.select_all(query)
-
         print "get_data", rows
         result = []
         if rows :
@@ -346,7 +345,7 @@ class Database(object):
         print query
         print values
         try:
-            return self.execute_insert(query, values)
+            return int(self.execute_insert(query, values))
         except mysql.Error, e:
             print e
             logger.logKnowledgeApi("insert", query)

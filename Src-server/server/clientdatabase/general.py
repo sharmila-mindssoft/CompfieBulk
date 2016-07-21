@@ -57,7 +57,7 @@ all__ = [
 ]
 
 
- def get_admin_id(db):
+def get_admin_id(db):
     columns = "admin_id"
     condition = "1"
     rows = db.get_data(tblAdmin, columns, condition)
@@ -229,7 +229,7 @@ def get_units_for_user(db, unit_ids, client_id=None):
         tblUnits, columns, condition
     )
     columns = [
-        "unit_id", "unit_code", "unit_name", "unit_address", "division_id","domain_ids", "country_id",
+        "unit_id", "unit_code", "unit_name", "unit_address", "division_id", "domain_ids", "country_id",
         "legal_entity_id", "business_group_id", "is_active", "is_closed"
     ]
     result = db.convert_to_dict(rows, columns)
@@ -253,7 +253,7 @@ def return_units(units):
             ))
         return results
 
- def get_client_users(db, client_id=None, unit_ids=None):
+def get_client_users(db, client_id=None, unit_ids=None):
     columns = "user_id, employee_name, employee_code, is_active"
     condition = "1"
     if unit_ids is not None:

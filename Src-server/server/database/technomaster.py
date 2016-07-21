@@ -599,24 +599,24 @@ def is_duplicate_business_group(db, business_group_id, business_group_name, clie
     return db.is_already_exists(tblBusinessGroups, condition, condition_val)
 
 def save_business_group(db, client_id, b_name, user_id):
+    user_id = int(user_id)
     current_time_stamp = get_date_time()
     columns = [
-        "client_id", "business_group_id", "business_group_name",
-        "created_by", "created_on", "updated_by", "updated_on"
+        "client_id", "business_group_name",
+        "created_by", "created_on"
     ]
     values = [
-        client_id, business_group_id, business_group_name,
-        session_user, current_time_stamp,
-        session_user, current_time_stamp
+        client_id, b_name,
+        user_id, current_time_stamp
     ]
     new_id = db.insert(tblBusinessGroups, columns, values)
 
     if new_id is False :
         return False
     else :
-        action = "Created Business Group \"%s\"" % business_group_name
-        db.save_activity(session_user, 19, action)
-        return new_id
+        action = "Created Business Group \"%s\"" % b_name
+        db.save_activity(user_id, 19, action)
+        return int(new_id)
 
 def update_business_group(
     db, client_id, business_group_id, business_group_name, session_user
@@ -646,6 +646,7 @@ def save_legal_entity(
     db, client_id, legal_entity_name,
     business_group_id, session_user
 ):
+    session_user = int(session_user)
     current_time_stamp = get_date_time()
     columns = [
         "client_id", "legal_entity_name",
@@ -666,7 +667,7 @@ def save_legal_entity(
     else :
         action = "Created Legal Entity \"%s\"" % legal_entity_name
         db.save_activity(session_user, 19, action)
-        return new_id
+        return int(new_id)
 
 def update_legal_entity(
     db, client_id, legal_entity_id, legal_entity_name,
@@ -714,7 +715,7 @@ def save_division(
         action = "Created Division \"%s\"" % division_name
         db.save_activity(session_user, 19, action)
 
-        return new_id
+        return int(new_id)
 
 def update_division(db, client_id, division_id, division_name, session_user):
     current_time_stamp = get_date_time()
@@ -745,7 +746,7 @@ def save_unit(db, client_id,  units, business_group_id, legal_entity_id, divisio
         "client_id", "legal_entity_id", "country_id", "geography_id", "industry_id",
         "domain_ids", "unit_code", "unit_name", "address", "postal_code",
         "is_active", "created_by",
-        "created_on", "updated_by", "updated_on"
+        "created_on"
     ]
     if business_group_id is not None:
         columns.append("business_group_id")
@@ -760,8 +761,7 @@ def save_unit(db, client_id,  units, business_group_id, legal_entity_id, divisio
             client_id, legal_entity_id, unit.country_id,
             unit.geography_id, unit.industry_id, domain_ids,
             unit.unit_code.upper(), unit.unit_name, unit.unit_address,
-            unit.postal_code, 1, session_user, current_time_stamp, session_user,
-            current_time_stamp
+            unit.postal_code, 1, session_user, current_time_stamp
         ]
         if business_group_id is not None :
             vals.append(business_group_id)
@@ -1041,16 +1041,16 @@ def get_next_auto_gen_number(db, group_name=None, client_id=None):
     group_name = group_name.replace(" ", "")
     unit_code_start_letters = group_name[:2].upper()
 
-    columns = "TRIM(LEADING '%s' FROM unit_code)" % unit_code_start_letters
-    condition = "unit_code like binary '%s%s' and CHAR_LENGTH(unit_code) = 7 and client_id= %s "
+    columns = "TRIM(LEADING '%s' FROM unit_code) as code" % unit_code_start_letters
+    condition = "unit_code like binary %s and CHAR_LENGTH(unit_code) = 7 and client_id= %s "
     condition_val = [
-        unit_code_start_letters, str('%'), client_id
+        str(unit_code_start_letters + '%'), client_id
     ]
     rows = db.get_data(tblUnits, columns, condition, condition_val)
     auto_generated_unit_codes = []
     for row in rows:
         try:
-            auto_generated_unit_codes.append(int(row[0]))
+            auto_generated_unit_codes.append(int(row["code"]))
         except Exception, ex:
             print ex
             continue

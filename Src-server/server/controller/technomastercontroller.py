@@ -212,8 +212,10 @@ def validate_duplicate_data(db, request, session_user):
     new_unit_list = []
     old_unit_list = []
     for country in country_wise_units :
+        c_id = country.country_id
         units = country.units
         for unit in units :
+            unit.country_id = c_id
             unit_id = unit.unit_id
             unit_name = unit.unit_name
             if is_duplicate_unit_code(db, unit_id, unit.unit_code, client_id) :
@@ -261,7 +263,7 @@ def save_client(db, request, session_user):
         if legal_entity is not None :
             leg_name = legal_entity.legal_entity_name
             leg_id = save_legal_entity(
-                db, client_id, leg_name, b_group_name, session_user
+                db, client_id, leg_name, b_group_id, session_user
             )
             if leg_id is False :
                 return False
