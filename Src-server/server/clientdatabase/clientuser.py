@@ -1,6 +1,7 @@
+from server.clientdatabase.tables import *
 from server.common import (
     datetime_to_string, string_to_datetime, new_uuid, get_date_time,
-    string_to_datetime_with_time
+    string_to_datetime_with_time, convert_to_dict
     )
 from server.clientdatabase.general import (
     is_two_levels_of_approval, calculate_ageing, is_space_available,
@@ -8,7 +9,7 @@ from server.clientdatabase.general import (
     convert_base64_to_file
     )
 
-all__ = [
+__all__ = [
     "get_inprogress_count",
     "get_overdue_count",
     "get_current_compliances_list",
@@ -136,7 +137,7 @@ def get_current_compliances_list(db, current_start_count, to_count, session_user
         session_user, current_start_count, to_count
     )
     rows = db.select_all(query)
-    current_compliances_row = db.convert_to_dict(rows, columns)
+    current_compliances_row = convert_to_dict(rows, columns)
     current_compliances_list = []
     for compliance in current_compliances_row:
         document_name = compliance["document_name"]
@@ -159,7 +160,7 @@ def get_current_compliances_list(db, current_start_count, to_count, session_user
             compliance_status = core.COMPLIANCE_STATUS("Not Complied")
         format_files = None
         if compliance["format_file"] is not None and compliance["format_file"].strip() != '':
-            format_files = [ "%s/%s" % (
+            format_files = ["%s/%s" % (
                     FORMAT_DOWNLOAD_URL, x
                 ) for x in compliance["format_file"].split(",")]
         remarks = compliance["remarks"]
@@ -235,16 +236,18 @@ def get_upcoming_compliances_list(db, upcoming_start_count, to_count, session_us
             select count(*) from tbl_compliance_history ch \
             where ch.compliance_id = ac.compliance_id and \
             ch.unit_id = ac.unit_id ) >0), 0,1) \
-            ) a ORDER BY start_date ASC LIMIT %d, %d "  % (
+            ) a ORDER BY start_date ASC LIMIT %d, %d " % (
                 tblUnits, tblDomains, tblAssignedCompliances,
                 tblCompliances, session_user, int(upcoming_start_count),
                 to_count
             )
     upcoming_compliances_rows = db.select_all(query)
 
-    columns = ["due_date", "document_name", "compliance_task",
-    "description","format_file", "unit", "domain_name",  "start_date"]
-    upcoming_compliances_result = db.convert_to_dict(
+    columns = [
+        "due_date", "document_name", "compliance_task",
+        "description", "format_file", "unit", "domain_name", "start_date"
+    ]
+    upcoming_compliances_result = convert_to_dict(
         upcoming_compliances_rows, columns
     )
     upcoming_compliances_list = []
@@ -262,7 +265,7 @@ def get_upcoming_compliances_list(db, upcoming_start_count, to_count, session_us
         start_date = compliance["start_date"]
         format_files = None
         if compliance["format_file"] is not None and compliance["format_file"].strip() != '':
-            format_files = [ "%s/%s" % (
+            format_files = ["%s/%s" % (
                     FORMAT_DOWNLOAD_URL, x
                 ) for x in compliance["format_file"].split(",")]
         upcoming_compliances_list.append(
@@ -324,7 +327,7 @@ def update_compliances(
                 file_size += doc.file_size
 
             if is_space_available(db, file_size):
-                is_uploading_file = True
+                # is_uploading_file = True
                 for doc in documents:
                     file_name_parts = doc.file_name.split('.')
                     name = None
@@ -344,10 +347,7 @@ def update_compliances(
                 update_used_space(db, file_size)
             else:
                 return clienttransactions.NotEnoughSpaceAvailable()
-
-    assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = get_compliance_history_details(db, 
-        compliance_history_id
-    )
+    assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = get_compliance_history_details(db, compliance_history_id)
     current_time_stamp = get_date_time()
     history_columns = [
         "completion_date", "documents", "remarks", "completed_on"
@@ -393,7 +393,7 @@ def update_compliances(
         )
         rows = db.select_one(query)
         columns = ["frequency_id"]
-        rows = db.convert_to_dict(rows, columns)
+        rows = convert_to_dict(rows, columns)
         frequency_id = int(rows["frequency_id"])
         as_columns = []
         as_values = []
@@ -416,16 +416,9 @@ def update_compliances(
                 tblAssignedCompliances, as_columns, as_values, as_condition,
                 client_id
             )
-
-        save_compliance_activity(db, 
-            unit_id, compliance_id, "Approved", "Complied",
-            remarks
-        )
+        save_compliance_activity(db, unit_id, compliance_id, "Approved", "Complied", remarks)
     else:
-        save_compliance_activity(db, 
-            unit_id, compliance_id, "Submitted", "Inprogress",
-            remarks
-        )
+        save_compliance_activity(db, unit_id, compliance_id, "Submitted", "Inprogress", remarks)
 
     db.update(
         tblComplianceHistory, history_columns, history_values,
@@ -511,8 +504,8 @@ def get_on_occurrence_compliances_for_user(
     rows = db.select_all(query)
     columns_list = columns.replace(" ", "").split(",")
     columns_list += ["unit_name"]
-    result = db.convert_to_dict(rows, columns_list)
-    compliances = []
+    result = convert_to_dict(rows, columns_list)
+    # compliances = []
     unit_wise_compliances = {}
     for row in result:
         duration = "%s %s" % (row["duration"], row["duration_type"])
@@ -575,11 +568,8 @@ def start_on_occurrence_task(
     db.insert(
         tblComplianceHistory, columns, values
     )
-
-    assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = get_compliance_history_details(db, 
-        compliance_history_id
-    )
-    user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
+    assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = get_compliance_history_details(db, compliance_history_id)
+    # user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
     assignee_email, assignee_name = get_user_email_name(db, str(assignee_id))
     approver_email, approver_name = get_user_email_name(db, str(approver_id))
     if concurrence_id not in [None, "None", 0, "", "null", "Null"] and is_two_levels_of_approval(db):

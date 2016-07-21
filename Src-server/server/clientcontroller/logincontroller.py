@@ -1,3 +1,4 @@
+from server.clientdatabase.tables import *
 from server.controller.corecontroller import process_user_forms
 from server.emailcontroller import EmailHandler as email
 from protocol import login, mobile
@@ -8,13 +9,14 @@ from server import logger
 from server.clientdatabase.login import *
 
 from server.common import (
-    encrypt
-    )
+    encrypt, new_uuid
+)
+
 from server.clientdatabase.general import (
     get_form_ids_for_admin, get_report_form_ids,
     verify_username, get_client_id_from_short_name,
     validate_reset_token, update_password, delete_used_token,
-    remove_session, update_profile
+    remove_session, update_profile, verify_password
     )
 
 __all__ = [
@@ -225,7 +227,7 @@ def admin_login_response(db, client_id, ip):
     column = "admin_id"
     condition = "1"
     rows = db.get_data(tblAdmin, column, condition)
-    user_id = rows[0][0]
+    user_id = rows[0]["admin_id"]
     email_id = None
     session_type = 1  # web
     session_token = add_session(
@@ -252,11 +254,11 @@ def send_reset_link(db, user_id, username, short_name):
         CLIENT_URL, short_name, reset_token)
 
     condition = "user_id = '%d' " % user_id
-    db.delete(db.tblEmailVerification, condition)
+    db.delete(tblEmailVerification, condition)
 
     columns = ["user_id", "verification_code"]
     values_list = [user_id, reset_token]
-    if db.insert(db.tblEmailVerification, columns, values_list):
+    if db.insert(tblEmailVerification, columns, values_list):
         if email().send_reset_link(db, user_id, username, reset_link):
             return True
         else:
@@ -286,7 +288,7 @@ def process_change_password(db, request):
     client_info = request.session_token.split("-")
     session_token = "{}-{}".format(client_info[0],client_info[2])
     client_id = int(client_info[0])
-    session_user = db.validate_session_token(client_id, session_token)
+    session_user = db.validate_session_token(session_token)
     if verify_password(db, request.current_password, session_user, client_id):
         update_password(db, request.new_password, session_user, client_id)
         return login.ChangePasswordSuccess()
@@ -303,6 +305,6 @@ def process_update_profile(db, request):
     client_info = request.session_token.split("-")
     session_token = "{}-{}".format(client_info[0],client_info[1])
     client_id = int(client_info[0])
-    session_user = db.validate_session_token(client_id, session_token)
+    session_user = db.validate_session_token(session_token)
     update_profile(db, request.contact_no, request.address, session_user)
     return login.UpdateUserProfileSuccess(request.contact_no, request.address)

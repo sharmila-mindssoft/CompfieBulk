@@ -10,7 +10,8 @@ from protocol import (
     clienttransactions, dashboard,
     login, general, clientuser, mobile
 )
-from server.clientdatabase import ClientDatabase
+# from server.clientdatabase import ClientDatabase
+from server.dbase import Database
 from controller.generalcontroller import process_uploaded_file
 import clientcontroller as controller
 import mobilecontroller as mobilecontroller
@@ -106,7 +107,7 @@ class API(object):
                 if company_server_ip.ip_address == ip and company_server_ip.port == port :
                 # if port :
                     try:
-                        db = ClientDatabase(
+                        db = Database(
                             company.db_ip.ip_address,
                             company.db_ip.port,
                             company.db_username,

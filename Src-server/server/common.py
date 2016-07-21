@@ -18,6 +18,10 @@ def get_date_time() :
     time_stamp = datetime.datetime.utcnow()
     return str(localize(time_stamp))
 
+def get_date_time_in_date() :
+    time_stamp = datetime.datetime.utcnow()
+    return localize(time_stamp)
+
 def get_system_date():
     date = datetime.datetime.today()
     return date

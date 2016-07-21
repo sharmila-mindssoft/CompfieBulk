@@ -1,13 +1,15 @@
+from server.clientdatabase.tables import *
+
 from server.clientdatabase.general import (
     is_primary_admin, is_admin, get_user_unit_ids,
-    get_users, get_users_by_id, get_user_company_details,
-    get_user_countries, get_user_domains
-    )
+    get_users, get_users_by_id, get_user_countries,
+    get_user_domains
+)
 
 from server.common import (
-    datetime_to_string, get_date_time, 
-    string_to_datetime, generate_and_return_password
-    )
+    datetime_to_string, get_date_time,
+    string_to_datetime, generate_and_return_password, convert_to_dict
+)
 
 __all__ = [
     "get_service_provider_details_list",
@@ -42,14 +44,16 @@ __all__ = [
 ]
 
 def get_service_provider_details_list(db, client_id):
-    columns = "service_provider_id, service_provider_name, address, contract_from,"+\
+    columns = "service_provider_id, service_provider_name, address, contract_from," + \
             "contract_to, contact_person, contact_no, is_active"
     rows = db.get_data(
         tblServiceProviders, columns, "1 ORDER BY service_provider_name"
     )
-    columns = ["service_provider_id", "service_provider_name", "address", "contract_from",
-    "contract_to", "contact_person", "contact_no", "is_active"]
-    result = db.convert_to_dict(rows, columns)
+    columns = [
+        "service_provider_id", "service_provider_name", "address", "contract_from",
+        "contract_to", "contact_person", "contact_no", "is_active"
+    ]
+    result = convert_to_dict(rows, columns)
     return return_service_provider_details(result)
 
 def return_service_provider_details(service_providers):
@@ -72,11 +76,12 @@ def return_service_provider_details(service_providers):
 #
 
 def generate_new_service_provider_id(db, client_id) :
-    return db.get_new_id("service_provider_id",tblServiceProviders,  client_id)
+    return db.get_new_id("service_provider_id", tblServiceProviders,  client_id)
 
-def is_duplicate_service_provider(db, service_provider_id,
-    service_provider_name, client_id):
-    condition = "service_provider_name ='%s' AND service_provider_id != '%d'" %(
+def is_duplicate_service_provider(
+    db, service_provider_id, service_provider_name, client_id
+):
+    condition = "service_provider_name ='%s' AND service_provider_id != '%d'" % (
         service_provider_name, service_provider_id)
     return db.is_already_exists(tblServiceProviders, condition, client_id)
 
@@ -84,14 +89,18 @@ def save_service_provider(db, service_provider_id, service_provider, session_use
     current_time_stamp = get_date_time()
     contract_from = string_to_datetime(service_provider.contract_from)
     contract_to = string_to_datetime(service_provider.contract_to)
-    columns = ["service_provider_id", "service_provider_name", "address", "contract_from",
-            "contract_to", "contact_person", "contact_no", "created_on", "created_by",
-            "updated_on", "updated_by"]
-    values = [service_provider_id, service_provider.service_provider_name,
-                service_provider.address, contract_from, contract_to,
-                service_provider.contact_person, service_provider.contact_no,
-                current_time_stamp, session_user, current_time_stamp, session_user]
-    result = db.insert(tblServiceProviders,columns, values, client_id)
+    columns = [
+        "service_provider_id", "service_provider_name", "address", "contract_from",
+        "contract_to", "contact_person", "contact_no", "created_on", "created_by",
+        "updated_on", "updated_by"
+    ]
+    values = [
+        service_provider_id, service_provider.service_provider_name,
+        service_provider.address, contract_from, contract_to,
+        service_provider.contact_person, service_provider.contact_no,
+        current_time_stamp, session_user, current_time_stamp, session_user
+    ]
+    result = db.insert(tblServiceProviders, columns, values, client_id)
 
     action = "Created Service Provider \"%s\"" % service_provider.service_provider_name
     db.save_activity(session_user, 2, action, client_id)
@@ -111,11 +120,15 @@ def update_service_provider(db, service_provider, session_user, client_id):
     current_time_stamp = get_date_time()
     contract_from = string_to_datetime(service_provider.contract_from)
     contract_to = string_to_datetime(service_provider.contract_to)
-    columns_list = [ "service_provider_name", "address", "contract_from", "contract_to",
-                "contact_person", "contact_no", "updated_on", "updated_by"]
-    values_list = [service_provider.service_provider_name, service_provider.address,
-            contract_from, contract_to, service_provider.contact_person,
-            service_provider.contact_no, current_time_stamp, session_user]
+    columns_list = [
+        "service_provider_name", "address", "contract_from", "contract_to",
+        "contact_person", "contact_no", "updated_on", "updated_by"
+    ]
+    values_list = [
+        service_provider.service_provider_name, service_provider.address,
+        contract_from, contract_to, service_provider. contact_person,
+        service_provider.contact_no, current_time_stamp, session_user
+    ]
     condition = "service_provider_id='%d'" % service_provider.service_provider_id
     result = db.update(tblServiceProviders, columns_list, values_list, condition, client_id)
 
@@ -123,7 +136,6 @@ def update_service_provider(db, service_provider, session_user, client_id):
     condition = "now() between contract_from and contract_to \
     and service_provider_id = '%d'" % service_provider.service_provider_id
     rows = db.get_data(tblServiceProviders, column, condition)
-
 
     if int(rows[0][0]) > 0:
         contract_status_after_update = True
@@ -166,7 +178,7 @@ def is_user_exists_under_service_provider(db, service_provider_id):
         return False
 
 def update_service_provider_status(db, service_provider_id,  is_active, session_user, client_id):
-    is_active= 1 if is_active != False else 0
+    is_active = 1 if is_active is not False else 0
     columns = ["is_active", "updated_on" , "updated_by"]
     values = [is_active, get_date_time(), session_user]
     condition = "service_provider_id='%d'" % service_provider_id
@@ -205,9 +217,10 @@ def get_forms(db, client_id):
 def generate_new_user_privilege_id(db, client_id) :
     return db.get_new_id("user_group_id", tblUserGroups, client_id)
 
-def is_duplicate_user_privilege(db, user_group_id, user_privilege_name,
-    client_id):
-    condition = "user_group_name ='%s' AND user_group_id != '%d'" %(
+def is_duplicate_user_privilege(
+    db, user_group_id, user_privilege_name, client_id
+):
+    condition = "user_group_name ='%s' AND user_group_id != '%d'" % (
         user_privilege_name, user_group_id)
     return db.is_already_exists(tblUserGroups, condition)
 
@@ -225,7 +238,7 @@ def get_user_privileges(db, client_id):
     )
 
     columns = ["user_group_id", "user_group_name", "is_active"]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_user_privileges(result)
 
 def return_user_privileges(user_privileges):
@@ -238,12 +251,16 @@ def return_user_privileges(user_privileges):
     return results
 
 def save_user_privilege(db, user_group_id, user_privilege, session_user, client_id):
-    columns = ["user_group_id", "user_group_name","form_ids", "is_active",
-              "created_on", "created_by", "updated_on", "updated_by"]
-    values_list =  [user_group_id, user_privilege.user_group_name,
-                    ",".join(str(x) for x in user_privilege.form_ids), 1,
-                    get_date_time(), session_user,get_date_time(),
-                    session_user]
+    columns = [
+        "user_group_id", "user_group_name", "form_ids", "is_active",
+        "created_on", "created_by", "updated_on", "updated_by"
+    ]
+    values_list = [
+        user_group_id, user_privilege.user_group_name,
+        ",".join(str(x) for x in user_privilege.form_ids), 1,
+        get_date_time(), session_user, get_date_time(),
+        session_user
+    ]
     result = db.insert(tblUserGroups, columns, values_list)
 
     action = "Created User Group \"%s\"" % user_privilege.user_group_name
@@ -252,9 +269,11 @@ def save_user_privilege(db, user_group_id, user_privilege, session_user, client_
     return result
 
 def update_user_privilege(db, user_privilege, session_user, client_id):
-    columns = ["user_group_name","form_ids", "updated_on", "updated_by"]
-    values =  [ user_privilege.user_group_name, ",".join(str(x) for x in user_privilege.form_ids),
-                get_date_time(),session_user]
+    columns = ["user_group_name", "form_ids", "updated_on", "updated_by"]
+    values = [
+        user_privilege.user_group_name, ",".join(str(x) for x in user_privilege.form_ids),
+        get_date_time(), session_user
+    ]
     condition = "user_group_id='%d'" % user_privilege.user_group_id
     result = db.update(tblUserGroups, columns, values, condition)
 
@@ -275,7 +294,7 @@ def is_user_exists_under_user_group(db, user_group_id):
         return False
 
 def update_user_privilege_status(db, user_group_id, is_active, session_user, client_id):
-    is_active = 0 if is_active != True else 1
+    is_active = 0 if is_active is not True else 1
     columns = ["is_active", "updated_by", "updated_on"]
     values = [is_active, session_user, get_date_time()]
     condition = "user_group_id='%d'" % user_group_id
@@ -298,19 +317,21 @@ def get_user_details(db, client_id, session_user):
     unit_ids = None
     if not is_primary_admin(db, session_user):
         unit_ids = get_user_unit_ids(db, session_user)
-    columns = "user_id, email_id, user_group_id, employee_name,"+\
-    "employee_code, contact_no, seating_unit_id, user_level, "+\
-    " is_admin, is_service_provider, service_provider_id, is_active,\
+    columns = "user_id, email_id, user_group_id, employee_name," + \
+        "employee_code, contact_no, seating_unit_id, user_level, " + \
+        " is_admin, is_service_provider, service_provider_id, is_active, \
     is_primary_admin"
     condition = "1 ORDER BY employee_name"
-    rows =  db.get_data(
-        tblUsers+ " tu",columns, condition
+    rows = db.get_data(
+        tblUsers + " tu", columns, condition
     )
-    columns = ["user_id", "email_id", "user_group_id", "employee_name",
-    "employee_code", "contact_no", "seating_unit_id", "user_level",
-    "is_admin", "is_service_provider", "service_provider_id", "is_active",
-    "is_primary_admin"]
-    result = db.convert_to_dict(rows, columns)
+    columns = [
+        "user_id", "email_id", "user_group_id", "employee_name",
+        "employee_code", "contact_no", "seating_unit_id", "user_level",
+        "is_admin", "is_service_provider", "service_provider_id", "is_active",
+        "is_primary_admin"
+    ]
+    result = convert_to_dict(rows, columns)
     return return_user_details(db, result, client_id, unit_ids)
 
 def return_user_details(
@@ -343,9 +364,9 @@ def return_user_details(
             user["user_group_id"], user["employee_name"],
             user["employee_code"], user["contact_no"],
             user["seating_unit_id"], user["user_level"],
-            [int(x) for x in countries.split(",")] if countries != None else [],
-            [int(x) for x in domains.split(",")] if domains != None else [],
-            [int(x) for x in units.split(",")] if units != None else [],
+            [int(x) for x in countries.split(",")] if countries is not None else [],
+            [int(x) for x in domains.split(",")] if domains is not None else [],
+            [int(x) for x in units.split(",")] if units is not None else [],
             bool(user["is_admin"]), bool(user["is_service_provider"]),
             user["service_provider_id"], bool(user["is_active"]),
             bool(user["is_primary_admin"])
@@ -359,7 +380,7 @@ def get_service_providers(db, client_id=None):
         tblServiceProviders, columns, condition
     )
     columns = ["service_provider_id", "service_provider_name", "is_active"]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_service_providers(result)
 
 def return_service_providers(service_providers):
@@ -395,13 +416,13 @@ def is_duplicate_user_email(db, user_id, email_id, client_id):
         flag1 = True
     else:
         flag1 = False
-    condition = "email_id ='%s' AND user_id != '%d'" %(
+    condition = "email_id ='%s' AND user_id != '%d'" % (
         email_id, user_id)
     flag2 = db.is_already_exists(tblUsers, condition, client_id)
     return (flag1 or flag2)
 
 def is_duplicate_employee_code(db, user_id, employee_code, client_id):
-    condition = "employee_code ='%s' AND user_id != '%d'" %(
+    condition = "employee_code ='%s' AND user_id != '%d'" % (
         employee_code, user_id)
     return db.is_already_exists(tblUsers, condition, client_id)
 
@@ -481,9 +502,7 @@ def save_user(db, user_id, user, session_user, client_id):
 
     action = "Created user \"%s - %s\"" % (user.employee_code, user.employee_name)
     db.save_activity(session_user, 4, action, client_id)
-    short_name = get_short_name_from_client_id(db, 
-        client_id
-    )
+    short_name = get_short_name_from_client_id(db, client_id)
     notify_user_thread = threading.Thread(
         target=notify_user, args=[
             short_name, user.email_id, password, user.employee_name, user.employee_code
@@ -499,13 +518,17 @@ def update_user(db, user, session_user, client_id):
     result4 = None
 
     current_time_stamp = get_date_time()
-    user.is_service_provider = 0 if user.is_service_provider == False else 1
-    columns = [ "user_group_id", "employee_name", "employee_code",
-            "contact_no", "seating_unit_id", "user_level",
-            "is_service_provider", "updated_on", "updated_by"]
-    values = [ user.user_group_id, user.employee_name, user.employee_code.replace(" ", ""),
-            user.contact_no, user.seating_unit_id, user.user_level,
-            user.is_service_provider, current_time_stamp, session_user ]
+    user.is_service_provider = 0 if user.is_service_provider is False else 1
+    columns = [
+        "user_group_id", "employee_name", "employee_code",
+        "contact_no", "seating_unit_id", "user_level",
+        "is_service_provider", "updated_on", "updated_by"
+    ]
+    values = [
+        user.user_group_id, user.employee_name, user.employee_code.replace(" ", ""),
+        user.contact_no, user.seating_unit_id, user.user_level,
+        user.is_service_provider, current_time_stamp, session_user
+    ]
     condition = "user_id='%d'" % user.user_id
 
     if user.is_service_provider == 1:
@@ -568,11 +591,14 @@ def update_user(db, user, session_user, client_id):
     return (result1 and result2 and result3 and result4)
 
 def update_user_status(db, user_id, is_active, session_user, client_id):
-    columns = ["is_active", "updated_on", "updated_by"]
-    is_active = 1 if is_active != False else 0
-    values = [is_active, get_date_time(), session_user]
-    condition = "user_id = '%d'"% user_id
-
+    columns = [
+        "is_active", "updated_on", "updated_by"
+    ]
+    is_active = 1 if is_active is not False else 0
+    values = [
+        is_active, get_date_time(), session_user
+    ]
+    condition = "user_id = '%d'" % user_id
     db_con = Database(
         KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
         KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
@@ -591,7 +617,7 @@ def update_user_status(db, user_id, is_active, session_user, client_id):
     rows = db.get_data(
         tblUsers, action_column, condition
     )
-    employee_code = rows [0][0]
+    employee_code = rows[0][0]
     employee_name = rows[0][1]
     if is_active == 1:
         action = "Activated user \"%s - %s\"" % (employee_code, employee_name)
@@ -601,7 +627,7 @@ def update_user_status(db, user_id, is_active, session_user, client_id):
 
     return db.update(tblUsers, columns, values, condition, client_id)
 
- def update_admin_status(db, user_id, is_admin, session_user, client_id):
+def update_admin_status(db, user_id, is_admin, session_user, client_id):
     columns = ["is_admin", "updated_on" , "updated_by"]
     is_admin = 1 if is_admin is not False else 0
     values = [is_admin, get_date_time(), session_user]
@@ -648,11 +674,11 @@ def get_units_closure_for_user(db, unit_ids):
         tblUnits, columns, condition
     )
     columns = [
-        "unit_id", "unit_code", "unit_name", "unit_address", "division_id","domain_ids", "country_id",
+        "unit_id", "unit_code", "unit_name", "unit_address", "division_id", "domain_ids", "country_id",
         "legal_entity_id", "business_group_id", "is_active", "is_closed"
     ]
 
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_units(result)
 
 def return_units(units):
@@ -804,18 +830,6 @@ def get_short_name_from_client_id(db, client_id):
         tblClientGroups, columns, "1"
     )
     return rows[0][0]
-
-def is_admin(db, user_id):
-    if user_id == 0:
-        return True
-    else:
-        columns = "count(*)"
-        condition = "(is_admin = 1 or is_primary_admin = 1) and user_id = '%d'" % user_id
-        rows = db.get_data(tblUsers, columns, condition)
-        if rows[0][0] > 0:
-            return True
-        else:
-            return False
 
 def notify_user(
     short_name, email_id, password, employee_name, employee_code

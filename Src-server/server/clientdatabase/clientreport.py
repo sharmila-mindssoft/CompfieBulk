@@ -1,13 +1,21 @@
+from server.clientdatabase.tables import *
+from protocol import (
+    core, clientreport
+)
+import json
 from server.common import (
     datetime_to_string_time, string_to_datetime, datetime_to_string,
-    calculate_years, get_date_time
+    get_date_time, convert_to_dict
+    )
+from server.clientdatabase.common import (
+    calculate_years, get_country_domain_timelines
     )
 from server.clientdatabase.general import (
-    get_user_company_details, get_countries_for_user,
-    get_domains_for_user, calculate_ageing
-    )
-
-all__ = [
+    calculate_ageing, get_admin_id
+)
+CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
+FORMAT_DOWNLOAD_URL = "/client/compliance_format"
+__all__ = [
     "report_unitwise_compliance",
     "return_unitwise_report",
     "report_assigneewise_compliance",
@@ -93,8 +101,7 @@ def report_assigneewise_compliance(
     else :
         count = 0
 
-
-    q = " SELECT  \
+    q = "SELECT \
         ac.country_id, ac.unit_id, ac.compliance_id, ac.statutory_dates ,\
         ac. trigger_before_days, ac.due_date, ac.validity_date, \
         c.compliance_task, c.document_name, c.compliance_description, c.frequency_id, \
@@ -135,7 +142,7 @@ def report_assigneewise_compliance(
     )
 
     rows = db.select_all(q)
-    data = db.convert_to_dict(rows, columns)
+    data = convert_to_dict(rows, columns)
     return data, count
 
 def return_unitwise_report(data):
@@ -340,8 +347,7 @@ def report_serviceproviderwise_compliance(
     else :
         count = 0
 
-
-    q = " SELECT  \
+    q = " SELECT \
         ac.country_id, ac.unit_id, ac.compliance_id, ac.statutory_dates ,\
         ac.trigger_before_days, ac.due_date, ac.validity_date, \
         c.compliance_task, c.document_name, c.compliance_description, c.frequency_id, \
@@ -368,7 +374,7 @@ def report_serviceproviderwise_compliance(
     )
 
     rows = db.select_all(q)
-    data = db.convert_to_dict(rows, columns)
+    data = convert_to_dict(rows, columns)
     return data, count
 
 def return_serviceprovider_report_data(data):
@@ -422,7 +428,7 @@ def return_serviceprovider_report_data(data):
             unit_wise[uname] = [compliance]
             AC = clientreport.ServiceProviderCompliance(
                 d["service_provider_name"], d["address"],
-                datetime_to_string(d["contract_from"]),datetime_to_string(d["contract_to"]),
+                datetime_to_string(d["contract_from"]), datetime_to_string(d["contract_to"]),
                 d["contact_person"], d["contact_no"], unit_wise
             )
             AC.to_structure()
@@ -504,7 +510,7 @@ def report_statutory_notifications_list(db, request_data):
         "business_group", "legal_entity", "division", "unit_code", "unit_name",
         "address", "statutory_provision", "notification_text", "updated_on"
     ]
-    data = db.convert_to_dict(rows, columns)
+    data = convert_to_dict(rows, columns)
     legal_wise = {}
     for d in data :
         unit_name = "%s - %s" % (d["unit_code"], d["unit_name"])
@@ -688,7 +694,6 @@ def get_where_query_for_compliance_details_report(
         qry_where += " AND ch.due_date between '%s' and '%s'" % (start_date, end_date)
 
     else :
-
         qry_where += " AND ch.due_date >= '%s' \
             AND ch.due_date <= '%s'" % (f_date, t_date)
     return qry_where
@@ -771,7 +776,7 @@ def get_compliance_details(
         qry_where, from_count, to_count
     )
     rows = db.select_all(qry)
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return result
 
 def report_reassigned_history(
@@ -929,7 +934,7 @@ def get_reassigned_history_report_data(
 
         )
     rows = db.select_all(qry)
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return result
 
 def get_reassigned_history_report_count(
@@ -1069,7 +1074,7 @@ def get_delayed_compliances(
         "address", "postal_code", "unit_id"
     ]
     rows = db.select_all(query)
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return result
 
 def get_delayed_compliances_with_count(
@@ -1137,7 +1142,7 @@ def get_not_complied_compliances(
         "compliance_history_id"
     ]
     rows = db.select_all(query)
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return result
 
 def get_not_complied_where_qry(
@@ -1244,7 +1249,7 @@ def get_not_opted_compliances(
         "address", "postal_code", "unit_id"
     ]
     rows = db.select_all(query)
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return result
 
 def get_not_opted_compliances_where_qry(
@@ -1367,7 +1372,7 @@ def get_unassigned_compliances(
         "address", "postal_code", "unit_id"
     ]
     rows = db.select_all(query)
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return result
 
 def get_unassigned_compliances_where_qry(
@@ -1579,7 +1584,7 @@ def get_login_trace(
         )
     rows = db.select_all(query)
     columns = ["created_on", "action"]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_logintrace(result)
 
 def return_logintrace(data) :
@@ -1592,15 +1597,15 @@ def return_logintrace(data) :
 def get_compliance_activity_report(
         db, country_id, domain_id, user_type, user_id, unit_id, compliance_id,
         level_1_statutory_name, from_date, to_date, session_user, client_id
-    ):
+):
         conditions = []
-        #user_type_condition
+        # user_type_condition
         if user_type == "Inhouse":
             conditions.append("us.service_provider_id is null or us.service_provider_id = 0")
         else:
             conditions.append("us.service_provider_id = 1")
 
-        #session_user_condition
+        # session_user_condition
         if session_user != 0:
             conditions.append(
                 '''
@@ -1609,7 +1614,7 @@ def get_compliance_activity_report(
                 ) '''.format(session_user)
             )
         else:
-           conditions.append(
+            conditions.append(
                 '''
                 u.unit_id in (
                     SELECT unit_id FROM tbl_units
@@ -1619,7 +1624,6 @@ def get_compliance_activity_report(
         # assignee_condition
         if user_id is not None:
             conditions.append("ac.assignee = {}".format(user_id))
-
 
         # unit_condition
         if unit_id is not None:
@@ -1639,8 +1643,7 @@ def get_compliance_activity_report(
                 "compliance_task = (SELECT compliance_task FROM tbl_compliances WHERE \
                     compliance_id = '%d')" % compliance_id
             )
-
-        #timeline_condition
+        # timeline_condition
         # [[1, [[1, [{'start_date': datetime.datetime(2016, 5, 1, 5, 30), 'end_date': datetime.datetime(2016, 12, 31, 5, 30), 'year': 2016}]]]]]
         timeline = get_country_domain_timelines(
             db, [country_id], [domain_id], [get_date_time().year], client_id
@@ -1691,7 +1694,7 @@ def get_compliance_activity_report(
             "unit_name", "address", "document_name", "compliance_name", "description",
             "statutory_mapping", "assignee_id", "employee_code", "employee_name"
         ]
-        rows = db.convert_to_dict(result, columns)
+        rows = convert_to_dict(result, columns)
         return rows
 
 def return_compliance_activity_report(
@@ -1897,7 +1900,7 @@ def get_compliance_task_applicability(db, request, session_user):
         "repeat_type", "duration_type", "repeats_every",
         "duration"
     ]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     legal_entity_wise = {}
     for r in result :
         business_group_name = r["business_group"]
@@ -1993,8 +1996,8 @@ def get_client_details_report(
         db, country_id,  business_group_id, legal_entity_id, division_id,
         unit_id, domain_ids, session_user
     )
-    columns = "unit_id, unit_code, unit_name, geography, "\
-            "address, domain_ids, postal_code, business_group_name,\
+    columns = "unit_id, unit_code, unit_name, geography, \
+            address, domain_ids, postal_code, business_group_name, \
             legal_entity_name, division_name"
     query = "SELECT %s \
             FROM %s u \
@@ -2010,8 +2013,8 @@ def get_client_details_report(
             )
     rows = db.select_all(query)
     columns_list = columns.replace(" ", "").split(",")
-    unit_rows = db.convert_to_dict(rows, columns_list)
-    units = []
+    unit_rows = convert_to_dict(rows, columns_list)
+    # units = []
     grouped_units = {}
     for unit in unit_rows:
         business_group_name = unit["business_group_name"]
@@ -2073,10 +2076,10 @@ def get_client_details_condition(
         condition += " AND unit_id in (%s)" % user_unit_ids
     if domain_ids is not None:
         for domain_id in domain_ids:
-            condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
-                        "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
-                        "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
-                        " or domain_ids LIKE '"+str(domain_id)+"') "
+            condition += " AND  ( domain_ids LIKE  '%," + str(domain_id) + ",%' " + \
+                        "or domain_ids LIKE  '%," + str(domain_id) + "' " + \
+                        "or domain_ids LIKE  '" + str(domain_id) + ",%'" + \
+                        " or domain_ids LIKE '" + str(domain_id) + "') "
     return condition
 
 def get_client_details_count(

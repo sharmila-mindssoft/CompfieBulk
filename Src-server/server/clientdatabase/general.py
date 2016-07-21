@@ -1,8 +1,10 @@
+from dateutil import relativedelta
 from server.common import (
-    encrypt
-    )
-
-all__ = [
+    encrypt, convert_to_dict, get_date_time, get_date_time_in_date
+)
+from server.clientdatabase.tables import *
+__all__ = [
+    "get_client_user_forms",
     "get_countries_for_user",
     "get_domains_for_user",
     "get_business_groups_for_user",
@@ -56,6 +58,28 @@ all__ = [
 
 ]
 
+def get_client_user_forms(db, form_ids, client_id, is_admin):
+    columns = "tf.form_id, tf.form_type_id, tft.form_type, tf.form_name, "
+    columns += "tf.form_url, tf.form_order, tf.parent_menu "
+
+    tables = [tblForms, tblFormType]
+    aliases = ["tf",  "tft"]
+    joinConditions = ["tf.form_type_id = tft.form_type_id"]
+    whereCondition = " form_id in (%s) order by tf.form_order" % (
+        form_ids
+    )
+    joinType = "left join"
+
+    rows = db.get_data_from_multiple_tables(
+        columns, tables, aliases, joinType,
+        joinConditions, whereCondition
+    )
+    row_columns = [
+        "form_id", "form_type_id", "form_type", "form_name", "form_url",
+        "form_order", "parent_menu"
+    ]
+    result = convert_to_dict(rows, row_columns)
+    return result
 
 def get_admin_id(db):
     columns = "admin_id"
@@ -74,7 +98,7 @@ def get_countries_for_user(db, user_id, client_id=None) :
             )
     rows = db.select_all(query)
     columns = ["country_id", "country_name", "is_active"]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_countries(result)
 
 def return_countries(data) :
@@ -95,7 +119,7 @@ def get_domains_for_user(db, user_id, client_id=None) :
             t1.domain_id = t2.domain_id WHERE t2.user_id = %s" % (user_id)
     rows = db.select_all(query)
     columns = ["domain_id", "domain_name", "is_active"]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_domains(result)
 
 def return_domains(data):
@@ -115,7 +139,7 @@ def get_business_groups_for_user(db, business_group_ids):
         tblBusinessGroups, columns, condition
     )
     columns = ["business_group_id", "business_group_name"]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_business_groups(result)
 
 def return_business_groups(business_groups):
@@ -136,7 +160,7 @@ def get_legal_entities_for_user(db, legal_entity_ids):
         tblLegalEntities, columns, condition
     )
     columns = ["legal_entity_id", "legal_entity_name", "business_group_id"]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_legal_entities(result)
 
 def return_legal_entities(legal_entities):
@@ -164,7 +188,7 @@ def get_divisions_for_user(db, division_ids):
         "division_id", "division_name", "legal_entity_id",
         "business_group_id"
     ]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_divisions(result)
 
 def return_divisions(divisions):
@@ -198,7 +222,7 @@ def get_country_wise_domain_month_range(db):
         "domain_id", "domain_name",
         "period_from", "period_to"
     ]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
 
     country_wise = {}
     domain_info = []
@@ -232,7 +256,7 @@ def get_units_for_user(db, unit_ids, client_id=None):
         "unit_id", "unit_code", "unit_name", "unit_address", "division_id", "domain_ids", "country_id",
         "legal_entity_id", "business_group_id", "is_active", "is_closed"
     ]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_units(result)
 
 def return_units(units):
@@ -262,7 +286,7 @@ def get_client_users(db, client_id=None, unit_ids=None):
         tblUsers, columns, condition
     )
     columns = ["user_id", "employee_name", "employee_code", "is_active"]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_client_users(result)
 
 def return_client_users(users):
@@ -279,7 +303,7 @@ def get_user_domains(db, user_id, client_id=None):
     result = None
     condition = 1
     if user_id > 0:
-        table  = tblUserDomains
+        table = tblUserDomains
         condition = " user_id = '%d'" % user_id
     rows = db.get_data(
         table, columns, condition
@@ -315,28 +339,28 @@ def is_in_contract(db):
         return True
 
 def verify_username(db, username):
-    columns = "count(*), user_id"
+    columns = "count(*) as result, user_id"
     condition = "email_id='%s' and is_active = 1" % (username)
     rows = db.get_data(
         tblUsers, columns, condition
     )
-    count = rows[0][0]
+    count = rows[0]["result"]
     if count == 1:
-        return rows[0][1]
+        return rows[0]["user_id"]
     else:
         condition = "username='%s'" % username
-        columns = "count(*)"
+        columns = "count(*) as result"
         rows = db.get_data(
             tblAdmin, columns, condition
         )
-        count = rows[0][0]
+        count = rows[0]["result"]
         if count == 1:
             return 0
         else:
             return None
 
 def verify_password(db, password, user_id, client_id=None):
-    columns = "count(*)"
+    columns = "count(*) as result"
     encrypted_password = encrypt(password)
     condition = "1"
     rows = None
@@ -352,7 +376,7 @@ def verify_password(db, password, user_id, client_id=None):
         rows = db.get_data(
             tblUsers, columns, condition
         )
-    if(int(rows[0][0]) <= 0):
+    if(int(rows[0]["result"]) <= 0):
         return False
     else:
         return True
@@ -362,7 +386,7 @@ def get_countries(db):
         t1.is_active FROM tbl_countries t1 "
     rows = db.select_all(query)
     columns = ["country_id", "country_name", "is_active"]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_countries(result)
 
 def get_domains(db):
@@ -370,14 +394,14 @@ def get_domains(db):
         t1.is_active FROM tbl_domains t1 "
     rows = db.select_all(query)
     columns = ["domain_id", "domain_name", "is_active"]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_domains(result)
 
 def is_primary_admin(db, user_id):
-    column = "count(1)"
+    column = "count(1) as result"
     condition = "user_id = '%d' and is_primary_admin = 1" % user_id
     rows = db.get_data(tblUsers, column, condition)
-    if rows[0][0] > 0 or user_id == 0:
+    if rows[0]["result"] > 0 or user_id == 0:
         return True
     else:
         return False
@@ -488,7 +512,7 @@ def get_client_level_1_statutoy(db, user_id, client_id=None) :
             FROM tbl_compliances GROUP BY statutory"
     rows = db.select_all(query)
     columns = ["statutory"]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_client_level_1_statutories(result)
 
 def return_client_level_1_statutories(data) :
@@ -506,7 +530,7 @@ def get_service_providers(db, client_id=None):
         tblServiceProviders, columns, condition
     )
     columns = ["service_provider_id", "service_provider_name", "is_active"]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_service_providers(result)
 
 def return_service_providers(service_providers):
@@ -524,7 +548,7 @@ def get_client_compliances(db, user_id, client_id=None) :
             FROM tbl_compliances"
     rows = db.select_all(query, client_id)
     columns = ["compliance_id", "document_name", "compliance_name"]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_client_compliances(result)
 
 def return_client_compliances(data) :
@@ -539,7 +563,7 @@ def return_client_compliances(data) :
     return results
 
 def calculate_ageing(due_date, frequency_type=None, completion_date=None, duration_type=None):
-    current_time_stamp = get_date_time()
+    current_time_stamp = get_date_time_in_date()
     compliance_status = "-"
     # due_date = self.localize(due_date)
     if frequency_type == "On Occurrence":
@@ -559,7 +583,7 @@ def calculate_ageing(due_date, frequency_type=None, completion_date=None, durati
                 else:
                     if duration_type in ["2", 2]:
                         compliance_status = "Delayed by %d.%d hour(s)" % (
-                           ( abs(r.days) * 4 + abs(r.hours)), abs(r.minutes)
+                           (abs(r.days) * 4 + abs(r.hours)), abs(r.minutes)
                         )
                     else:
                         compliance_status = "Delayed by %d day(s)" % (
@@ -578,7 +602,7 @@ def calculate_ageing(due_date, frequency_type=None, completion_date=None, durati
                 else:
                     if duration_type in ["2", 2]:
                         compliance_status = "%d.%d hour(s) left" % (
-                           ( abs(r.days) * 24 + abs(r.hours)), abs(r.minutes)
+                           (abs(r.days) * 24 + abs(r.hours)), abs(r.minutes)
                         )
                     else:
                         compliance_status = " %d day(s) left" % (
@@ -598,7 +622,7 @@ def calculate_ageing(due_date, frequency_type=None, completion_date=None, durati
                            (abs(r.days) * 24 + abs(r.hours)), abs(r.minutes)
                         )
                     else:
-                        compliance_status = "Overdue by %d day(s)" %(
+                        compliance_status = "Overdue by %d day(s)" % (
                             abs(r.days)
                         )
             return r.days, compliance_status
@@ -673,8 +697,8 @@ def get_compliance_frequency(db, client_id, condition="1"):
     return compliance_frequency
 
 def get_user_ids_by_unit_and_domain(
-        db, unit_id, domain_id
-    ):
+    db, unit_id, domain_id
+):
     unit_user_rows = db.get_data(
         tblUserUnits, "user_id" , "unit_id = '%d'" % unit_id
     )
@@ -698,8 +722,8 @@ def get_user_ids_by_unit_and_domain(
     return user_ids
 
 def get_users_by_unit_and_domain(
-        db, unit_id, domain_id
-    ):
+    db, unit_id, domain_id
+):
     user_ids = get_user_ids_by_unit_and_domain(
         db, unit_id, domain_id
     )
@@ -711,7 +735,7 @@ def get_users_by_unit_and_domain(
             tblUsers, columns, condition
         )
         columns = ["user_id", "employee_name", "employee_code", "is_active"]
-        result = db.convert_to_dict(rows, columns)
+        result = convert_to_dict(rows, columns)
     return return_users(result)
 
 def get_users(db, client_id):
@@ -721,7 +745,7 @@ def get_users(db, client_id):
             tblUsers, columns, condition
         )
         columns = ["user_id", "employee_name", "employee_code", "is_active"]
-        result = db.convert_to_dict(rows, columns)
+        result = convert_to_dict(rows, columns)
         return return_users(result)
 
 def get_users_by_id(db, user_ids, client_id):
@@ -731,14 +755,14 @@ def get_users_by_id(db, user_ids, client_id):
         tblUsers, columns, condition
     )
     columns = ["user_id", "employee_name", "employee_code", "is_active"]
-    result = db.convert_to_dict(rows, columns)
+    result = convert_to_dict(rows, columns)
     return return_users(result)
 
 def return_users(users):
     results = []
     for user in users :
         if user["employee_code"] is not None:
-            employee_name = "%s - %s" % (user["employee_code"],user["employee_name"])
+            employee_name = "%s - %s" % (user["employee_code"], user["employee_name"])
         else:
             employee_name = "Administrator"
         results.append(core.User(
@@ -752,7 +776,7 @@ def get_compliance_name_by_id(db, compliance_id):
     rows = db.get_data(tblCompliances, column, condition)
     compliance_name = ""
     if rows[0][0] is not None:
-        if str(rows[0][0])  == "None" :
+        if str(rows[0][0]) == "None" :
             compliance_name = rows[0][1]
         else :
             compliance_name += rows[0][0]+" - "+rows[0][1]
@@ -772,7 +796,7 @@ def is_space_available(db, upload_size):
 def update_used_space(db, file_size):
     columns = "total_disk_space_used"
     condition = "1"
-    db.increment( tblClientGroups, columns, condition, value = file_size)
+    db.increment(tblClientGroups, columns, condition, value=file_size)
 
     total_used_space = 0
 
@@ -824,7 +848,7 @@ def save_compliance_notification(
     notification_id = db.get_new_id(
         "notification_id", tblNotificationsLog
     )
-    current_time_stamp = get_date_time()
+    current_time_stamp = get_date_time_in_date()
 
     # Get history details from compliance history id
     history_columns = "unit_id, compliance_id, completed_by, concurred_by, \
@@ -837,7 +861,7 @@ def save_compliance_notification(
         "unit_id", "compliance_id", "completed_by",
         "concurred_by", "approved_by"
     ]
-    history = db.convert_to_dict(history_rows[0], history_columns_list)
+    history = convert_to_dict(history_rows[0], history_columns_list)
     unit_id = history["unit_id"]
     compliance_id = history["compliance_id"]
 
@@ -848,7 +872,7 @@ def save_compliance_notification(
     unit_columns_list = [
         "country_id", "business_group_id", "legal_entity_id", "division_id"
     ]
-    unit = db.convert_to_dict(unit_rows[0], unit_columns_list)
+    unit = convert_to_dict(unit_rows[0], unit_columns_list)
 
     # Getting compliance_details from compliance_id
     compliance_columns = "domain_id"
@@ -968,7 +992,7 @@ def calculate_from_and_to_date_for_domain(db, country_id, domain_id):
     columns = "contract_from, contract_to"
     rows = db.get_data(tblClientGroups, columns, "1")
     contract_from = rows[0][0]
-    contract_to = rows[0][1]
+    # contract_to = rows[0][1]
 
     columns = "period_from, period_to"
     condition = "country_id = '%d' and domain_id = '%d'" % (
@@ -976,7 +1000,7 @@ def calculate_from_and_to_date_for_domain(db, country_id, domain_id):
     )
     rows = db.get_data(tblClientConfigurations, columns, condition)
     period_from = rows[0][0]
-    period_to = rows[0][1]
+    # period_to = rows[0][1]
 
     to_date = contract_from
     current_year = to_date.year
@@ -1058,8 +1082,8 @@ def calculate_due_date(
                 due_date = datetime.date(
                     year, due_date.month, due_date.day
                 )
-                if from_date <= due_date  <= to_date:
-                    due_dates.append (due_date)
+                if from_date <= due_date <= to_date:
+                    due_dates.append(due_date)
                 year += 1
     if len(due_dates) > 2:
         if due_dates[0] > due_dates[1]:
@@ -1137,12 +1161,12 @@ def get_user_name_by_id(db, user_id, client_id=None):
     return employee_name
 
 def get_form_ids_for_admin(db):
-    columns = "group_concat(form_id)"
+    columns = "group_concat(form_id) as form_id"
     condition = "is_admin = 1 OR form_type_id in (4,5) OR form_id in (1, 9,11,10,12)"
     rows = db.get_data(
         tblForms, columns, condition
     )
-    return rows[0][0]
+    return rows[0]["form_id"]
 
 def get_report_form_ids(db):
     columns = "group_concat(form_id)"
@@ -1158,21 +1182,21 @@ def get_client_id_from_short_name(db, short_name):
     rows = db.get_data(
         "tbl_client_groups", columns, condition
     )
-    return rows[0][0]
+    return rows[0]["client_id"]
 
 def validate_reset_token(db, reset_token, client_id):
-    column = "count(*), user_id"
+    column = "count(*) as result, user_id"
     condition = " verification_code='%s'" % reset_token
     rows = db.get_data(
         tblEmailVerification, column, condition
     )
-    count = rows[0][0]
-    user_id = rows[0][1]
+    count = rows[0]["result"]
+    user_id = rows[0]["user_id"]
     if count == 1:
-        column = "count(*)"
+        column = "count(*) as usercount"
         condition = "user_id = '%d' and is_active = 1" % user_id
         rows = db.get_data(tblUsers, column, condition)
-        if rows[0][0] > 0 or user_id == 0:
+        if rows[0]["usercount"] > 0 or user_id == 0:
             return user_id
         else:
             return None
@@ -1186,11 +1210,11 @@ def update_password(db, password, user_id, client_id):
     result = False
     condition = " user_id='%d'" % user_id
     result = db.update(
-        tblUsers, columns, values, condition, client_id
+        tblUsers, columns, values, condition
     )
     if is_primary_admin(db, user_id) or user_id == 0:
         result = db.update(
-            tblAdmin, columns, values, "1", client_id
+            tblAdmin, columns, values, "1"
         )
     if user_id != 0:
         columns = "employee_code, employee_name"
@@ -1202,7 +1226,7 @@ def update_password(db, password, user_id, client_id):
     else:
         employee_name = "Administrator"
 
-    action = "\"%s\" has updated his/her password" % ( employee_name)
+    action = "\"%s\" has updated his/her password" % (employee_name)
     db.save_activity(user_id, 0, action)
 
     if result:
@@ -1210,7 +1234,7 @@ def update_password(db, password, user_id, client_id):
     else:
         return False
 
-def delete_used_token(self, reset_token, client_id):
+def delete_used_token(db, reset_token, client_id):
     condition = " verification_code='%s'" % reset_token
     if db.delete(tblEmailVerification, condition, client_id):
         return True
@@ -1228,10 +1252,10 @@ def update_profile(db, contact_no, address, session_user):
     db.update(tblUsers, columns, values, condition)
 
 def is_service_proivder_user(db, user_id):
-    column = "count(1)"
+    column = "count(1) as result"
     condition = "user_id = '%d' and is_service_provider = 1" % user_id
     rows = db.get_data(tblUsers, column, condition)
-    if rows[0][0] > 0:
+    if rows[0]["result"] > 0:
         return True
     else:
         return False
