@@ -143,7 +143,7 @@ CREATE TABLE `tbl_units` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_service_providers`;
 CREATE TABLE `tbl_service_providers` (
-  `service_provider_id` int(11) NOT NULL,
+  `service_provider_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `service_provider_name` varchar(50) NOT NULL,
   `address` varchar(500) DEFAULT NULL,
   `contract_from` date DEFAULT NULL,
@@ -154,20 +154,18 @@ CREATE TABLE `tbl_service_providers` (
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`service_provider_id`)
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_user_groups`;
 CREATE TABLE `tbl_user_groups` (
-  `user_group_id` int(11) NOT NULL,
+  `user_group_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `user_group_name` varchar(50) DEFAULT NULL,
   `form_ids` longtext,
   `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`user_group_id`)
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_admin`;
 CREATE TABLE `tbl_admin` (
@@ -177,7 +175,7 @@ CREATE TABLE `tbl_admin` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_users`;
 CREATE TABLE `tbl_users` (
-  `user_id` int(11) NOT NULL,
+  `user_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `user_group_id` int(11) DEFAULT NULL,
   `service_provider_id` int(11) DEFAULT NULL,
   `email_id` varchar(100) NOT NULL,
@@ -194,8 +192,7 @@ CREATE TABLE `tbl_users` (
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`user_id`)
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_user_countries`;
 CREATE TABLE `tbl_user_countries` (
@@ -312,7 +309,7 @@ CREATE TABLE `tbl_approval_status` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_compliance_history`;
 CREATE TABLE `tbl_compliance_history` (
-  `compliance_history_id` int(11) NOT NULL,
+  `compliance_history_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `unit_id` int(11) DEFAULT NULL,
   `compliance_id` int(11) DEFAULT NULL,
   `start_date` datetime DEFAULT NULL,
@@ -330,29 +327,26 @@ CREATE TABLE `tbl_compliance_history` (
   `concurred_on` datetime DEFAULT NULL,
   `approve_status` varchar(20) DEFAULT NULL,
   `approved_by` int(11) DEFAULT NULL,
-  `approved_on` datetime DEFAULT NULL,
-  PRIMARY KEY (`compliance_history_id`)
+  `approved_on` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_compliance_activity_log`;
 CREATE TABLE `tbl_compliance_activity_log` (
-  `compliance_activity_id` int(11) NOT NULL,
+  `compliance_activity_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `unit_id` int(11) DEFAULT NULL,
   `compliance_id` int(11) DEFAULT NULL,
   `activity_date` date DEFAULT NULL,
   `activity_status` varchar(20) DEFAULT NULL,
   `compliance_status` varchar(20) DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`compliance_activity_id`)
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_activity_log`;
 CREATE TABLE `tbl_activity_log` (
-  `activity_log_id` int(11) NOT NULL,
+  `activity_log_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `form_id` int(11) NOT NULL,
   `action` varchar(500) NOT NULL,
-  `created_on` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`activity_log_id`)
+  `created_on` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_email_verification`;
 CREATE TABLE `tbl_email_verification` (
@@ -369,7 +363,7 @@ CREATE TABLE `tbl_mobile_registration` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_statutory_notifications_log`;
 CREATE TABLE `tbl_statutory_notifications_log` (
-  `statutory_notification_id` int(11) NOT NULL,
+  `statutory_notification_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `country_name` VARCHAR(50) NOT NULL,
   `domain_name` VARCHAR(50) NOT NULL,
   `industry_name` longtext NOT NULL,
@@ -377,18 +371,16 @@ CREATE TABLE `tbl_statutory_notifications_log` (
   `statutory_provision` longtext,
   `applicable_location` longtext,
   `notification_text` longtext,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`statutory_notification_id`)
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_statutory_notifications_units`;
 CREATE TABLE `tbl_statutory_notifications_units` (
-  `statutory_notification_unit_id` int(11) NOT NULL,
+  `statutory_notification_unit_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `statutory_notification_id` int(11) DEFAULT NULL,
   `business_group_id` int(11) DEFAULT NULL,
   `legal_entity_id` int(11) DEFAULT NULL,
   `division_id` int(11) DEFAULT NULL,
-  `unit_id` int(11) NOT NULL,
-  PRIMARY KEY (`statutory_notification_unit_id`)
+  `unit_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_statutory_notification_status`;
 CREATE TABLE `tbl_statutory_notification_status` (
@@ -404,7 +396,7 @@ CREATE TABLE `tbl_notification_types` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_notifications_log`;
 CREATE TABLE `tbl_notifications_log` (
-  `notification_id` int(11) NOT NULL,
+  `notification_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `country_id` int(11) DEFAULT NULL,
   `domain_id` int(11) DEFAULT NULL,
   `business_group_id` int(11) DEFAULT NULL,
@@ -418,8 +410,7 @@ CREATE TABLE `tbl_notifications_log` (
   `notification_type_id` int(11) DEFAULT NULL,
   `notification_text` longtext,
   `extra_details` longtext,
-  `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`notification_id`)
+  `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_notification_user_log`;
 CREATE TABLE `tbl_notification_user_log` (
