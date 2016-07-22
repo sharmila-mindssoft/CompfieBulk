@@ -1,10 +1,10 @@
-from protocol import core
+from protocol import (core, dashboard, clientreport)
 from dateutil import relativedelta
 from server.common import (
     encrypt, convert_to_dict, get_date_time, get_date_time_in_date
 )
 from server.clientdatabase.tables import *
-from server.clientdatabase.clienttransaction import set_new_due_date
+
 __all__ = [
     "get_client_user_forms",
     "get_countries_for_user",
@@ -135,15 +135,16 @@ def return_domains(data):
 
 def get_business_groups_for_user(db, business_group_ids):
     columns = "business_group_id, business_group_name"
-    condition = "1"
+    condition = "1 "
     if business_group_ids is not None:
-        condition = "business_group_id in (%s) ORDER BY business_group_name" % business_group_ids
+        condition = "business_group_id in (%s) " % business_group_ids
+    condition_val = None
+    order = " ORDER BY business_group_name "
     rows = db.get_data(
-        tblBusinessGroups, columns, condition
+        tblBusinessGroups, columns, condition, condition_val, order
     )
-    columns = ["business_group_id", "business_group_name"]
-    result = convert_to_dict(rows, columns)
-    return return_business_groups(result)
+    print rows
+    return return_business_groups(rows)
 
 def return_business_groups(business_groups):
     results = []
@@ -156,15 +157,15 @@ def return_business_groups(business_groups):
 
 def get_legal_entities_for_user(db, legal_entity_ids):
     columns = "legal_entity_id, legal_entity_name, business_group_id"
-    condition = "1"
+    condition = "1 "
     if legal_entity_ids is not None:
-        condition = "legal_entity_id in (%s) ORDER BY legal_entity_name" % legal_entity_ids
+        condition = "legal_entity_id in (%s) " % legal_entity_ids
+    condition_val = None
+    order = "ORDER BY legal_entity_name "
     rows = db.get_data(
-        tblLegalEntities, columns, condition
+        tblLegalEntities, columns, condition, condition_val, order
     )
-    columns = ["legal_entity_id", "legal_entity_name", "business_group_id"]
-    result = convert_to_dict(rows, columns)
-    return return_legal_entities(result)
+    return return_legal_entities(rows)
 
 def return_legal_entities(legal_entities):
     results = []
@@ -183,16 +184,13 @@ def get_divisions_for_user(db, division_ids):
     columns = "division_id, division_name, legal_entity_id, business_group_id"
     condition = "1"
     if division_ids is not None:
-        condition = "division_id in (%s) ORDER BY division_name" % division_ids
+        condition = "division_id in (%s) " % division_ids
+    condition_val = None
+    order = " ORDER BY division_name"
     rows = db.get_data(
-        tblDivisions, columns, condition
+        tblDivisions, columns, condition, condition_val, order
     )
-    columns = [
-        "division_id", "division_name", "legal_entity_id",
-        "business_group_id"
-    ]
-    result = convert_to_dict(rows, columns)
-    return return_divisions(result)
+    return return_divisions(rows)
 
 def return_divisions(divisions):
     results = []
@@ -246,21 +244,18 @@ def get_country_wise_domain_month_range(db):
         country_wise[country_name] = domain_info
     return country_wise
 
-def get_units_for_user(db, unit_ids, client_id=None):
+def get_units_for_user(db, unit_ids):
     columns = "unit_id, unit_code, unit_name, address, division_id, domain_ids, country_id,"
     columns += " legal_entity_id, business_group_id, is_active, is_closed"
     condition = "is_closed = 0"
     if unit_ids is not None:
-        condition = "unit_id in (%s) ORDER BY unit_name" % unit_ids
+        condition = "unit_id in (%s) " % unit_ids
+    condition_val = None
+    order = "ORDER BY unit_name"
     rows = db.get_data(
-        tblUnits, columns, condition
+        tblUnits, columns, condition, condition_val, order
     )
-    columns = [
-        "unit_id", "unit_code", "unit_name", "unit_address", "division_id", "domain_ids", "country_id",
-        "legal_entity_id", "business_group_id", "is_active", "is_closed"
-    ]
-    result = convert_to_dict(rows, columns)
-    return return_units(result)
+    return return_units(rows)
 
 def return_units(units):
         results = []
@@ -274,7 +269,7 @@ def return_units(units):
             results.append(core.ClientUnit(
                 unit["unit_id"], division_id, unit["legal_entity_id"],
                 b_group_id, unit["unit_code"],
-                unit["unit_name"], unit["unit_address"], bool(unit["is_active"]),
+                unit["unit_name"], unit["address"], bool(unit["is_active"]),
                 [int(x) for x in unit["domain_ids"].split(",")], unit["country_id"],
                 bool(unit["is_closed"])
             ))
@@ -288,9 +283,7 @@ def get_client_users(db, client_id=None, unit_ids=None):
     rows = db.get_data(
         tblUsers, columns, condition
     )
-    columns = ["user_id", "employee_name", "employee_code", "is_active"]
-    result = convert_to_dict(rows, columns)
-    return return_client_users(result)
+    return return_client_users(rows)
 
 def return_client_users(users):
     results = []
@@ -315,9 +308,9 @@ def get_user_domains(db, user_id, client_id=None):
     if rows:
         for index, row in enumerate(rows):
             if index == 0:
-                result += str(row[0])
+                result += str(row["domain_id"])
             else:
-                result += ", %s" % str(row[0])
+                result += ", %s" % str(row["domain_id"])
     return result
 
 def is_service_provider_in_contract(db, service_provider_id):
@@ -459,9 +452,9 @@ def get_user_unit_ids(db, user_id, client_id=None):
         result = ""
         for index, row in enumerate(rows):
             if index == 0:
-                result += str(row[0])
+                result += str(row["unit_id"])
             else:
-                result += ",%s" % str(row[0])
+                result += ",%s" % str(row["unit_id"])
     return result
 
 def is_two_levels_of_approval(db):
@@ -490,7 +483,7 @@ def get_user_company_details(db, user_id, client_id=None):
     if len(rows) > 0:
         result = []
         for row in rows:
-            result.append(row[0])
+            result.append(row["unit_id"])
         unit_ids = ",".join(str(x) for x in result)
 
     if unit_ids not in [None, "None", ""]:
@@ -535,9 +528,7 @@ def get_service_providers(db, client_id=None):
     rows = db.get_data(
         tblServiceProviders, columns, condition
     )
-    columns = ["service_provider_id", "service_provider_name", "is_active"]
-    result = convert_to_dict(rows, columns)
-    return return_service_providers(result)
+    return return_service_providers(rows)
 
 def return_service_providers(service_providers):
     results = []
@@ -567,6 +558,81 @@ def return_client_compliances(data) :
             d["compliance_id"], compliance_name
         ))
     return results
+
+def set_new_due_date(statutory_dates, repeats_type_id, compliance_id):
+    due_date = None
+    due_date_list = []
+    date_list = []
+    now = datetime.datetime.now()
+    current_year = now.year
+    current_month = now.month
+    for date in statutory_dates:
+            s_date = core.StatutoryDate(
+                date["statutory_date"],
+                date["statutory_month"],
+                date["trigger_before_days"],
+                date.get("repeat_by")
+            )
+            date_list.append(s_date)
+
+            s_month = date["statutory_month"]
+            s_day = date["statutory_date"]
+            current_date = n_date = datetime.date.today()
+
+            if s_date.statutory_date is not None :
+                try :
+                    n_date = n_date.replace(day=int(s_day))
+                except ValueError :
+                    if n_date.month == 12 :
+                        days = 31
+                    else :
+                        days = (n_date.replace(month=n_date.month+1, day=1) - datetime.timedelta(days=1)).day
+                    n_date = n_date.replace(day=days)
+
+            if s_date.statutory_month is not None :
+                if s_date.statutory_date is not None :
+                    n_date = n_date.replace(day=s_day, month=int(s_month))
+                else :
+                    try :
+                        n_date = n_date.replace(month=int(s_month))
+                    except ValueError :
+                        if n_date.month == 12 :
+                            days = 31
+                        else :
+                            days = (n_date.replace(day=1, month=s_month+1) - datetime.timedelta(days=1)).day
+                        n_date = n_date.replace(day=days, month=int(s_month))
+            if current_date > n_date:
+                if repeats_type_id == 2 and len(statutory_dates) == 1 :
+                    try :
+                        n_date = n_date.replace(month=current_month+1)
+                    except ValueError :
+                        if n_date.month == 12 :
+                            days = 31
+                        else :
+                            days = (n_date.replace(day=1, month=current_month+1, year=current_year+1) - datetime.timedelta(days=1)).day
+                        try :
+                            n_date = n_date.replace(day=days, month=current_month+1)
+                        except ValueError :
+                            logger.logClient("error", "set_new_due_date", n_date)
+                            logger.logClient("error", "set_new_due_date", days)
+                            logger.logClient("error", "set_new_due_date", current_month+1)
+
+                else :
+                    try :
+                        n_date = n_date.replace(year=current_year+1)
+                    except ValueError :
+                        if n_date.month == 12 :
+                            days = 31
+                        else :
+                            days = (n_date.replace(day=1, month=n_date.month+1, year=current_year+1) - datetime.timedelta(days=1)).day
+
+                        n_date = n_date.replace(day=days, year=current_year+1)
+            if s_day is None and s_month is None :
+                due_date = ""
+            else :
+                due_date = n_date.strftime("%d-%b-%Y")
+            due_date_list.append(due_date)
+    return due_date, due_date_list, date_list
 
 def calculate_ageing(due_date, frequency_type=None, completion_date=None, duration_type=None):
     current_time_stamp = get_date_time_in_date()
@@ -696,8 +762,8 @@ def get_compliance_frequency(db, client_id, condition="1"):
     for row in rows:
         compliance_frequency.append(
             core.ComplianceFrequency(
-                row[0],
-                core.COMPLIANCE_FREQUENCY(row[1])
+                row["frequency_id"],
+                core.COMPLIANCE_FREQUENCY(row["frequency"])
                 )
             )
     return compliance_frequency
@@ -710,14 +776,14 @@ def get_user_ids_by_unit_and_domain(
     )
     unit_users = []
     for unit_user in unit_user_rows:
-        unit_users.append(unit_user[0])
+        unit_users.append(unit_user["user_id"])
 
     domain_user_rows = db.get_data(
         tblUserDomains, "user_id" , "domain_id = '%s'" % domain_id
     )
     domain_users = []
     for domain_user in domain_user_rows:
-        domain_users.append(domain_user[0])
+        domain_users.append(domain_user["user_id"])
 
     users = list(set(unit_users).intersection(domain_users))
     user_ids = None
@@ -733,16 +799,13 @@ def get_users_by_unit_and_domain(
     user_ids = get_user_ids_by_unit_and_domain(
         db, unit_id, domain_id
     )
-    result = []
     if user_ids is not None:
         columns = "user_id, employee_name, employee_code, is_active"
         condition = " is_active = 1 and user_id in (%s)" % user_ids
         rows = db.get_data(
             tblUsers, columns, condition
         )
-        columns = ["user_id", "employee_name", "employee_code", "is_active"]
-        result = convert_to_dict(rows, columns)
-    return return_users(result)
+    return return_users(rows)
 
 def get_users(db, client_id):
         columns = "user_id, employee_name, employee_code, is_active"
@@ -750,9 +813,7 @@ def get_users(db, client_id):
         rows = db.get_data(
             tblUsers, columns, condition
         )
-        columns = ["user_id", "employee_name", "employee_code", "is_active"]
-        result = convert_to_dict(rows, columns)
-        return return_users(result)
+        return return_users(rows)
 
 def get_users_by_id(db, user_ids, client_id):
     columns = "user_id, employee_name, employee_code, is_active"
@@ -760,9 +821,7 @@ def get_users_by_id(db, user_ids, client_id):
     rows = db.get_data(
         tblUsers, columns, condition
     )
-    columns = ["user_id", "employee_name", "employee_code", "is_active"]
-    result = convert_to_dict(rows, columns)
-    return return_users(result)
+    return return_users(rows)
 
 def return_users(users):
     results = []
@@ -859,15 +918,11 @@ def save_compliance_notification(
     # Get history details from compliance history id
     history_columns = "unit_id, compliance_id, completed_by, concurred_by, \
     approved_by"
-    history_condition = "compliance_history_id = '%s'" % compliance_history_id
+    history_condition = "compliance_history_id = %s" % compliance_history_id
     history_rows = db.get_data(
         tblComplianceHistory, history_columns, history_condition
     )
-    history_columns_list = [
-        "unit_id", "compliance_id", "completed_by",
-        "concurred_by", "approved_by"
-    ]
-    history = convert_to_dict(history_rows[0], history_columns_list)
+    history = history_rows[0]  # convert_to_dict(history_rows[0], history_columns_list)
     unit_id = history["unit_id"]
     compliance_id = history["compliance_id"]
 
@@ -875,14 +930,14 @@ def save_compliance_notification(
     unit_columns = "country_id, business_group_id, legal_entity_id, division_id"
     unit_condition = "unit_id = '%s'" % int(unit_id)
     unit_rows = db.get_data(tblUnits, unit_columns, unit_condition)
-    unit_columns_list = [
-        "country_id", "business_group_id", "legal_entity_id", "division_id"
-    ]
-    unit = convert_to_dict(unit_rows[0], unit_columns_list)
+    # unit_columns_list = [
+    #     "country_id", "business_group_id", "legal_entity_id", "division_id"
+    # ]
+    unit = unit_rows[0]  # convert_to_dict(unit_rows[0], unit_columns_list)
 
     # Getting compliance_details from compliance_id
     compliance_columns = "domain_id"
-    compliance_condition = "compliance_id = '%s'" % compliance_id
+    compliance_condition = "compliance_id = %s " % compliance_id
     compliance_rows = db.get_data(
         tblCompliances, compliance_columns, compliance_condition
     )

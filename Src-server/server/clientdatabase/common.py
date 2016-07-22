@@ -1,3 +1,5 @@
+import datetime
+from dateutil import relativedelta
 from server.clientdatabase.tables import *
 from server.common import (
     string_to_datetime
@@ -28,8 +30,8 @@ def get_country_domain_timelines(
                 condition
             )
             if len(rows) > 0:
-                period_from = rows[0][0]
-                period_to = rows[0][1]
+                period_from = rows[0]["period_from"]
+                period_to = rows[0]["period_to"]
                 start_end_dates = []
                 for year in years:
                     start_year = year

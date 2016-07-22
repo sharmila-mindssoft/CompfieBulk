@@ -251,7 +251,7 @@ class Database(object):
 
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None:
-            query += " WHERE %s" % condition
+            query += " WHERE %s " % condition
             if order is not None :
                 query += order
 
@@ -392,6 +392,7 @@ class Database(object):
         print values
         try:
             res = self.execute(query, values)
+            print res
             return True
         except mysql.Error, e:
             logger.logKnowledgeApi("update", query)
