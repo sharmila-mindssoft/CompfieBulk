@@ -37,34 +37,45 @@ function getIndustries () {
 //display industry list in view page
 function loadIndustryList (industriesList) {
   var j = 1;
-  var imgName = null;
-  var passStatus = null;
-  var industryId = 0;
-  var industryName = null;
-  var isActive = false;
 
   $(".tbody-industry-list-view").find("tr").remove();
-    for(var entity in industriesList) {
-      industryId = industriesList[entity]["industry_id"];
-      industryName = industriesList[entity]["industry_name"];
-      isActive = industriesList[entity]["is_active"];
+    $.each(industriesList, function(key, value) {
+      var industryId = value["industry_id"];
+      var industryName = value["industry_name"];
+      var isActive = value["is_active"];
+
+      var passStatus = null;
+      var classValue = null;
+
       if(isActive == true) {
-        passStatus=false;
-        imgName="icon-active.png"
+        passStatus = false;
+        classValue = "active-icon";
       }
       else {
         passStatus=true;
-        imgName="icon-inactive.png"
+        classValue = "inactive-icon";
       }
+
       var tableRow=$('#templates .table-industry-master .table-row');
       var clone=tableRow.clone();
       $('.sno', clone).text(j);
       $('.industry-name', clone).text(industryName);
-      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+industryId+',\''+industryName.replace(/"/gi,'##')+'\')"/>');
-      $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+industryId+','+passStatus+')"/>');
+
+      $('.edit-icon').attr('title', 'Edit');
+      $(".edit-icon", clone).on("click", function() {
+          displayEdit(industryId, industryName);
+      });
+
+      $(".status", clone).addClass(classValue);
+      $('.active-icon').attr('title', 'Deactivate');
+      $('.inactive-icon').attr('title', 'Activate');
+      $(".status", clone).on("click", function() {
+          changeStatus(industryId, passStatus);
+      });
+
       $('.tbody-industry-list-view').append(clone);
       j = j + 1;
-    }
+    });
 }
 
 // validation
@@ -154,34 +165,45 @@ function displayEdit (industryId,industryName) {
 
 // activate / deactivate industry master
 function changeStatus (industryId,isActive) {
-  var msgstatus='deactivate';
+  var msgstatus = message.deactive_message;
   if(isActive){
-    msgstatus='activate';
+      msgstatus = message.active_message;
   }
-  var answer = confirm('Are you sure want to '+msgstatus+ '?');
-  if (answer)
-  {
-    function onSuccess(response){
-      getIndustries ();
-    }
-    function onFailure(error){
-      if(error == "TransactionExists"){
-          alert(message.trasaction_exists)
-      }else{
-          alert(error)
+  $( ".warning-confirm" ).dialog({
+      title: message.title_status_change,
+      buttons: {
+          Ok: function() {
+              $( this ).dialog( "close" );
+
+              function onSuccess(response){
+                getIndustries ();
+              }
+              function onFailure(error){
+                if(error == "TransactionExists"){
+                    alert(message.trasaction_exists)
+                }else{
+                    alert(error)
+                }
+              }
+              mirror.changeIndustryStatus(industryId, isActive,
+                function (error, response) {
+                  if (error == null){
+                    onSuccess(response);
+                  }
+                  else {
+                    onFailure(error);
+                  }
+                }
+              );
+          },
+          Cancel: function() {
+              $( this ).dialog( "close" );
+          }
+      },
+      open: function ()  {
+          $(".warning-message").html(msgstatus);
       }
-    }
-    mirror.changeIndustryStatus(industryId, isActive,
-      function (error, response) {
-        if (error == null){
-          onSuccess(response);
-        }
-        else {
-          onFailure(error);
-        }
-      }
-      );
-    }
+  });
 }
 
 //filter process

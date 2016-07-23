@@ -818,51 +818,63 @@ function submitcompliance(){
         }
 
 
-        var answer = confirm(assigneeText + concurrenceText + approvalText + 'Do you want to add in settings ?');
-        if (answer)
-        {
-          function onSuccess(data){
-          //getAssignedStatutories ();
-          getAssignCompliances ();
-          $('ul.setup-panel li:eq(0)').addClass('active');
-          $('ul.setup-panel li:eq(1)').addClass('disabled');
-          $('ul.setup-panel li:eq(2)').addClass('disabled');
-          $('ul.setup-panel li a[href="#step-1"]').trigger('click');
-          $(".tbody-assignstatutory").find("tbody").remove();
-          $('#assignee').empty();
-          $('#concurrence').empty();
-          $('#approval').empty();
-          load_firstwizard();
-          hideLoader();
-          }
-          function onFailure(error, response){
-            displayMessage(error);
-            err_message = message.error;
-            if (err_message == "undefined")
-              displayMessage(error);
-            else if (error == "InvalidDueDate") {
-              task = response["compliance_task"];
-              displayMessage(message.invalid_duedate + task);
+        var msgstatus = assigneeText + concurrenceText + approvalText + 'Do you want to add in settings ?';
+        
+        $( ".warning-confirm" ).dialog({
+            title: "Add in Settings",
+            buttons: {
+                Ok: function() {
+                    $( this ).dialog( "close" );
+
+                    function onSuccess(data){
+                      //getAssignedStatutories ();
+                      getAssignCompliances ();
+                      $('ul.setup-panel li:eq(0)').addClass('active');
+                      $('ul.setup-panel li:eq(1)').addClass('disabled');
+                      $('ul.setup-panel li:eq(2)').addClass('disabled');
+                      $('ul.setup-panel li a[href="#step-1"]').trigger('click');
+                      $(".tbody-assignstatutory").find("tbody").remove();
+                      $('#assignee').empty();
+                      $('#concurrence').empty();
+                      $('#approval').empty();
+                      load_firstwizard();
+                      hideLoader();
+                    }
+                    function onFailure(error, response){
+                      displayMessage(error);
+                      err_message = message.error;
+                      if (err_message == "undefined")
+                        displayMessage(error);
+                      else if (error == "InvalidDueDate") {
+                        task = response["compliance_task"];
+                        displayMessage(message.invalid_duedate + task);
+                      }
+                      else
+                        displayMessage(err_message);
+                      hideLoader();
+                    }
+                    client_mirror.saveAssignedComplianceFormData(acCountryId, assignComplianceAssigneeId,
+                      assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
+                      assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
+                      function (error, response) {
+                        if (error == null){
+                          onSuccess(response);
+                        }
+                        else {
+                          onFailure(error, response);
+                        }
+                      }
+                    );
+                },
+                Cancel: function() {
+                    $( this ).dialog( "close" );
+                    hideLoader();
+                }
+            },
+            open: function ()  {
+                $(".warning-message").html(msgstatus);
             }
-            else
-              displayMessage(err_message);
-            hideLoader();
-          }
-          client_mirror.saveAssignedComplianceFormData(acCountryId, assignComplianceAssigneeId,
-            assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,
-            assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, newSettingsList,
-            function (error, response) {
-              if (error == null){
-                onSuccess(response);
-              }
-              else {
-                onFailure(error, response);
-              }
-            }
-          );
-        }else{
-          hideLoader();
-        }
+        });
       }else{
         newSettingsList = null;
         function onSuccess(data){

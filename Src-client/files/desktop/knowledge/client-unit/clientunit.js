@@ -133,29 +133,19 @@ function getGeographyLevels(countryId, levelId){
 function loadClientsList(clientunitsList){
     $(".tbody-clientunit-list").find("tr").remove();
     var sno = 0;
-    var imageName, title;
     var getAllArrayValues = [];
     for(var i = 0; i < groupList.length; i++){
         max[groupList[i]["client_id"]] = groupList[i]["no_of_units"];
     }
     $.each(unitList, function (key, value){
-        // var isActive = value['is_active'];
-        // var unitId = value['unit_id'];
-        // var unitVal = {};
-        clientId = value['client_id'];
-        bgroupId = value['business_group_id'];
-        lentitiesId = value['legal_entity_id'];
-        divisionId = value['division_id'];
-        // if(isActive == true){
-        //     imageName = "icon-active.png";
-        //     title = "Click here to deactivate"
-        //     statusVal = false;
-        // }
-        // else{
-        //     imageName = "icon-inactive.png";
-        //     title = "Click here to Activate"
-        //     statusVal = true;
-        // }
+        var isActive = value['is_active'];
+        var unitId = value['unit_id'];
+        var unitVal = {};
+        var clientId = value['client_id'];
+        var bgroupId = value['business_group_id'];
+        var lentitiesId = value['legal_entity_id'];
+        var divisionId = value['division_id'];
+
         var tableRow = $('#templates .table-clientunit-list .table-row');
         var clone = tableRow.clone();
         sno = sno + 1;
@@ -164,8 +154,13 @@ function loadClientsList(clientunitsList){
         $('.business-group-name', clone).text(getBusinessGroupName(bgroupId));
         $('.legal-entity-name', clone).text(getLegalEntityName(lentitiesId));
         $('.division-name', clone).text(getDivisionName(divisionId));
-        $('.edit', clone).html('<img src = "/images/icon-edit.png" id = "editid" onclick = "clientunit_edit('+clientId+','+bgroupId+','+lentitiesId+','+divisionId+')"/>');
-        // $('.is-active', clone).html('<img src = "/images/'+imageName+'" title = "'+title+'" onclick = "clientunit_active('+clientId+','+lentitiesId+', '+divisionId+', '+statusVal+')"/>');
+
+        $('.edit-icon').attr('title', 'Edit');
+	    $(".edit-icon", clone).on("click", function() {
+	        clientunit_edit(clientId, bgroupId, lentitiesId, divisionId);
+	    });
+/*        $('.edit', clone).html('<img src = "/images/icon-edit.png" id = "editid" onclick = "clientunit_edit('+clientId+','+bgroupId+','+lentitiesId+','+divisionId+')"/>');
+*/        // $('.is-active', clone).html('<img src = "/images/'+imageName+'" title = "'+title+'" onclick = "clientunit_active('+clientId+','+lentitiesId+', '+divisionId+', '+statusVal+')"/>');
         $('.tbody-clientunit-list').append(clone);
     });
 }
@@ -232,20 +227,34 @@ $("#btn-clientunit-add").click(function(){
 
 //Cancel Button ----------------------------------------------------------------------------------------------
 $("#btn-clientunit-cancel").click(function(){
-    var answer = confirm('Are you sure, you want to cancel the operation?');
-    if (answer)
-    {
-        $("#clientunit-add").hide();
-        $("#clientunit-view").show();
-        isUpdate = false;
-        countryByCount = 1;
-        countc = 0;
-        usercountrycount = 0;
-        $('#group-select  option:gt(0)').empty();
-        $('#businessgroup-select  option:gt(0)').empty();
-        $('#entity-select  option:gt(0)').empty();
-        $('#division-select  option:gt(0)').empty();
-    }
+
+    var msgstatus = message.cancel_operation;
+    
+    $( ".warning-confirm" ).dialog({
+        title: "Cancel",
+        buttons: {
+            Ok: function() {
+                $( this ).dialog( "close" );
+
+                $("#clientunit-add").hide();
+                $("#clientunit-view").show();
+                isUpdate = false;
+                countryByCount = 1;
+                countc = 0;
+                usercountrycount = 0;
+                $('#group-select  option:gt(0)').empty();
+                $('#businessgroup-select  option:gt(0)').empty();
+                $('#entity-select  option:gt(0)').empty();
+                $('#division-select  option:gt(0)').empty();
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
+            }
+        },
+        open: function ()  {
+            $(".warning-message").html(msgstatus);
+        }
+    });
 });
 
 //Load All Groups---------------------------------------------------------------------------------------------
@@ -1512,30 +1521,42 @@ function unit_close(){
 
 //Active or inactive Client Unit List --------------------------------------------------------------------------
 function clientunit_active(clientunitId, lentityId, divisionId, isActive){
-    var msgstatus='deactivate';
+
+    var msgstatus = message.deactive_message;
     if(isActive){
-        msgstatus='activate';
+        msgstatus = message.active_message;
     }
-    var answer = confirm('Are you sure want to '+msgstatus+ '?');
-    if (answer)
-    {
-        function onSuccess(data) {
-            initialize();
-        }
-        function onFailure(error) {
-            displayMessage(error);
-        }
-        mirror.changeClientStatus( parseInt(clientunitId), parseInt(lentityId), divisionId, isActive,
-            function(error, response){
-                if(error == null){
-                    onSuccess(response);
+    $( ".warning-confirm" ).dialog({
+        title: message.title_status_change,
+        buttons: {
+            Ok: function() {
+                $( this ).dialog( "close" );
+
+                function onSuccess(data) {
+                    initialize();
                 }
-                else{
-                    onFailure(error);
+                function onFailure(error) {
+                    displayMessage(error);
                 }
+                mirror.changeClientStatus( parseInt(clientunitId), parseInt(lentityId), divisionId, isActive,
+                    function(error, response){
+                        if(error == null){
+                            onSuccess(response);
+                        }
+                        else{
+                            onFailure(error);
+                        }
+                    }
+                );
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
             }
-        );
-    }
+        },
+        open: function ()  {
+            $(".warning-message").html(msgstatus);
+        }
+    });
 }
 
 //Search Client name ----------------------------------------------------------------------------------------------

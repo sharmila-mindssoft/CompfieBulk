@@ -1,862 +1,192 @@
-2016-07-19 11:30:55,105 - knowledge_logger - main.py-handle-api- : global name 'get_audit_trails' is not defined
-2016-07-19 11:30:55,112 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+2016-07-20 10:59:30,285 - knowledge_logger - main.py-handle-api- : 0
+2016-07-20 10:59:30,286 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 242, in handle_general
-    return controller.process_general_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 95, in process_general_request
-    result = process_get_audit_trails(db, request_frame, user_id)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 284, in process_get_audit_trails
-    audit_trails = get_audit_trails(
-NameError: global name 'get_audit_trails' is not defined
-
-2016-07-19 12:58:37,374 - knowledge_logger - main.py-handle-api- : global name 'string_to_datetime' is not defined
-2016-07-19 12:58:37,375 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 242, in handle_general
-    return controller.process_general_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 96, in process_general_request
-    result = process_get_audit_trails(db, request_frame, user_id)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 288, in process_get_audit_trails
-    from_date, to_date, user_id, form_id
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/general.py", line 410, in get_audit_trails
-    from_date = string_to_datetime(from_date).date()
-NameError: global name 'string_to_datetime' is not defined
-
-2016-07-19 12:58:55,693 - knowledge_logger - main.py-handle-api- : 0
-2016-07-19 12:58:55,693 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 242, in handle_general
-    return controller.process_general_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 96, in process_general_request
-    result = process_get_audit_trails(db, request_frame, user_id)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 288, in process_get_audit_trails
-    from_date, to_date, user_id, form_id
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/general.py", line 431, in get_audit_trails
-    user_id = row[0]
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 225, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 30, in process_login_request
+    result = process_forgot_password(db, request)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 128, in process_forgot_password
+    user_id = verify_username(db, request.username)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/login.py", line 86, in verify_username
+    count = rows[0][0]
 KeyError: 0
 
-2016-07-19 12:59:36,393 - knowledge_logger - main.py-handle-api- : global name 'datetime_to_string_time' is not defined
-2016-07-19 12:59:36,393 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+2016-07-20 11:03:17,338 - knowledge_logger - main.py-handle-api- : 0
+2016-07-20 11:03:17,339 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 242, in handle_general
-    return controller.process_general_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 96, in process_general_request
-    result = process_get_audit_trails(db, request_frame, user_id)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 288, in process_get_audit_trails
-    from_date, to_date, user_id, form_id
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/general.py", line 434, in get_audit_trails
-    date = datetime_to_string_time(row["created_on"])
-NameError: global name 'datetime_to_string_time' is not defined
-
-2016-07-19 13:00:49,967 - knowledge_logger - main.py-handle-api- : global name 'results' is not defined
-2016-07-19 13:00:49,967 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 242, in handle_general
-    return controller.process_general_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 96, in process_general_request
-    result = process_get_audit_trails(db, request_frame, user_id)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 288, in process_get_audit_trails
-    from_date, to_date, user_id, form_id
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/general.py", line 406, in get_audit_trails
-    users = return_users(db, condition)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/general.py", line 378, in return_users
-    results.append(core.User(
-NameError: global name 'results' is not defined
-
-2016-07-19 13:02:43,390 - knowledge_logger - main.py-handle-api- : global name 'self' is not defined
-2016-07-19 13:02:43,391 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 242, in handle_general
-    return controller.process_general_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 46, in process_general_request
-    result = procees_update_user_profile(db, request_frame, user_id)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 206, in procees_update_user_profile
-    update_profile(db, request.contact_no, request.address, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/general.py", line 444, in update_profile
-    db.update(self.tblUsers, columns, values, condition)
-NameError: global name 'self' is not defined
-
-2016-07-19 13:06:22,186 - knowledge_logger - main.py-handle-api- : 1
-2016-07-19 13:06:22,187 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 225, in handle_login
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 225, in handle_login
     return controller.process_login_request(request, db, self._ip_addess)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/logincontroller.py", line 45, in process_login_request
-    result = process_change_password(db, request)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/logincontroller.py", line 178, in process_change_password
-    update_password(db, request.new_password, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/login.py", line 150, in update_password
-    employee_name = rows[0][1]
-KeyError: 1
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 35, in process_login_request
+    result = process_reset_token(db, request)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/logincontroller.py", line 155, in process_reset_token
+    user_id = validate_reset_token(db, request.reset_token)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/login.py", line 122, in validate_reset_token
+    count = rows[0][0]
+KeyError: 0
 
-2016-07-19 13:06:28,807 - knowledge_logger - main.py-handle-api- : 1
-2016-07-19 13:06:28,808 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+2016-07-23 13:48:11,985 - knowledge_logger - main.py-handle-api- : %d format: a number is required, not str
+2016-07-23 13:48:11,986 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 225, in handle_login
-    return controller.process_login_request(request, db, self._ip_addess)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/logincontroller.py", line 45, in process_login_request
-    result = process_change_password(db, request)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/logincontroller.py", line 178, in process_change_password
-    update_password(db, request.new_password, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/login.py", line 150, in update_password
-    employee_name = rows[0][1]
-KeyError: 1
-
-2016-07-19 13:07:43,788 - knowledge_logger - main.py-handle-api- : global name 'get_client_ids' is not defined
-2016-07-19 13:07:43,789 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 234, in handle_techno
     return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 40, in process_techno_request
-    result = get_client_groups(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 50, in get_client_groups
-    user_client_countries = get_user_client_countries(db, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 44, in get_user_client_countries
-    client_ids = get_client_ids(db)
-NameError: global name 'get_client_ids' is not defined
-
-2016-07-19 13:07:51,105 - knowledge_logger - main.py-handle-api- : global name 'get_client_ids' is not defined
-2016-07-19 13:07:51,106 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 40, in process_techno_request
-    result = get_client_groups(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 50, in get_client_groups
-    user_client_countries = get_user_client_countries(db, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 44, in get_user_client_countries
-    client_ids = get_client_ids(db)
-NameError: global name 'get_client_ids' is not defined
-
-2016-07-19 13:09:25,376 - knowledge_logger - main.py-handle-api- : 'country_id'
-2016-07-19 13:09:25,376 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 40, in process_techno_request
-    result = get_client_groups(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 50, in get_client_groups
-    user_client_countries = get_user_client_countries(db, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 69, in get_user_client_countries
-    return return_countries(result)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 77, in return_countries
-    d["country_id"], d["country_name"], bool(d["is_active"])
-KeyError: 'country_id'
-
-2016-07-19 13:11:00,494 - knowledge_logger - main.py-handle-api- : 'country_id'
-2016-07-19 13:11:00,494 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 40, in process_techno_request
-    result = get_client_groups(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 50, in get_client_groups
-    user_client_countries = get_user_client_countries(db, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 73, in get_user_client_countries
-    return return_countries(result)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 81, in return_countries
-    d["country_id"], d["country_name"], bool(d["is_active"])
-KeyError: 'country_id'
-
-2016-07-19 13:12:19,021 - knowledge_logger - main.py-handle-api- : %d format: a number is required, not str
-2016-07-19 13:12:19,022 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 40, in process_techno_request
-    result = get_client_groups(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 51, in get_client_groups
-    user_client_domains = get_user_client_domains(db, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 93, in get_user_client_domains
-    domain_ids += get_client_domains(db, int(client_id)).split(",")
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 84, in get_client_domains
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technocontroller.py", line 68, in process_techno_request
+    result = get_clients(db, request_frame, session_user)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technomastercontroller.py", line 335, in get_clients
+    group_company_list = get_group_companies_for_user_with_max_unit_count(db, session_user)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/technomaster.py", line 927, in get_group_companies_for_user_with_max_unit_count
+    return return_group_companies_with_max_unit_count(db, result)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/technomaster.py", line 934, in return_group_companies_with_max_unit_count
+    client_domains = get_client_domains(db, group_company["client_id"])
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/technomaster.py", line 73, in get_client_domains
     rows = db.get_data(tblClientDomains, columns, condition, [client_id])
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 253, in get_data
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 253, in get_data
     rows = self.select_all(query, condition_val)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 187, in select_all
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 187, in select_all
     cursor.execute(query, param)
-  File "/usr/local/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 187, in execute
-    query = query % tuple([db.literal(item) for item in args])
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 159, in execute
+    query = query % db.literal(args)
 TypeError: %d format: a number is required, not str
 
-2016-07-19 13:12:57,824 - knowledge_logger - main.py-handle-api- : 0
-2016-07-19 13:12:57,824 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+2016-07-23 16:07:27,074 - knowledge_logger - main.py-handle-api- : get_statutory_mappings() got an unexpected keyword argument 'for_approve'
+2016-07-23 16:07:27,075 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 40, in process_techno_request
-    result = get_client_groups(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 51, in get_client_groups
-    user_client_domains = get_user_client_domains(db, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 93, in get_user_client_domains
-    domain_ids += get_client_domains(db, int(client_id)).split(",")
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 85, in get_client_domains
-    return rows[0][0]
-KeyError: 0
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 46, in process_knowledge_transaction_request
+    result = process_get_statutory_mappings(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 116, in process_get_statutory_mappings
+    statutory_mappings = get_statutory_mappings(db, user_id, for_approve=False)
+TypeError: get_statutory_mappings() got an unexpected keyword argument 'for_approve'
 
-2016-07-19 13:15:48,177 - knowledge_logger - main.py-handle-api- : not all arguments converted during string formatting
-2016-07-19 13:15:48,177 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+2016-07-23 16:07:27,251 - knowledge_logger - main.py-handle-api- : global name 'statutory_id' is not defined
+2016-07-23 16:07:27,252 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 40, in process_techno_request
-    result = get_client_groups(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 50, in get_client_groups
-    user_client_countries = get_user_client_countries(db, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 66, in get_user_client_countries
-    tblCountries, columns, condition, ",".join(str(x) for x in country_ids)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 253, in get_data
-    rows = self.select_all(query, condition_val)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 189, in select_all
-    cursor.execute(query, (param))
-  File "/usr/local/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 187, in execute
-    query = query % tuple([db.literal(item) for item in args])
-TypeError: not all arguments converted during string formatting
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 39, in process_knowledge_transaction_request
+    result = process_get_statutory_mapping_master(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 100, in process_get_statutory_mapping_master
+    statutories = get_statutory_master(db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 769, in get_statutory_master
+    frame_parent_mappings(result)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 790, in frame_parent_mappings
+    if statutory_id is not None :
+NameError: global name 'statutory_id' is not defined
 
-2016-07-19 13:19:50,663 - knowledge_logger - main.py-handle-api- : global name 'LOGO_URL' is not defined
-2016-07-19 13:19:50,664 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+2016-07-23 16:07:53,618 - knowledge_logger - main.py-handle-api- : get_statutory_mappings() got an unexpected keyword argument 'for_approve'
+2016-07-23 16:07:53,618 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 40, in process_techno_request
-    result = get_client_groups(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 53, in get_client_groups
-    client_list = get_group_company_details(db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 149, in get_group_company_details
-    return return_group_company_details(rows)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 160, in return_group_company_details
-    logo_url = "/%s/%s" % (LOGO_URL, client_row[3])
-NameError: global name 'LOGO_URL' is not defined
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 46, in process_knowledge_transaction_request
+    result = process_get_statutory_mappings(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 116, in process_get_statutory_mappings
+    statutory_mappings = get_statutory_mappings(db, user_id, for_approve=False)
+TypeError: get_statutory_mappings() got an unexpected keyword argument 'for_approve'
 
-2016-07-19 13:20:09,322 - knowledge_logger - main.py-handle-api- : 3
-2016-07-19 13:20:09,322 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+2016-07-23 16:07:53,673 - knowledge_logger - main.py-handle-api- : global name 'statutory_id' is not defined
+2016-07-23 16:07:53,673 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 40, in process_techno_request
-    result = get_client_groups(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 53, in get_client_groups
-    client_list = get_group_company_details(db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 149, in get_group_company_details
-    return return_group_company_details(rows)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 160, in return_group_company_details
-    logo_url = "/%s/%s" % (LOGO_URL, client_row[3])
-KeyError: 3
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 39, in process_knowledge_transaction_request
+    result = process_get_statutory_mapping_master(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 100, in process_get_statutory_mapping_master
+    statutories = get_statutory_master(db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 769, in get_statutory_master
+    frame_parent_mappings(result)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 790, in frame_parent_mappings
+    if statutory_id is not None :
+NameError: global name 'statutory_id' is not defined
 
-2016-07-19 13:21:19,728 - knowledge_logger - main.py-handle-api- : global name 'db' is not defined
-2016-07-19 13:21:19,728 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+2016-07-23 16:13:56,128 - knowledge_logger - main.py-handle-api- : get_statutory_mappings() got an unexpected keyword argument 'for_approve'
+2016-07-23 16:13:56,129 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 40, in process_techno_request
-    result = get_client_groups(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 53, in get_client_groups
-    client_list = get_group_company_details(db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 149, in get_group_company_details
-    return return_group_company_details(rows)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 170, in return_group_company_details
-    client_countries = get_client_countries(db, client_id)
-NameError: global name 'db' is not defined
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 46, in process_knowledge_transaction_request
+    result = process_get_statutory_mappings(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 116, in process_get_statutory_mappings
+    statutory_mappings = get_statutory_mappings(db, user_id, for_approve=False)
+TypeError: get_statutory_mappings() got an unexpected keyword argument 'for_approve'
 
-2016-07-19 13:21:41,553 - knowledge_logger - main.py-handle-api- : get_date_configurations() takes exactly 1 argument (2 given)
-2016-07-19 13:21:41,553 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+2016-07-23 16:13:56,366 - knowledge_logger - main.py-handle-api- : global name 'statutory_id' is not defined
+2016-07-23 16:13:56,367 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 40, in process_techno_request
-    result = get_client_groups(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 53, in get_client_groups
-    client_list = get_group_company_details(db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 149, in get_group_company_details
-    return return_group_company_details(db, rows)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 174, in return_group_company_details
-    date_configurations = get_date_configurations(db, client_id)
-TypeError: get_date_configurations() takes exactly 1 argument (2 given)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 39, in process_knowledge_transaction_request
+    result = process_get_statutory_mapping_master(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 100, in process_get_statutory_mapping_master
+    statutories = get_statutory_master(db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 769, in get_statutory_master
+    frame_parent_mappings(result)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 790, in frame_parent_mappings
+    if statutory_id is not None :
+NameError: global name 'statutory_id' is not defined
 
-2016-07-19 13:23:43,239 - knowledge_logger - main.py-handle-api- : global name 'is_deactivated_existing_domain' is not defined
-2016-07-19 13:23:43,240 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+2016-07-23 16:32:56,309 - knowledge_logger - main.py-handle-api- : get_statutory_mappings() got an unexpected keyword argument 'for_approve'
+2016-07-23 16:32:56,309 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 54, in process_techno_request
-    result = update_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 126, in update_client_group
-    elif is_deactivated_existing_domain(db, request.client_id, request.domain_ids):
-NameError: global name 'is_deactivated_existing_domain' is not defined
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 46, in process_knowledge_transaction_request
+    result = process_get_statutory_mappings(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 116, in process_get_statutory_mappings
+    statutory_mappings = get_statutory_mappings(db, user_id, for_approve=False)
+TypeError: get_statutory_mappings() got an unexpected keyword argument 'for_approve'
 
-2016-07-19 13:37:48,009 - knowledge_logger - main.py-handle-api- : delete() takes exactly 4 arguments (3 given)
-2016-07-19 13:37:48,009 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+2016-07-23 16:32:56,479 - knowledge_logger - main.py-handle-api- : global name 'statutory_id' is not defined
+2016-07-23 16:32:56,479 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 54, in process_techno_request
-    result = update_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 136, in update_client_group
-    save_client_countries(db, request.client_id, request.country_ids)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 253, in save_client_countries
-    db.delete(tblClientCountries, condition)
-TypeError: delete() takes exactly 4 arguments (3 given)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 39, in process_knowledge_transaction_request
+    result = process_get_statutory_mapping_master(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 100, in process_get_statutory_mapping_master
+    statutories = get_statutory_master(db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 769, in get_statutory_master
+    frame_parent_mappings(result)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 790, in frame_parent_mappings
+    if statutory_id is not None :
+NameError: global name 'statutory_id' is not defined
 
-2016-07-19 16:16:12,410 - knowledge_logger - main.py-handle-api- : delete() takes exactly 4 arguments (3 given)
-2016-07-19 16:16:12,410 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+2016-07-23 16:40:54,201 - knowledge_logger - main.py-handle-api- : get_statutory_mappings() got an unexpected keyword argument 'for_approve'
+2016-07-23 16:40:54,201 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 54, in process_techno_request
-    result = update_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 136, in update_client_group
-    save_client_countries(db, request.client_id, request.country_ids)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 253, in save_client_countries
-    db.delete(tblClientCountries, condition)
-TypeError: delete() takes exactly 4 arguments (3 given)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 46, in process_knowledge_transaction_request
+    result = process_get_statutory_mappings(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 116, in process_get_statutory_mappings
+    statutory_mappings = get_statutory_mappings(db, user_id, for_approve=False)
+TypeError: get_statutory_mappings() got an unexpected keyword argument 'for_approve'
 
-2016-07-19 16:18:44,044 - knowledge_logger - main.py-handle-api- : 'int' object is not iterable
-2016-07-19 16:18:44,044 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+2016-07-23 16:40:54,250 - knowledge_logger - main.py-handle-api- : global name 'statutory_id' is not defined
+2016-07-23 16:40:54,251 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
     response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 54, in process_techno_request
-    result = update_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 136, in update_client_group
-    save_client_countries(db, request.client_id, request.country_ids)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 253, in save_client_countries
-    db.delete(tblClientCountries, condition, client_id)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 426, in delete
-    return self.execute(query, condition_val)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 146, in execute
-    cursor.execute(query, (param))
-  File "/usr/local/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 187, in execute
-    query = query % tuple([db.literal(item) for item in args])
-TypeError: 'int' object is not iterable
-
-2016-07-19 16:21:13,643 - knowledge_logger - main.py-handle-api- : delete() takes exactly 4 arguments (3 given)
-2016-07-19 16:21:13,643 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 54, in process_techno_request
-    result = update_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 138, in update_client_group
-    save_incharge_persons(db, request, request.client_id)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 298, in save_incharge_persons
-    db.delete(tblUserClients, condition)
-TypeError: delete() takes exactly 4 arguments (3 given)
-
-2016-07-19 16:27:40,626 - knowledge_logger - main.py-handle-api- : delete() takes exactly 4 arguments (3 given)
-2016-07-19 16:27:40,626 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 54, in process_techno_request
-    result = update_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 138, in update_client_group
-    save_incharge_persons(db, request, request.client_id)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 298, in save_incharge_persons
-    db.delete(tblUserClients, condition)
-TypeError: delete() takes exactly 4 arguments (3 given)
-
-2016-07-19 16:28:15,317 - knowledge_logger - main.py-handle-api- : get_client_db_info() takes at most 1 argument (2 given)
-2016-07-19 16:28:15,317 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 54, in process_techno_request
-    result = update_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 140, in update_client_group
-    db, request.client_id, request.country_ids, request.domain_ids
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 452, in replicate_client_countries_and_domains
-    rows = get_client_db_info(db, client_id)
-TypeError: get_client_db_info() takes at most 1 argument (2 given)
-
-2016-07-19 16:32:20,611 - knowledge_logger - main.py-handle-api- : 0
-2016-07-19 16:32:20,611 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 54, in process_techno_request
-    result = update_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 140, in update_client_group
-    db, request.client_id, request.country_ids, request.domain_ids
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 474, in replicate_client_countries_and_domains
-    country_values_tuple = (int(country[0]), country[1], country[2])
-KeyError: 0
-
-2016-07-19 16:48:22,967 - knowledge_logger - main.py-handle-api- : 2
-2016-07-19 16:48:22,968 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 54, in process_techno_request
-    result = update_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 140, in update_client_group
-    db, request.client_id, request.country_ids, request.domain_ids
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 483, in replicate_client_countries_and_domains
-    domain_values_tuple = (int(domain["domain_id"]), domain["domain_name"], domain[2])
-KeyError: 2
-
-2016-07-19 16:49:06,154 - knowledge_logger - main.py-handle-api- : list index out of range
-2016-07-19 16:49:06,154 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 54, in process_techno_request
-    result = update_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 144, in update_client_group
-    session_user
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 522, in save_date_configurations
-    if is_combination_already_exists(db, country_id, domain_id, client_id):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 505, in is_combination_already_exists
-    if rows[0]["exists"] > 0:
-IndexError: list index out of range
-
-2016-07-19 16:50:21,009 - knowledge_logger - main.py-handle-api- : list index out of range
-2016-07-19 16:50:21,010 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 54, in process_techno_request
-    result = update_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 144, in update_client_group
-    session_user
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 523, in save_date_configurations
-    if is_combination_already_exists(db, country_id, domain_id, client_id):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 506, in is_combination_already_exists
-    if rows[0]["exists"] > 0:
-IndexError: list index out of range
-
-2016-07-19 16:52:17,870 - knowledge_logger - main.py-handle-api- : 0
-2016-07-19 16:52:17,871 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 61, in process_techno_request
-    result = change_client_group_status(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 160, in change_client_group_status
-    update_client_group_status(db, client_id, is_active, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 562, in update_client_group_status
-    group_name = rows[0][0]
-KeyError: 0
-
-2016-07-19 16:52:45,096 - knowledge_logger - main.py-handle-api- : not enough arguments for format string
-2016-07-19 16:52:45,097 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 61, in process_techno_request
-    result = change_client_group_status(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 160, in change_client_group_status
-    update_client_group_status(db, client_id, is_active, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 569, in update_client_group_status
-    return db.update(tblClientGroups, columns, values, condition)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 383, in update
-    res = self.execute(query, values)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 144, in execute
-    cursor.execute(query, param)
-  File "/usr/local/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 187, in execute
-    query = query % tuple([db.literal(item) for item in args])
-TypeError: not enough arguments for format string
-
-2016-07-19 17:34:05,636 - knowledge_logger - main.py-handle-api- : local variable 'p' referenced before assignment
-2016-07-19 17:34:05,636 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 225, in handle_login
-    return controller.process_login_request(request, db, self._ip_addess)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/logincontroller.py", line 25, in process_login_request
-    result = process_login(db, request, session_user_ip)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/logincontroller.py", line 60, in process_login
-    response = verify_login(db, username, encrypt_password)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/login.py", line 20, in verify_login
-    (password, username)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 245, in get_data
-    elif '.' in p :
-UnboundLocalError: local variable 'p' referenced before assignment
-
-2016-07-19 17:35:23,390 - knowledge_logger - main.py-handle-api- : is_logo_in_image_format() takes exactly 1 argument (2 given)
-2016-07-19 17:35:23,391 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 234, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 47, in process_techno_request
-    result = save_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 82, in save_client_group
-    elif not is_logo_in_image_format(db, request.logo):
-TypeError: is_logo_in_image_format() takes exactly 1 argument (2 given)
-
-2016-07-19 17:49:10,471 - knowledge_logger - main.py-handle-api- : global name 'country_id' is not defined
-2016-07-19 17:49:10,472 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 242, in handle_general
-    return controller.process_general_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 81, in process_general_request
-    result = process_save_country(db, request_frame, user_id)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/generalcontroller.py", line 219, in process_save_country
-    if (save_country(db, country_name, user_id)) :
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/admin.py", line 216, in save_country
-    country_id, country_name, is_active, created_by, created_on
-NameError: global name 'country_id' is not defined
-
-2016-07-19 17:51:46,470 - knowledge_logger - main.py-parse-request : expected a string with max length(50), but received: Lankasafsdfsd sdf sdf sdf sdf sdf sdf sdf sdf sdf sdf sdf sdfsdf sdf ds fsf sdf sdf
-2016-07-19 17:51:46,471 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 103, in _parse_request
-    data
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/general.py", line 770, in parse_structure
-    request = parse_structure_VariantType_general_Request(request)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 758, in parse_structure_VariantType_general_Request
-    return general.Request.parse_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/general.py", line 56, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/general.py", line 185, in parse_inner_structure
-    country_name = parse_structure_CustomTextType_50(country_name)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 423, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 94, in parse_custom_string
-    x
-ValueError: expected a string with max length(50), but received: Lankasafsdfsd sdf sdf sdf sdf sdf sdf sdf sdf sdf sdf sdf sdfsdf sdf ds fsf sdf sdf
-
-2016-07-19 17:52:51,925 - knowledge_logger - main.py-parse-request : expected a string with max length(50), but received: Lankasafsdfsd sdf sdf sdf sdf sdf sdf sdf sdf sdf sdf sdf sdfsdf sdf ds fsf sdf sdf
-2016-07-19 17:52:51,926 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 103, in _parse_request
-    data
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/general.py", line 770, in parse_structure
-    request = parse_structure_VariantType_general_Request(request)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 758, in parse_structure_VariantType_general_Request
-    return general.Request.parse_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/general.py", line 56, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/general.py", line 185, in parse_inner_structure
-    country_name = parse_structure_CustomTextType_50(country_name)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/parse_structure.py", line 423, in parse_structure_CustomTextType_50
-    return parse_custom_string(data, 50)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/protocol/jsonvalidators.py", line 94, in parse_custom_string
-    x
-ValueError: expected a string with max length(50), but received: Lankasafsdfsd sdf sdf sdf sdf sdf sdf sdf sdf sdf sdf sdf sdfsdf sdf ds fsf sdf sdf
-
-2016-07-19 18:02:56,741 - knowledge_logger - main.py-handle-api- : _mysql_server_connect() takes exactly 5 arguments (4 given)
-2016-07-19 18:02:56,741 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 143, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 235, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 47, in process_techno_request
-    result = save_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 114, in save_client_group
-    create_db.delete_database()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/createclientdatabase.py", line 101, in delete_database
-    self._host, self._username, self._password,
-TypeError: _mysql_server_connect() takes exactly 5 arguments (4 given)
-
-2016-07-19 18:03:40,193 - knowledge_logger - main.py-handle-api- : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''compfie_new_6'' at line 1")
-2016-07-19 18:03:40,194 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 143, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 235, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 47, in process_techno_request
-    result = save_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 114, in save_client_group
-    create_db.delete_database()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/createclientdatabase.py", line 105, in delete_database
-    cursor.execute(query, [self._db_name])
-  File "/usr/local/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 205, in execute
-    self.errorhandler(self, exc, value)
-  File "/usr/local/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
-    raise errorclass, errorvalue
-ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''compfie_new_6'' at line 1")
-
-2016-07-19 18:04:29,312 - knowledge_logger - main.py-handle-api- : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''compfie_new_6'' at line 1")
-2016-07-19 18:04:29,312 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 143, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 235, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 47, in process_techno_request
-    result = save_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 114, in save_client_group
-    create_db.delete_database()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/createclientdatabase.py", line 105, in delete_database
-    cursor.execute(query, [self._db_name])
-  File "/usr/local/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 205, in execute
-    self.errorhandler(self, exc, value)
-  File "/usr/local/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
-    raise errorclass, errorvalue
-ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''compfie_new_6'' at line 1")
-
-2016-07-19 18:06:15,820 - knowledge_logger - main.py-handle-api- : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''compfie_new_6'' at line 1")
-2016-07-19 18:06:15,821 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 143, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 235, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 47, in process_techno_request
-    result = save_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 114, in save_client_group
-    create_db.delete_database()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/createclientdatabase.py", line 105, in delete_database
-    cursor.execute(query, [self._db_name])
-  File "/usr/local/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 205, in execute
-    self.errorhandler(self, exc, value)
-  File "/usr/local/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
-    raise errorclass, errorvalue
-ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''compfie_new_6'' at line 1")
-
-2016-07-19 18:08:35,972 - knowledge_logger - main.py-handle-api- : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''compfie_new_6'' at line 1")
-2016-07-19 18:08:35,972 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 143, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 235, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 47, in process_techno_request
-    result = save_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 114, in save_client_group
-    create_db.delete_database()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/createclientdatabase.py", line 105, in delete_database
-    cursor.execute(query, [self._db_name])
-  File "/usr/local/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 205, in execute
-    self.errorhandler(self, exc, value)
-  File "/usr/local/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
-    raise errorclass, errorvalue
-ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''compfie_new_6'' at line 1")
-
-2016-07-19 18:09:14,611 - knowledge_logger - main.py-handle-api- : (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''compfie_new_6'' at line 1")
-2016-07-19 18:09:14,611 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 143, in handle_api_request
-    response_data = unbound_method(self, request_data, self._db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 235, in handle_techno
-    return controller.process_techno_request(request, db)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 47, in process_techno_request
-    result = save_client_group(db, request_frame, session_user)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 114, in save_client_group
-    create_db.delete_database()
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/createclientdatabase.py", line 105, in delete_database
-    cursor.execute(query, [self._db_name])
-  File "/usr/local/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 205, in execute
-    self.errorhandler(self, exc, value)
-  File "/usr/local/lib/python2.7/dist-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
-    raise errorclass, errorvalue
-ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''compfie_new_6'' at line 1")
-
-2016-07-19 18:25:16,020 - knowledge_logger - main.py-handle-api- : 'exceptions.NameError' object has no attribute 'to_structure'
-2016-07-19 18:25:16,021 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 148, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.NameError' object has no attribute 'to_structure'
-
-2016-07-19 18:31:46,787 - knowledge_logger - main.py-handle-api- : 'exceptions.NameError' object has no attribute 'to_structure'
-2016-07-19 18:31:46,787 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 148, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.NameError' object has no attribute 'to_structure'
-
-2016-07-19 18:33:42,431 - knowledge_logger - main.py-handle-api- : 'exceptions.NameError' object has no attribute 'to_structure'
-2016-07-19 18:33:42,431 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 148, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.NameError' object has no attribute 'to_structure'
-
-2016-07-19 18:34:59,833 - knowledge_logger - main.py-handle-api- : 'exceptions.NameError' object has no attribute 'to_structure'
-2016-07-19 18:34:59,834 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 148, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 138, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.NameError' object has no attribute 'to_structure'
-
-2016-07-19 18:37:27,579 - knowledge_logger - main.py-handle-api- : 'exceptions.NameError' object has no attribute 'to_structure'
-2016-07-19 18:37:27,579 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 139, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.NameError' object has no attribute 'to_structure'
-
-2016-07-19 18:44:18,072 - knowledge_logger - main.py-handle-api- : 'exceptions.KeyError' object has no attribute 'to_structure'
-2016-07-19 18:44:18,072 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 139, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.KeyError' object has no attribute 'to_structure'
-
-2016-07-19 18:45:08,085 - knowledge_logger - main.py-handle-api- : 'exceptions.KeyError' object has no attribute 'to_structure'
-2016-07-19 18:45:08,085 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 139, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.KeyError' object has no attribute 'to_structure'
-
-2016-07-19 18:47:24,124 - knowledge_logger - main.py-handle-api- : 'exceptions.KeyError' object has no attribute 'to_structure'
-2016-07-19 18:47:24,124 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 139, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.KeyError' object has no attribute 'to_structure'
-
-2016-07-19 18:50:47,029 - knowledge_logger - main.py-handle-api- : 'exceptions.KeyError' object has no attribute 'to_structure'
-2016-07-19 18:50:47,029 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 139, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.KeyError' object has no attribute 'to_structure'
-
-2016-07-19 18:54:05,084 - knowledge_logger - main.py-handle-api- : 'exceptions.KeyError' object has no attribute 'to_structure'
-2016-07-19 18:54:05,084 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 139, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.KeyError' object has no attribute 'to_structure'
-
-2016-07-19 18:56:39,275 - knowledge_logger - main.py-handle-api- : 'exceptions.KeyError' object has no attribute 'to_structure'
-2016-07-19 18:56:39,276 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 139, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.KeyError' object has no attribute 'to_structure'
-
-2016-07-19 18:57:47,746 - knowledge_logger - main.py-handle-api- : 'exceptions.ValueError' object has no attribute 'to_structure'
-2016-07-19 18:57:47,746 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 139, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.ValueError' object has no attribute 'to_structure'
-
-2016-07-19 19:32:43,667 - knowledge_logger - main.py-handle-api- : 'exceptions.AttributeError' object has no attribute 'to_structure'
-2016-07-19 19:32:43,668 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 139, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.AttributeError' object has no attribute 'to_structure'
-
-2016-07-19 19:33:46,874 - knowledge_logger - main.py-handle-api- : 'exceptions.ValueError' object has no attribute 'to_structure'
-2016-07-19 19:33:46,874 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 139, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.ValueError' object has no attribute 'to_structure'
-
-2016-07-19 19:41:23,304 - knowledge_logger - main.py-handle-api- : 'exceptions.ValueError' object has no attribute 'to_structure'
-2016-07-19 19:41:23,304 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 139, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.ValueError' object has no attribute 'to_structure'
-
-2016-07-19 19:48:29,366 - knowledge_logger - main.py-handle-api- : 'exceptions.NameError' object has no attribute 'to_structure'
-2016-07-19 19:48:29,366 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 139, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.NameError' object has no attribute 'to_structure'
-
-2016-07-19 19:49:16,349 - knowledge_logger - main.py-handle-api- : 'exceptions.IndexError' object has no attribute 'to_structure'
-2016-07-19 19:49:16,349 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 139, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.IndexError' object has no attribute 'to_structure'
-
-2016-07-19 19:52:11,928 - knowledge_logger - main.py-handle-api- : 'exceptions.ValueError' object has no attribute 'to_structure'
-2016-07-19 19:52:11,928 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 139, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.ValueError' object has no attribute 'to_structure'
-
-2016-07-19 19:58:31,525 - knowledge_logger - main.py-handle-api- : 'exceptions.IndexError' object has no attribute 'to_structure'
-2016-07-19 19:58:31,526 - knowledge_logger - main.py : Traceback (most recent call last):
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 149, in handle_api_request
-    respond(response_data)
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 139, in respond
-    response_data, response
-  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 92, in _send_response
-    data = response_data.to_structure()
-AttributeError: 'exceptions.IndexError' object has no attribute 'to_structure'
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 39, in process_knowledge_transaction_request
+    result = process_get_statutory_mapping_master(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 100, in process_get_statutory_mapping_master
+    statutories = get_statutory_master(db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 769, in get_statutory_master
+    frame_parent_mappings(result)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 790, in frame_parent_mappings
+    if statutory_id is not None :
+NameError: global name 'statutory_id' is not defined
 

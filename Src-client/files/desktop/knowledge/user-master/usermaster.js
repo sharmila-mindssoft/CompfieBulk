@@ -78,80 +78,100 @@ function displayEdit (userId) {
 
 // activate/deactivate process
 function changeStatus (userId,isActive) {
-	var msgstatus='deactivate';
-    if(isActive){
-      msgstatus='activate';
-    }
-    var answer = confirm('Are you sure want to '+msgstatus+ '?');
-    if (answer)
-    {
-		function onSuccess(response){
-			getUsers();
-			$(".filter-text-box").val('');
-		}
-		function onFailure(error){
-			alert(error)
-		}
-		mirror.changeAdminUserStatus(userId, isActive,
-			function (error, response) {
-	            if (error == null){
-	              onSuccess(response);
-	            }
-	            else {
-	              onFailure(error);
-	            }
-	        }
-	    );
+
+	var msgstatus = message.deactive_message;
+	if(isActive){
+	    msgstatus = message.active_message;
 	}
+	$( ".warning-confirm" ).dialog({
+	    title: message.title_status_change,
+	    buttons: {
+	        Ok: function() {
+	            $( this ).dialog( "close" );
+
+	            function onSuccess(response){
+					getUsers();
+					$(".filter-text-box").val('');
+				}
+				function onFailure(error){
+					alert(error)
+				}
+				mirror.changeAdminUserStatus(userId, isActive,
+					function (error, response) {
+			            if (error == null){
+			              onSuccess(response);
+			            }
+			            else {
+			              onFailure(error);
+			            }
+			        }
+			    );
+	        },
+	        Cancel: function() {
+	            $( this ).dialog( "close" );
+	        }
+	    },
+	    open: function ()  {
+	        $(".warning-message").html(msgstatus);
+	    }
+	});
 }
 
 // display user list in view page
 function loadUserList(usersList) {
 	var j = 1;
-	var imgName = '';
-  	var passStatus = '';
-  	var userId = 0;
-  	var employeeName = '';
-  	var employeeId = '';
-  	var isActive = false;
-  	var designation = '';
-  	var userList;
 
   	$(".tbody-user-list").find("tr").remove();
-  	for(var entity in usersList) {
-  		userId = usersList[entity]["user_id"];
-    	employeeName = usersList[entity]["employee_name"];
-    	employeeId = usersList[entity]["employee_code"];
-    	isActive = usersList[entity]["is_active"];
-    	designation = usersList[entity]["designation"];
+  	$.each(usersList, function(key, value) {
+  		var userId = value["user_id"];
+    	var employeeName = value["employee_name"];
+    	var employeeId = value["employee_code"];
+    	var isActive = value["is_active"];
+    	var designation = value["designation"];
     	if (designation == "None" || designation == null){
     		designation = "-"
     	}
     	for(var k in userGroupsList){
-    		if(userGroupsList[k]["user_group_id"] == usersList[entity]["user_group_id"]){
+    		if(userGroupsList[k]["user_group_id"] == value["user_group_id"]){
     			usergroup = userGroupsList[k]["user_group_name"];
     		break;
-    	}
-    }
-    if(isActive == true) {
-    	passStatus=false;
-    	imgName="icon-active.png"
-    }
-    else {
-    	passStatus=true;
-   	 	imgName="icon-inactive.png"
-   	 }
-   	var tableRow=$('#templates .table-user-master .table-row');
-    var clone=tableRow.clone();
-    $('.sno', clone).text(j);
-    $('.employee-name', clone).html(employeeId + ' - ' + employeeName);
-    $('.user-group', clone).text(usergroup);
-    $('.designation', clone).text(designation);
-    $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+userId+')"/>');
-    $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+userId+','+passStatus+')"/>');
-    $('.tbody-user-list').append(clone);
-    j = j + 1;
-  }
+	    	}
+	    }
+    
+	    var passStatus = null;
+	    var classValue = null;
+
+	    if(isActive == true) {
+	      passStatus = false;
+	      classValue = "active-icon";
+	    }
+	    else {
+	      passStatus=true;
+	      classValue = "inactive-icon";
+	    }
+
+	   	var tableRow=$('#templates .table-user-master .table-row');
+	    var clone=tableRow.clone();
+	    $('.sno', clone).text(j);
+	    $('.employee-name', clone).html(employeeId + ' - ' + employeeName);
+	    $('.user-group', clone).text(usergroup);
+	    $('.designation', clone).text(designation);
+
+	    $('.edit-icon').attr('title', 'Edit');
+	    $(".edit-icon", clone).on("click", function() {
+	        displayEdit(userId);
+	    });
+
+	    $(".status", clone).addClass(classValue);
+	    $('.active-icon').attr('title', 'Deactivate');
+	    $('.inactive-icon').attr('title', 'Activate');
+	    $(".status", clone).on("click", function() {
+	        changeStatus(userId, passStatus);
+	    });
+
+	    $('.tbody-user-list').append(clone);
+	    j = j + 1;
+	});
 }
 
 // get users list from api

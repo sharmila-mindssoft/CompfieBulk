@@ -312,36 +312,49 @@ function serviceprovider_edit(serviceProviderId){
     }
 }
 function serviceprovider_active(serviceProviderId, isActive){
-    var msgstatus='deactivate';
+
+    var msgstatus = message.deactive_message;
     if(isActive){
-        msgstatus='activate';
+        msgstatus = message.active_message;
     }
-    var answer = confirm('Are you sure want to '+msgstatus+ '?');
-    if (answer)
-    {
-        function onSuccess(data){
-            initialize();
-        }
-        function onFailure(error){
-            if(error == "CannotDeactivateUserExists"){
-                alert(message.cannot_deactivate_sp);
-            }else if(error == "CannotChangeStatusOfContractExpiredSP"){
-                alert(message.cannot_change_status);
-            }else{
-                alert(error);
-            }
-        }
-        client_mirror.changeServiceProviderStatus(parseInt(serviceProviderId), isActive, 
-            function (error, response){
-                if(error == null){
-                    onSuccess(response);
+    $( ".warning-confirm" ).dialog({
+        title: message.title_status_change,
+        buttons: {
+            Ok: function() {
+                $( this ).dialog( "close" );
+
+                function onSuccess(data){
+                    initialize();
                 }
-                else{
-                    onFailure(error);
+                function onFailure(error){
+                    if(error == "CannotDeactivateUserExists"){
+                        alert(message.cannot_deactivate_sp);
+                    }else if(error == "CannotChangeStatusOfContractExpiredSP"){
+                        alert(message.cannot_change_status);
+                    }else{
+                        alert(error);
+                    }
                 }
+                client_mirror.changeServiceProviderStatus(parseInt(serviceProviderId), isActive, 
+                    function (error, response){
+                        if(error == null){
+                            onSuccess(response);
+                        }
+                        else{
+                            onFailure(error);
+                        }
+                    }
+                );
+                
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
             }
-        );
-    }
+        },
+        open: function ()  {
+            $(".warning-message").html(msgstatus);
+        }
+    });
 }
 
 $(function() {

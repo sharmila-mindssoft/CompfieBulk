@@ -43,31 +43,42 @@ function initialize(){
 function loadCountriesList(countriesList){
     $(".tbody-countries-list").find("tr").remove();
     var sno = 0;
-    var imageName = null;
-    var title = null;
+    
     $.each(countriesList, function(i, value){
         var countries = countriesList[i];
         $.each(countries, function(j, value){
             var countryId = countries[j]["country_id"];
             var countryName = countries[j]["country_name"];
             var isActive = countries[j]["is_active"];
-            if(isActive == true){
-                imageName = "icon-active.png";
-                title = "Click here to deactivate"
-                statusVal = false;
+            var passStatus = null;
+            var classValue = null;
+
+            if(isActive == true) {
+              passStatus = false;
+              classValue = "active-icon";
             }
-            else{
-                imageName = "icon-inactive.png";
-                title = "Click here to Activate"
-                statusVal = true;
+            else {
+              passStatus=true;
+              classValue = "inactive-icon";
             }
             var tableRow = $('#templates .table-countries-list .table-row');
             var clone = tableRow.clone();
             sno = sno + 1;
             $('.sno', clone).text(sno);
             $('.country-name', clone).text(countryName);
-            $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="country_edit('+countryId+',\''+countryName.replace(/"/gi,'##')+'\')"/>');
-            $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="country_active('+countryId+', '+statusVal+')"/>');
+            
+            $('.edit-icon').attr('title', 'Edit');
+            $(".edit-icon", clone).on("click", function() {
+                country_edit(countryId, countryName);
+            });
+
+            $(".status", clone).addClass(classValue);
+            $('.active-icon').attr('title', 'Deactivate');
+            $('.inactive-icon').attr('title', 'Activate');
+            $(".status", clone).on("click", function() {
+                country_active(countryId, passStatus);
+            });
+
             $('.tbody-countries-list').append(clone);
         });
     });
@@ -153,35 +164,45 @@ function country_edit(countryId, countryName){
 }
 //activate/deactivate country
 function country_active(countryId, isActive){
-    var msgstatus='deactivate';
+    var msgstatus = message.deactive_message;
     if(isActive){
-        msgstatus='activate';
+        msgstatus = message.active_message;
     }
-    var answer = confirm('Are you sure want to '+msgstatus+ '?');
-    if (answer)
-    {
-        $("#country-id").val(countryId);
-        function onSuccess(response){
-            initialize();
-        }
-        function onFailure(error){
-            if(error == "TransactionExists"){
-                alert(message.trasaction_exists)
-            }else{
-                alert(error)
-            }
-        }
-        mirror.changeCountryStatus( parseInt(countryId), isActive,
-            function (error, response) {
-                if (error == null){
-                    onSuccess(response);
+    $( ".warning-confirm" ).dialog({
+        title: message.title_status_change,
+        buttons: {
+            Ok: function() {
+                $( this ).dialog( "close" );
+                $("#country-id").val(countryId);
+                function onSuccess(response){
+                    initialize();
                 }
-                else {
-                    onFailure(error);
+                function onFailure(error){
+                    if(error == "TransactionExists"){
+                        alert(message.trasaction_exists)
+                    }else{
+                        alert(error)
+                    }
                 }
+                mirror.changeCountryStatus( parseInt(countryId), isActive,
+                    function (error, response) {
+                        if (error == null){
+                            onSuccess(response);
+                        }
+                        else {
+                            onFailure(error);
+                        }
+                    }
+                );
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
             }
-        );
-    }
+        },
+        open: function ()  {
+            $(".warning-message").html(msgstatus);
+        }
+    });
 }
 //filter process
 $("#search-country-name").keyup(function() {

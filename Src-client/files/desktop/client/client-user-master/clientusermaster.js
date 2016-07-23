@@ -533,37 +533,48 @@ $("#submit").click(function(){
     
 });
 function user_active(userId, isActive){
-    var msgstatus='deactivate';
+    var msgstatus = message.deactive_message;
     if(isActive){
-        msgstatus='activate';
+        msgstatus = message.active_message;
     }
-    var answer = confirm('Are you sure want to '+msgstatus+ '?');
-    if (answer)
-    {
-        function onSuccess(data){
-            initialize();
-        }
-        function onFailure(error){
-            if (error == "CannotChangePrimaryAdminStatus"){
-                alert(message.cant_deactivate_primaryadmin);
-            }
-            else if(error == "ReassignCompliancesBeforeDeactivate"){
-                alert(message.reassign_compliance_before_user_deactivate)
-            }else{
-                alert(error)
-            }
-        }
-        client_mirror.changeClientUserStatus(userId, isActive,
-            function(error, response){
-                if(error == null){
-                    onSuccess(response);
+    $( ".warning-confirm" ).dialog({
+        title: message.title_status_change,
+        buttons: {
+            Ok: function() {
+                $( this ).dialog( "close" );
+
+                function onSuccess(data){
+                    initialize();
                 }
-                else{
-                    onFailure(error);
+                function onFailure(error){
+                    if (error == "CannotChangePrimaryAdminStatus"){
+                        alert(message.cant_deactivate_primaryadmin);
+                    }
+                    else if(error == "ReassignCompliancesBeforeDeactivate"){
+                        alert(message.reassign_compliance_before_user_deactivate)
+                    }else{
+                        alert(error)
+                    }
                 }
+                client_mirror.changeClientUserStatus(userId, isActive,
+                    function(error, response){
+                        if(error == null){
+                            onSuccess(response);
+                        }
+                        else{
+                            onFailure(error);
+                        }
+                    }
+                );
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
             }
-        );
-    }
+        },
+        open: function ()  {
+            $(".warning-message").html(msgstatus);
+        }
+    });
 }
 function user_isadmin(userId, isAdmin){
     var msgstatus;
@@ -573,29 +584,41 @@ function user_isadmin(userId, isAdmin){
     if(isAdmin == 0){
         msgstatus='deactivate promote admin';
     }
-    var answer = confirm('Are you sure to '+msgstatus+ '?');
-    if (answer)
-    {
-        function onSuccess(data){
-            initialize();
-        }
-        function onFailure(error){
-            if (error == "CannotPromoteServiceProvider"){
-                alert("Cannot promote a service provider as admin");
-            }else if (error == "CannotChangePrimaryAdminStatus"){
-                alert("Only Techno team can change status of primary admin");
+
+    $( ".warning-confirm" ).dialog({
+        title: message.title_status_change,
+        buttons: {
+            Ok: function() {
+                $( this ).dialog( "close" );
+
+                function onSuccess(data){
+                    initialize();
+                }
+                function onFailure(error){
+                    if (error == "CannotPromoteServiceProvider"){
+                        alert(message.cannot_promote_sp_admin);
+                    }else if (error == "CannotChangePrimaryAdminStatus"){
+                        alert(message.techno_team_change_primary_admin_status);
+                    }
+                }
+                client_mirror.changeAdminStatus(userId, isAdmin,
+                    function(error, response){
+                        if(error == null){
+                            onSuccess(response);
+                        }
+                        else{
+                            onFailure(error);
+                        }
+                    });
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
             }
+        },
+        open: function ()  {
+            $(".warning-message").html('Are you sure to '+msgstatus+ '?');
         }
-        client_mirror.changeAdminStatus(userId, isAdmin,
-            function(error, response){
-                if(error == null){
-                    onSuccess(response);
-                }
-                else{
-                    onFailure(error);
-                }
-            });
-    }
+    });
 }
 
 function checkdomainids(arrayunitdomain, arrayalldomain ){

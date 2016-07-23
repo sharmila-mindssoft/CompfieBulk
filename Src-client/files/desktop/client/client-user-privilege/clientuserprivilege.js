@@ -249,34 +249,47 @@ function loadFormListUpdate(formList, userGroupList, userGroupId){
 	});
 }
 function userPrivilegeActive(userGroupId, isActive){
-	var msgstatus='deactivate';
-    if(isActive){
-        msgstatus='activate';
-    }
-    var answer = confirm('Are you sure want to '+msgstatus+ '?');
-    if (answer)
-    {
-	  	function onSuccess(data){
-	   		initialize();
-	  	}
-	  	function onFailure(error){
-	  		/*if(error == "CannotDeactivateUserExists"){
-	  			displayMessage(message.cannot_deactivate_usergroup)
-	  		}*/
-	  		alert(message.cannot_deactivate_usergroup);
-	 	}
-	  	client_mirror.changeClientUserGroupStatus(userGroupId, isActive, 
-	  		function (error, response){
-				if(error == null){
-					onSuccess(response);
-				}
-				else{
-					onFailure(error);
 
-				}
-			}
-		);
+	var msgstatus = message.deactive_message;
+	if(isActive){
+	    msgstatus = message.active_message;
 	}
+	$( ".warning-confirm" ).dialog({
+	    title: message.title_status_change,
+	    buttons: {
+	        Ok: function() {
+	            $( this ).dialog( "close" );
+
+	            function onSuccess(data){
+			   		initialize();
+			  	}
+			  	function onFailure(error){
+			  		/*if(error == "CannotDeactivateUserExists"){
+			  			displayMessage(message.cannot_deactivate_usergroup)
+			  		}*/
+			  		alert(message.cannot_deactivate_usergroup);
+			 	}
+			  	client_mirror.changeClientUserGroupStatus(userGroupId, isActive, 
+			  		function (error, response){
+						if(error == null){
+							onSuccess(response);
+						}
+						else{
+							onFailure(error);
+
+						}
+					}
+				);
+	            
+	        },
+	        Cancel: function() {
+	            $( this ).dialog( "close" );
+	        }
+	    },
+	    open: function ()  {
+	        $(".warning-message").html(msgstatus);
+	    }
+	});
 }
 
 $('.checkbox-full-check').click(function(event) {  

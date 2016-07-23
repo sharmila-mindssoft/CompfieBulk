@@ -34,29 +34,41 @@ function loadStatNatureData(statNatureList){
     var sno = 0;
     for(var i in statNatureList){
         var statNature = statNatureList[i];
-        for(var j in statNature){
-            var statNatureName = statNature[j]['statutory_nature_name'];
-            var statNatureId = statNature[j]['statutory_nature_id'];
-            var statNatureActive = statNature[j]['is_active'];
-            if(statNatureActive == true){
-                imageName = "icon-active.png";
-                title = "Click here to deactivate";
-                statusVal = false;
+        $.each(statNature, function(key, value) {
+            var statNatureName = value['statutory_nature_name'];
+            var statNatureId = value['statutory_nature_id'];
+            var statNatureActive = value['is_active'];
+            var passStatus = null;
+            var classValue = null;
+
+            if(statNatureActive == true) {
+              passStatus = false;
+              classValue = "active-icon";
             }
-            else{
-                imageName = "icon-inactive.png";
-                title = "Click here to Activate";
-                statusVal = true;
+            else {
+              passStatus=true;
+              classValue = "inactive-icon";
             }
             var tableRow = $('#templates .table-statutory-nature-list .table-row');
             var clone = tableRow.clone();
             sno = sno + 1;
             $('.sno', clone).text(sno);
             $('.statutory-nature-name', clone).text(statNatureName);
-            $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="statNature_edit('+statNatureId+',\''+statNatureName.replace(/"/gi,'##')+'\')"/>');
-            $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="statNature_active('+statNatureId+', '+statusVal+')"/>');
+            
+            $('.edit-icon').attr('title', 'Edit');
+            $(".edit-icon", clone).on("click", function() {
+                statNature_edit(statNatureId, statNatureName);
+            });
+
+            $(".status", clone).addClass(classValue);
+            $('.active-icon').attr('title', 'Deactivate');
+            $('.inactive-icon').attr('title', 'Activate');
+            $(".status", clone).on("click", function() {
+                statNature_active(statNatureId, passStatus);
+            });
+
             $('.tbody-statutory-nature-list').append(clone);
-        }
+        });
     }
 }
 
@@ -141,22 +153,35 @@ function statNature_edit(statNatureId, statNatureName){
     $("#statutory-nature-name").focus();
 }
 function statNature_active(statNatureId, isActive){
-    var msgstatus='deactivate';
+
+    var msgstatus = message.deactive_message;
     if(isActive){
-        msgstatus='activate';
+        msgstatus = message.active_message;
     }
-    var answer = confirm('Are you sure want to '+msgstatus+ '?');
-    if (answer)
-    {
-        function success(status, data){
-            $("#search-statutory-nature-name").val('');
-            initialize();
+    $( ".warning-confirm" ).dialog({
+        title: message.title_status_change,
+        buttons: {
+            Ok: function() {
+                $( this ).dialog( "close" );
+
+                function success(status, data){
+                    $("#search-statutory-nature-name").val('');
+                    initialize();
+                }
+                function failure(error){
+                    alert(error)
+                }
+                mirror.changeStatutoryNatureStatus(parseInt(statNatureId), isActive, success, failure);
+                
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
+            }
+        },
+        open: function ()  {
+            $(".warning-message").html(msgstatus);
         }
-        function failure(error){
-            alert(error)
-        }
-        mirror.changeStatutoryNatureStatus(parseInt(statNatureId), isActive, success, failure);
-    }
+    });
 }
 $("#search-statutory-nature-name").keyup(function() {
     var count=0;

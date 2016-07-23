@@ -67,23 +67,24 @@ function initialize(){
 function loadUserGroupdata(userGroupList){
 	$(".tbody-usergroups-list").find("tr").remove();
  	var sno = 0;
-	var imageName, title;
-	for(var j in userGroupList){
-		var catgid = userGroupList[j]["form_category_id"];
-		var userGroupName = userGroupList[j]["user_group_name"];
-		var isActive = userGroupList[j]["is_active"];
-		var userGroupId = userGroupList[j]["user_group_id"];
+	$.each(userGroupList, function(key, value) {
+		var catgid = value["form_category_id"];
+		var userGroupName = value["user_group_name"];
+		var isActive = value["is_active"];
+		var userGroupId = value["user_group_id"];
 
-		if(isActive == true){
-			imageName = "icon-active.png";
-			title = "Click here to deactivate"
-			statusVal = false;
-		}
-		else{
-			imageName = "icon-inactive.png";
-			title = "Click here to Activate"
-			statusVal = true;
-		}
+		var passStatus = null;
+	    var classValue = null;
+
+	    if(isActive == true) {
+	      passStatus = false;
+	      classValue = "active-icon";
+	    }
+	    else {
+	      passStatus=true;
+	      classValue = "inactive-icon";
+	    }
+	
 		function getCategoryName(catgId){
 			var catgname;
 			$.each(categoryList, function(key,value){
@@ -100,10 +101,21 @@ function loadUserGroupdata(userGroupList){
 		$('.sno', clone).text(sno);
 		$('.group-name', clone).text(userGroupName);
 		$('.catg-name', clone).text(getCategoryName(catgid));
-		$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="userGroupEdit('+userGroupId+',\''+userGroupName+'\', '+catgid+')"/>');
-		$('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="userGroupActive('+userGroupId+', '+statusVal+')"/>');
+
+		$('.edit-icon').attr('title', 'Edit');
+	    $(".edit-icon", clone).on("click", function() {
+	        userGroupEdit(userGroupId, userGroupName, catgid);
+	    });
+
+	    $(".status", clone).addClass(classValue);
+	    $('.active-icon').attr('title', 'Deactivate');
+	    $('.inactive-icon').attr('title', 'Activate');
+	    $(".status", clone).on("click", function() {
+	        userGroupActive(userGroupId, passStatus);
+	    });
+
 		$('.tbody-usergroups-list').append(clone);
-	}
+	});
 }
 $("#categoryName").on("change", function(){
 // 	$("#btnUserGroupShow").trigger("click");
@@ -331,36 +343,46 @@ function userGroupEdit(userGroupId, userGroupName, catgid){
 	);
 }
 function userGroupActive(userGroupId, isActive){
-
 	$("#userGroupId").val(userGroupId);
-	var msgstatus='deactivate';
-  	if(isActive){
-   		msgstatus='activate';
-  	}
-  	var answer = confirm('Are you sure want to '+msgstatus+ '?');
-  	if (answer)
-  	{
-	    function onSuccess(response){
-	      initialize();
-	    }
-	    function onFailure(error){
-		    if(error == "CannotDeactivateUserExists"){
-	            alert(message.cannot_deactivate_usergroup)
-	        }else{
-	            alert(error)
+	var msgstatus = message.deactive_message;
+	if(isActive){
+	    msgstatus = message.active_message;
+	}
+	$( ".warning-confirm" ).dialog({
+	    title: message.title_status_change,
+	    buttons: {
+	        Ok: function() {
+	            $( this ).dialog( "close" );
+
+	            function onSuccess(response){
+			      initialize();
+			    }
+			    function onFailure(error){
+				    if(error == "CannotDeactivateUserExists"){
+			            alert(message.cannot_deactivate_usergroup)
+			        }else{
+			            alert(error)
+			        }
+			    }
+			    mirror.changeAdminUserGroupStatus(userGroupId, isActive,
+					function (error, response) {
+			            if (error == null){
+			                onSuccess(response);
+			            }
+			            else {
+			                onFailure(error);
+			            }
+			        }
+				);
+	        },
+	        Cancel: function() {
+	            $( this ).dialog( "close" );
 	        }
+	    },
+	    open: function ()  {
+	        $(".warning-message").html(msgstatus);
 	    }
-	    mirror.changeAdminUserGroupStatus(userGroupId, isActive,
-			function (error, response) {
-	            if (error == null){
-	                onSuccess(response);
-	            }
-	            else {
-	                onFailure(error);
-	            }
-	        }
-		);
-    }
+	});
 }
 
 $('.checkbox-full-check').click(function(event) {

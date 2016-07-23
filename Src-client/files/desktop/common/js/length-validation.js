@@ -1,4 +1,3 @@
-
 var max3 = 3;
 var max4 = 4;
 var max5 = 5;

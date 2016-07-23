@@ -3051,7 +3051,7 @@ div.scrollable {
     overflow: auto;
 }
 
-/*Password Indicator
+/*Password Indicator Start
 */
 #pw-result{
 	margin-left:5px;
@@ -3074,4 +3074,54 @@ div.scrollable {
 
 .pw-strong{
 	color:#006400;
+}
+/*Password Indicator End
+*/
+
+.pw-hint span {
+    z-index:10;
+    font-size: 12px;
+    padding:14px 20px;
+    margin-top:-30px; 
+    margin-left:28px;
+    width:300px; 
+    line-height:16px;
+    border-radius:4px;
+     
+    position:absolute; 
+    color:#111;
+    border:1px solid #DCA; 
+    background:#fffAF0;
+}
+.pw-callout {
+	z-index:20;
+	position:absolute;
+	top:30px;
+	border:0;
+	left:-12px;
+}
+
+.edit-icon {
+	background:  url(../images/icon-edit.png) no-repeat center;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+.view-icon {
+	background:  url(../images/icon-viewsubmit.png) no-repeat center;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+.active-icon {
+	background:  url(../images/icon-active.png) no-repeat center;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+.inactive-icon {
+	background:  url(../images/icon-inactive.png) no-repeat center;
+	border: none;
+	outline: none;
+	cursor: pointer;
 }
