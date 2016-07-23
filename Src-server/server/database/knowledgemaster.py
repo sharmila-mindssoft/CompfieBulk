@@ -47,14 +47,14 @@ def get_industries(db) :
 def get_industry_by_id(db, industry_id) :
     if type(industry_id) is int :
         q = "SELECT industry_name FROM tbl_industries \
-            WHERE industry_id=%s"
-        param = (industry_id)
+            WHERE industry_id = %s "
+        param = [industry_id]
 
     else :
         q = " SELECT (GROUP_CONCAT(industry_name SEPARATOR ', ')) as \
             industry_name FROM tbl_industries \
             WHERE industry_id in %s"
-        param = (str(tuple(industry_id)))
+        param = [tuple(industry_id)]
 
     row = db.select_one(q, param)
     industry_name = None

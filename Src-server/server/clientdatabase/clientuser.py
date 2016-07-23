@@ -1,3 +1,5 @@
+from dateutil import relativedelta
+from protocol import core
 from server.clientdatabase.tables import *
 from server.common import (
     datetime_to_string, string_to_datetime, new_uuid, get_date_time,
@@ -281,25 +283,6 @@ def get_upcoming_compliances_list(db, upcoming_start_count, to_count, session_us
             ))
     return upcoming_compliances_list
 
-# def calculate_next_start_date(self, due_date, statutory_dates, repeats_every):
-#     statutory_dates = json.loads(statutory_dates)
-#     next_start_date = None
-#     if len(statutory_dates) > 1:
-#         month_of_due_date = due_date.month
-#         for statutory_date in statutory_dates:
-#             if month_of_due_date >= statutory_date["statutory_month"]:
-#                 next_start_date = due_date - timedelta(
-#                     days = statutory_date["trigger_before_days"])
-#                 break
-#             else:
-#                 continue
-#     else:
-#         trigger_before = 0
-#         if len(statutory_dates) > 0:
-#             trigger_before = int(statutory_dates[0]["trigger_before_days"])
-#         next_start_date = due_date - timedelta(days=trigger_before)
-#     return next_start_date
-
 def update_compliances(
     db, compliance_history_id, documents, completion_date,
     validity_date, next_due_date, remarks, client_id, session_user
@@ -347,7 +330,14 @@ def update_compliances(
                 update_used_space(db, file_size)
             else:
                 return clienttransactions.NotEnoughSpaceAvailable()
-    assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = get_compliance_history_details(db, compliance_history_id)
+    history = get_compliance_history_details(db, compliance_history_id)
+    print history
+    assignee_id = history["completed_by"]
+    concurrence_id = history["concurred"]
+    approver_id = history["approved_by"]
+    compliance_name = history["compliance_name"]
+    document_name = history["doc_name"]
+    due_date = history["due_date"]
     current_time_stamp = get_date_time()
     history_columns = [
         "completion_date", "documents", "remarks", "completed_on"
@@ -378,8 +368,8 @@ def update_compliances(
     rows = db.get_data(
         tblComplianceHistory, columns, condition
     )
-    unit_id = rows[0][0]
-    compliance_id = rows[0][1]
+    unit_id = rows[0]["unit_id"]
+    compliance_id = rows[0]["compliance_id"]
     ageing, remarks = calculate_ageing(
         due_date, frequency_type=None, completion_date=completion_date, duration_type=None
     )
@@ -413,8 +403,7 @@ def update_compliances(
         )
         if len(as_columns) > 0 and len(as_values) > 0 and len(as_columns) == len(as_values):
             db.update(
-                tblAssignedCompliances, as_columns, as_values, as_condition,
-                client_id
+                tblAssignedCompliances, as_columns, as_values, as_condition
             )
         save_compliance_activity(db, unit_id, compliance_id, "Approved", "Complied", remarks)
     else:
@@ -468,7 +457,7 @@ def get_on_occurrence_compliance_count(
             AND ac.unit_id in (%s)\
             AND c.domain_id in (%s) \
             AND c.frequency_id = 4 \
-            AND ac.assignee = '%d' " % (
+            AND ac.assignee = %s " % (
                 tblAssignedCompliances,
                 tblCompliances, tblUnits, user_unit_ids,
                 user_domain_ids, session_user
@@ -551,14 +540,14 @@ def start_on_occurrence_task(
     ]
 
     approval_columns = "approval_person, concurrence_person"
-    approval_condition = " compliance_id = '%d' and unit_id = '%d' " % (
+    approval_condition = " compliance_id = %s and unit_id = %s " % (
         compliance_id, unit_id
     )
     rows = db.get_data(
         tblAssignedCompliances, approval_columns, approval_condition
     )
-    concurred_by = rows[0][1]
-    approved_by = rows[0][0]
+    concurred_by = rows[0]["approval_person"]
+    approved_by = rows[0]["concurrence_person"]
     if is_two_levels_of_approval(db):
         columns.append("concurred_by")
         values.append(concurred_by)
@@ -601,28 +590,28 @@ def remove_uploaded_file(file_path):
         os.remove(file_path)
 
 def get_compliance_history_details(db, compliance_history_id):
-    columns = "completed_by, ifnull(concurred_by, 0), approved_by, ( \
-        select compliance_task from %s c \
-        where c.compliance_id = ch.compliance_id ), \
-        (select document_name from %s c \
-        where c.compliance_id = ch.compliance_id ), due_date" % (
-            tblCompliances, tblCompliances)
-    condition = "compliance_history_id = '%d'" % compliance_history_id
+    columns = [
+        "completed_by", "ifnull(concurred_by, 0) as concurred", "approved_by",
+        "(select compliance_task from %s c where c.compliance_id = ch.compliance_id ) as compliance_name" % tblCompliances,
+        "(select document_name from %s c where c.compliance_id = ch.compliance_id ) as doc_name" % tblCompliances,
+        "due_date"
+    ]
+    condition = "compliance_history_id = %s " % compliance_history_id
     rows = db.get_data(tblComplianceHistory + " ch", columns, condition)
     if rows:
         return rows[0]
 
 def is_onOccurrence_with_hours(db, compliance_history_id):
     columns = "compliance_id"
-    condition = "compliance_history_id = '%d'" % compliance_history_id
+    condition = "compliance_history_id = %s" % compliance_history_id
     rows = db.get_data(tblComplianceHistory, columns, condition)
-    compliance_id = rows[0][0]
+    compliance_id = rows[0]["compliance_id"]
 
     comp_columns = "frequency_id, duration_type_id"
-    comp_condition = "compliance_id = '%d'" % compliance_id
+    comp_condition = "compliance_id = %s" % compliance_id
     comp_rows = db.get_data(tblCompliances, comp_columns, comp_condition)
-    frequency_id = comp_rows[0][0]
-    duration_type_id = comp_rows[0][1]
+    frequency_id = comp_rows[0]["frequency_id"]
+    duration_type_id = comp_rows[0]["duration_type_id"]
     if frequency_id == 4 and duration_type_id == 2:
         return True
     else:

@@ -1,3 +1,5 @@
+import datetime
+import json
 from protocol import (core, dashboard, clientreport)
 from dateutil import relativedelta
 from server.common import (
@@ -409,7 +411,7 @@ def have_compliances(db, user_id):
         column = "count(*) as compliances"
         condition = "assignee = '%s' and is_active = 1" % user_id
         rows = db.get_data(tblAssignedCompliances, column, condition)
-        no_of_compliances = rows[0]["compliance"]
+        no_of_compliances = rows[0]["compliances"]
         if no_of_compliances > 0:
             return True
         else:
@@ -462,13 +464,13 @@ def is_two_levels_of_approval(db):
     rows = db.get_data(tblClientGroups, columns, "1")
     return rows[0]["two_levels_of_approval"]
 
-def get_user_company_details(db, user_id, client_id=None):
+def get_user_company_details(db, user_id):
     admin_id = get_admin_id(db)
     columns = "unit_id"
     condition = " 1 "
     rows = None
     if user_id > 0 and user_id != admin_id:
-        condition = "  user_id = '%s'" % user_id
+        condition = "  user_id = %s " % user_id
         rows = db.get_data(
             tblUserUnits, columns, condition
         )
