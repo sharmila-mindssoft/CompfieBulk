@@ -9,7 +9,6 @@ var max100 = 100;
 var max250 = 250;
 var max500 = 500;
 
-
 function countryValidate(){
 	if($("#country-name").val().trim().length > max50){
 		displayMessage("Country Name" + message.should_not_exceed + max50 + " characters");

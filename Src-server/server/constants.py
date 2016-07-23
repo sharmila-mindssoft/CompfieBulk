@@ -32,7 +32,7 @@ LOCAL_TIMEZONE = pytz.timezone("Asia/Kolkata")
 IS_DEVELOPMENT = True
 VERSION = 1
 SEND_EMAIL = False
-RECORD_DISPLAY_COUNT = 5
+RECORD_DISPLAY_COUNT = 100
 FILE_TYPES = ["exe", "xhtml", "htm", "html", "py", "js"]
 FILE_MAX_LIMIT = 1024 * 1024 * 50  # 50 MB
 
