@@ -214,6 +214,7 @@ var message = {
 	"should_not_exceed" : " should not exceed ",
 	"remarks_required" : "Remarks Required",
 	"password_weak" : "Password should not be Weak"
+
 };
 
 function clearMessage() {

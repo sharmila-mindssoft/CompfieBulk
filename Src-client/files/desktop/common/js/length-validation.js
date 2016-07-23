@@ -1,4 +1,3 @@
-
 var max3 = 3;
 var max4 = 4;
 var max5 = 5;
@@ -9,6 +8,7 @@ var max50 = 50;
 var max100 = 100;
 var max250 = 250;
 var max500 = 500;
+
 
 function countryValidate(){
 	if($("#country-name").val().trim().length > max50){
