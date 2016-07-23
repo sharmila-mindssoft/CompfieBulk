@@ -213,7 +213,13 @@ var message = {
 	"NotEnoughSpaceAvailable": "Not enough space available",
 	"should_not_exceed" : " should not exceed ",
 	"remarks_required" : "Remarks Required",
-	"password_weak" : "Password should not be Weak"
+	"password_weak" : "Password should not be Weak",
+	"active_message" : "Are you sure want to activate?",
+	"deactive_message" : "Are you sure want to deactivate?",
+	"title_status_change" : "Change Status",
+	"cannot_promote_sp_admin" : "Cannot promote a service provider as admin",
+	"techno_team_change_primary_admin_status" : "Only Techno team can change status of primary admin",
+	"cancel_operation" : "Are you sure, you want to cancel the operation?"
 };
 
 function clearMessage() {

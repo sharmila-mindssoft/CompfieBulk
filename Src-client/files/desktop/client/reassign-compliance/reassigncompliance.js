@@ -752,16 +752,30 @@ function submitcompliance(){
         }
 
 
-        var answer = confirm(assigneeText + concurrenceText + approvalText + 'Do you want to add in settings ?');
-        if (answer)
-        { 
-          saveReassign(userId, assignComplianceAssigneeId,
-            assignComplianceAssigneeName,
-            assignComplianceConcurrenceId,
-            assignComplianceApprovalId, reassignCompliance, reason, newSettingsList);
-        }else{
-          hideLoader();
-        }
+        var msgstatus = assigneeText + concurrenceText + approvalText + 'Do you want to add in settings ?';
+        
+        $( ".warning-confirm" ).dialog({
+            title: message.title_status_change,
+            buttons: {
+                Ok: function() {
+                    $( this ).dialog( "close" );
+
+                    saveReassign(userId, assignComplianceAssigneeId,
+                      assignComplianceAssigneeName,
+                      assignComplianceConcurrenceId,
+                      assignComplianceApprovalId, reassignCompliance, reason, newSettingsList
+                    );
+                    
+                },
+                Cancel: function() {
+                    $( this ).dialog( "close" );
+                    hideLoader();
+                }
+            },
+            open: function ()  {
+                $(".warning-message").html(msgstatus);
+            }
+        });
     }else{
       newSettingsList = null;
       saveReassign (userId, assignComplianceAssigneeId,

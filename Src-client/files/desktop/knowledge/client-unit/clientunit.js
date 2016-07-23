@@ -227,20 +227,34 @@ $("#btn-clientunit-add").click(function(){
 
 //Cancel Button ----------------------------------------------------------------------------------------------
 $("#btn-clientunit-cancel").click(function(){
-    var answer = confirm('Are you sure, you want to cancel the operation?');
-    if (answer)
-    {
-        $("#clientunit-add").hide();
-        $("#clientunit-view").show();
-        isUpdate = false;
-        countryByCount = 1;
-        countc = 0;
-        usercountrycount = 0;
-        $('#group-select  option:gt(0)').empty();
-        $('#businessgroup-select  option:gt(0)').empty();
-        $('#entity-select  option:gt(0)').empty();
-        $('#division-select  option:gt(0)').empty();
-    }
+
+    var msgstatus = message.cancel_operation;
+    
+    $( ".warning-confirm" ).dialog({
+        title: "Cancel",
+        buttons: {
+            Ok: function() {
+                $( this ).dialog( "close" );
+
+                $("#clientunit-add").hide();
+                $("#clientunit-view").show();
+                isUpdate = false;
+                countryByCount = 1;
+                countc = 0;
+                usercountrycount = 0;
+                $('#group-select  option:gt(0)').empty();
+                $('#businessgroup-select  option:gt(0)').empty();
+                $('#entity-select  option:gt(0)').empty();
+                $('#division-select  option:gt(0)').empty();
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
+            }
+        },
+        open: function ()  {
+            $(".warning-message").html(msgstatus);
+        }
+    });
 });
 
 //Load All Groups---------------------------------------------------------------------------------------------
@@ -1507,30 +1521,42 @@ function unit_close(){
 
 //Active or inactive Client Unit List --------------------------------------------------------------------------
 function clientunit_active(clientunitId, lentityId, divisionId, isActive){
-    var msgstatus='deactivate';
+
+    var msgstatus = message.deactive_message;
     if(isActive){
-        msgstatus='activate';
+        msgstatus = message.active_message;
     }
-    var answer = confirm('Are you sure want to '+msgstatus+ '?');
-    if (answer)
-    {
-        function onSuccess(data) {
-            initialize();
-        }
-        function onFailure(error) {
-            displayMessage(error);
-        }
-        mirror.changeClientStatus( parseInt(clientunitId), parseInt(lentityId), divisionId, isActive,
-            function(error, response){
-                if(error == null){
-                    onSuccess(response);
+    $( ".warning-confirm" ).dialog({
+        title: message.title_status_change,
+        buttons: {
+            Ok: function() {
+                $( this ).dialog( "close" );
+
+                function onSuccess(data) {
+                    initialize();
                 }
-                else{
-                    onFailure(error);
+                function onFailure(error) {
+                    displayMessage(error);
                 }
+                mirror.changeClientStatus( parseInt(clientunitId), parseInt(lentityId), divisionId, isActive,
+                    function(error, response){
+                        if(error == null){
+                            onSuccess(response);
+                        }
+                        else{
+                            onFailure(error);
+                        }
+                    }
+                );
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
             }
-        );
-    }
+        },
+        open: function ()  {
+            $(".warning-message").html(msgstatus);
+        }
+    });
 }
 
 //Search Client name ----------------------------------------------------------------------------------------------

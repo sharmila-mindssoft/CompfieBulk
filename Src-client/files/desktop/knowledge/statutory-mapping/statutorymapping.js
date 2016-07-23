@@ -161,35 +161,47 @@ $(".btn-statutorymapping-add").click(function(){
 
 //activate/deactivate statutory mapping
 function changeStatus (statutorymappingId,isActive) {
-  var msgstatus='deactivate';
+
+  var msgstatus = message.deactive_message;
   if(isActive){
-    msgstatus='activate';
+      msgstatus = message.active_message;
   }
-  var answer = confirm('Are you sure want to '+msgstatus+ '?');
-  if (answer)
-  {
-    function onSuccess(data){
-      $(".listfilter").val('');
-      getStatutoryMappings();
-    }
-    function onFailure(error){
-      if(error == "TransactionExists"){
-          alert(message.trasaction_exists)
-      }else{
-          alert(error)
-      }
-    }
-    mirror.changeStatutoryMappingStatus(statutorymappingId, isActive,
-      function (error, response) {
-          if (error == null){
-            onSuccess(response);
+  $( ".warning-confirm" ).dialog({
+      title: message.title_status_change,
+      buttons: {
+          Ok: function() {
+              $( this ).dialog( "close" );
+
+              function onSuccess(data){
+                $(".listfilter").val('');
+                getStatutoryMappings();
+              }
+              function onFailure(error){
+                if(error == "TransactionExists"){
+                    alert(message.trasaction_exists)
+                }else{
+                    alert(error)
+                }
+              }
+              mirror.changeStatutoryMappingStatus(statutorymappingId, isActive,
+                function (error, response) {
+                    if (error == null){
+                      onSuccess(response);
+                    }
+                    else {
+                      onFailure(error);
+                    }
+                }
+              );
+          },
+          Cancel: function() {
+              $( this ).dialog( "close" );
           }
-          else {
-            onFailure(error);
-          }
+      },
+      open: function ()  {
+          $(".warning-message").html(msgstatus);
       }
-    );
-  }
+  });
 }
 
 //load statutory mapping list in view page

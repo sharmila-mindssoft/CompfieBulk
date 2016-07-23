@@ -143,32 +143,44 @@ function dismissPopup(){
 }
 
 function clientprofile_active(userId, clientId, status){
-     var msgstatus='deactivate';
+
+    var msgstatus = message.deactive_message;
     if(status){
-        msgstatus='activate';
+        msgstatus = message.active_message;
     }
-    var answer = confirm('Are you sure want to '+msgstatus+ '?');
-    if(answer)
-    {
-        function onSuccess(data){
-            initialize();
-        }
-        function onFailure(error){
-            if(error == "ReassignFirst"){
-                alert("Cannot Promote this user as Client admin. \nSince the old admin has compliances under him. \nFirst inform the client to reassign those compliances to another user.");
-            }
-        }
-        mirror.changeClientUserStatus(userId, status,
-            function(error, response){
-                if(error == null){
-                    onSuccess(response);
+    $( ".warning-confirm" ).dialog({
+        title: message.title_status_change,
+        buttons: {
+            Ok: function() {
+                $( this ).dialog( "close" );
+
+                function onSuccess(data){
+                    initialize();
                 }
-                else{
-                    onFailure(error);
+                function onFailure(error){
+                    if(error == "ReassignFirst"){
+                        alert("Cannot Promote this user as Client admin. \nSince the old admin has compliances under him. \nFirst inform the client to reassign those compliances to another user.");
+                    }
                 }
+                mirror.changeClientUserStatus(userId, status,
+                    function(error, response){
+                        if(error == null){
+                            onSuccess(response);
+                        }
+                        else{
+                            onFailure(error);
+                        }
+                    }
+                );
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
             }
-        );
-    }
+        },
+        open: function ()  {
+            $(".warning-message").html(msgstatus);
+        }
+    });
 }
 
 function alertUserToPromoteAnotherAdmin(isActive){

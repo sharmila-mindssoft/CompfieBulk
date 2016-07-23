@@ -343,36 +343,46 @@ function userGroupEdit(userGroupId, userGroupName, catgid){
 	);
 }
 function userGroupActive(userGroupId, isActive){
-
 	$("#userGroupId").val(userGroupId);
-	var msgstatus='deactivate';
-  	if(isActive){
-   		msgstatus='activate';
-  	}
-  	var answer = confirm('Are you sure want to '+msgstatus+ '?');
-  	if (answer)
-  	{
-	    function onSuccess(response){
-	      initialize();
-	    }
-	    function onFailure(error){
-		    if(error == "CannotDeactivateUserExists"){
-	            alert(message.cannot_deactivate_usergroup)
-	        }else{
-	            alert(error)
+	var msgstatus = message.deactive_message;
+	if(isActive){
+	    msgstatus = message.active_message;
+	}
+	$( ".warning-confirm" ).dialog({
+	    title: message.title_status_change,
+	    buttons: {
+	        Ok: function() {
+	            $( this ).dialog( "close" );
+
+	            function onSuccess(response){
+			      initialize();
+			    }
+			    function onFailure(error){
+				    if(error == "CannotDeactivateUserExists"){
+			            alert(message.cannot_deactivate_usergroup)
+			        }else{
+			            alert(error)
+			        }
+			    }
+			    mirror.changeAdminUserGroupStatus(userGroupId, isActive,
+					function (error, response) {
+			            if (error == null){
+			                onSuccess(response);
+			            }
+			            else {
+			                onFailure(error);
+			            }
+			        }
+				);
+	        },
+	        Cancel: function() {
+	            $( this ).dialog( "close" );
 	        }
+	    },
+	    open: function ()  {
+	        $(".warning-message").html(msgstatus);
 	    }
-	    mirror.changeAdminUserGroupStatus(userGroupId, isActive,
-			function (error, response) {
-	            if (error == null){
-	                onSuccess(response);
-	            }
-	            else {
-	                onFailure(error);
-	            }
-	        }
-		);
-    }
+	});
 }
 
 $('.checkbox-full-check').click(function(event) {

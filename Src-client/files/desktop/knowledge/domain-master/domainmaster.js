@@ -169,34 +169,46 @@ function displayEdit (domainId,domainName) {
 
 //activate/deactivate domain master
 function changeStatus (domainId,isActive) {
-  var msgstatus='deactivate';
+
+  var msgstatus = message.deactive_message;
   if(isActive){
-    msgstatus='activate';
+      msgstatus = message.active_message;
   }
-  var answer = confirm('Are you sure want to '+msgstatus+ '?');
-  if (answer)
-  {
-    function onSuccess(response){
-      getDomains ();
-      $("#search-domain-name").val('');
-    }
-    function onFailure(error){
-      if(error == "TransactionExists"){
-          alert(message.trasaction_exists)
-      }else{
-          alert(error)
+  $( ".warning-confirm" ).dialog({
+      title: message.title_status_change,
+      buttons: {
+          Ok: function() {
+            $( this ).dialog( "close" );
+
+            function onSuccess(response){
+              getDomains ();
+              $("#search-domain-name").val('');
+            }
+            function onFailure(error){
+              if(error == "TransactionExists"){
+                  alert(message.trasaction_exists)
+              }else{
+                  alert(error)
+              }
+            }
+            mirror.changeDomainStatus(domainId, isActive,
+              function (error, response) {
+                if (error == null){
+                  onSuccess(response);
+                }
+                else {
+                  onFailure(error);
+                }
+              });
+          },
+          Cancel: function() {
+              $( this ).dialog( "close" );
+          }
+      },
+      open: function ()  {
+          $(".warning-message").html(msgstatus);
       }
-    }
-    mirror.changeDomainStatus(domainId, isActive,
-      function (error, response) {
-        if (error == null){
-          onSuccess(response);
-        }
-        else {
-          onFailure(error);
-        }
-      });
-    }
+  });
 }
 
 //filter process

@@ -153,22 +153,35 @@ function statNature_edit(statNatureId, statNatureName){
     $("#statutory-nature-name").focus();
 }
 function statNature_active(statNatureId, isActive){
-    var msgstatus='deactivate';
+
+    var msgstatus = message.deactive_message;
     if(isActive){
-        msgstatus='activate';
+        msgstatus = message.active_message;
     }
-    var answer = confirm('Are you sure want to '+msgstatus+ '?');
-    if (answer)
-    {
-        function success(status, data){
-            $("#search-statutory-nature-name").val('');
-            initialize();
+    $( ".warning-confirm" ).dialog({
+        title: message.title_status_change,
+        buttons: {
+            Ok: function() {
+                $( this ).dialog( "close" );
+
+                function success(status, data){
+                    $("#search-statutory-nature-name").val('');
+                    initialize();
+                }
+                function failure(error){
+                    alert(error)
+                }
+                mirror.changeStatutoryNatureStatus(parseInt(statNatureId), isActive, success, failure);
+                
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
+            }
+        },
+        open: function ()  {
+            $(".warning-message").html(msgstatus);
         }
-        function failure(error){
-            alert(error)
-        }
-        mirror.changeStatutoryNatureStatus(parseInt(statNatureId), isActive, success, failure);
-    }
+    });
 }
 $("#search-statutory-nature-name").keyup(function() {
     var count=0;

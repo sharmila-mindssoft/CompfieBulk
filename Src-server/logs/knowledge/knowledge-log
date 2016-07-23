@@ -26,3 +26,167 @@ KeyError: 0
     count = rows[0][0]
 KeyError: 0
 
+2016-07-23 13:48:11,985 - knowledge_logger - main.py-handle-api- : %d format: a number is required, not str
+2016-07-23 13:48:11,986 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 234, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technocontroller.py", line 68, in process_techno_request
+    result = get_clients(db, request_frame, session_user)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/technomastercontroller.py", line 335, in get_clients
+    group_company_list = get_group_companies_for_user_with_max_unit_count(db, session_user)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/technomaster.py", line 927, in get_group_companies_for_user_with_max_unit_count
+    return return_group_companies_with_max_unit_count(db, result)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/technomaster.py", line 934, in return_group_companies_with_max_unit_count
+    client_domains = get_client_domains(db, group_company["client_id"])
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/technomaster.py", line 73, in get_client_domains
+    rows = db.get_data(tblClientDomains, columns, condition, [client_id])
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 253, in get_data
+    rows = self.select_all(query, condition_val)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/dbase.py", line 187, in select_all
+    cursor.execute(query, param)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/cursors.py", line 159, in execute
+    query = query % db.literal(args)
+TypeError: %d format: a number is required, not str
+
+2016-07-23 16:07:27,074 - knowledge_logger - main.py-handle-api- : get_statutory_mappings() got an unexpected keyword argument 'for_approve'
+2016-07-23 16:07:27,075 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 46, in process_knowledge_transaction_request
+    result = process_get_statutory_mappings(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 116, in process_get_statutory_mappings
+    statutory_mappings = get_statutory_mappings(db, user_id, for_approve=False)
+TypeError: get_statutory_mappings() got an unexpected keyword argument 'for_approve'
+
+2016-07-23 16:07:27,251 - knowledge_logger - main.py-handle-api- : global name 'statutory_id' is not defined
+2016-07-23 16:07:27,252 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 39, in process_knowledge_transaction_request
+    result = process_get_statutory_mapping_master(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 100, in process_get_statutory_mapping_master
+    statutories = get_statutory_master(db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 769, in get_statutory_master
+    frame_parent_mappings(result)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 790, in frame_parent_mappings
+    if statutory_id is not None :
+NameError: global name 'statutory_id' is not defined
+
+2016-07-23 16:07:53,618 - knowledge_logger - main.py-handle-api- : get_statutory_mappings() got an unexpected keyword argument 'for_approve'
+2016-07-23 16:07:53,618 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 46, in process_knowledge_transaction_request
+    result = process_get_statutory_mappings(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 116, in process_get_statutory_mappings
+    statutory_mappings = get_statutory_mappings(db, user_id, for_approve=False)
+TypeError: get_statutory_mappings() got an unexpected keyword argument 'for_approve'
+
+2016-07-23 16:07:53,673 - knowledge_logger - main.py-handle-api- : global name 'statutory_id' is not defined
+2016-07-23 16:07:53,673 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 39, in process_knowledge_transaction_request
+    result = process_get_statutory_mapping_master(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 100, in process_get_statutory_mapping_master
+    statutories = get_statutory_master(db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 769, in get_statutory_master
+    frame_parent_mappings(result)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 790, in frame_parent_mappings
+    if statutory_id is not None :
+NameError: global name 'statutory_id' is not defined
+
+2016-07-23 16:13:56,128 - knowledge_logger - main.py-handle-api- : get_statutory_mappings() got an unexpected keyword argument 'for_approve'
+2016-07-23 16:13:56,129 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 46, in process_knowledge_transaction_request
+    result = process_get_statutory_mappings(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 116, in process_get_statutory_mappings
+    statutory_mappings = get_statutory_mappings(db, user_id, for_approve=False)
+TypeError: get_statutory_mappings() got an unexpected keyword argument 'for_approve'
+
+2016-07-23 16:13:56,366 - knowledge_logger - main.py-handle-api- : global name 'statutory_id' is not defined
+2016-07-23 16:13:56,367 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 39, in process_knowledge_transaction_request
+    result = process_get_statutory_mapping_master(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 100, in process_get_statutory_mapping_master
+    statutories = get_statutory_master(db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 769, in get_statutory_master
+    frame_parent_mappings(result)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 790, in frame_parent_mappings
+    if statutory_id is not None :
+NameError: global name 'statutory_id' is not defined
+
+2016-07-23 16:32:56,309 - knowledge_logger - main.py-handle-api- : get_statutory_mappings() got an unexpected keyword argument 'for_approve'
+2016-07-23 16:32:56,309 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 46, in process_knowledge_transaction_request
+    result = process_get_statutory_mappings(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 116, in process_get_statutory_mappings
+    statutory_mappings = get_statutory_mappings(db, user_id, for_approve=False)
+TypeError: get_statutory_mappings() got an unexpected keyword argument 'for_approve'
+
+2016-07-23 16:32:56,479 - knowledge_logger - main.py-handle-api- : global name 'statutory_id' is not defined
+2016-07-23 16:32:56,479 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 39, in process_knowledge_transaction_request
+    result = process_get_statutory_mapping_master(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 100, in process_get_statutory_mapping_master
+    statutories = get_statutory_master(db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 769, in get_statutory_master
+    frame_parent_mappings(result)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 790, in frame_parent_mappings
+    if statutory_id is not None :
+NameError: global name 'statutory_id' is not defined
+
+2016-07-23 16:40:54,201 - knowledge_logger - main.py-handle-api- : get_statutory_mappings() got an unexpected keyword argument 'for_approve'
+2016-07-23 16:40:54,201 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 46, in process_knowledge_transaction_request
+    result = process_get_statutory_mappings(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 116, in process_get_statutory_mappings
+    statutory_mappings = get_statutory_mappings(db, user_id, for_approve=False)
+TypeError: get_statutory_mappings() got an unexpected keyword argument 'for_approve'
+
+2016-07-23 16:40:54,250 - knowledge_logger - main.py-handle-api- : global name 'statutory_id' is not defined
+2016-07-23 16:40:54,251 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 142, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/main.py", line 250, in handle_knowledge_transaction
+    return controller.process_knowledge_transaction_request(request, db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 39, in process_knowledge_transaction_request
+    result = process_get_statutory_mapping_master(db, user_id)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/controller/knowledgetransactioncontroller.py", line 100, in process_get_statutory_mapping_master
+    statutories = get_statutory_master(db)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 769, in get_statutory_master
+    frame_parent_mappings(result)
+  File "/home/solar/projects/Aparajitha-SAAS/Src-server/server/database/knowledgemaster.py", line 790, in frame_parent_mappings
+    if statutory_id is not None :
+NameError: global name 'statutory_id' is not defined
+

@@ -455,36 +455,48 @@ function validateEmail($email) {
 }
 
 function clientgroup_active(clientId, isActive){
-    var msgstatus='deactivate';
+
+    var msgstatus = message.deactive_message;
     if(isActive){
-        msgstatus='activate';
+        msgstatus = message.active_message;
     }
-    var answer = confirm('Are you sure want to '+msgstatus+ '?');
-    if (answer)
-    {
-        $("#clientgroup-id").val(clientId);
-        function onSuccess(data){
-          initialize();
-        }
-        function onFailure(error){
-            if(error == "CannotDeactivateClient"){
-                alert(message.cannot_deactivate_client);
-            }
-            else{
-                displayMessage(error);
-            }
-        }
-        mirror.changeClientGroupStatus( parseInt(clientId), isActive,
-            function (error, response){
-                if(error == null){
-                    onSuccess(response);
+    $( ".warning-confirm" ).dialog({
+        title: message.title_status_change,
+        buttons: {
+            Ok: function() {
+                $( this ).dialog( "close" );
+
+                $("#clientgroup-id").val(clientId);
+                function onSuccess(data){
+                  initialize();
                 }
-                else{
-                    onFailure(error);
+                function onFailure(error){
+                    if(error == "CannotDeactivateClient"){
+                        alert(message.cannot_deactivate_client);
+                    }
+                    else{
+                        displayMessage(error);
+                    }
                 }
+                mirror.changeClientGroupStatus( parseInt(clientId), isActive,
+                    function (error, response){
+                        if(error == null){
+                            onSuccess(response);
+                        }
+                        else{
+                            onFailure(error);
+                        }
+                    }
+                );
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
             }
-        );
-    }
+        },
+        open: function ()  {
+            $(".warning-message").html(msgstatus);
+        }
+    });
 }
 function clientgroup_edit(clientGroupId){
     clearMessage();
