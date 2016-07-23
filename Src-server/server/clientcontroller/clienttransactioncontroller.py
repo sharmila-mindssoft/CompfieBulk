@@ -7,12 +7,12 @@ from server.clientdatabase.clienttransaction import *
 
 from server.clientdatabase.general import (
     verify_password, get_user_company_details,
-    get_countries_for_user, get_domains_for_user, 
+    get_countries_for_user, get_domains_for_user,
     get_business_groups_for_user, get_legal_entities_for_user,
     get_divisions_for_user, get_client_settings, get_admin_info,
     get_compliance_frequency, get_users_by_unit_and_domain,
-    get_compliance_name_by_id
-    )
+    get_compliance_name_by_id, validate_compliance_due_date
+)
 
 
 __all__ = [
@@ -285,7 +285,7 @@ def process_save_past_records(
                 entered due date".format(compliance_name, compliance.due_date)
             return clienttransactions.SavePastRecordsFailed(error=error)
     for compliance in compliance_list:
-        if save_past_record(db, 
+        if save_past_record(db,
                 compliance.unit_id, compliance.compliance_id, compliance.due_date,
                 compliance.completion_date, compliance.documents, compliance.validity_date,
                 compliance.completed_by, client_id
