@@ -281,12 +281,12 @@ def run_web_front_end(port, knowledge_server_address):
         )
         web_server.low_level_url(
             r"/css/(.*)",
-            StaticFileHandler, 
+            StaticFileHandler,
             dict(path=css_path)
         )
         web_server.low_level_url(
             r"/js/(.*)",
-            StaticFileHandler, 
+            StaticFileHandler,
             dict(path=js_path)
         )
         web_server.low_level_url(

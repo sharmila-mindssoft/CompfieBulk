@@ -30,7 +30,8 @@ __all__ = [
     "check_duplicate_geography", "save_geography",
     "update_geography", "change_geography_status",
     "save_statutory", "update_statutory", "get_statutory_master",
-    "get_statutory_by_id", "get_country_wise_level_1_statutoy"
+    "get_statutory_by_id", "get_country_wise_level_1_statutoy",
+    "check_duplicate_statutory"
 ]
 
 STATUTORY_PARENTS = {}
@@ -269,8 +270,10 @@ def get_statutory_levels(db):
         "level_id", "level_position", "level_name",
         "country_id", "domain_id"
     ]
-    condition = " 1 ORDER BT level_position"
+    condition = " 1 ORDER BY level_position"
     result = db.get_data("tbl_statutory_levels", columns, condition)
+    print result
+    print '*' * 50
     return return_statutory_levels(result)
 
 def return_statutory_levels(data):
@@ -490,12 +493,12 @@ def get_geographies_for_user_with_mapping(db, user_id):
 
     country_ids = None
     if ((user_id is not None) and (user_id != 0)):
-        country_ids = get_user_countries(user_id)
+        country_ids = get_user_countries(db, user_id)
     columns = "t1.geography_id, t1.geography_name, t1.parent_names,"
     columns += "t1.level_id,t1.parent_ids, t1.is_active,"
     columns += " t2.country_id, t3.country_name"
     tables = [
-        db.tblGeographies, db.tblGeographyLevels, db.tblCountries
+        tblGeographies, tblGeographyLevels, tblCountries
     ]
     aliases = ["t1", "t2", "t3"]
     join_type = " INNER JOIN"
@@ -695,7 +698,7 @@ def save_statutory(db, name, level_id, parent_ids, parent_names, user_id) :
         return True
 
 def update_statutory(db, statutory_id, name, parent_ids, parent_names, updated_by) :
-    oldData = db.get_statutory_by_id(statutory_id)
+    oldData = get_statutory_by_id(db, statutory_id)
     if bool(oldData) is False:
         return False
 
@@ -704,8 +707,8 @@ def update_statutory(db, statutory_id, name, parent_ids, parent_names, updated_b
         "statutory_name", "parent_ids", "parent_names",
         "updated_by"
     ]
-    values = [name, parent_ids, parent_names, updated_by]
-    where_condition = " statutory_id"
+    values = [name, parent_ids, parent_names, str(updated_by)]
+    where_condition = " statutory_id = %s"
     param = []
     param.extend(values)
     param.append(statutory_id)
@@ -715,8 +718,8 @@ def update_statutory(db, statutory_id, name, parent_ids, parent_names, updated_b
         db.save_activity(updated_by, 10, action)
         qry = "SELECT statutory_id, statutory_name, parent_ids \
             from tbl_statutories \
-            WHERE parent_ids like '%s'"
-        rows = db.select_all(qry, (str("%" + str(statutory_id) + ",%")))
+            WHERE parent_ids like %s"
+        rows = db.select_all(qry, [str("%" + str(statutory_id) + ",%")])
         columns = ["statutory_id", "statutory_name", "parent_ids"]
         result = convert_to_dict(rows, columns)
 
@@ -760,17 +763,17 @@ def get_statutory_master(db, statutory_id=None):
         on t2.domain_id = t4.domain_id"
     if statutory_id is not None :
         query = query + " WHERE t1.statutory_id = %s"
-        rows = db.select_all(query, [statutory_id])
+        rows = db.select_all(query, [int(statutory_id)])
     else :
         rows = db.select_all(query)
     result = []
     if rows :
         result = convert_to_dict(rows, columns)
-        frame_parent_mappings(result)
+        frame_parent_mappings(db, result, statutory_id)
         # self.set_statutory_parent_mappings(result)
     return return_statutory_master(result)
 
-def frame_parent_mappings(data):
+def frame_parent_mappings(db, data, statutory_id=None):
     columns = [
         "statutory_id", "statutory_name",
         "level_id", "parent_ids",
@@ -810,7 +813,9 @@ def frame_parent_mappings(data):
             if pid > 0 :
                 names.append(statu_names.get(pid))
         names.append(d["statutory_name"])
-        STATUTORY_PARENTS[d["statutory_id"]] = ">> ".join(names)
+        STATUTORY_PARENTS[d["statutory_id"]] = [
+            d["statutory_name"], ">> ".join(names), p_ids
+        ]
 
 def return_statutory_master(data):
     statutories = {}
@@ -828,7 +833,7 @@ def return_statutory_master(data):
         statutory = core.Statutory(
             statutory_id, d["statutory_name"],
             d["level_id"], parent_ids, parent_ids[-1],
-            mappings
+            mappings[1]
         )
 
         country_wise = statutories.get(country_id)
@@ -844,9 +849,29 @@ def return_statutory_master(data):
         statutories[country_id] = country_wise
     return statutories
 
+def check_duplicate_statutory(db, parent_ids, statutory_id, domain_id=None) :
+    query = "SELECT T1.statutory_id, T1.statutory_name, T1.level_id, T2.domain_id \
+        FROM tbl_statutories T1 \
+        INNER JOIN tbl_statutory_levels T2\
+        ON T1.level_id = T2.level_id \
+        WHERE T1.parent_ids='%s' " % (parent_ids)
+    if statutory_id is not None :
+        query = query + " AND T1.statutory_id != %s" % statutory_id
+
+    if domain_id is not None :
+        query = query + " AND domain_id = %s" % (domain_id)
+
+    rows = db.select_all(query)
+    columns = ["statutory_id", "statutory_name", "level_id", "domain_id"]
+    result = []
+    if rows :
+        result = convert_to_dict(rows, columns)
+    return result
+
+
 def get_country_wise_level_1_statutoy(db) :
     if bool(STATUTORY_PARENTS) is False:
-        get_statutory_master()
+        get_statutory_master(db)
     query = "SELECT t1.statutory_id, t1.statutory_name, \
         t1.level_id, t1.parent_ids, t2.country_id, \
         t3.country_name, t2.domain_id, t4.domain_name \

@@ -3,13 +3,14 @@ from protocol import (clientmasters, core, login)
 from server.controller.corecontroller import process_user_menus
 from server.constants import RECORD_DISPLAY_COUNT
 from server import logger
+from server.clientdatabase.tables import *
 from server.clientdatabase.clientmaster import *
 from server.clientdatabase.general import (
     get_domains_for_user,
     get_countries_for_user, get_countries, get_domains,
     get_business_groups_for_user, get_legal_entities_for_user,
     get_divisions_for_user, get_units_for_user, have_compliances,
-    is_seating_unit
+    is_seating_unit, get_user_company_details
     )
 __all__ = [
     "process_client_master_requests"
@@ -158,15 +159,22 @@ def process_get_service_providers(db, request, session_user, client_id):
 # To validate and Save service provider
 ########################################################
 def process_save_service_provider(db, request, session_user, client_id):
-    service_provider_id = generate_new_service_provider_id(db, client_id)
-    if is_duplicate_service_provider(db,
+    # create fail class for false res status
+
+    service_provider_id = None
+    if is_duplicate_service_provider(
+        db,
         service_provider_id,
-        request.service_provider_name, client_id
+        request.service_provider_name
     ) :
         return clientmasters.ServiceProviderNameAlreadyExists()
-    elif save_service_provider(db, 
-        service_provider_id, request, session_user, client_id
-    ) :
+    res = save_service_provider(
+        db,
+        request, session_user
+    )
+    if res is False :
+        return clientmasters.SaveServiceProviderSuccess()
+    else :
         return clientmasters.SaveServiceProviderSuccess()
 
 
@@ -180,9 +188,10 @@ def process_update_service_provider(db, request, session_user, client_id):
         request.service_provider_id, client_id
     ):
         return clientmasters.InvalidServiceProviderId()
-    elif is_duplicate_service_provider(db, 
+    elif is_duplicate_service_provider(
+        db,
         request.service_provider_id,
-        request.service_provider_name, client_id
+        request.service_provider_name
     ) :
         return clientmasters.ServiceProviderNameAlreadyExists()
     elif update_service_provider(db, request, session_user, client_id) :
@@ -199,13 +208,15 @@ def process_change_service_provider_status(db, request, session_user, client_id)
         request.service_provider_id, client_id
     ):
         return clientmasters.InvalidServiceProviderId()
-    elif not is_service_provider_in_contract(db, request.service_provider_id):
+    elif is_service_provider_in_contract(db, request.service_provider_id) is False:
         return clientmasters.CannotChangeStatusOfContractExpiredSP()
-    elif is_user_exists_under_service_provider(db, 
+    elif is_user_exists_under_service_provider(
+        db,
         request.service_provider_id
     ):
         return clientmasters.CannotDeactivateUserExists()
-    elif update_service_provider_status(db, 
+    elif update_service_provider_status(
+        db,
         request.service_provider_id,
         is_active, session_user, client_id
     ):
@@ -218,13 +229,13 @@ def process_get_forms(db, client_id) :
     result_rows = get_forms(db, client_id)
     forms = []
     for row in result_rows:
-        parent_menu = None if row[6] == None else row[6]
+        parent_menu = None if row["parent_menu"] == None else row["parent_menu"]
         form = core.Form(
-            form_id=row[0],
-            form_name=row[3],
-            form_url=row[4],
+            form_id=row["form_id"],
+            form_name=row["form_name"],
+            form_url=row["form_url"],
             parent_menu=parent_menu,
-            form_type=row[2]
+            form_type=row["form_type"]
         )
         forms.append(form)
     return process_user_menus(forms)
@@ -236,10 +247,10 @@ def process_get_user_privilege_details_list(db, client_id):
     user_group_list = []
     rows = get_user_privilege_details_list(db, client_id)
     for row in rows:
-        user_group_id = int(row[0])
-        user_group_name = row[1]
-        form_ids = [int(x) for x in row[2].split(",")]
-        is_active = bool(row[3])
+        user_group_id = int(row["user_group_id"])
+        user_group_name = row["user_group_name"]
+        form_ids = [int(x) for x in row["form_ids"].split(",")]
+        is_active = bool(row["is_active"])
         user_group_list.append(
             clientmasters.ClientUserGroup(
                 user_group_id,
@@ -264,12 +275,14 @@ def process_get_user_privileges(db, request, session_user, client_id):
 ########################################################
 def process_save_user_privileges(db, request, session_user, client_id):
     user_group_id = generate_new_user_privilege_id(db, client_id)
-    if is_duplicate_user_privilege(db, 
+    if is_duplicate_user_privilege(
+        db,
         user_group_id,
         request.user_group_name, client_id
     ) :
         return clientmasters.UserGroupNameAlreadyExists()
-    elif save_user_privilege(db, 
+    elif save_user_privilege(
+        db,
         user_group_id, request, session_user, client_id
     ) :
         return clientmasters.SaveUserPrivilegesSuccess()
@@ -283,7 +296,8 @@ def process_update_user_privileges(db, request, session_user, client_id):
         request.user_group_id, client_id
     ):
         return clientmasters.InvalidUserGroupId()
-    elif is_duplicate_user_privilege(db, 
+    elif is_duplicate_user_privilege(
+        db,
         request.user_group_id,
         request.user_group_name, client_id
     ) :
@@ -300,11 +314,13 @@ def process_change_user_privilege_status(db, request, session_user, client_id):
         request.user_group_id, client_id
     ):
         return clientmasters.InvalidUserGroupId()
-    elif is_user_exists_under_user_group(db, 
+    elif is_user_exists_under_user_group(
+        db,
         request.user_group_id
     ):
         return clientmasters.CannotDeactivateUserExists()
-    elif update_user_privilege_status(db, 
+    elif update_user_privilege_status(
+        db,
         request.user_group_id, request.is_active,
         session_user, client_id
     ):
@@ -314,10 +330,10 @@ def process_change_user_privilege_status(db, request, session_user, client_id):
 # To get the list of all users with details
 ########################################################
 def process_get_client_users(db, request, session_user, client_id):
-    user_company_info = get_user_company_details(db,
-        session_user, client_id
+    user_company_info = get_user_company_details(
+        db,
+        session_user
     )
-    #import from general.py
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
@@ -326,13 +342,16 @@ def process_get_client_users(db, request, session_user, client_id):
     user_domain_list = get_domains_for_user(db, session_user, client_id)
     country_list = get_countries(db)
     domain_list = get_domains(db)
-    business_group_list = get_business_groups_for_user(db, 
+    business_group_list = get_business_groups_for_user(
+        db,
         business_group_ids
     )
-    legal_entity_list = get_legal_entities_for_user(db, 
+    legal_entity_list = get_legal_entities_for_user(
+        db,
         legal_entity_ids
     )
-    division_list = get_divisions_for_user(db,
+    division_list = get_divisions_for_user(
+        db,
         division_ids
     )
     unit_list = get_units_for_user(db, None)
@@ -363,17 +382,19 @@ def process_get_client_users(db, request, session_user, client_id):
 # To validate and save a user
 ########################################################
 def process_save_client_user(db, request, session_user, client_id):
-    user_id = db.generate_new_user_id(client_id)
-    if (db.get_no_of_remaining_licence() <= 0):
+    # user_id = db.generate_new_user_id(client_id)
+    user_id = None
+    if (get_no_of_remaining_licence(db) <= 0):
         return clientmasters.UserLimitExceeds()
-    elif db.is_duplicate_user_email(user_id, request.email_id, client_id) :
+    elif is_duplicate_user_email(db, user_id, request.email_id) :
         return clientmasters.EmailIdAlreadyExists()
-    elif db.is_duplicate_employee_code(
+    elif is_duplicate_employee_code(
+        db,
         user_id,
-        request.employee_code.replace(" ",""), client_id
+        request.employee_code.replace(" ", "")
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
-    elif db.save_user(user_id, request, session_user, client_id) :
+    elif save_user(db, request, session_user, client_id) :
         return clientmasters.SaveClientUserSuccess()
 
 ########################################################
@@ -382,9 +403,10 @@ def process_save_client_user(db, request, session_user, client_id):
 def process_update_client_user(db, request, session_user, client_id):
     if db.is_invalid_id(tblUsers, "user_id", request.user_id, client_id) :
         return clientmasters.InvalidUserId()
-    elif is_duplicate_employee_code(db, 
+    elif is_duplicate_employee_code(
+        db,
         request.user_id,
-        request.employee_code.replace(" ",""), client_id
+        request.employee_code.replace(" ", ""), client_id
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
     elif update_user(db, request, session_user, client_id) :
@@ -400,7 +422,8 @@ def process_change_client_user_status(db, request, session_user, client_id):
         return clientmasters.CannotChangePrimaryAdminStatus()
     elif have_compliances(db, request.user_id) and request.is_active in [False, 0]:
         return clientmasters.ReassignCompliancesBeforeDeactivate()
-    elif update_user_status(db, 
+    elif update_user_status(
+        db,
         request.user_id,
         request.is_active, session_user, client_id
     ):
@@ -416,7 +439,8 @@ def process_change_admin_status(db, request, session_user, client_id):
         return clientmasters.CannotChangePrimaryAdminStatus()
     elif is_service_proivder_user(db, request.user_id):
         return clientmasters.CannotPromoteServiceProvider()
-    elif update_admin_status(db, 
+    elif update_admin_status(
+        db,
         request.user_id,
         request.is_admin, session_user, client_id
     ):
@@ -426,14 +450,14 @@ def process_change_admin_status(db, request, session_user, client_id):
 # To get all the units under the given client
 ########################################################
 def process_get_units(db, request, session_user, client_id):
-    user_company_info = get_user_company_details(db, 
+    user_company_info = get_user_company_details(
+        db,
         session_user, client_id
     )
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
     business_group_ids = user_company_info[3]
-    #import from general.py
     business_group_list = get_business_groups_for_user(
         db, business_group_ids
     )
@@ -457,7 +481,6 @@ def process_get_units(db, request, session_user, client_id):
 def process_close_unit(db, request, session_user, client_id):
     session_user = session_user
     password = request.password
-    #import from general.py
     if verify_password(db, password, session_user, client_id):
         if is_seating_unit(db, request.unit_id):
             return clientmasters.CannotCloseUnit()

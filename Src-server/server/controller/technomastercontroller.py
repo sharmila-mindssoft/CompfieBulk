@@ -25,7 +25,7 @@ from server.database.technomaster import *
 
 __all__ = [
     "get_client_groups",
-    "save_client_group",
+    "save_client_group_data",
     "update_client_group",
     "change_client_group_status",
     "save_client",
@@ -79,7 +79,7 @@ def save_client_group(db, request, session_user):
         return technomasters.GroupNameAlreadyExists()
     elif is_duplicate_short_name(db, request.short_name, client_id):
         return technomasters.ShortNameAlreadyExists()
-    elif not is_logo_in_image_format(db, request.logo):
+    elif not is_logo_in_image_format(request.logo):
         return technomasters.NotAnImageFile()
     else:
         country_ids = ",".join(str(x) for x in request.country_ids)
@@ -92,13 +92,14 @@ def save_client_group(db, request, session_user):
         )
         try:
             is_db_created = create_db.begin_process()
+            save_client_group_data(db, client_id, request, session_user)
             save_client_countries(db, client_id, request.country_ids)
             save_client_domains(db, client_id, request.domain_ids)
             save_incharge_persons(db, request, client_id)
             save_client_user(db, request, session_user, client_id)
             create_db.update_client_db_details()
             notify_incharge_persons(db, request)
-            if is_db_created :
+            if is_db_created is True :
                 send_client_credentials_thread = threading.Thread(
                     target=send_client_credentials, args=[
                         request.short_name, request.email_id, result[1]
@@ -107,9 +108,12 @@ def save_client_group(db, request, session_user):
                 send_client_credentials_thread.start()
                 return technomasters.SaveClientGroupSuccess()
             else :
-                raise Exception("Error in creating database")
-        except Exception:
+                # raise Exception("Error in creating database")
+                # raise Exception(is_db_created)
+                return is_db_created
+        except Exception, e:
             create_db.delete_database()
+            return e
 
 
 ########################################################
@@ -208,8 +212,10 @@ def validate_duplicate_data(db, request, session_user):
     new_unit_list = []
     old_unit_list = []
     for country in country_wise_units :
+        c_id = country.country_id
         units = country.units
         for unit in units :
+            unit.country_id = c_id
             unit_id = unit.unit_id
             unit_name = unit.unit_name
             if is_duplicate_unit_code(db, unit_id, unit.unit_code, client_id) :
@@ -257,7 +263,7 @@ def save_client(db, request, session_user):
         if legal_entity is not None :
             leg_name = legal_entity.legal_entity_name
             leg_id = save_legal_entity(
-                db, client_id, leg_name, b_group_name, session_user
+                db, client_id, leg_name, b_group_id, session_user
             )
             if leg_id is False :
                 return False
@@ -381,7 +387,7 @@ def reactivate_unit(db, request, session_user):
 ########################################################
 def get_client_profile(db, request, session_user):
     client_ids = get_user_clients(db, session_user)
-    if client_id is None:
+    if client_ids is None:
         return technomasters.UserIsNotResponsibleForAnyClient()
     else:
         profiles = get_profiles(db, client_ids)

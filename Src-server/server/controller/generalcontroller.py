@@ -10,7 +10,8 @@ from server.common import (save_file_in_path)
 from server.database.admin import *
 from server.database.general import (
     get_user_form_ids,
-    get_notifications
+    get_notifications, get_audit_trails,
+    update_profile
 )
 
 __all__ = [

@@ -143,7 +143,7 @@ class Database(object):
             elif type(param) is list :
                 cursor.execute(query, param)
             else :
-                cursor.execute(query, (param))
+                cursor.execute(query)
             return True
         except mysql.Error, e :
             print e
@@ -190,6 +190,7 @@ class Database(object):
             res = cursor.fetchall()
             return res
         except mysql.Error, e:
+            print e
             logger.logClientApi("select_all", query)
             logger.logClientApi("select_all", e)
             return
@@ -238,12 +239,19 @@ class Database(object):
                     params.append(p.strip())
             param = params
         elif type(columns) is list :
-            param = columns
+            param = []
+            for c in columns :
+                if "as " in c :
+                    param.append(c.split('as ')[1].strip())
+                elif '.' in c :
+                    param.append(c.split('.')[1].strip())
+                else :
+                    param.append(c.strip())
             columns = ", ".join(columns)
 
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None:
-            query += " WHERE %s" % condition
+            query += " WHERE %s " % condition
             if order is not None :
                 query += order
 
@@ -256,6 +264,7 @@ class Database(object):
             if order is not None :
                 query += order
             rows = self.select_all(query)
+        print "get_data", rows
         result = []
         if rows :
             result = convert_to_dict(rows, param)
@@ -280,7 +289,14 @@ class Database(object):
                     params.append(p.strip())
             param = params
         elif type(columns) is list :
-            param = columns
+            param = []
+            for c in columns :
+                if "as " in c :
+                    param.append(c.split('as ')[1].strip())
+                elif '.' in c :
+                    param.append(c.split('.')[1].strip())
+                else :
+                    param.append(c.strip())
             columns = ", ".join(columns)
 
         query = "SELECT %s FROM " % columns
@@ -328,7 +344,7 @@ class Database(object):
         query = """INSERT INTO %s %s """ % (table, columns)
         query += " VALUES (%s) " % (",".join(stringValue))
         try:
-            return self.execute_insert(query, values)
+            return int(self.execute_insert(query, values))
         except mysql.Error, e:
             print e
             logger.logKnowledgeApi("insert", query)
@@ -372,8 +388,11 @@ class Database(object):
                 query += column+" = %s "
 
         query += " WHERE " + condition
+        print query
+        print values
         try:
             res = self.execute(query, values)
+            print res
             return True
         except mysql.Error, e:
             logger.logKnowledgeApi("update", query)
@@ -427,15 +446,21 @@ class Database(object):
     # specified column
     ########################################################
     def append(self, table, column, value, condition):
-        rows = self.get_data(table, column, condition)
-        currentValue = rows[0][0]
-        if currentValue is not None:
-            newValue = currentValue+","+str(value)
-        else:
-            newValue = str(value)
-        columns = [column]
-        values = [newValue]
-        return self.update(table, columns, values, condition)
+        try :
+            rows = self.get_data(table, column, condition)
+            print column
+            currentValue = rows[0][column]
+            if currentValue is not None:
+                newValue = currentValue+","+str(value)
+            else:
+                newValue = str(value)
+            columns = [column]
+            values = [newValue]
+            res = self.update(table, columns, values, condition)
+            return res
+        except mysql.Error, e :
+            print e
+            return False
 
     ########################################################
     # To increment value in the specified column by the
@@ -445,7 +470,7 @@ class Database(object):
 
     def increment(self, table, column, condition, value=1):
         rows = self.get_data(table, column, condition)
-        currentValue = rows[0][0]
+        currentValue = rows[0][column]
         if currentValue is not None:
             newValue = int(currentValue) + value
         else:

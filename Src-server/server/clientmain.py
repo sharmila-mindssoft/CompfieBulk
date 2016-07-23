@@ -12,7 +12,6 @@ from protocol import (
 )
 # from server.clientdatabase import ClientDatabase
 from server.dbase import Database
-from controller.generalcontroller import process_uploaded_file
 import clientcontroller as controller
 import mobilecontroller as mobilecontroller
 from webfrontend.client import CompanyManager
@@ -105,7 +104,6 @@ class API(object):
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
                 if company_server_ip.ip_address == ip and company_server_ip.port == port :
-                # if port :
                     try:
                         db = Database(
                             company.db_ip.ip_address,

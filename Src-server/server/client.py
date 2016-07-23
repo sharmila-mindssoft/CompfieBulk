@@ -7,7 +7,10 @@ from replication.protocol import (
     InvalidReceivedCount,
     GetClientChanges
 )
-
+from server.clientdatabase.general import (
+    get_countries, get_domains, get_trail_id,
+    update_traild_id, reset_domain_trail_id
+)
 import logger
 
 
@@ -160,7 +163,7 @@ class ReplicationManager(object) :
         country_list = None
         self._db.begin()
         try:
-            country_list = self._db.get_countries()
+            country_list = get_countries(self._db)
             for c in country_list :
                 self._countries.append(int(c.country_id))
             self._db.commit()
@@ -174,7 +177,7 @@ class ReplicationManager(object) :
         domain_list = None
         self._db.begin()
         try:
-            domain_list = self._db.get_domains()
+            domain_list = get_domains(self._db)
             for d in domain_list :
                 self._domains.append(int(d.domain_id))
             self._db.commit()
@@ -188,7 +191,7 @@ class ReplicationManager(object) :
         # assert self._received_count is None
         self._db.begin()
         try:
-            self._received_count = self._db.get_trail_id()
+            self._received_count = get_trail_id(self._db)
             self._db.commit()
         except Exception, e:
             print e
@@ -365,7 +368,7 @@ class ReplicationManager(object) :
                 self._execute_insert_statement(changes_list, error_ok=True)
                 changes_list = []
             # print "audit_trail_id updated ", self._temp_count
-            self._db.update_traild_id(self._temp_count)
+            update_traild_id(self._db, self._temp_count)
             self._received_count = self._temp_count
             self._db.commit()
             # self._temp_count = 0
@@ -485,7 +488,8 @@ class ReplicationBase(object):
         country_list = None
         self._db.begin()
         try:
-            country_list = self._db.get_countries()
+            country_list = get_countries(self._db)
+            print country_list
             for c in country_list :
                 self._countries.append(int(c.country_id))
             self._db.commit()
@@ -499,7 +503,7 @@ class ReplicationBase(object):
         domain_list = None
         self._db.begin()
         try:
-            domain_list = self._db.get_domains()
+            domain_list = get_domains(self._db)
             for d in domain_list :
                 self._domains.append(int(d.domain_id))
             self._db.commit()
@@ -626,7 +630,7 @@ class ReplicationBase(object):
                 self._execute_insert_statement(changes_list, error_ok=True)
                 changes_list = []
             # print "audit_trail_id updated ", self._temp_count
-            self._db.update_traild_id(self._temp_count, self._type)
+            update_traild_id(self._db, self._temp_count, self._type)
             self._received_count = self._temp_count
             self._db.commit()
             # self._temp_count = 0
@@ -660,7 +664,7 @@ class ReplicationManagerWithBase(ReplicationBase):
         # assert self._received_count is None
         self._db.begin()
         try:
-            self._received_count = self._db.get_trail_id()
+            self._received_count = get_trail_id(self._db)
             self._db.commit()
         except Exception, e:
             print e
@@ -788,7 +792,7 @@ class DomainReplicationManager(ReplicationBase):
     def _get_received_count(self):
         self._db.begin()
         try:
-            self._actual_replica_count = self._db.get_trail_id()
+            self._actual_replica_count = get_trail_id(self._db)
             print "_actual_replica_count"
             print self._actual_replica_count
             self._db.commit()
@@ -801,7 +805,7 @@ class DomainReplicationManager(ReplicationBase):
     def _get_domain_received_count(self):
         self._db.begin()
         try:
-            self._received_count = self._db.get_trail_id(self._type)
+            self._received_count = get_trail_id(self._db, self._type)
             print "_received_count"
             print self._received_count
             self._db.commit()
@@ -813,7 +817,7 @@ class DomainReplicationManager(ReplicationBase):
     def _reset_domain_trail_id(self):
         self._db.begin()
         try :
-            self._db.reset_domain_trail_id()
+            reset_domain_trail_id(self._db)
             self._db.commit()
         except Exception, e :
             print e

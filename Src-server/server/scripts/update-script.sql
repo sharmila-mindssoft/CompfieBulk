@@ -79,3 +79,31 @@ CHANGE COLUMN `client_statutory_id` `client_statutory_id` INT(11) NOT NULL AUTO_
 ALTER TABLE `compfie_knowledge`.`tbl_client_compliances`
 CHANGE COLUMN `client_compliance_id` `client_compliance_id` INT(11) NOT NULL AUTO_INCREMENT ;
 
+-- client db
+
+ALTER TABLE `tbl_service_providers`
+CHANGE COLUMN `service_provider_id` `service_provider_id` INT(11) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `tbl_user_groups`
+CHANGE COLUMN `user_group_id` `user_group_id` INT(11) NOT NULL AUTO_INCREMENT ;
+
+-- ALTER TABLE `tbl_users`
+-- CHANGE COLUMN `user_id` `user_id` INT(11) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `tbl_compliance_history`
+CHANGE COLUMN `compliance_history_id` `compliance_history_id` INT(11) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `tbl_compliance_activity_log`
+CHANGE COLUMN `compliance_activity_id` `compliance_activity_id` INT(11) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `tbl_activity_log`
+CHANGE COLUMN `activity_log_id` `activity_log_id` INT(11) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `tbl_statutory_notifications_log`
+CHANGE COLUMN `statutory_notification_id` `statutory_notification_id` INT(11) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `tbl_statutory_notifications_units`
+CHANGE COLUMN `statutory_notification_unit_id` `statutory_notification_unit_id` INT(11) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `tbl_notifications_log`
+CHANGE COLUMN `notification_id` `notification_id` INT(11) NOT NULL AUTO_INCREMENT ;

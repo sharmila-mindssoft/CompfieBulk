@@ -1841,7 +1841,7 @@ class ServiceProviderDetails(object):
         service_provider_name = data.get("service_provider_name")
         service_provider_name = parse_structure_CustomTextType_50(service_provider_name)
         address = data.get("address")
-        address = parse_structure_CustomTextType_250(address)
+        address = parse_structure_OptionalType_CustomTextType_250(address)
         contract_from = data.get("contract_from")
         contract_from = parse_structure_CustomTextType_20(contract_from)
         contract_to = data.get("contract_to")
@@ -1858,7 +1858,7 @@ class ServiceProviderDetails(object):
         return {
             "service_provider_id": to_structure_OptionalType_SignedIntegerType_8(self.service_provider_id),
             "service_provider_name": to_structure_CustomTextType_250(self.service_provider_name),
-            "address": to_structure_CustomTextType_250(self.address),
+            "address": to_structure_OptionalType_CustomTextType_250(self.address),
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
             "contact_person": to_structure_CustomTextType_250(self.contact_person),
