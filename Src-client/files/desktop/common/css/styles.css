@@ -3107,6 +3107,12 @@ div.scrollable {
 	outline: none;
 	cursor: pointer;
 }
+.view-icon {
+	background:  url(../images/icon-viewsubmit.png) no-repeat center;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
 .active-icon {
 	background:  url(../images/icon-active.png) no-repeat center;
 	border: none;

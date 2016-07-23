@@ -138,13 +138,13 @@ function loadClientsList(clientunitsList){
         max[groupList[i]["client_id"]] = groupList[i]["no_of_units"];
     }
     $.each(unitList, function (key, value){
-        // var isActive = value['is_active'];
-        // var unitId = value['unit_id'];
-        // var unitVal = {};
-        clientId = value['client_id'];
-        bgroupId = value['business_group_id'];
-        lentitiesId = value['legal_entity_id'];
-        divisionId = value['division_id'];
+        var isActive = value['is_active'];
+        var unitId = value['unit_id'];
+        var unitVal = {};
+        var clientId = value['client_id'];
+        var bgroupId = value['business_group_id'];
+        var lentitiesId = value['legal_entity_id'];
+        var divisionId = value['division_id'];
 
         var tableRow = $('#templates .table-clientunit-list .table-row');
         var clone = tableRow.clone();
@@ -159,7 +159,6 @@ function loadClientsList(clientunitsList){
 	    $(".edit-icon", clone).on("click", function() {
 	        clientunit_edit(clientId, bgroupId, lentitiesId, divisionId);
 	    });
-
 /*        $('.edit', clone).html('<img src = "/images/icon-edit.png" id = "editid" onclick = "clientunit_edit('+clientId+','+bgroupId+','+lentitiesId+','+divisionId+')"/>');
 */        // $('.is-active', clone).html('<img src = "/images/'+imageName+'" title = "'+title+'" onclick = "clientunit_active('+clientId+','+lentitiesId+', '+divisionId+', '+statusVal+')"/>');
         $('.tbody-clientunit-list').append(clone);
