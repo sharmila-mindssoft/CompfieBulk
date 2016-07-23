@@ -199,25 +199,19 @@ function loadCountwiseStatutoryMapping(keysList, statutoryMappingsList){
   $('#activate-step-finish').addClass('btn-right');
   $('#activate-step-finish').removeClass('btn-right-submiting');
   var j = startCount+1;
-  var imgName = '';
-  var passStatus = '';
-  var statutorymappingId = 0;
-  var isActive = false;
-  var industryName = '';
-  var statutoryNatureName = '';
-  var countryName = '';
-  var domainName = '';
-  var approvalStatus = '';
-  var title='';
+  
   $(".tbody-statutorymapping-list").find("tr").remove();
 
   if(endCount>Object.keys(finalList).length) endCount = Object.keys(finalList).length
+  
   if(Object.keys(finalList).length > 0) $('.view-count-message').text("Showing " + (startCount+1) + " to " + endCount + " of " + Object.keys(finalList).length );
-  for(var k=0; k<keysList.length; k++){
-    var entity = keysList[k];
-    statutorymappingId = entity;
-    industryName = statutoryMappingsList[entity]["industry_names"];
-    statutoryNatureName = statutoryMappingsList[entity]["statutory_nature_name"];
+  
+  $.each(keysList, function(key, value) {
+  //for(var k=0; k<keysList.length; k++){
+    var entity = keysList[key];
+    var statutorymappingId = entity;
+    var industryName = statutoryMappingsList[entity]["industry_names"];
+    var statutoryNatureName = statutoryMappingsList[entity]["statutory_nature_name"];
     var statutoryMappings='';
     for(var i=0; i<statutoryMappingsList[entity]["statutory_mappings"].length; i++){
       statutoryMappings = statutoryMappings + statutoryMappingsList[entity]["statutory_mappings"][i] + " <br>";
@@ -227,19 +221,13 @@ function loadCountwiseStatutoryMapping(keysList, statutoryMappingsList){
       complianceNames = complianceNames + statutoryMappingsList[entity]["compliance_names"][i]["compliance_name"] + " <br>";
     }
     statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
-    countryName = statutoryMappingsList[entity]["country_name"];
-    domainName = statutoryMappingsList[entity]["domain_name"];
-    isActive = statutoryMappingsList[entity]["is_active"];
-    approvalStatus = statutoryMappingsList[entity]["approval_status_text"];
+    var countryName = statutoryMappingsList[entity]["country_name"];
+    var domainName = statutoryMappingsList[entity]["domain_name"];
+    var isActive = statutoryMappingsList[entity]["is_active"];
+    var approvalStatus = statutoryMappingsList[entity]["approval_status_text"];
 
-    if(isActive == true) {
-      passStatus= false;
-      imgName="icon-active.png"
-    }
-    else {
-      passStatus=true;
-      imgName="icon-inactive.png"
-     }
+    var passStatus = null;
+    var classValue = null;
 
     var tableRow=$('#templates .table-statutorymapping .table-row');
     var clone=tableRow.clone();
@@ -250,18 +238,33 @@ function loadCountwiseStatutoryMapping(keysList, statutoryMappingsList){
     $('.statutorynature', clone).text(statutoryNatureName);
     $('.statutory', clone).html(statutoryMappings);
     $('.compliancetask', clone).html(complianceNames);
+
+
     if(isActive == true) {
-      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+statutorymappingId+')"/>');
+      $('.edit-icon').attr('title', 'Edit');
+      $(".edit-icon", clone).on("click", function() {
+          displayEdit(statutorymappingId);
+      });
+      passStatus = false;
+      classValue = "active-icon";
     }
     else {
-      title = "Only active status mapping have edit option"
-      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' title="'+title+'" />');
-     }
-    $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+statutorymappingId+','+passStatus+')"/>');
+      $('.edit-icon').attr('title', 'Only active status mapping have edit option');
+      passStatus=true;
+      classValue = "inactive-icon";
+    }
+
+    $(".status", clone).addClass(classValue);
+    $('.active-icon').attr('title', 'Deactivate');
+    $('.inactive-icon').attr('title', 'Activate');
+    $(".status", clone).on("click", function() {
+        changeStatus(parseInt(statutorymappingId), passStatus);
+    });
+
     $('.approvalstatus', clone).text(approvalStatus);
     $('.tbody-statutorymapping-list').append(clone);
     j = j + 1;
-    }
+  });
 }
 
 //get statutory mapping list for selected page

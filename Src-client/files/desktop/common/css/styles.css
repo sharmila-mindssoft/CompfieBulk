@@ -3100,3 +3100,22 @@ div.scrollable {
 	border:0;
 	left:-12px;
 }
+
+.edit-icon {
+	background:  url(../images/icon-edit.png) no-repeat center;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+.active-icon {
+	background:  url(../images/icon-active.png) no-repeat center;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+.inactive-icon {
+	background:  url(../images/icon-inactive.png) no-repeat center;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}

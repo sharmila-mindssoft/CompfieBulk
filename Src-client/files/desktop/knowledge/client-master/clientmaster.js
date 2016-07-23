@@ -117,30 +117,42 @@ function initialize(){
 function loadClientGroupList(clientGroupList){
     $(".tbody-clientgroup-list").find("tr").remove();
     var sno = 0;
-    var imageName, title;
-    for(var i in clientGroupList){
-        var clientGroups = clientGroupList[i];
-        var clientId = clientGroups["client_id"];
-        var isActive = clientGroups["is_active"];
-        if(isActive == true){
-            imageName = "icon-active.png";
-            title = "Click here to deactivate"
-            statusVal = false;
+    $.each(clientGroupList, function(key, value) {
+        var clientId = value["client_id"];
+        var isActive = value["is_active"];
+
+        var passStatus = null;
+        var classValue = null;
+
+        if(isActive == true) {
+          passStatus = false;
+          classValue = "active-icon";
         }
-        else{
-            imageName = "icon-inactive.png";
-            title = "Click here to Activate"
-            statusVal = true;
+        else {
+          passStatus=true;
+          classValue = "inactive-icon";
         }
+
         var tableRow = $('#templates .table-clientgroup-list .table-row');
         var clone = tableRow.clone();
         sno = sno + 1;
         $('.sno', clone).text(sno);
-        $('.clientgroup-name', clone).text(clientGroups["client_name"]);
-        $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="clientgroup_edit('+clientId+')"/>');
-        $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientgroup_active('+clientId+', '+statusVal+')"/>');
+        $('.clientgroup-name', clone).text(value["client_name"]);
+
+        $('.edit-icon').attr('title', 'Edit');
+        $(".edit-icon", clone).on("click", function() {
+            clientgroup_edit(clientId);
+        });
+
+        $(".status", clone).addClass(classValue);
+        $('.active-icon').attr('title', 'Deactivate');
+        $('.inactive-icon').attr('title', 'Activate');
+        $(".status", clone).on("click", function() {
+            clientgroup_active(clientId, passStatus);
+        });
+
         $('.tbody-clientgroup-list').append(clone);
-    }
+    });
 }
 $('#no-of-user-licence').on('input', function (event) {
     this.value = this.value.replace(/[^0-9]/g, '');

@@ -37,37 +37,45 @@ function getDomains () {
 //display domains list in view page
 function loadDomainList (domainsList) {
   var j = 1;
-  var imgName = null;
-  var passStatus = null;
-  var domainId = 0;
-  var domainName = null;
-  var isActive = false;
-  var title;
   $(".tbody-domain-list1").find("tr").remove();
-    for(var entity in domainsList) {
-      domainId = domainsList[entity]["domain_id"];
-      domainName = domainsList[entity]["domain_name"];
-      isActive = domainsList[entity]["is_active"];
-      if(isActive == true) {
-        passStatus=false;
-        imgName="icon-active.png"
-        title = "Click here to deactivate"
-      }
-      else {
-        passStatus=true;
-        imgName="icon-inactive.png"
-        title = "Click here to activate"
-      }
-      var tableRow=$('#templates .table-domain-master .table-row');
-      var clone=tableRow.clone();
-      $('.sno', clone).text(j);
-      $('.domain-name', clone).text(domainName);
 
-      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+domainId+',\''+domainName.replace(/"/gi,'##')+'\')"/>');
-      $('.status', clone).html('<img src=\'/images/'+imgName+'\' title="'+title+'" onclick="changeStatus('+domainId+','+passStatus+')"/>');
-      $('.tbody-domain-list1').append(clone);
-      j = j + 1;
+  $.each(domainsList, function(key, value) {
+    var domainName = value["domain_name"];;
+    var domainId = value["domain_id"];
+    var isActive = value["is_active"];
+
+    var passStatus = null;
+    var classValue = null;
+
+    if(isActive == true) {
+      passStatus = false;
+      classValue = "active-icon";
     }
+    else {
+      passStatus=true;
+      classValue = "inactive-icon";
+    }
+
+    var tableRow = $('#templates .table-domain-master .table-row');
+    var clone = tableRow.clone();
+    $('.sno', clone).text(j);
+    $('.domain-name', clone).text(domainName);
+
+    $('.edit-icon').attr('title', 'Edit');
+    $(".edit-icon", clone).on("click", function() {
+        displayEdit(domainId, domainName);
+    });
+
+    $(".status", clone).addClass(classValue);
+    $('.active-icon').attr('title', 'Deactivate');
+    $('.inactive-icon').attr('title', 'Activate');
+    $(".status", clone).on("click", function() {
+        changeStatus(domainId, passStatus);
+    });
+
+    $('.tbody-domain-list1').append(clone);
+    j = j + 1;
+  });
 }
 
 //validation
