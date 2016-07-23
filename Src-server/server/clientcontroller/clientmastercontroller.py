@@ -10,7 +10,7 @@ from server.clientdatabase.general import (
     get_countries_for_user, get_countries, get_domains,
     get_business_groups_for_user, get_legal_entities_for_user,
     get_divisions_for_user, get_units_for_user, have_compliances,
-    is_seating_unit
+    is_seating_unit, get_user_company_details
     )
 __all__ = [
     "process_client_master_requests"
@@ -208,7 +208,7 @@ def process_change_service_provider_status(db, request, session_user, client_id)
         request.service_provider_id, client_id
     ):
         return clientmasters.InvalidServiceProviderId()
-    elif not is_service_provider_in_contract(db, request.service_provider_id):
+    elif is_service_provider_in_contract(db, request.service_provider_id) is False:
         return clientmasters.CannotChangeStatusOfContractExpiredSP()
     elif is_user_exists_under_service_provider(
         db,
@@ -229,13 +229,13 @@ def process_get_forms(db, client_id) :
     result_rows = get_forms(db, client_id)
     forms = []
     for row in result_rows:
-        parent_menu = None if row[6] == None else row[6]
+        parent_menu = None if row["parent_menu"] == None else row["parent_menu"]
         form = core.Form(
-            form_id=row[0],
-            form_name=row[3],
-            form_url=row[4],
+            form_id=row["form_id"],
+            form_name=row["form_name"],
+            form_url=row["form_url"],
             parent_menu=parent_menu,
-            form_type=row[2]
+            form_type=row["form_type"]
         )
         forms.append(form)
     return process_user_menus(forms)
@@ -247,10 +247,10 @@ def process_get_user_privilege_details_list(db, client_id):
     user_group_list = []
     rows = get_user_privilege_details_list(db, client_id)
     for row in rows:
-        user_group_id = int(row[0])
-        user_group_name = row[1]
-        form_ids = [int(x) for x in row[2].split(",")]
-        is_active = bool(row[3])
+        user_group_id = int(row["user_group_id"])
+        user_group_name = row["user_group_name"]
+        form_ids = [int(x) for x in row["form_ids"].split(",")]
+        is_active = bool(row["is_active"])
         user_group_list.append(
             clientmasters.ClientUserGroup(
                 user_group_id,
@@ -332,7 +332,7 @@ def process_change_user_privilege_status(db, request, session_user, client_id):
 def process_get_client_users(db, request, session_user, client_id):
     user_company_info = get_user_company_details(
         db,
-        session_user, client_id
+        session_user
     )
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
@@ -382,17 +382,19 @@ def process_get_client_users(db, request, session_user, client_id):
 # To validate and save a user
 ########################################################
 def process_save_client_user(db, request, session_user, client_id):
-    user_id = db.generate_new_user_id(client_id)
-    if (db.get_no_of_remaining_licence() <= 0):
+    # user_id = db.generate_new_user_id(client_id)
+    user_id = None
+    if (get_no_of_remaining_licence(db) <= 0):
         return clientmasters.UserLimitExceeds()
-    elif db.is_duplicate_user_email(user_id, request.email_id, client_id) :
+    elif is_duplicate_user_email(db, user_id, request.email_id) :
         return clientmasters.EmailIdAlreadyExists()
-    elif db.is_duplicate_employee_code(
+    elif is_duplicate_employee_code(
+        db,
         user_id,
-        request.employee_code.replace(" ", ""), client_id
+        request.employee_code.replace(" ", "")
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
-    elif db.save_user(user_id, request, session_user, client_id) :
+    elif save_user(db, request, session_user, client_id) :
         return clientmasters.SaveClientUserSuccess()
 
 ########################################################
