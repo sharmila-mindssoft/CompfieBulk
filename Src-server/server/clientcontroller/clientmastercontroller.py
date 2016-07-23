@@ -10,7 +10,8 @@ from server.clientdatabase.general import (
     get_countries_for_user, get_countries, get_domains,
     get_business_groups_for_user, get_legal_entities_for_user,
     get_divisions_for_user, get_units_for_user, have_compliances,
-    is_seating_unit, get_user_company_details
+    is_seating_unit, get_user_company_details, is_primary_admin,
+    is_service_proivder_user
     )
 __all__ = [
     "process_client_master_requests"
@@ -382,8 +383,7 @@ def process_get_client_users(db, request, session_user, client_id):
 # To validate and save a user
 ########################################################
 def process_save_client_user(db, request, session_user, client_id):
-    # user_id = db.generate_new_user_id(client_id)
-    user_id = None
+    user_id = db.get_new_id("user_id", tblUsers)
     if (get_no_of_remaining_licence(db) <= 0):
         return clientmasters.UserLimitExceeds()
     elif is_duplicate_user_email(db, user_id, request.email_id) :
@@ -394,7 +394,7 @@ def process_save_client_user(db, request, session_user, client_id):
         request.employee_code.replace(" ", "")
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
-    elif save_user(db, request, session_user, client_id) :
+    elif save_user(db, user_id, request, session_user, client_id) :
         return clientmasters.SaveClientUserSuccess()
 
 ########################################################
@@ -406,7 +406,7 @@ def process_update_client_user(db, request, session_user, client_id):
     elif is_duplicate_employee_code(
         db,
         request.user_id,
-        request.employee_code.replace(" ", ""), client_id
+        request.employee_code.replace(" ", "")
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
     elif update_user(db, request, session_user, client_id) :
@@ -452,7 +452,7 @@ def process_change_admin_status(db, request, session_user, client_id):
 def process_get_units(db, request, session_user, client_id):
     user_company_info = get_user_company_details(
         db,
-        session_user, client_id
+        session_user
     )
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]

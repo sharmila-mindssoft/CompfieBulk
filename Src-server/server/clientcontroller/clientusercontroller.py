@@ -5,8 +5,9 @@ from server.constants import RECORD_DISPLAY_COUNT
 from server.clientdatabase.clientuser import *
 
 from server.common import (
-    get_date_time, datetime_to_string_time
-    )
+    datetime_to_string_time,
+    get_date_time_in_date
+)
 
 from server.clientdatabase.general import (
     get_user_domains, get_user_unit_ids
@@ -80,7 +81,7 @@ def process_get_current_compliance_detail(db, request, session_user, client_id):
     current_compliances_list = get_current_compliances_list(
         db, current_start_count, to_count, session_user, client_id
     )
-    current_date_time = get_date_time()
+    current_date_time = get_date_time_in_date()
     str_current_date_time = datetime_to_string_time(current_date_time)
     inprogress_count = get_inprogress_count(db, session_user)
     overdue_count = get_overdue_count(db, session_user)
@@ -129,7 +130,7 @@ def process_update_compliance_detail(db, request, session_user, client_id):
     if validate_documents(request.documents):
         return clientuser.UnSupportedFile()
     else:
-        result = update_compliances(db, 
+        result = update_compliances(db,
             request.compliance_history_id, request.documents,
             request.completion_date, request.validity_date, request.next_due_date,
             request.remarks, client_id, session_user
