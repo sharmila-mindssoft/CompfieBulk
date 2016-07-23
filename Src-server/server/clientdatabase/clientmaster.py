@@ -1,4 +1,13 @@
+import threading
+from server.emailcontroller import EmailHandler
+from server import logger
+from server.dbase import Database
 from protocol import (core)
+from server.constants import (
+    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT,
+    KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
+    KNOWLEDGE_DATABASE_NAME
+)
 from server.clientdatabase.tables import *
 
 from server.clientdatabase.general import (
@@ -12,6 +21,7 @@ from server.common import (
     string_to_datetime, generate_and_return_password
 )
 
+email = EmailHandler()
 __all__ = [
     "get_service_provider_details_list",
     "generate_new_service_provider_id",
@@ -52,6 +62,7 @@ def get_service_provider_details_list(db, client_id):
     rows = db.get_data(
         tblServiceProviders, columns, condition, condition_val, order
     )
+    print rows
     return return_service_provider_details(rows)
 
 def return_service_provider_details(service_providers):
@@ -81,10 +92,13 @@ def is_duplicate_service_provider(
 ):
     condition = "service_provider_name = %s "
     condition_val = [service_provider_name]
+    print service_provider_id
     if service_provider_id is not None :
-        condition += " service_provider_id != %s"
-        condition_val.append(service_provider_name)
-    return db.is_already_exists(tblServiceProviders, condition, condition_val)
+        condition += " AND service_provider_id != %s"
+        condition_val.append(service_provider_id)
+    res = db.is_already_exists(tblServiceProviders, condition, condition_val)
+    print res
+    return res
 
 def save_service_provider(db, service_provider, session_user):
     current_time_stamp = get_date_time()
@@ -102,6 +116,7 @@ def save_service_provider(db, service_provider, session_user):
         current_time_stamp, session_user, current_time_stamp, session_user
     ]
     service_provider_id = db.insert(tblServiceProviders, columns, values)
+    print service_provider_id
     if service_provider_id is not False :
         action = "Created Service Provider \"%s\"" % service_provider.service_provider_name
         db.save_activity(session_user, 2, action)
@@ -158,11 +173,11 @@ def update_service_provider(db, service_provider, session_user, client_id):
     return result
 
 def is_service_provider_in_contract(db, service_provider_id):
-    column = "count(1) as services"
+    column = "count(0) as services"
     condition = "now() between contract_from and DATE_ADD(contract_to, INTERVAL 1 DAY)\
-    and service_provider_id = '%d' and is_active = 1" % service_provider_id
+    and service_provider_id = %s " % service_provider_id
     rows = db.get_data(tblServiceProviders, column, condition)
-    if rows[0]["services"] > 0:
+    if int(rows[0]["services"]) > 0:
         return True
     else:
         return False
@@ -173,13 +188,15 @@ def is_user_exists_under_service_provider(db, service_provider_id):
     rows = db.get_data(
         tblUsers, columns, condition
     )
-    if rows[0]["exists"] > 0:
-        return True
-    else:
+    if len(rows) > 0 :
+        if int(rows[0]["exists"]) > 0:
+            return True
+        else:
+            return False
+    else :
         return False
 
 def update_service_provider_status(db, service_provider_id,  is_active, session_user, client_id):
-    is_active = 1 if is_active is not False else 0
     columns = ["is_active", "updated_on" , "updated_by"]
     values = [is_active, get_date_time(), session_user]
     condition = "service_provider_id= %s " % service_provider_id
@@ -221,9 +238,9 @@ def generate_new_user_privilege_id(db, client_id) :
 def is_duplicate_user_privilege(
     db, user_group_id, user_privilege_name, client_id
 ):
-    condition = "user_group_name ='%s' AND user_group_id != '%d'" % (
-        user_privilege_name, user_group_id)
-    return db.is_already_exists(tblUserGroups, condition)
+    condition = "user_group_name = %s AND user_group_id != %s"
+    condition_val = [user_privilege_name, user_group_id]
+    return db.is_already_exists(tblUserGroups, condition, condition_val)
 
 def get_user_privilege_details_list(db, client_id):
     columns = "user_group_id, user_group_name, form_ids, is_active"
@@ -281,12 +298,12 @@ def update_user_privilege(db, user_privilege, session_user, client_id):
     return result
 
 def is_user_exists_under_user_group(db, user_group_id):
-    columns = "count(*)"
+    columns = "count(*) as users"
     condition = "user_group_id = '%d'" % user_group_id
     rows = db.get_data(
         tblUsers, columns, condition
     )
-    if rows[0][0] > 0:
+    if rows[0]["users"] > 0:
         return True
     else:
         return False
@@ -302,7 +319,7 @@ def update_user_privilege_status(db, user_group_id, is_active, session_user, cli
     rows = db.get_data(
         tblUserGroups, action_column, condition
     )
-    user_group_name = rows[0][0]
+    user_group_name = rows[0]["user_group_name"]
     action = None
     if is_active == 0:
         action = "Deactivated user group \"%s\"" % user_group_name
@@ -337,7 +354,7 @@ def return_user_details(
     results = []
     for user in users :
         query = "select unit_id from %s tuu where \
-        user_id = '%d'" % (tblUserUnits, user["user_id"])
+        user_id = %s " % (tblUserUnits, user["user_id"])
         rows = db.select_all(query)
         user_unit_ids = []
         for row in rows:
@@ -384,39 +401,43 @@ def return_service_providers(service_providers):
     return results
 
 def get_no_of_remaining_licence(db):
-    columns = "count(*)"
+    columns = "count(0) as licence"
     condition = "1"
     rows = db.get_data(tblUsers, columns, condition)
-    no_of_licence_holders = rows[0][0]
+    no_of_licence_holders = rows[0]["licence"]
 
     columns = "no_of_user_licence"
     rows = db.get_data(tblClientGroups, columns, condition)
-    no_of_licence = rows[0][0]
+    no_of_licence = rows[0]["no_of_user_licence"]
 
     remaining_licence = int(no_of_licence) - int(no_of_licence_holders)
     return remaining_licence
 
-def is_duplicate_user_email(db, user_id, email_id, client_id):
+def is_duplicate_user_email(db, user_id, email_id):
     flag1 = False
     flag2 = False
-    columns = "count(*)"
-    condition = "username = '%s'" % email_id
-    rows = db.get_data(tblAdmin, columns, condition)
-    if rows[0][0] > 0 :
+    columns = "count(0) as email"
+    condition = "username = %s"
+    condition_val = [email_id]
+    rows = db.get_data(tblAdmin, columns, condition, condition_val)
+    if rows[0]["email"] > 0 :
         flag1 = True
     else:
         flag1 = False
-    condition = "email_id ='%s' AND user_id != '%d'" % (
-        email_id, user_id)
-    flag2 = db.is_already_exists(tblUsers, condition, client_id)
+    condition = "email_id = %s "
+    condition_val = [email_id]
+    if user_id is not None :
+        condition += " AND user_id != %s"
+        condition_val.append(user_id)
+    flag2 = db.is_already_exists(tblUsers, condition, condition_val)
     return (flag1 or flag2)
 
-def is_duplicate_employee_code(db, user_id, employee_code, client_id):
-    condition = "employee_code ='%s' AND user_id != '%d'" % (
-        employee_code, user_id)
-    return db.is_already_exists(tblUsers, condition, client_id)
+def is_duplicate_employee_code(db, user_id, employee_code):
+    condition = "employee_code = %s AND user_id != %s"
+    condition_val = [employee_code, user_id]
+    return db.is_already_exists(tblUsers, condition, condition_val)
 
-def save_user(db, user_id, user, session_user, client_id):
+def save_user(db, user_id,  user, session_user, client_id):
     result1 = None
     result2 = None
     result3 = None
@@ -443,7 +464,9 @@ def save_user(db, user_id, user, session_user, client_id):
         columns.append("seating_unit_id")
         values.append(user.seating_unit_id)
 
-    result1 = db.insert(tblUsers, columns, values)
+    is_save = db.insert(tblUsers, columns, values)
+    if is_save is False :
+        return False
 
     db_con = Database(
         KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
@@ -607,8 +630,8 @@ def update_user_status(db, user_id, is_active, session_user, client_id):
     rows = db.get_data(
         tblUsers, action_column, condition
     )
-    employee_code = rows[0][0]
-    employee_name = rows[0][1]
+    employee_code = rows[0]["employee_code"]
+    employee_name = rows[0]["employee_name"]
     if is_active == 1:
         action = "Activated user \"%s - %s\"" % (employee_code, employee_name)
     else:
@@ -628,8 +651,8 @@ def update_admin_status(db, user_id, is_admin, session_user, client_id):
     rows = db.get_data(
         tblUsers, action_column, condition
     )
-    employee_code = rows[0][0]
-    employee_name = rows[0][1]
+    employee_code = rows[0]["employee_code"]
+    employee_name = rows[0]["employee_name"]
 
     db_con = Database(
         KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
@@ -677,7 +700,7 @@ def return_units(units):
         results.append(core.ClientUnit(
             unit["unit_id"], division_id, unit["legal_entity_id"],
             b_group_id, unit["unit_code"],
-            unit["unit_name"], unit["unit_address"], bool(unit["is_active"]),
+            unit["unit_name"], unit["address"], bool(unit["is_active"]),
             [int(x) for x in unit["domain_ids"].split(",")], unit["country_id"],
             bool(unit["is_closed"])
         ))
@@ -728,7 +751,7 @@ def close_unit(db, unit_id, session_user):
     rows = db.get_data(
         tblUnits, action_column, action_condition
     )
-    action = "Closed Unit \"%s - %s\"" % (rows[0][0], rows[0][1])
+    action = "Closed Unit \"%s - %s\"" % (rows[0]["unit_code"], rows[0]["unit_name"])
     db.save_activity(session_user, 5, action)
 
 def get_audit_trails(
@@ -736,12 +759,12 @@ def get_audit_trails(
     from_date, to_date, user_id, form_id
 ):
     form_ids = None
-    form_column = "group_concat(form_id)"
+    form_column = "group_concat(form_id) as forms"
     form_condition = "form_type_id != 4"
     rows = db.get_data(
         tblForms, form_column, form_condition
     )
-    form_ids = rows[0][0]
+    form_ids = rows[0]["forms"]
     forms = return_forms(db, client_id, form_ids)
 
     if not is_primary_admin(db, session_user) and not is_admin(db, session_user):

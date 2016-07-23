@@ -11,7 +11,8 @@ from server.common import (
 from server.database.knowledgemaster import (
     STATUTORY_PARENTS, GEOGRAPHY_PARENTS,
     get_geographies, get_statutory_master,
-    get_statutory_by_id, get_geography_by_id
+    get_statutory_by_id, get_geography_by_id,
+    get_industry_by_id
 )
 
 APPROVAL_STATUS = ["Pending", "Approved", "Rejected", "Approved & Notified"]
@@ -754,24 +755,6 @@ def update_compliance(db, mapping_id, domain_id, datas, updated_by) :
         compliance_ids.append(compliance_id)
 
     return compliance_ids, compliance_names
-
-def get_industry_by_id(db, industry_id) :
-    if type(industry_id) is int :
-        q = "SELECT industry_name FROM tbl_industries \
-            WHERE industry_id=%s"
-        value = [industry_id]
-
-    else :
-        q = " SELECT (GROUP_CONCAT(industry_name SEPARATOR ', ')) as \
-            industry_name FROM tbl_industries \
-            WHERE industry_id in %s"
-        value = [str(tuple(industry_id))]
-
-    row = db.select_one(q, value)
-    industry_name = None
-    if row :
-        industry_name = row[0]
-    return industry_name
 
 def save_statutory_backup(db, statutory_mapping_id, created_by):
     old_record = get_statutory_mapping_by_id(db, statutory_mapping_id)
