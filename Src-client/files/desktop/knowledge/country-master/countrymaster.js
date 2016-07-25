@@ -152,7 +152,6 @@ $("#submit").click(function(){
             }
         }
     }
-
 });
 //edit country
 function country_edit(countryId, countryName){

@@ -1006,6 +1006,7 @@ $("#temp_addcompliance").click(function() {
           }
           else{
             if(repeats_type == '2' && $('.multipleinput').prop("checked") == true){
+              var s_months = [];
               var rep_every = parseInt($('#repeats_every').val());
               var maxCount = 0;
               if(rep_every == 1){
@@ -1022,6 +1023,7 @@ $("#temp_addcompliance").click(function() {
                 maxCount = 2;
               }
               for(var i=1;i<=maxCount;i++){
+
                 statutory_day = null;
                 statutory_month = null;
                 trigger_before_days = null;
@@ -1040,8 +1042,13 @@ $("#temp_addcompliance").click(function() {
                     displayMessage(message.triggerbefore_iszero);
                     return false;
                   }
+                  if($.inArray(statutory_month, s_months) >= 0){
+                    displayMessage(message.invalid_statutory_month);
+                    return false;
+                  }
                   statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
                   statutory_dates.push(statutory_date);
+                  s_months.push(statutory_month);
                 }
               }
             }else{
@@ -1892,7 +1899,7 @@ function load_stautorydates(){
         $('#multiple_statutory_month'+i).val('');
         $('#multiple_triggerbefore'+i).val('');
       }
-  }
+    }
   }else{
     $('#single_statutory_date').show();
     $('#single_statutory_month').show();
