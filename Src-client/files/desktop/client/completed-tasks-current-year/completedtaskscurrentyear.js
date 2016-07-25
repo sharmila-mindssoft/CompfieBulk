@@ -273,7 +273,7 @@ function submitcompliance(){
           var completion_date = $('#completiondate'+i).val();
           var completed_by = $('#assignee'+i).val();
           var frequency_ = $('#frequency'+i).val();
-          var compliance_name = $('#complaincename'+i).val();
+          var compliance_name = $('#compliancename'+i).val();
           if(completed_by != '') completed_by = parseInt(completed_by);
 
           if(due_date == ''){
@@ -301,10 +301,10 @@ function submitcompliance(){
               displayMessage(message.duedatelessthanvaliditydate_compliance + compliance_name);
               hideLoader();
               return false;
-            }else if(dateDifference > 90){
+           /* }else if(dateDifference > 90){
               displayMessage(message.invalid_duedate + compliance_name);
               hideLoader();
-              return false;
+              return false;*/
             }else{
               displayMessage("");
             }
