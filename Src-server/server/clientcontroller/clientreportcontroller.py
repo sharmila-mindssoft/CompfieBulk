@@ -129,7 +129,7 @@ def process_client_report_requests(request, db) :
     elif type(request) is clientreport.GetComplianceActivityReportFilters:
         logger.logClientApi("GetComplianceActivityReportFilters  - " + str(client_id), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = get_compliance_activity_report_filters(db, request, session_user, client_id)
+        result = process_get_compliance_activity_report_filters(db, request, session_user, client_id)
         logger.logClientApi("GetComplianceActivityReportFilters", "process end")
         logger.logClientApi("------", str(time.time()))
 
@@ -503,7 +503,7 @@ def process_get_compliance_activity_report_filters(db, request, session_user, cl
         countries=country_list
     )
 
-def get_compliance_activity_report(db, request, session_user, client_id):
+def process_get_compliance_activity_report(db, request, session_user, client_id):
     country_id = request.country_id
     domain_id = request.domain_id
     unit_id = request.unit_id
