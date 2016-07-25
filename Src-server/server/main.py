@@ -134,7 +134,6 @@ class API(object):
             return
 
         def respond(response_data):
-            print response_data
             self._send_response(
                 response_data, response
             )

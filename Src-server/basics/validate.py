@@ -34,7 +34,6 @@ class Validate(object):
                 return module.module_name()
         possibilities = self._possibilities(t)
         if len(possibilities) == 0:
-            print "emptuy"
             possibilities = ""
         else:
             possibilities = ("\n".join(possibilities))
@@ -51,7 +50,6 @@ class Validate(object):
             if t.name() in dir(module.module()):
                 names.append(module.module_name())
         return names
-
 
     def validate(self, globals):
         self._verify_type_names(globals)

@@ -135,8 +135,6 @@ class Database(object):
         cursor = self.cursor()
         assert cursor is not None
 
-        print query
-        print param
         try :
             if type(param) is tuple :
                 cursor.execute(query, param)
@@ -176,7 +174,6 @@ class Database(object):
     def select_all(self, query, param=None):
         cursor = self.cursor()
         assert cursor is not None
-        print query, param
         try:
             if param is None :
                 cursor.execute(query)
@@ -264,7 +261,6 @@ class Database(object):
             if order is not None :
                 query += order
             rows = self.select_all(query)
-        print "get_data", rows
         result = []
         if rows :
             result = convert_to_dict(rows, param)
@@ -388,8 +384,6 @@ class Database(object):
                 query += column+" = %s "
 
         query += " WHERE " + condition
-        print query
-        print values
         try:
             res = self.execute(query, values)
             print res
@@ -433,7 +427,6 @@ class Database(object):
     def delete(self, table, condition, condition_val):
         query = "DELETE from "+table+" WHERE "+condition
         try:
-            print query
             return self.execute(query, condition_val)
         except mysql.Error, e:
             print e
@@ -448,7 +441,6 @@ class Database(object):
     def append(self, table, column, value, condition):
         try :
             rows = self.get_data(table, column, condition)
-            print column
             currentValue = rows[0][column]
             if currentValue is not None:
                 newValue = currentValue+","+str(value)
@@ -488,9 +480,7 @@ class Database(object):
     def is_already_exists(self, table, condition, condition_val) :
         query = "SELECT count(0) FROM %s WHERE %s " % (table, condition)
         rows = None
-        print query
         rows = self.select_all(query, condition_val)
-        print rows
         if rows :
             if rows[0][0] > 0:
                 return True
