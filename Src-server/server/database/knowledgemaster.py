@@ -1,6 +1,7 @@
 from protocol import (
     core, knowledgemaster
 )
+from server.exceptionmessage import *
 from server.common import (
     convert_to_dict, get_date_time
 )
@@ -107,7 +108,7 @@ def save_industry(db, industry_name, user_id):
     values = [industry_name, str(user_id), str(created_on)]
     new_id = db.insert(table_name, columns, values)
     if new_id is False :
-        return False
+        raise process_error("E001")
     else :
         action = "New Industry type %s added" % (industry_name)
         db.save_activity(user_id, 7, action)
@@ -131,7 +132,7 @@ def update_industry(db, industry_id, industry_name, user_id):
         db.save_activity(user_id, 7, action)
         return True
     else :
-        return False
+        raise process_error("E002")
 
 def update_industry_status(db, industry_id, is_active, user_id) :
     oldData = get_industry_by_id(db, industry_id)
@@ -156,7 +157,7 @@ def update_industry_status(db, industry_id, is_active, user_id) :
         db.save_activity(user_id, 7, action)
         return True
     else :
-        return False
+        raise process_error("E003")
 
 def get_nature_by_id(db, nature_id) :
     q = "SELECT statutory_nature_name \
@@ -213,7 +214,7 @@ def save_statutory_nature(db, nature_name, user_id) :
     values = [nature_name, user_id, str(created_on)]
     new_id = db.insert(table_name, columns, values)
     if new_id is False :
-        return False
+        raise process_error("E004")
     else :
         action = "New Statutory Nature %s added" % (nature_name)
         db.save_activity(user_id, 8, action)
@@ -237,7 +238,7 @@ def update_statutory_nature(db, nature_id, nature_name, user_id):
         db.save_activity(user_id, 8, action)
         return True
     else :
-        return False
+        raise process_error("E005")
 
 def update_statutory_nature_status(db, nature_id, is_active, user_id) :
     oldData = get_nature_by_id(db, nature_id)
@@ -262,7 +263,7 @@ def update_statutory_nature_status(db, nature_id, is_active, user_id) :
         db.save_activity(user_id, 8, action)
         return True
     else :
-        return False
+        raise process_error("E006")
 
 
 def get_statutory_levels(db):
@@ -319,6 +320,8 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id) :
             if new_id is not False :
                 action = "New Statutory levels added"
                 db.save_activity(user_id, 9, action)
+            else :
+                raise process_error("E007")
         else :
             columns = ["level_position", "level_name", "updated_by"]
             values = [position, name, user_id]
@@ -333,6 +336,8 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id) :
             ) :
                 action = "Statutory levels updated"
                 db.save_activity(user_id, 9, action)
+            else :
+                raise process_error("E008")
     return True
 
 def get_geography_levels(db):
@@ -381,7 +386,7 @@ def delete_grography_level(db, level_id):
     else :
         db.execute("delete from tbl_geographies where level_id = %s ", (level_id))
         db.execute("delete from tbl_geography_levels where level_id = %s ", (level_id))
-        return False
+        raise process_error("E009")
 
 def save_geography_levels(db, country_id, levels, user_id):
     table_name = "tbl_geography_levels"
@@ -414,6 +419,8 @@ def save_geography_levels(db, country_id, levels, user_id):
             if new_id is not False :
                 action = "New Geography levels added"
                 db.save_activity(user_id, 5, action)
+            else :
+                raise process_error("E010")
 
         else :
             columns = [
@@ -431,6 +438,8 @@ def save_geography_levels(db, country_id, levels, user_id):
             ) :
                 action = "Geography levels updated"
                 db.save_activity(user_id, 5, action)
+            else :
+                raise process_error("E011")
     return knowledgemaster.SaveGeographyLevelSuccess()
 
 
@@ -581,7 +590,7 @@ def save_geography(
 
     new_id = db.insert(table_name, columns, values)
     if new_id is False :
-        return False
+        raise process_error("E012")
     else :
         action = "New Geography %s added" % (geography_name)
         db.save_activity(user_id, 6, action)
@@ -635,7 +644,7 @@ def update_geography(db, geography_id, name, parent_ids, parent_names, updated_b
             ))
         return True
     else :
-        return False
+        raise process_error("E013")
 
 
 def change_geography_status(db, geography_id, is_active, updated_by) :
@@ -661,7 +670,7 @@ def change_geography_status(db, geography_id, is_active, updated_by) :
         db.save_activity(updated_by, 6, action)
         return True
     else :
-        return False
+        raise process_error("E014")
 
 def get_statutory_by_id(db, statutory_id):
     query = "SELECT statutory_id, statutory_name, \
@@ -691,7 +700,7 @@ def save_statutory(db, name, level_id, parent_ids, parent_names, user_id) :
 
     new_id = db.insert(table_name, columns, values)
     if new_id is False :
-        return False
+        raise process_error("E015")
     else :
         action = "Statutory - %s added" % name
         db.save_activity(user_id, 10, action)
@@ -742,7 +751,7 @@ def update_statutory(db, statutory_id, name, parent_ids, parent_names, updated_b
             db.save_activity(updated_by, 10, action)
         return True
     else :
-        return False
+        raise process_error("E016")
 
 def get_statutory_master(db, statutory_id=None):
     columns = [

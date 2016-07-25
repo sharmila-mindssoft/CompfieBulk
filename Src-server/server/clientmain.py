@@ -283,6 +283,8 @@ class API(object):
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
             db.rollback()
+            response.set_status(400)
+            response.send(str(e))
             return
 
     @api_request(login.Request, need_client_id=True)

@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from server.constants import ENABLE_INFO_LOG
+from server.constants import ENABLE_INFO_LOG, ENABLE_QUERY_LOG
 
 ROOTPATH = ""
 knowledge_log_path = "logs/knowledge/knowledge-log"
@@ -11,6 +11,8 @@ webfront_log_path = "logs/webfront-log"
 trace_log_path = "logs/client/trace-log"
 know_trace_log_path = "logs/knowledge/trace-log"
 process_error_log_path = "logs/daily_process_error-log"
+know_query_log_path = "logs/knowledge/query-log"
+client_query_log_path = "logs/client/query-log"
 
 def _get_time_rotate_file_obj(logger_name, log_path):
     log_format = logging.Formatter("%(asctime)s - %(name)s - %(message)s")
@@ -102,3 +104,15 @@ processErrorLogger = _get_rotate_file_obj("process_error_log", process_error_log
 def logProcessError(callername, message):
     log_message = "%s : %s " % (callername, message)
     processErrorLogger.error(log_message)
+
+knowtQueryLogger = _get_rotate_file_obj("know_query_log", know_query_log_path)
+def logKnowledgeQuery(callername, message):
+    log_message = "%s: %s" % (callername, message)
+    if ENABLE_QUERY_LOG :
+        knowtQueryLogger.info(log_message)
+
+clientQueryLogger = _get_rotate_file_obj("client_query_log", client_query_log_path)
+def logClientQuery(callername, message):
+    log_message = "%s: %s" % (callername, message)
+    if ENABLE_QUERY_LOG :
+        clientQueryLogger.info(log_message)

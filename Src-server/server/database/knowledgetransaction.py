@@ -315,7 +315,7 @@ def check_duplicate_compliance_name(db, request_frame):
     if len(compliance_names) > 0 :
         return list(set(compliance_names))
     else :
-        return False
+        raise process_error("E017")
 
 def save_statutory_mapping(db, data, created_by) :
     country_id = data.country_id
@@ -346,7 +346,7 @@ def save_statutory_mapping(db, data, created_by) :
     ]
     statutory_mapping_id = db.insert(tblStatutoryMappings, mapping_column, mapping_value)
     if statutory_mapping_id is False :
-        return False
+        raise process_error("E018")
     else :
 
         # if (self.save_data(statutory_table, field, data_save)) :
@@ -464,7 +464,7 @@ def save_compliance(db, mapping_id, domain_id, datas, created_by) :
             values.extend([repeats_every, repeats_type])
         compliance_id = db.insert(table_name, columns, values)
         if compliance_id is False :
-            return
+            raise process_error("E019")
 
         # if is_format :
         #     self.convert_base64_to_file(file_name, file_content)
@@ -599,7 +599,7 @@ def update_statutory_mapping(db, data, updated_by) :
     statutory_mapping_id = data.statutory_mapping_id
     is_exists = get_statutory_mapping_by_id(db, statutory_mapping_id)
     if bool(is_exists) is False :
-        return False
+        raise process_error("E020")
     domain_id = data.domain_id
     country_id = int(is_exists["country_id"])
     industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
@@ -748,11 +748,13 @@ def update_compliance(db, mapping_id, domain_id, datas, updated_by) :
             values.extend([repeats_every, repeats_type, 0, 0])
 
         where_condition = "compliance_id = %s" % (compliance_id)
-        db.update(table_name, columns, values, where_condition)
-        if is_format :
-            convert_base64_to_file(file_name, file_content)
-            is_format = False
-        compliance_ids.append(compliance_id)
+        if (db.update(table_name, columns, values, where_condition)) :
+            if is_format :
+                convert_base64_to_file(file_name, file_content)
+                is_format = False
+            compliance_ids.append(compliance_id)
+        else :
+            raise process_error("E021")
 
     return compliance_ids, compliance_names
 
@@ -803,7 +805,7 @@ def save_statutory_backup(db, statutory_mapping_id, created_by):
     ]
     backup_id = db.insert(tbl_statutory_backup, columns, values)
     if backup_id is False :
-        return False
+        raise process_error("E022")
 
     qry = " INSERT INTO tbl_compliances_backup \
         (statutory_backup_id, statutory_provision, \
@@ -971,7 +973,7 @@ def save_statutory_notifications(db, mapping_id, notification_text):
     ]
     notification_id = db.insert(tblStatutoryNotificationsLog, columns, values)
     if notification_id is False :
-        return False
+        raise process_error("E023")
     save_statutory_notification_units(db, notification_id, mapping_id, client_info)
 
 def save_statutory_notification_units(db, statutory_notification_id, mapping_id, client_info):
@@ -1001,4 +1003,6 @@ def save_statutory_notification_units(db, statutory_notification_id, mapping_id,
                 column.append("division_id")
                 values.append(division_id)
 
-            db.insert(tblStatutoryNotificationsUnits, column, values)
+            n_id = db.insert(tblStatutoryNotificationsUnits, column, values)
+            if n_id is False :
+                raise process_error("E023")

@@ -7,6 +7,7 @@ from server.database.knowledgemaster import (
     STATUTORY_PARENTS,
     get_statutory_master,
 )
+from server.exceptionmessage import process_error
 
 def get_assigned_statutories_list(
     db, user_id
@@ -756,10 +757,11 @@ def save_client_statutories(db, data, user_id):
             domain_id, int(unit_id) , submission_type, int(user_id), created_on
         )
         client_statutory_id = db.insert(tblClientStatutories, field, values)
-        print client_statutory_id
         if (client_statutory_id is not False) :
             assigned_statutories = data.assigned_statutories
             value_list.extend(save_update_client_complainces(db, client_statutory_id, assigned_statutories, user_id, created_on))
+        else :
+            raise process_error("E060")
     execute_bulk_insert(db, value_list)
 
 def execute_bulk_insert(db, value_list, submitted_on=None) :
@@ -817,5 +819,3 @@ def submit_client_statutories_compliances(db, client_statutory_id, data, user_id
     db.execute(query)
     value_list = save_update_client_complainces(db, client_statutory_id, data, user_id, submitted_on)
     execute_bulk_insert(db, value_list, submitted_on)
-
-

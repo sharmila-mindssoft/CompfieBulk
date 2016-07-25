@@ -1,6 +1,5 @@
 import MySQLdb as mysql
 from server import logger
-
 from server.common import (convert_to_dict, get_date_time)
 
 class Database(object):
@@ -16,6 +15,7 @@ class Database(object):
         self._mysqlDatabase = mysqlDatabase
         self._connection = None
         self._cursor = None
+        self._for_client = False
 
     # Used to get first three letters of month by the month's integer value
     string_months = {
@@ -138,10 +138,16 @@ class Database(object):
         try :
             if type(param) is tuple :
                 cursor.execute(query, param)
+                logger.logKnowledgeQuery("execute", query % param)
             elif type(param) is list :
                 cursor.execute(query, param)
+                if len(param) > 1 :
+                    logger.logKnowledgeQuery("execute", query % tuple(param))
+                else :
+                    logger.logKnowledgeQuery("execute", query % param[0])
             else :
                 cursor.execute(query)
+                logger.logKnowledgeQuery("execute", query)
             return True
         except mysql.Error, e :
             print e
@@ -340,7 +346,8 @@ class Database(object):
         query = """INSERT INTO %s %s """ % (table, columns)
         query += " VALUES (%s) " % (",".join(stringValue))
         try:
-            return int(self.execute_insert(query, values))
+            n_id = int(self.execute_insert(query, values))
+            return n_id
         except mysql.Error, e:
             print e
             logger.logKnowledgeApi("insert", query)

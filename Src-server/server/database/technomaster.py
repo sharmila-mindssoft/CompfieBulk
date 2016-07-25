@@ -1,9 +1,10 @@
 from protocol import (
     core, technomasters
 )
+from server.exceptionmessage import process_error
 from server.constants import (CLIENT_LOGO_PATH, LOGO_URL)
 from server.common import (
-    datetime_to_string, convert_to_dict, get_date_time,
+    datetime_to_string, get_date_time,
     string_to_datetime, remove_uploaded_file,
     convert_base64_to_file, new_uuid
 )
@@ -244,6 +245,8 @@ def save_client_group_data(db, client_id, client_group, session_user):
         current_time_stamp, session_user, current_time_stamp
     ]
     result = db.insert(tblClientGroups, columns, values)
+    if result is False :
+        raise process_error("E040")
     action = "Created Client \"%s\"" % client_group.group_name
     db.save_activity(session_user, 18, action)
     return result
@@ -278,7 +281,10 @@ def save_client_countries(db, client_id, country_ids):
     for country_id in country_ids:
         values_tuple = (client_id, country_id)
         values_list.append(values_tuple)
-    return db.bulk_insert(tblClientCountries, columns, values_list)
+    res = db.bulk_insert(tblClientCountries, columns, values_list)
+    if res is False :
+        raise process_error("E041")
+    return res
 
 def save_client_domains(db, client_id, domain_ids):
     old_d = get_client_domains(db, client_id)
@@ -304,7 +310,10 @@ def save_client_domains(db, client_id, domain_ids):
         values_list.append(values_tuple)
     if len(new_id) > 0 :
         update_client_domain_status(db, client_id, new_id)
-    return db.bulk_insert(tblClientDomains, columns, values_list)
+    res = db.bulk_insert(tblClientDomains, columns, values_list)
+    if res is False:
+        raise process_error("E042")
+    return res
 
 def update_client_domain_status(db, client_id, domain_ids) :
     q = "update tbl_client_replication_status set is_new_data =1, \
@@ -323,7 +332,10 @@ def save_incharge_persons(db, client_group, client_id):
     for incharge_person in client_group.incharge_persons:
         values_tuple = (client_id, incharge_person)
         values_list.append(values_tuple)
-    return db.bulk_insert(tblUserClients, columns, values_list)
+    r = db.bulk_insert(tblUserClients, columns, values_list)
+    if r is False :
+        raise process_error("E043")
+    return r
 
 def save_client_user(db, client_group, session_user, client_id=None):
     if client_id is None:
@@ -336,7 +348,10 @@ def save_client_user(db, client_group, session_user, client_id=None):
         client_id, 0, client_group.email_id, "Admin",
         get_date_time(), 1, 1
     ]
-    return db.insert(tblClientUsers, columns, values)
+    r = db.insert(tblClientUsers, columns, values)
+    if r is False :
+        raise process_error("E044")
+    return r
 
 def notify_incharge_persons(db, client_group):
     notification_text = "Client %s has been assigned" % client_group.group_name
@@ -346,25 +361,20 @@ def notify_incharge_persons(db, client_group):
         tblNotifications, ["notification_text", "link"],
         [notification_text, link]
     )
+    if notification_id is False :
+        raise process_error("E045")
 
     columns = ["notification_id", "user_id", "read_status"]
     values_list = []
     for incharge_person in client_group.incharge_persons:
         values_tuple = (notification_id, incharge_person, 0)
         values_list.append(values_tuple)
-    return db.bulk_insert(
+    r = db.bulk_insert(
         tblNotificationsStatus, columns, values_list
     )
-
-def is_unit_exists_under_domain(db, domain, client_id):
-    columns = "count(*) as units"
-    condition = " FIND_IN_SET(%s, domain_ids) and client_id = %s "
-    condition_val = [domain, client_id]
-    rows = db.get_data(tblUnits, columns, condition, condition_val)
-    if rows[0]["units"] > 0:
-        return True
-    else:
-        return False
+    if r is False :
+        raise process_error("E045")
+    return r
 
 def is_unit_exists_under_country(db, country, client_id):
     columns = "count(*) as units"
@@ -375,22 +385,6 @@ def is_unit_exists_under_country(db, country, client_id):
         return True
     else:
         return False
-
-def is_deactivated_existing_country(db, client_id, country_ids):
-    existing_countries = get_client_countries(db, client_id)
-    existing_countries_list = None
-    if existing_countries is not None:
-        existing_countries_list = [int(x) for x in existing_countries.split(",")]
-    current_countries = [int(x) for x in country_ids]
-    for country in existing_countries_list:
-        if country not in current_countries:
-            if is_unit_exists_under_country(db, country, client_id):
-                return True
-            else:
-                continue
-        else:
-            continue
-    return False
 
 def validate_no_of_user_licence(db, no_of_user_licence, client_id):
     column = "count(*) as license"
@@ -458,11 +452,12 @@ def update_client_group_record(db, client_group, session_user):
 
     condition = "client_id = '%s'"
     values.append(client_group.client_id)
-
-    action = "Updated Client \"%s\"" % client_group.group_name
-    db.save_activity(session_user, 18, action)
-
-    return db.update(tblClientGroups, columns, values, condition)
+    if db.update(tblClientGroups, columns, values, condition) :
+        action = "Updated Client \"%s\"" % client_group.group_name
+        db.save_activity(session_user, 18, action)
+        return True
+    else :
+        raise process_error("E046")
 
 def get_client_db_info(db, client_id=None):
     columns = "database_ip, client_id, "
@@ -552,17 +547,22 @@ def save_date_configurations(db, client_id, date_configurations, session_user):
             AND domain_id = %s" % (
                 client_id, country_id, domain_id
             )
-            db.update(
+            r = db.update(
                 tblClientConfigurations, update_columns, update_values, update_condition
             )
+            if r is False :
+                raise process_error("E048")
+
         else:
             insert_values = [
                 client_id, country_id,
                 domain_id, period_from, period_to, session_user, current_time_stamp
             ]
-            db.insert(
+            r = db.insert(
                 tblClientConfigurations, insert_columns, insert_values
             )
+            if r is False :
+                raise process_error("E047")
 
 def is_unit_exists_under_client(db, client_id):
     column = "count(*) as units"
@@ -591,7 +591,9 @@ def update_client_group_status(db, client_id, is_active, session_user):
         action = "Deactivated Client \"%s\"" % group_name
     db.save_activity(session_user, 18, action)
 
-    return db.update(tblClientGroups, columns, values, condition)
+    r = db.update(tblClientGroups, columns, values, condition)
+    if r is False :
+        raise process_error("E049")
 
 def is_duplicate_business_group(db, business_group_id, business_group_name, client_id):
     condition = "business_group_name = %s AND business_group_id != %s and client_id = %s "
@@ -612,7 +614,7 @@ def save_business_group(db, client_id, b_name, user_id):
     new_id = db.insert(tblBusinessGroups, columns, values)
 
     if new_id is False :
-        return False
+        raise process_error("E050")
     else :
         action = "Created Business Group \"%s\"" % b_name
         db.save_activity(user_id, 19, action)
@@ -635,7 +637,9 @@ def update_business_group(
     if result :
         action = "Updated Business Group \"%s\"" % business_group_name
         db.save_activity(session_user, 19, action)
-    return result
+        return result
+    else :
+        raise process_error("E051")
 
 def is_duplicate_legal_entity(db, legal_entity_id, legal_entity_name, client_id):
     condition = "legal_entity_name = %s AND legal_entity_id != %s and client_id = %s"
@@ -663,7 +667,7 @@ def save_legal_entity(
 
     new_id = db.insert(tblLegalEntities, columns, values)
     if new_id is False :
-        return False
+        raise process_error("E052")
     else :
         action = "Created Legal Entity \"%s\"" % legal_entity_name
         db.save_activity(session_user, 19, action)
@@ -681,7 +685,9 @@ def update_legal_entity(
     if result :
         action = "Updated Legal Entity \"%s\"" % legal_entity_name
         db.save_activity(session_user, 19, action)
-    return result
+        return result
+    else :
+        raise process_error("E053")
 
 def is_duplicate_division(db, division_id, division_name, client_id):
     condition = "division_name = %s AND division_id != %s and client_id = %s "
@@ -710,7 +716,7 @@ def save_division(
 
     new_id = db.insert(tblDivisions, columns, values)
     if new_id is False :
-        return False
+        raise process_error("E054")
     else :
         action = "Created Division \"%s\"" % division_name
         db.save_activity(session_user, 19, action)
@@ -727,8 +733,9 @@ def update_division(db, client_id, division_id, division_name, session_user):
     if result :
         action = "Updated Division \"%s\"" % division_name
         db.save_activity(session_user, 19, action)
-
-    return result
+        return result
+    else :
+        raise process_error("E055")
 
 def is_duplicate_unit_code(db, unit_id, unit_code, client_id):
     condition = "unit_code = %s AND unit_id != %s and client_id = %s"
@@ -771,6 +778,8 @@ def save_unit(db, client_id,  units, business_group_id, legal_entity_id, divisio
         unit_names.append("\"%s - %s\"" % (str(unit.unit_code).upper(), unit.unit_name))
 
     result = db.bulk_insert(tblUnits, columns, values_list)
+    if result is False :
+        raise process_error("E056")
 
     action = "Created following Units %s" % (",".join(unit_names))
     db.save_activity(session_user, 19, action)
@@ -797,7 +806,7 @@ def update_unit(db, client_id,  units, session_user):
             action = "Unit details updated for \"%s - %s\"" % (unit.unit_code, unit.unit_name)
             db.save_activity(session_user, 19, action)
         else :
-            return False
+            raise process_error("E057")
 
     return True
 
@@ -1097,8 +1106,10 @@ def reactivate_unit_data(db, client_id, unit_id, session_user):
     if result["division_id"] not in ["Null", "None", None, ""]:
         unit_columns.append("division_id")
         values.append(result["division_id"])
-    db.insert(tblUnits, unit_columns, values)
-    return unit_code, result["unit_name"]
+    if db.insert(tblUnits, unit_columns, values) :
+        return unit_code, result["unit_name"]
+    else :
+        raise process_error("E058")
 
 def get_next_unit_auto_gen_no(db, client_id):
     columns = "count(*) units"
@@ -1257,150 +1268,154 @@ def return_group_companies(db, group_companies):
 
 
 def create_new_admin(db, new_admin_id, client_id, session_user):
-    columns = [
-        "database_ip", "database_username", "database_password",
-        "database_name"
-    ]
-    condition = "client_id = %s" % client_id
-    rows = db.get_data(
-        tblClientDatabase, columns, condition
-    )
-    if rows:
-        host = rows[0]["database_ip"]
-        username = rows[0]["database_username"]
-        password = rows[0]["database_password"]
-        database = rows[0]["database_name"]
-        conn = db._db_connect(host, username, password, database)
-        cursor = conn.cursor()
+    try :
+        columns = [
+            "database_ip", "database_username", "database_password",
+            "database_name"
+        ]
+        condition = "client_id = %s" % client_id
+        rows = db.get_data(
+            tblClientDatabase, columns, condition
+        )
+        if rows:
+            host = rows[0]["database_ip"]
+            username = rows[0]["database_username"]
+            password = rows[0]["database_password"]
+            database = rows[0]["database_name"]
+            conn = db._db_connect(host, username, password, database)
+            cursor = conn.cursor()
 
-        # Getting old admin details
-        query = "select admin_id, username, password from tbl_admin"
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        old_admin_id = rows[0][0]
-
-        query = "select count(*) from tbl_assigned_compliances \
-        where assignee = %s or concurrence_person = %s or \
-        approval_person = %s " % (old_admin_id, old_admin_id, old_admin_id)
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        compliance_count = rows[0][0]
-        if compliance_count > 0:
-            return "Reassign"
-        else:
-            # Getting new admin details
-            query = "select email_id, password from tbl_users where \
-            user_id = %s " % (new_admin_id)
+            # Getting old admin details
+            query = "select admin_id, username, password from tbl_admin"
             cursor.execute(query)
             rows = cursor.fetchall()
-            admin_email = rows[0][0]
-            admin_password = rows[0][1]
+            old_admin_id = rows[0][0]
 
-            # Promoting to new admin in Client db
-            query = "update tbl_admin set admin_id= %s , username = '%s', password= '%s'" % (
-                new_admin_id, admin_email, admin_password
-            )
-            cursor.execute(query)
-            query = "update tbl_users set is_primary_admin = 1 where user_id = %s" % (
-                new_admin_id
-            )
-            cursor.execute(query)
-
-            # Deactivating old admin in Client db
-            query = "update tbl_users set is_active = 0 \
-            where user_id = %s " % (
-                old_admin_id
-            )
-            cursor.execute(query)
-
-            # Adding all countries to new admin
-            query = "select country_id from tbl_countries"
+            query = "select count(*) from tbl_assigned_compliances \
+            where assignee = %s or concurrence_person = %s or \
+            approval_person = %s " % (old_admin_id, old_admin_id, old_admin_id)
             cursor.execute(query)
             rows = cursor.fetchall()
-
-            query = "delete from tbl_user_countries where user_id = '%d'" % (
-                new_admin_id
-            )
-            cursor.execute(query)
-            if rows:
-                query = "Insert into tbl_user_countries (country_id, user_id) values "
-                for index, row in enumerate(rows):
-                    q = "%s (%s, %s) " % (query, row[0], new_admin_id)
-                    cursor.execute(q)
-
-            # Adding all domains to new admin
-            query = "select domain_id from tbl_domains"
-            cursor.execute(query)
-            rows = cursor.fetchall()
-
-            query = "delete from tbl_user_domains where user_id = %s" % (
-                new_admin_id
-            )
-            cursor.execute(query)
-            if rows:
-                query = "Insert into tbl_user_domains (domain_id, user_id) values "
-                for index, row in enumerate(rows):
-                    q = "%s (%s, %s) " % (query, row[0], new_admin_id)
-                    cursor.execute(q)
-
-            # Adding all units to new admin
-            query = "select unit_id from tbl_units"
-            cursor.execute(query)
-            rows = cursor.fetchall()
-
-            query = "delete from tbl_user_units where user_id = %s" % (
-                new_admin_id
-            )
-            cursor.execute(query)
-
-            if rows:
-                query = "Insert into tbl_user_units (unit_id, user_id) values "
-                for row in rows:
-                    q = "%s (%s, %s) " % (query, row[0], new_admin_id)
-                    cursor.execute(q)
-
-            query = "update tbl_assigned_compliances set concurrence_person = null,\
-            approval_person = '%s' where assignee = '%s'" % (new_admin_id, new_admin_id)
-            cursor.execute(query)
-
-            query = "update tbl_compliance_history set concurred_by = null,\
-            approved_by = '%s' where completed_by = '%s' and completed_on is null\
-            or completed_on = 0 " % (new_admin_id, new_admin_id)
-            cursor.execute(query)
-
-            query = "update tbl_compliance_history set approve_status = 1, \
-            approved_on=now(), approved_by='%s' where completed_by = '%s' and \
-            completed_on is not null and completed_on != 0 and approve_status \
-            is null or approve_status = 0" % (new_admin_id, new_admin_id)
-            cursor.execute(query)
-
-            query = "SELECT employee_name, employee_code FROM tbl_users \
-            WHERE user_id='%s'" % new_admin_id
-            cursor.execute(query)
-            rows = cursor.fetchall()
-            if rows[0][1] is not None:
-                employee_name = "%s - %s" % (rows[0][1], rows[0][0])
+            compliance_count = rows[0][0]
+            if compliance_count > 0:
+                return "Reassign"
             else:
-                employee_name = rows[0][0]
+                # Getting new admin details
+                query = "select email_id, password from tbl_users where \
+                user_id = %s " % (new_admin_id)
+                cursor.execute(query)
+                rows = cursor.fetchall()
+                admin_email = rows[0][0]
+                admin_password = rows[0][1]
 
-            conn.commit()
+                # Promoting to new admin in Client db
+                query = "update tbl_admin set admin_id= %s , username = '%s', password= '%s'" % (
+                    new_admin_id, admin_email, admin_password
+                )
+                cursor.execute(query)
+                query = "update tbl_users set is_primary_admin = 1 where user_id = %s" % (
+                    new_admin_id
+                )
+                cursor.execute(query)
 
-            # Promoting to new admin in Knowledge db
-            query = "update tbl_client_users set is_primary_admin = 1 \
-            where user_id = %s and client_id = %s"
-            db.execute(query, [new_admin_id, client_id])
+                # Deactivating old admin in Client db
+                query = "update tbl_users set is_active = 0 \
+                where user_id = %s " % (
+                    old_admin_id
+                )
+                cursor.execute(query)
 
-            # Deactivating old admin in Knowledge db
-            query = "update tbl_client_users set is_active = 0 \
-            where user_id = %s and client_id = %s"
-            db.execute(query, [old_admin_id, client_id])
+                # Adding all countries to new admin
+                query = "select country_id from tbl_countries"
+                cursor.execute(query)
+                rows = cursor.fetchall()
 
-            query = "update tbl_client_groups set email_id = %s where client_id = %s"
-            db.execute(query, [admin_email, client_id])
+                query = "delete from tbl_user_countries where user_id = '%d'" % (
+                    new_admin_id
+                )
+                cursor.execute(query)
+                if rows:
+                    query = "Insert into tbl_user_countries (country_id, user_id) values "
+                    for index, row in enumerate(rows):
+                        q = "%s (%s, %s) " % (query, row[0], new_admin_id)
+                        cursor.execute(q)
 
-            action = None
-            action = "User \"%s\" was promoted to Primary Admin status" % (employee_name)
-            db.save_activity(session_user, 20, action)
-            return True
-    else:
-        return "ClientDatabaseNotExists"
+                # Adding all domains to new admin
+                query = "select domain_id from tbl_domains"
+                cursor.execute(query)
+                rows = cursor.fetchall()
+
+                query = "delete from tbl_user_domains where user_id = %s" % (
+                    new_admin_id
+                )
+                cursor.execute(query)
+                if rows:
+                    query = "Insert into tbl_user_domains (domain_id, user_id) values "
+                    for index, row in enumerate(rows):
+                        q = "%s (%s, %s) " % (query, row[0], new_admin_id)
+                        cursor.execute(q)
+
+                # Adding all units to new admin
+                query = "select unit_id from tbl_units"
+                cursor.execute(query)
+                rows = cursor.fetchall()
+
+                query = "delete from tbl_user_units where user_id = %s" % (
+                    new_admin_id
+                )
+                cursor.execute(query)
+
+                if rows:
+                    query = "Insert into tbl_user_units (unit_id, user_id) values "
+                    for row in rows:
+                        q = "%s (%s, %s) " % (query, row[0], new_admin_id)
+                        cursor.execute(q)
+
+                query = "update tbl_assigned_compliances set concurrence_person = null,\
+                approval_person = '%s' where assignee = '%s'" % (new_admin_id, new_admin_id)
+                cursor.execute(query)
+
+                query = "update tbl_compliance_history set concurred_by = null,\
+                approved_by = '%s' where completed_by = '%s' and completed_on is null\
+                or completed_on = 0 " % (new_admin_id, new_admin_id)
+                cursor.execute(query)
+
+                query = "update tbl_compliance_history set approve_status = 1, \
+                approved_on=now(), approved_by='%s' where completed_by = '%s' and \
+                completed_on is not null and completed_on != 0 and approve_status \
+                is null or approve_status = 0" % (new_admin_id, new_admin_id)
+                cursor.execute(query)
+
+                query = "SELECT employee_name, employee_code FROM tbl_users \
+                WHERE user_id='%s'" % new_admin_id
+                cursor.execute(query)
+                rows = cursor.fetchall()
+                if rows[0][1] is not None:
+                    employee_name = "%s - %s" % (rows[0][1], rows[0][0])
+                else:
+                    employee_name = rows[0][0]
+
+                conn.commit()
+
+                # Promoting to new admin in Knowledge db
+                query = "update tbl_client_users set is_primary_admin = 1 \
+                where user_id = %s and client_id = %s"
+                db.execute(query, [new_admin_id, client_id])
+
+                # Deactivating old admin in Knowledge db
+                query = "update tbl_client_users set is_active = 0 \
+                where user_id = %s and client_id = %s"
+                db.execute(query, [old_admin_id, client_id])
+
+                query = "update tbl_client_groups set email_id = %s where client_id = %s"
+                db.execute(query, [admin_email, client_id])
+
+                action = None
+                action = "User \"%s\" was promoted to Primary Admin status" % (employee_name)
+                db.save_activity(session_user, 20, action)
+                return True
+        else:
+            return "ClientDatabaseNotExists"
+    except Exception, e :
+        print e
+        raise process_error("E059")
