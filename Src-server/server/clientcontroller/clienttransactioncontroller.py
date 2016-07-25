@@ -219,7 +219,7 @@ def process_save_assigned_compliance(db, request, session_user, client_id):
 ########################################################
 def process_get_past_records_form_data(db, request, session_user, client_id):
     countries = get_countries_for_user(db, session_user, client_id)
-    row = get_user_company_details(db, session_user, client_id)
+    row = get_user_company_details(db, session_user)
     business_groups = get_business_groups_for_user(db, row[3])
     legal_entities = get_legal_entities_for_user(db, row[2])
     divisions = get_divisions_for_user(db, row[1])
