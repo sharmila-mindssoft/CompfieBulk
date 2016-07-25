@@ -137,17 +137,17 @@ class Database(object):
 
         try :
             if type(param) is tuple :
+                logger.logQuery(self._for_client, "execute", query % param)
                 cursor.execute(query, param)
-                logger.logKnowledgeQuery("execute", query % param)
             elif type(param) is list :
-                cursor.execute(query, param)
                 if len(param) > 1 :
-                    logger.logKnowledgeQuery("execute", query % tuple(param))
+                    logger.logQuery(self._for_client, "execute", query % tuple(param))
                 else :
-                    logger.logKnowledgeQuery("execute", query % param[0])
+                    logger.logQuery(self._for_client, "execute", query % param[0])
+                cursor.execute(query, param)
             else :
+                logger.logQuery(self._for_client, "execute", query)
                 cursor.execute(query)
-                logger.logKnowledgeQuery("execute", query)
             return True
         except mysql.Error, e :
             print e
@@ -161,11 +161,17 @@ class Database(object):
         assert cursor is not None
         try :
             if type(param) is tuple :
+                logger.logQuery(self._for_client, "execute_insert", query % param)
                 cursor.execute(query, param)
             elif type(param) is list :
+                if len(param) > 1 :
+                    logger.logQuery(self._for_client, "execute_insert", query % tuple(param))
+                else :
+                    logger.logQuery(self._for_client, "execute_insert", query % param[0])
                 cursor.execute(query, param)
             else :
-                cursor.execute(query, (param))
+                logger.logQuery(self._for_client, "execute_insert")
+                cursor.execute(query)
             return int(cursor.lastrowid)
         except mysql.Error, e :
             print e
@@ -185,11 +191,20 @@ class Database(object):
                 cursor.execute(query)
             else :
                 if type(param) is tuple :
+                    logger.logQuery(self._for_client, "select_all", query % param)
                     cursor.execute(query, param)
+
                 elif type(param) is list :
+                    if len(param) > 1 :
+                        logger.logQuery(self._for_client, "select_all", query % tuple(param))
+                    else :
+                        logger.logQuery(self._for_client, "select_all", query % param[0])
                     cursor.execute(query, param)
+
                 else :
-                    cursor.execute(query, (param))
+                    logger.logQuery(self._for_client, "select_all", query)
+                    cursor.execute(query)
+
             res = cursor.fetchall()
             return res
         except mysql.Error, e:
@@ -206,11 +221,17 @@ class Database(object):
                 cursor.execute(query)
             else :
                 if type(param) is tuple :
+                    logger.logQuery(self._for_client, "select_one", query % param)
                     cursor.execute(query, param)
                 elif type(param) is list :
+                    if len(param) > 1 :
+                        logger.logQuery(self._for_client, "select_one", query % param)
+                    else :
+                        logger.logQuery(self._for_client, "select_one", query % param[0])
                     cursor.execute(query, param)
                 else :
-                    cursor.execute(query, (str(param)))
+                    logger.logQuery(self._for_client, "select_one", query % param)
+                    cursor.execute(query)
             res = cursor.fetchone()
             return res
         except mysql.Error, e:
@@ -259,13 +280,16 @@ class Database(object):
                 query += order
 
             if condition_val is None :
+                logger.logQuery(self._for_client, "get_data", query)
                 rows = self.select_all(query)
             else :
+                logger.logQuery(self._for_client, "get_data", query % condition_val)
                 rows = self.select_all(query, condition_val)
 
         else :
             if order is not None :
                 query += order
+            logger.logQuery(self._for_client, "get_data", query)
             rows = self.select_all(query)
         result = []
         if rows :
@@ -321,8 +345,10 @@ class Database(object):
 
         if where_condition is not None :
             query += " WHERE %s " % (where_condition)
+            logger.logQuery(self._for_client, "get_data_from_multiple_tables", query)
             rows = self.select_all(query)
         else :
+            logger.logQuery(self._for_client, "get_data_from_multiple_tables", query)
             rows = self.select_all(query)
 
         result = []
@@ -346,6 +372,7 @@ class Database(object):
         query = """INSERT INTO %s %s """ % (table, columns)
         query += " VALUES (%s) " % (",".join(stringValue))
         try:
+            logger.logQuery(self._for_client, "insert", query % values)
             n_id = int(self.execute_insert(query, values))
             return n_id
         except mysql.Error, e:
@@ -371,6 +398,7 @@ class Database(object):
         try:
             cursor = self.cursor()
             assert cursor is not None
+            logger.logQuery(self._for_client, "bulk_insert", query % valueList)
             cursor.executemany(query, valueList)
             return True
         except mysql.Error, e:

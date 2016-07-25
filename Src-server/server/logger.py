@@ -106,13 +106,11 @@ def logProcessError(callername, message):
     processErrorLogger.error(log_message)
 
 knowtQueryLogger = _get_rotate_file_obj("know_query_log", know_query_log_path)
-def logKnowledgeQuery(callername, message):
-    log_message = "%s: %s" % (callername, message)
-    if ENABLE_QUERY_LOG :
-        knowtQueryLogger.info(log_message)
-
 clientQueryLogger = _get_rotate_file_obj("client_query_log", client_query_log_path)
-def logClientQuery(callername, message):
+def logQuery(knowledge_qry, callername, message):
     log_message = "%s: %s" % (callername, message)
     if ENABLE_QUERY_LOG :
-        clientQueryLogger.info(log_message)
+        if knowledge_qry :
+            knowtQueryLogger.info(log_message)
+        else :
+            clientQueryLogger.info(log_message)

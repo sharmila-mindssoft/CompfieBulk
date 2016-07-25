@@ -112,6 +112,7 @@ class API(object):
                             company.db_password,
                             company.db_name
                         )
+                        db._for_client = True
                         db.connect()
                         if db._connection is not None :
                             self._databases[company_id] = db
