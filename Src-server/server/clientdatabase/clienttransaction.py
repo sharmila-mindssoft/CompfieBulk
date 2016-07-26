@@ -21,8 +21,10 @@ from server.clientdatabase.general import (
     calculate_ageing, get_user_unit_ids, get_admin_id,
     get_user_domains, get_email_id_for_users,
     get_user_name_by_id, convert_base64_to_file,
-    set_new_due_date, is_primary_admin, is_two_levels_of_approval
+    set_new_due_date, is_primary_admin, is_two_levels_of_approval,
+    is_admin, calculate_due_date, filter_out_due_dates
 )
+from server.exceptionmessage import client_process_error
 email = EmailHandler()
 
 __all__ = [
@@ -800,42 +802,46 @@ def get_units_for_user_grouped_by_industry(db, unit_ids):
         tblUnits, industry_column, industry_condition
     )
 
-    columns = "unit_id, concat(unit_code,'-',unit_name), address, division_id," + \
-        "legal_entity_id, business_group_id, country_id, domain_ids"
+    columns = [
+        "unit_id", "concat(unit_code,'-',unit_name) as u_name",
+        "address", "division_id",
+        "legal_entity_id", "business_group_id", "country_id", "domain_ids"
+    ]
     industry_wise_units = []
     for industry in industry_rows:
-        industry_name = industry[0]
+        industry_name = industry["industry_name"]
         units = []
         ad_condition = " and industry_name = '%s' and is_active = 1" % industry_name
         rows = db.get_data(
             tblUnits, columns, condition+ad_condition
         )
         for unit in rows:
-            domain_ids_list = [int(x) for x in unit[7].split(",")]
+            domain_ids_list = [int(x) for x in unit["domain_ids"].split(",")]
             division_id = None
             b_group_id = None
-            if unit[3] > 0 :
-                division_id = unit[3]
-            if unit[5] > 0 :
-                b_group_id = unit[5]
+            if unit["division_id"] > 0 :
+                division_id = unit["division_id"]
+            if unit["business_group_id"] > 0 :
+                b_group_id = unit["business_group_id"]
             units.append(
                 clienttransactions.PastRecordUnits(
-                    unit[0], unit[1], unit[2], division_id, unit[4],
-                    b_group_id, unit[6], domain_ids_list
+                    unit["unit_id"], unit["u_name"],
+                    unit["address"], division_id, unit["legal_entity_id"],
+                    b_group_id, unit["country_id"], domain_ids_list
                 )
             )
         industry_wise_units.append(clienttransactions.IndustryWiseUnits(industry_name, units))
     return industry_wise_units
 
 def get_level_1_statutories_for_user_with_domain(db, session_user, client_id, domain_id=None):
-    columns = "distinct compliance_id "
+    columns = "distinct compliance_id as compliance "
     condition = "1"
     if not is_admin(db, session_user):
         condition = "assignee = '%d'" % session_user
     rows = db.get_data(tblAssignedCompliances, columns, condition)
     c_ids = []
     for r in rows :
-        c_ids.append(str(r[0]))
+        c_ids.append(str(r["compliance"]))
 
     if len(c_ids) == 1 :
         compliance_ids = "(%s)" % c_ids[0]
@@ -844,7 +850,7 @@ def get_level_1_statutories_for_user_with_domain(db, session_user, client_id, do
 
     domain_ids = domain_id
     if domain_ids is None :
-        columns = "group_concat(domain_id)"
+        columns = "group_concat(domain_id) as domain"
         domain_rows = None
         if session_user != 0:
             domain_rows = db.get_data(
@@ -856,7 +862,7 @@ def get_level_1_statutories_for_user_with_domain(db, session_user, client_id, do
                 tblDomains, columns,
                 "1"
             )
-        domain_ids = domain_rows[0][0]
+        domain_ids = domain_rows[0]["domain"]
     level_1_statutory = {}
     for domain_id in domain_ids.split(","):
         condition = "domain_id in (%s)" % (domain_id)
@@ -869,7 +875,7 @@ def get_level_1_statutories_for_user_with_domain(db, session_user, client_id, do
         )
         level_1_statutory[domain_id] = []
         for mapping in mapping_rows:
-            statutories = mapping[0].split(">>")
+            statutories = mapping["statutory_mapping"].split(">>")
             if statutories[0].strip() not in level_1_statutory[domain_id]:
                 level_1_statutory[domain_id].append(statutories[0].strip())
     return level_1_statutory
@@ -1015,12 +1021,12 @@ def is_already_completed_compliance(
     db, due_date, compliance_id, unit_id, due_dates_list=None
 ):
     # Checking same due date already exists
-    columns = "count(*)"
+    columns = "count(*) as history"
     condition = "unit_id = '{}' and due_date = '{}' and compliance_id = '{}'".format(
         unit_id, due_date, compliance_id
     )
     rows = db.get_data(tblComplianceHistory, columns, condition)
-    is_compliance_with_same_due_date_exists = True if rows[0][0] > 0 else False
+    is_compliance_with_same_due_date_exists = True if rows[0]["history"] > 0 else False
     if is_compliance_with_same_due_date_exists:
         return is_compliance_with_same_due_date_exists
     else:
@@ -1036,13 +1042,13 @@ def is_already_completed_compliance(
                 else :
                     next_due_date = due_dates_list[current_due_date_index+1]
 
-                columns = "count(*)"
+                columns = "count(*) as history"
                 condition = "unit_id = '{}' AND due_date < '{}' AND compliance_id = '{}' AND \
                 approve_status = 1 and validity_date > '{}' and validity_date > '{}'".format(
                     unit_id, due_date, compliance_id, due_date, next_due_date
                 )
                 rows = db.get_data(tblComplianceHistory, columns, condition)
-                if rows[0][0] > 0:
+                if rows[0]["history"] > 0:
                     return True
                 else:
                     return False
@@ -1153,10 +1159,12 @@ def save_past_record(
         values.append(",".join(document_names))
         values.append(file_size)
 
-    db.insert(
+    result = db.insert(
         tblComplianceHistory, columns, values
     )
-    return True
+    if result is False :
+        raise client_process_error("E015")
+    return result
 
 def get_compliance_approval_count(db, session_user):
     columns = "count(*) as compliance"
@@ -1420,7 +1428,7 @@ def notify_compliance_approved(
     assignee_email, assignee_name = get_user_email_name(db, str(assignee_id))
     approver_email, approver_name = get_user_email_name(db, str(approver_id))
     concurrence_email, concurrence_name = (None, None)
-    if concurrence_id not in [None, "None", 0, "", "null", "Null"] and is_two_levels_of_approval(db):
+    if concurrence_id not in [None, "None", 0, "", "null", "Null"] and is_two_levels_of_approval(db) is True:
         concurrence_email, concurrence_name = get_user_email_name(db, str(concurrence_id))
         if approval_status == "Approved":
             notification_text = "Compliance %s, completed by %s and concurred by you \
@@ -1881,7 +1889,9 @@ def reassign_compliance(db, request, session_user):
             reassigned_date, reassigned_reason, created_by,
             created_on
         ]
-        db.insert(tblReassignedCompliancesHistory, reassing_columns, values)
+        result = db.insert(tblReassignedCompliancesHistory, reassing_columns, values)
+        if result is False :
+            raise client_process_error("E016")
 
         update_assign_column = [
             "assignee", "is_reassigned", "approval_person",

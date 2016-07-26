@@ -2,7 +2,7 @@ import threading
 from server.emailcontroller import EmailHandler
 from server import logger
 from server.dbase import Database
-from protocol import (core)
+from protocol import (core, general)
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT,
     KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
@@ -18,8 +18,9 @@ from server.clientdatabase.general import (
 
 from server.common import (
     datetime_to_string, get_date_time,
-    string_to_datetime, generate_and_return_password
+    string_to_datetime, generate_and_return_password, datetime_to_string_time
 )
+from server.exceptionmessage import client_process_error
 
 email = EmailHandler()
 __all__ = [
@@ -116,11 +117,11 @@ def save_service_provider(db, service_provider, session_user):
         current_time_stamp, session_user, current_time_stamp, session_user
     ]
     service_provider_id = db.insert(tblServiceProviders, columns, values)
-    print service_provider_id
-    if service_provider_id is not False :
-        action = "Created Service Provider \"%s\"" % service_provider.service_provider_name
-        db.save_activity(session_user, 2, action)
-        return True
+    if service_provider_id is False :
+        raise client_process_error("E001")
+
+    action = "Created Service Provider \"%s\"" % service_provider.service_provider_name
+    db.save_activity(session_user, 2, action)
     return service_provider_id
 
 def update_service_provider(db, service_provider, session_user, client_id):
@@ -147,6 +148,8 @@ def update_service_provider(db, service_provider, session_user, client_id):
     ]
     condition = "service_provider_id= %s" % service_provider.service_provider_id
     result = db.update(tblServiceProviders, columns_list, values_list, condition)
+    if result is False :
+        raise client_process_error("E002")
 
     column = "count(*) as services"
     condition = "now() between contract_from and contract_to \
@@ -201,7 +204,8 @@ def update_service_provider_status(db, service_provider_id,  is_active, session_
     values = [is_active, get_date_time(), session_user]
     condition = "service_provider_id= %s " % service_provider_id
     result = db.update(tblServiceProviders, columns, values, condition)
-
+    if result is False :
+        raise client_process_error("E003")
     action_column = "service_provider_name"
     rows = db.get_data(
         tblServiceProviders, action_column,
@@ -277,7 +281,8 @@ def save_user_privilege(db, user_group_id, user_privilege, session_user, client_
         session_user
     ]
     result = db.insert(tblUserGroups, columns, values_list)
-
+    if result is False :
+        raise client_process_error("E004")
     action = "Created User Group \"%s\"" % user_privilege.user_group_name
     db.save_activity(session_user, 3, action)
 
@@ -291,7 +296,8 @@ def update_user_privilege(db, user_privilege, session_user, client_id):
     ]
     condition = "user_group_id='%d'" % user_privilege.user_group_id
     result = db.update(tblUserGroups, columns, values, condition)
-
+    if result is False :
+        raise client_process_error("E005")
     action = "Updated User Group \"%s\"" % user_privilege.user_group_name
     db.save_activity(session_user, 3, action)
 
@@ -314,7 +320,8 @@ def update_user_privilege_status(db, user_group_id, is_active, session_user, cli
     values = [is_active, session_user, get_date_time()]
     condition = "user_group_id='%d'" % user_group_id
     result = db.update(tblUserGroups, columns, values, condition)
-
+    if result is False :
+        raise client_process_error("E006")
     action_column = "user_group_name"
     rows = db.get_data(
         tblUserGroups, action_column, condition
@@ -367,7 +374,7 @@ def return_user_details(
                     continue
         countries = get_user_countries(db, user["user_id"], client_id)
         domains = get_user_domains(db, user["user_id"], client_id)
-        units = get_user_unit_ids(db, user["user_id"], client_id)
+        units = get_user_unit_ids(db, user["user_id"])
         results.append(core.ClientUser(
             user["user_id"], user["email_id"],
             user["user_group_id"], user["employee_name"],
@@ -438,9 +445,6 @@ def is_duplicate_employee_code(db, user_id, employee_code):
     return db.is_already_exists(tblUsers, condition, condition_val)
 
 def save_user(db, user_id,  user, session_user, client_id):
-    result1 = None
-    result2 = None
-    result3 = None
     current_time_stamp = get_date_time()
     user.is_service_provider = 0 if user.is_service_provider is False else 1
     columns = [
@@ -464,9 +468,9 @@ def save_user(db, user_id,  user, session_user, client_id):
         columns.append("seating_unit_id")
         values.append(user.seating_unit_id)
 
-    is_save = db.insert(tblUsers, columns, values)
-    if is_save is False :
-        return False
+    result1 = db.insert(tblUsers, columns, values)
+    if result1 is False :
+        raise client_process_error("E007")
 
     db_con = Database(
         KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
@@ -498,21 +502,24 @@ def save_user(db, user_id,  user, session_user, client_id):
         country_value_tuple = (user_id, int(country_id))
         country_values_list.append(country_value_tuple)
     result2 = db.bulk_insert(tblUserCountries, country_columns, country_values_list, client_id)
-
+    if result2 is False :
+        raise client_process_error("E008")
     domain_columns = ["user_id", "domain_id"]
     domain_values_list = []
     for domain_id in user.domain_ids:
         domain_value_tuple = (user_id, int(domain_id))
         domain_values_list.append(domain_value_tuple)
     result3 = db.bulk_insert(tblUserDomains, domain_columns, domain_values_list, client_id)
-
+    if result3 is False :
+        raise client_process_error("E009")
     unit_columns = ["user_id", "unit_id"]
     unit_values_list = []
     for unit_id in user.unit_ids:
         unit_value_tuple = (user_id, int(unit_id))
         unit_values_list.append(unit_value_tuple)
     result4 = db.bulk_insert(tblUserUnits, unit_columns, unit_values_list, client_id)
-
+    if result4 is False :
+        raise client_process_error("E010")
     action = "Created user \"%s - %s\"" % (user.employee_code, user.employee_name)
     db.save_activity(session_user, 4, action)
     short_name = get_short_name_from_client_id(db, client_id)
@@ -525,10 +532,6 @@ def save_user(db, user_id,  user, session_user, client_id):
     return (result1 and result2 and result3 and result4)
 
 def update_user(db, user, session_user, client_id):
-    result1 = None
-    result2 = None
-    result3 = None
-    result4 = None
 
     current_time_stamp = get_date_time()
     user.is_service_provider = 0 if user.is_service_provider is False else 1
@@ -552,6 +555,9 @@ def update_user(db, user, session_user, client_id):
         values.append(user.seating_unit_id)
 
     result1 = db.update(tblUsers, columns, values, condition)
+    if result1 is False :
+        raise client_process_error("E011")
+
     db.delete(tblUserCountries, condition, client_id)
     db.delete(tblUserDomains, condition, client_id)
     db.delete(tblUserUnits, condition, client_id)
@@ -562,6 +568,8 @@ def update_user(db, user, session_user, client_id):
         country_value_tuple = (user.user_id, int(country_id))
         country_values_list.append(country_value_tuple)
     result2 = db.bulk_insert(tblUserCountries, country_columns, country_values_list, client_id)
+    if result2 is False :
+        raise client_process_error("E008")
 
     domain_columns = ["user_id", "domain_id"]
     domain_values_list = []
@@ -569,6 +577,8 @@ def update_user(db, user, session_user, client_id):
         domain_value_tuple = (user.user_id, int(domain_id))
         domain_values_list.append(domain_value_tuple)
     result3 = db.bulk_insert(tblUserDomains, domain_columns, domain_values_list, client_id)
+    if result3 is False :
+        raise client_process_error("E009")
 
     db_con = Database(
         KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
@@ -597,7 +607,8 @@ def update_user(db, user, session_user, client_id):
         unit_value_tuple = (user.user_id, int(unit_id))
         unit_values_list.append(unit_value_tuple)
     result4 = db.bulk_insert(tblUserUnits, unit_columns, unit_values_list, client_id)
-
+    if result4 is False :
+        raise client_process_error("E010")
     action = "Updated user \"%s - %s\"" % (user.employee_code, user.employee_name)
     db.save_activity(session_user, 4, action)
 
@@ -612,6 +623,10 @@ def update_user_status(db, user_id, is_active, session_user, client_id):
         is_active, get_date_time(), session_user
     ]
     condition = "user_id = '%d'" % user_id
+    result = db.update(tblUsers, columns, values, condition)
+    if result is False :
+        raise client_process_error("E012")
+
     db_con = Database(
         KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
         KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
@@ -638,7 +653,7 @@ def update_user_status(db, user_id, is_active, session_user, client_id):
         action = "Dectivated user \"%s - %s\"" % (employee_code, employee_name)
     db.save_activity(session_user, 4, action)
 
-    return db.update(tblUsers, columns, values, condition)
+    return result
 
 def update_admin_status(db, user_id, is_admin, session_user, client_id):
     columns = ["is_admin", "updated_on" , "updated_by"]
@@ -646,7 +661,8 @@ def update_admin_status(db, user_id, is_admin, session_user, client_id):
     values = [is_admin, get_date_time(), session_user]
     condition = "user_id='%d'" % user_id
     result = db.update(tblUsers, columns, values, condition)
-
+    if result is False :
+        raise client_process_error("E013")
     action_column = "employee_code, employee_name"
     rows = db.get_data(
         tblUsers, action_column, condition
@@ -713,13 +729,15 @@ def close_unit(db, unit_id, session_user):
     result = db.update(
         tblUnits, columns, values, condition
     )
-
+    if result is False :
+        raise client_process_error("E014")
     columns = ["is_active"]
     values = [0]
     result = db.update(
         tblAssignedCompliances, columns, values, condition
     )
-
+    if result is False :
+        raise client_process_error("E014")
     db_con = Database(
         KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
         KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME

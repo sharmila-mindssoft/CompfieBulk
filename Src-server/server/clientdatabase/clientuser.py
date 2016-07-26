@@ -1,15 +1,18 @@
+import datetime
+from server import logger
 from dateutil import relativedelta
-from protocol import core
+from protocol import (core, clientuser)
 from server.clientdatabase.tables import *
 from server.common import (
     datetime_to_string, string_to_datetime, new_uuid, get_date_time,
     string_to_datetime_with_time, convert_to_dict
-    )
+)
 from server.clientdatabase.general import (
     is_two_levels_of_approval, calculate_ageing, is_space_available,
     save_compliance_activity, save_compliance_notification, get_user_email_name,
     convert_base64_to_file
-    )
+)
+from server.exceptionmessage import client_process_error
 
 __all__ = [
     "get_inprogress_count",
@@ -331,7 +334,6 @@ def update_compliances(
             else:
                 return clienttransactions.NotEnoughSpaceAvailable()
     history = get_compliance_history_details(db, compliance_history_id)
-    print history
     assignee_id = history["completed_by"]
     concurrence_id = history["concurred"]
     approver_id = history["approved_by"]
@@ -554,13 +556,26 @@ def start_on_occurrence_task(
     columns.append("approved_by")
     values.append(approved_by)
 
-    db.insert(
+    result = db.insert(
         tblComplianceHistory, columns, values
     )
-    assignee_id, concurrence_id, approver_id, compliance_name, document_name, due_date = get_compliance_history_details(db, compliance_history_id)
+    if result is False :
+        raise client_process_error("E017")
+
+    history = get_compliance_history_details(db, compliance_history_id)
+    assignee_id = history["completed_by"]
+    concurrence_id = history["concurred"]
+    approver_id = history["approved_by"]
+    if approver_id is None :
+        approver_id = assignee_id
+    compliance_name = history["compliance_name"]
+    document_name = history["doc_name"]
+    due_date = history["due_date"]
+
     # user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
     assignee_email, assignee_name = get_user_email_name(db, str(assignee_id))
     approver_email, approver_name = get_user_email_name(db, str(approver_id))
+    print concurrence_id
     if concurrence_id not in [None, "None", 0, "", "null", "Null"] and is_two_levels_of_approval(db):
         concurrence_email, concurrence_name = get_user_email_name(db, str(concurrence_id))
     if document_name not in (None, "None", "") :
