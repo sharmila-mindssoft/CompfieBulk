@@ -216,6 +216,5 @@ def convert_base64_to_file(file_name, file_content, file_path=None):
         file_path = "%s/%s" % (file_path, file_name)
     remove_uploaded_file(file_path)
     if file_content is not None:
-        new_file = open(file_path, "wb")
-        new_file.write(file_content.decode('base64'))
-        new_file.close()
+        with io.FileIO(file_path, "wb") as fn :
+            fn.write(file_content.decode('base64'))
