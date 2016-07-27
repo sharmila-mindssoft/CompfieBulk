@@ -94,6 +94,8 @@ $("#submit").click(function(){
       function onFailure(error){
         if(error == "InvalidUserName"){
           displayMessage(message.nouser_exists);
+        }else{
+          displayMessage(error);
         }
         hideLoader();
       }

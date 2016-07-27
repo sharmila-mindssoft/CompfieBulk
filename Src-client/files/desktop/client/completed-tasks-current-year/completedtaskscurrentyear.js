@@ -418,6 +418,7 @@ function getStatutories(){
       hideLoader();
     }
     function onFailure(error){
+      displayMessage(error);
       hideLoader();
     }
     client_mirror.getStatutoriesByUnit(
@@ -704,6 +705,7 @@ function getPastRecords () {
     load_firstwizard();
   }
   function onFailure(error){
+    displayMessage(error);
   }
   client_mirror.getPastRecordsFormData(
     function (error, response) {

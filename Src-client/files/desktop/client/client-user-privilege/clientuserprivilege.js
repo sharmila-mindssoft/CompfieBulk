@@ -26,7 +26,7 @@ $("#btn-userprivilege-add").click(function(){
 		loadFormData(data['forms']['menus'])		
 	}
 	function onFailure(error){
-		console.log(error);
+		displayMessage(error);
 	}
 	client_mirror.getClientUserGroups(
 		function (error, response){
@@ -71,7 +71,7 @@ function initialize(){
 		$("#search-user-group-name").val("");
 	}
 	function onFailure(status, data){
-		console.log(status);
+		displayMessage(error);
 	}
 	client_mirror.getClientUserGroups(
 		function (error, response){
@@ -208,7 +208,7 @@ function userPrivilegeEdit(userGroupId, userGroupName){
 		loadFormListUpdate(data['forms']['menus'], data['user_groups'], userGroupId);     
 	}
 	function onFailure(error){
-		console.log(error);
+		displayMessage(error);
 	}
 	client_mirror.getClientUserGroups(
 		function (error, response){
@@ -264,10 +264,13 @@ function userPrivilegeActive(userGroupId, isActive){
 			   		initialize();
 			  	}
 			  	function onFailure(error){
-			  		/*if(error == "CannotDeactivateUserExists"){
-			  			displayMessage(message.cannot_deactivate_usergroup)
-			  		}*/
-			  		alert(message.cannot_deactivate_usergroup);
+			  		if(error == "CannotDeactivateUserExists"){
+			  			//displayMessage(message.cannot_deactivate_usergroup)
+			  			custom_alert(message.cannot_deactivate_usergroup);
+			  		}else{
+			  			custom_alert(error);
+			  		}
+			  		
 			 	}
 			  	client_mirror.changeClientUserGroupStatus(userGroupId, isActive, 
 			  		function (error, response){

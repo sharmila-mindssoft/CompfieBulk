@@ -178,9 +178,9 @@ function changeStatus (statutorymappingId,isActive) {
               }
               function onFailure(error){
                 if(error == "TransactionExists"){
-                    alert(message.trasaction_exists)
+                    custom_alert(message.trasaction_exists)
                 }else{
-                    alert(error)
+                    custom_alert(error)
                 }
               }
               mirror.changeStatutoryMappingStatus(statutorymappingId, isActive,

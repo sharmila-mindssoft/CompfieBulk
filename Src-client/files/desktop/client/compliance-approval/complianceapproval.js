@@ -28,7 +28,7 @@ function initialize(){
         hideLoader();
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
         hideLoader();
     }
     client_mirror.getComplianceApprovalList(sno,
@@ -55,7 +55,7 @@ $('#pagination').click(function(){
         hideLoader();
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
         hideLoader();
     }
     client_mirror.getComplianceApprovalList(sno,

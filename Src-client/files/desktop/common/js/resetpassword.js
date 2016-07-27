@@ -38,8 +38,10 @@ $("#submit").click(function(){
               if(error == "InvalidResetToken"){
                 displayMessage(message.invalid_reset_token);
               }
-              if(error == "EnterDifferentPassword"){
+              else if(error == "EnterDifferentPassword"){
                 displayMessage(message.password_already_used);
+              }else{
+                displayMessage(error);
               }
             }
             client_mirror.resetPassword(resetToken, newpassword,url_parameters[url_parameters.length - 2],
@@ -63,8 +65,11 @@ $("#submit").click(function(){
                 if(error == "InvalidResetToken"){
                   displayMessage(message.invalid_reset_token);
                 }
-                if(error == "EnterDifferentPassword"){
+                else if(error == "EnterDifferentPassword"){
                   displayMessage(message.password_already_used);
+                }
+                else{
+                  displayMessage(error);
                 }
               }
             mirror.resetPassword(resetToken, newpassword,

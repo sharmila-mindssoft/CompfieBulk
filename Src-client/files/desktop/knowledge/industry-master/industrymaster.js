@@ -20,7 +20,7 @@ function getIndustries () {
       loadIndustryList(industriesList);
   }
   function onFailure(error){
-    displayMessage(error);
+    custom_alert(error);
   }
   mirror.getIndustryList(
       function (error, response) {
@@ -116,8 +116,11 @@ if(validate()){
         if(error == "InvalidIndustryId"){
             displayMessage(message.invalid_industryid);
         }                
-        if(error == "IndustryNameAlreadyExists"){
+        else if(error == "IndustryNameAlreadyExists"){
             displayMessage(message.industryname_exists);
+        }
+        else{
+          displayMessage(error);
         }
     }
     mirror.saveIndustry(industryName,
@@ -138,7 +141,9 @@ if(validate()){
     }
     function onFailure(error){            
         if(error == "IndustryNameAlreadyExists"){
-            displayMessage(message.industryname_exists);
+          displayMessage(message.industryname_exists);
+        }else{
+          displayMessage(error)
         }
     }
     mirror.updateIndustry(parseInt(industryId), industryName,
@@ -180,9 +185,9 @@ function changeStatus (industryId,isActive) {
               }
               function onFailure(error){
                 if(error == "TransactionExists"){
-                    alert(message.trasaction_exists)
+                    custom_alert(message.trasaction_exists)
                 }else{
-                    alert(error)
+                    custom_alert(error)
                 }
               }
               mirror.changeIndustryStatus(industryId, isActive,

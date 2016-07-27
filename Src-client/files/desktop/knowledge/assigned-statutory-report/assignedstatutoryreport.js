@@ -44,7 +44,7 @@ function initialize(){
         loadCountries(countriesList);
     }
     function onFailure(error){
-        console.log(error);
+       displayMessage(error);
     }
     mirror.getAssignedStatutoryReportFilters(
         function (error, response){
@@ -200,7 +200,7 @@ $("#show-button").click(function(){
         }
         function onFailure(error){
             hideLoader();
-            console.log(error);
+            displayMessage(error);
         }
         //countryId, domainId,  clientId, businessGroupId, legalEntityId, divisionId, unitId, level1StatutoryId, applicableStatus,
         mirror.getAssignedStatutoryReport(parseInt(countries),  domainsVal,  groupid, businessgroupid,

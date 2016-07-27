@@ -24,7 +24,7 @@ function initialize(){
     loadClientProfileList(profiles)
   }
   function onFailure(error){
-        console.log(error);
+        displayMessage(error);
   }
   client_mirror.getSettings(
         function(error, response){
@@ -133,7 +133,7 @@ if(validate()){
         displayMessage(message.record_updated);
       }
     function onFailure(error) {
-        displayMessage = error
+        displayMessage(error);
     }
     client_mirror.updateSettings(twolevelapproval, parseInt(assigneeReminderDays), parseInt(eReminderAdvance), parseInt(eReminder),
         function (error, response) {

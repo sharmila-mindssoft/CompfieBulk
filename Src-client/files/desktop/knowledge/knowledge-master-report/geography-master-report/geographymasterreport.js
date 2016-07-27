@@ -8,6 +8,7 @@ function getGeography(){
     countriesList = data["countries"];
   }
   function onFailure(error){
+    displayMessage(error);
   }
   mirror.getGeographyReport(
     function (error, response) {

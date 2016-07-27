@@ -50,7 +50,7 @@ function initialize(){
         loadClientsList(data);
     }
     function onFailure(error){
-        displayMessage(error);
+        custom_alert(error);
     }
     mirror.getClients(
         function(error, response){
@@ -596,7 +596,7 @@ function autoGenerateUnitCode(){
         unitcodeautogenerate(data["next_unit_code"]);
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
     }
     mirror.getNextUnitCode(parseInt(client_id),
         function(error, response){
@@ -1488,7 +1488,7 @@ function unit_close(){
     }
     else{
         function onSuccess(data){
-            alert("Unit '"+data["unit_name"]+"'' has been reactivated successfully.\n New Unit code for the unit is '"+data["unit_code"]+"' \n You need to Assign statutory for this unit, \n for the client to access")
+            custom_alert("Unit '"+data["unit_name"]+"'' has been reactivated successfully.\n New Unit code for the unit is '"+data["unit_code"]+"' \n You need to Assign statutory for this unit, \n for the client to access")
             $('#unitidval').val("");
             $('#clientidval').val("");
             $('.overlay').css("visibility","hidden");
@@ -1499,6 +1499,8 @@ function unit_close(){
             if(error == 'InvalidPassword'){
                 $('.popup-error-msg').html("Enter Correct password");
                 $('#password').val("");
+            }else{
+                $('.popup-error-msg').html(error);
             }
         }
         mirror.reactivateUnit(parseInt(clientidval), parseInt(unitidval), password,

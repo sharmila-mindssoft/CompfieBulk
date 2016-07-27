@@ -94,7 +94,7 @@ function changeStatus (userId,isActive) {
 					$(".filter-text-box").val('');
 				}
 				function onFailure(error){
-					alert(error)
+					custom_alert(error)
 				}
 				mirror.changeAdminUserStatus(userId, isActive,
 					function (error, response) {
@@ -184,6 +184,7 @@ function getUsers(){
 		loadUserList(usersList);
 	}
 	function onFailure(error){
+		custom_alert(error);
 	}
 	mirror.getAdminUserList(
 		function (error, response) {
@@ -260,14 +261,16 @@ $("#submit").click(function(){
 			}
 			function onFailure(error){
 				if(error == "EmailIDAlreadyExists"){
-            	displayMessage(message.emailid_exists);
-        }
-        if(error == "ContactNumberAlreadyExists"){
-            displayMessage(message.contactno_exists);
-        }
-        if(error == "EmployeeCodeAlreadyExists"){
-            displayMessage(message.employeeid_exists);
-        }
+		           displayMessage(message.emailid_exists);
+		        }
+		        else if(error == "ContactNumberAlreadyExists"){
+		            displayMessage(message.contactno_exists);
+		        }
+		        else if(error == "EmployeeCodeAlreadyExists"){
+		            displayMessage(message.employeeid_exists);
+		        }else{
+		        	displayMessage(error);
+		        }
 			}
 			userDetail = [emailId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,countryIds,domainIds];
 			userDetailDict = mirror.getSaveAdminUserDict(userDetail);

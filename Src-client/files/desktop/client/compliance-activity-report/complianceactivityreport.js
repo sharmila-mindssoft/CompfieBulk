@@ -39,7 +39,7 @@ function initialize(){
         complianceList = data['compliances'];
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
     }
     client_mirror.getComplianceActivityReportFilters(
         function (error, response){
@@ -148,7 +148,7 @@ function loadcomplianceactivityreport(buttontype){
         }
         function onFailure(error){
             hideLoader();
-            console.log(error);
+            displayMessage(error);
         }
         var csv = false
         if(buttontype == "export"){

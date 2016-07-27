@@ -46,7 +46,7 @@ function getStatutoryMappings(){
 
   }
   function onFailure(error){
-
+    displayMessage(error);
   }
   mirror.getApproveStatutoryMapings(
     function (error, response) {
@@ -343,6 +343,7 @@ function reloadStatutoryMapping(){
       loadApproveStatutory();
     }
       function onFailure(error){
+        displayMessage(error);
     }
     mirror.getApproveStatutoryMapings(
       function (error, response) {

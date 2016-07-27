@@ -136,6 +136,8 @@ function performLogin(e_button, e_email, e_password) {
         }
         else if (status.indexOf("timeout") >= 0) {
             disp_message = message.connection_timeout
+        }else{
+            disp_message = status
         }
         displayLoginMessage(disp_message);
         $("input").val("");

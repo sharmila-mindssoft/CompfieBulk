@@ -226,7 +226,7 @@ function loadCompliance(reportType){
         hideLoader();
       }
       function onFailure(error){
-        onFailure(error);
+        displayMessage(error);
         hideLoader();
       }
 

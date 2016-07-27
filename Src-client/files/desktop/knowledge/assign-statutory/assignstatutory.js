@@ -597,6 +597,7 @@ $("#country").click(function(event){
   load_firstwizard();
 }
 function onFailure(error){
+  displayMessage(error);
 }
 mirror.getAssignStatutoryWizardOne(parseInt($('.countrylist.active').attr('id')),
   function (error, response) {
@@ -739,6 +740,7 @@ function validate_firsttab(){
         return true;
       }
       function onFailure(error){
+        displayMessage(error);
         hideLoader();
       }
       mirror.getAssignStatutoryWizardTwo(parseInt($('.countrylist.active').attr('id')),
@@ -1089,7 +1091,7 @@ function getAssignedStatutories () {
     loadAssignedStatutoriesList(assignedStatutoriesList);
   }
   function onFailure(error){
-    displayMessage(error)
+    custom_alert(error)
   }
   mirror.getAssignedStatutoriesList(
     function (error, response) {

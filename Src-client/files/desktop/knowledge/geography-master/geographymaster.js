@@ -106,9 +106,9 @@ function changeStatus (geographyId,isActive) {
               }
               function onFailure(error){
                 if(error == "TransactionExists"){
-                    alert(message.trasaction_exists)
+                    custom_alert(message.trasaction_exists)
                 }else{
-                    alert(error)
+                    custom_alert(error)
                 }      
               }
             mirror.changeGeographyStatus(geographyId, isActive,
@@ -306,7 +306,9 @@ function saverecord(j,e){
         }
         function onFailure(error){
           if(error == 'GeographyNameAlreadyExists'){
-              displayMessage(message.geographyname_exists);
+            displayMessage(message.geographyname_exists);
+          }else{
+            displayMessage(error)
           }
         }
         countryId = parseInt($("#country").val());
@@ -457,8 +459,11 @@ function updaterecord(j,e){
           if(error == 'GeographyNameAlreadyExists'){
               displayMessage(message.geographyname_exists);
           }
-          if(error == 'InvalidGeographyId'){
+          else if(error == 'InvalidGeographyId'){
               displayMessage(message.invalid_geographyid);
+          }
+          else{
+            displayMessage(error);
           }
 
         }
@@ -524,7 +529,7 @@ function GetGeographies(){
     loadGeographiesList(geographiesList);
   }
   function onFailure(error){
-    displayMessage(error);
+    custom_alert(error);
   }
   mirror.getGeographies(
     function (error, response) {

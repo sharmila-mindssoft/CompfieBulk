@@ -21,12 +21,14 @@ $("#submit-client").click(function(){
       displayMessage(message.password_weak);
     } else {
         function onSuccess(data){
-          alert("Password Changed Successfully.");
+          custom_alert("Password Changed Successfully.");
           client_mirror.logout();   
         }
         function onFailure(error){
           if(error == "InvalidCurrentPassword"){
             displayMessage(message.invalid_cpassword);
+          }else{
+            displayMessage(error);
           }
         }
 

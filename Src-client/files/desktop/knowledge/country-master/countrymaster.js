@@ -26,7 +26,7 @@ function initialize(){
         loadCountriesList(data);
     }
     function onFailure(error){
-        displayMessage(error);
+        custom_alert(error);
     }
     mirror.getCountryList(
         function (error, response) {
@@ -112,6 +112,8 @@ $("#submit").click(function(){
                 function onFailure(error){
                     if(error == 'CountryNameAlreadyExists'){
                         displayMessage(message.countryname_exists);
+                    }else{
+                        displayMessage(error);
                     }
                 }
                 mirror.saveCountry(countryNameValue,
@@ -135,8 +137,10 @@ $("#submit").click(function(){
                     if(error == 'InvalidCountryId') {
                         displayMessage(message.countryname_invalid);
                     }
-                    if(error == 'CountryNameAlreadyExists'){
+                    else if(error == 'CountryNameAlreadyExists'){
                         displayMessage(message.countryname_exists);
+                    }else{
+                        displayMessage(error);
                     }
                 }
                 mirror.updateCountry(parseInt(countryIdValue), countryNameValue,
@@ -178,9 +182,9 @@ function country_active(countryId, isActive){
                 }
                 function onFailure(error){
                     if(error == "TransactionExists"){
-                        alert(message.trasaction_exists)
+                        custom_alert(message.trasaction_exists)
                     }else{
-                        alert(error)
+                        custom_alert(error)
                     }
                 }
                 mirror.changeCountryStatus( parseInt(countryId), isActive,
@@ -217,3 +221,4 @@ $("#search-country-name").keyup(function() {
 $(function() {
     initialize();
 });
+

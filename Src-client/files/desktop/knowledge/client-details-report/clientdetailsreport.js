@@ -37,7 +37,7 @@ function initialize(){
         loadCountries(countriesList);
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
     }
     mirror.getClientDetailsReportFilters(
         function (error, response){
@@ -133,7 +133,7 @@ function loadunitdetailsreport(){
             loadClientDetailsList(data['units']);       
         }
         function onFailure(error){
-            console.log(error);
+            displayMessage(error);
         }
         mirror.getClientDetailsReport(parseInt(countries), parseInt(groupid), businessgroupid,  
             lentityid, divisionid, unitid,  domainsVal, sno, 

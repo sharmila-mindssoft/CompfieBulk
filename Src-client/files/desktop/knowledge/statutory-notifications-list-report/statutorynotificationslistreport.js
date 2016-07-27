@@ -13,7 +13,7 @@ function initialize(){
 		//loadCountries(countriesList);
 	}
 	function onFailure(error){
-		console.log(error);
+		displayMessage(error);
 	}
 	mirror.getStatutoryNotificationsFilters(
 		function (error, response){

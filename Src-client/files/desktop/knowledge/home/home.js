@@ -3,7 +3,7 @@ function initialize(){
         loadNotificationList(data["notifications"]);
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
     }
     $(".notification-container").hide();
     if (mirror.getUserId() > 0 ) {

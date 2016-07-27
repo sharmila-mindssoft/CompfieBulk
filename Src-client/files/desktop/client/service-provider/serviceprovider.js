@@ -74,7 +74,7 @@ function initialize(){
         loadServiceProviderList(data);
     }
     function onFailure(error){
-        console.log(error);
+        custom_alert(error);
     }
     client_mirror.getServiceProviders(
         function(error, response){
@@ -202,9 +202,12 @@ $("#submit").click(function(){
                 if(error == 'ServiceProviderNameAlreadyExists') {
                     displayMessage(message.spname_exists);
                 }   
-                if(error == 'ContactNumberAlreadyExists') {
+                else if(error == 'ContactNumberAlreadyExists') {
                     displayMessage(message.contactno_exists);
-                }   
+                }
+                else{
+                    displayMessage(error);
+                }
          
             }
             var serviceProviderDetail;
@@ -235,8 +238,11 @@ $("#submit").click(function(){
                 if(error == 'ServiceProviderNameAlreadyExists') {
                     displayMessage(message.spname_exists);
                 }   
-                if(error == 'ContactNumberAlreadyExists') {
+                else if(error == 'ContactNumberAlreadyExists') {
                     displayMessage(message.contactno_exists);
+                }
+                else{
+                    displayMessage(error);
                 }
             }
             var serviceProviderDetail;
@@ -328,11 +334,11 @@ function serviceprovider_active(serviceProviderId, isActive){
                 }
                 function onFailure(error){
                     if(error == "CannotDeactivateUserExists"){
-                        alert(message.cannot_deactivate_sp);
+                        custom_alert(message.cannot_deactivate_sp);
                     }else if(error == "CannotChangeStatusOfContractExpiredSP"){
-                        alert(message.cannot_change_status);
+                        custom_alert(message.cannot_change_status);
                     }else{
-                        alert(error);
+                        custom_alert(error);
                     }
                 }
                 client_mirror.changeServiceProviderStatus(parseInt(serviceProviderId), isActive, 

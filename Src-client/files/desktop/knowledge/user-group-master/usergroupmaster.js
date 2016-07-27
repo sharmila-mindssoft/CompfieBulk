@@ -49,7 +49,7 @@ function initialize(){
 		loadUserGroupdata(uglist);
 	}
 	function onFailure(error){
-		console.log(error);
+		custom_alert(error);
 	}
 	mirror.getAdminUserGroupList(
 		function (error, response) {
@@ -135,6 +135,8 @@ $("#categoryName").on("change", function(){
 	function onFailure(error){
 		if(error == "GroupNameAlreadyExists"){
 			displayMessage(message.groupname_exists)
+		}else{
+			displayMessage(error);
 		}
 	}
 	mirror.getAdminUserGroupList(
@@ -253,6 +255,8 @@ $("#btnUserGroupSubmit").click(function(){
 				function onFailure(error){
 					if(error == "GroupNameAlreadyExists"){
 						displayMessage(message.groupname_exists);
+					}else{
+						displayMessage(error);
 					}
 				}
 
@@ -294,6 +298,8 @@ $("#btnUserGroupSubmit").click(function(){
 				function onFailure(error){
 					if(error == "GroupNameAlreadyExists"){
 						displayMessage(message.groupname_exists);
+					}else{
+						displayMessage(error);
 					}
 				}
 				var userGroupInsertDetails = mirror.getUpdateAdminUserGroupDict(parseInt(groupIdVal), groupNameVal,
@@ -329,7 +335,7 @@ function userGroupEdit(userGroupId, userGroupName, catgid){
 		loadFormListUpdate(data['forms'], data['user_groups'], catgid, userGroupId);
 	}
 	function onFailure(error){
-		console.log(error);
+		displayMessage(error);
 	}
 	mirror.getAdminUserGroupList(
 		function (error, response) {
@@ -359,9 +365,9 @@ function userGroupActive(userGroupId, isActive){
 			    }
 			    function onFailure(error){
 				    if(error == "CannotDeactivateUserExists"){
-			            alert(message.cannot_deactivate_usergroup)
+			            custom_alert(message.cannot_deactivate_usergroup)
 			        }else{
-			            alert(error)
+			            custom_alert(error)
 			        }
 			    }
 			    mirror.changeAdminUserGroupStatus(userGroupId, isActive,

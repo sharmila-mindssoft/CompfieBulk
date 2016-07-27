@@ -63,7 +63,7 @@ $(".btn-clientgroup-add").click(function(){
         $('.tbody-dateconfiguration-list').empty();
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
     }
     mirror.getClientGroups(
         function (error, response) {
@@ -99,7 +99,7 @@ function initialize(){
         loadClientGroupList(data['client_list']);
     }
     function onFailure(error){
-        console.log(error);
+        custom_alert(error);
     }
     mirror.getClientGroups(
         function (error, response) {
@@ -472,10 +472,10 @@ function clientgroup_active(clientId, isActive){
                 }
                 function onFailure(error){
                     if(error == "CannotDeactivateClient"){
-                        alert(message.cannot_deactivate_client);
+                        custom_alert(message.cannot_deactivate_client);
                     }
                     else{
-                        displayMessage(error);
+                        custom_alert(error);
                     }
                 }
                 mirror.changeClientGroupStatus( parseInt(clientId), isActive,
@@ -516,7 +516,7 @@ function clientgroup_edit(clientGroupId){
         loadFormListUpdate(data['client_list'], clientGroupId);
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
     }
     mirror.getClientGroups(
         function (error, response){
@@ -690,7 +690,7 @@ $("#upload-logo").on("change", function(e) {
             logo_file = data
         }
         else{
-          alert(data);
+          custom_alert(data);
         }
      });
 });

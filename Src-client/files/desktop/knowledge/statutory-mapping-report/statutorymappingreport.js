@@ -248,7 +248,7 @@ $('#pagination').click(function(){
     hideLoader();
   }
   function onFailure(error){
-    onFailure(error);
+    displayMessage(error);
     hideLoader();
   }
   mirror.getStatutoryMappingsReportData(filterdata,
@@ -310,7 +310,7 @@ $("#submit").click(function(){
       hideLoader();
     }
     function onFailure(error){
-      onFailure(error);
+     displayMessage(error);
       hideLoader();
     }
     mirror.getStatutoryMappingsReportData(filterdata,

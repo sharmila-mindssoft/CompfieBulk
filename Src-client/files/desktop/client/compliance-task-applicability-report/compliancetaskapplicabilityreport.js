@@ -67,7 +67,7 @@ function initialize(){
         $("#countryval").focus();
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
     }
     client_mirror.getTaskApplicabilityReportFilters(
         function (error, response){
@@ -172,7 +172,7 @@ function loadcompliancetaskapplicabilityreport(buttontype){
             }
         }
         function onFailure(error){
-            console.log(error);
+            displayMessage(error);
         }
 
         client_mirror.getTaskApplicabilityReportData(
@@ -234,7 +234,7 @@ $('#pagination').click(function(e){
         hideLoader();
     }
     function onFailure(error){
-        onFailure(error);
+        displayMessage(error);
         hideLoader();
     }
 

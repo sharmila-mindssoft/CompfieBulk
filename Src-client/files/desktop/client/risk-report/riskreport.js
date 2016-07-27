@@ -185,7 +185,7 @@ function loadCompliance(reportType){
       }
     }
     function onFailure(error){
-      onFailure(error);
+      displayMessage(error);
       hideLoader();
     }
     var csv = true

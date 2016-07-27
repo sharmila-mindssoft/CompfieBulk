@@ -17,6 +17,20 @@ function getMonth_IntegettoString(intMonth){
 }
 
 
+function custom_alert(output_msg)
+{
+  $( ".alert-confirm" ).dialog({
+      buttons: {
+          Ok: function() {
+              $( this ).dialog( "close" );
+          }
+      },
+      open: function ()  {
+          $(".alert-message").html(output_msg);
+      }
+  });
+}
+
 /*
   checkStrength is function which will do the 
   main password strength checking for us

@@ -47,7 +47,7 @@ $("#submit").click(function(){
             displayMessage(message.updated_success);
         }
         function onFailure(error){
-            console.log(error);
+            displayMessage(error);
         }
         client_mirror.updateUserProfile( countrycode+"-"+areacode+"-"+mobile, address,
             function(error, response){

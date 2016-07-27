@@ -396,6 +396,7 @@ function validate_firsttab(){
       }
       function onFailure(error){
         hideLoader();
+        displayMessage(error);
       }
       client_mirror.getAssignComplianceForUnits(assignStatutoryUnitIds,
         parseInt(domainID),
@@ -1459,6 +1460,7 @@ function getAssignCompliances () {
     load_firstwizard();
   }
   function onFailure(error){
+    displayMessage(error);
   }
   client_mirror.getAssignComplianceFormData(
     function (error, response) {

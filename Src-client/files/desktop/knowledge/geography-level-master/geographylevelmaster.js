@@ -232,6 +232,8 @@ $("#submit").click(function(){
           	var levelValue = response['level'];
           	var msg = "Level "+ levelValue + " ";
           	displayMessage(msg+message.shouldnot_empty);
+          }else{
+          	displayMessage(error);
           }
         }
 		mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist,

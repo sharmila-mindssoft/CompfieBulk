@@ -134,7 +134,7 @@ function get_notifications(sno){
         hideLoader();
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
         hideLoader();
     }
     client_mirror.getNotifications('Notification', sno,
