@@ -68,9 +68,9 @@ def save_domain(db, domain_name, user_id) :
     query = "INSERT INTO tbl_domains(domain_name, \
         created_by, created_on) \
         VALUES (%s, %s, %s) "
-    res = db.execute(query, (
+    res = db.execute(query, [
         domain_name, user_id, created_on
-    ))
+    ])
     if res is False :
         raise process_error("E024")
     action = "Add Domain - \"%s\"" % domain_name
@@ -195,8 +195,8 @@ def return_countries(data) :
 
 def get_country_by_id(db, country_id) :
     q = "SELECT country_name FROM tbl_countries \
-        WHERE country_id=%s"
-    row = db.select_one(q, (str(country_id)))
+        WHERE country_id= %s "
+    row = db.select_one(q, [country_id])
     country_name = row[0]
     return country_name
 
@@ -245,12 +245,12 @@ def update_country(db, country_id, country_name, updated_by) :
 
 def check_country_id_to_deactivate(db, country_id) :
     q = "SELECT count(*) from tbl_statutory_mappings where country_id = %s"
-    row = db.select_one(q, str(country_id))
+    row = db.select_one(q, [country_id])
     if row[0] > 0 :
         return False
     else :
         q = "SELECT count(*) from tbl_client_countries where country_id = %s "
-        row = db.select_one(q, str(country_id))
+        row = db.select_one(q, [country_id])
         if row[0] > 0 :
             return False
     return True
@@ -267,9 +267,9 @@ def update_country_status(db, country_id, is_active, updated_by) :
             status = "deactivated"
         else:
             status = "activated"
-        if db.execute(query, (
+        if db.execute(query, [
             is_active, updated_by, country_id
-        )) :
+        ]) :
             action = "Country %s status  - %s" % (oldData, status)
             db.save_activity(updated_by, 1, action)
             return True

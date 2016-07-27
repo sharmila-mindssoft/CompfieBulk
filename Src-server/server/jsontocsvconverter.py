@@ -6,6 +6,13 @@ import uuid
 from protocol import (
     core
 )
+from server.common import (
+    string_to_datetime, datetime_to_string,
+    convert_to_dict
+)
+from server.clientdatabase.tables import *
+from server.clientdatabase.clientreport import *
+
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
@@ -66,8 +73,8 @@ class ConvertJsonToCSV(object):
         compliance_id = request.compliance_id
         level_1_statutory_name = request.level_1_statutory_name
 
-        rows = db.get_compliance_activity_report(
-            country_id, domain_id, user_type, user_id,
+        rows = get_compliance_activity_report(
+            db, country_id, domain_id, user_type, user_id,
             unit_id, compliance_id,
             level_1_statutory_name, from_date, to_date,
             session_user, client_id
@@ -94,7 +101,7 @@ class ConvertJsonToCSV(object):
             csv_values = [
                 row["unit_name"], row["address"], level_1_statutory,
                 compliance_name,
-                db.datetime_to_string(
+                datetime_to_string(
                     row["activity_date"]
                 ),
                 core.COMPLIANCE_ACTIVITY_STATUS(row["activity_status"]),
@@ -112,60 +119,56 @@ class ConvertJsonToCSV(object):
         unit_id = request.unit_id
         level_1_statutory_name = request.level_1_statutory_name
         statutory_status = request.statutory_status
-        delayed_compliance = [] #1
-        not_complied = [] # 2
-        not_opted = [] # 3
-        unassigned = [] # 4
         is_header = False
         compliance_list = []
         if statutory_status == 1 :  # Delayed compliance
-            where_qry = db.get_delayed_compliances_where_qry(
-                business_group_id, legal_entity_id, division_id, unit_id,
+            where_qry = get_delayed_compliances_where_qry(
+                db, business_group_id, legal_entity_id, division_id, unit_id,
                 level_1_statutory_name, session_user
             )
-            total = db.get_delayed_compliances_count(
-                country_id, domain_id, business_group_id,
+            total = get_delayed_compliances_count(
+                db, country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name,
                 session_user
             )
-            compliance_list = db.get_delayed_compliances(
-                domain_id, country_id, where_qry, 0, total
+            compliance_list = get_delayed_compliances(
+                db, domain_id, country_id, where_qry, 0, total
             )
             status = "Delayed Compliance"
         if statutory_status == 2 :  # Not complied
-            where_qry = db.get_not_complied_where_qry(
-                business_group_id, legal_entity_id, division_id, unit_id,
+            where_qry = get_not_complied_where_qry(
+                db, business_group_id, legal_entity_id, division_id, unit_id,
                 level_1_statutory_name
             )
-            total = db.get_not_complied_compliances_count(
-                country_id, domain_id, where_qry
+            total = get_not_complied_compliances_count(
+                db, country_id, domain_id, where_qry
             )
-            compliance_list = db.get_not_complied_compliances(
-                domain_id, country_id, where_qry, 0, total
+            compliance_list = get_not_complied_compliances(
+                db, domain_id, country_id, where_qry, 0, total
             )
             status = "Not Complied"
         if statutory_status == 3 :  # Not opted
-            where_qry = db.get_not_opted_compliances_where_qry(
-                business_group_id, legal_entity_id, division_id, unit_id,
+            where_qry = get_not_opted_compliances_where_qry(
+                db, business_group_id, legal_entity_id, division_id, unit_id,
                 level_1_statutory_name,  session_user
             )
-            total = db.get_not_opted_compliances_count(
-                country_id, domain_id, where_qry
+            total = get_not_opted_compliances_count(
+                db, country_id, domain_id, where_qry
             )
-            compliance_list = db.get_not_opted_compliances(
-                domain_id, country_id, where_qry, 0, total
+            compliance_list = get_not_opted_compliances(
+                db, domain_id, country_id, where_qry, 0, total
             )
             status = "Not Opted"
         if statutory_status == 4 :  # Unassigned
-            where_qry = db.get_unassigned_compliances_where_qry(
-                business_group_id, legal_entity_id, division_id, unit_id,
+            where_qry = get_unassigned_compliances_where_qry(
+                db, business_group_id, legal_entity_id, division_id, unit_id,
                 level_1_statutory_name, session_user
             )
-            total = db.get_unassigned_compliances_count(
-                country_id, domain_id, where_qry
+            total = get_unassigned_compliances_count(
+                db, country_id, domain_id, where_qry
             )
-            compliance_list = db.get_unassigned_compliances(
-                domain_id, country_id, where_qry, 0, total
+            compliance_list = get_unassigned_compliances(
+                db, domain_id, country_id, where_qry, 0, total
             )
             status = "Unassigned Compliance"
         csv_headers = [
@@ -252,18 +255,18 @@ class ConvertJsonToCSV(object):
         compliance_status = request.compliance_status
         is_header = False
 
-        qry_where = db.get_where_query_for_compliance_details_report(
-             country_id, domain_id, statutory_id,
+        qry_where = get_where_query_for_compliance_details_report(
+            db, country_id, domain_id, statutory_id,
             unit_id, compliance_id, assignee_id,
             from_date, to_date, compliance_status,
             session_user
         )
 
-        total_count = db.get_compliance_details_total_count(
-            country_id, domain_id, statutory_id, qry_where
+        total_count = get_compliance_details_total_count(
+            db, country_id, domain_id, statutory_id, qry_where
         )
-        rows = db.get_compliance_details(
-            country_id, domain_id, statutory_id,
+        rows = get_compliance_details(
+            db, country_id, domain_id, statutory_id,
             qry_where, 0, total_count
         )
 
@@ -297,18 +300,8 @@ class ConvertJsonToCSV(object):
         legal_entity = request.legal_entity_id
         division_id = request.division_id
         unit = request.unit_id
-        where_qry = ""
-        if business_group is not None :
-            where_qry = " AND T4.business_group_id = %s" % (business_group)
-
-        if legal_entity is not None :
-            where_qry += " AND T4.legal_entity_id = %s" % (legal_entity)
-
-        if division_id is not None :
-            where_qry += " AND T4.division_id = %s" % (division_id)
-
-        if unit is not None :
-            where_qry += " AND T3.unit_id = %s" % (unit)
+        where_qry = None
+        where_qry_val = []
 
         query = "SELECT T2.statutory_provision, T2.statutory_mapping, \
             T2.compliance_task, T2.document_name, T2.format_file, \
@@ -339,12 +332,28 @@ class ConvertJsonToCSV(object):
             WHERE T3.country_id = %s \
             AND T3.domain_id = %s \
             %s \
-            " % (
-                request.country_id,
-                request.domain_id,
-                where_qry
-            )
-        rows = db.select_all(query)
+            "
+        where_qry_val.extend([request.country_id, request.domain_id])
+        if business_group is not None :
+            where_qry = " AND T4.business_group_id = %s"
+            where_qry_val.append(business_group)
+
+        if legal_entity is not None :
+            where_qry += " AND T4.legal_entity_id = %s"
+            where_qry_val.append(legal_entity)
+
+        if division_id is not None :
+            where_qry += " AND T4.division_id = %s"
+            where_qry_val.append(division_id)
+
+        if unit is not None :
+            where_qry += " AND T3.unit_id = %s"
+            where_qry_val.append(unit)
+
+        if where_qry is None :
+            rows = db.select_all(query)
+        else :
+            rows = db.select_all(query + where_qry, where_qry_val)
         columns = [
             "statutory_provision", "statutory_mapping", "compliance_task",
             "document_name", "format_file", "penal_consequences",
@@ -355,7 +364,7 @@ class ConvertJsonToCSV(object):
             "repeat_type", "duration_type", "repeats_every",
             "duration"
         ]
-        result = db.convert_to_dict(rows, columns)
+        result = convert_to_dict(rows, columns)
 
         def statutory_repeat_text(statutory_dates, repeat, repeat_type) :
             trigger_days = ""
@@ -394,7 +403,6 @@ class ConvertJsonToCSV(object):
 
         applicable_wise = {}
         for r in result :
-            unit_id = r["unit_id"]
             mapping = r["statutory_mapping"].split(">>")
             level_1_statutory = mapping[0]
             level_1_statutory = level_1_statutory.strip()
@@ -465,15 +473,15 @@ class ConvertJsonToCSV(object):
         unit_id = request.unit_id
         domain_ids = request.domain_ids
 
-        condition = db.get_client_details_condition(
-            country_id,  business_group_id, legal_entity_id, division_id,
+        condition = get_client_details_condition(
+            db, country_id,  business_group_id, legal_entity_id, division_id,
             unit_id, domain_ids, session_user
         )
-        columns = "unit_id, unit_code, unit_name, geography, "\
-                "address, domain_ids, postal_code, business_group_name,\
+        columns = "unit_id, unit_code, unit_name, geography, \
+                address, domain_ids, postal_code, business_group_name,\
                 legal_entity_name, division_name"
-        total_count = db.get_client_details_count(
-            country_id,  business_group_id, legal_entity_id, division_id,
+        total_count = get_client_details_count(
+            db, country_id,  business_group_id, legal_entity_id, division_id,
             unit_id, domain_ids, session_user
         )
         query = "SELECT %s \
@@ -483,16 +491,16 @@ class ConvertJsonToCSV(object):
                 LEFT JOIN %s d ON (d.division_id = u.division_id) \
                 WHERE %s \
                 ORDER BY u.business_group_id, u.legal_entity_id, u.division_id, \
-                u.unit_id DESC LIMIT %d, %d" % (
-                    columns, db.tblUnits, db.tblBusinessGroups,
-                    db.tblLegalEntities, db.tblDivisions, condition,
-                   0, total_count
-                )
-        rows = db.select_all(query)
-        columns_list = columns.replace(" ", "").split(",")
-        unit_rows = db.convert_to_dict(rows, columns_list)
+                u.unit_id DESC LIMIT %s, %s"
 
-        units = []
+        rows = db.select_all(query, [
+            columns, tblUnits, tblBusinessGroups,
+            tblLegalEntities, tblDivisions, condition,
+            0, total_count
+        ])
+        columns_list = columns.replace(" ", "").split(",")
+        unit_rows = convert_to_dict(rows, columns_list)
+
         if not is_header:
             csv_headers = [
                 "Business Group", "Legal Entity",
@@ -503,10 +511,10 @@ class ConvertJsonToCSV(object):
             is_header = True
         for result_row in unit_rows:
             domain_names = db.get_data(
-                db.tblDomains,
-                "group_concat(domain_name)",
+                tblDomains,
+                "group_concat(domain_name) domains",
                 "domain_id in (%s)" % result_row["domain_ids"]
-            )[0][0]
+            )[0]["domains"]
             csv_values = [
                 result_row["business_group_name"],
                 result_row["legal_entity_name"],
@@ -529,46 +537,45 @@ class ConvertJsonToCSV(object):
         user_id = request.user_id
         from_date = request.from_date
         to_date = request.to_date
-        qry_where = db.get_where_query_for_reassigned_history_report(
-            country_id, domain_id, level_1_statutory_name,
+        qry_where = get_where_query_for_reassigned_history_report(
+            db, country_id, domain_id, level_1_statutory_name,
             unit_id, compliance_id, user_id, from_date, to_date, session_user
         )
-        to_count = db.get_reassigned_history_report_count(
-            country_id, domain_id, qry_where
+        to_count = get_reassigned_history_report_count(
+            db, country_id, domain_id, qry_where
         )
-        rows = db.get_reassigned_history_report_data(
-            country_id, domain_id, qry_where,
+        rows = get_reassigned_history_report_data(
+            db, country_id, domain_id, qry_where,
             0, to_count
         )
-
 
         if not is_header:
             csv_headers = [
                 "Unit Code", "Unit Name", "Address", "Level 1 statutory",
-                "Compliance Name", "Due date","Assignee", "Reassigned to",
+                "Compliance Name", "Due date", "Assignee", "Reassigned to",
                 "Reassigned date", "Remarks"
             ]
             self.write_csv(csv_headers, None)
             is_header = True
         for history in rows:
-            columns = [
-                "compliance_id", "assignee", "reassigned_from", "reassigned_date",
-                "remarks", "due_date", "compliance_task",
-                "document_name", "unit_code", "unit_name", "address",
-                "assigneename", "oldassignee", "unit_id", "statutory_mapping"
-            ]
+            # columns = [
+            #     "compliance_id", "assignee", "reassigned_from", "reassigned_date",
+            #     "remarks", "due_date", "compliance_task",
+            #     "document_name", "unit_code", "unit_name", "address",
+            #     "assigneename", "oldassignee", "unit_id", "statutory_mapping"
+            # ]
             mappings = history["statutory_mapping"].split('>>')
             statutory_name = mappings[0].strip()
             statutory_name = statutory_name.strip()
             if history["document_name"] is not None :
                 compliance_name = " %s - %s" % (history["document_name"], history["compliance_task"])
             else :
-                compliance_name = r["compliance_task"]
+                compliance_name = history["compliance_task"]
             csv_values = [
                 history["unit_code"], history["unit_name"], history["address"],
                 statutory_name, compliance_name, history["due_date"],
                 history["reassigned_from"], history["assigneename"],
-                db.datetime_to_string(history["reassigned_date"]),
+                datetime_to_string(history["reassigned_date"]),
                 history["remarks"]
             ]
             self.write_csv(None, csv_values)
@@ -587,29 +594,36 @@ class ConvertJsonToCSV(object):
         if from_date is None:
             from_date = ''
         else:
-            from_date = self.string_to_datetime(from_date)
+            from_date = string_to_datetime(from_date)
         if to_date is None:
             to_date = ''
         else:
-            to_date = self.string_to_datetime(to_date)
+            to_date = string_to_datetime(to_date)
         condition = "1"
+        condition_val = []
         if business_group_id is not None:
-            condition += " AND business_group_id = '%d'" % business_group_id
+            condition += " AND business_group_id = %s "
+            condition_val.append(business_group_id)
+
         if legal_entity_id is not None:
-            condition += " AND legal_entity_id = '%d'" % legal_entity_id
+            condition += " AND legal_entity_id = %s "
+            condition_val.append(legal_entity_id)
+
         if division_id is not None:
-            condition += " AND division_id = '%d'" % division_id
+            condition += " AND division_id = %s "
+            condition_val.append(division_id)
+
         if unit_id is not None:
-            condition += " AND unit_id = '%d'" % unit_id
+            condition += " AND unit_id = %s "
+            condition_val.append(unit_id)
 
         # Gettings distinct sets of bg_id, le_id, div_id, unit_id
-        columns = "business_group_id, legal_entity_id, division_id, unit_id"
-        where_condition = "1 AND %s" % condition
-        where_condition += " group by business_group_id, legal_entity_id, division_id, unit_id"
-        rows = db.get_data(db.tblStatutoryNotificationsUnits, columns, where_condition)
-        columns = ["business_group_id", "legal_entity_id", "division_id", "unit_id"]
-        rows = db.convert_to_dict(rows, columns)
-        notifications = []
+        columns = [
+            "business_group_id", "legal_entity_id", "division_id",
+            "unit_id"
+        ]
+        condition += " group by business_group_id, legal_entity_id, division_id, unit_id"
+        rows = db.get_data(tblStatutoryNotificationsUnits, columns, condition)
         conditiondate = None
         for row in rows:
             business_group_id = row["business_group_id"]
@@ -636,31 +650,32 @@ class ConvertJsonToCSV(object):
                 tbl_units u ON \
                 snu.unit_id = u.unit_id \
                 where \
-                snl.country_name = '%s' \
+                snl.country_name = %s \
                 and \
-                snl.domain_name = '%s' \
+                snl.domain_name = %s \
                 and \
-                bg.business_group_id = '%d' \
+                bg.business_group_id = %s \
                 and \
-                le.legal_entity_id = '%d' \
+                le.legal_entity_id = %s \
                 and \
-                d.division_id = '%d' \
+                d.division_id = %s \
                 and \
-                u.unit_id = '%d' " % (
-                    country_name, domain_name, business_group_id, legal_entity_id, division_id, unit_id
+                u.unit_id = %s " % (
+                    country_name, domain_name, business_group_id,
+                    legal_entity_id, division_id, unit_id
                 )
             if from_date != '' and to_date != '':
-                conditiondate = " AND  snl.updated_on between '%s' and '%s' " % (from_date, to_date)
+                conditiondate = " AND  snl.updated_on between %s and %s " % (from_date, to_date)
                 query = query + conditiondate
             if level_1_statutory_name is not None:
-                conditionlevel1 = "AND statutory_provision like '%s'" % str(level_1_statutory_name + "%")
+                conditionlevel1 = "AND statutory_provision like %s " % str(level_1_statutory_name + "%")
                 query = query + conditionlevel1
             result_rows = db.select_all(query)
             columns = [
                 "business_group_name", "legal_entity_name", "division_name", "unit_code", "unit_name", "address",
                 "statutory_provision", "notification_text", "updated_on"
             ]
-            statutory_notifications = db.convert_to_dict(result_rows, columns)
+            statutory_notifications = convert_to_dict(result_rows, columns)
             level_1_statutory_wise_notifications = {}
             if len(result_rows) > 0:
                 business_group_name = result_rows[0][0]
@@ -676,7 +691,7 @@ class ConvertJsonToCSV(object):
                     if not is_header:
                         csv_headers = [
                             "Business group name", "Legal Entity Name", "Division Name", "Unit Name",
-                            "Level 1 statutory mame","Statutory provision", "Notification Text",
+                            "Level 1 statutory mame", "Statutory provision", "Notification Text",
                             "Date and Time"
                         ]
                         self.write_csv(csv_headers, None)
@@ -684,7 +699,7 @@ class ConvertJsonToCSV(object):
                     csv_values = [
                         business_group_name, legal_entity_name, division_name, unit_name,
                         level_1_statutory_name, notification["statutory_provision"],
-                        notification["notification_text"],db.datetime_to_string(notification["updated_on"])
+                        notification["notification_text"], datetime_to_string(notification["updated_on"])
                     ]
                     self.write_csv(None, csv_values)
 
@@ -701,31 +716,29 @@ class ConvertJsonToCSV(object):
 
         query = "SELECT service_provider_id, service_provider_name, address, contract_from, contract_to, contact_person, contact_no  \
                 FROM tbl_service_providers \
-                WHERE service_provider_id like '%s' and is_active = 1" % (service_provider_id)
-        rows = db.select_all(query, client_id)
+                WHERE service_provider_id like %s and is_active = 1"
+        rows = db.select_all(query, [service_provider_id])
 
-        service_provider_wise_compliances_list = []
         for row in rows:
             service_provider_name = row[1]
             address = row[2]
-            contract_from = db.datetime_to_string(row[3])
-            contract_to = db.datetime_to_string(row[4])
+            contract_from = datetime_to_string(row[3])
+            contract_to = datetime_to_string(row[4])
             contact_person = row[5]
             contact_no = row[6]
 
-            user_ids = db.get_service_provider_user_ids(row[0], client_id)
+            user_ids = get_service_provider_user_ids(db, row[0], client_id)
             if unit_id is None :
-                unit_ids = db.get_service_provider_user_unit_ids(user_ids, client_id)
+                unit_ids = get_service_provider_user_unit_ids(db, user_ids, client_id)
             else:
                 unit_ids = unit_id
 
             q = "SELECT unit_id, unit_code, unit_name, address  \
                 FROM tbl_units \
-                WHERE country_id = '%d' and unit_id in (%s)" % (country_id, unit_ids)
+                WHERE country_id = %s and unit_id in (%s)"
 
-            unit_rows = db.select_all(q, client_id)
+            unit_rows = db.select_all(q, [country_id, unit_ids])
 
-            unit_wise_compliances = {}
             for unit in unit_rows:
                 unit_id = unit[0]
                 unit_name = "%s - %s " % (unit[1], unit[2])
@@ -746,7 +759,6 @@ class ConvertJsonToCSV(object):
                     )
                 compliance_rows = db.select_all(query)
 
-                compliances_list = []
                 for compliance in compliance_rows:
                     statutory_dates = compliance[2]
                     statutory_dates = json.loads(statutory_dates)
@@ -767,11 +779,11 @@ class ConvertJsonToCSV(object):
 
                     due_date = None
                     if(compliance[4] is not None):
-                        due_date = db.datetime_to_string(compliance[4])
+                        due_date = datetime_to_string(compliance[4])
 
                     validity_date = None
                     if(compliance[3] is not None):
-                        validity_date = db.datetime_to_string(compliance[3])
+                        validity_date = datetime_to_string(compliance[3])
 
                     if compliance[7] in (2, 3) :
                         summary = "Repeats every %s - %s" % (compliance[9], compliance[11])
@@ -784,11 +796,10 @@ class ConvertJsonToCSV(object):
                     else :
                         summary = None
 
-
                     if not is_header:
-                        csv_headers =[
+                        csv_headers = [
                             "Service provider name", "Address", "Contract From", "Contract To",
-                            "Contact Person", "Contact No", "Compliance name","Unit Name", "Unit Address",
+                            "Contact Person", "Contact No", "Compliance name", "Unit Name", "Unit Address",
                             "Frequency", "Description", "Statutory Date", "Due date", "Validity Date"
                         ]
                         self.write_csv(csv_headers, None)

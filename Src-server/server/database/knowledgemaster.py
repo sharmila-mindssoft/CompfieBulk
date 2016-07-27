@@ -380,7 +380,7 @@ def get_geograhpy_levels_for_user(db, user_id):
 
 def delete_grography_level(db, level_id):
     q = "select count(*) from tbl_geographies where level_id = %s"
-    row = db.select_one(q, (level_id))
+    row = db.select_one(q, [level_id])
     if row[0] > 0 :
         return True
     else :
@@ -543,7 +543,7 @@ def get_geography_by_id(db, geography_id):
     query = "SELECT geography_id, geography_name, \
         level_id, parent_ids, parent_names, is_active \
         FROM tbl_geographies WHERE geography_id = %s"
-    rows = db.select_one(query, (geography_id))
+    rows = db.select_one(query, [geography_id])
     result = []
     if rows :
         columns = [

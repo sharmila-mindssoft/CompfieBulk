@@ -1,7 +1,7 @@
 import MySQLdb as mysql
 from server import logger
 from server.common import (convert_to_dict, get_date_time)
-
+from server.exceptionmessage import  fetch_error
 class Database(object):
     def __init__(
         self,
@@ -211,11 +211,13 @@ class Database(object):
             print e
             logger.logClientApi("select_all", query)
             logger.logClientApi("select_all", e)
-            return
+            raise fetch_error()
 
     def select_one(self, query, param=None):
         cursor = self.cursor()
         assert cursor is not None
+        print query
+        print param
         try:
             if param is None :
                 cursor.execute(query)
@@ -225,7 +227,7 @@ class Database(object):
                     cursor.execute(query, param)
                 elif type(param) is list :
                     if len(param) > 1 :
-                        logger.logQuery(self._for_client, "select_one", query % param)
+                        logger.logQuery(self._for_client, "select_one", query % tuple(param))
                     else :
                         logger.logQuery(self._for_client, "select_one", query % param[0])
                     cursor.execute(query, param)
@@ -239,7 +241,7 @@ class Database(object):
             print e
             logger.logClientApi("select_one", query)
             logger.logClientApi("select_one", e)
-            return
+            raise fetch_error()
 
     ########################################################
     # To form a select query

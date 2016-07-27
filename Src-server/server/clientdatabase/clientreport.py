@@ -27,14 +27,37 @@ __all__ = [
     "report_compliance_details",
     "report_reassigned_history",
     "get_delayed_compliances_with_count",
+    "get_delayed_compliances_where_qry",
+    "get_delayed_compliances_count",
+    "get_delayed_compliances",
+    "get_not_complied_where_qry",
+    "get_not_complied_compliances_count",
+    "get_not_complied_compliances",
     "get_not_complied_compliances_with_count",
+    "get_not_opted_compliances_where_qry",
+    "get_not_opted_compliances_count",
+    "get_not_opted_compliances",
     "get_not_opted_compliances_with_count",
+    "get_unassigned_compliances_where_qry",
+    "get_unassigned_compliances_count",
+    "get_unassigned_compliances",
     "get_unassigned_compliances_with_count",
     "get_login_trace",
     "return_compliance_activity_report",
     "get_compliance_task_applicability",
     "get_client_details_count",
-    "get_client_details_report"
+    "get_client_details_report",
+    "get_compliance_activity_report",
+    "get_where_query_for_compliance_details_report",
+    "get_compliance_details_total_count",
+    "get_compliance_details",
+    "get_client_details_condition",
+    "get_where_query_for_reassigned_history_report",
+    "get_reassigned_history_report_count",
+    "get_reassigned_history_report_data",
+    "get_service_provider_user_ids",
+    "get_service_provider_user_unit_ids",
+
 ]
 
 def report_unitwise_compliance(
@@ -66,23 +89,36 @@ def report_assigneewise_compliance(
         "duration_type", "repeat_type", "duration",
         "repeat_every"
     ]
-    qry_where = ""
+    qry_where = None
+    qry_where_val = []
     admin_id = get_admin_id(db)
+
     if business_group_id is not None :
-        qry_where += " AND u.business_group_id = %s " % (business_group_id)
+        qry_where += " AND u.business_group_id = %s "
+        qry_where_val.append(business_group_id)
+
     if legal_entity_id is not None :
-        qry_where += " AND u.legal_entity_id = %s " % (legal_entity_id)
+        qry_where += " AND u.legal_entity_id = %s "
+        qry_where_val.append(legal_entity_id)
+
     if division_id is not None :
-        qry_where += " AND u.division_id = %s " % (division_id)
+        qry_where += " AND u.division_id = %s "
+        qry_where_val.append(division_id)
+
     if unit_id is not None :
-        qry_where += " AND u.unit_id = %s" % (unit_id)
+        qry_where += " AND u.unit_id = %s"
+        qry_where_val.append(unit_id)
+
     if assignee is not None :
-        qry_where += " AND ac.assignee = %s" % (assignee)
+        qry_where += " AND ac.assignee = %s"
+        qry_where_val.append(assignee)
+
     if session_user > 0 and session_user != admin_id :
         qry_where += " AND u.unit_id in \
             (select us.unit_id from tbl_user_units us where \
                 us.user_id = %s\
-            )" % int(session_user)
+            )"
+        qry_where_val.append(session_user)
 
     q_count = " SELECT  \
         count(ac.compliance_id) \
@@ -91,12 +127,14 @@ def report_assigneewise_compliance(
         INNER JOIN tbl_compliances c on ac.compliance_id = c.compliance_id \
         WHERE c.is_active = 1 \
         and ac.country_id = %s and c.domain_id = %s \
-        %s \
-    " % (
-        country_id, domain_id,
-        qry_where
-    )
-    row = db.select_one(q_count)
+    "
+    param = [country_id, domain_id]
+    if qry_where is not None :
+        q_count += qry_where
+        parm.extend(qry_where_val)
+
+    row = db.select_one(q_count, param)
+
     if row :
         count = row[0]
     else :
@@ -135,14 +173,16 @@ def report_assigneewise_compliance(
         INNER JOIN tbl_compliances c on ac.compliance_id = c.compliance_id \
         WHERE c.is_active = 1 \
         and ac.country_id = %s and c.domain_id = %s \
-        %s \
     ORDER BY u.legal_entity_id, ac.assignee, u.unit_id \
-    limit %s, %s" % (
-        country_id, domain_id,
-        qry_where, from_count, to_count
-    )
+    limit %s, %s"
 
-    rows = db.select_all(q)
+    param = [country_id, domain_id, from_count, to_count]
+    if qry_where is not None :
+        q += qry_where
+        parm.extend(qry_where_val)
+
+    rows = db.select_all(q, param)
+
     data = convert_to_dict(rows, columns)
     return data, count
 
@@ -313,18 +353,24 @@ def report_serviceproviderwise_compliance(
         "duration_type", "repeat_type", "duration",
         "repeat_every"
     ]
-    qry_where = ""
+    qry_where = None
+    qry_where_val = []
     admin_id = get_admin_id(db)
 
     if unit_id is not None :
-        qry_where += " AND u.unit_id = %s" % (unit_id)
+        qry_where += " AND u.unit_id = %s"
+        qry_where_val.append(unit_id)
+
     if service_provider_id is not None :
-        qry_where += " AND s.service_provider_id = %s" % (service_provider_id)
+        qry_where += " AND s.service_provider_id = %s"
+        qry_where_val.append(service_provider_id)
+
     if session_user > 0 and session_user != admin_id :
         qry_where += " AND u.unit_id in \
             (select us.unit_id from tbl_user_units us where \
                 us.user_id = %s\
-            )" % int(session_user)
+            )"
+        qry_where_val.append(session_user)
 
     q_count = " SELECT  \
         count(ac.compliance_id) \
@@ -337,12 +383,14 @@ def report_serviceproviderwise_compliance(
         and ac.country_id = %s and c.domain_id = %s  \
         AND SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1),'>>',- 1) = '%s'\
         %s \
-    " % (
-        country_id, domain_id, statutory_id,
-        qry_where
-    )
+    "
+    param = [country_id, domain_id, statutory_id]
 
-    row = db.select_one(q_count)
+    if qry_where is not None :
+        q_count += qry_where
+        parm.extend(qry_where_val)
+
+    row = db.select_one(q_count, param)
     if row :
         count = row[0]
     else :
@@ -373,8 +421,12 @@ def report_serviceproviderwise_compliance(
         country_id, domain_id, statutory_id,
         qry_where, from_count, to_count
     )
+    param = [country_id, domain_id, statutory_id]
+    if qry_where is not None :
+        q += qry_where
+        param.extend(qry_where_val)
 
-    rows = db.select_all(q)
+    rows = db.select_all(q, param)
     data = convert_to_dict(rows, columns)
     return data, count
 
@@ -460,22 +512,34 @@ def report_statutory_notifications_list(db, request_data):
     level_1_statutory_name = request_data.level_1_statutory_name
     from_date = request_data.from_date
     to_date = request_data.to_date
-    condition = ""
+
+    condition = None
+    condition_val = []
     if from_date is not None and to_date is not None :
         from_date = string_to_datetime(from_date).date()
         to_date = string_to_datetime(to_date).date()
-        condition += " AND date(snl.updated_on) >= '%s' AND date(snl.updated_on) <= '%s'" % (from_date, to_date)
+        condition += " AND date(snl.updated_on) >= %s AND date(snl.updated_on) <= %s"
+        condition_val.append(from_date, to_date)
+
     if business_group_id is not None:
-        condition += " AND u.business_group_id = '%s'" % business_group_id
+        condition += " AND u.business_group_id = %s"
+        condition_val.append(business_group_id)
+
     if legal_entity_id is not None:
-        condition += " AND u.legal_entity_id = '%s'" % legal_entity_id
+        condition += " AND u.legal_entity_id = %s"
+        condition_val.append(legal_entity_id)
+
     if division_id is not None:
-        condition += " AND u.division_id = '%s'" % division_id
+        condition += " AND u.division_id = %s"
+        condition_val.append(division_id)
+
     if unit_id is not None:
-        condition += " AND u.unit_id = '%s'" % unit_id
+        condition += " AND u.unit_id = %s"
+        condition_val.append(unit_id)
 
     if level_1_statutory_name is not None :
-        condition += " AND snl.statutory_provision like '%s'" % str((level_1_statutory_name + '%'))
+        condition += " AND snl.statutory_provision like %s"
+        condition_val.append(str(level_1_statutory_name + '%'))
 
     query = "SELECT \
         (select business_group_name from tbl_business_groups where business_group_id = u.business_group_id), \
@@ -499,14 +563,16 @@ def report_statutory_notifications_list(db, request_data):
         INNER JOIN tbl_domains td ON \
         td.domain_id = snl.domain_name \
     where \
-        tc.country_name = '%s' \
-        and td.domain_name = '%s' \
+        tc.country_name = %s \
+        and td.domain_name = %s \
         %s \
-        ORDER BY snl.updated_on" % (
-                country_name, domain_name,
-                condition
-            )
-    rows = db.select_all(query)
+        ORDER BY snl.updated_on"
+    param = [country_name, domain_name]
+    if condition is not None :
+        query += condition
+        param.extend(condition_val)
+
+    rows = db.select_all(query, param)
     columns = [
         "business_group", "legal_entity", "division", "unit_code", "unit_name",
         "address", "statutory_provision", "notification_text", "updated_on"
@@ -557,7 +623,7 @@ def report_compliance_details(
     session_user, from_count, to_count
 ) :
 
-    qry_where = get_where_query_for_compliance_details_report(
+    qry_where, qry_where_val = get_where_query_for_compliance_details_report(
         db, country_id, domain_id, statutory_id,
         unit_id, compliance_id, assignee,
         from_date, to_date, compliance_status,
@@ -565,12 +631,12 @@ def report_compliance_details(
     )
 
     total = get_compliance_details_total_count(
-        db, country_id, domain_id, statutory_id, qry_where
+        db, country_id, domain_id, statutory_id, qry_where, qry_where_val
     )
 
     result = get_compliance_details(
         db, country_id, domain_id, statutory_id,
-        qry_where, from_count, to_count
+        qry_where, qry_where_val, from_count, to_count
     )
 
     return return_cmopliance_details_report(client_id, compliance_status, result, total)
@@ -643,8 +709,8 @@ def get_where_query_for_compliance_details_report(
     session_user
 ):
     q_c = "SELECT t.period_from, t.period_to FROM tbl_client_configurations t \
-            where t.country_id = %s and t.domain_id = %s " % (country_id, domain_id)
-    r_c = db.select_one(q_c)
+            where t.country_id = %s and t.domain_id = %s "
+    r_c = db.select_one(q_c, [country_id, domain_id])
     f_date = t_date = None
     if r_c :
         year_list = calculate_years(int(r_c[0]), int(r_c[1]))[0]
@@ -655,22 +721,31 @@ def get_where_query_for_compliance_details_report(
         else :
             t_date = datetime.date(int(year_list[0]), int(r_c[1])+1, 1) - datetime.timedelta(days=1)
 
-    qry_where = ""
+    qry_where = None
+    qry_where_val = []
     admin_id = get_admin_id(db)
     if unit_id is not None :
-        qry_where += " AND ch.unit_id = %s" % (unit_id)
+        qry_where += " AND ch.unit_id = %s"
+        qry_where_val.append(unit_id)
+
     if compliance_id is not None :
-        qry_where += " AND ch.compliance_id = %s " % (compliance_id)
+        qry_where += " AND ch.compliance_id = %s "
+        qry_where_val.append(compliance_id)
+
     if assignee is not None :
-        qry_where += " AND ch.completed_by = %s" % (assignee)
+        qry_where += " AND ch.completed_by = %s"
+        qry_where_val.append(assignee)
+
     if session_user > 0 and session_user != admin_id :
         qry_where += " AND ch.unit_id in \
             (select us.unit_id from tbl_user_units us where \
                 us.user_id = %s\
-            )" % int(session_user)
+            )"
+        qry_where_val.append(session_user)
         qry_where += " and c.domain_id IN \
             (SELECT ud.domain_id FROM tbl_user_domains ud \
-            where ud.user_id = %s)" % int(session_user)
+            where ud.user_id = %s)"
+        qry_where_val.append[session_user]
 
     if(compliance_status == 'Complied'):
         c_status = " AND ch.due_date >= ch.completion_date \
@@ -692,15 +767,17 @@ def get_where_query_for_compliance_details_report(
     if from_date is not None and to_date is not None :
         start_date = string_to_datetime(from_date)
         end_date = string_to_datetime(to_date)
-        qry_where += " AND ch.due_date between '%s' and '%s'" % (start_date, end_date)
+        qry_where += " AND ch.due_date between %s and %s"
+        qry_where_val.append(start_date, end_date)
 
     else :
-        qry_where += " AND ch.due_date >= '%s' \
-            AND ch.due_date <= '%s'" % (f_date, t_date)
-    return qry_where
+        qry_where += " AND ch.due_date >= %s \
+            AND ch.due_date <= %s"
+        qry_where_val.append(f_date, t_date)
+    return qry_where, qry_where_val
 
 def get_compliance_details_total_count(
-    db, country_id, domain_id, statutory_id, qry_where
+    db, country_id, domain_id, statutory_id, qry_where, qry_where_val
 ):
     qry_count = "SELECT \
         count(distinct ch.compliance_history_id) \
@@ -715,13 +792,13 @@ def get_compliance_details_total_count(
             AND c.statutory_mapping like '%s' \
             %s \
     order by ch.due_date desc \
-     " % (
-        country_id, domain_id,
-        str(statutory_id+"%"),
-        qry_where
-    )
+     "
+    param = [country_id, domain_id, str(statutory_id + "%")]
+    if qry_where is not None :
+        qry_count += qry_where
+        param.extend(qry_where_val)
 
-    row = db.select_one(qry_count)
+    row = db.select_one(qry_count, param)
     if row :
         total = int(row[0])
     else :
@@ -730,7 +807,7 @@ def get_compliance_details_total_count(
 
 def get_compliance_details(
     db, country_id, domain_id, statutory_id,
-    qry_where, from_count, to_count
+    qry_where, qry_where_val, from_count, to_count
 ):
 
     columns = [
@@ -768,15 +845,16 @@ def get_compliance_details(
         tbl_units ut on ch.unit_id = ut.unit_id \
     where ut.country_id = %s \
             AND c.domain_id = %s \
-            AND c.statutory_mapping like '%s' \
+            AND c.statutory_mapping like %s \
             %s \
     order by ch.due_date desc limit %s, %s \
-    " % (
-        country_id, domain_id,
-        str(statutory_id+"%"),
-        qry_where, from_count, to_count
-    )
-    rows = db.select_all(qry)
+    "
+    param = [country_id, domain_id, str(statutory_id + "%"), from_count, to_count]
+    if qry_where is not None :
+        qry += qry_where
+        param.extend(qry_where_val)
+
+    rows = db.select_all(qry, param)
     result = convert_to_dict(rows, columns)
     return result
 
@@ -785,16 +863,16 @@ def report_reassigned_history(
     unit_id, compliance_id, user_id, from_date, to_date, session_user,
     from_count, to_count
 ):
-    qry_where = get_where_query_for_reassigned_history_report(
+    qry_where, qry_val = get_where_query_for_reassigned_history_report(
         db, country_id, domain_id, level_1_statutory_name,
         unit_id, compliance_id, user_id, from_date, to_date, session_user
     )
     result = get_reassigned_history_report_data(
-        db, country_id, domain_id, qry_where,
+        db, country_id, domain_id, qry_where, qry_val,
         from_count, to_count
     )
     count = get_reassigned_history_report_count(
-        db, country_id, domain_id, qry_where
+        db, country_id, domain_id, qry_where, qry_val
     )
     return return_reassinged_history_report(
         db, result, count
@@ -869,41 +947,55 @@ def get_where_query_for_reassigned_history_report(
     db, country_id, domain_id, level_1_statutory_name,
     unit_id, compliance_id, user_id, from_date, to_date, session_user
 ):
-    qry_where = ""
+    qry_where = None
+    qry_where_val = []
     admin_id = get_admin_id(db)
     if level_1_statutory_name is not None :
-        qry_where += " AND t3.statutory_mapping like '%s'" % (str(level_1_statutory_name+'%'))
+        qry_where += " AND t3.statutory_mapping like %s "
+        qry_where_val.append(str(level_1_statutory_name) + '%')
+
     if unit_id is not None :
-        qry_where += " And t1.unit_id = %s" % (unit_id)
+        qry_where += " And t1.unit_id = %s "
+        qry_where_val.append(unit_id)
 
     if compliance_id is not None :
-        qry_where += " AND t1.compliance_id = %s" % (compliance_id)
+        qry_where += " AND t1.compliance_id = %s "
+        qry_where_val.append(compliance_id)
+
     if user_id is not None :
-        qry_where += " AND t1.assignee = %s " % (user_id)
+        qry_where += " AND t1.assignee = %s "
+        qry_where_val.append(user_id)
 
     if from_date is not None and to_date is not None :
         start_date = string_to_datetime(from_date).date()
         end_date = string_to_datetime(to_date).date()
-        qry_where += " AND t1.reassigned_date between '%s' and '%s' " % (start_date, end_date)
+        qry_where += " AND t1.reassigned_date between %s and %s "
+        qry_where_val.append(start_date, end_date)
+
     elif from_date is not None:
         start_date = string_to_datetime(from_date).date()
-        qry_where += " AND t1.reassigned_date > DATE_SUB('%s', INTERVAL 1 DAY)" % (start_date)
+        qry_where += " AND t1.reassigned_date > DATE_SUB('%s', INTERVAL 1 DAY)"
+        qry_where_val.append(start_date)
+
     elif to_date is not None:
         end_date = string_to_datetime(from_date).date()
-        qry_where += " AND t1.reassigned_date < DATE_SUB('%s', INTERVAL 1 DAY)" % (end_date)
+        qry_where += " AND t1.reassigned_date < DATE_SUB('%s', INTERVAL 1 DAY)"
+        qry_where_val.append(end_date)
 
     if session_user > 0 and session_user != admin_id :
         qry_where += " AND t1.unit_id in \
             (select us.unit_id from tbl_user_units us where \
                 us.user_id = %s\
-            )" % int(session_user)
+            )"
+        qry_where_val.append(int(session_user))
         qry_where += " and t3.domain_id IN \
             (SELECT ud.domain_id FROM tbl_user_domains ud \
-            where ud.user_id = %s)" % int(session_user)
-    return qry_where
+            where ud.user_id = %s)"
+        qry_where_val.append(int(session_user))
+    return qry_where, qry_where_val
 
 def get_reassigned_history_report_data(
-    db, country_id, domain_id, qry_where,
+    db, country_id, domain_id, qry_where, qry_val,
     from_count, to_count
 ):
     columns = [
@@ -925,21 +1017,20 @@ def get_reassigned_history_report_data(
         INNER JOIN tbl_units t4 on t1.unit_id = t4.unit_id \
         WHERE t4.country_id = %s \
         AND t3.domain_id = %s \
-        %s \
         order by SUBSTRING_INDEX(SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), \
         '>>', - 1), t1.unit_id,  t1.reassigned_date desc \
-        limit %s, %s" % (
-            country_id, domain_id,
-            qry_where,
-            from_count, to_count
+        limit %s, %s"
+    param = [country_id, domain_id, from_count, to_count]
+    if qry_where is not None :
+        qry += qry_where
+        param.extend(qry_val)
 
-        )
-    rows = db.select_all(qry)
+    rows = db.select_all(qry, param)
     result = convert_to_dict(rows, columns)
     return result
 
 def get_reassigned_history_report_count(
-    db, country_id, domain_id, qry_where
+    db, country_id, domain_id, qry_where, qry_val
 ):
     qry_count = "SELECT sum(t.c_count) from \
     (SELECT \
@@ -955,12 +1046,13 @@ def get_reassigned_history_report_count(
         tbl_units t4 ON t1.unit_id = t4.unit_id \
     WHERE \
         t4.country_id = %s AND t3.domain_id = %s \
-        %s \
-    group by t1.unit_id) t " % (
-        country_id, domain_id,
-        qry_where,
-    )
-    rcount = db.select_one(qry_count)
+    group by t1.unit_id) t "
+    param = [country_id, domain_id]
+    if qry_where is not None :
+        qry_count += qry_where
+        param.extend(qry_val)
+
+    rcount = db.select_one(qry_count, param)
     if rcount[0] :
         count = int(rcount[0])
     else :
@@ -971,40 +1063,48 @@ def get_delayed_compliances_where_qry(
     db, business_group_id, legal_entity_id, division_id, unit_id,
     leval_1_statutory_name, session_user
 ) :
-    where_qry = ""
+    where_qry = None
+    where_qry_val = []
     admin_id = get_admin_id(db)
     if session_user > 0 and session_user != admin_id :
         where_qry += " AND u.unit_id in \
             (select us.unit_id from tbl_user_units us where \
                 us.user_id = %s\
-            )" % int(session_user)
+            )"
+        where_qry_val.append(int(session_user))
         where_qry += " AND c.domain_id in \
             (select us.domain_id from tbl_user_domains us where \
                 us.user_id = %s\
-            )" % int(session_user)
+            )"
+        where_qry_val.append(int(session_user))
 
     if business_group_id is not None :
-        where_qry += " AND u.business_group_id = %s " % (business_group_id)
+        where_qry += " AND u.business_group_id = %s "
+        where_qry_val.append(business_group_id)
 
     if legal_entity_id is not None :
-        where_qry += " AND u.legal_entity_id = %s " % (legal_entity_id)
+        where_qry += " AND u.legal_entity_id = %s "
+        where_qry_val.append(legal_entity_id)
 
     if division_id is not None :
-        where_qry += " AND u.division_id = %s " % (division_id)
+        where_qry += " AND u.division_id = %s "
+        where_qry_val.append(division_id)
 
     if unit_id is not None :
-        where_qry += " AND u.unit_id = %s " % (unit_id)
+        where_qry += " AND u.unit_id = %s "
+        where_qry_val.append(unit_id)
 
     if leval_1_statutory_name is not None :
-        where_qry += " AND c.statutory_mapping like '%s' " % (leval_1_statutory_name + '%')
-    return where_qry
+        where_qry += " AND c.statutory_mapping like %s "
+        where_qry_val.append(level_1_statutory_name + '%')
+    return where_qry, where_qry_val
 
 def get_delayed_compliances_count(
     db, country_id, domain_id, business_group_id,
     legal_entity_id, division_id, unit_id, leval_1_statutory_name,
     session_user
 ) :
-    where_qry = get_delayed_compliances_where_qry(
+    where_qry, where_qry_val = get_delayed_compliances_where_qry(
         db, business_group_id, legal_entity_id, division_id, unit_id,
         leval_1_statutory_name, session_user
     )
@@ -1021,11 +1121,13 @@ def get_delayed_compliances_count(
         AND ac.country_id = %s \
         AND ch.due_date < ch.completion_date \
         AND ch.approve_status = 1 \
-        %s " % (
-            domain_id, country_id,
-            where_qry
-        )
-    c_row = db.select_one(q_count)
+        %s "
+    param = [domain_id, country_id]
+    if where_qry is not None :
+        q_count += where_qry
+        param.extend(where_qry_val)
+
+    c_row = db.select_one(q_count, param)
     if c_row :
         total = int(c_row[0])
     else :
@@ -1033,7 +1135,7 @@ def get_delayed_compliances_count(
     return total
 
 def get_delayed_compliances(
-    db, domain_id, country_id, where_qry, from_count, to_count
+    db, domain_id, country_id, where_qry, where_qry_val, from_count, to_count
 ):
     query = "SELECT  c.compliance_id, c.compliance_task, c.document_name, \
         ac.statutory_dates, c.compliance_description, c.penal_consequences, c.frequency_id, \
@@ -1057,13 +1159,14 @@ def get_delayed_compliances(
         AND ac.country_id = %s \
         AND ch.due_date < ch.completion_date \
         AND ch.approve_status = 1 \
-        %s \
         order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1), u.unit_id \
-        limit %s, %s " % (
-            domain_id, country_id,
-            where_qry,
-            from_count, to_count
-        )
+        limit %s, %s "
+    param = [domain_id, country_id, from_count, to_count]
+    if where_qry is not None :
+        query += where_qry
+        param.extend(where_qry_val)
+    rows = db.select_all(query, param)
+
     columns = [
         "compliance_id", "compliance_task", "document_name",
         "statutory_dates", "compliance_description", "penal_consequences",
@@ -1074,7 +1177,7 @@ def get_delayed_compliances(
         "division", "unit_code", "unit_name",
         "address", "postal_code", "unit_id"
     ]
-    rows = db.select_all(query)
+
     result = convert_to_dict(rows, columns)
     return result
 
@@ -1083,7 +1186,7 @@ def get_delayed_compliances_with_count(
     legal_entity_id, division_id, unit_id, leval_1_statutory_name,
     session_user, from_count, to_count
 ) :
-    where_qry = get_delayed_compliances_where_qry(
+    where_qry, where_qry_val = get_delayed_compliances_where_qry(
         db, business_group_id, legal_entity_id, division_id, unit_id,
         leval_1_statutory_name, session_user
     )
@@ -1093,12 +1196,12 @@ def get_delayed_compliances_with_count(
         session_user
     )
     result = get_delayed_compliances(
-        db, domain_id, country_id, where_qry, from_count, to_count
+        db, domain_id, country_id, where_qry, where_qry_val, from_count, to_count
     )
     return return_risk_report_data(db, result, total)
 
 def get_not_complied_compliances(
-    db, domain_id, country_id, where_qry, from_count, to_count
+    db, domain_id, country_id, where_qry, where_qry_val, from_count, to_count
 ):
     query = "SELECT distinct c.compliance_id, c.compliance_task, c.document_name, \
         ac.statutory_dates, c.compliance_description, c.penal_consequences, c.frequency_id, \
@@ -1124,13 +1227,18 @@ def get_not_complied_compliances(
         AND ((IFNULL(c.duration_type_id, 0) = 2 AND ch.due_date < now()) \
         or (IFNULL(c.duration_type_id, 0) != 2 AND ch.due_date < CURDATE()))  \
         AND IFNULL(ch.approve_status, 0) != 1 \
-        %s \
         order by SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1), '>>', - 1), u.unit_id \
         limit %s, %s " % (
             domain_id, country_id,
             where_qry,
             from_count, to_count
         )
+    param = [domain_id, country_id, from_count, to_count]
+    if where_qry is not None :
+        query += where_qry
+        param.extend(where_qry)
+    rows = db.select_all(query)
+
     columns = [
         "compliance_id", "compliance_task", "document_name",
         "statutory_dates", "compliance_description", "penal_consequences",
@@ -1142,7 +1250,7 @@ def get_not_complied_compliances(
         "address", "postal_code", "unit_id",
         "compliance_history_id"
     ]
-    rows = db.select_all(query)
+
     result = convert_to_dict(rows, columns)
     return result
 
@@ -1150,25 +1258,32 @@ def get_not_complied_where_qry(
     db, business_group_id, legal_entity_id, division_id, unit_id,
     leval_1_statutory_name
 ):
-    where_qry = ""
+    where_qry = None
+    where_qry_val = []
     if business_group_id is not None :
-        where_qry = " AND u.business_group_id = %s " % (business_group_id)
+        where_qry = " AND u.business_group_id = %s "
+        where_qry_val.append(business_group_id)
 
     if legal_entity_id is not None :
-        where_qry = " AND u.legal_entity_id = %s " % (legal_entity_id)
+        where_qry = " AND u.legal_entity_id = %s "
+        where_qry_val.append(legal_entity_id)
 
     if division_id is not None :
-        where_qry = " AND u.division_id = %s " % (division_id)
+        where_qry = " AND u.division_id = %s "
+        where_qry_val.append(division_id)
 
     if unit_id is not None :
-        where_qry = " AND u.unit_id = %s " % (unit_id)
+        where_qry = " AND u.unit_id = %s "
+        where_qry_val.append(unit_id)
 
     if leval_1_statutory_name is not None :
-        where_qry = " AND c.statutory_mapping like '%s' " % (leval_1_statutory_name + '%')
-    return where_qry
+        where_qry = " AND c.statutory_mapping like %s "
+        where_qry_val.append(leval_1_statutory_name + '%')
+
+    return where_qry, where_qry_val
 
 def get_not_complied_compliances_count(
-    db, country_id, domain_id, where_qry
+    db, country_id, domain_id, where_qry, where_qry_val
 ):
     q_count = "SELECT count(c.compliance_id) \
         FROM tbl_compliance_history ch \
@@ -1181,11 +1296,13 @@ def get_not_complied_compliances_count(
         AND ((IFNULL(c.duration_type_id, 0) = 2 AND ch.due_date < now()) \
         or (IFNULL(c.duration_type_id, 0) != 2 AND ch.due_date < CURDATE()))  \
         AND IFNULL(ch.approve_status, 0) != 1 \
-        %s " % (
-            domain_id, country_id,
-            where_qry
-        )
-    c_row = db.select_one(q_count)
+        %s "
+    param = [domain_id, country_id]
+    if where_qry is not None :
+        q_count += where_qry
+        param.extend(where_qry_val)
+
+    c_row = db.select_one(q_count, param)
     if c_row :
         total = int(c_row[0])
     else :
@@ -1197,15 +1314,15 @@ def get_not_complied_compliances_with_count(
     legal_entity_id, division_id, unit_id, leval_1_statutory_name,
     session_user, from_count, to_count
 ):
-    where_qry = get_not_complied_where_qry(
+    where_qry, where_qry_val = get_not_complied_where_qry(
         db, business_group_id, legal_entity_id, division_id, unit_id,
         leval_1_statutory_name
     )
     total = get_not_complied_compliances_count(
-        db, country_id, domain_id, where_qry
+        db, country_id, domain_id, where_qry, where_qry_val
     )
     result = get_not_complied_compliances(
-        db, domain_id, country_id, where_qry, from_count, to_count
+        db, domain_id, country_id, where_qry, where_qry_val, from_count, to_count
     )
     return return_risk_report_data(db, result, total)
 
@@ -2096,3 +2213,15 @@ def get_client_details_count(
     if rows:
         count = rows[0][0]
     return count
+
+def get_service_provider_user_ids(db, service_provider_id, client_id):
+    columns = "group_concat(user_id) as users"
+    condition = " service_provider_id = %s and is_service_provider = 1" % service_provider_id
+    rows = db.get_data(tblUsers, columns, condition)
+    return rows[0]["users"]
+
+def get_service_provider_user_unit_ids(db, user_ids, client_id):
+    columns = "group_concat(unit_id) as units"
+    condition = " user_id in (%s)" % user_ids
+    rows = db.get_data(self.tblUserUnits, columns, condition)
+    return rows[0]["units"]

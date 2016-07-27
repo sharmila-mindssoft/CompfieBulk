@@ -188,6 +188,7 @@ function initMirror() {
         )
         .fail(
             function (jqXHR, textStatus, errorThrown) {
+                // alert(jqXHR["responseText"]);
                 callback(jqXHR["responseText"], errorThrown);
                 // alert("jqXHR:"+jqXHR.status);
                 // alert("textStatus:"+textStatus);

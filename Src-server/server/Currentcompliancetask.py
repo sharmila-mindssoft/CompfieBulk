@@ -41,9 +41,9 @@ class ComplianceTask(Database):
             WHERE (t1.due_date - INTERVAL t1.trigger_before_days DAY) <= '%s' \
             AND t1.is_active = 1 AND t2.is_active = 1 \
             AND t1.country_id = %s \
-            AND t4.compliance_id is null " % (current_date, country_id)
+            AND t4.compliance_id is null "
 
-        rows = self.select_all(query)
+        rows = self.select_all(query, [current_date, country_id])
         columns = [
             "country_id", "unit_id", "compliance_id", "statutory_dates",
             "trigger_before_days", "due_date", "validity_date", "document_name", "compliance_task",

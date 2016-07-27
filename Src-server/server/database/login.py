@@ -34,7 +34,7 @@ def verify_login(db, username, password):
             FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
             ON t1.user_group_id = t2.user_group_id \
             WHERE t1.password=%s and t1.email_id=%s and t1.is_active=1"""
-        data_list = db.select_one(query, (password, username))
+        data_list = db.select_one(query, [password, username])
         if data_list is None :
             return False
         else :

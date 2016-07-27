@@ -63,7 +63,6 @@ def get_service_provider_details_list(db, client_id):
     rows = db.get_data(
         tblServiceProviders, columns, condition, condition_val, order
     )
-    print rows
     return return_service_provider_details(rows)
 
 def return_service_provider_details(service_providers):
@@ -361,8 +360,8 @@ def return_user_details(
     results = []
     for user in users :
         query = "select unit_id from %s tuu where \
-        user_id = %s " % (tblUserUnits, user["user_id"])
-        rows = db.select_all(query)
+        user_id = %s "
+        rows = db.select_all(query, [tblUserUnits, user["user_id"]])
         user_unit_ids = []
         for row in rows:
             user_unit_ids.append(row[0])
@@ -787,10 +786,8 @@ def get_audit_trails(
 
     if not is_primary_admin(db, session_user) and not is_admin(db, session_user):
         unit_ids = get_user_unit_ids(db, session_user)
-        query = "SELECT DISTINCT user_id FROM %s where unit_id in (%s)" % (
-            tblUserUnits, unit_ids
-        )
-        rows = db.select_all(query)
+        query = "SELECT DISTINCT user_id FROM %s where unit_id in (%s)"
+        rows = db.select_all(query, [tblUserUnits, unit_ids])
         user_ids = ""
         for index, row in enumerate(rows):
             if index == 0:
