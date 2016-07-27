@@ -1,6 +1,5 @@
 import MySQLdb as mysql
 from server import logger
-
 from server.common import (convert_to_dict, get_date_time)
 
 class Database(object):
@@ -16,6 +15,7 @@ class Database(object):
         self._mysqlDatabase = mysqlDatabase
         self._connection = None
         self._cursor = None
+        self._for_client = False
 
     # Used to get first three letters of month by the month's integer value
     string_months = {
@@ -135,14 +135,18 @@ class Database(object):
         cursor = self.cursor()
         assert cursor is not None
 
-        print query
-        print param
         try :
             if type(param) is tuple :
+                logger.logQuery(self._for_client, "execute", query % param)
                 cursor.execute(query, param)
             elif type(param) is list :
+                if len(param) > 1 :
+                    logger.logQuery(self._for_client, "execute", query % tuple(param))
+                else :
+                    logger.logQuery(self._for_client, "execute", query % param[0])
                 cursor.execute(query, param)
             else :
+                logger.logQuery(self._for_client, "execute", query)
                 cursor.execute(query)
             return True
         except mysql.Error, e :
@@ -157,11 +161,17 @@ class Database(object):
         assert cursor is not None
         try :
             if type(param) is tuple :
+                logger.logQuery(self._for_client, "execute_insert", query % param)
                 cursor.execute(query, param)
             elif type(param) is list :
+                if len(param) > 1 :
+                    logger.logQuery(self._for_client, "execute_insert", query % tuple(param))
+                else :
+                    logger.logQuery(self._for_client, "execute_insert", query % param[0])
                 cursor.execute(query, param)
             else :
-                cursor.execute(query, (param))
+                logger.logQuery(self._for_client, "execute_insert")
+                cursor.execute(query)
             return int(cursor.lastrowid)
         except mysql.Error, e :
             print e
@@ -176,17 +186,25 @@ class Database(object):
     def select_all(self, query, param=None):
         cursor = self.cursor()
         assert cursor is not None
-        print query, param
         try:
             if param is None :
                 cursor.execute(query)
             else :
                 if type(param) is tuple :
+                    logger.logQuery(self._for_client, "select_all", query % param)
                     cursor.execute(query, param)
+
                 elif type(param) is list :
+                    if len(param) > 1 :
+                        logger.logQuery(self._for_client, "select_all", query % tuple(param))
+                    else :
+                        logger.logQuery(self._for_client, "select_all", query % param[0])
                     cursor.execute(query, param)
+
                 else :
-                    cursor.execute(query, (param))
+                    logger.logQuery(self._for_client, "select_all", query)
+                    cursor.execute(query)
+
             res = cursor.fetchall()
             return res
         except mysql.Error, e:
@@ -203,11 +221,17 @@ class Database(object):
                 cursor.execute(query)
             else :
                 if type(param) is tuple :
+                    logger.logQuery(self._for_client, "select_one", query % param)
                     cursor.execute(query, param)
                 elif type(param) is list :
+                    if len(param) > 1 :
+                        logger.logQuery(self._for_client, "select_one", query % param)
+                    else :
+                        logger.logQuery(self._for_client, "select_one", query % param[0])
                     cursor.execute(query, param)
                 else :
-                    cursor.execute(query, (str(param)))
+                    logger.logQuery(self._for_client, "select_one", query % param)
+                    cursor.execute(query)
             res = cursor.fetchone()
             return res
         except mysql.Error, e:
@@ -256,15 +280,17 @@ class Database(object):
                 query += order
 
             if condition_val is None :
+                logger.logQuery(self._for_client, "get_data", query)
                 rows = self.select_all(query)
             else :
+                logger.logQuery(self._for_client, "get_data", query % condition_val)
                 rows = self.select_all(query, condition_val)
 
         else :
             if order is not None :
                 query += order
+            logger.logQuery(self._for_client, "get_data", query)
             rows = self.select_all(query)
-        print "get_data", rows
         result = []
         if rows :
             result = convert_to_dict(rows, param)
@@ -319,8 +345,10 @@ class Database(object):
 
         if where_condition is not None :
             query += " WHERE %s " % (where_condition)
+            logger.logQuery(self._for_client, "get_data_from_multiple_tables", query)
             rows = self.select_all(query)
         else :
+            logger.logQuery(self._for_client, "get_data_from_multiple_tables", query)
             rows = self.select_all(query)
 
         result = []
@@ -344,7 +372,9 @@ class Database(object):
         query = """INSERT INTO %s %s """ % (table, columns)
         query += " VALUES (%s) " % (",".join(stringValue))
         try:
-            return int(self.execute_insert(query, values))
+            logger.logQuery(self._for_client, "insert", query % values)
+            n_id = int(self.execute_insert(query, values))
+            return n_id
         except mysql.Error, e:
             print e
             logger.logKnowledgeApi("insert", query)
@@ -368,6 +398,7 @@ class Database(object):
         try:
             cursor = self.cursor()
             assert cursor is not None
+            logger.logQuery(self._for_client, "bulk_insert", query % valueList)
             cursor.executemany(query, valueList)
             return True
         except mysql.Error, e:
@@ -388,8 +419,6 @@ class Database(object):
                 query += column+" = %s "
 
         query += " WHERE " + condition
-        print query
-        print values
         try:
             res = self.execute(query, values)
             print res
@@ -433,7 +462,6 @@ class Database(object):
     def delete(self, table, condition, condition_val):
         query = "DELETE from "+table+" WHERE "+condition
         try:
-            print query
             return self.execute(query, condition_val)
         except mysql.Error, e:
             print e
@@ -448,7 +476,6 @@ class Database(object):
     def append(self, table, column, value, condition):
         try :
             rows = self.get_data(table, column, condition)
-            print column
             currentValue = rows[0][column]
             if currentValue is not None:
                 newValue = currentValue+","+str(value)
@@ -488,9 +515,7 @@ class Database(object):
     def is_already_exists(self, table, condition, condition_val) :
         query = "SELECT count(0) FROM %s WHERE %s " % (table, condition)
         rows = None
-        print query
         rows = self.select_all(query, condition_val)
-        print rows
         if rows :
             if rows[0][0] > 0:
                 return True

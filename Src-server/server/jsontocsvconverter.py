@@ -1,10 +1,10 @@
 import os
+import io
 import json
 import csv
 import uuid
-import datetime
 from protocol import (
-    core, clientreport, 
+    core
 )
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
@@ -22,8 +22,8 @@ class ConvertJsonToCSV(object):
 
         if not os.path.exists(CSV_PATH):
             os.makedirs(CSV_PATH)
-        with open(self.FILE_PATH, 'wb+') as f:
-            self.writer = csv.writer(f)#self.header, quoting=csv.QUOTE_ALL) 
+        with io.FileIO(self.FILE_PATH, "wb+") as f :
+            self.writer = csv.writer(f)  # self.header, quoting=csv.QUOTE_ALL)
             # self.convert_json_to_csv(jsonObj)
             if report_type == "ActivityReport":
                 self.generate_compliance_activity_report(db, request, session_user, client_id)
@@ -53,7 +53,6 @@ class ConvertJsonToCSV(object):
             self.writer.writerow(header)
         if values:
             self.writer.writerow(values)
-            
 
     def generate_compliance_activity_report(self, db, request, session_user, client_id):
         is_header = False
@@ -65,17 +64,17 @@ class ConvertJsonToCSV(object):
         from_date = request.from_date
         to_date = request.to_date
         compliance_id = request.compliance_id
-        level_1_statutory_name = request.level_1_statutory_name 
+        level_1_statutory_name = request.level_1_statutory_name
 
         rows = db.get_compliance_activity_report(
-            country_id, domain_id, user_type, user_id, 
+            country_id, domain_id, user_type, user_id,
             unit_id, compliance_id,
-            level_1_statutory_name, from_date, to_date, 
+            level_1_statutory_name, from_date, to_date,
             session_user, client_id
         )
         csv_header = [
-            "Unit Name", "Address", "Level 1 Statutory Name", 
-            "Compliance Name", "Activity Date", "Activity Status", 
+            "Unit Name", "Address", "Level 1 Statutory Name",
+            "Compliance Name", "Activity Date", "Activity Status",
             "Compliance Status", "Remarks", "Assignee"
         ]
         if not is_header:
@@ -91,10 +90,10 @@ class ConvertJsonToCSV(object):
 
             employee_name = row["employee_name"]
             if row["employee_code"] not in ["None", None, ""]:
-                employee_name = "%s - %s" % (row["employee_code"], employee_name)        
+                employee_name = "%s - %s" % (row["employee_code"], employee_name)
             csv_values = [
-                row["unit_name"], row["address"], level_1_statutory, 
-                compliance_name, 
+                row["unit_name"], row["address"], level_1_statutory,
+                compliance_name,
                 db.datetime_to_string(
                     row["activity_date"]
                 ),
@@ -102,7 +101,7 @@ class ConvertJsonToCSV(object):
                 core.COMPLIANCE_STATUS(row["compliance_status"]),
                 row["remarks"], employee_name
             ]
-            self.write_csv(None, csv_values)                
+            self.write_csv(None, csv_values)
 
     def generate_risk_report(self, db, request, session_user, client_id):
         country_id = request.country_id
@@ -121,9 +120,9 @@ class ConvertJsonToCSV(object):
         compliance_list = []
         if statutory_status == 1 :  # Delayed compliance
             where_qry = db.get_delayed_compliances_where_qry(
-                business_group_id, legal_entity_id, division_id, unit_id, 
+                business_group_id, legal_entity_id, division_id, unit_id,
                 level_1_statutory_name, session_user
-            ) 
+            )
             total = db.get_delayed_compliances_count(
                 country_id, domain_id, business_group_id,
                 legal_entity_id, division_id, unit_id, level_1_statutory_name,
@@ -135,7 +134,7 @@ class ConvertJsonToCSV(object):
             status = "Delayed Compliance"
         if statutory_status == 2 :  # Not complied
             where_qry = db.get_not_complied_where_qry(
-                business_group_id, legal_entity_id, division_id, unit_id, 
+                business_group_id, legal_entity_id, division_id, unit_id,
                 level_1_statutory_name
             )
             total = db.get_not_complied_compliances_count(
@@ -147,30 +146,30 @@ class ConvertJsonToCSV(object):
             status = "Not Complied"
         if statutory_status == 3 :  # Not opted
             where_qry = db.get_not_opted_compliances_where_qry(
-                business_group_id, legal_entity_id, division_id, unit_id, 
+                business_group_id, legal_entity_id, division_id, unit_id,
                 level_1_statutory_name,  session_user
-            ) 
+            )
             total = db.get_not_opted_compliances_count(
                 country_id, domain_id, where_qry
-            ) 
+            )
             compliance_list = db.get_not_opted_compliances(
                 domain_id, country_id, where_qry, 0, total
             )
             status = "Not Opted"
         if statutory_status == 4 :  # Unassigned
             where_qry = db.get_unassigned_compliances_where_qry(
-                business_group_id, legal_entity_id, division_id, unit_id, 
+                business_group_id, legal_entity_id, division_id, unit_id,
                 level_1_statutory_name, session_user
-            ) 
+            )
             total = db.get_unassigned_compliances_count(
                 country_id, domain_id, where_qry
-            ) 
+            )
             compliance_list = db.get_unassigned_compliances(
                 domain_id, country_id, where_qry, 0, total
-            )          
+            )
             status = "Unassigned Compliance"
         csv_headers = [
-            "Status", "Business Group Name", "Legal Entity Name", 
+            "Status", "Business Group Name", "Legal Entity Name",
             "Division Name", "Level 1 Statutory Name",
             "Unit Name", "Statutory Mapping", "Compliance Name",
             "Description", "Penal", "Frequency", "Repeats"
@@ -232,7 +231,7 @@ class ConvertJsonToCSV(object):
 
             csv_values = [
                 status, d["business_group"], d["legal_entity"],
-                d["division"], d["level_1"], unit_name, 
+                d["division"], d["level_1"], unit_name,
                 statutory_mapping, compliance_name,
                 d["compliance_description"], d["penal_consequences"],
                 d["frequency"], repeats
@@ -262,7 +261,7 @@ class ConvertJsonToCSV(object):
 
         total_count = db.get_compliance_details_total_count(
             country_id, domain_id, statutory_id, qry_where
-        ) 
+        )
         rows = db.get_compliance_details(
             country_id, domain_id, statutory_id,
             qry_where, 0, total_count
@@ -283,11 +282,11 @@ class ConvertJsonToCSV(object):
             if compliance["document_name"] not in [None, "None", ""]:
                 compliance_name = "%s - %s" % (compliance["document_name"], compliance_name)
             csv_values = [
-                unit_name, compliance["address"], 
-                compliance_name,  compliance["assigneename"], 
-                compliance["due_date"], 
+                unit_name, compliance["address"],
+                compliance_name,  compliance["assigneename"],
+                compliance["due_date"],
                 compliance["completion_date"],
-                compliance["validity_date"], compliance["documents"], 
+                compliance["validity_date"], compliance["documents"],
                 compliance["status"]
             ]
             self.write_csv(None, csv_values)
@@ -442,17 +441,17 @@ class ConvertJsonToCSV(object):
 
             if not is_header:
                 csv_headers = [
-                    "Unit Name", "Address", "Applicability Status", "Level 1 Statutory", "Statutory Provision", 
-                    "Statutory Mapping", "Compliance", "Description", "Penal Consequences", "Frequency", 
+                    "Unit Name", "Address", "Applicability Status", "Level 1 Statutory", "Statutory Provision",
+                    "Statutory Mapping", "Compliance", "Description", "Penal Consequences", "Frequency",
                     "Repeats"
                 ]
                 self.write_csv(csv_headers, None)
                 is_header = True
             for compliance in compliance_name_list:
                 csv_values = [
-                    r["unit_name"], r["unit_address"], applicability_status, level_1_statutory, 
-                    r["statutory_provision"], r["statutory_mapping"], 
-                    compliance, r["compliance_description"], 
+                    r["unit_name"], r["unit_address"], applicability_status, level_1_statutory,
+                    r["statutory_provision"], r["statutory_mapping"],
+                    compliance, r["compliance_description"],
                     r["penal_consequences"], r["frequency"], repeat_text
                 ]
                 self.write_csv(None, csv_values)
@@ -492,30 +491,30 @@ class ConvertJsonToCSV(object):
         rows = db.select_all(query)
         columns_list = columns.replace(" ", "").split(",")
         unit_rows = db.convert_to_dict(rows, columns_list)
-        
+
         units = []
         if not is_header:
             csv_headers = [
-                "Business Group", "Legal Entity", 
-                "Division", "Unit Code", "Unit Name", "Geography", 
+                "Business Group", "Legal Entity",
+                "Division", "Unit Code", "Unit Name", "Geography",
                 "Address", "Domains", "Postal Code"
             ]
             self.write_csv(csv_headers, None)
             is_header = True
         for result_row in unit_rows:
             domain_names = db.get_data(
-                db.tblDomains, 
-                "group_concat(domain_name)", 
+                db.tblDomains,
+                "group_concat(domain_name)",
                 "domain_id in (%s)" % result_row["domain_ids"]
             )[0][0]
             csv_values = [
-                result_row["business_group_name"], 
+                result_row["business_group_name"],
                 result_row["legal_entity_name"],
-                result_row["division_name"], 
+                result_row["division_name"],
                 result_row["unit_code"],
-                result_row["unit_name"], 
-                result_row["geography"], 
-                result_row["address"], domain_names, 
+                result_row["unit_name"],
+                result_row["geography"],
+                result_row["address"], domain_names,
                 result_row["postal_code"]
             ]
             self.write_csv(None, csv_values)
@@ -541,7 +540,7 @@ class ConvertJsonToCSV(object):
             country_id, domain_id, qry_where,
             0, to_count
         )
-        
+
 
         if not is_header:
             csv_headers = [
@@ -568,7 +567,7 @@ class ConvertJsonToCSV(object):
             csv_values = [
                 history["unit_code"], history["unit_name"], history["address"],
                 statutory_name, compliance_name, history["due_date"],
-                history["reassigned_from"], history["assigneename"], 
+                history["reassigned_from"], history["assigneename"],
                 db.datetime_to_string(history["reassigned_date"]),
                 history["remarks"]
             ]
@@ -684,7 +683,7 @@ class ConvertJsonToCSV(object):
                         is_header = True
                     csv_values = [
                         business_group_name, legal_entity_name, division_name, unit_name,
-                        level_1_statutory_name, notification["statutory_provision"], 
+                        level_1_statutory_name, notification["statutory_provision"],
                         notification["notification_text"],db.datetime_to_string(notification["updated_on"])
                     ]
                     self.write_csv(None, csv_values)
@@ -785,9 +784,9 @@ class ConvertJsonToCSV(object):
                     else :
                         summary = None
 
-                        
+
                     if not is_header:
-                        csv_headers =[ 
+                        csv_headers =[
                             "Service provider name", "Address", "Contract From", "Contract To",
                             "Contact Person", "Contact No", "Compliance name","Unit Name", "Unit Address",
                             "Frequency", "Description", "Statutory Date", "Due date", "Validity Date"
@@ -796,7 +795,7 @@ class ConvertJsonToCSV(object):
                         is_header = True
                     frequence_json = compliance_frequency.to_structure()
                     csv_values = [
-                        service_provider_name, address, contract_from, contract_to, contact_person, 
+                        service_provider_name, address, contract_from, contract_to, contact_person,
                         contact_no, compliance_name, unit_name, unit_address,
                         frequence_json, description, summary,
                         due_date, validity_date

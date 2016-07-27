@@ -112,6 +112,7 @@ class API(object):
                             company.db_password,
                             company.db_name
                         )
+                        db._for_client = True
                         db.connect()
                         if db._connection is not None :
                             self._databases[company_id] = db
@@ -283,6 +284,8 @@ class API(object):
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
             db.rollback()
+            response.set_status(400)
+            response.send(str(e))
             return
 
     @api_request(login.Request, need_client_id=True)

@@ -1,3 +1,4 @@
+import io
 import datetime
 import json
 from protocol import (core, dashboard, clientreport)
@@ -6,6 +7,7 @@ from server.common import (
     encrypt, convert_to_dict, get_date_time, get_date_time_in_date
 )
 from server.clientdatabase.tables import *
+from server.exceptionmessage import client_process_error
 
 __all__ = [
     "get_client_user_forms",
@@ -439,7 +441,7 @@ def is_admin(db, user_id):
         else:
             return False
 
-def get_user_unit_ids(db, user_id, client_id=None):
+def get_user_unit_ids(db, user_id):
     columns = "unit_id"
     table = tblUnits
     result = None
@@ -462,7 +464,7 @@ def get_user_unit_ids(db, user_id, client_id=None):
 def is_two_levels_of_approval(db):
     columns = "two_levels_of_approval"
     rows = db.get_data(tblClientGroups, columns, "1")
-    return rows[0]["two_levels_of_approval"]
+    return bool(rows[0]["two_levels_of_approval"])
 
 def get_user_company_details(db, user_id):
     admin_id = get_admin_id(db)
@@ -905,9 +907,11 @@ def save_compliance_activity(
     if remarks:
         columns.append("remarks")
         values.append(remarks)
-    db.insert(
+    result = db.insert(
        tblComplianceActivityLog, columns, values
     )
+    if result is False :
+        raise client_process_error("E018")
 
 def save_compliance_notification(
     db, compliance_history_id, notification_text, category, action
@@ -959,7 +963,9 @@ def save_compliance_notification(
         history["completed_by"], history["concurred_by"], history["approved_by"],
         1, notification_text, extra_details, current_time_stamp
     ]
-    db.insert(tblNotificationsLog, columns, values)
+    r = db.insert(tblNotificationsLog, columns, values)
+    if r is False :
+        raise client_process_error("E019")
 
     # Saving in user log
     columns = [
@@ -986,7 +992,10 @@ def save_compliance_notification(
         values.append(int(history["concurred_by"]))
     elif action.lower() == "started":
         values.append(int(history["completed_by"]))
-    return db.insert(tblNotificationUserLog, columns, values)
+    r1 = db.insert(tblNotificationUserLog, columns, values)
+    if r1 is False :
+        raise client_process_error("E019")
+    return r1
 
 def get_user_countries(db, user_id, client_id=None):
     columns = "group_concat(country_id) as countries"
@@ -1020,6 +1029,7 @@ def get_email_id_for_users(db, user_id):
         return None
 
 def get_user_email_name(db, user_ids):
+    print user_ids
     user_id_list = [int(x) for x in user_ids.split(",")]
     admin_email = None
     index = None
@@ -1038,13 +1048,13 @@ def get_user_email_name(db, user_ids):
     employee_name = ""
     for index, row in enumerate(rows):
         if index == 0:
-            if row[1] is not None:
-                employee_name += "%s" % row[1]
-            email_ids += "%s" % row[0]
+            if row["employee_name"] is not None:
+                employee_name += "%s" % row["employee_name"]
+            email_ids += "%s" % row["email_id"]
         else:
-            if row[1] is not None:
-                employee_name += ", %s" % row[1]
-            email_ids += ", %s" % row[0]
+            if row["employee_name"] is not None:
+                employee_name += ", %s" % row["employee_name"]
+            email_ids += ", %s" % row["email_id"]
     if admin_email is not None:
         employee_name += "Administrator"
         email_ids += admin_email
@@ -1205,9 +1215,9 @@ def convert_base64_to_file(file_name, file_content, client_id):
         os.makedirs(client_directory)
     remove_uploaded_file(file_path)
     if file_content is not None :
-        new_file = open(file_path, "wb")
-        new_file.write(file_content.decode('base64'))
-        new_file.close()
+        with io.FileIO(file_path, "wb") as fn :
+            fn.write(file_content.decode('base64'))
+
 
 def get_user_name_by_id(db, user_id, client_id=None):
     employee_name = None
