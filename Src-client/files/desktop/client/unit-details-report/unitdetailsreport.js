@@ -34,7 +34,7 @@ function initialize(){
 		unitList = data['units'];
 	}
 	function onFailure(error){
-		console.log(error);
+		displayMessage(error);
 	}
 	client_mirror.getClientDetailsReportFilters(
 		function (error, response){
@@ -141,7 +141,7 @@ function loadunitdetailsreport(buttontype){
 		    hideLoader();
 		}
 		function onFailure(error){
-			console.log(error);
+			displayMessage(error);
 			hideLoader();
 		}
 	    csv = false

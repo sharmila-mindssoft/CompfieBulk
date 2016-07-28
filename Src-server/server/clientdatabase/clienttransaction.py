@@ -50,6 +50,8 @@ __all__ = [
     "save_assigned_compliance"
 ]
 
+CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
+
 def get_statutory_settings(db, session_user, client_id):
     admin_id = get_admin_id(db)
     if session_user == 0 or session_user == admin_id:

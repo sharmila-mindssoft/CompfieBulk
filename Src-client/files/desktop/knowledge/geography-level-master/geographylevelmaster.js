@@ -232,6 +232,8 @@ $("#submit").click(function(){
           	var levelValue = response['level'];
           	var msg = "Level "+ levelValue + " ";
           	displayMessage(msg+message.shouldnot_empty);
+          }else{
+          	displayMessage(error);
           }
         }
 		mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist,
@@ -310,4 +312,11 @@ $(".fieldvalue").keyup(function (evt) {
   return false;
   }
  }
+});
+
+$('.fieldvalue').on('input', function (e) {
+    this.value = isAlphabetic($(this));
+});
+$('#insertvalue').on('input', function (e) {
+    this.value = isAlphabetic($(this));
 });

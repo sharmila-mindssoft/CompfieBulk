@@ -106,9 +106,9 @@ function changeStatus (geographyId,isActive) {
               }
               function onFailure(error){
                 if(error == "TransactionExists"){
-                    alert(message.trasaction_exists)
+                    custom_alert(message.trasaction_exists)
                 }else{
-                    alert(error)
+                    custom_alert(error)
                 }      
               }
             mirror.changeGeographyStatus(geographyId, isActive,
@@ -180,6 +180,9 @@ function loadGeographyFirstLevels(saverecord){
   }
   }
   $('#ulist'+setlevelstage).append(str);
+  $('.addleft').on('input', function (e) {
+      this.value = isCommon($(this));
+  });
 }
 
 //check & uncheck list data
@@ -306,7 +309,9 @@ function saverecord(j,e){
         }
         function onFailure(error){
           if(error == 'GeographyNameAlreadyExists'){
-              displayMessage(message.geographyname_exists);
+            displayMessage(message.geographyname_exists);
+          }else{
+            displayMessage(error)
           }
         }
         countryId = parseInt($("#country").val());
@@ -415,6 +420,9 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
   }
   $('#ulist'+setlevelstage).append(str);
   }
+  $('.addleft').on('input', function (e) {
+    this.value = isCommon($(this));
+  });
 }
 
 //update geography master
@@ -457,8 +465,11 @@ function updaterecord(j,e){
           if(error == 'GeographyNameAlreadyExists'){
               displayMessage(message.geographyname_exists);
           }
-          if(error == 'InvalidGeographyId'){
+          else if(error == 'InvalidGeographyId'){
               displayMessage(message.invalid_geographyid);
+          }
+          else{
+            displayMessage(error);
           }
 
         }
@@ -524,7 +535,7 @@ function GetGeographies(){
     loadGeographiesList(geographiesList);
   }
   function onFailure(error){
-    displayMessage(error);
+    custom_alert(error);
   }
   mirror.getGeographies(
     function (error, response) {

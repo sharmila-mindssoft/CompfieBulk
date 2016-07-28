@@ -154,6 +154,8 @@ $("#submit").click(function(){
         function onFailure(error){             
           if(error == "DuplicateStatutoryLevelsExists"){
             displayMessage(message.statutorylevel_exists);
+          }else{
+            displayMessage(error);
           }
         }
         mirror.saveAndUpdateStatutoryLevels(parseInt(country), parseInt(domain), passlevellist, 
@@ -193,4 +195,8 @@ $(".fieldvalue").keyup(function (evt) {
 $(document).ready(function(){
   GetStatutoryLevels();
   $("#countryval").focus();
+});
+
+$('.fieldvalue').on('input', function (e) {
+    this.value = isAlphabetic($(this));
 });

@@ -263,6 +263,10 @@ function load_statutory(sList){
     statutoriesCount = statutoriesCount + 1;
     lastDomainName = domainName;
     lastActName = actname;
+
+    $('.input-box').on('input', function (e) {
+      this.value = isCommon($(this));
+    });
   }
 
   if(statutoriesCount > 1){
@@ -350,6 +354,8 @@ function submit_statutory(){
         $('.popup-error-msg').html(message.enter_correct_password);
         $('#password').focus();
         $('#password').val("");
+      }else{
+         $('.popup-error-msg').html(error);
       }
       hideLoader();
     }
@@ -629,7 +635,7 @@ function getStatutorySettings () {
     hideLoader();
   }
   function onFailure(error){
-    displayMessage(error);
+    custom_alert(error);
     hideLoader();
   }
   client_mirror.getStatutorySettings(

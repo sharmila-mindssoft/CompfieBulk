@@ -93,7 +93,7 @@ function apipass(lastdate, todaydate, userid, formid, sno){
         }
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
     }
     mirror.getAuditTrail(lastdate, todaydate, userid, formid, sno,
         function(error, response){
@@ -242,7 +242,7 @@ $('#pagination').click(function(){
         hideLoader();
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
         hideLoader();
     }
     mirror.getAuditTrail(fromDateValue, toDateValue, userid, formid, sno, 

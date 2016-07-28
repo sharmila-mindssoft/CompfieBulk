@@ -307,8 +307,8 @@ function load_secondwizard(){
           $('.closetrigger'+clickvalue).hide();
         });
 
-        $('.trigger').keyup('input', function (event) {
-          this.value = this.value.replace(/[^0-9]/g, '');
+        $('.trigger').on('input', function (e) {
+            this.value = isNumbers($(this));
         });
 
         statutoriesCount = statutoriesCount + 1;
@@ -396,6 +396,7 @@ function validate_firsttab(){
       }
       function onFailure(error){
         hideLoader();
+        displayMessage(error);
       }
       client_mirror.getAssignComplianceForUnits(assignStatutoryUnitIds,
         parseInt(domainID),
@@ -1459,6 +1460,7 @@ function getAssignCompliances () {
     load_firstwizard();
   }
   function onFailure(error){
+    displayMessage(error);
   }
   client_mirror.getAssignComplianceFormData(
     function (error, response) {

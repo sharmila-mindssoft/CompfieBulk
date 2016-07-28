@@ -237,7 +237,7 @@ $('#pagination').click(function(){
     hideLoader();
   }
   function onFailure(error){
-    onFailure(error);
+    displayMessage(error);
     hideLoader();
   }
   client_mirror.getAssigneewisecomplianceReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), parseInt(assignee), s_endCount,
@@ -298,7 +298,7 @@ $("#submit").click(function(){
         hideLoader();
       }
       function onFailure(error){
-        onFailure(error);
+        displayMessage(error);
         hideLoader();
       }
       client_mirror.getAssigneewisecomplianceReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), parseInt(assignee), s_endCount,

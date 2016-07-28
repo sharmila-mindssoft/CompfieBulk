@@ -85,7 +85,7 @@ function initialize(){
         loadClientUserList();
     }
     function onFailure(error){
-        console.log(error);
+        custom_alert(error);
     }
     client_mirror.getClientUsers(
         function(error, response){
@@ -208,7 +208,7 @@ function user_edit(userId){
         loadUserUpdate(userId);
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
     }
     client_mirror.getClientUsers(
         function(error, response){
@@ -548,12 +548,12 @@ function user_active(userId, isActive){
                 }
                 function onFailure(error){
                     if (error == "CannotChangePrimaryAdminStatus"){
-                        alert(message.cant_deactivate_primaryadmin);
+                        custom_alert(message.cant_deactivate_primaryadmin);
                     }
                     else if(error == "ReassignCompliancesBeforeDeactivate"){
-                        alert(message.reassign_compliance_before_user_deactivate)
+                        custom_alert(message.reassign_compliance_before_user_deactivate)
                     }else{
-                        alert(error)
+                        custom_alert(error)
                     }
                 }
                 client_mirror.changeClientUserStatus(userId, isActive,
@@ -596,9 +596,11 @@ function user_isadmin(userId, isAdmin){
                 }
                 function onFailure(error){
                     if (error == "CannotPromoteServiceProvider"){
-                        alert(message.cannot_promote_sp_admin);
+                        custom_alert(message.cannot_promote_sp_admin);
                     }else if (error == "CannotChangePrimaryAdminStatus"){
-                        alert(message.techno_team_change_primary_admin_status);
+                        custom_alert(message.techno_team_change_primary_admin_status);
+                    }else{
+                        custom_alert(error);
                     }
                 }
                 client_mirror.changeAdminStatus(userId, isAdmin,
@@ -1248,4 +1250,21 @@ $( document ).tooltip({
                 .appendTo( this );
         }
     }
+});
+
+$('#employee-name').on('input', function (e) {
+    this.value = isCommon_Name($(this));
+});
+$('#employee-id').on('input', function (e) {
+    this.value = isCommon($(this));
+});
+
+$('#mobile-number').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#area-code').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#country-code').on('input', function (e) {
+    this.value = isNumbers_Countrycode($(this));
 });

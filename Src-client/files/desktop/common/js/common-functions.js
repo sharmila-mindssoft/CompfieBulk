@@ -1,3 +1,4 @@
+//Convert Number to Srting of Month
 function getMonth_IntegettoString(intMonth){
 	var stringMonth = '';
 	if(intMonth == 1) stringMonth = "Jan"
@@ -16,12 +17,66 @@ function getMonth_IntegettoString(intMonth){
   	return stringMonth;
 }
 
+//display custom alert box
+function custom_alert(output_msg)
+{
+  $( ".alert-confirm" ).dialog({
+      buttons: {
+          Ok: function() {
+              $( this ).dialog( "close" );
+          }
+      },
+      open: function ()  {
+          $(".alert-message").html(output_msg);
+      }
+  });
+}
+
+//Validate that input value contains only one or more letters
+function isCommon(inputElm) {
+  //allowed => alphanumeric, dot, comma, Hyphen
+  return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/, '');
+}
+
+function isAlphabetic(inputElm) {
+  //allowed => alphabetic
+  return inputElm.val().replace(/[^ A-Za-z]/, '');
+}
+
+function isAlphanumeric(inputElm) {
+  //allowed => alphanumeric
+  return inputElm.val().replace(/[^ 0-9A-Za-z]/, '');
+}
+
+function isNumbers(inputElm) {
+  //allowed => only numbers
+  return inputElm.val().replace(/[^0-9]/, '');
+}
+
+function isCommon_Name(inputElm) {
+  //allowed => alphanumeric, dot
+  return inputElm.val().replace(/[^ A-Za-z.]/, '');
+}
+
+function isCommon_Address(inputElm) {
+  //allowed => alphanumeric, dot, comma, Hyphen, @, hash
+  return inputElm.val().replace(/[^ A-Za-z_.,-@#]/, '');
+}
+
+function isNumbers_Countrycode(inputElm) {
+  //allowed => only numbers,+
+  return inputElm.val().replace(/[^0-9+]/, '');
+}
+
+function isAlphanumeric_Shortname(inputElm) {
+  //allowed => alphanumeric
+  return inputElm.val().replace(/[^0-9a-z]/, '');
+}
 
 /*
   checkStrength is function which will do the 
   main password strength checking for us
 */
-
 function checkStrength(password)
 {
   //initial strength

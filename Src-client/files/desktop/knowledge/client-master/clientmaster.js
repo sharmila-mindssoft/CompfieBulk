@@ -63,7 +63,7 @@ $(".btn-clientgroup-add").click(function(){
         $('.tbody-dateconfiguration-list').empty();
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
     }
     mirror.getClientGroups(
         function (error, response) {
@@ -99,7 +99,7 @@ function initialize(){
         loadClientGroupList(data['client_list']);
     }
     function onFailure(error){
-        console.log(error);
+        custom_alert(error);
     }
     mirror.getClientGroups(
         function (error, response) {
@@ -154,21 +154,7 @@ function loadClientGroupList(clientGroupList){
         $('.tbody-clientgroup-list').append(clone);
     });
 }
-$('#no-of-user-licence').on('input', function (event) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
 
-$('#file-space').on('input', function (event) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
-
-$('#short-name').on('input', function (event) {
-    this.value = this.value.replace(/[^a-z0-9]/g, '');
-});
-
-$("#short-name").on('keyup', function(){
-    $(".shorturl").text($(this).val());
-});
 function dataconfigurationvalidate(){
     var flag = 0;
     $(".tbody-dateconfiguration-list .tl-from").each(function(){
@@ -472,10 +458,10 @@ function clientgroup_active(clientId, isActive){
                 }
                 function onFailure(error){
                     if(error == "CannotDeactivateClient"){
-                        alert(message.cannot_deactivate_client);
+                        custom_alert(message.cannot_deactivate_client);
                     }
                     else{
-                        displayMessage(error);
+                        custom_alert(error);
                     }
                 }
                 mirror.changeClientGroupStatus( parseInt(clientId), isActive,
@@ -516,7 +502,7 @@ function clientgroup_edit(clientGroupId){
         loadFormListUpdate(data['client_list'], clientGroupId);
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
     }
     mirror.getClientGroups(
         function (error, response){
@@ -690,7 +676,7 @@ $("#upload-logo").on("change", function(e) {
             logo_file = data
         }
         else{
-          alert(data);
+          custom_alert(data);
         }
      });
 });
@@ -1274,4 +1260,24 @@ $(function() {
 });
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
+});
+
+$('#clientgroup-name').on('input', function (e) {
+    this.value = isCommon($(this));
+});
+
+$('#no-of-user-licence').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+
+$('#file-space').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+
+$('#short-name').on('input', function (e) {
+    this.value = isAlphanumeric_Shortname($(this));
+});
+
+$("#short-name").on('keyup', function(){
+    $(".shorturl").text($(this).val());
 });

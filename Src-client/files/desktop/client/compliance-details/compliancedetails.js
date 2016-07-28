@@ -197,7 +197,7 @@ $('#pagination').click(function(){
     hideLoader();
   }
   function onFailure(error){
-    onFailure(error);
+    displayMessage(error);
     hideLoader();
   }
 
@@ -276,7 +276,7 @@ function loadCompliance(reportType){
       hideLoader();
     }
     function onFailure(error){
-      onFailure(error);
+      displayMessage(error);
       hideLoader();
     }
     csv = true

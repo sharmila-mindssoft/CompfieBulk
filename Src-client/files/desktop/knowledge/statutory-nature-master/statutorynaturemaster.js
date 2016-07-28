@@ -18,7 +18,7 @@ function initialize(){
         loadStatNatureData(data);
     }
     function onFailure(error){
-        displayMessage(error);
+        custom_alert(error);
     }
     mirror.getStatutoryNatureList(function (error, response){
         if(error == null){
@@ -103,6 +103,8 @@ $("#btn-statutory-nature-submit").click(function(){
             function onFailure(error){
                 if(error == 'StatutoryNatureNameAlreadyExists'){
                     displayMessage(message.statutoryname_exists);
+                }else{
+                    displayMessage(error);
                 }
             }
             mirror.saveStatutoryNature(statutoryNatureNameVal, function (error, response){
@@ -126,8 +128,11 @@ $("#btn-statutory-nature-submit").click(function(){
                 if(error == 'InvalidStatutoryNatureId'){
                     displayMessage(message.stat_nature_invalid);
                 }
-                if(error == 'StatutoryNatureNameAlreadyExists'){
+                else if(error == 'StatutoryNatureNameAlreadyExists'){
                     displayMessage(message.statutoryname_exists);
+                }
+                else{
+                    displayMessage(error);
                 }
             }
             mirror.updateStatutoryNature(parseInt(statutoryNatureIdVal), statutoryNatureNameVal,
@@ -169,7 +174,7 @@ function statNature_active(statNatureId, isActive){
                     initialize();
                 }
                 function failure(error){
-                    alert(error)
+                    custom_alert(error)
                 }
                 mirror.changeStatutoryNatureStatus(parseInt(statNatureId), isActive, success, failure);
                 
@@ -194,4 +199,8 @@ $("#search-statutory-nature-name").keyup(function() {
 });
 $(function() {
     initialize();
+});
+
+$('#statutory-nature-name').on('input', function (e) {
+    this.value = isAlphabetic($(this));
 });

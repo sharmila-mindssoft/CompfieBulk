@@ -121,7 +121,7 @@ function changeStatus(notification_id, read_status){
       get_notification_count();
     }
     function onFailure(error) {
-        displayMessage = error
+        displayMessage(error);
     }
     client_mirror.updateNotificationStatus(parseInt(notification_id), true,
         function (error, response) {
@@ -145,7 +145,7 @@ function get_reminders(sno){
     hideLoader();
   }
   function onFailure(error){
-        console.log(error);
+        displayMessage(error);
         hideLoader();
   }
   client_mirror.getNotifications( 'Reminder', sno,

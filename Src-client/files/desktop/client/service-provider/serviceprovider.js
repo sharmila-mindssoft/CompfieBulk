@@ -74,7 +74,7 @@ function initialize(){
         loadServiceProviderList(data);
     }
     function onFailure(error){
-        console.log(error);
+        custom_alert(error);
     }
     client_mirror.getServiceProviders(
         function(error, response){
@@ -123,15 +123,6 @@ function loadServiceProviderList(serviceProviderList){
         }
     }
 }
-$('#country-code').on('input', function (event) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
-$('#area-code').on('input', function (event) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
-$('#mobile-number').on('input', function (event) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
 
 $("#submit").click(function(){
 
@@ -202,9 +193,12 @@ $("#submit").click(function(){
                 if(error == 'ServiceProviderNameAlreadyExists') {
                     displayMessage(message.spname_exists);
                 }   
-                if(error == 'ContactNumberAlreadyExists') {
+                else if(error == 'ContactNumberAlreadyExists') {
                     displayMessage(message.contactno_exists);
-                }   
+                }
+                else{
+                    displayMessage(error);
+                }
          
             }
             var serviceProviderDetail;
@@ -235,8 +229,11 @@ $("#submit").click(function(){
                 if(error == 'ServiceProviderNameAlreadyExists') {
                     displayMessage(message.spname_exists);
                 }   
-                if(error == 'ContactNumberAlreadyExists') {
+                else if(error == 'ContactNumberAlreadyExists') {
                     displayMessage(message.contactno_exists);
+                }
+                else{
+                    displayMessage(error);
                 }
             }
             var serviceProviderDetail;
@@ -328,11 +325,11 @@ function serviceprovider_active(serviceProviderId, isActive){
                 }
                 function onFailure(error){
                     if(error == "CannotDeactivateUserExists"){
-                        alert(message.cannot_deactivate_sp);
+                        custom_alert(message.cannot_deactivate_sp);
                     }else if(error == "CannotChangeStatusOfContractExpiredSP"){
-                        alert(message.cannot_change_status);
+                        custom_alert(message.cannot_change_status);
                     }else{
-                        alert(error);
+                        custom_alert(error);
                     }
                 }
                 client_mirror.changeServiceProviderStatus(parseInt(serviceProviderId), isActive, 
@@ -363,4 +360,24 @@ $(function() {
 
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
+});
+
+
+$('#service-provider-name').on('input', function (e) {
+    this.value = isCommon_Name($(this));
+});
+$('#contact-person').on('input', function (e) {
+    this.value = isCommon_Name($(this));
+});
+$('#address').on('input', function (e) {
+    this.value = isCommon_Address($(this));
+});
+$('#mobile-number').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#area-code').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#country-code').on('input', function (e) {
+    this.value = isNumbers_Countrycode($(this));
 });

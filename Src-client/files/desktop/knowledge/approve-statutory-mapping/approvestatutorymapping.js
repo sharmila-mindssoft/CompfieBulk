@@ -46,7 +46,7 @@ function getStatutoryMappings(){
 
   }
   function onFailure(error){
-
+    displayMessage(error);
   }
   mirror.getApproveStatutoryMapings(
     function (error, response) {
@@ -193,7 +193,7 @@ function loadApproveStatutory(){
         $('.compliancetask', clone).html(complianceNames);
         $('.applicablelocation', clone).html(applicableLocation);
         $('.action', clone).html('<input type="hidden" id="mapping_id'+j+'" value="'+statutorymappingId+'" /> <input type="hidden" id="statutoryprovision'+j+'" value="'+statutoryprovision.replace(/"/gi,'##')+'" /> <select class="input-box" id="action'+j+'" onchange="dispreason('+j+')"></select>');
-        $('.reason', clone).html('<textarea class="input-box" maxlength="500" id="notifyreason'+j+'" placeholder="Enter notification text" style="height:50px;display:none;"></textarea><span style="font-size:0.75em;display:none;" id="notifynote'+j+'"> <br> (max 500 characters)</span> <input type="text" maxlength="500" style="display:none;" id="reason'+j+'" class="input-box" placeholder="Enter reason" />');
+        $('.reason', clone).html('<textarea class="input-box userreason" maxlength="500" id="notifyreason'+j+'" placeholder="Enter notification text" style="height:50px;display:none;"></textarea><span style="font-size:0.75em;display:none;" id="notifynote'+j+'"> <br> (max 500 characters)</span> <input type="text" maxlength="500" style="display:none;" id="reason'+j+'" class="input-box userreason" placeholder="Enter reason" />');
         $('.tbody-statutorymapping-list').append(clone);
 
         for (var status in approvalStatusList) {
@@ -214,6 +214,9 @@ function loadApproveStatutory(){
           $("#action"+j).append(option);
         }
         j = j + 1;
+        $('.userreason').on('input', function (e) {
+	      this.value = isCommon($(this));
+	  	});
       }
       $('#saverecord').show();
     }
@@ -343,6 +346,7 @@ function reloadStatutoryMapping(){
       loadApproveStatutory();
     }
       function onFailure(error){
+        displayMessage(error);
     }
     mirror.getApproveStatutoryMapings(
       function (error, response) {

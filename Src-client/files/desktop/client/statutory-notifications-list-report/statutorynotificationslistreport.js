@@ -38,7 +38,7 @@ function initialize(){
         level1List = data['level_1_statutories'];
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
     }
     client_mirror.getStatutoryNotificationsListFilters(
         function (error, response){
@@ -145,7 +145,7 @@ function loadStatutoryNotificationsListreport(buttontype){
             }
         }
         function onFailure(error){
-            console.log(error);
+            displayMessage(error);
         }
         csv = false
         if(buttontype == "export"){

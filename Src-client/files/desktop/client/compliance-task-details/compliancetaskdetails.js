@@ -53,7 +53,7 @@ function initialize(){
 
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
         hideLoader();
     }
     client_mirror.getCurrentComplianceDetail( c_endCount,
@@ -85,7 +85,7 @@ $('#pagination').click(function(){
         hideLoader();
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
         hideLoader();
     }
     client_mirror.getCurrentComplianceDetail( c_endCount,
@@ -209,7 +209,7 @@ $('.upcomming-tab').click(function(){
             hideLoader();
         }
         function onFailure(error){
-            console.log(error);
+            displayMessage(error);
             hideLoader();
         }
         client_mirror.getUpcomingComplianceDetail(u_endCount,
@@ -236,7 +236,7 @@ $('#pagination-upcoming').click(function(){
         hideLoader();
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
         hideLoader();
     }
     client_mirror.getUpcomingComplianceDetail(u_endCount,
@@ -502,6 +502,11 @@ function showSideBar(idval, data){
                 monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
             });
+
+
+            $('.sideview-remarks').on('input', function (e) {
+                this.value = isCommon($(this));
+            });
         }
     });
 
@@ -544,7 +549,7 @@ function uploadedfile(e){
             $(".uploaded-filename").html(result);
         }
         else{
-          alert(data);
+          custom_alert(data);
         }
     });
 }

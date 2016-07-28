@@ -317,7 +317,7 @@ function getUserCompliances(userid, userName, compliancesCount){
     hideLoader();
   }
   function onFailure(error){
-    onFailure(error);
+    displayMessage(error);
     hideLoader();
   }
   client_mirror.getAssigneeWiseCompliances( userId, s_endCount,
@@ -802,6 +802,7 @@ function getReassignCompliances () {
     load_compliances();
   }
   function onFailure(error){
+    displayMessage(error);
   }
   client_mirror.getUserwiseCompliances(
     function (error, response) {
@@ -1218,4 +1219,8 @@ $( document ).tooltip({
                 .appendTo( this );
         }
     }
+});
+
+$('#reason').on('input', function (e) {
+    this.value = isCommon($(this));
 });

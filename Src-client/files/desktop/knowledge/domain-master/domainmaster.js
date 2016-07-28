@@ -20,7 +20,7 @@ function getDomains () {
     loadDomainList(domainsList);
   }
   function onFailure(error){
-    displayMessage(error);
+    custom_alert(error);
   }
   mirror.getDomainList(
       function (error, response) {
@@ -107,6 +107,8 @@ if(validate()){
 
         if(error == "DomainNameAlreadyExists"){
             displayMessage(message.domainname_exists);
+        }else{
+          displayMessage(error);
         }
     }
     mirror.saveDomain(domainName,
@@ -131,8 +133,11 @@ if(validate()){
             displayMessage(message.invalid_domainid);
         }
 
-        if(error == 'DomainNameAlreadyExists'){
+        else if(error == 'DomainNameAlreadyExists'){
             displayMessage(message.domainname_exists);
+        }
+        else{
+          displayMessage(error);
         }
     }
     mirror.updateDomain(parseInt(domainId), domainName,
@@ -186,9 +191,9 @@ function changeStatus (domainId,isActive) {
             }
             function onFailure(error){
               if(error == "TransactionExists"){
-                  alert(message.trasaction_exists)
+                  custom_alert(message.trasaction_exists)
               }else{
-                  alert(error)
+                  custom_alert(error)
               }
             }
             mirror.changeDomainStatus(domainId, isActive,
@@ -226,4 +231,8 @@ $("#search-domain-name").keyup(function() {
 $(document).ready(function () {
   getDomains ();
   $("#domainname").focus();
+});
+
+$('#domainname').on('input', function (e) {
+    this.value = isAlphabetic($(this));
 });

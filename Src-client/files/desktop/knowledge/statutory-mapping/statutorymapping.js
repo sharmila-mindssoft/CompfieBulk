@@ -178,9 +178,9 @@ function changeStatus (statutorymappingId,isActive) {
               }
               function onFailure(error){
                 if(error == "TransactionExists"){
-                    alert(message.trasaction_exists)
+                    custom_alert(message.trasaction_exists)
                 }else{
-                    alert(error)
+                    custom_alert(error)
                 }
               }
               mirror.changeStatutoryMappingStatus(statutorymappingId, isActive,
@@ -408,6 +408,9 @@ function loadStatutoryLevels(countryval,domainval){
           }
         }
         $('#statutorylist'+setlevelstage).append(str);
+        $('.addleft').on('input', function (e) {
+          this.value = isCommon($(this));
+        });
   }
 }
 
@@ -1006,6 +1009,7 @@ $("#temp_addcompliance").click(function() {
           }
           else{
             if(repeats_type == '2' && $('.multipleinput').prop("checked") == true){
+              var s_months = [];
               var rep_every = parseInt($('#repeats_every').val());
               var maxCount = 0;
               if(rep_every == 1){
@@ -1022,6 +1026,7 @@ $("#temp_addcompliance").click(function() {
                 maxCount = 2;
               }
               for(var i=1;i<=maxCount;i++){
+
                 statutory_day = null;
                 statutory_month = null;
                 trigger_before_days = null;
@@ -1040,8 +1045,13 @@ $("#temp_addcompliance").click(function() {
                     displayMessage(message.triggerbefore_iszero);
                     return false;
                   }
+                  if($.inArray(statutory_month, s_months) >= 0){
+                    displayMessage(message.invalid_statutory_month);
+                    return false;
+                  }
                   statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
                   statutory_dates.push(statutory_date);
+                  s_months.push(statutory_month);
                 }
               }
             }else{
@@ -1892,7 +1902,7 @@ function load_stautorydates(){
         $('#multiple_statutory_month'+i).val('');
         $('#multiple_triggerbefore'+i).val('');
       }
-  }
+    }
   }else{
     $('#single_statutory_date').show();
     $('#single_statutory_month').show();
@@ -2431,18 +2441,6 @@ for(var j=1; j<=12; j++){
     $("#multiple_statutory_month"+j).append(option);
   }
 }
-
-$('#repeats_every').keyup('input', function (event) {
-  this.value = this.value.replace(/[^0-9]/g, '');
-});
-
-$('.trigger').keyup('input', function (event) {
-  this.value = this.value.replace(/[^0-9]/g, '');
-});
-
-$('#duration').keyup('input', function (event) {
-  this.value = this.value.replace(/[^0-9]/g, '');
-});
 $('#days').hide();
 $('#hours').show();
 $("#trigger_every").show();
@@ -2493,4 +2491,29 @@ $( document ).tooltip({
           .appendTo( this );
     }
   }
+});
+
+$('#statutory_provision').on('input', function (e) {
+  this.value = isCommon($(this));
+});
+$('#compliance_task').on('input', function (e) {
+  this.value = isCommon($(this));
+});
+$('#compliance_description').on('input', function (e) {
+  this.value = isCommon($(this));
+});
+$('#compliance_document').on('input', function (e) {
+  this.value = isCommon($(this));
+});
+$('#penal_consequences').on('input', function (e) {
+  this.value = isCommon($(this));
+});
+$('#repeats_every').on('input', function (e) {
+  this.value = isNumbers($(this));
+});
+$('#duration').on('input', function (e) {
+  this.value = isNumbers($(this));
+});
+$('.trigger').on('input', function (e) {
+  this.value = isNumbers($(this));
 });

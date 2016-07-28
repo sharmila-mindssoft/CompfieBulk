@@ -12,7 +12,7 @@ function initialize(){
 		loadUnitClosureList(unitsList);
 	}
 	function onFailure(error){
-		console.log(error);
+		custom_alert(error);
 	}
 	client_mirror.getUnitClosureList(
 		function (error, response){
@@ -64,6 +64,8 @@ function unit_close(){
 				// $('.overlay').css("visibility","hidden");
 				// $('.overlay').css("opacity","0");
 				$('.popup-error-msg').html("Cannot close unit. One or more users have this unit as seating unit. Change the seating unit of those users to close the unit");
+			}else{
+				$('.popup-error-msg').html(error);
 			}
 		}
 		client_mirror.closeUnit(parseInt(unitidval), password,

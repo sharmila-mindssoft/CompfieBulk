@@ -25,15 +25,6 @@ function initialize(){
     }       
     $('.userid').val(userprofile['user_id']);
 }
-$('.countrycode').on('input', function (event) {   
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
-$('.areacode').on('input', function (event) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
-$('.mobile').on('input', function (event) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
 $("#submit").click(function(){
     var checkLength = profileValidate();
     if(checkLength){
@@ -47,7 +38,7 @@ $("#submit").click(function(){
             displayMessage(message.updated_success);
         }
         function onFailure(error){
-            console.log(error);
+            displayMessage(error);
         }
         client_mirror.updateUserProfile( countrycode+"-"+areacode+"-"+mobile, address,
             function(error, response){
@@ -66,3 +57,15 @@ $(function() {
     initialize();
 });
 
+$('#address').on('input', function (e) {
+    this.value = isCommon_Address($(this));
+});
+$('#mobile').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#areacode').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#countrycode').on('input', function (e) {
+    this.value = isNumbers_Countrycode($(this));
+});

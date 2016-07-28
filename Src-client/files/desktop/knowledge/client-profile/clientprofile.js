@@ -17,7 +17,7 @@ function initialize(){
 		profiles = data['profiles'];
 	}
 	function onFailure(error){
-        console.log(error);
+        displayMessage(error);
 	}
 	mirror.getClientProfile(
         function(error, response){
@@ -159,7 +159,9 @@ function clientprofile_active(userId, clientId, status){
                 }
                 function onFailure(error){
                     if(error == "ReassignFirst"){
-                        alert("Cannot Promote this user as Client admin. \nSince the old admin has compliances under him. \nFirst inform the client to reassign those compliances to another user.");
+                        custom_alert("Cannot Promote this user as Client admin. \nSince the old admin has compliances under him. \nFirst inform the client to reassign those compliances to another user.");
+                    }else{
+                        displayMessage(error)
                     }
                 }
                 mirror.changeClientUserStatus(userId, status,
@@ -185,9 +187,9 @@ function clientprofile_active(userId, clientId, status){
 
 function alertUserToPromoteAnotherAdmin(isActive){
     if (isActive == true){
-        alert("Try Promote another person as Client admin. \nCurrent admin will be deactivated automatically");
+        custom_alert("Try Promote another person as Client admin. \nCurrent admin will be deactivated automatically");
     }else{
-        alert("Cannot Change status of inactive administrator");
+        custom_alert("Cannot Change status of inactive administrator");
     }
 }
 
@@ -202,7 +204,7 @@ function clientprofile_isadmin(userId, clientId){
             loadClientProfileList(clientId)
         }
         function onFailure(error){
-            console.log(error);
+            displayMessage(error);
         }
         mirror.getClientProfile(
             function(error, response){
@@ -218,7 +220,7 @@ function clientprofile_isadmin(userId, clientId){
     }
     function failure(error){
         if(error == "ReassignFirst"){
-            alert("Cannot Promote this user as Client admin. \nSince the old admin has compliances under him. \nFirst inform admin to reassign those compliances to another user.");
+            custom_alert("Cannot Promote this user as Client admin. \nSince the old admin has compliances under him. \nFirst inform admin to reassign those compliances to another user.");
         }
     }
     mirror.createNewAdmin(userId, clientId,

@@ -30,7 +30,7 @@ function initialize(){
         userList = data['users'];
     }
     function onFailure(error){
-        console.log(error);
+        displayMessage(error);
     }
     client_mirror.getReassignedHistoryReportFilters(
         function (error, response){
@@ -133,7 +133,7 @@ function loadreassignedhistory(buttontype, end_count){
             }
         }
         function onFailure(error){
-            console.log(error);
+            displayMessage(error);
             hideLoader();
         }
         csv = false

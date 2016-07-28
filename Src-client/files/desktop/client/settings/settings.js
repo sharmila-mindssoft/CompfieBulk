@@ -24,7 +24,7 @@ function initialize(){
     loadClientProfileList(profiles)
   }
   function onFailure(error){
-        console.log(error);
+        displayMessage(error);
   }
   client_mirror.getSettings(
         function(error, response){
@@ -133,7 +133,7 @@ if(validate()){
         displayMessage(message.record_updated);
       }
     function onFailure(error) {
-        displayMessage = error
+        displayMessage(error);
     }
     client_mirror.updateSettings(twolevelapproval, parseInt(assigneeReminderDays), parseInt(eReminderAdvance), parseInt(eReminder),
         function (error, response) {
@@ -149,19 +149,6 @@ if(validate()){
 
 $(function() {
   initialize();
-
-  $('#assigneeval').keyup('input', function (event) {
-      this.value = this.value.replace(/[^0-9]/g, '');
-  });
-
-  $('#concurrenceapprovalval').keyup('input', function (event) {
-      this.value = this.value.replace(/[^0-9]/g, '');
-  });
-
-  $('#allval').keyup('input', function (event) {
-      this.value = this.value.replace(/[^0-9]/g, '');
-  });
-
 });
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
@@ -181,4 +168,14 @@ $( document ).tooltip({
                 .appendTo( this );
         }
     }
+});
+
+$('#assigneeval').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+  $('#concurrenceapprovalval').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#allval').on('input', function (e) {
+    this.value = isNumbers($(this));
 });
