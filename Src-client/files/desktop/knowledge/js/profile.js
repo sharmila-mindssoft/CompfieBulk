@@ -25,15 +25,7 @@ function initialize(){
     }       
     $('.userid').val(userprofile['user_id']);
 }
-$('.countrycode').on('input', function (event) {   
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
-$('.areacode').on('input', function (event) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
-$('.mobile').on('input', function (event) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
+
 $("#submit").click(function(){
 
     var checkLength = profileValidate();
@@ -69,3 +61,15 @@ $(function() {
     initialize();
 });
 
+$('#address').on('input', function (e) {
+    this.value = isCommon_Address($(this));
+});
+$('#mobile').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#areacode').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#countrycode').on('input', function (e) {
+    this.value = isNumbers_Countrycode($(this));
+});

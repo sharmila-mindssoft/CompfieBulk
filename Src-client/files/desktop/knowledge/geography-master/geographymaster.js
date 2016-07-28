@@ -180,6 +180,9 @@ function loadGeographyFirstLevels(saverecord){
   }
   }
   $('#ulist'+setlevelstage).append(str);
+  $('.addleft').on('input', function (e) {
+      this.value = isCommon($(this));
+  });
 }
 
 //check & uncheck list data
@@ -417,6 +420,9 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
   }
   $('#ulist'+setlevelstage).append(str);
   }
+  $('.addleft').on('input', function (e) {
+    this.value = isCommon($(this));
+  });
 }
 
 //update geography master

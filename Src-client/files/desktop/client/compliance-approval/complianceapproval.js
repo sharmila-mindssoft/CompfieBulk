@@ -427,7 +427,9 @@ function showSideBar(idval, data){
     });
 
     $('.half-width-task-details').append(cloneValSide);
-
+    $('.remarks-textarea').on('input', function (e) {
+        this.value = isCommon($(this));
+    });
 }
 
 function showTextbox(){

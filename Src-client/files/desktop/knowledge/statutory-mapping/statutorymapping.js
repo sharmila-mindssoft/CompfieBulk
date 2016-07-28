@@ -408,6 +408,9 @@ function loadStatutoryLevels(countryval,domainval){
           }
         }
         $('#statutorylist'+setlevelstage).append(str);
+        $('.addleft').on('input', function (e) {
+          this.value = isCommon($(this));
+        });
   }
 }
 
@@ -2438,18 +2441,6 @@ for(var j=1; j<=12; j++){
     $("#multiple_statutory_month"+j).append(option);
   }
 }
-
-$('#repeats_every').keyup('input', function (event) {
-  this.value = this.value.replace(/[^0-9]/g, '');
-});
-
-$('.trigger').keyup('input', function (event) {
-  this.value = this.value.replace(/[^0-9]/g, '');
-});
-
-$('#duration').keyup('input', function (event) {
-  this.value = this.value.replace(/[^0-9]/g, '');
-});
 $('#days').hide();
 $('#hours').show();
 $("#trigger_every").show();
@@ -2500,4 +2491,29 @@ $( document ).tooltip({
           .appendTo( this );
     }
   }
+});
+
+$('#statutory_provision').on('input', function (e) {
+  this.value = isCommon($(this));
+});
+$('#compliance_task').on('input', function (e) {
+  this.value = isCommon($(this));
+});
+$('#compliance_description').on('input', function (e) {
+  this.value = isCommon($(this));
+});
+$('#compliance_document').on('input', function (e) {
+  this.value = isCommon($(this));
+});
+$('#penal_consequences').on('input', function (e) {
+  this.value = isCommon($(this));
+});
+$('#repeats_every').on('input', function (e) {
+  this.value = isNumbers($(this));
+});
+$('#duration').on('input', function (e) {
+  this.value = isNumbers($(this));
+});
+$('.trigger').on('input', function (e) {
+  this.value = isNumbers($(this));
 });

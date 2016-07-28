@@ -263,6 +263,10 @@ function load_statutory(sList){
     statutoriesCount = statutoriesCount + 1;
     lastDomainName = domainName;
     lastActName = actname;
+
+    $('.input-box').on('input', function (e) {
+      this.value = isCommon($(this));
+    });
   }
 
   if(statutoriesCount > 1){

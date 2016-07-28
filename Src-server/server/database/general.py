@@ -224,7 +224,8 @@ def get_user_form_ids(db, user_id) :
     q = "select t1.form_ids from tbl_user_groups t1 \
         INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id \
         AND t2.user_id = %s"
-    row = db.select_one(q, (user_id))
+    row = db.select_one(q, [user_id])
+
     if row :
         return row[0]
     else :

@@ -442,15 +442,26 @@ $("#usergroupval").keyup(function(){
 $(document).ready(function(){
 	getUsers();
 	$("#employeename").focus();
-  $('#contactno').keyup('input', function (event) {
-      this.value = this.value.replace(/[^0-9]/g, '');
-  });
+});
 
-  $('#areacode').keyup('input', function (event) {
-      this.value = this.value.replace(/[^0-9]/g, '');
-  });
-
-  $('#countrycode').keyup('input', function (event) {
-      this.value = this.value.replace(/[^0-9^+]/g, '');
-  });
+$('#employeename').on('input', function (e) {
+    this.value = isCommon_Name($(this));
+});
+$('#employeeid').on('input', function (e) {
+    this.value = isCommon($(this));
+});
+$('#address').on('input', function (e) {
+    this.value = isCommon_Address($(this));
+});
+$('#designation').on('input', function (e) {
+    this.value = isCommon($(this));
+});
+$('#contactno').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#areacode').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#countrycode').on('input', function (e) {
+    this.value = isNumbers_Countrycode($(this));
 });

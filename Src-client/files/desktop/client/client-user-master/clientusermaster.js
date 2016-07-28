@@ -1251,3 +1251,20 @@ $( document ).tooltip({
         }
     }
 });
+
+$('#employee-name').on('input', function (e) {
+    this.value = isCommon_Name($(this));
+});
+$('#employee-id').on('input', function (e) {
+    this.value = isCommon($(this));
+});
+
+$('#mobile-number').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#area-code').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#country-code').on('input', function (e) {
+    this.value = isNumbers_Countrycode($(this));
+});

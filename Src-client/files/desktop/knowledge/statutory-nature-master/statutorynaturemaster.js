@@ -200,3 +200,7 @@ $("#search-statutory-nature-name").keyup(function() {
 $(function() {
     initialize();
 });
+
+$('#statutory-nature-name').on('input', function (e) {
+    this.value = isAlphabetic($(this));
+});

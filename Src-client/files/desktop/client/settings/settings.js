@@ -149,19 +149,6 @@ if(validate()){
 
 $(function() {
   initialize();
-
-  $('#assigneeval').keyup('input', function (event) {
-      this.value = this.value.replace(/[^0-9]/g, '');
-  });
-
-  $('#concurrenceapprovalval').keyup('input', function (event) {
-      this.value = this.value.replace(/[^0-9]/g, '');
-  });
-
-  $('#allval').keyup('input', function (event) {
-      this.value = this.value.replace(/[^0-9]/g, '');
-  });
-
 });
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
@@ -181,4 +168,14 @@ $( document ).tooltip({
                 .appendTo( this );
         }
     }
+});
+
+$('#assigneeval').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+  $('#concurrenceapprovalval').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#allval').on('input', function (e) {
+    this.value = isNumbers($(this));
 });

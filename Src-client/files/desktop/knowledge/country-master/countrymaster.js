@@ -222,3 +222,6 @@ $(function() {
     initialize();
 });
 
+$('#country-name').on('input', function (e) {
+    this.value = isAlphabetic($(this));
+});

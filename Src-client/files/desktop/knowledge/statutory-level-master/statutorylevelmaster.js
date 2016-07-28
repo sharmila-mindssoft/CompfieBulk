@@ -196,3 +196,7 @@ $(document).ready(function(){
   GetStatutoryLevels();
   $("#countryval").focus();
 });
+
+$('.fieldvalue').on('input', function (e) {
+    this.value = isAlphabetic($(this));
+});

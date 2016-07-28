@@ -123,15 +123,6 @@ function loadServiceProviderList(serviceProviderList){
         }
     }
 }
-$('#country-code').on('input', function (event) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
-$('#area-code').on('input', function (event) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
-$('#mobile-number').on('input', function (event) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
 
 $("#submit").click(function(){
 
@@ -369,4 +360,24 @@ $(function() {
 
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
+});
+
+
+$('#service-provider-name').on('input', function (e) {
+    this.value = isCommon_Name($(this));
+});
+$('#contact-person').on('input', function (e) {
+    this.value = isCommon_Name($(this));
+});
+$('#address').on('input', function (e) {
+    this.value = isCommon_Address($(this));
+});
+$('#mobile-number').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#area-code').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+$('#country-code').on('input', function (e) {
+    this.value = isNumbers_Countrycode($(this));
 });

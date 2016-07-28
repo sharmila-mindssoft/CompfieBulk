@@ -153,7 +153,7 @@ def update_domain_status(db, domain_id, is_active, updated_by) :
 def get_user_countries(db, user_id):
     columns = "group_concat(country_id) as country_id"
     condition = " user_id = %s"
-    condition_val = (str(user_id))
+    condition_val = [str(user_id)]
     rows = db.get_data(tblUserCountries, columns, condition, condition_val)
     return rows[0]["country_id"]
 

@@ -1220,3 +1220,7 @@ $( document ).tooltip({
         }
     }
 });
+
+$('#reason').on('input', function (e) {
+    this.value = isCommon($(this));
+});

@@ -154,21 +154,7 @@ function loadClientGroupList(clientGroupList){
         $('.tbody-clientgroup-list').append(clone);
     });
 }
-$('#no-of-user-licence').on('input', function (event) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
 
-$('#file-space').on('input', function (event) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
-
-$('#short-name').on('input', function (event) {
-    this.value = this.value.replace(/[^a-z0-9]/g, '');
-});
-
-$("#short-name").on('keyup', function(){
-    $(".shorturl").text($(this).val());
-});
 function dataconfigurationvalidate(){
     var flag = 0;
     $(".tbody-dateconfiguration-list .tl-from").each(function(){
@@ -1274,4 +1260,24 @@ $(function() {
 });
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
+});
+
+$('#clientgroup-name').on('input', function (e) {
+    this.value = isCommon($(this));
+});
+
+$('#no-of-user-licence').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+
+$('#file-space').on('input', function (e) {
+    this.value = isNumbers($(this));
+});
+
+$('#short-name').on('input', function (e) {
+    this.value = isAlphanumeric_Shortname($(this));
+});
+
+$("#short-name").on('keyup', function(){
+    $(".shorturl").text($(this).val());
 });

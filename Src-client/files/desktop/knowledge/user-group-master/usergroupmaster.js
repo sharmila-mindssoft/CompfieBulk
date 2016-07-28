@@ -410,3 +410,7 @@ $(function() {
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
 });
+
+$('#groupName').on('input', function (e) {
+    this.value = isCommon($(this));
+});

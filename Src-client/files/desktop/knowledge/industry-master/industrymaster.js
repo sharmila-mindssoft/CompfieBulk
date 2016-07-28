@@ -226,3 +226,7 @@ $("#search-industry-name").keyup(function() {
 $(document).ready(function () {
   getIndustries ();
 });
+
+$('#industry_name').on('input', function (e) {
+    this.value = isAlphabetic($(this));
+});

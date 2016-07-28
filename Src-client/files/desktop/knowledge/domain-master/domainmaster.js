@@ -232,3 +232,7 @@ $(document).ready(function () {
   getDomains ();
   $("#domainname").focus();
 });
+
+$('#domainname').on('input', function (e) {
+    this.value = isAlphabetic($(this));
+});

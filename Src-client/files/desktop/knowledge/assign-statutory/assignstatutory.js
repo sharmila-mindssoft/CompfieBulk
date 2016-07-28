@@ -202,7 +202,7 @@ function load_secondwizard(){
     $('.actname', clone).html('<div style="float:left;margin-top:5px;width:65%;">'+actname+
       '</div> <div style="float:right; width:35%;" class="default-display-none remark'+actCount+
       '" ><div style="float:right;  width:220px;margin-top:3px;"> <input type="text" maxlength="500" id="remarkvalue'+actCount+
-      '" value="'+not_applicable_remarks+'" class="input-box" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:7px;"> Remarks</div></div>');
+      '" value="'+not_applicable_remarks+'" class="input-box userremark" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:7px;"> Remarks</div></div>');
     $('.tbody-assignstatutory').append(clone);
 
     if(applicable_status == false){
@@ -276,6 +276,10 @@ function load_secondwizard(){
 
     actCount = actCount + 1;
     count++;
+
+    $('.userremark').on('input', function (e) {
+      this.value = isCommon($(this));
+    });
 
     $(".act-label").on("click", function(event){
       accordionstatus = false;
