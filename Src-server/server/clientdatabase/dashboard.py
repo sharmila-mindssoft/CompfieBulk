@@ -203,20 +203,21 @@ def get_compliance_status(
         AND T2.domain_id IN %s  \
         %s \
         GROUP BY month, year, T2.domain_id, %s\
-        ORDER BY month desc, year desc, %s" % (
-            group_by_name,
-            user_qry,
-            year_range_qry,
-            status_type_qry,
-            date_qry,
-            str(tuple(country_ids)),
-            str(tuple(domain_ids)),
-            filter_type_ids,
-            group_by_name,
-            group_by_name
-        )
+        ORDER BY month desc, year desc, %s"
+
     # # print query
-    rows = db.select_all(query)
+    rows = db.select_all(query, [
+        group_by_name,
+        user_qry,
+        year_range_qry,
+        status_type_qry,
+        date_qry,
+        str(tuple(country_ids)),
+        str(tuple(domain_ids)),
+        filter_type_ids,
+        group_by_name,
+        group_by_name
+    ])
     print rows
     columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
     return filter_ids, convert_to_dict(rows, columns)
@@ -753,15 +754,15 @@ def compliance_details_query(
         ORDER BY  T1.unit_id,  \
         SUBSTRING_INDEX(SUBSTRING_INDEX(T4.statutory_mapping, '>>', 1), '>>', -1), \
         T1.due_date \
-        limit %s, %s " % (
-            user_qry,
-            str(tuple(domain_ids)),
-            date_qry,
-            status_qry,
-            filter_type_qry,
-            from_count , to_count
-        )
-    rows = db.select_all(query)
+        limit %s, %s "
+    rows = db.select_all(query, [
+        user_qry,
+        str(tuple(domain_ids)),
+        date_qry,
+        status_qry,
+        filter_type_qry,
+        from_count , to_count
+    ])
     columns = [
         "compliance_history_id", "unit_id",
         "compliance_id", "start_date", "due_date",
@@ -782,11 +783,10 @@ def compliance_details_query(
 def get_client_domain_configuration(
     db, current_year=None
 ):
-    where_qry = ""
 
     query = "SELECT country_id, domain_id, \
         period_from, period_to \
-        FROM  tbl_client_configurations %s" % (where_qry)
+        FROM  tbl_client_configurations "
 
     rows = db.select_all(query)
     columns = ["country_id", "domain_id", "period_from", "period_to"]
@@ -1274,12 +1274,12 @@ def get_not_complied_chart(db, request, session_user, client_id):
         AND T1.approve_status is NULL \
         OR T1.approve_status != 1 \
         %s \
-        ORDER BY T1.due_date " % (
-            str(tuple(country_ids)),
-            str(tuple(domain_ids)),
-            filter_type_ids
-        )
-    rows = db.select_all(query)
+        ORDER BY T1.due_date "
+    rows = db.select_all(query, [
+        str(tuple(country_ids)),
+        str(tuple(domain_ids)),
+        filter_type_ids
+    ])
     columns = [
         "compliance_history_id", "unit_id", "compliance_id",
         "start_date", "due_date", "business_group_id",
@@ -1497,12 +1497,13 @@ def get_compliance_applicability_chart(
     elif filter_type == "Unit":
         filter_type_qry = "AND T3.unit_id IN %s" % str(tuple(filter_id))
 
-    query1 = query % (
+    query1 = query
+
+    rows = db.select_all(query1, [
         str(tuple(country_ids)),
         str(tuple(domain_ids)),
         filter_type_qry
-    )
-    rows = db.select_all(query1)
+    ])
 
     columns = [
         "compliance_id", "statutory_applicable",
@@ -1592,14 +1593,14 @@ def get_compliance_applicability_drill_down(
     elif applicability == "NotOpted" :
         applicable_type_qry = "AND T1.compliance_opted = 0"
 
-    query1 = query % (
+    query1 = query
+    rows = db.select_all(query1, [
         str(tuple(country_ids)),
         str(tuple(domain_ids)),
         filter_type_qry,
         applicable_type_qry,
         from_count, to_count
-    )
-    rows = db.select_all(query1)
+    ])
     columns = [
         "compliance_id", "unit_id", "frequency_id",
         "frequency", "repeats_type", "duration_type",
@@ -1734,16 +1735,17 @@ def get_notifications(
             SUBSTRING_INDEX(extra_details, '-', 1),\
             ' ','') AS UNSIGNED)) \
             LIMIT %s, %s ) as a \
-            ORDER BY a.notification_id DESC" % (
-                columns, subquery_columns,
-                tblNotificationUserLog,
-                tblNotificationsLog,
-                tblCompliances,
-                tblComplianceHistory,
-                notification_type_id, session_user,
-                start_count, to_count
-            )
-    rows = db.select_all(query)
+            ORDER BY a.notification_id DESC"
+
+    rows = db.select_all(query, [
+        columns, subquery_columns,
+        tblNotificationUserLog,
+        tblNotificationsLog,
+        tblCompliances,
+        tblComplianceHistory,
+        notification_type_id, session_user,
+        start_count, to_count
+    ])
     columns_list = [
         "notification_id", "notification_text", "created_on",
         "extra_details", "statutory_provision",
@@ -1925,12 +1927,12 @@ def get_assigneewise_compliances_list(
             INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id)
             INNER JOIN tbl_users tus ON (tus.user_id = tac.assignee)
             INNER JOIN tbl_compliances tc ON (tac.compliance_id = tc.compliance_id)
-            WHERE %s AND domain_id = '%d' AND tch.due_date BETWEEN '%s' AND '%s'
+            WHERE %s AND domain_id = %s AND tch.due_date BETWEEN '%s' AND '%s'
             group by completed_by, tch.unit_id;
-        ''' % (
+        '''
+        rows = db.select_all(query, [
             condition, domain_id, from_date, to_date
-        )
-        rows = db.select_all(query)
+        ])
         columns = [
             "assignee", "completed_by", "unit_id", "unit_name", "address", "domain_id",
             "domain_name", "complied", "inprogress", "not_complied", "delayed",
@@ -2035,10 +2037,10 @@ def get_assigneewise_yearwise_compliances(
                 INNER JOIN tbl_domains td ON (td.domain_id = tc.domain_id)
                 WHERE tch.unit_id = '%d' AND tc.domain_id = '%d'
                 AND tch.due_date between '%s' AND '%s';
-            ''' % (
+            '''
+            rows = db.select_all(query, [
                 user_id, unit_id, int(domain_id), from_date, to_date
-            )
-            rows = db.select_all(query)
+            ])
             if rows:
                 convert_columns = [
                     "domain_id", "complied", "inprogress", "not_complied",
@@ -2096,11 +2098,11 @@ def get_assigneewise_reassigned_compliances(
         AND reassigned_date between tch.due_date and completion_date
         AND completion_date > tch.due_date AND is_reassigned = 1
         AND tch.due_date between '%s' AND '%s'
-    ''' % (
+    '''
+    rows = db.select_all(query, [
         tblReassignedCompliancesHistory, user_id, user_id, unit_id,
         int(domain_id), user_id, from_date, to_date
-    )
-    rows = db.select_all(query)
+    ])
     columns = [
         "reassigned_date", "reassigned_from", "document_name",
         "compliance_name", "due_date", "start_date", "completion_date"
@@ -2160,11 +2162,11 @@ def get_assigneewise_compliances_drilldown_data_count(
     WHERE completed_by = '%d' AND unit_id = '%d'
     AND due_date BETWEEN '%s' AND '%s '
     AND domain_id in (%s)
-    ''' % (
+    '''
+    rows = db.select_all(query, [
         tblComplianceHistory, tblCompliances, tblUsers,
         assignee_id, unit_id, from_date, to_date, domain_condition
-    )
-    rows = db.select_all(query)
+    ])
     return rows[0][0]
 
 def get_assigneewise_compliances_drilldown_data(
@@ -2225,12 +2227,12 @@ def get_assigneewise_compliances_drilldown_data(
     AND domain_id in (%s)
     ORDER BY compliance_status
     LIMIT %d, %d
-    ''' % (
+    '''
+    rows = db.select_all(query, [
         columns, subquery_columns, tblComplianceHistory,
         tblCompliances, tblUsers, assignee_id, unit_id,
         from_date, to_date, domain_condition, int(start_count), to_count
-    )
-    rows = db.select_all(query)
+    ])
     columns_list = [
         "compliance_id", "start_date", "due_date", "completion_date",
         "document_name", "compliance_name", "compliance_description",

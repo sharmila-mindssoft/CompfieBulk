@@ -134,13 +134,14 @@ def get_statutory_mapping_report(
         and t1.domain_id = %s \
         %s \
         ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), t2.frequency_id \
-        limit %s, %s" % (
-            user_id, user_id,
-            country_id, domain_id,
-            qry_where,
-            from_count, to_count
-        )
-    rows = db.select_all(q)
+        limit %s, %s"
+
+    rows = db.select_all(q, [
+        user_id, user_id,
+        country_id, domain_id,
+        qry_where,
+        from_count, to_count
+    ])
     columns = [
         "statutory_mapping_id", "country_id",
         "country_name", "domain_id", "domain_name", "industry_ids",

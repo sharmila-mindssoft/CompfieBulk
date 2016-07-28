@@ -863,14 +863,22 @@ def check_duplicate_statutory(db, parent_ids, statutory_id, domain_id=None) :
         FROM tbl_statutories T1 \
         INNER JOIN tbl_statutory_levels T2\
         ON T1.level_id = T2.level_id \
-        WHERE T1.parent_ids='%s' " % (parent_ids)
+        WHERE T1.parent_ids= %s " % (parent_ids)
+    where_qry = None
+    param = []
     if statutory_id is not None :
-        query = query + " AND T1.statutory_id != %s" % statutory_id
+        where_qry += " AND T1.statutory_id != %s"
+        param.append(statutory_id)
 
     if domain_id is not None :
-        query = query + " AND domain_id = %s" % (domain_id)
+        where_qry += " AND domain_id = %s"
+        param.append(domain_id)
 
-    rows = db.select_all(query)
+    if where_qry is None :
+        rows = db.select_all(query)
+    else :
+        rows = db.select_all(query + where_qry, param)
+
     columns = ["statutory_id", "statutory_name", "level_id", "domain_id"]
     result = []
     if rows :

@@ -99,10 +99,10 @@ def get_countries_for_user(db, user_id, client_id=None) :
         t1.is_active FROM tbl_countries t1 "
     if user_id > 0 and user_id != admin_id:
         query = query + " INNER JOIN tbl_user_countries t2 \
-            ON t1.country_id = t2.country_id WHERE t2.user_id = %s" % (
-                user_id
-            )
-    rows = db.select_all(query)
+            ON t1.country_id = t2.country_id WHERE t2.user_id = %s"
+        rows = db.select_all(query, [user_id])
+    else :
+        rows = db.select_all(query)
     columns = ["country_id", "country_name", "is_active"]
     result = convert_to_dict(rows, columns)
     return return_countries(result)
@@ -123,8 +123,10 @@ def get_domains_for_user(db, user_id, client_id=None) :
         t1.is_active FROM tbl_domains t1 "
     if user_id > 0 and user_id != admin_id:
         query = query + " INNER JOIN tbl_user_domains t2 ON \
-            t1.domain_id = t2.domain_id WHERE t2.user_id = %s" % (user_id)
-    rows = db.select_all(query)
+            t1.domain_id = t2.domain_id WHERE t2.user_id = %s"
+        rows = db.select_all(query, [user_id])
+    else :
+        rows = db.select_all(query)
     columns = ["domain_id", "domain_name", "is_active"]
     result = convert_to_dict(rows, columns)
     return return_domains(result)
@@ -1174,12 +1176,11 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
         due_dates = ",".join(str(x) for x in formated_date_list)
         query = '''
             SELECT is_ok FROM
-            (SELECT (CASE WHEN (unit_id = '{}' AND DATE(due_date) IN ({}) AND \
-            compliance_id = '{}') THEN DATE(due_date) ELSE 'NotExists' END ) as
-            is_ok FROM {} ) a WHERE is_ok != "NotExists"'''.format(
-            unit_id, due_dates, compliance_id, tblComplianceHistory
-        )
-        rows = db.select_all(query)
+            (SELECT (CASE WHEN (unit_id = %s AND DATE(due_date) IN (%s) AND \
+            compliance_id = %s) THEN DATE(due_date) ELSE 'NotExists' END ) as
+            is_ok FROM tbl_compliance_history ) a WHERE is_ok != "NotExists"'''
+
+        rows = db.select_all(query, [unit_id, due_dates, compliance_id])
         if len(rows) > 0:
             for row in rows:
                 formated_date_list.remove("%s%s%s" % ("'", row[0], "'"))
@@ -1195,11 +1196,11 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
                 else :
                     next_due_date = due_dates_list[current_due_date_index+1]
                 columns = "count(*) as compliance"
-                condition = "unit_id = '{}' AND due_date < {} AND compliance_id = '{}' AND \
-                approve_status = 1 and validity_date > {} and validity_date > '{}'".format(
-                    unit_id, due_date, compliance_id, due_date, next_due_date
-                )
-                rows = db.get_data(tblComplianceHistory, columns, condition)
+                condition = "unit_id = %s AND due_date < %s AND compliance_id = %s AND \
+                approve_status = 1 and validity_date > %s and validity_date > %s "
+
+                condition_val = [unit_id, due_date, compliance_id, due_date, next_due_date]
+                rows = db.get_data(tblComplianceHistory, columns, condition, condition_val)
                 if rows[0]["compliance"] > 0:
                     continue
                 else:

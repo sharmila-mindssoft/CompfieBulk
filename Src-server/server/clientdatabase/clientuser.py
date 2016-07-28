@@ -27,61 +27,58 @@ __all__ = [
 ]
 
 def get_inprogress_count(db, session_user):
-    other_compliance_condition = "completed_by='{}' AND \
+    param = [session_user]
+    other_compliance_condition = " WHERE frequency_id != 4 AND completed_by=%s  AND \
     ac.is_active = 1 AND \
     IFNULL(ch.due_date, 0) >= current_date() \
-    AND IFNULL(ch.completed_on, 0) = 0".format(
-        session_user
-    )
-    on_occurrence_condition = "completed_by='{}' AND \
+    AND IFNULL(ch.completed_on, 0) = 0"
+
+    on_occurrence_condition = " WHERE frequency_id = 4 AND completed_by = %s AND \
     ac.is_active = 1 AND \
     IFNULL(ch.due_date, 0) >= now() \
-    AND IFNULL(ch.completed_on, 0) = 0".format(
-        session_user
-    )
-    query = "SELECT count(*) FROM %s ch INNER JOIN \
-    %s ac ON (ch.compliance_id = ac.compliance_id and ac.unit_id = ch.unit_id) INNER JOIN\
-    %s c ON (ch.compliance_id = c.compliance_id ) " % (
-        tblComplianceHistory , tblAssignedCompliances, tblCompliances
-    )
+    AND IFNULL(ch.completed_on, 0) = 0"
 
-    other_compliance_rows = db.select_all(
-        "%s WHERE frequency_id != 4 AND %s" % (query, other_compliance_condition)
-    )
+    query = "SELECT count(*) FROM tbl_compliance_history ch INNER JOIN \
+    tbl_assigned_compliances ac ON (ch.compliance_id = ac.compliance_id and ac.unit_id = ch.unit_id) INNER JOIN\
+    tbl_compliances c ON (ch.compliance_id = c.compliance_id ) "
+
+    other_compliance_rows = db.select_all(query + other_compliance_condition, param)
+    on_occurrence_rows = db.select_all(query + on_occurrence_condition, param)
+    # other_compliance_rows = db.select_all(
+    #     "%s WHERE frequency_id != 4 AND %s" % (query, other_compliance_condition)
+    # )
     other_compliance_count = other_compliance_rows[0][0]
 
-    query += " WHERE frequency_id = 4 AND %s" % (on_occurrence_condition)
-    on_occurrence_rows = db.select_all(query)
+    # query += " WHERE frequency_id = 4 AND %s" % (on_occurrence_condition)
+    # on_occurrence_rows = db.select_all(query)
     on_occurrence_count = on_occurrence_rows[0][0]
 
     return int(other_compliance_count) + int(on_occurrence_count)
 
 def get_overdue_count(db, session_user):
-    query = "SELECT count(*) FROM %s ch INNER JOIN \
-    %s ac ON (ch.compliance_id = ac.compliance_id and ac.unit_id = ch.unit_id) INNER JOIN\
-    %s c ON (ch.compliance_id = c.compliance_id) WHERE " % (
-        tblComplianceHistory, tblAssignedCompliances, tblCompliances
-    )
-    condition = "completed_by ='%d'" % (session_user)
-    other_compliance_condition = " %s AND frequency_id != 4 AND \
+    query = "SELECT count(*) FROM tbl_compliance_history ch INNER JOIN \
+    tbl_assigned_compliances ac ON (ch.compliance_id = ac.compliance_id and ac.unit_id = ch.unit_id) INNER JOIN\
+    tbl_compliances c ON (ch.compliance_id = c.compliance_id) WHERE "
+
+    param = [session_user]
+    other_compliance_condition = " completed_by = %s AND frequency_id != 4 AND \
     ac.is_active = 1 AND \
     IFNULL(ch.due_date, 0) < current_date() AND \
-    IFNULL(ch.completed_on, 0) = 0 " % (
-        condition
-    )
+    IFNULL(ch.completed_on, 0) = 0 "
 
-    on_occurrence_condition = " %s AND frequency_id = 4 AND \
+    on_occurrence_condition = " completed_by = %s AND frequency_id = 4 AND \
     ac.is_active = 1 AND \
     IFNULL(ch.due_date, 0) < now() AND \
-    IFNULL(ch.completed_on, 0) = 0 " % (
-        condition
-    )
-    other_compliance_count = db.select_all("%s %s" % (
-        query, other_compliance_condition)
-    )[0][0]
-    on_occurrence_count = db.select_all("%s %s" % (
-        query, on_occurrence_condition)
-    )[0][0]
+    IFNULL(ch.completed_on, 0) = 0 "
+    other_compliance_count = db.select_one(query + other_compliance_condition, param)[0]
+    on_occurrence_count = db.select_one(query + on_occurrence_condition, param)[0]
+
+    # other_compliance_count = db.select_all("%s %s" % (
+    #     query, other_compliance_condition)
+    # )[0][0]
+    # on_occurrence_count = db.select_all("%s %s" % (
+    #     query, on_occurrence_condition)
+    # )[0][0]
     return int(other_compliance_count) + int(on_occurrence_count)
 
 def get_current_compliances_list(db, current_start_count, to_count, session_user, client_id):
@@ -132,16 +129,15 @@ def get_current_compliances_list(db, current_start_count, to_count, session_user
             INNER JOIN
         tbl_compliances c ON (ac.compliance_id = c.compliance_id)
     WHERE
-        ch.completed_by = '%d'
+        ch.completed_by = %s
             and ac.is_active = 1
             and IFNULL(ch.completed_on, 0) = 0
             and IFNULL(ch.due_date, 0) != 0
     LIMIT %s, %s ) a
     ORDER BY due_date ASC
-    ''' % (
-        session_user, current_start_count, to_count
-    )
-    rows = db.select_all(query)
+    '''
+
+    rows = db.select_all(query, [session_user, current_start_count, to_count])
     current_compliances_row = convert_to_dict(rows, columns)
     current_compliances_list = []
     for compliance in current_compliances_row:
@@ -197,22 +193,18 @@ def get_upcoming_count(db, session_user):
         SELECT ac.compliance_id, ac.unit_id FROM tbl_assigned_compliances ac
         INNER JOIN tbl_compliances c ON (ac.compliance_id = c.compliance_id)
         WHERE
-        assignee = '%d' AND frequency_id != 4
+        assignee = %s AND frequency_id != 4
         AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH)
         AND ac.is_active = 1;
-    ''' % (
-        session_user
-    )
-    all_compliace_rows = db.select_all(all_compliance_query)
+    '''
+    all_compliace_rows = db.select_all(all_compliance_query, [session_user])
     all_compliance_count = len(all_compliace_rows)
     onetime_query = '''
         SELECT ch.compliance_id, ch.unit_id FROM tbl_compliance_history ch
         INNER JOIN tbl_compliances c on (ch.compliance_id =  c.compliance_id)
-        WHERE frequency_id = 1 and completed_by = '%d' ;
-    ''' % (
-        session_user
-    )
-    onetime_rows = db.select_all(onetime_query)
+        WHERE frequency_id = 1 and completed_by = %s ;
+    '''
+    onetime_rows = db.select_all(onetime_query, [session_user])
 
     combined_rows = []
     for combination in onetime_rows:
@@ -227,30 +219,30 @@ def get_upcoming_count(db, session_user):
 def get_upcoming_compliances_list(db, upcoming_start_count, to_count, session_user, client_id):
     query = "SELECT * FROM (SELECT ac.due_date, document_name, compliance_task, \
             compliance_description, format_file, \
-            (select concat(unit_code,'-' ,unit_name, ',',address) from %s tu  where\
-            tu.unit_id = ac.unit_id), \
+            unit_code, unit_name, address,\
             (select domain_name \
-            FROM %s d where d.domain_id = c.domain_id) as domain_name, \
+            FROM tbl_domains d where d.domain_id = c.domain_id) as domain_name, \
             DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) \
             as start_date\
-            FROM %s  ac \
-            INNER JOIN %s c ON (ac.compliance_id = c.compliance_id) WHERE \
-            assignee = '%d' AND frequency_id != 4 \
+            FROM tbl_assigned_compliances  ac \
+            INNER JOIN tbl_compliances c ON ac.compliance_id = c.compliance_id \
+            INNER JOIN tbl_units tu ON tu.unit_id = ac.unit_id \
+            WHERE \
+            assignee = %s AND frequency_id != 4 \
             AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) \
             AND ac.is_active = 1 AND IF ( (frequency_id = 1 AND ( \
             select count(*) from tbl_compliance_history ch \
             where ch.compliance_id = ac.compliance_id and \
             ch.unit_id = ac.unit_id ) >0), 0,1) \
-            ) a ORDER BY start_date ASC LIMIT %d, %d " % (
-                tblUnits, tblDomains, tblAssignedCompliances,
-                tblCompliances, session_user, int(upcoming_start_count),
-                to_count
-            )
-    upcoming_compliances_rows = db.select_all(query)
+            ) a \
+            ORDER BY start_date ASC LIMIT %s, %s  "
+
+    upcoming_compliances_rows = db.select_all(query, [session_user, int(upcoming_start_count), to_count])
 
     columns = [
         "due_date", "document_name", "compliance_task",
-        "description", "format_file", "unit", "domain_name", "start_date"
+        "description", "format_file", "unit_code", "unit_name", "address",
+        "domain_name", "start_date"
     ]
     upcoming_compliances_result = convert_to_dict(
         upcoming_compliances_rows, columns
@@ -263,9 +255,9 @@ def get_upcoming_compliances_list(db, upcoming_start_count, to_count, session_us
         if document_name not in (None, "None", "") :
             compliance_name = "%s - %s" % (document_name, compliance_task)
 
-        unit_details = compliance["unit"].split(",")
-        unit_name = unit_details[0]
-        address = unit_details[1]
+        # unit_details = compliance["unit"].split(",")
+        unit_name = "%s-%s" % (compliance["unit_code"], compliance["unit_name"])
+        address = compliance["address"]
 
         start_date = compliance["start_date"]
         format_files = None
@@ -360,15 +352,15 @@ def update_compliances(
     if next_due_date not in ["", None, "None"]:
         history_columns.append("next_due_date")
         history_values.append(next_due_date)
-    history_condition = "compliance_history_id = '%d' \
-        and completed_by ='%d'" % (
-            compliance_history_id, session_user
-        )
+    history_condition = "compliance_history_id = %s \
+        and completed_by = %s "
+
+    history_condition_val = [compliance_history_id, session_user]
 
     columns = "unit_id, compliance_id"
-    condition = "compliance_history_id = '%d'" % compliance_history_id
+    condition = "compliance_history_id = %s "
     rows = db.get_data(
-        tblComplianceHistory, columns, condition
+        tblComplianceHistory, columns, condition, [compliance_history_id]
     )
     unit_id = rows[0]["unit_id"]
     compliance_id = rows[0]["compliance_id"]
@@ -380,10 +372,9 @@ def update_compliances(
         history_columns.append("approved_on")
         history_values.append(1)
         history_values.append(current_time_stamp)
-        query = "SELECT frequency_id FROM %s tc WHERE tc.compliance_id = '%s' " % (
-            tblCompliances, compliance_id
-        )
-        rows = db.select_one(query)
+        query = "SELECT frequency_id FROM tbl_compliances tc WHERE tc.compliance_id = %s "
+
+        rows = db.select_one(query, [compliance_id])
         columns = ["frequency_id"]
         rows = convert_to_dict(rows, columns)
         frequency_id = int(rows["frequency_id"])
@@ -400,9 +391,8 @@ def update_compliances(
             as_columns.append("is_active")
             as_values.append(0)
 
-        as_condition = " unit_id = '%d' and compliance_id = '%d'" % (
-            unit_id, compliance_id
-        )
+        as_condition = " unit_id = %s and compliance_id = %s "
+        as_values.extend([unit_id, compliance_id])
         if len(as_columns) > 0 and len(as_values) > 0 and len(as_columns) == len(as_values):
             db.update(
                 tblAssignedCompliances, as_columns, as_values, as_condition
@@ -411,6 +401,7 @@ def update_compliances(
     else:
         save_compliance_activity(db, unit_id, compliance_id, "Submitted", "Inprogress", remarks)
 
+    history_values.extend(history_condition_val)
     db.update(
         tblComplianceHistory, history_columns, history_values,
         history_condition
@@ -452,50 +443,52 @@ def get_on_occurrence_compliance_count(
     db, session_user, user_domain_ids, user_unit_ids
 ):
     query = "SELECT count(*) \
-            FROM %s ac \
-            INNER JOIN %s c ON (ac.compliance_id = c.compliance_id)\
-            INNER JOIN %s u ON (ac.unit_id = u.unit_id) \
+            FROM tbl_assigned_compliances ac \
+            INNER JOIN tbl_compliances c ON (ac.compliance_id = c.compliance_id)\
+            INNER JOIN tbl_units u ON (ac.unit_id = u.unit_id) \
             WHERE u.is_closed = 0 \
             AND ac.unit_id in (%s)\
             AND c.domain_id in (%s) \
             AND c.frequency_id = 4 \
-            AND ac.assignee = %s " % (
-                tblAssignedCompliances,
-                tblCompliances, tblUnits, user_unit_ids,
-                user_domain_ids, session_user
-            )
-    rows = db.select_all(query)
-    return rows[0][0]
+            AND ac.assignee = %s "
+    rows = db.select_one(query, [
+        user_unit_ids,
+        user_domain_ids, session_user
+    ])
+    return rows[0]
 
 def get_on_occurrence_compliances_for_user(
     db, session_user, user_domain_ids, user_unit_ids, start_count,
     to_count
 ):
-    columns = "ac.compliance_id, c.statutory_provision,\
+    columns = [
+        "compliance_id", "statutory_provision",
+        "compliance_task", "compliance_description",
+        "duration_type", "duration", "document_name", "unit_id", "unit_name"
+    ]
+    # concat_columns = "concat(unit_code, '-', unit_name)"
+
+    query = "SELECT ac.compliance_id, c.statutory_provision,\
             compliance_task, compliance_description, \
-            duration_type, duration, document_name, u.unit_id"
-    concat_columns = "concat(unit_code, '-', unit_name)"
-    query = "SELECT %s, %s \
-            FROM %s ac \
-            INNER JOIN %s c ON (ac.compliance_id = c.compliance_id)\
-            INNER JOIN %s cd ON (c.duration_type_id = cd.duration_type_id) \
-            INNER JOIN %s u ON (ac.unit_id = u.unit_id) \
+            duration_type, duration, document_name, u.unit_id, \
+            concat(u.unit_code, '-', u.unit_name) \
+            FROM tbl_assigned_compliances ac \
+            INNER JOIN tbl_compliances c ON (ac.compliance_id = c.compliance_id)\
+            INNER JOIN tbl_compliance_duration_type cd ON (c.duration_type_id = cd.duration_type_id) \
+            INNER JOIN tbl_units u ON (ac.unit_id = u.unit_id) \
             WHERE u.is_closed = 0 \
             AND ac.unit_id in (%s)\
             AND c.domain_id in (%s) \
             AND c.frequency_id = 4 \
-            AND ac.assignee = '%d' \
+            AND ac.assignee = %s \
             ORDER BY u.unit_id, document_name, compliance_task \
-            LIMIT %d, %d" % (
-                columns, concat_columns, tblAssignedCompliances,
-                tblCompliances, tblComplianceDurationType,
-                tblUnits, user_unit_ids, user_domain_ids,
-                session_user, int(start_count), to_count
-            )
-    rows = db.select_all(query)
-    columns_list = columns.replace(" ", "").split(",")
-    columns_list += ["unit_name"]
-    result = convert_to_dict(rows, columns_list)
+            LIMIT %s, %s "
+
+    rows = db.select_all(query, [
+        user_unit_ids, user_domain_ids,
+        session_user, int(start_count), int(to_count)
+    ])
+    result = convert_to_dict(rows, columns)
     # compliances = []
     unit_wise_compliances = {}
     for row in result:
@@ -510,9 +503,9 @@ def get_on_occurrence_compliances_for_user(
             unit_wise_compliances[unit_name] = []
         unit_wise_compliances[unit_name].append(
             clientuser.ComplianceOnOccurrence(
-                row["ac.compliance_id"], row["c.statutory_provision"],
+                row["compliance_id"], row["statutory_provision"],
                 compliance_name, row["compliance_description"],
-                duration, row["u.unit_id"]
+                duration, row["unit_id"]
             )
         )
     return unit_wise_compliances
@@ -542,11 +535,9 @@ def start_on_occurrence_task(
     ]
 
     approval_columns = "approval_person, concurrence_person"
-    approval_condition = " compliance_id = %s and unit_id = %s " % (
-        compliance_id, unit_id
-    )
+    approval_condition = " compliance_id = %s and unit_id = %s "
     rows = db.get_data(
-        tblAssignedCompliances, approval_columns, approval_condition
+        tblAssignedCompliances, approval_columns, approval_condition, [compliance_id, unit_id]
     )
     concurred_by = rows[0]["approval_person"]
     approved_by = rows[0]["concurrence_person"]
