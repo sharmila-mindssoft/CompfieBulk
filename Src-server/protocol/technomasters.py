@@ -126,25 +126,33 @@ class GetClientGroups(Request):
         }
 
 class CreateNewAdmin(Request):
-    def __init__(self, new_admin_id, client_id):
+    def __init__(self, new_admin_id, client_id, old_admin_id, username):
         self.new_admin_id = new_admin_id
         self.client_id = client_id
+        self.old_admin_id = old_admin_id
+        self.username = username
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["new_admin_id", "client_id"])
+        data = parse_dictionary(data, ["new_admin_id", "client_id", "old_admin_id", "username"])
         new_admin_id = data.get("new_admin_id")
         new_admin_id = parse_structure_UnsignedIntegerType_32(new_admin_id)
         client_id = data.get("client_id")
         client_id = parse_structure_UnsignedIntegerType_32(client_id)
+        old_admin_id = data.get("old_admin_id")
+        old_admin_id = parse_structure_UnsignedIntegerType_32(old_admin_id)
+        username = data.get("username")
+        username = parse_structure_CustomTextType_100(username)
         return CreateNewAdmin(
-            new_admin_id, client_id
+            new_admin_id, client_id, old_admin_id, username
         )
 
     def to_inner_structure(self):
         return {
             "new_admin_id": to_structure_UnsignedIntegerType_32(self.new_admin_id),
-            "client_id": to_structure_UnsignedIntegerType_32(self.client_id)
+            "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
+            "old_admin_id": to_structure_UnsignedIntegerType_32(self.old_admin_id),
+            "username": to_structure_CustomTextType_100(self.username)
         }
 
 class SaveClientGroup(Request):

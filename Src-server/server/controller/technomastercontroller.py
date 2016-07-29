@@ -403,7 +403,9 @@ def get_client_profile(db, request, session_user):
 def create_new_admin_for_client(db, request, session_user):
     new_admin_id = request.new_admin_id
     client_id = request.client_id
-    result = create_new_admin(db, new_admin_id, client_id, session_user)
+    old_admin_id = request.old_admin_id
+    employee_name = request.username
+    result = create_new_admin(db, new_admin_id, old_admin_id, employee_name, client_id, session_user)
     if result == "ClientDatabaseNotExists":
         return technomasters.ClientDatabaseNotExists()
     elif result == "Reassign":

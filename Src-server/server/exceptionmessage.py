@@ -59,6 +59,7 @@ messages = {
     "E058": "Unit activation failed",
     "E059": "Client admin creation failed",
     "E060": "Client statutories creation failed",
+    "E061": "Client info not found"
 }
 
 client_message = {
@@ -91,3 +92,6 @@ def client_process_error(msg_code):
 
 def fetch_error():
     return RuntimeError("Transaction failed while processing data.")
+
+def not_found_error(msg_code):
+    return ValueError(messages.get(msg_code))
