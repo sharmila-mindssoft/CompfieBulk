@@ -22,7 +22,7 @@ FORMAT_DOWNLOAD_URL = "/client/compliance_format"
 # Log flag
 #
 ENABLE_INFO_LOG = False
-ENABLE_QUERY_LOG = True
+ENABLE_QUERY_LOG = False
 
 #
 # Timezone

@@ -149,8 +149,8 @@ class ClientDBCreate(object):
             q = "SELECT country_id, country_name, is_active \
                     FROM tbl_countries\
                     WHERE country_id\
-                    IN (%s) " % (country_ids)
-            rows = self._db.select_all(q)
+                    IN (%s) "
+            rows = self._db.select_all(q, [country_ids])
             for r in rows :
                 q = " INSERT INTO tbl_countries VALUES (%s, %s, %s)"
                 cursor.execute(q, [int(r[0]), r[1], int(r[2])])

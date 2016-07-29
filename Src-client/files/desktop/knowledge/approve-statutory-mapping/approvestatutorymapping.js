@@ -161,14 +161,14 @@ function loadApproveStatutory(){
         statutoryMappings = statutoryMappings + statutoryMappingsList[entity]["statutory_mappings"][i]+ '<br>';
         statutoryprovision = statutoryprovision + statutoryMappingsList[entity]["statutory_mappings"][i];
       }
-      statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
+      statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/knowledge/images/right_arrow.png\'/> ');
 
       var applicableLocation = '';
 
       for(var i=0; i<statutoryMappingsList[entity]["geography_mappings"].length; i++){
         applicableLocation = applicableLocation + statutoryMappingsList[entity]["geography_mappings"][i] + '<br>';
       }
-      applicableLocation = applicableLocation.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
+      applicableLocation = applicableLocation.replace(/>>/gi,' <img src=\'/knowledge/images/right_arrow.png\'/> ');
 
       isActive = statutoryMappingsList[entity]["is_active"];
       approvalStatus = statutoryMappingsList[entity]["approval_status"];

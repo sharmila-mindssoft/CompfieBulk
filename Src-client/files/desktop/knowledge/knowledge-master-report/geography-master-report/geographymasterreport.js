@@ -27,12 +27,12 @@ function loadGeographyList(geographyList){
   var sno=0;
   var geography = '';
   var isActive = 0;
-  var title;  
+  var title;
   $(".tbody-geography-report-list").find("tr").remove();
   for(var list in geographyList) {
     geography = geographyList[list]["geography"];
     isActive = geographyList[list]["is_active"];
-    var geographyimage = geography.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
+    var geographyimage = geography.replace(/>>/gi,' <img src=\'/knowledge/images/right_arrow.png\'/> ');
     if(isActive == 1) {
       title="Active";
     }
@@ -80,10 +80,10 @@ $("#search-geography-name").keyup(function(){
   var geographyList = geographiesList[cId];
   for(var entity in geographyList) {
       geogtaphyname = geographyList[entity]["geography"];
-      if (~geogtaphyname.toLowerCase().indexOf(filterkey)) 
+      if (~geogtaphyname.toLowerCase().indexOf(filterkey))
       {
         filteredList.push(geographyList[entity]);
-      }   
+      }
   }
   loadGeographyList(filteredList);
 });

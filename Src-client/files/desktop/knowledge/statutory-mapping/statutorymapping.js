@@ -211,13 +211,13 @@ function loadCountwiseStatutoryMapping(keysList, statutoryMappingsList){
   $('#activate-step-finish').addClass('btn-right');
   $('#activate-step-finish').removeClass('btn-right-submiting');
   var j = startCount+1;
-  
+
   $(".tbody-statutorymapping-list").find("tr").remove();
 
   if(endCount>Object.keys(finalList).length) endCount = Object.keys(finalList).length
-  
+
   if(Object.keys(finalList).length > 0) $('.view-count-message').text("Showing " + (startCount+1) + " to " + endCount + " of " + Object.keys(finalList).length );
-  
+
   $.each(keysList, function(key, value) {
   //for(var k=0; k<keysList.length; k++){
     var entity = keysList[key];
@@ -232,7 +232,7 @@ function loadCountwiseStatutoryMapping(keysList, statutoryMappingsList){
     for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
       complianceNames = complianceNames + statutoryMappingsList[entity]["compliance_names"][i]["compliance_name"] + " <br>";
     }
-    statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
+    statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/knowledge/images/right_arrow.png\'/> ');
     var countryName = statutoryMappingsList[entity]["country_name"];
     var domainName = statutoryMappingsList[entity]["domain_name"];
     var isActive = statutoryMappingsList[entity]["is_active"];
@@ -369,6 +369,7 @@ function getStatutoryMappings(){
           }
           else {
             console.log(error);
+            custom_alert(error);
             hideLoader();
           }
       }
@@ -385,7 +386,7 @@ function loadStatutoryLevels(countryval,domainval){
           var tableRow=$('#statutory-level-templates');
           var clone=tableRow.clone();
           $('.statutory_title', clone).html('<div class="scrollable">'+statutoryLevelList[j]["l_name"]+'</div>');
-          $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="statutoryfilter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" maxlength="100" class="input-box addleft" placeholder="" style="width:90%" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["l_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+          $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="statutoryfilter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" maxlength="100" class="input-box addleft" placeholder="" style="width:90%" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/knowledge/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["l_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
           $('.tbody-statutory-level').append(clone);
         }
         var setlevelstage= 1;
@@ -403,7 +404,7 @@ function loadStatutoryLevels(countryval,domainval){
           for(var i in statutoryList){
             var setstatutoryid = statutoryList[i]["statutory_id"];
             if(statutoryList[i]["level_id"] == firstlevelid){
-            str += '<span class="eslist-filter'+setlevelstage+'" style="float:left;margin-right:5px;margin-left:5px;margin-top:3px;cursor:pointer;" onclick="editstaturoty('+setstatutoryid+',\''+statutoryList[i]["statutory_name"].replace(/"/gi,'##')+'\','+setlevelstage+')"><img src="/images/icon-edit.png" style="width:11px;height:11px"/> </span> <li id="'+setstatutoryid+'" class="'+clsval1+'" onclick="activate_statutorylist(this,'+setstatutoryid+',\''+clsval+'\','+countryval+','+domainval+','+setlevelstage+')" >'+statutoryList[i]["statutory_name"]+'</li> ';
+            str += '<span class="eslist-filter'+setlevelstage+'" style="float:left;margin-right:5px;margin-left:5px;margin-top:3px;cursor:pointer;" onclick="editstaturoty('+setstatutoryid+',\''+statutoryList[i]["statutory_name"].replace(/"/gi,'##')+'\','+setlevelstage+')"><img src="/knowledge/images/icon-edit.png" style="width:11px;height:11px"/> </span> <li id="'+setstatutoryid+'" class="'+clsval1+'" onclick="activate_statutorylist(this,'+setstatutoryid+',\''+clsval+'\','+countryval+','+domainval+','+setlevelstage+')" >'+statutoryList[i]["statutory_name"]+'</li> ';
             }
           }
         }
@@ -508,7 +509,7 @@ function multiactivate(element, type){
 }
 
 function make_breadcrumbs(){
-    var arrowimage = " <img src=\'/images/right_arrow.png\'/> ";
+    var arrowimage = " <img src=\'/knowledge/images/right_arrow.png\'/> ";
     $(".breadcrumbs_1").html(sm_countryval + arrowimage + sm_domainval + arrowimage + sm_industryvals + arrowimage + sm_statutorynatureval);
 }
 
@@ -539,7 +540,7 @@ function load(id,level,country,domain){
   for(var i in statutoryList){
     var setstatutoryid = statutoryList[i]["statutory_id"];
     if( id == statutoryList[i]["parent_id"] && statutoryList[i]["level_id"] == levelid) {
-      str += '<span class="eslist-filter'+setlevelstage+'" style="float:left;margin-right:5px;margin-left:5px;margin-top:3px;cursor:pointer;" onclick="editstaturoty('+setstatutoryid+',\''+statutoryList[i]["statutory_name"].replace(/"/gi,'##')+'\','+setlevelstage+')"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></span> <li id="'+setstatutoryid+'" class="'+clsval1+'" onclick="activate_statutorylist(this,'+setstatutoryid+',\''+clsval+'\','+country+','+domain+','+setlevelstage+')" >'+statutoryList[i]["statutory_name"]+'</li> ';
+      str += '<span class="eslist-filter'+setlevelstage+'" style="float:left;margin-right:5px;margin-left:5px;margin-top:3px;cursor:pointer;" onclick="editstaturoty('+setstatutoryid+',\''+statutoryList[i]["statutory_name"].replace(/"/gi,'##')+'\','+setlevelstage+')"><img src="/knowledge/images/icon-edit.png" style="width:11px;height:11px"/></span> <li id="'+setstatutoryid+'" class="'+clsval1+'" onclick="activate_statutorylist(this,'+setstatutoryid+',\''+clsval+'\','+country+','+domain+','+setlevelstage+')" >'+statutoryList[i]["statutory_name"]+'</li> ';
     }
   }
   $('#statutorylist'+setlevelstage).append(str);
@@ -582,7 +583,7 @@ $("#upload_file").on("change", function(e) {
       file_lst = e.target.files;
       displayMessage("");
       $("#uploaded_fileview").show();
-      $("#uploaded_filename").html( tFN + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' />")
+      $("#uploaded_filename").html( tFN + "   <img src=\'/knowledge/images/close-icon-black.png\' onclick='remove_temp_file()' />")
     }
   }else{
     displayMessage(message.invalid_file_format)
@@ -715,6 +716,7 @@ function reload(last_statutory_id,last_level,country,domain){
     load(last_statutory_id,last_level,country,domain)
   }
   function failure(data){
+    custom_alert(data);
   }
   mirror.getStatutoryMappingsMaster(success, failure);
 }
@@ -760,8 +762,8 @@ function load_statories(){
     var tableRow=$('#statutory-templates .table-statutory .table-row');
     var clone=tableRow.clone();
     $('.sno', clone).text(i+1);
-    $('.statutory', clone).html(dispstatutory.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> '));
-    $('.remove', clone).html('<img src=\'/images/icon-delete.png\' onclick="temp_removestatutories(\''+sm_statutoryids[i]+'\')"/>');
+    $('.statutory', clone).html(dispstatutory.replace(/>>/gi,' <img src=\'/knowledge/images/right_arrow.png\'/> '));
+    $('.remove', clone).html('<img src=\'/knowledge/images/icon-delete.png\' onclick="temp_removestatutories(\''+sm_statutoryids[i]+'\')"/>');
     $('.tbody-statutory-list').append(clone);
 }
 make_breadcrumbs2();
@@ -876,7 +878,7 @@ function load_compliance(){
           cDescription+'">'+partDescription+'</abbr>');
     $('.frequency', clone).text(complianceFrequency);
     $('.repeats', clone).text(display_repeats);
-    $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="temp_editcompliance(\''+complianceid+'\')"/>');
+    $('.edit', clone).html('<img src=\'/knowledge/images/icon-edit.png\' onclick="temp_editcompliance(\''+complianceid+'\')"/>');
     if(edit_compliance_id != null){
       if(isActive == true) {
         display_image="icon-active.png"
@@ -887,10 +889,10 @@ function load_compliance(){
         display_image="icon-inactive.png";
         passStatus = true;
        }
-      $('.status', clone).html('<img src=\'/images/'+display_image+'\' onclick="temp_change_status_compliance(\''+complianceid+'\','+passStatus+')"/>');
+      $('.status', clone).html('<img src=\'/knowledge/images/'+display_image+'\' onclick="temp_change_status_compliance(\''+complianceid+'\','+passStatus+')"/>');
     }else{
       isAllComplianceActive = true;
-      $('.status', clone).html('<img src=\'/images/icon-delete.png\' onclick="temp_removecompliance(\''+complianceid+'\')"/>');
+      $('.status', clone).html('<img src=\'/knowledge/images/icon-delete.png\' onclick="temp_removecompliance(\''+complianceid+'\')"/>');
     }
     $('.tbody-compliance-list').append(clone);
 
@@ -1191,7 +1193,7 @@ function temp_editcompliance(edit_id){
       concatfilename = fullname;
     }
     $("#uploaded_fileview").show();
-    $("#uploaded_filename").html( concatfilename + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file("+edit_id+")' />")
+    $("#uploaded_filename").html( concatfilename + "   <img src=\'/knowledge/images/close-icon-black.png\' onclick='remove_temp_file("+edit_id+")' />")
   }else{
     $("#uploaded_fileview").hide();
     $("#uploaded_filename").html("");
@@ -1301,10 +1303,10 @@ function temp_change_status_compliance(edit_id, passStatus){
 
 //create breadcrumb & display
 function make_breadcrumbs2(){
-  var arrowimage = " <img src=\'/images/right_arrow.png\'/> ";
+  var arrowimage = " <img src=\'/knowledge/images/right_arrow.png\'/> ";
   var statutories_name = '';
   for(var i=0;i<disp_statutories.length;i++){
-      statutories_name = statutories_name + disp_statutories[i].replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ') + ',';
+      statutories_name = statutories_name + disp_statutories[i].replace(/>>/gi,' <img src=\'/knowledge/images/right_arrow.png\'/> ') + ',';
   }
   statutories_name = statutories_name.replace(/,\s*$/, "");
   $(".breadcrumbs_2").html(statutories_name);

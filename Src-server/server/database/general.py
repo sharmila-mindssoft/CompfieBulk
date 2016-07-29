@@ -43,7 +43,7 @@ def get_trail_log(db, client_id, received_count):
     query += "  column_name, value, client_id, action"
     query += " from tbl_audit_log WHERE audit_trail_id>%s AND (client_id = 0 OR client_id=%s) LIMIT 100;"
 
-    rows = db.select_all(query, (received_count, client_id))
+    rows = db.select_all(query, [received_count, client_id])
     results = []
     if rows :
         columns = [
@@ -60,7 +60,7 @@ def get_trail_log_for_domain(db, client_id, domain_id, received_count, actual_co
         AND tbl_name = 'tbl_compliances' \
         AND column_name = 'domain_id' \
         AND value = %s limit 10"
-    q_rows = db.select_all(q, (received_count, actual_count, domain_id))
+    q_rows = db.select_all(q, [received_count, actual_count, domain_id])
     auto_id = []
     # print q
     for r in q_rows :
@@ -76,10 +76,10 @@ def get_trail_log_for_domain(db, client_id, domain_id, received_count, actual_co
             tbl_auto_id IN (%s)  "
         # print "-"
         # print query
-        rows = db.select_all(query, (
+        rows = db.select_all(query, [
             received_count,
             ','.join(auto_id)
-        ))
+        ])
     results = []
     if rows :
         columns = [
@@ -109,7 +109,7 @@ def return_changes(data):
 
 def remove_trail_log(db, client_id, received_count):
     q = "delete from tbl_audit_log where audit_trail_id < %s and client_id = %s"
-    db.execute(q, (received_count, client_id))
+    db.execute(q, [received_count, client_id])
 
 def get_servers(db):
     query = "SELECT client_id, machine_id, database_ip, "
@@ -225,7 +225,6 @@ def get_user_form_ids(db, user_id) :
         INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id \
         AND t2.user_id = %s"
     row = db.select_one(q, [user_id])
-
     if row :
         return row[0]
     else :
@@ -400,8 +399,8 @@ def get_audit_trails(
     user_ids = None
     query = '''
     SELECT group_concat(user_id) from tbl_users where user_group_id = (
-    SELECT user_group_id from tbl_users where user_id = '%d')''' % session_user
-    rows = db.select_all(query)
+    SELECT user_group_id from tbl_users where user_id = %s )'''
+    rows = db.select_all(query, [session_user])
     if rows:
         user_ids = rows[0][0]
     condition = '''user_id in (%s)''' % user_ids

@@ -37,7 +37,6 @@ __all__ = [
 #
 
 def get_domains_for_user(db, user_id) :
-    # query = "CALL sp_get_domains_for_user (%s)" % (user_id)
     query = "SELECT distinct t1.domain_id, t1.domain_name, \
         t1.is_active FROM tbl_domains t1 "
     if user_id > 0 :
@@ -68,9 +67,9 @@ def save_domain(db, domain_name, user_id) :
     query = "INSERT INTO tbl_domains(domain_name, \
         created_by, created_on) \
         VALUES (%s, %s, %s) "
-    res = db.execute(query, (
+    res = db.execute(query, [
         domain_name, user_id, created_on
-    ))
+    ])
     if res is False :
         raise process_error("E024")
     action = "Add Domain - \"%s\"" % domain_name
@@ -151,19 +150,24 @@ def update_domain_status(db, domain_id, is_active, updated_by) :
 # Country
 #
 def get_user_countries(db, user_id):
-    columns = "group_concat(country_id) as country_id"
+    columns = "country_id"
     condition = " user_id = %s"
-    condition_val = [str(user_id)]
+    condition_val = [user_id]
     rows = db.get_data(tblUserCountries, columns, condition, condition_val)
-    return rows[0]["country_id"]
+    country_ids = []
+    for r in rows :
+        country_ids.append(r["country_id"])
+    return country_ids
 
 def get_user_domains(db, user_id):
-    columns = "group_concat(domain_id) as domain_id"
+    columns = "domain_id"
     condition = " user_id = %s"
-    condition_val = (str(user_id))
+    condition_val = [user_id]
     rows = db.get_data(tblUserDomains, columns, condition, condition_val)
-    return rows[0]["domain_id"]
-
+    domain_ids = []
+    for r in rows :
+        domain_ids.append(r["domain_id"])
+    return domain_ids
 
 def get_countries_for_user(db, user_id) :
 
@@ -195,8 +199,8 @@ def return_countries(data) :
 
 def get_country_by_id(db, country_id) :
     q = "SELECT country_name FROM tbl_countries \
-        WHERE country_id=%s"
-    row = db.select_one(q, (str(country_id)))
+        WHERE country_id= %s "
+    row = db.select_one(q, [country_id])
     country_name = row[0]
     return country_name
 
@@ -245,12 +249,12 @@ def update_country(db, country_id, country_name, updated_by) :
 
 def check_country_id_to_deactivate(db, country_id) :
     q = "SELECT count(*) from tbl_statutory_mappings where country_id = %s"
-    row = db.select_one(q, str(country_id))
+    row = db.select_one(q, [country_id])
     if row[0] > 0 :
         return False
     else :
         q = "SELECT count(*) from tbl_client_countries where country_id = %s "
-        row = db.select_one(q, str(country_id))
+        row = db.select_one(q, [country_id])
         if row[0] > 0 :
             return False
     return True
@@ -267,9 +271,9 @@ def update_country_status(db, country_id, is_active, updated_by) :
             status = "deactivated"
         else:
             status = "activated"
-        if db.execute(query, (
+        if db.execute(query, [
             is_active, updated_by, country_id
-        )) :
+        ]) :
             action = "Country %s status  - %s" % (oldData, status)
             db.save_activity(updated_by, 1, action)
             return True
@@ -319,14 +323,11 @@ def get_form_categories(db):
 #
 def is_duplicate_user_group_name(db, user_group_name, user_group_id=None):
     if user_group_id is not None :
-        condition = "user_group_name = %s AND user_group_id != %s" % (
-            user_group_name, user_group_id
-        )
+        condition = "user_group_name = %s AND user_group_id != %s"
+        return db.is_already_exists(tblUserGroups, condition, [user_group_name, user_group_id])
     else :
-        condition = "user_group_name = %s" % (
-            user_group_name
-        )
-    return db.is_already_exists(tblUserGroups, condition)
+        condition = "user_group_name = %s"
+        return db.is_already_exists(tblUserGroups, condition, [user_group_name])
 
 def is_user_exists_under_user_group(db, user_group_id):
     columns = "count(0) as count"
@@ -365,12 +366,12 @@ def save_user_group(
 ):
     time_stamp = str(get_date_time())
     columns = "( user_group_name, form_category_id, form_ids, \
-    is_active, created_on, created_by, updated_on, updated_by)"
+    is_active, created_on, created_by)"
     forms = ",".join(str(x) for x in form_ids)
     values = [
         user_group_name, form_category_id,
         forms, 1, time_stamp,
-        0, time_stamp, 0
+        0
     ]
     new_id = db.insert(tblUserGroups, columns, values)
     if new_id :
@@ -394,10 +395,11 @@ def update_user_group(
         user_group_name, form_category_id,
         ",".join(str(x) for x in form_ids), time_stamp, 0
     ]
-    condition = "user_group_id=%s" % user_group_id
+    condition = "user_group_id= %s " % user_group_id
     if db.update(tblUserGroups, columns, values, condition) :
         action = "Updated User Group \"%s\"" % user_group_name
         db.save_activity(0, 3, action)
+        return True
     else :
         raise process_error("E031")
 
@@ -432,12 +434,12 @@ def get_detailed_user_list(db):
 
 def is_duplicate_email(db, email_id, user_id=None):
     if user_id is not None :
-        condition = "email_id =%s AND user_id != %s"
+        condition = "email_id = %s AND user_id != %s"
         condition_val = [
             email_id, user_id
         ]
     else :
-        condition = "email_id =%s "
+        condition = "email_id = %s "
         condition_val = [email_id]
     return db.is_already_exists(tblUsers, condition, condition_val)
 

@@ -11,7 +11,7 @@ from technomastercontroller import (
     get_clients,
     reactivate_unit,
     get_client_profile,
-    create_new_admin,
+    create_new_admin_for_client,
     get_next_unit_code
 )
 from server import logger
@@ -107,7 +107,7 @@ def process_techno_request(request, db) :
     if type(request_frame) is technomasters.CreateNewAdmin:
         logger.logKnowledgeApi("GetclientProfile", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        result = create_new_admin(db, request_frame, session_user)
+        result = create_new_admin_for_client(db, request_frame, session_user)
         logger.logKnowledgeApi("GetClientProfile", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 

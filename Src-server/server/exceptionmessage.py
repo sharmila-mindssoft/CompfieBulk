@@ -88,3 +88,6 @@ def process_error(msg_code):
 
 def client_process_error(msg_code):
     return RuntimeError(client_message.get(msg_code))
+
+def fetch_error():
+    return RuntimeError("Transaction failed while processing data.")

@@ -14,6 +14,7 @@ from server.database.knowledgemaster import (
     get_statutory_by_id, get_geography_by_id,
     get_industry_by_id
 )
+from server.exceptionmessage import process_error
 
 APPROVAL_STATUS = ["Pending", "Approved", "Rejected", "Approved & Notified"]
 def get_compliance_by_id(db, compliance_id, is_active=None):
@@ -47,8 +48,6 @@ def get_compliance_by_id(db, compliance_id, is_active=None):
         (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t1.repeats_type_id) repeat_type \
         FROM tbl_compliances t1 %s ORDER BY t1.frequency_id" % q
     rows = db.select_all(qry, value)
-    print rows
-    print '*' * 50
     columns = [
         "compliance_id", "statutory_provision",
         "compliance_task", "compliance_description",
@@ -153,11 +152,11 @@ def get_statutory_mappings(db, user_id, for_approve=False) :
         and t6.user_id = %s"
 
     if for_approve is True :
-        q = q + " WHERE t1.approval_status in (0)"
+        q = q + " WHERE t1.approval_status = 0 "
 
     q = q + " ORDER BY country_name, domain_name, statutory_nature_name"
     rows = db.select_all(q, [user_id, user_id])
-    # print q
+
     columns = [
         "statutory_mapping_id", "country_id",
         "country_name", "domain_id", "domain_name", "industry_ids",
@@ -315,7 +314,7 @@ def check_duplicate_compliance_name(db, request_frame):
     if len(compliance_names) > 0 :
         return list(set(compliance_names))
     else :
-        raise process_error("E017")
+        return False
 
 def save_statutory_mapping(db, data, created_by) :
     country_id = data.country_id
@@ -539,7 +538,7 @@ def save_notifications_status(
     query = "SELECT distinct user_id from tbl_users WHERE \
         user_group_id in \
         (select user_group_id from tbl_user_groups \
-        where form_ids like '%s') AND \
+        where form_ids like %s) AND \
         user_id in (select user_id from \
             tbl_user_domains where domain_id = %s \
         )  \

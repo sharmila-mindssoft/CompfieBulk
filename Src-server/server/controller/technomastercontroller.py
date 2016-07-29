@@ -400,7 +400,7 @@ def get_client_profile(db, request, session_user):
 ########################################################
 # To promote a user as Primary admin
 ########################################################
-def create_new_admin(db, request, session_user):
+def create_new_admin_for_client(db, request, session_user):
     new_admin_id = request.new_admin_id
     client_id = request.client_id
     result = create_new_admin(db, new_admin_id, client_id, session_user)

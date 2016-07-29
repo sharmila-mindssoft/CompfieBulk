@@ -397,9 +397,9 @@ def get_groups_for_country(db, country_id, user_id) :
         ON t1.client_id = t4.client_id \
         AND t1.is_active = 1 \
         AND t4.user_id =  %s \
-        AND t1.client_id in (select distinct client_id from tbl_client_countries where country_id = %s)" % (user_id, country_id)
+        AND t1.client_id in (select distinct client_id from tbl_client_countries where country_id = %s)"
 
-    rows = db.select_all(query)
+    rows = db.select_all(query, [user_id, country_id])
     columns = ["client_id", "group_name", "is_active", "domain_ids", "country_ids"]
     results = convert_to_dict(rows, columns)
     return return_result(results)
@@ -439,10 +439,8 @@ def get_legal_entity_for_country(db, country_id, user_id):
         INNER JOIN tbl_user_clients t3 \
         ON t1.client_id = t3.client_id \
         AND t3.user_id = %s \
-        AND t2.country_id = %s" % (
-            user_id, country_id
-        )
-    rows = db.select_all(query)
+        AND t2.country_id = %s"
+    rows = db.select_all(query, [user_id, country_id])
     columns = ["client_id", "legal_entity_id", "legal_entity_name", "business_group_id"]
     result = convert_to_dict(rows, columns)
 
@@ -466,10 +464,8 @@ def get_divisions_for_country(db, country_id, user_id):
         INNER JOIN tbl_user_clients t3 \
         ON t1.client_id = t3.client_id \
         AND t3.user_id = %s \
-        AND t2.country_id=%s" % (
-            user_id, country_id
-        )
-    rows = db.select_all(query)
+        AND t2.country_id=%s"
+    rows = db.select_all(query, [user_id, country_id])
     columns = ["client_id", "business_group_id", "legal_entity_id", "division_id", "division_name"]
     result = convert_to_dict(rows, columns)
 
@@ -524,10 +520,8 @@ def get_units_for_country(db, country_id, user_id):
         ON t1.client_id = t4.client_id \
         AND t1.is_active = 1 \
         AND t4.user_id = %s \
-        AND t2.country_id = %s " % (
-            user_id, country_id
-        )
-    rows = db.select_all(query)
+        AND t2.country_id = %s "
+    rows = db.select_all(query, [user_id, country_id])
     columns = [
         "unit_id", "unit_code", "unit_name", "division_id",
         "legal_entity_id", "business_group_id",

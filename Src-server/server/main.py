@@ -102,7 +102,9 @@ class API(object):
             request_data = request_data_type.parse_structure(
                 data
             )
+            return request_data
         except Exception, e:
+            print "_parse_request"
             print e
             logger.logKnowledgeApi(e, "_parse_request")
             logger.logKnowledgeApi(traceback.format_exc(), "")
@@ -112,8 +114,7 @@ class API(object):
             logger.logKnowledge("error", "main.py", traceback.format_exc())
             response.set_status(400)
             response.send(str(e))
-            return None
-        return request_data
+            # return None
 
     def handle_api_request(
         self, unbound_method, request, response,
@@ -148,6 +149,7 @@ class API(object):
                 self._db.rollback()
             respond(response_data)
         except Exception, e:
+            print "handle_api_request"
             print e
             print(traceback.format_exc())
             print ip_address
@@ -157,8 +159,8 @@ class API(object):
 
             logger.logKnowledge("error", "main.py-handle-api-", e)
             logger.logKnowledge("error", "main.py", traceback.format_exc())
-
-            self._db.rollback()
+            if str(e).find("expected a") is False :
+                self._db.rollback()
             response.set_status(400)
             response.send(str(e))
 
