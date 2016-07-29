@@ -348,17 +348,17 @@ function loadCompliancedata(assignedRecord){
     var valu  = assignedRecord;    
     var appStatus = valu['compliance_applicable_status']
     if(appStatus == true){
-        asImageName = "<img src='/images/tick1bold.png'>";
+        asImageName = "<img src='/knowledge/images/tick1bold.png'>";
     }
     else{
-        asImageName = "<img src='/images/deletebold.png'>";
+        asImageName = "<img src='/knowledge/images/deletebold.png'>";
     }
     var optedStatus = valu['compliance_opted_status']
     if(optedStatus == true){
-        optedImageName = "<img src='/images/tick-orange.png'>";
+        optedImageName = "<img src='/knowledge/images/tick-orange.png'>";
     }
     else if(optedStatus == false){
-        optedImageName = "<img src='/images/deletebold.png'>";
+        optedImageName = "<img src='/knowledge/images/deletebold.png'>";
     }
     else{
         optedImageName = "Nil";
@@ -390,18 +390,18 @@ function loadAssignedActdata(assignedList){
     var cloneAssigned = tableRowAssigned.clone();
     var appStatus = val['applicable_status']
     if(appStatus == true){
-        asImageName = "<img src='/images/tick1bold.png'>";
+        asImageName = "<img src='/knowledge/images/tick1bold.png'>";
     }
     else{
-        asImageName = "<img src='/images/deletebold.png'>";
+        asImageName = "<img src='/knowledge/images/deletebold.png'>";
     }
     var optedStatuslevel1 = val['opted_status']
 
     if(optedStatuslevel1 == true){
-        optedImageNamelevel1 = "<img src='/images/tick-orange.png'>";
+        optedImageNamelevel1 = "<img src='/knowledge/images/tick-orange.png'>";
     }
     else if(optedStatuslevel1 == false){
-        optedImageNamelevel1 = "<img src='/images/deletebold.png'>";
+        optedImageNamelevel1 = "<img src='/knowledge/images/deletebold.png'>";
     }
     else{
         optedImageNamelevel1 = "Nil";

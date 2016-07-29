@@ -169,7 +169,7 @@ function make_breadcrumbs(){
 
   var bc_businessgroup = $('.businessgrouplist.active').text();
   var bc_divisionname = $('.divisionlist.active').text();
-  var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
+  var arrowimage = " <img src=\'/knowledge/images/chevron_black_right.png\'/> ";
 
   if(bc_businessgroup != '') bc_businessgroup = arrowimage + bc_businessgroup;
   if(bc_divisionname != '') bc_divisionname = arrowimage + bc_divisionname;
@@ -936,7 +936,7 @@ function displayEdit(client_statutory_id, country_id, group_id, location_id, dom
       $("#activate-step-submit").show();
     }
 
-    var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
+    var arrowimage = " <img src=\'/knowledge/images/chevron_black_right.png\'/> ";
     var bc_businessgroup = '';
     var bc_divisionname = '';
 
