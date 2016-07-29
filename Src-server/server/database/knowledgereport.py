@@ -59,7 +59,7 @@ def get_statutory_mapping_report(
         qry_where += "AND t1.statutory_nature_id = %s "
         qry_val.append(statutory_nature_id)
     if level_1_statutory_id is not None :
-        qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, '%s') from tbl_statutories where statutory_id = %s)"
+        qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, %s) from tbl_statutories where statutory_id = %s)"
         qry_val.append(str("%"))
         qry_val.append(level_1_statutory_id)
     if frequency_id is not None :
@@ -83,16 +83,18 @@ def get_statutory_mapping_report(
         WHERE t1.approval_status in (1, 3) AND t2.is_active = 1 AND \
         t1.country_id = %s \
         and t1.domain_id = %s "
-    q_count += qry_where
-    q_count += "ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
+    order = "ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
             t2.frequency_id "
 
     param_lst = [
         user_id, user_id,
         country_id, domain_id
     ]
-    param_lst.extend(qry_val)
-    row = db.select_one(q_count, param_lst)
+    if qry_where is not "" :
+        q_count += qry_where
+        param_lst.extend(qry_val)
+
+    row = db.select_one(q_count + order, param_lst)
 
     if row :
         r_count = row[0]
@@ -131,17 +133,22 @@ def get_statutory_mapping_report(
         and t6.user_id = %s \
         WHERE t1.approval_status in (1, 3) AND t2.is_active = 1 AND \
         t1.country_id = %s \
-        and t1.domain_id = %s \
-        %s \
-        ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), t2.frequency_id \
+        and t1.domain_id = %s "
+
+    order = "ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), t2.frequency_id \
         limit %s, %s"
 
-    rows = db.select_all(q, [
+    param_lst = [
         user_id, user_id,
-        country_id, domain_id,
-        qry_where,
-        from_count, to_count
-    ])
+        country_id, domain_id
+    ]
+
+    if qry_where is not None :
+        q += qry_where
+        param_lst.extend(qry_val)
+
+    param_lst.extend([from_count, to_count])
+    rows = db.select_all(q + order, param_lst)
     columns = [
         "statutory_mapping_id", "country_id",
         "country_name", "domain_id", "domain_name", "industry_ids",

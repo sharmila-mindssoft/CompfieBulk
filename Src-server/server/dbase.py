@@ -198,7 +198,7 @@ class Database(object):
                     if len(param) > 1 :
                         logger.logQuery(self._for_client, "select_all", query % tuple(param))
                     else :
-                        logger.logQuery(self._for_client, "select_all", query % param[0])
+                        logger.logQuery(self._for_client, "select_all", query % param)
                     cursor.execute(query, param)
 
                 else :
@@ -209,6 +209,9 @@ class Database(object):
             return res
         except mysql.Error, e:
             print e
+            print '@@@@@@@@@@2222'
+            print query
+            print param
             logger.logClientApi("select_all", query)
             logger.logClientApi("select_all", e)
             raise fetch_error()
@@ -216,8 +219,7 @@ class Database(object):
     def select_one(self, query, param=None):
         cursor = self.cursor()
         assert cursor is not None
-        print query
-        print param
+
         try:
             if param is None :
                 cursor.execute(query)
@@ -229,7 +231,7 @@ class Database(object):
                     if len(param) > 1 :
                         logger.logQuery(self._for_client, "select_one", query % tuple(param))
                     else :
-                        logger.logQuery(self._for_client, "select_one", query % param[0])
+                        logger.logQuery(self._for_client, "select_one", query % param)
                     cursor.execute(query, param)
                 else :
                     logger.logQuery(self._for_client, "select_one", query % param)
@@ -238,6 +240,8 @@ class Database(object):
             return res
         except mysql.Error, e:
             print "Exception"
+            print query
+            print param
             print e
             logger.logClientApi("select_one", query)
             logger.logClientApi("select_one", e)
@@ -285,7 +289,7 @@ class Database(object):
                 logger.logQuery(self._for_client, "get_data", query)
                 rows = self.select_all(query)
             else :
-                logger.logQuery(self._for_client, "get_data", query % condition_val)
+                logger.logQuery(self._for_client, "get_data", query % tuple(condition_val))
                 rows = self.select_all(query, condition_val)
 
         else :
@@ -374,7 +378,8 @@ class Database(object):
         query = """INSERT INTO %s %s """ % (table, columns)
         query += " VALUES (%s) " % (",".join(stringValue))
         try:
-            logger.logQuery(self._for_client, "insert", query % values)
+            print query
+            print values
             n_id = int(self.execute_insert(query, values))
             return n_id
         except mysql.Error, e:
@@ -400,7 +405,6 @@ class Database(object):
         try:
             cursor = self.cursor()
             assert cursor is not None
-            logger.logQuery(self._for_client, "bulk_insert", query % valueList)
             cursor.executemany(query, valueList)
             return True
         except mysql.Error, e:
@@ -423,6 +427,7 @@ class Database(object):
         query += " WHERE " + condition
         try:
             res = self.execute(query, values)
+            print '------------'
             print res
             return True
         except mysql.Error, e:
@@ -517,9 +522,10 @@ class Database(object):
     def is_already_exists(self, table, condition, condition_val) :
         query = "SELECT count(0) FROM %s WHERE %s " % (table, condition)
         rows = None
-        rows = self.select_all(query, condition_val)
+        rows = self.select_one(query, condition_val)
+        print rows
         if rows :
-            if rows[0][0] > 0:
+            if rows[0] > 0:
                 return True
             else :
                 return False

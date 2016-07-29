@@ -124,9 +124,9 @@ function loadClientProfileList(groupId){
 
                 if(isServiceProvider == false){
                     if(isAdmin == true){
-                        $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="alertUserToPromoteAnotherAdmin('+isActive+')" />');
+                        $('.promote-admin', clone).html('<img src="/knowledge/images/'+imageadminName+'" title="'+admintitle+'" onclick="alertUserToPromoteAnotherAdmin('+isActive+')" />');
                     }else{
-                        $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="clientprofile_isadmin('+userId+','+groupId+','+adminstatus+')" />');
+                        $('.promote-admin', clone).html('<img src="/knowledge/images/'+imageadminName+'" title="'+admintitle+'" onclick="clientprofile_isadmin('+userId+','+groupId+','+adminstatus+')" />');
                     }
 
                 }

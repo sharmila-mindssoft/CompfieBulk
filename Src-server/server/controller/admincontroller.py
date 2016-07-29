@@ -244,8 +244,8 @@ def get_users(db, request_frame, session_user):
         address = None if user_row["address"] == "" else user_row["address"]
         designation = None if user_row["designation"] == "" else user_row["designation"]
         is_active = True if user_row["is_active"] == 1 else False
-        country_ids = [int(x) for x in get_user_countries(db, user_id).split(",")]
-        domain_ids = [int(x) for x in get_user_domains(db, user_id).split(",")]
+        country_ids = get_user_countries(db, user_id)
+        domain_ids = get_user_domains(db, user_id)
         user_list.append(
             core.UserDetails(
                 user_id, email_id, user_group_id,

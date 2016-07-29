@@ -244,7 +244,6 @@ def update_statutory_nature_status(db, nature_id, is_active, user_id) :
     oldData = get_nature_by_id(db, nature_id)
     if oldData is None:
         return False
-    print is_active
     table_name = "tbl_statutory_natures"
     columns = ["is_active", "updated_by"]
     values = [is_active, user_id]
@@ -273,8 +272,6 @@ def get_statutory_levels(db):
     ]
     condition = " 1 ORDER BY level_position"
     result = db.get_data("tbl_statutory_levels", columns, condition)
-    print result
-    print '*' * 50
     return return_statutory_levels(result)
 
 def return_statutory_levels(data):
@@ -368,14 +365,11 @@ def get_geograhpy_levels_for_user(db, user_id):
     columns = [
         "level_id", "level_position", "level_name", "country_id"
     ]
-    condition = " 1 ORDER BY level_position"
+    condition = " country_id in (select country_id from tbl_user_countries where user_id = %s)"
+    condition_val = [user_id]
+    order = " ORDER BY level_position"
 
-    country_ids = None
-    country_ids = get_user_countries(db, user_id)
-    if country_ids is not None:
-        condition = "country_id in (%s) ORDER BY level_position" % country_ids
-
-    result = db.get_data("tbl_geography_levels", columns, condition)
+    result = db.get_data("tbl_geography_levels", columns, condition, condition_val, order)
     return return_geography_levels(result)
 
 def delete_grography_level(db, level_id):
@@ -500,9 +494,6 @@ def return_geographies(data):
 
 def get_geographies_for_user_with_mapping(db, user_id):
 
-    country_ids = None
-    if ((user_id is not None) and (user_id != 0)):
-        country_ids = get_user_countries(db, user_id)
     columns = "t1.geography_id, t1.geography_name, t1.parent_names,"
     columns += "t1.level_id,t1.parent_ids, t1.is_active,"
     columns += " t2.country_id, t3.country_name"
@@ -514,9 +505,8 @@ def get_geographies_for_user_with_mapping(db, user_id):
     join_conditions = [
         "t1.level_id = t2.level_id", "t2.country_id = t3.country_id"
     ]
-    where_condition = "1"
-    if country_ids is not None:
-        where_condition = "t2.country_id in (%s)" % country_ids
+    where_condition = " t2.country_id in (select country_id from tbl_user_countries where user_id = %s )" % user_id
+
     result = db.get_data_from_multiple_tables(
         columns, tables, aliases, join_type,
         join_conditions, where_condition
@@ -559,7 +549,7 @@ def check_duplicate_geography(db, country_id, parent_ids, geography_id) :
         FROM tbl_geographies t1 \
         INNER JOIN tbl_geography_levels t2 \
         ON t1.level_id = t2.level_id \
-        WHERE t1.parent_ids='%s' \
+        WHERE t1.parent_ids= %s  \
         AND t2.country_id = %s"
     if geography_id is not None :
         query = query + " AND geography_id != %s"
