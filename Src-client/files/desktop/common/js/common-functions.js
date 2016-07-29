@@ -73,6 +73,10 @@ function isAlphanumeric_Shortname(inputElm) {
   return inputElm.val().replace(/[^0-9a-z]/, '');
 }
 
+function isCommon_Unitcode(inputElm) {
+  //allowed => alphanumeric
+  return inputElm.val().replace(/[^0-9A-Za-z]/, '');
+}
 /*
   checkStrength is function which will do the 
   main password strength checking for us
