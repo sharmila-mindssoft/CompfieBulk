@@ -568,11 +568,11 @@ def get_assign_statutory_wizard_two(
             SELECT g.geography_id \
             FROM tbl_geographies g \
             WHERE g.geography_id = %s \
-            OR g.parent_ids LIKE '%s' OR t4.geography_id IN %s )"
+            OR g.parent_ids LIKE %s OR t4.geography_id IN %s )"
     rows = db.select_all(query, [
         domain_id, country_id, industry_id, geography_id,
         str("%" + str(geography_id) + ",%"),
-        (str(tuple(parent_ids)))
+        tuple(parent_ids)
     ])
     print rows
     columns = [
@@ -587,7 +587,7 @@ def get_assign_statutory_wizard_two(
         if mapping_id not in mapping_ids :
             mapping_ids.append(mapping_id)
             final_result.append(r)
-    return return_assign_statutory_wizard_two(country_id, domain_id, final_result)
+    return return_assign_statutory_wizard_two(db, country_id, domain_id, final_result)
 
 def get_compliance_by_mapping_id(db, mapping_id):
 

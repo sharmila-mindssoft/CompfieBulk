@@ -12,7 +12,7 @@ from server.database.tables import *
 from server.database.admin import (
     get_countries_for_user, get_domains_for_user
 )
-
+from server.database.validateclientuserrecord import ClientAdmin
 
 def generate_new_client_id(db):
     return db.get_new_id("client_id", tblClientGroups)
@@ -1250,155 +1250,29 @@ def return_group_companies(db, group_companies):
         )
     return results
 
-def create_new_admin(db, new_admin_id, client_id, session_user):
-    try :
-        columns = [
-            "database_ip", "database_username", "database_password",
-            "database_name"
-        ]
-        condition = "client_id = %s" % client_id
-        rows = db.get_data(
-            tblClientDatabase, columns, condition
-        )
-        if rows:
-            host = rows[0]["database_ip"]
-            username = rows[0]["database_username"]
-            password = rows[0]["database_password"]
-            database = rows[0]["database_name"]
-            conn = db._db_connect(host, username, password, database)
-            cursor = conn.cursor()
+def create_new_admin(db, new_admin_id, old_admin_id, old_admin_name, client_id, session_user):
+    t_obj = ClientAdmin(db, new_admin_id, old_admin_id, client_id)
+    result = t_obj.perform_promote_admin()
+    if result is True :
+        # Promoting to new admin in Knowledge db
+        query = "update tbl_client_users set is_primary_admin = 1 \
+        where user_id = %s and client_id = %s"
+        db.execute(query, [new_admin_id, client_id])
 
-            # Getting old admin details
-            query = "select admin_id, username, password from tbl_admin"
-            cursor.execute(query)
-            rows = cursor.fetchall()
-            old_admin_id = rows[0][0]
+        # Deactivating old admin in Knowledge db
+        query = "update tbl_client_users set is_active = 0 \
+        where user_id = %s and client_id = %s"
+        db.execute(query, [old_admin_id, client_id])
 
-            query = "select count(*) from tbl_assigned_compliances \
-            where assignee = %s or concurrence_person = %s or \
-            approval_person = %s " % (old_admin_id, old_admin_id, old_admin_id)
-            cursor.execute(query)
-            rows = cursor.fetchall()
-            compliance_count = rows[0][0]
-            if compliance_count > 0:
-                return "Reassign"
-            else:
-                # Getting new admin details
-                query = "select email_id, password from tbl_users where \
-                user_id = %s " % (new_admin_id)
-                cursor.execute(query)
-                rows = cursor.fetchall()
-                admin_email = rows[0][0]
-                admin_password = rows[0][1]
-
-                # Promoting to new admin in Client db
-                query = "update tbl_admin set admin_id= %s , username = '%s', password= '%s'" % (
-                    new_admin_id, admin_email, admin_password
-                )
-                cursor.execute(query)
-                query = "update tbl_users set is_primary_admin = 1 where user_id = %s" % (
-                    new_admin_id
-                )
-                cursor.execute(query)
-
-                # Deactivating old admin in Client db
-                query = "update tbl_users set is_active = 0 \
-                where user_id = %s " % (
-                    old_admin_id
-                )
-                cursor.execute(query)
-
-                # Adding all countries to new admin
-                query = "select country_id from tbl_countries"
-                cursor.execute(query)
-                rows = cursor.fetchall()
-
-                query = "delete from tbl_user_countries where user_id = '%d'" % (
-                    new_admin_id
-                )
-                cursor.execute(query)
-                if rows:
-                    query = "Insert into tbl_user_countries (country_id, user_id) values "
-                    for index, row in enumerate(rows):
-                        q = "%s (%s, %s) " % (query, row[0], new_admin_id)
-                        cursor.execute(q)
-
-                # Adding all domains to new admin
-                query = "select domain_id from tbl_domains"
-                cursor.execute(query)
-                rows = cursor.fetchall()
-
-                query = "delete from tbl_user_domains where user_id = %s" % (
-                    new_admin_id
-                )
-                cursor.execute(query)
-                if rows:
-                    query = "Insert into tbl_user_domains (domain_id, user_id) values "
-                    for index, row in enumerate(rows):
-                        q = "%s (%s, %s) " % (query, row[0], new_admin_id)
-                        cursor.execute(q)
-
-                # Adding all units to new admin
-                query = "select unit_id from tbl_units"
-                cursor.execute(query)
-                rows = cursor.fetchall()
-
-                query = "delete from tbl_user_units where user_id = %s" % (
-                    new_admin_id
-                )
-                cursor.execute(query)
-
-                if rows:
-                    query = "Insert into tbl_user_units (unit_id, user_id) values "
-                    for row in rows:
-                        q = "%s (%s, %s) " % (query, row[0], new_admin_id)
-                        cursor.execute(q)
-
-                query = "update tbl_assigned_compliances set concurrence_person = null,\
-                approval_person = '%s' where assignee = '%s'" % (new_admin_id, new_admin_id)
-                cursor.execute(query)
-
-                query = "update tbl_compliance_history set concurred_by = null,\
-                approved_by = '%s' where completed_by = '%s' and completed_on is null\
-                or completed_on = 0 " % (new_admin_id, new_admin_id)
-                cursor.execute(query)
-
-                query = "update tbl_compliance_history set approve_status = 1, \
-                approved_on=now(), approved_by='%s' where completed_by = '%s' and \
-                completed_on is not null and completed_on != 0 and approve_status \
-                is null or approve_status = 0" % (new_admin_id, new_admin_id)
-                cursor.execute(query)
-
-                query = "SELECT employee_name, employee_code FROM tbl_users \
-                WHERE user_id='%s'" % new_admin_id
-                cursor.execute(query)
-                rows = cursor.fetchall()
-                if rows[0][1] is not None:
-                    employee_name = "%s - %s" % (rows[0][1], rows[0][0])
-                else:
-                    employee_name = rows[0][0]
-
-                conn.commit()
-
-                # Promoting to new admin in Knowledge db
-                query = "update tbl_client_users set is_primary_admin = 1 \
-                where user_id = %s and client_id = %s"
-                db.execute(query, [new_admin_id, client_id])
-
-                # Deactivating old admin in Knowledge db
-                query = "update tbl_client_users set is_active = 0 \
-                where user_id = %s and client_id = %s"
-                db.execute(query, [old_admin_id, client_id])
-
-                query = "update tbl_client_groups set email_id = %s where client_id = %s"
-                db.execute(query, [admin_email, client_id])
-
-                action = None
-                action = "User \"%s\" was promoted to Primary Admin status" % (employee_name)
-                db.save_activity(session_user, 20, action)
-                return True
-        else:
-            return "ClientDatabaseNotExists"
-    except Exception, e :
-        print e
-        raise process_error("E059")
+        query = "update tbl_client_groups t1, \
+        (select email_id from tbl_client_users where user_id = %s \
+        and client_id = %s) t2 \
+        set t1.email_id = t2.email_id  where client_id = %s"
+        db.execute(query, [
+            old_admin_id, client_id, client_id
+        ])
+        action = None
+        action = "User \"%s\" is promoted as Client Admin" % (old_admin_name)
+        db.save_activity(session_user, 20, action)
+        return True
+    return result

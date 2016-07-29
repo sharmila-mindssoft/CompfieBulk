@@ -1,6 +1,7 @@
 var profiles;
 var groupList;
-
+var currentAdminId = null;
+var newAdmin = null;
 function clearMessage() {
     $(".error-message").hide();
     $(".error-message").text("");
@@ -69,8 +70,9 @@ function loadClientProfileList(groupId){
                 var tableRow = $('#templates .table-clientprofile-list .table-row');
                 var clone = tableRow.clone();
                 sno = sno + 1;
+                employeeName = lists[key]['user_name'];
                 $('.sno', clone).text(sno);
-                $('.employee', clone).text(lists[key]['user_name']);
+                $('.employee', clone).text(employeeName);
                 $('.email', clone).text(lists[key]['email_id']);
                 if(lists[key]['contact_no'] == null){
                   $('.mobile-number', clone).text("-");
@@ -100,15 +102,16 @@ function loadClientProfileList(groupId){
                   statusVal = true;
                 }*/
                 if(isAdmin == true){
-                    adminstatus = false;
+                    currentAdminId = userId;
+                    // adminstatus = false;
                     imageadminName = "promote-active.png";
                     admintitle = "Click here to deactivate Promote Admin";
-                    if(isActive == false){
-                        imageadminName = "icon-inactive.png";
-                    }
+                    // if(isActive == false){
+                    //     imageadminName = "icon-inactive.png";
+                    // }
                 }
                 else{
-                    adminstatus = true;
+                    // adminstatus = true;
                     imageadminName = "promote-inactive.png";
                     admintitle = "Click here to Promote Admin";
                     if(isActive == false){
@@ -126,7 +129,7 @@ function loadClientProfileList(groupId){
                     if(isAdmin == true){
                         $('.promote-admin', clone).html('<img src="/knowledge/images/'+imageadminName+'" title="'+admintitle+'" onclick="alertUserToPromoteAnotherAdmin('+isActive+')" />');
                     }else{
-                        $('.promote-admin', clone).html('<img src="/knowledge/images/'+imageadminName+'" title="'+admintitle+'" onclick="clientprofile_isadmin('+userId+','+groupId+','+adminstatus+')" />');
+                        $('.promote-admin', clone).html('<img src="/knowledge/images/'+imageadminName+'" title="'+admintitle+'" onclick="clientprofile_isadmin('+userId+','+groupId+',\''+employeeName+'\')" />');
                     }
 
                 }
@@ -159,7 +162,7 @@ function clientprofile_active(userId, clientId, status){
                 }
                 function onFailure(error){
                     if(error == "ReassignFirst"){
-                        custom_alert("Cannot Promote this user as Client admin. \nSince the old admin has compliances under him. \nFirst inform the client to reassign those compliances to another user.");
+                        custom_alert("Cannot Promote this user as Client admin. \nSince the old admin has compliances under him. \n Inform client to reassign those compliances to another user.");
                     }else{
                         displayMessage(error)
                     }
@@ -193,7 +196,7 @@ function alertUserToPromoteAnotherAdmin(isActive){
     }
 }
 
-function clientprofile_isadmin(userId, clientId){
+function clientprofile_isadmin(userId, clientId, userName){
     function onSuccess(data){
         // initialize();
         //$('#groupsval').val('');
@@ -223,7 +226,7 @@ function clientprofile_isadmin(userId, clientId){
             custom_alert("Cannot Promote this user as Client admin. \nSince the old admin has compliances under him. \nFirst inform admin to reassign those compliances to another user.");
         }
     }
-    mirror.createNewAdmin(userId, clientId,
+    mirror.createNewAdmin(userId, clientId, currentAdminId, userName,
         function(error, response){
             if(error == null){
                 onSuccess(response);
