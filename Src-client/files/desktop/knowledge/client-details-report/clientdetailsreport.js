@@ -231,9 +231,9 @@ function onGroupSuccess(val){
 }
 
 //load group form list in autocomplete text box  
-$("#groupsval").keyup(function(){
+$("#groupsval").keyup(function(e){
   var textval = $(this).val();
-  getGroupAutocomplete(textval, groupList, function(val){
+  getGroupAutocomplete(e, textval, groupList, function(val){
     onGroupSuccess(val)
   })
 });
@@ -245,9 +245,9 @@ function onBusinessGroupSuccess(val){
 }
 
 //load businessgroup form list in autocomplete text box  
-$("#businessgroupsval").keyup(function(){
+$("#businessgroupsval").keyup(function(e){
   var textval = $(this).val();
-  getBusinessGroupAutocomplete(textval, businessgroupsList, function(val){
+  getBusinessGroupAutocomplete(e, textval, businessgroupsList, function(val){
     onBusinessGroupSuccess(val)
   })
 });
@@ -259,9 +259,9 @@ function onLegalEntitySuccess(val){
 }
 
 //load legalentity form list in autocomplete text box  
-$("#legalentityval").keyup(function(){
+$("#legalentityval").keyup(function(e){
   var textval = $(this).val();
-  getLegalEntityAutocomplete(textval, legalEntityList, function(val){
+  getLegalEntityAutocomplete(e, textval, legalEntityList, function(val){
     onLegalEntitySuccess(val)
   })
 });
@@ -273,9 +273,9 @@ function onDivisionSuccess(val){
 }
 
 //load division form list in autocomplete text box  
-$("#divisionval").keyup(function(){
+$("#divisionval").keyup(function(e){
   var textval = $(this).val();
-  getDivisionAutocomplete(textval, divisionsList, function(val){
+  getDivisionAutocomplete(e, textval, divisionsList, function(val){
     onDivisionSuccess(val)
   })
 });
@@ -287,9 +287,9 @@ function onUnitSuccess(val){
 }
 
 //load unit wwith condition form list in autocomplete text box  
-$("#unitval").keyup(function(){
+$("#unitval").keyup(function(e){
   var textval = $(this).val();
-  getUnitAutocomplete(textval, unitList, function(val){
+  getUnitAutocomplete(e, textval, unitList, function(val){
     onUnitSuccess(val)
   })
 });

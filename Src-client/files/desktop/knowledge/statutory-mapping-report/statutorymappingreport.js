@@ -335,9 +335,9 @@ function onCountrySuccess(val){
 }
 
 //load country list in autocomplete text box  
-$("#countryval").keyup(function(){
+$("#countryval").keyup(function(e){
   var textval = $(this).val();
-  getCountryAutocomplete(textval, countriesList, function(val){
+  getCountryAutocomplete(e, textval, countriesList, function(val){
     onCountrySuccess(val)
   })
 });
@@ -349,9 +349,9 @@ function onDomainSuccess(val){
   $("#domainval").focus();
 }
 //load domain list in autocomplete textbox  
-$("#domainval").keyup(function(){
+$("#domainval").keyup(function(e){
   var textval = $(this).val();
-  getDomainAutocomplete(textval, domainsList, function(val){
+  getDomainAutocomplete(e, textval, domainsList, function(val){
     onDomainSuccess(val)
   })
 });
@@ -363,9 +363,9 @@ function onIndustrySuccess(val){
   $("#industryval").focus();
 }
 //load industry list in autocomplete textbox  
-$("#industryval").keyup(function(){
+$("#industryval").keyup(function(e){
   var textval = $(this).val();
-  getIndustryAutocomplete(textval, industriesList, function(val){
+  getIndustryAutocomplete(e, textval, industriesList, function(val){
     onIndustrySuccess(val)
   })
 });
@@ -377,9 +377,9 @@ function onStatutoryNatureSuccess(val){
   $("#statutorynature").focus();
 }
 //load statutorynature list in autocomplete textbox  
-$("#statutorynatureval").keyup(function(){
+$("#statutorynatureval").keyup(function(e){
   var textval = $(this).val();
-  getStatutoryNatureAutocomplete(textval, statutoryNaturesList, function(val){
+  getStatutoryNatureAutocomplete(e, textval, statutoryNaturesList, function(val){
     onStatutoryNatureSuccess(val)
   })
 });
@@ -391,9 +391,9 @@ function onGeogaphySuccess(val){
   $("#geographyval").focus();
 }
 //load geography list in autocomplete textbox  
-$("#geographyval").keyup(function(){
+$("#geographyval").keyup(function(e){
   var textval = $(this).val();
-  getGeographyAutocomplete(textval, geographiesList[$("#country").val()], function(val){
+  getGeographyAutocomplete(e, textval, geographiesList[$("#country").val()], function(val){
     onGeogaphySuccess(val)
   })
 });
@@ -405,9 +405,9 @@ function onStatutorySuccess(val){
   $("#statutoryval").focus();
 }
 //load statutory list in autocomplete textbox  
-$("#statutoryval").keyup(function(){
+$("#statutoryval").keyup(function(e){
   var textval = $(this).val();
-  getStatutoryAutocomplete(textval, statutoriesList[$("#country").val()][$("#domain").val()], function(val){
+  getStatutoryAutocomplete(e, textval, statutoriesList[$("#country").val()][$("#domain").val()], function(val){
     onStatutorySuccess(val)
   })
 });

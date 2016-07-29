@@ -265,9 +265,9 @@ function onUserSuccess(val){
 }
 
 //load user list in autocomplete text box  
-$("#user").keyup(function(){
+$("#user").keyup(function(e){
     var textval = $(this).val();
-    getUserAutocomplete(textval, userList, function(val){
+    getUserAutocomplete(e, textval, userList, function(val){
         onUserSuccess(val);
     })
 });
@@ -279,9 +279,9 @@ function onFormSuccess(val){
 }
 
 //load form list in autocomplete text box  
-$("#formname").keyup(function(){
+$("#formname").keyup(function(e){
     var textval = $(this).val();
-    getFormAutocomplete(textval, formList, function(val){
+    getFormAutocomplete(e, textval, formList, function(val){
         onFormSuccess(val);
     });
 });

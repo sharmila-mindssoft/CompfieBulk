@@ -127,18 +127,21 @@ function checkStrength(password)
   }
 }
 
-//country autocomplete function
-//var chosen = "";
-function getCountryAutocomplete(textval, listval, callback){
-  
-  /*if (e.keyCode == 40) {
+
+function onArrowKey(e, ac_item, callback){
+
+  if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13) {
+    chosen = "";
+  }
+
+  if (e.keyCode == 40) {
       if(chosen === "") {
           chosen = 0;
-      } else if((chosen+1) < $('#ac-country li').length) {
+      } else if((chosen+1) < $('#' + ac_item + ' li').length) {
           chosen++;
       }
-      $('#ac-country li').removeClass('auto-selected');
-      $('#ac-country li:eq('+chosen+')').addClass('auto-selected');
+      $('#' + ac_item + ' li').removeClass('auto-selected');
+      $('#' + ac_item + ' li:eq('+chosen+')').addClass('auto-selected');
       return false;
   }
   if (e.keyCode == 38) {
@@ -147,16 +150,22 @@ function getCountryAutocomplete(textval, listval, callback){
       } else if(chosen > 0) {
           chosen--;
       }
-      $('#ac-country li').removeClass('auto-selected');
-      $('#ac-country li:eq('+chosen+')').addClass('auto-selected');
+      $('#' + ac_item + ' li').removeClass('auto-selected');
+      $('#' + ac_item + ' li:eq('+chosen+')').addClass('auto-selected');
       return false;
   }
-  
   if (e.keyCode == 13) {
-    activate_text_arrow('country_auto',callback);
+    var ac_id = $('#' + ac_item + ' li:eq('+chosen+')').attr('id');
+    var ac_name = $('#' + ac_item + ' li:eq('+chosen+')').text();
+    activate_text_arrow(ac_id, ac_name, callback);
     return false;
-  }*/
+  }
+}
 
+//country autocomplete function
+var chosen = "";
+function getCountryAutocomplete(e, textval, listval, callback){
+  $("#country").val('');
   $("#ac-country").show(); 
   var countries = listval;
   var suggestions = [];
@@ -167,19 +176,19 @@ function getCountryAutocomplete(textval, listval, callback){
     }
     var str='';
     for(var i in suggestions){
-      //str += '<li class="country_auto" id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
       str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-country ul').append(str);
     //$("#country").val('');
   }else{
-    $("#country").val('');
     $(".ac-textbox").hide();
   }
+  onArrowKey(e, "ac-country", callback)
 }
 
 //domain autocomplete function
-function getDomainAutocomplete(textval, listval, callback){
+function getDomainAutocomplete(e, textval, listval, callback){
+  $("#domain").val('');
   $("#ac-domain").show(); 
   var domains = listval;
   var suggestions = [];
@@ -195,14 +204,15 @@ function getDomainAutocomplete(textval, listval, callback){
     $('#ac-domain ul').append(str);
     //$("#domain").val('');
     }else{
-      $("#domain").val('');
       $(".ac-textbox").hide();
     }
+    onArrowKey(e, "ac-domain", callback)
 }
 
 //usergroup autocomplete function
-function getUserGroupAutocomplete(textval, listval, callback){
+function getUserGroupAutocomplete(e, textval, listval, callback){
   $("#ac-usergroup").show(); 
+  $("#usergroup").val('');
   var usergroups = listval;
   var suggestions = [];
   $('#ac-usergroup ul').empty();
@@ -217,14 +227,15 @@ function getUserGroupAutocomplete(textval, listval, callback){
     $('#ac-usergroup ul').append(str);
     //$("#usergroup").val('');
   }else{
-    $("#usergroup").val('');
     $(".ac-textbox").hide();
   }
+  onArrowKey(e, "ac-usergroup", callback)
 }
 
 //industry autocomplete function
-function getIndustryAutocomplete(textval, listval, callback){
+function getIndustryAutocomplete(e, textval, listval, callback){
   $("#ac-industry").show();
+  $("#industry").val('');
   var industries = listval;
   var suggestions = [];
   $('#ac-industry ul').empty();
@@ -239,14 +250,15 @@ function getIndustryAutocomplete(textval, listval, callback){
     $('#ac-industry ul').append(str);
     //$("#industry").val('');
     }else{
-      $("#industry").val('');
       $(".ac-textbox").hide();
     }
+    onArrowKey(e, "ac-industry", callback)
 }
 
 //statutorynature autocomplete function
-function getStatutoryNatureAutocomplete(textval, listval, callback){
+function getStatutoryNatureAutocomplete(e, textval, listval, callback){
   $("#ac-statutorynature").show();
+  $("#statutorynature").val('');
   var statutorynatures = statutoryNaturesList;
   var suggestions = [];
   $('#ac-statutorynature ul').empty();
@@ -256,19 +268,20 @@ function getStatutoryNatureAutocomplete(textval, listval, callback){
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
+        str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,'+callback+')">'+suggestions[i][1]+'</li>';
     }
     $('#ac-statutorynature ul').append(str);
     //$("#statutorynature").val('');
     }else{
-      $("#statutorynature").val('');
       $(".ac-textbox").hide();
     }
+    onArrowKey(e, "ac-statutorynature", callback)
 }
 
 //geography autocomplete function
-function getGeographyAutocomplete(textval, listval, callback){
+function getGeographyAutocomplete(e, textval, listval, callback){
   $("#ac-geography").show();
+  $("#geography").val('');
   var geographies = listval;
   var suggestions = [];
   $('#ac-geography ul').empty();
@@ -283,14 +296,17 @@ function getGeographyAutocomplete(textval, listval, callback){
     $('#ac-geography ul').append(str);
     //$("#geography").val('');
     }else{
-      $("#geography").val('');
       $(".ac-textbox").hide();
     }
+    onArrowKey(e, "ac-geography", callback)
 }
 
 //statutory autocomplete function
-function getStatutoryAutocomplete(textval, listval, callback){
+function getStatutoryAutocomplete(e, textval, listval, callback){
   $("#ac-statutory").show();
+  $("#statutory").val('');
+  $("#level1id").val(''); 
+
   var statutories = listval;
   var suggestions = [];
   $('#ac-statutory ul').empty();
@@ -305,15 +321,17 @@ function getStatutoryAutocomplete(textval, listval, callback){
     $('#ac-statutory ul').append(str);
     //$("#statutory").val('');
   }else{
-    $("#statutory").val('');
-    $("#level1id").val('');  
     $(".ac-textbox").hide();
   }
+  onArrowKey(e, "ac-statutory", callback)
 }
 
 //user autocomplete function
-function getUserAutocomplete(textval, listval, callback){
+function getUserAutocomplete(e, textval, listval, callback){
   $("#ac-user").show();
+  $("#userid").val('');
+  $("#assignee").val('');
+
   var users = listval;
   var suggestions = [];
   $('#ac-user ul').empty();
@@ -343,15 +361,15 @@ function getUserAutocomplete(textval, listval, callback){
       //$("#userid").val('');
       //$("#assignee").val('');
   }else{
-    $("#userid").val('');
-    $("#assignee").val('');
     $(".ac-textbox").hide();
   }
+  onArrowKey(e, "ac-user", callback)
 }
 
 //form autocomplete function
-function getFormAutocomplete(textval, listval, callback){
+function getFormAutocomplete(e, textval, listval, callback){
   $("#ac-form").show();
+  $("#formid").val('');
   var forms = listval;
   var suggestions = [];
   $('#ac-form ul').empty();
@@ -367,14 +385,15 @@ function getFormAutocomplete(textval, listval, callback){
       $('#ac-form ul').append(str);
       //$("#formid").val('');
   }else{
-    $("#formid").val('');
     $(".ac-textbox").hide();
   }
+  onArrowKey(e, "ac-form", callback)
 }
 
 //group autocomplete function
-function getGroupAutocomplete(textval, listval, callback){
+function getGroupAutocomplete(e, textval, listval, callback){
   $("#ac-group").show();
+  $("#group-id").val('');
   var groups = listval;
   var suggestions = [];
   $('#ac-group ul').empty();
@@ -391,14 +410,15 @@ function getGroupAutocomplete(textval, listval, callback){
     $('#ac-group ul').append(str);
     //$("#group-id").val('');
   }else{
-    $("#group-id").val('');
     $(".ac-textbox").hide();
   }
+  onArrowKey(e, "ac-group", callback)
 }
 
 //businessgroup autocomplete function
-function getBusinessGroupAutocomplete(textval, listval, callback){
+function getBusinessGroupAutocomplete(e, textval, listval, callback){
   $("#ac-businessgroup").show();
+  $("#businessgroupid").val('');
   var bgroups = listval;
   var suggestions = [];
   $('#ac-businessgroup ul').empty();
@@ -416,14 +436,15 @@ function getBusinessGroupAutocomplete(textval, listval, callback){
      // $("#businessgroupid").val('');
   }
   else{
-    $("#businessgroupid").val('');
     $(".ac-textbox").hide();
   }
+  onArrowKey(e, "ac-businessgroup", callback)
 }
 
 //legalentity autocomplete function
-function getLegalEntityAutocomplete(textval, listval, callback){
+function getLegalEntityAutocomplete(e, textval, listval, callback){
   $("#ac-legalentity").show();
+  $("#legalentityid").val('');
   var lentity = listval;
   var suggestions = [];
   $('#ac-legalentity ul').empty();
@@ -448,14 +469,15 @@ function getLegalEntityAutocomplete(textval, listval, callback){
     $('#ac-legalentity ul').append(str);
     //$("#legalentityid").val('');
     }else{
-      $("#legalentityid").val('');
       $(".ac-textbox").hide();
     }
+    onArrowKey(e, "ac-legalentity", callback)
 }
 
 //division autocomplete function
-function getDivisionAutocomplete(textval, listval, callback){
+function getDivisionAutocomplete(e, textval, listval, callback){
   $("#ac-division").show();
+  $("#divisionid").val('');
   var division = listval;
   var suggestions = [];
   $('#ac-division ul').empty();
@@ -480,15 +502,18 @@ function getDivisionAutocomplete(textval, listval, callback){
     $('#ac-division ul').append(str);
     //$("#divisionid").val('');
     }else{
-      $("#divisionid").val('');
       $(".ac-textbox").hide();
     }
+    onArrowKey(e, "ac-division", callback)
 }
 
 
 //unit autocomplete function
-function getUnitAutocomplete(textval, listval, callback){
+function getUnitAutocomplete(e, textval, listval, callback){
   $("#ac-unit").show();
+  $("#seatingunit").val('');
+  $("#unit").val('');
+  $("#unitid").val('');
   var units = listval;
     var suggestions = [];
     $('#ac-unit ul').empty();
@@ -512,16 +537,15 @@ function getUnitAutocomplete(textval, listval, callback){
         //$("#unitid").val('');
         
     }else{
-      $("#seatingunit").val('');
-      $("#unit").val('');
-      $("#unitid").val('');
       $(".ac-textbox").hide();
     }
+    onArrowKey(e, "ac-unit", callback)
 }
 
 //reassignuser autocomplete function
-function getReassignUserAutocomplete(textval, listval, callback){
+function getReassignUserAutocomplete(e, textval, listval, callback){
   $("#ac-user").show();
+  $("#user").val('');
   var sUnit = $("#seatingunit").val();
   var assignees = listval;
 
@@ -541,14 +565,17 @@ function getReassignUserAutocomplete(textval, listval, callback){
     $('#ac-user ul').append(str);
     //$("#user").val('');
     }else{
-      $("#user").val('');
       $(".ac-textbox").hide();
     }
+    onArrowKey(e, "ac-user", callback)
 }
 
 //client statutory autocomplete function
-function getClientStatutoryAutocomplete(textval, listval, callback){
+function getClientStatutoryAutocomplete(e, textval, listval, callback){
   $("#ac-statutory").show();
+  $("#act").val('');
+  $("#level1id").val('');
+
   var acts = listval;
   var suggestions = [];
   $('#ac-statutory ul').empty();
@@ -564,15 +591,18 @@ function getClientStatutoryAutocomplete(textval, listval, callback){
     //$("#act").val('');
     //$("#level1id").val('');
   }else{
-    $("#act").val('');
-    $("#level1id").val('');
     $(".ac-textbox").hide();
   }
+  onArrowKey(e, "ac-statutory", callback)
 }
 
 //client statutory autocomplete function
-function getComplianceTaskAutocomplete(textval, listval, callback){
+function getComplianceTaskAutocomplete(e, textval, listval, callback){
   $("#ac-compliancetask").show();
+  $("#compliancetask").val('');
+  $("#complianceid").val('');
+  $("#compliancesid").val('');
+
   var compliancetasks = listval;
   var suggestions = [];
  $('#ac-compliancetask ul').empty();
@@ -589,16 +619,17 @@ function getComplianceTaskAutocomplete(textval, listval, callback){
     //$("#complianceid").val('');
     //$("#compliancesid").val('');
   }else{
-    $("#compliancetask").val('');
-    $("#complianceid").val('');
-    $("#compliancesid").val('');
     $(".ac-textbox").hide();
   }
+  onArrowKey(e, "ac-compliancetask", callback)
 }
 
 //client businessgroup autocomplete function
-function getClientBusinessGroupAutocomplete(textval, listval, callback){
+function getClientBusinessGroupAutocomplete(e, textval, listval, callback){
   $("#ac-businessgroup").show();
+  $("#businessgroup").val('');
+  $("#businessgroupid").val('');
+
   var bgroups = listval;
   var suggestions = [];
   $('#ac-businessgroup ul').empty();
@@ -614,15 +645,17 @@ function getClientBusinessGroupAutocomplete(textval, listval, callback){
     //$("#businessgroup").val('');
     //$("#businessgroupid").val('');
   }else{
-    $("#businessgroup").val('');
-    $("#businessgroupid").val('');
     $(".ac-textbox").hide();
   }
+  onArrowKey(e, "ac-businessgroup", callback)
 }
 
 //client legalentity autocomplete function
-function getClientLegalEntityAutocomplete(textval, listval, callback){
+function getClientLegalEntityAutocomplete(e, textval, listval, callback){
   $("#ac-legalentity").show();
+  $("#legalentity").val('');
+  $("#legalentityid").val('');
+
   var lentity = listval;
   var suggestions = [];
   $('#ac-legalentity ul').empty();
@@ -639,15 +672,17 @@ function getClientLegalEntityAutocomplete(textval, listval, callback){
     //$("#legalentity").val('');
     //$("#legalentityid").val('');
   }else{
-    $("#legalentity").val('');
-    $("#legalentityid").val('');
     $(".ac-textbox").hide();
   }
+  onArrowKey(e, "ac-legalentity", callback)
 }
 
 //client division autocomplete function
-function getClientDivisionAutocomplete(textval, listval, callback){
+function getClientDivisionAutocomplete(e, textval, listval, callback){
   $("#ac-division").show();
+  $("#division").val('');
+  $("#divisionid").val('');
+
   var division = listval;
   var suggestions = [];
   $('#ac-division ul').empty();
@@ -663,10 +698,9 @@ function getClientDivisionAutocomplete(textval, listval, callback){
     //$("#division").val('');
     //$("#divisionid").val('');
   }else{
-    $("#division").val('');
-    $("#divisionid").val('');
     $(".ac-textbox").hide();
   }
+  onArrowKey(e, "ac-division", callback)
 }
 
 //autocomplete function callback
@@ -678,11 +712,8 @@ function activate_text (element,callback) {
   callback(ac_result);
 }
 
-/*function activate_text_arrow (clsname,callback) {
+function activate_text_arrow (ac_id, ac_name, callback) {
   $(".ac-textbox").hide();
-  var cls = '.'+clsname+'.auto-selected';
-  var ac_id = $(cls).attr('id');
-  var ac_name = $('.country_auto.auto-selected').text().trim();
   var ac_result = [ac_id,ac_name];
   callback(ac_result);
-}*/
+}

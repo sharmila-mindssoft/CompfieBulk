@@ -239,9 +239,9 @@ function onCountrySuccess(val){
 }
 
 //load country list in autocomplete text box  
-$("#countryval").keyup(function(){
+$("#countryval").keyup(function(e){
   var textval = $(this).val();
-  getCountryAutocomplete(textval, countriesList, function(val){
+  getCountryAutocomplete(e, textval, countriesList, function(val){
     onCountrySuccess(val)
   })
 });
@@ -253,9 +253,9 @@ function onBusinessGroupSuccess(val){
 }
 
 //load businessgroup form list in autocomplete text box  
-$("#businessgroupsval").keyup(function(){
+$("#businessgroupsval").keyup(function(e){
   var textval = $(this).val();
-  getClientBusinessGroupAutocomplete(textval, businessgroupsList, function(val){
+  getClientBusinessGroupAutocomplete(e, textval, businessgroupsList, function(val){
     onBusinessGroupSuccess(val)
   })
 });
@@ -267,9 +267,9 @@ function onLegalEntitySuccess(val){
 }
 
 //load legalentity form list in autocomplete text box  
-$("#legalentityval").keyup(function(){
+$("#legalentityval").keyup(function(e){
   var textval = $(this).val();
-  getClientLegalEntityAutocomplete(textval, legalEntityList, function(val){
+  getClientLegalEntityAutocomplete(e, textval, legalEntityList, function(val){
     onLegalEntitySuccess(val)
   })
 });
@@ -281,9 +281,9 @@ function onDivisionSuccess(val){
 }
 
 //load division form list in autocomplete text box  
-$("#divisionval").keyup(function(){
+$("#divisionval").keyup(function(e){
   var textval = $(this).val();
-  getClientDivisionAutocomplete(textval, divisionsList, function(val){
+  getClientDivisionAutocomplete(e, textval, divisionsList, function(val){
     onDivisionSuccess(val)
   })
 });
@@ -295,11 +295,11 @@ function onUnitSuccess(val){
 }
 
 //load unit  form list in autocomplete text box  
-$("#unitval").keyup(function(){
+$("#unitval").keyup(function(e){
   var textval = $(this).val();
   //var cId = $("#country").val();
   //var dId = 0;
-  getUnitAutocomplete(textval, unitList, function(val){
+  getUnitAutocomplete(e, textval, unitList, function(val){
     onUnitSuccess(val)
   })
 });

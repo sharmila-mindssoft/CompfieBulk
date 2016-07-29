@@ -244,9 +244,9 @@ function onGroupSuccess(val){
 }
 
 //load form list in autocomplete text box
-$("#groupsval").keyup(function(){
+$("#groupsval").keyup(function(e){
   var textval = $(this).val();
-  getGroupAutocomplete(textval, groupList, function(val){
+  getGroupAutocomplete(e, textval, groupList, function(val){
     onGroupSuccess(val)
   })
 });

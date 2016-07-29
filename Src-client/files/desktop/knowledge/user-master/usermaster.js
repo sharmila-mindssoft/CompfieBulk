@@ -431,9 +431,9 @@ function onUserGroupSuccess(val){
 }
 
 //load usergroup list in autocomplete text box
-$("#usergroupval").keyup(function(){
+$("#usergroupval").keyup(function(e){
   var textval = $(this).val();
-  getUserGroupAutocomplete(textval, userGroupsList, function(val){
+  getUserGroupAutocomplete(e, textval, userGroupsList, function(val){
     onUserGroupSuccess(val)
   })
 });

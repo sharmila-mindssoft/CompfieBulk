@@ -44,9 +44,9 @@ function onCountrySuccess(val){
 }
 
 //load country list in autocomplete text box  
-$("#countryval").keyup(function(){
+$("#countryval").keyup(function(e){
   var textval = $(this).val();
-  getCountryAutocomplete(textval, countriesList, function(val){
+  getCountryAutocomplete(e, textval, countriesList, function(val){
     onCountrySuccess(val)
   })
 });
@@ -59,9 +59,9 @@ function onDomainSuccess(val){
   loadstatutoryLevelsList();
 }
 //load domain list in autocomplete textbox  
-$("#domainval").keyup(function(){
+$("#domainval").keyup(function(e){
   var textval = $(this).val();
-  getDomainAutocomplete(textval, domainsList, function(val){
+  getDomainAutocomplete(e, textval, domainsList, function(val){
     onDomainSuccess(val)
   })
 });

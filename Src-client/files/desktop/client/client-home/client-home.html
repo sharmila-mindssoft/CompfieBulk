@@ -257,7 +257,7 @@
                             <input type="hidden" id="a_unit" value="">
 
                             <input type="hidden" id="country" value="">
-                            <input type="text" class="input-box icon-autocomplete" id="countryval" value="" onkeyup="ac_country_load(this.value)">
+                            <input type="text" class="input-box icon-autocomplete" id="countryval" value="" onkeyup="ac_country_load(this.value, event)">
                             <div id="ac-country" class="ac-textbox default-display-none">
                               <ul style="width:85%;"></ul>
                             </div>
@@ -267,7 +267,7 @@
                         <div class="input-row">
                           <div class="field-label">Legal Entity:</div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" id="legalentityval" onkeyup="ac_le_load(this.value)">
+                            <input type="text" class="input-box icon-autocomplete" id="legalentityval" onkeyup="ac_le_load(this.value, event)">
                             <input type="hidden" id="legalentityid">
                             <div id="ac-legalentity" class="ac-textbox default-display-none" >
                             <ul style="width:85%;"></ul>
@@ -277,7 +277,7 @@
                         <div class="input-row">
                           <div class="field-label">Seating Unit:</div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" id="unitval" value="" onkeyup="ac_unit_load(this.value)">
+                            <input type="text" class="input-box icon-autocomplete" id="unitval" value="" onkeyup="ac_unit_load(this.value, event)">
                             <input type="hidden" id="unitid">
                             <div id="ac-unit" class="ac-textbox default-display-none">
                               <ul style="width:85%;"></ul>
@@ -290,7 +290,7 @@
                         <div class="input-row">
                           <div class="field-label">Business Group:</div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value="" onkeyup="ac_bg_load(this.value)">
+                            <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value="" onkeyup="ac_bg_load(this.value, event)">
                             <input type="hidden" id="businessgroupid">
                             <div id="ac-businessgroup" class="ac-textbox default-display-none">
                               <ul style="width:85%;"></ul>
@@ -302,7 +302,7 @@
                           <div class="field-label">Division:</div>
                           <div class="field-input">
 
-                            <input type="text" class="input-box icon-autocomplete" id="divisionval" value="" onkeyup="ac_division_load(this.value)">
+                            <input type="text" class="input-box icon-autocomplete" id="divisionval" value="" onkeyup="ac_division_load(this.value, event)">
                             <input type="hidden" id="divisionid">
                             <div id="ac-division" class="ac-textbox default-display-none">
                               <ul style="width:85%;"></ul>
@@ -314,7 +314,7 @@
                           <div class="field-label">User:</div>
                           <div class="field-input">
 
-                            <input type="text" class="input-box icon-autocomplete" id="userval" value="" onkeyup="ac_user_load(this.value)">
+                            <input type="text" class="input-box icon-autocomplete" id="userval" value="" onkeyup="ac_user_load(this.value, event)">
                             <input type="hidden" id="userid">
                             <div id="ac-user" class="ac-textbox default-display-none">
                               <ul style="width:85%;"></ul>

@@ -451,9 +451,9 @@ function onDomainSuccess(val){
   $("#domain").val(val[0]);
 }
 //load domain list in autocomplete textbox  
-$("#domainval").keyup(function(){
+$("#domainval").keyup(function(e){
   var textval = $(this).val();
-  getDomainAutocomplete(textval, domainsList, function(val){
+  getDomainAutocomplete(e, textval, domainsList, function(val){
     onDomainSuccess(val)
   })
 });
@@ -465,9 +465,9 @@ function onGroupSuccess(val){
 }
 
 //load group form list in autocomplete text box  
-$("#groupsval").keyup(function(){
+$("#groupsval").keyup(function(e){
   var textval = $(this).val();
-  getGroupAutocomplete(textval, groupList, function(val){
+  getGroupAutocomplete(e, textval, groupList, function(val){
     onGroupSuccess(val)
   })
 });
@@ -479,9 +479,9 @@ function onBusinessGroupSuccess(val){
 }
 
 //load businessgroup form list in autocomplete text box  
-$("#businessgroupsval").keyup(function(){
+$("#businessgroupsval").keyup(function(e){
   var textval = $(this).val();
-  getBusinessGroupAutocomplete(textval, businessgroupsList, function(val){
+  getBusinessGroupAutocomplete(e, textval, businessgroupsList, function(val){
     onBusinessGroupSuccess(val)
   })
 });
@@ -493,9 +493,9 @@ function onLegalEntitySuccess(val){
 }
 
 //load legalentity form list in autocomplete text box  
-$("#legalentityval").keyup(function(){
+$("#legalentityval").keyup(function(e){
   var textval = $(this).val();
-  getLegalEntityAutocomplete(textval, legalEntityList, function(val){
+  getLegalEntityAutocomplete(e, textval, legalEntityList, function(val){
     onLegalEntitySuccess(val)
   })
 });
@@ -507,9 +507,9 @@ function onDivisionSuccess(val){
 }
 
 //load division form list in autocomplete text box  
-$("#divisionval").keyup(function(){
+$("#divisionval").keyup(function(e){
   var textval = $(this).val();
-  getDivisionAutocomplete(textval, divisionsList, function(val){
+  getDivisionAutocomplete(e, textval, divisionsList, function(val){
     onDivisionSuccess(val)
   })
 });
@@ -521,10 +521,10 @@ function onUnitSuccess(val){
 }
 
 //load unit with conditionform list in autocomplete text box  
-$("#unitval").keyup(function(){
+$("#unitval").keyup(function(e){
   var textval = $(this).val();
   //getUnitConditionAutocomplete(textval, unitList, function(val){
-  getUnitAutocomplete(textval, unitList, function(val){
+  getUnitAutocomplete(e, textval, unitList, function(val){
     onUnitSuccess(val)
   })
 });
@@ -535,9 +535,9 @@ function onStatutorySuccess(val){
   $("#level1id").val(val[0]);
 }
 //load statutory list in autocomplete textbox  
-$("#level1val").keyup(function(){
+$("#level1val").keyup(function(e){
   var textval = $(this).val();
-  getStatutoryAutocomplete(textval, level1List[$("#countries").val()][$("#domain").val()], function(val){
+  getStatutoryAutocomplete(e, textval, level1List[$("#countries").val()][$("#domain").val()], function(val){
     onStatutorySuccess(val)
   })
 });

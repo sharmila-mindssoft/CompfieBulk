@@ -4129,8 +4129,8 @@ function onCountrySuccess(val){
 }
 
 //load country list in autocomplete text box
-function ac_country_load(textval){
-  getCountryAutocomplete(textval, COUNTRYLIST, function(val){
+function ac_country_load(textval, e){
+  getCountryAutocomplete(e, textval, COUNTRYLIST, function(val){
     onCountrySuccess(val)
   })
 }
@@ -4142,8 +4142,8 @@ function onLegalEntitySuccess(val){
 }
 
 //load legalentity form list in autocomplete text box
-function ac_le_load(textval){
-  getClientLegalEntityAutocomplete(textval, LEGALENTITYLIST, function(val){
+function ac_le_load(textval, e){
+  getClientLegalEntityAutocomplete(e, textval, LEGALENTITYLIST, function(val){
     onLegalEntitySuccess(val)
   })
 }
@@ -4155,10 +4155,10 @@ function onUnitSuccess(val){
 }
 
 //load unit  form list in autocomplete text box
-function ac_unit_load(textval){
+function ac_unit_load(textval, e){
   //var cId = $("#country").val();
   //var dId = 0;
-  getUnitAutocomplete(textval, UNITLIST, function(val){
+  getUnitAutocomplete(e, textval, UNITLIST, function(val){
     onUnitSuccess(val)
   })
 }
@@ -4170,8 +4170,8 @@ function onBusinessGroupSuccess(val){
 }
 
 //load businessgroup form list in autocomplete text box
-function ac_bg_load(textval){
-  getClientBusinessGroupAutocomplete(textval, BUSINESSGROUPSLIST, function(val){
+function ac_bg_load(textval, e){
+  getClientBusinessGroupAutocomplete(e, textval, BUSINESSGROUPSLIST, function(val){
     onBusinessGroupSuccess(val)
   })
 }
@@ -4183,8 +4183,8 @@ function onDivisionSuccess(val){
 }
 
 //load division form list in autocomplete text box
-function ac_division_load(textval){
-  getClientDivisionAutocomplete(textval, DIVISIONLIST, function(val){
+function ac_division_load(textval, e){
+  getClientDivisionAutocomplete(e, textval, DIVISIONLIST, function(val){
     onDivisionSuccess(val)
   })
 }
@@ -4196,8 +4196,8 @@ function onUserSuccess(val){
 }
 
 //load user list in autocomplete text box
-function ac_user_load(textval){
-    getUserAutocomplete(textval, USERLIST, function(val){
+function ac_user_load(textval, e){
+    getUserAutocomplete(e, textval, USERLIST, function(val){
         onUserSuccess(val);
     })
 }

@@ -71,9 +71,9 @@ function onCountrySuccess(val){
 }
 
 //load country list in autocomplete text box
-$("#countryval").keyup(function(){
+$("#countryval").keyup(function(e){
   var textval = $(this).val();
-  getCountryAutocomplete(textval, countriesList, function(val){
+  getCountryAutocomplete(e, textval, countriesList, function(val){
     onCountrySuccess(val)
   })
 });
@@ -85,9 +85,9 @@ function onDomainSuccess(val){
   $("#domainval").focus();
 }
 //load domain list in autocomplete textbox
-$("#domainval").keyup(function(){
+$("#domainval").keyup(function(e){
   var textval = $(this).val();
-  getDomainAutocomplete(textval, domainsList, function(val){
+  getDomainAutocomplete(e, textval, domainsList, function(val){
     onDomainSuccess(val)
   })
 });
@@ -99,9 +99,9 @@ function onIndustrySuccess(val){
   $("#industryval").focus();
 }
 //load industry list in autocomplete textbox
-$("#industryval").keyup(function(){
+$("#industryval").keyup(function(e){
   var textval = $(this).val();
-  getIndustryAutocomplete(textval, industriesList, function(val){
+  getIndustryAutocomplete(e, textval, industriesList, function(val){
     onIndustrySuccess(val)
   })
 });
@@ -113,9 +113,9 @@ function onStatutoryNatureSuccess(val){
   $("#statutorynatureval").focus();
 }
 //load statutorynature list in autocomplete textbox
-$("#statutorynatureval").keyup(function(){
+$("#statutorynatureval").keyup(function(e){
   var textval = $(this).val();
-  getStatutoryNatureAutocomplete(textval, statutoryNaturesList, function(val){
+  getStatutoryNatureAutocomplete(e, textval, statutoryNaturesList, function(val){
     onStatutoryNatureSuccess(val)
   })
 });
