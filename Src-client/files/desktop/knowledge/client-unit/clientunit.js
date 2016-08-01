@@ -1715,7 +1715,7 @@ function hideunitlocation(classname) {
     $('.'+lastClass).css("display", "none");
 }
 
-function onArrowKey_UnitLocation(e, ac_item, ccount, mappingname){
+function onArrowKey_UnitLocation(e, ac_item, ccount){
   if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13) {
     chosen = "";
   }
@@ -1740,11 +1740,20 @@ function onArrowKey_UnitLocation(e, ac_item, ccount, mappingname){
       return false;
   }
   if (e.keyCode == 13) {
+    var mappingname = '';
     var ac_id = $('.' + ac_item + ' li:eq('+chosen+')').attr('id');
     var ac_name = $('.' + ac_item + ' li:eq('+chosen+')').text();
     $('.unitlocation'+ccount).val(ac_name);
     $('.unitlocation-ids'+ccount).val(ac_id);
-    $('.full-location-list'+ccount).html('<br>'+mappingname.replace(/##/gi,'"'));
+    for(var geography in geographyList){
+        var geolist = geographyList[geography];
+        for(var glist in geolist){
+            if(geolist[glist]['geography_id'] == parseInt(ac_id)){
+                mappingname = geolist[glist]["mapping"];
+            }
+        }
+    }
+    $('.full-location-list'+ccount).html('<br>'+mappingname);
     $('.auto-complete-unit-location').css("display", "none");
     return false;
   }
@@ -1765,7 +1774,7 @@ function loadlocation(textval, classval, e){
     var lastClass = classval.split(' ').pop();
     var ccount = lastClass.split('-');
     var countval = '-'+ccount[1]+'-'+ccount[2];
-    
+
     var glevelval = $('.glevel'+countval).val();
     $('.auto-complete-unit-location'+countval).css("display", "block");
     var suggestions = [];
@@ -1787,7 +1796,7 @@ function loadlocation(textval, classval, e){
         $('.unitlocationlist-text'+countval).append(str);
         //$('.unitlocation-ids'+countval).val('');
 
-        onArrowKey_UnitLocation(e, 'auto-complete-unit-location'+countval, countval, suggestions[i][2].replace(/"/gi,'##'))
+        onArrowKey_UnitLocation(e, 'unitlocationlist-text'+countval, countval)
     }
 }
 
