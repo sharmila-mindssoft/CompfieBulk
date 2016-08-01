@@ -87,7 +87,7 @@ function loadCountwiseResult(filterList){
     if(actname != lastActName){
       var tableRow=$('#act-templates .table-act-list .table-row-act-list');
       var clone=tableRow.clone();
-      $('.actname', clone).html(actname +'<span><img src="/images/chevron_black_down.png"></span>');
+      $('.actname', clone).html(actname +'<span><img src="/knowledge/images/chevron_black_down.png"></span>');
       $('.tbody-compliance').append(clone);
       $('.tbody-compliance').append('<tbody class="accordion-content accordion-content'+count+' default"></tbody>');
       /*if(count==1){

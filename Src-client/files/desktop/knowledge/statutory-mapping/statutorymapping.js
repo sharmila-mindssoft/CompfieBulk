@@ -995,22 +995,31 @@ $("#temp_addcompliance").click(function() {
           repeats_every = parseInt($('#repeats_every').val());
           repeats_every_length = $('#repeats_every').val().trim().length;
 
+          var max_triggerbefore = 0;
+          if(repeats_type == 1){
+            max_triggerbefore = repeats_every;
+          }else if(repeats_type == 2){
+            max_triggerbefore = repeats_every * 30;
+          }else{
+            max_triggerbefore = repeats_every * 365;
+          }
+
           if(repeats_every == 0){
             displayMessage(message.invalid_repeatsevery);
             return false;
           }
-          else if(repeats_type == '1' && repeats_every_length > 3){
+          else if(repeats_type == 1 && repeats_every_length > 3){
             displayMessage(message.days_maximum);
             return false;
-          }else if(repeats_type == '2' && repeats_every_length > 2){
+          }else if(repeats_type == 2 && repeats_every_length > 2){
             displayMessage(message.months_maximum);
             return false;
-          }else if(repeats_type == '3'  && repeats_every_length > 1){
+          }else if(repeats_type == 3  && repeats_every_length > 1){
             displayMessage(message.years_maximum);
             return false;
           }
           else{
-            if(repeats_type == '2' && $('.multipleinput').prop("checked") == true){
+            if(repeats_type == 2 && $('.multipleinput').prop("checked") == true){
               var s_months = [];
               var rep_every = parseInt($('#repeats_every').val());
               var maxCount = 0;
@@ -1047,6 +1056,12 @@ $("#temp_addcompliance").click(function() {
                     displayMessage(message.triggerbefore_iszero);
                     return false;
                   }
+
+                  if(trigger_before_days > max_triggerbefore){
+                    displayMessage(message.triggerdays_exceeding_repeatsevery)
+                    return false;
+                  }
+
                   if($.inArray(statutory_month, s_months) >= 0){
                     displayMessage(message.invalid_statutory_month);
                     return false;
@@ -1070,6 +1085,10 @@ $("#temp_addcompliance").click(function() {
                 }
                 if(trigger_before_days == 0){
                   displayMessage(message.triggerbefore_iszero);
+                  return false;
+                }
+                if(trigger_before_days > max_triggerbefore){
+                  displayMessage(message.triggerdays_exceeding_repeatsevery)
                   return false;
                 }
               statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days, repeatBy);
