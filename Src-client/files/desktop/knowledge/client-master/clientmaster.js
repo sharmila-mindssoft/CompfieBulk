@@ -245,7 +245,6 @@ $("#btn-clientgroup-submit").click(function(){
         if(contractToVal != ''){
           convertDate = convert_date(contractToVal);
         }
-
         if(clientGroupNameVal == ''){
             displayMessage(message.group_required);
         }

@@ -853,9 +853,9 @@ def check_duplicate_statutory(db, parent_ids, statutory_id, domain_id=None) :
         FROM tbl_statutories T1 \
         INNER JOIN tbl_statutory_levels T2\
         ON T1.level_id = T2.level_id \
-        WHERE T1.parent_ids= %s " % (parent_ids)
-    where_qry = None
-    param = []
+        WHERE T1.parent_ids= %s"
+    where_qry = ""
+    param = [parent_ids]
     if statutory_id is not None :
         where_qry += " AND T1.statutory_id != %s"
         param.append(statutory_id)
@@ -864,10 +864,7 @@ def check_duplicate_statutory(db, parent_ids, statutory_id, domain_id=None) :
         where_qry += " AND domain_id = %s"
         param.append(domain_id)
 
-    if where_qry is None :
-        rows = db.select_all(query)
-    else :
-        rows = db.select_all(query + where_qry, param)
+    rows = db.select_all(query + where_qry, param)
 
     columns = ["statutory_id", "statutory_name", "level_id", "domain_id"]
     result = []
@@ -909,7 +906,7 @@ def frame_geography_parent_mapping(rows):
         country_id = int(row["country_id"])
         geography_id = int(row["geography_id"])
         is_active = bool(row["is_active"])
-        mappings = row["parent_names"]
+        mappings = row["parent_names"]+'>>'+row["geography_name"]
         GEOGRAPHY_PARENTS[geography_id] = [
             mappings, is_active, country_id
         ]

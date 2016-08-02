@@ -193,7 +193,11 @@ function loadCountwiseResult(filterList){
     $('.tbl_description', clone1).text(filterList[entity]["description"]);
     $('.tbl_penalconsequences', clone1).text(filterList[entity]["penal_consequences"]);
     $('.tbl_occurance', clone1).text(statutorydate);
-    $('.tbl_applicablelocation', clone1).text(filterList[entity]["geography_mappings"]);
+    var applicableLocation = '';
+    for(var i=0; i<filterList[entity]["geography_mappings"].length; i++){
+      applicableLocation = applicableLocation + filterList[entity]["geography_mappings"][i] + '<br>';
+    }
+    $('.tbl_applicablelocation', clone1).html(applicableLocation);
     $('.accordion-content'+(count-1)).append(clone1);
 
     compliance_count = compliance_count + 1;
