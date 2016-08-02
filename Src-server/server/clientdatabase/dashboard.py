@@ -106,7 +106,9 @@ def get_compliance_status(
     # domain_ids = request.domain_ids
     filter_ids = request.filter_ids
     year_range_qry = ""
-
+    where_qry = ""
+    where_qry += status_type_qry
+    where_qry_val = []
     if chart_type is None :
         from_date = request.from_date
         if from_date == "" :
@@ -121,15 +123,16 @@ def get_compliance_status(
             if i == 0 :
                 year_range_qry = y
             else :
-                year_range_qry += "OR %s" % (y)
+                year_range_qry += " OR %s " % (y)
         if len(year_condition) > 0 :
-            year_range_qry = "AND (%s)" % year_range_qry
+            year_range_qry = " AND (%s) " % year_range_qry
         else :
             year_range_qry = ""
-
     else :
         from_date = None
         to_date = None
+
+    where_qry += year_range_qry
 
     if filter_type == "Group" :
         group_by_name = "T3.country_id"
@@ -137,53 +140,55 @@ def get_compliance_status(
         filter_ids = country_ids
 
     elif filter_type == "BusinessGroup" :
-        # filters = get_user_business_group_ids(db, user_id)
-        # filter_ids = filters.split(',')
         if len(filter_ids) == 1 :
             filter_ids.append(0)
         group_by_name = "T3.business_group_id"
-        filter_type_ids = "AND T3.business_group_id in %s" % str(tuple(filter_ids))
-
+        filter_type_ids = " AND T3.business_group_id in %s "
+        where_qry_val.append(tuple(filter_ids))
     elif filter_type == "LegalEntity" :
-        # filters = get_user_legal_entity_ids(db, user_id)
-        # filter_ids = filters.split(',')
         if len(filter_ids) == 1 :
             filter_ids.append(0)
         group_by_name = "T3.legal_entity_id"
-        filter_type_ids = "AND T3.legal_entity_id in %s" % str(tuple(filter_ids))
+        filter_type_ids = " AND T3.legal_entity_id in %s "
+        where_qry_val.append(tuple(filter_ids))
 
     elif filter_type == "Division" :
-        # filters = get_user_division_ids(db, user_id)
-        # filter_ids = filters.split(',')
         if len(filter_ids) == 1 :
             filter_ids.append(0)
         group_by_name = "T3.division_id"
-        filter_type_ids = "AND T3.division_id in %s" % str(tuple(filter_ids))
+        filter_type_ids = " AND T3.division_id in %s "
+        where_qry_val.append(tuple(filter_ids))
 
     elif filter_type == "Unit":
-        # filters = get_user_unit_ids(db, user_id)
-        # filter_ids = filters.split(',')
         if len(filter_ids) == 1 :
             filter_ids.append(0)
         group_by_name = "T3.unit_id"
-        filter_type_ids = "AND T3.unit_id in %s" % str(tuple(filter_ids))
+        filter_type_ids = " AND T3.unit_id in %s "
+        where_qry_val.append(tuple(filter_ids))
 
     elif filter_type == "Consolidated":
         group_by_name = "T3.country_id"
         filter_type_ids = ""
         filter_ids = country_ids
 
+    where_qry += filter_type_ids
+
     if user_id == 0 :
-        user_qry = '1'
+        user_qry = ""
     else :
-        user_qry = "(T1.completed_by LIKE '%s' OR T1.concurred_by LIKE '%s' \
-        OR T1.approved_by LIKE '%s')" % (user_id, user_id, user_id)
+        user_qry = " (T1.completed_by LIKE %s OR T1.concurred_by LIKE %s \
+        OR T1.approved_by LIKE %s) "
+        where_qry += user_qry
+        where_qry_val.extend([user_id, user_id, user_id])
 
     date_qry = ""
     if from_date is not None and to_date is not None :
         from_date = string_to_datetime(from_date)
         to_date = string_to_datetime(to_date)
-        date_qry = "AND T1.due_date >= '%s' AND T1.due_date <= '%s' " % (from_date, to_date)
+        date_qry = " AND T1.due_date >= %s AND T1.due_date <= %s "
+        where_qry += date_qry
+        where_qry_val.extend([from_date, to_date])
+
     query = "SELECT \
         %s, \
         T3.country_id, \
@@ -195,30 +200,19 @@ def get_compliance_status(
         INNER JOIN tbl_compliances T2 ON T1.compliance_id = T2.compliance_id  \
         INNER JOIN tbl_units T3  \
         ON T1.unit_id = T3.unit_id  \
-        WHERE %s \
-        %s \
-        %s \
-        %s \
-        AND T3.country_id IN %s \
-        AND T2.domain_id IN %s  \
-        %s \
-        GROUP BY month, year, T2.domain_id, %s\
-        ORDER BY month desc, year desc, %s"
+        WHERE " % (group_by_name)
 
+    order = "GROUP BY month, year, T2.domain_id, %s \
+        ORDER BY month desc, year desc, %s " % (group_by_name, group_by_name)
+
+    where_qry1 = " T3.country_id IN %s \
+        AND T2.domain_id IN %s  " + where_qry
+
+    param = [tuple(country_ids), tuple(domain_ids)]
+    param.extend(where_qry_val)
     # # print query
-    rows = db.select_all(query, [
-        group_by_name,
-        user_qry,
-        year_range_qry,
-        status_type_qry,
-        date_qry,
-        str(tuple(country_ids)),
-        str(tuple(domain_ids)),
-        filter_type_ids,
-        group_by_name,
-        group_by_name
-    ])
-    print rows
+    q = query + where_qry1 + order
+    rows = db.select_all(q, param)
     columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
     return filter_ids, convert_to_dict(rows, columns)
 
@@ -659,70 +653,96 @@ def get_trend_chart_drill_down(
     return drill_down_data
 
 def get_compliances_details_for_status_chart(db, request, session_user, client_id, from_count, to_count):
-    domain_ids = request.domain_ids
-    from_date = request.from_date
-    to_date = request.to_date
     year = request.year
-    filter_type = request.filter_type
-    filter_id = request.filter_id
     compliance_status = request.compliance_status
-
-    status_qry = ""
-    if compliance_status == "Inprogress" :
-        status_qry = " AND ((IFNULL(T4.duration_type_id,0) = 2 AND T1.due_date >= now()) or (IFNULL(T4.duration_type_id, 0) != 2 AND T1.due_date >= CURDATE())) \
-                AND IFNULL(T1.approve_status, 0) != 1"
-
-    elif compliance_status == "Complied" :
-        status_qry = " AND T1.due_date >= T1.completion_date \
-            AND T1.approve_status = 1"
-
-    elif compliance_status == "Delayed Compliance" :
-        status_qry = " AND T1.due_date < T1.completion_date \
-            AND T1.approve_status = 1"
-
-    elif compliance_status == "Not Complied" :
-        status_qry = " AND ((IFNULL(T4.duration_type_id,0) =2 AND T1.due_date < now()) or (IFNULL(T4.duration_type_id,0) != 2 AND T1.due_date < CURDATE())) \
-            AND IFNULL(T1.approve_status, 0) != 1 "
-
-    if filter_type == "Group" :
-        filter_type_qry = "AND T5.country_id = %s" % (filter_id)
-
-    elif filter_type == "BusinessGroup" :
-        filter_type_qry = "AND T5.business_group_id = %s" % (filter_id)
-
-    elif filter_type == "LegalEntity" :
-        filter_type_qry = "AND T5.legal_entity_id = %s" % (filter_id)
-
-    elif filter_type == "Division" :
-        filter_type_qry = "AND T5.division_id = %s" % (filter_id)
-
-    elif filter_type == "Unit":
-        filter_type_qry = "AND T5.unit_id = %s" % (filter_id)
-
-    date_qry = ""
-    if from_date is not None and to_date is not None :
-        from_date = string_to_datetime(from_date)
-        to_date = string_to_datetime(to_date)
-        date_qry = " AND T1.due_date >= '%s' AND T1.due_date <= '%s' " % (from_date, to_date)
+    chart_type = "compliance_status"
 
     result = compliance_details_query(
-        db, domain_ids, date_qry, status_qry, filter_type_qry,
-        session_user, from_count, to_count
+        db, request, chart_type, compliance_status, from_count, to_count, session_user
     )
     year_info = get_client_domain_configuration(db, int(year))[0]
     return return_compliance_details_drill_down(year_info, compliance_status, request.year, result, client_id)
 
-def compliance_details_query(
-    db, domain_ids, date_qry, status_qry, filter_type_qry, user_id,
-    from_count, to_count
-) :
+def frame_compliance_details_query(db, chart_type, compliance_status, request, from_count, to_count, user_id):
+    domain_ids = request.domain_ids
+    filter_type = request.filter_type
+    if chart_type == "compliance_status":
+        from_date = request.from_date
+        to_date = request.to_date
+        filter_id = request.filter_id
+    else :
+        filter_id = request.filter_ids
+        from_date = None
+        to_date = None
+
     if len(domain_ids) == 1 :
         domain_ids.append(0)
-    if user_id == 0 :
-        user_qry = '1'
+
+    where_qry = ""
+    where_qry_val = []
+    if compliance_status == "Inprogress" :
+        where_qry = " AND ((IFNULL(T4.duration_type_id,0) = 2 AND T1.due_date >= now()) or (IFNULL(T4.duration_type_id, 0) != 2 AND T1.due_date >= CURDATE())) \
+                AND IFNULL(T1.approve_status, 0) != 1"
+
+    elif compliance_status == "Complied" :
+        where_qry = " AND T1.due_date >= T1.completion_date \
+            AND T1.approve_status = 1"
+
+    elif compliance_status == "Delayed Compliance" :
+        where_qry = " AND T1.due_date < T1.completion_date \
+            AND T1.approve_status = 1"
+
+    elif compliance_status == "Not Complied" :
+        where_qry = " AND ((IFNULL(T4.duration_type_id,0) =2 AND T1.due_date < now()) or (IFNULL(T4.duration_type_id,0) != 2 AND T1.due_date < CURDATE())) \
+            AND IFNULL(T1.approve_status, 0) != 1 "
+
+    if filter_type == "Group" :
+        where_qry += " AND T5.country_id "
+
+    elif filter_type == "BusinessGroup" :
+        where_qry += " AND T5.business_group_id "
+
+    elif filter_type == "LegalEntity" :
+        where_qry += " AND T5.legal_entity_id "
+
+    elif filter_type == "Division" :
+        where_qry += " AND T5.division_id "
+
+    elif filter_type == "Unit":
+        where_qry += " AND T5.unit_id "
+
+    if chart_type != "compliance_status" :
+        if len(filter_id) == 1:
+            filter_id.append(0)
+        where_qry += " IN %s "
+        where_qry_val.append(tuple(filter_id))
     else :
-        user_qry = "(T1.completed_by LIKE '%s' OR T1.concurred_by LIKE '%s' \
-        OR T1.approved_by LIKE '%s')" % (user_id, user_id, user_id)
+        where_qry += " = %s "
+        where_qry_val.append(filter_id)
+
+    if chart_type == "not_complied":
+        not_complied_type = request.not_complied_type
+
+        if not_complied_type == "Below 30":
+            where_qry += " AND abs(datediff(date(now()), date(T1.due_date))) <= 30 "
+        elif not_complied_type == "Below 60":
+            where_qry += " AND abs(datediff(date(now()), date(T1.due_date))) BETWEEN 30 and 60 "
+        elif not_complied_type == "Below 90":
+            if ageing > 60 and ageing <= 90 :
+                where_qry += " AND abs(datediff(date(now()), date(T1.due_date))) BETWEEN 60 and 90 "
+        else :
+            where_qry += " AND abs(datediff(date(now()), date(T1.due_date))) > 90 "
+
+    if from_date is not None and to_date is not None :
+        from_date = string_to_datetime(from_date)
+        to_date = string_to_datetime(to_date)
+        where_qry += " AND T1.due_date >= %s AND T1.due_date <= %s "
+        where_qry_val.extend([from_date, to_date])
+
+    if user_id > 0 :
+        where_qry += "(T1.completed_by LIKE %s OR T1.concurred_by LIKE %s \
+        OR T1.approved_by LIKE %s)"
+        where_qry_val.extend([user_id, user_id, user_id])
 
     query = "SELECT \
         T1.compliance_history_id, T1.unit_id,\
@@ -746,23 +766,25 @@ def compliance_details_query(
         FROM tbl_compliance_history T1  \
         INNER JOIN tbl_compliances T4  ON T1.compliance_id = T4.compliance_id  \
         INNER JOIN tbl_units T5 ON T1.unit_id = T5.unit_id \
-        WHERE %s AND \
-        T4.domain_id IN %s  \
-        %s \
-        %s \
-        %s \
-        ORDER BY  T1.unit_id,  \
+        WHERE \
+        T4.domain_id IN %s "
+
+    order = " ORDER BY  T1.unit_id,  \
         SUBSTRING_INDEX(SUBSTRING_INDEX(T4.statutory_mapping, '>>', 1), '>>', -1), \
         T1.due_date \
         limit %s, %s "
-    rows = db.select_all(query, [
-        user_qry,
-        str(tuple(domain_ids)),
-        date_qry,
-        status_qry,
-        filter_type_qry,
-        from_count , to_count
-    ])
+    where_qry_val.extend([from_count, to_count])
+    q = query + where_qry + order
+    param = [tuple(domain_ids)]
+    param.extend(where_qry_val)
+    rows = db.select_all(q, param)
+    return rows
+
+def compliance_details_query(
+    db, data, chart_type, compliance_status, from_count, to_count, user_id
+) :
+    rows = frame_compliance_details_query(db, chart_type, compliance_status, data, from_count, to_count, user_id)
+
     columns = [
         "compliance_history_id", "unit_id",
         "compliance_id", "start_date", "due_date",
@@ -959,10 +981,10 @@ def get_escalation_chart(db, request, session_user, client_id):
     filter_type = request.filter_type
 
     delayed_qry = " AND T1.due_date < T1.completion_date \
-            AND T1.approve_status = 1"
+            AND T1.approve_status = 1 "
 
     not_complied_qry = " AND ((IFNULL(T2.duration_type_id, 0) =2 AND T1.due_date < now()) or (IFNULL(T2.duration_type_id, 0) != 2 and T1.due_date < CURDATE())) \
-            AND IFNULL(T1.approve_status,0) <> 1"
+            AND IFNULL(T1.approve_status,0) <> 1 "
 
     chart_type = "Escalation"
     filter_ids, delayed = get_compliance_status(
@@ -1004,9 +1026,6 @@ def get_escalation_chart(db, request, session_user, client_id):
                         delayed,
                         not_complied
                     )
-                    # count_det["year"] = year
-                    # count_det["delayed_count"] = delayed
-                    # count_det["not_complied_count"] = not_complied
 
                 else :
                     count_det.delayed_compliance_count += int(delayed)
@@ -1030,9 +1049,6 @@ def get_user_business_group_ids(db, user_id):
     table = tblUnits
     result = None
     condition = 1
-    # if user_id > 0 :
-    #     table = tblUserUnits
-    #     condition = " user_id = %s " % user_id
     rows = db.get_data(
         table, columns, condition
     )
@@ -1045,9 +1061,6 @@ def get_user_legal_entity_ids(db, user_id):
     table = tblUnits
     result = None
     condition = 1
-    # if user_id > 0 :
-    #     table = tblUserUnits
-    #     condition = " user_id = %s " % user_id
     rows = db.get_data(
         table, columns, condition
     )
@@ -1060,9 +1073,6 @@ def get_user_division_ids(db, user_id):
     table = tblUnits
     result = None
     condition = 1
-    # if user_id > 0 :
-    #     table = tblUserUnits
-    #     condition = " user_id = %s " % user_id
     rows = db.get_data(
         table, columns, condition
     )
@@ -1168,57 +1178,27 @@ def calculate_year_wise_count(
 def get_escalation_drill_down_data(
     db, request, session_user, client_id, from_count, to_count
 ):
-    domain_ids = request.domain_ids
-    filter_type = request.filter_type
-    filter_ids = request.filter_ids
     year = request.year
-
-    delayed_status_qry = " AND T1.due_date < T1.completion_date \
-        AND T1.approve_status = 1"
-
-    not_complied_status_qry = " AND T1.due_date < CURDATE() \
-        AND T1.approve_status is NULL "
-
-    if len(filter_ids) == 1:
-        filter_ids.append(0)
-
-    if filter_type == "Group" :
-        filter_type_qry = "AND T5.country_id IN %s" % (str(tuple(filter_ids)))
-
-    elif filter_type == "BusinessGroup" :
-        filter_type_qry = "AND T5.business_group_id IN %s" % (str(tuple(filter_ids)))
-
-    elif filter_type == "LegalEntity" :
-        filter_type_qry = "AND T5.legal_entity_id IN %s" % (str(tuple(filter_ids)))
-
-    elif filter_type == "Division" :
-        filter_type_qry = "AND T5.division_id IN %s" % (str(tuple(filter_ids)))
-
-    elif filter_type == "Unit":
-        filter_type_qry = "AND T5.unit_id IN %s" % (str(tuple(filter_ids)))
-
-    date_qry = ""
-
     year_info = get_client_domain_configuration(db)[0]
 
+    chart_type = "excalation"
+    compliance_status = "Delayed Compliance"
     delayed_details = compliance_details_query(
-        db, domain_ids, date_qry, delayed_status_qry,
-        filter_type_qry, session_user,
-        from_count, to_count
+        db, request, chart_type, compliance_status, from_count, to_count, session_user
     )
+
     delayed_details_list = return_compliance_details_drill_down(
-        year_info, "Delayed Compliance", year,
+        year_info, compliance_status, year,
         delayed_details, client_id
     )
 
+    compliance_status = "Not Complied"
     not_complied_details = compliance_details_query(
-        db, domain_ids, date_qry, not_complied_status_qry,
-        filter_type_qry, session_user,
-        from_count, to_count
+        db, request, chart_type, compliance_status, from_count, to_count, session_user
     )
 
     not_complied_details_list = return_compliance_details_drill_down(
-        year_info, "Not Complied", year,
+        year_info, compliance_status, year,
         not_complied_details, client_id
     )
 
@@ -1241,21 +1221,25 @@ def get_not_complied_chart(db, request, session_user, client_id):
         _filter_ids.append(0)
 
     filter_type_ids = ""
-
+    where_qry_val = []
     if filter_type == "Group" :
         pass
 
     elif filter_type == "BusinessGroup" :
-        filter_type_ids = "AND T4.business_group_id IN %s" % str(tuple(_filter_ids))
+        filter_type_ids = "AND T4.business_group_id IN %s"
+        where_qry_val.append(tuple(_filter_ids))
 
     elif filter_type == "LegalEntity" :
-        filter_type_ids = "AND T4.legal_entity_id IN %s" % str(tuple(_filter_ids))
+        filter_type_ids = "AND T4.legal_entity_id IN %s"
+        where_qry_val.append(tuple(_filter_ids))
 
     elif filter_type == "Division" :
-        filter_type_ids = "AND T4.division_id IN %s" % str(tuple(_filter_ids))
+        filter_type_ids = "AND T4.division_id IN %s"
+        where_qry_val.append(tuple(_filter_ids))
 
     elif filter_type == "Unit":
-        filter_type_ids = "AND T4.unit_id IN %s" % str(tuple(_filter_ids))
+        filter_type_ids = "AND T4.unit_id IN %s"
+        where_qry_val.append(tuple(_filter_ids))
 
     query = "SELECT T1.compliance_history_id, T1.unit_id, \
         T1.compliance_id, T1.start_date, T1.due_date, \
@@ -1273,13 +1257,11 @@ def get_not_complied_chart(db, request, session_user, client_id):
         AND T1.due_date < CURDATE() \
         AND T1.approve_status is NULL \
         OR T1.approve_status != 1 \
-        %s \
-        ORDER BY T1.due_date "
-    rows = db.select_all(query, [
-        str(tuple(country_ids)),
-        str(tuple(domain_ids)),
-        filter_type_ids
-    ])
+        " + filter_type_ids
+    order = "ORDER BY T1.due_date "
+    param = [tuple(country_ids), tuple(domain_ids)]
+    param.extend(where_qry_val)
+    rows = db.select_all(query + order, param)
     columns = [
         "compliance_history_id", "unit_id", "compliance_id",
         "start_date", "due_date", "business_group_id",
@@ -1333,60 +1315,13 @@ def get_not_complied_chart(db, request, session_user, client_id):
     )
 
 def get_not_complied_drill_down(db, request, session_user, client_id, from_count, to_count):
-    domain_ids = request.domain_ids
-    if len(domain_ids) == 1:
-        domain_ids.append(0)
-    filter_type = request.filter_type
-    filter_ids = request.filter_ids
-    if len(filter_ids) == 1 :
-        filter_ids.append(0)
-    not_complied_type = request.not_complied_type
-
-    not_complied_status_qry = " AND T1.due_date < CURDATE() \
-        AND T1.approve_status is NULL  OR T1.approve_status != 1"
-
-    filter_type_qry = ""
-    if filter_type == "Group" :
-        filter_type_qry = "AND T5.country_id IN %s" % (str(tuple(filter_ids)))
-
-    elif filter_type == "BusinessGroup" :
-        filter_type_qry = "AND T5.business_group_id IN %s" % (str(tuple(filter_ids)))
-
-    elif filter_type == "LegalEntity" :
-        filter_type_qry = "AND T5.legal_entity_id IN %s" % (str(tuple(filter_ids)))
-
-    elif filter_type == "Division" :
-        filter_type_qry = "AND T5.division_id IN %s" % (str(tuple(filter_ids)))
-
-    elif filter_type == "Unit":
-        filter_type_qry = "AND T5.unit_id IN %s" % (str(tuple(filter_ids)))
-
-    date_qry = ""
-
-    not_complied_details = compliance_details_query(
-        db, domain_ids, date_qry, not_complied_status_qry,
-        filter_type_qry, session_user,
-        from_count, to_count
+    chart_type = "not_complied"
+    compliance_status = "Not Complied"
+    not_complied_details_filtered = compliance_details_query(
+        db, request, chart_type, compliance_status,
+        from_count, to_count, session_user
     )
     current_date = datetime.datetime.today()
-    not_complied_details_filtered = []
-
-    for c in not_complied_details :
-        due_date = c["due_date"]
-        ageing = abs((current_date - due_date).days)
-
-        if not_complied_type == "Below 30":
-            if ageing <= 30 :
-                not_complied_details_filtered.append(c)
-        elif not_complied_type == "Below 60":
-            if ageing > 30 and ageing <= 60 :
-                not_complied_details_filtered.append(c)
-        elif not_complied_type == "Below 90":
-            if ageing > 60 and ageing <= 90 :
-                not_complied_details_filtered.append(c)
-        else :
-            if ageing > 90 :
-                not_complied_details_filtered.append(c)
     unit_wise_data = {}
     for r in not_complied_details_filtered :
 
@@ -1467,7 +1402,7 @@ def get_compliance_applicability_chart(
         ON T2.unit_id = T3.unit_id \
         WHERE T2.country_id IN %s \
         AND T2.domain_id IN %s \
-        %s "
+    "
 
     country_ids = request.country_ids
     if len(country_ids) == 1 :
@@ -1479,6 +1414,10 @@ def get_compliance_applicability_chart(
     filter_id = request.filter_ids
     if len(filter_id) == 1:
         filter_id.append(0)
+
+    param = [
+        tuple(country_ids), tuple(domain_ids),
+    ]
     filter_type_qry = ""
     if filter_type == "Group" :
         # filter_type_qry = "AND T3.country_id
@@ -1486,24 +1425,24 @@ def get_compliance_applicability_chart(
         pass
 
     elif filter_type == "BusinessGroup" :
-        filter_type_qry = "AND T3.business_group_id IN %s" % str(tuple(filter_id))
+        filter_type_qry = "AND T3.business_group_id IN %s"
+        param.append(tuple(filter_id))
 
     elif filter_type == "LegalEntity" :
-        filter_type_qry = "AND T3.legal_entity_id IN %s" % str(tuple(filter_id))
+        filter_type_qry = "AND T3.legal_entity_id IN %s"
+        param.append(tuple(filter_id))
 
     elif filter_type == "Division" :
-        filter_type_qry = "AND T3.division_id IN %s" % str(tuple(filter_id))
+        filter_type_qry = "AND T3.division_id IN %s"
+        param.append(tuple(filter_id))
 
     elif filter_type == "Unit":
-        filter_type_qry = "AND T3.unit_id IN %s" % str(tuple(filter_id))
+        filter_type_qry = "AND T3.unit_id IN %s"
+        param.append(tuple(filter_id))
 
-    query1 = query
+    query1 = query + filter_type_qry
 
-    rows = db.select_all(query1, [
-        str(tuple(country_ids)),
-        str(tuple(domain_ids)),
-        filter_type_qry
-    ])
+    rows = db.select_all(query1, param)
 
     columns = [
         "compliance_id", "statutory_applicable",
@@ -1550,16 +1489,17 @@ def get_compliance_applicability_drill_down(
         INNER JOIN tbl_compliances T4\
         ON T4.compliance_id = T1.compliance_id\
         WHERE T2.country_id IN %s \
-        AND T2.domain_id IN %s \
-        %s %s \
-        limit %s, %s "
-
+        AND T2.domain_id IN %s "
+    limit = " limit %s, %s "
     country_ids = request.country_ids
     if len(country_ids) == 1:
         country_ids.append(0)
     domain_ids = request.domain_ids
     if len(domain_ids) == 1:
         domain_ids.append(0)
+    param = [
+        tuple(country_ids), tuple(domain_ids),
+    ]
     filter_type = request.filter_type
     filter_id = request.filter_ids
     if len(filter_id) == 1 :
@@ -1569,38 +1509,35 @@ def get_compliance_applicability_drill_down(
     if filter_type == "Group" :
         # filter_type_qry = "AND T3.country_id
         # IN %s" % (str(tuple(filter_ids)))
-        filter_type_qry = ""
+        where_type_qry = ""
 
     elif filter_type == "BusinessGroup" :
-        filter_type_qry = "AND T3.business_group_id IN %s" % str(tuple(filter_id))
+        where_type_qry = "AND T3.business_group_id IN %s "
+        param.append(tuple(filter_id))
 
     elif filter_type == "LegalEntity" :
-        filter_type_qry = "AND T3.legal_entity_id IN %s" % str(tuple(filter_id))
+        where_type_qry = "AND T3.legal_entity_id IN %s "
+        param.append(tuple(filter_id))
 
     elif filter_type == "Division" :
-        filter_type_qry = "AND T3.division_id IN %s" % str(tuple(filter_id))
+        where_type_qry = "AND T3.division_id IN %s "
+        param.append(tuple(filter_id))
 
     elif filter_type == "Unit":
-        filter_type_qry = "AND T3.unit_id IN %s" % str(tuple(filter_id))
-
-    applicable_type_qry = ""
+        where_type_qry = "AND T3.unit_id IN %s "
+        param.append(tuple(filter_id))
 
     if applicability == "Applicable" :
-        applicable_type_qry = "AND T1.compliance_opted = 1"
-    elif applicability == "NotApplicable" :
-        applicable_type_qry = "AND T1.compliance_opted = 0 \
+        where_type_qry = " AND T1.compliance_opted = 1"
+    elif applicability == "Not Applicable" :
+        where_type_qry = " AND T1.compliance_opted = 0 \
             AND T1.compliance_applicable = 0"
-    elif applicability == "NotOpted" :
-        applicable_type_qry = "AND T1.compliance_opted = 0"
+    elif applicability == "Not Opted" :
+        where_type_qry = " AND T1.compliance_applicable = 1 AND T1.compliance_opted = 0"
 
-    query1 = query
-    rows = db.select_all(query1, [
-        str(tuple(country_ids)),
-        str(tuple(domain_ids)),
-        filter_type_qry,
-        applicable_type_qry,
-        from_count, to_count
-    ])
+    query1 = query + where_type_qry + limit
+    param.extend([from_count, to_count])
+    rows = db.select_all(query1, param)
     columns = [
         "compliance_id", "unit_id", "frequency_id",
         "frequency", "repeats_type", "duration_type",

@@ -185,13 +185,13 @@ def is_service_provider_in_contract(db, service_provider_id):
         return False
 
 def is_user_exists_under_service_provider(db, service_provider_id):
-    columns = "count(*) as exists"
-    condition = "service_provider_id = %s " % service_provider_id
+    columns = "count(0) as users"
+    condition = "service_provider_id = %s "
     rows = db.get_data(
-        tblUsers, columns, condition
+        tblUsers, columns, condition, [service_provider_id]
     )
     if len(rows) > 0 :
-        if int(rows[0]["exists"]) > 0:
+        if int(rows[0]["users"]) > 0:
             return True
         else:
             return False
@@ -359,9 +359,9 @@ def return_user_details(
             unit_ids_list = []
     results = []
     for user in users :
-        query = "select unit_id from %s tuu where \
+        query = "select unit_id from tbl_user_units tuu where \
         user_id = %s "
-        rows = db.select_all(query, [tblUserUnits, user["user_id"]])
+        rows = db.select_all(query, [user["user_id"]])
         user_unit_ids = []
         for row in rows:
             user_unit_ids.append(row[0])

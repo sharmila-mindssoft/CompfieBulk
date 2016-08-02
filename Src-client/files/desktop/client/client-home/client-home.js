@@ -2831,7 +2831,7 @@ function prepareComplianceApplicability(source_data) {
         chartDataSeries.push({
             name: "Not Opted",
             y: not_opted,
-            drilldown: "Not Applicable"
+            drilldown: "Not Opted"
         });
     }
     var filterTypeInput = getFilterTypeInput()
@@ -2851,6 +2851,7 @@ function prepareComplianceApplicability(source_data) {
 }
 
 function updateComplianceApplicabilityChart(data) {
+
     data = prepareComplianceApplicability(data);
     chartTitle = data[1];
     chartDataSeries = data[0];
