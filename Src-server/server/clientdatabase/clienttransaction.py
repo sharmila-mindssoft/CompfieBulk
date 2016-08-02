@@ -531,7 +531,7 @@ def total_compliance_for_units(db, unit_ids, domain_id):
         and t04.is_active = 1 \
         and t03.compliance_id IS NULL "
     row = db.select_one(q, [
-        str(tuple(unit_ids)), domain_id
+        tuple(unit_ids), domain_id
     ])
     if row :
         return row[0]
