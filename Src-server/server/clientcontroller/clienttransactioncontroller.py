@@ -358,7 +358,7 @@ def process_get_user_wise_compliances(db, session_user, client_id):
     two_level_approve = get_client_settings(db)
     client_admin = get_admin_info(db)
     domains = get_domains_for_user(db, session_user)
-    compliance_count = get_assigneewise_complaince_count(db, session_user)
+    compliance_count = get_assigneewise_compliance_count(db, session_user)
 
     result = clienttransactions.GetUserwiseCompliancesSuccess(
         compliance_count, users, units,

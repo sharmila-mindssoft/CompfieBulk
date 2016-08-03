@@ -82,6 +82,8 @@ client_message = {
     "E017": "On occurrence compliance start failed",
     "E018": "Compliance activity creation failed",
     "E019": "Create notification failed",
+    "E020": "Save compliance activity failed",
+    "E021": "Update file space failed"
 }
 
 def process_error(msg_code):

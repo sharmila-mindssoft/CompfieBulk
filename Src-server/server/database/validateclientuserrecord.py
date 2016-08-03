@@ -1,17 +1,12 @@
 from server.dbase import Database
 from server.exceptionmessage import not_found_error
 
-
-class ClientAdmin(object):
-    def __init__(self, db, new_admin_id, old_admin_id, client_id) :
+class ClientdbConnect(object):
+    def __init__(self, db):
         self._db = db
-        self._new_admin_id = new_admin_id
-        self._client_id = client_id
-        self._old_admin_id = old_admin_id
         self._c_db = None
         self._conn = None
         self._cursor = None
-        print "init"
 
     def get_client_database(self):
         columns = [
@@ -40,6 +35,15 @@ class ClientAdmin(object):
             database
         )
         self._c_db.connect()
+
+class ClientAdmin(ClientdbConnect):
+    def __init__(self, db, new_admin_id, old_admin_id, client_id) :
+        super(ClientAdmin, self).__init__(db)
+
+        self._new_admin_id = new_admin_id
+        self._client_id = client_id
+        self._old_admin_id = old_admin_id
+        print "init"
 
     def get_admin_compliances(self):
         q = "select count(compliance_id) from tbl_assigned_compliances  \
@@ -105,6 +109,7 @@ class ClientAdmin(object):
                 self.remove_old_admin()
                 self.update_new_admin_records()
                 self._c_db.commit()
+                self._c_db.close()
                 return True
         except Exception, e :
             print e

@@ -1,13 +1,17 @@
+import os
 import io
 import datetime
 import json
-from protocol import (core, dashboard, clientreport)
 from dateutil import relativedelta
-from server.common import (
-    encrypt, convert_to_dict, get_date_time, get_date_time_in_date
-)
 from server.clientdatabase.tables import *
+from server.constants import (CLIENT_DOCS_BASE_PATH)
+from protocol import (core, dashboard, clientreport)
+from server.common import (
+    encrypt, convert_to_dict, get_date_time, get_date_time_in_date,
+    remove_uploaded_file
+)
 from server.exceptionmessage import client_process_error
+from savetoknowledge import UpdateFileSpace
 
 __all__ = [
     "get_client_user_forms",
@@ -465,7 +469,7 @@ def get_user_unit_ids(db, user_id):
 
 def is_two_levels_of_approval(db):
     columns = "two_levels_of_approval"
-    rows = db.get_data(tblClientGroups, columns, "1")
+    rows = db.get_data(tblClientGroups, columns, condition=None)
     return bool(rows[0]["two_levels_of_approval"])
 
 def get_user_company_details(db, user_id):
@@ -752,8 +756,8 @@ def validate_compliance_due_date(db, request):
             due_date, due_date_list, date_list = set_new_due_date(s_dates, repeats_type_id, comp_id)
 
             if c.due_date not in [None, ""] and due_date not in [None, ""]:
-                t_due_date = datetime.datetime.strptime(c.due_date, "%s-%b-%Y")
-                n_due_date = datetime.datetime.strptime(due_date, "%s-%b-%Y")
+                t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+                n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
                 if (n_due_date < t_due_date) :
                     # Due date should be lessthen statutory date
                     return False, task
@@ -876,18 +880,7 @@ def update_used_space(db, file_size):
     if rows[0]["total_disk_space_used"] is not None:
         total_used_space = int(rows[0]["total_disk_space_used"])
 
-    db_con = Database(
-        KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-        KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
-    )
-    db_con.connect()
-    db_con.begin()
-    q = "UPDATE tbl_client_groups set total_disk_space_used = '%s' where client_id = '%s'" % (
-        total_used_space, client_id
-    )
-    db_con.execute(q)
-    db_con.commit()
-    db_con.close()
+    UpdateFileSpace(total_used_space, client_id)
 
 def save_compliance_activity(
     db, unit_id, compliance_id, activity_status, compliance_status,
@@ -918,9 +911,9 @@ def save_compliance_activity(
 def save_compliance_notification(
     db, compliance_history_id, notification_text, category, action
 ):
-    notification_id = db.get_new_id(
-        "notification_id", tblNotificationsLog
-    )
+    # notification_id = db.get_new_id(
+    #     "notification_id", tblNotificationsLog
+    # )
     current_time_stamp = get_date_time_in_date()
 
     # Get history details from compliance history id
@@ -953,20 +946,20 @@ def save_compliance_notification(
 
     # Saving notification
     columns = [
-        "notification_id", "country_id", "domain_id", "business_group_id",
+        "country_id", "domain_id", "business_group_id",
         "legal_entity_id", "division_id", "unit_id", "compliance_id",
         "assignee", "concurrence_person", "approval_person", "notification_type_id",
         "notification_text", "extra_details", "created_on"
     ]
     extra_details = "%s-%s" % (compliance_history_id, category)
     values = [
-        notification_id, unit["country_id"], domain_id, unit["business_group_id"],
+        unit["country_id"], domain_id, unit["business_group_id"],
         unit["legal_entity_id"], unit["division_id"], unit_id, compliance_id,
         history["completed_by"], history["concurred_by"], history["approved_by"],
         1, notification_text, extra_details, current_time_stamp
     ]
-    r = db.insert(tblNotificationsLog, columns, values)
-    if r is False :
+    notification_id = db.insert(tblNotificationsLog, columns, values)
+    if notification_id is False :
         raise client_process_error("E019")
 
     # Saving in user log
@@ -1172,18 +1165,23 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
         for x in due_dates_list:
             x = str(x)
             x.replace(" ", "")
-            formated_date_list.append('%s%s%s' % ("'", x, "'"))
-        due_dates = ",".join(str(x) for x in formated_date_list)
+            formated_date_list.append("%s" % (x))
+            # if len(formated_date_list) == 1 :
+            #     formated_date_list.append(formated_date_list[0])
+        due_dates = tuple(formated_date_list)
         query = '''
             SELECT is_ok FROM
-            (SELECT (CASE WHEN (unit_id = %s AND DATE(due_date) IN (%s) AND \
+            (SELECT (CASE WHEN (unit_id = %s AND DATE(due_date) IN %s AND \
             compliance_id = %s) THEN DATE(due_date) ELSE 'NotExists' END ) as
             is_ok FROM tbl_compliance_history ) a WHERE is_ok != "NotExists"'''
 
+        print query
+        print [unit_id, due_dates, compliance_id]
         rows = db.select_all(query, [unit_id, due_dates, compliance_id])
+        print rows
         if len(rows) > 0:
             for row in rows:
-                formated_date_list.remove("%s%s%s" % ("'", row[0], "'"))
+                formated_date_list.remove("%s" % (row[0]))
         result_due_date = []
         for current_due_date_index, due_date in enumerate(formated_date_list):
             next_due_date = None
@@ -1191,15 +1189,19 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
             if len(due_dates_list) < current_due_date_index + 1:
                 continue
             else:
+                print len(due_dates_list)
+                print current_due_date_index
+                print len(formated_date_list)
                 if current_due_date_index == len(formated_date_list)-1 :
                     next_due_date = due_dates_list[current_due_date_index]
                 else :
                     next_due_date = due_dates_list[current_due_date_index+1]
-                columns = "count(*) as compliance"
-                condition = "unit_id = %s AND due_date < %s AND compliance_id = %s AND \
-                approve_status = 1 and validity_date > %s and validity_date > %s "
 
-                condition_val = [unit_id, due_date, compliance_id, due_date, next_due_date]
+                columns = "count(*) as compliance"
+                condition = "unit_id = %s AND due_date <= %s AND compliance_id = %s AND \
+                approve_status = 1 and validity_date >= %s "
+
+                condition_val = [unit_id, due_date, compliance_id, next_due_date]
                 rows = db.get_data(tblComplianceHistory, columns, condition, condition_val)
                 if rows[0]["compliance"] > 0:
                     continue

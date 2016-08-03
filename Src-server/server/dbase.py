@@ -285,7 +285,8 @@ class Database(object):
             query += " WHERE %s " % condition
             if order is not None :
                 query += order
-
+            print query
+            print condition_val
             if condition_val is None :
                 logger.logQuery(self._for_client, "get_data", query)
                 rows = self.select_all(query)
@@ -299,6 +300,7 @@ class Database(object):
             logger.logQuery(self._for_client, "get_data", query)
             rows = self.select_all(query)
         result = []
+        print rows
         if rows :
             result = convert_to_dict(rows, param)
         return result
@@ -432,6 +434,7 @@ class Database(object):
             print res
             return True
         except mysql.Error, e:
+            print e
             logger.logKnowledgeApi("update", query)
             logger.logKnowledgeApi("update", e)
             return False
