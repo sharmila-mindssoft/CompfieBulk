@@ -450,7 +450,6 @@ def is_admin(db, user_id):
 def get_user_unit_ids(db, user_id):
     columns = "unit_id"
     table = tblUnits
-    result = None
     condition = 1
     if user_id > 0:
         table = tblUserUnits
@@ -458,14 +457,18 @@ def get_user_unit_ids(db, user_id):
     rows = db.get_data(
         table, columns, condition
     )
+    u_ids = []
     if rows :
-        result = ""
-        for index, row in enumerate(rows):
-            if index == 0:
-                result += str(row["unit_id"])
-            else:
-                result += ",%s" % str(row["unit_id"])
-    return result
+        for r in rows :
+            u_ids.append(str(r["unit_id"]))
+
+        # result = ""
+        # for index, row in enumerate(rows):
+        #     if index == 0:
+        #         result += str(row["unit_id"])
+        #     else:
+        #         result += ",%s" % str(row["unit_id"])
+    return ",".join(u_ids)
 
 def is_two_levels_of_approval(db):
     columns = "two_levels_of_approval"
