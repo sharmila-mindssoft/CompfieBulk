@@ -1527,8 +1527,6 @@ function initMirror() {
                 //if fails
             }
         });
-
-
     }
 
     return {

@@ -384,9 +384,9 @@ function onCountrySuccess(val){
 }
 
 //load country list in autocomplete text box
-$("#countryval").keyup(function(){
+$("#countryval").keyup(function(e){
   var textval = $(this).val();
-  getCountryAutocomplete(textval, countriesList, function(val){
+  getCountryAutocomplete(e, textval, countriesList, function(val){
     onCountrySuccess(val)
   })
 });
@@ -397,9 +397,9 @@ function onDomainSuccess(val){
   $("#domain").val(val[0]);
 }
 //load domain list in autocomplete textbox
-$("#domainval").keyup(function(){
+$("#domainval").keyup(function(e){
   var textval = $(this).val();
-  getDomainAutocomplete(textval, domainsList, function(val){
+  getDomainAutocomplete(e, textval, domainsList, function(val){
     onDomainSuccess(val)
   })
 });
@@ -411,11 +411,11 @@ function onUnitSuccess(val){
 }
 
 //load unit  form list in autocomplete text box
-$("#unitval").keyup(function(){
+$("#unitval").keyup(function(e){
   var textval = $(this).val();
   //var cId = $("#country").val();
   //var dId = $("#domain").val();
-  getUnitAutocomplete(textval, unitList, function(val){
+  getUnitAutocomplete(e, textval, unitList, function(val){
     onUnitSuccess(val)
   })
 });
@@ -426,9 +426,9 @@ function onStatutorySuccess(val){
   $("#level1id").val(val[0].replace(/##/gi,'"'));
 }
 //load statutory list in autocomplete textbox
-$("#level1val").keyup(function(){
+$("#level1val").keyup(function(e){
   var textval = $(this).val();
-  getClientStatutoryAutocomplete(textval, level1List, function(val){
+  getClientStatutoryAutocomplete(e, textval, level1List, function(val){
     onStatutorySuccess(val)
   })
 });
@@ -440,9 +440,9 @@ function onUserSuccess(val){
 }
 
 //load user list in autocomplete text box
-$("#userval").keyup(function(){
+$("#userval").keyup(function(e){
   var textval = $(this).val();
-  getUserAutocomplete(textval, userList, function(val){
+  getUserAutocomplete(e, textval, userList, function(val){
     onUserSuccess(val)
   })
 });
@@ -454,9 +454,9 @@ function onComplianceTaskSuccess(val){
 }
 
 //load compliancetask form list in autocomplete text box
-$("#complianceval").keyup(function(){
+$("#complianceval").keyup(function(e){
   var textval = $(this).val();
-  getComplianceTaskAutocomplete(textval, complianceList, function(val){
+  getComplianceTaskAutocomplete(e, textval, complianceList, function(val){
     onComplianceTaskSuccess(val)
   })
 });

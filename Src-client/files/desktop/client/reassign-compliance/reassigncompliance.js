@@ -825,10 +825,10 @@ function onUnitSuccess(val){
 }
 
 //load unit with conditionform list in autocomplete text box  
-$("#seatingunitval").keyup(function(){
+$("#seatingunitval").keyup(function(e){
     var textval = $(this).val();
     //getUnitConditionAutocomplete(textval, unitsList, function(val){
-    getUnitAutocomplete(textval, unitsList, function(val){
+    getUnitAutocomplete(e, textval, unitsList, function(val){
         onUnitSuccess(val)
     })
 });
@@ -840,9 +840,9 @@ function onUserSuccess(val){
 }
 
 //load user list in autocomplete text box  
-$("#userval").keyup(function(){
+$("#userval").keyup(function(e){
   var textval = $(this).val();
-  getReassignUserAutocomplete(textval, usersList, function(val){
+  getReassignUserAutocomplete(e, textval, usersList, function(val){
     onUserSuccess(val)
   })
 });

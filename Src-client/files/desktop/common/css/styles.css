@@ -1887,13 +1887,13 @@ list-style-type:none; line-height:25px;
 display: none !important;
 }
 .gt input[type="checkbox"]+label {
-background: url('/images/deletebold.png') no-repeat;
+background: url('../images/deletebold.png') no-repeat;
 height:17px;
 padding-left: 18px;
 cursor: pointer;
 }
 .gt input[type="checkbox"]:checked + label {
-background: url('/images/tick1bold.png') no-repeat;
+background: url('../images/tick1bold.png') no-repeat;
 height:17px;
 cursor: pointer;
 }
@@ -1902,13 +1902,13 @@ cursor: pointer;
 display: none !important;
 }
 .ot input[type="checkbox"]+label {
-background: url('/images/deletebold.png') no-repeat;
+background: url('../images/deletebold.png') no-repeat;
 height:17px;
 padding-left: 18px;
 cursor: pointer;
 }
 .ot input[type="checkbox"]:checked + label {
-background: url('/images/tick-orange.png') no-repeat;
+background: url('../images/tick-orange.png') no-repeat;
 height:17px;
 cursor: pointer;
 }
@@ -3123,4 +3123,20 @@ div.scrollable {
 	border: none;
 	outline: none;
 	cursor: pointer;
+}
+
+.back-to-top {
+    position: fixed;
+    bottom: 2em;
+    right: 0px;
+    text-decoration: none;
+    color: #000000;
+    background-color: rgba(235, 235, 235, 0.80);
+    font-size: 12px;
+    padding: 1em;
+    display: none;
+}
+
+.back-to-top:hover {    
+    background-color: #fc9b01;
 }

@@ -92,7 +92,7 @@ def get_client_ids(db):
 
 def get_user_client_countries(db, session_user):
     client_ids = get_client_ids(db)
-    if client_ids is not None:
+    if client_ids != '':
         client_ids_list = client_ids.split(",")
         country_ids = []
         for client_id in client_ids_list:
@@ -128,7 +128,7 @@ def get_client_domains(db, client_id):
 
 def get_user_client_domains(db, session_user):
     client_ids = get_client_ids(db)
-    if client_ids is not None:
+    if client_ids != '':
         client_ids_list = client_ids.split(",")
         domain_ids = []
         for client_id in client_ids_list:

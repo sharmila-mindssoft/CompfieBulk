@@ -1162,7 +1162,7 @@ function onUnitSuccess(val){
 }
 
 //load unit with conditionform list in autocomplete text box
-$("#seatingunitval").keyup(function(){
+$("#seatingunitval").keyup(function(e){
     var textval = $(this).val();
     if($("#usertype option:selected").val() == "")
     {
@@ -1170,7 +1170,7 @@ $("#seatingunitval").keyup(function(){
         return false;
     }
     //getUnitNoConditionAutocomplete(textval, unitList, function(val){
-    getUnitAutocomplete(textval, unitList, function(val){
+    getUnitAutocomplete(e, textval, unitList, function(val){
         onUnitSuccess(val)
     })
 });
@@ -1182,9 +1182,9 @@ function onUserGroupSuccess(val){
 }
 
 //load usergroup list in autocomplete text box
-$("#usergroupval").keyup(function(){
+$("#usergroupval").keyup(function(e){
   var textval = $(this).val();
-  getUserGroupAutocomplete(textval, userGroupsList, function(val){
+  getUserGroupAutocomplete(e, textval, userGroupsList, function(val){
     onUserGroupSuccess(val)
   })
 });

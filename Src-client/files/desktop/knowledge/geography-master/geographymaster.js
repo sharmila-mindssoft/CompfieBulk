@@ -141,10 +141,10 @@ function onCountrySuccess(val){
   loadGeographyFirstLevels(val[0]);
 }
 
-//load country list in autocomplete text box
-$("#countryval").keyup(function(){
+//load country list in autocomplete text box  
+$("#countryval").keyup(function(e){
   var textval = $(this).val();
-  getCountryAutocomplete(textval, countriesList, function(val){
+  getCountryAutocomplete(e, textval, countriesList, function(val){
     onCountrySuccess(val)
   })
 });

@@ -184,9 +184,9 @@ function onUserSuccess(val){
 }
 
 //load user list in autocomplete text box  
-$("#userval").keyup(function(){
+$("#userval").keyup(function(e){
   var textval = $(this).val();
-  getUserAutocomplete(textval, userList, function(val){
+  getUserAutocomplete(e, textval, userList, function(val){
     onUserSuccess(val)
   })
 });
