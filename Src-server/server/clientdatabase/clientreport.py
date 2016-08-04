@@ -89,7 +89,7 @@ def report_assigneewise_compliance(
         "duration_type", "repeat_type", "duration",
         "repeat_every"
     ]
-    qry_where = None
+    qry_where = ""
     qry_where_val = []
     admin_id = get_admin_id(db)
 
@@ -131,7 +131,7 @@ def report_assigneewise_compliance(
     param = [country_id, domain_id]
     if qry_where is not None :
         q_count += qry_where
-        parm.extend(qry_where_val)
+        param.extend(qry_where_val)
 
     row = db.select_one(q_count, param)
 
@@ -179,10 +179,10 @@ def report_assigneewise_compliance(
     param = [country_id, domain_id]
     if qry_where is not None :
         q += qry_where
-        parm.extend(qry_where_val)
+        param.extend(qry_where_val)
 
     param.extend([from_count, to_count])
-    rows = db.select_all(q + order, param)
+    rows = db.select_all("%s %s" % (q, order), param)
 
     data = convert_to_dict(rows, columns)
     return data, count
@@ -354,7 +354,7 @@ def report_serviceproviderwise_compliance(
         "duration_type", "repeat_type", "duration",
         "repeat_every"
     ]
-    qry_where = None
+    qry_where = ""
     qry_where_val = []
     admin_id = get_admin_id(db)
 
@@ -382,13 +382,13 @@ def report_serviceproviderwise_compliance(
         INNER JOIN tbl_service_providers s on s.service_provider_id = ur.service_provider_id \
         WHERE c.is_active = 1 \
         and ac.country_id = %s and c.domain_id = %s  \
-        AND SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1),'>>',- 1) = '%s'\
+        AND SUBSTRING_INDEX(SUBSTRING_INDEX(c.statutory_mapping, '>>', 1),'>>',- 1) = %s\
     "
     param = [country_id, domain_id, statutory_id]
 
     if qry_where is not None :
         q_count += qry_where
-        parm.extend(qry_where_val)
+        param.extend(qry_where_val)
 
     row = db.select_one(q_count, param)
     if row :
@@ -511,32 +511,32 @@ def report_statutory_notifications_list(db, request_data):
     from_date = request_data.from_date
     to_date = request_data.to_date
 
-    condition = None
+    condition = ""
     condition_val = []
     if from_date is not None and to_date is not None :
         from_date = string_to_datetime(from_date).date()
         to_date = string_to_datetime(to_date).date()
-        condition += " AND date(snl.updated_on) >= %s AND date(snl.updated_on) <= %s"
+        condition += " AND date(snl.updated_on) >= %s AND date(snl.updated_on) <= %s "
         condition_val.extend([from_date, to_date])
 
     if business_group_id is not None:
-        condition += " AND u.business_group_id = %s"
+        condition += " AND u.business_group_id = %s "
         condition_val.append(business_group_id)
 
     if legal_entity_id is not None:
-        condition += " AND u.legal_entity_id = %s"
+        condition += " AND u.legal_entity_id = %s "
         condition_val.append(legal_entity_id)
 
     if division_id is not None:
-        condition += " AND u.division_id = %s"
+        condition += " AND u.division_id = %s "
         condition_val.append(division_id)
 
     if unit_id is not None:
-        condition += " AND u.unit_id = %s"
+        condition += " AND u.unit_id = %s "
         condition_val.append(unit_id)
 
     if level_1_statutory_name is not None :
-        condition += " AND snl.statutory_provision like %s"
+        condition += " AND snl.statutory_provision like %s "
         condition_val.append(str(level_1_statutory_name + '%'))
 
     query = "SELECT \
@@ -743,7 +743,7 @@ def get_where_query_for_compliance_details_report(
         qry_where += " and c.domain_id IN \
             (SELECT ud.domain_id FROM tbl_user_domains ud \
             where ud.user_id = %s)"
-        qry_where_val.append[session_user]
+        qry_where_val.append(session_user)
 
     if(compliance_status == 'Complied'):
         c_status = " AND ch.due_date >= ch.completion_date \
@@ -945,7 +945,7 @@ def get_where_query_for_reassigned_history_report(
     db, country_id, domain_id, level_1_statutory_name,
     unit_id, compliance_id, user_id, from_date, to_date, session_user
 ):
-    qry_where = None
+    qry_where = ""
     qry_where_val = []
     admin_id = get_admin_id(db)
     if level_1_statutory_name is not None :
@@ -1711,35 +1711,35 @@ def get_login_trace(
 ):
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
-    condition = None
+    condition = ""
 
     query = "SELECT al.created_on, al.action \
         FROM tbl_activity_log al \
         INNER JOIN \
         tbl_users u ON \
         al.user_id  = u.user_id \
-        WHERE 1 \
+        WHERE \
         al.form_id = 0 and al.action not like %s "
-    order = "ORDER BY al.created_on desc \
+    order = " ORDER BY al.created_on desc \
         limit %s, %s"
 
-    param = [str("%\password%")]
+    param = [str("%" + 'password' + "%")]
 
     if user_id is not None:
         condition = " AND al.user_id = %s "
         param.append(user_id)
 
     if from_date is not None and to_date is not None:
-        condition += " AND  date(al.created_on) between %s AND %s"
+        condition += " AND  date(al.created_on) >= %s AND date(al.created_on) <= %s "
         param.extend([from_date, to_date])
 
     if condition is not None :
         query += condition
 
     param.extend([from_count, to_count])
-    rows = db.select_all(query, param)
+    rows = db.select_all(query + order, param)
     columns = ["created_on", "action"]
-    result = convert_to_dict(rows + order, columns)
+    result = convert_to_dict(rows, columns)
     return return_logintrace(result)
 
 def return_logintrace(data) :
@@ -1798,32 +1798,32 @@ def get_compliance_activity_report(
         year_start_date = timeline[0][1][0][1][0]["start_date"]
         year_end_date = timeline[0][1][0][1][0]["end_date"]
         if from_date is not None and to_date is not None:
-            conditions += " AND cal.updated_on between %s and DATE_ADD('%s', INTERVAL 1 DAY)"
+            conditions += " AND cal.updated_on between %s and DATE_ADD(%s, INTERVAL 1 DAY)"
             condition_val.extend([string_to_datetime(from_date).date(), string_to_datetime(to_date).date()])
 
         elif from_date is not None and to_date is None:
-            conditions += " AND cal.updated_on between %s and DATE_ADD('%s', INTERVAL 1 DAY)"
+            conditions += " AND cal.updated_on between %s and DATE_ADD(%s, INTERVAL 1 DAY)"
             condition_val.extend([string_to_datetime(from_date).date(), year_end_date])
 
         elif from_date is None and to_date is not None:
-            conditions += " AND cal.updated_on between %s and DATE_ADD('%s', INTERVAL 1 DAY)"
+            conditions += " AND cal.updated_on between %s and DATE_ADD(%s, INTERVAL 1 DAY)"
             condition_val.extend([year_start_date, string_to_datetime(to_date).date()])
 
         else:
-            conditions += " AND cal.updated_on between %s and DATE_ADD('%s', INTERVAL 1 DAY)"
+            conditions += " AND cal.updated_on between %s and DATE_ADD(%s, INTERVAL 1 DAY)"
             condition_val.extend([year_start_date, year_end_date])
 
-        query = "SELECT distinct activity_date, activity_status, compliance_status, \
-            cal.remarks, concat(unit_code, "-", unit_name), \
-            address, document_name, compliance_task, compliance_description, \
-            statutory_mapping, ac.completed_by, employee_code, \
-            employee_name FROM tbl_compliance_activity_log cal \
-            INNER JOIN tbl_compliances c ON (c.compliance_id = cal.compliance_id) \
-            INNER JOIN tbl_units u ON (u.unit_id = cal.unit_id) \
-            INNER JOIN tbl_compliance_history ac ON ((cal.compliance_id = ac.compliance_id) and (cal.unit_id = ac.unit_id)) \
-            INNER JOIN tbl_users us ON (us.user_id = ac.completed_by) \
-            WHERE u.country_id = %s \
-            AND c.domain_id = %s "
+        query = ''' SELECT distinct activity_date, activity_status, compliance_status,
+            cal.remarks, concat(unit_code, "-", unit_name),
+            address, document_name, compliance_task, compliance_description,
+            statutory_mapping, ac.completed_by, employee_code,
+            employee_name FROM tbl_compliance_activity_log cal
+            INNER JOIN tbl_compliances c ON (c.compliance_id = cal.compliance_id)
+            INNER JOIN tbl_units u ON (u.unit_id = cal.unit_id)
+            INNER JOIN tbl_compliance_history ac ON ((cal.compliance_id = ac.compliance_id) and (cal.unit_id = ac.unit_id))
+            INNER JOIN tbl_users us ON (us.user_id = ac.completed_by)
+            WHERE u.country_id = %s
+            AND c.domain_id = %s '''
 
         order = " ORDER BY cal.updated_on DESC"
 

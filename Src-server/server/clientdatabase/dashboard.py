@@ -13,7 +13,8 @@ from server.common import (
     get_date_time_in_date, convert_to_dict, datetime_to_string_time, datetime_to_string
 )
 from server.clientdatabase.general import (
-    get_user_unit_ids, calculate_ageing, get_admin_id, get_user_domains, get_group_name
+    get_user_unit_ids, calculate_ageing, get_admin_id,
+    get_user_domains, get_group_name, is_primary_admin
 )
 from server.clientdatabase.clienttransaction import get_units_for_assign_compliance
 __all__ = [
@@ -78,7 +79,7 @@ def get_status_wise_compliances_count(db, request, session_user):
         db, not_complied_qry, request, user_id
         )
     if from_date is not None and to_date is not None :
-        return frame_compliance_status_count(
+        return frameg_compliance_status_count(
             db, inprogress, complied, delayed,
             not_complied
         )
@@ -173,10 +174,10 @@ def get_compliance_status(
 
     where_qry += filter_type_ids
 
-    if user_id == 0 :
+    if is_primary_admin(db, user_id) is True :
         user_qry = ""
     else :
-        user_qry = " (T1.completed_by LIKE %s OR T1.concurred_by LIKE %s \
+        user_qry = " AND (T1.completed_by LIKE %s OR T1.concurred_by LIKE %s \
         OR T1.approved_by LIKE %s) "
         where_qry += user_qry
         where_qry_val.extend([user_id, user_id, user_id])
@@ -740,7 +741,7 @@ def frame_compliance_details_query(db, chart_type, compliance_status, request, f
         where_qry_val.extend([from_date, to_date])
 
     if user_id > 0 :
-        where_qry += "(T1.completed_by LIKE %s OR T1.concurred_by LIKE %s \
+        where_qry += " AND (T1.completed_by LIKE %s OR T1.concurred_by LIKE %s \
         OR T1.approved_by LIKE %s)"
         where_qry_val.extend([user_id, user_id, user_id])
 
@@ -774,7 +775,7 @@ def frame_compliance_details_query(db, chart_type, compliance_status, request, f
         T1.due_date \
         limit %s, %s "
     where_qry_val.extend([from_count, to_count])
-    q = query + where_qry + order
+    q = "%s %s %s " % (query, where_qry, order)
     param = [tuple(domain_ids)]
     param.extend(where_qry_val)
     rows = db.select_all(q, param)
@@ -1207,8 +1208,8 @@ def get_escalation_drill_down_data(
 #
 # Not Complied chart
 #
-
 def get_not_complied_chart(db, request, session_user, client_id):
+    user_id = int(session_user)
     country_ids = request.country_ids
     if len(country_ids) == 1:
         country_ids.append(0)
@@ -1255,13 +1256,23 @@ def get_not_complied_chart(db, request, session_user, client_id):
         WHERE T3.country_id IN %s \
         AND T3.domain_id IN %s \
         AND T1.due_date < CURDATE() \
-        AND T1.approve_status is NULL \
-        OR T1.approve_status != 1 \
+        AND IFNULL(T1.approve_status, 0) != 1 \
         " + filter_type_ids
-    order = "ORDER BY T1.due_date "
     param = [tuple(country_ids), tuple(domain_ids)]
+
+    if is_primary_admin(db, user_id) is True :
+        query += ""
+    else :
+        query += " AND (T1.completed_by LIKE %s OR T1.concurred_by LIKE %s \
+        OR T1.approved_by LIKE %s) "
+        where_qry_val.extend([user_id, user_id, user_id])
+
     param.extend(where_qry_val)
-    rows = db.select_all(query + order, param)
+
+    order = "ORDER BY T1.due_date "
+    print query + order
+    print param
+    rows = db.select_all("%s %s" % (query, order), param)
     columns = [
         "compliance_history_id", "unit_id", "compliance_id",
         "start_date", "due_date", "business_group_id",
@@ -1528,12 +1539,12 @@ def get_compliance_applicability_drill_down(
         param.append(tuple(filter_id))
 
     if applicability == "Applicable" :
-        where_type_qry = " AND T1.compliance_opted = 1"
+        where_type_qry += " AND T1.compliance_opted = 1"
     elif applicability == "Not Applicable" :
-        where_type_qry = " AND T1.compliance_opted = 0 \
+        where_type_qry += " AND T1.compliance_opted = 0 \
             AND T1.compliance_applicable = 0"
     elif applicability == "Not Opted" :
-        where_type_qry = " AND T1.compliance_applicable = 1 AND T1.compliance_opted = 0"
+        where_type_qry += " AND T1.compliance_applicable = 1 AND T1.compliance_opted = 0"
 
     query1 = query + where_type_qry + limit
     param.extend([from_count, to_count])
