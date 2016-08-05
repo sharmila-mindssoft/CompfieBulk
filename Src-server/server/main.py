@@ -142,11 +142,14 @@ class API(object):
             self._db.begin()
             response_data = unbound_method(self, request_data, self._db)
             if response_data is None or type(response_data) is bool :
+                print response_data
                 self._db.rollback()
             if type(response_data) != technomasters.ClientCreationFailed:
                 self._db.commit()
             else:
                 self._db.rollback()
+            print "-------------"
+            print response_data
             respond(response_data)
         except Exception, e:
             print "handle_api_request"
@@ -160,6 +163,7 @@ class API(object):
             logger.logKnowledge("error", "main.py-handle-api-", e)
             logger.logKnowledge("error", "main.py", traceback.format_exc())
             if str(e).find("expected a") is False :
+                print "------- rollbacked"
                 self._db.rollback()
             response.set_status(400)
             response.send(str(e))

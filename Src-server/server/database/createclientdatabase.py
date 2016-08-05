@@ -1,3 +1,4 @@
+import sys
 import os
 import io
 import Queue
@@ -32,6 +33,7 @@ class ClientDBCreate(object):
         self._db_name = None
         self._db_username = None
         self._db_password = None
+        print "ClientDBCreate Begin"
 
     def process_error(self, message):
         raise ValueError(message)
@@ -40,11 +42,12 @@ class ClientDBCreate(object):
         result = self.get_server_machine_details()
         if result is False :
             raise self.process_error("Prepare db_constrsains failed")
-        if result is True :
+        elif result is True :
             res = self.process_db_creation()
+            r = self.update_client_db_details()
+            print r
+            print res
             return res
-        else :
-            return result
 
     def db_name(self):
         return "%s_%s_%s" % (CLIENT_DB_PREFIX, self._short_name.lower(), self._client_id)
@@ -82,7 +85,11 @@ class ClientDBCreate(object):
             return q
 
         result_q = enthread()
+        print "--------========================"
+        print result_q
         result = result_q.get()
+        print "==================--------------"
+        print result
         return result
 
     def _mysql_server_connect(self, host, username, password, port):
@@ -121,23 +128,34 @@ class ClientDBCreate(object):
             print "main_con success"
             main_cursor = main_con.cursor()
             self._create_db(main_cursor)
+            print "create DB"
             self._grant_privileges(main_cursor)
-            main_cursor.commit()
+            print "create DB user"
+            main_con.commit()
 
             db_con = self._db_connect(
                 self._host, self._username, self._password, self._db_name,
                 self._port
             )
+            db_cursor = db_con.cursor()
             print "connection success"
-            self._create_tables(db_con)
-            self._create_admin_user(db_con)
-            self._create_procedure(db_con)
-            self._create_trigger(db_con)
-            self._save_client_domains(self._domain_ids, db_con)
-            self._save_client_countries(self._country_ids, db_con)
+            self._create_tables(db_cursor)
+            print "table create"
+            admin_password = self._create_admin_user(db_cursor)
+            print "admin create"
+            self._create_procedure(db_cursor)
+            print "procedure create"
+            self._create_trigger(db_cursor)
+            print "trigger create"
+            self._save_client_domains(self._domain_ids, db_cursor)
+            print "domain create "
+            self._save_client_countries(self._country_ids, db_cursor)
+            print "country create "
             db_con.commit()
-            return True
+            return True, admin_password
         except Exception, e :
+            print e
+            print "main Exception"
             if db_con is not None :
                 db_con.rollback()
             if main_con is not None :
@@ -183,10 +201,13 @@ class ClientDBCreate(object):
 
     def _grant_privileges(self, cursor):
         try :
-            query = "GRANT SELECT, INSERT, UPDATE, DELETE ON %s.* to %s@%s IDENTIFIED BY %s;"
-            cursor.execute(query, [
+            query = "GRANT SELECT, INSERT, UPDATE, DELETE ON %s.* to '%s'@'%s' IDENTIFIED BY '%s';"
+            print query
+            param = (
                 self._db_name, self._db_username, str('%'), self._db_password
-            ])
+            )
+            print param
+            cursor.execute(query % param)
             cursor.execute("FLUSH PRIVILEGES;")
         except mysql.Error, ex :
             print ex
@@ -204,13 +225,14 @@ class ClientDBCreate(object):
             is_primary_admin, is_service_provider, is_admin)\
             values (0, 'Administrator', %s, %s, 1 , 1, 0, 0 )"
             cursor.execute(query, [self._email_id, encrypted_password])
+            return password
         except Exception :
             raise self.process_error("admin user creation failed in client database")
 
     def _create_tables(self, cursor):
         try :
             sql_script_path = os.path.join(
-                os.path.join(os.path.split(__file__)[0]),
+                os.path.join(os.path.split(__file__)[0], ".."),
                 "scripts/mirror-client.sql"
             )
             with io.FileIO(sql_script_path, "r") as file_obj :
@@ -222,7 +244,8 @@ class ClientDBCreate(object):
                         cursor.execute(command)
                     else:
                         break
-        except Exception :
+        except mysql.Error, e :
+            print e
             raise self.process_error("table creation failed in client database")
 
     def _create_procedure(self, cursor):
@@ -340,6 +363,8 @@ class ClientDBCreate(object):
         )
 
         result = self._get_machine_details()
+        if len(result) == 0:
+            raise self.process_error("Client server is full")
         machine_id = result[0]["machine_id"]
         server_ip = result[0]["ip"]
         server_port = result[0]["port"]
@@ -366,10 +391,12 @@ class ClientDBCreate(object):
             tblMachines, "client_ids",
             machine_condition
         )
+        print "machine length_rows"
         if length_rows:
             print length_rows
             company_ids = length_rows[0]["client_ids"].split(",")
-            if company_ids >= 30:
+            print company_ids
+            if len(company_ids) >= 30:
                 self.set_server_full(machine_condition)
         return self._db.insert(
             tblClientDatabase, client_db_columns,

@@ -251,6 +251,7 @@ def save_client_group_data(db, client_id, client_group, session_user):
         raise process_error("E040")
     action = "Created Client \"%s\"" % client_group.group_name
     db.save_activity(session_user, 18, action)
+    print "save client_group", result
     return result
 
 def get_date_configurations(db, client_id):
@@ -286,6 +287,7 @@ def save_client_countries(db, client_id, country_ids):
     res = db.bulk_insert(tblClientCountries, columns, values_list)
     if res is False :
         raise process_error("E041")
+    print "save_client_countries ", res
     return res
 
 def save_client_domains(db, client_id, domain_ids):
@@ -309,6 +311,7 @@ def save_client_domains(db, client_id, domain_ids):
     res = db.bulk_insert(tblClientDomains, columns, values_list)
     if res is False:
         raise process_error("E042")
+    print "save client domains ", res
     return res
 
 def update_client_domain_status(db, client_id, domain_ids) :
@@ -331,6 +334,7 @@ def save_incharge_persons(db, client_group, client_id):
     r = db.bulk_insert(tblUserClients, columns, values_list)
     if r is False :
         raise process_error("E043")
+    print "save incharge_person ", r
     return r
 
 def save_client_user(db, client_group, session_user, client_id=None):
@@ -347,6 +351,7 @@ def save_client_user(db, client_group, session_user, client_id=None):
     r = db.insert(tblClientUsers, columns, values)
     if r is False :
         raise process_error("E044")
+    print "save client user ", r
     return r
 
 def notify_incharge_persons(db, client_group):
