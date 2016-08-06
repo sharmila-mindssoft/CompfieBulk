@@ -303,25 +303,19 @@ def return_client_users(users):
         ))
     return results
 
-def get_user_domains(db, user_id, client_id=None):
-    columns = "domain_id"
-    table = tblDomains
-    result = None
-    condition = 1
-    if user_id > 0:
-        table = tblUserDomains
-        condition = " user_id = '%s'" % user_id
-    rows = db.get_data(
-        table, columns, condition
-    )
-    result = ""
-    if rows:
-        for index, row in enumerate(rows):
-            if index == 0:
-                result += str(row["domain_id"])
-            else:
-                result += ", %s" % str(row["domain_id"])
-    return result
+def get_user_domains(db, user_id):
+    q = "select domain_id from tbl_user_domains"
+    param = None
+    condition = ""
+    if is_primary_admin(db, user_id) is not True :
+        condition = " user_id = %s"
+        param = [user_id]
+
+    rows = db.select_all(q + condition, param)
+    d_ids = []
+    for r in rows :
+        d_ids.append(int(r[0]))
+    return d_ids
 
 def is_service_provider_in_contract(db, service_provider_id):
     column = "count(1) as live"
@@ -448,27 +442,19 @@ def is_admin(db, user_id):
             return False
 
 def get_user_unit_ids(db, user_id):
-    columns = "unit_id"
-    table = tblUnits
-    condition = 1
-    if user_id > 0:
-        table = tblUserUnits
-        condition = " user_id = '%s'" % user_id
-    rows = db.get_data(
-        table, columns, condition
-    )
-    u_ids = []
-    if rows :
-        for r in rows :
-            u_ids.append(str(r["unit_id"]))
+    q = "select distinct unit_id from tbl_units"
+    param = None
+    condition = ""
+    if is_primary_admin(db, user_id) is not True :
+        condition = " unit_id in (select unit_id from tbl_user_units \
+            where user_id = %s )"
+        param = [user_id]
 
-        # result = ""
-        # for index, row in enumerate(rows):
-        #     if index == 0:
-        #         result += str(row["unit_id"])
-        #     else:
-        #         result += ",%s" % str(row["unit_id"])
-    return ",".join(u_ids)
+    rows = db.select_all(q + condition, param)
+    u_ids = []
+    for r in rows :
+        u_ids.append(int(r[0]))
+    return u_ids
 
 def is_two_levels_of_approval(db):
     columns = "two_levels_of_approval"
@@ -996,19 +982,18 @@ def save_compliance_notification(
     return r1
 
 def get_user_countries(db, user_id, client_id=None):
-    columns = "group_concat(country_id) as countries"
-    table = tblCountries
-    result = None
-    condition = 1
-    if user_id > 0:
-        table = tblUserCountries
-        condition = " user_id = '%s'" % user_id
-    rows = db.get_data(
-        table, columns, condition
-    )
-    if rows :
-        result = rows[0]["countries"]
-    return result
+    q = "select country_id from tbl_user_countries"
+    param = None
+    condition = ""
+    if is_primary_admin(db, user_id) is not True :
+        condition = " user_id = %s"
+        param = [user_id]
+
+    rows = db.select_all(q + condition, param)
+    c_ids = []
+    for r in rows :
+        c_ids.append(int(r[0]))
+    return c_ids
 
 def get_email_id_for_users(db, user_id):
     if user_id == 0 :

@@ -83,7 +83,11 @@ client_message = {
     "E018": "Compliance activity creation failed",
     "E019": "Create notification failed",
     "E020": "Save compliance activity failed",
-    "E021": "Update file space failed"
+    "E021": "Core file space update failed",
+    "E022": "Client user details save failed in core",
+    "E023": "Client user details update failed in core",
+    "E024": "Client user status update failed in core",
+    "E025": "Client unit closure failed in core"
 }
 
 def process_error(msg_code):

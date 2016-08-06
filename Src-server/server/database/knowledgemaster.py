@@ -518,7 +518,7 @@ def get_geographies_for_user_with_mapping(db, user_id):
             geography = core.GeographyWithMapping(
                 d["geography_id"], d["geography_name"],
                 d["level_id"],
-                d["parent_names"]+">>"+d["geography_name"],
+                d["parent_names"],
                 parent_ids[-1], bool(d["is_active"])
             )
             country_id = d["country_id"]
@@ -905,9 +905,8 @@ def frame_geography_parent_mapping(rows):
     for row in rows :
         country_id = int(row["country_id"])
         geography_id = int(row["geography_id"])
-        name = row["geography_name"]
         is_active = bool(row["is_active"])
-        mappings = row["parent_names"] + " >> " + name
+        mappings = row["parent_names"]
         GEOGRAPHY_PARENTS[geography_id] = [
             mappings, is_active, country_id
         ]

@@ -26,23 +26,26 @@ function initialize(){
 	);
 }
 
-function showPopup(unitId){
+function showPopup(unitId, unitName){
 	$('#unitidval').val(unitId);
+	$("#unitnameval").val(unitName);
 	$('.overlay').css("visibility","visible");
 	$('.overlay').css("opacity","1");
-	$('.popup-error-msg').html("");	
+	$('.popup-error-msg').html("");
 	$("#password").val("");
 	$('#password').focus();
 	window.scrollTo(0, 0);
 }
 $('.close').click(function(){
 	$('#unitidval').val("");
-	$("#password").val("");		
+	$('#unitnameval').val("");
+	$("#password").val("");
 	$('.overlay').css("visibility","hidden");
 	$('.overlay').css("opacity","0");
 });
 function unit_close(){
 	var unitidval=$('#unitidval').val();
+	var unitnameval=$('#unitnameval').val();
 	var password=$('#password').val();
 	if(password==''){
 		$('.popup-error-msg').html("Enter password");
@@ -68,7 +71,7 @@ function unit_close(){
 				$('.popup-error-msg').html(error);
 			}
 		}
-		client_mirror.closeUnit(parseInt(unitidval), password,
+		client_mirror.closeUnit(parseInt(unitidval), unitnameval, password,
 			function (error, response){
 				if(error == null){
 					onSuccess(response);
@@ -88,7 +91,7 @@ function getBusinessGroupsName(businessgroupid){
 			if(businessGroupsList[key]['business_group_id'] == businessgroupid){
 				businessGroupName = businessGroupsList[key]['business_group_name'];
 			}
-		});	
+		});
 	}
 	else{
 		businessGroupName = '';
@@ -103,7 +106,7 @@ function getLegalEntityName(legalentityid){
 			if(legalEntitiesList[key]['legal_entity_id'] == legalentityid){
 				legalEntityName = legalEntitiesList[key]['legal_entity_name'];
 			}
-		});	
+		});
 	}
 	else{
 		legalEntityName = '';
@@ -117,7 +120,7 @@ function getDivisionName(divisionid){
 			if(divisionsList[key]['division_id'] == divisionid){
 				divisionName = divisionsList[key]['division_name'];
 			}
-		});	
+		});
 	}
 	else{
 		divisionName = '';
@@ -128,25 +131,25 @@ function getDivisionName(divisionid){
 function loadUnitClosureList(unitsListData){
  	$(".tbody-unitclosure-list").find("tr").remove();
  	var sno = 0;
-	var imageName, title;	
-	$.each(unitsListData, function(k, value) { 
-		
+	var imageName, title;
+	$.each(unitsListData, function(k, value) {
+
 		var bgroupid = value['business_group_id'];
 		var lentityid = value['legal_entity_id'];
 		var divisionid = value['division_id'];
-		var unitName = value['unit_code'] + '-' + value['unit_name'];	
+		var unitName = value['unit_code'] + '-' + value['unit_name'];
 		var unitId = value["unit_id"];
-		var address = value["unit_address"];		
+		var address = value["unit_address"];
 		var isClosed = value["is_closed"];
 		var isActive = value["is_active"];
-		
+
 		if(isClosed == false){
 			imageName = "deletebold.png";
 			title = "close"
 			statusVal = 0;
 		}
 		else{
-			imageName = "";	
+			imageName = "";
 			title = ""
 		}
 		var tableRow = $('#templates .table-unitclosure-list .table-row');
@@ -159,11 +162,11 @@ function loadUnitClosureList(unitsListData){
 		$('.unit', clone).text(unitName);
 		$('.unit-address', clone).text(address);
 		if(imageName == ''){
-			$('.is-active', clone).text('closed');	
+			$('.is-active', clone).text('closed');
 		}
 		else{
-			$('.is-active', clone).html('<img src="/images/'+imageName+'" class="popupoverlay" onClick="showPopup('+unitId+')" title="'+title+'"/>');	
-		}		
+			$('.is-active', clone).html('<img src="/images/'+imageName+'" class="popupoverlay" onClick="showPopup('+unitId+')" title="'+title+'"/>');
+		}
 		$('.tbody-unitclosure-list').append(clone);
 	});
 }

@@ -23,7 +23,8 @@ from server.clientdatabase.general import (
     get_user_name_by_id, convert_base64_to_file,
     set_new_due_date, is_two_levels_of_approval,
     is_admin, calculate_due_date, filter_out_due_dates,
-    get_user_email_name,  save_compliance_notification
+    get_user_email_name,  save_compliance_notification,
+    get_user_countries
 )
 from server.exceptionmessage import client_process_error
 email = EmailHandler()
@@ -2003,7 +2004,6 @@ def update_user_settings(db, new_units):
         country_ids = n.country_id
 
         user_units = get_user_unit_ids(db, user_id)
-        user_units = [int(x) for x in user_units.split(',')]
         new_unit = []
         if unit_ids is not None :
             for u_id in unit_ids :
@@ -2021,7 +2021,6 @@ def update_user_settings(db, new_units):
             # self.save_activity(user_id, 7, action)
 
         user_domain_ids = get_user_domains(db, user_id)
-        user_domain_ids = [int(x) for x in user_domain_ids.split(',')]
         new_domains = []
         if domain_ids is not None :
             for d_id in domain_ids :
@@ -2045,7 +2044,6 @@ def update_user_settings(db, new_units):
             #     # self.save_activity(user_id, 7, action)
 
         user_countries = get_user_countries(db, user_id)
-        user_countries = [int(x) for x in user_countries.split(',')]
         new_countries = []
         if country_ids is not None :
             for c_id in country_ids :

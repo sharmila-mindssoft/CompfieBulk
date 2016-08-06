@@ -456,3 +456,161 @@ AssertionError
     result = create_new_admin(db, request_frame, session_user)
 TypeError: create_new_admin() takes exactly 4 arguments (3 given)
 
+2016-08-05 15:43:26,863 - knowledge_logger - main.py-handle-api- : get_trail_log_for_domain() takes exactly 5 arguments (4 given)
+2016-08-05 15:43:26,864 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 215, in handle_domain_replication
+    actual_replica_count
+TypeError: get_trail_log_for_domain() takes exactly 5 arguments (4 given)
+
+2016-08-05 15:43:26,867 - knowledge_logger - main.py-handle-api- : 
+2016-08-05 15:43:26,868 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+    self._db.begin()
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
+    assert self._cursor is None
+AssertionError
+
+2016-08-05 15:43:26,870 - knowledge_logger - main.py-handle-api- : 
+2016-08-05 15:43:26,871 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+    self._db.begin()
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
+    assert self._cursor is None
+AssertionError
+
+2016-08-05 15:43:26,874 - knowledge_logger - main.py-handle-api- : 
+2016-08-05 15:43:26,874 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+    self._db.begin()
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
+    assert self._cursor is None
+AssertionError
+
+2016-08-05 15:43:26,878 - knowledge_logger - main.py-handle-api- : 
+2016-08-05 15:43:26,878 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+    self._db.begin()
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
+    assert self._cursor is None
+AssertionError
+
+2016-08-05 15:43:26,881 - knowledge_logger - main.py-handle-api- : 
+2016-08-05 15:43:26,882 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+    self._db.begin()
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
+    assert self._cursor is None
+AssertionError
+
+2016-08-05 15:44:23,909 - knowledge_logger - main.py-handle-api- : 
+2016-08-05 15:44:23,909 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+    self._db.begin()
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
+    assert self._cursor is None
+AssertionError
+
+2016-08-05 15:52:20,159 - knowledge_logger - main.py-handle-api- : not all arguments converted during string formatting
+2016-08-05 15:52:20,160 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 197, in handle_replication
+    gen.get_trail_log(db, client_id, received_count)
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/general.py", line 55, in get_trail_log
+    update_client_replication_status(db, client_id, received_count)
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/general.py", line 185, in update_client_replication_status
+    db.execute(q, [client_id])
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 147, in execute
+    logger.logQuery(self._for_client, "execute", query % param[0])
+TypeError: not all arguments converted during string formatting
+
+2016-08-05 15:52:20,244 - knowledge_logger - main.py-handle-api- : 
+2016-08-05 15:52:20,244 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+    self._db.begin()
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
+    assert self._cursor is None
+AssertionError
+
+2016-08-05 15:52:20,311 - knowledge_logger - main.py-handle-api- : 
+2016-08-05 15:52:20,312 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+    self._db.begin()
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
+    assert self._cursor is None
+AssertionError
+
+2016-08-05 15:52:23,104 - knowledge_logger - main.py-handle-api- : 
+2016-08-05 15:52:23,104 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+    self._db.begin()
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
+    assert self._cursor is None
+AssertionError
+
+2016-08-05 15:52:23,160 - knowledge_logger - main.py-handle-api- : 
+2016-08-05 15:52:23,161 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+    self._db.begin()
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
+    assert self._cursor is None
+AssertionError
+
+2016-08-05 15:53:13,917 - knowledge_logger - main.py-handle-api- : 
+2016-08-05 15:53:13,918 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+    self._db.begin()
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
+    assert self._cursor is None
+AssertionError
+
+2016-08-05 15:53:13,926 - knowledge_logger - main.py-handle-api- : 
+2016-08-05 15:53:13,926 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+    self._db.begin()
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
+    assert self._cursor is None
+AssertionError
+
+2016-08-05 16:26:56,583 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data.
+2016-08-05 16:26:56,583 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 244, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technocontroller.py", line 68, in process_techno_request
+    result = get_clients(db, request_frame, session_user)
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/controller/technomastercontroller.py", line 342, in get_clients
+    group_company_list = get_group_companies_for_user_with_max_unit_count(db, session_user)
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/database/technomaster.py", line 1010, in get_group_companies_for_user_with_max_unit_count
+    result = db.get_data(tblClientGroups, columns, condition)
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 294, in get_data
+    rows = self.select_all(query)
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 220, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+
+2016-08-05 16:27:04,182 - knowledge_logger - main.py-handle-api- : 
+2016-08-05 16:27:04,183 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+    self._db.begin()
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
+    assert self._cursor is None
+AssertionError
+
+2016-08-05 16:27:10,967 - knowledge_logger - main.py-handle-api- : 
+2016-08-05 16:27:10,967 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/main.py", line 142, in handle_api_request
+    self._db.begin()
+  File "/home/usha/Python/workspace/Compliance-Mirror/Src-server/server/dbase.py", line 108, in begin
+    assert self._cursor is None
+AssertionError
+
+2016-08-05 16:30:05,738 - knowledge_logger - create : save user
+2016-08-05 16:32:29,397 - knowledge_logger - create : save user
+2016-08-05 16:33:49,865 - knowledge_logger - create : save user
+2016-08-05 16:35:56,926 - knowledge_logger - create : save user
+2016-08-05 16:36:57,844 - knowledge_logger - create : save user
+2016-08-05 17:13:08,845 - knowledge_logger - create : save user

@@ -2223,7 +2223,6 @@ def get_client_details_condition(
     unit_id, domain_ids, session_user
 ):
     user_unit_ids = get_user_unit_ids(db, session_user)
-    user_unit_ids = [int(x) for x in user_unit_ids.split(',')]
     condition = "u.country_id = %s "
     condition_val = [country_id]
     if business_group_id is not None:

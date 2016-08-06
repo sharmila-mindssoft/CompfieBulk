@@ -3,8 +3,8 @@ import datetime
 from dateutil import relativedelta
 from protocol import (core, dashboard)
 from server.constants import FORMAT_DOWNLOAD_URL
+from server.emailcontroller import EmailHandler
 from server.clientdatabase.tables import *
-
 from server.clientdatabase.common import (
     get_last_7_years, get_country_domain_timelines,
     calculate_ageing_in_hours, calculate_years
@@ -17,6 +17,7 @@ from server.clientdatabase.general import (
     get_user_domains, get_group_name, is_primary_admin
 )
 from server.clientdatabase.clienttransaction import get_units_for_assign_compliance
+email = EmailHandler()
 __all__ = [
     "get_units_for_dashboard_filters",
     "get_compliance_status_chart",
@@ -212,7 +213,7 @@ def get_compliance_status(
     param = [tuple(country_ids), tuple(domain_ids)]
     param.extend(where_qry_val)
     # # print query
-    q = query + where_qry1 + order
+    q = "%s %s %s" % (query, where_qry1, order)
     rows = db.select_all(q, param)
     columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
     return filter_ids, convert_to_dict(rows, columns)
@@ -1837,13 +1838,15 @@ def get_assigneewise_compliances_list(
     if unit_id is not None:
         condition += " AND tu.unit_id = '%d'" % (unit_id)
     else:
-        condition += " AND tu.unit_id in (%s)" % (
-            get_user_unit_ids(db, session_user)
+        units = get_user_unit_ids(db, session_user)
+        if len(units) == 1 :
+            units.append(0)
+        condition += " AND tu.unit_id in %s " % (
+            tuple(units)
         )
     if assignee_id is not None:
         condition += " AND tch.completed_by = '%d'" % (assignee_id)
-    domain_ids = get_user_domains(db, session_user)
-    domain_ids_list = [int(x) for x in domain_ids.split(",")]
+    domain_ids_list = get_user_domains(db, session_user)
     current_date = get_date_time_in_date()
     result = {}
     for domain_id in domain_ids_list:
@@ -1944,13 +1947,11 @@ def get_assigneewise_yearwise_compliances(
     db, country_id, unit_id, user_id, client_id
 ):
     current_year = get_date_time_in_date().year
-    domain_ids = [int(x) for x in get_user_domains(db, user_id).split(",")]
+    domain_ids_list = get_user_domains(db, user_id)
     start_year = current_year - 5
     iter_year = start_year
     year_wise_compliance_count = []
     while iter_year <= current_year:
-        domain_ids = get_user_domains(db, user_id)
-        domain_ids_list = [int(x) for x in domain_ids.split(",")]
         domainwise_complied = 0
         domainwise_inprogress = 0
         domainwise_notcomplied = 0
@@ -2081,8 +2082,7 @@ def get_assigneewise_compliances_drilldown_data_count(
 ):
     domain_id_list = []
     if domain_id is None:
-        domain_ids = get_user_domains(db, session_user)
-        domain_id_list = [int(x) for x in domain_ids.split(",")]
+        domain_id_list = get_user_domains(db, session_user)
     else:
         domain_id_list = [domain_id]
 
@@ -2123,8 +2123,7 @@ def get_assigneewise_compliances_drilldown_data(
 ):
     domain_id_list = []
     if domain_id is None:
-        domain_ids = get_user_domains(db, session_user)
-        domain_id_list = [int(x) for x in domain_ids.split(",")]
+        domain_id_list = get_user_domains(db, session_user)
     else:
         domain_id_list = [domain_id]
 
