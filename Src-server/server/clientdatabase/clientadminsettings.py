@@ -35,7 +35,7 @@ def get_settings(db, client_id):
 def get_licence_holder_details(db, client_id):
     columns = "tcu.user_id, tcu.email_id, tcu.employee_name, tcu.employee_code," + \
         " tcu.contact_no, tcu.is_admin, tu.unit_code, tu.unit_name, tu.address," + \
-        " tcu.is_active, tsp.service_provider_name"
+        " tcu.is_active, tsp.service_provider_name, tcu.is_primary_admin",
     tables = [tblUsers, tblUnits, tblServiceProviders]
     aliases = ["tcu", "tu", "tsp"]
     join_type = "left join"
@@ -57,13 +57,13 @@ def get_profile(
     contract_from = datetime_to_string(contract_from)
     contract_to = datetime_to_string(contract_to)
 
-    admin_columns = "username"
-    admin_condition = "1"
-    result = db.get_data(
-        tblAdmin, admin_columns, admin_condition
-    )
-    admin_email = result[0]["username"]
-    is_admin_is_a_user = False
+    # admin_columns = "username"
+    # admin_condition = "1"
+    # result = db.get_data(
+    #     tblAdmin, admin_columns, admin_condition
+    # )
+    # admin_email = result[0]["username"]
+    # is_admin_is_a_user = False
 
     licence_holder_rows = get_licence_holder_details(db, client_id)
     licence_holders = []
@@ -82,7 +82,7 @@ def get_profile(
         user_id = row["user_id"]
         email_id = row["email_id"]
         if email_id == admin_email:
-            is_admin_is_a_user = True
+            # is_admin_is_a_user = True
             employee_name = "Administrator: %s" % employee_name
         contact_no = row["contact_no"]
         # is_admin = row[5]
@@ -94,13 +94,13 @@ def get_profile(
                 unit_name, address
             ))
     remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
-    if not is_admin_is_a_user:
-        licence_holders.append(
-            clientadminsettings.LICENCE_HOLDER(
-                0, "Administrator", admin_email, None,
-                None, None
-            ))
-        remaining_licence -= 1
+    # if not is_admin_is_a_user:
+    #     licence_holders.append(
+    #         clientadminsettings.LICENCE_HOLDER(
+    #             0, "Administrator", admin_email, None,
+    #             None, None
+    #         ))
+    #     remaining_licence -= 1
 
     used_space = round((total_disk_space_used/1000000000), 2)
     total_space = total_disk_space/1000000000

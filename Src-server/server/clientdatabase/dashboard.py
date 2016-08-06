@@ -1787,7 +1787,7 @@ def get_user_company_details(db, user_id, client_id=None):
     columns = "unit_id"
     condition = " 1 "
     rows = None
-    if user_id > 0 and user_id != admin_id:
+    if user_id != admin_id:
         condition = "  user_id = '%d'" % user_id
         rows = db.get_data(
             tblUserUnits, columns, condition
@@ -2267,7 +2267,7 @@ def notify_expiration(db):
     values = [notification_id, 0]
     db.insert(tblNotificationUserLog, columns, values)
 
-    q = "SELECT username from tbl_admin"
+    q = "SELECT email_id from tbl_users where is_active = 1 and is_primary_admin = 1"
     rows = db.select_all(q)
     admin_mail_id = rows[0][0]
     email.notify_contract_expiration(

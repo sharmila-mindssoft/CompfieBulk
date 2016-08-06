@@ -114,7 +114,7 @@ function getUnitNameAndAddress(unitId){
     if(unitId != null){
         $.each(unitList, function(key, value) {
             if(value['unit_id'] == unitId){
-                unit['unitName'] = value['unit_name'];
+                unit['unitName'] = value['unit_code'] + " - " + value['unit_name'];
                 unit['unitAddress'] = value['unit_address'];
             }
         });
@@ -188,8 +188,7 @@ function loadClientUserList(){
         else if (seatingUnitId != null){
          $('.seating-unit', clone).html('<abbr class="page-load" title="'+getUnitNameAndAddress(seatingUnitId)['unitAddress']+'"><img src="/images/icon-info.png" style="margin-right:10px"/>'+getUnitNameAndAddress(seatingUnitId)['unitName']);
         }
-        alert(userId);
-        if (userId != 0){
+        if (userId != 1){
             $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
         }
         if (isPrimaryAdmin == false){

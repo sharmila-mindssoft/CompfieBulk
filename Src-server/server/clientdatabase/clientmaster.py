@@ -450,7 +450,7 @@ def save_user_domains(db, domain_ids, user_id):
     db.delete(tblUserDomains, "user_id = %s", [user_id])
     domain_columns = ["user_id", "domain_id"]
     domain_values_list = []
-    for domain_id in user.domain_ids:
+    for domain_id in domain_ids:
         domain_values_list.append((user_id, int(domain_id)))
 
     res = db.bulk_insert(tblUserDomains, domain_columns, domain_values_list)
@@ -461,7 +461,7 @@ def save_user_units(db, unit_ids, user_id):
     db.delete(tblUserUnits, "user_id = %s", [user_id])
     unit_columns = ["user_id", "unit_id"]
     unit_values_list = []
-    for unit_id in user.unit_ids:
+    for unit_id in unit_ids:
         unit_values_list.append((user_id, int(unit_id)))
     res = db.bulk_insert(tblUserUnits, unit_columns, unit_values_list)
     if res is False :
@@ -514,7 +514,7 @@ def save_user(db, user, session_user, client_id):
     return True
 
 def update_user(db, user, session_user, client_id):
-
+    user_id = user.user_id
     current_time_stamp = get_date_time()
     user.is_service_provider = 0 if user.is_service_provider is False else 1
     columns = [
@@ -527,7 +527,7 @@ def update_user(db, user, session_user, client_id):
         user.contact_no, user.seating_unit_id, user.user_level,
         user.is_service_provider, current_time_stamp, session_user
     ]
-    condition = "user_id= %s " % user.user_id
+    condition = "user_id= %s " % user_id
 
     if user.is_service_provider == 1:
         columns.append("service_provider_id")
@@ -543,7 +543,7 @@ def update_user(db, user, session_user, client_id):
     save_user_countries(db, user.country_ids, user_id)
     save_user_domains(db, user.domain_ids, user_id)
     save_user_units(db, user.unit_ids, user_id)
-    UpdateUsers(self, user, user.user_id, client_id)
+    UpdateUsers(user, user.user_id, client_id)
 
     action = "Updated user \"%s - %s\"" % (user.employee_code, user.employee_name)
     db.save_activity(session_user, 4, action)

@@ -217,9 +217,9 @@ class ClientDBCreate(object):
     def _create_admin_user(self, cursor):
         try :
             encrypted_password, password = generate_and_return_password()
-            query = "insert into tbl_admin (username, password) values (%s, %s)"
-            logger.logKnowledge("info", "create", "save user")
-            cursor.execute(query, [self._email_id, encrypted_password])
+            # query = "insert into tbl_admin (username, password) values (%s, %s)"
+            # logger.logKnowledge("info", "create", "save user")
+            # cursor.execute(query, [self._email_id, encrypted_password])
 
             query = "insert into tbl_users (user_id, employee_name, email_id, password, user_level,\
             is_primary_admin, is_service_provider, is_admin)\
@@ -287,8 +287,8 @@ class ClientDBCreate(object):
                         statutory_notification_id, \
                         user_id, read_status \
                     ) \
-                    SELECT NEW.statutory_notification_id, t1.admin_id, 0 FROM \
-                    tbl_admin t1 where t1.admin_id != 0; \
+                    SELECT NEW.statutory_notification_id, t1.user_id, 0 FROM \
+                    tbl_users t1 where t1.is_active = 1 and t1.is_primary_admin = 1; \
                 END; "
             cursor.execute(t1)
             t2 = " CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units` \

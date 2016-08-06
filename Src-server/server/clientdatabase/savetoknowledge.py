@@ -89,7 +89,7 @@ class SaveUsers(KnowledgedbConnect):
 
 class UpdateUsers(KnowledgedbConnect):
     def __init__(self, user_info, user_id, client_id):
-        super(SaveUsers, self).__init__()
+        super(UpdateUsers, self).__init__()
         self._user_id = user_id
         self._user_info = user_info
         self._client_id = client_id

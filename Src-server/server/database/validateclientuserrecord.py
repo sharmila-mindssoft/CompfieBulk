@@ -87,16 +87,15 @@ class ClientAdmin(ClientdbConnect):
         # updating on going compliances are under discussion. as of now concurrence and approvar paerson will not be changed for inprogress compliances.
 
     def remove_old_admin(self):
-        q2 = "update tbl_users set is_active = 0 where user_id in \
-            (select admin_id from tbl_admin limit 1)"
+        q2 = "update tbl_users set is_active = 0 where user_id = %s " % (self._old_admin_id)
 
         self._c_db.execute(q2)
 
-        q1 = "update tbl_admin t1, (select user_id, email_id, password \
-            from tbl_users) t2 set t1.admin_id = t2.user_id, \
-            t1.username = t2.email_id, t1.password = t2.password \
-            where t2.user_id = %s"
-        self._c_db.execute(q1, [self._new_admin_id])
+        # q1 = "update tbl_admin t1, (select user_id, email_id, password \
+        #     from tbl_users) t2 set t1.admin_id = t2.user_id, \
+        #     t1.username = t2.email_id, t1.password = t2.password \
+        #     where t2.user_id = %s"
+        # self._c_db.execute(q1, [self._new_admin_id])
 
     def perform_promote_admin(self):
         try :
