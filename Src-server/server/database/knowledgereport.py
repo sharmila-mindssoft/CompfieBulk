@@ -21,7 +21,7 @@ def get_geography_report(db):
     def return_report_data(result) :
         mapping_dict = {}
         for item in result :
-            mappings = item["parent_names"] + ">>" + item["geography_name"]
+            mappings = item["parent_names"]
             is_active = bool(item["is_active"])
             country_id = item["country_id"]
             _list = mapping_dict.get(country_id)

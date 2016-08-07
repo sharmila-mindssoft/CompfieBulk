@@ -438,43 +438,51 @@ class UpdateClientUserStatus(Request):
         }
 
 class ChangeClientUserStatus(Request):
-    def __init__(self, user_id, is_active):
+    def __init__(self, user_id, is_active, employee_name):
         self.user_id = user_id
         self.is_active = is_active
+        self.employee_name = employee_name
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["u_id", "active"])
+        data = parse_dictionary(data, ["u_id", "active", "emp_name"])
         user_id = data.get("u_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         is_active = data.get("active")
         is_active = parse_structure_Bool(is_active)
-        return ChangeClientUserStatus(user_id, is_active)
+        employee_name = data.get("emp_name")
+        employee_name = parse_structure_CustomTextType_100(employee_name)
+        return ChangeClientUserStatus(user_id, is_active, employee_name)
 
     def to_inner_structure(self):
         return {
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
             "is_active": to_structure_Bool(self.is_active),
+            "employee_name": to_structure_CustomTextType_100(self.employee_name)
         }
 
 class ChangeAdminStatus(Request):
-    def __init__(self, user_id, is_admin):
+    def __init__(self, user_id, is_admin, employee_name):
         self.user_id = user_id
         self.is_admin = is_admin
+        self.employee_name = employee_name
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["u_id", "admin"])
+        data = parse_dictionary(data, ["u_id", "admin", "emp_name"])
         user_id = data.get("u_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         is_admin = data.get("admin")
         is_admin = parse_structure_Bool(is_admin)
-        return ChangeAdminStatus(user_id, is_admin)
+        employee_name = data.get("emp_name")
+        employee_name = parse_structure_CustomTextType_100(employee_name)
+        return ChangeAdminStatus(user_id, is_admin, employee_name)
 
     def to_inner_structure(self):
         return {
             "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
             "is_admin": to_structure_Bool(self.is_admin),
+            "employee_name": to_structure_CustomTextType_100(self.employee_name)
         }
 
 
@@ -492,23 +500,27 @@ class GetUnits(Request):
         }
 
 class CloseUnit(Request):
-    def __init__(self, unit_id, password):
+    def __init__(self, unit_id, unit_name, password):
         self.unit_id = unit_id
         self.password = password
+        self.unit_name = unit_name
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["u_id", "pwd"])
+        data = parse_dictionary(data, ["u_id", "pwd", "u_name"])
         unit_id = data.get("u_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         password = data.get("pwd")
         password = parse_structure_CustomTextType_100(password)
-        return CloseUnit(unit_id, password)
+        unit_name = data.get("u_name")
+        unit_name = parse_structure_CustomTextType_100(unit_name)
+        return CloseUnit(unit_id, password, unit_name)
 
     def to_inner_structure(self):
         return {
             "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
             "password": to_structure_CustomTextType_100(self.password),
+            "unit_name": to_structure_CustomTextType_100(self.unit_name)
         }
 
 class GetAuditTrails(Request):

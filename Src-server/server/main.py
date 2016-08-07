@@ -142,11 +142,14 @@ class API(object):
             self._db.begin()
             response_data = unbound_method(self, request_data, self._db)
             if response_data is None or type(response_data) is bool :
+                print response_data
                 self._db.rollback()
             if type(response_data) != technomasters.ClientCreationFailed:
                 self._db.commit()
             else:
                 self._db.rollback()
+            print "-------------"
+            print response_data
             respond(response_data)
         except Exception, e:
             print "handle_api_request"
@@ -160,6 +163,7 @@ class API(object):
             logger.logKnowledge("error", "main.py-handle-api-", e)
             logger.logKnowledge("error", "main.py", traceback.format_exc())
             if str(e).find("expected a") is False :
+                print "------- rollbacked"
                 self._db.rollback()
             response.set_status(400)
             response.send(str(e))
@@ -196,7 +200,7 @@ class API(object):
 
     @api_request(GetDomainChanges)
     def handle_domain_replication(self, request, db):
-        actual_count = gen.get_trail_id()
+        actual_count = gen.get_trail_id(db)
         client_id = request.client_id
         domain_id = request.domain_id
         received_count = request.received_count
@@ -207,7 +211,7 @@ class API(object):
 
         res = GetChangesSuccess(
             gen.get_trail_log_for_domain(
-                client_id, domain_id, received_count,
+                db, client_id, domain_id, received_count,
                 actual_replica_count
             )
         )
@@ -215,7 +219,7 @@ class API(object):
 
     @api_request(GetChanges)
     def handle_delreplicated(self, request, db):
-        actual_count = gen.get_trail_id()
+        actual_count = gen.get_trail_id(db)
 
         client_id = request.client_id
         received_count = request.received_count

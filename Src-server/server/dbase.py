@@ -152,6 +152,8 @@ class Database(object):
             return True
         except mysql.Error, e :
             print e
+            print query
+            print param
             return False
 
     ########################################################
@@ -285,7 +287,8 @@ class Database(object):
             query += " WHERE %s " % condition
             if order is not None :
                 query += order
-
+            print query
+            print condition_val
             if condition_val is None :
                 logger.logQuery(self._for_client, "get_data", query)
                 rows = self.select_all(query)
@@ -299,6 +302,7 @@ class Database(object):
             logger.logQuery(self._for_client, "get_data", query)
             rows = self.select_all(query)
         result = []
+        print rows
         if rows :
             result = convert_to_dict(rows, param)
         return result
@@ -392,7 +396,7 @@ class Database(object):
     ########################################################
     # To form a bulk insert query
     ########################################################
-    def bulk_insert(self, table, columns, valueList, client_id=None) :
+    def bulk_insert(self, table, columns, valueList) :
 
         stringValue = []
         for i in range(len(columns)) :
@@ -432,6 +436,7 @@ class Database(object):
             print res
             return True
         except mysql.Error, e:
+            print e
             logger.logKnowledgeApi("update", query)
             logger.logKnowledgeApi("update", e)
             return False

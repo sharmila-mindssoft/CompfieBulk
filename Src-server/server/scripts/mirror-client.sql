@@ -1,15 +1,13 @@
-DROP TABLE IF EXISTS `tbl_audit_log`;
+
 CREATE TABLE `tbl_audit_log` (
   `audit_trail_id` int(11) DEFAULT 0,
   `domain_trail_id` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_form_type`;
 CREATE TABLE `tbl_form_type` (
   `form_type_id` int(11) NOT NULL,
   `form_type` varchar(50) NOT NULL,
   PRIMARY KEY (`form_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_forms`;
 CREATE TABLE `tbl_forms` (
   `form_id` int(11) NOT NULL,
   `form_type_id` int(11) NOT NULL,
@@ -20,39 +18,33 @@ CREATE TABLE `tbl_forms` (
   `is_admin` tinyint(4) NOT NULL,
   PRIMARY KEY (`form_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_countries`;
 CREATE TABLE `tbl_countries` (
   `country_id` int(11) NOT NULL,
   `country_name` varchar(50) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`country_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_domains`;
 CREATE TABLE `tbl_domains` (
   `domain_id` int(11) NOT NULL,
   `domain_name` varchar(50) NOT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_compliance_frequency`;
 CREATE TABLE `tbl_compliance_frequency` (
   `frequency_id` int(11) NOT NULL,
   `frequency` varchar(50) NOT NULL,
   PRIMARY KEY (`frequency_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_compliance_repeat_type`;
 CREATE TABLE `tbl_compliance_repeat_type` (
   `repeat_type_id` int(11) NOT NULL,
   `repeat_type` varchar(50) NOT NULL,
   PRIMARY KEY (`repeat_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_compliance_duration_type`;
 CREATE TABLE `tbl_compliance_duration_type` (
   `duration_type_id` int(11) NOT NULL,
   `duration_type` varchar(50) NOT NULL,
   PRIMARY KEY (`duration_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_compliances`;
 CREATE TABLE `tbl_compliances` (
   `compliance_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -73,7 +65,6 @@ CREATE TABLE `tbl_compliances` (
   `is_active` tinyint(4) DEFAULT 1,
   PRIMARY KEY (`compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_client_groups`;
 CREATE TABLE `tbl_client_groups` (
   `client_id` int(11) NOT NULL,
   `group_name` varchar(50) NOT NULL,
@@ -93,7 +84,6 @@ CREATE TABLE `tbl_client_groups` (
   `updated_on` TIMESTAMP NOT NULL DEFAULT current_timestamp on update current_timestamp,
   PRIMARY KEY (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_client_configurations`;
 CREATE TABLE `tbl_client_configurations` (
   `client_config_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
@@ -102,20 +92,17 @@ CREATE TABLE `tbl_client_configurations` (
   `period_to` int(11) NOT NULL,
   PRIMARY KEY (`country_id`, `domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_business_groups`;
 CREATE TABLE `tbl_business_groups` (
   `business_group_id` int(11) NOT NULL,
   `business_group_name` varchar(100) NOT NULL,
   PRIMARY KEY (`business_group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_legal_entities`;
 CREATE TABLE `tbl_legal_entities` (
   `legal_entity_id` int(11) NOT NULL,
   `business_group_id` int(11) DEFAULT NULL,
   `legal_entity_name` varchar(100) NOT NULL,
   PRIMARY KEY (`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_divisions`;
 CREATE TABLE `tbl_divisions` (
   `division_id` int(11) NOT NULL,
   `business_group_id` int(11) DEFAULT NULL,
@@ -123,7 +110,6 @@ CREATE TABLE `tbl_divisions` (
   `division_name` varchar(100) NOT NULL,
   PRIMARY KEY (`division_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_units`;
 CREATE TABLE `tbl_units` (
   `unit_id` int(11) NOT NULL,
   `business_group_id` int(11) DEFAULT NULL,
@@ -141,7 +127,6 @@ CREATE TABLE `tbl_units` (
   `is_closed` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_service_providers`;
 CREATE TABLE `tbl_service_providers` (
   `service_provider_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `service_provider_name` varchar(50) NOT NULL,
@@ -156,7 +141,6 @@ CREATE TABLE `tbl_service_providers` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_user_groups`;
 CREATE TABLE `tbl_user_groups` (
   `user_group_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `user_group_name` varchar(50) DEFAULT NULL,
@@ -167,15 +151,13 @@ CREATE TABLE `tbl_user_groups` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_admin`;
 CREATE TABLE `tbl_admin` (
   `admin_id` int(11) NOT NULL DEFAULT 0,
   `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_users`;
 CREATE TABLE `tbl_users` (
-  `user_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT 0,
   `user_group_id` int(11) DEFAULT NULL,
   `service_provider_id` int(11) DEFAULT NULL,
   `email_id` varchar(100) NOT NULL,
@@ -194,38 +176,32 @@ CREATE TABLE `tbl_users` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_user_countries`;
 CREATE TABLE `tbl_user_countries` (
   `user_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   PRIMARY KEY (`country_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_user_domains`;
 CREATE TABLE `tbl_user_domains` (
   `user_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   PRIMARY KEY (`domain_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_user_units`;
 CREATE TABLE `tbl_user_units` (
   `user_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   PRIMARY KEY (`unit_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_user_login_history`;
 CREATE TABLE `tbl_user_login_history` (
   `user_id` int(11) NOT NULL,
   `login_time` int(11) DEFAULT NULL,
   `logout_time` int(11) DEFAULT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_session_types`;
 CREATE TABLE `tbl_session_types` (
   `session_type_id` int(11) NOT NULL,
   `session_type` varchar(20) NOT NULL,
   PRIMARY KEY (`session_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_user_sessions`;
 CREATE TABLE `tbl_user_sessions` (
   `session_token` varchar(50) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -233,7 +209,6 @@ CREATE TABLE `tbl_user_sessions` (
   `last_accessed_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`session_token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_client_statutories`;
 CREATE TABLE `tbl_client_statutories` (
   `client_statutory_id` int(11) NOT NULL,
   `geography` VARCHAR(50) NOT NULL,
@@ -243,7 +218,6 @@ CREATE TABLE `tbl_client_statutories` (
   `is_new` tinyint(4) DEFAULT 0,
   PRIMARY KEY (`client_statutory_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_client_compliances`;
 CREATE TABLE `tbl_client_compliances` (
   `client_compliance_id` int(11) NOT  NULL,
   `client_statutory_id` int(11) NOT NULL,
@@ -262,7 +236,6 @@ CREATE TABLE `tbl_client_compliances` (
   PRIMARY KEY (`client_compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `tbl_assigned_compliances`;
 CREATE TABLE `tbl_assigned_compliances` (
   `country_id` int(11) NOT NULL,
   `unit_id` int(11) DEFAULT NULL,
@@ -282,7 +255,6 @@ CREATE TABLE `tbl_assigned_compliances` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`unit_id`, `compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_reassigned_compliances_history`;
 CREATE TABLE `tbl_reassigned_compliances_history` (
   `unit_id` int(11) NOT NULL,
   `compliance_id` int(11) DEFAULT NULL,
@@ -295,19 +267,16 @@ CREATE TABLE `tbl_reassigned_compliances_history` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_compliance_status`;
 CREATE TABLE `tbl_compliance_status` (
   `compliance_status_id` int(11) NOT NULL,
   `compliance_status` varchar(20) NOT NULL,
   PRIMARY KEY (`compliance_status_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_approval_status`;
 CREATE TABLE `tbl_approval_status` (
   `approval_status_id` int(11) NOT NULL,
   `approval_status` varchar(20) NOT NULL,
   PRIMARY KEY (`approval_status_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_compliance_history`;
 CREATE TABLE `tbl_compliance_history` (
   `compliance_history_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `unit_id` int(11) DEFAULT NULL,
@@ -329,7 +298,6 @@ CREATE TABLE `tbl_compliance_history` (
   `approved_by` int(11) DEFAULT NULL,
   `approved_on` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_compliance_activity_log`;
 CREATE TABLE `tbl_compliance_activity_log` (
   `compliance_activity_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `unit_id` int(11) DEFAULT NULL,
@@ -340,7 +308,6 @@ CREATE TABLE `tbl_compliance_activity_log` (
   `remarks` varchar(500) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_activity_log`;
 CREATE TABLE `tbl_activity_log` (
   `activity_log_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
@@ -348,20 +315,17 @@ CREATE TABLE `tbl_activity_log` (
   `action` varchar(500) NOT NULL,
   `created_on` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_email_verification`;
 CREATE TABLE `tbl_email_verification` (
   `user_id` int(11) NOT NULL,
   `verification_code` varchar(50) NOT NULL,
   PRIMARY KEY (`verification_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_mobile_registration`;
 CREATE TABLE `tbl_mobile_registration` (
   `registration_key` varchar(50) NOT NULL,
   `device_type_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`registration_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_statutory_notifications_log`;
 CREATE TABLE `tbl_statutory_notifications_log` (
   `statutory_notification_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `country_name` VARCHAR(50) NOT NULL,
@@ -373,7 +337,6 @@ CREATE TABLE `tbl_statutory_notifications_log` (
   `notification_text` longtext,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_statutory_notifications_units`;
 CREATE TABLE `tbl_statutory_notifications_units` (
   `statutory_notification_unit_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `statutory_notification_id` int(11) DEFAULT NULL,
@@ -382,19 +345,16 @@ CREATE TABLE `tbl_statutory_notifications_units` (
   `division_id` int(11) DEFAULT NULL,
   `unit_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_statutory_notification_status`;
 CREATE TABLE `tbl_statutory_notification_status` (
   `statutory_notification_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `read_status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_notification_type`;
 CREATE TABLE `tbl_notification_types` (
   `notification_type_id` int(11) NOT NULL,
   `notification_type` varchar(20) NOT NULL,
   PRIMARY KEY (`notification_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_notifications_log`;
 CREATE TABLE `tbl_notifications_log` (
   `notification_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `country_id` int(11) DEFAULT NULL,
@@ -412,14 +372,12 @@ CREATE TABLE `tbl_notifications_log` (
   `extra_details` longtext,
   `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_notification_user_log`;
 CREATE TABLE `tbl_notification_user_log` (
   `notification_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `read_status` tinyint(1) DEFAULT '0',
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_mobile_sync_versions`;
 CREATE TABLE `tbl_mobile_sync_versions` (
   `unit_details_version` int(11) NOT NULL,
   `user_details_version` int(11) NOT NULL,

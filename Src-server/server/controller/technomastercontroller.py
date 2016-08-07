@@ -6,6 +6,7 @@
 ########################################################
 import threading
 import re
+import Queue
 from protocol import technomasters
 from server.emailcontroller import EmailHandler as email
 from server import logger
@@ -91,29 +92,29 @@ def save_client_group(db, request, session_user):
             country_ids, domain_ids
         )
         try:
-            is_db_created = create_db.begin_process()
             save_client_group_data(db, client_id, request, session_user)
+            print "save_client_group_data"
+            print "db process being"
+            is_db_created = create_db.begin_process()
+            print "db process end"
             save_client_countries(db, client_id, request.country_ids)
+            print "save_client_countries"
             save_client_domains(db, client_id, request.domain_ids)
             save_incharge_persons(db, request, client_id)
             save_client_user(db, request, session_user, client_id)
-            create_db.update_client_db_details()
             notify_incharge_persons(db, request)
-            if is_db_created is True :
+            if is_db_created[0] is True :
                 send_client_credentials_thread = threading.Thread(
                     target=send_client_credentials, args=[
-                        request.short_name, request.email_id, result[1]
+                        request.short_name, request.email_id, is_db_created[1]
                     ]
                 )
                 send_client_credentials_thread.start()
                 return technomasters.SaveClientGroupSuccess()
-            else :
-                # raise Exception("Error in creating database")
-                # raise Exception(is_db_created)
-                return is_db_created
         except Exception, e:
             create_db.delete_database()
-            return e
+            print "Exception client_db_delete_database()", e
+            raise Exception(e)
 
 
 ########################################################

@@ -41,7 +41,7 @@ def get_trail_log(db, client_id, received_count):
     query = "SELECT "
     query += "  audit_trail_id, tbl_name, tbl_auto_id,"
     query += "  column_name, value, client_id, action"
-    query += " from tbl_audit_log WHERE audit_trail_id>%s AND (client_id = 0 OR client_id=%s) LIMIT 100;"
+    query += " from tbl_audit_log WHERE audit_trail_id > %s AND (client_id = 0 OR client_id= %s) LIMIT 100;"
 
     rows = db.select_all(query, [received_count, client_id])
     results = []
@@ -51,6 +51,7 @@ def get_trail_log(db, client_id, received_count):
             "column_name", "value", "client_id", "action"
         ]
         results = convert_to_dict(rows, columns)
+    print "get_trail_log ", results
     if len(results) == 0 :
         update_client_replication_status(db, client_id, received_count)
     return return_changes(results)
@@ -72,7 +73,7 @@ def get_trail_log_for_domain(db, client_id, domain_id, received_count, actual_co
         query += "  audit_trail_id, tbl_name, tbl_auto_id,"
         query += "  column_name, value, client_id, action"
         query += " from tbl_audit_log WHERE tbl_name = 'tbl_compliances' \
-            AND audit_trail_id>%s AND  \
+            AND audit_trail_id> %s AND  \
             tbl_auto_id IN (%s)  "
         # print "-"
         # print query
@@ -87,7 +88,7 @@ def get_trail_log_for_domain(db, client_id, domain_id, received_count, actual_co
             "column_name", "value", "client_id", "action"
         ]
         results = convert_to_dict(rows, columns)
-    # print len(results)
+    print "get_trail_log_for_domain ", len(results)
     if len(results) == 0 :
         update_client_replication_status(db, client_id, 0, type="domain_trail_id")
     return return_changes(results)
@@ -177,16 +178,16 @@ def _return_clients(data):
 
 def update_client_replication_status(db, client_id, received_count, type=None):
     if type is None :
-        q = "update tbl_client_replication_status set is_new_data = 0 where client_id = %s" % (client_id)
+        q = "update tbl_client_replication_status set is_new_data = 0 where client_id = %s"
         remove_trail_log(db, client_id, received_count)
     else :
         q = "update tbl_client_replication_status set is_new_domain = 0, domain_id = '' where client_id = %s"
     # print q
-    db.execute(q, (client_id))
+    db.execute(q, [client_id])
 
 def update_client_domain_status(db, client_id, domain_ids) :
     q = "update tbl_client_replication_status set is_new_data =1, \
-        is_new_domain = 1, domain_id = '%s' where client_id = %s"
+        is_new_domain = 1, domain_id = %s where client_id = %s"
     # print q
     db.execute(q, (
             str((','.join(domain_ids))),
