@@ -671,7 +671,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeAdminStatus(uId, admin, adminName callback) {
+    function changeAdminStatus(uId, admin, adminName, callback) {
         callerName = "client_masters"
         var request = [
             "ChangeAdminStatus", {

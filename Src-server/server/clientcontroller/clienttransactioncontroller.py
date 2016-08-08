@@ -9,7 +9,7 @@ from server.clientdatabase.general import (
     verify_password, get_user_company_details,
     get_countries_for_user, get_domains_for_user,
     get_business_groups_for_user, get_legal_entities_for_user,
-    get_divisions_for_user, get_client_settings, get_admin_info,
+    get_divisions_for_user, get_client_settings, get_admin_id,
     get_compliance_frequency, get_users_by_unit_and_domain,
     get_compliance_name_by_id, validate_compliance_due_date
 )
@@ -187,7 +187,7 @@ def process_get_assign_compliance_form_data(db, session_user, client_id):
     units = get_units_to_assig(db, session_user)
     users = get_users_for_seating_units(db, session_user, client_id)
     two_level_approve = get_client_settings(db)
-    client_admin = get_admin_info(db)
+    client_admin = get_admin_id(db)
     return clienttransactions.GetAssignCompliancesFormDataSuccess(
         countries, domains, business_groups, legal_entities,
         divisions, units, users,
@@ -356,7 +356,7 @@ def process_get_user_wise_compliances(db, session_user, client_id):
     )
     units = get_units_for_assign_compliance(db, session_user)
     two_level_approve = get_client_settings(db)
-    client_admin = get_admin_info(db)
+    client_admin = get_admin_id(db)
     domains = get_domains_for_user(db, session_user)
     compliance_count = get_assigneewise_compliance_count(db, session_user)
 

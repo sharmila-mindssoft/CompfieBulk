@@ -1,5 +1,4 @@
 tblActivityLog = "tbl_activity_log"
-tblAdmin = "tbl_admin"
 tblApprovalStatus = "tbl_approval_status"
 tblAssignedCompliances = "tbl_assigned_compliances"
 tblBusinessGroups = "tbl_business_groups"

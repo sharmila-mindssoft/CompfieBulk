@@ -149,15 +149,9 @@ def get_compliance_to_start(db, client_id, current_date, country_id):
     return result
 
 def get_email_id_for_users(db, user_id):
-    if user_id == 0 :
-        q = "SELECT 'Administrator', username from tbl_admin where admin_id = %s" % (
-            user_id
-        )
-        pass
-    else :
-        q = "SELECT employee_name, email_id from tbl_users where user_id = %s" % (
-            user_id
-        )
+    q = "SELECT employee_name, email_id from tbl_users where user_id = %s" % (
+        user_id
+    )
     cursor = db.cursor()
     cursor.execute(q)
     row = cursor.fetchone()
@@ -434,7 +428,7 @@ def notify_before_contract_period(db, client_id):
     cur = db.cursor()
     cur.execute(q)
 
-    q = "SELECT username from tbl_admin"
+    q = "SELECT email_id from tbl_users where is_active = 1 and is_primary_admin = 1 "
     cur.execute(q)
     rows = cur.fetchall()
     admin_mail_id = rows[0][0]

@@ -128,10 +128,10 @@ def mobile_user_admin_response(db, login_type, client_id, ip):
     elif login_type.lower() == "blackberry" :
         session_type = 4
 
-    column = "admin_id"
-    condition = "1"
-    rows = db.get_data(tblAdmin, column, condition)
-    user_id = rows[0][0]
+    column = "user_id"
+    condition = " is_active = 1 and is_primary_admin = 1 "
+    rows = db.get_data(tblUsers, column, condition)
+    user_id = rows[0]["user_id"]
     session_token = add_session(
         db, user_id, session_type, ip, "Administrator", client_id
     )
@@ -224,10 +224,10 @@ def user_login_response(db, data, client_id, ip):
     )
 
 def admin_login_response(db, client_id, ip):
-    column = "admin_id"
-    condition = "1"
-    rows = db.get_data(tblAdmin, column, condition)
-    user_id = rows[0]["admin_id"]
+    column = "user_id"
+    condition = " is_active = 1 and is_primary_admin = 1"
+    rows = db.get_data(tblUsers, column, condition)
+    user_id = rows[0]["user_id"]
     email_id = None
     session_type = 1  # web
     session_token = add_session(

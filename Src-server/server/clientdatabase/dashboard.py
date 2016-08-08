@@ -1671,13 +1671,13 @@ def get_notifications(
     query = " \
             SELECT * FROM (\
             SELECT %s,%s \
-            FROM %s nul \
-            LEFT JOIN %s nl ON (nul.notification_id = nl.notification_id)\
-            LEFT JOIN %s tc ON (tc.compliance_id = nl.compliance_id) \
-            LEFT JOIN %s tch ON (tch.compliance_id = nl.compliance_id AND \
+            FROM tbl_notification_user_log nul \
+            LEFT JOIN tbl_notifications_log nl ON (nul.notification_id = nl.notification_id)\
+            LEFT JOIN tbl_compliances tc ON (tc.compliance_id = nl.compliance_id) \
+            LEFT JOIN tbl_compliance_history tch ON (tch.compliance_id = nl.compliance_id AND \
             tch.unit_id = nl.unit_id) \
-            WHERE notification_type_id = '%s' \
-            AND user_id = '%s' \
+            WHERE notification_type_id = %s \
+            AND user_id = %s \
             AND read_status = 0\
             AND (compliance_history_id is null \
             OR  compliance_history_id = CAST(REPLACE(\
@@ -1688,10 +1688,6 @@ def get_notifications(
 
     rows = db.select_all(query, [
         columns, subquery_columns,
-        tblNotificationUserLog,
-        tblNotificationsLog,
-        tblCompliances,
-        tblComplianceHistory,
         notification_type_id, session_user,
         start_count, to_count
     ])
@@ -1787,7 +1783,7 @@ def get_user_company_details(db, user_id, client_id=None):
     columns = "unit_id"
     condition = " 1 "
     rows = None
-    if user_id > 0 and user_id != admin_id:
+    if user_id != admin_id:
         condition = "  user_id = '%d'" % user_id
         rows = db.get_data(
             tblUserUnits, columns, condition
@@ -2267,7 +2263,7 @@ def notify_expiration(db):
     values = [notification_id, 0]
     db.insert(tblNotificationUserLog, columns, values)
 
-    q = "SELECT username from tbl_admin"
+    q = "SELECT email_id from tbl_users where is_active = 1 and is_primary_admin = 1"
     rows = db.select_all(q)
     admin_mail_id = rows[0][0]
     email.notify_contract_expiration(
