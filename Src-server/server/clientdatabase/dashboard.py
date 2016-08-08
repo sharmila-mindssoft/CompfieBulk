@@ -10,11 +10,13 @@ from server.clientdatabase.common import (
     calculate_ageing_in_hours, calculate_years
 )
 from server.common import (
-    get_date_time_in_date, convert_to_dict, datetime_to_string_time, datetime_to_string
+    get_date_time_in_date, convert_to_dict,
+    datetime_to_string_time, datetime_to_string
 )
 from server.clientdatabase.general import (
     get_user_unit_ids, calculate_ageing, get_admin_id,
-    get_user_domains, get_group_name, is_primary_admin
+    get_user_domains, get_group_name, is_primary_admin,
+    get_all_users
 )
 from server.clientdatabase.clienttransaction import get_units_for_assign_compliance
 email = EmailHandler()
@@ -1646,6 +1648,18 @@ def get_notifications(
     db, notification_type, start_count, to_count,
     session_user, client_id
 ):
+    users = get_all_users(db)
+
+    def get_user_info_str(user_id):
+        u_info = users.get(user_id)
+        if u_info is None :
+            return None
+        data = "%s - %s, %s - %s " % (
+            u_info.get("employee_code"), u_info.get("employee_name"), u_info.get("contact_no"),
+            u_info.get("email_id")
+        )
+        return data
+
     notification_type_id = None
     if notification_type == "Notification":
         notification_type_id = 1
@@ -1653,24 +1667,23 @@ def get_notifications(
         notification_type_id = 2
     elif notification_type == "Escalation":
         notification_type_id = 3
-    columns = '''nul.notification_id as notification_id, notification_text, created_on, \
-        extra_details, statutory_provision, \
-        assignee, concurrence_person, approval_person, \
-        nl.compliance_id, compliance_task, document_name, \
-        compliance_description, penal_consequences, read_status,\
-        due_date, completion_date, approve_status'''
-    subquery_columns = "(SELECT concat(IFNULL(employee_code, 'Administrator'), '-', employee_name,\
-    ',','(' , IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE user_id = assignee), IF(\
-    concurrence_person IS NULL, '', (SELECT concat(IFNULL(employee_code, 'Administrator'), '-', \
-    employee_name,',','(' ,  IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE \
-    user_id = concurrence_person)), (SELECT concat(IFNULL(employee_code, 'Administrator'), '-',\
-    employee_name,',','(' ,  IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE \
-    user_id = approval_person),\
-    (select concat(unit_code, '-', unit_name, ',', address) \
-    FROM tbl_units tu WHERE tu.unit_id = nl.unit_id) " % (tblUsers, tblUsers, tblUsers)
+    # subquery_columns = "(SELECT concat(IFNULL(employee_code, 'Administrator'), '-', employee_name,\
+    # ',','(' , IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE user_id = assignee), IF(\
+    # concurrence_person IS NULL, '', (SELECT concat(IFNULL(employee_code, 'Administrator'), '-', \
+    # employee_name,',','(' ,  IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE \
+    # user_id = concurrence_person)), (SELECT concat(IFNULL(employee_code, 'Administrator'), '-',\
+    # employee_name,',','(' ,  IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE \
+    # user_id = approval_person),\
+    # (select concat(unit_code, '-', unit_name, ',', address) \
+    # FROM tbl_units tu WHERE tu.unit_id = nl.unit_id) " % (tblUsers, tblUsers, tblUsers)
     query = " \
-            SELECT * FROM (\
-            SELECT %s,%s \
+            SELECT nul.notification_id as notification_id, notification_text,\
+            created_on, extra_details, statutory_provision, assignee, IFNULL(concurrence_person, -1),\
+            approval_person, nl.compliance_id, compliance_task, document_name,\
+            compliance_description, penal_consequences, read_status,\
+            due_date, completion_date, approve_status, \
+            (select concat(unit_code, '-', unit_name, ',', address) from tbl_units where \
+                unit_id = nl.unit_id) \
             FROM tbl_notification_user_log nul \
             LEFT JOIN tbl_notifications_log nl ON (nul.notification_id = nl.notification_id)\
             LEFT JOIN tbl_compliances tc ON (tc.compliance_id = nl.compliance_id) \
@@ -1678,16 +1691,13 @@ def get_notifications(
             tch.unit_id = nl.unit_id) \
             WHERE notification_type_id = %s \
             AND user_id = %s \
-            AND read_status = 0\
             AND (compliance_history_id is null \
             OR  compliance_history_id = CAST(REPLACE(\
             SUBSTRING_INDEX(extra_details, '-', 1),\
             ' ','') AS UNSIGNED)) \
-            LIMIT %s, %s ) as a \
-            ORDER BY a.notification_id DESC"
-
+            ORDER BY read_status desc, nul.notification_id DESC \
+            limit %s, %s"
     rows = db.select_all(query, [
-        columns, subquery_columns,
         notification_type_id, session_user,
         start_count, to_count
     ])
@@ -1697,9 +1707,9 @@ def get_notifications(
         "assignee", "concurrence_person", "approval_person",
         "compliance_id", "compliance_task", "document_name",
         "compliance_description", "penal_consequences", "read_status",
-        "due_date", "completion_date", "approve_status"
+        "due_date", "completion_date", "approve_status", "unit_details"
     ]
-    columns_list += ["assignee_details", "concurrence_details", "approver_details", "unit_details"]
+
     notifications = convert_to_dict(rows, columns_list)
     notifications_list = []
     for notification in notifications:
@@ -1732,9 +1742,12 @@ def get_notifications(
             unit_details = notification["unit_details"].split(",")
             unit_name = unit_details[0]
             unit_address = unit_details[1]
-            assignee = notification["assignee_details"]
-            concurrence_person = None if notification["concurrence_details"] in ['', None, "None"] else notification["concurrence_details"]
-            approval_person = notification["approver_details"]
+            assignee = get_user_info_str(notification["assignee"])
+            concurrence_person = get_user_info_str(notification["concurrence_person"])
+            approval_person = get_user_info_str(notification["approval_person"])
+
+            # concurrence_person = None if notification["concurrence_details"] in ['', None, "None"] else notification["concurrence_details"]
+            # approval_person = notification["approver_details"]
             compliance_name = notification["compliance_task"]
             if notification["document_name"] is not None and notification["document_name"].replace(" ", "") != "None":
                 compliance_name = "%s - %s" % (

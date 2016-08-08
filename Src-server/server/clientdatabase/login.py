@@ -92,8 +92,6 @@ def verify_login(db, username, password):
         ON t1.user_group_id = t2.user_group_id \
         WHERE t1.password= %s and t1.email_id= %s and t1.is_active=1"
 
-    print query
-    print [password, username]
     data_list = db.select_one(query, [password, username])
     print data_list
     if data_list is None :
