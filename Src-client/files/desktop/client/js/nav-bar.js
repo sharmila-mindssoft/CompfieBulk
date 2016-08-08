@@ -27,10 +27,10 @@ function initializeNavBar () {
     }
     var frm = window.location.href
     var navBarItems = null
-   
+
     navBarItems = client_mirror.getUserMenu();
 
-   
+
     if (navBarItems === null || navBarItems == undefined)
         return;
     var menus = null
@@ -105,7 +105,7 @@ function initializeNavBar () {
 
     var client_name = client_mirror.getClientShortName();
     var employee_name = client_mirror.getEmployeeName();
-    
+
     profile_url = "/profile";
     change_password_url = "/change-password";
     if (
@@ -115,7 +115,7 @@ function initializeNavBar () {
         var item = getItemObject(settings_url, "Settings");
         $("ul", settingsMenuObject).append(item);
     }
-    
+
 
     if (
         (typeof(employee_name) == "undefined") ||
@@ -164,13 +164,14 @@ function showDeletionPopup(notification_text){
 }
 
 function persistNavBar() {
+    var client_name = client_mirror.getClientShortName();
     frms = window.location.href.split("/");
 
     ac_menu = client_mirror.getPageUrl();
     form_name = "/" + frms[frms.length - 1];
     if (ac_menu.indexOf(form_name) == -1)
         window.location.href = "/login/" + client_name;
-    
+
 }
 $(document).ready(function () {
     initializeNavBar();

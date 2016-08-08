@@ -82,6 +82,28 @@ def convert_to_dict(data_list, columns) :
     else:
         return []
 
+def convert_to_key_dict(data_list, columns):
+    assert type(data_list) in (list, tuple)
+    if len(data_list) > 0:
+        if type(data_list[0]) is tuple :
+            result_list = {}
+            if len(data_list[0]) == len(columns) :
+                for data in data_list:
+                    result = {}
+                    for i, d in enumerate(data):
+                        result[columns[i]] = d
+                    result_list[data[0]] = result
+            return result_list
+        else :
+            result = {}
+            if len(data_list) == len(columns) :
+                for i, d in enumerate(data_list):
+                    result[columns[i]] = d
+            return result
+    else:
+        return []
+
+
 def time_convertion(time_zone):
     current_time = datetime.datetime.utcnow()
     print "current_time"

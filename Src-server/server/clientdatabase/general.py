@@ -8,7 +8,7 @@ from server.constants import (CLIENT_DOCS_BASE_PATH)
 from protocol import (core, dashboard, clientreport)
 from server.common import (
     encrypt, convert_to_dict, get_date_time, get_date_time_in_date,
-    remove_uploaded_file
+    remove_uploaded_file, convert_to_key_dict
 )
 from server.exceptionmessage import client_process_error
 from savetoknowledge import UpdateFileSpace
@@ -791,13 +791,24 @@ def get_users_by_unit_and_domain(
         )
     return return_users(rows)
 
+def get_all_users(db):
+    columns = [
+        "user_id", "employee_code", "employee_name",
+        "contact_no", "email_id"
+    ]
+    q = "select user_id, IFNULL(employee_code, '-'), employee_name, \
+        IFNULL(contact_no, '--'), email_id from tbl_users"
+    data = db.select_all(q)
+    rows = convert_to_key_dict(data, columns)
+    return rows
+
 def get_users(db, client_id):
-        columns = "user_id, employee_name, employee_code, is_active"
-        condition = "1"
-        rows = db.get_data(
-            tblUsers, columns, condition
-        )
-        return return_users(rows)
+    columns = "user_id, employee_name, employee_code, is_active"
+    condition = "1"
+    rows = db.get_data(
+        tblUsers, columns, condition
+    )
+    return return_users(rows)
 
 def get_users_by_id(db, user_ids, client_id):
     columns = "user_id, employee_name, employee_code, is_active"
