@@ -127,7 +127,7 @@ class UpdateUsers(KnowledgedbConnect):
 
 class UpdateUserStatus(KnowledgedbConnect):
     def __init__(self, is_active, user_id, client_id, status_type="status"):
-        super(SaveUsers, self).__init__()
+        super(UpdateUserStatus, self).__init__()
         self._user_id = user_id
         self._is_active = is_active
         self._client_id = client_id

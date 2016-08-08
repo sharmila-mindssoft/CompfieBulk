@@ -1671,13 +1671,13 @@ def get_notifications(
     query = " \
             SELECT * FROM (\
             SELECT %s,%s \
-            FROM %s nul \
-            LEFT JOIN %s nl ON (nul.notification_id = nl.notification_id)\
-            LEFT JOIN %s tc ON (tc.compliance_id = nl.compliance_id) \
-            LEFT JOIN %s tch ON (tch.compliance_id = nl.compliance_id AND \
+            FROM tbl_notification_user_log nul \
+            LEFT JOIN tbl_notifications_log nl ON (nul.notification_id = nl.notification_id)\
+            LEFT JOIN tbl_compliances tc ON (tc.compliance_id = nl.compliance_id) \
+            LEFT JOIN tbl_compliance_history tch ON (tch.compliance_id = nl.compliance_id AND \
             tch.unit_id = nl.unit_id) \
-            WHERE notification_type_id = '%s' \
-            AND user_id = '%s' \
+            WHERE notification_type_id = %s \
+            AND user_id = %s \
             AND read_status = 0\
             AND (compliance_history_id is null \
             OR  compliance_history_id = CAST(REPLACE(\
@@ -1688,10 +1688,6 @@ def get_notifications(
 
     rows = db.select_all(query, [
         columns, subquery_columns,
-        tblNotificationUserLog,
-        tblNotificationsLog,
-        tblCompliances,
-        tblComplianceHistory,
         notification_type_id, session_user,
         start_count, to_count
     ])

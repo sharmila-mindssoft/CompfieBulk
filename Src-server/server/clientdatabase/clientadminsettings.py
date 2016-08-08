@@ -33,17 +33,20 @@ def get_settings(db, client_id):
         return None
 
 def get_licence_holder_details(db, client_id):
-    columns = "tcu.user_id, tcu.email_id, tcu.employee_name, tcu.employee_code," + \
-        " tcu.contact_no, tcu.is_admin, tu.unit_code, tu.unit_name, tu.address," + \
-        " tcu.is_active, tsp.service_provider_name, tcu.is_primary_admin",
+    columns = [
+        "tcu.user_id", "tcu.email_id", "tcu.employee_name", "ifnull(tcu.employee_code, 0) as employee_code",
+        "tcu.contact_no", "tcu.is_admin", "tu.unit_code", "tu.unit_name", "tu.address",
+        "tcu.is_active", "tsp.service_provider_name", "tcu.is_primary_admin",
+        "ifnull(tcu.is_service_provider, 0) as is_service_provider"
+    ]
     tables = [tblUsers, tblUnits, tblServiceProviders]
     aliases = ["tcu", "tu", "tsp"]
     join_type = "left join"
     join_conditions = [
         "tcu.seating_unit_id = tu.unit_id",
-        "tcu.service_provider_id=tsp.service_provider_id"
+        "tcu.service_provider_id = tsp.service_provider_id"
     ]
-    where_condition = "1"
+    where_condition = "1 order by tcu.user_id"
     return db.get_data_from_multiple_tables(
         columns, tables, aliases,
         join_type, join_conditions,
@@ -70,10 +73,13 @@ def get_profile(
     for row in licence_holder_rows:
         employee_name = None
         unit_name = None
-        if(row["employee_code"] == None):
-            employee_name = row["employee_name"]
-        else:
-            employee_name = "%s - %s" % (row["employee_code"], row["employee_name"])
+        if row["is_service_provider"] == 0:
+            if(row["employee_code"] == "0"):
+                employee_name = row["employee_name"]
+            else:
+                employee_name = "%s - %s" % (row["employee_code"], row["employee_name"])
+        else :
+            employee_name = "%s - %s" % (row["service_provider_name"], row["employee_name"])
 
         if row["unit_name"] == None:
             unit_name = row["service_provider_name"]
@@ -81,9 +87,9 @@ def get_profile(
             unit_name = "%s - %s" % (row["unit_code"], row["unit_name"])
         user_id = row["user_id"]
         email_id = row["email_id"]
-        if email_id == admin_email:
-            # is_admin_is_a_user = True
-            employee_name = "Administrator: %s" % employee_name
+        # if email_id == admin_email:
+        #     # is_admin_is_a_user = True
+        #     employee_name = "Administrator: %s" % employee_name
         contact_no = row["contact_no"]
         # is_admin = row[5]
         address = row["address"]

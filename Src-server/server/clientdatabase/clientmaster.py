@@ -1,13 +1,7 @@
 import threading
 from server.emailcontroller import EmailHandler
 from server import logger
-from server.dbase import Database
 from protocol import (core, general)
-from server.constants import (
-    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT,
-    KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
-    KNOWLEDGE_DATABASE_NAME
-)
 from server.common import (
     datetime_to_string, get_date_time,
     string_to_datetime, generate_and_return_password, datetime_to_string_time

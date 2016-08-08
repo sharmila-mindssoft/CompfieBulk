@@ -133,7 +133,7 @@ function loadClientUserList(){
         var isActive = users["is_active"];
         var isAdmin = users["is_admin"];
         var isPrimaryAdmin = users["is_primary_admin"];
-
+        var isServiceProvide = users["is_service_provider"];
         if(isActive == true){
             imageName = "icon-active.png";
             title = "Click here to deactivate"
@@ -171,7 +171,7 @@ function loadClientUserList(){
         else if(isActive == true && isPrimaryAdmin == true){
             emp_code_name = "Administrator";
         }
-        else if(userList[i]["is_service_provider"] == true){
+        else if(isServiceProvide == true){
             emp_code_name = getServiceProviderName(userList[i]["service_provider_id"])+" - "+users["employee_name"];
         }
         else{
@@ -182,7 +182,7 @@ function loadClientUserList(){
         $(".username", clone).text(username);
         $('.group-name', clone).text(getUserGroupName(userGroupId));
         $('.level-name', clone).text("Level "+users["user_level"]);
-        if(userList[i]["is_service_provider"] == true){
+        if(isServiceProvide == true){
             $('.seating-unit', clone).html("-");
         }
         else if (seatingUnitId != null){
@@ -191,10 +191,10 @@ function loadClientUserList(){
         if (userId != 1){
             $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
         }
-        if (isPrimaryAdmin == false){
-            $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+',' + emp_code_name +')"/>');
+        if (isPrimaryAdmin == false && isServiceProvide == false){
+            $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+', \''+ emp_code_name +'\')"/>');
             if (is_session_user_primary_admin == true){
-                $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="user_isadmin('+userId+', '+adminstatus+', '+ emp_code_name +')" />');
+                $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="user_isadmin('+userId+', '+adminstatus+', \''+ emp_code_name +'\')" />');
             }
         }
         $('.tbody-users-list').append(clone);

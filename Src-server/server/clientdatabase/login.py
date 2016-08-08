@@ -88,11 +88,14 @@ def verify_login(db, username, password):
         t1.employee_name, t1.employee_code, t1.contact_no, \
         t2.user_group_name, t2.form_ids, t1.is_admin, \
         t1.service_provider_id, t1.is_primary_admin \
-        FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
+        FROM tbl_users t1 LEFT JOIN tbl_user_groups t2\
         ON t1.user_group_id = t2.user_group_id \
         WHERE t1.password= %s and t1.email_id= %s and t1.is_active=1"
 
+    print query
+    print [password, username]
     data_list = db.select_one(query, [password, username])
+    print data_list
     if data_list is None :
         return False
     else :

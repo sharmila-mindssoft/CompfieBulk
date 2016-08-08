@@ -95,7 +95,7 @@ def get_admin_id(db):
     columns = "user_id"
     condition = " is_active = 1 and is_primary_admin = 1 "
     rows = db.get_data(tblUsers, columns, condition)
-    return rows[0]["admin_id"]
+    return rows[0]["user_id"]
 
 def get_countries_for_user(db, user_id, client_id=None) :
     admin_id = get_admin_id(db)
