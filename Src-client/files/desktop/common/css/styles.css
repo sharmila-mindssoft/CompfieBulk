@@ -1520,6 +1520,34 @@ list-style-type:none; line-height:25px;
   background: url(../images/tick_1_inactive.png) no-repeat left 5px center;
 }
 
+.ac-selectbox ul li.auto-selected {
+  background: #EAE8E8 url(../images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.auto-selected.active {
+  background: #EAE8E8 url(../images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.auto-selected.active_selectbox {
+  background: #EAE8E8 url(../images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.auto-selected.active_selectbox_country {
+  background: #EAE8E8 url(../images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.auto-selected.active_selectbox_bgroups {
+  background: #EAE8E8 url(../images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.auto-selected.active_selectbox_legal_entities {
+  background: #EAE8E8 url(../images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.auto-selected.active_selectbox_division {
+  background: #EAE8E8 url(../images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.auto-selected.active_selectbox_domains {
+  background: #EAE8E8 url(../images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.auto-selected.active_selectbox_users {
+  background: #EAE8E8 url(../images/tick_1.png) no-repeat left 5px center;
+}
+
 .ac-selectbox ul li.active {
   background: url(../images/tick_1.png) no-repeat left 5px center;
 }
@@ -1536,22 +1564,20 @@ list-style-type:none; line-height:25px;
   background: #f1e9f6 url(../images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox_country {
-  background: #f1e9f6 url(../images/tick_1.png) no-repeat left 5px center;
+  background: url(../images/tick_1.png) no-repeat left 5px center;
 }
-
 .ac-selectbox ul li.active_selectbox_bgroups {
-  background: #f1e9f6 url(../images/tick_1.png) no-repeat left 5px center;
+  background: url(../images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox_legal_entities{
-  background: #f1e9f6 url(../images/tick_1.png) no-repeat left 5px center;
+  background: url(../images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox_division{
-  background: #f1e9f6 url(../images/tick_1.png) no-repeat left 5px center;
+  background: url(../images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox_domains{
-  background: #f1e9f6 url(../images/tick_1.png) no-repeat left 5px center;
+  background: url(../images/tick_1.png) no-repeat left 5px center;
 }
-
 .ac-selectbox ul li.active_selectbox_users {
   background: #f1e9f6 url(../images/tick_1.png) no-repeat left 5px center;
 }

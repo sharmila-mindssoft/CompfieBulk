@@ -33,10 +33,12 @@ def get_current_month():
 
 def addMonth(value, due_date):
     try :
-        m = due_date.month
-        y = due_date.year
+        m = due_date.month - 1 + value
+        y = (due_date.year + m / 12)
+        m = m % 12 + 1
         m_range = monthrange(y, m)
-        new_date = (due_date + datetime.timedelta(days=m_range[1]))
+        d = min(due_date.day, m_range[1])
+        new_date = datetime.date(y, m, d)
         return new_date
     except Exception, e :
         print e
@@ -44,6 +46,18 @@ def addMonth(value, due_date):
 def addDays(value, due_date):
     new_date = (due_date + datetime.timedelta(days=value))
     return new_date
+
+def addYear(value, due_date):
+    try:
+        m = due_date.month - 1
+        y = due_date.year + value
+        m = m % 12 + 1
+        m_range = monthrange(y, m)
+        d = min(due_date.day, m_range[1])
+        new_date = datetime.date(y, m, d)
+        return new_date
+    except Exception, e:
+        print e
 
 def addYears(value, due_date):
     new_date = (due_date + datetime.timedelta(days=value * 366))
@@ -181,6 +195,9 @@ def encrypt(value):
     m.update(value)
     return m.hexdigest()
 
+def get_current_date():
+    date = datetime.datetime.today()
+    return date
 ########################################################
 # Converts the passed date in string format to localized
 # datetime format (Time zone is India)

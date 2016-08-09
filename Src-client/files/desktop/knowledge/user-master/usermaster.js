@@ -353,7 +353,7 @@ $(".filter-text-box").keyup(function() {
 //Autocomplete Script Starts
 
 function onArrowKeyUser(e, ac_item){
-  if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13) {
+  if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 32) {
     chosen_user = "";
   }
 
@@ -378,12 +378,12 @@ function onArrowKeyUser(e, ac_item){
       $('#' + ac_item + ' li:eq('+chosen_user+')').addClass('auto-selected');
       return false;
   }
-  if (e.keyCode == 13) {
+  if (e.keyCode == 32) {
+  	$('#' + ac_item + ' li:eq('+chosen_user+')').removeClass('auto-selected');
   	var ms_id = $('#' + ac_item + ' li:eq('+chosen_user+')').attr('id');
   	var chkstatus = $('#' + ac_item + ' li:eq('+chosen_user+')').attr('class');
 
   	if(ac_item == 'ulist'){
-  		$('#' + ac_item + ' li:eq('+chosen_user+')').removeClass('auto-selected');
 		if(chkstatus == 'active_selectbox'){
 			$('#' + ac_item + ' li:eq('+chosen_user+')').removeClass("active_selectbox");
 			var remove = domainIds.indexOf(parseInt(ms_id));
@@ -394,7 +394,6 @@ function onArrowKeyUser(e, ac_item){
 		}
 		$("#domainselected").val(domainIds.length+" Selected");
   	}else{
-  		$('#' + ac_item + ' li:eq('+chosen_user+')').removeClass('auto-selected');
 		if(chkstatus == 'active_selectbox_country'){
 			$('#' + ac_item + ' li:eq('+chosen_user+')').removeClass("active_selectbox_country");
 			var remove = countryIds.indexOf(parseInt(ms_id));
@@ -410,16 +409,20 @@ function onArrowKeyUser(e, ac_item){
 }
 
 //Hide list items after select
-$(".hidemenu").click(function(){
-  $("#autocompleteview").hide();
-});
 $(".hideselect").mouseleave(function(){
+  chosen_user = "";
   $("#selectboxview").hide();
   $("#selectboxview-country").hide();
 });
 
+/*$(".icon-autocomplete").focusout(function(){
+	chosen_user = "";
+	$("#selectboxview").hide();
+  	$("#selectboxview-country").hide();
+});*/
+
 //load domain list in multi select box
-$("#domainselected").click(function(){
+$("#domainselected").focus(function(){
 	$("#selectboxview").show();
 	var domains = domainsList;
 	$('#ulist').empty();
@@ -460,7 +463,7 @@ function activate(element){
  }
 
 //load country list in multi select box
-$("#countryselected").click(function(){
+$("#countryselected").focus(function(){
 	$("#selectboxview-country").show();
 	var countries = countriesList;
 	$('#ulist-country').empty();
