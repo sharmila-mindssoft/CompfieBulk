@@ -22,13 +22,14 @@ forms = [5, 6, 7, 8, 9, 10]
         return type is object of response class from knowledgemaster protocol.
 """
 
-def process_knowledge_master_request(request, db) :
+
+def process_knowledge_master_request(request, db):
     session_token = request.session_token
     request_frame = request.request
     user_id = validate_user_session(db, session_token)
-    if user_id is not None :
+    if user_id is not None:
         is_valid = validate_user_forms(db, user_id, forms, request_frame)
-        if is_valid is not True :
+        if is_valid is not True:
             return login.InvalidSessionToken()
     if user_id is None:
         return login.InvalidSessionToken()
@@ -124,10 +125,12 @@ def process_knowledge_master_request(request, db) :
         logger.logKnowledgeApi("UpdateStatutoryNature", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
-    elif type(request_frame) is knowledgemaster.ChangeStatutoryNatureStatus :
+    elif type(request_frame) is knowledgemaster.ChangeStatutoryNatureStatus:
         logger.logKnowledgeApi("ChangeStatutoryNatureStatus", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        result = process_change_statutory_nature_status(db, request_frame, user_id)
+        result = process_change_statutory_nature_status(
+            db, request_frame, user_id
+        )
         logger.logKnowledgeApi("ChangeStatutoryNatureStatus", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
@@ -159,19 +162,20 @@ def process_knowledge_master_request(request, db) :
         logger.logKnowledgeApi("UpdateStatutory", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
-    else :
+    else:
         result = login.InvalidSessionToken()
 
     return result
+
 
 # industry
 ########################################################
 # To Handle get industry list request
 ########################################################
-
 def process_get_industry(db):
     results = get_industries(db)
     return knowledgemaster.GetIndustriesSuccess(industries=results)
+
 
 ########################################################
 # save industry request
@@ -183,12 +187,12 @@ def process_get_industry(db):
 def process_save_industry(db, request_frame, user_id):
     industry_name = request_frame.industry_name
     isDuplicate = check_duplicate_industry(db, industry_name, industry_id=None)
-
-    if isDuplicate :
+    if isDuplicate:
         return knowledgemaster.IndustryNameAlreadyExists()
 
     if (save_industry(db, industry_name, user_id)):
         return knowledgemaster.SaveIndustrySuccess()
+
 
 ########################################################
 # update industry request
@@ -202,14 +206,14 @@ def process_update_industry(db, request_frame, user_id):
     industry_name = request_frame.industry_name
     industry_id = request_frame.industry_id
     isDuplicate = check_duplicate_industry(db, industry_name, industry_id)
-
-    if isDuplicate :
+    if isDuplicate:
         return knowledgemaster.IndustryNameAlreadyExists()
 
     if (update_industry(db, industry_id, industry_name, user_id)):
         return knowledgemaster.UpdateIndustrySuccess()
-    else :
+    else:
         return knowledgemaster.InvalidIndustryId()
+
 
 ########################################################
 # To Handle change industry request
@@ -221,16 +225,18 @@ def process_update_industry(db, request_frame, user_id):
 def process_change_industry_status(db, request_frame, user_id):
     is_active = request_frame.is_active
     industry_id = request_frame.industry_id
-
-    if (update_industry_status(db, industry_id, int(is_active), user_id)) :
+    if (update_industry_status(db, industry_id, int(is_active), user_id)):
         return knowledgemaster.ChangeIndustryStatusSuccess()
-    else :
+    else:
         return knowledgemaster.InvalidIndustryId()
+
 
 # statutory nature
 def process_get_statutory_nature(db):
     results = get_statutory_nature(db)
-    success = knowledgemaster.GetStatutoryNaturesSuccess(statutory_natures=results)
+    success = knowledgemaster.GetStatutoryNaturesSuccess(
+        statutory_natures=results
+    )
     return success
 
 
@@ -243,13 +249,14 @@ def process_get_statutory_nature(db):
 ########################################################
 def process_save_statutory_nature(db, request_frame, user_id):
     nature_name = request_frame.statutory_nature_name
-    isDuplicate = check_duplicate_statutory_nature(db, nature_name, nature_id=None)
-
-    if isDuplicate :
+    isDuplicate = check_duplicate_statutory_nature(
+        db, nature_name, nature_id=None
+    )
+    if isDuplicate:
         return knowledgemaster.StatutoryNatureNameAlreadyExists()
-
     if (save_statutory_nature(db, nature_name, user_id)):
         return knowledgemaster.SaveStatutoryNatureSuccess()
+
 
 ########################################################
 # To Handle update_statutory_nature request
@@ -263,13 +270,11 @@ def process_update_statutory_nature(db, request_frame, user_id):
     nature_name = request_frame.statutory_nature_name
     nature_id = request_frame.statutory_nature_id
     isDuplicate = check_duplicate_statutory_nature(db, nature_name, nature_id)
-
-    if isDuplicate :
+    if isDuplicate:
         return knowledgemaster.StatutoryNatureNameAlreadyExists()
-
     if (update_statutory_nature(db, nature_id, nature_name, user_id)):
         return knowledgemaster.UpdateStatutoryNatureSuccess()
-    else :
+    else:
         return knowledgemaster.InvalidStatutoryNatureId()
 
 
@@ -283,11 +288,15 @@ def process_update_statutory_nature(db, request_frame, user_id):
 def process_change_statutory_nature_status(db, request_frame, user_id):
     is_active = request_frame.is_active
     nature_id = request_frame.statutory_nature_id
-
-    if (update_statutory_nature_status(db, nature_id, int(is_active), user_id)) :
+    if (
+        update_statutory_nature_status(
+            db, nature_id, int(is_active), user_id
+        )
+    ):
         return knowledgemaster.ChangeStatutoryNatureStatusSuccess()
-    else :
+    else:
         return knowledgemaster.InvalidStatutoryNatureId()
+
 
 # statutory level
 ########################################################
@@ -304,9 +313,11 @@ def process_get_statutory_level(db, user_id):
         countries, domains, statutory_levels
     )
 
+
 ########################################################
 # To Handle save statutory level request
-    # request_frame args are country_id, domain_id and levels with position and name.
+    # request_frame args are country_id, domain_id and levels
+    # with position and name.
     # possible returns
     # DuplicateStatutoryLevelsExists
     # SaveStatutoryLevelSuccess
@@ -316,17 +327,18 @@ def process_save_statutory_level(db, request_frame, user_id):
     domain_id = request_frame.domain_id
     levels = request_frame.levels
     level_names = [x.level_name.lower().strip() for x in levels]
-    if len([n for n in level_names if level_names.count(n.lower()) > 1]) > 1 :
+    if len([n for n in level_names if level_names.count(n.lower()) > 1]) > 1:
         return knowledgemaster.DuplicateStatutoryLevelsExists()
 
     level_positions = [x.level_position for x in levels]
-    if len([p for p in level_positions if level_positions.count(p) > 1]) > 1 :
+    if len([p for p in level_positions if level_positions.count(p) > 1]) > 1:
         return knowledgemaster.DuplicateStatutoryLevelsExists()
 
     save_statutory_levels(
         db, country_id, domain_id, levels, user_id
     )
     return knowledgemaster.SaveStatutoryLevelSuccess()
+
 
 # geography level
 def process_get_geography_level(db, user_id):
@@ -336,21 +348,28 @@ def process_get_geography_level(db, user_id):
         countries, geography_levels
     )
 
+
 def process_save_geography_level(db, request_frame, user_id):
     country_id = request_frame.country_id
     levels = request_frame.levels
-
-    level_names = [x.level_name.lower().strip() for x in levels if x.level_name is not ""]
-    if len([n for n in level_names if level_names.count(n.lower()) > 1]) > 1 :
+    level_names = [
+        x.level_name.lower().strip() for x in levels if x.level_name is not ""
+    ]
+    if len(
+        [n for n in level_names if level_names.count(n.lower()) > 1]
+    ) > 1:
         return knowledgemaster.DuplicateGeographyLevelsExists()
 
     level_positions = [x.level_position for x in levels]
-    if len([p for p in level_positions if level_positions.count(p) > 1]) > 1 :
+    if len(
+        [p for p in level_positions if level_positions.count(p) > 1]
+    ) > 1:
         return knowledgemaster.DuplicateGeographyLevelsExists()
 
     return save_geography_levels(
         db, country_id, levels, user_id
     )
+
 
 # geography
 def process_get_geographies(db, user_id):
@@ -363,6 +382,7 @@ def process_get_geographies(db, user_id):
         geographies
     )
 
+
 def process_save_geography(db, request_frame, user_id):
     geography_level_id = request_frame.geography_level_id
     geography_name = request_frame.geography_name
@@ -371,13 +391,18 @@ def process_save_geography(db, request_frame, user_id):
     parent_names = " >> ".join(str(x) for x in request_frame.parent_names)
     parent_names += " >> " + geography_name
     country_id = request_frame.country_id
-    print parent_names
-    saved_names = [row["geography_name"].lower() for row in check_duplicate_geography(db, country_id, parent_ids, None)]
-
-    if saved_names.count(geography_name.lower()) > 0 :
+    saved_names = [
+        row["geography_name"].lower() for row in check_duplicate_geography(
+            db, country_id, parent_ids, None
+        )
+    ]
+    if saved_names.count(geography_name.lower()) > 0:
         return knowledgemaster.GeographyNameAlreadyExists()
-    else :
-        save_geography(db, geography_level_id, geography_name, parent_ids, parent_names, user_id)
+    else:
+        save_geography(
+            db, geography_level_id, geography_name, parent_ids,
+            parent_names, user_id
+        )
         return knowledgemaster.SaveGeographySuccess()
 
 
@@ -389,19 +414,22 @@ def process_update_geography(db, request_frame, user_id):
     parent_ids = ','.join(str(x) for x in parent_ids_list) + ","
     parent_names = ' >> '.join(str(x) for x in request_frame.parent_names)
     parent_names += " >> " + geography_name
-    print parent_names
     country_id = request_frame.country_id
-
-    saved_names = [row["geography_name"].lower() for row in check_duplicate_geography(db, country_id, parent_ids, geography_id)]
-    if saved_names.count(geography_name.lower()) > 0 :
+    saved_names = [
+        row["geography_name"].lower() for row in check_duplicate_geography(
+            db, country_id, parent_ids, geography_id
+        )
+    ]
+    if saved_names.count(geography_name.lower()) > 0:
         return knowledgemaster.GeographyNameAlreadyExists()
-    else :
+    else:
         if (update_geography(
             db, geography_id, geography_name, parent_ids, parent_names, user_id
         )):
             return knowledgemaster.UpdateGeographySuccess()
-        else :
+        else:
             return knowledgemaster.InvalidGeographyId()
+
 
 def process_change_geography_status(db, request_frame, user_id):
     geography_id = request_frame.geography_id
@@ -409,8 +437,9 @@ def process_change_geography_status(db, request_frame, user_id):
 
     if (change_geography_status(db, geography_id, is_active, user_id)):
         return knowledgemaster.ChangeGeographyStatusSuccess()
-    else :
+    else:
         return knowledgemaster.InvalidGeographyId()
+
 
 # statutories
 def process_save_statutory(db, request_frame, user_id):
@@ -426,10 +455,9 @@ def process_save_statutory(db, request_frame, user_id):
             db, parent_ids, statutory_id, domain_id
         )
     ]
-
-    if saved_names.count(statutory_name.lower()) > 0 :
+    if saved_names.count(statutory_name.lower()) > 0:
         return knowledgemaster.StatutoryNameAlreadyExists()
-    else :
+    else:
         save_statutory(
             db,
             statutory_name, statutory_level_id,
@@ -444,9 +472,17 @@ def process_update_statutory(db, request_frame, user_id):
     parent_ids_list = request_frame.parent_ids
     parent_ids = ','.join(str(x) for x in parent_ids_list) + ","
     parent_names = " >> ".join(str(x) for x in request_frame.parent_names)
-    saved_names = [row["statutory_name"].lower() for row in check_duplicate_statutory(db, parent_ids, statutory_id)]
-    if saved_names.count(statutory_name.lower()) > 0 :
+    saved_names = [
+        row["statutory_name"].lower() for row in check_duplicate_statutory(
+            db, parent_ids, statutory_id)
+    ]
+    if saved_names.count(statutory_name.lower()) > 0:
         return knowledgemaster.StatutoryNameAlreadyExists()
-    else :
-        if (update_statutory(db, statutory_id, statutory_name, parent_ids, parent_names, user_id)):
+    else:
+        if (
+            update_statutory(
+                db, statutory_id, statutory_name, parent_ids,
+                parent_names, user_id
+            )
+        ):
             return knowledgemaster.SaveStatutorySuccess()
