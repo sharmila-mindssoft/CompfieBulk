@@ -79,7 +79,6 @@ def send_client_credentials(
 
 def save_client_group(db, request, session_user):
     session_user = int(session_user)
-    # client_id = generate_new_client_id(db)
     if is_duplicate_group_name(db, request.group_name):
         return technomasters.GroupNameAlreadyExists()
     elif is_duplicate_short_name(db, request.short_name):

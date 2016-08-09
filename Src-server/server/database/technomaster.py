@@ -36,7 +36,8 @@ def is_duplicate_short_name(db, short_name, client_id=None):
 def get_client_countries(db, client_id):
     columns = "country_id"
     condition = "client_id = %s"
-    rows = db.get_data(tblClientCountries, columns, condition, [client_id])
+    condition_val = [client_id]
+    rows = db.get_data(tblClientCountries, columns, condition, condition_val)
     country_ids = [
         r["country_id"] for r in rows
     ]
@@ -99,18 +100,15 @@ def get_client_ids(db):
     client_ids = []
     if rows:
         client_ids.append(str(rows[0]["client_id"]))
-    return ",".join(client_ids)
+    return client_ids
 
 
 def get_user_client_countries(db, session_user):
-    client_ids = get_client_ids(db)
-    if client_ids != '':
-        client_ids_list = client_ids.split(",")
+    client_ids_list = get_client_ids(db)
+    if len(client_ids_list) > 0:
         country_ids = []
         for client_id in client_ids_list:
             country_ids.extend(get_client_countries(db, int(client_id)))
-            # if countries is not None:
-            #     country_ids += countries.split(",")
         columns = "DISTINCT country_id as country_id, country_name, is_active"
         condition = "country_id in (%s) and is_active = 1 " % (
             ",".join(str(x) for x in country_ids)
@@ -126,28 +124,29 @@ def get_user_client_countries(db, session_user):
 
 
 def return_countries(data):
-    results = []
-    for d in data:
-        results.append(core.Country(
-            d["country_id"], d["country_name"], bool(d["is_active"])
-        ))
+    fn = core.Country
+    results = [
+        fn(
+           d["country_id"], d["country_name"], bool(d["is_active"])
+        ) for d in data
+    ]
     return results
 
 
 def get_client_domains(db, client_id):
     columns = "domain_id"
     condition = "client_id = %s "
-    rows = db.get_data(tblClientDomains, columns, condition, [client_id])
-    domain_ids = []
-    for r in rows:
-        domain_ids.append(int(r["domain_id"]))
+    condition_val = [client_id]
+    rows = db.get_data(tblClientDomains, columns, condition, condition_val)
+    domain_ids = [
+        int(r["domain_id"]) for r in rows
+    ]
     return domain_ids
 
 
 def get_user_client_domains(db, session_user):
-    client_ids = get_client_ids(db)
-    if client_ids != '':
-        client_ids_list = client_ids.split(",")
+    client_ids_list = get_client_ids(db)
+    if len(client_ids_list) > 0:
         domain_ids = []
         for client_id in client_ids_list:
             domain_ids.extend(get_client_domains(db, int(client_id)))
@@ -165,11 +164,12 @@ def get_user_client_domains(db, session_user):
 
 
 def return_domains(data):
-    results = []
-    for d in data:
-        results.append(core.Domain(
+    fn = core.Domain
+    results = [
+        fn(
             d["domain_id"], d["domain_name"], bool(d["is_active"])
-        ))
+        ) for d in data
+    ]
     return results
 
 
@@ -189,24 +189,22 @@ def get_techno_users(db):
         user_domain_column
     ]
     condition = "user_group_id in (select user_group_id from " + \
-        " %s where form_category_id = 3 )" % (
-            tblUserGroups
-        )
+        " %s where form_category_id = 3 )"
+    condition = condition % (tblUserGroups)
     rows = db.get_data(tblUsers, columns, condition)
     return return_techno_users(rows)
 
 
 def return_techno_users(users):
-    results = []
-    for user in users:
-        results.append(
-            core.ClientInchargePersons(
-                user["user_id"], user["e_name"],
-                bool(user["is_active"]),
-                [int(x) for x in user["country_ids"].split(',')],
-                [int(x) for x in user["domain_ids"].split(",")]
-            )
-        )
+    fn = core.ClientInchargePersons
+    results = [
+        fn(
+            user["user_id"], user["e_name"],
+            bool(user["is_active"]),
+            [int(x) for x in user["country_ids"].split(',')],
+            [int(x) for x in user["domain_ids"].split(",")]
+        ) for user in users
+    ]
     return results
 
 
@@ -310,12 +308,13 @@ def get_date_configurations(db, client_id):
 
 
 def return_client_configuration(configurations):
-    results = []
-    for configuration in configurations:
-        results.append(core.ClientConfiguration(
+    fn = core.ClientConfiguration
+    results = [
+        fn(
             configuration["country_id"], configuration["domain_id"],
             configuration["period_from"], configuration["period_to"]
-        ))
+        ) for configuration in configurations
+    ]
     return results
 
 
@@ -448,8 +447,11 @@ def is_unit_exists_under_country(db, country, client_id):
 
 def validate_no_of_user_licence(db, no_of_user_licence, client_id):
     column = "count(*) as license"
-    condition = "client_id = %s " % client_id
-    rows = db.get_data(tblClientUsers, column, condition)
+    condition = "client_id = %s "
+    condition_val = [client_id]
+    rows = db.get_data(
+        tblClientUsers, column, condition, condition_val
+    )
     current_no_of_users = int(rows[0]["license"])
     if no_of_user_licence < current_no_of_users:
         return True
@@ -459,8 +461,12 @@ def validate_no_of_user_licence(db, no_of_user_licence, client_id):
 
 def validate_total_disk_space(db, file_space, client_id):
     settings_columns = "total_disk_space_used"
-    condition = "client_id = %s " % client_id
-    rows = db.get_data(tblClientGroups, settings_columns, condition)
+    condition = "client_id = %s "
+    condition_val = [client_id]
+    rows = db.get_data(
+        tblClientGroups, settings_columns,
+        condition, condition_val
+    )
     used_space = int(rows[0]["total_disk_space_used"])
     if file_space < used_space:
         return True
@@ -480,8 +486,11 @@ def save_client_logo(logo, client_id):
 
 def update_client_logo(db, logo, client_id):
     column = "logo_url"
-    condition = "client_id = %s " % client_id
-    rows = db.get_data(tblClientGroups, column, condition)
+    condition = "client_id = %s "
+    condition_val = [client_id]
+    rows = db.get_data(
+        tblClientGroups, column, condition, condition_val
+    )
     old_file_name = rows[0]["logo_url"]
     old_file_path = "%s/%s" % (CLIENT_LOGO_PATH, old_file_name)
     remove_uploaded_file(old_file_path)
@@ -493,7 +502,6 @@ def update_client_group_record(db, client_group, session_user):
     contract_from = string_to_datetime(client_group.contract_from)
     contract_to = string_to_datetime(client_group.contract_to)
     is_sms_subscribed = 0 if client_group.is_sms_subscribed is False else 1
-
     columns = [
         "group_name", "contract_from", "contract_to", "no_of_user_licence",
         "total_disk_space", "is_sms_subscribed", "incharge_persons",
@@ -629,7 +637,8 @@ def save_date_configurations(
         if is_combination_already_exists(db, country_id, domain_id, client_id):
             update_values = [period_from, period_to]
             update_condition = " client_id = %s AND country_id = %s " + \
-                " AND domain_id = %s" % (
+                " AND domain_id = %s"
+            update_condition = update_condition % (
                     client_id, country_id, domain_id
                 )
             r = db.update(
@@ -954,7 +963,8 @@ def get_business_groups_for_user(db, user_id):
     condition = "1"
     if client_ids is not None:
         condition = "client_id in (%s) " + \
-            " order by business_group_name ASC" % client_ids
+            " order by business_group_name ASC"
+        condition = condition % client_ids
         result = db.get_data(tblBusinessGroups, columns, condition)
     return return_business_groups(result)
 
@@ -982,7 +992,8 @@ def get_legal_entities_for_user(db, user_id):
     condition = "1"
     if client_ids is not None:
         condition = "client_id in (%s) " + \
-            " order by legal_entity_name ASC" % client_ids
+            " order by legal_entity_name ASC"
+        condition = condition % client_ids
         result = db.get_data(tblLegalEntities, columns, condition)
 
     return return_legal_entities(result)
@@ -1223,16 +1234,15 @@ def reactivate_unit_data(db, client_id, unit_id, session_user):
     action = "Reactivated Unit \"%s-%s\"" % (rows[0][0], rows[0][1])
     db.save_activity(session_user, 19, action)
 
-    new_unit_id = db.get_new_id("unit_id", tblUnits)
     result = result[0]
     unit_code = get_next_unit_auto_gen_no(db, client_id)
     unit_columns = [
-        "client_id", "unit_id", "is_active", "legal_entity_id",
+        "client_id", "is_active", "legal_entity_id",
         "country_id", "geography_id", "industry_id", "unit_code", "unit_name",
         "address", "postal_code", "domain_ids"
     ]
     values = [
-        client_id, new_unit_id, 1, result["legal_entity_id"],
+        client_id, 1, result["legal_entity_id"],
         result["country_id"], result["geography_id"],
         result["industry_id"], unit_code, result["unit_name"],
         result["address"], result["postal_code"], result["domain_ids"]
@@ -1251,14 +1261,17 @@ def reactivate_unit_data(db, client_id, unit_id, session_user):
 
 def get_next_unit_auto_gen_no(db, client_id):
     columns = "count(*) units"
-    condition = "client_id = '%d'" % client_id
-    rows = db.get_data(tblUnits, columns, condition)
+    condition = "client_id = %s"
+    condition_val = [client_id]
+    rows = db.get_data(tblUnits, columns, condition, condition_val)
     no_of_units = rows[0]["units"]
 
     group_columns = "group_name"
-    group_condition = "client_id = %s" % client_id
+    group_condition = "client_id = %s"
+    group_condition_val = [client_id]
     group_company = db.get_data(
-        tblClientGroups, group_columns, group_condition
+        tblClientGroups, group_columns,
+        group_condition, group_condition_val
     )
 
     group_name = group_company[0]["group_name"].replace(" ", "")
@@ -1292,7 +1305,7 @@ def get_next_unit_auto_gen_no(db, client_id):
         unit_code += "00"
     elif len(str(next_auto_gen_no)) == 4:
         unit_code += "0"
-    unit_code += "%d" % (next_auto_gen_no)
+    unit_code += "%s" % (next_auto_gen_no)
     return unit_code
 
 
@@ -1386,7 +1399,7 @@ def get_licence_holder_details(db, client_id):
     aliases = ["tcu", "tu"]
     join_type = "left join"
     join_conditions = ["tcu.seating_unit_id = tu.unit_id"]
-    where_condition = "tcu.client_id = '%d'" % client_id
+    where_condition = "tcu.client_id = %s" % client_id
     return db.get_data_from_multiple_tables(
         columns, tables, aliases, join_type, join_conditions, where_condition
     )
