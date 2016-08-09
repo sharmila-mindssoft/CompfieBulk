@@ -167,16 +167,17 @@ class Database(object):
                 logger.logQuery(self._for_client, "execute_insert", query % param)
                 cursor.execute(query, param)
             elif type(param) is list :
+                print "inside elif "
                 if len(param) > 1 :
                     logger.logQuery(self._for_client, "execute_insert", query % tuple(param))
-                else :
+                else:
                     logger.logQuery(self._for_client, "execute_insert", query % param[0])
                 cursor.execute(query, param)
-            else :
+            else:
                 logger.logQuery(self._for_client, "execute_insert")
                 cursor.execute(query)
             return int(cursor.lastrowid)
-        except mysql.Error, e :
+        except mysql.Error, e:
             print e
             print query
             print param

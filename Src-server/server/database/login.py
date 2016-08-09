@@ -68,9 +68,9 @@ def add_session(
     if client_id is not None:
         session_id = "%s-%s" % (client_id, session_id)
     updated_on = get_date_time()
-    query = "INSERT INTO tbl_user_sessions \
-        (session_token, user_id, session_type_id, last_accessed_time) \
-        VALUES (%s, %s, %s, %s);"
+    query = '''INSERT INTO tbl_user_sessions
+        (session_token, user_id, session_type_id, last_accessed_time)
+        VALUES (%s, %s, %s, %s);'''
     db.execute(query, (session_id, user_id, session_type_id, updated_on))
 
     # action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
@@ -79,20 +79,30 @@ def add_session(
 
     return session_id
 
+
 def verify_username(db, username):
-    columns = "count(*), user_id"
-    condition = "email_id='%s' and is_active = 1" % (username)
-    rows = db.get_data(tblUsers, columns, condition)
-    count = rows[0][0]
-    if count == 1:
-        return rows[0][1]
-    else:
-        condition = "username='%s'" % username
-        columns = "count(*)"
-        rows = db.get_data(tblAdmin, columns, condition)
-        count = rows[0][0]
-        if count == 1:
-            return 0
+    user_columns = ["user_id", "employee_name"]
+    param = [username]
+    # checking in tbl_users
+    user_query = '''
+        SELECT user_id, employee_name  FROM tbl_users
+        WHERE email_id = %s and is_active = 1
+    '''
+    user_rows = db.select_all(user_query, param)
+    if user_rows:
+        result = convert_to_dict(user_rows, user_columns)
+        return (
+            result[0]["user_id"],
+            result[0]["employee_name"]
+        )
+    else:  # checking in tbl_admin
+        admin_query = '''
+            SELECT count(username) FROM tbl_admin
+            WHERE username = %s and is_active = 1
+        '''
+        admin_rows = db.select_all(admin_query, param)
+        if rows:
+            return (0, "Administrator")
         else:
             return None
 

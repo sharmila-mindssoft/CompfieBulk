@@ -77,7 +77,7 @@ class EmailHandler(Email):
         super(EmailHandler, self).__init__()
 
     def send_reset_link(
-        self, db, user_id, receiver, reset_link
+        self, db, user_id, receiver, reset_link, employee_name
     ):
         # email_to = [receiver]
         # context = {
@@ -85,11 +85,6 @@ class EmailHandler(Email):
         #     "ResetLink" : reset_link
         # }
         # template_name = self.get_template("task_completed")
-        user_name = db.get_user_name_by_id(user_id)
-        user_name_parts = user_name.split("-")
-        employee_name = user_name_parts[0]
-        if len(user_name_parts) > 1:
-            employee_name = user_name_parts[1]
         subject = "Reset Password"
         message = '''
             Dear %s, <br> \

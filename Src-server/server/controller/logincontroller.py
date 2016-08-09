@@ -115,6 +115,7 @@ def user_login_response(db, data, ip):
         designation, None, bool(1)
     )
 
+
 def admin_login_response(db, ip):
     user_id = 0
     email_id = None
@@ -122,34 +123,41 @@ def admin_login_response(db, ip):
     session_token = add_session(db, user_id, session_type, ip, "Administrator")
     menu = process_user_forms(db, "1,2,3,4")
     employee_name = "Administrator"
-    return login.AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name, None)
+    return login.AdminLoginSuccess(
+        user_id, session_token, email_id, menu,
+        employee_name, None
+    )
+
 
 def process_forgot_password(db, request):
-    user_id = verify_username(db, request.username)
+    email_id = request.username
+    user_id, employee_name = verify_username(
+        db, email_id
+    )
     if user_id is not None:
-        send_reset_link(db, user_id, request.username)
+        send_reset_link(db, user_id, email_id, employee_name)
         return login.ForgotPasswordSuccess()
     else:
         return login.InvalidUserName()
 
-def send_reset_link(db, user_id, username):
+
+def send_reset_link(db, user_id, email_id, employee_name):
     reset_token = new_uuid()
     reset_link = "%s/reset-password/%s" % (
         KNOWLEDGE_URL, reset_token
     )
-
-    condition = "user_id = '%d' " % user_id
-    db.delete(tblEmailVerification, condition)
-
+    condition = "user_id = %s "
+    condition_val = [user_id]
+    db.delete(tblEmailVerification, condition, condition_val)
     columns = ["user_id", "verification_code"]
     values_list = [user_id, reset_token]
-    if db.insert(tblEmailVerification, columns, values_list):
-        if email().send_reset_link(db, user_id, username, reset_link):
-            return True
-        else:
-            print "Send email failed"
+    db.insert(tblEmailVerification, columns, values_list)
+    if email().send_reset_link(
+        db, user_id, email_id, reset_link, employee_name
+    ):
+        return True
     else:
-        print "Saving reset token failed"
+        print "Send email failed"
 
 def process_reset_token(db, request):
     user_id = validate_reset_token(db, request.reset_token)
