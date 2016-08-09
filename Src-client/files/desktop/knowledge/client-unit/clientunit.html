@@ -218,11 +218,11 @@
 <div id="templatesUnitRow" style="display:none;">
 <table class="table-UnitRow-list">
     <tr class="table-row" style="vertical-align:top;">
-        <td><select class="input-box geography-levels" onfocus="loadglevels(this.className);" >
+        <td><select class="input-box geography-levels" onfocus="loadglevels(this.className);" onchange="changelocation(this.className);">
             <option value="">Select</option>
         </select>
         </td>
-        <td><input type="text" class="input-box icon-autocomplete unit-location" onkeyup="loadlocation(this.value, this.className, event);"  onchange="changelocation(this.className);" style="width:150px;"  value="">
+        <td><input type="text" class="input-box icon-autocomplete unit-location" onkeyup="loadlocation(this.value, this.className, event);" style="width:150px;"  value="">
         <input type="hidden" class="unit-location-ids">
         <div class="auto-complete-unit-location ac-textbox" style="display:none;" onclick="hideunitlocation(this.className);" onmouseleave="hideunitlocation(this.className);" >
             <ul class="unitlocationlist-text" style="width:195px;"></ul>

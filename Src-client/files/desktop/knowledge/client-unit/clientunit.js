@@ -1716,6 +1716,7 @@ function hideunitlocation(classname) {
 }
 
 function onArrowKey_UnitLocation(e, ac_item, ccount){
+
   if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13) {
     chosen = "";
   }
@@ -1770,7 +1771,6 @@ function activate_unitlocaion (element, ccount, mappingname) {
 
 //autocomplete location
 function loadlocation(textval, classval, e){
-
     var lastClass = classval.split(' ').pop();
     var ccount = lastClass.split('-');
     var countval = '-'+ccount[1]+'-'+ccount[2];
