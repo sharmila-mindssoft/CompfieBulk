@@ -16,16 +16,17 @@ __all__ = [
 
 forms = [3, 4]
 
+
 ########################################################
 # To Redirect Requests to Functions
 ########################################################
-def process_admin_request(request, db) :
+def process_admin_request(request, db):
     session_token = request.session_token
     request_frame = request.request
     session_user = validate_user_session(db, session_token)
-    if session_user is not None :
+    if session_user is not None:
         is_valid = validate_user_forms(db, session_user, forms, request_frame)
-        if is_valid is not True :
+        if is_valid is not True:
             return login.InvalidSessionToken()
 
     if session_user is None:
@@ -76,12 +77,13 @@ def process_admin_request(request, db) :
 ########################################################
 # To Retrieve category wise forms from database
 ########################################################
-def get_forms_list(db) :
+def get_forms_list(db):
     result_rows = get_forms(db)
     knowledge_forms = []
     techno_forms = []
     for row in result_rows:
-        parent_menu = None if row["parent_menu"] == None else row["parent_menu"]
+        parent_menu = None if (
+            row["parent_menu"] == None) else row["parent_menu"]
         if int(row["form_category_id"]) == 2:
             form = core.Form(
                 form_id=row["form_id"],
@@ -117,6 +119,7 @@ def get_forms_list(db) :
     result[3] = process_user_menus(techno_forms)
     return result
 
+
 ########################################################
 # To get list of user groups with it's details such as
 # forms, form categories
@@ -129,9 +132,9 @@ def process_user_group_detailed_list(db):
         user_group_name = row["user_group_name"]
         form_category_id = row["form_category_id"]
         no_of_users = row["count"]
-        if len(row["form_ids"]) >= 1 :
+        if len(row["form_ids"]) >= 1:
             form_ids = [int(x) for x in row["form_ids"].split(",")]
-        else :
+        else:
             form_ids = []
         is_active = False if row["is_active"] == 0 else True
         user_group_list.append(admin.UserGroup(
@@ -140,6 +143,7 @@ def process_user_group_detailed_list(db):
         ))
     return user_group_list
 
+
 ########################################################
 # To get form categories list
 ########################################################
@@ -147,8 +151,11 @@ def get_form_categories_db(db):
     formCategoryList = []
     rows = get_form_categories(db)
     for row in rows:
-        formCategoryList.append(core.FormCategory(row["form_category_id"], row["form_category"]))
+        formCategoryList.append(core.FormCategory(
+            row["form_category_id"], row["form_category"])
+        )
     return formCategoryList
+
 
 ########################################################
 # To handle get user group list request
@@ -165,6 +172,7 @@ def get_user_groups(db, request_frame, session_user):
     )
     return result
 
+
 ########################################################
 # To Handle Save user group request
 ########################################################
@@ -172,7 +180,7 @@ def save_user_group_record(db, request, session_user):
     user_group_name = request.user_group_name
     form_category_id = request.form_category_id
     form_ids = request.form_ids
-    if is_duplicate_user_group_name(db, user_group_name) :
+    if is_duplicate_user_group_name(db, user_group_name):
         return admin.GroupNameAlreadyExists()
     elif save_user_group(
         db,
@@ -180,6 +188,7 @@ def save_user_group_record(db, request, session_user):
         form_category_id, form_ids
     ):
         return admin.SaveUserGroupSuccess()
+
 
 ########################################################
 # To Handle Update user group request
@@ -189,16 +198,17 @@ def update_user_groups(db, request, session_user):
     user_group_name = request.user_group_name
     form_category_id = request.form_category_id
     form_ids = request.form_ids
-    if db.is_invalid_id(tblUserGroups, "user_group_id", user_group_id) :
+    if db.is_invalid_id(tblUserGroups, "user_group_id", user_group_id):
         return admin.InvalidUserGroupId()
-    elif is_duplicate_user_group_name(db, user_group_name, user_group_id) :
+    elif is_duplicate_user_group_name(db, user_group_name, user_group_id):
         return admin.GroupNameAlreadyExists()
     elif update_user_group(
         db,
         user_group_id, user_group_name,
         form_category_id, form_ids
-    ) :
+    ):
         return admin.UpdateUserGroupSuccess()
+
 
 ########################################################
 # To Change the status of user group
@@ -215,6 +225,7 @@ def change_user_group_status(db, request, session_user):
     elif update_user_group_status(db, user_group_id, is_active):
         return admin.ChangeUserGroupStatusSuccess()
 
+
 ########################################################
 # To get Users List with user details
 ########################################################
@@ -229,11 +240,11 @@ def get_users(db, request_frame, session_user):
         user_group_id = user_group_row["user_group_id"]
         user_group_name = user_group_row["user_group_name"]
         is_active = True if user_group_row["is_active"] == 1 else False
-        user_group_list.append(core.UserGroup(user_group_id, user_group_name, is_active))
+        user_group_list.append(
+            core.UserGroup(user_group_id, user_group_name, is_active)
+        )
 
     user_rows = get_detailed_user_list(db)
-    # columns = "user_id, email_id, user_group_id, employee_name, employee_code, " + \
-    #         "contact_no, address, designation, is_active"
     for user_row in user_rows:
         user_id = user_row["user_id"]
         email_id = user_row["email_id"]
@@ -242,7 +253,8 @@ def get_users(db, request_frame, session_user):
         employee_code = user_row["employee_code"]
         contact_no = user_row["contact_no"]
         address = None if user_row["address"] == "" else user_row["address"]
-        designation = None if user_row["designation"] == "" else user_row["designation"]
+        designation = None if (
+            user_row["designation"] == "") else user_row["designation"]
         is_active = True if user_row["is_active"] == 1 else False
         country_ids = get_user_countries(db, user_id)
         domain_ids = get_user_domains(db, user_id)
@@ -261,6 +273,7 @@ def get_users(db, request_frame, session_user):
         users=user_list
     )
 
+
 ########################################################
 # To Handle Save user request
 ########################################################
@@ -275,15 +288,17 @@ def save_user_record(db, request, session_user):
     designation = None if request.designation == "" else request.designation
     country_ids = request.country_ids
     domain_ids = request.domain_ids
-    if is_duplicate_email(db, email_id) :
+    if is_duplicate_email(db, email_id):
         return admin.EmailIDAlreadyExists()
-    elif is_duplicate_employee_code(db, employee_code) :
+    elif is_duplicate_employee_code(db, employee_code):
         return admin.EmployeeCodeAlreadyExists()
     elif save_user(
         db, email_id, user_group_id, employee_name,
-        employee_code, contact_no, address, designation, country_ids, domain_ids
-    ) :
+        employee_code, contact_no, address, designation,
+        country_ids, domain_ids
+    ):
         return admin.SaveUserSuccess()
+
 
 ########################################################
 # To Handle Update user request
@@ -300,13 +315,16 @@ def update_user_record(db, request, session_user):
     domain_ids = request.domain_ids
     if db.is_invalid_id(tblUsers, "user_id", user_id):
         return admin.InvalidUserId()
-    elif is_duplicate_employee_code(db, employee_code, user_id) :
+    elif is_duplicate_employee_code(
+        db, employee_code, user_id
+    ):
         return admin.EmployeeCodeAlreadyExists()
     elif update_user(
         db, user_id, user_group_id, employee_name, employee_code,
         contact_no, address, designation, country_ids, domain_ids
-    ) :
+    ):
         return admin.UpdateUserSuccess()
+
 
 ########################################################
 # To Change the status of user

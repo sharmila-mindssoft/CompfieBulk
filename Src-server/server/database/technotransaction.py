@@ -1,6 +1,6 @@
 from protocol import (core, technotransactions)
 from server.common import (
-    convert_to_dict, get_date_time
+    convert_to_dict, get_date_time, datetime_to_string
 )
 from server.database.tables import *
 from server.database.knowledgemaster import (
@@ -22,7 +22,8 @@ def get_assigned_statutories_list(
         (select business_group_name from tbl_business_groups where business_group_id =  t3.business_group_id )business_group_name, \
         (select legal_entity_name from tbl_legal_entities where legal_entity_id = t3.legal_entity_id )legal_entity_name, \
         (select division_name from tbl_divisions where division_id = t3.division_id) division_name, \
-        (select industry_name from tbl_industries where industry_id = t3.industry_id )industry_name \
+        (select industry_name from tbl_industries where industry_id = t3.industry_id )industry_name, \
+        t1.created_on\
         FROM tbl_client_statutories t1 \
         INNER JOIN tbl_client_groups t2 \
         ON t1.client_id = t2.client_id \
@@ -41,7 +42,7 @@ def get_assigned_statutories_list(
         "country_id", "domain_id", "unit_id", "submission_type",
         "group_name", "geography_name", "country_name",
         "domain_name", "unit_name", "unit_code", "business_group_name", "legal_entity_name",
-        "division_name", "industry_name"
+        "division_name", "industry_name", "assigned_date"
     ]
     result = convert_to_dict(rows, columns)
     return return_assign_statutory_list(result)
@@ -67,7 +68,8 @@ def return_assign_statutory_list(assigned_list):
                 data["geography_name"],
                 data["domain_id"],
                 data["domain_name"],
-                data["industry_name"]
+                data["industry_name"],
+                datetime_to_string(data["assigned_date"])
             )
         )
 

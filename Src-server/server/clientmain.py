@@ -118,6 +118,7 @@ class API(object):
                             self._databases[company_id] = db
                     except Exception, e:
                         print e
+                        print str(traceback.format_exc())
                         logger.logClientApi(ip, port)
                         logger.logClientApi(e, "Server added")
                         logger.logClient("error", "exception", str(traceback.format_exc()))
@@ -174,6 +175,7 @@ class API(object):
             # print _client_manager
 
         except Exception, e :
+            print traceback.format_exc()
             logger.logClientApi(e, "Server added")
             logger.logClientApi(traceback.format_exc(), "")
             logger.logClient("error", "clientmain.py-server-added", e)
@@ -233,6 +235,7 @@ class API(object):
 
         except Exception, e:
             print e
+            print traceback
             logger.logClientApi(e, "_parse_request")
             logger.logClientApi(traceback.format_exc(), "")
 
@@ -275,8 +278,8 @@ class API(object):
             db.commit()
             respond(response_data)
         except Exception, e:
-            # print(traceback.format_exc())
-            # print e
+            print(traceback.format_exc())
+            print e
             logger.logClientApi(e, "handle_api_request")
             logger.logClientApi(traceback.format_exc(), "")
 

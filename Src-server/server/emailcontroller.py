@@ -13,6 +13,7 @@ __all__ = ["EmailHandler"]
 # CLIENT_URL = "http://localhost:8080/"
 # KNOWLEDGE_URL= "http://localhost:8082/knowledge/"
 
+
 class Email(object):
 
     def __init__(self):
@@ -23,7 +24,9 @@ class Email(object):
         # self.API_KEY = 'u5IPdlY1JAxa5_fJoJaPEw'
         self.initializeTemplates()
 
-    def send_email(self, receiver, subject, message, cc=None, is_credential=False):
+    def send_email(
+        self, receiver, subject, message, cc=None, is_credential=False
+    ):
         print "inside send email"
         # server = smtplib.SMTP('smtp.gmail.com', 25, timeout=30)
         # server = smtplib.SMTP("mail.aparajitha.com", 465)
@@ -32,9 +35,9 @@ class Email(object):
         # server.starttls()
         # print server.login(self.sender, self.password)
         _is_send = SEND_EMAIL
-        if is_credential :
+        if is_credential:
             _is_send = True
-        if _is_send :
+        if _is_send:
             server = SMTP("mail.aparajitha.com", 465)
             print server
             server.set_debuglevel(False)
@@ -56,19 +59,20 @@ class Email(object):
             response = server.sendmail(self.sender, receiver,  msg.as_string())
             print response
             server.close()
-        else :
+        else:
             print "SEND_EMAIL is ", _is_send
 
     def initializeTemplates(self):
         self.templates = {
-            "task_rejected" : "TaskRejected",
-            "task_completed" : "TaskCompleted",
-            "reset_password" : "ResetPassword",
-            "account_created" : "AccountCreated",
+            "task_rejected": "TaskRejected",
+            "task_completed": "TaskCompleted",
+            "reset_password": "ResetPassword",
+            "account_created": "AccountCreated",
         }
 
     def get_template(self, type):
         return self.templates[type]
+
 
 class EmailHandler(Email):
     def __init__(
@@ -77,7 +81,7 @@ class EmailHandler(Email):
         super(EmailHandler, self).__init__()
 
     def send_reset_link(
-        self, db, user_id, receiver, reset_link
+        self, db, user_id, receiver, reset_link, employee_name
     ):
         # email_to = [receiver]
         # context = {
@@ -85,11 +89,6 @@ class EmailHandler(Email):
         #     "ResetLink" : reset_link
         # }
         # template_name = self.get_template("task_completed")
-        user_name = db.get_user_name_by_id(user_id)
-        user_name_parts = user_name.split("-")
-        employee_name = user_name_parts[0]
-        if len(user_name_parts) > 1:
-            employee_name = user_name_parts[1]
         subject = "Reset Password"
         message = '''
             Dear %s, <br> \
@@ -99,7 +98,9 @@ class EmailHandler(Email):
             Compfie Support Team''' % (
             employee_name, reset_link
         )
-        self.send_email(receiver, subject, message, cc=None, is_credential=True)
+        self.send_email(
+            receiver, subject, message, cc=None, is_credential=True
+        )
         # self.send_mail(template_name, email_to, context)
         return True
 
@@ -107,10 +108,6 @@ class EmailHandler(Email):
         self, short_name, receiver, password
     ):
         subject = "Account Created"
-        # message = "Dear Client, Your Compfie account has been created.\
-        # Your Credentials are <br> Url: '%slogin/%s' <br> Username: %s <br> password: %s" % (
-        # 	CLIENT_URL, short_name, receiver, password
-        # )
         message = '''
             Dear Client, <br> \
             <p>Your Compfie account has been created. </p>\
@@ -123,16 +120,14 @@ class EmailHandler(Email):
             CLIENT_URL, short_name, CLIENT_URL, short_name,
             receiver, password
         )
-        self.send_email(receiver, subject, message, cc=None, is_credential=True)
+        self.send_email(
+            receiver, subject, message, cc=None, is_credential=True
+        )
 
     def send_user_credentials(
         self, short_name, receiver, password, employee_name, employee_code
     ):
         subject = "Account Created"
-        # message = "Dear %s, Your Compfie account has been created. Your login credentials are: %s\
-        # Url: '%slogin/%s' <br> Username: %s <br> password: %s" % (
-        # 	CLIENT_URL, employee_name, employee_code, short_name, receiver, password
-        # )
         message = '''
             Dear %s, <br> \
             <p>Your Compfie account has been created. </p>\
@@ -145,7 +140,9 @@ class EmailHandler(Email):
             employee_name, CLIENT_URL, short_name, CLIENT_URL, short_name,
             receiver, password
         )
-        self.send_email(receiver, subject, message, cc=None, is_credential=True)
+        self.send_email(
+            receiver, subject, message, cc=None, is_credential=True
+        )
 
     def send_knowledge_user_credentials(
         self, receiver, password, employee_name, employee_code
@@ -162,15 +159,19 @@ class EmailHandler(Email):
             Compfie Support Team''' % (
              employee_name, KNOWLEDGE_URL, KNOWLEDGE_URL, receiver, password
         )
-        self.send_email(receiver, subject, message, cc=None, is_credential=True)
+        self.send_email(
+            receiver, subject, message, cc=None, is_credential=True
+        )
 
-    def notify_assign_compliance(self, receiver, assignee_name, compliance_info):
+    def notify_assign_compliance(
+        self, receiver, assignee_name, compliance_info
+    ):
         subject = "New compliance task assigned "
-        message = "Dear %s, <br> \
-            <p>%s</p>" % (
+        message = '''
+            Dear %s, <br>
+            <p>%s</p>''' % (
             assignee_name, compliance_info,
         )
-        # print message
         self.send_email(receiver, subject, message, cc=None)
 
     def notify_task(
@@ -179,15 +180,23 @@ class EmailHandler(Email):
         approver_email, approver_name, compliance_name,
         due_date, when
     ):
-        receiver = "%s, %s, %s" % (assignee_email, concurrence_email, approver_email)
+        receiver = "%s, %s, %s" % (
+            assignee_email, concurrence_email, approver_email
+        )
         if when == "Start":
             subject = "Task Started"
-            message = "Dear %s,  Compliance %s has started. Due date for the compliance is %s" % (
+            message = '''
+                Dear %s,  Compliance %s has started.
+                Due date for the compliance is %s
+            ''' % (
                 assignee_name, compliance_name, due_date
             )
         elif when == "Before Due Date":
             subject = "Task Reminder"
-            message = "Dear %s, Reminding you to Complete the compliance %s with due date %s" % (
+            message = '''
+                Dear %s, Reminding you to Complete the compliance
+                %s with due date %s
+            ''' % (
                 assignee_name, compliance_name, due_date
             )
         elif when == "After Due Date":
@@ -203,7 +212,9 @@ class EmailHandler(Email):
         concurrence_name, compliance_name
     ):
         subject = "Task Rejected"
-        message = "Dear %s, Compliance %s has been rejected. The reason is %s." % (
+        message = '''
+            Dear %s, Compliance %s has been rejected. The reason is %s.
+        ''' % (
             assignee_name, compliance_name, remarks
         )
         receiver = assignee_email
@@ -227,11 +238,12 @@ class EmailHandler(Email):
         cc = "%s" % (assignee_email)
         subject = "Task Completed"
         message = '''
-        Dear %s,
-        <br>
-        %s has completed the task %s successfully. Review and %s
+            Dear %s,
+            <br>
+            %s has completed the task %s successfully. Review and %s
         ''' % (
-            approval_or_concurrence_person, assignee_name, compliance_name, action
+            approval_or_concurrence_person, assignee_name,
+            compliance_name, action
         )
         self.send_email(approval_or_concurrence_email, subject, message, cc)
 
@@ -243,9 +255,9 @@ class EmailHandler(Email):
 
         subject = "Task %s" % approval_status
         message = '''
-        Dear %s,
-        <br>
-        Task %s %s Successfully.
+            Dear %s,
+            <br>
+            Task %s %s Successfully.
         ''' % (
             assignee_name, compliance_name, approval_status
         )
@@ -257,12 +269,11 @@ class EmailHandler(Email):
             cc = "%s" % (assignee_email)
             subject = "Task Concurred"
             message = '''
-            Dear %s,
-            <br>
-            %s has completed the task %s successfully and %s has concurred the compliance.\
-            Review and approve the compliance
+                Dear %s,<br>
+                %s has completed the task %s successfully and %s has concurred
+                the compliance. Review and approve the compliance
             ''' % (
-                approver_name, assignee_name , compliance_name,
+                approver_name, assignee_name, compliance_name,
                 concurrence_name
             )
             self.send_email(approver_email, subject, message, cc)
@@ -273,16 +284,18 @@ class EmailHandler(Email):
         due_date, receiver, cc_person=None
     ):
         subject = "Compliance Task Started"
-        message = "Dear %s, \
-            Compliance task %s has been started for unit %s. \
-            Due date of this compliance is %s" % (
-                assignee, compliance_name,
-                unit_name, due_date
-            )
-        try :
+        message = '''
+            Dear %s,
+            Compliance task %s has been started for unit %s.
+            Due date of this compliance is %s
+        ''' % (
+            assignee, compliance_name,
+            unit_name, due_date
+        )
+        try:
             self.send_email(receiver, subject, message, cc_person)
             pass
-        except Exception, e :
+        except Exception, e:
             print e
             print "Email Failed for compliance start ", message
 
@@ -295,10 +308,10 @@ class EmailHandler(Email):
                     <p> Thanks & Regards, <br>\
                     Compfie Support Team''' % content
         cc_person = None
-        try :
+        try:
             self.send_email(receiver, subject, message, cc_person)
             pass
-        except Exception, e :
+        except Exception, e:
             print e
             print "Email Failed for compliance start ", message
 
@@ -311,10 +324,10 @@ class EmailHandler(Email):
                     <p> Thanks & Regards, <br>\
                     Compfie Support Team''' % content
         cc_person = None
-        try :
+        try:
             self.send_email(receiver, subject, message, cc_person)
             pass
-        except Exception, e :
+        except Exception, e:
             print e
             print "Email Failed for compliance start ", message
 
@@ -323,16 +336,17 @@ class EmailHandler(Email):
         receiver
     ):
         subject = "Compliance Task Reminder"
-        message = "Dear %s, \
-            Only %s day(s) left to complete %s task for unit %s" % (
-                assignee, days_left, compliance_name,
-                unit_name
-            )
-        try :
+        message = '''
+            Dear %s, \
+            Only %s day(s) left to complete %s task for unit %s
+        ''' % (
+            assignee, days_left, compliance_name, unit_name
+        )
+        try:
             print
             self.send_email(receiver, subject, message, cc=None)
             pass
-        except Exception, e :
+        except Exception, e:
             print e
             print "Email Failed for notify to assignee %s ", message
 
@@ -341,15 +355,17 @@ class EmailHandler(Email):
         receiver, cc_person
     ):
         subject = "Compliance Task Reminder"
-        message = "Dear %s, \
-            Only %s day(s) left to complete %s task for unit %s" % (
-                assignee, days_left, compliance_name,
-                unit_name
-            )
-        try :
+        message = '''
+            Dear %s, \
+            Only %s day(s) left to complete %s task for unit %s
+        ''' % (
+            assignee, days_left, compliance_name,
+            unit_name
+        )
+        try:
             self.send_email(receiver, subject, message, cc_person)
             pass
-        except Exception, e :
+        except Exception, e:
             print e
             print "Email Failed for before due_date  ", message
 
@@ -358,13 +374,15 @@ class EmailHandler(Email):
         over_due_days, receiver, cc_person
     ):
         subject = "Compliance Escalation Notification"
-        message = "Dear %s, \
-            Compliance %s for unit %s has overdue by %s day(s)." % (
-                assignee, compliance_name, unit_name, over_due_days
-            )
-        try :
+        message = '''
+            Dear %s, \
+            Compliance %s for unit %s has overdue by %s day(s).
+        ''' % (
+            assignee, compliance_name, unit_name, over_due_days
+        )
+        try:
             self.send_email(receiver, subject, message, cc_person)
             pass
-        except Exception, e :
+        except Exception, e:
             print e
             print "Email Failed for escalations", message

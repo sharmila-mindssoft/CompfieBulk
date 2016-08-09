@@ -19,28 +19,29 @@ __all__ = [
     "process_logout"
 ]
 
-def process_login_request(request, db, session_user_ip) :
+
+def process_login_request(request, db, session_user_ip):
     if type(request) is login.Login:
         logger.logKnowledgeApi("Login", "process begin")
         result = process_login(db, request, session_user_ip)
         logger.logKnowledgeApi("Login", "process end")
 
-    if type(request) is login.ForgotPassword :
+    if type(request) is login.ForgotPassword:
         logger.logKnowledgeApi("ForgotPassword", "process begin")
         result = process_forgot_password(db, request)
         logger.logKnowledgeApi("ForgotPassword", "process end")
 
-    if type(request) is login.ResetTokenValidation :
+    if type(request) is login.ResetTokenValidation:
         logger.logKnowledgeApi("ResetTokenValidation", "process begin")
         result = process_reset_token(db, request)
         logger.logKnowledgeApi("ResetTokenValidation", "process end")
 
-    if type(request) is login.ResetPassword :
+    if type(request) is login.ResetPassword:
         logger.logKnowledgeApi("ResetPassword", "process begin")
         result = process_reset_password(db, request)
         logger.logKnowledgeApi("ResetPassword", "process end")
 
-    if type(request) is login.ChangePassword :
+    if type(request) is login.ChangePassword:
         logger.logKnowledgeApi("ChangePassword", "process begin")
         result = process_change_password(db, request)
         logger.logKnowledgeApi("ChangePassword", "process end")
@@ -52,6 +53,7 @@ def process_login_request(request, db, session_user_ip) :
 
     return result
 
+
 def process_login(db, request, session_user_ip):
     login_type = request.login_type
     username = request.username
@@ -60,31 +62,33 @@ def process_login(db, request, session_user_ip):
     response = verify_login(db, username, encrypt_password)
     if response is True:
         return admin_login_response(db, session_user_ip)
-    else :
+    else:
         if bool(response):
-            if login_type.lower() == "web" :
+            if login_type.lower() == "web":
                 return user_login_response(db, response, session_user_ip)
-            else :
-                return mobile_user_login_respone(db, response, request, session_user_ip)
-        else :
+            else:
+                return mobile_user_login_respone(
+                    db, response, request, session_user_ip
+                )
+        else:
             return login.InvalidCredentials()
 
 
 def mobile_user_login_respone(db, data, request, ip):
     login_type = request.login_type
-    if login_type.lower() == "web" :
+    if login_type.lower() == "web":
         session_type = 1
-    elif login_type.lower() == "android" :
+    elif login_type.lower() == "android":
         session_type = 2
-    elif login_type.lower() == "ios" :
+    elif login_type.lower() == "ios":
         session_type = 3
-    elif login_type.lower() == "blackberry" :
+    elif login_type.lower() == "blackberry":
         session_type = 4
     user_id = data["user_id"]
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
     form_ids = [int(x) for x in data["form_ids"].split(",")]
-    if 11 not in form_ids :
+    if 11 not in form_ids:
         return login.InvalidCredentials()
     employee = "%s - %s" % (employee_code, employee_name)
     session_token = add_session(db, user_id, session_type, ip, employee)
@@ -93,6 +97,7 @@ def mobile_user_login_respone(db, data, request, ip):
         data["employee_name"],
         session_token
     )
+
 
 def user_login_response(db, data, ip):
     user_id = data["user_id"]
@@ -115,6 +120,7 @@ def user_login_response(db, data, ip):
         designation, None, bool(1)
     )
 
+
 def admin_login_response(db, ip):
     user_id = 0
     email_id = None
@@ -122,34 +128,42 @@ def admin_login_response(db, ip):
     session_token = add_session(db, user_id, session_type, ip, "Administrator")
     menu = process_user_forms(db, "1,2,3,4")
     employee_name = "Administrator"
-    return login.AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name, None)
+    return login.AdminLoginSuccess(
+        user_id, session_token, email_id, menu,
+        employee_name, None
+    )
+
 
 def process_forgot_password(db, request):
-    user_id = verify_username(db, request.username)
+    email_id = request.username
+    user_id, employee_name = verify_username(
+        db, email_id
+    )
     if user_id is not None:
-        send_reset_link(db, user_id, request.username)
+        send_reset_link(db, user_id, email_id, employee_name)
         return login.ForgotPasswordSuccess()
     else:
         return login.InvalidUserName()
 
-def send_reset_link(db, user_id, username):
+
+def send_reset_link(db, user_id, email_id, employee_name):
     reset_token = new_uuid()
     reset_link = "%s/reset-password/%s" % (
         KNOWLEDGE_URL, reset_token
     )
-
-    condition = "user_id = '%d' " % user_id
-    db.delete(tblEmailVerification, condition)
-
+    condition = "user_id = %s "
+    condition_val = [user_id]
+    db.delete(tblEmailVerification, condition, condition_val)
     columns = ["user_id", "verification_code"]
     values_list = [user_id, reset_token]
-    if db.insert(tblEmailVerification, columns, values_list):
-        if email().send_reset_link(db, user_id, username, reset_link):
-            return True
-        else:
-            print "Send email failed"
+    db.insert(tblEmailVerification, columns, values_list)
+    if email().send_reset_link(
+        db, user_id, email_id, reset_link, employee_name
+    ):
+        return True
     else:
-        print "Saving reset token failed"
+        print "Send email failed"
+
 
 def process_reset_token(db, request):
     user_id = validate_reset_token(db, request.reset_token)
@@ -162,7 +176,7 @@ def process_reset_token(db, request):
 def process_reset_password(db, request):
     user_id = validate_reset_token(db, request.reset_token)
     if user_id is not None:
-        if db.update_password(request.new_password, user_id):
+        if update_password(db, request.new_password, user_id):
             if delete_used_token(db, request.reset_token):
                 return login.ResetPasswordSuccess()
             else:
@@ -172,12 +186,13 @@ def process_reset_password(db, request):
     else:
         return login.InvalidResetToken()
 
+
 def process_change_password(db, request):
     session_user = db.validate_session_token(request.session_token)
     if verify_password(db, request.current_password, session_user):
         update_password(db, request.new_password, session_user)
         return login.ChangePasswordSuccess()
-    else :
+    else:
         return login.InvalidCurrentPassword()
 
 
