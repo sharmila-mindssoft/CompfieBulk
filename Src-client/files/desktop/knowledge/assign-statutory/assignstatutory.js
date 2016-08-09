@@ -1014,7 +1014,7 @@ function loadCountwiseAssignedStatutoriesList(assignedStatutoriesList){
     $('.tbl_industry', clone).text(value["industry_name"]);
     $('.tbl_unit', clone).text(value["unit_name"]);
     $('.tbl_domain', clone).text(value["domain_name"]);
-
+    $('.tbl_assigned_date', clone).text(value["assigned_date"]);
     $('.edit-icon').attr('title', 'Edit');
     $('.view-icon').attr('title', 'View & Submit');
 
@@ -1110,7 +1110,7 @@ function getAssignedStatutories () {
 }
 
 //filter process
-$(".listfilter").keyup(function() {
+function filterList(){
   var filter1 = $("#filter1").val().toLowerCase();
   var filter2 = $("#filter2").val().toLowerCase();
   var filter3 = $("#filter3").val().toLowerCase();
@@ -1121,7 +1121,7 @@ $(".listfilter").keyup(function() {
   var filter8 = $("#filter8").val().toLowerCase();
   var filter9 = $("#filter9").val().toLowerCase();
   var filter10 = $("#filter10").val().toLowerCase();
-
+  var filter11 = $("#filter11").val();
   var filteredList=[];
   for(var entity in assignedStatutoriesList) {
     var filter1val = assignedStatutoriesList[entity]["country_name"];
@@ -1138,23 +1138,57 @@ $(".listfilter").keyup(function() {
     var filter7val = assignedStatutoriesList[entity]["industry_name"];
     var filter8val = assignedStatutoriesList[entity]["unit_name"];
     var filter9val = assignedStatutoriesList[entity]["domain_name"];
+    var filter11val = assignedStatutoriesList[entity]["assigned_date"];
     var filter10val = null;
     if(assignedStatutoriesList[entity]["submission_status"] == 1)
         filter10val = 'Submitted';
       else
         filter10val = "Pending";
-    if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2) && ~filter3val.toLowerCase().indexOf(filter3) && ~filter4val.toLowerCase().indexOf(filter4) && ~filter5val.toLowerCase().indexOf(filter5) && ~filter6val.toLowerCase().indexOf(filter6) && ~filter7val.toLowerCase().indexOf(filter7) && ~filter8val.toLowerCase().indexOf(filter8) && ~filter9val.toLowerCase().indexOf(filter9) && ~filter10val.toLowerCase().indexOf(filter10))
-    {
+    if (
+        ~filter1val.toLowerCase().indexOf(filter1) &&
+        ~filter2val.toLowerCase().indexOf(filter2) &&
+        ~filter3val.toLowerCase().indexOf(filter3) &&
+        ~filter4val.toLowerCase().indexOf(filter4) &&
+        ~filter5val.toLowerCase().indexOf(filter5) &&
+        ~filter6val.toLowerCase().indexOf(filter6) &&
+        ~filter7val.toLowerCase().indexOf(filter7) &&
+        ~filter8val.toLowerCase().indexOf(filter8) &&
+        ~filter9val.toLowerCase().indexOf(filter9) &&
+        ~filter10val.toLowerCase().indexOf(filter10) &&
+        ~filter11val.indexOf(filter11)
+    ) {
       filteredList.push(assignedStatutoriesList[entity]);
     }
   }
   loadAssignedStatutoriesList(filteredList);
+}
+
+
+$(".listfilter").keyup(function() {
+    filterList();
 });
 
 //initialization and UL filter process
 $(document).ready(function () {
   hideLoader();
   getAssignedStatutories ();
+  $("#filter11").datepicker({
+      changeMonth: true,
+      changeYear: true,
+      numberOfMonths: 1,
+      dateFormat: "dd-M-yy",
+      monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      onSelect: function(dateText) {
+        filterList();
+      }
+  });
+  $("#filter11").keyup(function(e) {
+      if(e.keyCode == 8 || e.keyCode == 46) {
+          $.datepicker._clearDate(this);
+      }
+  });
+
   $("#filter_country").keyup( function() {
     var filter = $("#filter_country").val().toLowerCase();
     var lis = document.getElementsByClassName('countrylist');

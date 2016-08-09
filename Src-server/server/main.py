@@ -110,7 +110,7 @@ class API(object):
             logger.logKnowledgeApi(traceback.format_exc(), "")
 
             logger.logKnowledge("error", "main.py-parse-request", e)
-            # print(traceback.format_exc())
+            print(traceback.format_exc())
             logger.logKnowledge("error", "main.py", traceback.format_exc())
             response.set_status(400)
             response.send(str(e))

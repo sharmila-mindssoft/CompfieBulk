@@ -87,7 +87,9 @@ client_message = {
     "E022": "Client user details save failed in core",
     "E023": "Client user details update failed in core",
     "E024": "Client user status update failed in core",
-    "E025": "Client unit closure failed in core"
+    "E025": "Client unit closure failed in core",
+    "E026": "Client opted status save failed in core",
+    "E027": "Client active status validation failed"
 }
 
 def process_error(msg_code):

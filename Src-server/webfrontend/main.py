@@ -96,6 +96,7 @@ class Controller(object):
                 return
         except Exception:
             # logger.logWebfront(request.body())
+            print traceback.format_exc()
             logger.logWebfront(traceback.format_exc())
             send_invalid_json_format(response)
             return

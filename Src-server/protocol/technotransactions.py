@@ -25,7 +25,8 @@ from protocol.parse_structure import (
     parse_structure_Bool,
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_SignedIntegerType_8,
-    parse_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability
+    parse_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability,
+    parse_structure_CustomTextType_20
 
 )
 from protocol.to_structure import (
@@ -54,7 +55,8 @@ from protocol.to_structure import (
     to_structure_Bool,
     to_structure_OptionalType_CustomTextType_500,
     to_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability,
-    to_structure_UnsignedIntegerType_32
+    to_structure_UnsignedIntegerType_32,
+    to_structure_CustomTextType_20
 
 )
 
@@ -504,8 +506,8 @@ class ASSIGNED_STATUTORIES(object):
         country_id, country_name,
         client_id, group_name, business_group_name,
         legal_entity_name, division_name,
-        unit_id, unit_name,
-        geography_id, geography_name, domain_id, domain_name, industry_name
+        unit_id, unit_name,  geography_id, geography_name,
+        domain_id, domain_name, industry_name, assigned_date
     ):
         self.submission_status = submission_status
         self.client_statutory_id = client_statutory_id
@@ -523,6 +525,7 @@ class ASSIGNED_STATUTORIES(object):
         self.domain_id = domain_id
         self.domain_name = domain_name
         self.industry_name = industry_name
+        self.assigned_date = assigned_date
 
     @staticmethod
     def parse_structure(data):
@@ -532,7 +535,8 @@ class ASSIGNED_STATUTORIES(object):
             "group_name", "business_group_name", "legal_entity_name",
             "division_name", "unit_id", "unit_name",
             "geography_id", "geography_name",
-            "domain_id", "domain_name", "industry_name"
+            "domain_id", "domain_name", "industry_name",
+            "assigned_date"
         ])
         submission_status = data.get("submission_status")
         submission_status = parse_structure_SignedIntegerType_8(submission_status)
@@ -566,12 +570,15 @@ class ASSIGNED_STATUTORIES(object):
         domain_name = parse_structure_CustomTextType_50(domain_name)
         industry_name = data.get("industry_name")
         industry_name = parse_structure_CustomTextType_50(industry_name)
+        assigned_date = data.get("assigned_date")
+        assigned_date = parse_structure_CustomTextType_20(assigned_date)
         return ASSIGNED_STATUTORIES(
             submission_status, client_statutory_id,
             country_id, country_name, client_id, group_name,
             business_group_name, legal_entity_name,
             division_name, unit_id, unit_name, geography_id,
-            geography_name, domain_id, domain_name, industry_name
+            geography_name, domain_id, domain_name, industry_name,
+            assigned_date
         )
 
     def to_structure(self):
@@ -591,7 +598,8 @@ class ASSIGNED_STATUTORIES(object):
             "geography_name": to_structure_CustomTextType_50(self.geography_name),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
-            "industry_name": to_structure_CustomTextType_50(self.industry_name)
+            "industry_name": to_structure_CustomTextType_50(self.industry_name),
+            "assigned_date": to_structure_CustomTextType_20(self.assigned_date)
         }
 
 #

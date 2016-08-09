@@ -2,14 +2,8 @@ import threading
 import datetime
 import json
 from server.emailcontroller import EmailHandler
-from server.dbase import Database
 from server import logger
 from server.clientdatabase.tables import *
-from server.constants import (
-    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT,
-    KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
-    KNOWLEDGE_DATABASE_NAME
-)
 from protocol import (
     clienttransactions, core
 )
@@ -27,6 +21,7 @@ from server.clientdatabase.general import (
     get_user_countries
 )
 from server.exceptionmessage import client_process_error
+from server.clientdatabase.savetoknowledge import *
 email = EmailHandler()
 
 __all__ = [
@@ -272,7 +267,7 @@ def update_statutory_settings(db, data, session_user, client_id):
     update_new_statutory_settings(db, unit_id)
     action = "Statutory settings updated for unit - %s " % (unit_name)
     db.save_activity(session_user, 6, action)
-    update_opted_status_in_knowledge(data)
+    SaveOptedStatus(data)
 
     return clienttransactions.UpdateStatutorySettingsSuccess()
 
@@ -297,48 +292,6 @@ def execute_bulk_insert(db, value_list) :
 def update_new_statutory_settings(db, unit_id):
     q = "Update tbl_client_statutories set is_new=1 where unit_id = %s"
     db.execute(q, [unit_id])
-
-def update_opted_status_in_knowledge(data):
-    try :
-        db_con = Database(
-            KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-            KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
-        )
-        db_con.connect()
-        db_con.begin()
-        statutories = data.statutories
-        for s in statutories :
-            client_statutory_id = s.client_statutory_id
-            statutory_opted_status = int(s.applicable_status)
-            not_applicable_remarks = s.not_applicable_remarks
-            if not_applicable_remarks is None :
-                not_applicable_remarks = ""
-            compliance_id = s.compliance_id
-            opted_status = int(s.compliance_opted_status)
-            remarks = s.compliance_remarks
-            if remarks is None :
-                remarks = ""
-            q = "UPDATE tbl_client_compliances SET \
-                statutory_opted = %s, \
-                not_applicable_remarks = %s, \
-                compliance_opted = %s, \
-                compliance_remarks = %s \
-                WHERE client_statutory_id = %s AND \
-                compliance_id = %s"
-            db_con.execute(q, [
-                statutory_opted_status,
-                not_applicable_remarks,
-                opted_status,
-                remarks,
-                client_statutory_id,
-                compliance_id
-            ])
-        db_con.commit()
-        db_con.close()
-    except Exception, e :
-        logger.logClient("error", "clientdatabase.py-update_opted_status_in_knowledge", e)
-        print e
-        db_con.rollback()
 
 def get_units_for_assign_compliance(db, session_user, is_closed=None):
     if is_closed is None :
@@ -856,7 +809,7 @@ def get_level_1_statutories_for_user_with_domain(db, session_user, client_id, do
     if domain_ids is None :
         columns = "group_concat(domain_id) as domain"
         domain_rows = None
-        if session_user != 0:
+        if session_user != get_admin_id(db):
             domain_rows = db.get_data(
                 tblUserDomains, columns,
                 "user_id='%d'" % session_user

@@ -31,71 +31,79 @@ __all__ = [
     "update_profile"
 ]
 
+
 def get_trail_id(db):
-    query = "select IFNULL(MAX(audit_trail_id), 0) as audit_trail_id from tbl_audit_log;"
+    query = "select IFNULL(MAX(audit_trail_id), 0) as audit_trail_id " + \
+        " from tbl_audit_log;"
     row = db.select_one(query)
     trail_id = row[0]
     return trail_id
+
 
 def get_trail_log(db, client_id, received_count):
     query = "SELECT "
     query += "  audit_trail_id, tbl_name, tbl_auto_id,"
     query += "  column_name, value, client_id, action"
-    query += " from tbl_audit_log WHERE audit_trail_id > %s AND (client_id = 0 OR client_id= %s) LIMIT 100;"
+    query += " from tbl_audit_log WHERE audit_trail_id > %s "
+    query += " AND (client_id = 0 OR client_id= %s) LIMIT 100;"
 
     rows = db.select_all(query, [received_count, client_id])
     results = []
-    if rows :
+    if rows:
         columns = [
             "audit_trail_id", "tbl_name", "tbl_auto_id",
             "column_name", "value", "client_id", "action"
         ]
         results = convert_to_dict(rows, columns)
     print "get_trail_log ", results
-    if len(results) == 0 :
+    if len(results) == 0:
         update_client_replication_status(db, client_id, received_count)
     return return_changes(results)
 
-def get_trail_log_for_domain(db, client_id, domain_id, received_count, actual_count):
-    q = "SELECT tbl_auto_id from tbl_audit_log where audit_trail_id > %s and audit_trail_id < %s \
-        AND tbl_name = 'tbl_compliances' \
-        AND column_name = 'domain_id' \
-        AND value = %s limit 10"
+
+def get_trail_log_for_domain(
+    db, client_id, domain_id, received_count, actual_count
+):
+    q = "SELECT tbl_auto_id from tbl_audit_log where audit_trail_id > %s " + \
+        " and audit_trail_id < %s " + \
+        " AND tbl_name = 'tbl_compliances' " + \
+        " AND column_name = 'domain_id' " + \
+        " AND value = %s limit 10"
     q_rows = db.select_all(q, [received_count, actual_count, domain_id])
     auto_id = []
-    # print q
-    for r in q_rows :
+    for r in q_rows:
         auto_id.append(str(r[0]))
 
     rows = None
-    if len(auto_id) > 0 :
+    if len(auto_id) > 0:
         query = "SELECT "
         query += "  audit_trail_id, tbl_name, tbl_auto_id,"
         query += "  column_name, value, client_id, action"
-        query += " from tbl_audit_log WHERE tbl_name = 'tbl_compliances' \
-            AND audit_trail_id> %s AND  \
-            tbl_auto_id IN (%s)  "
-        # print "-"
-        # print query
+        query += " from tbl_audit_log WHERE tbl_name = 'tbl_compliances' " + \
+            " AND audit_trail_id> %s AND " + \
+            " tbl_auto_id IN (%s) "
         rows = db.select_all(query, [
             received_count,
             ','.join(auto_id)
         ])
     results = []
-    if rows :
+    if rows:
         columns = [
             "audit_trail_id", "tbl_name", "tbl_auto_id",
             "column_name", "value", "client_id", "action"
         ]
         results = convert_to_dict(rows, columns)
     print "get_trail_log_for_domain ", len(results)
-    if len(results) == 0 :
-        update_client_replication_status(db, client_id, 0, type="domain_trail_id")
+    if len(results) == 0:
+        update_client_replication_status(
+            db, client_id, 0, type="domain_trail_id"
+        )
     return return_changes(results)
+
 
 def return_changes(data):
     results = []
-    for d in data :
+    for d in data:
         change = Change(
             int(d["audit_trail_id"]),
             d["tbl_name"],
@@ -108,9 +116,12 @@ def return_changes(data):
         results.append(change)
     return results
 
+
 def remove_trail_log(db, client_id, received_count):
-    q = "delete from tbl_audit_log where audit_trail_id < %s and client_id = %s"
+    q = "delete from tbl_audit_log where audit_trail_id < %s " + \
+        " and client_id = %s"
     db.execute(q, [received_count, client_id])
+
 
 def get_servers(db):
     query = "SELECT client_id, machine_id, database_ip, "
@@ -120,7 +131,7 @@ def get_servers(db):
     query += "FROM tbl_client_database"
     rows = db.select_all(query)
     results = []
-    if rows :
+    if rows:
         columns = [
             "client_id", "machine_id", "database_ip",
             "database_port", "database_username",
@@ -130,9 +141,10 @@ def get_servers(db):
         results = convert_to_dict(rows, columns)
     return return_companies(results)
 
+
 def return_companies(data):
     results = []
-    for d in data :
+    for d in data:
         database_ip = IPAddress(
             d["database_ip"],
             int(d["database_port"])
@@ -152,22 +164,24 @@ def return_companies(data):
         ))
     return results
 
-def get_client_replication_list(db) :
-    q = "select client_id, is_new_data, is_new_domain, domain_id from tbl_client_replication_status \
-        where is_new_data = 1"
+
+def get_client_replication_list(db):
+    q = "select client_id, is_new_data, is_new_domain, " + \
+        " domain_id from tbl_client_replication_status " + \
+        " where is_new_data = 1"
     rows = db.select_all(q)
     results = []
-    if rows :
+    if rows:
         column = [
             "client_id", "is_new_data", "is_new_domain", "domain_id"
         ]
         results = convert_to_dict(rows, column)
-        # print results
     return _return_clients(results)
+
 
 def _return_clients(data):
     results = []
-    for d in data :
+    for d in data:
         results.append(Client(
             int(d["client_id"]),
             bool(d["is_new_data"]),
@@ -176,29 +190,33 @@ def _return_clients(data):
         ))
     return results
 
-def update_client_replication_status(db, client_id, received_count, type=None):
-    if type is None :
-        q = "update tbl_client_replication_status set is_new_data = 0 where client_id = %s"
+
+def update_client_replication_status(
+    db, client_id, received_count, type=None
+):
+    if type is None:
+        q = "update tbl_client_replication_status set is_new_data = 0 " + \
+            " where client_id = %s"
         remove_trail_log(db, client_id, received_count)
-    else :
-        q = "update tbl_client_replication_status set is_new_domain = 0, domain_id = '' where client_id = %s"
-    # print q
+    else:
+        q = "update tbl_client_replication_status set is_new_domain = 0, " + \
+            " domain_id = '' where client_id = %s"
     db.execute(q, [client_id])
 
-def update_client_domain_status(db, client_id, domain_ids) :
-    q = "update tbl_client_replication_status set is_new_data =1, \
-        is_new_domain = 1, domain_id = %s where client_id = %s"
-    # print q
+
+def update_client_domain_status(db, client_id, domain_ids):
+    q = "update tbl_client_replication_status set is_new_data =1, " + \
+        " is_new_domain = 1, domain_id = %s where client_id = %s"
     db.execute(q, (
             str((','.join(domain_ids))),
             client_id
         ))
 
-def get_user_forms(db, form_ids):
 
-    columns = "tf.form_id, tf.form_category_id, tfc.form_category, \
-        tf.form_type_id, tft.form_type,\
-        tf.form_name, tf.form_url, tf.form_order, tf.parent_menu"
+def get_user_forms(db, form_ids):
+    columns = "tf.form_id, tf.form_category_id, tfc.form_category," + \
+        " tf.form_type_id, tft.form_type, " + \
+        " tf.form_name, tf.form_url, tf.form_order, tf.parent_menu"
     tables = ["tbl_forms", "tbl_form_category", "tbl_form_type"]
     aliases = ["tf", "tfc", "tft"]
     join_conditions = [
@@ -219,21 +237,23 @@ def get_user_forms(db, form_ids):
 # general controllers methods
 #
 
-def get_user_form_ids(db, user_id) :
-    if user_id == 0 :
+
+def get_user_form_ids(db, user_id):
+    if user_id == 0:
         return "1, 2, 3, 4"
-    q = "select t1.form_ids from tbl_user_groups t1 \
-        INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id \
-        AND t2.user_id = %s"
+    q = "select t1.form_ids from tbl_user_groups t1 " + \
+        " INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id " + \
+        " AND t2.user_id = %s"
     row = db.select_one(q, [user_id])
-    if row :
+    if row:
         return row[0]
-    else :
+    else:
         return None
 
 #
 #   Notifications
 #
+
 
 def get_user_type(db, user_id):
     columns = "user_group_id"
@@ -250,11 +270,12 @@ def get_user_type(db, user_id):
     else:
         return "Techno"
 
+
 def get_notifications(
     db, notification_type, session_user, client_id=None
 ):
     user_type = None
-    if session_user != 0 :
+    if session_user != 0:
         user_type = get_user_type(db, session_user)
 
     columns = "tn.notification_id, notification_text, link, " + \
@@ -263,13 +284,13 @@ def get_notifications(
     tables = [tblNotifications, tblNotificationsStatus]
     aliases = ["tn", "tns"]
     join_conditions = ["tn.notification_id = tns.notification_id"]
-    where_condition = " tns.user_id ='%d' " % (
+    where_condition = " tns.user_id =%s " % (
         session_user
     )
     if user_type == "Techno":
-        where_condition += " AND link not like '%sstatutory%s' " % ("%" , "%")
+        where_condition += " AND link not like '%sstatutory%s' " % ("%", "%")
     elif user_type == "Knowledge":
-        where_condition += " AND link not like '%sclient%s'" % ("%" , "%")
+        where_condition += " AND link not like '%sclient%s'" % ("%", "%")
     where_condition += "order by created_on DESC limit 30"
     rows = db.get_data_from_multiple_tables(
         columns, tables,
@@ -283,11 +304,11 @@ def get_notifications(
         ))
     return notifications
 
-def get_compliance_duration(db):
 
+def get_compliance_duration(db):
     def return_compliance_duration(data):
         duration_list = []
-        for d in data :
+        for d in data:
             duration = core.DURATION_TYPE(d["duration_type"])
             duration_list.append(
                 core.ComplianceDurationType(
@@ -295,15 +316,17 @@ def get_compliance_duration(db):
                 )
             )
         return duration_list
-
-    result = db.get_data("tbl_compliance_duration_type", ["duration_type_id", "duration_type"], None)
+    result = db.get_data(
+        "tbl_compliance_duration_type",
+        ["duration_type_id", "duration_type"], None
+    )
     return return_compliance_duration(result)
 
-def get_compliance_repeat(db):
 
+def get_compliance_repeat(db):
     def return_compliance_repeat(data):
         repeat_list = []
-        for d in data :
+        for d in data:
             repeat = core.REPEATS_TYPE(d["repeat_type"])
             repeat_list.append(
                 core.ComplianceRepeatType(
@@ -311,15 +334,16 @@ def get_compliance_repeat(db):
                 )
             )
         return repeat_list
-
-    result = db.get_data("tbl_compliance_repeat_type", ["repeat_type_id", "repeat_type"], None)
+    result = db.get_data(
+        "tbl_compliance_repeat_type", ["repeat_type_id", "repeat_type"], None
+    )
     return return_compliance_repeat(result)
 
-def get_compliance_frequency(db):
 
-    def return_compliance_frequency(data) :
+def get_compliance_frequency(db):
+    def return_compliance_frequency(data):
         frequency_list = []
-        for d in data :
+        for d in data:
             frequency = core.COMPLIANCE_FREQUENCY(
                 d["frequency"]
             )
@@ -328,16 +352,17 @@ def get_compliance_frequency(db):
             )
             frequency_list.append(c_frequency)
         return frequency_list
-
-    result = db.get_data("tbl_compliance_frequency", ["frequency_id", "frequency"], None)
-    print result
+    result = db.get_data(
+        "tbl_compliance_frequency",
+        ["frequency_id", "frequency"], None
+    )
     return return_compliance_frequency(result)
 
-def get_approval_status(db, approval_id=None):
 
+def get_approval_status(db, approval_id=None):
     def return_approval_status(data):
         approval_list = []
-        for sts in enumerate(data) :
+        for sts in enumerate(data):
             approve = core.APPROVAL_STATUS(sts[1])
             c_approval = core.StatutoryApprovalStatus(
                 sts[0], approve
@@ -347,15 +372,15 @@ def get_approval_status(db, approval_id=None):
 
     status = ("Pending", "Approved", "Rejected", "Approved & Notified")
 
-    if approval_id is None :
+    if approval_id is None:
         return return_approval_status(status)
-    else :
+    else:
         return status[int(approval_id)]
+
 
 #
 #   Audit Trail
 #
-
 def return_forms(db, form_ids=None):
     columns = "form_id, form_name"
     condition = " form_id != '26' "
@@ -364,23 +389,30 @@ def return_forms(db, form_ids=None):
     forms = db.get_data(tblForms, columns, condition)
     results = []
     for form in forms:
-        results.append(general.AuditTrailForm(form["form_id"], form["form_name"]))
+        results.append(
+            general.AuditTrailForm(form["form_id"], form["form_name"])
+        )
     return results
+
 
 def get_users(db, condition="1"):
     columns = "user_id, employee_name, employee_code, is_active"
     rows = db.get_data(tblUsers, columns, condition)
     return rows
 
+
 def return_users(db, condition="1"):
     user_rows = get_users(db, condition)
     results = []
-    for user in user_rows :
-        employee_name = "%s - %s" % (user["employee_code"], user["employee_name"])
+    for user in user_rows:
+        employee_name = "%s - %s" % (
+            user["employee_code"], user["employee_name"]
+        )
         results.append(core.User(
             user["user_id"], employee_name, bool(user["is_active"])
         ))
     return results
+
 
 def get_audit_trails(
     db, session_user, from_count, to_count,
@@ -423,7 +455,7 @@ def get_audit_trails(
     columns = "user_id, form_id, action, created_on"
     where_qry += " AND user_id in (%s)" % (user_ids)
     where_qry += " ORDER BY created_on DESC"
-    where_qry += " LIMIT %d, %d" % (from_count, to_count)
+    where_qry += " LIMIT %s, %s" % (from_count, to_count)
     rows = db.get_data(tblActivityLog, columns, where_qry)
     audit_trail_details = []
     for row in rows:
@@ -431,16 +463,17 @@ def get_audit_trails(
         form_id = row["form_id"]
         action = row["action"]
         date = datetime_to_string_time(row["created_on"])
-        audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
+        audit_trail_details.append(
+            general.AuditTrail(user_id, form_id, action, date)
+        )
     return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
+
 
 #
 #   Update Profile
 #
-
 def update_profile(db, contact_no, address, session_user):
     columns = ["contact_no", "address"]
     values = [contact_no, address]
     condition = "user_id= '%s'" % session_user
     db.update(tblUsers, columns, values, condition)
-

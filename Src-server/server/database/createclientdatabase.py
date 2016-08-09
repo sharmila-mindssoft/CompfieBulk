@@ -1,10 +1,8 @@
-import sys
 import os
 import io
 import Queue
 import threading
 import MySQLdb as mysql
-from server import logger
 from server.database.tables import *
 
 from server.common import (
