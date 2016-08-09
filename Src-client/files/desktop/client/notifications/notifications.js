@@ -45,7 +45,7 @@ function loadNotifications(notifications){
             readStatus = '';
         }
         if(assignee != null){
-            str += '<a href="#popup1" style="text-decoration: none;"><li id="notification'+notificationId+'" class="'+readStatus+'" onclick="changeStatus('+notificationId+','+notifications[key]["read_status"]+')"> '+notificationText+'<p class="subtext"><span class="time">'+updatedon+'</span><span class="notification-cat">Category: '+extraDetails+'</span></p> </li></a>';
+            str += '<li id="notification'+notificationId+'" class="'+readStatus+'" onclick="changeStatus('+notificationId+','+notifications[key]["read_status"]+')"> '+notificationText+'<p class="subtext"><span class="time">'+updatedon+'</span><span class="notification-cat">Category: '+extraDetails+'</span></p> </li>';
         }else{
             str += '<li id="notification'+notificationId+'" class="'+readStatus+'" onclick="changeStatus('+notificationId+','+notifications[key]["read_status"]+')"> '+notificationText+'<p class="subtext"><span class="time">'+updatedon+'</span><span class="notification-cat">Category: '+extraDetails+'</span></p> </li>';
         }
@@ -63,7 +63,15 @@ function loadNotifications(notifications){
     }
 }
 
+$(".close").click(function(){
+  $('.overlay').css("visibility","hidden");
+  $('.overlay').css("opacity","0");
+});
+
 function changeStatus(notification_id, read_status){
+    $('.overlay').css("visibility","visible");
+    $('.overlay').css("opacity","1");
+
     $('#notification'+notification_id).removeClass( "unread" );
 
     if(notificationDict[notification_id][6] != null){

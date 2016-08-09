@@ -349,7 +349,7 @@ function load_UserCompliances(uCompliances, uId){
         seatingUnit = unitsList[unit]["unit_name"];
       }
     }
-    if(uId == 0){
+    if(uId == client_admin){
       userName = "Client Admin";
       seatingUnit = "-";
     }

@@ -1,4 +1,5 @@
 import datetime
+import threading
 from server import logger
 from dateutil import relativedelta
 from protocol import (core, clientuser)
@@ -13,6 +14,7 @@ from server.clientdatabase.general import (
     convert_base64_to_file, update_used_space
 )
 from server.exceptionmessage import client_process_error
+from server.emailcontroller import EmailHandler
 from server.constants import (
     FORMAT_DOWNLOAD_URL,
 )
@@ -27,6 +29,8 @@ __all__ = [
     "get_on_occurrence_compliances_for_user",
     "start_on_occurrence_task"
 ]
+
+email = EmailHandler()
 
 def get_inprogress_count(db, session_user):
     param = [session_user]

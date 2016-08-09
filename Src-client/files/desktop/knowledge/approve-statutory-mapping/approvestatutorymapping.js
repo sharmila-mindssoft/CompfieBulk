@@ -234,6 +234,11 @@ $("#submit").click(function(){
   loadApproveStatutory();
 });
 
+/*$(".close").click(function(){
+  $('.overlay').css("visibility","hidden");
+  $('.overlay').css("opacity","0");
+});*/
+
 //display popup with details
 function disppopup(sm_id,compliance_id,element){
   $("#popup1").show();

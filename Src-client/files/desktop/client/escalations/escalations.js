@@ -43,12 +43,12 @@ function loadEscalations(escalations){
       }
 
       if(assignee != null){
-        str += '<a href="#popup1" style="text-decoration: none;"> <li id="notification'+notificationId+
+        str += '<li id="notification'+notificationId+
         '" class="'+readStatus+'" onclick="changeStatus('+notificationId+','+escalations[reminder]["read_status"]+
         ')"> <p style="width:90%;text-align:left">'+notificationText+
         "</p> <span style='font-weight:bold;vertical-align:bottom'>"+assigneesplit[0]+
         " <abbr class='page-load' title='"+assigneesplit[0]+
-        "'> <img src='images/icon-info-blue.png' style='width:15px;height:15px'> </abbr></span> </li></a>"
+        "'> <img src='images/icon-info-blue.png' style='width:15px;height:15px'> </abbr></span> </li>"
       }else{
         str += '<li id="notification'+notificationId+
         '" class="'+readStatus+'" onclick="changeStatus('+notificationId+','+escalations[reminder]["read_status"]+
@@ -70,7 +70,15 @@ function loadEscalations(escalations){
     }
 }
 
+$(".close").click(function(){
+  $('.overlay').css("visibility","hidden");
+  $('.overlay').css("opacity","0");
+});
+
 function changeStatus(notification_id, read_status){
+  $('.overlay').css("visibility","visible");
+  $('.overlay').css("opacity","1");
+
   $('#notification'+notification_id).removeClass( "unread" );
   $("#popup1").show();
   var act = notificationDict[notification_id][0];
