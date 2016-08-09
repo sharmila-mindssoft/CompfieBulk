@@ -640,6 +640,16 @@ function checkdomainids(arrayunitdomain, arrayalldomain ){
 var chosen_clientuser = "";
 
 function onArrowKeyUser(e, ac_item){
+  
+  if (e.keyCode == 13) {
+    chosen_clientuser = "";
+    $("#selectboxview-country").hide();
+    $("#selectboxview-businessgroup").hide();
+    $("#selectboxview-legal-entities").hide();
+    $("#selectboxview-division").hide();
+    $("#selectboxview-domains").hide();
+  }
+
   if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 32) {
     chosen_clientuser = "";
   }
@@ -728,10 +738,6 @@ $("#division-selected").keyup(function(e){
     onArrowKeyUser(e, 'ulist-division')
 });
 
-/*$(".icon-autocomplete").focusout(function(){
-    chosen_clientuser = "";
-    $("#selectboxview-country").hide();
-});*/
 //country Selection
 function hidemenu() {
     chosen_clientuser = "";
