@@ -49,7 +49,7 @@ function loadReminders(reminders){
       }
 
       if(assignee != null){
-        str += '<a href="#popup1" style="text-decoration: none;"> <li class="'+readStatus+'" id="notification'+notificationId+'" onclick="changeStatus('+notificationId+','+reminders[reminder]["read_status"]+')">'+ notificationText + "<span style='font-weight:bold'>"+assigneesplit[0]+"</span> </li></a>"
+        str += '<li class="'+readStatus+'" id="notification'+notificationId+'" onclick="changeStatus('+notificationId+','+reminders[reminder]["read_status"]+')">'+ notificationText + "<span style='font-weight:bold'>"+assigneesplit[0]+"</span> </li>"
       }else{
         str += '<li class="'+readStatus+'" id="notification'+notificationId+'" onclick="changeStatus('+notificationId+','+reminders[reminder]["read_status"]+')">'+notificationText
       }
@@ -66,7 +66,16 @@ function loadReminders(reminders){
     }
 }
 
+$(".close").click(function(){
+  $('.overlay').css("visibility","hidden");
+  $('.overlay').css("opacity","0");
+});
+
 function changeStatus(notification_id, read_status){
+
+  $('.overlay').css("visibility","visible");
+  $('.overlay').css("opacity","1");
+
   $('#notification'+notification_id).removeClass( "unread" );
 
   if(notificationDict[notification_id][6] != null){

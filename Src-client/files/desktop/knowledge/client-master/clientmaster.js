@@ -690,11 +690,91 @@ $("#upload-logo").on("change", function(e) {
 // });
 
 //Autocomplete Script Starts and Hide list items after select
+
+var chosen_clientmaster = "";
+
+function onArrowKeyUser(e, ac_item){
+  if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 32) {
+    chosen_clientmaster = "";
+  }
+  if (e.keyCode == 40) {
+      if(chosen_clientmaster === "") {
+          chosen_clientmaster = 0;
+      } else if((chosen_clientmaster+1) < $('#' + ac_item + ' li').length) {
+          chosen_clientmaster++;
+      }
+      $('#' + ac_item + ' li').removeClass('auto-selected');
+      $('#' + ac_item + ' li:eq('+chosen_clientmaster+')').addClass('auto-selected');
+
+      return false;
+  }
+  if (e.keyCode == 38) {
+      if(chosen_clientmaster === "") {
+          chosen_clientmaster = 0;
+      } else if(chosen_clientmaster > 0) {
+          chosen_clientmaster--;
+      }
+      $('#' + ac_item + ' li').removeClass('auto-selected');
+      $('#' + ac_item + ' li:eq('+chosen_clientmaster+')').addClass('auto-selected');
+      return false;
+  }
+  if (e.keyCode == 32) {
+    $('#' + ac_item + ' li:eq('+chosen_clientmaster+')').removeClass('auto-selected');
+    var ms_id = $('#' + ac_item + ' li:eq('+chosen_clientmaster+')').attr('id');
+    var chkstatus = $('#' + ac_item + ' li:eq('+chosen_clientmaster+')').attr('class');
+
+    if(ac_item == 'ulist'){
+        if(chkstatus == 'active_selectbox'){
+            $('#' + ac_item + ' li:eq('+chosen_clientmaster+')').removeClass("active_selectbox");
+        }else{
+            $('#' + ac_item + ' li:eq('+chosen_clientmaster+')').addClass("active_selectbox");
+        }
+        activate_domain();
+    }else if(ac_item == 'ulist-country'){
+        if(chkstatus == 'active_selectbox_country'){
+            $('#' + ac_item + ' li:eq('+chosen_clientmaster+')').removeClass("active_selectbox_country");
+        }else{
+            $('#' + ac_item + ' li:eq('+chosen_clientmaster+')').addClass("active_selectbox_country");
+        }
+        activateCountry_country();
+    }else{
+        if(chkstatus == 'active_selectbox_users'){
+            $('#' + ac_item + ' li:eq('+chosen_clientmaster+')').removeClass("active_selectbox_users");
+        }else{
+            $('#' + ac_item + ' li:eq('+chosen_clientmaster+')').addClass("active_selectbox_users");
+        }
+        activateUsers_user();
+    }
+    return false;
+  }
+}
+
 function hidemenu() {
+    chosen_clientmaster = "";
     document.getElementById('selectboxview').style.display = 'none';
     document.getElementById('selectboxview-country').style.display = 'none';
     document.getElementById('selectboxview-users').style.display = 'none';
 }
+
+/*$(".icon-autocomplete").focusout(function(){
+    chosen_clientmaster = "";
+    $("#selectboxview").hide();
+    $("#selectboxview-country").hide();
+    $("#selectboxview-users").hide();
+});*/
+
+$("#domainselected").keyup(function(e){
+    onArrowKeyUser(e, 'ulist')
+});
+
+$("#countryselected").keyup(function(e){
+    onArrowKeyUser(e, 'ulist-country')
+});
+
+$("#usersSelected").keyup(function(e){
+    onArrowKeyUser(e, 'ulist-user')
+});
+
 //load domain list in multi select box
 function loadauto() {
     document.getElementById('selectboxview').style.display = 'block';
@@ -751,13 +831,8 @@ function loadauto() {
  // }
 }
 //check & uncheck process
-function activate(element){
-    var chkStatus = $(element).attr('class');
-    if(chkStatus == 'active_selectbox'){
-        $(element).removeClass("active_selectbox");
-    }else{
-        $(element).addClass("active_selectbox");
-    }
+
+function activate_domain(){
     var selIds='';
     var selNames='';
     var totalCount =  $(".active_selectbox").length;
@@ -779,7 +854,15 @@ function activate(element){
     else{
         dateConfigurations(dateconfigList);
     }
-
+}
+function activate(element){
+    var chkStatus = $(element).attr('class');
+    if(chkStatus == 'active_selectbox'){
+        $(element).removeClass("active_selectbox");
+    }else{
+        $(element).addClass("active_selectbox");
+    }
+    activate_domain();
 }
 // function domainunionclientdomains(){
 //     var d = domainsList;
@@ -1106,15 +1189,8 @@ function loadautocountry() {
     $('#ulist-country').append(str);
     $("#countryselected").val(editcountryval.length+" Selected");
 }
-//check & uncheck process
-function activateCountry(element){
-    var chkstatus = $(element).attr('class');
-    if(chkstatus == 'active_selectbox_country'){
-        $(element).removeClass("active_selectbox_country");
-    }
-    else{
-        $(element).addClass("active_selectbox_country");
-    }
+
+function activateCountry_country(){
     var selids = '';
     var selNames = '';
     var totalcount =  $(".active_selectbox_country").length;
@@ -1137,6 +1213,19 @@ function activateCountry(element){
         dateConfigurations(dateconfigList);
     }
 }
+
+//check & uncheck process
+function activateCountry(element){
+    var chkstatus = $(element).attr('class');
+    if(chkstatus == 'active_selectbox_country'){
+        $(element).removeClass("active_selectbox_country");
+    }
+    else{
+        $(element).addClass("active_selectbox_country");
+    }
+    activateCountry_country();
+}
+
 function dateconfig(){
     $('.tbody-dateconfiguration-list').empty();
     var countriesvalList = $('#country').val();
@@ -1231,14 +1320,7 @@ function loadAutoUsers () {
   $("#usersSelected").val(editusersval.length+" Selected")
 }
 //check & uncheck process
-function activateUsers(element){
-  var chkstatus = $(element).attr('class');
-  if(chkstatus == 'active_selectbox_users'){
-        $(element).removeClass("active_selectbox_users");
-  }
-  else{
-    $(element).addClass("active_selectbox_users");
-  }
+function activateUsers_user(){
     var selids = '';
     var totalcount =  $(".active_selectbox_users").length;
     $(".active_selectbox_users").each( function( index, el ) {
@@ -1251,6 +1333,17 @@ function activateUsers(element){
     $("#usersSelected").val(totalcount+" Selected");
     $("#users").val(selids);
 }
+function activateUsers(element){
+  var chkstatus = $(element).attr('class');
+  if(chkstatus == 'active_selectbox_users'){
+        $(element).removeClass("active_selectbox_users");
+  }
+  else{
+    $(element).addClass("active_selectbox_users");
+  }
+  activateUsers_user();  
+}
+
 function gototop(){
     $("html, body").animate({ scrollTop: 0 }, "slow");
 }

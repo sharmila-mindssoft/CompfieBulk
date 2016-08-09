@@ -636,8 +636,105 @@ function checkdomainids(arrayunitdomain, arrayalldomain ){
     return found;
 }
 
+
+var chosen_clientuser = "";
+
+function onArrowKeyUser(e, ac_item){
+  if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 32) {
+    chosen_clientuser = "";
+  }
+  if (e.keyCode == 40) {
+      if(chosen_clientuser === "") {
+          chosen_clientuser = 0;
+      } else if((chosen_clientuser+1) < $('#' + ac_item + ' li').length) {
+          chosen_clientuser++;
+      }
+      $('#' + ac_item + ' li').removeClass('auto-selected');
+      $('#' + ac_item + ' li:eq('+chosen_clientuser+')').addClass('auto-selected');
+
+      return false;
+  }
+  if (e.keyCode == 38) {
+      if(chosen_clientuser === "") {
+          chosen_clientuser = 0;
+      } else if(chosen_clientuser > 0) {
+          chosen_clientuser--;
+      }
+      $('#' + ac_item + ' li').removeClass('auto-selected');
+      $('#' + ac_item + ' li:eq('+chosen_clientuser+')').addClass('auto-selected');
+      return false;
+  }
+  if (e.keyCode == 32) {
+
+    $('#' + ac_item + ' li:eq('+chosen_clientuser+')').removeClass('auto-selected');
+    var ms_id = $('#' + ac_item + ' li:eq('+chosen_clientuser+')').attr('id');
+    var chkstatus = $('#' + ac_item + ' li:eq('+chosen_clientuser+')').attr('class');
+
+    if(ac_item == 'ulist-domain'){
+        if(chkstatus == 'active_selectbox_domains'){
+            $('#' + ac_item + ' li:eq('+chosen_clientuser+')').removeClass("active_selectbox_domains");
+        }else{
+            $('#' + ac_item + ' li:eq('+chosen_clientuser+')').addClass("active_selectbox_domains");
+        }
+        activate_domain();
+    }else if(ac_item == 'ulist-country'){
+        if(chkstatus == 'active_selectbox_country'){
+            $('#' + ac_item + ' li:eq('+chosen_clientuser+')').removeClass("active_selectbox_country");
+        }else{
+            $('#' + ac_item + ' li:eq('+chosen_clientuser+')').addClass("active_selectbox_country");
+        }
+        activate_country();
+    }else if(ac_item == 'ulist-bg'){
+        if(chkstatus == 'active_selectbox_bgroups'){
+            $('#' + ac_item + ' li:eq('+chosen_clientuser+')').removeClass("active_selectbox_bgroups");
+        }else{
+            $('#' + ac_item + ' li:eq('+chosen_clientuser+')').addClass("active_selectbox_bgroups");
+        }
+        activate_bg();
+    }else if(ac_item == 'ulist-legalentity'){
+        if(chkstatus == 'active_selectbox_legal_entities'){
+            $('#' + ac_item + ' li:eq('+chosen_clientuser+')').removeClass("active_selectbox_legal_entities");
+        }else{
+            $('#' + ac_item + ' li:eq('+chosen_clientuser+')').addClass("active_selectbox_legal_entities");
+        }
+        activate_legalentity();
+    }else{
+        if(chkstatus == 'active_selectbox_division'){
+            $('#' + ac_item + ' li:eq('+chosen_clientuser+')').removeClass("active_selectbox_division");
+        }else{
+            $('#' + ac_item + ' li:eq('+chosen_clientuser+')').addClass("active_selectbox_division");
+        }
+        activate_division();
+    }
+    return false;
+  }
+}
+
+$("#domainsselected").keyup(function(e){
+    onArrowKeyUser(e, 'ulist-domain')
+});
+
+$("#countryselected").keyup(function(e){
+    onArrowKeyUser(e, 'ulist-country')
+});
+
+$("#bgroupsselected").keyup(function(e){
+    onArrowKeyUser(e, 'ulist-bg')
+});
+$("#legal-entities-selected").keyup(function(e){
+    onArrowKeyUser(e, 'ulist-legalentity')
+});
+$("#division-selected").keyup(function(e){
+    onArrowKeyUser(e, 'ulist-division')
+});
+
+/*$(".icon-autocomplete").focusout(function(){
+    chosen_clientuser = "";
+    $("#selectboxview-country").hide();
+});*/
 //country Selection
 function hidemenu() {
+    chosen_clientuser = "";
     document.getElementById('selectboxview-country').style.display = 'none';
 }
 
@@ -672,14 +769,7 @@ function loadautocountry () {
 
 }
 //check & uncheck process
-function activateCountry(element){
-  var chkstatus = $(element).attr('class');
-  if(chkstatus == 'active_selectbox_country'){
-        $(element).removeClass("active_selectbox_country");
-  }
-  else{
-    $(element).addClass("active_selectbox_country");
-  }
+function activate_country(){
     var selids='';
     var selNames='';
     var totalcount =  $(".active_selectbox_country").length;
@@ -696,11 +786,22 @@ function activateCountry(element){
     $("#countryselected").val(totalcount+" Selected");
     $("#country").val(selids);
     unitview();
+}
+function activateCountry(element){
+  var chkstatus = $(element).attr('class');
+  if(chkstatus == 'active_selectbox_country'){
+        $(element).removeClass("active_selectbox_country");
+  }
+  else{
+    $(element).addClass("active_selectbox_country");
+  }
+  activate_country();
 
 }
 // business group --------------------------------------------------------------------------------------------------------
 function hidemenubgroup() {
     document.getElementById('selectboxview-businessgroup').style.display = 'none';
+    chosen_clientuser = "";
 }
 function loadautobusinessgroups () {
     document.getElementById('selectboxview-businessgroup').style.display = 'block';
@@ -731,14 +832,7 @@ function loadautobusinessgroups () {
   $("#bgroupsselected").val(editbgroupsval.length+" Selected");
 }
 //check & uncheck process
-function activatebgroups(element){
-  var chkstatus = $(element).attr('class');
-  if(chkstatus == 'active_selectbox_bgroups'){
-        $(element).removeClass("active_selectbox_bgroups");
-  }
-  else{
-    $(element).addClass("active_selectbox_bgroups");
-  }
+function activate_bg(){
     var selids='';
     var selNames='';
     var totalcount =  $(".active_selectbox_bgroups").length;
@@ -760,9 +854,21 @@ function activatebgroups(element){
     unitview();
 
 }
+function activatebgroups(element){
+  var chkstatus = $(element).attr('class');
+  if(chkstatus == 'active_selectbox_bgroups'){
+        $(element).removeClass("active_selectbox_bgroups");
+  }
+  else{
+    $(element).addClass("active_selectbox_bgroups");
+  }
+  activate_bg();
+
+}
 // Legal Entity----------------------------------------------------------------------------------------------------------------------
 function hidemenulegalentities() {
     document.getElementById('selectboxview-legal-entities').style.display = 'none';
+    chosen_clientuser = "";
 }
 function loadautolegalentities () {
     document.getElementById('selectboxview-legal-entities').style.display = 'block';
@@ -837,14 +943,7 @@ function loadautolegalentities () {
     }
 }
 //check & uncheck process
-function activatelegalentities(element){
-    var chkstatus = $(element).attr('class');
-    if(chkstatus == 'active_selectbox_legal_entities'){
-        $(element).removeClass("active_selectbox_legal_entities");
-    }
-    else{
-        $(element).addClass("active_selectbox_legal_entities");
-    }
+function activate_legalentity(){
     var selids='';
     var totalcount =  $(".active_selectbox_legal_entities").length;
     $(".active_selectbox_legal_entities").each( function( index, el ) {
@@ -858,9 +957,21 @@ function activatelegalentities(element){
     $("#legal-entities").val(selids);
     unitview();
 }
+
+function activatelegalentities(element){
+    var chkstatus = $(element).attr('class');
+    if(chkstatus == 'active_selectbox_legal_entities'){
+        $(element).removeClass("active_selectbox_legal_entities");
+    }
+    else{
+        $(element).addClass("active_selectbox_legal_entities");
+    }
+    activate_legalentity();
+}
 // Divisions----------------------------------------------------------------------------------------------------------------------
 function hidemenudivision() {
     document.getElementById('selectboxview-division').style.display = 'none';
+    chosen_clientuser = "";
 }
 function loadautodivision() {
     document.getElementById('selectboxview-division').style.display = 'block';
@@ -912,14 +1023,7 @@ function loadautodivision() {
 
 }
 //check & uncheck process
-function activateDivision(element){
-  var chkstatus = $(element).attr('class');
-  if(chkstatus == 'active_selectbox_division'){
-        $(element).removeClass("active_selectbox_division");
-  }
-  else{
-    $(element).addClass("active_selectbox_division");
-  }
+function activate_division(){
     var selids='';
     var selNames='';
     var totalcount =  $(".active_selectbox_division").length;
@@ -933,6 +1037,18 @@ function activateDivision(element){
     $("#division-selected").val(totalcount+" Selected");
     $("#division").val(selids);
     unitview();
+}
+
+function activateDivision(element){
+  var chkstatus = $(element).attr('class');
+  if(chkstatus == 'active_selectbox_division'){
+        $(element).removeClass("active_selectbox_division");
+  }
+  else{
+    $(element).addClass("active_selectbox_division");
+  }
+  activate_division();
+    
 }
 //Unit List -----------------------------------------------------------------------------------------------------
 function unitview(){
@@ -1130,14 +1246,7 @@ function loadautodomains () {
   $("#domainsselected").val(editdomainsval.length+" Selected");
 }
 //check & uncheck process
-function activatedomains(element){
-  var chkstatus = $(element).attr('class');
-  if(chkstatus == 'active_selectbox_domains'){
-        $(element).removeClass("active_selectbox_domains");
-  }
-  else{
-    $(element).addClass("active_selectbox_domains");
-  }
+function activate_domain(){
     var selids='';
     var selNames='';
     var totalcount =  $(".active_selectbox_domains").length;
@@ -1154,6 +1263,17 @@ function activatedomains(element){
     $("#domainsselected").val(totalcount+" Selected");
     $("#domains").val(selids);
     unitview();
+}
+
+function activatedomains(element){
+  var chkstatus = $(element).attr('class');
+  if(chkstatus == 'active_selectbox_domains'){
+        $(element).removeClass("active_selectbox_domains");
+  }
+  else{
+    $(element).addClass("active_selectbox_domains");
+  }
+  activate_domain();
 }
 
 //retrive unit with condition form autocomplete value
