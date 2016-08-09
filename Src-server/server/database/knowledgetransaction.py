@@ -952,12 +952,14 @@ def change_approval_status(db, data, updated_by):
         columns.extend(["rejected_reason"])
         values.extend([rejected_reason])
         notification_log_text = "Statutory Mapping: %s " + \
-            " has been Rejected and reason is %s" % (
+            " has been Rejected and reason is %s"
+        notification_log_text = notification_log_text % (
                 provission, rejected_reason
             )
     else:
         notification_log_text = "Statutory Mapping: %s " + \
-            " has been Approved" % (provision)
+            " has been Approved"
+        notification_log_text = notification_log_text % (provision)
 
     db.update(tbl_name, columns, values, where)
     if approval_status == 3:
@@ -965,7 +967,8 @@ def change_approval_status(db, data, updated_by):
             db, statutory_mapping_id, notification_text
         )
         notification_log_text = "Statutory Mapping: %s " + \
-            " has been Approved & Notified" % (provision)
+            " has been Approved & Notified"
+        notification_log_text = notification_log_text % (provision)
 
     link = "/knowledge/statutory-mapping"
     if users["updated_by"] is None:

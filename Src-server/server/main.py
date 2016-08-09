@@ -142,7 +142,7 @@ class API(object):
             self._db.begin()
             response_data = unbound_method(self, request_data, self._db)
             if response_data is None or type(response_data) is bool :
-                print response_data
+                # print response_data
                 self._db.rollback()
             if type(response_data) != technomasters.ClientCreationFailed:
                 self._db.commit()
