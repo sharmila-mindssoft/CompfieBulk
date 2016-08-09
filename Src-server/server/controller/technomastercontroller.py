@@ -94,6 +94,10 @@ def save_client_group(db, request, session_user):
         try:
             save_client_group_data(db, client_id, request, session_user)
             print "save_client_group_data"
+            save_date_configurations(
+                db, request.client_id, request.date_configurations,
+                session_user
+            )
             print "db process being"
             is_db_created = create_db.begin_process()
             print "db process end"

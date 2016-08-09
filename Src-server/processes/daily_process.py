@@ -27,9 +27,6 @@ mysqlPassword = KNOWLEDGE_DB_PASSWORD
 mysqlDatabase = KNOWLEDGE_DATABASE_NAME
 mysqlPort = KNOWLEDGE_DB_PORT
 
-expired_download_path = "/expired/download/"
-expired_folder_path = "./expired/"
-
 email = EmailHandler()
 
 def db_connection(host, user, password, db, port):
@@ -393,63 +390,13 @@ def start_new_task(db, client_id, current_date, country_id):
 
     print " %s compliances started for client_id %s - %s" % (count, client_id, current_date)
 
-def notify_before_contract_period(db, client_id):
-    cursor = db.cursor()
-
-    # download_link = exp(client_id, db).generate_report()
-
-    query = "SELECT group_name FROM tbl_client_groups"
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    group_name = rows[0][0]
-
-    notification_text = '''Your contract with Compfie for the group \"%s\" is about to expire. \
-    Kindly renew your contract to avail the services continuously.'''  % group_name
-    # Before contract expiration \
-    # You can download documents of %s <a href="%s">here </a> ''' % (
-    #     group_name, download_link
-    # )
-    extra_details = "0 - Reminder : Contract Expiration"
-
-    notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
-    created_on = datetime.datetime.now()
-    query = "INSERT INTO tbl_notifications_log \
-        (notification_id, notification_type_id,\
-        notification_text, extra_details, created_on\
-        ) VALUES (%s, %s, '%s', '%s', '%s')" % (
-            notification_id, 2,
-            notification_text, extra_details, created_on
-        )
-    cursor.execute(query)
-    cursor.close()
-
-    q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
-        VALUES (%s, %s)" % (notification_id, 0)
-    cur = db.cursor()
-    cur.execute(q)
-
-    q = "SELECT email_id from tbl_users where is_active = 1 and is_primary_admin = 1 "
-    cur.execute(q)
-    rows = cur.fetchall()
-    admin_mail_id = rows[0][0]
-    cur.close()
-    email.notify_contract_expiration(
-        admin_mail_id, notification_text
-    )
-
 def check_service_provider_contract_period(
     db, client_id
 ):
     query = "UPDATE tbl_service_providers set is_active = 0 WHERE \
-    now() not between contract_from and contract_to"
+    contract_from >= now() and contract_to <= now()"
     cursor = db.cursor()
     cursor.execute(query)
-
-def is_already_notified(
-    client_id
-):
-    client_folder_path = "%s%s" % (expired_folder_path, str(client_id))
-    return os.path.isdir(client_folder_path)
 
 
 def run_daily_process(country_id, current_date):
@@ -461,8 +408,6 @@ def run_daily_process(country_id, current_date):
                 start_new_task(db, client_id, current_date, country_id)
                 db.commit()
                 check_service_provider_contract_period(db, client_id)
-                # if client_id in client_ids and not is_already_notified(client_id):
-                #     notify_before_contract_period(db, client_id)
                 db.commit()
             except Exception, e :
                 print e

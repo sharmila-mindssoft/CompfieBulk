@@ -1,7 +1,7 @@
 import MySQLdb as mysql
-from server import logger
+import logger
 from server.common import (convert_to_dict, get_date_time)
-from server.exceptionmessage import  fetch_error
+from server.exceptionmessage import fetch_error
 
 class Database(object):
     def __init__(
@@ -178,6 +178,8 @@ class Database(object):
             return int(cursor.lastrowid)
         except mysql.Error, e :
             print e
+            print query
+            print param
             return False
 
 ########################################################

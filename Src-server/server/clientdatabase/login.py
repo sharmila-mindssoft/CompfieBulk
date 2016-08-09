@@ -1,5 +1,4 @@
 from server.clientdatabase.tables import *
-from server.dbase import Database
 
 from server.common import (
    convert_to_dict, new_uuid, get_date_time
@@ -8,10 +7,7 @@ from server.common import (
 from server.clientdatabase.general import (
     is_service_proivder_user
 )
-from server.constants import (
-    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-)
+from server.clientdatabase.savetoknowledge import IsClientActive
 
 __all__ = [
     "is_configured",
@@ -59,23 +55,8 @@ def is_contract_not_started(db):
         return True
 
 def is_client_active(client_id):
-    db_con = Database(
-        KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-        KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
-    )
-    db_con.connect()
-    db_con.begin()
-    db_cur = db_con.cursor()
-    q = "select count(*) from tbl_client_groups where \
-    client_id = '%d' and is_active = 1" % client_id
-    db_cur.execute(q)
-    rows = db_cur.fetchall()
-    db_con.commit()
-    db_con.close()
-    if rows[0][0] > 0:
-        return True
-    else:
-        return False
+    t_obj = IsClientActive(client_id)
+    return t_obj._is_client_active()
 
 def verify_login(db, username, password):
     data_columns = [
