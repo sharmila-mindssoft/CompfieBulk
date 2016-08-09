@@ -20,50 +20,50 @@ class Database(object):
 
     # Used to get first three letters of month by the month's integer value
     string_months = {
-        1 : "Jan",
-        2 : "Feb",
-        3 : "Mar",
-        4 : "Apr",
-        5 : "May",
-        6 : "Jun",
-        7 : "Jul",
-        8 : "Aug",
-        9 : "Sep",
-        10 : "Oct",
-        11 : "Nov",
-        12 : "Dec",
+        1: "Jan",
+        2: "Feb",
+        3: "Mar",
+        4: "Apr",
+        5: "May",
+        6: "Jun",
+        7: "Jul",
+        8: "Aug",
+        9: "Sep",
+        10: "Oct",
+        11: "Nov",
+        12: "Dec",
     }
 
     # Used to get month in string by the month's integer value
     string_full_months = {
-        1 : "January",
-        2 : "February",
-        3 : "March",
-        4 : "April",
-        5 : "May",
-        6 : "June",
-        7 : "July",
-        8 : "August",
-        9 : "September",
-        10 : "October",
-        11 : "November",
-        12 : "December",
+        1: "January",
+        2: "February",
+        3: "March",
+        4: "April",
+        5: "May",
+        6: "June",
+        7: "July",
+        8: "August",
+        9: "September",
+        10: "October",
+        11: "November",
+        12: "December",
     }
 
     # Used to get the end day of a month
     end_day_of_month = {
-         1 : 31,
-         2 : 28,
-         3 : 31,
-         4 : 30,
-         5 : 31,
-         6 : 30,
-         7 : 31,
-         8 : 31,
-         9 : 30,
-         10 : 31,
-         11 : 30,
-         12 : 31,
+         1: 31,
+         2: 28,
+         3: 31,
+         4: 30,
+         5: 31,
+         6: 30,
+         7: 31,
+         8: 31,
+         9: 30,
+         10: 31,
+         11: 30,
+         12: 31,
     }
 
     ########################################################
@@ -77,7 +77,7 @@ class Database(object):
     ########################################################
     def connect(self):
         assert self._connection is None
-        try :
+        try:
             connection = mysql.connect(
                 host=self._mysqlHost, user=self._mysqlUser,
                 passwd=self._mysqlPassword, db=self._mysqlDatabase,
@@ -166,16 +166,23 @@ class Database(object):
     def execute_insert(self, query, param):
         cursor = self.cursor()
         assert cursor is not None
-        try :
-            if type(param) is tuple :
-                logger.logQuery(self._for_client, "execute_insert", query % param)
+        try:
+            if type(param) is tuple:
+                logger.logQuery(
+                    self._for_client, "execute_insert", query % param
+                )
                 cursor.execute(query, param)
-            elif type(param) is list :
+            elif type(param) is list:
                 print "inside elif "
-                if len(param) > 1 :
-                    logger.logQuery(self._for_client, "execute_insert", query % tuple(param))
+                if len(param) > 1:
+                    logger.logQuery(
+                        self._for_client, "execute_insert",
+                        query % tuple(param)
+                    )
                 else:
-                    logger.logQuery(self._for_client, "execute_insert", query % param[0])
+                    logger.logQuery(
+                        self._for_client, "execute_insert", query % param[0]
+                    )
                 cursor.execute(query, param)
             else:
                 logger.logQuery(self._for_client, "execute_insert")
@@ -197,21 +204,28 @@ class Database(object):
         cursor = self.cursor()
         assert cursor is not None
         try:
-            if param is None :
+            if param is None:
                 cursor.execute(query)
-            else :
-                if type(param) is tuple :
-                    logger.logQuery(self._for_client, "select_all", query % param)
+            else:
+                if type(param) is tuple:
+                    logger.logQuery(
+                        self._for_client, "select_all", query % param
+                    )
                     cursor.execute(query, param)
 
-                elif type(param) is list :
-                    if len(param) > 1 :
-                        logger.logQuery(self._for_client, "select_all", query % tuple(param))
-                    else :
-                        logger.logQuery(self._for_client, "select_all", query % param)
+                elif type(param) is list:
+                    if len(param) > 1:
+                        logger.logQuery(
+                            self._for_client, "select_all",
+                            query % tuple(param)
+                        )
+                    else:
+                        logger.logQuery(
+                            self._for_client, "select_all", query % param
+                        )
                     cursor.execute(query, param)
 
-                else :
+                else:
                     logger.logQuery(self._for_client, "select_all", query)
                     cursor.execute(query)
 
@@ -231,20 +245,29 @@ class Database(object):
         assert cursor is not None
 
         try:
-            if param is None :
+            if param is None:
                 cursor.execute(query)
-            else :
-                if type(param) is tuple :
-                    logger.logQuery(self._for_client, "select_one", query % param)
+            else:
+                if type(param) is tuple:
+                    logger.logQuery(
+                        self._for_client, "select_one", query % param
+                    )
                     cursor.execute(query, param)
-                elif type(param) is list :
-                    if len(param) > 1 :
-                        logger.logQuery(self._for_client, "select_one", query % tuple(param))
-                    else :
-                        logger.logQuery(self._for_client, "select_one", query % param)
+                elif type(param) is list:
+                    if len(param) > 1:
+                        logger.logQuery(
+                            self._for_client, "select_one",
+                            query % tuple(param)
+                        )
+                    else:
+                        logger.logQuery(
+                            self._for_client, "select_one", query % param
+                        )
                     cursor.execute(query, param)
-                else :
-                    logger.logQuery(self._for_client, "select_one", query % param)
+                else:
+                    logger.logQuery(
+                        self._for_client, "select_one", query % param
+                    )
                     cursor.execute(query)
             res = cursor.fetchone()
             return res
@@ -267,50 +290,52 @@ class Database(object):
     ):
         assert type(columns) in (list, str)
         param = []
-        if type(columns) is str :
+        if type(columns) is str:
             param = columns.split(',')
             params = []
-            for p in param :
-                if "as " in p :
+            for p in param:
+                if "as " in p:
                     params.append(p.split('as ')[1].strip())
-                elif '.' in p :
+                elif '.' in p:
                     params.append(p.split('.')[1].strip())
-                else :
+                else:
                     params.append(p.strip())
             param = params
-        elif type(columns) is list :
+        elif type(columns) is list:
             param = []
-            for c in columns :
-                if "as " in c :
+            for c in columns:
+                if "as " in c:
                     param.append(c.split('as ')[1].strip())
-                elif '.' in c :
+                elif '.' in c:
                     param.append(c.split('.')[1].strip())
-                else :
+                else:
                     param.append(c.strip())
             columns = ", ".join(columns)
 
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None:
             query += " WHERE %s " % condition
-            if order is not None :
+            if order is not None:
                 query += order
             print query
             print condition_val
-            if condition_val is None :
+            if condition_val is None:
                 logger.logQuery(self._for_client, "get_data", query)
                 rows = self.select_all(query)
-            else :
-                logger.logQuery(self._for_client, "get_data", query % tuple(condition_val))
+            else:
+                logger.logQuery(
+                    self._for_client, "get_data", query % tuple(condition_val)
+                )
                 rows = self.select_all(query, condition_val)
 
-        else :
-            if order is not None :
+        else:
+            if order is not None:
                 query += order
             logger.logQuery(self._for_client, "get_data", query)
             rows = self.select_all(query)
         result = []
         print rows
-        if rows :
+        if rows:
             result = convert_to_dict(rows, param)
         return result
 
@@ -323,23 +348,23 @@ class Database(object):
     ):
         assert type(columns) in (list, str)
         param = []
-        if type(columns) is str :
+        if type(columns) is str:
             param = columns.split(',')
             params = []
-            for p in param :
-                if '.' in p :
+            for p in param:
+                if '.' in p:
                     params.append(p.split('.')[1].strip())
-                else :
+                else:
                     params.append(p.strip())
             param = params
-        elif type(columns) is list :
+        elif type(columns) is list:
             param = []
-            for c in columns :
-                if "as " in c :
+            for c in columns:
+                if "as " in c:
                     param.append(c.split('as ')[1].strip())
-                elif '.' in c :
+                elif '.' in c:
                     param.append(c.split('.')[1].strip())
-                else :
+                else:
                     param.append(c.strip())
             columns = ", ".join(columns)
 
@@ -361,29 +386,33 @@ class Database(object):
                     join_conditions[index-1]
                 )
 
-        if where_condition is not None :
+        if where_condition is not None:
             query += " WHERE %s " % (where_condition)
-            logger.logQuery(self._for_client, "get_data_from_multiple_tables", query)
+            logger.logQuery(
+                self._for_client, "get_data_from_multiple_tables", query
+            )
             rows = self.select_all(query)
-        else :
-            logger.logQuery(self._for_client, "get_data_from_multiple_tables", query)
+        else:
+            logger.logQuery(
+                self._for_client, "get_data_from_multiple_tables", query
+            )
             rows = self.select_all(query)
 
         result = []
-        if rows :
+        if rows:
             result = convert_to_dict(rows, param)
         return result
 
     ########################################################
     # To form a insert query
     ########################################################
-    def insert(self, table, columns, values) :
+    def insert(self, table, columns, values):
         # columns = ", ".join(columns)
         stringValue = []
-        for i in range(len(values)) :
+        for i in range(len(values)):
             stringValue.append('%s')
 
-        if type(columns) is list :
+        if type(columns) is list:
             columns = ", ".join(columns)
             columns = "(%s)" % columns
 
@@ -403,13 +432,13 @@ class Database(object):
     ########################################################
     # To form a bulk insert query
     ########################################################
-    def bulk_insert(self, table, columns, valueList) :
+    def bulk_insert(self, table, columns, valueList):
 
         stringValue = []
-        for i in range(len(columns)) :
+        for i in range(len(columns)):
             stringValue.append('%s')
 
-        if type(columns) is list :
+        if type(columns) is list:
             columns = ", ".join(columns)
         query = "INSERT INTO %s (%s) " % (table, columns)
         query += " VALUES (%s) " % (",".join(stringValue))
@@ -428,7 +457,7 @@ class Database(object):
     ########################################################
     # To form a update query
     ########################################################
-    def update(self, table, columns, values, condition) :
+    def update(self, table, columns, values, condition):
         query = "UPDATE "+table+" set "
         for index, column in enumerate(columns):
             if index < len(columns)-1:
@@ -494,7 +523,7 @@ class Database(object):
     # specified column
     ########################################################
     def append(self, table, column, value, condition):
-        try :
+        try:
             rows = self.get_data(table, column, condition)
             currentValue = rows[0][column]
             if currentValue is not None:
@@ -505,7 +534,7 @@ class Database(object):
             values = [newValue]
             res = self.update(table, columns, values, condition)
             return res
-        except mysql.Error, e :
+        except mysql.Error, e:
             print e
             return False
 
@@ -532,17 +561,17 @@ class Database(object):
     # True otherwise returns false
     ########################################################
 
-    def is_already_exists(self, table, condition, condition_val) :
+    def is_already_exists(self, table, condition, condition_val):
         query = "SELECT count(0) FROM %s WHERE %s " % (table, condition)
         rows = None
         rows = self.select_one(query, condition_val)
         print rows
-        if rows :
+        if rows:
             if rows[0] > 0:
                 return True
-            else :
+            else:
                 return False
-        else :
+        else:
             return False
 
     ########################################################
@@ -559,37 +588,40 @@ class Database(object):
     # To generate a new Id for the given table and given
     # field
     ########################################################
-    def get_new_id(self, field , table_name, client_id=None) :
+    def get_new_id(self, field, table_name, client_id=None):
         newId = 1
         query = "SELECT max(%s) from %s " % (field, table_name)
         row = None
         row = self.select_one(query)
-        if row[0] is not None :
+        if row[0] is not None:
             newId = int(row[0]) + 1
         return newId
 
     def save_activity(self, user_id, form_id, action):
         created_on = get_date_time()
         activityId = self.get_new_id("activity_log_id", "tbl_activity_log")
-        query = "INSERT INTO tbl_activity_log \
-            (activity_log_id, user_id, form_id, action, created_on) \
-            VALUES (%s, %s, %s, %s, %s)"
+        query = '''INSERT INTO tbl_activity_log
+            (activity_log_id, user_id, form_id, action, created_on)
+            VALUES (%s, %s, %s, %s, %s)'''
         self.execute(query, (
                 activityId, user_id, form_id, action, created_on
         ))
         return True
 
-    def validate_session_token(self, session_token) :
-        query = "SELECT user_id FROM tbl_user_sessions \
-            WHERE session_token = '%s'" % (session_token)
-        row = self.select_one(query)
+    def validate_session_token(self, session_token):
+        query = '''SELECT user_id FROM tbl_user_sessions
+            WHERE session_token=%s'''
+        param = [session_token]
+        row = self.select_one(query, param)
         user_id = None
-        if row :
+        if row:
             user_id = row[0]
             self.update_session_time(session_token)
         return user_id
 
     def update_session_time(self, session_token):
         updated_on = get_date_time()
-        q = "update tbl_user_sessions set last_accessed_time=%s where session_token = %s "
+        q = '''
+            update tbl_user_sessions set last_accessed_time=%s
+            where session_token = %s'''
         self.execute(q, (str(updated_on), str(session_token)))

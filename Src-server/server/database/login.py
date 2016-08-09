@@ -28,13 +28,13 @@ def verify_login(db, username, password):
             "contact_no", "address",
             "designation", "user_group_name", "form_ids"
         ]
-        query = """SELECT t1.user_id, t1.user_group_id, t1.email_id, \
-            t1.employee_name, t1.employee_code, t1.contact_no, \
-            t1.address, t1.designation, \
-            t2.user_group_name, t2.form_ids \
-            FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
-            ON t1.user_group_id = t2.user_group_id \
-            WHERE t1.password=%s and t1.email_id=%s and t1.is_active=1"""
+        query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, " + \
+            " t1.employee_name, t1.employee_code, t1.contact_no, " + \
+            " t1.address, t1.designation, " + \
+            " t2.user_group_name, t2.form_ids " + \
+            " FROM tbl_users t1 INNER JOIN tbl_user_groups t2 " + \
+            " ON t1.user_group_id = t2.user_group_id " + \
+            " WHERE t1.password=%s and t1.email_id=%s and t1.is_active=1"
         data_list = db.select_one(query, [password, username])
         if data_list is None:
             return False
@@ -48,8 +48,8 @@ def verify_login(db, username, password):
 # To clear user session
 ########################################################
 def clear_old_session(db, user_id, session_type_id, client_id=None):
-    query = '''DELETE FROM tbl_user_sessions
-        WHERE user_id=%s and session_type_id=%s'''
+    query = "DELETE FROM tbl_user_sessions " + \
+        " WHERE user_id=%s and session_type_id=%s"
 
     db.execute(query, (
         user_id, session_type_id
@@ -71,9 +71,9 @@ def add_session(
     if client_id is not None:
         session_id = "%s-%s" % (client_id, session_id)
     updated_on = get_date_time()
-    query = '''INSERT INTO tbl_user_sessions
-        (session_token, user_id, session_type_id, last_accessed_time)
-        VALUES (%s, %s, %s, %s);'''
+    query = " INSERT INTO tbl_user_sessions " + \
+        " (session_token, user_id, session_type_id, " + \
+        " last_accessed_time) VALUES (%s, %s, %s, %s);"
     db.execute(query, (session_id, user_id, session_type_id, updated_on))
 
     # action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
@@ -87,10 +87,8 @@ def verify_username(db, username):
     user_columns = ["user_id", "employee_name"]
     param = [username]
     # checking in tbl_users
-    user_query = '''
-        SELECT user_id, employee_name  FROM tbl_users
-        WHERE email_id = %s and is_active = 1
-    '''
+    user_query = "SELECT user_id, employee_name  FROM tbl_users " + \
+        " WHERE email_id = %s and is_active = 1"
     user_rows = db.select_all(user_query, param)
     if user_rows:
         result = convert_to_dict(user_rows, user_columns)
@@ -99,10 +97,8 @@ def verify_username(db, username):
             result[0]["employee_name"]
         )
     else:  # checking in tbl_admin
-        admin_query = '''
-            SELECT count(username) FROM tbl_admin
-            WHERE username = %s and is_active = 1
-        '''
+        admin_query = " SELECT count(username) FROM tbl_admin " + \
+            " WHERE username = %s and is_active = 1"
         admin_rows = db.select_all(admin_query, param)
         if admin_rows:
             return (0, "Administrator")
@@ -116,13 +112,13 @@ def verify_password(db, password, user_id):
     condition = "1"
     rows = None
     if user_id == 0:
-        condition = "password='%s'" % (encrypted_password)
-        rows = db.get_data(tblAdmin, columns, condition)
+        condition = "password=%s"
+        condition_val = [encrypted_password]
+        rows = db.get_data(tblAdmin, columns, condition, condition_val)
     else:
-        condition = "password='%s' and user_id='%d'" % (
-            encrypted_password, user_id
-        )
-        rows = db.get_data(tblUsers, columns, condition)
+        condition = "password=%s and user_id=%s"
+        condition_val = [encrypted_password, user_id]
+        rows = db.get_data(tblUsers, columns, condition, condition_val)
     if(int(rows[0]["count(1)"]) <= 0):
         return False
     else:
@@ -165,14 +161,15 @@ def update_password(db, password, user_id):
     condition = "1"
     result = False
     if user_id != 0:
-        condition = " user_id='%d'" % user_id
+        condition = " user_id=%s" % user_id
         result = db.update(tblUsers, columns, values, condition)
     else:
         result = db.update(tblAdmin, columns, values, condition)
 
     if user_id != 0:
         columns = "employee_code, employee_name"
-        condition = "user_id = '%d'" % user_id
+        condition = "user_id =%s"
+        condition_val = [user_id]
         rows = db.get_data(tblUsers, columns, condition)
         employee_name = rows[0]["employee_name"]
         if rows[0]["employee_code"] is not None:
