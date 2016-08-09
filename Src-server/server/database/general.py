@@ -284,7 +284,7 @@ def get_notifications(
     tables = [tblNotifications, tblNotificationsStatus]
     aliases = ["tn", "tns"]
     join_conditions = ["tn.notification_id = tns.notification_id"]
-    where_condition = " tns.user_id ='%d' " % (
+    where_condition = " tns.user_id =%s " % (
         session_user
     )
     if user_type == "Techno":
@@ -455,7 +455,7 @@ def get_audit_trails(
     columns = "user_id, form_id, action, created_on"
     where_qry += " AND user_id in (%s)" % (user_ids)
     where_qry += " ORDER BY created_on DESC"
-    where_qry += " LIMIT %d, %d" % (from_count, to_count)
+    where_qry += " LIMIT %s, %s" % (from_count, to_count)
     rows = db.get_data(tblActivityLog, columns, where_qry)
     audit_trail_details = []
     for row in rows:
