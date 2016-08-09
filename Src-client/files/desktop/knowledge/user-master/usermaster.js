@@ -351,6 +351,64 @@ $(".filter-text-box").keyup(function() {
 });
 
 //Autocomplete Script Starts
+
+function onArrowKeyUser(e, ac_item){
+  if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13) {
+    chosen_user = "";
+  }
+
+  if (e.keyCode == 40) {
+      if(chosen_user === "") {
+          chosen_user = 0;
+      } else if((chosen_user+1) < $('#' + ac_item + ' li').length) {
+          chosen_user++;
+      }
+      $('#' + ac_item + ' li').removeClass('auto-selected');
+      $('#' + ac_item + ' li:eq('+chosen_user+')').addClass('auto-selected');
+
+      return false;
+  }
+  if (e.keyCode == 38) {
+      if(chosen_user === "") {
+          chosen_user = 0;
+      } else if(chosen_user > 0) {
+          chosen_user--;
+      }
+      $('#' + ac_item + ' li').removeClass('auto-selected');
+      $('#' + ac_item + ' li:eq('+chosen_user+')').addClass('auto-selected');
+      return false;
+  }
+  if (e.keyCode == 13) {
+  	var ms_id = $('#' + ac_item + ' li:eq('+chosen_user+')').attr('id');
+  	var chkstatus = $('#' + ac_item + ' li:eq('+chosen_user+')').attr('class');
+
+  	if(ac_item == 'ulist'){
+  		$('#' + ac_item + ' li:eq('+chosen_user+')').removeClass('auto-selected');
+		if(chkstatus == 'active_selectbox'){
+			$('#' + ac_item + ' li:eq('+chosen_user+')').removeClass("active_selectbox");
+			var remove = domainIds.indexOf(parseInt(ms_id));
+	    	domainIds.splice(remove,1);
+		}else{
+			$('#' + ac_item + ' li:eq('+chosen_user+')').addClass("active_selectbox");
+			domainIds.push(parseInt(ms_id));
+		}
+		$("#domainselected").val(domainIds.length+" Selected");
+  	}else{
+  		$('#' + ac_item + ' li:eq('+chosen_user+')').removeClass('auto-selected');
+		if(chkstatus == 'active_selectbox_country'){
+			$('#' + ac_item + ' li:eq('+chosen_user+')').removeClass("active_selectbox_country");
+			var remove = countryIds.indexOf(parseInt(ms_id));
+	    	countryIds.splice(remove,1);
+		}else{
+			$('#' + ac_item + ' li:eq('+chosen_user+')').addClass("active_selectbox_country");
+			countryIds.push(parseInt(ms_id));
+		}
+		$("#countryselected").val(countryIds.length+" Selected");
+  	}
+    return false;
+  }
+}
+
 //Hide list items after select
 $(".hidemenu").click(function(){
   $("#autocompleteview").hide();
@@ -377,12 +435,22 @@ $("#domainselected").click(function(){
 	}
   $('#ulist').append(str);
 });
+
+var chosen_user = '';
+$("#domainselected").keyup(function(e){
+	onArrowKeyUser(e, 'ulist')
+});
+
+$("#countryselected").keyup(function(e){
+	onArrowKeyUser(e, 'ulist-country')
+});
+
 //check & uncheck process
 function activate(element){
 	var chkstatus = $(element).attr('class');
 	if(chkstatus == 'active_selectbox'){
 		$(element).removeClass("active_selectbox");
-		remove = domainIds.indexOf(parseInt(element.id));
+		var remove = domainIds.indexOf(parseInt(element.id));
     	domainIds.splice(remove,1);
 	}else{
 		$(element).addClass("active_selectbox");
@@ -413,7 +481,7 @@ function activatecountry(element){
    var chkstatus = $(element).attr('class');
    if(chkstatus == 'active_selectbox_country'){
    	$(element).removeClass("active_selectbox_country");
-   	remove = countryIds.indexOf(parseInt(element.id));
+   	var remove = countryIds.indexOf(parseInt(element.id));
     countryIds.splice(remove,1);
    }else{
     $(element).addClass("active_selectbox_country");

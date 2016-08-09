@@ -906,7 +906,7 @@ def frame_geography_parent_mapping(rows):
         country_id = int(row["country_id"])
         geography_id = int(row["geography_id"])
         is_active = bool(row["is_active"])
-        mappings = row["parent_names"]
+        mappings = row["parent_names"] + " >> " + row["geography_name"]
         GEOGRAPHY_PARENTS[geography_id] = [
             mappings, is_active, country_id
         ]

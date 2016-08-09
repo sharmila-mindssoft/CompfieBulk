@@ -157,7 +157,7 @@ CREATE TABLE `tbl_admin` (
   `password` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_users` (
-  `user_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT 0,
+  `user_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `user_group_id` int(11) DEFAULT NULL,
   `service_provider_id` int(11) DEFAULT NULL,
   `email_id` varchar(100) NOT NULL,
