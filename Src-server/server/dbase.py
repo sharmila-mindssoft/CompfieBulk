@@ -385,8 +385,6 @@ class Database(object):
         query = """INSERT INTO %s %s """ % (table, columns)
         query += " VALUES (%s) " % (",".join(stringValue))
         try:
-            print query
-            print values
             n_id = int(self.execute_insert(query, values))
             return n_id
         except mysql.Error, e:

@@ -195,6 +195,9 @@ def encrypt(value):
     m.update(value)
     return m.hexdigest()
 
+def get_current_date():
+    date = datetime.datetime.today()
+    return date
 ########################################################
 # Converts the passed date in string format to localized
 # datetime format (Time zone is India)
