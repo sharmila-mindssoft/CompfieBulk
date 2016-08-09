@@ -152,10 +152,10 @@ class API(object):
             print response_data
             respond(response_data)
         except Exception, e:
-            print "handle_api_request"
-            print e
-            print(traceback.format_exc())
-            print ip_address
+            # print "handle_api_request"
+            # print e
+            # print(traceback.format_exc())
+            # print ip_address
             logger.logKnowledgeApi(e, "handle_api_request")
             logger.logKnowledgeApi(traceback.format_exc(), "")
             logger.logKnowledgeApi(ip_address, "")
@@ -231,7 +231,7 @@ class API(object):
 
     @api_request(login.Request)
     def handle_login(self, request, db):
-        print self._ip_addess
+        # print self._ip_addess
         return controller.process_login_request(request, db, self._ip_addess)
         # return login.ResetPasswordSuccess()
 

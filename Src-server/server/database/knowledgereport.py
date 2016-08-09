@@ -103,7 +103,6 @@ def get_statutory_mapping_report(
     if qry_where is not "":
         q_count += qry_where
         param_lst.extend(qry_val)
-    print len(param_lst)
     row = db.select_one(q_count + order, param_lst)
 
     if row:

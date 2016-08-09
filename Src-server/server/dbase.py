@@ -3,6 +3,7 @@ import logger
 from server.common import (convert_to_dict, get_date_time)
 from server.exceptionmessage import fetch_error
 
+
 class Database(object):
     def __init__(
         self,

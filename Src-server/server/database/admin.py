@@ -370,7 +370,8 @@ def is_user_exists_under_user_group(db, user_group_id):
 def get_user_group_detailed_list(db):
     columns = "ug.user_group_id, user_group_name, form_category_id, " + \
                 "form_ids, is_active, (select count(*) from %s u where " + \
-                "ug.user_group_id = u.user_group_id) as count" % (tblUsers)
+                "ug.user_group_id = u.user_group_id) as count"
+    columns = columns % (tblUsers)
     tables = tblUserGroups+" ug"
     where_condition = " 1 order by user_group_name"
     rows = db.get_data(tables, columns, where_condition)
