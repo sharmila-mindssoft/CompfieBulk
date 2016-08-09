@@ -6,6 +6,7 @@ import uuid
 import random
 import string
 import hashlib
+from calendar import monthrange
 from server.constants import (
     LOCAL_TIMEZONE, KNOWLEDGE_FORMAT_PATH
 )
@@ -31,8 +32,14 @@ def get_current_month():
     return month
 
 def addMonth(value, due_date):
-    new_date = (due_date + datetime.timedelta(days=value*366 / 12))
-    return new_date
+    try :
+        m = due_date.month
+        y = due_date.year
+        m_range = monthrange(y, m)
+        new_date = (due_date + datetime.timedelta(days=m_range[1]))
+        return new_date
+    except Exception, e :
+        print e
 
 def addDays(value, due_date):
     new_date = (due_date + datetime.timedelta(days=value))

@@ -1037,7 +1037,10 @@ def get_user_email_name(db, user_ids):
 def calculate_from_and_to_date_for_domain(db, country_id, domain_id):
     columns = "contract_from, contract_to"
     rows = db.get_data(tblClientGroups, columns, "1")
-    contract_from = rows[0]["contract_from"]
+    if rows :
+        contract_from = rows[0]["contract_from"]
+    else :
+        contract_from = None
     # contract_to = rows[0][1]
 
     columns = "period_from, period_to"
@@ -1045,6 +1048,7 @@ def calculate_from_and_to_date_for_domain(db, country_id, domain_id):
         country_id, domain_id
     )
     rows = db.get_data(tblClientConfigurations, columns, condition)
+    print rows
     period_from = rows[0]["period_from"]
     # period_to = rows[0][1]
 

@@ -1,4 +1,5 @@
 import logging
+from logging import handlers
 import sys
 
 from server.constants import ENABLE_INFO_LOG, ENABLE_QUERY_LOG
@@ -16,7 +17,7 @@ client_query_log_path = "logs/client/query-log"
 
 def _get_time_rotate_file_obj(logger_name, log_path):
     log_format = logging.Formatter("%(asctime)s - %(name)s - %(message)s")
-    rotateFileHandler = logging.handlers.TimedRotatingFileHandler(
+    rotateFileHandler = handlers.TimedRotatingFileHandler(
         log_path, when="midnight", backupCount=10
     )
     rotateFileHandler.suffix = "%Y-%m-%d"
