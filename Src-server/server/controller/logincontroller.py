@@ -170,7 +170,7 @@ def process_reset_token(db, request):
 def process_reset_password(db, request):
     user_id = validate_reset_token(db, request.reset_token)
     if user_id is not None:
-        if db.update_password(request.new_password, user_id):
+        if update_password(db, request.new_password, user_id):
             if delete_used_token(db, request.reset_token):
                 return login.ResetPasswordSuccess()
             else:

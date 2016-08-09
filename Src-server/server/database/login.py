@@ -101,10 +101,11 @@ def verify_username(db, username):
             WHERE username = %s and is_active = 1
         '''
         admin_rows = db.select_all(admin_query, param)
-        if rows:
+        if admin_rows:
             return (0, "Administrator")
         else:
             return None
+
 
 def verify_password(db, password, user_id):
     columns = "count(1)"
@@ -115,32 +116,45 @@ def verify_password(db, password, user_id):
         condition = "password='%s'" % (encrypted_password)
         rows = db.get_data(tblAdmin, columns, condition)
     else:
-        condition = "password='%s' and user_id='%d'" % (encrypted_password, user_id)
+        condition = "password='%s' and user_id='%d'" % (
+            encrypted_password, user_id
+        )
         rows = db.get_data(tblUsers, columns, condition)
     if(int(rows[0]["count(1)"]) <= 0):
         return False
     else:
         return True
 
+
 ########################################################
 # Check whether the given reset token is valid
 ########################################################
 def validate_reset_token(db, reset_token):
-    column = "count(*), user_id"
-    condition = " verification_code='%s'" % reset_token
-    rows = db.get_data(tblEmailVerification, column, condition)
-    count = rows[0][0]
-    user_id = rows[0][1]
-    if count == 1:
-        column = "count(*)"
-        condition = "user_id = '%d' and is_active = 1" % user_id
-        rows = db.get_data(tblUsers, column, condition)
-        if rows[0][0] > 0 or user_id == 0:
+    email_verification_column = "user_id"
+    email_verification_condition = " verification_code=%s"
+    email_verification_condition_val = [reset_token]
+    email_verification_rows = db.get_data(
+        tblEmailVerification, email_verification_column,
+        email_verification_condition, email_verification_condition_val
+    )
+    if email_verification_rows:
+        user_id = email_verification_rows[0]["user_id"]
+        if user_id == 0:  # Returning if user is admin
             return user_id
-        else:
-            return None
+        else:  # Checking if user is active
+            user_column = "user_id"
+            user_condition = "user_id = %s and is_active = 1"
+            user_condition_val = [user_id]
+            user_rows = db.get_data(
+                tblUsers, user_column, user_condition, user_condition_val
+            )
+            if user_rows:
+                return user_id
+            else:
+                return None
     else:
         return None
+
 
 def update_password(db, password, user_id):
     columns = ["password"]

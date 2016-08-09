@@ -136,21 +136,25 @@ class Database(object):
         cursor = self.cursor()
         assert cursor is not None
 
-        try :
-            if type(param) is tuple :
+        try:
+            if type(param) is tuple:
                 logger.logQuery(self._for_client, "execute", query % param)
                 cursor.execute(query, param)
-            elif type(param) is list :
-                if len(param) > 1 :
-                    logger.logQuery(self._for_client, "execute", query % tuple(param))
-                else :
-                    logger.logQuery(self._for_client, "execute", query % param[0])
+            elif type(param) is list:
+                if len(param) > 1:
+                    logger.logQuery(
+                        self._for_client, "execute", query % tuple(param)
+                    )
+                else:
+                    logger.logQuery(
+                        self._for_client, "execute", query % param[0]
+                    )
                 cursor.execute(query, param)
-            else :
+            else:
                 logger.logQuery(self._for_client, "execute", query)
                 cursor.execute(query)
             return True
-        except mysql.Error, e :
+        except mysql.Error, e:
             print e
             print query
             print param
