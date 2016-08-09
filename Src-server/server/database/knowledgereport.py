@@ -73,7 +73,7 @@ def get_statutory_mapping_report(
         qry_val.append(str("%"))
         qry_val.append(level_1_statutory_id)
     if frequency_id is not None:
-        qry_where += "AND t2.frequency_id = %s " % (frequency_id)
+        qry_where += " AND t2.frequency_id = %s "
         qry_val.append(frequency_id)
 
     q_count = "SELECT  count(distinct t2.compliance_id) " + \
@@ -103,7 +103,7 @@ def get_statutory_mapping_report(
     if qry_where is not "":
         q_count += qry_where
         param_lst.extend(qry_val)
-
+    print len(param_lst)
     row = db.select_one(q_count + order, param_lst)
 
     if row:
