@@ -9,6 +9,8 @@ __all__ = [
     "validate_reset_token", "update_password",
     "delete_used_token", "remove_session"
 ]
+
+
 ########################################################
 # To Check Login credentials
 ########################################################
@@ -19,8 +21,7 @@ def verify_login(db, username, password):
         tblAdminCondition,
         (password, username)
     )
-
-    if (len(admin_details) == 0) :
+    if (len(admin_details) == 0):
         data_columns = [
             "user_id", "user_group_id", "email_id",
             "employee_name", "employee_code",
@@ -35,23 +36,25 @@ def verify_login(db, username, password):
             ON t1.user_group_id = t2.user_group_id \
             WHERE t1.password=%s and t1.email_id=%s and t1.is_active=1"""
         data_list = db.select_one(query, [password, username])
-        if data_list is None :
+        if data_list is None:
             return False
-        else :
+        else:
             return convert_to_dict(data_list, data_columns)
-    else :
+    else:
         return True
+
 
 ########################################################
 # To clear user session
 ########################################################
-def clear_old_session(db, user_id, session_type_id, client_id=None) :
-    query = "DELETE FROM tbl_user_sessions \
-        WHERE user_id=%s and session_type_id=%s"
+def clear_old_session(db, user_id, session_type_id, client_id=None):
+    query = '''DELETE FROM tbl_user_sessions
+        WHERE user_id=%s and session_type_id=%s'''
 
     db.execute(query, (
         user_id, session_type_id
     ))
+
 
 ########################################################
 # Adds User session
@@ -59,7 +62,7 @@ def clear_old_session(db, user_id, session_type_id, client_id=None) :
 def add_session(
     db, user_id, session_type_id, ip,
     employee, client_id=None
-) :
+):
     if client_id is not None:
         clear_old_session(db, user_id, session_type_id, client_id)
     else:
@@ -173,7 +176,9 @@ def update_password(db, password, user_id):
         rows = db.get_data(tblUsers, columns, condition)
         employee_name = rows[0]["employee_name"]
         if rows[0]["employee_code"] is not None:
-            employee_name = "%s - %s" % (rows[0]["employee_code"], rows[0]["employee_name"])
+            employee_name = "%s - %s" % (
+                rows[0]["employee_code"], rows[0]["employee_name"]
+            )
     else:
         employee_name = "Administrator"
 
@@ -185,6 +190,7 @@ def update_password(db, password, user_id):
     else:
         return False
 
+
 ########################################################
 # Deletes a reset token, once it is used
 ########################################################
@@ -194,6 +200,7 @@ def delete_used_token(db, reset_token):
         return True
     else:
         return False
+
 
 def remove_session(db, session_token):
     db.delete(tblUserSessions, "session_token=%s", [session_token])
