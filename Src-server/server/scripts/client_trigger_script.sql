@@ -16,8 +16,8 @@ CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON 
     INSERT INTO tbl_statutory_notification_status (
     	statutory_notification_id,
     	user_id, read_status)
-        SELECT NEW.statutory_notification_id, t1.admin_id, 0 FROM
-        tbl_admin t1 where t1.admin_id != 0;
+        SELECT NEW.statutory_notification_id, t1.user_id, 0 FROM
+        tbl_users t1 where t1.is_active = 1 and t1.is_primary_admin = 1;
 END
 //
 DELIMITER ;

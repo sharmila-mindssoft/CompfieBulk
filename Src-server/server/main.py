@@ -200,7 +200,7 @@ class API(object):
 
     @api_request(GetDomainChanges)
     def handle_domain_replication(self, request, db):
-        actual_count = gen.get_trail_id()
+        actual_count = gen.get_trail_id(db)
         client_id = request.client_id
         domain_id = request.domain_id
         received_count = request.received_count
@@ -211,7 +211,7 @@ class API(object):
 
         res = GetChangesSuccess(
             gen.get_trail_log_for_domain(
-                client_id, domain_id, received_count,
+                db, client_id, domain_id, received_count,
                 actual_replica_count
             )
         )
@@ -219,7 +219,7 @@ class API(object):
 
     @api_request(GetChanges)
     def handle_delreplicated(self, request, db):
-        actual_count = gen.get_trail_id()
+        actual_count = gen.get_trail_id(db)
 
         client_id = request.client_id
         received_count = request.received_count

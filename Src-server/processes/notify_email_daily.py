@@ -111,15 +111,9 @@ def get_new_id(db, table_name, column_name):
     return row[0]
 
 def get_email_id_for_users(db, user_id):
-    if user_id == 0 :
-        q = "SELECT 'Administrator', username from tbl_admin where admin_id = %s" % (
-            user_id
-        )
-        pass
-    else :
-        q = "SELECT employee_name, email_id from tbl_users where user_id = %s" % (
-            user_id
-        )
+    q = "SELECT employee_name, email_id from tbl_users where user_id = %s" % (
+        user_id
+    )
     cursor = db.cursor()
     cursor.execute(q)
     row = cursor.fetchone()

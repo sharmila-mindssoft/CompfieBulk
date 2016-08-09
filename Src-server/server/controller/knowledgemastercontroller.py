@@ -369,8 +369,9 @@ def process_save_geography(db, request_frame, user_id):
     parent_ids_list = request_frame.parent_ids
     parent_ids = ','.join(str(x) for x in parent_ids_list) + ","
     parent_names = " >> ".join(str(x) for x in request_frame.parent_names)
+    parent_names += " >> " + geography_name
     country_id = request_frame.country_id
-
+    print parent_names
     saved_names = [row["geography_name"].lower() for row in check_duplicate_geography(db, country_id, parent_ids, None)]
 
     if saved_names.count(geography_name.lower()) > 0 :
@@ -386,7 +387,9 @@ def process_update_geography(db, request_frame, user_id):
     geography_name = request_frame.geography_name
     parent_ids_list = request_frame.parent_ids
     parent_ids = ','.join(str(x) for x in parent_ids_list) + ","
-    parnet_names = ' >> '.join(str(x) for x in request_frame.parent_names)
+    parent_names = ' >> '.join(str(x) for x in request_frame.parent_names)
+    parent_names += " >> " + geography_name
+    print parent_names
     country_id = request_frame.country_id
 
     saved_names = [row["geography_name"].lower() for row in check_duplicate_geography(db, country_id, parent_ids, geography_id)]
@@ -394,7 +397,7 @@ def process_update_geography(db, request_frame, user_id):
         return knowledgemaster.GeographyNameAlreadyExists()
     else :
         if (update_geography(
-            db, geography_id, geography_name, parent_ids, parnet_names, user_id
+            db, geography_id, geography_name, parent_ids, parent_names, user_id
         )):
             return knowledgemaster.UpdateGeographySuccess()
         else :

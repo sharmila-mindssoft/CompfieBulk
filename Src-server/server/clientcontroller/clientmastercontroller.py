@@ -361,7 +361,7 @@ def process_get_client_users(db, request, session_user, client_id):
     user_list = get_user_details(db, client_id, session_user)
     service_provider_list = get_service_providers(db, client_id)
     remaining_licence = get_no_of_remaining_licence(db)
-    is_primary_admin = True if session_user == 0 else is_primary_admin(db, session_user)
+    is_primary_user = True if session_user == 0 else is_primary_admin(db, session_user)
     return clientmasters.GetClientUsersSuccess(
         user_countries=user_country_list,
         user_domains=user_domain_list,
@@ -376,25 +376,25 @@ def process_get_client_users(db, request, session_user, client_id):
         users=user_list,
         service_providers=service_provider_list,
         remaining_licence=remaining_licence,
-        is_primary_admin=is_primary_admin
+        is_primary_admin=is_primary_user
     )
 
 ########################################################
 # To validate and save a user
 ########################################################
 def process_save_client_user(db, request, session_user, client_id):
-    user_id = db.get_new_id("user_id", tblUsers)
+    # user_id = db.get_new_id("user_id", tblUsers)
     if (get_no_of_remaining_licence(db) <= 0):
         return clientmasters.UserLimitExceeds()
-    elif is_duplicate_user_email(db, user_id, request.email_id) :
+    elif is_duplicate_user_email(db, request.email_id, user_id=None) :
         return clientmasters.EmailIdAlreadyExists()
     elif is_duplicate_employee_code(
         db,
-        user_id,
-        request.employee_code.replace(" ", "")
+        request.employee_code.replace(" ", ""),
+        user_id=None
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
-    elif save_user(db, user_id, request, session_user, client_id) :
+    elif save_user(db, request, session_user, client_id) :
         return clientmasters.SaveClientUserSuccess()
 
 ########################################################
@@ -425,7 +425,9 @@ def process_change_client_user_status(db, request, session_user, client_id):
     elif update_user_status(
         db,
         request.user_id,
-        request.is_active, session_user, client_id
+        request.is_active,
+        request.employee_name,
+        session_user, client_id
     ):
         return clientmasters.ChangeClientUserStatusSuccess()
 
@@ -442,7 +444,8 @@ def process_change_admin_status(db, request, session_user, client_id):
     elif update_admin_status(
         db,
         request.user_id,
-        request.is_admin, session_user, client_id
+        request.is_admin, request.employee_name,
+        session_user, client_id
     ):
         return clientmasters.ChangeAdminStatusSuccess()
 
@@ -485,7 +488,7 @@ def process_close_unit(db, request, session_user, client_id):
         if is_seating_unit(db, request.unit_id):
             return clientmasters.CannotCloseUnit()
         else:
-            close_unit(db, request.unit_id, session_user)
+            close_unit(db, request.unit_id, request.unit_name, session_user)
             return clientmasters.CloseUnitSuccess()
     else:
         return clientmasters.InvalidPassword()

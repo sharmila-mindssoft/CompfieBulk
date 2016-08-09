@@ -152,6 +152,8 @@ class Database(object):
             return True
         except mysql.Error, e :
             print e
+            print query
+            print param
             return False
 
     ########################################################
@@ -394,7 +396,7 @@ class Database(object):
     ########################################################
     # To form a bulk insert query
     ########################################################
-    def bulk_insert(self, table, columns, valueList, client_id=None) :
+    def bulk_insert(self, table, columns, valueList) :
 
         stringValue = []
         for i in range(len(columns)) :

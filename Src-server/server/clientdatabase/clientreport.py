@@ -113,7 +113,7 @@ def report_assigneewise_compliance(
         qry_where += " AND ac.assignee = %s"
         qry_where_val.append(assignee)
 
-    if session_user > 0 and session_user != admin_id :
+    if session_user != admin_id :
         qry_where += " AND u.unit_id in \
             (select us.unit_id from tbl_user_units us where \
                 us.user_id = %s\
@@ -366,7 +366,7 @@ def report_serviceproviderwise_compliance(
         qry_where += " AND s.service_provider_id = %s"
         qry_where_val.append(service_provider_id)
 
-    if session_user > 0 and session_user != admin_id :
+    if session_user != admin_id :
         qry_where += " AND u.unit_id in \
             (select us.unit_id from tbl_user_units us where \
                 us.user_id = %s\
@@ -734,7 +734,7 @@ def get_where_query_for_compliance_details_report(
         qry_where += " AND ch.completed_by = %s"
         qry_where_val.append(assignee)
 
-    if session_user > 0 and session_user != admin_id :
+    if session_user != admin_id :
         qry_where += " AND ch.unit_id in \
             (select us.unit_id from tbl_user_units us where \
                 us.user_id = %s\
@@ -980,7 +980,7 @@ def get_where_query_for_reassigned_history_report(
         qry_where += " AND t1.reassigned_date < DATE_SUB('%s', INTERVAL 1 DAY)"
         qry_where_val.append(end_date)
 
-    if session_user > 0 and session_user != admin_id :
+    if session_user != admin_id :
         qry_where += " AND t1.unit_id in \
             (select us.unit_id from tbl_user_units us where \
                 us.user_id = %s\
@@ -1066,7 +1066,7 @@ def get_delayed_compliances_where_qry(
     where_qry = ""
     where_qry_val = []
     admin_id = get_admin_id(db)
-    if session_user > 0 and session_user != admin_id :
+    if session_user != admin_id :
         where_qry += " AND u.unit_id in \
             (select us.unit_id from tbl_user_units us where \
                 us.user_id = %s\
@@ -1384,7 +1384,7 @@ def get_not_opted_compliances_where_qry(
     where_qry_val = []
     admin_id = get_admin_id(db)
 
-    if session_user > 0 and session_user != admin_id :
+    if session_user != admin_id :
         where_qry += " AND u.unit_id in \
             (select us.unit_id from tbl_user_units us where \
                 us.user_id = %s\
@@ -1521,7 +1521,7 @@ def get_unassigned_compliances_where_qry(
     where_qry_val = []
     admin_id = get_admin_id(db)
 
-    if session_user > 0 and session_user != admin_id :
+    if session_user != admin_id :
         where_qry += " AND u.unit_id in \
             (select us.unit_id from tbl_user_units us where \
                 us.user_id = %s\
@@ -1979,7 +1979,7 @@ def get_compliance_task_applicability(db, request, session_user):
         where_qry += " AND T2.statutory_mapping like %s"
         where_qry_val.append(str(statutory_name + '%'))
 
-    if session_user > 0 and session_user != admin_id :
+    if session_user != admin_id :
         where_qry += " AND T4.unit_id in \
             (select us.unit_id from tbl_user_units us where \
                 us.user_id = %s"
@@ -2223,7 +2223,6 @@ def get_client_details_condition(
     unit_id, domain_ids, session_user
 ):
     user_unit_ids = get_user_unit_ids(db, session_user)
-    user_unit_ids = [int(x) for x in user_unit_ids.split(',')]
     condition = "u.country_id = %s "
     condition_val = [country_id]
     if business_group_id is not None:

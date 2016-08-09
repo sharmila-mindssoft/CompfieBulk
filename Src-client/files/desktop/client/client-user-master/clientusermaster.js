@@ -114,7 +114,7 @@ function getUnitNameAndAddress(unitId){
     if(unitId != null){
         $.each(unitList, function(key, value) {
             if(value['unit_id'] == unitId){
-                unit['unitName'] = value['unit_name'];
+                unit['unitName'] = value['unit_code'] + " - " + value['unit_name'];
                 unit['unitAddress'] = value['unit_address'];
             }
         });
@@ -133,7 +133,7 @@ function loadClientUserList(){
         var isActive = users["is_active"];
         var isAdmin = users["is_admin"];
         var isPrimaryAdmin = users["is_primary_admin"];
-
+        var isServiceProvide = users["is_service_provider"];
         if(isActive == true){
             imageName = "icon-active.png";
             title = "Click here to deactivate"
@@ -164,35 +164,37 @@ function loadClientUserList(){
         var clone = tableRow.clone();
         sno = sno + 1;
         $('.sno', clone).text(sno);
+
         if (isActive == false && isPrimaryAdmin == true){
-            $('.employee-code-name', clone).text("Old Administrator");
+            emp_code_name = "Old Administrator";
         }
         else if(isActive == true && isPrimaryAdmin == true){
-            $('.employee-code-name', clone).text("Administrator");
+            emp_code_name = "Administrator";
         }
-        else if(userList[i]["is_service_provider"] == true){
-            $('.employee-code-name', clone).text(getServiceProviderName(userList[i]["service_provider_id"])+" - "+users["employee_name"]);
+        else if(isServiceProvide == true){
+            emp_code_name = getServiceProviderName(userList[i]["service_provider_id"])+" - "+users["employee_name"];
         }
         else{
-            $('.employee-code-name', clone).text(users["employee_code"]+" - "+users["employee_name"]);
+            emp_code_name = users["employee_code"]+" - "+users["employee_name"];
         }
+        $('.employee-code-name', clone).text(emp_code_name);
 
         $(".username", clone).text(username);
         $('.group-name', clone).text(getUserGroupName(userGroupId));
         $('.level-name', clone).text("Level "+users["user_level"]);
-        if(userList[i]["is_service_provider"] == true){
+        if(isServiceProvide == true){
             $('.seating-unit', clone).html("-");
         }
         else if (seatingUnitId != null){
          $('.seating-unit', clone).html('<abbr class="page-load" title="'+getUnitNameAndAddress(seatingUnitId)['unitAddress']+'"><img src="/images/icon-info.png" style="margin-right:10px"/>'+getUnitNameAndAddress(seatingUnitId)['unitName']);
         }
-        if (userId != 0){
+        if (userId != 1){
             $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
         }
-        if (isPrimaryAdmin == false){
-            $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+')"/>');
+        if (isPrimaryAdmin == false && isServiceProvide == false){
+            $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+', \''+ emp_code_name +'\')"/>');
             if (is_session_user_primary_admin == true){
-                $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="user_isadmin('+userId+', '+adminstatus+')" />');
+                $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="user_isadmin('+userId+', '+adminstatus+', \''+ emp_code_name +'\')" />');
             }
         }
         $('.tbody-users-list').append(clone);
@@ -283,7 +285,7 @@ function loadUserUpdate(userId){
             }
             $("#user-level").val(userList[user]['user_level']);
             //$("#user-level option[value = "+userList[user]['user_level']+"]").attr('selected','selected');
-            $("#email-id").val(userList[user]['email_id']);            
+            $("#email-id").val(userList[user]['email_id']);
             $("#email-id").attr("readonly", "readonly");
             $("#country").val(userList[user]['country_ids']);
             $("#units").val(userList[user]['unit_ids']);
@@ -530,9 +532,9 @@ $("#submit").click(function(){
             console.log("All fails.. Something Wrong");
         }
     }
-    
+
 });
-function user_active(userId, isActive){
+function user_active(userId, isActive, employeeCodeName){
     var msgstatus = message.deactive_message;
     if(isActive){
         msgstatus = message.active_message;
@@ -556,7 +558,7 @@ function user_active(userId, isActive){
                         custom_alert(error)
                     }
                 }
-                client_mirror.changeClientUserStatus(userId, isActive,
+                client_mirror.changeClientUserStatus(userId, isActive, employeeCodeName,
                     function(error, response){
                         if(error == null){
                             onSuccess(response);
@@ -576,7 +578,7 @@ function user_active(userId, isActive){
         }
     });
 }
-function user_isadmin(userId, isAdmin){
+function user_isadmin(userId, isAdmin, employeeName){
     var msgstatus;
     if(isAdmin == 1){
         msgstatus='activate promote admin';
@@ -603,7 +605,7 @@ function user_isadmin(userId, isAdmin){
                         custom_alert(error);
                     }
                 }
-                client_mirror.changeAdminStatus(userId, isAdmin,
+                client_mirror.changeAdminStatus(userId, isAdmin, employeeName,
                     function(error, response){
                         if(error == null){
                             onSuccess(response);
@@ -1077,7 +1079,7 @@ function activateUnit(element){
             });
         }
     }
-    
+
     var selids='';
     var totalcount =  $("#unitList li.active").length;
     $("#unitList li.active").each( function( index, el ) {

@@ -8,7 +8,7 @@ from server.constants import (CLIENT_DOCS_BASE_PATH)
 from protocol import (core, dashboard, clientreport)
 from server.common import (
     encrypt, convert_to_dict, get_date_time, get_date_time_in_date,
-    remove_uploaded_file
+    remove_uploaded_file, convert_to_key_dict
 )
 from server.exceptionmessage import client_process_error
 from savetoknowledge import UpdateFileSpace
@@ -92,16 +92,16 @@ def get_client_user_forms(db, form_ids, client_id, is_admin):
     return rows
 
 def get_admin_id(db):
-    columns = "admin_id"
-    condition = "1"
-    rows = db.get_data(tblAdmin, columns, condition)
-    return rows[0]["admin_id"]
+    columns = "user_id"
+    condition = " is_active = 1 and is_primary_admin = 1 "
+    rows = db.get_data(tblUsers, columns, condition)
+    return rows[0]["user_id"]
 
 def get_countries_for_user(db, user_id, client_id=None) :
     admin_id = get_admin_id(db)
     query = "SELECT distinct t1.country_id, t1.country_name, \
         t1.is_active FROM tbl_countries t1 "
-    if user_id > 0 and user_id != admin_id:
+    if user_id != admin_id:
         query = query + " INNER JOIN tbl_user_countries t2 \
             ON t1.country_id = t2.country_id WHERE t2.user_id = %s"
         rows = db.select_all(query, [user_id])
@@ -125,7 +125,7 @@ def get_domains_for_user(db, user_id, client_id=None) :
     admin_id = get_admin_id(db)
     query = "SELECT distinct t1.domain_id, t1.domain_name, \
         t1.is_active FROM tbl_domains t1 "
-    if user_id > 0 and user_id != admin_id:
+    if user_id != admin_id:
         query = query + " INNER JOIN tbl_user_domains t2 ON \
             t1.domain_id = t2.domain_id WHERE t2.user_id = %s"
         rows = db.select_all(query, [user_id])
@@ -303,25 +303,19 @@ def return_client_users(users):
         ))
     return results
 
-def get_user_domains(db, user_id, client_id=None):
-    columns = "domain_id"
-    table = tblDomains
-    result = None
-    condition = 1
-    if user_id > 0:
-        table = tblUserDomains
-        condition = " user_id = '%s'" % user_id
-    rows = db.get_data(
-        table, columns, condition
-    )
-    result = ""
-    if rows:
-        for index, row in enumerate(rows):
-            if index == 0:
-                result += str(row["domain_id"])
-            else:
-                result += ", %s" % str(row["domain_id"])
-    return result
+def get_user_domains(db, user_id):
+    q = "select domain_id from tbl_user_domains"
+    param = None
+    condition = ""
+    if is_primary_admin(db, user_id) is not True :
+        condition = " WHERE user_id = %s"
+        param = [user_id]
+
+    rows = db.select_all(q + condition, param)
+    d_ids = []
+    for r in rows :
+        d_ids.append(int(r[0]))
+    return d_ids
 
 def is_service_provider_in_contract(db, service_provider_id):
     column = "count(1) as live"
@@ -353,35 +347,20 @@ def verify_username(db, username):
     count = rows[0]["result"]
     if count == 1:
         return rows[0]["user_id"]
-    else:
-        condition = "username='%s'" % username
-        columns = "count(*) as result"
-        rows = db.get_data(
-            tblAdmin, columns, condition
-        )
-        count = rows[0]["result"]
-        if count == 1:
-            return 0
-        else:
-            return None
-
+    else :
+        return None
 def verify_password(db, password, user_id, client_id=None):
     columns = "count(*) as result"
     encrypted_password = encrypt(password)
     condition = "1"
     rows = None
-    if user_id == 0:
-        condition = "password='%s'" % (encrypted_password)
-        rows = db.get_data(
-           tblAdmin, columns, condition
-        )
-    else:
-        condition = "password='%s' and user_id='%s'" % (
-            encrypted_password, user_id
-        )
-        rows = db.get_data(
-            tblUsers, columns, condition
-        )
+    condition = "password='%s' and user_id='%s'" % (
+        encrypted_password, user_id
+    )
+    rows = db.get_data(
+        tblUsers, columns, condition
+    )
+
     if(int(rows[0]["result"]) <= 0):
         return False
     else:
@@ -448,27 +427,19 @@ def is_admin(db, user_id):
             return False
 
 def get_user_unit_ids(db, user_id):
-    columns = "unit_id"
-    table = tblUnits
-    condition = 1
-    if user_id > 0:
-        table = tblUserUnits
-        condition = " user_id = '%s'" % user_id
-    rows = db.get_data(
-        table, columns, condition
-    )
-    u_ids = []
-    if rows :
-        for r in rows :
-            u_ids.append(str(r["unit_id"]))
+    q = "select distinct unit_id from tbl_units"
+    param = None
+    condition = ""
+    if is_primary_admin(db, user_id) is not True :
+        condition = " WHERE unit_id in (select unit_id from tbl_user_units \
+            where user_id = %s )"
+        param = [user_id]
 
-        # result = ""
-        # for index, row in enumerate(rows):
-        #     if index == 0:
-        #         result += str(row["unit_id"])
-        #     else:
-        #         result += ",%s" % str(row["unit_id"])
-    return ",".join(u_ids)
+    rows = db.select_all(q + condition, param)
+    u_ids = []
+    for r in rows :
+        u_ids.append(int(r[0]))
+    return u_ids
 
 def is_two_levels_of_approval(db):
     columns = "two_levels_of_approval"
@@ -480,7 +451,7 @@ def get_user_company_details(db, user_id):
     columns = "unit_id"
     condition = " 1 "
     rows = None
-    if user_id > 0 and user_id != admin_id:
+    if user_id != admin_id:
         condition = "  user_id = %s " % user_id
         rows = db.get_data(
             tblUserUnits, columns, condition
@@ -740,7 +711,7 @@ def get_client_settings(db):
         return bool(int(row[0]))
 
 def get_admin_info(db):
-    query = "SELECT admin_id from tbl_admin"
+    query = "SELECT email_id from tbl_users"
     row = db.select_one(query)
     return int(row[0])
 
@@ -820,13 +791,24 @@ def get_users_by_unit_and_domain(
         )
     return return_users(rows)
 
+def get_all_users(db):
+    columns = [
+        "user_id", "employee_code", "employee_name",
+        "contact_no", "email_id"
+    ]
+    q = "select user_id, IFNULL(employee_code, '-'), employee_name, \
+        IFNULL(contact_no, '--'), email_id from tbl_users"
+    data = db.select_all(q)
+    rows = convert_to_key_dict(data, columns)
+    return rows
+
 def get_users(db, client_id):
-        columns = "user_id, employee_name, employee_code, is_active"
-        condition = "1"
-        rows = db.get_data(
-            tblUsers, columns, condition
-        )
-        return return_users(rows)
+    columns = "user_id, employee_name, employee_code, is_active"
+    condition = "1"
+    rows = db.get_data(
+        tblUsers, columns, condition
+    )
+    return return_users(rows)
 
 def get_users_by_id(db, user_ids, client_id):
     columns = "user_id, employee_name, employee_code, is_active"
@@ -996,30 +978,23 @@ def save_compliance_notification(
     return r1
 
 def get_user_countries(db, user_id, client_id=None):
-    columns = "group_concat(country_id) as countries"
-    table = tblCountries
-    result = None
-    condition = 1
-    if user_id > 0:
-        table = tblUserCountries
-        condition = " user_id = '%s'" % user_id
-    rows = db.get_data(
-        table, columns, condition
-    )
-    if rows :
-        result = rows[0]["countries"]
-    return result
+    q = "select country_id from tbl_user_countries"
+    param = None
+    condition = ""
+    if is_primary_admin(db, user_id) is not True :
+        condition = " WHERE user_id = %s"
+        param = [user_id]
+
+    rows = db.select_all(q + condition, param)
+    c_ids = []
+    for r in rows :
+        c_ids.append(int(r[0]))
+    return c_ids
 
 def get_email_id_for_users(db, user_id):
-    if user_id == 0 :
-        q = "SELECT 'Administrator', username from tbl_admin where admin_id = %s" % (
-            user_id
-        )
-        pass
-    else :
-        q = "SELECT employee_name, email_id from tbl_users where user_id = %s" % (
-            user_id
-        )
+    q = "SELECT employee_name, email_id from tbl_users where user_id = %s" % (
+        user_id
+    )
     row = db.select_one(q)
     if row :
         return row[0], row[1]
@@ -1028,15 +1003,15 @@ def get_email_id_for_users(db, user_id):
 
 def get_user_email_name(db, user_ids):
     print user_ids
-    user_id_list = [int(x) for x in user_ids.split(",")]
+    # user_id_list = [int(x) for x in user_ids.split(",")]
     admin_email = None
     index = None
-    if 0 in user_id_list:
-        index = user_id_list.index(0)
-        column = "username"
-        admin_rows = db.get_data(tblAdmin, column, "1")
-        user_id_list.remove(0)
-        admin_email = admin_rows[0]["username"]
+    # if 0 in user_id_list:
+    #     index = user_id_list.index(0)
+    #     column = "username"
+    #     admin_rows = db.get_data(tblAdmin, column, "1")
+    #     user_id_list.remove(0)
+    #     admin_email = admin_rows[0]["username"]
     column = "email_id, employee_name"
     condition = "user_id in (%s)" % ",".join(str(x) for x in user_ids)
     rows = db.get_data(
@@ -1053,9 +1028,9 @@ def get_user_email_name(db, user_ids):
             if row["employee_name"] is not None:
                 employee_name += ", %s" % row["employee_name"]
             email_ids += ", %s" % row["email_id"]
-    if admin_email is not None:
-        employee_name += "Administrator"
-        email_ids += admin_email
+    # if admin_email is not None:
+    #     employee_name += "Administrator"
+    #     email_ids += admin_email
 
     return email_ids, employee_name
 
@@ -1291,19 +1266,14 @@ def update_password(db, password, user_id, client_id):
     result = db.update(
         tblUsers, columns, values, condition
     )
-    if is_primary_admin(db, user_id) or user_id == 0:
-        result = db.update(
-            tblAdmin, columns, values, "1"
-        )
-    if user_id != 0:
-        columns = "employee_code, employee_name"
-        condition = "user_id = '%s'" % user_id
-        rows = db.get_data(tblUsers, columns, condition)
-        employee_name = rows[0][1]
-        if rows[0]["employee_code"] is not None:
-            employee_name = "%s - %s" % (rows[0]["employee_code"], rows[0]["employee_name"])
-    else:
-        employee_name = "Administrator"
+    columns = "employee_code, employee_name"
+    condition = "user_id = '%s'" % user_id
+    rows = db.get_data(tblUsers, columns, condition)
+    employee_name = rows[0][1]
+    if rows[0]["employee_code"] is not None:
+        employee_name = "%s - %s" % (rows[0]["employee_code"], rows[0]["employee_name"])
+    else :
+        employee_name = rows[0]["employee_name"]
 
     action = "\"%s\" has updated his/her password" % (employee_name)
     db.save_activity(user_id, 0, action)

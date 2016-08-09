@@ -659,23 +659,25 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeClientUserStatus(uId, active, callback) {
+    function changeClientUserStatus(uId, active, employeeName, callback) {
         callerName = "client_masters"
         var request = [
             "ChangeClientUserStatus", {
                 "u_id": uId,
-                "active": active
+                "active": active,
+                "emp_name": employeeName
             }
         ];
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeAdminStatus(uId, admin, callback) {
+    function changeAdminStatus(uId, admin, adminName, callback) {
         callerName = "client_masters"
         var request = [
             "ChangeAdminStatus", {
                 "u_id": uId,
-                "admin": admin
+                "admin": admin,
+                "emp_name": adminName
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -690,12 +692,13 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function closeUnit(uId, pwd, callback,
+    function closeUnit(uId, uName, pwd, callback,
         failure_callback) {
         callerName = "client_masters"
         var request = [
             "CloseUnit", {
                 "u_id": uId,
+                "u_name": uName,
                 "pwd": pwd
             }
         ];

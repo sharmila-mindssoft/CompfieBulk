@@ -23,7 +23,8 @@ from server.clientdatabase.general import (
     get_user_name_by_id, convert_base64_to_file,
     set_new_due_date, is_two_levels_of_approval,
     is_admin, calculate_due_date, filter_out_due_dates,
-    get_user_email_name,  save_compliance_notification
+    get_user_email_name,  save_compliance_notification,
+    get_user_countries
 )
 from server.exceptionmessage import client_process_error
 email = EmailHandler()
@@ -55,7 +56,7 @@ CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 
 def get_statutory_settings(db, session_user, client_id):
     admin_id = get_admin_id(db)
-    if session_user == 0 or session_user == admin_id:
+    if session_user == admin_id:
         where_qry = ''
         condition_val = None
     else :
@@ -344,7 +345,7 @@ def get_units_for_assign_compliance(db, session_user, is_closed=None):
         is_close = 0
     else:
         is_close = '%'
-    if session_user > 0 and session_user != get_admin_id(db) :
+    if session_user != get_admin_id(db) :
         qry = ' AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id = %s)'
     else :
         qry = None
@@ -368,7 +369,7 @@ def get_units_for_assign_compliance(db, session_user, is_closed=None):
 
 
 def get_units_to_assig(db, session_user) :
-    if session_user > 0 and session_user != get_admin_id(db) :
+    if session_user != get_admin_id(db) :
         qry = ' AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id = %s) '
     else :
         qry = None
@@ -442,7 +443,7 @@ def get_users_for_seating_units(db, session_user, client_id):
         ON t1.user_id = t2.user_id \
         WHERE t1.is_active = 1 "
 
-    if session_user > 0 and session_user != get_admin_id(db) :
+    if session_user != get_admin_id(db) :
         query = query + where_condition
         rows = db.select_all(query, [session_user])
     else :
@@ -544,7 +545,7 @@ def get_assign_compliance_statutories_for_units(
 ):
     if len(unit_ids) == 1 :
         unit_ids.append(0)
-    if session_user == 0 or session_user == get_admin_id(db) :
+    if session_user == get_admin_id(db) :
         session_user = '%'
 
     qry_applicable = "SELECT distinct A.compliance_id, B.unit_id units \
@@ -1696,7 +1697,7 @@ def get_assigneewise_compliance_count(db, session_user):
     param = [1, 1]
     order = "GROUP BY t01.assignee "
 
-    if session_user > 0 and session_user != admin_id :
+    if session_user != admin_id :
         user_qry = " AND t01.unit_id in (select distinct unit_id from tbl_user_units where user_id like %s)"
         user_qry += " AND t02.domain_id in (select distinct domain_id from tbl_user_domains where user_id like %s)"
         param.extend([session_user, session_user])
@@ -1718,7 +1719,7 @@ def get_compliance_for_assignee(db, session_user, assignee, from_count, to_count
     admin_id = get_admin_id(db)
     result = []
     user_qry = ""
-    if session_user > 0 and session_user != admin_id :
+    if session_user != admin_id :
         user_qry = " AND t1.unit_id in (select distinct unit_id from tbl_user_units where user_id like %s)"
         user_qry = " AND t2.domain_id in (select distinct domain_id from tbl_user_domains where domain_id like %s)"
 
@@ -2003,7 +2004,6 @@ def update_user_settings(db, new_units):
         country_ids = n.country_id
 
         user_units = get_user_unit_ids(db, user_id)
-        user_units = [int(x) for x in user_units.split(',')]
         new_unit = []
         if unit_ids is not None :
             for u_id in unit_ids :
@@ -2021,7 +2021,6 @@ def update_user_settings(db, new_units):
             # self.save_activity(user_id, 7, action)
 
         user_domain_ids = get_user_domains(db, user_id)
-        user_domain_ids = [int(x) for x in user_domain_ids.split(',')]
         new_domains = []
         if domain_ids is not None :
             for d_id in domain_ids :
@@ -2045,7 +2044,6 @@ def update_user_settings(db, new_units):
             #     # self.save_activity(user_id, 7, action)
 
         user_countries = get_user_countries(db, user_id)
-        user_countries = [int(x) for x in user_countries.split(',')]
         new_countries = []
         if country_ids is not None :
             for c_id in country_ids :

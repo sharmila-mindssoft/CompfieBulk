@@ -3,20 +3,23 @@ import datetime
 from dateutil import relativedelta
 from protocol import (core, dashboard)
 from server.constants import FORMAT_DOWNLOAD_URL
+from server.emailcontroller import EmailHandler
 from server.clientdatabase.tables import *
-
 from server.clientdatabase.common import (
     get_last_7_years, get_country_domain_timelines,
     calculate_ageing_in_hours, calculate_years
 )
 from server.common import (
-    get_date_time_in_date, convert_to_dict, datetime_to_string_time, datetime_to_string
+    get_date_time_in_date, convert_to_dict,
+    datetime_to_string_time, datetime_to_string
 )
 from server.clientdatabase.general import (
     get_user_unit_ids, calculate_ageing, get_admin_id,
-    get_user_domains, get_group_name, is_primary_admin
+    get_user_domains, get_group_name, is_primary_admin,
+    get_all_users
 )
 from server.clientdatabase.clienttransaction import get_units_for_assign_compliance
+email = EmailHandler()
 __all__ = [
     "get_units_for_dashboard_filters",
     "get_compliance_status_chart",
@@ -212,7 +215,7 @@ def get_compliance_status(
     param = [tuple(country_ids), tuple(domain_ids)]
     param.extend(where_qry_val)
     # # print query
-    q = query + where_qry1 + order
+    q = "%s %s %s" % (query, where_qry1, order)
     rows = db.select_all(q, param)
     columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
     return filter_ids, convert_to_dict(rows, columns)
@@ -1645,6 +1648,18 @@ def get_notifications(
     db, notification_type, start_count, to_count,
     session_user, client_id
 ):
+    users = get_all_users(db)
+
+    def get_user_info_str(user_id):
+        u_info = users.get(user_id)
+        if u_info is None :
+            return None
+        data = "%s - %s, %s - %s " % (
+            u_info.get("employee_code"), u_info.get("employee_name"), u_info.get("contact_no"),
+            u_info.get("email_id")
+        )
+        return data
+
     notification_type_id = None
     if notification_type == "Notification":
         notification_type_id = 1
@@ -1652,45 +1667,37 @@ def get_notifications(
         notification_type_id = 2
     elif notification_type == "Escalation":
         notification_type_id = 3
-    columns = '''nul.notification_id as notification_id, notification_text, created_on, \
-        extra_details, statutory_provision, \
-        assignee, concurrence_person, approval_person, \
-        nl.compliance_id, compliance_task, document_name, \
-        compliance_description, penal_consequences, read_status,\
-        due_date, completion_date, approve_status'''
-    subquery_columns = "(SELECT concat(IFNULL(employee_code, 'Administrator'), '-', employee_name,\
-    ',','(' , IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE user_id = assignee), IF(\
-    concurrence_person IS NULL, '', (SELECT concat(IFNULL(employee_code, 'Administrator'), '-', \
-    employee_name,',','(' ,  IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE \
-    user_id = concurrence_person)), (SELECT concat(IFNULL(employee_code, 'Administrator'), '-',\
-    employee_name,',','(' ,  IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE \
-    user_id = approval_person),\
-    (select concat(unit_code, '-', unit_name, ',', address) \
-    FROM tbl_units tu WHERE tu.unit_id = nl.unit_id) " % (tblUsers, tblUsers, tblUsers)
+    # subquery_columns = "(SELECT concat(IFNULL(employee_code, 'Administrator'), '-', employee_name,\
+    # ',','(' , IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE user_id = assignee), IF(\
+    # concurrence_person IS NULL, '', (SELECT concat(IFNULL(employee_code, 'Administrator'), '-', \
+    # employee_name,',','(' ,  IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE \
+    # user_id = concurrence_person)), (SELECT concat(IFNULL(employee_code, 'Administrator'), '-',\
+    # employee_name,',','(' ,  IFNULL(contact_no, '-'), '-', email_id, ')') FROM %s WHERE \
+    # user_id = approval_person),\
+    # (select concat(unit_code, '-', unit_name, ',', address) \
+    # FROM tbl_units tu WHERE tu.unit_id = nl.unit_id) " % (tblUsers, tblUsers, tblUsers)
     query = " \
-            SELECT * FROM (\
-            SELECT %s,%s \
-            FROM %s nul \
-            LEFT JOIN %s nl ON (nul.notification_id = nl.notification_id)\
-            LEFT JOIN %s tc ON (tc.compliance_id = nl.compliance_id) \
-            LEFT JOIN %s tch ON (tch.compliance_id = nl.compliance_id AND \
+            SELECT nul.notification_id as notification_id, notification_text,\
+            created_on, extra_details, statutory_provision, assignee, IFNULL(concurrence_person, -1),\
+            approval_person, nl.compliance_id, compliance_task, document_name,\
+            compliance_description, penal_consequences, read_status,\
+            due_date, completion_date, approve_status, \
+            (select concat(unit_code, '-', unit_name, ',', address) from tbl_units where \
+                unit_id = nl.unit_id) \
+            FROM tbl_notification_user_log nul \
+            LEFT JOIN tbl_notifications_log nl ON (nul.notification_id = nl.notification_id)\
+            LEFT JOIN tbl_compliances tc ON (tc.compliance_id = nl.compliance_id) \
+            LEFT JOIN tbl_compliance_history tch ON (tch.compliance_id = nl.compliance_id AND \
             tch.unit_id = nl.unit_id) \
-            WHERE notification_type_id = '%s' \
-            AND user_id = '%s' \
-            AND read_status = 0\
+            WHERE notification_type_id = %s \
+            AND user_id = %s \
             AND (compliance_history_id is null \
             OR  compliance_history_id = CAST(REPLACE(\
             SUBSTRING_INDEX(extra_details, '-', 1),\
             ' ','') AS UNSIGNED)) \
-            LIMIT %s, %s ) as a \
-            ORDER BY a.notification_id DESC"
-
+            ORDER BY read_status desc, nul.notification_id DESC \
+            limit %s, %s"
     rows = db.select_all(query, [
-        columns, subquery_columns,
-        tblNotificationUserLog,
-        tblNotificationsLog,
-        tblCompliances,
-        tblComplianceHistory,
         notification_type_id, session_user,
         start_count, to_count
     ])
@@ -1700,9 +1707,9 @@ def get_notifications(
         "assignee", "concurrence_person", "approval_person",
         "compliance_id", "compliance_task", "document_name",
         "compliance_description", "penal_consequences", "read_status",
-        "due_date", "completion_date", "approve_status"
+        "due_date", "completion_date", "approve_status", "unit_details"
     ]
-    columns_list += ["assignee_details", "concurrence_details", "approver_details", "unit_details"]
+
     notifications = convert_to_dict(rows, columns_list)
     notifications_list = []
     for notification in notifications:
@@ -1735,9 +1742,12 @@ def get_notifications(
             unit_details = notification["unit_details"].split(",")
             unit_name = unit_details[0]
             unit_address = unit_details[1]
-            assignee = notification["assignee_details"]
-            concurrence_person = None if notification["concurrence_details"] in ['', None, "None"] else notification["concurrence_details"]
-            approval_person = notification["approver_details"]
+            assignee = get_user_info_str(notification["assignee"])
+            concurrence_person = get_user_info_str(notification["concurrence_person"])
+            approval_person = get_user_info_str(notification["approval_person"])
+
+            # concurrence_person = None if notification["concurrence_details"] in ['', None, "None"] else notification["concurrence_details"]
+            # approval_person = notification["approver_details"]
             compliance_name = notification["compliance_task"]
             if notification["document_name"] is not None and notification["document_name"].replace(" ", "") != "None":
                 compliance_name = "%s - %s" % (
@@ -1786,7 +1796,7 @@ def get_user_company_details(db, user_id, client_id=None):
     columns = "unit_id"
     condition = " 1 "
     rows = None
-    if user_id > 0 and user_id != admin_id:
+    if user_id != admin_id:
         condition = "  user_id = '%d'" % user_id
         rows = db.get_data(
             tblUserUnits, columns, condition
@@ -1837,13 +1847,15 @@ def get_assigneewise_compliances_list(
     if unit_id is not None:
         condition += " AND tu.unit_id = '%d'" % (unit_id)
     else:
-        condition += " AND tu.unit_id in (%s)" % (
-            get_user_unit_ids(db, session_user)
+        units = get_user_unit_ids(db, session_user)
+        if len(units) == 1 :
+            units.append(0)
+        condition += " AND tu.unit_id in %s " % (
+            tuple(units)
         )
     if assignee_id is not None:
         condition += " AND tch.completed_by = '%d'" % (assignee_id)
-    domain_ids = get_user_domains(db, session_user)
-    domain_ids_list = [int(x) for x in domain_ids.split(",")]
+    domain_ids_list = get_user_domains(db, session_user)
     current_date = get_date_time_in_date()
     result = {}
     for domain_id in domain_ids_list:
@@ -1944,13 +1956,11 @@ def get_assigneewise_yearwise_compliances(
     db, country_id, unit_id, user_id, client_id
 ):
     current_year = get_date_time_in_date().year
-    domain_ids = [int(x) for x in get_user_domains(db, user_id).split(",")]
+    domain_ids_list = get_user_domains(db, user_id)
     start_year = current_year - 5
     iter_year = start_year
     year_wise_compliance_count = []
     while iter_year <= current_year:
-        domain_ids = get_user_domains(db, user_id)
-        domain_ids_list = [int(x) for x in domain_ids.split(",")]
         domainwise_complied = 0
         domainwise_inprogress = 0
         domainwise_notcomplied = 0
@@ -2081,8 +2091,7 @@ def get_assigneewise_compliances_drilldown_data_count(
 ):
     domain_id_list = []
     if domain_id is None:
-        domain_ids = get_user_domains(db, session_user)
-        domain_id_list = [int(x) for x in domain_ids.split(",")]
+        domain_id_list = get_user_domains(db, session_user)
     else:
         domain_id_list = [domain_id]
 
@@ -2123,8 +2132,7 @@ def get_assigneewise_compliances_drilldown_data(
 ):
     domain_id_list = []
     if domain_id is None:
-        domain_ids = get_user_domains(db, session_user)
-        domain_id_list = [int(x) for x in domain_ids.split(",")]
+        domain_id_list = get_user_domains(db, session_user)
     else:
         domain_id_list = [domain_id]
 
@@ -2268,7 +2276,7 @@ def notify_expiration(db):
     values = [notification_id, 0]
     db.insert(tblNotificationUserLog, columns, values)
 
-    q = "SELECT username from tbl_admin"
+    q = "SELECT email_id from tbl_users where is_active = 1 and is_primary_admin = 1"
     rows = db.select_all(q)
     admin_mail_id = rows[0][0]
     email.notify_contract_expiration(
