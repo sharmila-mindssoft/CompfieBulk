@@ -154,5 +154,6 @@ function initialize(){
 }
 
 $(function() {
+  get_notification_count();
   initialize();
 });
