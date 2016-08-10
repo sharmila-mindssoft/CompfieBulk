@@ -1183,10 +1183,11 @@ def get_group_companies_for_user_with_max_unit_count(db, user_id):
     columns = ["client_id", "group_name", "is_active"]
     condition = "is_active=1"
     if client_ids is not None:
-        condition = "client_id in (%s) order by group_name ASC"
-        condition_val = [client_ids]
+        condition = "client_id in (%s) order by group_name ASC" % (
+            client_ids
+        )
         result = db.get_data(
-            tblClientGroups, columns, condition, condition_val
+            tblClientGroups, columns, condition
         )
     return return_group_companies_with_max_unit_count(db, result)
 
