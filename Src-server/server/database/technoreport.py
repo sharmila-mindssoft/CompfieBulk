@@ -9,8 +9,7 @@ from server.common import (
 )
 from server.database.knowledgemaster import (
     GEOGRAPHY_PARENTS,
-    get_geographies,
-    get_industry_by_id
+    get_geographies
 )
 from server.database.technotransaction import (
     return_assigned_compliances_by_id
@@ -285,7 +284,8 @@ def get_client_details_report_count(
     )
     query = "SELECT count(*) " +\
         " FROM %s tu " + \
-        " WHERE %s " % (tblUnits, condition)
+        " WHERE %s "
+    query = query % (tblUnits, condition)
     rows = db.select_all(query, param)
     result = convert_to_dict(rows, ["count"])
     return result[0]["count"]
@@ -315,7 +315,8 @@ def get_client_details_report(
         " WHERE %s " + \
         " ORDER BY tu.business_group_id, " + \
         " tu.legal_entity_id, tu.division_id, " + \
-        " tu.unit_id ASC LIMIT %s, %s" % (
+        " tu.unit_id ASC LIMIT %s, %s"
+    query = query % (
             columns, tblUnits, tblGeographies, tblBusinessGroups,
             tblLegalEntities, tblDivisions, condition,
             int(start_count), int(to_count)
