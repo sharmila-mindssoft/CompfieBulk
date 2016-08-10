@@ -721,8 +721,11 @@ def is_duplicate_business_group(
     db, business_group_id, business_group_name, client_id
 ):
     condition = "business_group_name = %s " + \
-        " AND business_group_id != %s and client_id = %s "
-    condition_val = [business_group_name, business_group_id, client_id]
+        " AND client_id = %s "
+    condition_val = [business_group_name, client_id]
+    if business_group_id is not None:
+        condition += " AND business_group_id != %s "
+        condition_val.append(business_group_id)
     return db.is_already_exists(tblBusinessGroups, condition, condition_val)
 
 
@@ -773,8 +776,11 @@ def is_duplicate_legal_entity(
     db, legal_entity_id, legal_entity_name, client_id
 ):
     condition = "legal_entity_name = %s " + \
-        " AND legal_entity_id != %s and client_id = %s"
-    condition_val = [legal_entity_name, legal_entity_id, client_id]
+        "  and client_id = %s"
+    condition_val = [legal_entity_name, client_id]
+    if legal_entity_id:
+        condition += " AND legal_entity_id != %s "
+        condition_val.append(legal_entity_id)
     return db.is_already_exists(tblLegalEntities, condition, condition_val)
 
 
@@ -824,8 +830,11 @@ def update_legal_entity(
 
 
 def is_duplicate_division(db, division_id, division_name, client_id):
-    condition = "division_name = %s AND division_id != %s and client_id = %s "
-    condition_val = [division_name, division_id, client_id]
+    condition = "division_name = %s  AND client_id = %s "
+    condition_val = [division_name, client_id]
+    if division_id is not None:
+        condition += " AND division_id != %s "
+        condition_val.append(division_id)
     return db.is_already_exists(tblDivisions, condition, condition_val)
 
 
@@ -985,9 +994,9 @@ def get_business_groups_for_user(db, user_id):
     if client_ids is not None:
         condition = "client_id in (%s) " + \
             " order by business_group_name ASC"
-        condition_val = [client_ids]
+        condition = condition % client_ids
         result = db.get_data(
-            tblBusinessGroups, columns, condition, condition_val
+            tblBusinessGroups, columns, condition
         )
     return return_business_groups(result)
 
@@ -1016,9 +1025,9 @@ def get_legal_entities_for_user(db, user_id):
     if client_ids is not None:
         condition = "client_id in (%s) " + \
             " order by legal_entity_name ASC"
-        condition_val = [client_ids]
+        condition = condition % client_ids
         result = db.get_data(
-            tblLegalEntities, columns, condition, condition_val
+            tblLegalEntities, columns, condition
         )
 
     return return_legal_entities(result)
