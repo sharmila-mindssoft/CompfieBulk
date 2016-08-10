@@ -348,6 +348,14 @@ class TemplateHandler(tornado.web.RequestHandler) :
         template = template_env.get_template(path)
         output = template.render(**self.__parameters)
         output = self.update_static_urls(output)
+        token = self.xsrf_token
+        print token
+        self.set_cookie("_xsrf", token)
+        # print self.get_secure_cookie('_xsrf')
+        # if not self.get_cookie("_xsrf"):
+        #     self.set_cookie("test", token)
+        # print self.get_secure_cookie('_xsrf')
+        # self.write(d)
         self.write(output)
 
     def options(self) :

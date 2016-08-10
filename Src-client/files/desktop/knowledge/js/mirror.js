@@ -152,16 +152,22 @@ function initMirror() {
             window.sessionStorage["my_ip"]  = data.ip;
         });
     }
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
     function apiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
             "session_token": sessionToken,
             "request": request
         };
-        jQuery.post(
-            BASE_URL + callerName,
-            toJSON(requestFrame),
-            function (data) {
+        $.ajax({
+            url : BASE_URL + callerName,
+            headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            type: "POST",
+            data: toJSON(requestFrame),
+            success: function (data) {
                 var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
@@ -184,10 +190,8 @@ function initMirror() {
                     else
                         callback(status, response)
                 }
-            }
-        )
-        .fail(
-            function (jqXHR, textStatus, errorThrown) {
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
                 // alert(jqXHR["responseText"]);
                 callback(jqXHR["responseText"], errorThrown);
                 // alert("jqXHR:"+jqXHR.status);
@@ -195,7 +199,7 @@ function initMirror() {
                 // alert("errorThrown:"+errorThrown);
                 // callback(error, null);
             }
-        );
+        });
     }
 
     function LoginApiRequest(callerName, request, callback) {
@@ -275,10 +279,12 @@ function initMirror() {
                 "session_token": sessionToken
             }
         ]
-        jQuery.post(
-            BASE_URL + "login",
-            toJSON(request),
-            function (data) {
+        $.ajax({
+            url: BASE_URL + "login",
+            headers: {'X-Xsrftoken' : getCookie('_xsrf')},
+            type: "POST",
+            data: toJSON(request),
+            success: function (data) {
                 var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
@@ -288,8 +294,11 @@ function initMirror() {
                 window.sessionStorage["login_url"] = login_url;
                 window.location.href = login_url;
 
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                callback(jqXHR["responseText"], errorThrown);
             }
-        )
+        });
     }
     //Domain Master
 
