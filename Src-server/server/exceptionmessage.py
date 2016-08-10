@@ -92,14 +92,18 @@ client_message = {
     "E027": "Client active status validation failed"
 }
 
+
 def process_error(msg_code):
     return RuntimeError(messages.get(msg_code))
+
 
 def client_process_error(msg_code):
     return RuntimeError(client_message.get(msg_code))
 
+
 def fetch_error():
     return RuntimeError("Transaction failed while processing data.")
+
 
 def not_found_error(msg_code):
     return ValueError(messages.get(msg_code))
