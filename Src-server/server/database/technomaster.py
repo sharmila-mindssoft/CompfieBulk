@@ -188,7 +188,6 @@ def get_techno_users(db):
     domains = db.get_data(
         tblUserDomains, domain_columns, country_domain_condition
     )
-    print "countries: {}".format(countries)
     user_country_map = {}
     for country in countries:
         user_id = int(country["user_id"])
@@ -198,7 +197,6 @@ def get_techno_users(db):
             country["country_id"]
         )
 
-    print "domains: {}".format(domains)
     user_domain_map = {}
     for domain in domains:
         user_id = int(domain["user_id"])
@@ -221,8 +219,6 @@ def get_techno_users(db):
 
 
 def return_techno_users(users, user_country_map, user_domain_map):
-    print user_country_map
-    print user_domain_map
     fn = core.ClientInchargePersons
     results = [
         fn(
@@ -272,9 +268,7 @@ def return_group_company_details(db, result):
         short_name = client_row["url_short_name"]
 
         country_ids = get_client_countries(db, client_id)
-        print country_ids
         domain_ids = get_client_domains(db, client_id)
-        print domain_ids
         date_configurations = get_date_configurations(db, client_id)
         client_list.append(
             core.GroupCompanyDetail(
