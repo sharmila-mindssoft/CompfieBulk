@@ -694,6 +694,13 @@ $("#upload-logo").on("change", function(e) {
 var chosen_clientmaster = "";
 
 function onArrowKeyUser(e, ac_item){
+  if (e.keyCode == 13) {
+    chosen_clientmaster = "";
+    $("#selectboxview-country").hide();
+    $("#selectboxview-users").hide();
+    $("#selectboxview").hide();
+  }
+
   if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 32) {
     chosen_clientmaster = "";
   }
