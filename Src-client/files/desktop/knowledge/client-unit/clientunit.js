@@ -1626,7 +1626,7 @@ function activate_text (element, ccount) {
     $('.glevel-'+checkval).empty();
 }
 
-function onArrowKey_Country(e, ac_item, ccount){
+function onArrowKey_Client(e, ac_item, ccount, multipleselect){
   if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13) {
     chosen = "";
   }
@@ -1654,10 +1654,26 @@ function onArrowKey_Country(e, ac_item, ccount){
     var ac_id = $('.' + ac_item + ' li:eq('+chosen+')').attr('id');
     var ac_name = $('.' + ac_item + ' li:eq('+chosen+')').text();
 
-    $(".countryval-"+ccount).val(ac_name);
-    $(".country-"+ccount).val(ac_id);
-    $('.glevel-'+ac_id).empty();
-    $('.autocompleteview-'+ccount).css("display", "none");
+    if(multipleselect == 'country'){
+        $(".countryval-"+ccount).val(ac_name);
+        $(".country-"+ccount).val(ac_id);
+        $('.glevel-'+ac_id).empty();
+        $('.autocompleteview-'+ccount).css("display", "none");
+    }else{
+        $('.unitlocation'+ccount).val(ac_name);
+        $('.unitlocation-ids'+ccount).val(ac_id);
+        for(var geography in geographyList){
+            var geolist = geographyList[geography];
+            for(var glist in geolist){
+                if(geolist[glist]['geography_id'] == parseInt(ac_id)){
+                    mappingname = geolist[glist]["mapping"];
+                }
+            }
+        }
+        $('.full-location-list'+ccount).html('<br>'+mappingname);
+        $('.auto-complete-unit-location').css("display", "none");
+    }
+    
     return false;
   }
 }
@@ -1704,60 +1720,13 @@ function loadauto_countrytext (textval, classval, e) {
         $('.ulist-text-'+ccount).append(str);
         $(".country-"+ccount).val('');
     }
-    onArrowKey_Country(e, 'autocompleteview-'+ccount, ccount)
+    onArrowKey_Client(e, 'autocompleteview-'+ccount, ccount, 'country')
 }
-
-
 
 //set selected autocomplte value to textbox and geographylevel list
 function hideunitlocation(classname) {
     var lastClass = classname.split(' ').pop();
     $('.'+lastClass).css("display", "none");
-}
-
-function onArrowKey_UnitLocation(e, ac_item, ccount){
-
-  if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13) {
-    chosen = "";
-  }
-  if (e.keyCode == 40) {
-      if(chosen === "") {
-          chosen = 0;
-      } else if((chosen+1) < $('.' + ac_item + ' li').length) {
-          chosen++;
-      }
-      $('.' + ac_item + ' li').removeClass('auto-selected');
-      $('.' + ac_item + ' li:eq('+chosen+')').addClass('auto-selected');
-      return false;
-  }
-  if (e.keyCode == 38) {
-      if(chosen === "") {
-          chosen = 0;
-      } else if(chosen > 0) {
-          chosen--;
-      }
-      $('.' + ac_item + ' li').removeClass('auto-selected');
-      $('.' + ac_item + ' li:eq('+chosen+')').addClass('auto-selected');
-      return false;
-  }
-  if (e.keyCode == 13) {
-    var mappingname = '';
-    var ac_id = $('.' + ac_item + ' li:eq('+chosen+')').attr('id');
-    var ac_name = $('.' + ac_item + ' li:eq('+chosen+')').text();
-    $('.unitlocation'+ccount).val(ac_name);
-    $('.unitlocation-ids'+ccount).val(ac_id);
-    for(var geography in geographyList){
-        var geolist = geographyList[geography];
-        for(var glist in geolist){
-            if(geolist[glist]['geography_id'] == parseInt(ac_id)){
-                mappingname = geolist[glist]["mapping"];
-            }
-        }
-    }
-    $('.full-location-list'+ccount).html('<br>'+mappingname);
-    $('.auto-complete-unit-location').css("display", "none");
-    return false;
-  }
 }
 
 function activate_unitlocaion (element, ccount, mappingname) {
@@ -1767,7 +1736,6 @@ function activate_unitlocaion (element, ccount, mappingname) {
     $('.unitlocation-ids'+ccount).val(checkval);
     $('.full-location-list'+ccount).html('<br>'+mappingname.replace(/##/gi,'"'));
 }
-
 
 //autocomplete location
 function loadlocation(textval, classval, e){
@@ -1796,10 +1764,9 @@ function loadlocation(textval, classval, e){
         $('.unitlocationlist-text'+countval).append(str);
         //$('.unitlocation-ids'+countval).val('');
 
-        onArrowKey_UnitLocation(e, 'unitlocationlist-text'+countval, countval)
+        onArrowKey_Client(e, 'unitlocationlist-text'+countval, countval, 'unit')
     }
 }
-
 
 function domainunionclientdomainList(classval){
     var finalObj;
@@ -1975,17 +1942,61 @@ function loaddomain(classval){
     $('.domainselected'+countval).val(editdomainval.length+" Selected")
 }
 
-//check & uncheck process
-function activate(element, count){
-    var chkstatus = $(element).attr('class');
-    if(chkstatus == 'active_selectbox'+count+' active'){
-        $(element).removeClass("active_selectbox"+count);
-        $(element).removeClass("active");
 
+function onArrowKeyUnit(e, ac_item, count){
+  if (e.keyCode == 13) {
+    chosen_unit = "";
+    $(".domain-selectbox-view").hide();
+  }
+  if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 32) {
+    chosen_unit = "";
+  }
+  if (e.keyCode == 40) {
+      if(chosen_unit === "") {
+          chosen_unit = 0;
+      } else if((chosen_unit+1) < $('.' + ac_item + ' li').length) {
+          chosen_unit++;
+      }
+      $('.' + ac_item + ' li').removeClass('auto-selected');
+      $('.' + ac_item + ' li:eq('+chosen_unit+')').addClass('auto-selected');
+
+      return false;
+  }
+  if (e.keyCode == 38) {
+      if(chosen_unit === "") {
+          chosen_unit = 0;
+      } else if(chosen_unit > 0) {
+          chosen_unit--;
+      }
+      $('.' + ac_item + ' li').removeClass('auto-selected');
+      $('.' + ac_item + ' li:eq('+chosen_unit+')').addClass('auto-selected');
+      return false;
+  }
+  if (e.keyCode == 32) {
+    $('.' + ac_item + ' li:eq('+chosen_unit+')').removeClass('auto-selected');
+    var ms_id = $('.' + ac_item + ' li:eq('+chosen_unit+')').attr('id');
+    var chkstatus = $('.' + ac_item + ' li:eq('+chosen_unit+')').attr('class');
+    if(chkstatus == 'active_selectbox'+count+' active'){
+        $('.' + ac_item + ' li:eq('+chosen_unit+')').removeClass("active_selectbox"+count);
+        $('.' + ac_item + ' li:eq('+chosen_unit+')').removeClass("active");
     }else{
-        $(element).addClass("active_selectbox"+count);
-        $(element).addClass("active");
+        $('.' + ac_item + ' li:eq('+chosen_unit+')').addClass("active_selectbox"+count);
+        $('.' + ac_item + ' li:eq('+chosen_unit+')').addClass("active");
     }
+    activate_domain(count);
+    return false;
+  }
+}
+
+var chosen_unit = '';
+function loaddomain_ms(e, classval){
+    var lastClass = classval.split(' ').pop();
+    var ccount = lastClass.split('-');
+    var countval = '-'+ccount[1]+'-'+ccount[2];
+    onArrowKeyUnit(e, 'ul-domain-list'+countval, countval)
+}
+
+function activate_domain(count){
     var selids='';
     var selNames='';
     var totalcount =  $(".active_selectbox"+count).length;
@@ -1998,6 +2009,20 @@ function activate(element, count){
     });
     $(".domainselected"+count).val(totalcount+" Selected");
     $(".domain"+count).val(selids);
+}
+
+//check & uncheck process
+function activate(element, count){
+    var chkstatus = $(element).attr('class');
+    if(chkstatus == 'active_selectbox'+count+' active'){
+        $(element).removeClass("active_selectbox"+count);
+        $(element).removeClass("active");
+
+    }else{
+        $(element).addClass("active_selectbox"+count);
+        $(element).addClass("active");
+    }
+    activate_domain(count);
 }
 function divisionExistingChecking(str){
     if(str == "New"){

@@ -198,7 +198,7 @@
       </td>
       <td><input type="text" class="input-box unit-address" maxlength="250" /></td>
       <td><input type="text" class="input-box postal-code" maxlength="8" ></td>
-      <td> <input type="text" class="input-box icon-autocomplete  domainselected" value="" readonly="readonly" onclick="loaddomain(this.className)">
+      <td> <input type="text" class="input-box icon-autocomplete  domainselected" value="" readonly="readonly" onkeyup="loaddomain_ms(event, this.className)" onclick="loaddomain(this.className)">
       <input type="hidden" class="domain">
       <div class="domain-selectbox-view ac-selectbox" style="display:none;">
       <ul class="ul-domain-list" onmouseleave="hidedomain(this.className);" style="width:170px;"></ul>
@@ -240,7 +240,7 @@
         </td>
         <td><input type="text" class="input-box unit-address"  maxlength="250" /></td>
         <td><input type="text" class="input-box postal-code" maxlength="8" ></td>
-        <td> <input type="text" class="input-box icon-autocomplete domainselected" value="" readonly="readonly" onclick="loaddomain(this.className)">
+        <td> <input type="text" class="input-box icon-autocomplete domainselected" value="" readonly="readonly" onkeyup="loaddomain_ms(event, this.className)" onclick="loaddomain(this.className)">
         <input type="hidden" class="domain">
         <div class="domain-selectbox-view ac-selectbox" style="display:none;">
         <ul class="ul-domain-list" onmouseleave="hidedomain(this.className);" style="width:170px;"></ul>
