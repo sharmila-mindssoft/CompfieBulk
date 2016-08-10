@@ -170,7 +170,7 @@ def update_password(db, password, user_id):
         columns = "employee_code, employee_name"
         condition = "user_id =%s"
         condition_val = [user_id]
-        rows = db.get_data(tblUsers, columns, condition)
+        rows = db.get_data(tblUsers, columns, condition, condition_val)
         employee_name = rows[0]["employee_name"]
         if rows[0]["employee_code"] is not None:
             employee_name = "%s - %s" % (
