@@ -1882,7 +1882,10 @@ list-style-type:none; line-height:25px;
   line-height: 30px;
   font-size: 0.8em;
 }
-
+.popup-link {
+  cursor: pointer;
+  text-decoration: underline;
+}
 .popup-password {
   margin: 70px auto;
   padding: 20px;

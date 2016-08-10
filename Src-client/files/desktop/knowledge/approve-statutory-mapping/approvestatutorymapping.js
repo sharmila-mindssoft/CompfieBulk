@@ -188,7 +188,7 @@ function loadApproveStatutory(){
         $('.statutory', clone).html(statutoryMappings);
         var complianceNames='';
         for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
-          complianceNames = complianceNames + '<a href="#popup1" class="new-link" onclick="disppopup('+statutorymappingId+','+i+',this)">'+(i+1)+'. '+statutoryMappingsList[entity]["compliance_names"][i]['compliance_name']+'</a> <br>';
+          complianceNames = complianceNames + '<a class="popup-link new-link" onclick="disppopup('+statutorymappingId+','+i+',this)">'+(i+1)+'. '+statutoryMappingsList[entity]["compliance_names"][i]['compliance_name']+'</a> <br>';
         }
         $('.compliancetask', clone).html(complianceNames);
         $('.applicablelocation', clone).html(applicableLocation);
@@ -234,14 +234,15 @@ $("#submit").click(function(){
   loadApproveStatutory();
 });
 
-/*$(".close").click(function(){
+$(".close").click(function(){
   $('.overlay').css("visibility","hidden");
   $('.overlay').css("opacity","0");
-});*/
+});
 
 //display popup with details
 function disppopup(sm_id,compliance_id,element){
-  $("#popup1").show();
+  $('.overlay').css("visibility","visible");
+  $('.overlay').css("opacity","1");
   $(element).removeClass("new-link");
 
   var sm = statutoryMappingsList[sm_id];

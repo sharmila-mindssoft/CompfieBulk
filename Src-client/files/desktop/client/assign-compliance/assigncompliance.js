@@ -106,9 +106,15 @@ function compliancestatus(element){
   }
 }
 
+$(".close").click(function(){
+  $('.overlay').css("visibility","hidden");
+  $('.overlay').css("opacity","0");
+});
+
 //display applicable unit details in popup
 function disppopup(units_string){
-  $("#popup1").show();
+  $('.overlay').css("visibility","visible");
+  $('.overlay').css("opacity","1");
   $(".popup-list").find("tr").remove();
   var units = units_string.split(',');
   for(var i=0; i<(units.length - 1); i++){
@@ -229,7 +235,7 @@ function load_secondwizard(){
           dispUnit = dispUnit + applicable_units[i]+',';
         }
         $('.applicableunit', clone2).html('<input type="hidden" id="appl_unit'+statutoriesCount+'" value="'+ dispUnit +
-          '"/><a href="#popup1" onclick="disppopup(\''+dispUnit+'\')">'+dispApplicableUnits+'</a>');
+          '"/><a class="popup-link" onclick="disppopup(\''+dispUnit+'\')">'+dispApplicableUnits+'</a>');
         $('.compliancefrequency', clone2).text(frequency);
 
         if(summary != null){

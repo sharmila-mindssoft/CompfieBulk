@@ -86,7 +86,7 @@
                   <option value="">Select</option>
                 </Select>
                 <input id="businessgroup-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Business Group Name" maxlength="100">
-                <span style="font-size:10px"><a href="#" id="businessgroup-new" onclick="businessGroupExistingChecking('New')">New</a><a href="#" id="businessgroup-existing" style="display:none;" onclick="businessGroupExistingChecking('Cancel')">Cancel</a></span> </div>
+                <span style="font-size:10px"><a class="popup-link" id="businessgroup-new" onclick="businessGroupExistingChecking('New')">New</a><a class="popup-link" id="businessgroup-existing" style="display:none;" onclick="businessGroupExistingChecking('Cancel')">Cancel</a></span> </div>
               </div>
             </div>
             <div class="input-row-right">
@@ -98,7 +98,7 @@
                     <option value="">Select</option>
                   </Select>
                   <input id="entity-text" type="text" class="input-box" style="width:190px;display:none" placeholder="Legal Entity Name" maxlength="100">
-                  <span style="font-size:10px"><a href="#" id="entity-new" onclick="legalEntityExistingChecking('New')">New</a><a href="#" id="entity-existing" style="display:none;" onclick="legalEntityExistingChecking('Cancel')">Cancel</a></span> </div>
+                  <span style="font-size:10px"><a class="popup-link" id="entity-new" onclick="legalEntityExistingChecking('New')">New</a><a class="popup-link" id="entity-existing" style="display:none;" onclick="legalEntityExistingChecking('Cancel')">Cancel</a></span> </div>
                 </div>
                 <div class="input-row">
                  <input type="hidden" id="division-update-id" value="">
@@ -108,7 +108,7 @@
                       <option value="">Select</option>
                     </Select>
                     <input id="division-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Division Name"maxlength="100" >
-                    <span style="font-size:10px"><a href="#" id="division-new" onclick="divisionExistingChecking('New')">New</a><a href="#" id="division-existing" style="display:none;" onclick="divisionExistingChecking('Cancel')">Cancel</a></span> </div>
+                    <span style="font-size:10px"><a class="popup-link" id="division-new" onclick="divisionExistingChecking('New')">New</a><a class="popup-link" id="division-existing" style="display:none;" onclick="divisionExistingChecking('Cancel')">Cancel</a></span> </div>
                   </div>
                 </div>
                 <input type="hidden" id="countrycount" value="">
@@ -132,7 +132,7 @@
     </div>
     <div id="popup" class="overlay" >
   <div class="popup">
-    <a class="close" href="#">X</a>
+    <a class="close">X</a>
     <div class="content">
       Password<br>
       <input type="hidden" id="unitidval">
