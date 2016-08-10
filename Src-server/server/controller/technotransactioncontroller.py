@@ -1,6 +1,8 @@
 import time
 from protocol import login, technotransactions
-from generalcontroller import validate_user_session, validate_user_forms, process_get_countries_for_user
+from generalcontroller import (
+    validate_user_session, validate_user_forms, process_get_countries_for_user
+)
 from server import logger
 from server.database.admin import (
     get_domains_for_user
@@ -29,13 +31,14 @@ __all__ = [
 
 forms = [21]
 
+
 def process_techno_transaction_request(request, db):
     session_token = request.session_token
     request_frame = request.request
     user_id = validate_user_session(db, session_token)
-    if user_id is not None :
+    if user_id is not None:
         is_valid = validate_user_forms(db, user_id, forms, request_frame)
-        if is_valid is not True :
+        if is_valid is not True:
             return login.InvalidSessionToken()
 
     if user_id is None:
@@ -55,17 +58,27 @@ def process_techno_transaction_request(request, db):
         logger.logKnowledgeApi("GetAssignedStatutoriesById", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
-    elif type(request_frame) is technotransactions.GetAssignedStatutoryWizardOneData:
-        logger.logKnowledgeApi("GetAssignedStatutoryWizardOneData", "process begin")
+    elif type(
+        request_frame
+    ) is technotransactions.GetAssignedStatutoryWizardOneData:
+        logger.logKnowledgeApi(
+            "GetAssignedStatutoryWizardOneData", "process begin"
+        )
         logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_assigned_statutory_wizard_one(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetAssignedStatutoryWizardOneData", "process end")
+        result = process_get_assigned_statutory_wizard_one(
+            db, request_frame, user_id
+        )
+        logger.logKnowledgeApi(
+            "GetAssignedStatutoryWizardOneData", "process end"
+        )
         logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technotransactions.GetStatutoryWizardTwoData:
         logger.logKnowledgeApi("GetStatutoryWizardTwoData", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_assigned_statutory_wizard_two(db, request_frame, user_id)
+        result = process_get_assigned_statutory_wizard_two(
+            db, request_frame, user_id
+        )
         logger.logKnowledgeApi("GetStatutoryWizardTwoData", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
@@ -85,12 +98,15 @@ def process_techno_transaction_request(request, db):
 
     return result
 
+
 def process_get_assigned_statutories(db, user_id):
     return get_assigned_statutories_list(db, user_id)
+
 
 def process_get_assigned_statutories_by_id(db, request_frame):
     client_statutory_id = request_frame.client_statutory_id
     return get_assigned_statutories_by_id(db, client_statutory_id)
+
 
 def process_get_assigned_statutory_wizard_one(db, request_frame, user_id):
     country_id = request_frame.country_id
@@ -109,20 +125,22 @@ def process_get_assigned_statutory_wizard_one(db, request_frame, user_id):
         legal_entities, divisions, units
     )
 
+
 def process_get_assigned_statutory_wizard_two(db, request_frame, user_id):
     geography_id = request_frame.geography_id
     industry_id = request_frame.industry_id
     domain_id = request_frame.domain_id
     country_id = request_frame.country_id
     unit_id = request_frame.unit_id
-    print unit_id
     return get_assign_statutory_wizard_two(
         db, country_id, geography_id, industry_id,
         domain_id, unit_id, user_id
     )
 
+
 def process_save_assigned_statutory(db, request_frame, user_id):
     return save_assigned_statutories(db, request_frame, user_id)
+
 
 def process_get_countries_for_groups(db, user_id):
     return process_get_countries_for_user(db, user_id)
