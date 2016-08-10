@@ -16,8 +16,12 @@ from server.database.technomaster import (
 
 CLIENT_DB_PREFIX = "compfie"
 
+
 class ClientDBCreate(object):
-    def __init__(self, db, client_id, short_name, email_id, country_ids, domain_ids):
+    def __init__(
+        self, db, client_id, short_name, email_id, country_ids, domain_ids
+    ):
+        print "inside client db create init"
         self._db = db
         self._client_id = client_id
         self._short_name = short_name
@@ -37,10 +41,12 @@ class ClientDBCreate(object):
         raise ValueError(message)
 
     def prepare_db_constrains(self):
+        print "inside prepare db constraints"
         result = self.get_server_machine_details()
-        if result is False :
+        print "result: {}".format(result)
+        if result is False:
             raise self.process_error("Prepare db_constrsains failed")
-        elif result is True :
+        elif result is True:
             res = self.process_db_creation()
             r = self.update_client_db_details()
             print r
@@ -48,7 +54,9 @@ class ClientDBCreate(object):
             return res
 
     def db_name(self):
-        return "%s_%s_%s" % (CLIENT_DB_PREFIX, self._short_name.lower(), self._client_id)
+        return "%s_%s_%s" % (
+            CLIENT_DB_PREFIX, self._short_name.lower(), self._client_id
+        )
 
     def db_username(self):
         return generate_random()
@@ -57,10 +65,12 @@ class ClientDBCreate(object):
         return generate_random()
 
     def get_server_machine_details(self):
+        print "inside get server machiner details"
         data = get_server_details(self._db)
-        if len(data) <= 0 :
+        print "data: {}".format(data)
+        if len(data) <= 0:
             return technomaster.ServerIsFull()
-        else :
+        else:
             self._host = data[0]["ip"]
             self._username = data[0]["server_username"]
             self._password = data[0]["server_password"]
@@ -91,6 +101,7 @@ class ClientDBCreate(object):
         return result
 
     def _mysql_server_connect(self, host, username, password, port):
+        print host, username, password, port
         return mysql.connect(
             host=host, user=username, passwd=password, port=port
         )
@@ -105,20 +116,20 @@ class ClientDBCreate(object):
         con = self._mysql_server_connect(
             self._host, self._username, self._password, self._port
         )
-        try :
+        try:
             cursor = con.cursor()
             query = "DROP DATABASE IF EXISTS %s" % self._db_name
             cursor.execute(query)
             # drop created user here.
             con.commit()
-        except mysql.Error, e :
+        except mysql.Error, e:
             print e
             con.rollback()
 
     def _create_database(self):
         db_con = None
         main_con = None
-        try :
+        try:
             print self._host, self._username, self._password
             main_con = self._mysql_server_connect(
                 self._host, self._username, self._password, self._port
@@ -151,43 +162,43 @@ class ClientDBCreate(object):
             print "country create "
             db_con.commit()
             return True, admin_password
-        except Exception, e :
+        except Exception, e:
             print e
             print "main Exception"
-            if db_con is not None :
+            if db_con is not None:
                 db_con.rollback()
-            if main_con is not None :
+            if main_con is not None:
                 main_con.rollback()
             return e
 
     def _save_client_countries(self, country_ids, cursor):
-        try :
-            q = "SELECT country_id, country_name, is_active \
-                    FROM tbl_countries\
-                    WHERE country_id\
-                    IN (%s) "
+        try:
+            q = "SELECT country_id, country_name, is_active " + \
+                    " FROM tbl_countries " + \
+                    " WHERE country_id " + \
+                    " IN (%s) "
             rows = self._db.select_all(q, [country_ids])
-            for r in rows :
+            for r in rows:
                 q = " INSERT INTO tbl_countries VALUES (%s, %s, %s)"
                 cursor.execute(q, [int(r[0]), r[1], int(r[2])])
-        except Exception :
+        except Exception:
             raise self.process_error("save client countries failed")
 
     def _save_client_domains(self, domain_ids, cursor):
-        try :
-            q = "SELECT domain_id, domain_name, is_active \
-                    FROM tbl_domains\
-                    WHERE domain_id\
-                    IN (%s)"
+        try:
+            q = "SELECT domain_id, domain_name, is_active " + \
+                    " FROM tbl_domains " + \
+                    " WHERE domain_id " + \
+                    " IN (%s)"
             rows = self._db.select_all(q, [domain_ids])
-            for r in rows :
+            for r in rows:
                 q = " INSERT INTO tbl_domains VALUES (%s, %s, %s)"
                 cursor.execute(q, [int(r[0]), r[1], int(r[2])])
-        except Exception :
+        except Exception:
             raise self.process_error("save client domains failed")
 
     def _create_db(self, cursor):
-        try :
+        try:
             query = "CREATE DATABASE %s" % self._db_name
             print query
             cursor.execute(query)
@@ -198,8 +209,9 @@ class ClientDBCreate(object):
             raise self.process_error(e)
 
     def _grant_privileges(self, cursor):
-        try :
-            query = "GRANT SELECT, INSERT, UPDATE, DELETE ON %s.* to '%s'@'%s' IDENTIFIED BY '%s';"
+        try:
+            query = "GRANT SELECT, INSERT, UPDATE, " + \
+                " DELETE ON %s.* to '%s'@'%s' IDENTIFIED BY '%s';"
             print query
             param = (
                 self._db_name, self._db_username, str('%'), self._db_password
@@ -207,33 +219,37 @@ class ClientDBCreate(object):
             print param
             cursor.execute(query % param)
             cursor.execute("FLUSH PRIVILEGES;")
-        except mysql.Error, ex :
+        except mysql.Error, ex:
             print ex
             e = "client database user grant_privileges failed"
             raise self.process_error(e)
 
     def _create_admin_user(self, cursor):
-        try :
+        try:
             encrypted_password, password = generate_and_return_password()
-            # query = "insert into tbl_admin (username, password) values (%s, %s)"
+            # query = "insert into tbl_admin ( " + \
+            #   " username, password) values (%s, %s)"
             # logger.logKnowledge("info", "create", "save user")
             # cursor.execute(query, [self._email_id, encrypted_password])
 
-            query = "insert into tbl_users (user_id, employee_name, email_id, password, user_level,\
-            is_primary_admin, is_service_provider, is_admin)\
-            values (0, 'Administrator', %s, %s, 1 , 1, 0, 0 )"
+            query = "insert into tbl_users (user_id, employee_name, " + \
+                " email_id, password, user_level, " + \
+                " is_primary_admin, is_service_provider, is_admin)" + \
+                " values (0, 'Administrator', %s, %s, 1 , 1, 0, 0 )"
             cursor.execute(query, [self._email_id, encrypted_password])
             return password
-        except Exception :
-            raise self.process_error("admin user creation failed in client database")
+        except Exception:
+            raise self.process_error(
+                "admin user creation failed in client database"
+            )
 
     def _create_tables(self, cursor):
-        try :
+        try:
             sql_script_path = os.path.join(
                 os.path.join(os.path.split(__file__)[0], ".."),
                 "scripts/mirror-client.sql"
             )
-            with io.FileIO(sql_script_path, "r") as file_obj :
+            with io.FileIO(sql_script_path, "r") as file_obj:
                 sql_file = file_obj.read()
                 sql_commands = sql_file.split(';')
                 size = len(sql_commands)
@@ -242,95 +258,119 @@ class ClientDBCreate(object):
                         cursor.execute(command)
                     else:
                         break
-        except mysql.Error, e :
+        except mysql.Error, e:
             print e
-            raise self.process_error("table creation failed in client database")
+            raise self.process_error(
+                "table creation failed in client database"
+            )
 
     def _create_procedure(self, cursor):
-        try :
-            p1 = "CREATE PROCEDURE `procedure_to_update_version` (IN update_type VARCHAR(100))\
-                BEGIN \
-                    SET SQL_SAFE_UPDATES=0;\
-                    case \
-                        when update_type = 'unit' then \
-                        SET @count = (SELECT unit_details_version+1 FROM tbl_mobile_sync_versions ); \
-                        update tbl_mobile_sync_versions set unit_details_version = @count; \
-                        when update_type = 'user' then \
-                        SET @count = (SELECT user_details_version+1 FROM tbl_mobile_sync_versions ); \
-                        update tbl_mobile_sync_versions set user_details_version = @count; \
-                        when update_type = 'compliance' then \
-                        SET @count = (SELECT compliance_applicability_version+1 FROM tbl_mobile_sync_versions ); \
-                        update tbl_mobile_sync_versions set compliance_applicability_version = @count; \
-                        when update_type = 'history' then \
-                        SET @count = (SELECT compliance_history_version+1 FROM tbl_mobile_sync_versions ); \
-                        update tbl_mobile_sync_versions set compliance_history_version = @count; \
-                    end case; \
-                    SET SQL_SAFE_UPDATES=1; \
-                END "
+        try:
+            p1 = "CREATE PROCEDURE `procedure_to_update_version` " + \
+                " (IN update_type VARCHAR(100)) " + \
+                " BEGIN " + \
+                " SET SQL_SAFE_UPDATES=0; " + \
+                " case  " + \
+                " when update_type = 'unit' then " + \
+                " SET @count = (SELECT unit_details_version+1 " + \
+                " FROM tbl_mobile_sync_versions ); " + \
+                " update tbl_mobile_sync_versions set " + \
+                " unit_details_version = @count; " + \
+                " when update_type = 'user' then " + \
+                " SET @count = (SELECT user_details_version+1 " + \
+                " FROM tbl_mobile_sync_versions ); " + \
+                " update tbl_mobile_sync_versions set " + \
+                " user_details_version = @count; " + \
+                " when update_type = 'compliance' then " + \
+                " SET @count = (SELECT compliance_applicability_version+1 " + \
+                " FROM tbl_mobile_sync_versions ); " + \
+                " update tbl_mobile_sync_versions set " + \
+                " compliance_applicability_version = @count; " + \
+                " when update_type = 'history' then " + \
+                " SET @count = (SELECT compliance_history_version+1 " + \
+                " FROM tbl_mobile_sync_versions ); " + \
+                " update tbl_mobile_sync_versions set " + \
+                " compliance_history_version = @count; " + \
+                " end case; " + \
+                " SET SQL_SAFE_UPDATES=1; " + \
+                " END "
             cursor.execute(p1)
-        except Exception :
-            raise self.process_error("procedure creation failed in client database")
+        except Exception:
+            raise self.process_error(
+                "procedure creation failed in client database"
+            )
 
     def _create_trigger(self, cursor):
-        try :
-            t1 = "CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON `tbl_statutory_notifications_units` \
-                FOR EACH ROW BEGIN \
-                    INSERT INTO tbl_statutory_notification_status ( \
-                    statutory_notification_id, \
-                    user_id, read_status) \
-                    SELECT NEW.statutory_notification_id, t1.user_id, 0 \
-                    FROM tbl_user_units t1 where t1.unit_id = NEW.unit_id; \
-                    \
-                    INSERT INTO tbl_statutory_notification_status ( \
-                        statutory_notification_id, \
-                        user_id, read_status \
-                    ) \
-                    SELECT NEW.statutory_notification_id, t1.user_id, 0 FROM \
-                    tbl_users t1 where t1.is_active = 1 and t1.is_primary_admin = 1; \
-                END; "
+        try:
+            t1 = "CREATE TRIGGER " + \
+                " `after_tbl_statutory_notifications_units_insert` " + \
+                " AFTER INSERT ON `tbl_statutory_notifications_units` " + \
+                " FOR EACH ROW BEGIN " + \
+                " INSERT INTO tbl_statutory_notification_status ( " + \
+                " statutory_notification_id, " + \
+                " user_id, read_status) " + \
+                " SELECT NEW.statutory_notification_id, t1.user_id, 0 " + \
+                " FROM tbl_user_units t1 where t1.unit_id = NEW.unit_id; " + \
+                " INSERT INTO tbl_statutory_notification_status ( " + \
+                " statutory_notification_id, " + \
+                " user_id, read_status) " + \
+                " SELECT NEW.statutory_notification_id, t1.user_id, 0  " + \
+                " FROM tbl_users t1 where t1.is_active = 1 " + \
+                " and t1.is_primary_admin = 1;" + \
+                " END; "
             cursor.execute(t1)
-            t2 = " CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units` \
-                FOR EACH ROW BEGIN \
-                    CALL procedure_to_update_version('unit'); \
-                END; "
+            t2 = " CREATE TRIGGER `after_tbl_units_insert` AFTER " + \
+                " INSERT ON `tbl_units` " + \
+                " FOR EACH ROW BEGIN " + \
+                " CALL procedure_to_update_version('unit'); " + \
+                " END; "
             cursor.execute(t2)
-            t3 = "CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units` \
-                FOR EACH ROW BEGIN \
-                    CALL procedure_to_update_version('unit'); \
-                END; "
+            t3 = "CREATE TRIGGER `after_tbl_units_update` " + \
+                " AFTER UPDATE ON `tbl_units` " + \
+                " FOR EACH ROW BEGIN " + \
+                " CALL procedure_to_update_version('unit'); " + \
+                " END; "
             cursor.execute(t3)
-            t4 = "CREATE TRIGGER `after_tbl_users_update` AFTER UPDATE ON `tbl_users` \
-                FOR EACH ROW BEGIN \
-                    CALL procedure_to_update_version('user'); \
-                END; "
+            t4 = "CREATE TRIGGER `after_tbl_users_update` " + \
+                " AFTER UPDATE ON `tbl_users` " + \
+                " FOR EACH ROW BEGIN " + \
+                " CALL procedure_to_update_version('user'); " + \
+                " END; "
             cursor.execute(t4)
-            t5 = "CREATE TRIGGER `after_tbl_users_insert` AFTER INSERT ON `tbl_users` \
-                FOR EACH ROW BEGIN \
-                    CALL procedure_to_update_version('user'); \
-                END; "
+            t5 = "CREATE TRIGGER `after_tbl_users_insert` " + \
+                " AFTER INSERT ON `tbl_users` " + \
+                " FOR EACH ROW BEGIN " + \
+                " CALL procedure_to_update_version('user'); " + \
+                " END; "
             cursor.execute(t5)
-            t6 = "CREATE TRIGGER `after_tbl_compliance_history_insert` AFTER INSERT ON `tbl_compliance_history` \
-                FOR EACH ROW BEGIN \
-                    CALL procedure_to_update_version('history'); \
-                END; "
+            t6 = "CREATE TRIGGER `after_tbl_compliance_history_insert` " + \
+                " AFTER INSERT ON `tbl_compliance_history` " + \
+                " FOR EACH ROW BEGIN " + \
+                " CALL procedure_to_update_version('history'); " + \
+                " END; "
             cursor.execute(t6)
-            t7 = "CREATE TRIGGER `after_tbl_compliance_history_update` AFTER UPDATE ON `tbl_compliance_history` \
-                FOR EACH ROW BEGIN \
-                    CALL procedure_to_update_version('history'); \
-                END; "
+            t7 = "CREATE TRIGGER `after_tbl_compliance_history_update` " + \
+                " AFTER UPDATE ON `tbl_compliance_history` " + \
+                " FOR EACH ROW BEGIN " + \
+                " CALL procedure_to_update_version('history'); " + \
+                " END; "
             cursor.execute(t7)
-            t8 = "CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client_compliances` \
-                FOR EACH ROW BEGIN \
-                    CALL procedure_to_update_version('compliance'); \
-                END; "
+            t8 = "CREATE TRIGGER `after_tbl_client_compliances_update` " + \
+                " AFTER UPDATE ON `tbl_client_compliances` " + \
+                " FOR EACH ROW BEGIN " + \
+                " CALL procedure_to_update_version('compliance'); " + \
+                " END; "
             cursor.execute(t8)
-            t9 = "CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER INSERT ON `tbl_client_compliances` \
-                FOR EACH ROW BEGIN \
-                    CALL procedure_to_update_version('compliance'); \
-                END; "
+            t9 = "CREATE TRIGGER `after_tbl_client_compliances_insert` " + \
+                " AFTER INSERT ON `tbl_client_compliances` " + \
+                " FOR EACH ROW BEGIN " + \
+                " CALL procedure_to_update_version('compliance'); " + \
+                " END; "
             cursor.execute(t9)
-        except Exception :
-            raise self.process_error("trigger creation failed in client database ")
+        except Exception:
+            raise self.process_error(
+                "trigger creation failed in client database "
+            )
 
     def _get_machine_details(self):
         columns = "machine_id, ip, port"
@@ -347,7 +387,9 @@ class ClientDBCreate(object):
         db_server_column = "company_ids"
         db_server_value = self._client_id
 
-        db_server_condition = "ip = '%s' and port = '%s'" % (str(self._host), str(self._port))
+        db_server_condition = "ip = '%s' and port = '%s'" % (
+            str(self._host), str(self._port)
+        )
         print db_server_condition
 
         self._db.append(
@@ -381,9 +423,9 @@ class ClientDBCreate(object):
             "server_ip", "server_port"
         ]
         client_dB_values = [
-            self._client_id, machine_id, self._host, self._port, self._db_username,
-            self._db_password, self._short_name, self._db_name,
-            server_ip, server_port
+            self._client_id, machine_id, self._host, self._port,
+            self._db_username, self._db_password, self._short_name,
+            self._db_name, server_ip, server_port
         ]
         length_rows = self._db.get_data(
             tblMachines, "client_ids",
@@ -402,4 +444,5 @@ class ClientDBCreate(object):
         )
 
     def begin_process(self):
+        print "inside process begin"
         return self.prepare_db_constrains()

@@ -79,10 +79,9 @@ def send_client_credentials(
 
 def save_client_group(db, request, session_user):
     session_user = int(session_user)
-    client_id = generate_new_client_id(db)
-    if is_duplicate_group_name(db, request.group_name, client_id):
+    if is_duplicate_group_name(db, request.group_name):
         return technomasters.GroupNameAlreadyExists()
-    elif is_duplicate_short_name(db, request.short_name, client_id):
+    elif is_duplicate_short_name(db, request.short_name):
         return technomasters.ShortNameAlreadyExists()
     elif not is_logo_in_image_format(request.logo):
         return technomasters.NotAnImageFile()
@@ -91,22 +90,22 @@ def save_client_group(db, request, session_user):
         domain_ids = ",".join(str(x) for x in request.domain_ids)
         short_name = re.sub('[^a-zA-Z0-9 \n\.]', '', request.short_name)
         short_name = short_name.replace(" ", "")
+        client_id = save_client_group_data(
+            db, request, session_user
+        )
         create_db = ClientDBCreate(
             db, client_id, short_name, request.email_id,
             country_ids, domain_ids
         )
         try:
-            save_client_group_data(db, client_id, request, session_user)
-            print "save_client_group_data"
-            save_date_configurations(
-                db, request.client_id, request.date_configurations,
-                session_user
-            )
             print "db process being"
             is_db_created = create_db.begin_process()
             print "db process end"
+            save_date_configurations(
+                db, client_id, request.date_configurations,
+                session_user
+            )
             save_client_countries(db, client_id, request.country_ids)
-            print "save_client_countries"
             save_client_domains(db, client_id, request.domain_ids)
             save_incharge_persons(db, request, client_id)
             save_client_user(db, request, session_user, client_id)

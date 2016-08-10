@@ -353,6 +353,12 @@ $(".filter-text-box").keyup(function() {
 //Autocomplete Script Starts
 
 function onArrowKeyUser(e, ac_item){
+  if (e.keyCode == 13) {
+    chosen_user = "";
+    $("#selectboxview-country").hide();
+    $("#selectboxview").hide();
+  }
+
   if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 32) {
     chosen_user = "";
   }
@@ -414,12 +420,6 @@ $(".hideselect").mouseleave(function(){
   $("#selectboxview").hide();
   $("#selectboxview-country").hide();
 });
-
-/*$(".icon-autocomplete").focusout(function(){
-	chosen_user = "";
-	$("#selectboxview").hide();
-  	$("#selectboxview-country").hide();
-});*/
 
 //load domain list in multi select box
 $("#domainselected").focus(function(){

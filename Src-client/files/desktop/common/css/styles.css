@@ -1870,9 +1870,11 @@ list-style-type:none; line-height:25px;
   font-weight: bold;
   text-decoration: none;
   color: #333;
+
 }
 .popup .close:hover {
   color: orange;
+  cursor: pointer;
 }
 .popup .content {
   max-height: 30%;
@@ -1902,6 +1904,7 @@ list-style-type:none; line-height:25px;
 }
 .popup-password .close:hover {
   color: orange;
+  cursor: pointer;
 }
 .popup-password .content {
   max-height: 25%;

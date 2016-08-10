@@ -1163,7 +1163,6 @@ function filterList(){
   loadAssignedStatutoriesList(filteredList);
 }
 
-
 $(".listfilter").keyup(function() {
     filterList();
 });
