@@ -3,6 +3,7 @@ import logger
 from server.common import (convert_to_dict, get_date_time)
 from server.exceptionmessage import fetch_error
 
+
 class Database(object):
     def __init__(
         self,
@@ -419,8 +420,6 @@ class Database(object):
         query = """INSERT INTO %s %s """ % (table, columns)
         query += " VALUES (%s) " % (",".join(stringValue))
         try:
-            print query
-            print values
             n_id = int(self.execute_insert(query, values))
             return n_id
         except mysql.Error, e:

@@ -7,10 +7,11 @@ import threading
 from server import logger
 from datetime import timedelta
 from server.dbase import Database
-from server.countrytimestamp import countries
+# from server.countrytimestamp import countries
 from server.emailcontroller import EmailHandler
 from server.common import (
-    convert_to_dict, time_convertion, return_date,
+    convert_to_dict,
+    # time_convertion, return_date,
     addMonth, addDays, addYears,
     create_new_date, convert_string_to_date,
 )
@@ -19,6 +20,10 @@ from server.constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
 email = EmailHandler()
+
+__all__ = [
+    "KnowledgeConnect"
+]
 
 class KnowledgeConnect(object):
     def __init__(self):
@@ -67,7 +72,6 @@ class KnowledgeConnect(object):
             self._k_db.rollback()
             print (traceback.format_exc())
 
-
 class AutoStart(Database):
     def __init__(self, c_db_ip, c_db_username, c_db_password, c_db_name, c_db_port, client_id, current_date):
         super(AutoStart, self).__init__(
@@ -102,6 +106,7 @@ class AutoStart(Database):
             WHERE (t1.due_date - INTERVAL t1.trigger_before_days DAY) <= %s \
             AND t1.is_active = 1 AND t2.is_active = 1 \
             AND t4.compliance_id is null "
+
         rows = self.select_all(query, [self.current_date])
         columns = [
             "country_id", "unit_id", "compliance_id", "statutory_dates",
@@ -325,8 +330,11 @@ class AutoStart(Database):
                 count += 1
             except Exception, e :
                 print e
+                print "task start failed"
+                print d
+                print
                 continue
-                # print(traceback.format_exc())
+                print(traceback.format_exc())
 
         print " %s compliances started for client_id %s - %s" % (count, self.client_id, self.current_date)
 
@@ -343,10 +351,10 @@ class AutoStart(Database):
             self.commit()
         except Exception, e :
             print e
+            print (traceback.format_exc())
             logger.logProcessError("DailyProcess", (traceback.format_exc()))
             self.rollback()
             self.close()
-
 
 class DailyProcess(KnowledgeConnect):
     def __init__(self):

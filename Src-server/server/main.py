@@ -142,7 +142,7 @@ class API(object):
             self._db.begin()
             response_data = unbound_method(self, request_data, self._db)
             if response_data is None or type(response_data) is bool :
-                print response_data
+                # print response_data
                 self._db.rollback()
             if type(response_data) != technomasters.ClientCreationFailed:
                 self._db.commit()
@@ -152,10 +152,10 @@ class API(object):
             print response_data
             respond(response_data)
         except Exception, e:
-            print "handle_api_request"
-            print e
-            print(traceback.format_exc())
-            print ip_address
+            # print "handle_api_request"
+            # print e
+            # print(traceback.format_exc())
+            # print ip_address
             logger.logKnowledgeApi(e, "handle_api_request")
             logger.logKnowledgeApi(traceback.format_exc(), "")
             logger.logKnowledgeApi(ip_address, "")
@@ -231,7 +231,7 @@ class API(object):
 
     @api_request(login.Request)
     def handle_login(self, request, db):
-        print self._ip_addess
+        # print self._ip_addess
         return controller.process_login_request(request, db, self._ip_addess)
         # return login.ResetPasswordSuccess()
 

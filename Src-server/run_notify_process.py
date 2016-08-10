@@ -6,10 +6,10 @@
 
 # # sudo chmod 777 run_daily_process.py
 
-from processes.notify_email_daily import run_email_process
+from processes.auto_notify_task import run_notify_process
 
 def main() :
-    run_email_process()
+    run_notify_process()
 
 if __name__ == "__main__" :
     main()

@@ -22,13 +22,14 @@ __all__ = [
 
 forms = [18, 19, 20]
 
-def process_techno_request(request, db) :
+
+def process_techno_request(request, db):
     session_token = request.session_token
     request_frame = request.request
     session_user = validate_user_session(db, session_token)
-    if session_user is not None :
+    if session_user is not None:
         is_valid = validate_user_forms(db, session_user, forms, request_frame)
-        if is_valid is not True :
+        if is_valid is not True:
             return login.InvalidSessionToken()
 
     if session_user is None:
