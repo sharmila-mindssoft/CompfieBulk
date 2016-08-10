@@ -1225,15 +1225,15 @@ def get_next_auto_gen_number(db, group_name=None, client_id=None):
     group_name = group_name.replace(" ", "")
     unit_code_start_letters = group_name[:2].upper()
 
-    columns = "TRIM(LEADING %s FROM unit_code) as code" % (
+    columns = "TRIM(LEADING '%s' FROM unit_code) as code" % (
         unit_code_start_letters
     )
-    condition = "unit_code like binary %s and " + \
-        " CHAR_LENGTH(unit_code) = 7 and client_id= %s "
-    condition_val = [
+    condition = "unit_code like binary '%s' and " + \
+        " CHAR_LENGTH(unit_code) = 7 and client_id= '%s' "
+    condition = condition % (
         str(unit_code_start_letters + '%'), client_id
-    ]
-    rows = db.get_data(tblUnits, columns, condition, condition_val)
+    )
+    rows = db.get_data(tblUnits, columns, condition)
     auto_generated_unit_codes = []
     for row in rows:
         try:
