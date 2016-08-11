@@ -1271,11 +1271,12 @@ def reactivate_unit_data(db, client_id, unit_id, session_user):
     condition = "unit_id = %s "
     condition_val = [unit_id]
     result = db.get_data(tblUnits, action_column, condition, condition_val)
-
-    action = "Reactivated Unit \"%s-%s\"" % (rows[0][0], rows[0][1])
+    result = result[0]
+    action = "Reactivated Unit \"%s-%s\"" % (
+        result["unit_code"], result["unit_name"]
+    )
     db.save_activity(session_user, 19, action)
 
-    result = result[0]
     unit_code = get_next_unit_auto_gen_no(db, client_id)
     unit_columns = [
         "client_id", "is_active", "legal_entity_id",
@@ -1301,7 +1302,7 @@ def reactivate_unit_data(db, client_id, unit_id, session_user):
 
 
 def get_next_unit_auto_gen_no(db, client_id):
-    columns = "count(*) units"
+    columns = "count(unit_id) as units"
     condition = "client_id = %s"
     condition_val = [client_id]
     rows = db.get_data(tblUnits, columns, condition, condition_val)
@@ -1318,18 +1319,22 @@ def get_next_unit_auto_gen_no(db, client_id):
     group_name = group_company[0]["group_name"].replace(" ", "")
     unit_code_start_letters = group_name[:2].upper()
 
-    columns = "TRIM(LEADING s FROM unit_code)" % unit_code_start_letters
-    condition = "unit_code like binary %s%s and " + \
+    columns = "TRIM(LEADING '%s' FROM unit_code) as code" % (
+        unit_code_start_letters
+    )
+    condition = "unit_code like binary '%s%s' and " + \
         " CHAR_LENGTH(unit_code) = 7 and client_id= %s"
-    condition_val = [unit_code_start_letters, "%", client_id]
-    rows = db.get_data(tblUnits, columns, condition, condition_val)
+    condition = condition % (unit_code_start_letters, "%", client_id)
+    rows = db.get_data(tblUnits, columns, condition)
+    print "rows================>: {}".format(rows)
     auto_generated_unit_codes = []
     for row in rows:
         try:
-            auto_generated_unit_codes.append(int(row[0]))
+            auto_generated_unit_codes.append(int(row["code"]))
         except Exception, ex:
             print ex
             continue
+    print "auto_generated_unit_codes ==================>: {}".format(auto_generated_unit_codes)
     next_auto_gen_no = 1
     if len(auto_generated_unit_codes) > 0:
         existing_max_unit_code = max(auto_generated_unit_codes)

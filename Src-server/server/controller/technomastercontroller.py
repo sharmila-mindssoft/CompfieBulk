@@ -14,6 +14,7 @@ from server.database.admin import (
     get_domains_for_user,
     get_countries_for_user
 )
+from server.database.login import verify_password
 from server.database.knowledgemaster import (
     get_geograhpy_levels_for_user,
     get_geographies_for_user_with_mapping,
@@ -407,7 +408,7 @@ def reactivate_unit(db, request, session_user):
     elif db.is_invalid_id(tblUnits, "unit_id", unit_id):
         return technomasters.InvalidUnitId()
     else:
-        if db.verify_password(password, session_user):
+        if verify_password(db, password, session_user):
             unit_code, unit_name = reactivate_unit_data(
                 db, client_id, unit_id, session_user
             )
