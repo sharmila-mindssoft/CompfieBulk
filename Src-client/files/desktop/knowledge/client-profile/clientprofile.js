@@ -80,7 +80,7 @@ function loadClientProfileList(groupId){
                 else{
                   $('.mobile-number', clone).text(lists[key]['contact_no']);
                 }
-                if(lists[key]["is_service_provider"] == false){
+                if(lists[key]["is_service_provider"] == false && lists[key]['seating_unit_name'] != '-'){
                     $('.seating-unit span', clone).html(lists[key]['seating_unit_name']);
                     $('.seating-unit abbr', clone).attr("title", lists[key]['address']);
                 }

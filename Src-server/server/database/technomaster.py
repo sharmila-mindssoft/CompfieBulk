@@ -1183,10 +1183,11 @@ def get_group_companies_for_user_with_max_unit_count(db, user_id):
     columns = ["client_id", "group_name", "is_active"]
     condition = "is_active=1"
     if client_ids is not None:
-        condition = "client_id in (%s) order by group_name ASC"
-        condition_val = [client_ids]
+        condition = "client_id in (%s) order by group_name ASC" % (
+            client_ids
+        )
         result = db.get_data(
-            tblClientGroups, columns, condition, condition_val
+            tblClientGroups, columns, condition
         )
     return return_group_companies_with_max_unit_count(db, result)
 
@@ -1225,15 +1226,15 @@ def get_next_auto_gen_number(db, group_name=None, client_id=None):
     group_name = group_name.replace(" ", "")
     unit_code_start_letters = group_name[:2].upper()
 
-    columns = "TRIM(LEADING %s FROM unit_code) as code" % (
+    columns = "TRIM(LEADING '%s' FROM unit_code) as code" % (
         unit_code_start_letters
     )
-    condition = "unit_code like binary %s and " + \
-        " CHAR_LENGTH(unit_code) = 7 and client_id= %s "
-    condition_val = [
+    condition = "unit_code like binary '%s' and " + \
+        " CHAR_LENGTH(unit_code) = 7 and client_id= '%s' "
+    condition = condition % (
         str(unit_code_start_letters + '%'), client_id
-    ]
-    rows = db.get_data(tblUnits, columns, condition, condition_val)
+    )
+    rows = db.get_data(tblUnits, columns, condition)
     auto_generated_unit_codes = []
     for row in rows:
         try:
