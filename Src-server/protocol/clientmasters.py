@@ -514,7 +514,7 @@ class CloseUnit(Request):
         password = parse_structure_CustomTextType_100(password)
         unit_name = data.get("u_name")
         unit_name = parse_structure_CustomTextType_100(unit_name)
-        return CloseUnit(unit_id, password, unit_name)
+        return CloseUnit(unit_id, unit_name, password)
 
     def to_inner_structure(self):
         return {

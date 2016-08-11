@@ -1326,7 +1326,6 @@ def get_next_unit_auto_gen_no(db, client_id):
         " CHAR_LENGTH(unit_code) = 7 and client_id= %s"
     condition = condition % (unit_code_start_letters, "%", client_id)
     rows = db.get_data(tblUnits, columns, condition)
-    print "rows================>: {}".format(rows)
     auto_generated_unit_codes = []
     for row in rows:
         try:
@@ -1334,7 +1333,6 @@ def get_next_unit_auto_gen_no(db, client_id):
         except Exception, ex:
             print ex
             continue
-    print "auto_generated_unit_codes ==================>: {}".format(auto_generated_unit_codes)
     next_auto_gen_no = 1
     if len(auto_generated_unit_codes) > 0:
         existing_max_unit_code = max(auto_generated_unit_codes)

@@ -50,6 +50,7 @@ class UpdateFileSpace(KnowledgedbConnect):
             self._k_db.rollback()
             raise client_process_error("E021")
 
+
 class SaveUsers(KnowledgedbConnect):
     def __init__(self, user_info, user_id, client_id):
         super(SaveUsers, self).__init__()
