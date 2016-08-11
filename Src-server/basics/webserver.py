@@ -217,7 +217,7 @@ class WebServer(object) :
                 self.low_level_url(*entry)
 
         settings = {
-            "xsrf_cookies": True,
+            # "xsrf_cookies": True,
             "cookie_secret": "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
             "gzip": True
         }
