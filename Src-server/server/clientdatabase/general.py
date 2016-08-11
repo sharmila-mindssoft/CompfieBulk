@@ -68,6 +68,7 @@ __all__ = [
 
 ]
 
+
 def get_client_user_forms(db, form_ids, client_id, is_admin):
     columns = "tf.form_id, tf.form_type_id, tft.form_type, tf.form_name, "
     columns += "tf.form_url, tf.form_order, tf.parent_menu "
@@ -84,11 +85,6 @@ def get_client_user_forms(db, form_ids, client_id, is_admin):
         columns, tables, aliases, joinType,
         joinConditions, whereCondition
     )
-    # row_columns = [
-    #     "form_id", "form_type_id", "form_type", "form_name", "form_url",
-    #     "form_order", "parent_menu"
-    # ]
-    # result = convert_to_dict(rows, row_columns)
     return rows
 
 
@@ -101,11 +97,11 @@ def get_admin_id(db):
 
 def get_countries_for_user(db, user_id):
     admin_id = get_admin_id(db)
-    query = "SELECT distinct t1.country_id, t1.country_name, \
-        t1.is_active FROM tbl_countries t1 "
+    query = "SELECT distinct t1.country_id, t1.country_name, " + \
+        " t1.is_active FROM tbl_countries t1 "
     if user_id != admin_id:
-        query = query + " INNER JOIN tbl_user_countries t2 \
-            ON t1.country_id = t2.country_id WHERE t2.user_id = %s"
+        query = query + " INNER JOIN tbl_user_countries t2 " + \
+            " ON t1.country_id = t2.country_id WHERE t2.user_id = %s"
         rows = db.select_all(query, [user_id])
     else:
         rows = db.select_all(query)
@@ -124,19 +120,21 @@ def return_countries(data):
     print results
     return results
 
+
 def get_domains_for_user(db, user_id):
     admin_id = get_admin_id(db)
-    query = "SELECT distinct t1.domain_id, t1.domain_name, \
-        t1.is_active FROM tbl_domains t1 "
+    query = "SELECT distinct t1.domain_id, t1.domain_name, " + \
+        " t1.is_active FROM tbl_domains t1 "
     if user_id != admin_id:
-        query = query + " INNER JOIN tbl_user_domains t2 ON \
-            t1.domain_id = t2.domain_id WHERE t2.user_id = %s"
+        query = query + " INNER JOIN tbl_user_domains t2 ON " + \
+            " t1.domain_id = t2.domain_id WHERE t2.user_id = %s"
         rows = db.select_all(query, [user_id])
     else:
         rows = db.select_all(query)
     columns = ["domain_id", "domain_name", "is_active"]
     result = convert_to_dict(rows, columns)
     return return_domains(result)
+
 
 def return_domains(data):
     results = []
@@ -146,18 +144,21 @@ def return_domains(data):
         ))
     return results
 
+
 def get_business_groups_for_user(db, business_group_ids):
     columns = "business_group_id, business_group_name"
     condition = "1 "
-    if business_group_ids is not None:
-        condition = "business_group_id in (%s) " % business_group_ids
     condition_val = None
+    if business_group_ids is not None:
+        condition = "business_group_id in (%s) "
+        condition_val = [business_group_ids]
     order = " ORDER BY business_group_name "
     rows = db.get_data(
         tblBusinessGroups, columns, condition, condition_val, order
     )
     print rows
     return return_business_groups(rows)
+
 
 def return_business_groups(business_groups):
     results = []
@@ -168,17 +169,20 @@ def return_business_groups(business_groups):
         ))
     return results
 
+
 def get_legal_entities_for_user(db, legal_entity_ids):
     columns = "legal_entity_id, legal_entity_name, business_group_id"
     condition = "1 "
-    if legal_entity_ids is not None:
-        condition = "legal_entity_id in (%s) " % legal_entity_ids
     condition_val = None
+    if legal_entity_ids is not None:
+        condition = "legal_entity_id in (%s) "
+        condition_val = [legal_entity_ids]
     order = "ORDER BY legal_entity_name "
     rows = db.get_data(
         tblLegalEntities, columns, condition, condition_val, order
     )
     return return_legal_entities(rows)
+
 
 def return_legal_entities(legal_entities):
     results = []
@@ -193,17 +197,20 @@ def return_legal_entities(legal_entities):
         ))
     return results
 
+
 def get_divisions_for_user(db, division_ids):
     columns = "division_id, division_name, legal_entity_id, business_group_id"
     condition = "1"
-    if division_ids is not None:
-        condition = "division_id in (%s) " % division_ids
     condition_val = None
+    if division_ids is not None:
+        condition = "division_id in (%s) "
+        condition_val = [division_ids]
     order = " ORDER BY division_name"
     rows = db.get_data(
         tblDivisions, columns, condition, condition_val, order
     )
     return return_divisions(rows)
+
 
 def return_divisions(divisions):
     results = []
@@ -215,6 +222,7 @@ def return_divisions(divisions):
         results.append(division_obj)
     return results
 
+
 def get_group_name(db):
     query = "SELECT group_name from %s " % tblClientGroups
     row = db.select_one(query)
@@ -222,14 +230,19 @@ def get_group_name(db):
         return row[0]
     return "group_name"
 
+
 def get_country_wise_domain_month_range(db):
-    q = "SELECT t1.country_id, \
-    (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
-    t1.domain_id,\
-    (select domain_name from tbl_domains where domain_id = t1.domain_id)domain_name,\
-    t1.period_from, t1.period_to from tbl_client_configurations t1 INNER JOIN \
-    tbl_countries TC ON TC.country_id = t1.country_id  \
-    INNER JOIN tbl_domains TD ON TD.domain_id = t1.domain_id"
+    q = " SELECT t1.country_id, " + \
+        " (select country_name " + \
+        " from tbl_countries " + \
+        " where country_id = t1.country_id) country_name, " + \
+        " t1.domain_id," + \
+        " (select domain_name from tbl_domains " + \
+        " where domain_id = t1.domain_id)domain_name, " + \
+        " t1.period_from, t1.period_to " + \
+        " from tbl_client_configurations t1 INNER JOIN " + \
+        " tbl_countries TC ON TC.country_id = t1.country_id  " + \
+        " INNER JOIN tbl_domains TD ON TD.domain_id = t1.domain_id"
     rows = db.select_all(q)
     columns = [
         "country_id", "country_name",
@@ -257,18 +270,24 @@ def get_country_wise_domain_month_range(db):
         country_wise[country_name] = domain_info
     return country_wise
 
+
 def get_units_for_user(db, unit_ids):
-    columns = "unit_id, unit_code, unit_name, address, division_id, domain_ids, country_id,"
-    columns += " legal_entity_id, business_group_id, is_active, is_closed"
+    columns = [
+        "unit_id", "unit_code", "unit_name", "address", "division_id",
+        "domain_ids", "country_id", "legal_entity_id", "business_group_id",
+        "is_active", "is_closed"
+    ]
     condition = "is_closed = 0"
-    if unit_ids is not None:
-        condition = "unit_id in (%s) " % unit_ids
     condition_val = None
+    if unit_ids is not None:
+        condition = "unit_id in (%s) "
+        condition_val = [unit_ids]
     order = "ORDER BY unit_name"
     rows = db.get_data(
         tblUnits, columns, condition, condition_val, order
     )
     return return_units(rows)
+
 
 def return_units(units):
         results = []
@@ -283,18 +302,22 @@ def return_units(units):
                 unit["unit_id"], division_id, unit["legal_entity_id"],
                 b_group_id, unit["unit_code"],
                 unit["unit_name"], unit["address"], bool(unit["is_active"]),
-                [int(x) for x in unit["domain_ids"].split(",")], unit["country_id"],
+                [int(x) for x in unit["domain_ids"].split(",")],
+                unit["country_id"],
                 bool(unit["is_closed"])
             ))
         return results
 
+
 def get_client_users(db, client_id=None, unit_ids=None):
     columns = "user_id, employee_name, employee_code, is_active"
     condition = "1"
+    conditon_val = None
     if unit_ids is not None:
-        condition += " and seating_unit_id in (%s)" % unit_ids
+        condition += " and seating_unit_id in (%s)"
+        conditon_val = [unit_ids]
     rows = db.get_data(
-        tblUsers, columns, condition
+        tblUsers, columns, condition, conditon_val
     )
     return return_client_users(rows)
 
@@ -322,19 +345,24 @@ def get_user_domains(db, user_id):
         d_ids.append(int(r[0]))
     return d_ids
 
+
 def is_service_provider_in_contract(db, service_provider_id):
     column = "count(1) as live"
-    condition = "now() between contract_from and DATE_ADD(contract_to, INTERVAL 1 DAY)\
-    and service_provider_id = '%s' and is_active = 1" % service_provider_id
-    rows = db.get_data(tblServiceProviders, column, condition)
+    condition = "now() between contract_from " + \
+        " and DATE_ADD(contract_to, INTERVAL 1 DAY) " + \
+        " and service_provider_id = %s and is_active = 1"
+    condition_val = [service_provider_id]
+    rows = db.get_data(tblServiceProviders, column, condition, condition_val)
     if rows[0]["live"] > 0:
         return True
     else:
         return False
 
+
 def is_in_contract(db):
     columns = "count(1) as live"
-    condition = "now() between contract_from and DATE_ADD(contract_to, INTERVAL 1 DAY)"
+    condition = "now() between contract_from and " + \
+        " DATE_ADD(contract_to, INTERVAL 1 DAY)"
     rows = db.get_data(
         tblClientGroups, columns, condition
     )
@@ -346,9 +374,10 @@ def is_in_contract(db):
 
 def verify_username(db, username):
     columns = "count(*) as result, user_id"
-    condition = "email_id='%s' and is_active = 1" % (username)
+    condition = "email_id=%s and is_active = 1"
+    condition_val = [username]
     rows = db.get_data(
-        tblUsers, columns, condition
+        tblUsers, columns, condition, condition_val
     )
     count = rows[0]["result"]
     if count == 1:
@@ -373,9 +402,10 @@ def verify_password(db, password, user_id, client_id=None):
     else:
         return True
 
+
 def get_countries(db):
-    query = "SELECT distinct t1.country_id, t1.country_name, \
-        t1.is_active FROM tbl_countries t1 "
+    query = "SELECT distinct t1.country_id, t1.country_name, " + \
+        " t1.is_active FROM tbl_countries t1 "
     print query
     rows = db.select_all(query)
     print rows
@@ -384,50 +414,62 @@ def get_countries(db):
     print result
     return return_countries(result)
 
+
 def get_domains(db):
-    query = "SELECT distinct t1.domain_id, t1.domain_name, \
-        t1.is_active FROM tbl_domains t1 "
+    query = "SELECT distinct t1.domain_id, t1.domain_name, " + \
+        " t1.is_active FROM tbl_domains t1 "
     rows = db.select_all(query)
     columns = ["domain_id", "domain_name", "is_active"]
     result = convert_to_dict(rows, columns)
     return return_domains(result)
 
+
 def is_primary_admin(db, user_id):
     column = "count(1) as result"
-    condition = "user_id = '%s' and is_primary_admin = 1" % user_id
-    rows = db.get_data(tblUsers, column, condition)
+    condition = "user_id = %s and is_primary_admin = 1"
+    condition_val = [user_id]
+    rows = db.get_data(tblUsers, column, condition, condition_val)
     if rows[0]["result"] > 0 or user_id == 0:
         return True
     else:
         return False
 
+
 def have_compliances(db, user_id):
-        column = "count(*) as compliances"
-        condition = "assignee = '%s' and is_active = 1" % user_id
-        rows = db.get_data(tblAssignedCompliances, column, condition)
+        column = "count(compliance_id) as compliances"
+        condition = "assignee = %s and is_active = 1"
+        condition_val = [user_id]
+        rows = db.get_data(
+            tblAssignedCompliances, column, condition, condition_val
+        )
         no_of_compliances = rows[0]["compliances"]
         if no_of_compliances > 0:
             return True
         else:
             return False
 
+
 def is_seating_unit(db, unit_id):
     column = "count(*) as units"
-    condition = "seating_unit_id ='%s'" % unit_id
-    rows = db.get_data(tblUsers, column, condition)
+    condition = "seating_unit_id =%s"
+    condition_val = [unit_id]
+    rows = db.get_data(tblUsers, column, condition, condition_val)
     user_count = rows[0]["units"]
     if user_count > 0:
         return True
     else:
         return False
 
+
 def is_admin(db, user_id):
     if user_id == 0:
         return True
     else:
-        columns = "count(*) as admin"
-        condition = "(is_admin = 1 or is_primary_admin = 1) and user_id = '%s'" % user_id
-        rows = db.get_data(tblUsers, columns, condition)
+        columns = "count(user_id) as admin"
+        condition = "(is_admin = 1 or is_primary_admin = 1) " + \
+            " and user_id = %s"
+        condition_val = [user_id]
+        rows = db.get_data(tblUsers, columns, condition, condition_val)
         if rows[0]["admin"] > 0:
             return True
         else:
@@ -439,8 +481,9 @@ def get_user_unit_ids(db, user_id):
     param = None
     condition = ""
     if is_primary_admin(db, user_id) is not True:
-        condition = " WHERE unit_id in (select unit_id from tbl_user_units \
-            where user_id = %s )"
+        condition = " WHERE unit_id in (select unit_id " + \
+            " from tbl_user_units " + \
+            " where user_id = %s )"
         param = [user_id]
 
     rows = db.select_all(q + condition, param)
@@ -449,62 +492,61 @@ def get_user_unit_ids(db, user_id):
         u_ids.append(int(r[0]))
     return u_ids
 
+
 def is_two_levels_of_approval(db):
     columns = "two_levels_of_approval"
     rows = db.get_data(tblClientGroups, columns, condition=None)
     return bool(rows[0]["two_levels_of_approval"])
 
+
 def get_user_company_details(db, user_id):
-    admin_id = get_admin_id(db)
-    columns = "unit_id"
-    condition = " 1 "
-    rows = None
-    if user_id != admin_id:
-        condition = "  user_id = %s " % user_id
-        rows = db.get_data(
-            tblUserUnits, columns, condition
-        )
+    if is_primary_admin(db, user_id):
+        condition = " 1 "
+        condition_val = None
     else:
-        rows = db.get_data(
-            tblUnits, columns, condition
-        )
-    unit_ids = None
-    division_ids = None
-    legal_entity_ids = None
-    business_group_ids = None
-    if len(rows) > 0:
-        result = []
-        for row in rows:
-            result.append(row["unit_id"])
-        unit_ids = ",".join(str(x) for x in result)
+        condition = "  user_id = %s "
+        condition_val = [user_id]
+    columns = [
+        "unit_id", "division_id", "legal_entity_id", "business_group_id"
+    ]
+    rows = db.get_data(tblUnits, columns, condition, condition_val)
 
-    if unit_ids not in [None, "None", ""]:
-        columns = "group_concat(distinct division_id) as div_ids, group_concat(distinct legal_entity_id) as leg_ids, \
-        group_concat(distinct business_group_id) as b_ids"
-        unit_condition = "1"
-        if unit_ids is not None:
-            unit_condition = "unit_id in (%s)" % unit_ids
-        rows = db.get_data(
-            tblUnits , columns, unit_condition
+    unit_ids = []
+    division_ids = []
+    legal_entity_ids = []
+    business_group_ids = []
+    for row in rows:
+        unit_ids.append(
+            int(row["unit_id"])
         )
-        division_ids = rows[0]["div_ids"]
-        legal_entity_ids = rows[0]["leg_ids"]
-        business_group_ids = rows[0]["b_ids"]
+        if int(row["division_id"]) not in division_ids:
+            division_ids.append(int(row["division_id"]))
+        if int(row["legal_entity_id"]) not in legal_entity_ids:
+            division_ids.append(int(row["legal_entity_id"]))
+        if int(row["business_group_id"]) not in business_group_ids:
+            division_ids.append(int(row["business_group_id"]))
+    return (
+        ",".join(str(x) for x in unit_ids),
+        ",".join(str(x) for x in division_ids),
+        ",".join(str(x) for x in legal_entity_ids),
+        ",".join(str(x) for x in business_group_ids)
+    )
 
-    return unit_ids, division_ids, legal_entity_ids, business_group_ids
 
 def get_client_level_1_statutoy(db, user_id, client_id=None):
-    query = "SELECT (case when (LEFT(statutory_mapping,INSTR(statutory_mapping,'>>')-1) = '') \
-            THEN \
-            statutory_mapping \
-            ELSE \
-            LEFT (statutory_mapping,INSTR(statutory_mapping,'>>')-1) \
-            END ) as statutory \
-            FROM tbl_compliances GROUP BY statutory"
+    query = "SELECT (case when (LEFT( " + \
+            " statutory_mapping,INSTR(statutory_mapping,'>>')-1) = '') " + \
+            " THEN " + \
+            " statutory_mapping " + \
+            " ELSE " + \
+            " LEFT (statutory_mapping,INSTR(statutory_mapping,'>>')-1) " + \
+            " END ) as statutory " + \
+            " FROM tbl_compliances GROUP BY statutory"
     rows = db.select_all(query)
     columns = ["statutory"]
     result = convert_to_dict(rows, columns)
     return return_client_level_1_statutories(result)
+
 
 def return_client_level_1_statutories(data):
     results = []
@@ -514,6 +556,7 @@ def return_client_level_1_statutories(data):
         )
     return results
 
+
 def get_service_providers(db, client_id=None):
     columns = "service_provider_id, service_provider_name, is_active"
     condition = "1"
@@ -521,6 +564,7 @@ def get_service_providers(db, client_id=None):
         tblServiceProviders, columns, condition
     )
     return return_service_providers(rows)
+
 
 def return_service_providers(service_providers):
     results = []
@@ -532,13 +576,15 @@ def return_service_providers(service_providers):
         results.append(service_provider_obj)
     return results
 
+
 def get_client_compliances(db, user_id, client_id=None):
-    query = "SELECT compliance_id, document_name ,compliance_task \
-            FROM tbl_compliances"
+    query = " SELECT compliance_id, document_name ,compliance_task " + \
+            " FROM tbl_compliances"
     rows = db.select_all(query, client_id)
     columns = ["compliance_id", "document_name", "compliance_name"]
     result = convert_to_dict(rows, columns)
     return return_client_compliances(result)
+
 
 def return_client_compliances(data):
     results = []
@@ -550,6 +596,7 @@ def return_client_compliances(data):
             d["compliance_id"], compliance_name
         ))
     return results
+
 
 def set_new_due_date(statutory_dates, repeats_type_id, compliance_id):
     due_date = None
@@ -578,7 +625,11 @@ def set_new_due_date(statutory_dates, repeats_type_id, compliance_id):
                     if n_date.month == 12:
                         days = 31
                     else:
-                        days = (n_date.replace(month=n_date.month+1, day=1) - datetime.timedelta(days=1)).day
+                        days = (n_date.replace(
+                                    month=n_date.month+1, day=1
+                                ) - datetime.timedelta(
+                                    days=1)
+                                ).day
                     n_date = n_date.replace(day=days)
 
             if s_date.statutory_month is not None:
@@ -591,7 +642,10 @@ def set_new_due_date(statutory_dates, repeats_type_id, compliance_id):
                         if n_date.month == 12:
                             days = 31
                         else:
-                            days = (n_date.replace(day=1, month=s_month+1) - datetime.timedelta(days=1)).day
+                            days = (
+                                n_date.replace(
+                                    day=1, month=s_month+1
+                                ) - datetime.timedelta(days=1)).day
                         n_date = n_date.replace(day=days, month=int(s_month))
             if current_date > n_date:
                 if repeats_type_id == 2 and len(statutory_dates) == 1:
@@ -601,13 +655,23 @@ def set_new_due_date(statutory_dates, repeats_type_id, compliance_id):
                         if n_date.month == 12:
                             days = 31
                         else:
-                            days = (n_date.replace(day=1, month=current_month+1, year=current_year+1) - datetime.timedelta(days=1)).day
+                            days = (
+                                n_date.replace(
+                                    day=1, month=current_month+1,
+                                    year=current_year+1
+                                ) - datetime.timedelta(days=1)).day
                         try:
-                            n_date = n_date.replace(day=days, month=current_month+1)
+                            n_date = n_date.replace(
+                                day=days, month=current_month+1
+                            )
                         except ValueError:
-                            logger.logClient("error", "set_new_due_date", n_date)
+                            logger.logClient(
+                                "error", "set_new_due_date", n_date
+                            )
                             logger.logClient("error", "set_new_due_date", days)
-                            logger.logClient("error", "set_new_due_date", current_month+1)
+                            logger.logClient(
+                                "error", "set_new_due_date", current_month+1
+                            )
 
                 else:
                     try:
@@ -616,7 +680,11 @@ def set_new_due_date(statutory_dates, repeats_type_id, compliance_id):
                         if n_date.month == 12:
                             days = 31
                         else:
-                            days = (n_date.replace(day=1, month=n_date.month+1, year=current_year+1) - datetime.timedelta(days=1)).day
+                            days = (
+                                n_date.replace(
+                                    day=1, month=n_date.month+1,
+                                    year=current_year+1
+                                ) - datetime.timedelta(days=1)).day
 
                         n_date = n_date.replace(day=days, year=current_year+1)
             if s_day is None and s_month is None:
@@ -626,7 +694,10 @@ def set_new_due_date(statutory_dates, repeats_type_id, compliance_id):
             due_date_list.append(due_date)
     return due_date, due_date_list, date_list
 
-def calculate_ageing(due_date, frequency_type=None, completion_date=None, duration_type=None):
+
+def calculate_ageing(
+    due_date, frequency_type=None, completion_date=None, duration_type=None
+):
     current_time_stamp = get_date_time_in_date()
     compliance_status = "-"
     # due_date = self.localize(due_date)
@@ -704,38 +775,46 @@ def calculate_ageing(due_date, frequency_type=None, completion_date=None, durati
                 return r.days, compliance_status
         else:
             if due_date not in [None, "None", 0]:
-                r = relativedelta.relativedelta(due_date.date(), current_time_stamp.date())
+                r = relativedelta.relativedelta(
+                    due_date.date(), current_time_stamp.date()
+                )
                 compliance_status = " %s days left" % abs(r.days+1)
                 if r.days < 0:
                     compliance_status = "Overdue by %s day(s)" % abs(r.days)
                     return r.days, compliance_status
     return 0, compliance_status
 
+
 def get_client_settings(db):
-    query = "SELECT two_levels_of_approval \
-        FROM tbl_client_groups"
+    query = "SELECT two_levels_of_approval " + \
+        " FROM tbl_client_groups"
     row = db.select_one(query)
     if row:
         return bool(int(row[0]))
+
 
 def get_admin_info(db):
     query = "SELECT email_id from tbl_users"
     row = db.select_one(query)
     return int(row[0])
 
+
 def validate_compliance_due_date(db, request):
     c_ids = []
     for c in request.compliances:
         c_ids.append(c.compliance_id)
-        q = "SELECT compliance_id, compliance_task, statutory_dates, repeats_type_id from tbl_compliances \
-            where compliance_id = %s" % int(c.compliance_id)
+        q = "SELECT compliance_id, compliance_task, " + \
+            " statutory_dates, repeats_type_id from tbl_compliances " + \
+            " where compliance_id = %s" % int(c.compliance_id)
         row = db.select_one(q)
         if row:
             comp_id = row[0]
             task = row[1]
             s_dates = json.loads(row[2])
             repeats_type_id = row[3]
-            due_date, due_date_list, date_list = set_new_due_date(s_dates, repeats_type_id, comp_id)
+            due_date, due_date_list, date_list = set_new_due_date(
+                s_dates, repeats_type_id, comp_id
+            )
 
             if c.due_date not in [None, ""] and due_date not in [None, ""]:
                 t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
@@ -744,6 +823,7 @@ def validate_compliance_due_date(db, request):
                     # Due date should be lessthen statutory date
                     return False, task
     return True, None
+
 
 def get_compliance_frequency(db, client_id, condition="1"):
     columns = "frequency_id, frequency"
@@ -760,30 +840,33 @@ def get_compliance_frequency(db, client_id, condition="1"):
             )
     return compliance_frequency
 
+
 def get_user_ids_by_unit_and_domain(
     db, unit_id, domain_id
 ):
     unit_user_rows = db.get_data(
-        tblUserUnits, "user_id" , "unit_id = '%s'" % unit_id
+        tblUserUnits, "user_id",
+        "unit_id = %s", [unit_id]
     )
-    unit_users = []
-    for unit_user in unit_user_rows:
-        unit_users.append(unit_user["user_id"])
+    unit_users = [
+        int(unit_user["user_id"]) for unit_user in unit_user_rows
+    ]
 
     domain_user_rows = db.get_data(
-        tblUserDomains, "user_id" , "domain_id = '%s'" % domain_id
+        tblUserDomains, "user_id",
+        "domain_id = %s", [domain_id]
     )
-    domain_users = []
-    for domain_user in domain_user_rows:
-        domain_users.append(domain_user["user_id"])
+    domain_users = [
+        int(domain_user["user_id"]) for domain_user in domain_user_rows
+    ]
 
     users = list(set(unit_users).intersection(domain_users))
-    user_ids = None
     if len(users) > 0:
         user_ids = ",".join(str(x) for x in users)
     else:
         user_ids = None
     return user_ids
+
 
 def get_users_by_unit_and_domain(
     db, unit_id, domain_id
@@ -793,19 +876,21 @@ def get_users_by_unit_and_domain(
     )
     if user_ids is not None:
         columns = "user_id, employee_name, employee_code, is_active"
-        condition = " is_active = 1 and user_id in (%s)" % user_ids
+        condition = " is_active = 1 and user_id in (%s)"
+        condtion_val = [user_ids]
         rows = db.get_data(
-            tblUsers, columns, condition
+            tblUsers, columns, condition, condtion_val
         )
     return return_users(rows)
+
 
 def get_all_users(db):
     columns = [
         "user_id", "employee_code", "employee_name",
         "contact_no", "email_id"
     ]
-    q = "select user_id, IFNULL(employee_code, '-'), employee_name, \
-        IFNULL(contact_no, '--'), email_id from tbl_users"
+    q = "select user_id, IFNULL(employee_code, '-'), employee_name, " + \
+        " IFNULL(contact_no, '--'), email_id from tbl_users"
     data = db.select_all(q)
     rows = convert_to_key_dict(data, columns)
     return rows
@@ -822,9 +907,10 @@ def get_users(db):
 
 def get_users_by_id(db, user_ids):
     columns = "user_id, employee_name, employee_code, is_active"
-    condition = " user_id in (%s)" % user_ids
+    condition = " user_id in (%s)"
+    condition_val = [user_ids]
     rows = db.get_data(
-        tblUsers, columns, condition
+        tblUsers, columns, condition, condition_val
     )
     return return_users(rows)
 
@@ -843,19 +929,26 @@ def return_users(users):
         ))
     return results
 
+
 def get_compliance_name_by_id(db, compliance_id):
     column = "document_name, compliance_task"
-    condition = "compliance_id = '%s'" % compliance_id
-    rows = db.get_data(tblCompliances, column, condition)
+    condition = "compliance_id = %s"
+    condition_val = [compliance_id]
+    rows = db.get_data(
+        tblCompliances, column, condition, condition_val
+    )
     compliance_name = ""
     if rows[0]["document_name"] is not None:
         if str(rows[0]["document_name"]) == "None":
             compliance_name = rows[0]["compliance_task"]
         else:
-            compliance_name += rows[0]["document_name"]+" - "+rows[0]["compliance_task"]
+            compliance_name += rows[0][
+                    "document_name"
+                ]+" - "+rows[0]["compliance_task"]
     else:
         compliance_name = rows[0]["compliance_task"]
     return compliance_name
+
 
 def is_space_available(db, upload_size):
     columns = "(total_disk_space - total_disk_space_used) as space"
@@ -866,35 +959,35 @@ def is_space_available(db, upload_size):
     else:
         return False
 
+
 def update_used_space(db, file_size):
     columns = "total_disk_space_used"
     condition = "1"
     db.increment(tblClientGroups, columns, condition, value=file_size)
 
     total_used_space = 0
-
-    rows = db.get_data(tblClientGroups, "total_disk_space_used, client_id", "1")
+    rows = db.get_data(
+        tblClientGroups, "total_disk_space_used, client_id", "1"
+    )
     client_id = rows[0]["client_id"]
     if rows[0]["total_disk_space_used"] is not None:
         total_used_space = int(rows[0]["total_disk_space_used"])
 
     UpdateFileSpace(total_used_space, client_id)
 
+
 def save_compliance_activity(
     db, unit_id, compliance_id, activity_status, compliance_status,
     remarks
 ):
-    compliance_activity_id = db.get_new_id(
-        "compliance_activity_id", tblComplianceActivityLog,
-    )
     date = get_date_time()
     columns = [
-        "compliance_activity_id", "unit_id", "compliance_id",
+        "unit_id", "compliance_id",
         "activity_date", "activity_status", "compliance_status",
         "updated_on"
     ]
     values = [
-        compliance_activity_id, unit_id, compliance_id, date, activity_status,
+        unit_id, compliance_id, date, activity_status,
         compliance_status,  date
     ]
     if remarks:
@@ -906,29 +999,36 @@ def save_compliance_activity(
     if result is False:
         raise client_process_error("E018")
 
+
 def save_compliance_notification(
     db, compliance_history_id, notification_text, category, action
 ):
-    # notification_id = db.get_new_id(
-    #     "notification_id", tblNotificationsLog
-    # )
     current_time_stamp = get_date_time_in_date()
 
     # Get history details from compliance history id
-    history_columns = "unit_id, compliance_id, completed_by, concurred_by, \
-    approved_by"
-    history_condition = "compliance_history_id = %s" % compliance_history_id
+    history_columns = [
+        "unit_id", "compliance_id", "completed_by",
+        "concurred_by", "approved_by"
+    ]
+    history_condition = "compliance_history_id = %s"
+    history_condition_val = [compliance_history_id]
     history_rows = db.get_data(
-        tblComplianceHistory, history_columns, history_condition
+        tblComplianceHistory, history_columns,
+        history_condition, history_condition_val
     )
-    history = history_rows[0]  # convert_to_dict(history_rows[0], history_columns_list)
+    history = history_rows[0]
     unit_id = history["unit_id"]
     compliance_id = history["compliance_id"]
 
     # Getting Unit details from unit_id
-    unit_columns = "country_id, business_group_id, legal_entity_id, division_id"
-    unit_condition = "unit_id = '%s'" % int(unit_id)
-    unit_rows = db.get_data(tblUnits, unit_columns, unit_condition)
+    unit_columns = [
+        "country_id", "business_group_id", "legal_entity_id", "division_id"
+    ]
+    unit_condition = "unit_id = %s"
+    unit_condition_val = [int(unit_id)]
+    unit_rows = db.get_data(
+        tblUnits, unit_columns, unit_condition, unit_condition_val
+    )
     # unit_columns_list = [
     #     "country_id", "business_group_id", "legal_entity_id", "division_id"
     # ]
@@ -936,9 +1036,11 @@ def save_compliance_notification(
 
     # Getting compliance_details from compliance_id
     compliance_columns = "domain_id"
-    compliance_condition = "compliance_id = %s " % compliance_id
+    compliance_condition = "compliance_id = %s "
+    compliance_condition_val = [compliance_id]
     compliance_rows = db.get_data(
-        tblCompliances, compliance_columns, compliance_condition
+        tblCompliances, compliance_columns,
+        compliance_condition, compliance_condition_val
     )
     domain_id = compliance_rows[0]["domain_id"]
 
@@ -946,15 +1048,17 @@ def save_compliance_notification(
     columns = [
         "country_id", "domain_id", "business_group_id",
         "legal_entity_id", "division_id", "unit_id", "compliance_id",
-        "assignee", "concurrence_person", "approval_person", "notification_type_id",
-        "notification_text", "extra_details", "created_on"
+        "assignee", "concurrence_person", "approval_person",
+        "notification_type_id", "notification_text", "extra_details",
+        "created_on"
     ]
     extra_details = "%s-%s" % (compliance_history_id, category)
     values = [
         unit["country_id"], domain_id, unit["business_group_id"],
         unit["legal_entity_id"], unit["division_id"], unit_id, compliance_id,
-        history["completed_by"], history["concurred_by"], history["approved_by"],
-        1, notification_text, extra_details, current_time_stamp
+        history["completed_by"], history["concurred_by"],
+        history["approved_by"], 1, notification_text, extra_details,
+        current_time_stamp
     ]
     notification_id = db.insert(tblNotificationsLog, columns, values)
     if notification_id is False:
@@ -1005,6 +1109,7 @@ def get_user_countries(db, user_id):
         c_ids.append(int(r[0]))
     return c_ids
 
+
 def get_email_id_for_users(db, user_id):
     q = "SELECT employee_name, email_id from tbl_users where user_id = %s" % (
         user_id
@@ -1015,21 +1120,15 @@ def get_email_id_for_users(db, user_id):
     else:
         return None
 
+
 def get_user_email_name(db, user_ids):
     print user_ids
-    # user_id_list = [int(x) for x in user_ids.split(",")]
-    admin_email = None
     index = None
-    # if 0 in user_id_list:
-    #     index = user_id_list.index(0)
-    #     column = "username"
-    #     admin_rows = db.get_data(tblAdmin, column, "1")
-    #     user_id_list.remove(0)
-    #     admin_email = admin_rows[0]["username"]
     column = "email_id, employee_name"
-    condition = "user_id in (%s)" % ",".join(str(x) for x in user_ids)
+    condition = "user_id in (%s)"
+    condition_val = [",".join(str(x) for x in user_ids)]
     rows = db.get_data(
-        tblUsers, column, condition
+        tblUsers, column, condition, condition_val
     )
     email_ids = ""
     employee_name = ""
@@ -1048,6 +1147,7 @@ def get_user_email_name(db, user_ids):
 
     return email_ids, employee_name
 
+
 def calculate_from_and_to_date_for_domain(db, country_id, domain_id):
     columns = "contract_from, contract_to"
     rows = db.get_data(tblClientGroups, columns, "1")
@@ -1058,13 +1158,12 @@ def calculate_from_and_to_date_for_domain(db, country_id, domain_id):
     # contract_to = rows[0][1]
 
     columns = "period_from, period_to"
-    condition = "country_id = '%s' and domain_id = '%s'" % (
-        country_id, domain_id
+    condition = "country_id = %s and domain_id = %s"
+    condition_val = [country_id, domain_id]
+    rows = db.get_data(
+        tblClientConfigurations, columns, condition, condition_val
     )
-    rows = db.get_data(tblClientConfigurations, columns, condition)
-    print rows
     period_from = rows[0]["period_from"]
-    # period_to = rows[0][1]
 
     to_date = contract_from
     current_year = to_date.year
@@ -1076,6 +1175,7 @@ def calculate_from_and_to_date_for_domain(db, country_id, domain_id):
     if no_of_years is not 0 or no_of_months >= 12:
         from_date = datetime.date(current_year, period_from, 1)
     return from_date, to_date
+
 
 def calculate_due_date(
     db, country_id, domain_id, statutory_dates=None, repeat_by=None,
@@ -1089,21 +1189,25 @@ def calculate_due_date(
         if ((current_date - test_date).days < 0):
             result = True
         return result
-    from_date, to_date = calculate_from_and_to_date_for_domain(db, country_id, domain_id)
+    from_date, to_date = calculate_from_and_to_date_for_domain(
+        db, country_id, domain_id
+    )
     due_dates = []
     summary = ""
     # For Monthly Recurring compliances
     if statutory_dates and len(json.loads(statutory_dates)) > 1:
-        summary += "Every {} month(s) (".format(repeat_every)
+        summary += "Every %s month(s) (" % (repeat_every)
         for statutory_date in json.loads(statutory_dates):
             date = statutory_date["statutory_date"]
             month = statutory_date["statutory_month"]
-            summary += "{} {} ".format(db.string_months[month], date)
+            summary += "%s %s " % (db.string_months[month], date)
             current_date = datetime.datetime.today().date()
             due_date_guess = datetime.date(current_date.year, month, date)
             real_due_date = None
             if is_future_date(due_date_guess):
-                real_due_date = datetime.date(current_date.year - 1, month, date)
+                real_due_date = datetime.date(
+                    current_date.year - 1, month, date
+                )
             else:
                 real_due_date = due_date_guess
             if from_date <= real_due_date <= to_date:
@@ -1118,10 +1222,12 @@ def calculate_due_date(
         if statutory_dates not in ["None", None, ""]:
             statutory_date_json = json.loads(statutory_dates)
             if len(statutory_date_json) > 0:
-                date_details += "({})".format(statutory_date_json[0]["statutory_date"])
+                date_details += "(%s)" % (
+                    statutory_date_json[0]["statutory_date"]
+                )
         # For Compliances Recurring in days
         if repeat_by == 1:  # Days
-            summary = "Every {} day(s)".format(repeat_every)
+            summary = "Every %s day(s)" % (repeat_every)
             previous_year_due_date = datetime.date(
                 due_date.year - 1, due_date.month, due_date.day
             )
@@ -1129,18 +1235,22 @@ def calculate_due_date(
                 due_dates.append(previous_year_due_date)
             iter_due_date = previous_year_due_date
             while not is_future_date(iter_due_date):
-                iter_due_date = iter_due_date + datetime.timedelta(days=repeat_every)
+                iter_due_date = iter_due_date + datetime.timedelta(
+                    days=repeat_every
+                )
                 if from_date <= iter_due_date <= to_date:
                     due_dates.append(iter_due_date)
         elif repeat_by == 2:   # Months
-            summary = "Every {} month(s) {}".format(repeat_every, date_details)
+            summary = "Every %s month(s) %s " % (repeat_every, date_details)
             iter_due_date = due_date
             while iter_due_date > from_date:
-                iter_due_date = iter_due_date + relativedelta.relativedelta(months=-repeat_every)
+                iter_due_date = iter_due_date + relativedelta.relativedelta(
+                    months=-repeat_every
+                )
                 if from_date <= iter_due_date <= to_date:
                     due_dates.append(iter_due_date)
         elif repeat_by == 3:   # Years
-            summary = "Every {} year(s) {}".format(repeat_every, date_details)
+            summary = "Every %s year(s) %s" % (repeat_every, date_details)
             year = from_date.year
             while year <= to_date.year:
                 due_date = datetime.date(
@@ -1153,6 +1263,7 @@ def calculate_due_date(
         if due_dates[0] > due_dates[1]:
             due_dates.reverse()
     return due_dates, summary
+
 
 def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
     # Checking same due date already exists
@@ -1194,11 +1305,16 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
                     next_due_date = due_dates_list[current_due_date_index+1]
 
                 columns = "count(*) as compliance"
-                condition = "unit_id = %s AND due_date <= %s AND compliance_id = %s AND \
-                approve_status = 1 and validity_date >= %s "
+                condition = "unit_id = %s AND due_date <= %s " + \
+                    " AND compliance_id = %s AND " + \
+                    " approve_status = 1 and validity_date >= %s "
 
-                condition_val = [unit_id, due_date, compliance_id, next_due_date]
-                rows = db.get_data(tblComplianceHistory, columns, condition, condition_val)
+                condition_val = [
+                    unit_id, due_date, compliance_id, next_due_date
+                ]
+                rows = db.get_data(
+                    tblComplianceHistory, columns, condition, condition_val
+                )
                 if rows[0]["compliance"] > 0:
                     continue
                 else:
@@ -1206,6 +1322,7 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
         return result_due_date
     else:
         return []
+
 
 def convert_base64_to_file(file_name, file_content, client_id):
     client_directory = "%s/%s" % (CLIENT_DOCS_BASE_PATH, client_id)
@@ -1222,58 +1339,76 @@ def get_user_name_by_id(db, user_id, client_id=None):
     employee_name = None
     if user_id is not None and user_id != 0:
         columns = "employee_code, employee_name"
-        condition = "user_id ='{}'".format(user_id)
+        condition = "user_id = %s "
+        condition_val = [user_id]
         rows = db.get_data(
-            tblUsers, columns, condition
+            tblUsers, columns, condition, condition_val
         )
         if len(rows) > 0:
-            employee_name = "{} - {}".format(rows[0]["employee_code"], rows[0]["employee_name"])
+            employee_name = "%s - %s" % (
+                rows[0]["employee_code"], rows[0]["employee_name"]
+            )
     else:
         employee_name = "Administrator"
     return employee_name
 
+
 def get_form_ids_for_admin(db):
-    columns = "group_concat(form_id) as form_id"
-    condition = "is_admin = 1 OR form_type_id in (4,5) OR form_id in (1, 9,11,10,12)"
+    columns = ["form_id"]
+    condition = " is_admin = 1 OR form_type_id in (4,5) " + \
+        " OR form_id in (1, 9,11,10,12)"
     rows = db.get_data(
         tblForms, columns, condition
     )
-    return rows[0]["form_id"]
+    form_ids = [
+        row["form_id"] for row in rows
+    ]
+    return ",".join(str(x) for x in form_ids)
+
 
 def get_report_form_ids(db):
-    columns = "group_concat(form_id) as forms"
+    columns = ["form_id"]
     condition = " form_type_id = 3"
     rows = db.get_data(
         tblForms, columns, condition
     )
-    return rows[0]["forms"]
+    form_ids = [
+        row["form_id"] for row in rows
+    ]
+    return ",".join(str(x) for x in form_ids)
+
 
 def get_client_id_from_short_name(db, short_name):
     columns = "client_id"
-    condition = "url_short_name = '%s'" % short_name
+    condition = "url_short_name = %s"
+    condition_val = [short_name]
     rows = db.get_data(
-        "tbl_client_groups", columns, condition
+        "tbl_client_groups", columns, condition, condition_val
     )
     return rows[0]["client_id"]
 
+
 def validate_reset_token(db, reset_token, client_id):
     column = "count(*) as result, user_id"
-    condition = " verification_code='%s'" % reset_token
+    condition = " verification_code=%s"
+    condition_val = [reset_token]
     rows = db.get_data(
-        tblEmailVerification, column, condition
+        tblEmailVerification, column, condition, condition_val
     )
     count = rows[0]["result"]
     user_id = rows[0]["user_id"]
     if count == 1:
         column = "count(*) as usercount"
-        condition = "user_id = '%s' and is_active = 1" % user_id
-        rows = db.get_data(tblUsers, column, condition)
+        condition = "user_id = %s and is_active = 1"
+        condition_val = [user_id]
+        rows = db.get_data(tblUsers, column, condition, condition_val)
         if rows[0]["usercount"] > 0 or user_id == 0:
             return user_id
         else:
             return None
     else:
         return None
+
 
 def update_password(db, password, user_id, client_id):
     columns = ["password"]
@@ -1285,11 +1420,14 @@ def update_password(db, password, user_id, client_id):
         tblUsers, columns, values, condition
     )
     columns = "employee_code, employee_name"
-    condition = "user_id = '%s'" % user_id
-    rows = db.get_data(tblUsers, columns, condition)
+    condition = "user_id = %s"
+    condition_val = [user_id]
+    rows = db.get_data(tblUsers, columns, condition, condition_val)
     employee_name = rows[0][1]
     if rows[0]["employee_code"] is not None:
-        employee_name = "%s - %s" % (rows[0]["employee_code"], rows[0]["employee_name"])
+        employee_name = "%s - %s" % (
+            rows[0]["employee_code"], rows[0]["employee_name"]
+        )
     else:
         employee_name = rows[0]["employee_name"]
 
@@ -1301,16 +1439,24 @@ def update_password(db, password, user_id, client_id):
     else:
         return False
 
+
 def delete_used_token(db, reset_token, client_id):
-    condition = " verification_code='%s'" % reset_token
-    if db.delete(tblEmailVerification, condition, client_id):
+    condition = " verification_code=%s"
+    condition_val = [reset_token]
+    if db.delete(tblEmailVerification, condition, condition_val):
         return True
     else:
         return False
 
+
 def remove_session(db, session_token):
-        q = "delete from tbl_user_sessions where session_token = '%s'" % (session_token)
-        db.execute(q)
+    condition = "session_token = %s"
+    condition_val = [session_token]
+    if db.delete(tblUserSessions, condition, condition_val):
+        return True
+    else:
+        return False
+
 
 def update_profile(db, contact_no, address, session_user):
     columns = ["contact_no", "address"]
@@ -1318,30 +1464,41 @@ def update_profile(db, contact_no, address, session_user):
     condition = "user_id= '%s'" % session_user
     db.update(tblUsers, columns, values, condition)
 
+
 def is_service_proivder_user(db, user_id):
     column = "count(1) as result"
-    condition = "user_id = '%s' and is_service_provider = 1" % user_id
-    rows = db.get_data(tblUsers, column, condition)
+    condition = "user_id = %s and is_service_provider = 1"
+    condition_val = [user_id]
+    rows = db.get_data(tblUsers, column, condition, condition_val)
     if rows[0]["result"] > 0:
         return True
     else:
         return False
 
+
 def get_trail_id(db, type=None):
     if type is None:
-        query = "select IFNULL(MAX(audit_trail_id), 0) as audit_trail_id from tbl_audit_log;"
+        query = "select IFNULL(MAX(audit_trail_id), 0) as audit_trail_id " + \
+            " from tbl_audit_log;"
     else:
-        query = "select IFNULL(MAX(domain_trail_id), 0) as audit_trail_id from tbl_audit_log;"
+        query = "select IFNULL(MAX(domain_trail_id), 0) as audit_trail_id " + \
+            " from tbl_audit_log;"
     row = db.select_one(query)
     trail_id = row[0]
     return trail_id
 
+
 def update_traild_id(db, audit_trail_id, get_type=None):
     if get_type is None:
-        query = "UPDATE tbl_audit_log SET audit_trail_id=%s;" % (audit_trail_id)
+        query = "UPDATE tbl_audit_log SET audit_trail_id=%s;" % (
+            audit_trail_id
+        )
     else:
-        query = "UPDATE tbl_audit_log SET domain_trail_id=%s;" % (audit_trail_id)
+        query = "UPDATE tbl_audit_log SET domain_trail_id=%s;" % (
+            audit_trail_id
+        )
     db.execute(query)
+
 
 def reset_domain_trail_id(db):
     q = "update tbl_audit_log set domain_trail_id=0"
