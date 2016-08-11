@@ -519,12 +519,14 @@ def get_user_company_details(db, user_id):
         unit_ids.append(
             int(row["unit_id"])
         )
-        if int(row["division_id"]) not in division_ids:
-            division_ids.append(int(row["division_id"]))
+        if row["division_id"] is not None:
+            if int(row["division_id"]) not in division_ids:
+                division_ids.append(int(row["division_id"]))
         if int(row["legal_entity_id"]) not in legal_entity_ids:
-            division_ids.append(int(row["legal_entity_id"]))
-        if int(row["business_group_id"]) not in business_group_ids:
-            division_ids.append(int(row["business_group_id"]))
+            legal_entity_ids.append(int(row["legal_entity_id"]))
+        if row["business_group_id"] is not None:
+            if int(row["business_group_id"]) not in business_group_ids:
+                business_group_ids.append(int(row["business_group_id"]))
     return (
         ",".join(str(x) for x in unit_ids),
         ",".join(str(x) for x in division_ids),

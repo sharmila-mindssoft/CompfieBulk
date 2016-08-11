@@ -380,6 +380,7 @@ def process_get_client_users(db, request, session_user):
     user_company_info = get_user_company_details(
         db, session_user
     )
+    print "user_company_info==================>{}".format(user_company_info)
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
