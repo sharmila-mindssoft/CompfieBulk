@@ -1,15 +1,18 @@
-from protocol import (clientadminsettings, login, core)
+from protocol import (
+    clientadminsettings, login
+)
 from server.clientdatabase.clientadminsettings import *
 
 __all__ = [
     "process_client_admin_settings_requests"
 ]
 
+
 ########################################################
 # To Redirect the requests to the corresponding
 # functions
 ########################################################
-def process_client_admin_settings_requests(request, db) :
+def process_client_admin_settings_requests(request, db):
     session_token = request.session_token
     client_info = session_token.split("-")
 
@@ -18,10 +21,11 @@ def process_client_admin_settings_requests(request, db) :
     session_user = db.validate_session_token(session_token)
     if session_user is None:
         return login.InvalidSessionToken()
-    if type(request) is clientadminsettings.GetSettings :
+    if type(request) is clientadminsettings.GetSettings:
         return process_get_settings(db, request, session_user, client_id)
-    elif type(request) is clientadminsettings.UpdateSettings :
+    elif type(request) is clientadminsettings.UpdateSettings:
         return process_update_settings(db, request, session_user, client_id)
+
 
 ########################################################
 # To retrieve the settings and profile of the given
@@ -41,7 +45,9 @@ def process_get_settings(db, request, session_user, client_id):
     return clientadminsettings.GetSettingsSuccess(
         is_two_levels_of_approval=bool(settings["two_levels_of_approval"]),
         assignee_reminder_days=settings["assignee_reminder"],
-        escalation_reminder_In_advance_days=settings["escalation_reminder_in_advance"],
+        escalation_reminder_In_advance_days=settings[
+            "escalation_reminder_in_advance"
+        ],
         escalation_reminder_days=settings["escalation_reminder"],
         profile_detail=profile_detail
     )
@@ -53,8 +59,10 @@ def process_get_settings(db, request, session_user, client_id):
 def process_update_settings(db, request, session_user, client_id):
     is_two_levels_of_approval = request.is_two_levels_of_approval
     assignee_reminder_days = request.assignee_reminder_days
-    escalation_reminder_In_advance_days = request.escalation_reminder_In_advance_days
+    rem_in_advance = request.escalation_reminder_In_advance_days
     escalation_reminder_days = request.escalation_reminder_days
-    updateSettings(db, is_two_levels_of_approval, assignee_reminder_days,
-        escalation_reminder_In_advance_days, escalation_reminder_days, client_id)
+    updateSettings(
+        db, is_two_levels_of_approval, assignee_reminder_days,
+        rem_in_advance, escalation_reminder_days, client_id
+    )
     return clientadminsettings.UpdateSettingsSuccess()

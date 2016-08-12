@@ -14,6 +14,7 @@ __all__ = [
     "updateSettings"
 ]
 
+
 #
 #   Client Admin Settings
 #
@@ -32,10 +33,13 @@ def get_settings(db, client_id):
     else:
         return None
 
+
 def get_licence_holder_details(db, client_id):
     columns = [
-        "tcu.user_id", "tcu.email_id", "tcu.employee_name", "ifnull(tcu.employee_code, 0) as employee_code",
-        "tcu.contact_no", "tcu.is_admin", "tu.unit_code", "tu.unit_name", "tu.address",
+        "tcu.user_id", "tcu.email_id", "tcu.employee_name",
+        "ifnull(tcu.employee_code, 0) as employee_code",
+        "tcu.contact_no", "tcu.is_admin", "tu.unit_code",
+        "tu.unit_name", "tu.address",
         "tcu.is_active", "tsp.service_provider_name", "tcu.is_primary_admin",
         "ifnull(tcu.is_service_provider, 0) as is_service_provider"
     ]
@@ -52,6 +56,7 @@ def get_licence_holder_details(db, client_id):
         join_type, join_conditions,
         where_condition
     )
+
 
 def get_profile(
     db, contract_from, contract_to, no_of_user_licence,
@@ -77,9 +82,13 @@ def get_profile(
             if(row["employee_code"] == "0"):
                 employee_name = row["employee_name"]
             else:
-                employee_name = "%s - %s" % (row["employee_code"], row["employee_name"])
-        else :
-            employee_name = "%s - %s" % (row["service_provider_name"], row["employee_name"])
+                employee_name = "%s - %s" % (
+                    row["employee_code"], row["employee_name"]
+                )
+        else:
+            employee_name = "%s - %s" % (
+                row["service_provider_name"], row["employee_name"]
+            )
 
         if row["unit_name"] == None:
             unit_name = row["service_provider_name"]
@@ -121,6 +130,7 @@ def get_profile(
         used_space
     )
     return profile_detail
+
 
 def updateSettings(
     db, is_two_levels_of_approval, assignee_reminder_days,
