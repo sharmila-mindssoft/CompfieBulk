@@ -190,8 +190,8 @@ def process_client_dashboard_requests(request, db):
 
 
 def process_get_chart_filters(db, session_user, client_id):
-    countries = get_countries_for_user(db, session_user, client_id)
-    domains = get_domains_for_user(db, session_user, client_id)
+    countries = get_countries_for_user(db, session_user)
+    domains = get_domains_for_user(db, session_user)
     business_group_ids = None
     business_groups = get_business_groups_for_user(db, business_group_ids)
     legal_entity_ids = None

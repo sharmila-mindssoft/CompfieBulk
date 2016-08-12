@@ -2511,7 +2511,7 @@ def get_no_of_days_left_for_contract_expiration(db):
 def need_to_display_deletion_popup(db):
     current_date = get_date_time_in_date()
     column = "notification_id, created_on, notification_text"
-    condition = "extra_details like '%s%s%s' AND " + \
+    condition = "extra_details like %s%s%s AND " + \
         " created_on > DATE_SUB(now(), INTERVAL 30 DAY )"
     condition_val = ["%", "Auto Deletion", "%"]
     notification_rows = db.get_data(
