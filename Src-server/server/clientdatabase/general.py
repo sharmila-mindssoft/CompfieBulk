@@ -69,7 +69,7 @@ __all__ = [
 ]
 
 
-def get_client_user_forms(db, form_ids, client_id, is_admin):
+def get_client_user_forms(db, form_ids, is_admin):
     columns = "tf.form_id, tf.form_type_id, tft.form_type, tf.form_name, "
     columns += "tf.form_url, tf.form_order, tf.parent_menu "
 
@@ -309,7 +309,7 @@ def return_units(units):
         return results
 
 
-def get_client_users(db, client_id=None, unit_ids=None):
+def get_client_users(db, unit_ids=None):
     columns = "user_id, employee_name, employee_code, is_active"
     condition = "1"
     conditon_val = None
@@ -386,7 +386,7 @@ def verify_username(db, username):
         return None
 
 
-def verify_password(db, password, user_id, client_id=None):
+def verify_password(db, password, user_id):
     columns = "count(*) as result"
     encrypted_password = encrypt(password)
     condition = "1"
@@ -535,7 +535,7 @@ def get_user_company_details(db, user_id):
     )
 
 
-def get_client_level_1_statutoy(db, user_id, client_id=None):
+def get_client_level_1_statutoy(db, user_id):
     query = "SELECT (case when (LEFT( " + \
             " statutory_mapping,INSTR(statutory_mapping,'>>')-1) = '') " + \
             " THEN " + \
@@ -559,7 +559,7 @@ def return_client_level_1_statutories(data):
     return results
 
 
-def get_service_providers(db, client_id=None):
+def get_service_providers(db):
     columns = "service_provider_id, service_provider_name, is_active"
     condition = "1"
     rows = db.get_data(
@@ -579,10 +579,10 @@ def return_service_providers(service_providers):
     return results
 
 
-def get_client_compliances(db, user_id, client_id=None):
+def get_client_compliances(db, user_id):
     query = " SELECT compliance_id, document_name ,compliance_task " + \
             " FROM tbl_compliances"
-    rows = db.select_all(query, client_id)
+    rows = db.select_all(query)
     columns = ["compliance_id", "document_name", "compliance_name"]
     result = convert_to_dict(rows, columns)
     return return_client_compliances(result)
@@ -827,7 +827,7 @@ def validate_compliance_due_date(db, request):
     return True, None
 
 
-def get_compliance_frequency(db, client_id, condition="1"):
+def get_compliance_frequency(db, condition="1"):
     columns = "frequency_id, frequency"
     rows = db.get_data(
         tblComplianceFrequency, columns, condition
@@ -1194,6 +1194,7 @@ def calculate_due_date(
     from_date, to_date = calculate_from_and_to_date_for_domain(
         db, country_id, domain_id
     )
+    print "from_date: {}, to_date: {}".format(from_date, to_date)
     due_dates = []
     summary = ""
     # For Monthly Recurring compliances
@@ -1337,7 +1338,7 @@ def convert_base64_to_file(file_name, file_content, client_id):
             fn.write(file_content.decode('base64'))
 
 
-def get_user_name_by_id(db, user_id, client_id=None):
+def get_user_name_by_id(db, user_id):
     employee_name = None
     if user_id is not None and user_id != 0:
         columns = "employee_code, employee_name"
@@ -1390,7 +1391,7 @@ def get_client_id_from_short_name(db, short_name):
     return rows[0]["client_id"]
 
 
-def validate_reset_token(db, reset_token, client_id):
+def validate_reset_token(db, reset_token):
     column = "count(*) as result, user_id"
     condition = " verification_code=%s"
     condition_val = [reset_token]
@@ -1412,7 +1413,7 @@ def validate_reset_token(db, reset_token, client_id):
         return None
 
 
-def update_password(db, password, user_id, client_id):
+def update_password(db, password, user_id):
     columns = ["password"]
     values = [encrypt(password)]
     condition = "1"
@@ -1442,7 +1443,7 @@ def update_password(db, password, user_id, client_id):
         return False
 
 
-def delete_used_token(db, reset_token, client_id):
+def delete_used_token(db, reset_token):
     condition = " verification_code=%s"
     condition_val = [reset_token]
     if db.delete(tblEmailVerification, condition, condition_val):
