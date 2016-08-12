@@ -349,7 +349,8 @@ $('#pagination').click(function(){
   unit_id =  parseInt($("#unit").val());
   s_endCount = statutoriesCount - 1;
   displayLoader();
-  client_mirror.getAssignComplianceForUnits(assignStatutoryUnitIds, parseInt(domainID), s_endCount,
+  client_mirror.getAssignComplianceForUnits(
+    assignStatutoryUnitIds, parseInt(domainID), s_endCount,
     function (error, response) {
         if (error == null){
           statutoriesList = response["statutories"];
@@ -768,7 +769,16 @@ function submitcompliance(){
           }
         }
       }
-
+      var unit_names = ""
+      for(var unit in unitsList){
+        if($.inArray(unitsList[unit]["unit_id"], assignStatutoryUnitIds) >= 0){
+          if(unit_names == ""){
+              unit_names += unitsList[unit]["unit_name"]
+          }else{
+              unit_names += ", "+unitsList[unit]["unit_name"]
+          }
+        }
+      }
       if(assigneeInserUnits.length > 0 || concurrenceInserUnits.length >0 || approvalInserUnits.length >0 ||
         assigneeInserDomain.length > 0 || concurrenceInserDomain.length > 0 || approvalInserDomain.length > 0){
         var assigneeText = '';
@@ -835,17 +845,29 @@ function submitcompliance(){
 
                     function onSuccess(data){
                       //getAssignedStatutories ();
-                      getAssignCompliances ();
-                      $('ul.setup-panel li:eq(0)').addClass('active');
-                      $('ul.setup-panel li:eq(1)').addClass('disabled');
-                      $('ul.setup-panel li:eq(2)').addClass('disabled');
-                      $('ul.setup-panel li a[href="#step-1"]').trigger('click');
-                      $(".tbody-assignstatutory").find("tbody").remove();
-                      $('#assignee').empty();
-                      $('#concurrence').empty();
-                      $('#approval').empty();
-                      load_firstwizard();
-                      hideLoader();
+                      message = "The selected task items for unit(s) "+unit_names+" have been assigned to "+ assignComplianceAssigneeName
+                      $( ".warning-confirm" ).dialog({
+                        title: "Success",
+                        buttons: {
+                            Ok: function() {
+                                $( this ).dialog( "close" );
+                                getAssignCompliances ();
+                                $('ul.setup-panel li:eq(0)').addClass('active');
+                                $('ul.setup-panel li:eq(1)').addClass('disabled');
+                                $('ul.setup-panel li:eq(2)').addClass('disabled');
+                                $('ul.setup-panel li a[href="#step-1"]').trigger('click');
+                                $(".tbody-assignstatutory").find("tbody").remove();
+                                $('#assignee').empty();
+                                $('#concurrence').empty();
+                                $('#approval').empty();
+                                load_firstwizard();
+                                hideLoader();
+                            },
+                        },
+                        open: function ()  {
+                            $(".warning-message").html(message);
+                        }
+                    });
                     }
                     function onFailure(error, response){
                       displayMessage(error);
@@ -885,18 +907,30 @@ function submitcompliance(){
       }else{
         newSettingsList = null;
         function onSuccess(data){
-          //getAssignedStatutories ();
-          getAssignCompliances ();
-          $('ul.setup-panel li:eq(0)').addClass('active');
-          $('ul.setup-panel li:eq(1)').addClass('disabled');
-          $('ul.setup-panel li:eq(2)').addClass('disabled');
-          $('ul.setup-panel li a[href="#step-1"]').trigger('click');
-          $(".tbody-assignstatutory").find("tbody").remove();
-          $('#assignee').empty();
-          $('#concurrence').empty();
-          $('#approval').empty();
-          load_firstwizard();
-          hideLoader();
+          message = "The selected task items for unit(s) "+unit_names+" have been assigned to "+ assignComplianceAssigneeName
+          $( ".warning-confirm" ).dialog({
+              title: "Success",
+              buttons: {
+                  Ok: function() {
+                      $( this ).dialog( "close" );
+                      getAssignCompliances ();
+                      $('ul.setup-panel li:eq(0)').addClass('active');
+                      $('ul.setup-panel li:eq(1)').addClass('disabled');
+                      $('ul.setup-panel li:eq(2)').addClass('disabled');
+                      $('ul.setup-panel li a[href="#step-1"]').trigger('click');
+                      $(".tbody-assignstatutory").find("tbody").remove();
+                      $('#assignee').empty();
+                      $('#concurrence').empty();
+                      $('#approval').empty();
+                      load_firstwizard();
+                      hideLoader();
+                      
+                  },
+              },
+              open: function ()  {
+                  $(".warning-message").html(message);
+              }
+          });
         }
         function onFailure(error, response){
           displayMessage(error);

@@ -28,28 +28,30 @@ __all__ = [
     "process_logout"
 ]
 
-def process_login_request(request, db, company_id, session_user_ip) :
+
+def process_login_request(
+    request, db, company_id, session_user_ip
+):
     if type(request) is login.Login:
         logger.logClientApi("Login", "begin")
         result = process_login(db, request, company_id, session_user_ip)
         logger.logClientApi("Login", "end")
-
-    elif type(request) is login.ForgotPassword :
+    elif type(request) is login.ForgotPassword:
         logger.logClientApi("ForgotPassword", "begin")
         result = process_forgot_password(db, request)
         logger.logClientApi("ForgotPassword", "end")
 
-    elif type(request) is login.ResetTokenValidation :
+    elif type(request) is login.ResetTokenValidation:
         logger.logClientApi("ResetTokenValidation", "begin")
         result = process_reset_token(db, request)
         logger.logClientApi("ResetTokenValidation", "end")
 
-    elif type(request) is login.ResetPassword :
+    elif type(request) is login.ResetPassword:
         logger.logClientApi("ResetPassword", "begin")
         result = process_reset_password(db, request)
         logger.logClientApi("ResetPassword", "end")
 
-    elif type(request) is login.ChangePassword :
+    elif type(request) is login.ChangePassword:
         logger.logClientApi("ResetPassword", "begin")
         result = process_change_password(db, request)
         logger.logClientApi("ResetPassword", "end")
@@ -65,6 +67,7 @@ def process_login_request(request, db, company_id, session_user_ip) :
         logger.logClientApi("Logout", "end")
 
     return result
+
 
 def process_login(db, request, client_id, session_user_ip):
     login_type = request.login_type
@@ -91,41 +94,45 @@ def process_login(db, request, client_id, session_user_ip):
         if response is True:
             logger.logLogin("info", user_ip, username, "Login process end")
             return admin_login_response(db, client_id, user_ip)
-        else :
+        else:
             if response is "ContractExpired":
                 logger.logLogin("info", user_ip, username, "ContractExpired")
                 return login.ContractExpired()
             elif response is False:
                 logger.logLogin("info", user_ip, username, "Login process end")
                 return login.InvalidCredentials()
-            else :
+            else:
                 logger.logLogin("info", user_ip, username, "Login process end")
                 return user_login_response(db, response, client_id, user_ip)
 
-    else :
-        if response is True :
+    else:
+        if response is True:
             logger.logLogin("info", user_ip, username, "Login process end")
-            return mobile_user_admin_response(db, login_type, client_id, user_ip)
-        else :
+            return mobile_user_admin_response(
+                db, login_type, client_id, user_ip
+            )
+        else:
             if response is "ContractExpired":
                 logger.logLogin("info", user_ip, username, "ContractExpired")
                 return login.ContractExpired()
             elif response is False:
                 logger.logLogin("info", user_ip, username, "Login process end")
                 return login.InvalidCredentials()
-            else :
+            else:
                 logger.logLogin("info", user_ip, username, "Login process end")
-                return mobile_user_login_respone(db, response, login_type, client_id, user_ip)
+                return mobile_user_login_respone(
+                    db, response, login_type, client_id, user_ip
+                )
 
 
 def mobile_user_admin_response(db, login_type, client_id, ip):
-    if login_type.lower() == "web" :
+    if login_type.lower() == "web":
         session_type = 1
-    elif login_type.lower() == "android" :
+    elif login_type.lower() == "android":
         session_type = 2
-    elif login_type.lower() == "ios" :
+    elif login_type.lower() == "ios":
         session_type = 3
-    elif login_type.lower() == "blackberry" :
+    elif login_type.lower() == "blackberry":
         session_type = 4
 
     column = "user_id"
@@ -153,20 +160,23 @@ def mobile_user_admin_response(db, login_type, client_id, ip):
         menu
     )
 
+
 def mobile_user_login_respone(db, data, login_type, client_id, ip):
-    if login_type.lower() == "web" :
+    if login_type.lower() == "web":
         session_type = 1
-    elif login_type.lower() == "android" :
+    elif login_type.lower() == "android":
         session_type = 2
-    elif login_type.lower() == "ios" :
+    elif login_type.lower() == "ios":
         session_type = 3
-    elif login_type.lower() == "blackberry" :
+    elif login_type.lower() == "blackberry":
         session_type = 4
     user_id = data["user_id"]
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
     employee = "%s - %s" % (employee_code, employee_name)
-    session_token = add_session(db, user_id, session_type, ip, employee, client_id)
+    session_token = add_session(
+        db, user_id, session_type, ip, employee, client_id
+    )
     client_info = get_client_group(db)
     group_name = client_info["group_name"]
     group_id = client_info["client_id"]
@@ -194,6 +204,7 @@ def mobile_user_login_respone(db, data, login_type, client_id, ip):
         menu
     )
 
+
 def user_login_response(db, data, client_id, ip):
     user_id = data["user_id"]
     email_id = data["email_id"]
@@ -201,7 +212,9 @@ def user_login_response(db, data, client_id, ip):
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
     employee = "%s - %s" % (employee_code, employee_name)
-    session_token = add_session(db, user_id, session_type, ip, employee, client_id)
+    session_token = add_session(
+        db, user_id, session_type, ip, employee, client_id
+    )
     contact_no = data["contact_no"]
     user_group_name = data["user_group_name"]
     form_ids = data["form_ids"]
@@ -223,6 +236,7 @@ def user_login_response(db, data, client_id, ip):
         client_id, bool(is_promoted_admin)
     )
 
+
 def admin_login_response(db, client_id, ip):
     column = "user_id"
     condition = " is_active = 1 and is_primary_admin = 1"
@@ -240,6 +254,7 @@ def admin_login_response(db, client_id, ip):
         user_id, session_token, email_id, menu, employee_name, client_id
     )
 
+
 def process_forgot_password(db, request):
     user_id = verify_username(db, request.username)
     if user_id is not None:
@@ -247,6 +262,7 @@ def process_forgot_password(db, request):
         return login.ForgotPasswordSuccess()
     else:
         return login.InvalidUserName()
+
 
 def send_reset_link(db, user_id, username, short_name):
     reset_token = new_uuid()
@@ -266,6 +282,7 @@ def send_reset_link(db, user_id, username, short_name):
     else:
         print "Saving reset token failed"
 
+
 def process_reset_token(db, request):
     client_id = get_client_id_from_short_name(db, request.short_name)
     user_id = validate_reset_token(db, request.reset_token, client_id)
@@ -273,6 +290,7 @@ def process_reset_token(db, request):
         return login.ResetSessionTokenValidationSuccess()
     else:
         return login.InvalidResetToken()
+
 
 def process_reset_password(db, request):
     client_id = get_client_id_from_short_name(db, request.short_name)
@@ -284,16 +302,20 @@ def process_reset_password(db, request):
     else:
         return login.InvalidResetToken()
 
+
 def process_change_password(db, request):
     client_info = request.session_token.split("-")
-    session_token = "{}-{}".format(client_info[0],client_info[2])
+    session_token = "{}-{}".format(
+        client_info[0], client_info[2]
+    )
     client_id = int(client_info[0])
     session_user = db.validate_session_token(session_token)
     if verify_password(db, request.current_password, session_user, client_id):
         update_password(db, request.new_password, session_user, client_id)
         return login.ChangePasswordSuccess()
-    else :
+    else:
         return login.InvalidCurrentPassword()
+
 
 def process_logout(db, request):
     # save logout time
@@ -301,10 +323,12 @@ def process_logout(db, request):
     remove_session(db, session)
     return login.LogoutSuccess()
 
+
 def process_update_profile(db, request):
     client_info = request.session_token.split("-")
-    session_token = "{}-{}".format(client_info[0],client_info[1])
-    client_id = int(client_info[0])
+    session_token = "{}-{}".format(
+        client_info[0],  client_info[1]
+    )
     session_user = db.validate_session_token(session_token)
     update_profile(db, request.contact_no, request.address, session_user)
     return login.UpdateUserProfileSuccess(request.contact_no, request.address)

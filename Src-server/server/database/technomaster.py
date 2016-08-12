@@ -781,6 +781,7 @@ def is_duplicate_legal_entity(
     if legal_entity_id:
         condition += " AND legal_entity_id != %s "
         condition_val.append(legal_entity_id)
+    print "condition ========> {}".format(condition)
     return db.is_already_exists(tblLegalEntities, condition, condition_val)
 
 

@@ -23,10 +23,11 @@ from server.client import (
 import logger
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
+
+
 #
 # cors_handler
 #
-
 def cors_handler(request, response):
     response.set_header("Access-Control-Allow-Origin", "*")
     response.set_header("Access-Control-Allow-Headers", "Content-Type")
