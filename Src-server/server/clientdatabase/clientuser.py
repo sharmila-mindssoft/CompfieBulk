@@ -434,7 +434,8 @@ def update_compliances(
         )
         action = "approve"
         notification_text = "%s has completed the " + \
-            " compliance %s. Review and approve" % (
+            " compliance %s. Review and approve"
+        notification_text = notification_text % (
                 assignee_name, compliance_name
             )
         concurrence_email, concurrence_name = (None, None)
@@ -447,7 +448,8 @@ def update_compliances(
             )
             action = "Concur"
             notification_text = "%s has completed the " + \
-                " compliance %s. Review and concur" % (
+                " compliance %s. Review and concur"
+            notification_text = notification_text % (
                     assignee_name, compliance_name
                 )
         save_compliance_notification(
@@ -639,10 +641,12 @@ def get_compliance_history_details(
 ):
     compliance_column = "(select compliance_task from %s c " + \
         " where c.compliance_id = ch.compliance_id ) " + \
-        " as compliance_name " % tblCompliances
+        " as compliance_name "
+    compliance_column = compliance_column % tblCompliances
     document_name_column = "(select document_name from %s c " + \
         " where c.compliance_id = ch.compliance_id ) " + \
-        " as doc_name" % tblCompliances
+        " as doc_name"
+    document_name_column = document_name_column % tblCompliances
     columns = [
         "completed_by", "ifnull(concurred_by, 0) as concurred", "approved_by",
         compliance_column, document_name_column, "due_date"

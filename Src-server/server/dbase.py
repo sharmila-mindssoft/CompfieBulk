@@ -157,8 +157,8 @@ class Database(object):
             return True
         except mysql.Error, e:
             print e
-            print query
-            print param
+            # print query
+            # print param
             return False
 
     ########################################################
@@ -191,8 +191,8 @@ class Database(object):
             return int(cursor.lastrowid)
         except mysql.Error, e:
             print e
-            print query
-            print param
+            # print query
+            # print param
             return False
 
 ########################################################
@@ -235,8 +235,8 @@ class Database(object):
         except mysql.Error, e:
             print e
             print '@@@@@@@@@@2222'
-            print query
-            print param
+            # print query
+            # print param
             logger.logClientApi("select_all", query)
             logger.logClientApi("select_all", e)
             raise fetch_error()
@@ -274,8 +274,8 @@ class Database(object):
             return res
         except mysql.Error, e:
             print "Exception"
-            print query
-            print param
+            # print query
+            # print param
             print e
             logger.logClientApi("select_one", query)
             logger.logClientApi("select_one", e)
@@ -318,8 +318,8 @@ class Database(object):
             query += " WHERE %s " % condition
             if order is not None:
                 query += order
-            print query
-            print condition_val
+            # print query
+            # print condition_val
             if condition_val is None:
                 logger.logQuery(self._for_client, "get_data", query)
                 rows = self.select_all(query)
@@ -335,7 +335,7 @@ class Database(object):
             logger.logQuery(self._for_client, "get_data", query)
             rows = self.select_all(query)
         result = []
-        print rows
+        # print rows
         if rows:
             result = convert_to_dict(rows, param)
         return result
@@ -564,7 +564,7 @@ class Database(object):
         query = "SELECT count(0) FROM %s WHERE %s " % (table, condition)
         rows = None
         rows = self.select_one(query, condition_val)
-        print rows
+        # print rows
         if rows:
             if rows[0] > 0:
                 return True

@@ -150,7 +150,7 @@ def get_business_groups_for_user(db, business_group_ids):
     condition = "1 "
     condition_val = None
     if business_group_ids is not None:
-        condition = "business_group_id in (%s) "
+        condition = " find_in_set (business_group_id, %s) "
         condition_val = [business_group_ids]
     order = " ORDER BY business_group_name "
     rows = db.get_data(
@@ -175,7 +175,7 @@ def get_legal_entities_for_user(db, legal_entity_ids):
     condition = "1 "
     condition_val = None
     if legal_entity_ids is not None:
-        condition = "legal_entity_id in (%s) "
+        condition = " find_in_set(legal_entity_id, %s) "
         condition_val = [legal_entity_ids]
     order = "ORDER BY legal_entity_name "
     rows = db.get_data(
@@ -203,7 +203,7 @@ def get_divisions_for_user(db, division_ids):
     condition = "1"
     condition_val = None
     if division_ids is not None:
-        condition = "division_id in (%s) "
+        condition = " find_in_set(division_id, %s) "
         condition_val = [division_ids]
     order = " ORDER BY division_name"
     rows = db.get_data(
@@ -280,7 +280,7 @@ def get_units_for_user(db, unit_ids):
     condition = "is_closed = 0"
     condition_val = None
     if unit_ids is not None:
-        condition = "unit_id in (%s) "
+        condition = " find_in_set(unit_id, %s) "
         condition_val = [unit_ids]
     order = "ORDER BY unit_name"
     rows = db.get_data(
