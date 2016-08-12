@@ -16,11 +16,12 @@ __all__ = [
     "process_client_user_request"
 ]
 
+
 ########################################################
 # To Redirect the requests to the corresponding
 # functions
 ########################################################
-def process_client_user_request(request, db) :
+def process_client_user_request(request, db):
     session_token = request.session_token
     client_info = session_token.split("-")
     request = request.request
@@ -32,21 +33,27 @@ def process_client_user_request(request, db) :
     if type(request) is clientuser.GetCurrentComplianceDetail:
         logger.logClientApi("GetCurrentComplianceDetail", "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = process_get_current_compliance_detail(db, request, session_user, client_id)
+        result = process_get_current_compliance_detail(
+            db, request, session_user, client_id
+        )
         logger.logClientApi("GetCurrentComplianceDetail", "process end")
         logger.logClientApi("------", str(time.time()))
 
     if type(request) is clientuser.GetUpcomingComplianceDetail:
         logger.logClientApi("GetUpcomingComplianceDetail", "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = process_get_upcoming_compliance_detail(db, request, session_user, client_id)
+        result = process_get_upcoming_compliance_detail(
+            db, request, session_user, client_id
+        )
         logger.logClientApi("GetUpcomingComplianceDetail", "process end")
         logger.logClientApi("------", str(time.time()))
 
     if type(request) is clientuser.UpdateComplianceDetail:
         logger.logClientApi("UpdateComplianceDetail", "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = process_update_compliance_detail(db, request, session_user, client_id)
+        result = process_update_compliance_detail(
+            db, request, session_user, client_id
+        )
         logger.logClientApi("UpdateComplianceDetail", "process end")
         logger.logClientApi("------", str(time.time()))
 
@@ -75,7 +82,9 @@ def process_client_user_request(request, db) :
 # To get the ongoing and upcoming compliances of the
 # given user
 ########################################################
-def process_get_current_compliance_detail(db, request, session_user, client_id):
+def process_get_current_compliance_detail(
+    db, request, session_user, client_id
+):
     current_start_count = request.current_start_count
     to_count = RECORD_DISPLAY_COUNT
     current_compliances_list = get_current_compliances_list(
@@ -92,7 +101,10 @@ def process_get_current_compliance_detail(db, request, session_user, client_id):
         inprogress_count=inprogress_count
     )
 
-def process_get_upcoming_compliance_detail(db, request, session_user, client_id):
+
+def process_get_upcoming_compliance_detail(
+    db, request, session_user, client_id
+):
     upcoming_start_count = request.upcoming_start_count
     to_count = RECORD_DISPLAY_COUNT
     upcoming_compliances_list = get_upcoming_compliances_list(
@@ -104,18 +116,20 @@ def process_get_upcoming_compliance_detail(db, request, session_user, client_id)
         total_count=total_count
     )
 
+
 ########################################################
 # To validate and update the compliance details
 ########################################################
 def is_unsupported_file(documents):
     for doc in documents:
-        file_name_parts = doc.file_name.split('.')
-        name = doc.file_name.split('.')[0]
+        # file_name_parts = doc.file_name.split('.')
+        # name = doc.file_name.split('.')[0]
         exten = doc.file_name.split('.')[1]
         if exten in ["exe", "htm", "html", "xhtml"]:
             return True
         else:
             continue
+
 
 def validate_documents(documents):
     if documents is not None:
@@ -126,14 +140,16 @@ def validate_documents(documents):
     else:
         return False
 
+
 def process_update_compliance_detail(db, request, session_user, client_id):
     if validate_documents(request.documents):
         return clientuser.UnSupportedFile()
     else:
-        result = update_compliances(db,
-            request.compliance_history_id, request.documents,
-            request.completion_date, request.validity_date, request.next_due_date,
-            request.remarks, client_id, session_user
+        result = update_compliances(
+            db, request.compliance_history_id, request.documents,
+            request.completion_date, request.validity_date,
+            request.next_due_date, request.remarks, client_id,
+            session_user
         )
         if result is True:
             return clientuser.UpdateComplianceDetailSuccess()
@@ -141,6 +157,7 @@ def process_update_compliance_detail(db, request, session_user, client_id):
             return clientuser.InvalidUser()
         else:
             return result
+
 
 ########################################################
 # To get the list of all on occurrence compliances
@@ -150,10 +167,8 @@ def process_get_on_occurrence_compliances(
     db, request, session_user, client_id
 ):
     to_count = RECORD_DISPLAY_COUNT
-    #import from general.py
     user_domain_ids = get_user_domains(db, session_user)
     user_unit_ids = get_user_unit_ids(db, session_user)
-    #import from clientuser.py
     compliances = get_on_occurrence_compliances_for_user(
         db, session_user, user_domain_ids, user_unit_ids,
         request.start_count, to_count
@@ -166,6 +181,7 @@ def process_get_on_occurrence_compliances(
         total_count=total_count
     )
 
+
 ########################################################
 # To start an on occurrence compliance
 ########################################################
@@ -177,6 +193,7 @@ def process_start_on_occurrence_compliance(
     unit_id = request.unit_id
     duration = request.duration
     start_on_occurrence_task(
-        db, compliance_id, start_date, unit_id, duration, session_user, client_id
+        db, compliance_id, start_date, unit_id, duration,
+        session_user, client_id
     )
     return clientuser.StartOnOccurrenceComplianceSuccess()
