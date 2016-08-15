@@ -504,7 +504,9 @@ def get_user_company_details(db, user_id):
         condition = " 1 "
         condition_val = None
     else:
-        condition = "  user_id = %s "
+        condition = "  unit_id in ( " + \
+            " SELECT unit_id FROM  tbl_user_units " + \
+            " WHERE user_id = %s )"
         condition_val = [user_id]
     columns = [
         "unit_id", "division_id", "legal_entity_id", "business_group_id"

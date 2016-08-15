@@ -352,10 +352,10 @@ class API(object):
         # else :
         #     return login.InvalidSessionToken()
 
+
 #
 # run_server
 #
-
 def run_server(address, knowledge_server_address):
     ip, port = address
     io_loop = IOLoop()
@@ -367,7 +367,9 @@ def run_server(address, knowledge_server_address):
         )
 
         web_server = WebServer(io_loop)
-        client_docs_path = os.path.join(ROOT_PATH, "clientdocuments")
+        src_server_path = os.path.join(ROOT_PATH, "Src-server")
+        server_path = os.path.join(src_server_path, "server")
+        client_docs_path = os.path.join(server_path, "clientdocuments")
         exported_reports_path = os.path.join(ROOT_PATH, "exported_reports")
 
         api = API(

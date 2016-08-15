@@ -691,7 +691,7 @@ def return_cmopliance_details_report(
     unitWise = {}
     for r in result:
         uname = r["unit_code"] + ' - ' + r["unit_name"]
-        if r["document_name"] == "None":
+        if r["document_name"] in ["None", None]:
             compliance_name = r["compliance_task"]
         else:
             compliance_name = r["document_name"] + ' - ' + r["compliance_task"]
@@ -1986,7 +1986,7 @@ def get_compliance_activity_report(
 
         query = "SELECT distinct activity_date, activity_status, " + \
             " compliance_status, cal.remarks, " + \
-            " concat(unit_code, "-", unit_name), " + \
+            " concat(unit_code, '-', unit_name), " + \
             " address, document_name, compliance_task, " + \
             " compliance_description, " + \
             " statutory_mapping, ac.completed_by, employee_code, " + \
@@ -2002,14 +2002,12 @@ def get_compliance_activity_report(
             " AND c.domain_id = %s "
         order = " ORDER BY cal.updated_on DESC"
 
-        print query
+        # print query
         param = [country_id, domain_id]
         if conditions != "":
             query += conditions
             param.extend(condition_val)
 
-        print query + order
-        print param
         result = db.select_all(query + order, param)
         columns = [
             "activity_date", "activity_status", "compliance_status", "remarks",

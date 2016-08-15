@@ -318,8 +318,8 @@ class Database(object):
             query += " WHERE %s " % condition
             if order is not None:
                 query += order
-            # print query
-            # print condition_val
+            print query
+            print condition_val
             if condition_val is None:
                 logger.logQuery(self._for_client, "get_data", query)
                 rows = self.select_all(query)
