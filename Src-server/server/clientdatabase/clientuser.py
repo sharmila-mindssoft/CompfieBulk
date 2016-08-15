@@ -476,13 +476,12 @@ def get_on_occurrence_compliance_count(
             " ON (ac.compliance_id = c.compliance_id) " + \
             " INNER JOIN tbl_units u ON (ac.unit_id = u.unit_id) " + \
             " WHERE u.is_closed = 0 " + \
-            " AND ac.unit_id in (%s) " + \
-            " AND c.domain_id in (%s) " + \
+            " AND ac.unit_id in %s " + \
+            " AND c.domain_id in %s " + \
             " AND c.frequency_id = 4 " + \
             " AND ac.assignee = %s "
     rows = db.select_one(query, [
-        user_unit_ids,
-        user_domain_ids, session_user
+        tuple(user_unit_ids), tuple(user_domain_ids), session_user
     ])
     return rows[0]
 
@@ -509,28 +508,42 @@ def get_on_occurrence_compliances_for_user(
             " ON (c.duration_type_id = cd.duration_type_id) " + \
             " INNER JOIN tbl_units u ON (ac.unit_id = u.unit_id) " + \
             " WHERE u.is_closed = 0 " + \
-            " AND ac.unit_id in (%s) " + \
-            " AND c.domain_id in (%s) " + \
+            " AND ac.unit_id in %s " + \
+            " AND c.domain_id in %s " + \
             " AND c.frequency_id = 4 " + \
             " AND ac.assignee = %s " + \
             " ORDER BY u.unit_id, document_name, compliance_task " + \
             " LIMIT %s, %s "
 
+    print
+    print
+    print query % (
+        tuple(user_unit_ids), tuple(user_domain_ids),
+        session_user, int(start_count), int(to_count)
+    )
+    print
+    print
     rows = db.select_all(query, [
-        user_unit_ids, user_domain_ids,
+        tuple(user_unit_ids), tuple(user_domain_ids),
         session_user, int(start_count), int(to_count)
     ])
+    print rows
     result = convert_to_dict(rows, columns)
+    print result
     # compliances = []
     unit_wise_compliances = {}
     for row in result:
+        print "inside for"
         duration = "%s %s" % (row["duration"], row["duration_type"])
+        print duration
         compliance_name = row["compliance_task"]
         if row["document_name"] not in ["None", "", None]:
             compliance_name = "%s - %s" % (
                 row["document_name"], compliance_name
             )
+        print compliance_name
         unit_name = row["unit_name"]
+        print unit_name
         if unit_name not in unit_wise_compliances:
             unit_wise_compliances[unit_name] = []
         unit_wise_compliances[unit_name].append(
@@ -540,6 +553,7 @@ def get_on_occurrence_compliances_for_user(
                 duration, row["unit_id"]
             )
         )
+    print unit_wise_compliances
     return unit_wise_compliances
 
 
@@ -584,7 +598,7 @@ def start_on_occurrence_task(
     compliance_history_id = db.insert(
         tblComplianceHistory, columns, values
     )
-    if result is False:
+    if compliance_history_id is False:
         raise client_process_error("E017")
 
     history = get_compliance_history_details(db, compliance_history_id)
