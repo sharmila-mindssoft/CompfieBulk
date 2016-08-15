@@ -1,7 +1,9 @@
 import time
 from protocol import (clientuser, login)
 from server import logger
-from server.constants import RECORD_DISPLAY_COUNT
+from server.constants import (
+    RECORD_DISPLAY_COUNT, FILE_MAX_LIMIT
+)
 from server.clientdatabase.clientuser import *
 
 from server.common import (
@@ -10,7 +12,7 @@ from server.common import (
 )
 
 from server.clientdatabase.general import (
-    get_user_domains, get_user_unit_ids
+    get_user_domains, get_user_unit_ids, is_space_available
     )
 __all__ = [
     "process_client_user_request"
@@ -121,11 +123,27 @@ def process_get_upcoming_compliance_detail(
 # To validate and update the compliance details
 ########################################################
 def is_unsupported_file(documents):
+    if documents is None:
+        return False
     for doc in documents:
         # file_name_parts = doc.file_name.split('.')
         # name = doc.file_name.split('.')[0]
         exten = doc.file_name.split('.')[1]
         if exten in ["exe", "htm", "html", "xhtml"]:
+            return True
+        else:
+            continue
+
+
+def validate_file_size(db, documents):
+    if documents is None:
+        return False
+    for doc in documents:
+        file_size = doc.file_size
+        if(
+            file_size > FILE_MAX_LIMIT or
+            not is_space_available(db, file_size)
+        ):
             return True
         else:
             continue
@@ -144,6 +162,8 @@ def validate_documents(documents):
 def process_update_compliance_detail(db, request, session_user, client_id):
     if validate_documents(request.documents):
         return clientuser.UnSupportedFile()
+    elif validate_file_size(db, request.documents):
+        return clientuser.FileSizeExceedsLimit()
     else:
         result = update_compliances(
             db, request.compliance_history_id, request.documents,

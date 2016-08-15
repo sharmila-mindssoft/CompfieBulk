@@ -1355,6 +1355,7 @@ def get_next_unit_auto_gen_no(db, client_id):
 
 
 def get_profiles(db, client_ids):
+    ONE_GB = 1024 * 1024 * 1000
     client_ids_list = [int(x) for x in client_ids.split(",")]
     profiles = []
     for client_id in client_ids_list:
@@ -1397,21 +1398,27 @@ def get_profiles(db, client_ids):
                 else:
                     is_service_provider = True
 
-            used_val = round((used_space/1000000000), 2)
+            used_val = round((used_space/ONE_GB), 2)
 
             licence_holders.append(
                 technomasters.LICENCE_HOLDER_DETAILS(
                     user_id, employee_name, email_id, contact_no,
                     unit_name, address,
-                    file_space/1000000000, used_val,
+                    file_space/ONE_GB, used_val,
                     bool(is_active), bool(is_primary_admin),
                     is_service_provider
                 )
             )
 
         remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
-        total_free_space = file_space/1000000000
-        total_used_space = float(used_val)
+        print
+        print "client========================>{}".format(client_id)
+        print "file_space: {}".format(file_space)
+        total_free_space = round(file_space/ONE_GB, 2)
+        print "total_free_space: {}".format(total_free_space)
+        total_used_space = used_space/ONE_GB
+        print "used_space: {}".format(total_used_space)
+        print
         profile_detail = technomasters.PROFILE_DETAIL(
             str(contract_from),
             str(contract_to), no_of_user_licence, remaining_licence,

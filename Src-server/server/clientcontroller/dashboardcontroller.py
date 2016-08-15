@@ -357,13 +357,13 @@ def process_assigneewise_compliances_filters(
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
     business_group_ids = user_company_info[3]
-    country_list = get_countries_for_user(db, session_user, client_id)
-    domain_list = get_domains_for_user(db, session_user, client_id)
+    country_list = get_countries_for_user(db, session_user)
+    domain_list = get_domains_for_user(db, session_user)
     business_group_list = get_business_groups_for_user(db, business_group_ids)
     legal_entity_list = get_legal_entities_for_user(db, legal_entity_ids)
     division_list = get_divisions_for_user(db, division_ids)
     unit_list = get_units_for_user(db, unit_ids)
-    users_list = get_client_users(db, client_id, unit_ids)
+    users_list = get_client_users(db, unit_ids)
     return dashboard.GetAssigneewiseComplianesFiltersSuccess(
         countries=country_list, business_groups=business_group_list,
         legal_entities=legal_entity_list, divisions=division_list,

@@ -458,7 +458,6 @@ def get_users_for_seating_units(db, session_user):
     result = convert_to_dict(rows, columns)
     user_list = []
     for r in result:
-        print r
         # q = "select unit_id from tbl_user_units where user_id = %s"
         # r_rows = db.select_all(q, [int(r["user_id"])])
         # r_unit_ids = convert_to_dict(r_rows, ["unit_id"])
@@ -1282,8 +1281,6 @@ def get_compliance_approval_count(db, session_user):
     approval_count = db.get_data(
         tblComplianceHistory, columns, approval_count_condition
     )[0]["count"]
-    print "concur_count:{}".format(concur_count)
-    print "approval_count:{}".format(approval_count)
     return concur_count + approval_count
 
 
@@ -1351,8 +1348,6 @@ def get_compliance_approval_list(
     assignee_wise_compliances = {}
     assignee_id_name_map = {}
     count = 0
-    print
-    print "result: {}".format(result)
     for row in result:
         download_urls = []
         file_name = []
@@ -1433,37 +1428,27 @@ def get_compliance_approval_list(
 
         domain_name = row["domain_name"]
         action = None
-        print "concurred_by_id:{}".format(concurred_by_id)
-        print "session_user:{}".format(session_user)
-        print "concurrence_status:{}".format(concurrence_status)
         if is_two_levels:
-            print "two levels of approval"
             if(
                 concurred_by_id == session_user and
                 concurrence_status in [False, None]
             ):
-                print "action : concur"
                 action = "Concur"
             elif(
                 concurrence_status is True and
                 int(session_user) == approved_by_id
             ):
-                print "action_approve"
                 action = "Approve"
             elif concurred_by_id is None and session_user == approved_by_id:
-                print "action : 2nd approve"
                 action = "Approve"
             else:
-                print "first else continue"
                 continue
         elif(
             concurred_by_id != session_user and
             session_user == approved_by_id
         ):
-            print "elif : approve"
             action = "Approve"
         else:
-            print "second else continue"
             continue
         assignee = row["employee_name"]
 
@@ -1492,7 +1477,6 @@ def get_compliance_approval_list(
                 )
             )
         else:
-            print "else third continue"
             continue
     return approval_compliances, count
 
@@ -1540,7 +1524,6 @@ def approve_compliance(
         values.append(string_to_datetime(next_due_date))
     condition = "compliance_history_id = %s "
     values.append(compliance_history_id)
-    print values
     db.update(tblComplianceHistory, columns, values, condition)
 
     # Getting compliance details from compliance history
@@ -1619,7 +1602,6 @@ def get_compliance_history_details(db, compliance_history_id):
         tblComplianceHistory + " ch", columns,
         condition, [compliance_history_id]
     )
-    print rows
     if rows:
         return rows[0]
     else:
@@ -1642,10 +1624,8 @@ def notify_compliance_approved(
         document_name != 'None'
     ):
         compliance_name = "%s - %s" % (document_name, compliance_name)
-    print "assignee_name", assignee_id
 
     assignee_email, assignee_name = get_user_email_name(db, str(assignee_id))
-    print "approver_name"
     approver_email, approver_name = get_user_email_name(db, str(approver_id))
     concurrence_email, concurrence_name = (None, None)
     if concurrence_id != -1 and is_two_levels_of_approval(db) is True:
@@ -1924,7 +1904,6 @@ def reject_compliance_concurrence(
     values = [0,  remarks, None, None]
     condition = "compliance_history_id = %s "
     values.append(compliance_history_id)
-    print "rows : {}".format(rows)
     db.update(tblComplianceHistory, columns, values, condition)
     notify_compliance_rejected(
         db, compliance_history_id, remarks, "RejectConcurrence",
@@ -2045,8 +2024,6 @@ def get_compliance_for_assignee(
         param.extend([session_user, session_user])
     param.extend([from_count, to_count])
 
-    print q
-    print param
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
     rows = db.select_all(q + order, param)
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")

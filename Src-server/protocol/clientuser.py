@@ -370,6 +370,7 @@ class NotEnoughDiskSpaceAvailable(Response):
         return {
         }
 
+
 class UnSupportedFile(Response):
     def __init__(self):
         pass
@@ -382,6 +383,21 @@ class UnSupportedFile(Response):
     def to_inner_structure(self):
         return {
         }
+
+
+class FileSizeExceedsLimit(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return FileSizeExceedsLimit()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 
 class GetOnOccurrenceCompliancesSuccess(Response):
     def __init__(self, compliances, total_count):
@@ -423,7 +439,7 @@ def _init_Response_class_map():
         CheckDiskSpaceSuccess, UpdateComplianceDetailSuccess,
         NotEnoughDiskSpaceAvailable, GetOnOccurrenceCompliancesSuccess,
         StartOnOccurrenceComplianceSuccess, UnSupportedFile,
-        NextDueDateMustBeWithIn90DaysBeforeValidityDate
+        NextDueDateMustBeWithIn90DaysBeforeValidityDate, FileSizeExceedsLimit
     ]
     class_map = {}
     for c in classes:

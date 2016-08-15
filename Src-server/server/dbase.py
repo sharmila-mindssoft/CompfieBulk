@@ -229,14 +229,13 @@ class Database(object):
                 else:
                     logger.logQuery(self._for_client, "select_all", query)
                     cursor.execute(query)
-
             res = cursor.fetchall()
             return res
         except mysql.Error, e:
             print e
             print '@@@@@@@@@@2222'
-            # print query
-            # print param
+            print query
+            print param
             logger.logClientApi("select_all", query)
             logger.logClientApi("select_all", e)
             raise fetch_error()

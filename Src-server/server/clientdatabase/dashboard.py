@@ -2003,8 +2003,8 @@ def get_assigneewise_compliances_list(
         units = get_user_unit_ids(db, session_user)
         if len(units) == 1:
             units.append(0)
-        condition += " AND tu.unit_id in %s " % (
-            tuple(units)
+        condition += " AND tu.unit_id in (%s) " % (
+            ",".join(str(x) for x in units)
         )
     if assignee_id is not None:
         condition += " AND tch.completed_by = %s" % (assignee_id)
