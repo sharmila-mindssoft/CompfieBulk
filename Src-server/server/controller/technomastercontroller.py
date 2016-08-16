@@ -423,6 +423,7 @@ def reactivate_unit(db, request, session_user):
 # To Get the Profile of all clients
 ########################################################
 def get_client_profile(db, request, session_user):
+    print "inside get client profile"
     client_ids = get_user_clients(db, session_user)
     if client_ids is None:
         return technomasters.UserIsNotResponsibleForAnyClient()
