@@ -372,7 +372,6 @@ def get_user_details(db, session_user):
     countries = db.get_data(
         tblUserCountries, user_country_columns, "1"
     )
-    print "countries :  {}".format(countries)
     user_country_mapping = {}
     for country in countries:
         user_id = int(country["user_id"])
@@ -381,15 +380,10 @@ def get_user_details(db, session_user):
         user_country_mapping[user_id].append(
             country["country_id"]
         )
-
-    print "user_country_mapping : {}".format(user_country_mapping)
-
     user_domain_columns = ["user_id", "domain_id"]
     domains = db.get_data(
         tblUserDomains, user_domain_columns, "1"
     )
-    print "domains :  {}".format(domains)
-
     user_domain_mapping = {}
     for domain in domains:
         user_id = int(domain["user_id"])
@@ -399,7 +393,6 @@ def get_user_details(db, session_user):
             domain["domain_id"]
         )
 
-    print "user_domain_mapping : {}".format(user_domain_mapping)
     user_unit_columns = ["user_id", "unit_id"]
     units = db.get_data(
         tblUserUnits, user_unit_columns, "1"
@@ -440,14 +433,6 @@ def return_user_details(
             user_country_mapping[user_id] = get_user_countries(db, user_id)
             user_domain_mapping[user_id] = get_user_domains(db, user_id)
             user_unit_mapping[user_id] = get_user_unit_ids(db, user_id)
-            print
-            print "Updating Details because user is primary admin=========>"
-            print "get_user_countries: {}".format(
-                get_user_countries(db, user_id)
-            )
-            print "get_user_domains: {}".format(get_user_domains(db, user_id))
-            print "user_country_mapping : {}".format(user_country_mapping)
-            print "user_domain_mapping : {}".format(user_domain_mapping)
         results.append(
             core.ClientUser(
                 user["user_id"], user["email_id"],
