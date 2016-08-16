@@ -422,12 +422,12 @@ def get_trend_chart(db, country_ids, domain_ids, client_id):
                     columns = "count(*) as total, sum(case " + \
                         " when approve_status = 1 then 1 " + \
                         "else 0 end) as complied"
-                    condition = "due_date between %s and %s "
-                    condition_val = [
+                    condition = "due_date between '%s' and '%s' "
+                    condition = condition % (
                         dates["start_date"], dates["end_date"]
-                    ]
+                    )
                     condition += " and compliance_history_id in (%s)"
-                    condition_val.append(compliance_history_ids)
+                    condition_val = [compliance_history_ids]
                     rows = db.get_data(
                         tblComplianceHistory, columns, condition, condition_val
                     )
@@ -464,6 +464,7 @@ def get_trend_chart(db, country_ids, domain_ids, client_id):
 def get_filtered_trend_data(
     db, country_ids, domain_ids, filter_type, filter_ids, client_id
 ):
+    print "inside get_filtered_trend_data"
     # import from common.py
     years = get_last_7_years()
     # import from common.py
@@ -493,6 +494,9 @@ def get_filtered_trend_data(
                         db, country_id, domain_id, client_id,
                         filter_id, filter_type
                     )
+                    print "compliance_history_ids : {}".format(
+                        compliance_history_ids
+                    )
                     if(
                         compliance_history_ids[0] is not None and
                         compliance_history_ids[2] is not None
@@ -503,6 +507,9 @@ def get_filtered_trend_data(
                             compliance_history_ids[0],
                             compliance_history_ids[2]
                         ]
+                        print "columns : {}".format(columns)
+                        print "condition: {}".format(condition)
+                        print "condition_val: {}".format(condition_val)
                         rows = db.get_data(
                             tblComplianceHistory, columns,
                             condition, condition_val
@@ -2568,12 +2575,11 @@ def get_compliance_history_ids_for_trend_chart(
 ):
     # Units related to the selected country and domain
     unit_columns = "unit_id"
-    unit_condition = "country_id =%s "
-    unit_condition += " AND  ( " + \
-        " domain_ids LIKE  '%," + str(domain_id) + ",%' " + \
-        "or domain_ids LIKE  '%," + str(domain_id) + "' " + \
-        "or domain_ids LIKE  '" + str(domain_id) + ",%'" + \
-        " or domain_ids LIKE '" + str(domain_id) + "') "
+    unit_condition = "country_id = %s " % (country_id)
+    unit_condition += " AND  find_in_set( " + \
+        " %s, domain_ids) " % (
+            domain_id
+        )
     unit_condition_val = [country_id]
     if filter_type is not None:
         if filter_type == "BusinessGroup":
@@ -2651,7 +2657,7 @@ def get_client_statutory_ids_and_unit_ids_for_trend_chart(
             condition += " unit_id =%s and country_id =%s)"
         condition_val.append(filter_id)
     else:
-        condition += " country_id = %s )" % (country_id)
+        condition += " country_id = %s )"
     condition_val.append(country_id)
     rows = db.get_data(
         tblClientStatutories, columns, condition, condition_val
