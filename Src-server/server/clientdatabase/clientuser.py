@@ -384,7 +384,6 @@ def update_compliances(
         frequency_id = int(rows["frequency_id"])
         as_columns = []
         as_values = []
-        print next_due_date
         if next_due_date is not None:
             as_columns.append("due_date")
             as_values.append(next_due_date)
@@ -476,12 +475,13 @@ def get_on_occurrence_compliance_count(
             " ON (ac.compliance_id = c.compliance_id) " + \
             " INNER JOIN tbl_units u ON (ac.unit_id = u.unit_id) " + \
             " WHERE u.is_closed = 0 " + \
-            " AND ac.unit_id in %s " + \
-            " AND c.domain_id in %s " + \
+            " AND find_in_set(ac.unit_id, %s) " + \
+            " AND find_in_set(c.domain_id, %s) " + \
             " AND c.frequency_id = 4 " + \
             " AND ac.assignee = %s "
     rows = db.select_one(query, [
-        tuple(user_unit_ids), tuple(user_domain_ids), session_user
+        ",".join(str(x) for x in user_unit_ids),
+        ",".join(str(x) for x in user_domain_ids), session_user
     ])
     return rows[0]
 
@@ -508,42 +508,29 @@ def get_on_occurrence_compliances_for_user(
             " ON (c.duration_type_id = cd.duration_type_id) " + \
             " INNER JOIN tbl_units u ON (ac.unit_id = u.unit_id) " + \
             " WHERE u.is_closed = 0 " + \
-            " AND ac.unit_id in %s " + \
-            " AND c.domain_id in %s " + \
+            " AND find_in_set(ac.unit_id, %s) " + \
+            " AND find_in_set(c.domain_id,%s) " + \
             " AND c.frequency_id = 4 " + \
             " AND ac.assignee = %s " + \
             " ORDER BY u.unit_id, document_name, compliance_task " + \
             " LIMIT %s, %s "
 
-    print
-    print
-    print query % (
-        tuple(user_unit_ids), tuple(user_domain_ids),
-        session_user, int(start_count), int(to_count)
-    )
-    print
-    print
     rows = db.select_all(query, [
-        tuple(user_unit_ids), tuple(user_domain_ids),
+        ",".join(str(x) for x in user_unit_ids),
+        ",".join( str(x) for x in user_domain_ids),
         session_user, int(start_count), int(to_count)
     ])
-    print rows
     result = convert_to_dict(rows, columns)
-    print result
     # compliances = []
     unit_wise_compliances = {}
     for row in result:
-        print "inside for"
         duration = "%s %s" % (row["duration"], row["duration_type"])
-        print duration
         compliance_name = row["compliance_task"]
         if row["document_name"] not in ["None", "", None]:
             compliance_name = "%s - %s" % (
                 row["document_name"], compliance_name
             )
-        print compliance_name
         unit_name = row["unit_name"]
-        print unit_name
         if unit_name not in unit_wise_compliances:
             unit_wise_compliances[unit_name] = []
         unit_wise_compliances[unit_name].append(
@@ -553,7 +540,6 @@ def get_on_occurrence_compliances_for_user(
                 duration, row["unit_id"]
             )
         )
-    print unit_wise_compliances
     return unit_wise_compliances
 
 
@@ -614,7 +600,6 @@ def start_on_occurrence_task(
     # user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
     assignee_email, assignee_name = get_user_email_name(db, str(assignee_id))
     approver_email, approver_name = get_user_email_name(db, str(approver_id))
-    print concurrence_id
     if (
         concurrence_id not in [None, "None", 0, "", "null", "Null"] and
         is_two_levels_of_approval(db)
