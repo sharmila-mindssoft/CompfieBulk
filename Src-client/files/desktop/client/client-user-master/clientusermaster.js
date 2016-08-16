@@ -296,7 +296,7 @@ function loadUserUpdate(userId){
                 if ($.inArray(unitid, user_unitids) != -1){
                     bgroups.push(unitList[units]['business_group_id']);
                     lentities.push(unitList[units]['legal_entity_id']);
-                    divisions.push(unitList[units]['division_id']);
+                    if(unitList[units]['division_id'] != null) divisions.push(unitList[units]['division_id']);
                 }
             }
             function unique(list) {
