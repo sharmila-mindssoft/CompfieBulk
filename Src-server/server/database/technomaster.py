@@ -992,7 +992,7 @@ def get_business_groups_for_user(db, user_id):
     ]
     condition = "1"
     if client_ids is not None:
-        condition = "client_id in (%s) " + \
+        condition = "client_id in  (%s) " + \
             " order by business_group_name ASC"
         condition = condition % client_ids
         result = db.get_data(
@@ -1054,7 +1054,8 @@ def get_divisions_for_user(db, user_id):
     ]
     condition = "1"
     if client_ids is not None:
-        condition = "client_id in (%s) order by division_name ASC" % client_ids
+        condition = "client_id in (%s) order by division_name ASC"
+        condition = condition % client_ids
         result = db.get_data(tblDivisions, columns, condition)
     return return_divisions(result)
 
@@ -1086,8 +1087,8 @@ def get_units_for_user(db, user_id):
     condition = "1"
     if client_ids is not None:
         condition = "client_id in (%s) order by unit_name ASC"
-        condition_val = [client_ids]
-        result = db.get_data(tblUnits, columns, condition, condition_val)
+        condition = condition % client_ids
+        result = db.get_data(tblUnits, columns, condition)
         print '*' * 50
         print result
     return return_units(result)
@@ -1192,11 +1193,11 @@ def get_group_companies_for_user_with_max_unit_count(db, user_id):
     columns = ["client_id", "group_name", "is_active"]
     condition = "is_active=1"
     if client_ids is not None:
-        condition = "client_id in (%s) order by group_name ASC" % (
-            client_ids
-        )
+        print "client_ids: {}".format(client_ids)
+        condition = "client_id in (%s) order by group_name ASC"
+        print "condition:{}".format(condition)
         result = db.get_data(
-            tblClientGroups, columns, condition
+            tblClientGroups, columns, condition, [client_ids]
         )
     return return_group_companies_with_max_unit_count(db, result)
 
@@ -1365,9 +1366,6 @@ def get_profiles(db, client_ids):
         file_space = settings_rows[0]["total_disk_space"]
         used_space = settings_rows[0]["total_disk_space_used"]
         licence_holder_rows = get_licence_holder_details(db, client_id)
-        print
-        print licence_holder_rows
-        print
         licence_holders = []
         for row in licence_holder_rows:
             employee_name = None
@@ -1461,7 +1459,7 @@ def get_group_companies_for_user(db, user_id):
     columns = ["client_id", "group_name", "is_active"]
     condition = "is_active = 1"
     if client_ids is not None:
-        condition = "client_id in (%s) order by group_name ASC"
+        condition = "find_in_set(client_id, %s) order by group_name ASC"
         condition_val = [client_ids]
         result = db.get_data(tblClientGroups, columns, condition, condition_val)
     return return_group_companies(db, result)
