@@ -174,7 +174,7 @@ class Database(object):
                 )
                 cursor.execute(query, param)
             elif type(param) is list:
-                print "inside elif "
+                # print "inside elif "
                 if len(param) > 1:
                     logger.logQuery(
                         self._for_client, "execute_insert",
@@ -234,8 +234,8 @@ class Database(object):
         except mysql.Error, e:
             print e
             print '@@@@@@@@@@2222'
-            print query
-            print param
+            # print query
+            # print param
             logger.logClientApi("select_all", query)
             logger.logClientApi("select_all", e)
             raise fetch_error()
@@ -317,8 +317,8 @@ class Database(object):
             query += " WHERE %s " % condition
             if order is not None:
                 query += order
-            print query
-            print condition_val
+            # print query
+            # print condition_val
             if condition_val is None:
                 logger.logQuery(self._for_client, "get_data", query)
                 rows = self.select_all(query)
