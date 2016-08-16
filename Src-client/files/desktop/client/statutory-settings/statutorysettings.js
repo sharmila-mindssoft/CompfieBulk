@@ -57,7 +57,7 @@ function compliancestatus(element, viewremarks){
   var remarkadd = '.cremarkadd'+$(element).val();
   var remarkview = '.cremarkview'+$(element).val();
   var applicable = '#applicable'+$(element).val();
-  var sClass = $(element).attr('class');
+  var sClass = $(element).attr('class').split(' ')[1];
 
   $('#cremarkvalue'+$(element).val()).val('');
   var optedval = $(element).is(":checked");
@@ -154,12 +154,18 @@ function load_statutory(sList){
     if(actname != lastActName){
       var acttableRow=$('#act-templates .font1 .tbody-heading');
       var clone=acttableRow.clone();
-      $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:100px;"> <label for="act'+actCount+'" style="margin-top:100px;" class="act-label"></label> ');
-      $('.actname', clone).html('<div style="float:left;margin-top:5px;">'+actname+'</div> <div style="float:right; width:500px;" class="default-display-none remark'+actCount+
-        '" ><div style="float:right;  width:250px;margin-top:-3px;"> <input type="text" maxlength="500" id="remarkvalue'+actCount+
-        '" value="'+not_applicable_remarks+'" class="input-box" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:5px;"> Remarks</div></div>');
-      $('.tbody-statutorysettings').append(clone);
 
+      $('.act-ck-box', clone).attr('id', 'act'+actCount);
+      $('.act-ck-box', clone).val(actCount);
+      //$('.act-label', clone).text(actname);
+      $('.act-label', clone).attr('for', 'act'+actCount);
+
+	  $('.act-remark', clone).addClass('remark'+actCount);
+      $('.remark-text', clone).attr('id', 'remarkvalue'+actCount);
+      $('.remark-text', clone).val(not_applicable_remarks);
+      $('.actname', clone).text(actname);
+
+      $('.tbody-statutorysettings').append(clone);
       $('.tbody-statutorysettings').append('<tbody class="accordion-content accordion-content'+count+' default"></tbody>');
 
       var complianceHeadingtableRow=$('#statutory-templates .compliance-heading');
@@ -223,24 +229,32 @@ function load_statutory(sList){
 
     var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
     var clone2=complianceDetailtableRow.clone();
-    $('.sno', clone2).html(openTag + statutoriesCount + closeTag +
-      '<input type="hidden" id="combineid'+statutoriesCount+'" value="'+combineId+'"/>' +
-      '<input type="hidden" id="oldremark'+statutoriesCount+'" value="'+compliance_remarks+'"/>' );
+    $('.sno', clone2).html(openTag + statutoriesCount + closeTag);
+    $('.combineid-class', clone2).attr('id', 'combineid'+statutoriesCount);
+    $('.combineid-class', clone2).val(combineId);
+    $('.oldremark-class', clone2).attr('id', 'oldremark'+statutoriesCount);
+    $('.oldremark-class', clone2).val(compliance_remarks);
 
     $('.statutoryprovision', clone2).html(openTag + sList[statutory]["statutory_provision"] + closeTag);
     $('.compliancetask', clone2).html( openTag + sList[statutory]["compliance_name"] + closeTag);
     $('.compliancedescription', clone2).html( openTag + sList[statutory]["description"] + closeTag);
 
-    $('.complianceopted', clone2).html('<input type="checkbox" checked="checked" id="statutory'+
-      statutoriesCount+'" value="'+statutoriesCount
-      +'" class="statutoryclass'+(actCount-1)+'" onclick="compliancestatus(this,'+
-        viewremarks+')"><label for="statutory'+statutoriesCount+'" title="'+optedTitle+'"></label>');
+    $('.compliance-ck-box', clone2).attr('id', 'statutory'+statutoriesCount);
+	$('.compliance-ck-box', clone2).val(statutoriesCount);
+	$('.compliance-ck-box', clone2).addClass('statutoryclass'+(actCount-1));
+	$('.compliance-label', clone2).attr('for', 'statutory'+statutoriesCount);
+	$(".compliance-ck-box", clone2).on("click", function() {
+        compliancestatus(this, viewremarks);
+    });
 
-    $('.cremark', clone2).html('<span class="cremarkadd'+statutoriesCount+
-      ' default-display-none" > <textarea id="cremarkvalue'+statutoriesCount+
-      '" class="input-box" maxlength="500" style="height:30px;"  placeholder="Enter client decision"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></span><span class="cremarkview'+statutoriesCount+
-      '"><abbr class="page-load tipso_style" title="'+compliance_remarks+'"><img src="images/icon-info.png"/>'+compliance_remarks_part+'</abbr></span>');
+	$('.cremarkadd', clone2).addClass('cremarkadd'+statutoriesCount);
+	$('.cremarkvalue', clone2).attr('id', 'cremarkvalue'+statutoriesCount);
+	$('.remark-text', clone2).val(not_applicable_remarks);
 
+	$('.cremarkview', clone2).addClass('cremarkview'+statutoriesCount);
+	$('.tipso_style', clone2).attr('title', compliance_remarks);
+	$('.crval', clone2).html(compliance_remarks_part);
+	
     if(compliance_applicable_status){
       $('.applicable', clone2).html('<img src=\'/images/tick1bold.png\' title="Applicable"/> <input type="hidden" id="applicable'+statutoriesCount+
         '" value="'+compliance_applicable_status+'"> </input> ');

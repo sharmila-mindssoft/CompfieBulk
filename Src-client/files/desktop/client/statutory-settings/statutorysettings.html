@@ -133,8 +133,29 @@
   <table class="font1" >
   <tbody class="accordion-toggle tbody-heading">
     <tr align="left" class="rightside tableRow " style="margin-bottom:1em; border:1px solid #ccc;">
-      <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; vertical-align:middle;" width="100%" colspan="7"><div class="actapplicable ot" style="float:left; width:3%;padding-top:5px;"></div><div class="actname" style="float:left; width:94%;margin-top:0px;"></div>
-      <div style="float:right; width:3%;padding-top:5px;"><img src="/images/chevron_black_down.png"></div>
+      <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; vertical-align:middle;" width="100%" colspan="7">
+
+      <div class="actapplicable ot" style="float:left; width:3%;padding-top:5px;">
+        <input type="checkbox" checked="checked" onclick="actstatus(this)" style="margin-top:100px;" class="act-ck-box"> 
+        <label style="margin-top:100px;" class="act-label"> </label> 
+      </div>
+
+      <div class="actname" style="float:left; width:60%;margin-top:5px;">
+      </div>
+
+      <div style="float:left;width:34%;">  
+        <div style="float:right; width:500px;" class="default-display-none act-remark" >
+          <div style="float:right;  width:250px;"> 
+            <input type="text" maxlength="500" class="input-box remark-text" style="width:200px;" placeholder="Enter Remarks" >
+          </div>
+          <div style="float:right; width:70px;margin-top:5px;"> Remarks
+        </div>
+      </div>
+      </div>
+
+      <div style="float:right; width:3%;padding-top:5px;"><img src="/images/chevron_black_down.png">
+      </div>
+
       </th>
     </tr>
   </tbody>
@@ -158,13 +179,34 @@
  <div id="statutory-values" class="default-display-none">
   <table class="table-statutory-values">
     <tr class="compliance-details">
-      <td class="sno"></td>
+      <input type="hidden" class="combineid-class" />
+      <input type="hidden" class="oldremark-class" />
+      <td class="sno">
+      </td>
       <td class="statutoryprovision"></td>
       <td class="compliancetask"></td>
       <td class="compliancedescription"></td>
       <td class="applicable"></td>
-      <td align="center" class="ot complianceopted"></td>
-      <td class="cremark"></td>
+      <td align="center" class="ot complianceopted">
+        <input type="checkbox" checked="checked" class="compliance-ck-box">
+        <label style="margin-top:100px;" class="compliance-label"> </label> 
+      </td>
+      <td class="cremark">
+        
+      <span class="cremarkadd default-display-none" > 
+      <textarea  class="cremarkvalue input-box" maxlength="500" style="height:30px;"  placeholder="Enter client decision">
+      </textarea><br>
+      <span style="font-size:0.75em;">(max 500 characters)</span>
+      </span>
+      
+      <span class="cremarkview">
+        <abbr class="page-load tipso_style">
+        <!-- <img src="images/icon-info.png"/> -->
+        <label class="crval"> </label>
+        </abbr>
+      </span>
+
+      </td>
     </tr>
   </table>
 </div>
