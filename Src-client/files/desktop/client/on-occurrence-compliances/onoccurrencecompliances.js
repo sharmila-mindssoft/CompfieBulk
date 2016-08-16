@@ -24,20 +24,22 @@ function load_compliances (compliancesList) {
       }
       
       var compliances = compliancesList[entity];
-      for(var compliance in compliances){
+      $.each(compliances, function(key, value) {
         sno = sno + 1;
-        var complianceId = compliances[compliance]["compliance_id"];
-        var unitId = compliances[compliance]["unit_id"];
-        var completeDays = compliances[compliance]["complete_within_days"];
+        var complianceId = value["compliance_id"];
+        var unitId = value["unit_id"];
+        var completeDays = value["complete_within_days"];
         var tableRow1=$('#templates .table-compliances .table-row');
         var clone1=tableRow1.clone();
         $('.sno', clone1).text(sno);
-        $('.statutory', clone1).text(compliances[compliance]["statutory_provision"]);
-        $('.compliance-task', clone1).text(compliances[compliance]["compliance_name"]);
-        $('.description', clone1).text(compliances[compliance]["description"]);
+        $('.statutory', clone1).text(value["statutory_provision"]);
+        $('.compliance-task', clone1).text(value["compliance_name"]);
+        $('.description', clone1).text(value["description"]);
         $('.duration', clone1).text(completeDays);
-        $('.startdate', clone1).html('<input type="text" class="input-box" width="200px" readonly="readonly" id="startdate'+sno+'"/>');
-        $('.action', clone1).html('<input type="button" class="btn-submit" value="Start" onclick="submitOnOccurence('+complianceId+','+sno+','+unitId+',\''+completeDays+'\')"/>');
+        $('.startdate', clone1).attr('id', 'startdate'+sno);
+        $(".btn-submit", clone1).on("click", function() {
+          submitOnOccurence(complianceId, sno, unitId, completeDays);
+        });
 
         /*$(clone1, '.action').on("click", function(e){
             submitOnOccurence(complianceId, j, unitId, completeDays);
@@ -53,7 +55,7 @@ function load_compliances (compliancesList) {
             monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         });
-      }
+      });
     }
 
     if(totalRecord == 0){
