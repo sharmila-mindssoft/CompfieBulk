@@ -383,9 +383,8 @@ def process_assigneewise_compliances(db, request, session_user, client_id):
     unit_id = request.unit_id
     user_id = request.user_id
     chart_data = get_assigneewise_compliances_list(
-        db,
-        country_id, business_group_id, legal_entity_id, division_id, unit_id,
-        session_user, client_id, user_id
+        db, country_id, business_group_id, legal_entity_id,
+        division_id, unit_id, session_user, client_id, user_id
     )
     return dashboard.GetAssigneeWiseCompliancesChartSuccess(
         chart_data=chart_data
@@ -399,8 +398,7 @@ def process_assigneewise_yearwise_compliances(
     unit_id = request.unit_id
     user_id = request.user_id
     chart_data = get_assigneewise_yearwise_compliances(
-        db,
-        country_id, unit_id, user_id, client_id
+        db, country_id, unit_id, user_id, client_id
     )
     return dashboard.GetAssigneewiseYearwiseCompliancesSuccess(
         chart_data=chart_data

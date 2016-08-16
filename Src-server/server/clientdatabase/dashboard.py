@@ -42,6 +42,7 @@ __all__ = [
     "get_assigneewise_compliances_list",
     "get_assigneewise_yearwise_compliances",
     "get_assigneewise_reassigned_compliances",
+    "get_assigneewise_compliances_drilldown_data",
     "get_assigneewise_compliances_drilldown_data_count",
     "get_no_of_days_left_for_contract_expiration",
     "need_to_display_deletion_popup",
@@ -1375,8 +1376,8 @@ def get_not_complied_chart(db, request, session_user, client_id):
         " WHERE T3.country_id IN %s " + \
         " AND T3.domain_id IN %s " + \
         " AND T1.due_date < CURDATE() " + \
-        " AND IFNULL(T1.approve_status, 0) != 1 " + \
-        " + filter_type_ids "
+        " AND IFNULL(T1.approve_status, 0) != 1 "
+    query += filter_type_ids
     param = [tuple(country_ids), tuple(domain_ids)]
 
     if is_primary_admin(db, user_id) is True:
@@ -1390,8 +1391,6 @@ def get_not_complied_chart(db, request, session_user, client_id):
     param.extend(where_qry_val)
 
     order = "ORDER BY T1.due_date "
-    print query + order
-    print param
     rows = db.select_all("%s %s" % (query, order), param)
     columns = [
         "compliance_history_id", "unit_id", "compliance_id",
@@ -2017,7 +2016,6 @@ def get_assigneewise_compliances_list(
         )
         from_date = timelines[0][1][0][1][0]["start_date"].date()
         to_date = timelines[0][1][0][1][0]["end_date"].date()
-
         query = " SELECT " + \
             " concat(IFNULL(employee_code, " + \
             " 'Administrator'), '-', employee_name) " + \
@@ -2051,12 +2049,14 @@ def get_assigneewise_compliances_list(
             " INNER JOIN tbl_users tus ON (tus.user_id = tac.assignee) " + \
             " INNER JOIN tbl_compliances tc " + \
             " ON (tac.compliance_id = tc.compliance_id) " + \
-            " WHERE %s AND domain_id = %s AND tch.due_date " + \
-            " BETWEEN %s AND %s " + \
+            " WHERE %s AND domain_id = %s "
+        query = query % (condition, domain_id)
+        date_condition = " AND tch.due_date " + \
+            " BETWEEN '%s' AND '%s' " + \
             " group by completed_by, tch.unit_id; "
-        rows = db.select_all(query, [
-            condition, domain_id, from_date, to_date
-        ])
+        date_condition = date_condition % (from_date, to_date)
+        query = query + date_condition
+        rows = db.select_all(query)
         columns = [
             "assignee", "completed_by", "unit_id", "unit_name",
             "address", "domain_id", "domain_name", "complied",
@@ -2173,10 +2173,12 @@ def get_assigneewise_yearwise_compliances(
                 " INNER JOIN tbl_domains td " + \
                 " ON (td.domain_id = tc.domain_id) " + \
                 " WHERE tch.unit_id =%s " + \
-                " AND tc.domain_id = %s " + \
-                " AND tch.due_date between %s AND %s;"
+                " AND tc.domain_id = %s "
+            date_condition = " AND tch.due_date between '%s' AND '%s';"
+            date_condition = date_condition % (from_date, to_date)
+            query = query + date_condition
             rows = db.select_all(query, [
-                user_id, unit_id, int(domain_id), from_date, to_date
+                user_id, unit_id, int(domain_id)
             ])
             if rows:
                 convert_columns = [
@@ -2197,11 +2199,10 @@ def get_assigneewise_yearwise_compliances(
                     domainwise_delayed += 0 if(
                             row["delayed_reassigned"] is None
                         ) else int(row["delayed_reassigned"])
-                    domainwise_total += (
-                        domainwise_complied + domainwise_inprogress)
-                    domainwise_total += (
-                        domainwise_notcomplied + domainwise_delayed)
-
+        domainwise_total += (
+            domainwise_complied + domainwise_inprogress)
+        domainwise_total += (
+            domainwise_notcomplied + domainwise_delayed)
         year_wise_compliance_count.append(
             dashboard.YearWise(
                 year=str(iter_year),
@@ -2231,7 +2232,8 @@ def get_assigneewise_reassigned_compliances(
         " document_name, compliance_task, " + \
         " tch.due_date, DATE_SUB(tch.due_date, " + \
         " INTERVAL trigger_before_days DAY) as start_date, " + \
-        " completion_date FROM %s trch INNER JOIN " + \
+        " completion_date FROM tbl_reassigned_compliances_history trch " + \
+        " INNER JOIN " + \
         " tbl_compliance_history tch ON ( " + \
         " trch.compliance_id = tch.compliance_id " + \
         " AND assignee= %s AND trch.unit_id = tch.unit_id) " + \
@@ -2246,13 +2248,15 @@ def get_assigneewise_reassigned_compliances(
         " INNER JOIN tbl_domains td ON (td.domain_id = tc.domain_id) " + \
         " WHERE tch.unit_id = %s AND tc.domain_id = %s " + \
         " AND approve_status = 1 AND completed_by = %s " + \
-        " AND reassigned_date between tch.due_date and completion_date " + \
-        " AND completion_date > tch.due_date AND is_reassigned = 1 " + \
-        " AND tch.due_date between %s AND %s "
+        " AND reassigned_date between CAST(tch.start_date AS DATE) " + \
+        " and CAST(completion_date AS DATE) " + \
+        " AND completion_date > tch.due_date AND is_reassigned = 1 "
 
+    date_condition = " AND tch.due_date between '%s' AND '%s' "
+    date_condition = date_condition % (from_date, to_date)
+    query += date_condition
     rows = db.select_all(query, [
-        tblReassignedCompliancesHistory, user_id, user_id, unit_id,
-        int(domain_id), user_id, from_date, to_date
+        user_id, user_id, unit_id, int(domain_id), user_id
     ])
     columns = [
         "reassigned_date", "reassigned_from", "document_name",
@@ -2311,14 +2315,14 @@ def get_assigneewise_compliances_drilldown_data_count(
         to_date = result[0][1][0][1][0]["end_date"]
         domain_condition = str(domain_id_list[0])
     query = " SELECT count(*) " + \
-        " FROM %s tch " + \
-        " INNER JOIN %s tc ON (tch.compliance_id = tc.compliance_id) " + \
-        " INNER JOIN %s tu ON (tch.completed_by = tu.user_id) " + \
+        " FROM tbl_compliance_history tch " + \
+        " INNER JOIN tbl_compliances tc ON " + \
+        " (tch.compliance_id = tc.compliance_id) " + \
+        " INNER JOIN tbl_users tu ON (tch.completed_by = tu.user_id) " + \
         " WHERE completed_by = %s AND unit_id = %s " + \
         " AND due_date BETWEEN %s AND %s " + \
         " AND domain_id in (%s) "
     rows = db.select_all(query, [
-        tblComplianceHistory, tblCompliances, tblUsers,
         assignee_id, unit_id, from_date, to_date, domain_condition
     ])
     return rows[0][0]
@@ -2348,12 +2352,13 @@ def get_assigneewise_compliances_drilldown_data(
         from_date = result[0][1][0][1][0]["start_date"]
         to_date = result[0][1][0][1][0]["end_date"]
         domain_condition = str(domain_id_list[0])
-    columns = " tch.compliance_id, start_date, due_date, completion_date, " + \
+    columns = " tch.compliance_id as compliance_id, start_date, " + \
+        " due_date, completion_date, " + \
         " document_name, compliance_task, " + \
         " compliance_description, " + \
         " statutory_mapping, concat( " + \
         " IFNULL(employee_code, 'Administrator'), " + \
-        " '-', employee_name)"
+        " '-', employee_name) as employee_name"
     subquery_columns = "IF( " + \
         " (approve_status = 1 " + \
         " and completion_date <= due_date), " + \
@@ -2374,20 +2379,29 @@ def get_assigneewise_compliances_drilldown_data(
         "    ) " + \
         ") " + \
         ") as compliance_status"
-    query = " SELECT %s, %s " + \
-        " FROM %s tch " + \
-        " INNER JOIN %s tc ON (tch.compliance_id = tc.compliance_id) " + \
-        " INNER JOIN %s tu ON (tch.completed_by = tu.user_id) " + \
-        " WHERE completed_by = %s AND unit_id = %s " + \
-        " AND due_date BETWEEN %s AND %s " + \
-        " AND domain_id in (%s) " + \
-        " ORDER BY compliance_status " + \
-        " LIMIT %s, %s"
-    rows = db.select_all(query, [
-        columns, subquery_columns, tblComplianceHistory,
-        tblCompliances, tblUsers, assignee_id, unit_id,
-        from_date, to_date, domain_condition, int(start_count), to_count
-    ])
+    query = " SELECT " + \
+        " compliance_id, start_date, due_date, completion_date, " + \
+        " document_name, compliance_task, compliance_description, " + \
+        " statutory_mapping, employee_name, compliance_status FROM ( " + \
+        " SELECT %s, %s " + \
+        " FROM tbl_compliance_history tch " + \
+        " INNER JOIN tbl_compliances tc " + \
+        " ON (tch.compliance_id = tc.compliance_id) " + \
+        " INNER JOIN tbl_users tu ON (tch.completed_by = tu.user_id) "
+    query = query % (columns, subquery_columns)
+    date_condition = " AND due_date BETWEEN '%s' AND '%s' " % (
+        from_date, to_date
+    )
+    where_condition = " WHERE completed_by = %s AND unit_id = %s " + \
+        " %s  AND domain_id in (%s) " + \
+        " LIMIT %s, %s) a " + \
+        " ORDER BY compliance_status "
+    where_condition = where_condition % (
+            assignee_id, unit_id, date_condition, domain_condition,
+            int(start_count), to_count
+        )
+    query = query + where_condition
+    rows = db.select_all(query)
     columns_list = [
         "compliance_id", "start_date", "due_date", "completion_date",
         "document_name", "compliance_name", "compliance_description",
