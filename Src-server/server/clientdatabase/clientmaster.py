@@ -684,8 +684,9 @@ def get_units_closure_for_user(db, unit_ids):
         "is_active", "is_closed"
     ]
     condition = "1"
-    if unit_ids is not None:
+    if unit_ids not in [None, ""]:
         condition = "unit_id in (%s)  ORDER BY unit_id ASC" % unit_ids
+        print condition
     rows = db.get_data(
         tblUnits, columns, condition
     )
