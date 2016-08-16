@@ -35,67 +35,96 @@ __all__ = [
 
 forms = [22, 23, 24, 25]
 
+
 def process_techno_report_request(request, db):
     session_token = request.session_token
     request_frame = request.request
     user_id = validate_user_session(db, session_token)
-    if user_id is not None :
+    if user_id is not None:
         is_valid = validate_user_forms(db, user_id, forms, request_frame)
-        if is_valid is not True :
+        if is_valid is not True:
             return login.InvalidSessionToken()
     if user_id is None:
         return login.InvalidSessionToken()
 
     if type(request_frame) is technoreports.GetAssignedStatutoryReportFilters:
-        logger.logKnowledgeApi("GetAssignedStatutoryReportFilters", "process begin")
+        logger.logKnowledgeApi(
+            "GetAssignedStatutoryReportFilters", "process begin"
+        )
         logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_assigned_statutory_report_filters(db, user_id)
-        logger.logKnowledgeApi("GetAssignedStatutoryReportFilters", "process end")
+        logger.logKnowledgeApi(
+            "GetAssignedStatutoryReportFilters", "process end"
+        )
         logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetAssignedStatutoryReport:
         logger.logKnowledgeApi("GetAssignedStatutoryReport", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_assigned_statutory_report_data(db, request_frame, user_id)
+        result = process_get_assigned_statutory_report_data(
+            db, request_frame, user_id
+        )
         logger.logKnowledgeApi("GetAssignedStatutoryReport", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetClientDetailsReportFilters:
-        logger.logKnowledgeApi("GetClientDetailsReportFilters", "process begin")
+        logger.logKnowledgeApi(
+            "GetClientDetailsReportFilters", "process begin"
+        )
         logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_client_details_report_filters(db, request_frame, user_id)
+        result = process_get_client_details_report_filters(
+            db, request_frame, user_id
+        )
         logger.logKnowledgeApi("GetClientDetailsReportFilters", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetClientDetailsReportData:
         logger.logKnowledgeApi("GetClientDetailsReportData", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_client_details_report_data(db, request_frame, user_id)
+        result = process_get_client_details_report_data(
+            db, request_frame, user_id
+        )
         logger.logKnowledgeApi("GetClientDetailsReportData", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetStatutoryNotificationsFilters:
-        logger.logKnowledgeApi("GetStatutoryNotificationsFilters", "process begin")
+        logger.logKnowledgeApi(
+            "GetStatutoryNotificationsFilters", "process begin"
+        )
         logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_statutory_notifications_filters(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetStatutoryNotificationsFilters", "process end")
+        result = process_get_statutory_notifications_filters(
+            db, request_frame, user_id
+        )
+        logger.logKnowledgeApi(
+            "GetStatutoryNotificationsFilters", "process end"
+        )
         logger.logKnowledgeApi("------", str(time.time()))
 
-    elif type(request_frame) is technoreports.GetStatutoryNotificationsReportData:
-        logger.logKnowledgeApi("GetStatutoryNotificationsReportData", "process begin")
+    elif (
+        type(
+            request_frame
+        ) is technoreports.GetStatutoryNotificationsReportData
+    ):
+        logger.logKnowledgeApi(
+            "GetStatutoryNotificationsReportData", "process begin"
+        )
         logger.logKnowledgeApi("------", str(time.time()))
-        result = process_get_statutory_notifications_report_data(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetStatutoryNotificationsReportData", "process end")
+        result = process_get_statutory_notifications_report_data(
+            db, request_frame, user_id
+        )
+        logger.logKnowledgeApi(
+            "GetStatutoryNotificationsReportData", "process end"
+        )
         logger.logKnowledgeApi("------", str(time.time()))
 
-    elif type(request_frame) is technoreports.GetComplianceTaskFilter :
+    elif type(request_frame) is technoreports.GetComplianceTaskFilter:
         logger.logKnowledgeApi("GetComplianceTaskFilter", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_compliance_task_filter(db, request_frame, user_id)
         logger.logKnowledgeApi("GetComplianceTaskFilter", "process end")
         logger.logKnowledgeApi("------", str(time.time()))
 
-    elif type(request_frame) is technoreports.GetComplianceTaskReport :
+    elif type(request_frame) is technoreports.GetComplianceTaskReport:
         logger.logKnowledgeApi("GetComplianceTaskReport", "process begin")
         logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_compliance_task_report(db, request_frame, user_id)
@@ -103,6 +132,7 @@ def process_techno_report_request(request, db):
         logger.logKnowledgeApi("------", str(time.time()))
 
     return result
+
 
 def process_get_assigned_statutory_report_filters(db, user_id):
     countries = get_countries_for_user(db, user_id)
@@ -119,8 +149,10 @@ def process_get_assigned_statutory_report_filters(db, user_id):
         level_1_statutories
     )
 
+
 def process_get_assigned_statutory_report_data(db, request_frame, user_id):
     return get_assigned_statutories_report(db, request_frame, user_id)
+
 
 def process_get_statutory_notifications_filters(db, request_frame, user_id):
     countries = get_countries_for_user(db, user_id)
@@ -132,14 +164,16 @@ def process_get_statutory_notifications_filters(db, request_frame, user_id):
         level_1_statutories=level_1_statutories
     )
 
+
 def process_get_statutory_notifications_report_data(db, request, user_id):
     countries = get_countries_for_user(db, user_id)
     domains = get_domains_for_user(db, user_id)
     level_1_statutories = get_country_wise_level_1_statutoy(db)
-    print "level_!_statatatat: {} ".format(level_1_statutories)
-    print "inside process_get_statutory_notifications_report_data: {}".format(request)
     result = get_statutory_notifications_report_data(db, request)
-    return technoreports.GetStatutoryNotificationsReportDataSuccess(countries, domains, level_1_statutories, result)
+    return technoreports.GetStatutoryNotificationsReportDataSuccess(
+        countries, domains, level_1_statutories, result
+    )
+
 
 def process_get_client_details_report_filters(db, request_frame, session_user):
     countries = get_countries_for_user(db, session_user)
@@ -158,6 +192,7 @@ def process_get_client_details_report_filters(db, request_frame, session_user):
         divisions=divisions, units=units
     )
 
+
 def process_get_client_details_report_data(db, request, session_user):
     to_count = RECORD_DISPLAY_COUNT
     units = get_client_details_report(
@@ -174,6 +209,7 @@ def process_get_client_details_report_data(db, request, session_user):
         units=units, total_count=total_count
     )
 
+
 def process_get_compliance_task_filter(db, request, session_user):
     countries = get_countries_for_user(db, session_user)
     domains = get_domains_for_user(db, session_user)
@@ -186,6 +222,7 @@ def process_get_compliance_task_filter(db, request, session_user):
         countries, domains, industries, statutory_nature,
         geographies, level_1_statutories, compliance_frequency
     )
+
 
 def process_get_compliance_task_report(db, request_frame, user_id):
     country_id = request_frame.country_id

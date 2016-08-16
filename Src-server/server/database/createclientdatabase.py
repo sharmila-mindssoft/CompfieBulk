@@ -175,8 +175,7 @@ class ClientDBCreate(object):
         try:
             q = "SELECT country_id, country_name, is_active " + \
                     " FROM tbl_countries " + \
-                    " WHERE country_id " + \
-                    " IN (%s) "
+                    " WHERE find_in_set(country_id, %s)"
             rows = self._db.select_all(q, [country_ids])
             for r in rows:
                 q = " INSERT INTO tbl_countries VALUES (%s, %s, %s)"
@@ -188,8 +187,7 @@ class ClientDBCreate(object):
         try:
             q = "SELECT domain_id, domain_name, is_active " + \
                     " FROM tbl_domains " + \
-                    " WHERE domain_id " + \
-                    " IN (%s)"
+                    " WHERE find_in_set(domain_id, %s)"
             rows = self._db.select_all(q, [domain_ids])
             for r in rows:
                 q = " INSERT INTO tbl_domains VALUES (%s, %s, %s)"

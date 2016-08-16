@@ -5,6 +5,7 @@ from server.common import (
     string_to_datetime
 )
 
+
 def get_last_7_years():
     seven_years_list = []
     end_year = datetime.datetime.now().year - 1
@@ -15,6 +16,7 @@ def get_last_7_years():
         iter_value += 1
     return seven_years_list
 
+
 def get_country_domain_timelines(
     db, country_ids, domain_ids, years, client_id=None
 ):
@@ -23,11 +25,11 @@ def get_country_domain_timelines(
         domain_wise_timeline = []
         for domain_id in domain_ids:
             columns = "period_from, period_to"
-            condition = "country_id = '{}' and domain_id = '{}'".format(
-                country_id, domain_id)
+            condition = "country_id = %s and domain_id = %s "
+            condition_val = [country_id, domain_id]
             rows = db.get_data(
                 tblClientConfigurations, columns,
-                condition
+                condition, condition_val
             )
             if len(rows) > 0:
                 period_from = rows[0]["period_from"]
@@ -38,12 +40,12 @@ def get_country_domain_timelines(
                     end_year = year+1
                     start_date_string = None
                     end_date_string = None
-                    start_date_string = "1-{}-{}".format(
+                    start_date_string = "1-%s-%s" % (
                         db.string_months[period_from],
                         start_year
                     )
                     start_date = string_to_datetime(start_date_string)
-                    end_date_string = "{}-{}-{}".format(
+                    end_date_string = "%s-%s-%s" % (
                         db.end_day_of_month[period_to],
                         db.string_months[period_to],
                         end_year
@@ -51,12 +53,14 @@ def get_country_domain_timelines(
                     end_date = string_to_datetime(end_date_string)
                     r = relativedelta.relativedelta(end_date, start_date)
                     if r.years > 0:
-                        end_date = end_date - relativedelta.relativedelta(years=1)
+                        end_date = (
+                            end_date - relativedelta.relativedelta(years=1)
+                        )
                     start_end_dates.append(
                         {
-                            "year" : year,
-                            "start_date" : start_date,
-                            "end_date" : end_date
+                            "year": year,
+                            "start_date": start_date,
+                            "end_date": end_date
                         }
                     )
                 domain_wise_timeline.append(
@@ -65,42 +69,44 @@ def get_country_domain_timelines(
         country_wise_timelines.append([country_id, domain_wise_timeline])
     return country_wise_timelines
 
-def calculate_ageing_in_hours(ageing) :
+
+def calculate_ageing_in_hours(ageing):
         day = ageing.days
         hour = 0
-        if day > 0 :
+        if day > 0:
             hour += day * 24
         hour += (ageing.seconds / 3600)
         minutes = (ageing.seconds / 60 % 60)
         summary = "%s:%s Hour(s)" % (hour, minutes)
         return summary
 
+
 def calculate_years(month_from, month_to):
     current_month = datetime.datetime.now().month
     current_year = datetime.datetime.now().year
-    if month_from == 1 and month_to == 12 :
+    if month_from == 1 and month_to == 12:
         single_years = []
         single_years.append([current_year])
         for i in range(1, 7):
             single_years.append([current_year - i])
         return single_years
-    else :
+    else:
         double_years = []
-        if current_month in [int(m) for m in range(month_from, 12+1)] :
+        if current_month in [int(m) for m in range(month_from, 12+1)]:
             first_year = current_year
             second_year = current_year + 1
             years = [first_year, second_year]
             # print first_year, second_year, years
-        elif current_month in [int(m) for m in range(1, month_to+1)] :
+        elif current_month in [int(m) for m in range(1, month_to+1)]:
             first_year = current_year - 1
             second_year = current_year
             # print first_year, second_year
 
         for i in range(1, 8):
-            if i == 1 :
+            if i == 1:
                 years = [first_year, second_year]
                 # print years
-            else :
+            else:
                 first_year = current_year - i
                 second_year = first_year + 1
                 years = [first_year, second_year]

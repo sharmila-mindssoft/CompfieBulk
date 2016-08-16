@@ -15,7 +15,7 @@ def process_user_forms(
 ):
     forms = None
     if client_id is not None:
-        forms = get_client_user_forms(db, form_ids, client_id, is_admin)
+        forms = get_client_user_forms(db, form_ids, is_admin)
     else:
         forms = get_user_forms(db, form_ids)
     form_list = []

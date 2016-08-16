@@ -23,10 +23,11 @@ from server.client import (
 import logger
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
+
+
 #
 # cors_handler
 #
-
 def cors_handler(request, response):
     response.set_header("Access-Control-Allow-Origin", "*")
     response.set_header("Access-Control-Allow-Headers", "Content-Type")
@@ -351,10 +352,10 @@ class API(object):
         # else :
         #     return login.InvalidSessionToken()
 
+
 #
 # run_server
 #
-
 def run_server(address, knowledge_server_address):
     ip, port = address
     io_loop = IOLoop()
@@ -366,7 +367,9 @@ def run_server(address, knowledge_server_address):
         )
 
         web_server = WebServer(io_loop)
-        client_docs_path = os.path.join(ROOT_PATH, "clientdocuments")
+        src_server_path = os.path.join(ROOT_PATH, "Src-server")
+        server_path = os.path.join(src_server_path, "server")
+        client_docs_path = os.path.join(server_path, "clientdocuments")
         exported_reports_path = os.path.join(ROOT_PATH, "exported_reports")
 
         api = API(

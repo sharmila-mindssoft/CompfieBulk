@@ -20,9 +20,10 @@ from server.templatepath import (
 )
 from server import logger
 
-if IS_DEVELOPMENT :
+
+if IS_DEVELOPMENT:
     FILE_VERSION = time.time()
-else :
+else:
     FILE_VERSION = VERSION
 
 
@@ -37,13 +38,14 @@ def cors_handler(request, response):
     response.set_status(204)
     response.send("")
 
+
 #
 # run_server
 #
-
-def expectation_error(expected, received) :
+def expectation_error(expected, received):
     msg = "expected %s, but received: %s"
     return msg % (expected, repr(received))
+
 
 def send_bad_request(response, custom_text=None):
     response.set_status(400)
@@ -56,8 +58,10 @@ def send_bad_request(response, custom_text=None):
         logger.logWebfront(custom_text)
         response.send(custom_text)
 
+
 def send_invalid_json_format(response):
     send_bad_request(response, "invalid json format")
+
 
 class Controller(object):
     def __init__(
@@ -84,11 +88,11 @@ class Controller(object):
             token = data[0]
             logger.logWebfront(str(token))
             actual_data = data[1]
-            if type(token) is unicode :
+            if type(token) is unicode:
                 token = token.encode("utf8")
-            elif type(token) is str :
+            elif type(token) is str:
                 pass
-            else :
+            else:
                 send_bad_request(
                     response,
                     expectation_error("a string", type(token))
@@ -128,7 +132,7 @@ class TemplateHandler(RequestHandler):
     def initialize(
         self, path_desktop, path_mobile, parameters,
         company_manager
-    ) :
+    ):
         self.__path_desktop = path_desktop
         self.__path_mobile = path_mobile
         self.__parameters = parameters
@@ -139,23 +143,23 @@ class TemplateHandler(RequestHandler):
         tree = etree.fromstring(content, parser)
         for node in tree.xpath('//*[@src]'):
             url = node.get('src')
-            if node.tag == "script" or node.tag == "img" :
+            if node.tag == "script" or node.tag == "img":
                 url += "?v=%s" % (FILE_VERSION)
             node.set('src', url)
 
         for node in tree.xpath('//*[@href]'):
             url = node.get('href')
             if not url.startswith("#"):
-                if node.tag == "link" :
+                if node.tag == "link":
                     url += "?v=%s" % (FILE_VERSION)
-            else :
-                if node.tag == "link" :
+            else:
+                if node.tag == "link":
                     url += "?v=%s" % (FILE_VERSION)
             node.set('href', url)
         data = etree.tostring(tree, method="html")
         return data
 
-    def get(self, url=None, token=None) :
+    def get(self, url=None, token=None):
         if url is not None:
             print 'GOT URL %s' % (url,)
             company = self._company_manager.locate_company(
@@ -166,12 +170,12 @@ class TemplateHandler(RequestHandler):
                 self.write("client not found")
                 return
         path = self.__path_desktop
-        if self.__path_mobile is not None :
+        if self.__path_mobile is not None:
             useragent = self.request.headers.get("User-Agent")
             if useragent is None:
                 useragent = ""
             user_agent = parse(useragent)
-            if user_agent.is_mobile :
+            if user_agent.is_mobile:
                 path = self.__path_mobile
         mime_type, encoding = mimetypes.guess_type(
             path
@@ -182,15 +186,17 @@ class TemplateHandler(RequestHandler):
         output = self.update_static_urls(output)
         self.write(output)
 
-    def options(self) :
+    def options(self):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "Content-Type")
         self.set_header("Access-Control-Allow-Methods", "GET, POST")
         self.set_status(204)
         self.write("")
 
+
 def server_added(servers):
     pass
+
 
 def run_web_front_end(port, knowledge_server_address):
     io_loop = IOLoop()
@@ -232,9 +238,11 @@ def run_web_front_end(port, knowledge_server_address):
         server_path = os.path.join(src_server_path, "server")
         format_path = os.path.join(server_path, "knowledgeformat")
         reports_path = os.path.join(ROOT_PATH, "exported_reports")
-        client_docs_path = os.path.join(ROOT_PATH, "clientdocuments")
+        client_docs_path = os.path.join(server_path, "clientdocuments")
         expiry_download = os.path.join(src_server_path, "expired")
-        seven_year_data_download = os.path.join(src_server_path, "seven_years_before_data")
+        seven_year_data_download = os.path.join(
+            src_server_path, "seven_years_before_data"
+        )
 
         web_server.low_level_url(
             r"/client/compliance_format/(.*)",

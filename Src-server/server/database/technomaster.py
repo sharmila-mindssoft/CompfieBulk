@@ -721,8 +721,11 @@ def is_duplicate_business_group(
     db, business_group_id, business_group_name, client_id
 ):
     condition = "business_group_name = %s " + \
-        " AND business_group_id != %s and client_id = %s "
-    condition_val = [business_group_name, business_group_id, client_id]
+        " AND client_id = %s "
+    condition_val = [business_group_name, client_id]
+    if business_group_id is not None:
+        condition += " AND business_group_id != %s "
+        condition_val.append(business_group_id)
     return db.is_already_exists(tblBusinessGroups, condition, condition_val)
 
 
@@ -773,8 +776,11 @@ def is_duplicate_legal_entity(
     db, legal_entity_id, legal_entity_name, client_id
 ):
     condition = "legal_entity_name = %s " + \
-        " AND legal_entity_id != %s and client_id = %s"
-    condition_val = [legal_entity_name, legal_entity_id, client_id]
+        "  and client_id = %s"
+    condition_val = [legal_entity_name, client_id]
+    if legal_entity_id:
+        condition += " AND legal_entity_id != %s "
+        condition_val.append(legal_entity_id)
     return db.is_already_exists(tblLegalEntities, condition, condition_val)
 
 
@@ -824,8 +830,11 @@ def update_legal_entity(
 
 
 def is_duplicate_division(db, division_id, division_name, client_id):
-    condition = "division_name = %s AND division_id != %s and client_id = %s "
-    condition_val = [division_name, division_id, client_id]
+    condition = "division_name = %s  AND client_id = %s "
+    condition_val = [division_name, client_id]
+    if division_id is not None:
+        condition += " AND division_id != %s "
+        condition_val.append(division_id)
     return db.is_already_exists(tblDivisions, condition, condition_val)
 
 
@@ -985,9 +994,9 @@ def get_business_groups_for_user(db, user_id):
     if client_ids is not None:
         condition = "client_id in (%s) " + \
             " order by business_group_name ASC"
-        condition_val = [client_ids]
+        condition = condition % client_ids
         result = db.get_data(
-            tblBusinessGroups, columns, condition, condition_val
+            tblBusinessGroups, columns, condition
         )
     return return_business_groups(result)
 
@@ -1016,9 +1025,9 @@ def get_legal_entities_for_user(db, user_id):
     if client_ids is not None:
         condition = "client_id in (%s) " + \
             " order by legal_entity_name ASC"
-        condition_val = [client_ids]
+        condition = condition % client_ids
         result = db.get_data(
-            tblLegalEntities, columns, condition, condition_val
+            tblLegalEntities, columns, condition
         )
 
     return return_legal_entities(result)
@@ -1262,11 +1271,12 @@ def reactivate_unit_data(db, client_id, unit_id, session_user):
     condition = "unit_id = %s "
     condition_val = [unit_id]
     result = db.get_data(tblUnits, action_column, condition, condition_val)
-
-    action = "Reactivated Unit \"%s-%s\"" % (rows[0][0], rows[0][1])
+    result = result[0]
+    action = "Reactivated Unit \"%s-%s\"" % (
+        result["unit_code"], result["unit_name"]
+    )
     db.save_activity(session_user, 19, action)
 
-    result = result[0]
     unit_code = get_next_unit_auto_gen_no(db, client_id)
     unit_columns = [
         "client_id", "is_active", "legal_entity_id",
@@ -1292,7 +1302,7 @@ def reactivate_unit_data(db, client_id, unit_id, session_user):
 
 
 def get_next_unit_auto_gen_no(db, client_id):
-    columns = "count(*) units"
+    columns = "count(unit_id) as units"
     condition = "client_id = %s"
     condition_val = [client_id]
     rows = db.get_data(tblUnits, columns, condition, condition_val)
@@ -1309,15 +1319,17 @@ def get_next_unit_auto_gen_no(db, client_id):
     group_name = group_company[0]["group_name"].replace(" ", "")
     unit_code_start_letters = group_name[:2].upper()
 
-    columns = "TRIM(LEADING s FROM unit_code)" % unit_code_start_letters
-    condition = "unit_code like binary %s%s and " + \
+    columns = "TRIM(LEADING '%s' FROM unit_code) as code" % (
+        unit_code_start_letters
+    )
+    condition = "unit_code like binary '%s%s' and " + \
         " CHAR_LENGTH(unit_code) = 7 and client_id= %s"
-    condition_val = [unit_code_start_letters, "%", client_id]
-    rows = db.get_data(tblUnits, columns, condition, condition_val)
+    condition = condition % (unit_code_start_letters, "%", client_id)
+    rows = db.get_data(tblUnits, columns, condition)
     auto_generated_unit_codes = []
     for row in rows:
         try:
-            auto_generated_unit_codes.append(int(row[0]))
+            auto_generated_unit_codes.append(int(row["code"]))
         except Exception, ex:
             print ex
             continue
@@ -1342,6 +1354,7 @@ def get_next_unit_auto_gen_no(db, client_id):
 
 
 def get_profiles(db, client_ids):
+    ONE_GB = 1024 * 1024 * 1000
     client_ids_list = [int(x) for x in client_ids.split(",")]
     profiles = []
     for client_id in client_ids_list:
@@ -1352,6 +1365,9 @@ def get_profiles(db, client_ids):
         file_space = settings_rows[0]["total_disk_space"]
         used_space = settings_rows[0]["total_disk_space_used"]
         licence_holder_rows = get_licence_holder_details(db, client_id)
+        print
+        print licence_holder_rows
+        print
         licence_holders = []
         for row in licence_holder_rows:
             employee_name = None
@@ -1384,21 +1400,21 @@ def get_profiles(db, client_ids):
                 else:
                     is_service_provider = True
 
-            used_val = round((used_space/1000000000), 2)
+            used_val = round((used_space/ONE_GB), 2)
 
             licence_holders.append(
                 technomasters.LICENCE_HOLDER_DETAILS(
                     user_id, employee_name, email_id, contact_no,
                     unit_name, address,
-                    file_space/1000000000, used_val,
+                    file_space/ONE_GB, used_val,
                     bool(is_active), bool(is_primary_admin),
                     is_service_provider
                 )
             )
 
         remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
-        total_free_space = file_space/1000000000
-        total_used_space = float(used_val)
+        total_free_space = round(file_space/ONE_GB, 2)
+        total_used_space = used_space/ONE_GB
         profile_detail = technomasters.PROFILE_DETAIL(
             str(contract_from),
             str(contract_to), no_of_user_licence, remaining_licence,

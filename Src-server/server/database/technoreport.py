@@ -9,70 +9,75 @@ from server.common import (
 )
 from server.database.knowledgemaster import (
     GEOGRAPHY_PARENTS,
-    get_geographies,
-    get_industry_by_id
+    get_geographies
 )
 from server.database.technotransaction import (
     return_assigned_compliances_by_id
 )
+
+
 def get_assigned_statutories_report(db, request_data, user_id):
     country_id = request_data.country_id
     domain_id = request_data.domain_id
     group_id = request_data.group_id
     qry = ""
     param_list = [country_id, domain_id]
-    if group_id is not None :
+    if group_id is not None:
         qry += " AND t1.client_id = %s "
         param_list.append(group_id)
 
     business_group_id = request_data.business_group_id
-    if business_group_id is not None :
+    if business_group_id is not None:
         qry += " AND t3.business_group_id = %s "
         param_list.append(business_group_id)
 
     legal_entity_id = request_data.legal_entity_id
-    if legal_entity_id is not None :
+    if legal_entity_id is not None:
         qry += " AND t3.legal_entity_id = %s "
         param_list.append(legal_entity_id)
 
     division_id = request_data.division_id
-    if division_id is not None :
+    if division_id is not None:
         qry += " AND t3.division_id =%s "
         param_list.append(division_id)
 
     unit_id = request_data.unit_id
-    if unit_id is not None :
+    if unit_id is not None:
         qry += " AND t3.unit_id = %s "
         param_list.append(unit_id)
 
     level_1_statutory_id = request_data.level_1_statutory_id
-    if level_1_statutory_id is not None :
+    if level_1_statutory_id is not None:
         qry += " AND t4.statutory_id = %s "
         param_list.append(level_1_statutory_id)
 
     applicable_status = request_data.applicability_status
-    if applicable_status is not None :
+    if applicable_status is not None:
         applicable_status = int(applicable_status)
         qry += " AND t4.compliance_applicable = %s "
         param_list.append(applicable_status)
 
-    query = "SELECT distinct t1.client_statutory_id, t1.client_id, \
-        t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, \
-        t1.submission_type, t2.group_name, t3.unit_name, \
-        (select business_group_name from tbl_business_groups where business_group_id = t3.business_group_id )business_group_name, \
-        (select legal_entity_name from tbl_legal_entities where legal_entity_id = t3.legal_entity_id)legal_entity_name,\
-        (select division_name from tbl_divisions where division_id = t3.division_id)division_name, \
-        t3.address, t3.postal_code, t3.unit_code \
-        FROM tbl_client_statutories t1 \
-        INNER JOIN tbl_client_groups t2 \
-        ON t1.client_id = t2.client_id \
-        INNER JOIN tbl_units t3 \
-        ON t1.unit_id = t3.unit_id \
-        INNER JOIN tbl_client_compliances t4 \
-        ON t1.client_statutory_id = t4.client_statutory_id \
-        WHERE t1.submission_type =1 \
-        AND t1.country_id = %s \
-        AND t1.domain_id = %s "
+    query = "SELECT distinct t1.client_statutory_id, t1.client_id, " + \
+        " t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, " + \
+        " t1.submission_type, t2.group_name, t3.unit_name, " + \
+        " (select business_group_name from tbl_business_groups " + \
+        "  where business_group_id " + \
+        " = t3.business_group_id ) business_group_name," + \
+        " (select legal_entity_name from tbl_legal_entities " + \
+        " where legal_entity_id = t3.legal_entity_id)legal_entity_name, " + \
+        " (select division_name from tbl_divisions " + \
+        " where division_id = t3.division_id)division_name, " + \
+        " t3.address, t3.postal_code, t3.unit_code " + \
+        " FROM tbl_client_statutories t1 " + \
+        " INNER JOIN tbl_client_groups t2 " + \
+        " ON t1.client_id = t2.client_id " + \
+        " INNER JOIN tbl_units t3 " + \
+        " ON t1.unit_id = t3.unit_id " + \
+        " INNER JOIN tbl_client_compliances t4 " + \
+        " ON t1.client_statutory_id = t4.client_statutory_id " + \
+        " WHERE t1.submission_type =1 " + \
+        " AND t1.country_id = %s " + \
+        " AND t1.domain_id = %s "
 
     query = query + qry
     rows = db.select_all(query, param_list)
@@ -84,18 +89,23 @@ def get_assigned_statutories_report(db, request_data, user_id):
         "division_name", "address", "postal_code", "unit_code"
     ]
     result = convert_to_dict(rows, columns)
-    return return_assigned_statutory_report(db, result, level_1_statutory_id, applicable_status)
+    return return_assigned_statutory_report(
+        db, result, level_1_statutory_id, applicable_status
+    )
 
-def return_assigned_statutory_report(db, report_data, level_1_statutory_id, applicable_status):
+
+def return_assigned_statutory_report(
+    db, report_data, level_1_statutory_id, applicable_status
+):
     if bool(GEOGRAPHY_PARENTS) is False:
         get_geographies(db)
 
     unit_wise_statutories_dict = {}
-    for data in report_data :
+    for data in report_data:
         client_statutory_id = data["client_statutory_id"]
         unit_id = int(data["unit_id"])
         unit_statutories = unit_wise_statutories_dict.get(unit_id)
-        if unit_statutories is None :
+        if unit_statutories is None:
             geography_id = int(data["geography_id"])
             geography_parents = GEOGRAPHY_PARENTS.get(geography_id)
             temp_parents = geography_parents[0].split(">>")
@@ -104,7 +114,10 @@ def return_assigned_statutory_report(db, report_data, level_1_statutory_id, appl
             unit_address = "%s, %s, %s" % (
                 data["address"], ', '.join(ordered), data["postal_code"]
             )
-            statutories = return_assigned_compliances_by_id(db, client_statutory_id, level_1_statutory_id, applicable_status)
+            statutories = return_assigned_compliances_by_id(
+                db, client_statutory_id, level_1_statutory_id,
+                applicable_status
+            )
             print '*' * 50
             unit_statutories = technoreports.UNIT_WISE_ASSIGNED_STATUTORIES(
                 data["unit_id"],
@@ -116,31 +129,34 @@ def return_assigned_statutory_report(db, report_data, level_1_statutory_id, appl
                 unit_address,
                 statutories
             )
-        else :
+        else:
             statutories = unit_statutories.assigned_statutories
-            new_stautory = return_assigned_compliances_by_id(db, client_statutory_id, None, applicable_status)
+            new_stautory = return_assigned_compliances_by_id(
+                db, client_statutory_id, None, applicable_status
+            )
             print '*' * 50
-            for new_s in new_stautory :
+            for new_s in new_stautory:
                 new_id = new_s.level_1_statutory_id
                 is_exists = False
-                for x in statutories :
-                    if x.level_1_statutory_id == new_id :
+                for x in statutories:
+                    if x.level_1_statutory_id == new_id:
                         x.compliances.extend(new_s.compliances)
                         is_exists = True
                         break
-                if is_exists is False :
+                if is_exists is False:
                     statutories.append(new_s)
             unit_statutories.assigned_statutories = statutories
 
         unit_wise_statutories_dict[unit_id] = unit_statutories
 
     final_unit_wise_statutories_list = []
-    for key, value in unit_wise_statutories_dict.iteritems() :
+    for key, value in unit_wise_statutories_dict.iteritems():
         final_unit_wise_statutories_list.append(value)
 
     return technoreports.GetAssignedStatutoryReportSuccess(
         final_unit_wise_statutories_list
     )
+
 
 def get_statutory_notifications_report_data(db, request_data):
     country_id = request_data.country_id
@@ -149,52 +165,57 @@ def get_statutory_notifications_report_data(db, request_data):
     from_date = request_data.from_date
     to_date = request_data.to_date
     where_qry = ""
-    if level_1_statutory_id is not None :
-        where_qry += " AND tss.statutory_id IN \
-        (select statutory_id from tbl_statutories where FIND_IN_SET(%s, parent_ids)) \
-        " % (level_1_statutory_id)
+    if level_1_statutory_id is not None:
+        where_qry += " AND tss.statutory_id IN " + \
+            " (select statutory_id from tbl_statutories " + \
+            " where FIND_IN_SET(%s, parent_ids)) "
+        where_qry = where_qry % (level_1_statutory_id)
 
-    if from_date is not None and to_date is not None :
+    if from_date is not None and to_date is not None:
         from_date = string_to_datetime(from_date).date()
         to_date = string_to_datetime(to_date).date()
-        where_qry += " AND date(tsnl.updated_on) >= '%s' AND date(tsnl.updated_on) <= '%s'" % (
-            from_date, to_date
-        )
+        where_qry += " AND date(tsnl.updated_on) >= '%s' " + \
+            " AND date(tsnl.updated_on) <= '%s'"
+        where_qry = where_qry % (
+                from_date, to_date
+            )
 
-    query = "SELECT  distinct tsm.country_id, tsm.domain_id\
-         from `tbl_statutory_notifications_log` tsnl    \
-        INNER JOIN `tbl_statutory_statutories` tss ON \
-        tsnl.statutory_mapping_id = tss.statutory_mapping_id \
-        INNER JOIN `tbl_statutory_mappings` tsm ON \
-        tsm.statutory_mapping_id = tsnl.statutory_mapping_id \
-        INNER JOIN  `tbl_statutories` ts ON \
-        tss.statutory_id = ts.statutory_id \
-        WHERE  \
-        tsm.country_id = %s and \
-        tsm.domain_id = %s \
-        group by tsm.country_id, tsm.domain_id "
+    query = "SELECT  distinct tsm.country_id, tsm.domain_id " + \
+        " from `tbl_statutory_notifications_log` tsnl " + \
+        " INNER JOIN `tbl_statutory_statutories` tss ON " + \
+        " tsnl.statutory_mapping_id = tss.statutory_mapping_id " + \
+        " INNER JOIN `tbl_statutory_mappings` tsm ON " + \
+        " tsm.statutory_mapping_id = tsnl.statutory_mapping_id " + \
+        " INNER JOIN  `tbl_statutories` ts ON " + \
+        " tss.statutory_id = ts.statutory_id " + \
+        " WHERE " + \
+        " tsm.country_id = %s and " + \
+        " tsm.domain_id = %s " + \
+        " group by tsm.country_id, tsm.domain_id "
     rows = db.select_all(query, [country_id, domain_id])
     country_wise_notifications = []
     for row in rows:
-        query = "SELECT  ts.statutory_name, tsnl.statutory_provision,\
-         tsnl.notification_text, tsnl.updated_on \
-         from `tbl_statutory_notifications_log` tsnl    \
-        INNER JOIN `tbl_statutory_statutories` tss ON \
-        tsnl.statutory_mapping_id = tss.statutory_mapping_id \
-        INNER JOIN `tbl_statutory_mappings` tsm ON \
-        tsm.statutory_mapping_id = tsnl.statutory_mapping_id \
-        INNER JOIN  `tbl_statutories` ts ON \
-        tss.statutory_id = ts.statutory_id \
-        WHERE  \
-        tsm.country_id = %s and \
-        tsm.domain_id = %s "
+        query = "SELECT  ts.statutory_name, tsnl.statutory_provision, " + \
+            " tsnl.notification_text, tsnl.updated_on " + \
+            " from `tbl_statutory_notifications_log` tsnl " + \
+            " INNER JOIN `tbl_statutory_statutories` tss ON " + \
+            " tsnl.statutory_mapping_id = tss.statutory_mapping_id " + \
+            " INNER JOIN `tbl_statutory_mappings` tsm ON " + \
+            " tsm.statutory_mapping_id = tsnl.statutory_mapping_id " + \
+            " INNER JOIN  `tbl_statutories` ts ON " + \
+            " tss.statutory_id = ts.statutory_id " + \
+            " WHERE  " + \
+            " tsm.country_id = %s and " + \
+            " tsm.domain_id = %s "
         query += where_qry
         notifications_rows = db.select_all(query, [row[0], row[1]])
         notification_columns = [
             "statutory_name", "statutory_provision",
             "notification_text", "updated_on"
         ]
-        statutory_notifications = convert_to_dict(notifications_rows, notification_columns)
+        statutory_notifications = convert_to_dict(
+            notifications_rows, notification_columns
+        )
         notifications = []
         for notification in statutory_notifications:
             notifications.append(technoreports.NOTIFICATIONS(
@@ -210,6 +231,7 @@ def get_statutory_notifications_report_data(db, request_data):
             )
         )
     return country_wise_notifications
+
 
 #
 #   Get Details Report
@@ -238,18 +260,19 @@ def get_client_details_report_condition(
 
     if domain_ids is not None:
         for i, domain_id in enumerate(domain_ids):
-            if i == 0 :
+            if i == 0:
                 condition += "  AND (FIND_IN_SET(%s, tu.domain_ids)"
                 param.append(domain_id)
-            elif i == len(domain_ids) - 1 :
+            elif i == len(domain_ids) - 1:
                 condition += " OR FIND_IN_SET(%s, tu.domain_ids) )"
                 param.append(domain_id)
-            else :
+            else:
                 condition += " OR FIND_IN_SET(%s, tu.domain_ids)"
                 param.append(domain_id)
-        if len(domain_ids) == 1 :
+        if len(domain_ids) == 1:
             condition += " )"
     return condition, param
+
 
 def get_client_details_report_count(
     db, country_id, client_id, business_group_id,
@@ -259,11 +282,14 @@ def get_client_details_report_count(
         country_id, client_id, business_group_id,
         legal_entity_id, division_id, unit_id, domain_ids
     )
-    query = "SELECT count(*) \
-    FROM %s tu \
-    WHERE %s " % (tblUnits, condition)
+    query = "SELECT count(*) " +\
+        " FROM %s tu " + \
+        " WHERE %s "
+    query = query % (tblUnits, condition)
     rows = db.select_all(query, param)
-    return rows[0][0]
+    result = convert_to_dict(rows, ["count"])
+    return result[0]["count"]
+
 
 def get_client_details_report(
     db, country_id, client_id, business_group_id,
@@ -274,21 +300,27 @@ def get_client_details_report(
         country_id, client_id, business_group_id,
         legal_entity_id, division_id, unit_id, domain_ids
     )
-    columns = "unit_id, unit_code, unit_name, geography_name, \
-                address, domain_ids, postal_code, business_group_name, \
-                legal_entity_name, division_name"
-    query = "SELECT %s \
-    FROM %s tu \
-    INNER JOIN %s tg ON (tu.geography_id = tg.geography_id) \
-    LEFT JOIN %s tb ON (tb.business_group_id = tu.business_group_id) \
-    INNER JOIN %s tl ON (tl.legal_entity_id = tu.legal_entity_id) \
-    LEFT JOIN %s td ON (td.division_id = tu.division_id)\
-    WHERE %s \
-    ORDER BY tu.business_group_id, tu.legal_entity_id, tu.division_id, \
-    tu.unit_id ASC LIMIT %s, %s" % (
-        columns, tblUnits, tblGeographies, tblBusinessGroups,
-        tblLegalEntities, tblDivisions, condition, int(start_count), int(to_count)
-    )
+    columns = "unit_id, unit_code, unit_name, geography_name, " + \
+        " address, domain_ids, postal_code, " + \
+        " business_group_name, legal_entity_name, " + \
+        " division_name"
+    query = " SELECT %s " + \
+        " FROM %s tu " + \
+        " INNER JOIN %s tg ON (tu.geography_id = tg.geography_id) " + \
+        " LEFT JOIN %s tb ON (tb.business_group_id " + \
+        " = tu.business_group_id) " + \
+        " INNER JOIN %s tl ON " + \
+        " (tl.legal_entity_id = tu.legal_entity_id) " + \
+        " LEFT JOIN %s td ON (td.division_id = tu.division_id) " + \
+        " WHERE %s " + \
+        " ORDER BY tu.business_group_id, " + \
+        " tu.legal_entity_id, tu.division_id, " + \
+        " tu.unit_id ASC LIMIT %s, %s"
+    query = query % (
+            columns, tblUnits, tblGeographies, tblBusinessGroups,
+            tblLegalEntities, tblDivisions, condition,
+            int(start_count), int(to_count)
+        )
     rows = db.select_all(query, params)
     print rows
     columns_list = columns.replace(" ", "").split(",")
@@ -306,9 +338,14 @@ def get_client_details_report(
             grouped_units[business_group_name] = {}
         if legal_entity_name not in grouped_units[business_group_name]:
             grouped_units[business_group_name][legal_entity_name] = {}
-        if division_name not in grouped_units[business_group_name][legal_entity_name]:
-            grouped_units[business_group_name][legal_entity_name][division_name] = []
-        grouped_units[business_group_name][legal_entity_name][division_name].append(
+        if (
+            division_name not in grouped_units[
+                business_group_name][legal_entity_name]
+        ):
+            grouped_units[
+                business_group_name][legal_entity_name][division_name] = []
+        grouped_units[
+            business_group_name][legal_entity_name][division_name].append(
             technoreports.UnitDetails(
                 unit["unit_id"], unit["geography_name"], unit["unit_code"],
                 unit["unit_name"], unit["address"], unit["postal_code"],
@@ -330,110 +367,133 @@ def get_client_details_report(
                 GroupedUnits.append(
                     technoreports.GroupedUnits(
                         division_name, legal_entity_name, business_group_name,
-                        grouped_units[business_group][legal_entity_name][division]
+                        grouped_units[
+                            business_group][legal_entity_name][division]
                     )
                 )
     return GroupedUnits
+
 
 def get_compliance_list_report_techno(
     db, country_id, domain_id, industry_id,
     statutory_nature_id, geography_id,
     level_1_statutory_id, frequency_id, user_id, from_count, to_count
-) :
-    q_count = "SELECT  count(distinct t2.compliance_id) \
-        FROM tbl_statutory_mappings t1 \
-        INNER JOIN tbl_compliances t2 \
-        ON t2.statutory_mapping_id = t1.statutory_mapping_id \
-        INNER JOIN tbl_statutory_industry t3 \
-        ON t3.statutory_mapping_id = t1.statutory_mapping_id \
-        INNER JOIN tbl_statutory_geographies t4 \
-        ON t4.statutory_mapping_id = t1.statutory_mapping_id \
-        INNER JOIN tbl_user_domains t5 \
-        ON t5.domain_id = t1.domain_id \
-        and t5.user_id = %s \
-        INNER JOIN tbl_user_countries t6 \
-        ON t6.country_id = t1.country_id \
-        and t6.user_id = %s \
-        WHERE t1.approval_status in (1, 3) AND t2.is_active = 1 AND \
-        t1.country_id = %s \
-        and t1.domain_id = %s "
-    q_order = "ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
-        (select group_concat(I.industry_name) from tbl_industries I where I.industry_id  in \
-        (select industry_id from tbl_statutory_industry where statutory_mapping_id = t1.statutory_mapping_id)), \
-            t2.frequency_id "
+):
+    q_count = "SELECT  count(distinct t2.compliance_id) " + \
+        " FROM tbl_statutory_mappings t1 " + \
+        " INNER JOIN tbl_compliances t2 " + \
+        " ON t2.statutory_mapping_id = t1.statutory_mapping_id " + \
+        " INNER JOIN tbl_statutory_industry t3 " + \
+        " ON t3.statutory_mapping_id = t1.statutory_mapping_id " + \
+        " INNER JOIN tbl_statutory_geographies t4 " + \
+        " ON t4.statutory_mapping_id = t1.statutory_mapping_id " + \
+        " INNER JOIN tbl_user_domains t5 " + \
+        " ON t5.domain_id = t1.domain_id " + \
+        " and t5.user_id = %s " + \
+        " INNER JOIN tbl_user_countries t6 " + \
+        " ON t6.country_id = t1.country_id " + \
+        " and t6.user_id = %s " + \
+        " WHERE t1.approval_status in (1, 3) AND t2.is_active = 1 AND " + \
+        " t1.country_id = %s " + \
+        " and t1.domain_id = %s "
+    q_order = "ORDER BY SUBSTRING_INDEX( " + \
+        " SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), " + \
+        " t2.frequency_id "
     param_list = [
         int(user_id), int(user_id), country_id, domain_id
     ]
 
     qry_where = ""
-    if industry_id is not None :
+    if industry_id is not None:
         qry_where += "AND t3.industry_id = %s "
         param_list.append(industry_id)
 
-    if geography_id is not None :
+    if geography_id is not None:
         qry_where += "AND t4.geography_id = %s "
         param_list.append(geography_id)
 
-    if statutory_nature_id is not None :
+    if statutory_nature_id is not None:
         qry_where += "AND t1.statutory_nature_id = %s "
         param_list.append(statutory_nature_id)
 
-    if level_1_statutory_id is not None :
-        qry_where += " AND t1.statutory_mapping LIKE (select group_concat(statutory_name, %s) from tbl_statutories where statutory_id = %s)"
+    if level_1_statutory_id is not None:
+        qry_where += " AND t1.statutory_mapping LIKE ( " + \
+            " select concat(statutory_name, %s) " + \
+            " from tbl_statutories where statutory_id = %s)"
         param_list.extend([str("%"), level_1_statutory_id])
 
-    if frequency_id is not None :
+    if frequency_id is not None:
         qry_where += "AND t2.frequency_id = %s "
         param_list.append(frequency_id)
 
     query = q_count + qry_where + q_order
     row = db.select_one(query, param_list)
-    if row :
+    if row:
         r_count = row[0]
-    else :
+    else:
         r_count = 0
 
-    q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, \
-        (select country_name from tbl_countries where country_id = t1.country_id) country_name, \
-        t1.domain_id, \
-        (select domain_name from tbl_domains where domain_id = t1.domain_id) domain_name, \
-        t1.industry_ids, t1.statutory_nature_id, \
-        (select statutory_nature_name from tbl_statutory_natures where statutory_nature_id = t1.statutory_nature_id)\
-        statutory_nature_name, \
-        t1.statutory_ids, \
-        t1.geography_ids, \
-        t1.approval_status, t1.is_active, t1.statutory_mapping,  \
-        t2.compliance_id, t2.statutory_provision, \
-        t2.compliance_task, t2.compliance_description, \
-        t2.document_name, t2.format_file, t2.format_file_size, \
-        t2.penal_consequences, t2.frequency_id, \
-        t2.statutory_dates, t2.repeats_every, \
-        t2.repeats_type_id, \
-        t2.duration, t2.duration_type_id, \
-        (select group_concat(I.industry_name) from tbl_industries I where I.industry_id  in \
-        (select industry_id from tbl_statutory_industry where statutory_mapping_id = t1.statutory_mapping_id))industry \
-        FROM tbl_statutory_mappings t1 \
-        INNER JOIN tbl_compliances t2 \
-        ON t2.statutory_mapping_id = t1.statutory_mapping_id\
-        INNER JOIN tbl_statutory_industry t3 \
-        ON t3.statutory_mapping_id = t1.statutory_mapping_id\
-        INNER JOIN tbl_statutory_geographies t4 \
-        ON t4.statutory_mapping_id = t1.statutory_mapping_id\
-        INNER JOIN tbl_user_domains t5 \
-        ON t5.domain_id = t1.domain_id \
-        and t5.user_id = %s \
-        INNER JOIN tbl_user_countries t6 \
-        ON t6.country_id = t1.country_id \
-        and t6.user_id = %s \
-        WHERE t1.approval_status in (1, 3) AND t2.is_active = 1 AND \
-        t1.country_id = %s \
-        and t1.domain_id = %s "
+    industry_qry = "select industry_name, statutory_mapping_id " + \
+        " from tbl_statutory_industry si " + \
+        " INNER JOIN tbl_industries i on " + \
+        " i.industry_id = si.industry_id "
+    industry_rows = db.select_all(industry_qry)
+    industry_result = convert_to_dict(
+        industry_rows, ["industry_name", "statutory_mapping_id"]
+    )
+    industry_statutory_mapping = {}
+    for row in industry_result:
+        statu_mapping_id = int(row["statutory_mapping_id"])
+        if statu_mapping_id not in industry_statutory_mapping:
+            industry_statutory_mapping[statu_mapping_id] = []
+        industry_statutory_mapping[statu_mapping_id].append(
+            row["industry_name"]
+        )
 
-    q_order = "ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t1.statutory_mapping, '>>', 1), '>>', -1), \
-            industry, t2.frequency_id \
-            limit %s, %s" % (from_count, to_count)
+    q = " SELECT distinct t1.statutory_mapping_id, t1.country_id, " + \
+        " (select country_name from tbl_countries " + \
+        " where country_id = t1.country_id) country_name, " + \
+        " t1.domain_id, " + \
+        " (select domain_name from tbl_domains " + \
+        " where domain_id = t1.domain_id) domain_name, " + \
+        " t1.industry_ids, t1.statutory_nature_id, " + \
+        " (select statutory_nature_name from tbl_statutory_natures " + \
+        " where statutory_nature_id = t1.statutory_nature_id) " + \
+        " statutory_nature_name, " + \
+        " t1.statutory_ids, " + \
+        " t1.geography_ids, " + \
+        " t1.approval_status, t1.is_active, t1.statutory_mapping, " + \
+        " t2.compliance_id, t2.statutory_provision, " + \
+        " t2.compliance_task, t2.compliance_description, " + \
+        " t2.document_name, t2.format_file, t2.format_file_size, " +\
+        " t2.penal_consequences, t2.frequency_id, " + \
+        " t2.statutory_dates, t2.repeats_every, " + \
+        " t2.repeats_type_id, " + \
+        " t2.duration, t2.duration_type_id " + \
+        " FROM tbl_statutory_mappings t1 " + \
+        " INNER JOIN tbl_compliances t2 " + \
+        " ON t2.statutory_mapping_id = t1.statutory_mapping_id " + \
+        " INNER JOIN tbl_statutory_industry t3 " + \
+        " ON t3.statutory_mapping_id = t1.statutory_mapping_id " + \
+        " INNER JOIN tbl_statutory_geographies t4 " + \
+        " ON t4.statutory_mapping_id = t1.statutory_mapping_id " + \
+        " INNER JOIN tbl_user_domains t5 " + \
+        " ON t5.domain_id = t1.domain_id " + \
+        " and t5.user_id = %s " + \
+        " INNER JOIN tbl_user_countries t6 " + \
+        " ON t6.country_id = t1.country_id " + \
+        " and t6.user_id = %s " + \
+        " WHERE t1.approval_status in (1, 3) AND t2.is_active = 1 AND " + \
+        " t1.country_id = %s " + \
+        " and t1.domain_id = %s "
+
+    q_order = "ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX( " + \
+        " t1.statutory_mapping, '>>', 1), '>>', -1), " + \
+        " t2.frequency_id " + \
+        " limit %s, %s" % (from_count, to_count)
 
     q += qry_where + q_order
+
     rows = db.select_all(q, param_list)
     columns = [
         "statutory_mapping_id", "country_id",
@@ -446,23 +506,29 @@ def get_compliance_list_report_techno(
         "document_name", "format_file",
         "format_file_size", "penal_consequences",
         "frequency_id", "statutory_dates", "repeats_every",
-        "repeats_type_id", "duration", "duration_type_id", "industry"
+        "repeats_type_id", "duration", "duration_type_id"
     ]
     print rows
     report_data = []
-    if rows :
+    if rows:
         report_data = convert_to_dict(rows, columns)
 
     return return_knowledge_report(
-        db, report_data, r_count
+        db, report_data, industry_statutory_mapping, r_count
     )
 
-def return_knowledge_report(db, report_data, total_count=None):
-    if bool(GEOGRAPHY_PARENTS) is False :
+
+def return_knowledge_report(
+    db, report_data, industry_statutory_mapping, total_count=None
+):
+    if bool(GEOGRAPHY_PARENTS) is False:
         get_geographies(db)
 
     report_list = []
-    for r in report_data :
+    for r in report_data:
+        print
+        print r
+        print
         mapping = r["statutory_mapping"].split(">>")
         act_name = mapping[0].strip()
         statutory_provision = " >>".join(mapping[1:])
@@ -471,36 +537,31 @@ def return_knowledge_report(db, report_data, total_count=None):
         document_name = r["document_name"]
         if document_name == "None":
             document_name = None
-        if document_name :
+        if document_name:
             name = "%s - %s" % (
                 document_name, compliance_task
             )
-        else :
+        else:
             name = compliance_task
 
         format_file = r["format_file"]
         format_file_size = r["format_file_size"]
-        if format_file_size is not None :
+        if format_file_size is not None:
             format_file_size = int(format_file_size)
-        if format_file :
+        if format_file:
             url = "%s/%s" % (
                 KNOWLEDGE_FORMAT_DOWNLOAD_URL, format_file
             )
-        else :
+        else:
             url = None
-        industry_ids = [
-            int(x) for x in r["industry_ids"][:-1].split(',')
-        ]
-        if len(industry_ids) == 1:
-            industry_names = get_industry_by_id(db, industry_ids[0])
-        else :
-            industry_names = get_industry_by_id(db, industry_ids)
-
+        industry_names = ",".join(
+            industry_statutory_mapping[r["statutory_mapping_id"]]
+        )
         geography_ids = [
             int(x) for x in r["geography_ids"][:-1].split(',')
         ]
         geography_mapping_list = []
-        for g_id in geography_ids :
+        for g_id in geography_ids:
             map_data = GEOGRAPHY_PARENTS.get(int(g_id))
             if map_data is not None:
                 map_data = map_data[0]
@@ -509,7 +570,7 @@ def return_knowledge_report(db, report_data, total_count=None):
         statutory_dates = r["statutory_dates"]
         statutory_dates = json.loads(statutory_dates)
         date_list = []
-        for date in statutory_dates :
+        for date in statutory_dates:
             s_date = core.StatutoryDate(
                 date["statutory_date"],
                 date["statutory_month"],
@@ -542,4 +603,3 @@ def return_knowledge_report(db, report_data, total_count=None):
         )
         report_list.append(info)
     return report_list, total_count
-#

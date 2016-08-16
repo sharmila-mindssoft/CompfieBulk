@@ -45,14 +45,14 @@ function loadClientProfileList(groupId){
             var remaininglicence = list['remaining_licence'];
             var totaldiskspace = list["total_disk_space"];
             var useddiskspace = list["used_disk_space"];
-            var free_space = (totaldiskspace - useddiskspace).toFixed(2);
+            var free_space = (totaldiskspace - useddiskspace).toFixed(5);
             $('.contract-start').html(contractFrom);
             $('.contract-expires').html(contractTo);
             $('.space-summary').html(free_space+" GB free of "+totaldiskspace+" GB");
-            var calculate = ((useddiskspace/totaldiskspace)*100).toFixed(2);
+            var calculate = ((useddiskspace/totaldiskspace)*100).toFixed(5);
 
             var balance = 100-calculate;
-            if(calculate !='0.00'){
+            if(calculate !='0.0000000'){
                 $('.usedspace').css("width", calculate+"%");
                 $('.totalspace').css("width", balance+"%");
                 $('.totalspace').html(balance+"%");
