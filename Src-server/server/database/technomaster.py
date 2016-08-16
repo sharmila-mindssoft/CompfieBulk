@@ -781,7 +781,6 @@ def is_duplicate_legal_entity(
     if legal_entity_id:
         condition += " AND legal_entity_id != %s "
         condition_val.append(legal_entity_id)
-    print "condition ========> {}".format(condition)
     return db.is_already_exists(tblLegalEntities, condition, condition_val)
 
 
@@ -1366,6 +1365,9 @@ def get_profiles(db, client_ids):
         file_space = settings_rows[0]["total_disk_space"]
         used_space = settings_rows[0]["total_disk_space_used"]
         licence_holder_rows = get_licence_holder_details(db, client_id)
+        print
+        print licence_holder_rows
+        print
         licence_holders = []
         for row in licence_holder_rows:
             employee_name = None
@@ -1411,14 +1413,8 @@ def get_profiles(db, client_ids):
             )
 
         remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
-        print
-        print "client========================>{}".format(client_id)
-        print "file_space: {}".format(file_space)
         total_free_space = round(file_space/ONE_GB, 2)
-        print "total_free_space: {}".format(total_free_space)
         total_used_space = used_space/ONE_GB
-        print "used_space: {}".format(total_used_space)
-        print
         profile_detail = technomasters.PROFILE_DETAIL(
             str(contract_from),
             str(contract_to), no_of_user_licence, remaining_licence,
