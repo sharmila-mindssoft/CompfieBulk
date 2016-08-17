@@ -6,7 +6,7 @@ from server.constants import (CLIENT_LOGO_PATH, LOGO_URL)
 from server.common import (
     datetime_to_string, get_date_time,
     string_to_datetime, remove_uploaded_file,
-    convert_base64_to_file, new_uuid
+    convert_base64_to_file, new_uuid, convert_to_dict
 )
 from server.database.tables import *
 from server.database.admin import (
@@ -172,22 +172,32 @@ def return_domains(data):
 
 
 def get_techno_users(db):
-    country_domain_condition = " user_id in ( " + \
-        " select user_group_id from tbl_users where user_group_id in ( " + \
-        " select user_group_id from tbl_user_groups " + \
-        " where form_category_id = 3))"
-
     # Getting techno user countries
-    country_columns = ["country_id", "user_id"]
-    countries = db.get_data(
-        tblUserCountries, country_columns, country_domain_condition
-    )
+    query = "SELECT t1.country_id, t1.user_id FROM tbl_user_countries t1 \
+            INNER JOIN tbl_users t2 ON t2.user_id = t1.user_id \
+            INNER JOIN tbl_user_groups t3 ON t2.user_group_id = t3.user_group_id AND t3.form_category_id = 3"
+    rows = db.select_all(query)
 
-    # Getting techno user countries
-    domain_columns = ["domain_id", "user_id"]
-    domains = db.get_data(
-        tblUserDomains, domain_columns, country_domain_condition
-    )
+    countries = []
+    if rows:
+        country_columns = [
+            "country_id", "user_id"
+        ]
+        countries = convert_to_dict(rows, country_columns)
+
+    # Getting techno user domains
+    query = "SELECT t1.domain_id, t1.user_id FROM tbl_user_domains t1 \
+            INNER JOIN tbl_users t2 ON t2.user_id = t1.user_id \
+            INNER JOIN tbl_user_groups t3 ON t2.user_group_id = t3.user_group_id AND t3.form_category_id = 3"
+    rows = db.select_all(query)
+
+    domains = []
+    if rows:
+        domain_columns = [
+            "domain_id", "user_id"
+        ]
+        domains = convert_to_dict(rows, domain_columns)
+
     user_country_map = {}
     for country in countries:
         user_id = int(country["user_id"])
