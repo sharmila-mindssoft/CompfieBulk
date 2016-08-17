@@ -164,7 +164,7 @@ function initMirror() {
         };
         $.ajax({
             url : BASE_URL + callerName,
-            headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            // headers: {'X-Xsrftoken': getCookie('_xsrf')},
             type: "POST",
             data: toJSON(requestFrame),
             success: function (data) {
