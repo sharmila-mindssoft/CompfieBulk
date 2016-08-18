@@ -50,7 +50,7 @@ function actstatus(element){
 
 function compliancestatus(element){
   $('ul.setup-panel li:eq(1)').addClass('disabled');
-  var sClass = $(element).attr('class');
+  var sClass = $(element).attr('class').split(' ')[1];
   var actSelect = sClass.substr(sClass.lastIndexOf("s") + 1);
   var cStatus = false;
   $('.'+sClass).each(function() {
@@ -127,7 +127,12 @@ function load_allcompliances(compliancesList){
         if(actname != lastActName){
           var acttableRow=$('#act-templates .font1 .tbody-heading');
           var clone=acttableRow.clone();
-          $('.actname', clone).html('<input style="margin-top:5px" type="checkbox" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)"> <label for="act'+actCount+'">'+actname+'</label> <span><img src="/images/chevron_black_down.png"></span>');
+
+          $('.actname-ckbox', clone).attr('id', 'act'+actCount);
+          $('.actname-ckbox', clone).val(actCount);
+          $('.actname-label', clone).attr('for', 'act'+actCount);
+          $('.actname-label', clone).text(actname);
+
           $('.tbody-assignstatutory').append(clone);
           $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+' default"></tbody>');
           
@@ -154,7 +159,6 @@ function load_allcompliances(compliancesList){
         //$('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
         for(var actentity in actList){
           var domainId = actList[actentity]["domain_id"];
-          var combine = unitId + ',' +domainId;
           var tbDays = actList[actentity]["trigger_before_days"];
           var compliance_id = actList[actentity]["compliance_id"];
           var compliance_name = actList[actentity]["compliance_name"];
@@ -199,19 +203,20 @@ function load_allcompliances(compliancesList){
           if(tbDays == 0){
             tbDays = '';
           }
+
+          var combineId = compliance_id + '#' + compliance_name + '#' + frequency + '#' + compliance_history_id + '#' + unitId + '#' +domainId;
+
           var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
           var clone2=complianceDetailtableRow.clone();
-          $('.ckbox', clone2).html('<input type="checkbox" id="statutory'+statutoriesCount+'" class="statutoryclass'+(actCount-1)+'" onclick="compliancestatus(this)">');
 
-          $('.snoo', clone2).html(statutoriesCount +
-            '<input type="hidden" id="complianceid'+statutoriesCount+'" value="'+compliance_id+'"/>' +
-            '<input type="hidden" id="compliancename'+statutoriesCount+'" value="'+compliance_name+'"/>' +
-            '<input type="hidden" id="frequency'+statutoriesCount+'" value="'+frequency+'"/>' +
-            '<input type="hidden" id="unit'+statutoriesCount+'" value="'+combine+'"/>' +
-            '<input type="hidden" id="compliancehistoryid'+statutoriesCount+'" value="'+compliance_history_id+'"/>' );
+          $('.ckbox', clone2).attr('id', 'statutory'+statutoriesCount);
+          $('.ckbox', clone2).addClass('statutoryclass'+(actCount-1));
+          $('.combineid-class', clone2).attr('id', 'combineid'+statutoriesCount);
+          $('.combineid-class', clone2).val(combineId);
+          $('.snoo', clone2).text(statutoriesCount);
 
-          $('.compliancetask', clone2).html('<abbr class="page-load" title="'+
-            compliance_description+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliance_name);
+          $('.compliancetask', clone2).text(compliance_name);
+          $('.tipso_style', clone2).attr('title', compliance_description);
 
           $('.compliancefrequency', clone2).text(frequency);
 
@@ -273,7 +278,6 @@ function load_allcompliances(compliancesList){
     $('#activate-step-2').hide();
     $('#pagination').hide();
   }
-
 }
 
 //pagination process
@@ -360,7 +364,11 @@ function load_UserCompliances(uCompliances, uId){
     $('.assigneename', clone1).text(userName);
     $('.seatingunit', clone1).text(seatingUnit);
     $('.noofcompliance', clone1).text(noOfCompliances);
-    $('.action', clone1).html('<input type="submit" value="Reassign" class="btn-save" style="width:auto;" onclick="getUserCompliances('+uId+ ',\''+userName+'\','+noOfCompliances+')"/>');
+
+    $(".btn-save", clone1).on("click", function() {
+      getUserCompliances(parseInt(uId), userName, noOfCompliances);
+    });
+
     $('.tbody-reassign-compliances-list').append(clone1);
     cCount = cCount + 1;
   }
@@ -519,15 +527,16 @@ function submitcompliance(){
       }
 
       if(complianceApplicable){
-        var compliance_id = parseInt($('#complianceid'+totalCompliance).val());
-        var compliance_name = $('#compliancename'+totalCompliance).val();
-        var compliance_history_id =  parseInt($('#compliancehistoryid'+totalCompliance).val());
-        var cfrequency =  $('#frequency'+totalCompliance).val();
-        var ccombine = $('#unit'+totalCompliance).val().split(",");
-        var cunit =  parseInt(ccombine[0]);
-        var cdomain =  parseInt(ccombine[1]);
-        var due_date = null;
+        var combineidVal = $('#combineid'+totalCompliance).val().split('#');
 
+        var compliance_id = parseInt(combineidVal[0]);
+        var compliance_name = combineidVal[1];
+        var compliance_history_id =  parseInt(combineidVal[3]);
+        var cfrequency =  combineidVal[2];
+        var cunit =  parseInt(combineidVal[4]);
+        var cdomain =  parseInt(combineidVal[5]);
+
+        var due_date = null;
         if($.inArray(cunit, acUnitArray) == -1){
           acUnitArray.push(cunit);
         }

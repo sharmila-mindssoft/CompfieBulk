@@ -117,8 +117,8 @@ def get_profile(
     #         ))
     #     remaining_licence -= 1
 
-    used_space = round((total_disk_space_used/1000000000), 2)
-    total_space = total_disk_space/1000000000
+    used_space = round((total_disk_space_used/(1024 * 1024 * 1024)), 2)
+    total_space = total_disk_space/(1024 * 1024 * 1024)
 
     profile_detail = clientadminsettings.PROFILE_DETAIL(
         contract_from,

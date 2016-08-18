@@ -1,4 +1,6 @@
 var landingPage = null;
+var captchaStatus = false;
+var captchaText = null;
 function clearLoginMessage() {
     $(".login-error-message").hide();
     $(".login-error-message span").text("");
@@ -60,7 +62,16 @@ function isLoginValidated (e_email, e_password) {
         e_password.focus();
         return false;
     }
-
+    /*if (e_captcha.val() == "" && captchaStatus == true) {
+        displayLoginMessage(message.captcha_required);
+        e_captcha.focus();
+        return false;
+    }
+    if (e_captcha.val() != "" && captchaText != e_captcha.val()) {
+        displayLoginMessage(message.invalid_captcha);
+        e_captcha.focus();
+        return false;
+    }*/
     return true;
 }
 
@@ -196,6 +207,17 @@ function performLogin(e_button, e_email, e_password) {
         displayLoginMessage(disp_message);
         $("input").val("");
         resetLoginUI(e_button, e_email, e_password);
+
+        /*captchaStatus = true;
+        if(captchaStatus){
+            captchaText = "AzK9oE";
+            $("#captcha-view").show();
+            var tCtx = document.getElementById('captchaCanvas').getContext('2d');
+            tCtx.font = "18px Arial";
+            tCtx.strokeText("AzK9oE", 10, 20);
+        }else{
+            $("#captcha-view").hide();
+        }*/
     }
 
     if (getShortName() === null){
@@ -208,6 +230,7 @@ function performLogin(e_button, e_email, e_password) {
                     // onSuccess(response)
                     resetLoginUI(e_button, e_email, e_password);
                     window.location.href = "/knowledge/home";
+                    //$("#captcha-view").hide();
                 }
                 else {
                     onFailure(error)
@@ -224,6 +247,7 @@ function performLogin(e_button, e_email, e_password) {
                     // onSuccess(response)
                     resetLoginUI(e_button, e_email, e_password);
                     window.location.href = landingPage;
+                    //$("#captcha-view").hide();
                 }
                 else {
                     onFailure(error)
@@ -231,7 +255,6 @@ function performLogin(e_button, e_email, e_password) {
             }
         );
     }
-
 }
 
 function initializeUI () {
@@ -253,10 +276,12 @@ function initializeLogin () {
     $("#txt-password").keydown(function (e) {
         if (e.keyCode == 13 && $(this).val() != "")
             performLogin($(this), $("#txt-username"), $("#txt-password"));
+            //performLogin($(this), $("#txt-username"), $("#txt-password"), $("#txt-captcha"));
     });
 
     $("#btn-login").on("click", function () {
         performLogin($(this), $("#txt-username"), $("#txt-password"));
+        //performLogin($(this), $("#txt-username"), $("#txt-password"), $("#txt-captcha"));
     });
 }
 

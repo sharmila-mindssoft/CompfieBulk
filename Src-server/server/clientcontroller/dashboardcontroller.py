@@ -357,13 +357,13 @@ def process_assigneewise_compliances_filters(
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
     business_group_ids = user_company_info[3]
-    country_list = get_countries_for_user(db, session_user, client_id)
-    domain_list = get_domains_for_user(db, session_user, client_id)
+    country_list = get_countries_for_user(db, session_user)
+    domain_list = get_domains_for_user(db, session_user)
     business_group_list = get_business_groups_for_user(db, business_group_ids)
     legal_entity_list = get_legal_entities_for_user(db, legal_entity_ids)
     division_list = get_divisions_for_user(db, division_ids)
     unit_list = get_units_for_user(db, unit_ids)
-    users_list = get_client_users(db, client_id, unit_ids)
+    users_list = get_client_users(db, unit_ids)
     return dashboard.GetAssigneewiseComplianesFiltersSuccess(
         countries=country_list, business_groups=business_group_list,
         legal_entities=legal_entity_list, divisions=division_list,
@@ -383,9 +383,8 @@ def process_assigneewise_compliances(db, request, session_user, client_id):
     unit_id = request.unit_id
     user_id = request.user_id
     chart_data = get_assigneewise_compliances_list(
-        db,
-        country_id, business_group_id, legal_entity_id, division_id, unit_id,
-        session_user, client_id, user_id
+        db, country_id, business_group_id, legal_entity_id,
+        division_id, unit_id, session_user, client_id, user_id
     )
     return dashboard.GetAssigneeWiseCompliancesChartSuccess(
         chart_data=chart_data
@@ -399,8 +398,7 @@ def process_assigneewise_yearwise_compliances(
     unit_id = request.unit_id
     user_id = request.user_id
     chart_data = get_assigneewise_yearwise_compliances(
-        db,
-        country_id, unit_id, user_id, client_id
+        db, country_id, unit_id, user_id, client_id
     )
     return dashboard.GetAssigneewiseYearwiseCompliancesSuccess(
         chart_data=chart_data

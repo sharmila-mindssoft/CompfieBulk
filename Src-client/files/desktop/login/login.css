@@ -1,3 +1,7 @@
+.default-display-none{
+	display: none;
+}
+
 .login-main-bg {
 	background: #000 url(../login/images/login-bg.jpg) center center;
 	background-size: cover;

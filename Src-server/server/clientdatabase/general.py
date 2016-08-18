@@ -112,12 +112,10 @@ def get_countries_for_user(db, user_id):
 
 def return_countries(data):
     results = []
-    print data
     for d in data:
         results.append(core.Country(
             d["country_id"], d["country_name"], bool(d["is_active"])
         ))
-    print results
     return results
 
 
@@ -156,7 +154,6 @@ def get_business_groups_for_user(db, business_group_ids):
     rows = db.get_data(
         tblBusinessGroups, columns, condition, condition_val, order
     )
-    print rows
     return return_business_groups(rows)
 
 
@@ -332,13 +329,13 @@ def return_client_users(users):
 
 
 def get_user_domains(db, user_id):
-    q = "select domain_id from tbl_user_domains"
+    q = "select domain_id from tbl_domains"
     param = None
     condition = ""
     if is_primary_admin(db, user_id) is not True:
+        q = "select domain_id from tbl_user_domains"
         condition = " WHERE user_id = %s"
         param = [user_id]
-
     rows = db.select_all(q + condition, param)
     d_ids = []
     for r in rows:
@@ -406,12 +403,9 @@ def verify_password(db, password, user_id):
 def get_countries(db):
     query = "SELECT distinct t1.country_id, t1.country_name, " + \
         " t1.is_active FROM tbl_countries t1 "
-    print query
     rows = db.select_all(query)
-    print rows
     columns = ["country_id", "country_name", "is_active"]
     result = convert_to_dict(rows, columns)
-    print result
     return return_countries(result)
 
 
@@ -504,7 +498,9 @@ def get_user_company_details(db, user_id):
         condition = " 1 "
         condition_val = None
     else:
-        condition = "  user_id = %s "
+        condition = "  unit_id in ( " + \
+            " SELECT unit_id FROM  tbl_user_units " + \
+            " WHERE user_id = %s )"
         condition_val = [user_id]
     columns = [
         "unit_id", "division_id", "legal_entity_id", "business_group_id"
@@ -1098,13 +1094,13 @@ def save_compliance_notification(
 
 
 def get_user_countries(db, user_id):
-    q = "select country_id from tbl_user_countries"
+    q = "select country_id from tbl_countries"
     param = None
     condition = ""
     if is_primary_admin(db, user_id) is not True:
+        q = "select country_id from tbl_user_countries"
         condition = " WHERE user_id = %s"
         param = [user_id]
-
     rows = db.select_all(q + condition, param)
     c_ids = []
     for r in rows:
@@ -1124,7 +1120,6 @@ def get_email_id_for_users(db, user_id):
 
 
 def get_user_email_name(db, user_ids):
-    print user_ids
     index = None
     column = "email_id, employee_name"
     condition = "user_id in (%s)"
@@ -1194,7 +1189,6 @@ def calculate_due_date(
     from_date, to_date = calculate_from_and_to_date_for_domain(
         db, country_id, domain_id
     )
-    print "from_date: {}, to_date: {}".format(from_date, to_date)
     due_dates = []
     summary = ""
     # For Monthly Recurring compliances
@@ -1285,10 +1279,7 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
             compliance_id = %s) THEN DATE(due_date) ELSE 'NotExists' END ) as
             is_ok FROM tbl_compliance_history ) a WHERE is_ok != "NotExists"'''
 
-        print query
-        print [unit_id, due_dates, compliance_id]
         rows = db.select_all(query, [unit_id, due_dates, compliance_id])
-        print rows
         if len(rows) > 0:
             for row in rows:
                 formated_date_list.remove("%s" % (row[0]))
@@ -1299,9 +1290,6 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
             if len(due_dates_list) < current_due_date_index + 1:
                 continue
             else:
-                print len(due_dates_list)
-                print current_due_date_index
-                print len(formated_date_list)
                 if current_due_date_index == len(formated_date_list)-1:
                     next_due_date = due_dates_list[current_due_date_index]
                 else:

@@ -174,7 +174,7 @@ class Database(object):
                 )
                 cursor.execute(query, param)
             elif type(param) is list:
-                print "inside elif "
+                # print "inside elif "
                 if len(param) > 1:
                     logger.logQuery(
                         self._for_client, "execute_insert",
@@ -229,12 +229,10 @@ class Database(object):
                 else:
                     logger.logQuery(self._for_client, "select_all", query)
                     cursor.execute(query)
-
             res = cursor.fetchall()
             return res
         except mysql.Error, e:
             print e
-            print '@@@@@@@@@@2222'
             # print query
             # print param
             logger.logClientApi("select_all", query)

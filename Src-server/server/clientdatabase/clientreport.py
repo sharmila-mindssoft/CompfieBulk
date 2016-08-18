@@ -12,7 +12,7 @@ from server.clientdatabase.common import (
     calculate_years, get_country_domain_timelines
     )
 from server.clientdatabase.general import (
-    calculate_ageing, get_admin_id, get_user_unit_ids
+    calculate_ageing, get_admin_id, get_user_unit_ids, is_admin
 )
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 FORMAT_DOWNLOAD_URL = "/client/compliance_format"
@@ -691,7 +691,7 @@ def return_cmopliance_details_report(
     unitWise = {}
     for r in result:
         uname = r["unit_code"] + ' - ' + r["unit_name"]
-        if r["document_name"] == "None":
+        if r["document_name"] in ["None", None]:
             compliance_name = r["compliance_task"]
         else:
             compliance_name = r["document_name"] + ' - ' + r["compliance_task"]
@@ -1903,8 +1903,8 @@ def return_logintrace(data):
 
 
 def get_compliance_activity_report(
-        db, country_id, domain_id, user_type, user_id, unit_id, compliance_id,
-        level_1_statutory_name, from_date, to_date, session_user, client_id
+    db, country_id, domain_id, user_type, user_id, unit_id, compliance_id,
+    level_1_statutory_name, from_date, to_date, session_user, client_id
 ):
         conditions = ""
         condition_val = []
@@ -1925,7 +1925,7 @@ def get_compliance_activity_report(
             condition_val.append(unit_id)
 
         # session_user_condition
-        if session_user != 0:
+        if not is_admin(db, session_user):
             conditions += " AND u.unit_id in ( " + \
                 " SELECT unit_id FROM tbl_user_units WHERE user_id = %s ) "
             condition_val.append(session_user)
@@ -1986,7 +1986,7 @@ def get_compliance_activity_report(
 
         query = "SELECT distinct activity_date, activity_status, " + \
             " compliance_status, cal.remarks, " + \
-            " concat(unit_code, "-", unit_name), " + \
+            " concat(unit_code, '-', unit_name), " + \
             " address, document_name, compliance_task, " + \
             " compliance_description, " + \
             " statutory_mapping, ac.completed_by, employee_code, " + \
@@ -2002,14 +2002,17 @@ def get_compliance_activity_report(
             " AND c.domain_id = %s "
         order = " ORDER BY cal.updated_on DESC"
 
-        print query
+        # print query
         param = [country_id, domain_id]
         if conditions != "":
             query += conditions
             param.extend(condition_val)
-
+        print
+        print
         print query + order
         print param
+        print
+        print
         result = db.select_all(query + order, param)
         columns = [
             "activity_date", "activity_status", "compliance_status", "remarks",

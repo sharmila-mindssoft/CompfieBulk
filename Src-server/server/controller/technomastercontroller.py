@@ -147,7 +147,7 @@ def update_client_group(db, request, session_user):
     ):
         return technomasters.InvalidNoOfLicence()
     elif validate_total_disk_space(
-        db, request.file_space * 1000000000, request.client_id
+        db, request.file_space * (1024 * 1024 * 1024), request.client_id
     ):
         return technomasters.InvalidFileSpace()
     else:
@@ -423,6 +423,7 @@ def reactivate_unit(db, request, session_user):
 # To Get the Profile of all clients
 ########################################################
 def get_client_profile(db, request, session_user):
+    print "inside get client profile"
     client_ids = get_user_clients(db, session_user)
     if client_ids is None:
         return technomasters.UserIsNotResponsibleForAnyClient()
