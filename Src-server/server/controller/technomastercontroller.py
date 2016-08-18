@@ -147,7 +147,7 @@ def update_client_group(db, request, session_user):
     ):
         return technomasters.InvalidNoOfLicence()
     elif validate_total_disk_space(
-        db, request.file_space * 1000000000, request.client_id
+        db, request.file_space * (1024 * 1024 * 1024), request.client_id
     ):
         return technomasters.InvalidFileSpace()
     else:

@@ -893,7 +893,7 @@ function submitcompliance(){
                       }
                       else
                         displayMessage(err_message);
-                      hideLoader();
+                        hideLoader();
                     }
                     client_mirror.saveAssignedComplianceFormData(acCountryId, assignComplianceAssigneeId,
                       assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName,

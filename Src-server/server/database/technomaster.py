@@ -267,7 +267,7 @@ def return_group_company_details(db, result):
         contract_from = datetime_to_string(client_row["contract_from"])
         contract_to = datetime_to_string(client_row["contract_to"])
         no_of_user_licence = client_row["no_of_user_licence"]
-        total_disk_space = client_row["total_disk_space"] / 1000000000
+        total_disk_space = round(client_row["total_disk_space"] / (1024 * 1024 * 1024))
         is_sms_subscribed = True if client_row[
             "is_sms_subscribed"
         ] == 1 else False
@@ -309,7 +309,7 @@ def save_client_group_data(db, client_group, session_user):
     values = [
         client_group.group_name, client_group.email_id,
         client_group.logo.file_size, contract_from, contract_to,
-        client_group.no_of_user_licence, client_group.file_space * 1000000000,
+        client_group.no_of_user_licence, client_group.file_space * (1024 * 1024 * 1024),
         is_sms_subscribed, client_group.short_name,
         ','.join(str(x) for x in client_group.incharge_persons),
         1, session_user,
@@ -540,7 +540,7 @@ def update_client_group_record(db, client_group, session_user):
     ]
     values = [
         client_group.group_name, contract_from, contract_to,
-        client_group.no_of_user_licence, client_group.file_space * 1000000000,
+        client_group.no_of_user_licence, client_group.file_space * (1024 * 1024 * 1024),
         is_sms_subscribed,
         ','.join(str(x) for x in client_group.incharge_persons), session_user,
         current_time_stamp
@@ -1365,7 +1365,7 @@ def get_next_unit_auto_gen_no(db, client_id):
 
 
 def get_profiles(db, client_ids):
-    ONE_GB = 1024 * 1024 * 1000
+    ONE_GB = 1024 * 1024 * 1024
     client_ids_list = [int(x) for x in client_ids.split(",")]
     profiles = []
     for client_id in client_ids_list:
