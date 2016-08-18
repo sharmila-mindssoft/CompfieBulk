@@ -148,8 +148,7 @@ class API(object):
                 self._db.commit()
             else:
                 self._db.rollback()
-            print "-------------"
-            print response_data
+            # print response_data
             respond(response_data)
         except Exception, e:
             # print "handle_api_request"
@@ -348,7 +347,9 @@ class TemplateHandler(tornado.web.RequestHandler) :
         template = template_env.get_template(path)
         output = template.render(**self.__parameters)
         output = self.update_static_urls(output)
-        # token = self.set_secure_cookie("_test", str(time.time()))
+        token = str(time.time())
+        print token
+        self.set_secure_cookie("_xsrf", token)
         # self.set_cookie("_test", to)
         # if not self.get_cookie("_xsrf"):
         #     token = self.xsrf_token
