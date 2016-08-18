@@ -106,9 +106,9 @@ function loadClientProfileList(groupId){
                     // adminstatus = false;
                     imageadminName = "promote-active.png";
                     admintitle = "Click here to deactivate Promote Admin";
-                    // if(isActive == false){
-                    //     imageadminName = "icon-inactive.png";
-                    // }
+                    if(isActive == false){
+                        imageadminName = "icon-inactive.png";
+                    }
                 }
                 else{
                     // adminstatus = true;
