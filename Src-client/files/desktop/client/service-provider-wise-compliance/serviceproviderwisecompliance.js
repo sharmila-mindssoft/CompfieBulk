@@ -51,12 +51,15 @@ function loadresult(filterList){
         var tableRow1=$('#serviceprovider-head-templates .table-serviceprovider-head .table-row-serviceprovider-headvalue');
         var clone1=tableRow1.clone();
         service_sno = service_sno + 1;
+
+        var spAddress = '';
+        if(filterList[entity]["address"] != null) spAddress = filterList[entity]["address"];
         $('.tbl_sp_count', clone1).text(service_sno);
         $('.tbl_sp_name', clone1).text(sp_name);
         $('.tbl_sp_contactperson', clone1).text(filterList[entity]["contact_person"]);
         $('.tbl_sp_email', clone1).text("main");
         $('.tbl_sp_contactno', clone1).text(filterList[entity]["contact_no"]);
-        $('.tbl_sp_address', clone1).text(filterList[entity]["address"]);
+        $('.tbl_sp_address', clone1).text(spAddress);
         $('.tbl_sp_period', clone1).text(filterList[entity]["contract_from"] +' to '+ filterList[entity]["contract_to"]);
         $('.tbody-serviceprovider').append(clone1);
 
