@@ -354,8 +354,12 @@ function load_UserCompliances(uCompliances, uId){
       }
     }
     if(uId == client_admin){
-      userName = "Client Admin";
-      seatingUnit = "-";
+      if(seatingUnitId == null){
+        userName = "Client Admin";
+        seatingUnit = "-";
+      }else{
+        userName = userName + " (Client Admin)";
+      }
     }
 
     var tableRow1=$('#templates .table-compliances .table-row');
@@ -499,7 +503,7 @@ function submitcompliance(){
     assignComplianceApprovalName = $('.approvallist.active').text().trim();
   }
 
-  if(assignComplianceAssigneeName == 'Client Admin'){
+  if(assignComplianceAssigneeId == client_admin){
     assignComplianceApprovalId = assignComplianceAssigneeId;
     assignComplianceApprovalName = assignComplianceAssigneeName;
   }
@@ -569,7 +573,7 @@ function submitcompliance(){
     var assigneeInserDomainVal = [];
     var assigneeInserCountry = [];
     
-    if(assignComplianceAssigneeName != 'Client Admin' && assignComplianceAssigneeId != null){
+    if(assignComplianceAssigneeId != client_admin && assignComplianceAssigneeId != null){
       var userUnits;
       var userDomains;
 
@@ -580,7 +584,6 @@ function submitcompliance(){
         }
       }
 
-      console.log(acDomainArray +'==='+userDomains)
       for(var k=0; k<acDomainArray.length; k++){
         if($.inArray(acDomainArray[k], userDomains) == -1){
           assigneeInserDomain.push(acDomainArray[k]);
@@ -655,7 +658,7 @@ function submitcompliance(){
     var approvalInserDomainVal = [];
     var approvalInserCountry = [];
 
-    if(assignComplianceApprovalName != 'Client Admin' && assignComplianceApprovalId != null){
+    if(assignComplianceApprovalId != client_admin && assignComplianceApprovalId != null){
       var userUnits;
       var userDomains;
       for(var user in usersList){
@@ -948,7 +951,6 @@ function loadUser(userType){
     if((assigneeUserId == null || assigneeUserId != client_admin)
     && (approvalUserId == null || approvalUserId != client_admin)
     && (concurrenceUserId == null || concurrenceUserId != client_admin)){
-
       str='<li id="'+client_admin+'-0'+'" class="'+userClass+'" > Client Admin </li>';
     }
   }
@@ -962,6 +964,10 @@ function loadUser(userType){
       }
       var uLevel = usersList[user]["user_level"];
       var userName= usersList[user]["user_name"] + ' - Level ' + uLevel;
+      if(userId == client_admin){
+        userName = userName + " (Client Admin)";
+        str = '';
+      }
       var isAssignee = usersList[user]["is_assignee"];
       var isConcurrence = usersList[user]["is_concurrence"];
       var isApprover = usersList[user]["is_approver"];
@@ -1016,8 +1022,12 @@ $("#assignee").click(function(event){
       });
       $(event.target).addClass("active");
     }
-    var assigneeText = $(".assigneelist.active").text().trim();
-    if(assigneeText != 'Client Admin'){
+    var assigneeText = '';
+    if($(".assigneelist.active").attr('id') != undefined){
+      assigneeText = $(".assigneelist.active").attr('id').split('-')[0]
+    }
+
+    if(assigneeText != client_admin){
       loadUser('concurrence');
       loadUser('approval');
     }else{
@@ -1157,10 +1167,10 @@ function validate_secondtab(){
   if($('.assigneelist.active').text() == ''){
     displayMessage(message.assignee_required);
     return false;
-  }else if ($('.concurrencelist.active').text() == '' && two_level_approve && $(".assigneelist.active").text().trim() != 'Client Admin'){
+  }else if ($('.concurrencelist.active').text() == '' && two_level_approve && $(".assigneelist.active").attr('id').split('-')[0] != client_admin){
     displayMessage(message.concurrence_required);
     return false;
-  }else if ($('.approvallist.active').text() == '' && $(".assigneelist.active").text().trim() != 'Client Admin'){
+  }else if ($('.approvallist.active').text() == '' && $(".assigneelist.active").attr('id').split('-')[0] != client_admin){
     displayMessage(message.approval_required);
     return false;
   }else if ($('#reason').val().trim() == ''){
