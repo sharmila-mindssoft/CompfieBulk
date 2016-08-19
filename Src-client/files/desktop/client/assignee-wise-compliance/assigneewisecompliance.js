@@ -155,7 +155,8 @@ function complianceListArray(data){
   var clone3=tableRow3.clone();
   var cDescription = data["description"];
   $('.tbl_sno', clone3).text(sno+1);
-  $('.tbl_compliance', clone3).html('<abbr class="page-load tipso_style" title="'+ cDescription +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+data["compliance_name"]);
+  $('.tipso_style', clone3).attr('title', cDescription);
+  $('.tbl_compliance', clone3).text(data["compliance_name"]);
   $('.tbl_unit', clone3).text(data["unit_address"]);
   $('.tbl_frequency', clone3).text(data["compliance_frequency"]);
   $('.tbl_statutorydate', clone3).text(statutorydate);

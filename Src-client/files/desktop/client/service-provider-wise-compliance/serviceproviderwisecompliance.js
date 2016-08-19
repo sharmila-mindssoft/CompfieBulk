@@ -77,11 +77,11 @@ function loadresult(filterList){
         if(lastUnit != compliancelist){
           var tableRow2=$('#unit-name-templates .table-unit-name .table-row-unit-name');
           var clone2=tableRow2.clone();
-          $('.tbl_unitheading', clone2).html('<div class="heading" style="margin-top:5px;width:auto;"> <abbr class="page-load tipso_style" title="'+ uAddress +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliancelist+'</div>');
+          $('.tipso_style', clone2).attr('title', uAddress);
+          $('.tbl_unitheading', clone2).text(compliancelist);
           $('.tbody-serviceprovider').append(clone2);
           lastUnit = compliancelist
         }
-      
         
         for(i=0; i<compliancelists[compliancelist].length; i++){
           var triggerdate = '';
