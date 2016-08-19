@@ -887,56 +887,30 @@ def get_units_for_user_grouped_by_industry(db, unit_ids):
 def get_level_1_statutories_for_user_with_domain(
     db, session_user, domain_id=None
 ):
-    columns = "distinct compliance_id as compliance "
-    condition = "1"
-    condition_val = None
     if not is_admin(db, session_user):
-        condition = "assignee = %s"
-        condition_val = [session_user]
-    rows = db.get_data(
-        tblAssignedCompliances, columns, condition, condition_val
-    )
-    c_ids = []
-    for r in rows:
-        c_ids.append(str(r["compliance"]))
-
-    if len(c_ids) == 1:
-        compliance_ids = "(%s)" % c_ids[0]
+        condition = " tac.assignee = %s "
+        condition = condition % (session_user)
     else:
-        compliance_ids = ','.join(c_ids)
+        condition = "1"
 
-    domain_ids = domain_id
-    if domain_ids is None:
-        columns = "domain_id"
-        domain_rows = None
-        if session_user != get_admin_id(db):
-            domain_cond = "user_id=%s"
-            domain_cond_val = [session_user]
-            domain_rows = db.get_data(
-                tblUserDomains, columns,
-                domain_cond, domain_cond_val
-            )
-        else:
-            domain_rows = db.get_data(tblDomains, columns, "1")
-        domain_ids = [
-            str(domain_row["domain_id"]) for domain_row in domain_rows
-        ]
+    query = " SELECT domain_id, statutory_mapping " + \
+        " FROM tbl_compliances tc WHERE compliance_id in ( " + \
+        " SELECT distinct compliance_id FROM tbl_assigned_compliances tac " + \
+        " WHERE %s)"
+    query = query % condition
+    rows = db.select_all(query)
+    columns = ["domain_id", "statutory_mapping"]
+    result = convert_to_dict(rows, columns)
+
     level_1_statutory = {}
-    for domain_id in domain_ids:
-        condition = "domain_id in (%s)"
-        condition_val = [domain_id]
-        if compliance_ids is not None:
-            condition += "AND compliance_id in (%s)"
-            condition_val.append(compliance_ids)
-        mapping_rows = db.get_data(
-            tblCompliances, "statutory_mapping",
-            condition, condition_val
-        )
-        level_1_statutory[domain_id] = []
-        for mapping in mapping_rows:
-            statutories = mapping["statutory_mapping"].split(">>")
-            if statutories[0].strip() not in level_1_statutory[domain_id]:
-                level_1_statutory[domain_id].append(statutories[0].strip())
+    for row in result:
+        domain_id = str(row["domain_id"])
+        statutory_mapping = row["statutory_mapping"]
+        if domain_id not in level_1_statutory:
+            level_1_statutory[domain_id] = []
+        statutories = statutory_mapping.split(">>")
+        if statutories[0].strip() not in level_1_statutory[domain_id]:
+            level_1_statutory[domain_id].append(statutories[0].strip())
     return level_1_statutory
 
 
