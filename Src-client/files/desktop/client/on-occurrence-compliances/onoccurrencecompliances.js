@@ -37,8 +37,10 @@ function load_compliances (compliancesList) {
         $('.description', clone1).text(value["description"]);
         $('.duration', clone1).text(completeDays);
         $('.startdate', clone1).attr('id', 'startdate'+sno);
+
+        $('.btn-submit', clone1).attr('id', sno);
         $(".btn-submit", clone1).on("click", function() {
-          submitOnOccurence(complianceId, sno, unitId, completeDays);
+          submitOnOccurence(complianceId, this, unitId, completeDays);
         });
 
         /*$(clone1, '.action').on("click", function(e){
@@ -88,8 +90,8 @@ function convert_date (data){
 }
 
 //start on occurance compliance
-function submitOnOccurence(complianceId, count, unitId, complete_within_days){
-  var startdate = $('#startdate'+count).val();
+function submitOnOccurence(complianceId, thisval, unitId, complete_within_days){
+  var startdate = $('#startdate'+thisval.id).val();
   var d = new Date();
   var month = d.getMonth()+1;
   var day = d.getDate();
@@ -106,7 +108,7 @@ function submitOnOccurence(complianceId, count, unitId, complete_within_days){
     function onSuccess(data){
       displayMessage(message.action_success);
       //getOnOccuranceCompliances ();
-      $('#startdate'+count).val('');
+      $('#startdate'+thisval.id).val('');
       hideLoader();
       //window.location.href='/compliance-task-details'
     }
