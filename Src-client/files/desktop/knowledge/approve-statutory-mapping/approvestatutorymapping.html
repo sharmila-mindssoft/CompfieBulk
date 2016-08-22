@@ -140,8 +140,18 @@
     <td class="statutory"></td>
     <td class="compliancetask" style="line-height:25px;"></td>
     <td class="applicablelocation"></td>
-    <td class="action"></td>
-    <td class="reason" style="vertical-align: top;"></td>
+    <td>
+      <input type="hidden" class="mapping_id" /> 
+      <input type="hidden" class="statutoryprovision"/> 
+      <select class="input-box action" onchange="dispreason(this)"></select>
+    </td>
+    <td style="vertical-align: top;">
+      <textarea class="input-box userreason default-display-none" maxlength="500" placeholder="Enter notification text" style="height:50px;"></textarea>
+      <span style="font-size:0.75em;" class="max-span default-display-none"> 
+      <br> (max 500 characters)
+      </span> 
+      <input type="text" maxlength="500" class="input-box reason default-display-none" placeholder="Enter reason" />'
+    </td>
   </tr>
 </table>
 </div>

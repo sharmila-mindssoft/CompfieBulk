@@ -145,7 +145,7 @@ function actstatus(element){
 
 
 function compliancestatus(element){
-  var sClass = $(element).attr('class');
+  var sClass = $(element).attr('class').split(' ')[1];
   var actSelect = sClass.substr(sClass.lastIndexOf("s") + 1);
 
   var cStatus = false;
@@ -195,14 +195,16 @@ function load_secondwizard(){
     if (not_applicable_remarks == null) not_applicable_remarks = '';
     var acttableRow=$('#act-templates .font1 .tbody-heading');
     var clone=acttableRow.clone();
-    $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+
-      '" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:100px;"> <label for="act'+actCount+
-      '" style="margin-top:100px;" class="act-label"></label> ');
 
-    $('.actname', clone).html('<div style="float:left;margin-top:5px;width:65%;">'+actname+
-      '</div> <div style="float:right; width:35%;" class="default-display-none remark'+actCount+
-      '" ><div style="float:right;  width:220px;margin-top:3px;"> <input type="text" maxlength="500" id="remarkvalue'+actCount+
-      '" value="'+not_applicable_remarks+'" class="input-box userremark" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:7px;"> Remarks</div></div>');
+    $('.act-ck-box', clone).attr('id', 'act'+actCount);
+    $('.act-ck-box', clone).val(actCount);
+    $('.act-label', clone).attr('for', 'act'+actCount);
+
+    $('.act-remark', clone).addClass('remark'+actCount);
+    $('.remark-text', clone).attr('id', 'remarkvalue'+actCount);
+    $('.remark-text', clone).val(not_applicable_remarks);
+    $('.actname', clone).text(actname);
+
     $('.tbody-assignstatutory').append(clone);
 
     if(applicable_status == false){
@@ -219,8 +221,6 @@ function load_secondwizard(){
     var complianceHeadingtableRow=$('#statutory-templates .compliance-heading');
     var clone1=complianceHeadingtableRow.clone();
     $('.accordion-content'+count).append(clone1);
-
-
 
     for(var compliance in complianceslist){
       var cDescription = complianceslist[compliance]["description"];
@@ -239,7 +239,15 @@ function load_secondwizard(){
       $('.compliancetask', clone2).text(complianceslist[compliance]["compliance_name"]);
       $('.compliancedescription', clone2).html('<abbr class="page-load" title="'+
           cDescription+'">'+partDescription+'</abbr>');
-      $('.complianceapplicable', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this)"><label for="statutory'+statutoriesCount+'"></label>');
+
+      $('.compliance-ck-box', clone2).attr('id', 'statutory'+statutoriesCount);
+      $('.compliance-ck-box', clone2).val(statutoriesCount);
+      $('.compliance-ck-box', clone2).addClass('statutoryclass'+actCount);
+      $('.compliance-label', clone2).attr('for', 'statutory'+statutoriesCount);
+      $(".compliance-ck-box", clone2).on("click", function() {
+        compliancestatus(this);
+      });
+
       $('.accordion-content'+count).append(clone2);
 
       if(compliance_applicable_status == false){
@@ -262,7 +270,15 @@ function load_secondwizard(){
         $('.statutoryprovision', clone2).html('<font color="#0404B4">'+newCompliances[newCompliance]["statutory_provision"]+'</font>');
         $('.compliancetask', clone2).html('<font color="#0404B4">'+newCompliances[newCompliance]["compliance_name"]+'</font>');
         $('.compliancedescription', clone2).html('<font color="#0404B4">'+newCompliances[newCompliance]["description"]+'</font>');
-        $('.complianceapplicable', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'"><label for="statutory'+statutoriesCount+'"></label>');
+        
+        $('.compliance-ck-box', clone2).attr('id', 'statutory'+statutoriesCount);
+        $('.compliance-ck-box', clone2).val(statutoriesCount);
+        $('.compliance-ck-box', clone2).addClass('statutoryclass'+actCount);
+        $('.compliance-label', clone2).attr('for', 'statutory'+statutoriesCount);
+        $(".compliance-ck-box", clone2).on("click", function() {
+          compliancestatus(this);
+        });
+
         $('.accordion-content'+count).append(clone2);
 
         if(compliance_applicable_status == false){
