@@ -15,6 +15,7 @@ process_error_log_path = "logs/daily_process_error-log"
 know_query_log_path = "logs/knowledge/query-log"
 client_query_log_path = "logs/client/query-log"
 
+
 def _get_time_rotate_file_obj(logger_name, log_path):
     log_format = logging.Formatter("%(asctime)s - %(name)s - %(message)s")
     rotateFileHandler = handlers.TimedRotatingFileHandler(
