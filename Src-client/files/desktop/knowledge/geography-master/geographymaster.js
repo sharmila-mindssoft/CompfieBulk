@@ -156,14 +156,34 @@ function loadGeographyFirstLevels(saverecord){
   $(".tbody-geography-level").find("div").remove();
   var geographyLevelList = geographyLevelsList[saverecord];
   var levelposition;
-  for(var j in geographyLevelList){
-    levelposition = geographyLevelList[j]["l_position"];
+  $.each(geographyLevelList, function(key, value) {
+    levelposition = value["l_position"];
+
+
     var tableRow=$('#geography-level-templates');
     var clone=tableRow.clone();
-    $('.title', clone).text(geographyLevelList[j]["l_name"]);
-    $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" maxlength="50" class="input-box addleft" placeholder=""  style="width:90%;" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a class="popup-link" id="update'+levelposition+'"><img src="/knowledge/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["l_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+    $('.title', clone).text(value["l_name"]);
+
+    $('.geography-list', clone).attr('id', 'ulist'+levelposition);
+    $('.addleft', clone).attr('id', 'datavalue'+levelposition);
+    $(".addleft", clone).on("keypress", function(event) {
+      saverecord1(value["l_position"], event);
+    });
+
+    $('.popup-link', clone).attr('id', 'update'+levelposition);
+    $(".add-geo", clone).on("click", function() {
+      saverecord1(value["l_position"], 'clickimage');
+    });
+
+    $('.glmid-class', clone).attr('id', 'glmid'+levelposition);
+    $('.glmid-class', clone).val(value["l_id"]);
+
+    $('.level-class', clone).attr('id', 'level'+levelposition);
+    $('.level-class', clone).val(levelposition);
+
     $('.tbody-geography-level').append(clone);
-  }
+    $('#geography-level-templates').show();
+  });
   var setlevelstage= 1;
   $('#datavalue'+setlevelstage).val('');
   $('#ulist'+setlevelstage).empty();
@@ -274,7 +294,7 @@ function load(id,level,country){
   });
 
 //validate and insert records in geograpahymapping table
-function saverecord(j,e){
+function saverecord1(j,e){
   var data = e.keyCode;
   if(data==13 || data ==undefined){
   var checkLength = geographyValidate($('#datavalue'+j).val().trim());
@@ -367,18 +387,56 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
   $(".tbody-geography-level").find("div").remove();
   var geographyLevelList = geographyLevelsList[countryid];
   var levelposition;
-  for(var j in geographyLevelList){
-    levelposition = geographyLevelList[j]["l_position"];
+  $.each(geographyLevelList, function(key, value) {
+    levelposition = value["l_position"];
     var tableRow=$('#geography-level-templates');
     var clone=tableRow.clone();
-    $('.title', clone).text(geographyLevelList[j]["l_name"]);
+    $('.title', clone).text(value["l_name"]);
     if(levelposition == lposition){
-      $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" maxlength="50" class="input-box addleft" placeholder=""  style="width:80%;" name="datavalue'+levelposition+'" id="datavalue'+levelposition+'" onkeypress="updaterecord('+levelposition+',event)"/><span> <a class="popup-link" id="update'+levelposition+'"><img src="/knowledge/images/icon-plus.png" formtarget="_self" onclick="updaterecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["l_id"]+'"/> <input type="hidden" id="visible'+levelposition+'" value=""/> <input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+      
+      $('.geography-list', clone).attr('id', 'ulist'+levelposition);
+      $('.addleft', clone).attr('readonly', false);
+      $('.addleft', clone).attr('id', 'datavalue'+levelposition);
+      $(".addleft", clone).on("keypress", function(event) {
+        updaterecord(value["l_position"], event);
+      });
+
+      $('.popup-link', clone).attr('id', 'update'+levelposition);
+      $(".add-geo", clone).on("click", function() {
+        updaterecord(value["l_position"], 'clickimage');
+      });
+
+      $('.glmid-class', clone).attr('id', 'glmid'+levelposition);
+      $('.glmid-class', clone).val(value["l_id"]);
+
+      $('.level-class', clone).attr('id', 'level'+levelposition);
+      $('.level-class', clone).val(levelposition);
+    
     }else{
-      $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" readonly="readonly" class="input-box addleft" placeholder=""  style="width:80%;" name="datavalue'+levelposition+'" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <img src="/knowledge/images/icon-plus.png" formtarget="_self"/></span></div><input type="hidden" name="glmid'+levelposition+'" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["l_id"]+'"/> <input type="hidden" name="visible'+levelposition+'" id="visible'+levelposition+'" value=""/> <input type="hidden" name="level'+levelposition+'" id="level'+levelposition+'" value="'+levelposition+'" />');
+      $('.geography-list', clone).attr('id', 'ulist'+levelposition);
+      $('.addleft', clone).attr('readonly', true);
+      $('.addleft', clone).attr('id', 'datavalue'+levelposition);
+      $(".addleft", clone).on("keypress", function(event) {
+        saverecord1(value["l_position"], event);
+      });
+
+      /*$('.popup-link', clone).attr('id', 'update'+levelposition);
+      $(".add-geo", clone).on("click", function() {
+        saverecord1(value["l_position"], 'clickimage');
+      });*/
+
+      $('.glmid-class', clone).attr('id', 'glmid'+levelposition);
+      $('.glmid-class', clone).val(value["l_id"]);
+
+      $('.level-class', clone).attr('id', 'level'+levelposition);
+      $('.level-class', clone).val(levelposition);
+
+      $('.visible-class', clone).attr('id', 'visible'+levelposition);
+
     }
     $('.tbody-geography-level').append(clone);
-  }
+    $('#geography-level-templates').show();
+  });
   $('#datavalue'+lposition).val(geographyName.replace(/##/gi,'"'));
   var levelstages= lposition-1;
   var parentid=parentidval;
