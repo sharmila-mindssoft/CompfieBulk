@@ -160,7 +160,7 @@ function load_statutory(sList){
       //$('.act-label', clone).text(actname);
       $('.act-label', clone).attr('for', 'act'+actCount);
 
-	  $('.act-remark', clone).addClass('remark'+actCount);
+	    $('.act-remark', clone).addClass('remark'+actCount);
       $('.remark-text', clone).attr('id', 'remarkvalue'+actCount);
       $('.remark-text', clone).val(not_applicable_remarks);
       $('.actname', clone).text(actname);
@@ -240,20 +240,20 @@ function load_statutory(sList){
     $('.compliancedescription', clone2).html( openTag + sList[statutory]["description"] + closeTag);
 
     $('.compliance-ck-box', clone2).attr('id', 'statutory'+statutoriesCount);
-	$('.compliance-ck-box', clone2).val(statutoriesCount);
-	$('.compliance-ck-box', clone2).addClass('statutoryclass'+(actCount-1));
-	$('.compliance-label', clone2).attr('for', 'statutory'+statutoriesCount);
-	$(".compliance-ck-box", clone2).on("click", function() {
-        compliancestatus(this, viewremarks);
+  	$('.compliance-ck-box', clone2).val(statutoriesCount);
+  	$('.compliance-ck-box', clone2).addClass('statutoryclass'+(actCount-1));
+  	$('.compliance-label', clone2).attr('for', 'statutory'+statutoriesCount);
+  	$(".compliance-ck-box", clone2).on("click", function() {
+      compliancestatus(this, viewremarks);
     });
 
-	$('.cremarkadd', clone2).addClass('cremarkadd'+statutoriesCount);
-	$('.cremarkvalue', clone2).attr('id', 'cremarkvalue'+statutoriesCount);
-	$('.remark-text', clone2).val(not_applicable_remarks);
+  	$('.cremarkadd', clone2).addClass('cremarkadd'+statutoriesCount);
+  	$('.cremarkvalue', clone2).attr('id', 'cremarkvalue'+statutoriesCount);
+  	$('.remark-text', clone2).val(not_applicable_remarks);
 
-	$('.cremarkview', clone2).addClass('cremarkview'+statutoriesCount);
-	$('.tipso_style', clone2).attr('title', compliance_remarks);
-	$('.crval', clone2).html(compliance_remarks_part);
+  	$('.cremarkview', clone2).addClass('cremarkview'+statutoriesCount);
+  	$('.tipso_style', clone2).attr('title', compliance_remarks);
+  	$('.crval', clone2).html(compliance_remarks_part);
 	
     if(compliance_applicable_status){
       $('.applicable', clone2).html('<img src=\'/images/tick1bold.png\' title="Applicable"/> <input type="hidden" id="applicable'+statutoriesCount+

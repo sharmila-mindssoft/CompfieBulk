@@ -954,7 +954,7 @@ def change_approval_status(db, data, updated_by):
         notification_log_text = "Statutory Mapping: %s " + \
             " has been Rejected and reason is %s"
         notification_log_text = notification_log_text % (
-                provission, rejected_reason
+                provision, rejected_reason
             )
     else:
         notification_log_text = "Statutory Mapping: %s " + \

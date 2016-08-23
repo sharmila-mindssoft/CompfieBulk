@@ -72,7 +72,7 @@ function load_thirdwizard(){
         if(lastAct != actname){
           var acttableRow=$('#act-templates .font1 .tableRow');
           var clone=acttableRow.clone();
-          $('.actname', clone).html('<div class="heading" style="margin-top:5px;width:auto;">'+actname+'</div>');
+          $('.heading', clone).html(actname);
           $('.tbody-assignstatutory').append(clone);
           lastAct = actname;
         }
@@ -91,27 +91,43 @@ function load_thirdwizard(){
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
 
-        $('.sno', clone2).html(sno +
-        '<input type="hidden" id="complianceid'+sno+'" value="'+compliance_id+'"/>' +
-        '<input type="hidden" id="compliancename'+sno+'" value="'+compliance_name+'"/>' +
-        '<input type="hidden" id="frequency'+sno+'" value="'+frequency+'"/>');
+        var combineId = compliance_id + '#' + compliance_name + '#' + frequency;
+        $('.combineid-class', clone2).attr('id', 'combineid'+sno);
+        $('.combineid-class', clone2).val(combineId);
 
-        $('.compliancetask', clone2).html('<abbr class="page-load" title="'+
-          compliance_description+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliance_name);
+        $('.sno', clone2).text(sno);
+
+        $('.compliancetask', clone2).text(compliance_name);
+        $('.tipso_style', clone2).attr('title', compliance_description);
+
         $('.compliancefrequency', clone2).text(frequency);
-        $('.statutorydate', clone2).text(statutorydate);
-        $('.duedate', clone2).html('<input type="text" value="'+due_date+'" readonly="readonly" class="input-box" id="duedate'+sno+'" />');
-        $('.completiondate', clone2).html('<input type="text" value="" readonly="readonly" class="input-box" id="completiondate'+sno+'" />');
-        if(frequency == 'Periodical' || frequency == 'Review'){
-          $('.validitydate', clone2).html('<input type="text" value="" class="input-box" readonly="readonly" id="validitydate'+sno+'" />');
-        }else{
-          $('.validitydate', clone2).html("");
-        }
-        $('.documentupload', clone2).html('<input type="file" class="input-box" id="upload'+sno+'" multiple />');
-        $('.assignee', clone2).html('<input type="text" value="'+assignee_name+'" class="input-box icon-autocomplete" id="assigneeval'+sno+'" style="width:100px;" /> <input type="hidden" id="assignee'+sno+'" value="'+assignee_id+'"> <div id="autocomplete_assignee'+sno+'" class="ac-textbox default-display-none"> <ul id="ulist_assignee'+sno+'" style="width:115px;" class="hidemenu"></ul></div>');
 
-        $('.completedstatus', clone2).html('<input type="checkbox" id="completedstatus'+sno+'">');
+        $('.statutorydate', clone2).text(statutorydate);
+
+        $('.duedate', clone2).attr('id', 'duedate'+sno);
+        $('.duedate', clone2).val(due_date);
+
+        $('.completiondate', clone2).attr('id', 'completiondate'+sno);
+
+        if(frequency == 'Periodical' || frequency == 'Review'){
+          $('.validitydate', clone2).attr('id', 'validitydate'+sno);
+        }else{
+          $('.view-validitydate', clone2).html("");
+        }
+        
+        $('.documentupload', clone2).attr('id', 'upload'+sno);
+        
+        $('.icon-autocomplete', clone2).attr('id', 'assigneeval'+sno);
+        $('.icon-autocomplete', clone2).val(assignee_name);
+        $('.assignee', clone2).attr('id', 'assignee'+sno);
+        $('.assignee', clone2).val(assignee_id);
+        $('.ac-textbox', clone2).attr('id', 'autocomplete_assignee'+sno);
+        $('.hidemenu', clone2).attr('id', 'ulist_assignee'+sno);
+
+        $('.completedstatus', clone2).attr('id', 'completedstatus'+sno);
+        
         $('.tbody-assignstatutory').append(clone2);
+
 
 
         $("#upload"+sno).on("change", function(e) {
@@ -267,13 +283,16 @@ function submitcompliance(){
           complianceApplicable = true;
         }
         if(complianceApplicable){
-          var compliance_id = parseInt($('#complianceid'+i).val());
+          var combineidVal = $('#combineid'+i).val().split('#');
+          var compliance_id = parseInt(combineidVal[0]);
+          var frequency_ = combineidVal[2];
+          var compliance_name = combineidVal[1];
+          
           var validity_date = $('#validitydate'+i).val();
           var due_date = $('#duedate'+i).val();
           var completion_date = $('#completiondate'+i).val();
           var completed_by = $('#assignee'+i).val();
-          var frequency_ = $('#frequency'+i).val();
-          var compliance_name = $('#compliancename'+i).val();
+          
           if(completed_by != '') completed_by = parseInt(completed_by);
 
           if(due_date == ''){

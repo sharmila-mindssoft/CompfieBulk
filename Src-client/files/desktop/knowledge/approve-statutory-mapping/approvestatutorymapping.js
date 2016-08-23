@@ -191,9 +191,19 @@ function loadApproveStatutory(){
           complianceNames = complianceNames + '<a class="popup-link new-link" onclick="disppopup('+statutorymappingId+','+i+',this)">'+(i+1)+'. '+statutoryMappingsList[entity]["compliance_names"][i]['compliance_name']+'</a> <br>';
         }
         $('.compliancetask', clone).html(complianceNames);
+
         $('.applicablelocation', clone).html(applicableLocation);
-        $('.action', clone).html('<input type="hidden" id="mapping_id'+j+'" value="'+statutorymappingId+'" /> <input type="hidden" id="statutoryprovision'+j+'" value="'+statutoryprovision.replace(/"/gi,'##')+'" /> <select class="input-box" id="action'+j+'" onchange="dispreason('+j+')"></select>');
-        $('.reason', clone).html('<textarea class="input-box userreason" maxlength="500" id="notifyreason'+j+'" placeholder="Enter notification text" style="height:50px;display:none;"></textarea><span style="font-size:0.75em;display:none;" id="notifynote'+j+'"> <br> (max 500 characters)</span> <input type="text" maxlength="500" style="display:none;" id="reason'+j+'" class="input-box userreason" placeholder="Enter reason" />');
+
+        $('.mapping_id', clone).attr('id', 'mapping_id'+j);
+        $('.mapping_id', clone).val(statutorymappingId);
+        $('.statutoryprovision', clone).attr('id', 'statutoryprovision'+j);
+        $('.statutoryprovision', clone).val(statutoryprovision);
+        $('.action', clone).attr('id', 'action'+j);
+
+        $('.userreason', clone).attr('id', 'notifyreason'+j);
+        $('.max-span', clone).attr('id', 'notifynote'+j);
+        $('.reason', clone).attr('id', 'reason'+j);
+
         $('.tbody-statutorymapping-list').append(clone);
 
         for (var status in approvalStatusList) {
@@ -323,7 +333,10 @@ function disppopup(sm_id,compliance_id,element){
 }
 
 //display reason select box according to action selection
-function dispreason(j){
+function dispreason(element){
+  var text = element.id;
+  var j = text.substring(text.lastIndexOf('n') + 1);
+
   if($("#action"+j).val() == '2'){
     $("#notifyreason"+j).hide();
     $("#notifynote"+j).hide();
@@ -371,7 +384,7 @@ $("#saverecord").click(function(){
   approvelist = [];
   for(var i=1; i<j; i++){
     var statutory_mapping_id = parseInt($("#mapping_id"+i).val());
-    var statutory_provision = $("#statutoryprovision"+i).val().replace(/##/gi,'"');
+    var statutory_provision = $("#statutoryprovision"+i).val();
     var approval_status = parseInt($("#action"+i).val());
     var rejected_reason = $("#reason"+i).val().trim();
     var notification_text = $("#notifyreason"+i).val().trim();
