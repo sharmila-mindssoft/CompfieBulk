@@ -173,7 +173,7 @@ def return_domains(data):
 
 def get_techno_users(db):
     country_domain_condition = " user_id in ( " + \
-        " select user_group_id from tbl_users where user_group_id in ( " + \
+        " select user_id from tbl_users where user_group_id in ( " + \
         " select user_group_id from tbl_user_groups " + \
         " where form_category_id = 3))"
 
@@ -188,6 +188,7 @@ def get_techno_users(db):
     domains = db.get_data(
         tblUserDomains, domain_columns, country_domain_condition
     )
+
     user_country_map = {}
     for country in countries:
         user_id = int(country["user_id"])
@@ -987,11 +988,12 @@ def get_business_groups_for_user(db, user_id):
     client_ids = None
     if user_id is not None:
         client_ids = get_user_clients(db, user_id)
+    print "client_ids : {}".format(client_ids)
     columns = [
         "business_group_id", "business_group_name", "client_id"
     ]
     condition = "1"
-    if client_ids is not None:
+    if client_ids not in [None, ""]:
         condition = "client_id in  (%s) " + \
             " order by business_group_name ASC"
         condition = condition % client_ids
@@ -1022,7 +1024,7 @@ def get_legal_entities_for_user(db, user_id):
             "client_id"
         ]
     condition = "1"
-    if client_ids is not None:
+    if client_ids not in [None, ""]:
         condition = "client_id in (%s) " + \
             " order by legal_entity_name ASC"
         condition = condition % client_ids
@@ -1053,7 +1055,7 @@ def get_divisions_for_user(db, user_id):
         "business_group_id", "client_id"
     ]
     condition = "1"
-    if client_ids is not None:
+    if client_ids not in [None, ""]:
         condition = "client_id in (%s) order by division_name ASC"
         condition = condition % client_ids
         result = db.get_data(tblDivisions, columns, condition)
@@ -1085,7 +1087,7 @@ def get_units_for_user(db, user_id):
         "industry_id", "domain_ids"
     ]
     condition = "1"
-    if client_ids is not None:
+    if client_ids not in [None, ""]:
         condition = "client_id in (%s) order by unit_name ASC"
         condition = condition % client_ids
         result = db.get_data(tblUnits, columns, condition)
