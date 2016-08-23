@@ -22,76 +22,108 @@ def get_assigned_statutories_report(db, request_data, user_id):
     group_id = request_data.group_id
     qry = ""
     param_list = [country_id, domain_id]
+
+    is_user_has_client = False
     if group_id is not None:
         qry += " AND t1.client_id = %s "
         param_list.append(group_id)
+        is_user_has_client = True
+    else:
+        user_client_columns = ["client_id"]
+        user_client_condition = "user_id = %s"
+        user_client_condition_params = [user_id]
+        user_client_rows = db.get_data(
+                tblUserClients, user_client_columns,
+                user_client_condition,
+                user_client_condition_params
+            )
+        client_ids = []
+        for client in user_client_rows:
+            client_ids.append(client["client_id"])
+        if len(client_ids) <= 0:
+            is_user_has_client = False
+        elif len(client_ids) == 1:
+            qry += " AND t1.client_id = %s "
+            param_list.append(client_ids[0])
+            is_user_has_client = True
+        else:
+            qry += " AND t1.client_id in %s "
+            param_list.append(tuple(client_ids))
+            is_user_has_client = True
 
-    business_group_id = request_data.business_group_id
-    if business_group_id is not None:
-        qry += " AND t3.business_group_id = %s "
-        param_list.append(business_group_id)
+    if is_user_has_client:
+        business_group_id = request_data.business_group_id
+        if business_group_id is not None:
+            qry += " AND t3.business_group_id = %s "
+            param_list.append(business_group_id)
 
-    legal_entity_id = request_data.legal_entity_id
-    if legal_entity_id is not None:
-        qry += " AND t3.legal_entity_id = %s "
-        param_list.append(legal_entity_id)
+        legal_entity_id = request_data.legal_entity_id
+        if legal_entity_id is not None:
+            qry += " AND t3.legal_entity_id = %s "
+            param_list.append(legal_entity_id)
 
-    division_id = request_data.division_id
-    if division_id is not None:
-        qry += " AND t3.division_id =%s "
-        param_list.append(division_id)
+        division_id = request_data.division_id
+        if division_id is not None:
+            qry += " AND t3.division_id =%s "
+            param_list.append(division_id)
 
-    unit_id = request_data.unit_id
-    if unit_id is not None:
-        qry += " AND t3.unit_id = %s "
-        param_list.append(unit_id)
+        unit_id = request_data.unit_id
+        if unit_id is not None:
+            qry += " AND t3.unit_id = %s "
+            param_list.append(unit_id)
 
-    level_1_statutory_id = request_data.level_1_statutory_id
-    if level_1_statutory_id is not None:
-        qry += " AND t4.statutory_id = %s "
-        param_list.append(level_1_statutory_id)
+        level_1_statutory_id = request_data.level_1_statutory_id
+        if level_1_statutory_id is not None:
+            qry += " AND t4.statutory_id = %s "
+            param_list.append(level_1_statutory_id)
 
-    applicable_status = request_data.applicability_status
-    if applicable_status is not None:
-        applicable_status = int(applicable_status)
-        qry += " AND t4.compliance_applicable = %s "
-        param_list.append(applicable_status)
+        applicable_status = request_data.applicability_status
+        if applicable_status is not None:
+            applicable_status = int(applicable_status)
+            qry += " AND t4.compliance_applicable = %s "
+            param_list.append(applicable_status)
 
-    query = "SELECT distinct t1.client_statutory_id, t1.client_id, " + \
-        " t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, " + \
-        " t1.submission_type, t2.group_name, t3.unit_name, " + \
-        " (select business_group_name from tbl_business_groups " + \
-        "  where business_group_id " + \
-        " = t3.business_group_id ) business_group_name," + \
-        " (select legal_entity_name from tbl_legal_entities " + \
-        " where legal_entity_id = t3.legal_entity_id)legal_entity_name, " + \
-        " (select division_name from tbl_divisions " + \
-        " where division_id = t3.division_id)division_name, " + \
-        " t3.address, t3.postal_code, t3.unit_code " + \
-        " FROM tbl_client_statutories t1 " + \
-        " INNER JOIN tbl_client_groups t2 " + \
-        " ON t1.client_id = t2.client_id " + \
-        " INNER JOIN tbl_units t3 " + \
-        " ON t1.unit_id = t3.unit_id " + \
-        " INNER JOIN tbl_client_compliances t4 " + \
-        " ON t1.client_statutory_id = t4.client_statutory_id " + \
-        " WHERE t1.submission_type =1 " + \
-        " AND t1.country_id = %s " + \
-        " AND t1.domain_id = %s "
+        query = "SELECT distinct t1.client_statutory_id, t1.client_id, " + \
+            " t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, " + \
+            " t1.submission_type, t2.group_name, t3.unit_name, " + \
+            " (select business_group_name from tbl_business_groups " + \
+            "  where business_group_id " + \
+            " = t3.business_group_id ) business_group_name," + \
+            " (select legal_entity_name from tbl_legal_entities " + \
+            " where legal_entity_id = t3.legal_entity_id) " + \
+            " legal_entity_name, " + \
+            " (select division_name from tbl_divisions " + \
+            " where division_id = t3.division_id)division_name, " + \
+            " t3.address, t3.postal_code, t3.unit_code " + \
+            " FROM tbl_client_statutories t1 " + \
+            " INNER JOIN tbl_client_groups t2 " + \
+            " ON t1.client_id = t2.client_id " + \
+            " INNER JOIN tbl_units t3 " + \
+            " ON t1.unit_id = t3.unit_id " + \
+            " INNER JOIN tbl_client_compliances t4 " + \
+            " ON t1.client_statutory_id = t4.client_statutory_id " + \
+            " WHERE t1.submission_type =1 " + \
+            " AND t1.country_id = %s " + \
+            " AND t1.domain_id = %s "
 
-    query = query + qry
-    rows = db.select_all(query, param_list)
-    columns = [
-        "client_statutory_id", "client_id", "geography_id",
-        "country_id", "domain_id", "unit_id", "submission_type",
-        "group_name", "unit_name",
-        "business_group_name", "legal_entity_name",
-        "division_name", "address", "postal_code", "unit_code"
-    ]
-    result = convert_to_dict(rows, columns)
-    return return_assigned_statutory_report(
-        db, result, level_1_statutory_id, applicable_status
-    )
+        query = query + qry
+        print query % tuple(param_list)
+        rows = db.select_all(query, param_list)
+        columns = [
+            "client_statutory_id", "client_id", "geography_id",
+            "country_id", "domain_id", "unit_id", "submission_type",
+            "group_name", "unit_name",
+            "business_group_name", "legal_entity_name",
+            "division_name", "address", "postal_code", "unit_code"
+        ]
+        result = convert_to_dict(rows, columns)
+        return return_assigned_statutory_report(
+            db, result, level_1_statutory_id, applicable_status
+        )
+    else:
+        return technoreports.GetAssignedStatutoryReportSuccess(
+            []
+        )
 
 
 def return_assigned_statutory_report(
