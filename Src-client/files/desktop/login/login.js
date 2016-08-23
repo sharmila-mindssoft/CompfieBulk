@@ -103,10 +103,45 @@ function processLogin(username, password, shortName, callback) {
         ];
         BASE_URL = "/api/"
     }
-    jQuery.post(
-        BASE_URL + "login",
-        JSON.stringify(requestFrame, null, " "),
-        function (data) {
+    function getCookie(name) {
+            var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+            return r ? r[1] : undefined;
+    }
+    // console.log(getCookie('_xsrf'));
+    // url = BASE_URL + "login";
+
+
+    // jQuery.postJSON = function(url, args, callback) {
+    //     alert("called");
+    //     args._xsrf = getCookie("_xsrf");
+    //     $.ajax({url: url, data: $.param(args), type: "POST",
+    //         success: function(response) {
+    //             alert(response);
+    //             if (callback) callback(eval("(" + response + ")"));
+    //         },
+    //         error: function(response) {
+    //             console.log("ERROR:", response)
+    //         }
+    //     });
+    // };
+    // $.postJSON(url, requestFrame, function(data) {
+    //     var data = parseJSON(data);
+    //     alert(data);
+    // });
+
+
+
+    // x_request = {
+    //     "_xsrf": getCookie('_xsrf'),
+    //     "data": requestFrame
+    // }
+    $.ajax({
+        url : BASE_URL + "login",
+        headers: {'X-Xsrftoken' : getCookie('_xsrf')},
+        type: "POST",
+        contentType: "application/json",
+        data : JSON.stringify(requestFrame, null, " "),
+        success:function(data, textStatus, jqXHR){
             var data = JSON.parse(data);
             var status = data[0];
             var response = data[1];
@@ -118,13 +153,33 @@ function processLogin(username, password, shortName, callback) {
             else {
                 callback(status, null);
             }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            //if fails
         }
-    )
-    .fail(
-        function (jqXHR, textStatus, errorThrown) {
-            callback(jqXHR["responseText"], errorThrown)
-        }
-    );
+    });
+    // jQuery.post(
+    //     BASE_URL + "login",
+    //     JSON.stringify(requestFrame, null, " "),
+    //     function (data) {
+    //         var data = JSON.parse(data);
+    //         var status = data[0];
+    //         var response = data[1];
+    //         matchString = 'success';
+    //         if (status.toLowerCase().indexOf(matchString) != -1){
+    //             initSession(response, shortName)
+    //             callback(null, response);
+    //         }
+    //         else {
+    //             callback(status, null);
+    //         }
+    //     }
+    // )
+    // .fail(
+    //     function (jqXHR, textStatus, errorThrown) {
+    //         callback(jqXHR["responseText"], errorThrown)
+    //     }
+    // );
 }
 function performLogin(e_button, e_email, e_password) {
     if (!isLoginValidated(e_email, e_password))
