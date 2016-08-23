@@ -231,7 +231,7 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
                     // onSuccess(response)
                     resetLoginUI(e_button, e_email, e_password);
                     window.location.href = "/knowledge/home";
-                    //$("#captcha-view").hide();
+                    $("#captcha-view").hide();
                 }
                 else {
                     onFailure(error)
@@ -248,7 +248,7 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
                     // onSuccess(response)
                     resetLoginUI(e_button, e_email, e_password);
                     window.location.href = landingPage;
-                    //$("#captcha-view").hide();
+                    $("#captcha-view").hide();
                 }
                 else {
                     onFailure(error)
