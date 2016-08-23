@@ -198,7 +198,6 @@ def get_techno_users(db):
         ]
         domains = convert_to_dict(rows, domain_columns)
 
-    user_country_map = {}
     for country in countries:
         user_id = int(country["user_id"])
         if user_id not in user_country_map:
@@ -579,6 +578,8 @@ def get_client_db_info(db, client_id=None):
 def replicate_client_countries_and_domains(
     db, client_id, country_ids, domain_ids
 ):
+    print "country_ids: {}".format(country_ids)
+    print "domain_ids: {}".format(domain_ids)
     rows = get_client_db_info(db, client_id)
     ip = rows[0]["database_ip"]
     username = rows[0]["database_username"]
@@ -593,12 +594,10 @@ def replicate_client_countries_and_domains(
 
     cursor.execute(delete_countries_query)
     cursor.execute(delete_domains_query)
-
     columns = "country_id, country_name, is_active"
-    condition = "country_id in (%s)"
-    condition_val = [','.join(str(x) for x in country_ids)]
+    condition = "country_id in %s"
+    condition_val = [tuple(country_ids)]
     country_rows = db.get_data(tblCountries, columns, condition, condition_val)
-
     country_values_list = [
         (
             int(country["country_id"]),
@@ -608,10 +607,9 @@ def replicate_client_countries_and_domains(
     ]
 
     columns = "domain_id, domain_name, is_active"
-    condition = "domain_id in (%s)"
-    condition_val = [','.join(str(x) for x in domain_ids)]
+    condition = "domain_id in %s"
+    condition_val = [tuple(domain_ids)]
     domain_rows = db.get_data(tblDomains, columns, condition, condition_val)
-
     domain_values_list = [
         (
             int(domain["domain_id"]),
@@ -1001,7 +999,7 @@ def get_business_groups_for_user(db, user_id):
         "business_group_id", "business_group_name", "client_id"
     ]
     condition = "1"
-    if client_ids is not None:
+    if client_ids not in [None, ""]:
         condition = "client_id in  (%s) " + \
             " order by business_group_name ASC"
         condition = condition % client_ids
@@ -1032,7 +1030,7 @@ def get_legal_entities_for_user(db, user_id):
             "client_id"
         ]
     condition = "1"
-    if client_ids is not None:
+    if client_ids not in [None, ""]:
         condition = "client_id in (%s) " + \
             " order by legal_entity_name ASC"
         condition = condition % client_ids
@@ -1063,7 +1061,7 @@ def get_divisions_for_user(db, user_id):
         "business_group_id", "client_id"
     ]
     condition = "1"
-    if client_ids is not None:
+    if client_ids not in [None, ""]:
         condition = "client_id in (%s) order by division_name ASC"
         condition = condition % client_ids
         result = db.get_data(tblDivisions, columns, condition)
@@ -1095,7 +1093,7 @@ def get_units_for_user(db, user_id):
         "industry_id", "domain_ids"
     ]
     condition = "1"
-    if client_ids is not None:
+    if client_ids not in [None, ""]:
         condition = "client_id in (%s) order by unit_name ASC"
         condition = condition % client_ids
         result = db.get_data(tblUnits, columns, condition)
@@ -1203,9 +1201,7 @@ def get_group_companies_for_user_with_max_unit_count(db, user_id):
     columns = ["client_id", "group_name", "is_active"]
     condition = "is_active=1"
     if client_ids is not None:
-        print "client_ids: {}".format(client_ids)
         condition = "client_id in (%s) order by group_name ASC"
-        print "condition:{}".format(condition)
         result = db.get_data(
             tblClientGroups, columns, condition, [client_ids]
         )

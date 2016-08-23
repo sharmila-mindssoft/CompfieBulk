@@ -14,7 +14,10 @@ from protocol import (
 from database import Database
 from Currentcompliancetask import ComplianceTask
 from server.emailcontroller import EmailHandler
-from server.constants import KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+from server.constants import (
+    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+)
 
 
 __all__ = [
@@ -9426,15 +9429,16 @@ class ClientDatabase(Database):
             return False
 
     def notify_expiration(self):
-        # download_link = exp(client_id, db).generate_report()
+        download_link = exp(client_id, db).generate_report()
         group_name = self.get_group_name()
+        notification_text = "Your contract with Compfie for the " + \
+            " group \"%s\" is about to expire. " + \
+            " Kindly renew your contract to avail " + \
+            " the services continuously. " + \
+            " Before contract expiration " + \
+            " You can download documents of %s <a href=%s>here </a> "
+        notification_text = notification_text % (group_name, download_link)
 
-        notification_text = '''Your contract with Compfie for the group \"%s\" is about to expire. \
-        Kindly renew your contract to avail the services continuously.'''  % group_name
-        # Before contract expiration \
-        # You can download documents of %s <a href="%s">here </a> ''' % (
-        #     group_name, download_link
-        # )
         extra_details = "0 - Reminder : Contract Expiration"
         notification_id = self.get_new_id("notification_id", self.tblNotificationsLog)
         created_on = datetime.datetime.now()
