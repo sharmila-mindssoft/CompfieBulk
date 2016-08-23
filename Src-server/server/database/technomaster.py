@@ -570,6 +570,8 @@ def get_client_db_info(db, client_id=None):
 def replicate_client_countries_and_domains(
     db, client_id, country_ids, domain_ids
 ):
+    print "country_ids: {}".format(country_ids)
+    print "domain_ids: {}".format(domain_ids)
     rows = get_client_db_info(db, client_id)
     ip = rows[0]["database_ip"]
     username = rows[0]["database_username"]
@@ -584,12 +586,10 @@ def replicate_client_countries_and_domains(
 
     cursor.execute(delete_countries_query)
     cursor.execute(delete_domains_query)
-
     columns = "country_id, country_name, is_active"
-    condition = "country_id in (%s)"
-    condition_val = [','.join(str(x) for x in country_ids)]
+    condition = "country_id in %s"
+    condition_val = [tuple(country_ids)]
     country_rows = db.get_data(tblCountries, columns, condition, condition_val)
-
     country_values_list = [
         (
             int(country["country_id"]),
@@ -599,10 +599,9 @@ def replicate_client_countries_and_domains(
     ]
 
     columns = "domain_id, domain_name, is_active"
-    condition = "domain_id in (%s)"
-    condition_val = [','.join(str(x) for x in domain_ids)]
+    condition = "domain_id in %s"
+    condition_val = [tuple(domain_ids)]
     domain_rows = db.get_data(tblDomains, columns, condition, condition_val)
-
     domain_values_list = [
         (
             int(domain["domain_id"]),
@@ -988,7 +987,6 @@ def get_business_groups_for_user(db, user_id):
     client_ids = None
     if user_id is not None:
         client_ids = get_user_clients(db, user_id)
-    print "client_ids : {}".format(client_ids)
     columns = [
         "business_group_id", "business_group_name", "client_id"
     ]
@@ -1195,9 +1193,7 @@ def get_group_companies_for_user_with_max_unit_count(db, user_id):
     columns = ["client_id", "group_name", "is_active"]
     condition = "is_active=1"
     if client_ids is not None:
-        print "client_ids: {}".format(client_ids)
         condition = "client_id in (%s) order by group_name ASC"
-        print "condition:{}".format(condition)
         result = db.get_data(
             tblClientGroups, columns, condition, [client_ids]
         )
