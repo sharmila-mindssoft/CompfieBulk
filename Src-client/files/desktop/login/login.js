@@ -137,8 +137,9 @@ function processLogin(username, password, shortName, callback) {
     // }
     $.ajax({
         url : BASE_URL + "login",
-        headers: {'X-Xsrftoken' : getCookie('_xsrf') },
+        headers: {'X-Xsrftoken' : getCookie('_xsrf')},
         type: "POST",
+        contentType: "application/json",
         data : JSON.stringify(requestFrame, null, " "),
         success:function(data, textStatus, jqXHR){
             var data = JSON.parse(data);

@@ -166,6 +166,7 @@ function initMirror() {
             url : BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
             type: "POST",
+            contentType: "application/json",
             data: toJSON(requestFrame),
             success: function (data) {
                 var data = parseJSON(data);
@@ -272,7 +273,7 @@ function initMirror() {
             return true;
     }
 
-    function logout() {
+    function logout(callback) {
         sessionToken = getSessionToken()
         var request = [
             "Logout", {
@@ -283,6 +284,7 @@ function initMirror() {
             url: BASE_URL + "login",
             headers: {'X-Xsrftoken' : getCookie('_xsrf')},
             type: "POST",
+            contentType: "application/json",
             data: toJSON(request),
             success: function (data) {
                 var data = parseJSON(data);
@@ -296,7 +298,7 @@ function initMirror() {
 
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                callback(jqXHR["responseText"], errorThrown);
+                callback(jqXHR["responseText"]);
             }
         });
     }

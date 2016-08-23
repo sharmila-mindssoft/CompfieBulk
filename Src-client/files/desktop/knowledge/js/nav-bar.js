@@ -28,7 +28,7 @@ function initializeNavBar () {
     var frm = window.location.href
     var navBarItems = null
     navBarItems = mirror.getUserMenu();
-    
+
     if (navBarItems === null || navBarItems == undefined)
         return;
     var menus = null
@@ -106,8 +106,8 @@ function initializeNavBar () {
 
     profile_url = "/knowledge/profile";
     change_password_url = "/knowledge/change-password";
-    
-   
+
+
     if (
         (typeof(employee_name) == "undefined") ||
         (employee_name != "Administrator")
@@ -120,7 +120,9 @@ function initializeNavBar () {
 
     var item = getItemObject(null, "Logout");
     item.on("click", function () {
-            mirror.logout();
+            mirror.logout(function(args) {
+                custom_alert(args);
+            });
     });
 
     $("ul", settingsMenuObject).append(item);
