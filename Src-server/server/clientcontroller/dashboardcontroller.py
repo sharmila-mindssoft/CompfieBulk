@@ -468,7 +468,9 @@ def process_assigneewise_compliances_drilldown(
 def check_contract_expiration(
     db, request, session_user, client_id
 ):
-    no_of_days_left = get_no_of_days_left_for_contract_expiration(db)
+    no_of_days_left = get_no_of_days_left_for_contract_expiration(
+        db, client_id
+    )
     if no_of_days_left < 0:
         no_of_days_left = 0
     (

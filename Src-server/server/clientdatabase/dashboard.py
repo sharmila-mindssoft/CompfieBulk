@@ -21,6 +21,7 @@ from server.clientdatabase.general import (
 from server.clientdatabase.clienttransaction import (
     get_units_for_assign_compliance
 )
+from processes.expiry_report_generator import ExpiryReportGenerator as exp
 
 email = EmailHandler()
 __all__ = [
@@ -1807,6 +1808,9 @@ def get_notifications(
         notification_type_id = 2
     elif notification_type == "Escalation":
         notification_type_id = 3
+    user_ids = [session_user]
+    if is_primary_admin(db, session_user) is True:
+        user_ids.append(0)
     query = " SELECT nul.notification_id as notification_id, " + \
             " notification_text, created_on, extra_details, " + \
             " statutory_provision, assignee, " + \
@@ -1826,7 +1830,7 @@ def get_notifications(
             " ON (tch.compliance_id = nl.compliance_id AND " + \
             " tch.unit_id = nl.unit_id) " + \
             " WHERE notification_type_id = %s " + \
-            " AND user_id = %s " + \
+            " AND user_id in %s " + \
             " AND (compliance_history_id is null " + \
             " OR  compliance_history_id = CAST(REPLACE( " + \
             " SUBSTRING_INDEX(extra_details, '-', 1), " + \
@@ -1834,7 +1838,7 @@ def get_notifications(
             " ORDER BY read_status desc, nul.notification_id DESC " + \
             " limit %s, %s"
     rows = db.select_all(query, [
-        notification_type_id, session_user,
+        notification_type_id, tuple(user_ids),
         start_count, to_count
     ])
     columns_list = [
@@ -1926,16 +1930,19 @@ def get_notifications(
                 penal_consequences
             )
         )
-    return notifications_list
+    return notificationfs_list
 
 
 def update_notification_status(
     db, notification_id, has_read, session_user, client_id
 ):
+    user_ids = [session_user]
+    if is_primary_admin(db, session_user) is True:
+        user_ids.append(0)
     columns = ["read_status"]
     values = [1 if has_read is True else 0]
-    condition = "notification_id = %s and user_id=%s" % (
-        notification_id, session_user)
+    condition = "notification_id = %s and user_id in %s" % (
+        notification_id, tuple(user_ids))
     db.update(
         tblNotificationUserLog, columns, values, condition
     )
@@ -2478,19 +2485,17 @@ def is_already_notified(db):
         return False
 
 
-def notify_expiration(db):
-    # download_link = exp(client_id, db).generate_report()
+def notify_expiration(db, client_id):
+    download_link = exp(client_id, db).generate_report()
     group_name = get_group_name(db)
 
     notification_text = " Your contract with Compfie for the " + \
         " group \"%s\" is about to expire. " + \
         " Kindly renew your contract to avail the " + \
-        " services continuously."
-    notification_text = notification_text % group_name
-    # Before contract expiration \
-    # You can download documents of %s <a href="%s">here </a> ''' % (
-    #     group_name, download_link
-    # )
+        " services continuously. " + \
+        " Before contract expiration " + \
+        " You can download documents <a href='%s'>here </a> "
+    notification_text = notification_text % (group_name, download_link)
     extra_details = "0 - Reminder: Contract Expiration"
     # notification_id = db.get_new_id("notification_id", tblNotificationsLog)
     created_on = datetime.datetime.now()
@@ -2513,7 +2518,7 @@ def notify_expiration(db):
     )
 
 
-def get_no_of_days_left_for_contract_expiration(db):
+def get_no_of_days_left_for_contract_expiration(db, client_id):
     column = "contract_to"
     condition = "1"
     rows = db.get_data(tblClientGroups, column, condition)
@@ -2525,7 +2530,7 @@ def get_no_of_days_left_for_contract_expiration(db):
     delta = contract_to - get_date_time_in_date().date()
     if delta.days < 30:
         if not is_already_notified(db):
-            notify_expiration(db)
+            notify_expiration(db, client_id)
     return delta.days
 
 
