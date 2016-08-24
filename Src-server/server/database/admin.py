@@ -318,18 +318,6 @@ def get_forms(db):
     return rows
 
 
-def return_forms(form_ids=None):
-    columns = ["form_id", "form_name"]
-    condition = " form_id != '26' "
-    if form_ids is not None:
-        condition += " AND form_id in (%s) " % form_ids
-    forms = db.get_data(tblForms, columns, condition)
-    results = []
-    for form in forms:
-        results.append(general.AuditTrailForm(form[0], form[1]))
-    return results
-
-
 def get_form_categories(db):
     columns = "form_category_id, form_category"
     condition = " form_category_id in (2,3)"
@@ -360,7 +348,6 @@ def is_user_exists_under_user_group(db, user_group_id):
     rows = db.get_data(
         tblUsers, columns, condition, condition_val
     )
-    print "is_duplicate", rows
     if rows[0]["count"] > 0:
         return True
     else:
@@ -369,9 +356,9 @@ def is_user_exists_under_user_group(db, user_group_id):
 
 def get_user_group_detailed_list(db):
     columns = "ug.user_group_id, user_group_name, form_category_id, " + \
-                "form_ids, is_active, (select count(*) from %s u where " + \
+                "form_ids, is_active, (select count(*) " + \
+                " from tbl_users u where " + \
                 "ug.user_group_id = u.user_group_id) as count"
-    columns = columns % (tblUsers)
     tables = tblUserGroups+" ug"
     where_condition = " 1 order by user_group_name"
     rows = db.get_data(tables, columns, where_condition)
@@ -439,7 +426,10 @@ def update_user_group_status(db, user_group_id, is_active):
     if result is False:
         raise process_error("E032")
     action_columns = "user_group_name"
-    rows = db.get_data(tblUserGroups, action_columns, condition)
+    condition = "user_group_id=%s"
+    rows = db.get_data(
+        tblUserGroups, action_columns, condition, [user_group_id]
+    )
     user_group_name = rows[0]["user_group_name"]
     action = ""
     if is_active == 0:
@@ -620,7 +610,11 @@ def update_user_status(db, user_id, is_active):
     if result is False:
         raise process_error("E039")
     action_columns = "employee_name, employee_code"
-    rows = db.get_data(tblUsers, action_columns, condition)
+    action_condition = "user_id=%s"
+    action_condition_val = [user_id]
+    rows = db.get_data(
+        tblUsers, action_columns, action_condition, action_condition_val
+    )
     employee_name = rows[0]["employee_name"]
     employee_code = rows[0]["employee_code"]
     action = ""
