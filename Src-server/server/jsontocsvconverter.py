@@ -151,39 +151,39 @@ class ConvertJsonToCSV(object):
             )
             status = "Delayed Compliance"
         if statutory_status == 2:  # Not complied
-            where_qry = get_not_complied_where_qry(
+            where_qry, where_qry_val = get_not_complied_where_qry(
                 db, business_group_id, legal_entity_id, division_id, unit_id,
                 level_1_statutory_name
             )
             total = get_not_complied_compliances_count(
-                db, country_id, domain_id, where_qry
+                db, country_id, domain_id, where_qry, where_qry_val
             )
             compliance_list = get_not_complied_compliances(
-                db, domain_id, country_id, where_qry, 0, total
+                db, domain_id, country_id, where_qry, where_qry_val, 0, total
             )
             status = "Not Complied"
         if statutory_status == 3:  # Not opted
-            where_qry = get_not_opted_compliances_where_qry(
+            where_qry, where_qry_val = get_not_opted_compliances_where_qry(
                 db, business_group_id, legal_entity_id, division_id, unit_id,
                 level_1_statutory_name,  session_user
             )
             total = get_not_opted_compliances_count(
-                db, country_id, domain_id, where_qry
+                db, country_id, domain_id, where_qry, where_qry_val
             )
             compliance_list = get_not_opted_compliances(
-                db, domain_id, country_id, where_qry, 0, total
+                db, domain_id, country_id, where_qry, where_qry_val, 0, total
             )
             status = "Not Opted"
         if statutory_status == 4:  # Unassigned
-            where_qry = get_unassigned_compliances_where_qry(
+            where_qry, where_qry_val = get_unassigned_compliances_where_qry(
                 db, business_group_id, legal_entity_id, division_id, unit_id,
                 level_1_statutory_name, session_user
             )
             total = get_unassigned_compliances_count(
-                db, country_id, domain_id, where_qry
+                db, country_id, domain_id, where_qry, where_qry_val
             )
             compliance_list = get_unassigned_compliances(
-                db, domain_id, country_id, where_qry, 0, total
+                db, domain_id, country_id, where_qry, where_qry_val, 0, total
             )
             status = "Unassigned Compliance"
         csv_headers = [

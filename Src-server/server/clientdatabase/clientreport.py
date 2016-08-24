@@ -1174,7 +1174,7 @@ def get_delayed_compliances_where_qry(
 
     if leval_1_statutory_name is not None:
         where_qry += " AND c.statutory_mapping like %s "
-        where_qry_val.append(level_1_statutory_name + '%')
+        where_qry_val.append(leval_1_statutory_name + '%')
     return where_qry, where_qry_val
 
 
@@ -1367,25 +1367,27 @@ def get_not_complied_where_qry(
     where_qry = ""
     where_qry_val = []
     if business_group_id is not None:
-        where_qry = " AND u.business_group_id = %s "
+        where_qry += " AND u.business_group_id = %s "
         where_qry_val.append(business_group_id)
 
     if legal_entity_id is not None:
-        where_qry = " AND u.legal_entity_id = %s "
+        where_qry += " AND u.legal_entity_id = %s "
         where_qry_val.append(legal_entity_id)
 
     if division_id is not None:
-        where_qry = " AND u.division_id = %s "
+        where_qry += " AND u.division_id = %s "
         where_qry_val.append(division_id)
 
     if unit_id is not None:
-        where_qry = " AND u.unit_id = %s "
+        where_qry += " AND u.unit_id = %s "
         where_qry_val.append(unit_id)
 
     if leval_1_statutory_name is not None:
-        where_qry = " AND c.statutory_mapping like %s "
+        where_qry += " AND c.statutory_mapping like %s "
         where_qry_val.append(leval_1_statutory_name + '%')
 
+    print "returning where_qry : {}".format(where_qry)
+    print "returning where_qry_val : {}".format(where_qry_val)
     return where_qry, where_qry_val
 
 
@@ -1409,8 +1411,12 @@ def get_not_complied_compliances_count(
     param = [domain_id, country_id]
     if where_qry != "":
         q_count += where_qry
-        param.extend(where_qry_val)
+        param += where_qry_val
 
+    print q_count
+    print where_qry
+    print where_qry_val
+    print param
     c_row = db.select_one(q_count, param)
     if c_row:
         total = int(c_row[0])
