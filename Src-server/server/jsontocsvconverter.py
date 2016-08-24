@@ -606,15 +606,15 @@ class ConvertJsonToCSV(object):
         user_id = request.user_id
         from_date = request.from_date
         to_date = request.to_date
-        qry_where = get_where_query_for_reassigned_history_report(
+        qry_where, qry_val = get_where_query_for_reassigned_history_report(
             db, country_id, domain_id, level_1_statutory_name,
             unit_id, compliance_id, user_id, from_date, to_date, session_user
         )
         to_count = get_reassigned_history_report_count(
-            db, country_id, domain_id, qry_where
+            db, country_id, domain_id, qry_where, qry_val
         )
         rows = get_reassigned_history_report_data(
-            db, country_id, domain_id, qry_where,
+            db, country_id, domain_id, qry_where, qry_val,
             0, to_count
         )
 
