@@ -21,7 +21,12 @@ function storeCaptcha(captcha_text){
 }
 
 function getCaptcha(){
-    return window.sessionStorage["captcha"]
+    captcha = window.sessionStorage["captcha"]
+    if(captcha){
+        return captcha;
+    }else{
+        return null;
+    }
 }
 
 function clearCaptcha(){
@@ -90,7 +95,7 @@ function isLoginValidated (e_email, e_password, e_captcha) {
 
 function loadCaptcha(){
     captcha_text = getCaptcha();
-    console.log("captcha_text : "+captcha_text);
+    console.log("captcha_text : "+ captcha_text);
     if(captcha_text == null || captcha_text == "null"){
         captchaStatus = false;    
     }else{
