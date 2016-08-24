@@ -1930,7 +1930,7 @@ def get_notifications(
                 penal_consequences
             )
         )
-    return notificationfs_list
+    return notifications_list
 
 
 def update_notification_status(

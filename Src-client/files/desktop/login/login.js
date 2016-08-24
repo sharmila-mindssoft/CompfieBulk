@@ -211,13 +211,11 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
         $("input").val("");
 
         resetLoginUI(e_button, e_email, e_password);
-        console.log("captcha_text: " + captcha_data.captcha_text);
         if(captcha_data.captcha_text == null){
             captchaStatus = false;    
         }else{
             captchaStatus = true;    
         }
-        console.log("captcha_status:  "+ captchaStatus);
         if(captchaStatus){
             var myCanvas = document.getElementById("captchaCanvas");
             var myCanvasContext = myCanvas.getContext('2d');
