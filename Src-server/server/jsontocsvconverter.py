@@ -404,14 +404,8 @@ class ConvertJsonToCSV(object):
             where_qry_val.append(unit)
 
         if where_qry is None:
-            print
-            print query % tuple(where_qry_val)
-            print
             rows = db.select_all(query, where_qry_val)
         else:
-            print
-            print query + where_qry % tuple(where_qry_val)
-            print
             rows = db.select_all(query + where_qry, where_qry_val)
         columns = [
             "statutory_provision", "statutory_mapping", "compliance_task",
