@@ -69,9 +69,12 @@ def process_login_request(
     return result
 
 
-def invalid_credentials(db, username, session_user_ip):
-    save_login_failure(db, username, session_user_ip)
-    no_of_attempts = get_login_attempt(db, username)
+def invalid_credentials(db, user_id, session_user_ip):
+    save_login_failure(db, user_id, session_user_ip)
+    rows = get_login_attempt_and_time(db, user_id)
+    no_of_attempts = 0
+    if rows:
+        no_of_attempts = rows[0]["login_attempt"]
     if no_of_attempts >= 3:
         captcha_text = generate_random(CAPTCHA_LENGHT)
     else:
@@ -99,13 +102,13 @@ def process_login(db, request, client_id, session_user_ip):
         return login.ContractExpired()
     elif not is_client_active(client_id):
         logger.logLogin("info", user_ip, username, "InvalidCredentials")
-        return invalid_credentials(db, username, session_user_ip)
+        return invalid_credentials(db, user_id, session_user_ip)
     else:
         response = verify_login(db, username, encrypt_password)
     if login_type.lower() == "web":
         if response is True:
             logger.logLogin("info", user_ip, username, "Login process end")
-            delete_login_failure_history(db, username)
+            delete_login_failure_history(db, user_id)
             return admin_login_response(db, client_id, user_ip)
         else:
             if response is "ContractExpired":
@@ -113,16 +116,16 @@ def process_login(db, request, client_id, session_user_ip):
                 return login.ContractExpired()
             elif response is False:
                 logger.logLogin("info", user_ip, username, "Login process end")
-                return invalid_credentials(db, username, session_user_ip)
+                return invalid_credentials(db, user_id, session_user_ip)
             else:
                 logger.logLogin("info", user_ip, username, "Login process end")
-                delete_login_failure_history(db, username)
+                delete_login_failure_history(db, user_id)
                 return user_login_response(db, response, client_id, user_ip)
 
     else:
         if response is True:
             logger.logLogin("info", user_ip, username, "Login process end")
-            delete_login_failure_history(db, username)
+            delete_login_failure_history(db, user_id)
             return mobile_user_admin_response(
                 db, login_type, client_id, user_ip
             )
@@ -132,10 +135,10 @@ def process_login(db, request, client_id, session_user_ip):
                 return login.ContractExpired()
             elif response is False:
                 logger.logLogin("info", user_ip, username, "Login process end")
-                return invalid_credentials(db, username, session_user_ip)
+                return invalid_credentials(db, user_id, session_user_ip)
             else:
                 logger.logLogin("info", user_ip, username, "Login process end")
-                delete_login_failure_history(db, username)
+                delete_login_failure_history(db, user_id)
                 return mobile_user_login_respone(
                     db, response, login_type, client_id, user_ip
                 )

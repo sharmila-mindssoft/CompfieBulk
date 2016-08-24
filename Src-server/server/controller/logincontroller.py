@@ -64,7 +64,6 @@ def process_login(db, request, session_user_ip):
     user_id, employee_name = verify_username(
         db, username
     )
-    print (user_id, employee_name)
     if user_id is None:
         return login.InvalidUserName()
     else:

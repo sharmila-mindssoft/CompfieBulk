@@ -209,7 +209,7 @@ def remove_session(db, session_token):
     db.delete(tblUserSessions, "session_token=%s", [session_token])
 
 
-def save_login_failure(db, user_id, session_user_ip):
+def check_and_update_login_attempt(db, user_id):
     current_date_time = get_date_time_in_date()
     rows = get_login_attempt_and_time(db, user_id)
     if(rows):
@@ -220,6 +220,10 @@ def save_login_failure(db, user_id, session_user_ip):
                 tblUserLoginHistory, ["login_attempt"], [0],
                 " user_id=%s " % user_id
             )
+
+
+def save_login_failure(db, user_id, session_user_ip):
+    check_and_update_login_attempt(db, user_id)
     columns = "user_id, ip, login_time"
     valueList = [(int(user_id), session_user_ip, get_date_time())]
     updateColumnsList = ["login_time", "ip"]
