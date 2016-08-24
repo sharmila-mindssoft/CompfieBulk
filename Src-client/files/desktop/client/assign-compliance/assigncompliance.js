@@ -855,7 +855,7 @@ function submitcompliance(){
 
                     function onSuccess(data){
                       //getAssignedStatutories ();
-                      message = "The selected task items for unit(s) "+unit_names+" have been assigned to "+ assignComplianceAssigneeName
+                      message = "The selected task items have been assigned to "+ assignComplianceAssigneeName
                       $( ".warning-confirm" ).dialog({
                         title: "Success",
                         buttons: {
@@ -917,7 +917,7 @@ function submitcompliance(){
       }else{
         newSettingsList = null;
         function onSuccess(data){
-          message = "The selected task items for unit(s) "+unit_names+" have been assigned to "+ assignComplianceAssigneeName
+          message = "The selected task items have been assigned to "+ assignComplianceAssigneeName
           $( ".warning-confirm" ).dialog({
               title: "Success",
               buttons: {
