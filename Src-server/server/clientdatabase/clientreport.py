@@ -1385,9 +1385,6 @@ def get_not_complied_where_qry(
     if leval_1_statutory_name is not None:
         where_qry += " AND c.statutory_mapping like %s "
         where_qry_val.append(leval_1_statutory_name + '%')
-
-    print "returning where_qry : {}".format(where_qry)
-    print "returning where_qry_val : {}".format(where_qry_val)
     return where_qry, where_qry_val
 
 

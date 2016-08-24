@@ -541,7 +541,7 @@ class Database(object):
 
     def increment(self, table, column, condition, value=1):
         rows = self.get_data(table, column, condition)
-        currentValue = rows[0]["login_attempt"]
+        currentValue = rows[0][column[0]]
         if currentValue is not None:
             newValue = int(currentValue) + value
         else:

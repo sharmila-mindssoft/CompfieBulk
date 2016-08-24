@@ -140,6 +140,9 @@ def validate_file_size(db, documents):
         return False
     for doc in documents:
         file_size = doc.file_size
+        print "file_size : {}".format(file_size)
+        print "FILE_MAX_LIMIT : {}".format(FILE_MAX_LIMIT)
+        print "is_space_available : {}".format(is_space_available(db, file_size))
         if(
             file_size > FILE_MAX_LIMIT or
             not is_space_available(db, file_size)
