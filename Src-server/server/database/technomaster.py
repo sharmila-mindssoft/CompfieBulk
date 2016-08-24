@@ -198,6 +198,7 @@ def get_techno_users(db):
         ]
         domains = convert_to_dict(rows, domain_columns)
 
+    user_country_map = {}
     for country in countries:
         user_id = int(country["user_id"])
         if user_id not in user_country_map:
