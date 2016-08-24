@@ -454,7 +454,7 @@ class Database(object):
     ########################################################
     # To form a update query
     ########################################################
-    def update(self, table, columns, values, condition):
+    def update(self, table, columns, values, condition, condition_val=None):
         query = "UPDATE "+table+" set "
         for index, column in enumerate(columns):
             if index < len(columns)-1:
@@ -464,6 +464,10 @@ class Database(object):
 
         query += " WHERE " + condition
         try:
+            if condition_val is not None:
+                values = values + condition_val
+            print query
+            print values
             res = self.execute(query, values)
             print '------------'
             print res
