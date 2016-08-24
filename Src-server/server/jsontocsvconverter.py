@@ -347,7 +347,7 @@ class ConvertJsonToCSV(object):
         legal_entity = request.legal_entity_id
         division_id = request.division_id
         unit = request.unit_id
-        where_qry = None
+        where_qry = ""
         where_qry_val = []
 
         query = "SELECT T2.statutory_provision, T2.statutory_mapping, " + \
