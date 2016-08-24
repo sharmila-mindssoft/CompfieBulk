@@ -35,6 +35,7 @@ VERSION = 1
 SEND_EMAIL = False
 RECORD_DISPLAY_COUNT = 100
 CAPTCHA_LENGHT = 6
+NO_OF_FAILURE_ATTEMPTS = 3
 FILE_TYPES = ["exe", "xhtml", "htm", "html", "py", "js"]
 FILE_MAX_LIMIT = 1024 * 1024 * 50  # 50 MB
 

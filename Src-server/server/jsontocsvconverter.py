@@ -534,36 +534,38 @@ class ConvertJsonToCSV(object):
         unit_id = request.unit_id
         domain_ids = request.domain_ids
 
-        condition = get_client_details_condition(
+        condition, condition_val = get_client_details_condition(
             db, country_id,  business_group_id, legal_entity_id, division_id,
             unit_id, domain_ids, session_user
         )
-        columns = "unit_id, unit_code, unit_name, geography, " + \
-            " address, domain_ids, postal_code, " + \
-            " business_group_name, " + \
-            " legal_entity_name, division_name"
         total_count = get_client_details_count(
             db, country_id,  business_group_id, legal_entity_id, division_id,
             unit_id, domain_ids, session_user
         )
-        query = "SELECT %s " + \
-                " FROM %s u " + \
-                " LEFT JOIN %s b ON ( " + \
-                " b.business_group_id = u.business_group_id) " + \
-                " INNER JOIN %s l ON ( " + \
-                " l.legal_entity_id = u.legal_entity_id) " + \
-                " LEFT JOIN %s d ON (d.division_id = u.division_id) " + \
-                " WHERE %s " + \
-                " ORDER BY u.business_group_id, " + \
-                " u.legal_entity_id, u.division_id, " + \
-                " u.unit_id DESC LIMIT %s, %s "
+        query = "SELECT unit_id, unit_code, unit_name, geography, " + \
+            " address, domain_ids, postal_code, " + \
+            " business_group_name, " + \
+            " legal_entity_name, division_name " + \
+            " FROM tbl_units u " + \
+            " LEFT JOIN tbl_business_groups b ON ( " + \
+            " b.business_group_id = u.business_group_id) " + \
+            " INNER JOIN tbl_legal_entities l ON ( " + \
+            " l.legal_entity_id = u.legal_entity_id) " + \
+            " LEFT JOIN tbl_divisions d " + \
+            " ON (d.division_id = u.division_id) " + \
+            " WHERE %s " + \
+            " ORDER BY u.business_group_id, " + \
+            " u.legal_entity_id, u.division_id, " + \
+            " u.unit_id DESC LIMIT %s, %s "
 
-        rows = db.select_all(query, [
-            columns, tblUnits, tblBusinessGroups,
-            tblLegalEntities, tblDivisions, condition,
-            0, total_count
-        ])
-        columns_list = columns.replace(" ", "").split(",")
+        query = query % (condition, 0, total_count)
+        print query
+        rows = db.select_all(query, condition_val)
+        columns_list = [
+            "unit_id", "unit_code", "unit_name", "geography",
+            "address", "domain_ids", "postal_code",
+            "business_group_name", "legal_entity_name", "division_name"
+        ]
         unit_rows = convert_to_dict(rows, columns_list)
 
         if not is_header:
@@ -577,7 +579,7 @@ class ConvertJsonToCSV(object):
         for result_row in unit_rows:
             domain_names = db.get_data(
                 tblDomains,
-                "group_concat(domain_name) domains",
+                ["group_concat(domain_name) as domains"],
                 "domain_id in (%s)" % result_row["domain_ids"]
             )[0]["domains"]
             csv_values = [

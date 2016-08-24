@@ -164,3 +164,139 @@ AttributeError: 'Database' object has no attribute 'delete_login_failure_history
     no_of_attempts = get_login_attempt(db, session_user_ip)
 NameError: global name 'get_login_attempt' is not defined
 
+2016-08-24 13:40:51,129 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data.
+2016-08-24 13:40:51,129 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 28, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 65, in process_login
+    db, username
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/login.py", line 104, in verify_username
+    admin_rows = db.select_all(admin_query, param)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 240, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+
+2016-08-24 13:52:41,995 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data.
+2016-08-24 13:52:41,996 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 28, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 85, in process_login
+    save_login_failure(db, user_id, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/login.py", line 218, in save_login_failure
+    db.increment(tblUserLoginHistory, increament_column, increament_cond)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 543, in increment
+    rows = self.get_data(table, column, condition)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 323, in get_data
+    rows = self.select_all(query)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 240, in select_all
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+
+2016-08-24 14:09:19,805 - knowledge_logger - main.py-handle-api- : relativedelta only diffs datetime/date
+2016-08-24 14:09:19,806 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 28, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 85, in process_login
+    save_login_failure(db, user_id, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/login.py", line 215, in save_login_failure
+    diff = relativedelta.relativedelta(current_date_time, last_login_time)
+  File "/usr/local/lib/python2.7/dist-packages/dateutil/relativedelta.py", line 124, in __init__
+    raise TypeError("relativedelta only diffs datetime/date")
+TypeError: relativedelta only diffs datetime/date
+
+2016-08-24 14:10:24,715 - knowledge_logger - main.py-handle-api- : relativedelta only diffs datetime/date
+2016-08-24 14:10:24,715 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 28, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 85, in process_login
+    save_login_failure(db, user_id, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/login.py", line 221, in save_login_failure
+    diff = relativedelta.relativedelta(current_date_time, last_login_time)
+  File "/usr/local/lib/python2.7/dist-packages/dateutil/relativedelta.py", line 124, in __init__
+    raise TypeError("relativedelta only diffs datetime/date")
+TypeError: relativedelta only diffs datetime/date
+
+2016-08-24 14:11:49,489 - knowledge_logger - main.py-handle-api- : global name 'get_date_time_in_date' is not defined
+2016-08-24 14:11:49,489 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 28, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 85, in process_login
+    save_login_failure(db, user_id, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/login.py", line 211, in save_login_failure
+    current_date_time = get_date_time_in_date()
+NameError: global name 'get_date_time_in_date' is not defined
+
+2016-08-24 14:13:28,040 - knowledge_logger - main.py-handle-api- : list index out of range
+2016-08-24 14:13:28,040 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 28, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 85, in process_login
+    save_login_failure(db, user_id, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/login.py", line 236, in save_login_failure
+    db.increment(tblUserLoginHistory, increament_column, increament_cond)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/dbase.py", line 544, in increment
+    currentValue = rows[0]["login_attempt"]
+IndexError: list index out of range
+
+2016-08-24 14:18:00,701 - knowledge_logger - main.py-handle-api- : tuple indices must be integers, not str
+2016-08-24 14:18:00,701 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 28, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 65, in process_login
+    db, username
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/database/login.py", line 108, in verify_username
+    count = admin_rows[0]["count"]
+TypeError: tuple indices must be integers, not str
+
+2016-08-24 14:18:35,620 - knowledge_logger - main.py-handle-api- : 'NoneType' object is not iterable
+2016-08-24 14:18:35,620 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 28, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 65, in process_login
+    db, username
+TypeError: 'NoneType' object is not iterable
+
+2016-08-24 14:19:06,959 - knowledge_logger - main.py-handle-api- : global name 'InvalidUserName' is not defined
+2016-08-24 14:19:06,959 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 143, in handle_api_request
+    response_data = unbound_method(self, request_data, self._db)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/main.py", line 234, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 28, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/thickpadi5/Projects/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 69, in process_login
+    return InvalidUserName()
+NameError: global name 'InvalidUserName' is not defined
+
