@@ -864,7 +864,8 @@ class ConvertJsonToCSV(object):
                     " and ac.unit_id = cs.unit_id " + \
                     " and cf.frequency_id = c.frequency_id " + \
                     " and ac.assignee in (%s) and " + \
-                    " c.statutory_mapping like %s" % (
+                    " c.statutory_mapping like '%s'"
+                query = query % (
                         country_id, domain_id,
                         unit_id, user_ids, str(statutory_id+"%")
                     )

@@ -2503,7 +2503,7 @@ def get_service_provider_user_ids(db, service_provider_id):
 def get_service_provider_user_unit_ids(db, user_ids):
     columns = "unit_id"
     condition = " user_id in (%s)"
-    rows = db.get_data(self.tblUserUnits, columns, condition, [user_ids])
+    rows = db.get_data(tblUserUnits, columns, condition, [user_ids])
     unit_ids = [
         int(row["unit_id"]) for row in rows
     ]
