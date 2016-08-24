@@ -191,9 +191,9 @@ function loadClientUserList(){
         if (userId != 1){
             $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
         }
-        if (isPrimaryAdmin == false && isServiceProvide == false){
+        if (isPrimaryAdmin == false){
             $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+', \''+ emp_code_name +'\')"/>');
-            if (is_session_user_primary_admin == true){
+            if (is_session_user_primary_admin == true && isServiceProvide == false){
                 $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="user_isadmin('+userId+', '+adminstatus+', \''+ emp_code_name +'\')" />');
             }
         }
