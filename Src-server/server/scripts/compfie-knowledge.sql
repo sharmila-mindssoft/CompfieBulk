@@ -124,7 +124,7 @@ DROP TABLE IF EXISTS `tbl_user_login_history`;
 CREATE TABLE `tbl_user_login_history` (
   `user_id` INT(11) NOT NULL,
   `ip` varchar(20) NOT NULL,
-  `login_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `login_time` DATETIME DEFAULT NULL,
   `login_attempt` int(11) DEFAULT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

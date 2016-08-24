@@ -107,3 +107,13 @@ CHANGE COLUMN `statutory_notification_unit_id` `statutory_notification_unit_id` 
 
 ALTER TABLE `tbl_notifications_log`
 CHANGE COLUMN `notification_id` `notification_id` INT(11) NOT NULL AUTO_INCREMENT ;
+
+-- Changed tbl_user_login_history Schema for Captcha
+DROP TABLE IF EXISTS `tbl_user_login_history`;
+CREATE TABLE `tbl_user_login_history` (
+  `user_id` INT(11) NOT NULL,
+  `ip` varchar(20) NOT NULL,
+  `login_time` DATETIME DEFAULT NULL,
+  `login_attempt` int(11) DEFAULT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
