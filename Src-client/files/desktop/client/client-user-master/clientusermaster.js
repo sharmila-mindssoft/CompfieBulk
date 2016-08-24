@@ -588,7 +588,7 @@ function user_isadmin(userId, isAdmin, employeeName){
     }
 
     $( ".warning-confirm" ).dialog({
-        title: message.title_status_change,
+        title: message.title_promote_admin,
         buttons: {
             Ok: function() {
                 $( this ).dialog( "close" );
@@ -620,7 +620,7 @@ function user_isadmin(userId, isAdmin, employeeName){
             }
         },
         open: function ()  {
-            $(".warning-message").html('Are you sure to '+msgstatus+ '?');
+            $(".warning-message").html('Are you sure want to '+msgstatus+ '?');
         }
     });
 }
