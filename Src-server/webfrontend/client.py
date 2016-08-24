@@ -38,12 +38,12 @@ class CompanyManager(object) :
         # print self._poll_url
 
     def get_token(self, ip, port):
-        print "Token called"
+        # print "Token called"
 
         def token_response(response):
-            print response
+            # print response
             self._token = response.body
-            print self._token
+            # print self._token
             # # # server list call after token success
             body = json.dumps(
                 GetCompanyServerDetails().to_structure()
@@ -57,7 +57,7 @@ class CompanyManager(object) :
                 request_timeout=10
             )
             self._request_body = request
-            print request.body
+            # print request.body
             self._io_loop.add_callback(self._poll)
 
         url = "http://%s:%s/knowledge/token" % (ip, port)
@@ -79,7 +79,7 @@ class CompanyManager(object) :
         )
 
     def _poll_response(self, response) :
-        print response.body
+        # print response.body
         err = "knowledge server poll error:"
         if not response.error :
             r = None

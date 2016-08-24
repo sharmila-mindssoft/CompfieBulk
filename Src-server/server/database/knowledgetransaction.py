@@ -812,9 +812,6 @@ def update_compliance(db, mapping_id, domain_id, datas, updated_by):
 
         where_condition = "compliance_id = %s" % (compliance_id)
         if (db.update(table_name, columns, values, where_condition)):
-            if is_format:
-                convert_base64_to_file(file_name, file_content)
-                is_format = False
             compliance_ids.append(compliance_id)
         else:
             raise process_error("E021")

@@ -299,12 +299,14 @@ def save_client_group_data(db, client_group, session_user):
     contract_to = string_to_datetime(client_group.contract_to)
     is_sms_subscribed = 0 if client_group.is_sms_subscribed is False else 1
 
+    file_name = save_client_logo(client_group.logo)
+
     columns = [
         "group_name", "email_id", "logo_size", "contract_from",
         "contract_to", "no_of_user_licence",
         "total_disk_space", "is_sms_subscribed", "url_short_name",
         "incharge_persons", "is_active", "created_by", "created_on",
-        "updated_by", "updated_on"
+        "updated_by", "updated_on", "logo_url"
     ]
     values = [
         client_group.group_name, client_group.email_id,
@@ -313,17 +315,21 @@ def save_client_group_data(db, client_group, session_user):
         is_sms_subscribed, client_group.short_name,
         ','.join(str(x) for x in client_group.incharge_persons),
         1, session_user,
-        current_time_stamp, session_user, current_time_stamp
-    ]
-    client_id = db.insert(tblClientGroups, columns, values)
-    if client_id is False:
-        raise process_error("E040")
+        current_time_stamp, session_user, current_time_stamp, file_name
 
-    file_name = save_client_logo(client_group.logo, client_id)
-    columns = ["logo_url"]
-    values = [file_name]
-    condition = "client_id = %s" % client_id
-    db.update(tblClientGroups, columns, values, condition)
+    ]
+
+    if file_name is not None :
+        client_id = db.insert(tblClientGroups, columns, values)
+        if client_id is False:
+            raise process_error("E040")
+    else :
+        raise process_error("E062")
+
+    # columns = ["logo_url"]
+    # values = [file_name]
+    # condition = "client_id = %s" % client_id
+    # db.update(tblClientGroups, columns, values, condition)
 
     action = "Created Client \"%s\"" % client_group.group_name
     db.save_activity(session_user, 18, action)
@@ -505,14 +511,18 @@ def validate_total_disk_space(db, file_space, client_id):
         return False
 
 
-def save_client_logo(logo, client_id):
+def save_client_logo(logo):
     # file_size = logo.file_size
     name = logo.file_name.split('.')[0]
     exten = logo.file_name.split('.')[1]
     auto_code = new_uuid()
     file_name = "%s-%s.%s" % (name, auto_code, exten)
-    convert_base64_to_file(file_name, logo.file_content, CLIENT_LOGO_PATH)
-    return file_name
+    try :
+        convert_base64_to_file(file_name, logo.file_content, CLIENT_LOGO_PATH)
+        return file_name
+    except Exception, e :
+        print e
+        return None
 
 
 def update_client_logo(db, logo, client_id):
@@ -525,7 +535,7 @@ def update_client_logo(db, logo, client_id):
     old_file_name = rows[0]["logo_url"]
     old_file_path = "%s/%s" % (CLIENT_LOGO_PATH, old_file_name)
     remove_uploaded_file(old_file_path)
-    return save_client_logo(logo, client_id)
+    return save_client_logo(logo)
 
 
 def update_client_group_record(db, client_group, session_user):
