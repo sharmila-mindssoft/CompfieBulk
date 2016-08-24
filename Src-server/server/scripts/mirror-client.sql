@@ -192,10 +192,10 @@ CREATE TABLE `tbl_user_units` (
   PRIMARY KEY (`unit_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_user_login_history` (
-  `ip` varchar(20) NOT NULL,
+  `username` varchar(100) NOT NULL,
   `login_time` DATETIME DEFAULT NULL,
   `login_attempt` int(11) DEFAULT NULL,
-  PRIMARY KEY (`ip`)
+  PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_session_types` (
   `session_type_id` int(11) NOT NULL,

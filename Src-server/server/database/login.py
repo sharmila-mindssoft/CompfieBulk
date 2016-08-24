@@ -1,7 +1,10 @@
 from server.database.tables import *
 from server.common import (
-    convert_to_dict, get_date_time, new_uuid, encrypt
+    convert_to_dict, get_date_time, new_uuid, encrypt,
+    get_date_time_in_date
 )
+from dateutil import relativedelta
+
 __all__ = [
     "verify_login",
     "add_session",
@@ -9,7 +12,7 @@ __all__ = [
     "validate_reset_token", "update_password",
     "delete_used_token", "remove_session",
     "save_login_failure", "delete_login_failure_history",
-    "get_login_attempt"
+    "get_login_attempt_and_time"
 ]
 
 
@@ -99,13 +102,14 @@ def verify_username(db, username):
             result[0]["employee_name"]
         )
     else:  # checking in tbl_admin
-        admin_query = " SELECT count(username) FROM tbl_admin " + \
-            " WHERE username = %s and is_active = 1"
+        admin_query = " SELECT count(username) as count FROM tbl_admin " + \
+            " WHERE username = %s"
         admin_rows = db.select_all(admin_query, param)
-        if admin_rows:
+        count = admin_rows[0][0]
+        if count > 0:
             return (0, "Administrator")
         else:
-            return None
+            return (None, None)
 
 
 def verify_password(db, password, user_id):
@@ -205,30 +209,41 @@ def remove_session(db, session_token):
     db.delete(tblUserSessions, "session_token=%s", [session_token])
 
 
-def save_login_failure(db, session_user_ip):
-    current_date_time = get_date_time()
-    columns = "ip, login_time"
-    valueList = [(session_user_ip, current_date_time)]
-    updateColumnsList = ["login_time"]
-    db.on_duplicate_key_update(
-        tblUserLoginHistory, columns, valueList, updateColumnsList
-    )
-    increament_column = ["login_attempt"]
-    increament_cond = " ip = '%s' " % (session_user_ip)
-    db.increment(tblUserLoginHistory, increament_column, increament_cond)
+def save_login_failure(db, user_id, session_user_ip):
+    current_date_time = get_date_time_in_date()
+    rows = get_login_attempt_and_time(db, user_id)
+    if(rows):
+        last_login_time = rows[0]["login_time"]
+        diff = relativedelta.relativedelta(current_date_time, last_login_time)
+        if diff.hours > 2 or diff.days > 0:
+            db.update(
+                tblUserLoginHistory, ["login_attempt"], [0],
+                " user_id=%s " % user_id
+            )
+    columns = "user_id, ip, login_time"
+    valueList = [(int(user_id), session_user_ip, get_date_time())]
+    updateColumnsList = ["login_time", "ip"]
+    if (
+        db.on_duplicate_key_update(
+            tblUserLoginHistory, columns, valueList, updateColumnsList
+        )
+    ):
+        increament_column = ["login_attempt"]
+        increament_cond = " user_id = %s " % (user_id)
+        db.increment(tblUserLoginHistory, increament_column, increament_cond)
 
 
-def delete_login_failure_history(db, session_user_ip):
-    condition = " ip=%s"
-    condition_val = [session_user_ip]
+def delete_login_failure_history(db, user_id):
+    condition = " user_id=%s"
+    condition_val = [user_id]
     db.delete(tblUserLoginHistory, condition, condition_val)
 
 
-def get_login_attempt(db, session_user_ip):
-    columns = ["login_attempt"]
-    condition = " ip=%s "
-    condition_val = [session_user_ip]
+def get_login_attempt_and_time(db, user_id):
+    columns = ["login_attempt", "login_time"]
+    condition = " user_id=%s "
+    condition_val = [user_id]
     rows = db.get_data(
         tblUserLoginHistory, columns, condition, condition_val
     )
-    return int(rows[0]["login_attempt"])
+    return rows

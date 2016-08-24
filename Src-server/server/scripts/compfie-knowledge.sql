@@ -122,10 +122,11 @@ CREATE TABLE `tbl_user_domains` (
 
 DROP TABLE IF EXISTS `tbl_user_login_history`;
 CREATE TABLE `tbl_user_login_history` (
+  `user_id` INT(11) NOT NULL,
   `ip` varchar(20) NOT NULL,
-  `login_time` DATETIME DEFAULT NULL,
+  `login_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `login_attempt` int(11) DEFAULT NULL,
-  PRIMARY KEY (`ip`)
+  PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_session_types`;

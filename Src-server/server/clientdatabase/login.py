@@ -170,29 +170,29 @@ def clear_old_session(db, user_id, session_type_id, client_id=None):
     ))
 
 
-def save_login_failure(db, session_user_ip):
+def save_login_failure(db, username, session_user_ip):
     current_date_time = get_date_time()
-    columns = "ip, login_time"
-    valueList = [(session_user_ip, current_date_time)]
-    updateColumnsList = ["login_time"]
+    columns = "username, ip, login_time"
+    valueList = [(username, session_user_ip, current_date_time)]
+    updateColumnsList = ["login_time", "ip"]
     db.on_duplicate_key_update(
         tblUserLoginHistory, columns, valueList, updateColumnsList
     )
     increament_column = ["login_attempt"]
-    increament_cond = " ip = '%s' " % (session_user_ip)
+    increament_cond = " username = %s " % (username)
     db.increment(tblUserLoginHistory, increament_column, increament_cond)
 
 
-def delete_login_failure_history(db, session_user_ip):
-    condition = " ip=%s"
-    condition_val = [session_user_ip]
+def delete_login_failure_history(db, username):
+    condition = " username=%s"
+    condition_val = [username]
     db.delete(tblUserLoginHistory, condition, condition_val)
 
 
-def get_login_attempt(db, session_user_ip):
+def get_login_attempt(db, username):
     columns = ["login_attempt"]
-    condition = " ip=%s "
-    condition_val = [session_user_ip]
+    condition = " username=%s "
+    condition_val = [username]
     rows = db.get_data(
         tblUserLoginHistory, columns, condition, condition_val
     )
