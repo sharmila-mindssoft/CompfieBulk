@@ -57,7 +57,7 @@ __all__ = [
     "get_reassigned_history_report_data",
     "get_service_provider_user_ids",
     "get_service_provider_user_unit_ids",
-
+    "return_cmopliance_details_report"
 ]
 
 
