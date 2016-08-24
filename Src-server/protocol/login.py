@@ -1,4 +1,5 @@
-from protocol.jsonvalidators import (parse_dictionary, parse_static_list, parse_bool)
+from protocol.jsonvalidators import (
+    parse_dictionary, parse_static_list, parse_bool)
 from protocol.parse_structure import (
     parse_structure_CustomTextType_100,
     parse_structure_RecordType_core_Menu,
@@ -352,18 +353,25 @@ class AdminLoginSuccess(Response):
             "client_id": to_structure_OptionalType_UnsignedIntegerType_32(self.client_id)
         }
 
+
 class InvalidCredentials(Response):
-    def __init__(self):
-        pass
+    def __init__(self, captcha_text):
+        self.captcha_text = captcha_text
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return InvalidCredentials()
+        data = parse_dictionary(data, ["captcha_text"])
+        captcha_text = data.get("captcha_text")
+        captcha_text = parse_structure_OptionalType_CustomTextType_100(
+            captcha_text)
+        return InvalidCredentials(captcha_text)
 
     def to_inner_structure(self):
         return {
+            "captcha_text": to_structure_OptionalType_CustomTextType_100(
+                self.captcha_text)
         }
+
 
 class ClientDatabaseNotExists(Response):
     def __init__(self):

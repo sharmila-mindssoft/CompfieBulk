@@ -798,7 +798,7 @@ def get_audit_trails(
     columns = [
         "user_id", "form_id", "action", "created_on"
     ]
-    where_qry += " AND action not like %sLog In by%s " + \
+    where_qry += " AND action not like '%sLog In by%s' " + \
         " ORDER BY activity_log_id DESC limit %s, %s "
     where_qry = where_qry % (
         "%", "%", from_count, to_count

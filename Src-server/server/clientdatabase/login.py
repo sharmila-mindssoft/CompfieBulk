@@ -1,13 +1,14 @@
 from server.clientdatabase.tables import *
 
 from server.common import (
-   convert_to_dict, new_uuid, get_date_time
+   convert_to_dict, new_uuid, get_date_time, get_date_time_in_date
 )
 
 from server.clientdatabase.general import (
     is_service_proivder_user, is_service_provider_in_contract
 )
 from server.clientdatabase.savetoknowledge import IsClientActive
+from dateutil import relativedelta
 
 __all__ = [
     "is_configured",
@@ -17,9 +18,12 @@ __all__ = [
     "is_contract_not_started",
     "add_session",
     "get_client_group",
-    "get_client_configuration"
+    "get_client_configuration",
+    "save_login_failure",
+    "delete_login_failure_history",
+    "get_login_attempt_and_time"
 
-    ]
+]
 
 
 def is_configured(db):
@@ -165,3 +169,47 @@ def clear_old_session(db, user_id, session_type_id, client_id=None):
     db.execute(query, (
         user_id, session_type_id
     ))
+
+
+def check_and_update_login_attempt(db, user_id):
+    current_date_time = get_date_time_in_date()
+    rows = get_login_attempt_and_time(db, user_id)
+    if(rows):
+        last_login_time = rows[0]["login_time"]
+        diff = relativedelta.relativedelta(current_date_time, last_login_time)
+        if diff.hours > 2 or diff.days > 0:
+            db.update(
+                tblUserLoginHistory, ["login_attempt"], [0],
+                " user_id=%s " % user_id
+            )
+
+
+def save_login_failure(db, user_id, session_user_ip):
+    check_and_update_login_attempt(db, user_id)
+    columns = "user_id, ip, login_time"
+    valueList = [(int(user_id), session_user_ip, get_date_time())]
+    updateColumnsList = ["login_time", "ip"]
+    if (
+        db.on_duplicate_key_update(
+            tblUserLoginHistory, columns, valueList, updateColumnsList
+        )
+    ):
+        increament_column = ["login_attempt"]
+        increament_cond = " user_id = %s " % (user_id)
+        db.increment(tblUserLoginHistory, increament_column, increament_cond)
+
+
+def delete_login_failure_history(db, user_id):
+    condition = " user_id=%s"
+    condition_val = [user_id]
+    db.delete(tblUserLoginHistory, condition, condition_val)
+
+
+def get_login_attempt_and_time(db, user_id):
+    columns = ["login_attempt", "login_time"]
+    condition = " user_id=%s "
+    condition_val = [user_id]
+    rows = db.get_data(
+        tblUserLoginHistory, columns, condition, condition_val
+    )
+    return rows

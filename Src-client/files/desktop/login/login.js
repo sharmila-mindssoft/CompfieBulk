@@ -15,6 +15,24 @@ function displayLoginMessage(message) {
 function displayLoginLoader() {
     $(".loading-indicator-spin").show();
 }
+
+function storeCaptcha(captcha_text){
+    window.sessionStorage["captcha"] = captcha_text;
+}
+
+function getCaptcha(){
+    captcha = window.sessionStorage["captcha"]
+    if(captcha != null && captcha != undefined && captcha != 'undefined'){
+        return captcha;
+    }else{
+        return null;
+    }
+}
+
+function clearCaptcha(){
+    delete window.sessionStorage["captcha"];
+}
+
 function initSession(userProfile, shortName) {
     setLandingPage(userProfile);
     window.sessionStorage["userInfo"] = JSON.stringify(userProfile, null, " ");
@@ -67,7 +85,7 @@ function isLoginValidated (e_email, e_password, e_captcha) {
         e_captcha.focus();
         return false;
     }
-    if (e_captcha.val() != "" && captchaText != e_captcha.val()) {
+    if (e_captcha.val() != "" && getCaptcha() != e_captcha.val()) {
         displayLoginMessage(message.invalid_captcha);
         e_captcha.focus();
         return false;
@@ -75,11 +93,35 @@ function isLoginValidated (e_email, e_password, e_captcha) {
     return true;
 }
 
+function loadCaptcha(){
+    captcha_text = getCaptcha();
+    console.log("captcha_text : "+ captcha_text);
+    if(captcha_text == null || captcha_text == "null"){
+        captchaStatus = false;    
+    }else{
+        captchaStatus = true;    
+    }
+    console.log("captcha status :"+captchaStatus);
+    if(captchaStatus){
+        var myCanvas = document.getElementById("captchaCanvas");
+        var myCanvasContext = myCanvas.getContext('2d');
+        myCanvasContext.clearRect(0, 0, myCanvas.width, myCanvas.height)
+
+        $("#captcha-view").show();
+        var tCtx = document.getElementById('captchaCanvas').getContext('2d');
+        tCtx.font = "18px Arial";
+        tCtx.strokeText(captcha_text, 10, 20);
+    }else{
+        $("#captcha-view").hide();
+    }
+}
+
 function resetLoginUI(e_button, e_email, e_password) {
     e_button.removeAttr("disabled", "disabled");
     e_email.removeAttr("disabled", "disabled");
     e_password.removeAttr("disabled", "disabled");
     e_email.focus();
+    loadCaptcha();
 }
 function processLogin(username, password, shortName, callback) {
 
@@ -151,7 +193,7 @@ function processLogin(username, password, shortName, callback) {
                 callback(null, response);
             }
             else {
-                callback(status, null);
+                callback(data, null);
             }
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -190,8 +232,11 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
     // e_email.attr("disabled", "disabled");
     // e_password.attr("disabled", "disabled");
 
-    function onFailure(status) {
+    function onFailure(data) {
         //console.log("status"+status);
+        status = data[0]
+        captcha_text = data[1].captcha_text
+        storeCaptcha(captcha_text);
         var disp_message = message.invalid_username_password;
         if(status == "ContractExpired"){
             disp_message = message.contract_expired;
@@ -207,18 +252,9 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
         }
         displayLoginMessage(disp_message);
         $("input").val("");
-        resetLoginUI(e_button, e_email, e_password);
 
-        captchaStatus = true;
-        if(captchaStatus){
-            captchaText = "AzK9oE";
-            $("#captcha-view").show();
-            var tCtx = document.getElementById('captchaCanvas').getContext('2d');
-            tCtx.font = "18px Arial";
-            tCtx.strokeText(captchaText, 10, 20);
-        }else{
-            $("#captcha-view").hide();
-        }
+        resetLoginUI(e_button, e_email, e_password);
+        
     }
 
     if (getShortName() === null){
@@ -230,6 +266,7 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
                 if (error == null){
                     // onSuccess(response)
                     resetLoginUI(e_button, e_email, e_password);
+                    clearCaptcha();
                     window.location.href = "/knowledge/home";
                     $("#captcha-view").hide();
                 }
@@ -247,6 +284,7 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
                 if (error == null){
                     // onSuccess(response)
                     resetLoginUI(e_button, e_email, e_password);
+                    clearCaptcha();
                     window.location.href = landingPage;
                     $("#captcha-view").hide();
                 }
@@ -264,6 +302,7 @@ function initializeUI () {
     var getEmptySpace = windowHHeight - loginBoxHeight;
     var topPadding = getEmptySpace / 2;
     $(".login-box-inner").css("margin-top", topPadding);
+    loadCaptcha();
 }
 
 function initializeLogin () {
@@ -275,6 +314,12 @@ function initializeLogin () {
     });
 
     $("#txt-password").keydown(function (e) {
+        if (e.keyCode == 13 && $(this).val() != "")
+            //performLogin($(this), $("#txt-username"), $("#txt-password"));
+            performLogin($(this), $("#txt-username"), $("#txt-password"), $("#txt-captcha"));
+    });
+
+    $("#txt-captcha").keydown(function (e) {
         if (e.keyCode == 13 && $(this).val() != "")
             //performLogin($(this), $("#txt-username"), $("#txt-password"));
             performLogin($(this), $("#txt-username"), $("#txt-password"), $("#txt-captcha"));

@@ -2,11 +2,13 @@ from corecontroller import process_user_forms
 from server.emailcontroller import EmailHandler as email
 from protocol import login, mobile
 from server.constants import (
-    KNOWLEDGE_URL
+    KNOWLEDGE_URL, CAPTCHA_LENGHT, NO_OF_FAILURE_ATTEMPTS
 )
 
 from server import logger
-from server.common import (encrypt, new_uuid)
+from server.common import (
+    encrypt, new_uuid, generate_random
+)
 from server.database.tables import *
 from server.database.login import *
 
@@ -59,19 +61,37 @@ def process_login(db, request, session_user_ip):
     username = request.username
     password = request.password
     encrypt_password = encrypt(password)
-    response = verify_login(db, username, encrypt_password)
-    if response is True:
-        return admin_login_response(db, session_user_ip)
+    user_id, employee_name = verify_username(
+        db, username
+    )
+    if user_id is None:
+        return login.InvalidUserName()
     else:
-        if bool(response):
-            if login_type.lower() == "web":
-                return user_login_response(db, response, session_user_ip)
-            else:
-                return mobile_user_login_respone(
-                    db, response, request, session_user_ip
-                )
+        response = verify_login(db, username, encrypt_password)
+        if response is True:
+            delete_login_failure_history(db, user_id)
+            return admin_login_response(db, session_user_ip)
         else:
-            return login.InvalidCredentials()
+            if bool(response):
+                if login_type.lower() == "web":
+                    delete_login_failure_history(db, user_id)
+                    return user_login_response(db, response, session_user_ip)
+                else:
+                    delete_login_failure_history(db, user_id)
+                    return mobile_user_login_respone(
+                        db, response, request, session_user_ip
+                    )
+            else:
+                save_login_failure(db, user_id, session_user_ip)
+                rows = get_login_attempt_and_time(db, user_id)
+                no_of_attempts = 0
+                if rows:
+                    no_of_attempts = rows[0]["login_attempt"]
+                if no_of_attempts >= NO_OF_FAILURE_ATTEMPTS:
+                    captcha_text = generate_random(CAPTCHA_LENGHT)
+                else:
+                    captcha_text = None
+                return login.InvalidCredentials(captcha_text)
 
 
 def mobile_user_login_respone(db, data, request, ip):

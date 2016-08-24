@@ -171,10 +171,10 @@ def new_uuid() :
 # To check generate a random string with alpahbets
 # and numbers
 ########################################################
-def generate_random():
+def generate_random(length=7):
     characters = string.ascii_uppercase + string.digits
     return ''.join(
-        random.SystemRandom().choice(characters) for _ in range(7)
+        random.SystemRandom().choice(characters) for _ in range(length)
     )
 
 ########################################################

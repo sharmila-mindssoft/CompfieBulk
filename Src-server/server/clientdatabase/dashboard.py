@@ -1830,7 +1830,7 @@ def get_notifications(
             " ON (tch.compliance_id = nl.compliance_id AND " + \
             " tch.unit_id = nl.unit_id) " + \
             " WHERE notification_type_id = %s " + \
-            " AND user_id in %s " + \
+            " AND user_id in (%s) " + \
             " AND (compliance_history_id is null " + \
             " OR  compliance_history_id = CAST(REPLACE( " + \
             " SUBSTRING_INDEX(extra_details, '-', 1), " + \
@@ -1838,7 +1838,8 @@ def get_notifications(
             " ORDER BY read_status desc, nul.notification_id DESC " + \
             " limit %s, %s"
     rows = db.select_all(query, [
-        notification_type_id, tuple(user_ids),
+        notification_type_id,
+        ",".join(str(x) for x in user_ids),
         start_count, to_count
     ])
     columns_list = [
@@ -1930,7 +1931,7 @@ def get_notifications(
                 penal_consequences
             )
         )
-    return notificationfs_list
+    return notifications_list
 
 
 def update_notification_status(

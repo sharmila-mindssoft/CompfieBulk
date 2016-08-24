@@ -481,8 +481,7 @@ class Database(object):
     # updateColumns list
     ########################################################
     def on_duplicate_key_update(
-        self, table, columns, valueList,
-        updateColumnsList, client_id=None
+        self, table, columns, valueList, updateColumnsList
     ):
         query = "INSERT INTO %s (%s) VALUES " % (table, columns)
 
@@ -500,7 +499,6 @@ class Database(object):
                 query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
-
         return self.execute(query)
 
     ########################################################
@@ -544,14 +542,13 @@ class Database(object):
 
     def increment(self, table, column, condition, value=1):
         rows = self.get_data(table, column, condition)
-        currentValue = rows[0][column]
+        currentValue = rows[0][column[0]]
         if currentValue is not None:
             newValue = int(currentValue) + value
         else:
             newValue = value
-        columns = [column]
         values = [newValue]
-        return self.update(table, columns, values, condition)
+        return self.update(table, column, values, condition)
 
     ########################################################
     # To check whether a row exists with the condition in the
