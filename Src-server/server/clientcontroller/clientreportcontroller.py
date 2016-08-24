@@ -360,7 +360,7 @@ def get_serviceprovider_report_filters(db, request, session_user):
 def get_serviceproviderwise_compliance(db, request, session_user):
     if request.csv:
         converter = ConvertJsonToCSV(
-            db, request, session_user, client_id, "ServiceProviderWise"
+            db, request, session_user, "ServiceProviderWise"
         )
         return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
@@ -438,7 +438,7 @@ def get_statutory_notifications_list_report(
 ):
     if request.csv:
         converter = ConvertJsonToCSV(
-            db, request, session_user, client_id, "StatutoryNotification"
+            db, request, session_user, "StatutoryNotification"
         )
         return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
@@ -451,7 +451,7 @@ def get_statutory_notifications_list_report(
 def get_compliancedetails_report(db, request, session_user, client_id):
     if request.csv:
         converter = ConvertJsonToCSV(
-            db, request, session_user, client_id, "ComplianceDetails"
+            db, request, session_user, "ComplianceDetails"
         )
         return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
@@ -546,7 +546,7 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
         )
     else:
         converter = ConvertJsonToCSV(
-            db, request, session_user, client_id, "Reassign"
+            db, request, session_user, "Reassign"
         )
         return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
@@ -597,7 +597,7 @@ def get_risk_report(db, request, session_user, client_id):
         )
     else:
         converter = ConvertJsonToCSV(
-            db, request, session_user, client_id, "RiskReport"
+            db, request, session_user, "RiskReport"
         )
         return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
@@ -665,7 +665,7 @@ def process_get_compliance_activity_report(
         )
     else:
         converter = ConvertJsonToCSV(
-            db, request, session_user, client_id, "ActivityReport"
+            db, request, session_user, "ActivityReport"
         )
         return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
@@ -698,7 +698,7 @@ def process_get_task_applicability_report_data(
 ):
     if request.csv:
         converter = ConvertJsonToCSV(
-            db, request, session_user, client_id, "TaskApplicability"
+            db, request, session_user, "TaskApplicability"
         )
         return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
@@ -735,7 +735,7 @@ def get_client_details_report_data(db, request, session_user, client_id):
     to_count = RECORD_DISPLAY_COUNT
     if request.csv:
         converter = ConvertJsonToCSV(
-            db, request, session_user, client_id, "ClientDetails"
+            db, request, session_user, "ClientDetails"
         )
         return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH

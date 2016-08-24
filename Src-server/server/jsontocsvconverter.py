@@ -24,7 +24,7 @@ FORMAT_DOWNLOAD_URL = "/client/compliance_format"
 
 
 class ConvertJsonToCSV(object):
-    def __init__(self, db, request, session_user, client_id, report_type):
+    def __init__(self, db, request, session_user, report_type):
         s = str(uuid.uuid4())
         file_name = "%s.csv" % s.replace("-", "")
         self.FILE_DOWNLOAD_PATH = "%s/%s" % (
@@ -38,27 +38,27 @@ class ConvertJsonToCSV(object):
             # self.convert_json_to_csv(jsonObj)
             if report_type == "ActivityReport":
                 self.generate_compliance_activity_report(
-                    db, request, session_user, client_id)
+                    db, request, session_user)
             elif report_type == "RiskReport":
-                self.generate_risk_report(db, request, session_user, client_id)
+                self.generate_risk_report(db, request, session_user)
             elif report_type == "ComplianceDetails":
                 self.generate_compliance_details_report(
-                    db, request, session_user, client_id)
+                    db, request, session_user)
             elif report_type == "TaskApplicability":
                 self.generate_task_applicability_report(
-                    db, request, session_user, client_id)
+                    db, request, session_user)
             elif report_type == "ClientDetails":
                 self.generate_client_details_report(
-                    db, request, session_user, client_id)
+                    db, request, session_user)
             elif report_type == "Reassign":
-                self.generate_reassign_history_rpeort(
-                    db, request, session_user, client_id)
+                self.generate_reassign_history_report(
+                    db, request, session_user)
             elif report_type == "StatutoryNotification":
                 self.generate_statutory_notification_report(
-                    db, request, session_user, client_id)
+                    db, request, session_user)
             elif report_type == "ServiceProviderWise":
                 self.generate_service_provider_wise_report(
-                    db, request, session_user, client_id)
+                    db, request, session_user)
 
     def to_string(self, s):
         try:
@@ -73,7 +73,7 @@ class ConvertJsonToCSV(object):
             self.writer.writerow(values)
 
     def generate_compliance_activity_report(
-        self, db, request, session_user, client_id
+        self, db, request, session_user
     ):
         is_header = False
         country_id = request.country_id
@@ -90,7 +90,7 @@ class ConvertJsonToCSV(object):
             db, country_id, domain_id, user_type, user_id,
             unit_id, compliance_id,
             level_1_statutory_name, from_date, to_date,
-            session_user, client_id
+            session_user
         )
         csv_header = [
             "Unit Name", "Address", "Level 1 Statutory Name",
@@ -125,7 +125,7 @@ class ConvertJsonToCSV(object):
             ]
             self.write_csv(None, csv_values)
 
-    def generate_risk_report(self, db, request, session_user, client_id):
+    def generate_risk_report(self, db, request, session_user):
         country_id = request.country_id
         domain_id = request.domain_id
         business_group_id = request.business_group_id
@@ -278,7 +278,7 @@ class ConvertJsonToCSV(object):
             self.write_csv(None, csv_values)
 
     def generate_compliance_details_report(
-        self, db, request, session_user, client_id
+        self, db, request, session_user
     ):
         country_id = request.country_id
         domain_id = request.domain_id
@@ -340,7 +340,7 @@ class ConvertJsonToCSV(object):
             self.write_csv(None, csv_values)
 
     def generate_task_applicability_report(
-        self, db, request, session_user, client_id
+        self, db, request, session_user
     ):
         is_header = False
         business_group = request.business_group_id
@@ -524,7 +524,7 @@ class ConvertJsonToCSV(object):
                 self.write_csv(None, csv_values)
 
     def generate_client_details_report(
-        self, db, request, session_user, client_id
+        self, db, request, session_user
     ):
         is_header = False
         country_id = request.country_id
@@ -594,8 +594,8 @@ class ConvertJsonToCSV(object):
             ]
             self.write_csv(None, csv_values)
 
-    def generate_reassign_history_rpeort(
-        self, db, request, session_user, client_id
+    def generate_reassign_history_report(
+        self, db, request, session_user
     ):
         is_header = False
         country_id = request.country_id
@@ -653,7 +653,7 @@ class ConvertJsonToCSV(object):
             self.write_csv(None, csv_values)
 
     def generate_statutory_notification_report(
-        self, db, request_data, session_user, client_id
+        self, db, request_data, session_user
     ):
         country_name = request_data.country_name
         domain_name = request_data.domain_name
@@ -794,7 +794,7 @@ class ConvertJsonToCSV(object):
                     self.write_csv(None, csv_values)
 
     def generate_service_provider_wise_report(
-        self, db, request, session_user, client_id
+        self, db, request, session_user
     ):
         is_header = False
         country_id = request.country_id
@@ -821,10 +821,10 @@ class ConvertJsonToCSV(object):
             contact_person = row[5]
             contact_no = row[6]
 
-            user_ids = get_service_provider_user_ids(db, row[0], client_id)
+            user_ids = get_service_provider_user_ids(db, row[0])
             if unit_id is None:
                 unit_ids = get_service_provider_user_unit_ids(
-                    db, user_ids, client_id)
+                    db, user_ids)
             else:
                 unit_ids = unit_id
 
