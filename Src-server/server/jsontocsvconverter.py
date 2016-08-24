@@ -385,8 +385,7 @@ class ConvertJsonToCSV(object):
             " INNER JOIN tbl_units T4 " + \
             " ON T3.unit_id = T4.unit_id " + \
             " WHERE T3.country_id = %s " + \
-            " AND T3.domain_id = %s " + \
-            " %s "
+            " AND T3.domain_id = %s "
         where_qry_val.extend([request.country_id, request.domain_id])
         if business_group is not None:
             where_qry = " AND T4.business_group_id = %s"
@@ -405,8 +404,14 @@ class ConvertJsonToCSV(object):
             where_qry_val.append(unit)
 
         if where_qry is None:
-            rows = db.select_all(query)
+            print
+            print query % tuple(where_qry_val)
+            print
+            rows = db.select_all(query, where_qry_val)
         else:
+            print
+            print query + where_qry % tuple(where_qry_val)
+            print
             rows = db.select_all(query + where_qry, where_qry_val)
         columns = [
             "statutory_provision", "statutory_mapping", "compliance_task",
