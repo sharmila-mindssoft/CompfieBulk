@@ -209,6 +209,7 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
         }
         displayLoginMessage(disp_message);
         $("input").val("");
+
         resetLoginUI(e_button, e_email, e_password);
         console.log("captcha_text: " + captcha_data.captcha_text);
         if(captcha_data.captcha_text == null){
@@ -218,6 +219,10 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
         }
         console.log("captcha_status:  "+ captchaStatus);
         if(captchaStatus){
+            var myCanvas = document.getElementById("captchaCanvas");
+            var myCanvasContext = myCanvas.getContext('2d');
+            myCanvasContext.clearRect(0, 0, myCanvas.width, myCanvas.height)
+
             captchaText = captcha_data.captcha_text;
             $("#captcha-view").show();
             var tCtx = document.getElementById('captchaCanvas').getContext('2d');
@@ -286,6 +291,12 @@ function initializeLogin () {
     });
 
     $("#txt-password").keydown(function (e) {
+        if (e.keyCode == 13 && $(this).val() != "")
+            //performLogin($(this), $("#txt-username"), $("#txt-password"));
+            performLogin($(this), $("#txt-username"), $("#txt-password"), $("#txt-captcha"));
+    });
+
+    $("#txt-captcha").keydown(function (e) {
         if (e.keyCode == 13 && $(this).val() != "")
             //performLogin($(this), $("#txt-username"), $("#txt-password"));
             performLogin($(this), $("#txt-username"), $("#txt-password"), $("#txt-captcha"));
