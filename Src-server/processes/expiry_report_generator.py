@@ -219,7 +219,8 @@ class ExpiryReportGenerator(object):
                 row, col+7, "" if(
                     result["remarks"] is None) else result["remarks"])
             worksheet.write_string(
-                row, col+8, result["assignee"])
+                row, col+8, "" if(
+                    result["assignee"] is None) else result["assignee"])
             worksheet.write_string(
                 row, col+9, self.datetime_to_string(result["completed_on"]))
             worksheet.write_string(
