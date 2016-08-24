@@ -22,7 +22,7 @@ function storeCaptcha(captcha_text){
 
 function getCaptcha(){
     captcha = window.sessionStorage["captcha"]
-    if(captcha){
+    if(captcha != 'undefined'){
         return captcha;
     }else{
         return null;
