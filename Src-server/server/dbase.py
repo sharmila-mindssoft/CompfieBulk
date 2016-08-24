@@ -422,7 +422,8 @@ class Database(object):
             return n_id
         except mysql.Error, e:
             print e
-            logger.logKnowledgeApi("insert", query)
+            print query, values
+            logger.logKnowledgeApi("insert", query + " -- " + values)
             logger.logKnowledgeApi("insert", e)
             return False
 
