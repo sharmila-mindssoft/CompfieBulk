@@ -17,9 +17,12 @@ __all__ = [
     "is_contract_not_started",
     "add_session",
     "get_client_group",
-    "get_client_configuration"
+    "get_client_configuration",
+    "save_login_failure",
+    "delete_login_failure_history",
+    "get_login_attempt"
 
-    ]
+]
 
 
 def is_configured(db):
@@ -165,3 +168,32 @@ def clear_old_session(db, user_id, session_type_id, client_id=None):
     db.execute(query, (
         user_id, session_type_id
     ))
+
+
+def save_login_failure(db, session_user_ip):
+    current_date_time = get_date_time()
+    columns = "ip, login_time"
+    valueList = [(session_user_ip, current_date_time)]
+    updateColumnsList = ["login_time"]
+    db.on_duplicate_key_update(
+        tblUserLoginHistory, columns, valueList, updateColumnsList
+    )
+    increament_column = ["login_attempt"]
+    increament_cond = " ip = '%s' " % (session_user_ip)
+    db.increment(tblUserLoginHistory, increament_column, increament_cond)
+
+
+def delete_login_failure_history(db, session_user_ip):
+    condition = " ip=%s"
+    condition_val = [session_user_ip]
+    db.delete(tblUserLoginHistory, condition, condition_val)
+
+
+def get_login_attempt(db, session_user_ip):
+    columns = ["login_attempt"]
+    condition = " ip=%s "
+    condition_val = [session_user_ip]
+    rows = db.get_data(
+        tblUserLoginHistory, columns, condition, condition_val
+    )
+    return int(rows[0]["login_attempt"])

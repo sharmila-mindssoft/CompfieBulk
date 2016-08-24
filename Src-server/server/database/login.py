@@ -7,7 +7,9 @@ __all__ = [
     "add_session",
     "verify_username", "verify_password",
     "validate_reset_token", "update_password",
-    "delete_used_token", "remove_session"
+    "delete_used_token", "remove_session",
+    "save_login_failure", "delete_login_failure_history",
+    "get_login_attempt"
 ]
 
 
@@ -201,3 +203,32 @@ def delete_used_token(db, reset_token):
 
 def remove_session(db, session_token):
     db.delete(tblUserSessions, "session_token=%s", [session_token])
+
+
+def save_login_failure(db, session_user_ip):
+    current_date_time = get_date_time()
+    columns = "ip, login_time"
+    valueList = [(session_user_ip, current_date_time)]
+    updateColumnsList = ["login_time"]
+    db.on_duplicate_key_update(
+        tblUserLoginHistory, columns, valueList, updateColumnsList
+    )
+    increament_column = ["login_attempt"]
+    increament_cond = " ip = '%s' " % (session_user_ip)
+    db.increment(tblUserLoginHistory, increament_column, increament_cond)
+
+
+def delete_login_failure_history(db, session_user_ip):
+    condition = " ip=%s"
+    condition_val = [session_user_ip]
+    db.delete(tblUserLoginHistory, condition, condition_val)
+
+
+def get_login_attempt(db, session_user_ip):
+    columns = ["login_attempt"]
+    condition = " ip=%s "
+    condition_val = [session_user_ip]
+    rows = db.get_data(
+        tblUserLoginHistory, columns, condition, condition_val
+    )
+    return int(rows[0]["login_attempt"])
