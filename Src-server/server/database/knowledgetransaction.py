@@ -260,15 +260,11 @@ def check_duplicate_statutory_mapping(db, data, statutory_mapping_id=None):
     domain_id = data.domain_id
     statutory_nature = data.statutory_nature_id
     industry_id = data.industry_ids
-    if len(industry_id) == 1:
-        industry_id = "(%s)" % (industry_id[0])
-    else:
-        industry_id = str(tuple(industry_id))
     statutory_id = data.statutory_ids
-    if len(statutory_id) == 1:
-        statutory_id = "(%s)" % (statutory_id[0])
-    else:
-        statutory_id = str(tuple(statutory_id))
+    industry_condition = db.generate_tuple_condition(
+        "t3.industry_id", industry_id)
+    statutory_condition = db.generate_tuple_condition(
+        "t2.statutory_id", statutory_id)
 
     q = "SELECT distinct t1.statutory_mapping_id " + \
         " from tbl_statutory_mappings t1 " + \
@@ -277,25 +273,22 @@ def check_duplicate_statutory_mapping(db, data, statutory_mapping_id=None):
         " inner join tbl_statutory_industry t3 on " + \
         " t1.statutory_mapping_id = t3.statutory_mapping_id " +\
         " WHERE t1.country_id = %s AND t1.domain_id = %s AND " + \
-        " t1.statutory_nature_id = %s AND t2.statutory_id in %s AND " + \
-        " t3.industry_id in %s"
+        " t1.statutory_nature_id = %s AND %s AND %s "
     val = [
             country_id,
             domain_id,
             statutory_nature,
-            statutory_id,
-            industry_id,
+            statutory_condition,
+            industry_condition,
         ]
     if statutory_mapping_id is not None:
         q = q + " AND t1.statutory_mapping_id != %s"
         val.append(statutory_mapping_id)
-        row = db.select_one(q, val)
-    else:
-        row = db.select_one(q, val)
+    row = db.select_one(q, val)
+    result = None
     if row:
-        return row[0]
-    else:
-        return None
+        result = row[0]
+    return result
 
 
 def check_duplicate_compliance_name(db, request_frame):
@@ -657,9 +650,9 @@ def update_statutory_mapping(db, data, updated_by):
     )
     values = (
         industry_ids, nature_id, statutory_ids, geography_ids,
-        0, '', statutory_mapping, int(updated_by)
+        0, '', statutory_mapping, int(updated_by), statutory_mapping_id
     )
-    where_condition = " statutory_mapping_id= %s " % (statutory_mapping_id)
+    where_condition = " statutory_mapping_id= %s "
 
     db.update(table_name, columns, values, where_condition)
     # self.update_statutory_mapping_id(
@@ -670,7 +663,8 @@ def update_statutory_mapping(db, data, updated_by):
         )
     compliance_ids = ','.join(str(x) for x in ids) + ","
     db.update(
-        table_name, ["compliance_ids"], [compliance_ids], where_condition
+        table_name, ["compliance_ids"],
+        [compliance_ids, statutory_mapping_id], where_condition
     )
     save_statutory_industry(
         db, statutory_mapping_id, data.industry_ids, False
@@ -808,7 +802,8 @@ def update_compliance(db, mapping_id, domain_id, datas, updated_by):
             )
             values.extend([repeats_every, repeats_type, 0, 0])
 
-        where_condition = "compliance_id = %s" % (compliance_id)
+        where_condition = "compliance_id = %s"
+        values.append(compliance_id)
         if (db.update(table_name, columns, values, where_condition)):
             if is_format:
                 convert_base64_to_file(file_name, file_content)
@@ -896,7 +891,8 @@ def change_compliance_status(db, mapping_id, is_active, updated_by):
     tbl_name = "tbl_compliances"
     columns = ["is_active", "updated_by"]
     values = [is_active, int(updated_by)]
-    where = "statutory_mapping_id=%s" % (mapping_id)
+    where = "statutory_mapping_id=%s"
+    values.append(mapping_id)
     db.update(tbl_name, columns, values, where)
 
 
@@ -905,7 +901,8 @@ def change_statutory_mapping_status(db, data, updated_by):
     is_active = int(data.is_active)
     columns = ["is_active", "updated_by"]
     values = [is_active, int(updated_by)]
-    where = "statutory_mapping_id=%s" % (statutory_mapping_id)
+    where = "statutory_mapping_id=%s"
+    values.append(statutory_mapping_id)
     db.update(tblStatutoryMappings, columns, values, where)
     change_compliance_status(db, statutory_mapping_id, is_active, updated_by)
     if is_active == 0:
@@ -924,14 +921,6 @@ def change_approval_status(db, data, updated_by):
     rejected_reason = data.rejected_reason
     notification_text = data.notification_text
     tbl_name = "tbl_statutory_mappings"
-    columns = [
-        "approval_status"
-    ]
-    values = [
-        approval_status
-    ]
-    where = "statutory_mapping_id=%s" % (statutory_mapping_id)
-
     q = "SELECT statutory_mapping, created_by, updated_by, domain_id, " + \
         " country_id, IFNULL(approval_status,0) " + \
         " from tbl_statutory_mappings " + \
@@ -947,6 +936,14 @@ def change_approval_status(db, data, updated_by):
             users["statutory_mapping"]
         )
         return msg,  None
+
+    columns = [
+        "approval_status"
+    ]
+    values = [
+        approval_status
+    ]
+    where = "statutory_mapping_id=%s"
     if approval_status == 2:
         # Rejected
         columns.extend(["rejected_reason"])
@@ -954,13 +951,13 @@ def change_approval_status(db, data, updated_by):
         notification_log_text = "Statutory Mapping: %s " + \
             " has been Rejected and reason is %s"
         notification_log_text = notification_log_text % (
-                provision, rejected_reason
-            )
+            provision, rejected_reason
+        )
     else:
         notification_log_text = "Statutory Mapping: %s " + \
             " has been Approved"
         notification_log_text = notification_log_text % (provision)
-
+    values.append(statutory_mapping_id)
     db.update(tbl_name, columns, values, where)
     if approval_status == 3:
         save_statutory_notifications(
