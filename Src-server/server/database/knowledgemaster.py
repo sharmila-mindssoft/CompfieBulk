@@ -673,6 +673,27 @@ def update_geography(
     else:
         raise process_error("E013")
 
+def check_geography_exists(db, geography_id):
+    #
+    # if geography used in mapping means return true else return false
+    # and geography has child means return true else false
+    #
+    is_exists = False
+    q = "select count(1) from tbl_statutory_geographies where geography_id = %s"
+    row = db.select_one(q, [geography_id])
+    if row[0] > 0 :
+        is_exists = True
+        raise process_error("E063")
+
+    if is_exists is False :
+        q1 = "select count(0) from tbl_geographies where FIND_IN_SET(%s, parent_ids)"
+        r = db.select_one(q1, [geography_id])
+        if r[0] > 0 :
+            is_exists = True
+            raise process_error("E064")
+
+    # return is_exists
+
 
 def change_geography_status(db, geography_id, is_active, updated_by):
     oldData = get_geography_by_id(db, geography_id)
@@ -685,6 +706,8 @@ def change_geography_status(db, geography_id, is_active, updated_by):
     param = []
     param.extend(values)
     param.append(geography_id)
+    # if is_active == 0 :
+    #     check_geography_exists(db, geography_id)
 
     if (db.update(table_name, columns, param, where_condition)):
         if is_active == 0:
@@ -961,7 +984,7 @@ def frame_geography_parent_mapping(rows):
         country_id = int(row["country_id"])
         geography_id = int(row["geography_id"])
         is_active = bool(row["is_active"])
-        mappings = row["parent_names"] + " >> " + row["geography_name"]
+        mappings = row["parent_names"]
         GEOGRAPHY_PARENTS[geography_id] = [
             mappings, is_active, country_id
         ]
