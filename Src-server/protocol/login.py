@@ -215,7 +215,7 @@ class Logout(Request):
         }
 
 def _init_Request_class_map():
-    classes = [Login, ForgotPassword, ResetTokenValidation, ResetPassword, 
+    classes = [Login, ForgotPassword, ResetTokenValidation, ResetPassword,
     ChangePassword, Logout, UpdateUserProfile]
     class_map = {}
     for c in classes:
@@ -372,6 +372,17 @@ class InvalidCredentials(Response):
                 self.captcha_text)
         }
 
+class InvalidMobileCredentials(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidMobileCredentials()
+
+    def to_inner_structure(self):
+        return {}
 
 class ClientDatabaseNotExists(Response):
     def __init__(self):
