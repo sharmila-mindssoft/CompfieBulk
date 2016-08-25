@@ -107,7 +107,6 @@ def get_assigned_statutories_report(db, request_data, user_id):
             " AND t1.domain_id = %s "
 
         query = query + qry
-        print query % tuple(param_list)
         rows = db.select_all(query, param_list)
         columns = [
             "client_statutory_id", "client_id", "geography_id",
@@ -197,22 +196,21 @@ def get_statutory_notifications_report_data(db, request_data):
     from_date = request_data.from_date
     to_date = request_data.to_date
     where_qry = ""
+    where_qry_val = [country_id, domain_id]
     if level_1_statutory_id is not None:
         where_qry += " AND tss.statutory_id IN " + \
             " (select statutory_id from tbl_statutories " + \
             " where FIND_IN_SET(%s, parent_ids)) "
-        where_qry = where_qry % (level_1_statutory_id)
+        where_qry_val.append(level_1_statutory_id)
 
     if from_date is not None and to_date is not None:
         from_date = string_to_datetime(from_date).date()
         to_date = string_to_datetime(to_date).date()
-        where_qry += " AND date(tsnl.updated_on) >= '%s' " + \
-            " AND date(tsnl.updated_on) <= '%s'"
-        where_qry = where_qry % (
-                from_date, to_date
-            )
-
-    query = "SELECT  distinct tsm.country_id, tsm.domain_id " + \
+        where_qry += " AND date(tsnl.updated_on) between %s " + \
+            " AND %s"
+        where_qry_val.extend([from_date, to_date])
+    query = "SELECT  ts.statutory_name, tsnl.statutory_provision, " + \
+        " tsnl.notification_text, tsnl.updated_on " + \
         " from `tbl_statutory_notifications_log` tsnl " + \
         " INNER JOIN `tbl_statutory_statutories` tss ON " + \
         " tsnl.statutory_mapping_id = tss.statutory_mapping_id " + \
@@ -220,49 +218,45 @@ def get_statutory_notifications_report_data(db, request_data):
         " tsm.statutory_mapping_id = tsnl.statutory_mapping_id " + \
         " INNER JOIN  `tbl_statutories` ts ON " + \
         " tss.statutory_id = ts.statutory_id " + \
-        " WHERE " + \
+        " WHERE  " + \
         " tsm.country_id = %s and " + \
-        " tsm.domain_id = %s " + \
-        " group by tsm.country_id, tsm.domain_id "
-    rows = db.select_all(query, [country_id, domain_id])
-    country_wise_notifications = []
-    for row in rows:
-        query = "SELECT  ts.statutory_name, tsnl.statutory_provision, " + \
-            " tsnl.notification_text, tsnl.updated_on " + \
-            " from `tbl_statutory_notifications_log` tsnl " + \
-            " INNER JOIN `tbl_statutory_statutories` tss ON " + \
-            " tsnl.statutory_mapping_id = tss.statutory_mapping_id " + \
-            " INNER JOIN `tbl_statutory_mappings` tsm ON " + \
-            " tsm.statutory_mapping_id = tsnl.statutory_mapping_id " + \
-            " INNER JOIN  `tbl_statutories` ts ON " + \
-            " tss.statutory_id = ts.statutory_id " + \
-            " WHERE  " + \
-            " tsm.country_id = %s and " + \
-            " tsm.domain_id = %s "
-        query += where_qry
-        notifications_rows = db.select_all(query, [row[0], row[1]])
-        notification_columns = [
-            "statutory_name", "statutory_provision",
-            "notification_text", "updated_on"
-        ]
-        statutory_notifications = convert_to_dict(
-            notifications_rows, notification_columns
-        )
-        notifications = []
-        for notification in statutory_notifications:
-            notifications.append(technoreports.NOTIFICATIONS(
+        " tsm.domain_id = %s "
+    query += where_qry
+    notifications_rows = db.select_all(query, where_qry_val)
+    notification_columns = [
+        "statutory_name", "statutory_provision",
+        "notification_text", "updated_on"
+    ]
+    statutory_notifications = convert_to_dict(
+        notifications_rows, notification_columns
+    )
+    return return_statutory_notifications(
+        statutory_notifications, country_id, domain_id
+    )
+
+
+def return_statutory_notifications(
+    statutory_notifications, country_id, domain_id
+):
+    notifications = []
+    for notification in statutory_notifications:
+        notifications.append(
+            technoreports.NOTIFICATIONS(
                 statutory_provision=notification["statutory_provision"],
                 notification_text=notification["notification_text"],
                 date_and_time=datetime_to_string(notification["updated_on"])
-            ))
-        country_wise_notifications.append(
+            )
+        )
+    final_result = []
+    if len(notifications) > 0:
+        final_result.append(
             technoreports.COUNTRY_WISE_NOTIFICATIONS(
-                country_id=row[0],
-                domain_id=row[1],
+                country_id=country_id,
+                domain_id=domain_id,
                 notifications=notifications
             )
         )
-    return country_wise_notifications
+    return final_result
 
 
 #
@@ -332,27 +326,26 @@ def get_client_details_report(
         country_id, client_id, business_group_id,
         legal_entity_id, division_id, unit_id, domain_ids
     )
-    columns = "unit_id, unit_code, unit_name, geography_name, " + \
+    columns = " unit_id, unit_code, unit_name, geography_name, " + \
         " address, domain_ids, postal_code, " + \
         " business_group_name, legal_entity_name, " + \
-        " division_name"
-    query = " SELECT %s " + \
-        " FROM %s tu " + \
+        " division_name "
+    query = " SELECT %s FROM %s tu " + \
         " INNER JOIN %s tg ON (tu.geography_id = tg.geography_id) " + \
         " LEFT JOIN %s tb ON (tb.business_group_id " + \
         " = tu.business_group_id) " + \
         " INNER JOIN %s tl ON " + \
         " (tl.legal_entity_id = tu.legal_entity_id) " + \
         " LEFT JOIN %s td ON (td.division_id = tu.division_id) " + \
-        " WHERE %s " + \
-        " ORDER BY tu.business_group_id, " + \
-        " tu.legal_entity_id, tu.division_id, " + \
-        " tu.unit_id ASC LIMIT %s, %s"
+        " WHERE %s "
     query = query % (
             columns, tblUnits, tblGeographies, tblBusinessGroups,
-            tblLegalEntities, tblDivisions, condition,
-            int(start_count), int(to_count)
+            tblLegalEntities, tblDivisions, condition
         )
+    query += " ORDER BY tu.business_group_id, " + \
+        " tu.legal_entity_id, tu.division_id, " + \
+        " tu.unit_id ASC LIMIT %s, %s"
+    params.extend([int(start_count), int(to_count)])
     rows = db.select_all(query, params)
     print rows
     columns_list = columns.replace(" ", "").split(",")
@@ -522,8 +515,8 @@ def get_compliance_list_report_techno(
     q_order = "ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX( " + \
         " t1.statutory_mapping, '>>', 1), '>>', -1), " + \
         " t2.frequency_id " + \
-        " limit %s, %s" % (from_count, to_count)
-
+        " limit %s, %s"
+    param_list.extend([from_count, to_count])
     q += qry_where + q_order
 
     rows = db.select_all(q, param_list)
