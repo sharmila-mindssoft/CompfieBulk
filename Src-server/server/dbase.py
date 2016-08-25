@@ -341,7 +341,7 @@ class Database(object):
     def generate_tuple_condition(self, column, values_list):
         condition = " 1 "
         condition_val = "%"
-        if values_list is not None:
+        if values_list not in [None, ""]:
             if len(values_list) > 1:
                 condition = " %s in %s " % (column, "%s")
                 condition_val = tuple(values_list)
@@ -357,7 +357,6 @@ class Database(object):
         self, columns, tables, aliases, join_type,
         join_conditions, where_condition, where_condition_val=None
     ):
-        print "********************************get_data_from_multiple_tables*******************************************"
         assert type(columns) in (list, str)
         param = []
         if type(columns) is str:
@@ -472,7 +471,7 @@ class Database(object):
     ########################################################
     # To form a update query
     ########################################################
-    def update(self, table, columns, values, condition, condition_val=None):
+    def update(self, table, columns, values, condition):
         query = "UPDATE "+table+" set "
         for index, column in enumerate(columns):
             if index < len(columns)-1:
@@ -482,10 +481,8 @@ class Database(object):
 
         query += " WHERE " + condition
         try:
-            if condition_val is not None:
-                values = values + condition_val
-            # print query
-            # print values
+            print query
+            print values
             res = self.execute(query, values)
             print '------------'
             print res
@@ -549,7 +546,9 @@ class Database(object):
                 newValue = str(value)
             columns = [column]
             values = [newValue]
-            res = self.update(table, columns, values, condition, condition_val)
+            values += condition_val
+            res = self.update(
+                table, columns, values, condition)
             return res
         except mysql.Error, e:
             print e
@@ -568,8 +567,8 @@ class Database(object):
             newValue = int(currentValue) + value
         else:
             newValue = value
-        values = [newValue]
-        return self.update(table, column, values, condition, condition_val)
+        values = [newValue] + condition_val
+        return self.update(table, column, values, condition)
 
     ########################################################
     # To check whether a row exists with the condition in the
