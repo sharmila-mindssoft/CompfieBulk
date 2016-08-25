@@ -385,21 +385,19 @@ class ClientDBCreate(object):
         db_server_column = "company_ids"
         db_server_value = self._client_id
 
-        db_server_condition = "ip = '%s' and port = '%s'" % (
-            str(self._host), str(self._port)
-        )
+        db_server_condition = "ip = %s and port = %s"
+        db_server_condition_val = [str(self._host), str(self._port)]
         print db_server_condition
 
         self._db.append(
             tblDatabaseServer, db_server_column, db_server_value,
-            db_server_condition
+            db_server_condition, db_server_condition_val
         )
-        db_server_column = "length"
+        db_server_column = ["length"]
         self._db.increment(
             tblDatabaseServer, db_server_column,
-            db_server_condition
+            db_server_condition, condition_val=db_server_condition_val
         )
-
         result = self._get_machine_details()
         if len(result) == 0:
             raise self.process_error("Client server is full")
@@ -408,12 +406,12 @@ class ClientDBCreate(object):
         server_port = result[0]["port"]
         machine_columns = "client_ids"
         machine_value = self._client_id
-        machine_condition = "ip='%s' and port='%s'" % (server_ip, server_port)
+        machine_condition = " ip = %s and port = %s"
+        machinery_condition_val = [str(server_ip), str(server_port)]
         self._db.append(
             tblMachines, machine_columns, machine_value,
-            machine_condition
+            machine_condition, machinery_condition_val
         )
-
         client_db_columns = [
             "client_id", "machine_id", "database_ip",
             "database_port", "database_username", "database_password",
@@ -427,7 +425,7 @@ class ClientDBCreate(object):
         ]
         length_rows = self._db.get_data(
             tblMachines, "client_ids",
-            machine_condition
+            machine_condition, machinery_condition_val
         )
         print "machine length_rows"
         if length_rows:
