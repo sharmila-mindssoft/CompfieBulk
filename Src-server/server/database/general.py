@@ -224,18 +224,16 @@ def get_user_forms(db, form_ids):
         "tf.form_type_id = tft.form_type_id"
     ]
     form_ids_list = [int(x) for x in form_ids.split(",")]
-    if len(form_ids_list) > 1:
-        where_condition = " tf.form_id in %s order by tf.form_order"
-        where_condition_val = [tuple(form_ids_list)]
-    else:
-        where_condition = " tf.form_id = %s order by tf.form_order"
-        where_condition_val = [form_ids_list[0]]
+    where_condition, where_condition_val = db.generate_tuple_condition(
+        "tf.form_id", form_ids_list
+    )
+    where_condition += " order by tf.form_order "
     join_type = "left join"
     rows = db.get_data_from_multiple_tables(
         columns, tables,
         aliases, join_type,
         join_conditions, where_condition,
-        where_condition_val
+        [where_condition_val]
     )
     return rows
 
@@ -393,17 +391,14 @@ def get_approval_status(db, approval_id=None):
 #
 def return_forms(db, form_ids=None):
     columns = "form_id, form_name"
-    condition = " form_id != '26' "
+    condition = " form_id != 26 "
     condition_val = None
     if form_ids is not None:
+        condition += " AND "
         form_ids_list = [int(x) for x in form_ids.split(",")]
-        if form_ids_list > 1:
-            condition += " AND form_id in %s "
-            condition_val = [tuple(form_ids_list)]
-        else:
-            condition += " AND form_id = %s "
-            condition_val = [form_ids_list[0]]
-    forms = db.get_data(tblForms, columns, condition, condition_val)
+        condition, condition_val = db.generate_tuple_condition(
+            "form_id", form_ids_list)
+    forms = db.get_data(tblForms, columns, condition, [condition_val])
     results = []
     for form in forms:
         results.append(
@@ -492,7 +487,6 @@ def get_audit_trails(
 #
 def update_profile(db, contact_no, address, session_user):
     columns = ["contact_no", "address"]
-    values = [contact_no, address]
     condition = "user_id= %s"
-    condition_val = [session_user]
-    db.update(tblUsers, columns, values, condition, condition_val)
+    values = [contact_no, address, session_user]
+    db.update(tblUsers, columns, values, condition)
