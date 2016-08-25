@@ -394,7 +394,7 @@ class ClientDBCreate(object):
             tblDatabaseServer, db_server_column, db_server_value,
             db_server_condition
         )
-        db_server_column = "length"
+        db_server_column = ["length"]
         self._db.increment(
             tblDatabaseServer, db_server_column,
             db_server_condition
