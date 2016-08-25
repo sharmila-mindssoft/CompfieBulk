@@ -387,13 +387,11 @@ def delete_grography_level(db, level_id):
     if row[0] > 0:
         return True
     else:
-        db.execute(
-            "delete from tbl_geographies where level_id = %s ", (level_id)
+        res = db.execute(
+            "delete from tbl_geography_levels where level_id = %s ", [level_id]
         )
-        db.execute(
-            "delete from tbl_geography_levels where level_id = %s ", (level_id)
-        )
-        raise process_error("E009")
+        if res is False :
+            raise process_error("E009")
 
 
 def save_geography_levels(db, country_id, levels, user_id):
@@ -401,36 +399,32 @@ def save_geography_levels(db, country_id, levels, user_id):
     created_on = get_date_time()
     newlist = sorted(levels, key=lambda k: k.level_position, reverse=True)
     result = False
+    d_l_id = None
     for n in newlist:
         if n.is_remove is True:
-            result = db.delete_grography_level(n.level_id)
-            if result:
+            print n.level_id
+            print n.level_position
+            result = delete_grography_level(db, n.level_id)
+            if result :
+                d_l_id = n.level_position
                 break
             else:
                 continue
-    if result:
-        return knowledgemaster.LevelShouldNotbeEmpty(n.level_position)
+    if result :
+        return knowledgemaster.LevelShouldNotbeEmpty(d_l_id)
 
-    for level in levels:
+    for level in sorted(levels, key=lambda k: k.level_id, reverse=True):
         name = level.level_name
         position = level.level_position
-        if level.level_id is None:
-            columns = [
-                "level_position", "level_name", "country_id",
-                "created_by", "created_on"
-            ]
-            values = [
-                position, name, int(country_id),
-                int(user_id), str(created_on)
-            ]
-            new_id = db.insert(table_name, columns, values)
-            if new_id is not False:
-                action = "New Geography levels added"
-                db.save_activity(user_id, 5, action)
-            else:
-                raise process_error("E010")
+        print '*' * 5
+        print position
+        print name
+        print level.is_remove
+        if level.is_remove :
+            continue
 
-        else:
+        if level.level_id is not None:
+            print "update"
             columns = [
                 "level_position", "level_name", "updated_by",
             ]
@@ -448,6 +442,24 @@ def save_geography_levels(db, country_id, levels, user_id):
                 db.save_activity(user_id, 5, action)
             else:
                 raise process_error("E011")
+
+        else :
+            print "insert"
+            columns = [
+                "level_position", "level_name", "country_id",
+                "created_by", "created_on"
+            ]
+            values = [
+                position, name, int(country_id),
+                int(user_id), str(created_on)
+            ]
+            new_id = db.insert(table_name, columns, values)
+            if new_id is not False:
+                action = "New Geography levels added"
+                db.save_activity(user_id, 5, action)
+            else:
+                raise process_error("E010")
+
     return knowledgemaster.SaveGeographyLevelSuccess()
 
 

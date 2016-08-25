@@ -136,7 +136,6 @@ class Database(object):
     def execute(self, query, param=None):
         cursor = self.cursor()
         assert cursor is not None
-
         try:
             if type(param) is tuple:
                 logger.logQuery(self._for_client, "execute", query % param)
@@ -604,8 +603,9 @@ class Database(object):
         return True
 
     def validate_session_token(self, session_token):
-        query = '''SELECT user_id FROM tbl_user_sessions
-            WHERE session_token=%s'''
+        query = '''SELECT t01.user_id FROM tbl_user_sessions t01
+            LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id and is_active = 1
+            WHERE  session_token=%s'''
         param = [session_token]
         row = self.select_one(query, param)
         user_id = None
