@@ -217,7 +217,7 @@ def return_statutory_mappings(db, data, is_report=None):
             map_data = GEOGRAPHY_PARENTS.get(int(g_id))
             if map_data is not None:
                 map_data = map_data[0]
-            geography_mapping_list.append(map_data)
+                geography_mapping_list.append(map_data)
         statutory_ids = [
             int(x) for x in d["statutory_ids"][:-1].split(',')
         ]
