@@ -67,7 +67,6 @@ class ClientDBCreate(object):
     def get_server_machine_details(self):
         print "inside get server machiner details"
         data = get_server_details(self._db)
-        print "data: {}".format(data)
         if len(data) <= 0:
             return technomaster.ServerIsFull()
         else:
@@ -225,11 +224,6 @@ class ClientDBCreate(object):
     def _create_admin_user(self, cursor):
         try:
             encrypted_password, password = generate_and_return_password()
-            # query = "insert into tbl_admin ( " + \
-            #   " username, password) values (%s, %s)"
-            # logger.logKnowledge("info", "create", "save user")
-            # cursor.execute(query, [self._email_id, encrypted_password])
-
             query = "insert into tbl_users (user_id, employee_name, " + \
                 " email_id, password, user_level, " + \
                 " is_primary_admin, is_service_provider, is_admin)" + \
@@ -379,7 +373,9 @@ class ClientDBCreate(object):
     def set_server_full(self, db_server_condition):
         columns = ["server_full"]
         values = [1]
-        self._db.update(tblMachines, columns, values, db_server_condition)
+        self._db.update(
+            tblMachines, columns, values, db_server_condition
+        )
 
     def update_client_db_details(self):
         db_server_column = "company_ids"
