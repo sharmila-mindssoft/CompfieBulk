@@ -316,8 +316,8 @@ class Database(object):
             query += " WHERE %s " % condition
             if order is not None:
                 query += order
-            # print query
-            # print condition_val
+            print query
+            print condition_val
             if condition_val is None:
                 logger.logQuery(self._for_client, "get_data", query)
                 rows = self.select_all(query)
@@ -338,13 +338,26 @@ class Database(object):
             result = convert_to_dict(rows, param)
         return result
 
+    def generate_tuple_condition(self, column, values_list):
+        condition = " 1 "
+        condition_val = "%"
+        if values_list is not None:
+            if len(values_list) > 1:
+                condition = " %s in %s " % (column, "%s")
+                condition_val = tuple(values_list)
+            else:
+                condition = " %s = %s " % (column, "%s")
+                condition_val = values_list[0]
+        return condition, condition_val
+
     ########################################################
     # To form a join query
     ########################################################
     def get_data_from_multiple_tables(
         self, columns, tables, aliases, join_type,
-        join_conditions, where_condition
+        join_conditions, where_condition, where_condition_val=None
     ):
+        print "********************************get_data_from_multiple_tables*******************************************"
         assert type(columns) in (list, str)
         param = []
         if type(columns) is str:
@@ -390,11 +403,16 @@ class Database(object):
             logger.logQuery(
                 self._for_client, "get_data_from_multiple_tables", query
             )
-            rows = self.select_all(query)
         else:
             logger.logQuery(
                 self._for_client, "get_data_from_multiple_tables", query
             )
+        if where_condition_val is not None:
+            print query
+            print where_condition_val
+            rows = self.select_all(query, where_condition_val)
+        else:
+            print query
             rows = self.select_all(query)
 
         result = []
@@ -466,8 +484,8 @@ class Database(object):
         try:
             if condition_val is not None:
                 values = values + condition_val
-            print query
-            print values
+            # print query
+            # print values
             res = self.execute(query, values)
             print '------------'
             print res
@@ -521,9 +539,9 @@ class Database(object):
     # To concate the value with the existing value in the
     # specified column
     ########################################################
-    def append(self, table, column, value, condition):
+    def append(self, table, column, value, condition, condition_val):
         try:
-            rows = self.get_data(table, column, condition)
+            rows = self.get_data(table, column, condition, condition_val)
             currentValue = rows[0][column]
             if currentValue is not None:
                 newValue = currentValue+","+str(value)
@@ -531,7 +549,7 @@ class Database(object):
                 newValue = str(value)
             columns = [column]
             values = [newValue]
-            res = self.update(table, columns, values, condition)
+            res = self.update(table, columns, values, condition, condition_val)
             return res
         except mysql.Error, e:
             print e
@@ -543,15 +561,15 @@ class Database(object):
     # float, double values
     ########################################################
 
-    def increment(self, table, column, condition, value=1):
-        rows = self.get_data(table, column, condition)
-        currentValue = rows[0][column[0]]
+    def increment(self, table, column, condition, value=1, condition_val=None):
+        rows = self.get_data(table, column, condition, condition_val)
+        currentValue = int(rows[0][column[0]])
         if currentValue is not None:
             newValue = int(currentValue) + value
         else:
             newValue = value
         values = [newValue]
-        return self.update(table, column, values, condition)
+        return self.update(table, column, values, condition, condition_val)
 
     ########################################################
     # To check whether a row exists with the condition in the
