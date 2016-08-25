@@ -200,7 +200,6 @@ def get_countries_for_user(db, user_id):
 
 def return_countries(data):
     results = []
-
     for d in data:
         results.append(core.Country(
             d["country_id"], d["country_name"], bool(d["is_active"])
@@ -404,13 +403,13 @@ def update_user_group(
         "user_group_name", "form_category_id", "form_ids", "updated_on",
         "updated_by"
     ]
+    condition = "user_group_id= %s "
     values = [
         user_group_name, form_category_id,
-        ",".join(str(x) for x in form_ids), time_stamp, 0
+        ",".join(str(x) for x in form_ids), time_stamp, 0,
+        user_group_id
     ]
-    condition = "user_group_id= %s "
-    condition_val = [user_group_id]
-    if db.update(tblUserGroups, columns, values, condition, condition_val):
+    if db.update(tblUserGroups, columns, values, condition):
         action = "Updated User Group \"%s\"" % user_group_name
         db.save_activity(0, 3, action)
         return True
@@ -421,15 +420,15 @@ def update_user_group(
 def update_user_group_status(db, user_group_id, is_active):
     time_stamp = get_date_time()
     columns = ["is_active", "updated_by", "updated_on"]
-    values = [is_active, 0, time_stamp]
     condition = "user_group_id=%s"
-    condition_val = [user_group_id]
+    values = [is_active, 0, time_stamp, user_group_id]
     result = db.update(
-        tblUserGroups, columns, values, condition, condition_val
+        tblUserGroups, columns, values, condition
     )
     if result is False:
         raise process_error("E032")
     action_columns = "user_group_name"
+    condition_val = [user_group_id]
     rows = db.get_data(
         tblUserGroups, action_columns, condition, condition_val
     )
@@ -548,7 +547,8 @@ def notify_user(
             email_id, password, employee_name, employee_code
         )
     except Exception, e:
-        print "Error while sending email : {}".format(e)
+        print "Error while sending email"
+        print e
 
 
 def update_user(
@@ -565,20 +565,18 @@ def update_user(
         "contact_no", "address", "designation",
         "updated_on", "updated_by"
     ]
+    user_condition = "user_id = %s"
     user_values = [
         user_group_id, employee_name, employee_code, contact_no,
-        address, designation, current_time_stamp, 0
+        address, designation, current_time_stamp, 0, user_id
     ]
-    user_condition = "user_id = %s"
-    user_condition_val = [user_id]
     result1 = db.update(
-        tblUsers, user_columns, user_values,
-        user_condition, user_condition_val
+        tblUsers, user_columns, user_values, user_condition
     )
     if result1 is False:
         raise process_error("E036")
-    db.delete(tblUserCountries, user_condition, user_condition_val)
-    db.delete(tblUserDomains, user_condition, user_condition_val)
+    db.delete(tblUserCountries, user_condition, [user_id])
+    db.delete(tblUserDomains, user_condition, [user_id])
 
     country_columns = ["user_id", "country_id"]
     country_values_list = []
@@ -613,8 +611,9 @@ def update_user_status(db, user_id, is_active):
     values = [is_active, get_date_time(), 0]
     condition = "user_id=%s"
     condition_val = [user_id]
+    values += condition_val
     result = db.update(
-        tblUsers, columns, values, condition, condition_val
+        tblUsers, columns, values, condition
     )
     if result is False:
         raise process_error("E039")
