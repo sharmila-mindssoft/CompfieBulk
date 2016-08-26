@@ -92,7 +92,9 @@ client_message = {
     "E024": "Client user status update failed in core",
     "E025": "Client unit closure failed in core",
     "E026": "Client opted status save failed in core",
-    "E027": "Client active status validation failed"
+    "E027": "Client active status validation failed",
+    "E028": "Email notification got failed",
+    "E029": "Saving reset token failed",
 }
 
 

@@ -101,7 +101,7 @@ class ForgotPassword(Request):
         short_name = parse_structure_OptionalType_CustomTextType_100(short_name)
         login_type = data.get("login_type")
         login_type = parse_structure_EnumType_core_SESSION_TYPE(login_type)
-        return ForgotPassword(username, short_name)
+        return ForgotPassword(username, short_name, login_type)
 
     def to_inner_structure(self):
         return {

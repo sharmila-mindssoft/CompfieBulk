@@ -63,14 +63,19 @@ function processForgotpassword(username, shortName, callback) {
       JSON.stringify(requestFrame, null, " "),
       function (data) {
           var data = JSON.parse(data);
-          var status = data[0];
-          var response = data[1];
-          matchString = 'success';
-          if (status.toLowerCase().indexOf(matchString) != -1){
-              callback(null, response);
+          if (typeof data != "string") {
+            var status = data[0];
+            var response = data[1];
           }
           else {
-              callback(status, null);
+            status = data;
+          }
+          matchString = 'success';
+          if (status.toLowerCase().indexOf(matchString) != -1){
+            callback(null, response);
+          }
+          else {
+            callback(status, null);
           }
       }
   );

@@ -18,6 +18,7 @@ from server.clientdatabase.general import (
     validate_reset_token, update_password, delete_used_token,
     remove_session, update_profile, verify_password
     )
+from server.exceptionmessage import client_process_error
 
 __all__ = [
     "process_login_request",
@@ -298,18 +299,18 @@ def send_reset_link(db, user_id, username, short_name):
     reset_link = "%sreset_password/%s/%s" % (
         CLIENT_URL, short_name, reset_token)
 
-    condition = "user_id = '%d' " % user_id
-    db.delete(tblEmailVerification, condition)
+    condition = "user_id = %s "
+    db.delete(tblEmailVerification, condition, [user_id])
 
     columns = ["user_id", "verification_code"]
-    values_list = [user_id, reset_token]
+    values_list = [user_id, str(reset_token)]
     if db.insert(tblEmailVerification, columns, values_list):
         if email().send_reset_link(db, user_id, username, reset_link):
             return True
         else:
-            print "Send email failed"
+            raise client_process_error("E028")
     else:
-        print "Saving reset token failed"
+        raise client_process_error("E029")
 
 
 def process_reset_token(db, request):
