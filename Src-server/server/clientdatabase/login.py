@@ -200,7 +200,7 @@ def save_login_failure(db, user_id, session_user_ip):
         increament_cond_val = [user_id]
         db.increment(
             tblUserLoginHistory, increament_column, increament_cond,
-            increament_cond_val
+            condition_val=increament_cond_val
         )
 
 
