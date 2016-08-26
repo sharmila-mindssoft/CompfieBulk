@@ -40,8 +40,8 @@ def get_version(db):
 def get_users_for_mobile(db, session_user):
         where_condition = " WHERE t2.unit_id IN " + \
             " (select distinct unit_id " + \
-            " from tbl_user_units where user_id = %s)" % (session_user)
-
+            " from tbl_user_units where user_id = %s)"
+        where_qry_val = None
         query = "SELECT distinct t1.user_id, t1.employee_name, " + \
             " t1.employee_code, " + \
             " t1.seating_unit_id, t1.user_level, " + \
@@ -66,7 +66,8 @@ def get_users_for_mobile(db, session_user):
             session_user != get_admin_id(db)
         ):
             query = query + where_condition
-        rows = db.select_all(query)
+            where_qry_val = [session_user]
+        rows = db.select_all(query, where_qry_val)
         columns = [
             "user_id", "employee_name", "employee_code",
             "seating_unit_id", "user_level",
@@ -92,12 +93,13 @@ def get_countries_for_user(db, user_id, client_id=None):
     admin_id = get_admin_id(db)
     query = "SELECT distinct t1.country_id, t1.country_name, " + \
         " t1.is_active FROM tbl_countries t1 "
+    where_qry_val = None
     if user_id > 0 and user_id != admin_id:
         query = query + " INNER JOIN tbl_user_countries t2 " + \
-            " ON t1.country_id = t2.country_id WHERE t2.user_id = %s" % (
-                user_id
-            )
-    rows = db.select_all(query)
+            " ON t1.country_id = t2.country_id " + \
+            " WHERE t2.user_id = %s"
+        where_qry_val = [user_id]
+    rows = db.select_all(query, where_qry_val)
     columns = ["country_id", "country_name", "is_active"]
     result = convert_to_dict(rows, columns)
     return return_countries(result)
@@ -116,11 +118,13 @@ def get_domains_for_user(db, user_id, client_id=None):
         admin_id = get_admin_id(db)
         query = "SELECT distinct t1.domain_id, t1.domain_name, " + \
             " t1.is_active FROM tbl_domains t1 "
+        where_qry_val = None
         if user_id > 0 and user_id != admin_id:
             query = query + " INNER JOIN tbl_user_domains t2 ON " + \
                 " t1.domain_id = t2.domain_id " + \
-                " WHERE t2.user_id = %s" % (user_id)
-        rows = db.select_all(query)
+                " WHERE t2.user_id = %s"
+            where_qry_val = [user_id]
+        rows = db.select_all(query, where_qry_val)
         columns = ["domain_id", "domain_name", "is_active"]
         result = convert_to_dict(rows, columns)
         return return_domains(result)
@@ -202,16 +206,21 @@ def get_units_for_assign_compliance(db, session_user, is_closed=None):
         is_close = '%'
     if session_user > 0 and session_user != get_admin_id(db):
         qry = " AND t1.unit_id in (select distinct unit_id " + \
-            " from tbl_user_units where user_id = %s)" % (int(session_user))
+            " from tbl_user_units where user_id = %s)"
+        qry_val = [int(session_user)]
     else:
         qry = ""
+        qry_val = None
     query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, " + \
         " t1.division_id, t1.legal_entity_id, t1.business_group_id, " + \
         " t1.address, t1.country_id, domain_ids " + \
-        " FROM tbl_units t1 WHERE t1.is_closed like %s" % is_close
+        " FROM tbl_units t1 WHERE t1.is_closed like %s"
+    param = [is_close]
     query += qry
+    if qry_val is not None:
+        param.extend(qry_val)
 
-    rows = db.select_all(query)
+    rows = db.select_all(query, param)
     columns = [
         "unit_id", "unit_code", "unit_name",
         "division_id", "legal_entity_id",
@@ -250,7 +259,7 @@ def return_units_for_assign_compliance(result):
 def get_compliance_applicability_for_mobile(db, session_user):
     user_id = session_user
     if session_user == 0 or session_user == get_admin_id(db):
-        user_id = '%'
+        user_id = "%"
     q = "SELECT t1.country_id, t1.domain_id, t1.unit_id, " + \
         " t2.compliance_id, t2.compliance_applicable, " +  \
         " t2.compliance_opted, t3.compliance_task, " + \
@@ -265,9 +274,9 @@ def get_compliance_applicability_for_mobile(db, session_user):
         " tbl_compliances t3 ON t2.compliance_id = t3.compliance_id " + \
         " WHERE t1.is_new = 1 AND t1.unit_id in " + \
         " (select unit_id from tbl_user_units where " + \
-        " user_id LIKE '%s')" % (user_id)
+        " user_id LIKE %s)"
 
-    rows = db.select_all(q)
+    rows = db.select_all(q, [user_id])
     result = convert_to_dict(rows, [
         "country_id", "domain_id", "unit_id",
         "compliance_id", "compliance_applicable",
@@ -308,20 +317,16 @@ def get_user_unit_ids(db, user_id, client_id=None):
         columns = "unit_id"
         table = tblUnits
         result = None
-        condition = 1
+        condition = ""
+        condition_val = None
         if user_id > 0:
             table = tblUserUnits
-            condition = " user_id = '%d'" % user_id
+            condition = " user_id = %s"
+            condition_val = [user_id]
         rows = db.get_data(
-            table, columns, condition
+            table, columns, condition, condition_val
         )
-        if rows:
-            result = ""
-            for index, row in enumerate(rows):
-                if index == 0:
-                    result += str(row[0])
-                else:
-                    result += ",%s" % str(row[0])
+        result = ",".join(str(row[0]) for row in rows)
         return result
 
 
@@ -332,9 +337,12 @@ def get_trend_chart_for_mobile(db, session_user):
     if unit_ids is not None:
         for unit_id in [int(x) for x in unit_ids.split(",")]:
             unit_details_column = "country_id, domain_ids"
-            unit_details_condition = "unit_id = '%d'" % unit_id
+            unit_details_condition = "unit_id = %s"
+            unit_details_condition_val = [unit_id]
             rows = db.get_data(
-                tblUnits, unit_details_column, unit_details_condition
+                tblUnits, unit_details_column,
+                unit_details_condition,
+                unit_details_condition_val
             )
             country_id = rows[0][0]
             domain_ids = rows[0][1]
@@ -357,13 +365,12 @@ def get_trend_chart_for_mobile(db, session_user):
                     history_columns = "group_concat(compliance_history_id)"
                     history_condition = " compliance_id in " + \
                         " ( SELECT compliance_id " + \
-                        " FROM %s WHERE domain_id = '%d') " + \
-                        " AND unit_id = '%d'" % (
-                            tblCompliances, domain_id, unit_id
-                        )
+                        " FROM tbl_compliances WHERE domain_id = %s) " + \
+                        " AND unit_id = %s "
+                    history_condition_val = [domain_id, unit_id]
                     history_rows = db.get_data(
                         tblComplianceHistory, history_columns,
-                        history_condition
+                        history_condition, history_condition_val
                     )
                     compliance_history_ids = history_rows[0][0]
 
@@ -371,17 +378,19 @@ def get_trend_chart_for_mobile(db, session_user):
                         for index, dates in enumerate(start_end_dates):
                             columns = "count(*) as total, " + \
                                 " sum(case when approve_status = 1 then 1 " + \
-                                "else 0 end) as complied"
-                            condition = "due_date " + \
-                                " between '{}' and '{}'".format(
-                                    dates["start_date"], dates["end_date"]
-                                )
-                            condition += " and compliance_history_id " + \
-                                " in ({})".format(
-                                    compliance_history_ids)
+                                "else 0 end) as complied "
+                            condition = " due_date  between %s and %s and"
+                            hist_cond, his_cond_val = db.generate_tuple_condition(
+                                "compliance_history_id", compliance_history_ids
+                            )
+                            condition = condition + hist_cond
+                            condition_val = [
+                                dates["start_date"], dates["end_date"],
+                                his_cond_val
+                            ]
                             rows = db.get_data(
                                 tblComplianceHistory,
-                                columns, condition
+                                columns, condition, condition_val
                             )
                             if len(rows) > 0:
                                 row = rows[0]
@@ -416,10 +425,9 @@ def get_compliance_history_for_mobile(db, user_id, request):
     if user_id == 0:
         user_qry = '1'
     else:
-        user_qry = "(t1.completed_by LIKE '%s' " + \
-            " OR t1.concurred_by LIKE '%s' " +  \
-            " OR t1.approved_by LIKE '%s')"
-        user_qry = user_qry % (user_id, user_id, user_id)
+        user_qry = "(t1.completed_by LIKE %s " + \
+            " OR t1.concurred_by LIKE %s " +  \
+            " OR t1.approved_by LIKE %s)"
 
     q = "SELECT t1.compliance_history_id, t1.unit_id, " + \
         " t1.compliance_id, t1.start_date, t1.due_date, " + \
@@ -430,10 +438,10 @@ def get_compliance_history_for_mobile(db, user_id, request):
         " t1.concurred_by, t1.concurred_on, IFNULL(t1.approve_status, 0), " + \
         " t1.approved_by, t1.approved_on " + \
         " FROM tbl_compliance_history t1 " + \
-        " WHERE t1.compliance_history_id > %s AND %s" % (
-            compliance_history_id, user_qry
-        )
-    rows = db.select_all(q)
+        " WHERE t1.compliance_history_id > %s AND "
+    q = q + user_qry
+    param = [compliance_history_id, user_id, user_id, user_id]
+    rows = db.select_all(q, param)
     column = [
         "compliance_history_id", "unit_id", "compliance_id",
         "start_date", "due_date", "completion_date",
