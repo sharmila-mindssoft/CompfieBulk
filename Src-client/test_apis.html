@@ -10,6 +10,7 @@
 		<script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
 		<script type="text/javascript" src="/files/desktop/common/js/client-mirror.js"></script>
 		<script type="text/javascript">
+			var CLIENT_BASE_URL = "http://localhost:8080/api/";
 			var file_list = []
 			var logo_file;
 			var jsonResponse;
@@ -36,19 +37,22 @@
 			}
 
 			function login () {
-
 				var request = [
-					"Login",
-					 {
-					  "login_type": "Android",
-					  "username": "admin",
-					  "password": "123456",
-					  "short_name": null,
-					  "ip": "122.164.164.35"
-					 }
+					"tvs",
+					[
+						"Login",
+						 {
+						  "login_type": "Android",
+						  "username": "sharmila@mindssoft.com",
+						  "password": "Admin@123456",
+						  "short_name": "tvs",
+						  "ip": "122.164.164.35"
+						 }
+					]
 				];
+				console.log(toJSON(request));
 		        jQuery.post(
-		            BASE_URL + "login",
+		            CLIENT_BASE_URL + "login",
 		            toJSON(request),
 		            function (data) {
 		                var data = parseJSON(data);
@@ -57,7 +61,6 @@
 		                matchString = 'success';
 		                if (status.toLowerCase().indexOf(matchString) != -1){
 		                    console.log("mirror success");
-		                    initSession(response)
 		                    callback(null, response);
 		                }
 		                else {
@@ -472,11 +475,23 @@
 			}
 
 			function getTrendChart(){
-				country_ids = [1]
-				domain_ids = [1]
-				filter_type = "Unit"
-        		filter_ids = [1]
-        		client_mirror.getTrendChart(country_ids, domain_ids, filter_type, filter_ids, callback);
+				// country_ids = [1]
+				// domain_ids = [1]
+				// filter_type = "Unit"
+    //     		filter_ids = [1]
+    //     		client_mirror.getTrendChart(country_ids, domain_ids, filter_type, filter_ids, callback);
+    			request = [
+    				"getTrendChart",
+    				{}
+    			];
+    			clientApiRequest(
+					"mobile",
+					request,
+					function(status, response) {
+						console.log(status);
+						console.log(response)
+					}
+				)
 			}
 			function getTrendChartDrillDown(){
 				country_ids = [1]
@@ -651,59 +666,80 @@
 				);
 			}
 			function getTrendChartForMobile(){
-		        sessionToken = "1-b548802ecd8d4ec6a98f5d04f8169096";
 		        request = [
 		        	"GetTrendChartData",
 		        	{
 		        		"user_id": 0
 		        	}
 		        ];
-		        var requestFrame = {
-		            "session_token": sessionToken,
-		            "request": request
-		        };
-		        var body = [
-		            sessionToken, requestFrame
-		        ]
-		        jQuery.post(
-		            "/api/mobile",
-		            toJSON(body),
-		            function(data) {
-		                var data = parseJSON(data);
-		                var status = data[0];
-		                var response = data[1];
-		                matchString = 'success';
-		                log("API STATUS :" + status)
-
-		                if (status.toLowerCase().indexOf(matchString) != -1) {
-		                    callback(null, response);
-		                }
-		                else if (status == "InvalidSessionToken") {
-		                    // console.log(status)
-		                    redirect_login()
-		                }
-		                else {
-		                    callback(status, null)
-		                }
-
-		            }
-		        )
-		            .fail(
-		                function(jqXHR, textStatus, errorThrown) {
-		                    // alert("jqXHR:"+jqXHR.status);
-		                    // alert("textStatus:"+textStatus);
-		                    // alert("errorThrown:"+errorThrown);
-		                    // callback(error, null);
-		                }
-		        );
+		        clientApiRequest(
+					"mobile",
+					request,
+					function(status, response) {
+						console.log(status);
+						console.log(response)
+					}
+				)
+	
 			}
 		</script>
 		<script type="text/javascript">
+		function clientApiRequest(callerName, request, callback) {
+        var sessionToken = "1-669c9ebc2aca488ba153d79aebba03ea";
+        var requestFrame = {
+            "session_token": sessionToken,
+            "request": request
+        };
+        var body = [
+            sessionToken, requestFrame
+        ]
+        jQuery.post(
+            CLIENT_BASE_URL + callerName,
+            toJSON(body),
+            function(data) {
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                matchString = 'success';
+                console.log("API STATUS :" + status);
+                ///callback(null, response)
+                if (status.toLowerCase().indexOf(matchString) != -1) {
+                    callback(null, response);
+                }
+                else if (status == "InvalidSessionToken") {
+                    // console.log(status)
+                    redirect_login()
+                }
+                else {
+                    if (status == "SavePastRecordsFailed"){
+                        callback(data, null);
+                    }else{
+                        callback(status, response);
+                    }
+
+                }
+
+            }
+        )
+            .fail(
+                function(jqXHR, textStatus, errorThrown) {
+                    // alert("jqXHR:"+jqXHR.status);
+                    // alert("textStatus:"+textStatus);
+                    // alert("errorThrown:"+errorThrown);
+                    if (errorThrown == "Not Found"){
+                        alert("Server connection not found");
+                        redirect_login();
+                    }
+                    else
+                        callback(jqXHR["responseText"], errorThrown)
+                }
+        );
+    }
 			function get_mobile_version() {
 				request = [
 					"GetVersions", {}
 				]
-				client_mirror.clientApiRequest(
+				clientApiRequest(
 					"mobile",
 					request,
 					function(status, response) {
@@ -716,7 +752,7 @@
 				request = [
 					"GetUsers", {}
 				];
-				client_mirror.clientApiRequest(
+				clientApiRequest(
 					"mobile",
 					request,
 					function(status, response) {
@@ -729,7 +765,7 @@
 				request = [
 					"GetUnitDetails", {}
 				];
-				client_mirror.clientApiRequest(
+				clientApiRequest(
 					"mobile", request,
 					function(status, response) {
 						console.log(status);
@@ -741,7 +777,7 @@
 				request = [
 					"GetComplianceApplicabilityStatus", {}
 				];
-				client_mirror.clientApiRequest(
+				clientApiRequest(
 					"mobile", request,
 					function(status, response) {
 						console.log(status);
@@ -755,7 +791,7 @@
 						"compliance_history_id": 0
 					}
 				];
-				client_mirror.clientApiRequest(
+				clientApiRequest(
 					"mobile", request,
 					function(status, response) {
 						console.log(status);
@@ -767,7 +803,7 @@
 				request = [
 					"CheckDiskSpace", {}
 				];
-				client_mirror.clientApiRequest(
+				clientApiRequest(
 					"mobile", request,
 					function(status, response) {
 						console.log(status);
