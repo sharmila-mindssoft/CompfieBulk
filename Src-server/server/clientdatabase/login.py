@@ -200,7 +200,7 @@ def save_login_failure(db, user_id, session_user_ip):
         increament_cond_val = [user_id]
         db.increment(
             tblUserLoginHistory, increament_column, increament_cond,
-            increament_cond_val
+            condition_val=increament_cond_val
         )
 
 
@@ -211,8 +211,9 @@ def delete_login_failure_history(db, user_id):
 
 
 def get_login_attempt_and_time(db, user_id):
+    print "user_id ", user_id
     columns = ["login_attempt", "login_time"]
-    condition = " user_id=%s "
+    condition = " user_id = %s "
     condition_val = [user_id]
     rows = db.get_data(
         tblUserLoginHistory, columns, condition, condition_val

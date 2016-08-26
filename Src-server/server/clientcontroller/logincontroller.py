@@ -258,8 +258,10 @@ def user_login_response(db, data, client_id, ip):
         for form_id in report_form_ids:
             if form_id not in form_ids_list:
                 form_ids_list.append(form_id)
-        form_ids = ",".join(str(x) for x in form_ids_list)
-    menu = process_user_forms(db, form_ids, client_id, 0)
+    else :
+        form_ids_list = form_ids
+        # form_ids = ",".join(str(x) for x in form_ids_list)
+    menu = process_user_forms(db, form_ids_list, client_id, 0)
     return login.UserLoginSuccess(
         user_id, session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, None, None,
