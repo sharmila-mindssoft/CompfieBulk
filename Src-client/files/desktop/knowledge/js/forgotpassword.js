@@ -48,13 +48,14 @@ function processForgotpassword(username, shortName, callback) {
       var request = [
         "ForgotPassword", {
             "username": username,
-            "short_name": null
+            "short_name": null,
+            "login_type": "Web"
         }
       ];
       var requestFrame = request;
       BASE_URL = "/knowledge/api/"
   }
-  
+
   jQuery.post(
       BASE_URL + "login",
       JSON.stringify(requestFrame, null, " "),
