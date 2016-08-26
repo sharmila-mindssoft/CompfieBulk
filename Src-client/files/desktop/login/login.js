@@ -199,7 +199,6 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
         else if (status.indexOf("timeout") >= 0) {
             disp_message = message.connection_timeout
         }else{
-            alert(status);
             status = status.replace(/([A-Z])/g, ' $1').trim();
             disp_message = status
         }
