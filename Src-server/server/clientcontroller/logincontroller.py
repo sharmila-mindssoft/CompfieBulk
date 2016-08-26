@@ -16,7 +16,7 @@ from server.clientdatabase.general import (
     get_form_ids_for_admin, get_report_form_ids,
     verify_username, get_client_id_from_short_name,
     validate_reset_token, update_password, delete_used_token,
-    remove_session, update_profile, verify_password
+    remove_session, update_profile, verify_password, get_user_name_by_id
     )
 from server.exceptionmessage import client_process_error
 
@@ -308,8 +308,12 @@ def send_reset_link(db, user_id, username, short_name):
 
     columns = ["user_id", "verification_code"]
     values_list = [user_id, str(reset_token)]
-    if db.insert(tblEmailVerification, columns, values_list):
-        if email().send_reset_link(db, user_id, username, reset_link):
+    row_id = db.insert(tblEmailVerification, columns, values_list)
+    employee_name = get_user_name_by_id(db, user_id)
+    if(row_id >= 0):
+        if email().send_reset_link(
+            db, user_id, username, reset_link, employee_name
+        ):
             return True
         else:
             raise client_process_error("E028")
