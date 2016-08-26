@@ -1,3 +1,4 @@
+from protocol import (core)
 from server.clientdatabase.tables import *
 
 from server.common import (

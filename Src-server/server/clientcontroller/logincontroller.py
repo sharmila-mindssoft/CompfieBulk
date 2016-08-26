@@ -18,6 +18,7 @@ from server.clientdatabase.general import (
     validate_reset_token, update_password, delete_used_token,
     remove_session, update_profile, verify_password
     )
+from server.exceptionmessage import client_process_error
 
 __all__ = [
     "process_login_request",
@@ -161,8 +162,8 @@ def mobile_user_admin_response(db, login_type, client_id, ip):
     session_token = add_session(
         db, user_id, session_type, ip, "Administrator", client_id
     )
-    form_ids = get_form_ids_for_admin(db)
-    menu = process_user_forms(db, form_ids, client_id, 1)
+    # form_ids = get_form_ids_for_admin(db)
+    # menu = process_user_forms(db, form_ids, client_id, 1)
     employee_name = "Administrator"
     client_info = get_client_group(db)
     group_name = client_info["group_name"]
@@ -176,7 +177,7 @@ def mobile_user_admin_response(db, login_type, client_id, ip):
         group_id,
         group_name,
         configuration,
-        menu
+        True, True, True
     )
 
 
@@ -212,7 +213,15 @@ def mobile_user_login_respone(db, data, login_type, client_id, ip):
             if form_id not in form_ids_list:
                 form_ids_list.append(form_id)
         form_ids = ",".join(str(x) for x in form_ids_list)
-    menu = process_user_forms(db, form_ids, client_id, 0)
+    form_ids = [int(x) for x in form_ids.split(",")]
+    dashboard = compliance_task = compliance_approve = False
+    if 1 in form_ids :
+        dashboard = True
+    elif 9 in form_ids :
+        compliance_task = True
+    elif 11 in form_ids :
+        compliance_approve = True
+    # menu = process_user_forms(db, form_ids, client_id, 0)
     return mobile.ClientUserLoginResponseSuccess(
         data["user_id"],
         data["employee_name"],
@@ -220,7 +229,9 @@ def mobile_user_login_respone(db, data, login_type, client_id, ip):
         group_id,
         group_name,
         configuration,
-        menu
+        dashboard,
+        compliance_task,
+        compliance_approve
     )
 
 
@@ -288,18 +299,18 @@ def send_reset_link(db, user_id, username, short_name):
     reset_link = "%sreset_password/%s/%s" % (
         CLIENT_URL, short_name, reset_token)
 
-    condition = "user_id = '%d' " % user_id
-    db.delete(tblEmailVerification, condition)
+    condition = "user_id = %s "
+    db.delete(tblEmailVerification, condition, [user_id])
 
     columns = ["user_id", "verification_code"]
-    values_list = [user_id, reset_token]
+    values_list = [user_id, str(reset_token)]
     if db.insert(tblEmailVerification, columns, values_list):
         if email().send_reset_link(db, user_id, username, reset_link):
             return True
         else:
-            print "Send email failed"
+            raise client_process_error("E028")
     else:
-        print "Saving reset token failed"
+        raise client_process_error("E029")
 
 
 def process_reset_token(db, request):

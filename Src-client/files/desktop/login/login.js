@@ -189,9 +189,15 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
 
     function onFailure(data) {
         //console.log("status"+status);
-        status = data[0]
-        captcha_text = data[1].captcha_text
-        storeCaptcha(captcha_text);
+        if (typeof data != "string") {
+            status = data[0];
+            captcha_text = data[1].captcha_text;
+            storeCaptcha(captcha_text);
+        }
+        else {
+            status = data;
+        }
+
         var disp_message = message.invalid_username_password;
         if (status == "NotConfigured"){
             disp_message = message.accountconfiguration_underprogress;

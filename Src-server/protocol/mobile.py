@@ -462,7 +462,7 @@ class ClientUserLoginResponseSuccess(Response):
     def __init__(
         self, user_id, name, session_token,
         group_id, group_name, configuration,
-        menu
+        dashboard, compliance_task_list, compliance_approvals
     ):
         self.user_id = user_id
         self.name = name
@@ -470,14 +470,18 @@ class ClientUserLoginResponseSuccess(Response):
         self.group_id = group_id
         self.group_name = group_name
         self.configuration = configuration
-        self.menu = menu
+        self.dashboard = dashboard
+        self.compliance_task_list = compliance_task_list
+        self.compliance_approvals = compliance_approvals
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "user_id", "name", "session_token",
             "group_id", "group_name",
-            "configuration", "menu"
+            "configuration",
+            "dashboard", "compliance_task_list",
+            "compliance_approvals"
         ])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
@@ -491,9 +495,17 @@ class ClientUserLoginResponseSuccess(Response):
         group_name = parse_structure_CustomTextType_100(group_name)
         configuration = data.get("configuration")
         configuration = parse_structure_VectorType_RecordType_core_ClientConfiguration(configuration)
-        menu = data.get("menu")
-        menu = parse_structure_RecordType_core_Menu(menu)
-        return ClientUserLoginResponseSuccess(user_id, name, session_token, group_id, group_name, configuration, menu)
+        dashboard = data.get("dashboard")
+        dashboard = parse_structure_Bool(dashboard)
+        compliance_task_list = data.get("compliance_task_list")
+        compliance_task_list = parse_structure_Bool(compliance_task_list)
+        compliance_approvals = data.get("compliance_approvals")
+        compliance_approvals = parse_structure_Bool(compliance_approvals)
+        return ClientUserLoginResponseSuccess(
+            user_id, name, session_token, group_id,
+            group_name, configuration,
+            dashboard, compliance_task_list, compliance_approvals
+        )
 
     def to_inner_structure(self):
         return {
@@ -503,7 +515,9 @@ class ClientUserLoginResponseSuccess(Response):
             "group_id": to_structure_UnsignedIntegerType_32(self.group_id),
             "group_name": to_structure_CustomTextType_100(self.group_name),
             "configuration": to_structure_VectorType_RecordType_core_ClientConfiguration(self.configuration),
-            "menu": to_structure_RecordType_core_Menu(self.menu)
+            "dashboard": to_structure_Bool(self.dashboard),
+            "compliance_task_list": to_structure_Bool(self.compliance_task_list),
+            "compliance_approvals": to_structure_Bool(self.compliance_approvals)
         }
 
 class GetVersionsSuccess(Response):
