@@ -178,7 +178,7 @@ function load_statutory(sList){
       $(".act-label").on("click", function(event){
         accordionstatus = false;
       });
-      
+
       $(clone, '.actname').click(function(){
         if(accordionstatus){
           //Expand or collapse this panel
@@ -254,7 +254,7 @@ function load_statutory(sList){
   	$('.cremarkview', clone2).addClass('cremarkview'+statutoriesCount);
   	$('.tipso_style', clone2).attr('title', compliance_remarks);
   	$('.crval', clone2).html(compliance_remarks_part);
-	
+
     if(compliance_applicable_status){
       $('.applicable', clone2).html('<img src=\'/images/tick1bold.png\' title="Applicable"/> <input type="hidden" id="applicable'+statutoriesCount+
         '" value="'+compliance_applicable_status+'"> </input> ');
@@ -285,7 +285,7 @@ function load_statutory(sList){
     $('.cremarkvalue').on('input', function (e) {
       this.value = isCommon($(this));
     });
-    
+
   }
 
   if(statutoriesCount > 1){

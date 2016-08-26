@@ -137,7 +137,7 @@ function loadUserList(usersList) {
     		break;
 	    	}
 	    }
-    
+
 	    var passStatus = null;
 	    var classValue = null;
 
@@ -283,38 +283,43 @@ $("#submit").click(function(){
           onFailure(error);
         }
       });
-		} else {
+		}
+		else {
 			function onSuccess(response) {
 				getUsers();
 				$("#user-add").hide();
 				$("#user-view").show();
 				$(".filter-text-box").val('');
  			}
-			function failure(data) {
+			function onFailure(error) {
 				if(error == "EmailIDAlreadyExists"){
-            	displayMessage(message.emailid_exists);
-        }
-        if(error == "ContactNumberAlreadyExists"){
-            displayMessage(message.contactno_exists);
-        }
-        if(error == "EmployeeCodeAlreadyExists"){
-            displayMessage(message.employeeid_exists);
-        }
-        if(error == "InvalidUserId"){
-            displayMessage(message.invalid_userid);
-        }
+            		displayMessage(message.emailid_exists);
+		        }
+		        else if(error == "ContactNumberAlreadyExists"){
+		            displayMessage(message.contactno_exists);
+		        }
+		        else if(error == "EmployeeCodeAlreadyExists"){
+		            displayMessage(message.employeeid_exists);
+		        }
+		        else if(error == "InvalidUserId"){
+		            displayMessage(message.invalid_userid);
+		        }
+		        else {
+		        	displayMessage(error);
+		        }
 			}
 			userDetail = [userId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,countryIds,domainIds];
 			userDetailDict = mirror.getUpdateAdminUserDict(userDetail);
 			mirror.updateAdminUser(userDetailDict,
 				function (error, response) {
-        if (error == null){
-          onSuccess(response);
-        }
-        else {
-          onFailure(error);
-        }
-      });
+	        		if (error == null){
+	          			onSuccess(response);
+	        		}
+			        else {
+			          onFailure(error);
+			        }
+			    }
+			);
 		}
 	}
 });

@@ -200,7 +200,6 @@ def get_countries_for_user(db, user_id):
 
 def return_countries(data):
     results = []
-
     for d in data:
         results.append(core.Country(
             d["country_id"], d["country_name"], bool(d["is_active"])
@@ -318,18 +317,6 @@ def get_forms(db):
     return rows
 
 
-def return_forms(form_ids=None):
-    columns = ["form_id", "form_name"]
-    condition = " form_id != '26' "
-    if form_ids is not None:
-        condition += " AND form_id in (%s) " % form_ids
-    forms = db.get_data(tblForms, columns, condition)
-    results = []
-    for form in forms:
-        results.append(general.AuditTrailForm(form[0], form[1]))
-    return results
-
-
 def get_form_categories(db):
     columns = "form_category_id, form_category"
     condition = " form_category_id in (2,3)"
@@ -360,7 +347,6 @@ def is_user_exists_under_user_group(db, user_group_id):
     rows = db.get_data(
         tblUsers, columns, condition, condition_val
     )
-    print "is_duplicate", rows
     if rows[0]["count"] > 0:
         return True
     else:
@@ -369,9 +355,9 @@ def is_user_exists_under_user_group(db, user_group_id):
 
 def get_user_group_detailed_list(db):
     columns = "ug.user_group_id, user_group_name, form_category_id, " + \
-                "form_ids, is_active, (select count(*) from %s u where " + \
+                "form_ids, is_active, (select count(*) " + \
+                " from tbl_users u where " + \
                 "ug.user_group_id = u.user_group_id) as count"
-    columns = columns % (tblUsers)
     tables = tblUserGroups+" ug"
     where_condition = " 1 order by user_group_name"
     rows = db.get_data(tables, columns, where_condition)
@@ -417,11 +403,12 @@ def update_user_group(
         "user_group_name", "form_category_id", "form_ids", "updated_on",
         "updated_by"
     ]
+    condition = "user_group_id= %s "
     values = [
         user_group_name, form_category_id,
-        ",".join(str(x) for x in form_ids), time_stamp, 0
+        ",".join(str(x) for x in form_ids), time_stamp, 0,
+        user_group_id
     ]
-    condition = "user_group_id= %s " % user_group_id
     if db.update(tblUserGroups, columns, values, condition):
         action = "Updated User Group \"%s\"" % user_group_name
         db.save_activity(0, 3, action)
@@ -433,13 +420,18 @@ def update_user_group(
 def update_user_group_status(db, user_group_id, is_active):
     time_stamp = get_date_time()
     columns = ["is_active", "updated_by", "updated_on"]
-    values = [is_active, 0, time_stamp]
-    condition = "user_group_id=%s" % user_group_id
-    result = db.update(tblUserGroups, columns, values, condition)
+    condition = "user_group_id=%s"
+    values = [is_active, 0, time_stamp, user_group_id]
+    result = db.update(
+        tblUserGroups, columns, values, condition
+    )
     if result is False:
         raise process_error("E032")
     action_columns = "user_group_name"
-    rows = db.get_data(tblUserGroups, action_columns, condition)
+    condition_val = [user_group_id]
+    rows = db.get_data(
+        tblUserGroups, action_columns, condition, condition_val
+    )
     user_group_name = rows[0]["user_group_name"]
     action = ""
     if is_active == 0:
@@ -555,7 +547,8 @@ def notify_user(
             email_id, password, employee_name, employee_code
         )
     except Exception, e:
-        print "Error while sending email : {}".format(e)
+        print "Error while sending email"
+        print e
 
 
 def update_user(
@@ -572,17 +565,18 @@ def update_user(
         "contact_no", "address", "designation",
         "updated_on", "updated_by"
     ]
+    user_condition = "user_id = %s"
     user_values = [
         user_group_id, employee_name, employee_code, contact_no,
         address, designation, current_time_stamp, 0, user_id
     ]
-    user_condition = "user_id = %s"
-    user_condition_val = [user_id]
-    result1 = db.update(tblUsers, user_columns, user_values, user_condition)
+    result1 = db.update(
+        tblUsers, user_columns, user_values, user_condition
+    )
     if result1 is False:
         raise process_error("E036")
-    db.delete(tblUserCountries, user_condition, user_condition_val)
-    db.delete(tblUserDomains, user_condition, user_condition_val)
+    db.delete(tblUserCountries, user_condition, [user_id])
+    db.delete(tblUserDomains, user_condition, [user_id])
 
     country_columns = ["user_id", "country_id"]
     country_values_list = []
@@ -615,12 +609,18 @@ def update_user(
 def update_user_status(db, user_id, is_active):
     columns = ["is_active", "updated_on", "updated_by"]
     values = [is_active, get_date_time(), 0]
-    condition = "user_id=%s" % user_id
-    result = db.update(tblUsers, columns, values, condition)
+    condition = "user_id=%s"
+    condition_val = [user_id]
+    values += condition_val
+    result = db.update(
+        tblUsers, columns, values, condition
+    )
     if result is False:
         raise process_error("E039")
     action_columns = "employee_name, employee_code"
-    rows = db.get_data(tblUsers, action_columns, condition)
+    rows = db.get_data(
+        tblUsers, action_columns, condition, condition_val
+    )
     employee_name = rows[0]["employee_name"]
     employee_code = rows[0]["employee_code"]
     action = ""

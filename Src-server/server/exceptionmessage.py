@@ -59,7 +59,10 @@ messages = {
     "E058": "Unit activation failed",
     "E059": "Client admin creation failed",
     "E060": "Client statutories creation failed",
-    "E061": "Client info not found"
+    "E061": "Client info not found",
+    "E062": "Client log save failed",
+    "E063": "Geography used in statutory mapping",
+    "E064": "Geography have child level entries "
 }
 
 client_message = {
@@ -89,7 +92,9 @@ client_message = {
     "E024": "Client user status update failed in core",
     "E025": "Client unit closure failed in core",
     "E026": "Client opted status save failed in core",
-    "E027": "Client active status validation failed"
+    "E027": "Client active status validation failed",
+    "E028": "Email notification got failed",
+    "E029": "Saving reset token failed",
 }
 
 

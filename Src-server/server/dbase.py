@@ -136,7 +136,6 @@ class Database(object):
     def execute(self, query, param=None):
         cursor = self.cursor()
         assert cursor is not None
-
         try:
             if type(param) is tuple:
                 logger.logQuery(self._for_client, "execute", query % param)
@@ -316,8 +315,8 @@ class Database(object):
             query += " WHERE %s " % condition
             if order is not None:
                 query += order
-            # print query
-            # print condition_val
+            print query
+            print condition_val
             if condition_val is None:
                 logger.logQuery(self._for_client, "get_data", query)
                 rows = self.select_all(query)
@@ -338,12 +337,24 @@ class Database(object):
             result = convert_to_dict(rows, param)
         return result
 
+    def generate_tuple_condition(self, column, values_list):
+        condition = " 1 "
+        condition_val = "%"
+        if values_list not in [None, ""]:
+            if len(values_list) > 1:
+                condition = " %s in %s " % (column, "%s")
+                condition_val = tuple(values_list)
+            else:
+                condition = " %s = %s " % (column, "%s")
+                condition_val = values_list[0]
+        return condition, condition_val
+
     ########################################################
     # To form a join query
     ########################################################
     def get_data_from_multiple_tables(
         self, columns, tables, aliases, join_type,
-        join_conditions, where_condition
+        join_conditions, where_condition, where_condition_val=None
     ):
         assert type(columns) in (list, str)
         param = []
@@ -390,11 +401,16 @@ class Database(object):
             logger.logQuery(
                 self._for_client, "get_data_from_multiple_tables", query
             )
-            rows = self.select_all(query)
         else:
             logger.logQuery(
                 self._for_client, "get_data_from_multiple_tables", query
             )
+        if where_condition_val is not None:
+            print query
+            print where_condition_val
+            rows = self.select_all(query, where_condition_val)
+        else:
+            print query
             rows = self.select_all(query)
 
         result = []
@@ -422,7 +438,8 @@ class Database(object):
             return n_id
         except mysql.Error, e:
             print e
-            logger.logKnowledgeApi("insert", query)
+            print query, values
+            logger.logKnowledgeApi("insert", query + " -- " + values)
             logger.logKnowledgeApi("insert", e)
             return False
 
@@ -463,14 +480,14 @@ class Database(object):
                 query += column+" = %s "
 
         query += " WHERE " + condition
+        print query
         try:
-            res = self.execute(query, values)
-            print '------------'
-            print res
+            self.execute(query, values)
             return True
         except mysql.Error, e:
+            print query, values
             print e
-            logger.logKnowledgeApi("update", query)
+            logger.logKnowledgeApi("update", query + " , " + values)
             logger.logKnowledgeApi("update", e)
             return False
 
@@ -517,9 +534,9 @@ class Database(object):
     # To concate the value with the existing value in the
     # specified column
     ########################################################
-    def append(self, table, column, value, condition):
+    def append(self, table, column, value, condition, condition_val):
         try:
-            rows = self.get_data(table, column, condition)
+            rows = self.get_data(table, column, condition, condition_val)
             currentValue = rows[0][column]
             if currentValue is not None:
                 newValue = currentValue+","+str(value)
@@ -527,9 +544,12 @@ class Database(object):
                 newValue = str(value)
             columns = [column]
             values = [newValue]
-            res = self.update(table, columns, values, condition)
+            values += condition_val
+            res = self.update(
+                table, columns, values, condition)
             return res
         except mysql.Error, e:
+            print table, column, value
             print e
             return False
 
@@ -539,14 +559,18 @@ class Database(object):
     # float, double values
     ########################################################
 
-    def increment(self, table, column, condition, value=1):
-        rows = self.get_data(table, column, condition)
-        currentValue = rows[0][column[0]]
+    def increment(self, table, column, condition, value=1, condition_val=None):
+        print condition_val
+        rows = self.get_data(table, column, condition, condition_val)
+        currentValue = int(rows[0][column[0]]) if(
+            rows[0][column[0]] is not None) else 0
         if currentValue is not None:
             newValue = int(currentValue) + value
         else:
             newValue = value
         values = [newValue]
+        if condition_val is not None:
+            values = values + condition_val
         return self.update(table, column, values, condition)
 
     ########################################################
@@ -603,8 +627,9 @@ class Database(object):
         return True
 
     def validate_session_token(self, session_token):
-        query = '''SELECT user_id FROM tbl_user_sessions
-            WHERE session_token=%s'''
+        query = '''SELECT t01.user_id FROM tbl_user_sessions t01
+            LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id and is_active = 1
+            WHERE  session_token=%s'''
         param = [session_token]
         row = self.select_one(query, param)
         user_id = None

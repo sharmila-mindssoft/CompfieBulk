@@ -67,7 +67,6 @@ class ClientDBCreate(object):
     def get_server_machine_details(self):
         print "inside get server machiner details"
         data = get_server_details(self._db)
-        print "data: {}".format(data)
         if len(data) <= 0:
             return technomaster.ServerIsFull()
         else:
@@ -225,11 +224,6 @@ class ClientDBCreate(object):
     def _create_admin_user(self, cursor):
         try:
             encrypted_password, password = generate_and_return_password()
-            # query = "insert into tbl_admin ( " + \
-            #   " username, password) values (%s, %s)"
-            # logger.logKnowledge("info", "create", "save user")
-            # cursor.execute(query, [self._email_id, encrypted_password])
-
             query = "insert into tbl_users (user_id, employee_name, " + \
                 " email_id, password, user_level, " + \
                 " is_primary_admin, is_service_provider, is_admin)" + \
@@ -379,27 +373,27 @@ class ClientDBCreate(object):
     def set_server_full(self, db_server_condition):
         columns = ["server_full"]
         values = [1]
-        self._db.update(tblMachines, columns, values, db_server_condition)
+        self._db.update(
+            tblMachines, columns, values, db_server_condition
+        )
 
     def update_client_db_details(self):
         db_server_column = "company_ids"
         db_server_value = self._client_id
 
-        db_server_condition = "ip = '%s' and port = '%s'" % (
-            str(self._host), str(self._port)
-        )
+        db_server_condition = "ip = %s and port = %s"
+        db_server_condition_val = [str(self._host), str(self._port)]
         print db_server_condition
 
         self._db.append(
             tblDatabaseServer, db_server_column, db_server_value,
-            db_server_condition
+            db_server_condition, db_server_condition_val
         )
-        db_server_column = "length"
+        db_server_column = ["length"]
         self._db.increment(
             tblDatabaseServer, db_server_column,
-            db_server_condition
+            db_server_condition, condition_val=db_server_condition_val
         )
-
         result = self._get_machine_details()
         if len(result) == 0:
             raise self.process_error("Client server is full")
@@ -408,12 +402,12 @@ class ClientDBCreate(object):
         server_port = result[0]["port"]
         machine_columns = "client_ids"
         machine_value = self._client_id
-        machine_condition = "ip='%s' and port='%s'" % (server_ip, server_port)
+        machine_condition = " ip = %s and port = %s"
+        machinery_condition_val = [str(server_ip), str(server_port)]
         self._db.append(
             tblMachines, machine_columns, machine_value,
-            machine_condition
+            machine_condition, machinery_condition_val
         )
-
         client_db_columns = [
             "client_id", "machine_id", "database_ip",
             "database_port", "database_username", "database_password",
@@ -427,7 +421,7 @@ class ClientDBCreate(object):
         ]
         length_rows = self._db.get_data(
             tblMachines, "client_ids",
-            machine_condition
+            machine_condition, machinery_condition_val
         )
         print "machine length_rows"
         if length_rows:

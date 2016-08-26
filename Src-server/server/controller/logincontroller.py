@@ -109,7 +109,7 @@ def mobile_user_login_respone(db, data, request, ip):
     employee_code = data["employee_code"]
     form_ids = [int(x) for x in data["form_ids"].split(",")]
     if 11 not in form_ids:
-        return login.InvalidCredentials()
+        return login.InvalidMobileCredentials()
     employee = "%s - %s" % (employee_code, employee_name)
     session_token = add_session(db, user_id, session_type, ip, employee)
     return mobile.UserLoginResponseSuccess(
@@ -156,8 +156,9 @@ def admin_login_response(db, ip):
 
 def process_forgot_password(db, request):
     email_id = request.username
+    user_type = request.login_type
     user_id, employee_name = verify_username(
-        db, email_id
+        db, email_id, user_type
     )
     if user_id is not None:
         send_reset_link(db, user_id, email_id, employee_name)

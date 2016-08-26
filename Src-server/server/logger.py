@@ -113,6 +113,6 @@ def logQuery(knowledge_qry, callername, message):
     log_message = "%s: %s" % (callername, message)
     if ENABLE_QUERY_LOG :
         if knowledge_qry :
-            knowtQueryLogger.info(log_message)
-        else :
             clientQueryLogger.info(log_message)
+        else :
+            knowtQueryLogger.info(log_message)

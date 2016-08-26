@@ -95,7 +95,7 @@ def get_status_wise_compliances_count(db, request, session_user):
         db, not_complied_qry, request, user_id
         )
     if from_date is not None and to_date is not None:
-        return frameg_compliance_status_count(
+        return frame_compliance_status_count(
             db, inprogress, complied, delayed,
             not_complied
         )
@@ -1942,8 +1942,8 @@ def update_notification_status(
         user_ids.append(0)
     columns = ["read_status"]
     values = [1 if has_read is True else 0]
-    condition = "notification_id = %s and user_id in %s" % (
-        notification_id, tuple(user_ids))
+    condition = "notification_id = %s and user_id in %s"
+    values.extend([notification_id, tuple(user_ids)])
     db.update(
         tblNotificationUserLog, columns, values, condition
     )

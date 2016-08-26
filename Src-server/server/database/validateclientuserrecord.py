@@ -95,12 +95,12 @@ class ClientAdmin(ClientdbConnect):
 
     def remove_old_admin(self):
         q2 = "update tbl_users set is_active = 0 " + \
-            " where user_id = %s " % (self._old_admin_id)
-        self._c_db.execute(q2)
+            " where user_id = %s "
+        self._c_db.execute(q2, [self._old_admin_id])
 
         q3 = " DELETE FROM tbl_user_sessions " + \
-            " WHERE user_id = %s " % (self._old_admin_id)
-        self._c_db.execute(q3)
+            " WHERE user_id = %s "
+        self._c_db.execute(q3, [self._old_admin_id])
         # q1 = "update tbl_admin t1, (select user_id, email_id, password \
         #     from tbl_users) t2 set t1.admin_id = t2.user_id, \
         #     t1.username = t2.email_id, t1.password = t2.password \

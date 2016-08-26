@@ -71,7 +71,7 @@ var message = {
 	"industry_required" : "Industry Required",
 	"statutorynature_required" : "Statutory Nature Required",
 	"statutory_selection_required" : "Atleast one Statute should be selected",
-	"compliance_selection_required" : "Atleast one Compliance should be selected",
+	"compliance_selection_required" : "Atleast one Compliance should be added",
 	"active_compliance_required" : "Atleast one Compliance should be Activate",
 	"location_selection_required" : "Atleast one Location should be selected",
 	"action_selection_required" : "Atleast one action should be selected",

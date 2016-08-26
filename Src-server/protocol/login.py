@@ -87,23 +87,27 @@ class Login(Request):
         }
 
 class ForgotPassword(Request):
-    def __init__(self, username, short_name):
+    def __init__(self, username, short_name, login_type):
         self.username = username
         self.short_name = short_name
+        self.login_type = login_type
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["username", "short_name"])
+        data = parse_dictionary(data, ["username", "short_name", "login_type"])
         username = data.get("username")
         username = parse_structure_CustomTextType_100(username)
         short_name = data.get("short_name")
         short_name = parse_structure_OptionalType_CustomTextType_100(short_name)
-        return ForgotPassword(username, short_name)
+        login_type = data.get("login_type")
+        login_type = parse_structure_EnumType_core_SESSION_TYPE(login_type)
+        return ForgotPassword(username, short_name, login_type)
 
     def to_inner_structure(self):
         return {
             "username": to_structure_CustomTextType_100(self.username),
-            "short_name" : to_structure_OptionalType_CustomTextType_100(self.short_name)
+            "short_name" : to_structure_OptionalType_CustomTextType_100(self.short_name),
+            "login_type": to_structure_EnumType_core_SESSION_TYPE(self.login_type)
         }
 
 class ResetTokenValidation(Request):
@@ -215,7 +219,7 @@ class Logout(Request):
         }
 
 def _init_Request_class_map():
-    classes = [Login, ForgotPassword, ResetTokenValidation, ResetPassword, 
+    classes = [Login, ForgotPassword, ResetTokenValidation, ResetPassword,
     ChangePassword, Logout, UpdateUserProfile]
     class_map = {}
     for c in classes:
@@ -372,6 +376,17 @@ class InvalidCredentials(Response):
                 self.captcha_text)
         }
 
+class InvalidMobileCredentials(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidMobileCredentials()
+
+    def to_inner_structure(self):
+        return {}
 
 class ClientDatabaseNotExists(Response):
     def __init__(self):

@@ -43,21 +43,18 @@ def get_industries(db):
         "tbl_industries", columns, condition=None,
         condition_val=None, order=order
     )
-
     return return_industry(result)
 
 
 def get_industry_by_id(db, industry_id):
     if type(industry_id) is int:
-        q = "SELECT industry_name FROM tbl_industries " + \
-            " WHERE industry_id = %s "
-        param = [industry_id]
+        values_list = [industry_id]
     else:
-        q = " SELECT (GROUP_CONCAT(industry_name SEPARATOR ', ')) as " + \
-            " industry_name FROM tbl_industries " + \
-            " WHERE industry_id in %s "
-        param = [tuple(industry_id)]
-    row = db.select_one(q, param)
+        values_list = industry_id
+    where_condition, where_condition_val = db.generate_tuple_condition(
+        "industry_id", values_list)
+    q = "SELECT industry_name FROM tbl_industries WHERE " + where_condition
+    row = db.select_one(q, [where_condition_val])
     industry_name = None
     if row:
         industry_name = row[0]
@@ -121,12 +118,9 @@ def update_industry(db, industry_id, industry_name, user_id):
         return False
     table_name = "tbl_industries"
     columns = ["industry_name", "updated_by"]
-    values = [industry_name, int(user_id)]
     where_condition = " industry_id = %s"
-    param = []
-    param.extend(values)
-    param.append(industry_id)
-    if (db.update(table_name, columns, param, where_condition)):
+    values = [industry_name, int(user_id), industry_id]
+    if (db.update(table_name, columns, values, where_condition)):
         action = "Industry type %s updated" % (industry_name)
         db.save_activity(user_id, 7, action)
         return True
@@ -140,13 +134,9 @@ def update_industry_status(db, industry_id, is_active, user_id):
         return False
     table_name = "tbl_industries"
     columns = ["is_active", "updated_by"]
-    values = [is_active, user_id]
     where_condition = " industry_id = %s"
-    param = []
-    param.extend(values)
-    param.append(industry_id)
-
-    if (db.update(table_name, columns, param, where_condition)):
+    values = [is_active, user_id, industry_id]
+    if (db.update(table_name, columns, values, where_condition)):
         if is_active == 0:
             status = "deactivated"
         else:
@@ -231,12 +221,9 @@ def update_statutory_nature(db, nature_id, nature_name, user_id):
         return False
     table_name = "tbl_statutory_natures"
     columns = ["statutory_nature_name", "updated_by"]
-    values = [nature_name, user_id]
     where_condition = " statutory_nature_id = %s"
-    param = []
-    param.extend(values)
-    param.append(nature_id)
-    if (db.update(table_name, columns, param, where_condition)):
+    values = [nature_name, user_id, nature_id]
+    if (db.update(table_name, columns, values, where_condition)):
         action = "Statutory Nature '%s' updated" % (nature_name)
         db.save_activity(user_id, 8, action)
         return True
@@ -250,12 +237,9 @@ def update_statutory_nature_status(db, nature_id, is_active, user_id):
         return False
     table_name = "tbl_statutory_natures"
     columns = ["is_active", "updated_by"]
-    values = [is_active, user_id]
     where_condition = " statutory_nature_id = %s"
-    param = []
-    param.extend(values)
-    param.append(nature_id)
-    if (db.update(table_name, columns, param, where_condition)):
+    values = [is_active, user_id, nature_id]
+    if (db.update(table_name, columns, values, where_condition)):
         if is_active == 0:
             status = "deactivated"
         else:
@@ -324,14 +308,11 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
                 raise process_error("E007")
         else:
             columns = ["level_position", "level_name", "updated_by"]
-            values = [position, name, user_id]
             where_condition = "level_id=%s"
-            param = []
-            param.extend(values)
-            param.append(level.level_id)
+            values = [position, name, user_id, level.level_id]
             if (
                 db.update(
-                    table_name, columns, param, where_condition
+                    table_name, columns, values, where_condition
                 )
             ):
                 action = "Statutory levels updated"
@@ -387,13 +368,11 @@ def delete_grography_level(db, level_id):
     if row[0] > 0:
         return True
     else:
-        db.execute(
-            "delete from tbl_geographies where level_id = %s ", (level_id)
+        res = db.execute(
+            "delete from tbl_geography_levels where level_id = %s ", [level_id]
         )
-        db.execute(
-            "delete from tbl_geography_levels where level_id = %s ", (level_id)
-        )
-        raise process_error("E009")
+        if res is False :
+            raise process_error("E009")
 
 
 def save_geography_levels(db, country_id, levels, user_id):
@@ -401,20 +380,49 @@ def save_geography_levels(db, country_id, levels, user_id):
     created_on = get_date_time()
     newlist = sorted(levels, key=lambda k: k.level_position, reverse=True)
     result = False
+    d_l_id = None
     for n in newlist:
         if n.is_remove is True:
-            result = db.delete_grography_level(n.level_id)
-            if result:
+            print n.level_id
+            print n.level_position
+            result = delete_grography_level(db, n.level_id)
+            if result :
+                d_l_id = n.level_position
                 break
             else:
                 continue
-    if result:
-        return knowledgemaster.LevelShouldNotbeEmpty(n.level_position)
+    if result :
+        return knowledgemaster.LevelShouldNotbeEmpty(d_l_id)
 
-    for level in levels:
+    for level in sorted(levels, key=lambda k: k.level_id, reverse=True):
         name = level.level_name
         position = level.level_position
-        if level.level_id is None:
+        print '*' * 5
+        print position
+        print name
+        print level.is_remove
+        if level.is_remove :
+            continue
+
+        if level.level_id is not None:
+            print "update"
+            columns = [
+                "level_position", "level_name", "updated_by",
+            ]
+            where_condition = "level_id=%s"
+            values = [position, name, user_id, level.level_id]
+            if (
+                db.update(
+                    table_name, columns, values, where_condition
+                )
+            ):
+                action = "Geography levels updated"
+                db.save_activity(user_id, 5, action)
+            else:
+                raise process_error("E011")
+
+        else :
+            print "insert"
             columns = [
                 "level_position", "level_name", "country_id",
                 "created_by", "created_on"
@@ -430,24 +438,6 @@ def save_geography_levels(db, country_id, levels, user_id):
             else:
                 raise process_error("E010")
 
-        else:
-            columns = [
-                "level_position", "level_name", "updated_by",
-            ]
-            values = [position, name, user_id]
-            where_condition = "level_id=%s"
-            param = []
-            param.extend(values)
-            param.append(level.level_id)
-            if (
-                db.update(
-                    table_name, columns, param, where_condition
-                )
-            ):
-                action = "Geography levels updated"
-                db.save_activity(user_id, 5, action)
-            else:
-                raise process_error("E011")
     return knowledgemaster.SaveGeographyLevelSuccess()
 
 
@@ -523,11 +513,11 @@ def get_geographies_for_user_with_mapping(db, user_id):
         "t1.level_id = t2.level_id", "t2.country_id = t3.country_id"
     ]
     where_condition = " t2.country_id in (select country_id " + \
-        " from tbl_user_countries where user_id = %s )" % user_id
-
+        " from tbl_user_countries where user_id = %s )"
+    where_condition_val = [user_id]
     result = db.get_data_from_multiple_tables(
         columns, tables, aliases, join_type,
-        join_conditions, where_condition
+        join_conditions, where_condition, where_condition_val
     )
     geographies = {}
     if result:
@@ -619,12 +609,9 @@ def update_geography(
         "geography_name", "parent_ids", "parent_names",
         "updated_by"
     ]
-    values = [name, parent_ids, parent_names, updated_by]
     where_condition = " geography_id = %s "
-    param = []
-    param.extend(values)
-    param.append(geography_id)
-    if (db.update(table_name, columns, param, where_condition)):
+    values = [name, parent_ids, parent_names, updated_by, geography_id]
+    if (db.update(table_name, columns, values, where_condition)):
         action = "Geography - %s updated" % name
         db.save_activity(updated_by, 6, action)
         qry = "SELECT geography_id, geography_name, parent_ids, level_id " + \
@@ -661,6 +648,27 @@ def update_geography(
     else:
         raise process_error("E013")
 
+def check_geography_exists(db, geography_id):
+    #
+    # if geography used in mapping means return true else return false
+    # and geography has child means return true else false
+    #
+    is_exists = False
+    q = "select count(1) from tbl_statutory_geographies where geography_id = %s"
+    row = db.select_one(q, [geography_id])
+    if row[0] > 0 :
+        is_exists = True
+        raise process_error("E063")
+
+    if is_exists is False :
+        q1 = "select count(0) from tbl_geographies where FIND_IN_SET(%s, parent_ids)"
+        r = db.select_one(q1, [geography_id])
+        if r[0] > 0 :
+            is_exists = True
+            raise process_error("E064")
+
+    # return is_exists
+
 
 def change_geography_status(db, geography_id, is_active, updated_by):
     oldData = get_geography_by_id(db, geography_id)
@@ -668,13 +676,12 @@ def change_geography_status(db, geography_id, is_active, updated_by):
         return False
     table_name = "tbl_geographies"
     columns = ["is_active", "updated_by"]
-    values = [is_active, updated_by]
     where_condition = " geography_id = %s"
-    param = []
-    param.extend(values)
-    param.append(geography_id)
+    # if is_active == 0 :
+    #     check_geography_exists(db, geography_id)
 
-    if (db.update(table_name, columns, param, where_condition)):
+    values = [is_active, updated_by, geography_id]
+    if (db.update(table_name, columns, values, where_condition)):
         if is_active == 0:
             status = "deactivated"
         else:
@@ -714,7 +721,6 @@ def save_statutory(db, name, level_id, parent_ids, parent_names, user_id):
         name, int(level_id),
         parent_ids, parent_names, int(user_id), str(created_on)
     ]
-
     new_id = db.insert(table_name, columns, values)
     if new_id is False:
         raise process_error("E015")
@@ -736,13 +742,9 @@ def update_statutory(
         "statutory_name", "parent_ids", "parent_names",
         "updated_by"
     ]
-    values = [name, parent_ids, parent_names, str(updated_by)]
     where_condition = " statutory_id = %s"
-    param = []
-    param.extend(values)
-    param.append(statutory_id)
-
-    if (db.update(table_name, columns, param, where_condition)):
+    values = [name, parent_ids, parent_names, str(updated_by), statutory_id]
+    if (db.update(table_name, columns, values, where_condition)):
         action = "Statutory - %s updated" % name
         db.save_activity(updated_by, 10, action)
         qry = "SELECT statutory_id, statutory_name, parent_ids " + \
@@ -751,7 +753,6 @@ def update_statutory(
         rows = db.select_all(qry, [str("%" + str(statutory_id) + ",%")])
         columns = ["statutory_id", "statutory_name", "parent_ids"]
         result = convert_to_dict(rows, columns)
-
         for row in result:
             if row["parent_ids"] == "0,":
                 row["parent_ids"] = statutory_id
@@ -949,7 +950,7 @@ def frame_geography_parent_mapping(rows):
         country_id = int(row["country_id"])
         geography_id = int(row["geography_id"])
         is_active = bool(row["is_active"])
-        mappings = row["parent_names"] + " >> " + row["geography_name"]
+        mappings = row["parent_names"]
         GEOGRAPHY_PARENTS[geography_id] = [
             mappings, is_active, country_id
         ]

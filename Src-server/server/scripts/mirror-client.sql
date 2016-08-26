@@ -68,7 +68,7 @@ CREATE TABLE `tbl_compliances` (
 CREATE TABLE `tbl_client_groups` (
   `client_id` int(11) NOT NULL,
   `group_name` varchar(50) NOT NULL,
-  `logo_url` varchar(200) NOT NULL,
+  `logo_url` varchar(200) DEFAULT NULL,
   `logo_size` float(11) NOT NULL,
   `contract_from` date NOT NULL,
   `contract_to` date NOT NULL,
@@ -328,7 +328,7 @@ CREATE TABLE `tbl_mobile_registration` (
   PRIMARY KEY (`registration_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_statutory_notifications_log` (
-  `statutory_notification_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `statutory_notification_id` int(11) NOT NULL ,
   `country_name` VARCHAR(50) NOT NULL,
   `domain_name` VARCHAR(50) NOT NULL,
   `industry_name` longtext NOT NULL,
@@ -336,15 +336,17 @@ CREATE TABLE `tbl_statutory_notifications_log` (
   `statutory_provision` longtext,
   `applicable_location` longtext,
   `notification_text` longtext,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`statutory_notification_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_statutory_notifications_units` (
-  `statutory_notification_unit_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `statutory_notification_unit_id` int(11) NOT NULL,
   `statutory_notification_id` int(11) DEFAULT NULL,
   `business_group_id` int(11) DEFAULT NULL,
   `legal_entity_id` int(11) DEFAULT NULL,
   `division_id` int(11) DEFAULT NULL,
-  `unit_id` int(11) NOT NULL
+  `unit_id` int(11) NOT NULL,
+  PRIMARY KEY (`statutory_notification_unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_statutory_notification_status` (
   `statutory_notification_id` int(11) NOT NULL,

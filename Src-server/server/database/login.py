@@ -87,8 +87,19 @@ def add_session(
 
     return session_id
 
+def get_user_form_ids(db, user_id):
+    if user_id == 0:
+        return "1, 2, 3, 4"
+    q = "select t1.form_ids from tbl_user_groups t1 " + \
+        " INNER JOIN tbl_users t2 on t1.user_group_id = t2.user_group_id " + \
+        " AND t2.user_id = %s"
+    row = db.select_one(q, [user_id])
+    if row:
+        return row[0]
+    else:
+        return None
 
-def verify_username(db, username):
+def verify_username(db, username, is_mobile=False):
     user_columns = ["user_id", "employee_name"]
     param = [username]
     # checking in tbl_users
@@ -97,10 +108,21 @@ def verify_username(db, username):
     user_rows = db.select_all(user_query, param)
     if user_rows:
         result = convert_to_dict(user_rows, user_columns)
-        return (
-            result[0]["user_id"],
-            result[0]["employee_name"]
-        )
+        if is_mobile is True :
+                forms = get_user_form_ids(db, int(result[0]["user_id"]))
+                form_ids = [int(x) for x in forms.split(",")]
+                if 11 in form_ids :
+                    return (
+                        result[0]["user_id"],
+                        result[0]["employee_name"]
+                    )
+                else :
+                    return None
+        else :
+            return (
+                result[0]["user_id"],
+                result[0]["employee_name"]
+            )
     else:  # checking in tbl_admin
         admin_query = " SELECT count(username) as count FROM tbl_admin " + \
             " WHERE username = %s"
@@ -167,7 +189,8 @@ def update_password(db, password, user_id):
     condition = "1"
     result = False
     if user_id != 0:
-        condition = " user_id=%s" % user_id
+        condition = " user_id=%s"
+        values.append(user_id)
         result = db.update(tblUsers, columns, values, condition)
     else:
         result = db.update(tblAdmin, columns, values, condition)
@@ -217,8 +240,8 @@ def check_and_update_login_attempt(db, user_id):
         diff = relativedelta.relativedelta(current_date_time, last_login_time)
         if diff.hours > 2 or diff.days > 0:
             db.update(
-                tblUserLoginHistory, ["login_attempt"], [0],
-                " user_id=%s " % user_id
+                tblUserLoginHistory, ["login_attempt"], [0, user_id],
+                " user_id=%s "
             )
 
 
@@ -233,8 +256,11 @@ def save_login_failure(db, user_id, session_user_ip):
         )
     ):
         increament_column = ["login_attempt"]
-        increament_cond = " user_id = %s " % (user_id)
-        db.increment(tblUserLoginHistory, increament_column, increament_cond)
+        increament_cond = " user_id = %s "
+        db.increment(
+            tblUserLoginHistory, increament_column, increament_cond,
+            condition_val=[user_id]
+        )
 
 
 def delete_login_failure_history(db, user_id):

@@ -97,9 +97,9 @@ function loadCaptcha(){
     captcha_text = getCaptcha();
     console.log("captcha_text : "+ captcha_text);
     if(captcha_text == null || captcha_text == "null"){
-        captchaStatus = false;    
+        captchaStatus = false;
     }else{
-        captchaStatus = true;    
+        captchaStatus = true;
     }
     console.log("captcha status :"+captchaStatus);
     if(captchaStatus){
@@ -153,30 +153,6 @@ function processLogin(username, password, shortName, callback) {
     // url = BASE_URL + "login";
 
 
-    // jQuery.postJSON = function(url, args, callback) {
-    //     alert("called");
-    //     args._xsrf = getCookie("_xsrf");
-    //     $.ajax({url: url, data: $.param(args), type: "POST",
-    //         success: function(response) {
-    //             alert(response);
-    //             if (callback) callback(eval("(" + response + ")"));
-    //         },
-    //         error: function(response) {
-    //             console.log("ERROR:", response)
-    //         }
-    //     });
-    // };
-    // $.postJSON(url, requestFrame, function(data) {
-    //     var data = parseJSON(data);
-    //     alert(data);
-    // });
-
-
-
-    // x_request = {
-    //     "_xsrf": getCookie('_xsrf'),
-    //     "data": requestFrame
-    // }
     $.ajax({
         url : BASE_URL + "login",
         headers: {'X-Xsrftoken' : getCookie('_xsrf')},
@@ -197,31 +173,10 @@ function processLogin(username, password, shortName, callback) {
             }
         },
         error: function(jqXHR, textStatus, errorThrown){
-            //if fails
+            callback(jqXHR["responseText"], errorThrown)
         }
     });
-    // jQuery.post(
-    //     BASE_URL + "login",
-    //     JSON.stringify(requestFrame, null, " "),
-    //     function (data) {
-    //         var data = JSON.parse(data);
-    //         var status = data[0];
-    //         var response = data[1];
-    //         matchString = 'success';
-    //         if (status.toLowerCase().indexOf(matchString) != -1){
-    //             initSession(response, shortName)
-    //             callback(null, response);
-    //         }
-    //         else {
-    //             callback(status, null);
-    //         }
-    //     }
-    // )
-    // .fail(
-    //     function (jqXHR, textStatus, errorThrown) {
-    //         callback(jqXHR["responseText"], errorThrown)
-    //     }
-    // );
+
 }
 function performLogin(e_button, e_email, e_password, e_captcha) {
     if (!isLoginValidated(e_email, e_password, e_captcha))
@@ -234,27 +189,30 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
 
     function onFailure(data) {
         //console.log("status"+status);
-        status = data[0]
-        captcha_text = data[1].captcha_text
-        storeCaptcha(captcha_text);
+        if (typeof data != "string") {
+            status = data[0];
+            captcha_text = data[1].captcha_text;
+            storeCaptcha(captcha_text);
+        }
+        else {
+            status = data;
+        }
+
         var disp_message = message.invalid_username_password;
-        if(status == "ContractExpired"){
-            disp_message = message.contract_expired;
-        }else if (status == "NotConfigured"){
+        if (status == "NotConfigured"){
             disp_message = message.accountconfiguration_underprogress;
-        }else if (status == "ContractNotYetStarted"){
-            disp_message = message.contract_notstart;
         }
         else if (status.indexOf("timeout") >= 0) {
             disp_message = message.connection_timeout
         }else{
+            status = status.replace(/([A-Z])/g, ' $1').trim();
             disp_message = status
         }
         displayLoginMessage(disp_message);
         $("input").val("");
 
         resetLoginUI(e_button, e_email, e_password);
-        
+
     }
 
     if (getShortName() === null){
