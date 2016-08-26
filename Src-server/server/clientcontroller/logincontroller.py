@@ -251,17 +251,19 @@ def user_login_response(db, data, client_id, ip):
     is_promoted_admin = int(data["is_admin"])
     if is_promoted_admin == 1:
         form_ids = "%s, 3, 4, 6, 7, 8, 24" % (form_ids)
-        form_ids_list = form_ids.split(",")
+        form_ids_list = [int(x) for x in form_ids.split(",")]
         if 1 not in form_ids_list:
             form_ids_list.append(1)
         report_form_ids = get_report_form_ids(db).split(",")
         for form_id in report_form_ids:
             if form_id not in form_ids_list:
                 form_ids_list.append(form_id)
-    else :
-        form_ids_list = form_ids
+    else:
+        form_ids_list = [int(x) for x in form_ids.split(",")]
         # form_ids = ",".join(str(x) for x in form_ids_list)
-    menu = process_user_forms(db, form_ids_list, client_id, 0)
+    menu = process_user_forms(
+        db, ",".join(str(x) for x in form_ids_list), client_id, 0
+    )
     return login.UserLoginSuccess(
         user_id, session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, None, None,

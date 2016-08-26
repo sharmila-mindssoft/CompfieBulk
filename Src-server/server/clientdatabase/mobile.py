@@ -38,55 +38,41 @@ def get_version(db):
 
 
 def get_users_for_mobile(db, session_user):
-        where_condition = " WHERE t2.unit_id IN " + \
-            " (select distinct unit_id " + \
-            " from tbl_user_units where user_id = %s)"
-        where_qry_val = None
-        query = "SELECT distinct t1.user_id, t1.employee_name, " + \
-            " t1.employee_code, " + \
-            " t1.seating_unit_id, t1.user_level, " + \
-            " (select group_concat(distinct domain_id) " + \
-            " from tbl_user_domains " + \
-            " where user_id = t1.user_id) domain_ids, " + \
-            " (select group_concat(distinct unit_id) " + \
-            " from tbl_user_units where user_id = t1.user_id ) unit_ids, " + \
-            " t1.is_service_provider, " + \
-            " (select service_provider_name " + \
-            " from  tbl_service_providers " + \
-            " where service_provider_id = t1.service_provider_id) " + \
-            " service_provider, " + \
-            " (select form_ids from tbl_user_groups " + \
-            " where user_group_id = t1.user_group_id) fomr_ids " + \
-            " FROM tbl_users t1 " + \
-            " INNER JOIN tbl_user_units t2 " + \
-            " ON t1.user_id = t2.user_id AND t1.is_active = 1 "
+    where_condition = " WHERE t2.unit_id IN " + \
+        " (select distinct unit_id " + \
+        " from tbl_user_units where user_id = %s)"
+    where_qry_val = None
+    query = "SELECT distinct t1.user_id, t1.employee_name, " + \
+        " t1.employee_code, t1.is_service_provider, " + \
+        " (select service_provider_name " + \
+        " from  tbl_service_providers " + \
+        " where service_provider_id = t1.service_provider_id) " + \
+        " service_provider " + \
+        " FROM tbl_users t1 " + \
+        " INNER JOIN tbl_user_units t2 " + \
+        " ON t1.user_id = t2.user_id AND t1.is_active = 1 "
+    if(
+        session_user > 0 and
+        session_user != get_admin_id(db)
+    ):
+        query = query + where_condition
+        where_qry_val = [session_user]
+    rows = db.select_all(query, where_qry_val)
+    columns = [
+        "user_id", "employee_name", "employee_code",
+        "is_service_provider", "service_provider"
+    ]
+    result = convert_to_dict(rows, columns)
+    user_list = []
+    for r in result:
+        if int(r["is_service_provider"]) == 0:
+            name = "%s - %s" % (r["employee_code"], r["employee_name"])
+        else:
+            name = "%s - %s" % (r["service_provider"], r["employee_name"])
 
-        if(
-            session_user > 0 and
-            session_user != get_admin_id(db)
-        ):
-            query = query + where_condition
-            where_qry_val = [session_user]
-        rows = db.select_all(query, where_qry_val)
-        columns = [
-            "user_id", "employee_name", "employee_code",
-            "seating_unit_id", "user_level",
-            "domain_ids", "unit_ids",
-            "is_service_provider", "service_provider",
-            "form_ids"
-        ]
-        result = convert_to_dict(rows, columns)
-        user_list = []
-        for r in result:
-            if int(r["is_service_provider"]) == 0:
-                name = "%s - %s" % (r["employee_code"], r["employee_name"])
-            else:
-                name = "%s - %s" % (r["service_provider"], r["employee_name"])
-
-            user_id = r["user_id"]
-            user_list.append(mobile.GetUsersList(user_id, name))
-
-        return user_list
+        user_id = r["user_id"]
+        user_list.append(mobile.GetUsersList(user_id, name))
+    return user_list
 
 
 def get_countries_for_user(db, user_id, client_id=None):
@@ -334,7 +320,7 @@ def get_trend_chart_for_mobile(db, session_user):
     years = get_last_7_years(db)
     unit_ids = get_user_unit_ids(db, session_user)
     unit_wise_details = []
-    if unit_ids is not None:
+    if unit_ids not in [None, "None", ""]:
         for unit_id in [int(x) for x in unit_ids.split(",")]:
             unit_details_column = "country_id, domain_ids"
             unit_details_condition = "unit_id = %s"
@@ -362,7 +348,7 @@ def get_trend_chart_for_mobile(db, session_user):
                     domain_id = domain_wise_timeline[0]
                     start_end_dates = domain_wise_timeline[1]
 
-                    history_columns = "group_concat(compliance_history_id)"
+                    history_columns = "compliance_history_id"
                     history_condition = " compliance_id in " + \
                         " ( SELECT compliance_id " + \
                         " FROM tbl_compliances WHERE domain_id = %s) " + \
@@ -372,7 +358,9 @@ def get_trend_chart_for_mobile(db, session_user):
                         tblComplianceHistory, history_columns,
                         history_condition, history_condition_val
                     )
-                    compliance_history_ids = history_rows[0][0]
+                    compliance_history_ids = [
+                        int(row[0]) for row in history_rows
+                    ]
 
                     if compliance_history_ids not in [None, '', "None"]:
                         for index, dates in enumerate(start_end_dates):
