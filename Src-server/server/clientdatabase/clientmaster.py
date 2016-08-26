@@ -118,6 +118,7 @@ def save_service_provider(db, service_provider, session_user):
     db.save_activity(session_user, 2, action)
     return service_provider_id
 
+
 def get_contract_status(
     db, service_provider_id
 ):
@@ -149,9 +150,8 @@ def update_service_provider(db, service_provider, session_user):
         contract_from, contract_to, service_provider. contact_person,
         service_provider.contact_no, current_time_stamp, session_user
     ]
-    condition = "service_provider_id= %s" % (
-        service_provider.service_provider_id
-    )
+    condition = "service_provider_id= %s"
+    values_list.append(service_provider.service_provider_id)
     result = db.update(
         tblServiceProviders, columns_list, values_list, condition
     )
@@ -217,15 +217,15 @@ def update_service_provider_status(
     db, service_provider_id,  is_active, session_user
 ):
     columns = ["is_active", "updated_on", "updated_by"]
-    values = [is_active, get_date_time(), session_user]
-    condition = "service_provider_id= %s " % service_provider_id
+    values = [is_active, get_date_time(), session_user, service_provider_id]
+    condition = "service_provider_id= %s "
     result = db.update(tblServiceProviders, columns, values, condition)
     if result is False:
         raise client_process_error("E003")
 
     action_column = "service_provider_name"
     rows = db.get_data(
-        tblServiceProviders, action_column, condition
+        tblServiceProviders, action_column, condition, [service_provider_id]
     )
     service_provider_name = rows[0]["service_provider_name"]
     action = None
@@ -318,9 +318,9 @@ def update_user_privilege(db, user_privilege, session_user):
     values = [
         user_privilege.user_group_name,
         ",".join(str(x) for x in user_privilege.form_ids),
-        get_date_time(), session_user
+        get_date_time(), session_user, user_privilege.user_group_id
     ]
-    condition = "user_group_id=%s" % user_privilege.user_group_id
+    condition = "user_group_id=%s"
     result = db.update(tblUserGroups, columns, values, condition)
     if result is False:
         raise client_process_error("E005")
@@ -347,15 +347,15 @@ def update_user_privilege_status(
 ):
     is_active = 0 if is_active is not True else 1
     columns = ["is_active", "updated_by", "updated_on"]
-    values = [is_active, session_user, get_date_time()]
-    condition = "user_group_id=%s" % user_group_id
+    values = [is_active, session_user, get_date_time(), user_group_id]
+    condition = "user_group_id=%s"
     result = db.update(tblUserGroups, columns, values, condition)
     if result is False:
         raise client_process_error("E006")
 
     action_column = "user_group_name"
     rows = db.get_data(
-        tblUserGroups, action_column, condition
+        tblUserGroups, action_column, condition, [user_group_id]
     )
     user_group_name = rows[0]["user_group_name"]
     action = None
@@ -599,9 +599,10 @@ def update_user(db, user, session_user, client_id):
         user.user_group_id, user.employee_name,
         user.employee_code.replace(" ", ""),
         user.contact_no, user.seating_unit_id, user.user_level,
-        user.is_service_provider, current_time_stamp, session_user
+        user.is_service_provider, current_time_stamp,
+        session_user
     ]
-    condition = "user_id= %s " % user_id
+    condition = "user_id= %s "
 
     if user.is_service_provider == 1:
         columns.append("service_provider_id")
@@ -609,7 +610,7 @@ def update_user(db, user, session_user, client_id):
     else:
         columns.append("seating_unit_id")
         values.append(user.seating_unit_id)
-
+    values.append(user_id)
     result1 = db.update(tblUsers, columns, values, condition)
     if result1 is False:
         raise client_process_error("E011")
@@ -683,12 +684,17 @@ def get_units_closure_for_user(db, unit_ids):
         "legal_entity_id", "business_group_id",
         "is_active", "is_closed"
     ]
-    condition = "1"
     if unit_ids not in [None, ""]:
-        condition = "unit_id in (%s)  ORDER BY unit_id ASC" % unit_ids
-        print condition
+        condition, condition_val = db.generate_tuple_condition(
+            "unit_id", [int(x) for x in unit_ids.split(",")]
+        )
+        condition_val = [condition_val]
+    else:
+        condition = "1"
+        condition_val = None
+    order = " ORDER BY unit_id ASC "
     rows = db.get_data(
-        tblUnits, columns, condition
+        tblUnits, columns, condition, condition_val, order
     )
     return return_units(rows)
 
@@ -716,16 +722,16 @@ def return_units(units):
 
 
 def close_unit(db, unit_id, unit_name, session_user):
-    condition = "unit_id = %s " % (unit_id)
+    condition = "unit_id = %s "
     columns = ["is_closed", "is_active"]
-    values = [1, 0]
+    values = [1, 0, unit_id]
     result = db.update(
         tblUnits, columns, values, condition
     )
     if result is False:
         raise client_process_error("E014")
     columns = ["is_active"]
-    values = [0]
+    values = [0, unit_id]
     result = db.update(
         tblAssignedCompliances, columns, values, condition
     )
@@ -785,26 +791,30 @@ def get_audit_trails(
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
     where_qry = "1"
+    where_qry_val = []
     if from_date is not None and to_date is not None:
-        where_qry += " AND  date(created_on) between '%s' AND '%s' " % (
-            from_date, to_date
-
-        )
+        where_qry += " AND  date(created_on) between %s AND %s "
+        where_qry_val.extend([from_date, to_date])
     if user_id is not None:
-        where_qry += " AND user_id = '%s'" % (user_id)
+        where_qry += " AND user_id = %s"
+        where_qry_val.append(user_id)
     if form_id is not None:
-        where_qry += " AND form_id = '%s'" % (form_id)
-
+        where_qry += " AND form_id = %s"
+        where_qry_val.append(form_id)
     columns = [
         "user_id", "form_id", "action", "created_on"
     ]
-    where_qry += " AND action not like '%sLog In by%s' " + \
+    where_qry += " AND action not like %s " + \
         " ORDER BY activity_log_id DESC limit %s, %s "
-    where_qry = where_qry % (
-        "%", "%", from_count, to_count
+
+    action_condition = "%sLog In by%s" % ("%", "%")
+    where_qry_val.extend(
+        [
+            action_condition, from_count, to_count
+        ]
     )
     rows = db.get_data(
-        tblActivityLog, columns, where_qry
+        tblActivityLog, columns, where_qry, where_qry_val
     )
     audit_trail_details = []
     for row in rows:
@@ -821,10 +831,15 @@ def get_audit_trails(
 def return_forms(db, form_ids=None):
     columns = "form_id, form_name"
     condition = "form_id != 24"
+    condition_val = None
     if form_ids is not None:
-        condition += " AND form_id in (%s)" % form_ids
+        condition, condition_val = db.generate_tuple_condition(
+            "form_id", [int(x) for x in form_ids.split(",")]
+        )
+        condition_val = [condition_val]
+        condition += " AND %s " % condition
     forms = db.get_data(
-        tblForms, columns, condition
+        tblForms, columns, condition, condition_val
     )
     results = []
     for form in forms:
