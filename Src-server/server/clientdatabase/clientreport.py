@@ -2145,9 +2145,9 @@ def get_compliance_task_applicability(db, request, session_user):
     admin_id = get_admin_id(db)
 
     if status.lower() == "applicable":
-        where_qry += " AND T1.statutory_applicable = 1"
+        where_qry += " AND T1.compliance_applicable = 1"
     elif status.lower() == "not applicable":
-        where_qry += " AND T1.statutory_applicable = 0"
+        where_qry += " AND T1.compliance_applicable = 0"
     else:
         where_qry += " AND T1.compliance_opted = 0"
 

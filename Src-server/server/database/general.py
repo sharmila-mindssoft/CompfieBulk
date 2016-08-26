@@ -118,7 +118,7 @@ def return_changes(data):
 
 
 def remove_trail_log(db, client_id, received_count):
-    q = "delete from tbl_audit_log where audit_trail_id < %s " + \
+    q = "delete from tbl_audit_log where audit_trail_id <= %s " + \
         " and client_id = %s"
     db.execute(q, [received_count, client_id])
 

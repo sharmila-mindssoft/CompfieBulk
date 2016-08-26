@@ -228,7 +228,7 @@ $("#submit").click(function(){
 		function onFailure(error, response){
           if(error == "DuplicateGeographyLevelsExists"){
             displayMessage(message.geographylevel_exists);
-          }else if(error = "LevelShouldNotbeEmpty"){
+          }else if(error == "LevelShouldNotbeEmpty"){
           	var levelValue = response['level'];
           	var msg = "Level "+ levelValue + " ";
           	displayMessage(msg+message.shouldnot_empty);

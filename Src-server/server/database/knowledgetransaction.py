@@ -140,6 +140,13 @@ def return_compliance(data):
         compalinaces.append(compliance)
     return [compliance_names, compalinaces]
 
+def get_mapping_compliances(db, mapping_id):
+    q = "select compliance_id from tbl_compliances where statutory_mapping_id = %s "
+    rows = db.select_all(q, [mapping_id])
+    compliance_ids = []
+    for r in rows :
+        compliance_ids.append(int(r[0]))
+    return compliance_ids
 
 def get_statutory_mappings(db, user_id, for_approve=False):
     q = "SELECT distinct t1.statutory_mapping_id, t1.country_id, " + \
@@ -152,11 +159,7 @@ def get_statutory_mappings(db, user_id, for_approve=False):
         " (select statutory_nature_name from tbl_statutory_natures " + \
         " where statutory_nature_id = t1.statutory_nature_id) " + \
         " statutory_nature_name, t1.statutory_ids, t1.geography_ids, " + \
-        " t1.approval_status, t1.is_active, " + \
-        " (select group_concat(distinct compliance_id) " + \
-        " from tbl_compliances " + \
-        " where statutory_mapping_id = t1.statutory_mapping_id " + \
-        " ) compliance_ids " + \
+        " t1.approval_status, t1.is_active " + \
         " FROM tbl_statutory_mappings t1 " + \
         " INNER JOIN tbl_user_domains t5 " + \
         " ON t5.domain_id = t1.domain_id " + \
@@ -176,7 +179,7 @@ def get_statutory_mappings(db, user_id, for_approve=False):
         "country_name", "domain_id", "domain_name", "industry_ids",
         "statutory_nature_id", "statutory_nature_name",
         "statutory_ids", "geography_ids",
-        "approval_status", "is_active", "compliance_ids"
+        "approval_status", "is_active"
     ]
 
     result = []
@@ -195,9 +198,8 @@ def return_statutory_mappings(db, data, is_report=None):
     for d in data:
         mapping_id = int(d["statutory_mapping_id"])
         industry_names = ""
-        compliance_ids = [
-            int(x) for x in d["compliance_ids"].split(',')
-        ]
+        compliance_ids = get_mapping_compliances(db, mapping_id)
+
         if len(compliance_ids) == 1:
             compliance_ids = compliance_ids[0]
         # compliance_id = int(d["compliance_id"])
@@ -215,7 +217,7 @@ def return_statutory_mappings(db, data, is_report=None):
             map_data = GEOGRAPHY_PARENTS.get(int(g_id))
             if map_data is not None:
                 map_data = map_data[0]
-            geography_mapping_list.append(map_data)
+                geography_mapping_list.append(map_data)
         statutory_ids = [
             int(x) for x in d["statutory_ids"][:-1].split(',')
         ]
@@ -805,9 +807,6 @@ def update_compliance(db, mapping_id, domain_id, datas, updated_by):
         where_condition = "compliance_id = %s"
         values.append(compliance_id)
         if (db.update(table_name, columns, values, where_condition)):
-            if is_format:
-                convert_base64_to_file(file_name, file_content)
-                is_format = False
             compliance_ids.append(compliance_id)
         else:
             raise process_error("E021")

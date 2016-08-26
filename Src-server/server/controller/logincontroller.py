@@ -109,7 +109,7 @@ def mobile_user_login_respone(db, data, request, ip):
     employee_code = data["employee_code"]
     form_ids = [int(x) for x in data["form_ids"].split(",")]
     if 11 not in form_ids:
-        return login.InvalidCredentials()
+        return login.InvalidMobileCredentials()
     employee = "%s - %s" % (employee_code, employee_name)
     session_token = add_session(db, user_id, session_type, ip, employee)
     return mobile.UserLoginResponseSuccess(

@@ -22,7 +22,7 @@ FORMAT_DOWNLOAD_URL = "/client/compliance_format"
 # Log flag
 #
 ENABLE_INFO_LOG = False
-ENABLE_QUERY_LOG = False
+ENABLE_QUERY_LOG = True
 
 #
 # Timezone
@@ -45,5 +45,6 @@ KNOWLEDGE_DB_USERNAME = "root"
 KNOWLEDGE_DB_PASSWORD = "123456"
 KNOWLEDGE_DATABASE_NAME = "compfie_knowledge"
 
-CLIENT_URL = "http://localhost:8080/"
-KNOWLEDGE_URL = "http://localhost:8082/knowledge"
+URL = "http://localhost:8080/"
+CLIENT_URL = URL
+KNOWLEDGE_URL = URL + "knowledge"

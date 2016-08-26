@@ -107,10 +107,16 @@ def save_client_group(db, request, session_user):
                 session_user
             )
             save_client_countries(db, client_id, request.country_ids)
+            print "---- country"
             save_client_domains(db, client_id, request.domain_ids)
+            print "---- domain"
             save_incharge_persons(db, request, client_id)
+            print "--- person"
             save_client_user(db, request, session_user, client_id)
+            print "----user"
             notify_incharge_persons(db, request)
+            print "--notify"
+            print is_db_created
             if is_db_created[0] is True:
                 send_client_credentials_thread = threading.Thread(
                     target=send_client_credentials, args=[
@@ -120,9 +126,10 @@ def save_client_group(db, request, session_user):
                 send_client_credentials_thread.start()
                 return technomasters.SaveClientGroupSuccess()
         except Exception, e:
+            print e
             create_db.delete_database()
             print "Exception client_db_delete_database()", e
-            raise Exception(e)
+            raise Exception(str("Client group creation failed"))
 
 
 ########################################################

@@ -71,7 +71,7 @@ var message = {
 	"industry_required" : "Industry Required",
 	"statutorynature_required" : "Statutory Nature Required",
 	"statutory_selection_required" : "Atleast one Statute should be selected",
-	"compliance_selection_required" : "Atleast one Compliance should be selected",
+	"compliance_selection_required" : "Atleast one Compliance should be added",
 	"active_compliance_required" : "Atleast one Compliance should be Activate",
 	"location_selection_required" : "Atleast one Location should be selected",
 	"action_selection_required" : "Atleast one action should be selected",
@@ -219,11 +219,12 @@ var message = {
 	"active_message" : "Are you sure want to activate?",
 	"deactive_message" : "Are you sure want to deactivate?",
 	"title_status_change" : "Change Status",
+	"title_promote_admin" : "Promote Admin",
 	"cannot_promote_sp_admin" : "Cannot promote a service provider as admin",
 	"techno_team_change_primary_admin_status" : "Only Techno team can change status of primary admin",
 	"cancel_operation" : "Are you sure, you want to cancel the operation?",
 	"invalid_statutory_month" : "Invalid statutory month",
-	"triggerdays_exceeding_repeatsevery" : "Trigger before days exceeding repeats every value"
+	"triggerdays_exceeding_repeatsevery" : "Trigger before days should not exceed repeats every value"
 };
 
 function clearMessage() {

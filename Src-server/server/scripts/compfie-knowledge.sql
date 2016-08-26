@@ -297,13 +297,9 @@ CREATE TABLE `tbl_compliances` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY `fk_compliances_statutory_mappings` (`statutory_mapping_id`),
-  KEY `fk_compliance_duration_id_1` (`duration_type_id`),
   KEY `fk_compliance_frequency_id` (`frequency_id`),
-  KEY `fk_complioance_repeat_id_1` (`repeats_type_id`),
   CONSTRAINT `fk_compliances_statutory_mappings` FOREIGN KEY (`statutory_mapping_id`) REFERENCES `tbl_statutory_mappings` (`statutory_mapping_id`),
-  CONSTRAINT `fk_compliance_duration_id_1` FOREIGN KEY (`duration_type_id`) REFERENCES `tbl_compliance_duration_type` (`duration_type_id`),
-  CONSTRAINT `fk_compliance_frequency_id` FOREIGN KEY (`frequency_id`) REFERENCES `tbl_compliance_frequency` (`frequency_id`),
-  CONSTRAINT `fk_complioance_repeat_id_1` FOREIGN KEY (`repeats_type_id`) REFERENCES `tbl_compliance_repeat_type` (`repeat_type_id`)
+  CONSTRAINT `fk_compliance_frequency_id` FOREIGN KEY (`frequency_id`) REFERENCES `tbl_compliance_frequency` (`frequency_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -514,7 +510,7 @@ CREATE TABLE `tbl_statutory_notifications_log` (
 
 DROP TABLE IF EXISTS `tbl_statutory_notifications_units`;
 CREATE TABLE `tbl_statutory_notifications_units` (
-  `statutory_notification_unit_id` int(11) NOT NULL,
+  `statutory_notification_unit_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `statutory_notification_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `business_group_id` int(11) NULL DEFAULT NULL,

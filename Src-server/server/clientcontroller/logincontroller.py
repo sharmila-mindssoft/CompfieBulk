@@ -327,10 +327,10 @@ def process_change_password(db, request):
     session_token = "{}-{}".format(
         client_info[0], client_info[2]
     )
-    client_id = int(client_info[0])
+    # client_id = int(client_info[0])
     session_user = db.validate_session_token(session_token)
-    if verify_password(db, request.current_password, session_user, client_id):
-        update_password(db, request.new_password, session_user, client_id)
+    if verify_password(db, request.current_password, session_user):
+        update_password(db, request.new_password, session_user)
         return login.ChangePasswordSuccess()
     else:
         return login.InvalidCurrentPassword()

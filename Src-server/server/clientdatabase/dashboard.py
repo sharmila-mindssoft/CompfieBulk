@@ -95,7 +95,7 @@ def get_status_wise_compliances_count(db, request, session_user):
         db, not_complied_qry, request, user_id
         )
     if from_date is not None and to_date is not None:
-        return frameg_compliance_status_count(
+        return frame_compliance_status_count(
             db, inprogress, complied, delayed,
             not_complied
         )

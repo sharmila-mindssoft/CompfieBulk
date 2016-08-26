@@ -368,13 +368,11 @@ def delete_grography_level(db, level_id):
     if row[0] > 0:
         return True
     else:
-        db.execute(
-            "delete from tbl_geographies where level_id = %s ", (level_id)
+        res = db.execute(
+            "delete from tbl_geography_levels where level_id = %s ", [level_id]
         )
-        db.execute(
-            "delete from tbl_geography_levels where level_id = %s ", (level_id)
-        )
-        raise process_error("E009")
+        if res is False :
+            raise process_error("E009")
 
 
 def save_geography_levels(db, country_id, levels, user_id):
@@ -382,20 +380,49 @@ def save_geography_levels(db, country_id, levels, user_id):
     created_on = get_date_time()
     newlist = sorted(levels, key=lambda k: k.level_position, reverse=True)
     result = False
+    d_l_id = None
     for n in newlist:
         if n.is_remove is True:
-            result = db.delete_grography_level(n.level_id)
-            if result:
+            print n.level_id
+            print n.level_position
+            result = delete_grography_level(db, n.level_id)
+            if result :
+                d_l_id = n.level_position
                 break
             else:
                 continue
-    if result:
-        return knowledgemaster.LevelShouldNotbeEmpty(n.level_position)
+    if result :
+        return knowledgemaster.LevelShouldNotbeEmpty(d_l_id)
 
-    for level in levels:
+    for level in sorted(levels, key=lambda k: k.level_id, reverse=True):
         name = level.level_name
         position = level.level_position
-        if level.level_id is None:
+        print '*' * 5
+        print position
+        print name
+        print level.is_remove
+        if level.is_remove :
+            continue
+
+        if level.level_id is not None:
+            print "update"
+            columns = [
+                "level_position", "level_name", "updated_by",
+            ]
+            where_condition = "level_id=%s"
+            values = [position, name, user_id, level.level_id]
+            if (
+                db.update(
+                    table_name, columns, values, where_condition
+                )
+            ):
+                action = "Geography levels updated"
+                db.save_activity(user_id, 5, action)
+            else:
+                raise process_error("E011")
+
+        else :
+            print "insert"
             columns = [
                 "level_position", "level_name", "country_id",
                 "created_by", "created_on"
@@ -411,21 +438,6 @@ def save_geography_levels(db, country_id, levels, user_id):
             else:
                 raise process_error("E010")
 
-        else:
-            columns = [
-                "level_position", "level_name", "updated_by",
-            ]
-            where_condition = "level_id=%s"
-            values = [position, name, user_id, level.level_id]
-            if (
-                db.update(
-                    table_name, columns, values, where_condition
-                )
-            ):
-                action = "Geography levels updated"
-                db.save_activity(user_id, 5, action)
-            else:
-                raise process_error("E011")
     return knowledgemaster.SaveGeographyLevelSuccess()
 
 
@@ -636,6 +648,27 @@ def update_geography(
     else:
         raise process_error("E013")
 
+def check_geography_exists(db, geography_id):
+    #
+    # if geography used in mapping means return true else return false
+    # and geography has child means return true else false
+    #
+    is_exists = False
+    q = "select count(1) from tbl_statutory_geographies where geography_id = %s"
+    row = db.select_one(q, [geography_id])
+    if row[0] > 0 :
+        is_exists = True
+        raise process_error("E063")
+
+    if is_exists is False :
+        q1 = "select count(0) from tbl_geographies where FIND_IN_SET(%s, parent_ids)"
+        r = db.select_one(q1, [geography_id])
+        if r[0] > 0 :
+            is_exists = True
+            raise process_error("E064")
+
+    # return is_exists
+
 
 def change_geography_status(db, geography_id, is_active, updated_by):
     oldData = get_geography_by_id(db, geography_id)
@@ -644,6 +677,9 @@ def change_geography_status(db, geography_id, is_active, updated_by):
     table_name = "tbl_geographies"
     columns = ["is_active", "updated_by"]
     where_condition = " geography_id = %s"
+    # if is_active == 0 :
+    #     check_geography_exists(db, geography_id)
+
     values = [is_active, updated_by, geography_id]
     if (db.update(table_name, columns, values, where_condition)):
         if is_active == 0:
@@ -914,7 +950,7 @@ def frame_geography_parent_mapping(rows):
         country_id = int(row["country_id"])
         geography_id = int(row["geography_id"])
         is_active = bool(row["is_active"])
-        mappings = row["parent_names"] + " >> " + row["geography_name"]
+        mappings = row["parent_names"]
         GEOGRAPHY_PARENTS[geography_id] = [
             mappings, is_active, country_id
         ]

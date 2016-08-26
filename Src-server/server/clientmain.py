@@ -294,7 +294,7 @@ class API(object):
 
     @api_request(login.Request, need_client_id=True)
     def handle_login(self, request, db, client_id):
-        print self._ip_address
+        # print self._ip_address
         logger.logLogin("info", self._ip_address, "login-user", "Login process end")
         return controller.process_login_request(request, db, client_id, self._ip_address)
 

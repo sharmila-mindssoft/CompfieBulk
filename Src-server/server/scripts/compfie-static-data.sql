@@ -476,7 +476,7 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                 NEW.client_id,
                 NEW.client_id,
                 'logo_url',
-                NEW.logo_url,
+                concat('logoooo', NEW.logo_url),
                 'tbl_client_groups');
    INSERT INTO tbl_audit_log(action,
                              client_id,

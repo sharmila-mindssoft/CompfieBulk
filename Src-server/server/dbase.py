@@ -136,7 +136,6 @@ class Database(object):
     def execute(self, query, param=None):
         cursor = self.cursor()
         assert cursor is not None
-
         try:
             if type(param) is tuple:
                 logger.logQuery(self._for_client, "execute", query % param)
@@ -439,7 +438,8 @@ class Database(object):
             return n_id
         except mysql.Error, e:
             print e
-            logger.logKnowledgeApi("insert", query)
+            print query, values
+            logger.logKnowledgeApi("insert", query + " -- " + values)
             logger.logKnowledgeApi("insert", e)
             return False
 
@@ -480,16 +480,14 @@ class Database(object):
                 query += column+" = %s "
 
         query += " WHERE " + condition
+        print query
         try:
-            print query
-            print values
-            res = self.execute(query, values)
-            print '------------'
-            print res
+            self.execute(query, values)
             return True
         except mysql.Error, e:
+            print query, values
             print e
-            logger.logKnowledgeApi("update", query)
+            logger.logKnowledgeApi("update", query + " , " + values)
             logger.logKnowledgeApi("update", e)
             return False
 
@@ -551,6 +549,7 @@ class Database(object):
                 table, columns, values, condition)
             return res
         except mysql.Error, e:
+            print table, column, value
             print e
             return False
 
@@ -627,8 +626,9 @@ class Database(object):
         return True
 
     def validate_session_token(self, session_token):
-        query = '''SELECT user_id FROM tbl_user_sessions
-            WHERE session_token=%s'''
+        query = '''SELECT t01.user_id FROM tbl_user_sessions t01
+            LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id and is_active = 1
+            WHERE  session_token=%s'''
         param = [session_token]
         row = self.select_one(query, param)
         user_id = None
