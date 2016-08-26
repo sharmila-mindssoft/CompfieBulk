@@ -278,9 +278,14 @@ function load_statutory(sList){
     lastDomainName = domainName;
     lastActName = actname;
 
-    $('.input-box').on('input', function (e) {
+    $('.remark-text').on('input', function (e) {
       this.value = isCommon($(this));
     });
+
+    $('.cremarkvalue').on('input', function (e) {
+      this.value = isCommon($(this));
+    });
+    
   }
 
   if(statutoriesCount > 1){
