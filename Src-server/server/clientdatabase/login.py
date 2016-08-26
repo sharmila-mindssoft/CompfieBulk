@@ -179,8 +179,8 @@ def check_and_update_login_attempt(db, user_id):
         diff = relativedelta.relativedelta(current_date_time, last_login_time)
         if diff.hours > 2 or diff.days > 0:
             db.update(
-                tblUserLoginHistory, ["login_attempt"], [0],
-                " user_id=%s " % user_id
+                tblUserLoginHistory, ["login_attempt"], [0, user_id],
+                " user_id=%s "
             )
 
 
@@ -195,8 +195,12 @@ def save_login_failure(db, user_id, session_user_ip):
         )
     ):
         increament_column = ["login_attempt"]
-        increament_cond = " user_id = %s " % (user_id)
-        db.increment(tblUserLoginHistory, increament_column, increament_cond)
+        increament_cond = " user_id = %s "
+        increament_cond_val = [user_id]
+        db.increment(
+            tblUserLoginHistory, increament_column, increament_cond,
+            increament_cond_val
+        )
 
 
 def delete_login_failure_history(db, user_id):
